@@ -30,13 +30,17 @@
 
         public void Write(string data)
         {
-			Dispatcher.UIThread.InvokeAsync (() => {
-				Text += data;
-			});
+            if (data != null)
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    Text += data;
+                });
+            }
         }
 
         public void WriteLine()
-        {
+        {            
 			Dispatcher.UIThread.InvokeAsync (() => {
 				Text += Environment.NewLine;
 			});
@@ -44,9 +48,13 @@
 
         public void WriteLine(string data)
         {
-			Dispatcher.UIThread.InvokeAsync (() => {
-				Text += data + Environment.NewLine;
-			});
+            if (data != null)
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    Text += data + Environment.NewLine;
+                });
+            }
         }
     }
 }
