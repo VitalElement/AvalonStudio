@@ -6,23 +6,7 @@
     using Models;
 
     public class ConsoleViewModel : ViewModelBase, IConsole
-    {
-        public ConsoleViewModel()
-        {                        
-            //Timer timer = new Timer();
-            //timer.Interval = 5000;
-
-            //timer.Tick += (sender, e) =>
-            //{
-            //    Dispatcher.UIThread.InvokeAsync(() =>
-            //    {
-            //        Text += "Testing Console: " + DateTime.Now + " " + Environment.NewLine;
-            //    });
-            //};
-
-            //timer.Start();
-        }
-
+    {        
         private string text;
         public string Text
         {
