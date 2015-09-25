@@ -173,7 +173,7 @@
       <Name>AvalonStudio.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\Perspex.MVVM\Perspex.MVVM.csproj">
-      <Project>{E2662EFE-750E-4F70-AD6E-7E4ABAF494C8}</Project>
+      <Project>{4daab6b2-01e0-4bad-aefc-39e76c843b36}</Project>
       <Name>Perspex.MVVM</Name>
     </ProjectReference>
   </ItemGroup>
