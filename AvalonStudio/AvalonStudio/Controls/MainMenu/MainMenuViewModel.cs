@@ -12,18 +12,18 @@
         {
             LoadProjectCommand = new RoutedCommand(async (args) =>
             {
-                Perspex.Controls.CommonDialog dlg = new Perspex.Controls.CommonDialog();
+               // Perspex.Controls.CommonDialog dlg = new Perspex.Controls.CommonDialog();
 
-                var result = await dlg.ShowAsync();
+                //var result = await dlg.ShowAsync();
 
 
-                if (result.Length == 1)
+                //if (result.Length == 1)
                 {
                     new Thread (new ThreadStart(new Action (async () =>
                     {
-                        var solution = Solution.LoadSolution(result[0]);
+                        //var solution = Solution.LoadSolution(result[0]);
 
-                        await solution.DefaultProject.Build(Workspace.This.Console, new System.Threading.CancellationTokenSource());
+                        //await solution.DefaultProject.Build(Workspace.This.Console, new System.Threading.CancellationTokenSource());
                     }))).Start();
                 }              
             });
