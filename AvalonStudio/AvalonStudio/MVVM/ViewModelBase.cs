@@ -1,6 +1,6 @@
 ﻿using Perspex.MVVM;
 
-namespace VEStudio.MVVM
+namespace AvalonStudio.MVVM
 {
     public static class ViewModelBaseExtensions
     {

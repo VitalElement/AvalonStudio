@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VEStudio.MVVM
+namespace AvalonStudio.MVVM
 {
     /// <summary>
     /// Extension methods to the ObservableCollection class

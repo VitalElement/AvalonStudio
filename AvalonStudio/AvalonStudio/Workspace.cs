@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio
 {
     using Perspex.MVVM;
-    using VEStudio.Controls.ViewModel;
+    using AvalonStudio.Controls.ViewModel;
     using Controls;
 
     public class Workspace : ViewModelBase

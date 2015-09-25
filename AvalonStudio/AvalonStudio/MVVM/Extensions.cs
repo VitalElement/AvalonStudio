@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace VEStudio.MVVM
+namespace AvalonStudio.MVVM
 {
     public static class Extensions
     {

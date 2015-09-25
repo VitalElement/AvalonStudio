@@ -3,7 +3,7 @@ using Perspex.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-namespace VEStudio.Controls.ViewModel
+namespace AvalonStudio.Controls.ViewModel
 {
     public class SolutionExplorerViewModel : ToolViewModel
     {

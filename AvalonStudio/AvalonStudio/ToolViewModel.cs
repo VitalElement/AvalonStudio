@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using VEStudio.Controls.ViewModel;
-using VEStudio.MVVM;
+using AvalonStudio.Controls.ViewModel;
+using AvalonStudio.MVVM;
 
-namespace VEStudio
+namespace AvalonStudio
 {
     public abstract class ToolViewModel : PaneViewModel
     {
