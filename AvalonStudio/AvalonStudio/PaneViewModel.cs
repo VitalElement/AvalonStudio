@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using VEStudio.MVVM;
+using AvalonStudio.MVVM;
 
-namespace VEStudio
+namespace AvalonStudio
 {
     public abstract class PaneViewModel : ViewModelBase
     {

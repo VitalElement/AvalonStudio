@@ -193,7 +193,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Models\AvalonStudio.Models.csproj">
-      <Project>{5cde5b11-41fa-4158-8d9a-d12531f32b4d}</Project>
+      <Project>{eacbff14-438d-4311-8d8c-18e7e6769c8f}</Project>
       <Name>AvalonStudio.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\Perspex.MVVM\Perspex.MVVM.csproj">
