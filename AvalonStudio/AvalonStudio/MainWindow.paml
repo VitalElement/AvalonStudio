@@ -1,0 +1,34 @@
+﻿<Window xmlns="https://github.com/perspex"        
+        xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+        Background="#2d2d30" Foreground="#C7C7C7">
+  <Grid RowDefinitions="20,0,*,150,25" ColumnDefinitions="220,*,200">
+    
+    <Grid Grid.ColumnSpan="3">
+      <Controls:MainMenu DataContext="{Binding MainMenu}" />
+    </Grid>
+
+    <Grid Grid.Row ="1" Grid.ColumnSpan="3">
+      <Controls:ToolBar />
+     </Grid>
+    
+    <Grid Grid.Row="2" Grid.RowSpan="2" Margin="2 2 1 2">
+      <Controls:SolutionExplorer DataContext="{Binding MainMenu}" />
+    </Grid>
+
+    <Grid Grid.Row="2" Grid.Column="1" Margin="1 2 2 1">
+      <Controls:Editor DataContext="{Binding Editor}" />
+    </Grid>
+    
+    <Grid Grid.Row="3" Grid.Column="1" Margin="1 1 2 2">      
+        <Controls:Console DataContext="{Binding Console}" />      
+    </Grid>
+
+    <Grid Grid.Row="2" Grid.Column="2" Grid.RowSpan="2">
+       
+    </Grid>
+    
+    <Grid Grid.Row="4" Grid.ColumnSpan="3">
+      <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
+    </Grid>
+  </Grid>
+</Window>
