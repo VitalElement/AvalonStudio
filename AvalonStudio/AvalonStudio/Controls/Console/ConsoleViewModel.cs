@@ -1,6 +1,7 @@
 ﻿namespace AvalonStudio.Controls
 {
     using System;
+	using Perspex.Threading;
     using Perspex.MVVM;
     using Models;
 
@@ -31,28 +32,37 @@
 
         public void Clear()
         {
-            Text = string.Empty;
+			Dispatcher.UIThread.InvokeAsync (() => {
+				Text = string.Empty;
+			});
         }
 
         public void Write(char data)
-        {
-            Text += data;
+		{
+			Dispatcher.UIThread.InvokeAsync (() => {
+				Text += data;
+			});
         }
 
         public void Write(string data)
         {
-            Text += data;
+			Dispatcher.UIThread.InvokeAsync (() => {
+				Text += data;
+			});
         }
 
         public void WriteLine()
         {
-            Text += Environment.NewLine;
+			Dispatcher.UIThread.InvokeAsync (() => {
+				Text += Environment.NewLine;
+			});
         }
 
         public void WriteLine(string data)
         {
-
-            Text += data + Environment.NewLine;
+			Dispatcher.UIThread.InvokeAsync (() => {
+				Text += data + Environment.NewLine;
+			});
         }
     }
 }

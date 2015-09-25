@@ -1,0 +1,48 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="AvalonStudio.Models/Tools/Compiler/ClangCompiler.cs">
+    <Files>
+      <File FileName="AvalonStudio.Models/Tools/Compiler/ClangCompiler.cs" Line="1" Column="1" />
+      <File FileName="AvalonStudio/Controls/Console.paml" Line="103" Column="103" />
+      <File FileName="AvalonStudio/Workspace.cs" Line="1" Column="1" />
+      <File FileName="AvalonStudio/MainWindow.paml" Line="35" Column="35" />
+      <File FileName="AvalonStudio.Models/Tools/Compiler/StandardToolChain.cs" Line="31" Column="31" />
+      <File FileName="AvalonStudio.Models/Solutions/Project.cs" Line="1" Column="1" />
+      <File FileName="AvalonStudio.Models/Solutions/Solution.cs" Line="1" Column="1" />
+      <File FileName="AvalonStudio.Models/Utils/Extensions.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="AvalonStudio" expanded="True">
+            <Node name="Controls" expanded="True">
+              <Node name="Console" expanded="True" />
+              <Node name="MainMenu" expanded="True" />
+            </Node>
+          </Node>
+          <Node name="AvalonStudio.Models" expanded="True">
+            <Node name="Solutions" expanded="True" />
+            <Node name="Tools" expanded="True">
+              <Node name="Compiler" expanded="True">
+                <Node name="ClangCompiler.cs" selected="True" />
+              </Node>
+            </Node>
+            <Node name="Utils" expanded="True" />
+          </Node>
+          <Node name="Perspex.MVVM" expanded="True" />
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>startInfo.Arguments</Value>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/home/dan/Desktop/AvalonStudio/AvalonStudio/AvalonStudio.Models/Solutions/Project.cs" line="389" column="9" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

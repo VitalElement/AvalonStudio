@@ -105,8 +105,8 @@
 
             try
             {
-                string fullPath = Path.Combine(solution.CurrentDirectory, unloadedProject.FileName);
-                result = LoadProjectInIsolation(fullPath);
+				string fullPath = Path.Combine(solution.CurrentDirectory, unloadedProject.FileName).Replace("\\", "/");
+				result = LoadProjectInIsolation(fullPath);
 
                 result.LocationRelativeToParent = solution.CurrentDirectory.MakeRelativePath(fullPath);                
 
@@ -232,7 +232,7 @@
 
             foreach (string projectLocation in this.References)
             {
-                var proj = this.Solution.LoadedProjects.FirstOrDefault((p) => this.Solution.CurrentDirectory.MakeRelativePath(p.Location) == projectLocation);
+				var proj = this.Solution.LoadedProjects.FirstOrDefault((p) => this.Solution.CurrentDirectory.MakeRelativePath(p.Location) == projectLocation.Replace("\\","/"));
 
                 if(proj != null)
                 {
@@ -300,11 +300,11 @@
                         foreach (var include in SelectedConfiguration.ToolChain.Settings.IncludePaths)
                         {
                             string formatString = "-I{0}";
-                            string includeArgument = Path.Combine(SelectedConfiguration.ToolChain.Settings.ToolChainLocation, include);
+							string includeArgument = Path.Combine(SelectedConfiguration.ToolChain.Settings.ToolChainLocation, include.Replace("..\\", "../"));
 
                             //if (includeArgument.Contains(' '))
                             {
-                                formatString = "-I\"{0}\"";
+                                //formatString = "-I\"{0}\"";
                             }
 
                             arguments.Add(string.Format(formatString, includeArgument));
@@ -319,7 +319,7 @@
                     foreach (var includePath in includes)
                     {
                         string formatString = "-I{0}";
-                        string includeArgument = Path.Combine(this.Solution.CurrentDirectory, includePath);
+						string includeArgument = Path.Combine(this.Solution.CurrentDirectory, includePath.Replace("..\\", "../"));
 
                         if (includePath == "\\")
                         {
@@ -328,7 +328,7 @@
 
                         //if (includeArgument.Contains(' '))
                         {
-                            formatString = "-I\"{0}\"";
+                            //formatString = "-I\"{0}\"";
                         }
 
                         arguments.Add(string.Format(formatString, includeArgument));
@@ -338,7 +338,7 @@
                 foreach (string includePath in this.SelectedConfiguration.IncludePaths)
                 {
                     string formatString = "-I{0}";
-                    string includeArgument = Path.Combine(this.CurrentDirectory, includePath);
+					string includeArgument = Path.Combine(this.CurrentDirectory, includePath.Replace("..\\", "../"));
 
                     if (includePath == "\\")
                     {
@@ -347,29 +347,29 @@
 
                     //if (includeArgument.Contains(' '))
                     {
-                        formatString = "-I\"{0}\"";
+                        //formatString = "-I\"{0}\"";
                     }
 
                     arguments.Add(string.Format(formatString, includeArgument));
                 }
 
-                foreach (string includePath in Project.SelectedConfiguration.IncludePaths)
-                {
-                    string formatString = "-I{0}";
-                    string includeArgument = Path.Combine(this.Solution.CurrentDirectory, includePath);
-
-                    if (includePath == "\\")
-                    {
-                        includeArgument = this.CurrentDirectory;
-                    }
-
-                    //if (includeArgument.Contains(' '))
-                    {
-                        formatString = "-I\"{0}\"";
-                    }
-
-                    arguments.Add(string.Format(formatString, includeArgument));
-                }
+//                foreach (string includePath in Project.SelectedConfiguration.IncludePaths)
+//                {
+//                    string formatString = "-I{0}";
+//					string includeArgument = Path.Combine(this.Solution.CurrentDirectory, includePath.Replace("..\\", "../"));
+//
+//                    if (includePath == "\\")
+//                    {
+//                        includeArgument = this.CurrentDirectory;
+//                    }
+//
+//                    //if (includeArgument.Contains(' '))
+//                    {
+//                        formatString = "-I\"{0}\"";
+//                    }
+//
+//                    arguments.Add(string.Format(formatString, includeArgument));
+//                }
 
                 return arguments.ToArray();
             }
@@ -390,7 +390,7 @@
         {
             get
             {
-                return Path.GetDirectoryName (this.Location) + "\\";
+                return Path.GetDirectoryName (this.Location) + "/";
             }
         }
 

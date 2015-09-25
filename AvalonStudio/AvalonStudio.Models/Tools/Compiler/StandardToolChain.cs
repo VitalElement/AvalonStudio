@@ -492,7 +492,7 @@
 
                            console.WriteLine(string.Format("[CC]    [{0}]    {1}", project.Title, Path.GetFileName(file.Location)));                           
 
-                           new Thread(() =>
+                           //new Thread(() =>
                            {
                                superProjectToolchain.Compile(console, superProject, project, file, objectFile, result);
                                compileThread.Release(1);
@@ -515,7 +515,9 @@
                                    compileJobs--;
                                }
 
-                           }).Start();
+                           }//).Start();
+
+
                        }
                        else
                        {
