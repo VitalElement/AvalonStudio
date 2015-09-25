@@ -43,7 +43,7 @@ namespace AvalonStudio.Models.Tools.Compiler
             startInfo.RedirectStandardError = true;
             startInfo.CreateNoWindow = true;
 
-            console.WriteLine ("[CC] " + Path.GetFileName(file.Location) + startInfo.Arguments);
+            //;console.WriteLine ("[CC] " + Path.GetFileName(file.Location) + startInfo.Arguments);
 
             using (var process = Process.Start (startInfo))
             {
