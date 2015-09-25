@@ -23,7 +23,7 @@
         //internal NClang.ClangIndex NClangIndex;
 
         [XmlIgnore]
-        public string CurrentDirectory { get { return Path.GetDirectoryName (OpenedLocation) + "\\"; } }
+        public string CurrentDirectory { get { return Path.GetDirectoryName (OpenedLocation) + "/"; } }
 
         [XmlIgnore]
         public string OpenedLocation { get; set; }

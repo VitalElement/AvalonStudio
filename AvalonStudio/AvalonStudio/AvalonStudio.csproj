@@ -34,10 +34,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Reactive.Windows.Threading, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-XAML.2.2.5\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -111,6 +107,15 @@
     <Reference Include="System.Reactive.PlatformServices, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
+    <Reference Include="System.Reactive.Windows.Threading, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\packages\Rx-Xaml.2.2.5\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="Perspex.Cairo">
+      <HintPath>..\Perspex.Cairo.dll</HintPath>
+    </Reference>
+    <Reference Include="Perspex.Gtk">
+      <HintPath>..\Perspex.Gtk.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
@@ -173,7 +178,7 @@
       <Name>AvalonStudio.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\Perspex.MVVM\Perspex.MVVM.csproj">
-      <Project>{4daab6b2-01e0-4bad-aefc-39e76c843b36}</Project>
+      <Project>{4DAAB6B2-01E0-4BAD-AEFC-39E76C843B36}</Project>
       <Name>Perspex.MVVM</Name>
     </ProjectReference>
   </ItemGroup>

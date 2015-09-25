@@ -8,7 +8,7 @@ namespace AvalonStudio
         {
             var app = new App();
             var window = new MainWindow();
-            var vm = new Workspace();
+			var vm = Workspace.This;
             window.DataContext = vm;
 
             window.Show();
