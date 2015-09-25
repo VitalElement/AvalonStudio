@@ -490,7 +490,7 @@
                                compileJobs++;
                            }
 
-                           console.WriteLine(string.Format("[CC]    [{0}]    {1}", project.Title, Path.GetFileName(file.Location)));                           
+                           console.WriteLine(string.Format("[CC]    [{0}]    {1}", project.Title, Path.GetFileName(file.Location)));
 
                            new Thread(() =>
                            {
