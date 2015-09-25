@@ -3,7 +3,8 @@
     using Perspex.MVVM;
     using System.Windows.Input;
     using AvalonStudio.Models.Solutions;
-    using System.Threading.Tasks;
+    using System.Threading;
+    using System;
 
     public class MainMenuViewModel : ViewModelBase
     {
@@ -18,29 +19,13 @@
 
                 if (result.Length == 1)
                 {
-                    Task.Factory.StartNew(async () =>
+                    new Thread (new ThreadStart(new Action (async () =>
                     {
                         var solution = Solution.LoadSolution(result[0]);
 
                         await solution.DefaultProject.Build(Workspace.This.Console, new System.Threading.CancellationTokenSource());
-                    });
-                }
-
-
-
-
-                //var ofd = new OpenFileDialog();
-                //ofd.InitialDirectory = VEStudioService.DefaultProjectFolder;
-                //ofd.Filter = "VEStudio Solution Files (*" + ".vesln" + ")|*" + ".vesln";
-
-                //if (ofd.ShowDialog() == DialogResult.OK)
-                //{
-                //    //ResetWorkspace();
-
-                //    var solution = Solution.LoadSolution(ofd.FileName);
-
-                //    Workspace.This.SolutionExplorer.Model = solution;
-                //}
+                    }))).Start();
+                }              
             });
         }
 
