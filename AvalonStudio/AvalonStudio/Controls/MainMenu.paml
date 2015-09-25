@@ -1,0 +1,36 @@
+﻿<UserControl xmlns="https://github.com/perspex">
+  <Menu Grid.ColumnSpan="2">
+    <MenuItem Header="File">
+      <MenuItem Header="New Project"/>
+      <MenuItem Header="Open Project" Command="{Binding LoadProjectCommand}"/>
+      <MenuItem Header="Save"/>
+      <MenuItem Header="Save All"/>
+      <MenuItem Header="Exit"/>
+    </MenuItem>
+
+    <MenuItem Header="View">
+      <MenuItem Header="Console" Command="{Binding ViewToolCommand}" CommandParameter="Console"/>
+      <MenuItem Header="Solution Explorer" Command="{Binding ViewToolCommand}" CommandParameter="SolutionExplorer"/>
+      <MenuItem Header="Test Runner"  Command="{Binding ViewToolCommand}" CommandParameter="TestRunner"/>
+      <MenuItem Header="Error List" Command="{Binding ViewToolCommand}" CommandParameter="ErrorList"/>
+      <MenuItem Header="Debugging">
+        <MenuItem Header="Locals" Command="{Binding ViewToolCommand}" CommandParameter="Locals"/>
+        <MenuItem Header="Watch List" Command="{Binding ViewToolCommand}" CommandParameter="WatchList"/>
+        <MenuItem Header="Dissasembly" Command="{Binding ViewToolCommand}" CommandParameter="Dissasembly"/>
+        <MenuItem Header="Memory Viewer" Command="{Binding ViewToolCommand}" CommandParameter="Memory" />
+        <MenuItem Header="Registers" Command="{Binding ViewToolCommand}" CommandParameter="Registers"/>
+        <MenuItem Header="Call Stack" Command="{Binding ViewToolCommand}" CommandParameter="CallStack"/>
+      </MenuItem>
+    </MenuItem>
+
+    <MenuItem Header="Tools">
+      <MenuItem Header="Formatting" Command="{Binding FormatSettingsCommand}"/>
+      <MenuItem Header="Options" Command="{Binding OptionsCommand}"/>
+      <MenuItem Header="Packages" Command="{Binding PackagesCommand}"/>
+    </MenuItem>
+
+    <MenuItem Header="Help">
+      <MenuItem Header="About" Command="{Binding AboutCommand}"/>
+    </MenuItem>
+  </Menu>
+</UserControl>

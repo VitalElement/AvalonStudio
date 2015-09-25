@@ -1,0 +1,8 @@
+﻿<UserControl xmlns="https://github.com/perspex" Background="#2D2D30" Foreground="WhiteSmoke">
+  <Border BorderBrush="#3E3E42" BorderThickness="1">
+    <Grid RowDefinitions="25,*">
+      <TextBlock Text="Console"  Margin="10,4,0,0"/>
+      <TextBox Grid.Row="1" BorderThickness="0" Background="#1E1E1E" FontFamily="Consolas" FontSize="14" Text="{Binding Text}"/>
+    </Grid>
+  </Border>
+</UserControl>
