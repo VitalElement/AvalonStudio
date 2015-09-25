@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AvalonStudio.Models</RootNamespace>
     <AssemblyName>AvalonStudio.Models</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -59,12 +59,6 @@
     <Compile Include="Solutions\TestProject.cs" />
     <Compile Include="Solutions\TranslationUnitIndex.cs" />
     <Compile Include="Solutions\UnloadedProject.cs" />
-    <Compile Include="Templates\ArmGCCLinkTemplate.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ArmGCCLinkTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Templates\ArmGCCLinkTemplateCode.cs" />
     <Compile Include="Tools\ClangFormat.cs" />
     <Compile Include="Tools\ClangRename.cs" />
     <Compile Include="Tools\Compiler\ArmCompiler.cs" />
@@ -80,18 +74,14 @@
     <Compile Include="Tools\ConsoleWriter.cs" />
     <Compile Include="Tools\IConsole.cs" />
     <Compile Include="Utils\Extensions.cs" />
+    <Compile Include="Templates\ArmGCCLinkTemplate.cs" />
+    <Compile Include="Templates\ArmGCCLinkTemplateCode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Solutions\SolutionExplorer.cd" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Templates\ArmGCCLinkTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>ArmGCCLinkTemplate.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -101,4 +91,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Templates\" />
+  </ItemGroup>
 </Project>
