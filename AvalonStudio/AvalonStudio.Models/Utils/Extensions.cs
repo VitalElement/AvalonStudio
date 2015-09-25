@@ -65,6 +65,45 @@
             return relativePath;
         }
 
+        private static bool osDetected = false;
+        private static bool isUnix = false;
+        public static bool IsUnix
+        {
+            get
+            {
+                if (!osDetected)
+                {
+                    osDetected = true;
+
+                    OperatingSystem os = Environment.OSVersion;
+                    PlatformID pid = os.Platform;
+                    switch (pid)
+                    {
+                        case PlatformID.Win32NT:
+                        case PlatformID.Win32S:
+                        case PlatformID.Win32Windows:
+                        case PlatformID.WinCE:
+                            break;
+
+                        default:
+                            isUnix = true;
+                            break;
+                    }
+                }
+                return isUnix;
+            }
+        }
+
+        public static string ConvertPathForOS (this string path)
+        {
+            if (IsUnix)
+            {
+                path = path.Replace("..\\", "../").Replace("\\", "/");
+            }
+
+            return path;
+        }
+
         public static T BinarySearch<T, TKey> (this IList<T> list, Func<T, TKey> keySelector, TKey key)
         where TKey : IComparable<TKey>
         {

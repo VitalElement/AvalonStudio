@@ -18,17 +18,17 @@ namespace AvalonStudio.Models.Tools.Compiler
             var startInfo = new ProcessStartInfo ();
 
             string binDirectory = Path.Combine (Settings.ToolChainLocation, "bin");
-            startInfo.FileName = Path.Combine ("", "clang");
+            startInfo.FileName = Path.Combine (binDirectory, "clang.exe");
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-//            if (!File.Exists (startInfo.FileName))
-//            {
-//                result.ExitCode = -1;
-//                console.WriteLine ("Unable to find compiler (" + startInfo.FileName + ") Please check VEStudio Toolchain settings.");
-//                return;
-//            }
+            if (!File.Exists(startInfo.FileName))
+            {
+                result.ExitCode = -1;
+                console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check VEStudio Toolchain settings.");
+                return;
+            }
 
-			string fileArguments = string.Empty;
+            string fileArguments = string.Empty;
 
 			if (file.FileType == FileType.CPlusPlus)
 			{

@@ -105,7 +105,7 @@
 
             try
             {
-				string fullPath = Path.Combine(solution.CurrentDirectory, unloadedProject.FileName).Replace("\\", "/");
+				string fullPath = Path.Combine(solution.CurrentDirectory, unloadedProject.FileName).ConvertPathForOS();
 				result = LoadProjectInIsolation(fullPath);
 
                 result.LocationRelativeToParent = solution.CurrentDirectory.MakeRelativePath(fullPath);                
@@ -232,7 +232,7 @@
 
             foreach (string projectLocation in this.References)
             {
-				var proj = this.Solution.LoadedProjects.FirstOrDefault((p) => this.Solution.CurrentDirectory.MakeRelativePath(p.Location) == projectLocation.Replace("\\","/"));
+				var proj = this.Solution.LoadedProjects.FirstOrDefault((p) => this.Solution.CurrentDirectory.MakeRelativePath(p.Location) == projectLocation.ConvertPathForOS());
 
                 if(proj != null)
                 {
@@ -299,13 +299,8 @@
                     {
                         foreach (var include in SelectedConfiguration.ToolChain.Settings.IncludePaths)
                         {
-                            string formatString = "-I{0}";
-							string includeArgument = Path.Combine(SelectedConfiguration.ToolChain.Settings.ToolChainLocation, include.Replace("..\\", "../"));
-
-                            //if (includeArgument.Contains(' '))
-                            {
-                                //formatString = "-I\"{0}\"";
-                            }
+                            string formatString = "-I\"{0}\"";
+							string includeArgument = Path.Combine(SelectedConfiguration.ToolChain.Settings.ToolChainLocation, include.ConvertPathForOS());
 
                             arguments.Add(string.Format(formatString, includeArgument));
                         }
@@ -318,17 +313,12 @@
                     
                     foreach (var includePath in includes)
                     {
-                        string formatString = "-I{0}";
-						string includeArgument = Path.Combine(this.Solution.CurrentDirectory, includePath.Replace("..\\", "../"));
+                        string formatString = "-I\"{0}\"";
+						string includeArgument = Path.Combine(this.Solution.CurrentDirectory, includePath.ConvertPathForOS());
 
                         if (includePath == "\\")
                         {
                             includeArgument = this.CurrentDirectory;
-                        }
-
-                        //if (includeArgument.Contains(' '))
-                        {
-                            //formatString = "-I\"{0}\"";
                         }
 
                         arguments.Add(string.Format(formatString, includeArgument));
@@ -337,39 +327,16 @@
 
                 foreach (string includePath in this.SelectedConfiguration.IncludePaths)
                 {
-                    string formatString = "-I{0}";
-					string includeArgument = Path.Combine(this.CurrentDirectory, includePath.Replace("..\\", "../"));
+                    string formatString = "-I\"{0}\"";
+					string includeArgument = Path.Combine(this.CurrentDirectory, includePath.ConvertPathForOS());
 
                     if (includePath == "\\")
                     {
                         includeArgument = this.CurrentDirectory;
                     }
 
-                    //if (includeArgument.Contains(' '))
-                    {
-                        //formatString = "-I\"{0}\"";
-                    }
-
                     arguments.Add(string.Format(formatString, includeArgument));
                 }
-
-//                foreach (string includePath in Project.SelectedConfiguration.IncludePaths)
-//                {
-//                    string formatString = "-I{0}";
-//					string includeArgument = Path.Combine(this.Solution.CurrentDirectory, includePath.Replace("..\\", "../"));
-//
-//                    if (includePath == "\\")
-//                    {
-//                        includeArgument = this.CurrentDirectory;
-//                    }
-//
-//                    //if (includeArgument.Contains(' '))
-//                    {
-//                        formatString = "-I\"{0}\"";
-//                    }
-//
-//                    arguments.Add(string.Format(formatString, includeArgument));
-//                }
 
                 return arguments.ToArray();
             }
