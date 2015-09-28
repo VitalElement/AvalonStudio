@@ -5,6 +5,7 @@
     using AvalonStudio.Models.Solutions;
     using System.Threading;
     using System;
+	using AvalonStudio.Models;
 
     public class MainMenuViewModel : ViewModelBase
     {
@@ -22,7 +23,7 @@
                     new Thread (new ThreadStart(new Action (async () =>
                     {
                         //var solution = Solution.LoadSolution(result[0]);
-
+								AvalonStudioSettings.This.TestInterface (Workspace.This.Console);
                         //await solution.DefaultProject.Build(Workspace.This.Console, new System.Threading.CancellationTokenSource());
                     }))).Start();
                 }              

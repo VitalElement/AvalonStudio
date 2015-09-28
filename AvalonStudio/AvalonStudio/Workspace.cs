@@ -18,9 +18,7 @@
             StatusBar = new StatusBarViewModel();
 
             StatusBar.LineNumber = 1;
-            StatusBar.Column = 1;
-
-            var settings = AvalonStudioSettings.This;
+            StatusBar.Column = 1;		
         }
 
         public MainMenuViewModel MainMenu { get; private set; }
