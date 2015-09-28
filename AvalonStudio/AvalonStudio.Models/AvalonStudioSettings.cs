@@ -1,30 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using AvalonStudio.Models.Solutions;
-using AvalonStudio.Models.Tools.Compiler;
-//using AvalonStudio.Models.Tools.Debuggers;
-
-namespace AvalonStudio.Models
+﻿namespace AvalonStudio.Models
 {
-    public class VEStudioSettings
+    using AvalonStudio.Models.Tools.Compiler;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Xml.Serialization;
+    //using AvalonStudio.Models.Tools.Debuggers;
+
+    public class AvalonStudioSettings
     {
-        public VEStudioSettings ()
+        public AvalonStudioSettings ()
         {
             InstalledToolChains = new List<ToolChain> ();
 
             ToolchainSettings = new List<ToolChainSettings> ();
 
-           // InstalledDebugAdaptors = new List<GDBDebugAdaptor> ();
+            // InstalledDebugAdaptors = new List<GDBDebugAdaptor> ();
+
+            NClang.ClangIndex index = NClang.ClangService.CreateIndex();
+
+            var tu = index.ParseTranslationUnit("CardLaminator.cpp", new string[] { }, new NClang.ClangUnsavedFile[] { }, NClang.TranslationUnitFlags.None);
+
+            var results = tu.CodeCompleteAt("CardLaminator.cpp", 49, 16, new NClang.ClangUnsavedFile[] { }, NClang.CodeCompleteFlags.None);
+
+            Console.WriteLine(results.ResultCount);
+
+            foreach (var result in results.Results)
+            {
+                foreach (var chunk in result.CompletionString.Chunks)
+                {
+                    Console.Write(chunk.Text);
+                }
+                Console.WriteLine();
+            }
         }
 
-        private static VEStudioSettings CreateNew ()
+        private static AvalonStudioSettings CreateNew ()
         {
-            VEStudioSettings result = new VEStudioSettings ();
+            AvalonStudioSettings result = new AvalonStudioSettings ();
 
             result.ToolchainSettings.Add (new ToolChainSettings (typeof (Arm)));
             result.ToolchainSettings.Add (new ToolChainSettings (typeof (ClangToolChain)));
@@ -37,19 +50,19 @@ namespace AvalonStudio.Models
             return result;
         }
 
-        public static VEStudioSettings LoadSettings ()
+        public static AvalonStudioSettings LoadSettings ()
         {
-            VEStudioSettings result = null;
+            AvalonStudioSettings result = null;
 
             if (File.Exists (VEStudioService.SettingsFile))
             {
                 try
                 {
-                    var serializer = new XmlSerializer (typeof (VEStudioSettings));
+                    var serializer = new XmlSerializer (typeof (AvalonStudioSettings));
 
                     var reader = new StreamReader (VEStudioService.SettingsFile);
 
-                    result = (VEStudioSettings)serializer.Deserialize (reader);
+                    result = (AvalonStudioSettings)serializer.Deserialize (reader);
 
                     reader.Close ();
                 }
@@ -67,13 +80,13 @@ namespace AvalonStudio.Models
             return result;
         }
 
-        public static VEStudioSettings This = LoadSettings ();
+        public static AvalonStudioSettings This = LoadSettings ();
 
         public void Save ()
         {
             try
             {
-                var serializer = new XmlSerializer (typeof (VEStudioSettings));
+                var serializer = new XmlSerializer (typeof (AvalonStudioSettings));
 
                 var textWriter = new StreamWriter (VEStudioService.SettingsFile);
 

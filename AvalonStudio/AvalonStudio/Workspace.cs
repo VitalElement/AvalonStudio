@@ -3,6 +3,7 @@
     using Perspex.MVVM;
     using AvalonStudio.Controls.ViewModel;
     using Controls;
+    using Models;
 
     public class Workspace : ViewModelBase
     {
@@ -18,6 +19,8 @@
 
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
+
+            var settings = AvalonStudioSettings.This;
         }
 
         public MainMenuViewModel MainMenu { get; private set; }

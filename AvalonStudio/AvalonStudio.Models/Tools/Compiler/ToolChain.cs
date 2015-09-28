@@ -47,7 +47,7 @@ namespace AvalonStudio.Models.Tools.Compiler
         {
             get
             {
-                ToolChainSettings result = VEStudioSettings.This.ToolchainSettings.FirstOrDefault ((tcs) => tcs.ToolChainRealType == this.GetType ());
+                ToolChainSettings result = AvalonStudioSettings.This.ToolchainSettings.FirstOrDefault ((tcs) => tcs.ToolChainRealType == this.GetType ());
 
                 return result;
             }
