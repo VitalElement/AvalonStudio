@@ -43,6 +43,9 @@
   <ItemGroup>
     <Compile Include="AvalonStudioService.cs" />
     <Compile Include="AvalonStudioSettings.cs" />
+    <Compile Include="LanguageServices\CodeCompletionData.cs" />
+    <Compile Include="LanguageServices\CPlusPlus\CPlusPlusLanguageService.cs" />
+    <Compile Include="LanguageServices\LanguageService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Solutions\BitThunderApplicationProject.cs" />
     <Compile Include="Solutions\Configuration.cs" />
