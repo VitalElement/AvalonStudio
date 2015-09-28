@@ -1,13 +1,9 @@
-﻿
-using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-//using AvalonStudio.Models.ProjectTemplates;
-using AvalonStudio.Models.Tools.Compiler;
-namespace AvalonStudio.Models
+﻿namespace AvalonStudio.Models
 {
+    //using AvalonStudio.Models.ProjectTemplates;
+    using AvalonStudio.Models.Tools.Compiler;
+    using System.IO;
+
     public class VEStudioService
     {
         public static void Initialise()

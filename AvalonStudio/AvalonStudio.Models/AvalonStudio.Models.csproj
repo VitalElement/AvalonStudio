@@ -91,7 +91,11 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Templates\" />
+    <ProjectReference Include="..\nclang\NClang\NClang.csproj">
+      <Project>{5ae560f9-0e8e-488e-b6c4-3c8196f9013a}</Project>
+      <Name>NClang</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
