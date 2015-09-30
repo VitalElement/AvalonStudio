@@ -1,6 +1,7 @@
 ﻿namespace AvalonStudio.Models.LanguageServices
 {
-    class CodeCompletionData
+    public class CodeCompletionData
     {
+        public string Suggestion { get; set; }
     }
 }
