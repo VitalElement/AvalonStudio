@@ -59,7 +59,7 @@
                 Directory.CreateDirectory (newFolder);
             }
 
-            result.LocationRelativeToParent = Path.Combine (name, name + VEStudioService.ProjectExtension);
+            result.LocationRelativeToParent = Path.Combine (name, name + AvalonStudioService.ProjectExtension);
 
             result.Configurations.Add(new ProjectConfiguration() { Name = "Default" });
 
@@ -374,7 +374,7 @@
         {
             get
             {
-                return Path.Combine(this.Solution.CurrentDirectory, Path.Combine(Path.GetDirectoryName(LocationRelativeToParent), Path.GetFileNameWithoutExtension(LocationRelativeToParent) + VEStudioService.ProjectUserDataExtension));
+                return Path.Combine(this.Solution.CurrentDirectory, Path.Combine(Path.GetDirectoryName(LocationRelativeToParent), Path.GetFileNameWithoutExtension(LocationRelativeToParent) + AvalonStudioService.ProjectUserDataExtension));
             }
         }
 
