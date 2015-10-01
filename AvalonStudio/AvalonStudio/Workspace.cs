@@ -1,9 +1,11 @@
 ﻿namespace AvalonStudio
 {
     using Perspex.MVVM;
-    using AvalonStudio.Controls.ViewModel;
+    using Controls.ViewModels;
     using Controls;
-    using Models;
+    using Models.Platform;
+    using System.Threading.Tasks;
+    using Models.PackageManager;
 
     public class Workspace : ViewModelBase
     {
@@ -18,7 +20,18 @@
             StatusBar = new StatusBarViewModel();
 
             StatusBar.LineNumber = 1;
-            StatusBar.Column = 1;		
+            StatusBar.Column = 1;
+            StatusBar.PlatformString = Platform.PlatformString;
+
+            Task.Factory.StartNew(async () =>
+            {
+               var repo = await Repository.DownloadCatalog();
+
+                foreach(var package in repo.Packages)
+                {
+                    Console.WriteLine(package.Name);
+                }
+            });
         }
 
         public MainMenuViewModel MainMenu { get; private set; }

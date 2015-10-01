@@ -51,7 +51,7 @@
 
             if (Directory.Exists(location) && !File.Exists(Path.Combine(location, name)))
             {
-                result.OpenedLocation = Path.Combine(location, name + VEStudioService.SolutionExtension);            
+                result.OpenedLocation = Path.Combine(location, name + AvalonStudioService.SolutionExtension);            
 
                 result.SaveChanges();
 
@@ -179,7 +179,7 @@
         public string AddNewProject (string projectName)
         {
             string folderName = Path.GetDirectoryName (this.OpenedLocation) + "\\" + projectName;
-            string projectLocation = folderName + "\\" + projectName + VEStudioService.ProjectExtension;
+            string projectLocation = folderName + "\\" + projectName + AvalonStudioService.ProjectExtension;
 
             if (!Directory.Exists (folderName))
             {
