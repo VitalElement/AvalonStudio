@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio
 {
     using Perspex.MVVM;
-    using Controls.ViewModel;
+    using Controls.ViewModels;
     using Controls;
     using Models.Platform;
     using System.Threading.Tasks;

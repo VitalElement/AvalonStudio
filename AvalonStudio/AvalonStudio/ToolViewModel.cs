@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AvalonStudio.Controls.ViewModel;
+using AvalonStudio.Controls.ViewModels;
 using AvalonStudio.MVVM;
 
 namespace AvalonStudio
