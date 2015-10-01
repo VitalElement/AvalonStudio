@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/perspex" Background="#007ACC" Foreground="WhiteSmoke">
   <Grid ColumnDefinitions="*,60,60,60,15,15,15,15">    
-    <TextBlock Foreground="WhiteSmoke" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0"  Text="Debug Mode Enabled" />
+    <TextBlock Foreground="WhiteSmoke" Margin="5 0 0 0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0"  Text="{Binding PlatformString}" />
     <TextBlock Foreground="WhiteSmoke" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1"  Text="{Binding OffsetText}"/>
     <TextBlock Foreground="WhiteSmoke" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="2"  Text="{Binding LineText}"/>
     <TextBlock Foreground="WhiteSmoke" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3" Text="{Binding ColumnText}"/>    
