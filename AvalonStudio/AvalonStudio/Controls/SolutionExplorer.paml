@@ -1,8 +1,22 @@
-﻿<UserControl xmlns="https://github.com/perspex" Background="#2D2D30" Foreground="WhiteSmoke">
+﻿<UserControl xmlns="https://github.com/perspex"
+             xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio"
+             Background="#2D2D30" Foreground="WhiteSmoke">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <TextBlock Text="Solution Explorer"  Margin="10,4,0,0"/>
-      <TreeView Grid.Row="1" BorderThickness="0" Background="#1E1E1E"/>
+      <!--<TreeView Grid.Row="1" BorderThickness="0" Background="#1E1E1E"/>-->
+      <ListBox Items="{Binding Items}" Grid.Row="1" BorderThickness="0" Background="#1E1E1E">
+        <!--<ListBox.DataTemplates>
+          <DataTemplate DataType="ViewModels:ProjectFileViewModel">
+            <TemplateContent>
+              <Grid>
+                <TextBlock Text="{Binding Title}" />
+              </Grid>
+            </TemplateContent>
+          </DataTemplate>
+        </ListBox.DataTemplates>-->
+        
+      </ListBox>
     </Grid>
   </Border>
 </UserControl>

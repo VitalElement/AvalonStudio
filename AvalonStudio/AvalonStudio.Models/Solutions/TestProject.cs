@@ -158,7 +158,7 @@
                 Directory.CreateDirectory(newFolder);
             }
 
-            result.LocationRelativeToParent = Path.Combine(name, name + VEStudioService.ProjectExtension);
+            result.LocationRelativeToParent = Path.Combine(name, name + AvalonStudioService.ProjectExtension);
 
             result.Configurations.Add(new ProjectConfiguration() { Name = "Default" });
 

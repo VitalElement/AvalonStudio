@@ -1,16 +1,23 @@
-﻿using Microsoft.Win32;
-using Perspex.MVVM;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-namespace AvalonStudio.Controls.ViewModel
+﻿namespace AvalonStudio.Controls.ViewModels
 {
+    using Perspex.MVVM;
+    using System;
+    using System.Collections.Generic;
+
     public class SolutionExplorerViewModel : ToolViewModel
     {
         public SolutionExplorerViewModel () : base (SolutionExplorerViewModel.ToolId, "Solution Explorer")
         {                                    
                         
-        }                           
+        }  
+        
+        public List<string> Items
+        {
+            get
+            {
+                return new List<string> {"CardLaminator", "main.cpp", "laminator.cpp" };
+            }
+        }
 
         //new private Solution model = null;
         //public Solution Model
