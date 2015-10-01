@@ -1,7 +1,7 @@
 ﻿<Window xmlns="https://github.com/perspex"        
         xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
         Background="#2d2d30" Foreground="#C7C7C7">
-  <Grid RowDefinitions="20,0,*,150,25" ColumnDefinitions="220,*,200">
+  <Grid RowDefinitions="20,0,*,200,25" ColumnDefinitions="220,*,200">
     
     <Grid Grid.ColumnSpan="3">
       <Controls:MainMenu DataContext="{Binding MainMenu}" />
@@ -12,7 +12,7 @@
      </Grid>
     
     <Grid Grid.Row="2" Grid.RowSpan="2" Margin="2 2 1 2">
-      <Controls:SolutionExplorer DataContext="{Binding MainMenu}" />
+      <Controls:SolutionExplorer DataContext="{Binding SolutionExplorer}" />
     </Grid>
 
     <Grid Grid.Row="2" Grid.Column="1" Margin="1 2 2 1">

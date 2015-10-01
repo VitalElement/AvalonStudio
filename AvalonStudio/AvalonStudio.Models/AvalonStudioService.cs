@@ -4,7 +4,7 @@
     using AvalonStudio.Models.Tools.Compiler;
     using System.IO;
 
-    public class VEStudioService
+    public class AvalonStudioService
     {
         public static void Initialise()
         {

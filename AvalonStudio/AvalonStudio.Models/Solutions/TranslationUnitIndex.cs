@@ -1,4 +1,4 @@
-﻿namespace VEStudio.Models.Solutions
+﻿namespace AvalonStudio.Models.Solutions
 {
     using System;
     using System.Collections.Generic;

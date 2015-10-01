@@ -1,11 +1,11 @@
 ﻿namespace AvalonStudio.Models
 {
-    using AvalonStudio.Models.Tools.Compiler;
+    using Tools.Compiler;
+    using Tools.Debuggers;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Xml.Serialization;
-    //using AvalonStudio.Models.Tools.Debuggers;
 
     public class AvalonStudioSettings
     {
@@ -15,9 +15,7 @@
 
             ToolchainSettings = new List<ToolChainSettings> ();
 
-            // InstalledDebugAdaptors = new List<GDBDebugAdaptor> ();
-
-            
+            InstalledDebugAdaptors = new List<GDBDebugAdaptor> ();
         }
 
 
@@ -61,13 +59,13 @@
         {
             AvalonStudioSettings result = null;
 
-            if (File.Exists (VEStudioService.SettingsFile))
+            if (File.Exists (AvalonStudioService.SettingsFile))
             {
                 try
                 {
                     var serializer = new XmlSerializer (typeof (AvalonStudioSettings));
 
-                    var reader = new StreamReader (VEStudioService.SettingsFile);
+                    var reader = new StreamReader (AvalonStudioService.SettingsFile);
 
                     result = (AvalonStudioSettings)serializer.Deserialize (reader);
 
@@ -95,7 +93,7 @@
             {
                 var serializer = new XmlSerializer (typeof (AvalonStudioSettings));
 
-                var textWriter = new StreamWriter (VEStudioService.SettingsFile);
+                var textWriter = new StreamWriter (AvalonStudioService.SettingsFile);
 
                 serializer.Serialize (textWriter, this);
 
@@ -110,6 +108,6 @@
         public bool ShowAllWarnings { get; set; }
         public List<ToolChainSettings> ToolchainSettings { get; set; }
         public List<ToolChain> InstalledToolChains { get; set; }
-        //public List<GDBDebugAdaptor> InstalledDebugAdaptors { get; set; }
+        public List<GDBDebugAdaptor> InstalledDebugAdaptors { get; set; }
     }
 }
