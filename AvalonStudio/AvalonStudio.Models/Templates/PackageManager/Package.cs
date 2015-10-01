@@ -1,20 +1,16 @@
-﻿using AvalonStudio.Models;
-using AvalonStudio.Models.Tools.Compiler;
-using LibGit2Sharp;
-using LibGit2Sharp.Handlers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using AvalonStudio.Models.Solutions;
-using AvalonStudio.Models.Tools.Compiler;
-using AvalonStudio.Models.Tools.Debuggers;
-
-namespace AvalonStudio.Models.PackageManager
+﻿namespace AvalonStudio.Models.PackageManager
 {
+    using AvalonStudio.Models.Tools.Compiler;
+    using AvalonStudio.Models.Tools.Debuggers;
+    using LibGit2Sharp;
+    using LibGit2Sharp.Handlers;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Xml.Serialization;
+
     [XmlInclude(typeof(ToolChainPackage))]
     [XmlInclude(typeof(ClangToolChainPackage))]
     [XmlInclude(typeof(DebugAdaptorPackage))]
