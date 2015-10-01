@@ -2,7 +2,7 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <TextBlock Text="main.cpp" Margin="0,0,0,0" TextAlignment="Center" HorizontalAlignment="Left" Width="60" Background="#2D2D30"/>
-      <TextBox Grid.Row="1" BorderThickness="0" Background="#1E1E1E" FontFamily="Consolas" FontSize="14" Text="{Binding Text}" />
+      <TextBox Grid.Row="1" BorderThickness="0" Background="#1E1E1E" FontFamily="Consolas" FontSize="10" Text="{Binding Text}" />
     </Grid>
   </Border>
 </UserControl>
