@@ -11,6 +11,13 @@
             set { debugMode = value; OnPropertyChanged(); }
         }
 
+        private string platformString;
+        public string PlatformString
+        {
+            get { return platformString; }
+            set { platformString = value; OnPropertyChanged(); }
+        }
+
         private int lineNumber;
         public int LineNumber
         {

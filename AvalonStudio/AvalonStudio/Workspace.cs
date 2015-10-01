@@ -4,6 +4,7 @@
     using AvalonStudio.Controls.ViewModel;
     using Controls;
     using Models;
+    using Models.Platform;
 
     public class Workspace : ViewModelBase
     {
@@ -18,7 +19,8 @@
             StatusBar = new StatusBarViewModel();
 
             StatusBar.LineNumber = 1;
-            StatusBar.Column = 1;		
+            StatusBar.Column = 1;
+            StatusBar.PlatformString = Platform.PlatformString;
         }
 
         public MainMenuViewModel MainMenu { get; private set; }
