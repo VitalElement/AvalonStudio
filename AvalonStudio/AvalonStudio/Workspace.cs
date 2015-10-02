@@ -6,6 +6,7 @@
     using Models.Platform;
     using System.Threading.Tasks;
     using Models.PackageManager;
+    using System.Threading;
 
     public class Workspace : ViewModelBase
     {
@@ -31,7 +32,13 @@
                 {
                     Console.WriteLine(package.Name);
                 }
+
+               // MainMenu.LoadProjectCommand.Execute(null);
             });
+
+            ProcessCancellationToken = new CancellationTokenSource();
+
+            
         }
 
         public MainMenuViewModel MainMenu { get; private set; }
@@ -43,5 +50,7 @@
         public ConsoleViewModel Console { get; private set; }        
 
         public StatusBarViewModel StatusBar { get; private set; }
+
+        public CancellationTokenSource ProcessCancellationToken { get; private set; }
     }
 }
