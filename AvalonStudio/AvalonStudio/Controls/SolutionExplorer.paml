@@ -5,17 +5,6 @@
     <Grid RowDefinitions="25,*">
       <TextBlock Text="Solution Explorer"  Margin="10,4,0,0"/>
       <!--<TreeView Grid.Row="1" BorderThickness="0" Background="#1E1E1E"/>-->
-      <ListBox Items="{Binding Items}" Grid.Row="1" BorderThickness="0" Background="#1E1E1E">
-        <ListBox.DataTemplates>
-          <DataTemplate DataType="ViewModels:ProjectFileViewModel">
-            <TemplateContent>
-              <Grid>
-                <TextBlock Text="{Binding Title}" />
-              </Grid>
-            </TemplateContent>
-          </DataTemplate>
-        </ListBox.DataTemplates>
-      </ListBox>
     </Grid>
   </Border>
 </UserControl>

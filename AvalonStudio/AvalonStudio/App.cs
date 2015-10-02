@@ -14,13 +14,14 @@ namespace AvalonStudio
             RegisterServices();
             InitializeSubsystems((int)Environment.OSVersion.Platform);
             Styles = new DefaultTheme();
+            //Styles.Add(new Editor.EditorStyle());
         }
 
         public static void AttachDevTools(Window window)
         {
-//#if DEBUG
-//            DevTools.Attach(window);
-//#endif
+#if DEBUG
+            DevTools.Attach(window);
+#endif
         }
     }
 }
