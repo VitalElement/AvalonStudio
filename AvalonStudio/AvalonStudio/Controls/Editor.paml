@@ -3,7 +3,7 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <TextBlock Text="main.cpp" Margin="0,0,0,0" TextAlignment="Center" />
-      <TextBox Grid.Row="1" Text="{Binding Text}" Background="#1e1e1e" BorderThickness="0"/>
+      <te:TextEditor Grid.Row="1" Text="{Binding Text}" />
     </Grid>
   </Border>
 </UserControl>
