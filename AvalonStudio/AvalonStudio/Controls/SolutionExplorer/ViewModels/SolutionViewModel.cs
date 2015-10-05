@@ -12,7 +12,7 @@
     {
         public SolutionViewModel(Solution model) : base(model)
         {
-            IsExpanded = true;
+            IsExpanded = true;            
 
             OpenInExplorerCommand = new RoutingCommand((o) =>
             {
