@@ -4,23 +4,29 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <TextBlock Text="Solution Explorer"  Margin="10,4,0,0"/>
-      <!--<TreeView Grid.Row="1" BorderThickness="0" Background="#1E1E1E" Items="{Binding Solution}">
+      <TreeView Grid.Row="1" BorderThickness="0" Background="#1E1E1E" Items="{Binding Solution}">
         <TreeView.DataTemplates>
-          <DataTemplate DataType="ViewModels:SolutionViewModel">
+          <TreeDataTemplate DataType="ViewModels:SolutionViewModel" ItemsSource="{Binding Children}">
               <TextBlock Text="{Binding Title}" />
-          </DataTemplate>
+          </TreeDataTemplate>
+          
+          <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Children}">
+            <TextBlock Text="{Binding Title}" />
+          </TreeDataTemplate>
+
+          <TreeDataTemplate DataType="ViewModels:ProjectFileViewModel" ItemsSource="{Binding Children}">
+            <TextBlock Text="{Binding Title}" />
+          </TreeDataTemplate>
+
+          <TreeDataTemplate DataType="ViewModels:ProjectFolderViewModel" ItemsSource="{Binding Children}">
+            <TextBlock Text="{Binding Title}" />
+          </TreeDataTemplate>
+
+          <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Children}">
+            <TextBlock Text="{Binding Title}" />
+          </TreeDataTemplate>
         </TreeView.DataTemplates>
-      </TreeView>-->
-        <!--<ListBox.DataTemplates>
-          <DataTemplate DataType="ViewModels:ProjectFileViewModel">
-            <TemplateContent>
-              <Grid>
-                <TextBlock Text="{Binding Title}" />
-              </Grid>
-            </TemplateContent>
-          </DataTemplate>
-        </ListBox.DataTemplates>-->
-              
+      </TreeView>                     
     </Grid>
   </Border>
 </UserControl>
