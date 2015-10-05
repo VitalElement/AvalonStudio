@@ -4,6 +4,7 @@ using Perspex;
 using Perspex.Controls;
 using Perspex.Diagnostics;
 using Perspex.Themes.Default;
+using AvalonStudio.TextEditor;
 
 namespace AvalonStudio
 {
@@ -14,14 +15,14 @@ namespace AvalonStudio
             RegisterServices();
             InitializeSubsystems((int)Environment.OSVersion.Platform);
             Styles = new DefaultTheme();
-            //Styles.Add(new Editor.EditorStyle());
+            Styles.Add(new TextEditorStyle());
         }
 
         public static void AttachDevTools(Window window)
         {
-#if DEBUG
-            DevTools.Attach(window);
-#endif
+//#if DEBUG
+//            DevTools.Attach(window);
+//#endif
         }
     }
 }

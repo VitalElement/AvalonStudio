@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using AvalonStudio.Utils;
-
-namespace AvalonStudio.Models.Solutions
+﻿namespace AvalonStudio.Models.Solutions
 {
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Xml.Serialization;
+
     public class SolutionFolder : Item
     {
         private SolutionFolder() : base (null)
         {
-            Children = new ObservableCollection<Item>();
+            Children = new ObservableCollection<Item>();            
         }
 
         public SolutionFolder (Solution solution, Item parent, string name) : base (parent)

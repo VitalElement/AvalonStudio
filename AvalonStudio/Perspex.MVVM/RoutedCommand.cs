@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace Perspex.MVVM
 {
-    public class OpacityCommand : RoutedCommand<object>
+    public class OpacityCommand : RoutingCommand<object>
     {
         public OpacityCommand(Action<object> command, Predicate<object> predicate)
             : base(command, predicate)
@@ -40,7 +40,7 @@ namespace Perspex.MVVM
     /// taking one parameter of type T.
     /// </summary>
     /// <typeparam name="T">is the type of the command parameter.</typeparam>
-    public class RoutedCommand<T> : ViewModelBase, ICommand
+    public class RoutingCommand<T> : ViewModelBase, ICommand
     {
         #region Construction and destruction
         /// <summary>
@@ -48,7 +48,7 @@ namespace Perspex.MVVM
         /// </summary>
         /// <param name="command">The Action that will be called when the command is executed.</param>
         /// <param name="predicate">Predicate to evaluate if the command can be called.</param>
-        public RoutedCommand(Action<T> command, Predicate<T> predicate)
+        public RoutingCommand(Action<T> command, Predicate<T> predicate)
         {
             if (command == null)
             {
@@ -63,7 +63,7 @@ namespace Perspex.MVVM
         /// Initializes a new instance of the <see cref="{T}" /> class.
         /// </summary>
         /// <param name="command">The Action that will be called when the command is executed.</param>
-        public RoutedCommand(Action<T> command)
+        public RoutingCommand(Action<T> command)
             : this(command, null)
         {
         }
@@ -146,25 +146,25 @@ namespace Perspex.MVVM
     /// A command implementation. Being bound to a view control, routes commands to the given delegates
     /// taking one parameter of type object.
     /// </summary>
-    public sealed class RoutedCommand : RoutedCommand<object>
+    public sealed class RoutingCommand : RoutingCommand<object>
     {
         private ICommand editScatterFileCommand;
         #region Construction and destruction
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoutedCommand"/> class.
+        /// Initializes a new instance of the <see cref="RoutingCommand"/> class.
         /// </summary>
         /// <param name="command">The Action that will be executed when the command is executed.</param>
         /// <param name="predicate">The predicate to evaluate if the command can be called.</param>
-        public RoutedCommand(Action<object> command, Predicate<object> predicate)
+        public RoutingCommand(Action<object> command, Predicate<object> predicate)
             : base(command, predicate)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RoutedCommand"/> class.
+        /// Initializes a new instance of the <see cref="RoutingCommand"/> class.
         /// </summary>
         /// <param name="command">The Action that will be executed when the command is executed.</param>
-        public RoutedCommand(Action<object> command)
+        public RoutingCommand(Action<object> command)
             : this(command, null)
         {
         }

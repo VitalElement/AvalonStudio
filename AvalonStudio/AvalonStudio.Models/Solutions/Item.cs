@@ -1,9 +1,8 @@
-﻿
-using System;
-using System.IO;
-using System.Xml.Serialization;
-namespace AvalonStudio.Models.Solutions
+﻿namespace AvalonStudio.Models.Solutions
 {
+    using System;
+    using System.Xml.Serialization;
+
     [Serializable]
     [XmlInclude(typeof(UnloadedProject))]
     [XmlInclude(typeof(SolutionFolder))]
