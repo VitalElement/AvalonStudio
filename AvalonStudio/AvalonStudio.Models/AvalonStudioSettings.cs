@@ -7,9 +7,9 @@
     using System.IO;
     using System.Xml.Serialization;
 
-    public class AvalonStudioSettings
+    public class VEStudioSettings
     {
-        public AvalonStudioSettings ()
+        public VEStudioSettings ()
         {
             InstalledToolChains = new List<ToolChain> ();
 
@@ -40,9 +40,9 @@
 			}
 		}
 
-        private static AvalonStudioSettings CreateNew ()
+        private static VEStudioSettings CreateNew ()
         {
-            AvalonStudioSettings result = new AvalonStudioSettings ();
+            VEStudioSettings result = new VEStudioSettings ();
 
             result.ToolchainSettings.Add (new ToolChainSettings (typeof (Arm)));
             result.ToolchainSettings.Add (new ToolChainSettings (typeof (ClangToolChain)));
@@ -55,19 +55,19 @@
             return result;
         }
 
-        public static AvalonStudioSettings LoadSettings ()
+        public static VEStudioSettings LoadSettings ()
         {
-            AvalonStudioSettings result = null;
+            VEStudioSettings result = null;
 
             if (File.Exists (AvalonStudioService.SettingsFile))
             {
                 try
                 {
-                    var serializer = new XmlSerializer (typeof (AvalonStudioSettings));
+                    var serializer = new XmlSerializer (typeof (VEStudioSettings));
 
                     var reader = new StreamReader (AvalonStudioService.SettingsFile);
 
-                    result = (AvalonStudioSettings)serializer.Deserialize (reader);
+                    result = (VEStudioSettings)serializer.Deserialize (reader);
 
                     reader.Close ();
                 }
@@ -85,13 +85,13 @@
             return result;
         }
 
-        public static AvalonStudioSettings This = LoadSettings ();
+        public static VEStudioSettings This = LoadSettings ();
 
         public void Save ()
         {
             try
             {
-                var serializer = new XmlSerializer (typeof (AvalonStudioSettings));
+                var serializer = new XmlSerializer (typeof (VEStudioSettings));
 
                 var textWriter = new StreamWriter (AvalonStudioService.SettingsFile);
 

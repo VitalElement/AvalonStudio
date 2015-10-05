@@ -23,6 +23,10 @@
       </MenuItem>
     </MenuItem>
 
+    <MenuItem Header="Build">
+      <MenuItem Header="Build Project" Command="{Binding BuildProjectCommand}" />
+    </MenuItem>
+
     <MenuItem Header="Tools">
       <MenuItem Header="Formatting" Command="{Binding FormatSettingsCommand}"/>
       <MenuItem Header="Options" Command="{Binding OptionsCommand}"/>
