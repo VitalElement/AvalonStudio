@@ -1,7 +1,31 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
-    public class ProjectFileViewModel
+    using AvalonStudio.Models.Solutions;
+    using System;
+
+    public class ProjectFileViewModel : ProjectItemViewModel
     {
-        public string Name { get; set; }
+        public ProjectFileViewModel(ProjectFile model)
+            : base(model)
+        {
+        }
+
+        public override bool CanAcceptDrop(Type type)
+        {
+            return false;
+        }
+
+        public override void Drop(ProjectItemViewModel item)
+        {
+
+        }
+
+        public ProjectFile Model
+        {
+            get
+            {
+                return BaseModel as ProjectFile;
+            }
+        }
     }
 }

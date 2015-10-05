@@ -1,30 +1,40 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using Perspex.MVVM;
-    using System.Windows.Input;
     using AvalonStudio.Models.Solutions;
-    using System.Threading;
+    using Perspex.Controls;
+    using Perspex.MVVM;
     using System;
-	using AvalonStudio.Models;
+    using System.IO;
+    using System.Threading;
+    using System.Windows.Input;
+    using System.Linq;
+    using Perspex.Threading;
 
     public class MainMenuViewModel : ViewModelBase
     {
         public MainMenuViewModel()
         {
-            LoadProjectCommand = new RoutedCommand(async (args) =>
+            LoadProjectCommand = new RoutingCommand(async (args) =>
             {
-               // Perspex.Controls.CommonDialog dlg = new Perspex.Controls.CommonDialog();
+                var dlg = new OpenFileDialog();
+                dlg.InitialFileName = string.Empty;
+                dlg.InitialDirectory = "c:\\";
+                var result = await dlg.ShowAsync();
 
-                //var result = await dlg.ShowAsync();
-
-
-                //if (result.Length == 1)
+                if (result.Length == 1)
                 {
-                    new Thread (new ThreadStart(new Action (async () =>
+                    new Thread (new ThreadStart(new Action (() =>
                     {
-                        //var solution = Solution.LoadSolution(result[0]);
-								AvalonStudioSettings.This.TestInterface (Workspace.This.Console);
-                        //await solution.DefaultProject.Build(Workspace.This.Console, new System.Threading.CancellationTokenSource());
+                        Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);
+                        using (var fs = File.OpenText(Workspace.This.SolutionExplorer.Model.DefaultProject.Children.OfType<ProjectFile>().First().Location))
+                        {
+                            var content = fs.ReadToEnd();
+
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                Workspace.This.Editor.Text = content;
+                            });
+                        }
                     }))).Start();
                 }              
             });

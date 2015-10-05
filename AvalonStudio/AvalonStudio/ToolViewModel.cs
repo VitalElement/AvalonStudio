@@ -17,7 +17,7 @@ namespace AvalonStudio
             Name = name;
             ToolTitle = name;
             
-            this.CloseCommand = new RoutedCommand ((o) =>
+            this.CloseCommand = new RoutingCommand ((o) =>
             {
                // Workspace.This.Tools.Remove (this);
             });

@@ -23,5 +23,13 @@
             get { return text; }
             set { text = value; OnPropertyChanged(); }
         }
+
+        private int caretIndex;
+        public int CaretIndex
+        {
+            get { return caretIndex; }
+            set { caretIndex = value; OnPropertyChanged(); Workspace.This.StatusBar.Offset = value; }
+        }
+
     }
 }
