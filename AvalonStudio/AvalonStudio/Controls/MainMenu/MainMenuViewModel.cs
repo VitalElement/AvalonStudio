@@ -9,6 +9,8 @@
     using System.Windows.Input;
     using System.Linq;
     using Perspex.Threading;
+    using System.Threading.Tasks;
+    using ViewModels;
 
     public class MainMenuViewModel : ViewModelBase
     {
@@ -21,7 +23,7 @@
                 dlg.InitialDirectory = "c:\\";
                 var result = await dlg.ShowAsync();
 
-                if (result.Length == 1)
+                if (result != null)
                 {
                     new Thread (new ThreadStart(new Action (() =>
                     {
@@ -38,12 +40,25 @@
                     }))).Start();
                 }              
             });
+
+            BuildProjectCommand = new RoutingCommand(async (args) =>
+            {
+                //new Thread(new ThreadStart(new Action(async () =>
+                {                    
+                    await Workspace.This.SolutionExplorer.Model.DefaultProject.Build(Workspace.This.Console, Workspace.This.ProcessCancellationToken);
+                }//))).Start();
+            });
+
+            this.PackagesCommand = new RoutingCommand((o) =>
+            {
+                Workspace.This.ModalDialog = new PackageManagerDialogViewModel();
+                Workspace.This.ModalDialog.ShowDialog();
+            });
         }
 
 
-        public ICommand LoadProjectCommand
-        {
-            get; set;
-        }
+        public ICommand LoadProjectCommand { get; private set; }
+        public ICommand BuildProjectCommand { get; private set; }
+        public ICommand PackagesCommand { get; private set; }
     }
 }

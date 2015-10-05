@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LibGit2Sharp, Version=0.22.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Perspex.Animation, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Perspex.9999.0.565-nightly\lib\portable-windows8+net45\Perspex.Animation.dll</HintPath>
       <Private>True</Private>
@@ -151,6 +152,14 @@
       <DependentUpon>MainMenu.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MainMenu\MainMenuViewModel.cs" />
+    <Compile Include="Controls\ModalDialog.paml.cs">
+      <DependentUpon>ModalDialog.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ModalDialog\Dialogs\PackageManagerDialogViewModel.cs" />
+    <Compile Include="Controls\ModalDialog\ModalDialogViewModelBase.cs" />
+    <Compile Include="Controls\PackageManagerDialog.paml.cs">
+      <DependentUpon>PackageManagerDialog.paml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SolutionExplorer\ViewModels\ProjectFileViewModel.cs" />
     <Compile Include="Controls\SolutionExplorer\ViewModels\ProjectFolderViewModel.cs" />
     <Compile Include="Controls\SolutionExplorer\ViewModels\ProjectItemViewModel.cs" />
@@ -198,6 +207,8 @@
     <None Include="CardLaminator.cpp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="Controls\ModalDialog.paml" />
+    <EmbeddedResource Include="Controls\PackageManagerDialog.paml" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Controls\SolutionExplorer.paml">
       <SubType>Designer</SubType>
