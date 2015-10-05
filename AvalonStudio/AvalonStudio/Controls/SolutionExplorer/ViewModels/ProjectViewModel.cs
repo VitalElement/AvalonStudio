@@ -1,17 +1,12 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
+    using AvalonStudio.Models.Solutions;
+    using Perspex.Media;
+    using Perspex.MVVM;
     using System;
     using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Linq;
     using System.Threading.Tasks;
-    using System.Windows;
     using System.Windows.Input;
-    using AvalonStudio.Models.Solutions;
-    using AvalonStudio.Models.Tools.Compiler;
-    using AvalonStudio.MVVM;
-    using Perspex.MVVM;
-    using Perspex.Media;
 
     public abstract class ProjectViewModel : ProjectParentViewModel<Project>
     {
