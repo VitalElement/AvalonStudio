@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using Models.PackageManager;
     using System.Threading;
+    using System.Windows.Input;
 
     public class Workspace : ViewModelBase
     {
@@ -38,7 +39,7 @@
 
             ProcessCancellationToken = new CancellationTokenSource();
 
-            
+            ModalDialog = new PackageManagerDialogViewModel();
         }
 
         public MainMenuViewModel MainMenu { get; private set; }
@@ -51,6 +52,25 @@
 
         public StatusBarViewModel StatusBar { get; private set; }
 
-        public CancellationTokenSource ProcessCancellationToken { get; private set; }
+        public CancellationTokenSource ProcessCancellationToken { get; private set; }        
+
+        private ModalDialogViewModelBase modalDialog;
+        public ModalDialogViewModelBase ModalDialog
+        {
+            get { return modalDialog; }
+            set { modalDialog = value; OnPropertyChanged(); }
+        }
+
+        public void InvalidateCodeAnalysis()
+        {
+
+        }
+
+        private bool hideWhenModalVisibility = true;
+        public bool HideWhenModalVisibility
+        {
+            get { return hideWhenModalVisibility; }
+            set { hideWhenModalVisibility = value; OnPropertyChanged(); }
+        }
     }
 }

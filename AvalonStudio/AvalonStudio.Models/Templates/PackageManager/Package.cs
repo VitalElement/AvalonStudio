@@ -178,19 +178,19 @@
 
             var debugAdaptor = new JLinkDebugAdaptor();
             debugAdaptor.Location = Path.Combine(LocalFolder, "JLinkGDBServerCL.exe");
-            var currentInstallation = AvalonStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(JLinkDebugAdaptor));
+            var currentInstallation = VEStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(JLinkDebugAdaptor));
 
             if (currentInstallation != null)
             {
-                var index = AvalonStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentInstallation);
-                AvalonStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
+                var index = VEStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentInstallation);
+                VEStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
             }
             else
             {
-                AvalonStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
+                VEStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
             }
 
-            AvalonStudioSettings.This.Save();
+            VEStudioSettings.This.Save();
 
             result = true;
 
@@ -227,19 +227,19 @@
 
             var debugAdaptor = new OpenOCDDebugAdaptor();
             debugAdaptor.Location = Path.Combine(LocalFolder, "bin\\openocd.exe");
-            var currentOpenOCDInstallation = AvalonStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(OpenOCDDebugAdaptor));
+            var currentOpenOCDInstallation = VEStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(OpenOCDDebugAdaptor));
 
             if (currentOpenOCDInstallation != null)
             {
-                var index = AvalonStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentOpenOCDInstallation);
-                AvalonStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
+                var index = VEStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentOpenOCDInstallation);
+                VEStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
             }
             else
             {
-                AvalonStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
+                VEStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
             }
 
-            AvalonStudioSettings.This.Save();
+            VEStudioSettings.This.Save();
 
             result = true;
 
@@ -281,13 +281,13 @@
         {
             bool result = false;
 
-            var toolChain = AvalonStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(ClangToolChain));
+            var toolChain = VEStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(ClangToolChain));
 
             if (toolChain == null)
             {
                 toolChain = new ToolChainSettings(typeof(ClangToolChain));
-                AvalonStudioSettings.This.ToolchainSettings.Add(toolChain);
-                AvalonStudioSettings.This.Save();
+                VEStudioSettings.This.ToolchainSettings.Add(toolChain);
+                VEStudioSettings.This.Save();
             }
 
 
@@ -295,7 +295,7 @@
             toolChain.IncludePaths = this.IncludePaths;
             result = true;
 
-            AvalonStudioSettings.This.Save();
+            VEStudioSettings.This.Save();
 
             return result;
         }
@@ -334,20 +334,20 @@
         {
             bool result = false;
 
-            var toolChain = AvalonStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(GCCToolChain));
+            var toolChain = VEStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(GCCToolChain));
 
             if (toolChain == null)
             {
                 toolChain = new ToolChainSettings(typeof(GCCToolChain));
-                AvalonStudioSettings.This.ToolchainSettings.Add(toolChain);
-                AvalonStudioSettings.This.Save();
+                VEStudioSettings.This.ToolchainSettings.Add(toolChain);
+                VEStudioSettings.This.Save();
             }
 
             toolChain.ToolChainLocation = this.LocalFolder;
             toolChain.IncludePaths = this.IncludePaths;
             result = true;
 
-            AvalonStudioSettings.This.Save();
+            VEStudioSettings.This.Save();
 
             return result;
         }
@@ -393,20 +393,20 @@
         {
             bool result = false;
 
-            var toolChain = AvalonStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(PicXC32ToolChain));
+            var toolChain = VEStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(PicXC32ToolChain));
 
             if (toolChain == null)
             {
                 toolChain = new ToolChainSettings(typeof(PicXC32ToolChain));
-                AvalonStudioSettings.This.ToolchainSettings.Add(toolChain);
-                AvalonStudioSettings.This.Save();
+                VEStudioSettings.This.ToolchainSettings.Add(toolChain);
+                VEStudioSettings.This.Save();
             }
 
             toolChain.ToolChainLocation = this.LocalFolder;
             toolChain.IncludePaths = this.IncludePaths;
             result = true;
 
-            AvalonStudioSettings.This.Save();
+            VEStudioSettings.This.Save();
 
             return result;
         }
@@ -446,20 +446,20 @@
         {
             bool result = false;
 
-            var toolChain = AvalonStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(BitThunderToolChain));
+            var toolChain = VEStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(BitThunderToolChain));
 
             if (toolChain == null)
             {
                 toolChain = new ToolChainSettings(typeof(BitThunderToolChain));
-                AvalonStudioSettings.This.ToolchainSettings.Add(toolChain);
-                AvalonStudioSettings.This.Save();
+                VEStudioSettings.This.ToolchainSettings.Add(toolChain);
+                VEStudioSettings.This.Save();
             }
 
             toolChain.ToolChainLocation = this.LocalFolder;
             toolChain.IncludePaths = this.IncludePaths;
             result = true;
 
-            AvalonStudioSettings.This.Save();
+            VEStudioSettings.This.Save();
 
             return result;
         }
@@ -499,13 +499,13 @@
         {
             bool result = false;
 
-            var toolChain = AvalonStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(MinGWToolChain));
+            var toolChain = VEStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(MinGWToolChain));
 
             if (toolChain == null)
             {
                 toolChain = new ToolChainSettings(typeof(MinGWToolChain));
-                AvalonStudioSettings.This.ToolchainSettings.Add(toolChain);
-                AvalonStudioSettings.This.Save();
+                VEStudioSettings.This.ToolchainSettings.Add(toolChain);
+                VEStudioSettings.This.Save();
             }
 
             toolChain.ToolChainLocation = this.LocalFolder;
@@ -516,22 +516,22 @@
             if (result)
             {
                 var debugAdaptor = new LocalDebugAdaptor();
-                var currentInstallation = AvalonStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(LocalDebugAdaptor));
+                var currentInstallation = VEStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(LocalDebugAdaptor));
 
                 if (currentInstallation != null)
                 {
-                    var index = AvalonStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentInstallation);
-                    AvalonStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
+                    var index = VEStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentInstallation);
+                    VEStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
                 }
                 else
                 {
-                    AvalonStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
+                    VEStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
                 }
 
-                AvalonStudioSettings.This.Save();
+                VEStudioSettings.This.Save();
             }
 
-            AvalonStudioSettings.This.Save();
+            VEStudioSettings.This.Save();
 
             return result;
         }
