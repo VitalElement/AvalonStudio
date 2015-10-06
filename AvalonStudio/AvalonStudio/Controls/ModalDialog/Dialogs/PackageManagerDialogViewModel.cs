@@ -60,6 +60,8 @@
                 Workspace.This.InvalidateCodeAnalysis();
                 this.Close();
             }, (o) => EnableInterface);
+
+            EnableInterface = true;
         }
 
         public string ButtonText

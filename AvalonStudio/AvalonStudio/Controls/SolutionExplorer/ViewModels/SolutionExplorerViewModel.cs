@@ -36,8 +36,10 @@
                     }
                 }
 
-                Solution = new ObservableCollection<SolutionViewModel>();
-                Solution.Add(new SolutionViewModel(model));                
+                var sol = new ObservableCollection<SolutionViewModel>();
+                sol.Add(new SolutionViewModel(model));
+
+                Solution = sol;
 
                 OnPropertyChanged ();
                 OnPropertyChanged (() => Projects);                

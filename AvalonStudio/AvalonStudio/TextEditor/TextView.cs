@@ -29,8 +29,9 @@
             InvalidateVisual();
         }
 
-        double lineHeight = 20;
-        public override void Render(IDrawingContext context)
+        double lineHeight = 20;        
+
+        public override void Render(DrawingContext context)
         {
             var textSize = new FormattedText("X", "Consolas", 12, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal) { Constraint = Bounds.Size };
             lineHeight = textSize.Measure().Height;
