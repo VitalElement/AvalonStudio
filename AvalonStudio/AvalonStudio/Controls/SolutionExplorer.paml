@@ -7,7 +7,7 @@
       <TreeView Grid.Row="1" BorderThickness="0" Background="#1E1E1E" Items="{Binding Solution}">
         <TreeView.DataTemplates>
           <TreeDataTemplate DataType="ViewModels:SolutionViewModel" ItemsSource="{Binding Children}">
-              <TextBlock Text="Testing" />
+              <TextBlock Text="{Binding Title}" />
           </TreeDataTemplate>
           
           <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Children}">

@@ -7,7 +7,7 @@
 
     public static class ReactiveObjectExtensions
     {
-        public static void RaisePropertyChanged(this ReactiveObject reactiveObject, [CallerMemberName]string propertyName = null)
+        public static void OnPropertyChanged(this ReactiveObject reactiveObject, [CallerMemberName]string propertyName = null)
         {
             reactiveObject.RaisePropertyChanged(propertyName);
         }
@@ -15,7 +15,7 @@
         public static void RaisePropertyChanged<T>(this ReactiveObject reactiveObject, Expression<Func<T>> changedProperty)
         {
             string name = ((MemberExpression)changedProperty.Body).Member.Name;
-            reactiveObject.RaisePropertyChanged(name);
+            reactiveObject.OnPropertyChanged(name);
         }
 
         public static ReactiveObject Create(object model)
