@@ -11,11 +11,11 @@ namespace AvalonStudio.Controls.ViewModels
     using System.IO;
     using System.Windows.Input;
 
-    public abstract class ProjectItemViewModel : ReactiveObject
+    public abstract class ProjectItemViewModel : ViewModel
     {
-        public ProjectItemViewModel(object model)
+        public ProjectItemViewModel(object model) : base (model)
         {
-            this.model = model as Item;
+
             ToggleEditingModeCommand = ReactiveCommand.Create();
 
             ToggleEditingModeCommand.Subscribe(args =>
@@ -97,12 +97,10 @@ namespace AvalonStudio.Controls.ViewModels
                 }
             }
         }
-
-        private Item model;
-        public Item Model
+        
+        new public Item Model
         {
-            get { return model; }
-            set { model = value; }
+            get { return base.Model as Item; }            
         }
 
         public static ProjectItemViewModel Create(Item item)
@@ -148,8 +146,8 @@ namespace AvalonStudio.Controls.ViewModels
         public ProjectParentViewModel(T model)
             : base(model)
         {
-            Children = new ObservableCollection<ReactiveObject>();
-            //Children.Bind((model as ProjectFolder).Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.BaseModel == m);
+            Children = new ObservableCollection<ViewModel>();
+            Children.BindCollections((model as ProjectFolder).Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.Model == m);
 
             AddNewFolderCommand = ReactiveCommand.Create();
             AddNewFolderCommand.Subscribe((args) =>
@@ -211,8 +209,8 @@ namespace AvalonStudio.Controls.ViewModels
         public ReactiveCommand<object> ImportFolderCommand { get; private set; }
 
 
-        private ObservableCollection<ReactiveObject> children;
-        public ObservableCollection<ReactiveObject> Children
+        private ObservableCollection<ViewModel> children;
+        public ObservableCollection<ViewModel> Children
         {
             get { return children; }
             set { this.RaiseAndSetIfChanged(ref children, value); }

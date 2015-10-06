@@ -1,4 +1,5 @@
-﻿namespace AvalonStudio.Controls.ViewModels
+﻿using AvalonStudio.MVVM;
+namespace AvalonStudio.Controls.ViewModels
 {
     using Microsoft.Win32;
     using System;
@@ -77,8 +78,9 @@
         public SolutionParentViewModel(T model)
             : base(model)
         {
-            Children = new ObservableCollection<ReactiveObject>();
-            //Children.Bind(Model.Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.BaseModel == m);
+            Children = new ObservableCollection<ViewModel>();
+            Children.BindCollections(Model.Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.Model == m);
+            
 
             AddNewFolderCommand = ReactiveCommand.Create();
             AddNewFolderCommand.Subscribe((args) =>
@@ -162,16 +164,14 @@
         public ReactiveCommand<object> AddExistingProjectCommand { get; private set; }
         public ReactiveCommand<object> RemoveCommand { get; private set; }
 
-        private SolutionFolder model;
-        public SolutionFolder Model
+        new public SolutionFolder Model
         {
-            get { return model; }
-            set { model = value; }
+            get { return base.Model as SolutionFolder; }
         }
 
 
-        private ObservableCollection<ReactiveObject> children;
-        public ObservableCollection<ReactiveObject> Children
+        private ObservableCollection<ViewModel> children;
+        public ObservableCollection<ViewModel> Children
         {
             get
             {

@@ -32,23 +32,23 @@
                 model.Parent.RemoveItem(model);
             });
 
-            DebugCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
-            DebugCommand.Subscribe((o) =>
-           {
-               //Workspace.This.DebugManager.StartDebuggingCommand.Execute(Model);            
-           });
+             //DebugCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
+           // DebugCommand.Subscribe((o) =>
+           //{
+           //    //Workspace.This.DebugManager.StartDebuggingCommand.Execute(Model);            
+           //});
 
-            CleanCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
-            CleanCommand.Subscribe((o) =>
-           {
-               Clean(model);
-           });
+           // CleanCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
+           // CleanCommand.Subscribe((o) =>
+           //{
+           //    Clean(model);
+           //});
 
-            BuildCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
-            BuildCommand.Subscribe(async (o) =>
-           {
-               await Build(model);
-           });
+           // BuildCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
+           // BuildCommand.Subscribe(async (o) =>
+           //{
+           //    await Build(model);
+           //});
 
             ManageReferencesCommand = ReactiveCommand.Create();
             ManageReferencesCommand.Subscribe((o) =>
