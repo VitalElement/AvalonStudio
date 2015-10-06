@@ -1,15 +1,9 @@
-﻿using Perspex.MVVM;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using AvalonStudio.MVVM;
-
-namespace AvalonStudio
+﻿namespace AvalonStudio
 {
-    public abstract class PaneViewModel : ViewModelBase
+    using ReactiveUI;
+    using System;
+
+    public abstract class PaneViewModel : ReactiveObject
     {
         public PaneViewModel (string contentId)
         {
@@ -21,7 +15,7 @@ namespace AvalonStudio
         public string ToolTitle
         {
             get { return title; }
-            set { title = value; OnPropertyChanged (); }
+            set { title = value; this.RaisePropertyChanged (); }
         }
 
         #endregion
@@ -40,7 +34,7 @@ namespace AvalonStudio
         {
             get { return contentId; }
 
-            set { contentId = value; OnPropertyChanged (); }
+            set { contentId = value; this.RaisePropertyChanged (); }
         }
         #endregion
 
@@ -49,7 +43,7 @@ namespace AvalonStudio
         public bool IsSelected
         {
             get { return isSelected; }
-            set { isSelected = value; OnPropertyChanged (); }
+            set { isSelected = value; this.RaisePropertyChanged (); }
         }
         #endregion
 
@@ -60,7 +54,7 @@ namespace AvalonStudio
         {
             get{return isActive;}
 
-            set { isActive = value; OnPropertyChanged (); }
+            set { isActive = value; this.RaisePropertyChanged (); }
         }
         #endregion
 
@@ -68,7 +62,7 @@ namespace AvalonStudio
         //public Visibility Visibility
         //{
         //    get { return visibility; }
-        //    set { visibility = value; OnPropertyChanged(); }
+        //    set { visibility = value; this.RaisePropertyChanged(); }
         //}
        
 
@@ -76,7 +70,7 @@ namespace AvalonStudio
         public bool IsCollapsed
         {
             get { return isCollapsed; }
-            set { isCollapsed = value; OnPropertyChanged(); }
+            set { isCollapsed = value; this.RaisePropertyChanged(); }
         }
 
     }

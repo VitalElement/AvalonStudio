@@ -1,6 +1,5 @@
 ﻿namespace AvalonStudio
 {
-    using Perspex.MVVM;
     using Controls.ViewModels;
     using Controls;
     using Models.Platform;
@@ -8,8 +7,9 @@
     using Models.PackageManager;
     using System.Threading;
     using System.Windows.Input;
+    using ReactiveUI;
 
-    public class Workspace : ViewModelBase
+    public class Workspace : ReactiveObject
     {
         public static Workspace This = new Workspace();
 
@@ -54,11 +54,11 @@
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }        
 
-        private ModalDialogViewModelBase modalDialog;
-        public ModalDialogViewModelBase ModalDialog
+        private ModalDialogReactiveObject modalDialog;
+        public ModalDialogReactiveObject ModalDialog
         {
             get { return modalDialog; }
-            set { modalDialog = value; OnPropertyChanged(); }
+            set { modalDialog = value; this.RaisePropertyChanged(); }
         }
 
         public void InvalidateCodeAnalysis()
@@ -70,7 +70,7 @@
         public bool HideWhenModalVisibility
         {
             get { return hideWhenModalVisibility; }
-            set { hideWhenModalVisibility = value; OnPropertyChanged(); }
+            set { hideWhenModalVisibility = value; this.RaisePropertyChanged(); }
         }
     }
 }

@@ -8,8 +8,8 @@
     using AvalonStudio.Models.Solutions;
     using AvalonStudio.MVVM;
     using AvalonStudio.Utils;
-    using Perspex.MVVM;
     using Perspex.Controls;
+    using ReactiveUI;
 
     public class SolutionFolderViewModel : SolutionParentViewModel<SolutionFolder>
     {
@@ -77,22 +77,25 @@
         public SolutionParentViewModel(T model)
             : base(model)
         {
-            Children = new ObservableCollection<ViewModelBase>();
-            Children.Bind(Model.Children, (p) => ViewModelBaseExtensions.Create(p), (vm, m) => vm.BaseModel == m);
+            Children = new ObservableCollection<ReactiveObject>();
+            //Children.Bind(Model.Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.BaseModel == m);
 
-            AddNewFolderCommand = new RoutingCommand((args) =>
+            AddNewFolderCommand = ReactiveCommand.Create();
+            AddNewFolderCommand.Subscribe((args) =>
             {
                 //Workspace.This.ModalDialog = new NewSolutionFolderViewModel(this.model as SolutionFolder);
                 //Workspace.This.ModalDialog.ShowDialog();
             });
 
-            AddNewProjectCommand = new RoutingCommand((o) =>
+            AddNewProjectCommand = ReactiveCommand.Create();
+            AddNewProjectCommand.Subscribe((o) =>
             {
                 //Workspace.This.ModalDialog = new NewProjectDialogViewModel(Workspace.This, Model, false);
                 //Workspace.This.ModalDialog.ShowDialog();
             });
 
-            AddExistingProjectCommand = new RoutingCommand(async (o) =>
+            AddExistingProjectCommand = ReactiveCommand.Create();
+            AddExistingProjectCommand.Subscribe(async (o) =>
             {
                 OpenFileDialog ofd = new OpenFileDialog();
                 ofd.InitialDirectory = model.Solution.CurrentDirectory;
@@ -114,7 +117,8 @@
             });
 
 
-            RemoveCommand = new RoutingCommand((o) =>
+            RemoveCommand = ReactiveCommand.Create();
+            RemoveCommand.Subscribe((o) =>
             {
                 model.Solution.GetParent(Model).RemoveItem(Model);
             });
@@ -153,21 +157,21 @@
             return false;
         }
 
-        public ICommand AddNewFolderCommand { get; private set; }
-        public ICommand AddNewProjectCommand { get; private set; }
-        public ICommand AddExistingProjectCommand { get; private set; }
-        public ICommand RemoveCommand { get; private set; }
+        public ReactiveCommand<object> AddNewFolderCommand { get; private set; }
+        public ReactiveCommand<object> AddNewProjectCommand { get; private set; }
+        public ReactiveCommand<object> AddExistingProjectCommand { get; private set; }
+        public ReactiveCommand<object> RemoveCommand { get; private set; }
 
-        new public SolutionFolder Model
+        private SolutionFolder model;
+        public SolutionFolder Model
         {
-            get
-            {
-                return BaseModel as SolutionFolder;
-            }
+            get { return model; }
+            set { model = value; }
         }
 
-        private ObservableCollection<ViewModelBase> children;
-        public ObservableCollection<ViewModelBase> Children
+
+        private ObservableCollection<ReactiveObject> children;
+        public ObservableCollection<ReactiveObject> Children
         {
             get
             {
@@ -176,7 +180,7 @@
 
             set
             {
-                children = value; OnPropertyChanged();
+                children = value; this.RaisePropertyChanged();
             }
         }
     }

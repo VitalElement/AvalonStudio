@@ -1,17 +1,17 @@
 ﻿namespace AvalonStudio.Controls
 {
     using System;
-	using Perspex.Threading;
-    using Perspex.MVVM;
+    using Perspex.Threading;
     using Models;
+    using ReactiveUI;
 
-    public class ConsoleViewModel : ViewModelBase, IConsole
+    public class ConsoleViewModel : ReactiveObject, IConsole
     {        
         private string text;
         public string Text
         {
             get { return text; }
-            set { text = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref text, value); }
         }
 
         public void Clear()

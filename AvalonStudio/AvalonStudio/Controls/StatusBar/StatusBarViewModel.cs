@@ -1,42 +1,43 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using Perspex.MVVM;
+    using ReactiveUI;
+    using AvalonStudio.MVVM;
 
-    public class StatusBarViewModel : ViewModelBase
+    public class StatusBarViewModel : ReactiveObject
     {
         private bool debugMode;
         public bool DebugMode
         {
             get { return debugMode; }
-            set { debugMode = value; OnPropertyChanged(); }
+            set { debugMode = value; this.RaisePropertyChanged(); }
         }
 
         private string platformString;
         public string PlatformString
         {
             get { return platformString; }
-            set { platformString = value; OnPropertyChanged(); }
+            set { platformString = value; this.RaisePropertyChanged(); }
         }
 
         private int lineNumber;
         public int LineNumber
         {
             get { return lineNumber; }
-            set { lineNumber = value; OnPropertyChanged(); OnPropertyChanged(() => LineText); }
+            set { lineNumber = value; this.RaisePropertyChanged(); this.RaisePropertyChanged(() => LineText); }
         }
 
         private int column;
         public int Column
         {
             get { return column; }
-            set { column = value; OnPropertyChanged(); OnPropertyChanged(() => ColumnText); }
+            set { column = value; this.RaisePropertyChanged(); this.RaisePropertyChanged(() => ColumnText); }
         }
 
         private int offset;
         public int Offset
         {
             get { return offset; }
-            set { offset = value; OnPropertyChanged(); OnPropertyChanged(() => OffsetText); }
+            set { offset = value; this.RaisePropertyChanged(); this.RaisePropertyChanged(() => OffsetText); }
         }
 
         public string OffsetText

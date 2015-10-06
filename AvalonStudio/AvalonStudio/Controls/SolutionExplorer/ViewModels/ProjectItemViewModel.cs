@@ -1,48 +1,53 @@
-﻿namespace AvalonStudio.Controls.ViewModels
+﻿
+namespace AvalonStudio.Controls.ViewModels
 {
     using AvalonStudio.Models.Solutions;
     using AvalonStudio.MVVM;
     using Perspex.Controls;
-    using Perspex.MVVM;
+    using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.IO;
     using System.Windows.Input;
 
-    public abstract class ProjectItemViewModel : ViewModelBase
+    public abstract class ProjectItemViewModel : ReactiveObject
     {
         public ProjectItemViewModel(object model)
-            : base(model)
         {
-            this.ToggleEditingMode = new RoutingCommand((args) =>
-           {
-               if (((object)Workspace.This.SolutionExplorer.SelectedItem) == (object)this && NumberOfSelections > 1)
-               {
-                   IsEditingTitle = (bool)args;
-               }
-           });
+            this.model = model as Item;
+            ToggleEditingModeCommand = ReactiveCommand.Create();
 
-            this.RemoveItemCommand = new RoutingCommand((o) =>
-           {
-               if (this.model is EditorViewModel)
-               {
-                   //(this.model as EditorViewModel).CloseCommand.Execute (null);
-               }
+            ToggleEditingModeCommand.Subscribe(args =>
+            {
+                if (((object)Workspace.This.SolutionExplorer.SelectedItem) == (object)this && NumberOfSelections > 1)
+                {
+                    IsEditingTitle = (bool)args;
+                }
+            });
 
-               if (model is ProjectItem)
-               {
-                   (model as ProjectItem).Container.RemoveItem(model as ProjectItem);
-               }
-           });
+            RemoveItemCommand = ReactiveCommand.Create();
+            RemoveItemCommand.Subscribe((o) =>
+            {
+                if (model is EditorViewModel)
+                {
+                    //(this.model as EditorViewModel).CloseCommand.Execute (null);
+                }
 
-            OpenInExplorerCommand = new RoutingCommand((o) =>
-           {
-               if (model is ProjectItem)
-               {
-                   Process.Start((model as ProjectItem).CurrentDirectory);
-               }
-           });
+                if (model is ProjectItem)
+                {
+                    (model as ProjectItem).Container.RemoveItem(model as ProjectItem);
+                }
+            });
+
+            OpenInExplorerCommand = ReactiveCommand.Create();
+            OpenInExplorerCommand.Subscribe((o) =>
+            {
+                if (model is ProjectItem)
+                {
+                    Process.Start((model as ProjectItem).CurrentDirectory);
+                }
+            });
 
             textBoxVisibility = false;
             labelVisibility = true;
@@ -55,7 +60,7 @@
         public string Title
         {
             get { return this.Model.FileName; }
-            set { this.Model.FileName = value; OnPropertyChanged(); IsEditingTitle = false; }
+            set { this.Model.FileName = value; this.RaisePropertyChanged(); IsEditingTitle = false; }
         }
 
         public int NumberOfSelections { get; set; }
@@ -74,20 +79,9 @@
             get { return isEditingTitle; }
             set
             {
-                isEditingTitle = value;
-
-                if (value)
-                {
-                    LabelVisibility = false;
-                    TextBoxVisibility = true;
-                }
-                else
-                {
-                    LabelVisibility = true;
-                    TextBoxVisibility = false;
-                }
-
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref isEditingTitle, value);
+                LabelVisibility = !value;
+                TextBoxVisibility = value;
             }
         }
 
@@ -99,17 +93,16 @@
                 if (!IsEditingTitle)
                 {
                     Model.UserData.IsExpanded = value;
-                    OnPropertyChanged();
+                    this.RaisePropertyChanged();
                 }
             }
         }
 
+        private Item model;
         public Item Model
         {
-            get
-            {
-                return BaseModel as Item;
-            }
+            get { return model; }
+            set { model = value; }
         }
 
         public static ProjectItemViewModel Create(Item item)
@@ -129,22 +122,22 @@
             return result;
         }
 
-        public ICommand RemoveItemCommand { get; private set; }
-        public ICommand ToggleEditingMode { get; private set; }
-        public ICommand OpenInExplorerCommand { get; protected set; }
+        public ReactiveCommand<object> RemoveItemCommand { get; private set; }
+        public ReactiveCommand<object> ToggleEditingModeCommand { get; private set; }
+        public ReactiveCommand<object> OpenInExplorerCommand { get; protected set; }
 
         private bool textBoxVisibility;
         public bool TextBoxVisibility
         {
             get { return textBoxVisibility; }
-            set { textBoxVisibility = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref textBoxVisibility, value); }
         }
 
         private bool labelVisibility;
         public bool LabelVisibility
         {
             get { return labelVisibility; }
-            set { labelVisibility = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref labelVisibility, value); }
         }
 
 
@@ -155,39 +148,43 @@
         public ProjectParentViewModel(T model)
             : base(model)
         {
-            Children = new ObservableCollection<ViewModelBase>();
-            Children.Bind((this.model as ProjectFolder).Children, (p) => ViewModelBaseExtensions.Create(p), (vm, m) => vm.BaseModel == m);
+            Children = new ObservableCollection<ReactiveObject>();
+            //Children.Bind((model as ProjectFolder).Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.BaseModel == m);
 
-            this.AddNewFolderCommand = new RoutingCommand((args) =>
-           {
+            AddNewFolderCommand = ReactiveCommand.Create();
+            AddNewFolderCommand.Subscribe((args) =>
+          {
                //Workspace.This.ModalDialog = new NewFolderDialogViewModel (this.model as ProjectFolder);
                // Workspace.This.ModalDialog.ShowDialog ();
            });
 
 
-            this.AddNewFileCommand = new RoutingCommand((args) =>
+            AddNewFileCommand = ReactiveCommand.Create();
+            AddNewFileCommand.Subscribe((args) =>
            {
                //Workspace.This.ModalDialog = new NewFileDialogViewModel (this.model as ProjectFolder);
                //Workspace.This.ModalDialog.ShowDialog ();
            });
 
 
-            this.AddExistingFileCommand = new RoutingCommand(async (o) =>
-           {
-               var ofd = new OpenFileDialog();
+            AddExistingFileCommand = ReactiveCommand.Create();
+            AddExistingFileCommand.Subscribe(async (o) =>
+          {
+              var ofd = new OpenFileDialog();
 
-               ofd.InitialDirectory = (model as ProjectFolder).CurrentDirectory;
+              ofd.InitialDirectory = (model as ProjectFolder).CurrentDirectory;
                //ofd.Filters.Add(new FileDialogFilter() {  = "C Source Files (*.c;*.h;*.cpp;*.hpp)|*.c;*.h;*.cpp;*.hpp|All Files (*.*)|*.*";
 
                var result = await ofd.ShowAsync();
 
-               if (result.Length == 1)
-               {
-                   (this.model as ProjectFolder).AddExistingFile(result[0]);
-               }
-           });
+              if (result.Length == 1)
+              {
+                  (this.Model as ProjectFolder).AddExistingFile(result[0]);
+              }
+          });
 
-            this.ImportFolderCommand = new RoutingCommand((o) =>
+            ImportFolderCommand = ReactiveCommand.Create();
+            ImportFolderCommand.Subscribe((o) =>
            {
                //FolderBrowserDialog fbd = new FolderBrowserDialog();
 
@@ -199,32 +196,26 @@
                //}
            });
 
-            this.AddNewItemCommand = new RoutingCommand((o) =>
+            AddNewItemCommand = ReactiveCommand.Create();
+            AddNewItemCommand.Subscribe((o) =>
            {
                //Workspace.This.ModalDialog = new NewItemDialogViewModel (model as ProjectFolder);
                //Workspace.This.ModalDialog.ShowDialog ();
            });
         }
 
-        public ICommand AddNewFolderCommand { get; private set; }
-        public ICommand AddNewFileCommand { get; private set; }
-        public ICommand AddNewItemCommand { get; private set; }
-        public ICommand AddExistingFileCommand { get; private set; }
-        public ICommand ImportFolderCommand { get; private set; }
+        public ReactiveCommand<object> AddNewFolderCommand { get; private set; }
+        public ReactiveCommand<object> AddNewFileCommand { get; private set; }
+        public ReactiveCommand<object> AddNewItemCommand { get; private set; }
+        public ReactiveCommand<object> AddExistingFileCommand { get; private set; }
+        public ReactiveCommand<object> ImportFolderCommand { get; private set; }
 
 
-        private ObservableCollection<ViewModelBase> children;
-        public ObservableCollection<ViewModelBase> Children
+        private ObservableCollection<ReactiveObject> children;
+        public ObservableCollection<ReactiveObject> Children
         {
-            get
-            {
-                return children;
-            }
-
-            set
-            {
-                children = value; OnPropertyChanged();
-            }
+            get { return children; }
+            set { this.RaiseAndSetIfChanged(ref children, value); }
         }
     }
 }

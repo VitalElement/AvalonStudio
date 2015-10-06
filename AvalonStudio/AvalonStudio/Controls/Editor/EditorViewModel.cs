@@ -1,9 +1,9 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using Perspex.MVVM;
+    using ReactiveUI;
     using System.IO;
 
-    public class EditorViewModel : ViewModelBase
+    public class EditorViewModel : ReactiveObject
     {
         public EditorViewModel()
         {
@@ -21,14 +21,14 @@
         public string Text
         {
             get { return text; }
-            set { text = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref text, value); }
         }
 
         private int caretIndex;
         public int CaretIndex
         {
             get { return caretIndex; }
-            set { caretIndex = value; OnPropertyChanged(); Workspace.This.StatusBar.Offset = value; }
+            set { this.RaiseAndSetIfChanged(ref caretIndex, value); Workspace.This.StatusBar.Offset = value; }
         }
 
     }
