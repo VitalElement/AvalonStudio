@@ -11,12 +11,8 @@ namespace AvalonStudio.MVVM
     /// <summary>
     /// Extension methods to the ObservableCollection class
     /// </summary>
-    public static class MyObservableCollectionExtensions
+    public static class ObservableCollectionExtensions
     {
-        public static void Test ()
-        {
-
-        }
         #region Public methods
         /// <summary>
         /// Inserts an element into the collection, keeping it sorted. The collection must be sorted
@@ -67,7 +63,7 @@ namespace AvalonStudio.MVVM
         /// <param name="creator">is a function which creates an instance of T, given a reference to O.</param>
         /// <param name="comparer">is a function which compares T to O.</param>
         /// <param name="selector">is a predicate which must evaluate to true for O to be added to this collection.</param>
-        public static void Bind<T, O>(this ObservableCollection<T> myself, ObservableCollection<O> other, Func<O, T> creator, Func<T, O, bool> comparer = null)
+        public static void BindCollections<T, O>(this ObservableCollection<T> myself, ObservableCollection<O> other, Func<O, T> creator, Func<T, O, bool> comparer = null)
         {
             other.CollectionChanged += (sender, e) =>
             {

@@ -8,6 +8,7 @@
     using System.Threading;
     using System.Windows.Input;
     using ReactiveUI;
+    using Models;
 
     public class Workspace : ReactiveObject
     {
@@ -15,6 +16,8 @@
 
         public Workspace()
         {
+            AvalonStudioService.Initialise();
+
             MainMenu = new MainMenuViewModel();
             SolutionExplorer = new SolutionExplorerViewModel();
             Editor = new EditorViewModel();

@@ -11,7 +11,7 @@
     public class SolutionViewModel : SolutionParentViewModel<Solution>
     {
         public SolutionViewModel(Solution model) : base(model)
-        {
+        {            
             IsExpanded = true;
 
             OpenInExplorerCommand = ReactiveCommand.Create();
