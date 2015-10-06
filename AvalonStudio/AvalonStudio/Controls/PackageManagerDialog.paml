@@ -5,7 +5,7 @@
       <ColumnDefinition/>
     </Grid.ColumnDefinitions>
 
-    <ListBox Items="{Binding AvailablePackages}" SelectedItem="{Binding SelectedPackage}" IsEnabled="{Binding EnableInterface}">
+    <ListBox Items="{Binding AvailablePackages}" SelectedItem="{Binding Path=SelectedPackage, Mode=TwoWay}" IsEnabled="{Binding EnableInterface}">
       <ListBox.DataTemplates>
         <DataTemplate DataType="Packages:Package">
           <TextBlock Text="{Binding Name}"/>
