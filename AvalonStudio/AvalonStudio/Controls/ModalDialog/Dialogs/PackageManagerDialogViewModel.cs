@@ -1,14 +1,16 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
     using Models.PackageManager;
-    using Perspex.MVVM;
     using Perspex.Threading;
+    using ReactiveUI;
     using System;
+
     using System.Collections.ObjectModel;
     using System.Threading.Tasks;
     using System.Windows.Input;
+    using MVVM;
 
-    public class PackageManagerDialogViewModel : ModalDialogViewModelBase
+    public class PackageManagerDialogViewModel : ModalDialogReactiveObject
     {
 
         public PackageManagerDialogViewModel()
@@ -29,7 +31,8 @@
                 });
             });
 
-            this.InstallCommand = new RoutingCommand(async (o) =>
+            InstallCommand = ReactiveCommand.Create();
+            InstallCommand.Subscribe(async (o) =>
             {
                 EnableInterface = false;
 
@@ -53,13 +56,15 @@
 
                 EnableInterface = true;
 
-            }, (o) => SelectedPackage != null && EnableInterface);
+            });
 
-            OKCommand = new RoutingCommand((o) =>
+            OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x=>x.EnableInterface));
+
+            OKCommand.Subscribe(_ =>
             {
                 Workspace.This.InvalidateCodeAnalysis();
                 this.Close();
-            }, (o) => EnableInterface);
+            });
 
             EnableInterface = true;
         }
@@ -86,20 +91,10 @@
             get { return enableInterface; }
             set
             {
-                enableInterface = value;
+                OKButtonVisible = value;
+                CancelButtonVisible = value;
 
-                if (value)
-                {
-                    OKButtonVisible = true;
-                    CancelButtonVisible = true;
-                }
-                else
-                {
-                    OKButtonVisible = false;
-                    CancelButtonVisible = false;
-                }
-
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref enableInterface, value);                
             }
         }
 
@@ -114,14 +109,18 @@
         public string Status
         {
             get { return status; }
-            set { status = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref status, value); }
         }
 
         private Package selectedPackage;
         public Package SelectedPackage
         {
             get { return selectedPackage; }
-            set { selectedPackage = value; OnPropertyChanged(); OnPropertyChanged(() => ButtonText); }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedPackage, value);
+                this.RaisePropertyChanged(() => ButtonText);
+            }
         }
 
 
@@ -129,10 +128,10 @@
         public ObservableCollection<Package> AvailablePackages
         {
             get { return availablePackage; }
-            set { availablePackage = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref availablePackage, value); }
         }
 
-        public ICommand InstallCommand { get; private set; }
-        public override ICommand OKCommand { get; protected set; }
+        public ReactiveCommand<object> InstallCommand { get; private set; }
+        public override ReactiveCommand<object> OKCommand { get; protected set; }
     }
 }

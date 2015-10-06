@@ -20,12 +20,11 @@
 
         }
 
+        private ProjectFile model;
         public ProjectFile Model
         {
-            get
-            {
-                return BaseModel as ProjectFile;
-            }
-        }
+            get { return model; }
+            set { model = value; }
+        }        
     }
 }

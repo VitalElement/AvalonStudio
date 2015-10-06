@@ -1,8 +1,9 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
     using AvalonStudio.Models.Solutions;
+    using MVVM;
     using Perspex.Media;
-    using Perspex.MVVM;
+    using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
     using System.Threading.Tasks;
@@ -25,27 +26,32 @@
             this.IncludePaths = new ObservableCollection<string>();
             // this.IncludePaths.Bind (model.IncludePaths, (p) => p, (s, so) => (s == so));
 
-            RemoveCommand = new RoutingCommand((o) =>
+            RemoveCommand = ReactiveCommand.Create();
+            RemoveCommand.Subscribe((o) =>
             {
                 model.Parent.RemoveItem(model);
             });
 
-            DebugCommand = new RoutingCommand((o) =>
+            DebugCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
+            DebugCommand.Subscribe((o) =>
            {
                //Workspace.This.DebugManager.StartDebuggingCommand.Execute(Model);            
-           }, CanExecuteCompileTask);
+           });
 
-            CleanCommand = new RoutingCommand((o) =>
+            CleanCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
+            CleanCommand.Subscribe((o) =>
            {
                Clean(model);
-           }, CanExecuteCompileTask);
+           });
 
-            BuildCommand = new RoutingCommand(async (o) =>
+            BuildCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
+            BuildCommand.Subscribe(async (o) =>
            {
                await Build(model);
-           }, CanExecuteCompileTask);
+           });
 
-            ManageReferencesCommand = new RoutingCommand((o) =>
+            ManageReferencesCommand = ReactiveCommand.Create();
+            ManageReferencesCommand.Subscribe((o) =>
             {
                 //Workspace.This.ModalDialog = new ManageReferencesDialogViewModel(Model);
                 // Workspace.This.ModalDialog.ShowDialog();
@@ -67,7 +73,7 @@
 
         protected void InvalidateFontWeight()
         {
-            OnPropertyChanged(() => FontWeight);
+            this.RaisePropertyChanged(() => FontWeight);
         }
 
         public async Task Build(Project project)
@@ -115,12 +121,12 @@
             }
         }
 
-        public ICommand BuildCommand { get; protected set; }
-        public ICommand CleanCommand { get; protected set; }
-        public ICommand DebugCommand { get; protected set; }
+        public ReactiveCommand<object> BuildCommand { get; protected set; }
+        public ReactiveCommand<object> CleanCommand { get; protected set; }
+        public ReactiveCommand<object> DebugCommand { get; protected set; }
 
-        public ICommand ManageReferencesCommand { get; protected set; }
-        public ICommand RemoveCommand { get; protected set; }
+        public ReactiveCommand<object> ManageReferencesCommand { get; protected set; }
+        public ReactiveCommand<object> RemoveCommand { get; protected set; }
 
 
         public static ProjectViewModel Create(Project model)
@@ -134,17 +140,15 @@
         public bool Visibility
         {
             get { return visibility; }
-            set { visibility = value; OnPropertyChanged(); }
+            set { visibility = value; this.RaisePropertyChanged(); }
         }
 
-
-        new public Project Model
+        private Project model;
+        public Project Model
         {
-            get
-            {
-                return BaseModel as Project;
-            }
-        }
+            get { return model; }
+            set { model = value; }
+        }        
 
         public FontWeight FontWeight
         {

@@ -14,11 +14,11 @@
             if (!object.ReferenceEquals(field, value))
             {
                 field = value;
-                this.OnPropertyChanged(propertyName);
+                RaisePropertyChanged(propertyName);
             }
         }
 
-        protected void OnPropertyChanged<T>(Expression<Func<T>> changedProperty)
+        protected void RaisePropertyChanged<T>(Expression<Func<T>> changedProperty)
         {
             if (PropertyChanged != null)
             {
@@ -27,7 +27,7 @@
             }
         }
 
-        protected void OnPropertyChanged([CallerMemberName]string propertyName = null)
+        protected void RaisePropertyChanged([CallerMemberName]string propertyName = null)
         {
             if (this.PropertyChanged != null)
             {

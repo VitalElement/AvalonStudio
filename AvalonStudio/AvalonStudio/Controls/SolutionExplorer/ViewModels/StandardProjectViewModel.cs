@@ -9,7 +9,7 @@
     using System.Windows.Input;
     using AvalonStudio.Models.Solutions;
     using AvalonStudio.MVVM;
-    using Perspex.MVVM;
+    using ReactiveUI;
 
     class StandardProjectViewModel : ProjectViewModel
     {
@@ -23,14 +23,15 @@
             //    }
             //});
 
-            ConfigureCommand = new RoutingCommand((o) =>
+            ConfigureCommand = ReactiveCommand.Create();
+            ConfigureCommand.Subscribe((o) =>
             {
-                //Workspace.This.ModalDialog = new ProjectConfigurationDialogViewModel(Model, () => OnPropertyChanged(() => Icon));
+                //Workspace.This.ModalDialog = new ProjectConfigurationDialogViewModel(Model, () => this.RaisePropertyChanged(() => Icon));
                 //Workspace.This.ModalDialog.ShowDialog();
             });
 
-
-            SetDefaultProjectCommand = new RoutingCommand((o) =>
+            SetDefaultProjectCommand = ReactiveCommand.Create();
+            SetDefaultProjectCommand.Subscribe((o) =>
             {
                 Model.Solution.DefaultProject = Model;
                 Model.Solution.SaveChanges();
@@ -63,7 +64,7 @@
         //}
 
 
-        public ICommand SetDefaultProjectCommand { get; private set; }
-        public ICommand ConfigureCommand { get; private set; }
+        public ReactiveCommand<object> SetDefaultProjectCommand { get; private set; }
+        public ReactiveCommand<object> ConfigureCommand { get; private set; }
     }
 }

@@ -38,12 +38,11 @@
             }
         }
 
-        new public ProjectFolder Model
+        private ProjectFolder model;
+        public ProjectFolder Model
         {
-            get
-            {
-                return BaseModel as ProjectFolder;
-            }
-        }
+            get { return model; }
+            set { model = value; }
+        }        
     }
 }

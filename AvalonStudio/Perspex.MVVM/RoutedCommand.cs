@@ -30,7 +30,7 @@ namespace Perspex.MVVM
             set
             {
                 if (value != opacity)
-                { opacity = value; OnPropertyChanged(); }
+                { opacity = value; this.RaisePropertyChanged(); }
             }
         }
     }
@@ -40,7 +40,7 @@ namespace Perspex.MVVM
     /// taking one parameter of type T.
     /// </summary>
     /// <typeparam name="T">is the type of the command parameter.</typeparam>
-    public class RoutingCommand<T> : ViewModelBase, ICommand
+    public class RoutingCommand<T> : ReactiveObject, ICommand
     {
         #region Construction and destruction
         /// <summary>
@@ -66,6 +66,7 @@ namespace Perspex.MVVM
         public RoutingCommand(Action<T> command)
             : this(command, null)
         {
+            
         }
         #endregion
 
@@ -124,7 +125,8 @@ namespace Perspex.MVVM
         /// <param name="sender">object that emitted the event.</param>
         /// <param name="e">Event Args.</param>
         public void Update(object sender, EventArgs e)
-        {
+        {            
+            //this.CanExecuteChanged(this, e);
             //CommandManager.InvalidateRequerySuggested();
         }
         #endregion

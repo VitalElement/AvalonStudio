@@ -1,12 +1,26 @@
-﻿using Perspex.MVVM;
-
-namespace AvalonStudio.MVVM
+﻿namespace AvalonStudio.MVVM
 {
-    public static class ViewModelBaseExtensions
+    using ReactiveUI;
+    using System;
+    using System.Linq.Expressions;
+    using System.Runtime.CompilerServices;
+
+    public static class ReactiveObjectExtensions
     {
-        public static ViewModelBase Create(object model)
+        public static void RaisePropertyChanged(this ReactiveObject reactiveObject, [CallerMemberName]string propertyName = null)
         {
-            ViewModelBase result = null;
+            reactiveObject.RaisePropertyChanged(propertyName);
+        }
+
+        public static void RaisePropertyChanged<T>(this ReactiveObject reactiveObject, Expression<Func<T>> changedProperty)
+        {
+            string name = ((MemberExpression)changedProperty.Body).Member.Name;
+            reactiveObject.RaisePropertyChanged(name);
+        }
+
+        public static ReactiveObject Create(object model)
+        {
+            ReactiveObject result = null;
 
             //if (model is ProjectFile)
             //{

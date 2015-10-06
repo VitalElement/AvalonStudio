@@ -1,8 +1,8 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using Perspex.MVVM;
+    using ReactiveUI;
 
-    public class ToolBarViewModel : ViewModelBase
+    public class ToolBarViewModel : ReactiveObject
     {
     }
 }

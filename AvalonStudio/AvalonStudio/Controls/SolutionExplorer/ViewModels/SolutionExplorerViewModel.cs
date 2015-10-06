@@ -2,7 +2,7 @@
 {
     using AvalonStudio.Models.Solutions;
     using AvalonStudio.MVVM;
-    using Perspex.MVVM;
+    using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
     using System.Linq;
@@ -26,9 +26,9 @@
 
                 if (this.Model != null)
                 {
-                    this.Projects.Bind (this.Model.Children,
-                        (p) => { return ProjectItemViewModel.Create(p); },
-                        ((pvm, p) => pvm.BaseModel == p));
+                    //this.Projects.Bind (this.Model.Children,
+                    //    (p) => { return ProjectItemViewModel.Create(p); },
+                    //    ((pvm, p) => pvm.BaseModel == p));
 
                     if (Model.LoadedProjects.Count > 0)
                     {
@@ -41,8 +41,8 @@
 
                 Solution = sol;
 
-                OnPropertyChanged ();
-                OnPropertyChanged (() => Projects);                
+                this.RaisePropertyChanged ();
+                this.RaisePropertyChanged (() => Projects);                
             }
         }
 
@@ -50,7 +50,7 @@
         public ObservableCollection<SolutionViewModel> Solution
         {
             get { return solution; }
-            set { solution = value; OnPropertyChanged(); }
+            set { solution = value; this.RaisePropertyChanged(); }
         }
 
 
@@ -62,7 +62,7 @@
                 return selectedProject;
             }
 
-            set { selectedProject = value; OnPropertyChanged (); }
+            set { selectedProject = value; this.RaisePropertyChanged (); }
         }
 
 
@@ -74,8 +74,8 @@
             solution.OpenedLocation = location;
         }
 
-        private ViewModelBase selectedItem;
-        public ViewModelBase SelectedItem 
+        private ReactiveObject selectedItem;
+        public ReactiveObject SelectedItem 
         {
             get { return selectedItem; }
             set
@@ -117,7 +117,7 @@
                         SelectedProject = (value as ProjectViewModel).Model.Project;
                     }
 
-                    OnPropertyChanged();
+                    this.RaisePropertyChanged();
 
                     if (this.SelectedItemChanged != null)
                     {
@@ -144,7 +144,7 @@
             }
         }
 
-        public event EventHandler<ViewModelBase> SelectedItemChanged;
+        public event EventHandler<ReactiveObject> SelectedItemChanged;
 
         public ObservableCollection<ProjectItemViewModel> Projects { get; set; }
 
