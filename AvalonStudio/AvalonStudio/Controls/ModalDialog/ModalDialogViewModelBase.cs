@@ -1,49 +1,51 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
-    using Perspex.MVVM;
-    using System.Windows.Input;
+    using ReactiveUI;
+    using System;
 
-    public abstract class ModalDialogViewModelBase : ViewModelBase
+    public abstract class ModalDialogReactiveObject : ReactiveObject
     {
-        public ModalDialogViewModelBase(string title, bool okButton = true, bool cancelButton = true)
+        public ModalDialogReactiveObject(string title, bool okButton = true, bool cancelButton = true)
         {
-            this.OKButtonVisible = okButton;
-                this.CancelButtonVisible = cancelButton;
+            OKButtonVisible = okButton;
+            CancelButtonVisible = cancelButton;
 
-            this.visible = false;
+            visible = false;
             this.title = title;
-            this.CancelCommand = new RoutingCommand((o) => { this.Close(); });
+
+            CancelCommand = ReactiveCommand.Create();
+            CancelCommand.Subscribe(_ => { Close(); });
         }
 
         private bool cancelButtonVisible = false;
         public bool CancelButtonVisible
         {
             get { return cancelButtonVisible; }
-            set { cancelButtonVisible = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref cancelButtonVisible, value); }
         }
 
         private bool okButtonVisible = false;
         public bool OKButtonVisible
         {
             get { return okButtonVisible; }
-            set { okButtonVisible = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref okButtonVisible, value); }
         }
 
-        public abstract ICommand OKCommand { get; protected set; }
-        public ICommand CancelCommand { get; private set; }
+        public abstract ReactiveCommand<object> OKCommand { get; protected set; }
+        public ReactiveCommand<object> CancelCommand { get; private set; }
 
         private string title;
         public string Title
         {
             get { return title; }
-            private set { title = value; OnPropertyChanged(); }
+            private set { this.RaiseAndSetIfChanged(ref title, value); }
         }
 
         private bool visible;
         public bool Visible
         {
             get { return visible; }
-            set { visible = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref visible, value); }
         }
 
         public void ShowDialog()
@@ -59,9 +61,9 @@
         }
     }
 
-    public abstract class ModalDialogViewModelBase<T> : ModalDialogViewModelBase
+    public abstract class ModalDialogReactiveObject<T> : ModalDialogReactiveObject
     {
-        public ModalDialogViewModelBase(T model, string title) : base(title)
+        public ModalDialogReactiveObject(T model, string title) : base(title)
         {
             this.Model = model;
         }

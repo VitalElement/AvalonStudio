@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
     using AvalonStudio.Models.Solutions;
-    using Perspex.MVVM;
+    using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -12,37 +12,43 @@
     {
         public SolutionViewModel(Solution model) : base(model)
         {
-            IsExpanded = true;            
+            IsExpanded = true;
 
-            OpenInExplorerCommand = new RoutingCommand((o) =>
+            OpenInExplorerCommand = ReactiveCommand.Create();
+            OpenInExplorerCommand.Subscribe((o) =>
             {
                 Process.Start(model.CurrentDirectory);
             });
 
-            ConfigurationCommand = new RoutingCommand((o) =>
+            ConfigurationCommand = ReactiveCommand.Create();
+            ConfigurationCommand.Subscribe((o) =>
             {
                 //Workspace.This.ModalDialog = new SolutionConfigurationDialogViewModel(Workspace.This.SolutionExplorer.Model);
                 //Workspace.This.ModalDialog.ShowDialog();
             });
 
-            BuildSolutionCommand = new RoutingCommand((o) =>
+            BuildSolutionCommand = ReactiveCommand.Create();
+            BuildSolutionCommand.Subscribe((o) =>
             {
                 BuildSolution();
             });
 
-            CleanSolutionCommand = new RoutingCommand((o) =>
+            CleanSolutionCommand = ReactiveCommand.Create();
+            CleanSolutionCommand.Subscribe((o) =>
             {
                 CleanSolution();
             });
 
-            RebuildSolutionCommand = new RoutingCommand((o) =>
+            RebuildSolutionCommand = ReactiveCommand.Create();
+            RebuildSolutionCommand.Subscribe((o) =>
             {
                 CleanSolution();
 
                 BuildSolution();
             });
 
-            RunAllTestsCommand = new RoutingCommand((o) =>
+            RunAllTestsCommand = ReactiveCommand.Create();
+            RunAllTestsCommand.Subscribe((o) =>
             {
                 RunTests();
             });
@@ -76,11 +82,11 @@
 
         }
 
-        public ICommand ConfigurationCommand { get; private set; }
-        public ICommand CleanSolutionCommand { get; private set; }
-        public ICommand BuildSolutionCommand { get; private set; }
-        public ICommand RebuildSolutionCommand { get; private set; }
-        public ICommand RunAllTestsCommand { get; private set; }
+        public ReactiveCommand<object> ConfigurationCommand { get; private set; }
+        public ReactiveCommand<object> CleanSolutionCommand { get; private set; }
+        public ReactiveCommand<object> BuildSolutionCommand { get; private set; }
+        public ReactiveCommand<object> RebuildSolutionCommand { get; private set; }
+        public ReactiveCommand<object> RunAllTestsCommand { get; private set; }
 
         new public string Title
         {

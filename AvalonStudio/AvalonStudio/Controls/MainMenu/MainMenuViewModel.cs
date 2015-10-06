@@ -2,21 +2,21 @@
 {
     using AvalonStudio.Models.Solutions;
     using Perspex.Controls;
-    using Perspex.MVVM;
+    using Perspex.Threading;
+    using ReactiveUI;
     using System;
     using System.IO;
-    using System.Threading;
-    using System.Windows.Input;
     using System.Linq;
-    using Perspex.Threading;
-    using System.Threading.Tasks;
+    using System.Threading;
     using ViewModels;
 
-    public class MainMenuViewModel : ViewModelBase
+    public class MainMenuViewModel : ReactiveObject
     {
         public MainMenuViewModel()
-        {
-            LoadProjectCommand = new RoutingCommand(async (args) =>
+        {            
+            LoadProjectCommand = ReactiveCommand.Create();
+
+            LoadProjectCommand.Subscribe(async _=>
             {
                 var dlg = new OpenFileDialog();
                 dlg.InitialFileName = string.Empty;
@@ -25,23 +25,24 @@
 
                 if (result != null)
                 {
-                    new Thread (new ThreadStart(new Action (() =>
-                    {
-                        Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);
-                        using (var fs = File.OpenText(Workspace.This.SolutionExplorer.Model.DefaultProject.Children.OfType<ProjectFile>().First().Location))
-                        {
-                            var content = fs.ReadToEnd();
+                    new Thread(new ThreadStart(new Action(() =>
+                  {
+                      Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);
+                      using (var fs = File.OpenText(Workspace.This.SolutionExplorer.Model.DefaultProject.Children.OfType<ProjectFile>().First().Location))
+                      {
+                          var content = fs.ReadToEnd();
 
-                            Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                Workspace.This.Editor.Text = content;
-                            });
-                        }
-                    }))).Start();
-                }              
+                          Dispatcher.UIThread.InvokeAsync(() =>
+                          {
+                              Workspace.This.Editor.Text = content;
+                          });
+                      }
+                  }))).Start();
+                }
             });
 
-            BuildProjectCommand = new RoutingCommand(async (args) =>
+            BuildProjectCommand = ReactiveCommand.Create();
+            BuildProjectCommand.Subscribe(async _ =>
             {
                 //new Thread(new ThreadStart(new Action(async () =>
                 {                    
@@ -49,7 +50,8 @@
                 }//))).Start();
             });
 
-            this.PackagesCommand = new RoutingCommand((o) =>
+            PackagesCommand = ReactiveCommand.Create();
+            PackagesCommand.Subscribe((o) =>
             {
                 Workspace.This.ModalDialog = new PackageManagerDialogViewModel();
                 Workspace.This.ModalDialog.ShowDialog();
@@ -57,8 +59,8 @@
         }
 
 
-        public ICommand LoadProjectCommand { get; private set; }
-        public ICommand BuildProjectCommand { get; private set; }
-        public ICommand PackagesCommand { get; private set; }
+        public ReactiveCommand<object> LoadProjectCommand { get; private set; }
+        public ReactiveCommand<object> BuildProjectCommand { get; private set; }
+        public ReactiveCommand<object> PackagesCommand { get; private set; }
     }
 }

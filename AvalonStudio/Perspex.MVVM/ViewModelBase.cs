@@ -1,8 +1,8 @@
 ﻿namespace Perspex.MVVM
 {
-    public class ViewModelBase<T> : ViewModelBase
+    public class ReactiveObject<T> : ReactiveObject
     {
-        public ViewModelBase(T model)
+        public ReactiveObject(T model)
             : base(model)
         {
         }
@@ -14,14 +14,14 @@
         }
     }
 
-    public class ViewModelBase : ObservableObject
+    public class ReactiveObject : ObservableObject
     {
-        public ViewModelBase()
+        public ReactiveObject()
         {
 
         }
 
-        public ViewModelBase(object model)
+        public ReactiveObject(object model)
         {
             this.model = model;
         }

@@ -179,7 +179,7 @@
     <Compile Include="TextEditor\TextView.cs" />
     <Compile Include="Workspace.cs" />
     <Compile Include="MVVM\Extensions.cs" />
-    <Compile Include="MVVM\ViewModelBase.cs" />
+    <Compile Include="MVVM\ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Controls\SolutionExplorerView.paml.cs">
@@ -218,10 +218,6 @@
     <ProjectReference Include="..\AvalonStudio.Models\AvalonStudio.Models.csproj">
       <Project>{EACBFF14-438D-4311-8D8C-18E7E6769C8F}</Project>
       <Name>AvalonStudio.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Perspex.MVVM\Perspex.MVVM.csproj">
-      <Project>{4DAAB6B2-01E0-4BAD-AEFC-39E76C843B36}</Project>
-      <Name>Perspex.MVVM</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
