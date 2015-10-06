@@ -11,7 +11,7 @@
 
     public class Workspace : ReactiveObject
     {
-        public static Workspace This = new Workspace();
+        public static Workspace This = null;
 
         public Workspace()
         {
