@@ -342,15 +342,18 @@ namespace AvalonStudio.Models.Solutions
             {
                 var newFolderName = Path.Combine(new DirectoryInfo(this.Location).Parent.FullName, value) + "\\";
 
-                if (CurrentDirectory != newFolderName)
-                {
-                    Directory.Move(CurrentDirectory, newFolderName);
-                    this.LocationRelativeToParent = Container.CurrentDirectory.MakeRelativePath(newFolderName) + "\\"; ;
-                    this.SaveChanges();
-                }
+                //if (Container != null)
+                //{
+                //    if (CurrentDirectory != newFolderName)
+                //    {
+                //        Directory.Move(CurrentDirectory, newFolderName);
+                //        this.LocationRelativeToParent = Container.CurrentDirectory.MakeRelativePath(newFolderName) + "\\"; ;
+                //        this.SaveChanges();
+                //    }
 
-                Container.Children.Remove(this);
-                Container.AddChild(this);
+                //    Container.Children.Remove(this);
+                //    Container.AddChild(this);
+                //}
             }
         }
     }

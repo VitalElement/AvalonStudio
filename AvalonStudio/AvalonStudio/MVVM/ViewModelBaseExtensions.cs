@@ -1,5 +1,7 @@
 ﻿namespace AvalonStudio.MVVM
 {
+    using Controls.ViewModels;
+    using Models.Solutions;
     using ReactiveUI;
     using System;
     using System.Linq.Expressions;
@@ -18,14 +20,14 @@
             reactiveObject.OnPropertyChanged(name);
         }
 
-        public static ReactiveObject Create(object model)
+        public static ViewModel Create(object model)
         {
-            ReactiveObject result = null;
+            ViewModel result = null;
 
-            //if (model is ProjectFile)
-            //{
-            //    result = new ProjectFileViewModel(model as ProjectFile);
-            //}
+            if (model is ProjectFile)
+            {
+                result = new ProjectFileViewModel(model as ProjectFile);
+            }
             //else if (model is BitThunderApplicationProject)
             //{
             //    result = new BitThunderProjectViewModel(model as BitThunderApplicationProject);
@@ -34,18 +36,18 @@
             //{
             //    result = new TestProjectViewModel(model as CatchTestProject);
             //}
-            //else if (model is Project)
-            //{
-            //    result = new StandardProjectViewModel(model as Project);
-            //}
-            //else if (model is ProjectFolder)
-            //{
-            //    result = new ProjectFolderViewModel(model as ProjectFolder);
-            //}
-            //else if (model is SolutionFolder)
-            //{
-            //    result = new SolutionFolderViewModel(model as SolutionFolder);
-            //}
+            else if (model is Project)
+            {
+                result = new StandardProjectViewModel(model as Project);
+            }
+            else if (model is ProjectFolder)
+            {
+                result = new ProjectFolderViewModel(model as ProjectFolder);
+            }
+            else if (model is SolutionFolder)
+            {
+                result = new SolutionFolderViewModel(model as SolutionFolder);
+            }
 
             return result;
         }

@@ -22,6 +22,10 @@
             <TextBlock Text="{Binding Title}" />
           </TreeDataTemplate>
 
+          <TreeDataTemplate DataType="ViewModels:ProjectViewModel" ItemsSource="{Binding Children}">
+            <TextBlock Text="{Binding Title}" />
+          </TreeDataTemplate>
+
           <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Children}">
             <TextBlock Text="{Binding Title}" />
           </TreeDataTemplate>
