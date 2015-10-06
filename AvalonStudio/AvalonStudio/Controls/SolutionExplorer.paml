@@ -14,7 +14,7 @@
             <TextBlock Text="{Binding Title}" />
           </TreeDataTemplate>
 
-          <TreeDataTemplate DataType="ViewModels:ProjectFileViewModel" ItemsSource="{Binding Children}">
+          <TreeDataTemplate DataType="ViewModels:ProjectFileViewModel">
             <TextBlock Text="{Binding Title}" />
           </TreeDataTemplate>
 
