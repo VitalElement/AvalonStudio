@@ -3,12 +3,11 @@ using Perspex.Markup.Xaml;
 
 namespace AvalonStudio.Controls
 {
-    public class PackageManagerDialog : Window
+    public class PackageManagerDialog : UserControl
     {
         public PackageManagerDialog()
         {
             this.InitializeComponent();
-            App.AttachDevTools(this);
         }
 
         private void InitializeComponent()

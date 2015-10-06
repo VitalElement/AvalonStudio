@@ -3,12 +3,11 @@ using Perspex.Markup.Xaml;
 
 namespace AvalonStudio.Controls
 {
-    public class ModalDialog : Window
+    public class ModalDialog : UserControl
     {
         public ModalDialog()
         {
             this.InitializeComponent();
-            App.AttachDevTools(this);
         }
 
         private void InitializeComponent()
