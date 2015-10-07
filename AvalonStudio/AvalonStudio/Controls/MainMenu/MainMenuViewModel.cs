@@ -5,6 +5,7 @@
     using Perspex.Threading;
     using ReactiveUI;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Threading;
@@ -19,6 +20,8 @@
             LoadProjectCommand.Subscribe(async _=>
             {
                 var dlg = new OpenFileDialog();
+                dlg.Title = "Open Project";
+                dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = new List<string> { "vesln" } });
                 dlg.InitialFileName = string.Empty;
                 dlg.InitialDirectory = "c:\\";
                 var result = await dlg.ShowAsync();
@@ -26,18 +29,18 @@
                 if (result != null)
                 {
                     new Thread(new ThreadStart(new Action(() =>
-                  {
-                      Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);
-                      using (var fs = File.OpenText(Workspace.This.SolutionExplorer.Model.DefaultProject.Children.OfType<ProjectFile>().First().Location))
-                      {
-                          var content = fs.ReadToEnd();
+                    {
+                        Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);
+                        using (var fs = File.OpenText(Workspace.This.SolutionExplorer.Model.DefaultProject.Children.OfType<ProjectFile>().First().Location))
+                        {
+                            var content = fs.ReadToEnd();
 
-                          Dispatcher.UIThread.InvokeAsync(() =>
-                          {
-                              Workspace.This.Editor.Text = content;
-                          });
-                      }
-                  }))).Start();
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                Workspace.This.Editor.Text = content;
+                            });
+                        }
+                    }))).Start();
                 }
             });
 
