@@ -11,25 +11,13 @@
     using MVVM;
 
     public class PackageManagerDialogViewModel : ModalDialogReactiveObject
-    {
-
+    {        
         public PackageManagerDialogViewModel()
             : base("Packages")
         {
             this.AvailablePackages = new ObservableCollection<Package>();
 
-            Task.Factory.StartNew(async () =>
-            {
-                var repo = await Repository.DownloadCatalog();
-
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    foreach (var p in repo.Packages)
-                    {
-                        AvailablePackages.Add(p);
-                    }
-                });
-            });
+            DownloadCatalog();
 
             InstallCommand = ReactiveCommand.Create();
             InstallCommand.Subscribe(async (o) =>
@@ -63,10 +51,20 @@
             OKCommand.Subscribe(_ =>
             {
                 Workspace.This.InvalidateCodeAnalysis();
-                this.Close();
+                this.Close();                
             });
 
             EnableInterface = true;
+        }
+
+        private async void DownloadCatalog()
+        {
+            var repo = await Repository.DownloadCatalog();
+
+            foreach (var p in repo.Packages)
+            {
+                AvailablePackages.Add(p);
+            }
         }
 
         public string ButtonText
@@ -101,7 +99,11 @@
 
         private bool ProgressUpdate(LibGit2Sharp.TransferProgress progress)
         {
-            Status = string.Format("Bytes: {0}, Objects {1}", progress.ReceivedBytes, progress.ReceivedObjects);
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Status = string.Format("Bytes: {0}, Objects {1}", progress.ReceivedBytes, progress.ReceivedObjects);
+            });
+
             return true;
         }
 
