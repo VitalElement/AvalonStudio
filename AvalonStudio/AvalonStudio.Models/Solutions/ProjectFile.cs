@@ -7,6 +7,7 @@ using System.Linq;
 using System.IO;
 using System.Xml.Serialization;
 using AvalonStudio.Utils;
+using AvalonStudio.Models.Tools.Debuggers;
 
 namespace AvalonStudio.Models.Solutions
 {
@@ -293,15 +294,15 @@ namespace AvalonStudio.Models.Solutions
             {
                 var newLocation = Path.Combine(CurrentDirectory, value);
 
-                if (newLocation != this.Location)
+                if (newLocation.NormalizePath() != this.Location.NormalizePath())
                 {
                     File.Move(this.Location, newLocation);
                     this.LocationRelativeToParent = Container.CurrentDirectory.MakeRelativePath(newLocation);
                     this.SaveChanges();
-                }
 
-                Container.Children.Remove(this);
-                Container.AddChild(this);
+                    Container.Children.Remove(this);
+                    Container.AddChild(this);
+                }
             }
         }
         #endregion
