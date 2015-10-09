@@ -3,9 +3,9 @@
     using ReactiveUI;
     using System;
 
-    public abstract class ModalDialogReactiveObject : ReactiveObject
+    public class ModalDialogViewModelBase : ReactiveObject
     {
-        public ModalDialogReactiveObject(string title, bool okButton = true, bool cancelButton = true)
+        public ModalDialogViewModelBase(string title, bool okButton = true, bool cancelButton = true)
         {
             OKButtonVisible = okButton;
             CancelButtonVisible = cancelButton;
@@ -31,7 +31,7 @@
             set { this.RaiseAndSetIfChanged(ref okButtonVisible, value); }
         }
 
-        public abstract ReactiveCommand<object> OKCommand { get; protected set; }
+        public virtual ReactiveCommand<object> OKCommand { get; protected set; }
         public ReactiveCommand<object> CancelCommand { get; private set; }
 
         private string title;
@@ -61,7 +61,7 @@
         }
     }
 
-    public abstract class ModalDialogReactiveObject<T> : ModalDialogReactiveObject
+    public abstract class ModalDialogReactiveObject<T> : ModalDialogViewModelBase
     {
         public ModalDialogReactiveObject(T model, string title) : base(title)
         {

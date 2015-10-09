@@ -79,19 +79,19 @@ namespace AvalonStudio.Models.PackageManager
         }
 
 
-        public static async void TestPackager ()
-        {
-            GenerateCatalog ();
+        //public static async void TestPackager ()
+        //{
+        //    GenerateCatalog ();
 
-            //ToolChainPackage.GeneratePackage ();
+        //    //ToolChainPackage.GeneratePackage ();
 
-            var repo = await Repository.DownloadCatalog ();
+        //    var repo = await Repository.DownloadCatalog ();
 
-            var package = await repo.Packages [0].DownloadPackage (null);
+        //    var package = await repo.Packages [0].DownloadPackage (null);
 
-            Console.WriteLine(package.Name);
-            package.Install ();
-        }
+        //    Console.WriteLine(package.Name);
+        //    package.Install ();
+        //}
 
         public List<Package> Packages { get; set; }
 

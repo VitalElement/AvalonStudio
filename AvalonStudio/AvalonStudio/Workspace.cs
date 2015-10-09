@@ -28,21 +28,21 @@
             StatusBar.Column = 1;
             StatusBar.PlatformString = Platform.PlatformString;
 
-            Task.Factory.StartNew(async () =>
-            {
-               var repo = await Repository.DownloadCatalog();
+            //Task.Factory.StartNew(async () =>
+            //{
+            //   var repo = await Repository.DownloadCatalog();
 
-                foreach(var package in repo.Packages)
-                {
-                    Console.WriteLine(package.Name);
-                }
+            //    foreach(var package in repo.Packages)
+            //    {
+            //        Console.WriteLine(package.Name);
+            //    }
 
-               // MainMenu.LoadProjectCommand.Execute(null);
-            });
+            //   // MainMenu.LoadProjectCommand.Execute(null);
+            //});
 
             ProcessCancellationToken = new CancellationTokenSource();
 
-            ModalDialog = new PackageManagerDialogViewModel();
+            ModalDialog = new ModalDialogViewModelBase("Dialog");// new PackageManagerDialogViewModel();
         }
 
         public MainMenuViewModel MainMenu { get; private set; }
@@ -57,8 +57,8 @@
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }        
 
-        private ModalDialogReactiveObject modalDialog;
-        public ModalDialogReactiveObject ModalDialog
+        private ModalDialogViewModelBase modalDialog;
+        public ModalDialogViewModelBase ModalDialog
         {
             get { return modalDialog; }
             set { modalDialog = value; this.RaisePropertyChanged(); }

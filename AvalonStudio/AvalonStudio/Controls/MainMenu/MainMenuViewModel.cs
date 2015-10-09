@@ -23,24 +23,21 @@
                 dlg.Title = "Open Project";
                 dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = new List<string> { "vesln" } });
                 dlg.InitialFileName = string.Empty;
-                dlg.InitialDirectory = "c:\\";
+                //dlg.InitialDirectory = "c:\\";
                 var result = await dlg.ShowAsync();
 
                 if (result != null)
                 {
-                    new Thread(new ThreadStart(new Action(() =>
+                    Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);
+                    using (var fs = File.OpenText(Workspace.This.SolutionExplorer.Model.DefaultProject.Children.OfType<ProjectFile>().First().Location))
                     {
-                        Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);
-                        using (var fs = File.OpenText(Workspace.This.SolutionExplorer.Model.DefaultProject.Children.OfType<ProjectFile>().First().Location))
-                        {
-                            var content = fs.ReadToEnd();
+                        var content = fs.ReadToEnd();
 
-                            Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                Workspace.This.Editor.Text = content;
-                            });
-                        }
-                    }))).Start();
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            Workspace.This.Editor.Text = content;
+                        });
+                    }
                 }
             });
 
@@ -48,8 +45,11 @@
             BuildProjectCommand.Subscribe(async _ =>
             {
                 //new Thread(new ThreadStart(new Action(async () =>
-                {                    
-                    await Workspace.This.SolutionExplorer.Model.DefaultProject.Build(Workspace.This.Console, Workspace.This.ProcessCancellationToken);
+                {
+                    if (Workspace.This.SolutionExplorer.Model != null)
+                    {
+                        await Workspace.This.SolutionExplorer.Model.DefaultProject.Build(Workspace.This.Console, Workspace.This.ProcessCancellationToken);
+                    }
                 }//))).Start();
             });
 

@@ -53,7 +53,6 @@
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     Text += data + Environment.NewLine;
-                    System.Console.WriteLine(data + Environment.NewLine);
                 });
             }
         }

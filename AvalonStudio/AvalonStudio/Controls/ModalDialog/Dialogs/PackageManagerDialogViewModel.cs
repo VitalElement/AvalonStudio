@@ -1,16 +1,13 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
     using Models.PackageManager;
+    using MVVM;
     using Perspex.Threading;
     using ReactiveUI;
     using System;
-
     using System.Collections.ObjectModel;
-    using System.Threading.Tasks;
-    using System.Windows.Input;
-    using MVVM;
 
-    public class PackageManagerDialogViewModel : ModalDialogReactiveObject
+    public class PackageManagerDialogViewModel : ModalDialogViewModelBase
     {        
         public PackageManagerDialogViewModel()
             : base("Packages")
