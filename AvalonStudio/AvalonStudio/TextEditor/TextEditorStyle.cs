@@ -46,6 +46,16 @@
         /// <returns>The root of the instantiated template.</returns>
         public static Control Template(TextEditor control)
         {
+            var textView = new TextView
+            {
+                Name = "textView",                
+                [~TextView.CaretIndexProperty] = control[~TextEditor.CaretIndexProperty],
+                [~TextView.SelectionStartProperty] = control[~TextEditor.SelectionStartProperty],
+                [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],
+                [~TextBlock.TextProperty] = control[~TextEditor.TextProperty],
+                [~TextBlock.TextWrappingProperty] = control[~TextEditor.TextWrappingProperty],
+            };
+
             Border result = new Border
             {
                 Name = "border",
@@ -59,23 +69,21 @@
                     [~ScrollViewer.CanScrollHorizontallyProperty] = control[~ScrollViewer.CanScrollHorizontallyProperty],
                     [~ScrollViewer.HorizontalScrollBarVisibilityProperty] = control[~ScrollViewer.HorizontalScrollBarVisibilityProperty],
                     [~ScrollViewer.VerticalScrollBarVisibilityProperty] = control[~ScrollViewer.VerticalScrollBarVisibilityProperty],
-                    Content = new StackPanel
-                    {
+                    Content = new Panel
+                    {                        
                         Children = new Perspex.Controls.Controls
                         {
-                            new Panel
+                            new StackPanel
                             {
+                                Orientation= Orientation.Horizontal,
                                 Children = new Perspex.Controls.Controls
                                 {
-                                    new TextView
+                                    new LineNumberMargin(textView)
                                     {
-                                        Name = "textView",
-                                        [~TextView.CaretIndexProperty] = control[~TextEditor.CaretIndexProperty],
-                                        [~TextView.SelectionStartProperty] = control[~TextEditor.SelectionStartProperty],
-                                        [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],
-                                        [~TextBlock.TextProperty] = control[~TextEditor.TextProperty],
-                                        [~TextBlock.TextWrappingProperty] = control[~TextEditor.TextWrappingProperty],
-                                    }
+                                        Margin = new Thickness (0, 0, 10, 0),
+                                        [~LineNumberMargin.HeightProperty] = control[~TemplatedControl.HeightProperty]                                        
+                                    },
+                                    textView                                    
                                 }
                             }
                         }
