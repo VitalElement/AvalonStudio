@@ -1,20 +1,17 @@
 ﻿namespace AvalonStudio.Controls
 {
+    using TextEditor;
     using ReactiveUI;
-    using System.IO;
+    using System.Collections.ObjectModel;
+    using Perspex.Media;
 
     public class EditorViewModel : ReactiveObject
     {
         public EditorViewModel()
         {
-            var fs = File.Open("CardLaminator.cpp", FileMode.Open);
+            this.highlightingData = new ObservableCollection<SyntaxHighlightingData>();
 
-            StreamReader sr = new StreamReader(fs);
-
-            Text = sr.ReadToEnd();
-
-            sr.Close();
-            fs.Close();
+            this.highlightingData.Add(new SyntaxHighlightingData() { Foreground = Brushes.Red, Start = 20, Length = 100 });
         }
 
         private string text;
@@ -30,6 +27,16 @@
             get { return caretIndex; }
             set { this.RaiseAndSetIfChanged(ref caretIndex, value); Workspace.This.StatusBar.Offset = value; }
         }
+
+        private ObservableCollection<SyntaxHighlightingData> highlightingData;
+        public ObservableCollection<SyntaxHighlightingData> HighlightingData
+        {
+            get { return highlightingData; }
+            set { this.RaiseAndSetIfChanged(ref highlightingData, value); }
+        }
+
+
+
 
     }
 }

@@ -16,15 +16,13 @@
     </Grid>
     <Grid Grid.Row="1" RowDefinitions="*,30">      
       <Border BorderBrush="#FF585656" BorderThickness="1" Margin="50 0 50 0">
-        
-          <!--
+        <ContentPresenter Content="{Binding DataContext}">
           <ContentPresenter.DataTemplates>
-            <DataTemplate DataType="ViewModels:PackageManagerDialogViewModel">
-              <TextBlock Text="Testing" />
+            <DataTemplate DataType="ViewModels:PackageManagerDialogViewModel">              
             </DataTemplate>
           </ContentPresenter.DataTemplates>
-          -->
-          <Controls:PackageManagerDialog />
+        </ContentPresenter>
+        <Controls:PackageManagerDialog />
       </Border>
     </Grid>
 
