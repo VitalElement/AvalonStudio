@@ -37,12 +37,10 @@
                 file.Model.MoveTo(this.Model);
             }
         }
-
-        private ProjectFolder model;
-        public ProjectFolder Model
+        
+        new public ProjectFolder Model
         {
-            get { return model; }
-            set { model = value; }
+            get { return base.Model as ProjectFolder; }            
         }        
     }
 }
