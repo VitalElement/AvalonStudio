@@ -1,14 +1,13 @@
 ﻿namespace AvalonStudio.TextEditor
 {
-    using System;
     using Perspex;
     using Perspex.Controls;
-    using Perspex.Controls.Primitives;
-    using Perspex.Input;
     using Perspex.Media;
     using Perspex.Threading;
-    using System.Reactive.Linq;
     using Perspex.VisualTree;
+    using System;
+    using System.Linq;
+    using System.Reactive.Linq;
 
     public class TextView : TextBlock
     {
@@ -89,17 +88,19 @@
             }
 
             // Calculate caret position
+            var tlCharPos = FormattedText.HitTestPoint(new Point(0, 0));            
             var charPos = FormattedText.HitTestTextPosition(CaretIndex);
             var x = Math.Floor(charPos.X) + 0.5;
             var y = Math.Floor(charPos.Y) + 0.5;
             var b = Math.Ceiling(charPos.Bottom) - 0.5;
+            var lineHeight = b - y;
 
             // Render Current Line Highlighting.
             if (selectionStart == selectionEnd)
             {
-                context.FillRectangle(Brush.Parse("#0e0e0e"), new Rect(Bounds.X, y, Bounds.Width, b - y));
+                context.FillRectangle(Brush.Parse("#0e0e0e"), new Rect(0, y, Bounds.Width, lineHeight));
             }
-
+            
             // Render Text
             base.Render(context);
 
@@ -126,6 +127,27 @@
                         new Point(x, b));
                 }
             }
+        }
+
+        public int GetLine(int caretIndex)
+        {
+            var lines = FormattedText.GetLines().ToList();
+
+            int pos = 0;
+            int i;
+
+            for (i = 0; i < lines.Count; ++i)
+            {
+                var line = lines[i];
+                pos += line.Length;
+
+                if (pos > caretIndex)
+                {
+                    break;
+                }
+            }
+
+            return i;
         }
 
         public void ShowCaret()
