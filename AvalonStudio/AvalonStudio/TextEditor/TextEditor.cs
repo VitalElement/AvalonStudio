@@ -111,13 +111,30 @@
             set { SetValue(SelectionEndProperty, value); }
         }
 
-        public static readonly PerspexProperty<ObservableCollection<TextEditorMargin>> MarginsProperty = 
+        public static readonly PerspexProperty<ObservableCollection<TextEditorMargin>> MarginsProperty =
             PerspexProperty.Register<TextEditor, ObservableCollection<TextEditorMargin>>("Margins");
 
         public ObservableCollection<TextEditorMargin> Margins
         {
             get { return GetValue(MarginsProperty); }
             set { SetValue(MarginsProperty, value); }
+        }
+
+        public static readonly PerspexProperty<ObservableCollection<SyntaxHighlightingData>> SyntaxHighlightingDataProperty =
+            PerspexProperty.Register<TextEditor, ObservableCollection<SyntaxHighlightingData>>("SyntaxHighlightingData");
+
+        public ObservableCollection<SyntaxHighlightingData> SyntaxHighlightingData
+        {
+            get { return GetValue(SyntaxHighlightingDataProperty); }
+            set { SetValue(SyntaxHighlightingDataProperty, value); }
+        }
+
+        public TextView TextView
+        {
+            get
+            {
+                return textView;
+            }
         }
         #endregion
 
@@ -323,7 +340,7 @@
         }
         #endregion
 
-        public void InstallMargin (Control margin)
+        public void InstallMargin(Control margin)
         {
             marginsContainer.Children.Add(margin);
         }
@@ -331,13 +348,13 @@
         #region Overrides
         protected override void OnTemplateApplied()
         {
-            textView = this.GetTemplateChild<TextView>("textView");            
+            textView = this.GetTemplateChild<TextView>("textView");
             textView.Cursor = new Cursor(StandardCursorType.Ibeam);
 
             marginsContainer = this.GetTemplateChild<StackPanel>("marginContainer");
 
-            InstallMargin(new BreakPointMargin(textView));
-            InstallMargin(new LineNumberMargin(textView));            
+            InstallMargin(new BreakPointMargin(this));
+            InstallMargin(new LineNumberMargin(this));
         }
 
         protected override void OnPointerPressed(PointerPressEventArgs e)
@@ -408,7 +425,7 @@
             HandleTextInput(e.Text);
         }
 
-       
+
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
