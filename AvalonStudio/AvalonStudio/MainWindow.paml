@@ -1,6 +1,6 @@
 ﻿<Window xmlns="https://github.com/perspex"        
         xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"        
-        Background="#2d2d30" Foreground="#C7C7C7" MinWidth="800" MaxWidth="800" MinHeight="600" MaxHeight="600">
+        Background="#2d2d30" Foreground="#C7C7C7">
   <Grid RowDefinitions="20,0,*,200,25" ColumnDefinitions="220,*,200">
     
     <Grid Grid.ColumnSpan="3">
