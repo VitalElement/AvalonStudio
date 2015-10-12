@@ -6,36 +6,30 @@
     using System;
     using System.Linq;
 
-    class LineNumberMargin : Control
+    class LineNumberMargin : TextEditorMargin
     {
-        private TextView textView;
-
-        public LineNumberMargin (TextView textView)
+        public LineNumberMargin(TextView textView) : base (textView)
         {
-            this.textView = textView;
+            
         }
 
-        public override void Render(DrawingContext context)
+        public override void Render(DrawingContext context, TextInfo textInfo)
         {            
             var charPos = textView.FormattedText.HitTestTextPosition(0);
 
-            var x = charPos.X;
-            var y = charPos.Y ;
-            var b = charPos.Bottom;
-            var lineHeight = b - y;
-
-            int visibleLines = (int)(Bounds.Height / lineHeight);
-
-            Width = (Math.Ceiling(charPos.Right)) * visibleLines.ToString().Length;
+            Width = textInfo.CharWidth * textInfo.NumLines.ToString().Length + 5;
 
             var firstLine = textView.GetLine(0) + 1;
             
-            for (int i = 0; i < visibleLines; i++)
+            for (int i = 0; i < textInfo.NumLines; i++)
             {
-                context.DrawText(Brush.Parse("#5d5d5d"), new Point(0, lineHeight * i), new FormattedText((i + firstLine).ToString(), "Consolas", textView.FontSize, FontStyle.Normal, TextAlignment.Right, FontWeight.Normal) { Constraint = new Size(Width, Bounds.Height) });
+                context.DrawText(Brush.Parse("#5d5d5d"), new Point(-5, textInfo.LineHeight * i), new FormattedText((i + firstLine).ToString(), "Consolas", textView.FontSize, FontStyle.Normal, TextAlignment.Right, FontWeight.Normal) { Constraint = new Size(Width, Bounds.Height) });
             }
 
-            context.DrawLine(new Pen(Brush.Parse("#5d5d5d")), new Point(Width + 5, 0), new Point(Width + 5, Bounds.Height));
-        }        
+            context.DrawLine(new Pen(Brush.Parse("#5d5d5d")), new Point(Width, 0), new Point(Width + 5, Bounds.Height));
+            
+        }
+
+
     }
 }
