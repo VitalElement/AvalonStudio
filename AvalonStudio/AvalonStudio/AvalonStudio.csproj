@@ -182,6 +182,7 @@
     <Compile Include="MVVM\ObservableCollectionExtensions.cs" />
     <Compile Include="MVVM\ViewModel.cs" />
     <Compile Include="TextEditor\TextEditor.cs" />
+    <Compile Include="TextEditor\TextEditorStyle.cs" />
     <Compile Include="TextEditor\TextView.cs" />
     <Compile Include="Workspace.cs" />
     <Compile Include="MVVM\Extensions.cs" />
