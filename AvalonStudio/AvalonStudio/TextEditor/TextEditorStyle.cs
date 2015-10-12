@@ -48,12 +48,14 @@
         {
             var textView = new TextView
             {
-                Name = "textView",                
+                Name = "textView",       
+                HorizontalAlignment = Perspex.Layout.HorizontalAlignment.Stretch,         
                 [~TextView.CaretIndexProperty] = control[~TextEditor.CaretIndexProperty],
                 [~TextView.SelectionStartProperty] = control[~TextEditor.SelectionStartProperty],
                 [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],
                 [~TextBlock.TextProperty] = control[~TextEditor.TextProperty],
                 [~TextBlock.TextWrappingProperty] = control[~TextEditor.TextWrappingProperty],
+                [Grid.ColumnProperty] = 2,
             };
 
             Border result = new Border
@@ -70,20 +72,25 @@
                     [~ScrollViewer.HorizontalScrollBarVisibilityProperty] = control[~ScrollViewer.HorizontalScrollBarVisibilityProperty],
                     [~ScrollViewer.VerticalScrollBarVisibilityProperty] = control[~ScrollViewer.VerticalScrollBarVisibilityProperty],
                     Content = new Panel
-                    {                        
+                    {
                         Children = new Perspex.Controls.Controls
-                        {
-                            new StackPanel
+                        {                                                        
+                            new Grid
                             {
-                                Orientation= Orientation.Horizontal,
+                                ColumnDefinitions = new ColumnDefinitions
+                                {
+                                    new ColumnDefinition(1, GridUnitType.Auto),
+                                    new ColumnDefinition(1, GridUnitType.Star),
+                                },
                                 Children = new Perspex.Controls.Controls
                                 {
                                     new LineNumberMargin(textView)
                                     {
                                         Margin = new Thickness (0, 0, 10, 0),
-                                        [~LineNumberMargin.HeightProperty] = control[~TemplatedControl.HeightProperty]                                        
+                                        [Grid.ColumnSpanProperty] = 1,
+                                        [~LineNumberMargin.HeightProperty] = control[~TemplatedControl.HeightProperty]
                                     },
-                                    textView                                    
+                                    textView
                                 }
                             }
                         }
