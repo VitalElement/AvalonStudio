@@ -112,7 +112,7 @@
             {
                 try
                 {
-                    project.SelectedConfiguration.ToolChain.Clean(Workspace.This.Console, this.model as Project, Workspace.This.ProcessCancellationToken);
+                    project.SelectedConfiguration.ToolChain.Clean(Workspace.This.Console, this.Model as Project, Workspace.This.ProcessCancellationToken);
                 }
                 catch (Exception e)
                 {
@@ -142,12 +142,10 @@
             get { return visibility; }
             set { visibility = value; this.RaisePropertyChanged(); }
         }
-
-        private Project model;
-        public Project Model
+        
+        new public Project Model
         {
-            get { return model; }
-            set { model = value; }
+            get { return base.Model as Project; }            
         }        
 
         public FontWeight FontWeight

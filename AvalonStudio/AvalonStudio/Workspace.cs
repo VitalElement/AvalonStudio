@@ -9,6 +9,7 @@
     using System.Windows.Input;
     using ReactiveUI;
     using Models;
+    using System.IO;
 
     public class Workspace : ReactiveObject
     {
@@ -28,21 +29,36 @@
             StatusBar.Column = 1;
             StatusBar.PlatformString = Platform.PlatformString;
 
-            Task.Factory.StartNew(async () =>
+            SolutionExplorer.SelectedItemChanged += (sender, e) =>
             {
-               var repo = await Repository.DownloadCatalog();
-
-                foreach(var package in repo.Packages)
+                if (e is ProjectFileViewModel)
                 {
-                    Console.WriteLine(package.Name);
-                }
+                    var fs = File.Open((e as ProjectFileViewModel).Model.Location, FileMode.Open);
 
-               // MainMenu.LoadProjectCommand.Execute(null);
-            });
+                    StreamReader sr = new StreamReader(fs);
+
+                    Editor.Text = sr.ReadToEnd();
+
+                    sr.Close();
+                    fs.Close();
+                }
+            };
+
+            //Task.Factory.StartNew(async () =>
+            //{
+            //   var repo = await Repository.DownloadCatalog();
+
+            //    foreach(var package in repo.Packages)
+            //    {
+            //        Console.WriteLine(package.Name);
+            //    }
+
+            //   // MainMenu.LoadProjectCommand.Execute(null);
+            //});
 
             ProcessCancellationToken = new CancellationTokenSource();
 
-            ModalDialog = new PackageManagerDialogViewModel();
+            ModalDialog = new ModalDialogViewModelBase("Dialog");// new PackageManagerDialogViewModel();
         }
 
         public MainMenuViewModel MainMenu { get; private set; }
@@ -57,8 +73,8 @@
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }        
 
-        private ModalDialogReactiveObject modalDialog;
-        public ModalDialogReactiveObject ModalDialog
+        private ModalDialogViewModelBase modalDialog;
+        public ModalDialogViewModelBase ModalDialog
         {
             get { return modalDialog; }
             set { modalDialog = value; this.RaisePropertyChanged(); }
