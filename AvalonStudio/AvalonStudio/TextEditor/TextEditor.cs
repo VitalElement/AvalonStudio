@@ -84,7 +84,7 @@
         }
 
         public static readonly PerspexProperty<int> CaretIndexProperty =
-            PerspexProperty.Register<TextEditor, int>("CaretIndex", validate: ValidateCaretIndex);
+            PerspexProperty.Register<TextEditor, int>("CaretIndex", validate: ValidateCaretIndex, defaultBindingMode: BindingMode.TwoWay);
 
         public int CaretIndex
         {

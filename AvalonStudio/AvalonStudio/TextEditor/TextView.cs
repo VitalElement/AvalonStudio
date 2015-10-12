@@ -88,21 +88,24 @@
                 }
             }
 
+            // Calculate caret position
             var charPos = FormattedText.HitTestTextPosition(CaretIndex);
             var x = Math.Floor(charPos.X) + 0.5;
             var y = Math.Floor(charPos.Y) + 0.5;
             var b = Math.Ceiling(charPos.Bottom) - 0.5;
 
+            // Render Current Line Highlighting.
             if (selectionStart == selectionEnd)
             {
                 context.FillRectangle(Brush.Parse("#0e0e0e"), new Rect(Bounds.X, y, Bounds.Width, b - y));
             }
 
-            // Render text
+            // Render Text
             base.Render(context);
 
             if (selectionStart == selectionEnd)
             {
+                // Render caret
                 var backgroundColor = (((Control)TemplatedParent).GetValue(BackgroundProperty) as SolidColorBrush)?.Color;
                 var caretBrush = Brushes.Black;
 
