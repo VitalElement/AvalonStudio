@@ -2,6 +2,7 @@
 {
     using Perspex;
     using Perspex.Controls;
+    using Perspex.Controls.Presenters;
     using Perspex.Controls.Primitives;
     using Perspex.Controls.Templates;
     using Perspex.Media;
@@ -48,8 +49,9 @@
         {
             var textView = new TextView
             {
-                Name = "textView",       
-                HorizontalAlignment = Perspex.Layout.HorizontalAlignment.Stretch,         
+                Name = "textView",
+                HorizontalAlignment = Perspex.Layout.HorizontalAlignment.Stretch,
+                Margin = new Thickness(5, 0),
                 [~TextView.CaretIndexProperty] = control[~TextEditor.CaretIndexProperty],
                 [~TextView.SelectionStartProperty] = control[~TextEditor.SelectionStartProperty],
                 [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],
@@ -74,9 +76,10 @@
                     Content = new Panel
                     {
                         Children = new Perspex.Controls.Controls
-                        {                                                        
+                        {
                             new Grid
                             {
+                                Margin = new Thickness(0, 5),
                                 ColumnDefinitions = new ColumnDefinitions
                                 {
                                     new ColumnDefinition(1, GridUnitType.Auto),
@@ -84,11 +87,11 @@
                                 },
                                 Children = new Perspex.Controls.Controls
                                 {
-                                    new LineNumberMargin(textView)
+                                    new StackPanel
                                     {
-                                        Margin = new Thickness (0, 0, 10, 0),
-                                        [Grid.ColumnSpanProperty] = 1,
-                                        [~LineNumberMargin.HeightProperty] = control[~TemplatedControl.HeightProperty]
+                                        Orientation= Orientation.Horizontal,
+                                        Name="marginContainer",
+                                        Margin=new Thickness(),
                                     },
                                     textView
                                 }
