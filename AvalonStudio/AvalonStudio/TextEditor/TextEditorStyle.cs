@@ -47,19 +47,6 @@
         /// <returns>The root of the instantiated template.</returns>
         public static Control Template(TextEditor control)
         {
-            var textView = new TextView
-            {
-                Name = "textView",
-                HorizontalAlignment = Perspex.Layout.HorizontalAlignment.Stretch,
-                Margin = new Thickness(5, 0),
-                [~TextView.CaretIndexProperty] = control[~TextEditor.CaretIndexProperty],
-                [~TextView.SelectionStartProperty] = control[~TextEditor.SelectionStartProperty],
-                [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],
-                [~TextBlock.TextProperty] = control[~TextEditor.TextProperty],
-                [~TextBlock.TextWrappingProperty] = control[~TextEditor.TextWrappingProperty],
-                [Grid.ColumnProperty] = 2,
-            };
-
             Border result = new Border
             {
                 Name = "border",
@@ -93,7 +80,18 @@
                                         Name="marginContainer",
                                         Margin=new Thickness(),
                                     },
-                                    textView
+                                    new TextView(control)
+                                    {
+                                        Name = "textView",
+                                        HorizontalAlignment = Perspex.Layout.HorizontalAlignment.Stretch,
+                                        Margin = new Thickness(5, 0),
+                                        [~TextView.CaretIndexProperty] = control[~TextEditor.CaretIndexProperty],
+                                        [~TextView.SelectionStartProperty] = control[~TextEditor.SelectionStartProperty],
+                                        [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],
+                                        [~TextBlock.TextProperty] = control[~TextEditor.TextProperty],
+                                        [~TextBlock.TextWrappingProperty] = control[~TextEditor.TextWrappingProperty],
+                                        [Grid.ColumnProperty] = 2,
+                                    }
                                 }
                             }
                         }

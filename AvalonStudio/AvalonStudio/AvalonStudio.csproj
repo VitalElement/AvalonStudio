@@ -184,6 +184,7 @@
     <Compile Include="TextEditor\BreakPointMargin.cs" />
     <Compile Include="TextEditor\LineNumberMargin.cs" />
     <Compile Include="TextEditor\Margin.cs" />
+    <Compile Include="TextEditor\SyntaxHighlightingData.cs" />
     <Compile Include="TextEditor\TextEditor.cs" />
     <Compile Include="TextEditor\TextEditorStyle.cs" />
     <Compile Include="TextEditor\TextView.cs" />

@@ -13,7 +13,7 @@
             FocusableProperty.OverrideDefaultValue(typeof(BreakPointMargin), true);
         }
 
-        public BreakPointMargin (TextView textView) : base (textView)
+        public BreakPointMargin (TextEditor textEditor) : base (textEditor)
         {
             
         }
@@ -31,8 +31,8 @@
         protected override void OnPointerMoved(PointerEventArgs e)
         {
             previewPointVisible = true;
-            var result = textView.FormattedText.HitTestPoint(e.GetPosition(this));
-            var line = textView.GetLine(result.TextPosition);
+            var result = textEditor.TextView.FormattedText.HitTestPoint(e.GetPosition(this));
+            var line = textEditor.TextView.GetLine(result.TextPosition);
 
             BpLine = line;
 
@@ -49,8 +49,8 @@
 
         protected override void OnPointerPressed(PointerPressEventArgs e)
         {
-            var result = textView.FormattedText.HitTestPoint(e.GetPosition(this));
-            var line = textView.GetLine(result.TextPosition);
+            var result = textEditor.TextView.FormattedText.HitTestPoint(e.GetPosition(this));
+            var line = textEditor.TextView.GetLine(result.TextPosition);
 
             InvalidateVisual();
         }
