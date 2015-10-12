@@ -28,19 +28,16 @@
 
                 if (result != null)
                 {
-                    new Thread(new ThreadStart(new Action(() =>
+                    Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);
+                    using (var fs = File.OpenText(Workspace.This.SolutionExplorer.Model.DefaultProject.Children.OfType<ProjectFile>().First().Location))
                     {
-                        Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);
-                        using (var fs = File.OpenText(Workspace.This.SolutionExplorer.Model.DefaultProject.Children.OfType<ProjectFile>().First().Location))
-                        {
-                            var content = fs.ReadToEnd();
+                        var content = fs.ReadToEnd();
 
-                            Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                Workspace.This.Editor.Text = content;
-                            });
-                        }
-                    }))).Start();
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            Workspace.This.Editor.Text = content;
+                        });
+                    }
                 }
             });
 
