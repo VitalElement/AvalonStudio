@@ -9,6 +9,7 @@
     using System.Windows.Input;
     using ReactiveUI;
     using Models;
+    using System.IO;
 
     public class Workspace : ReactiveObject
     {
@@ -27,6 +28,21 @@
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
             StatusBar.PlatformString = Platform.PlatformString;
+
+            SolutionExplorer.SelectedItemChanged += (sender, e) =>
+            {
+                if (e is ProjectFileViewModel)
+                {
+                    var fs = File.Open((e as ProjectFileViewModel).Model.Location, FileMode.Open);
+
+                    StreamReader sr = new StreamReader(fs);
+
+                    Editor.Text = sr.ReadToEnd();
+
+                    sr.Close();
+                    fs.Close();
+                }
+            };
 
             //Task.Factory.StartNew(async () =>
             //{

@@ -3,22 +3,12 @@
     using TextEditor;
     using ReactiveUI;
     using System.Collections.ObjectModel;
-    using System.IO;
     using Perspex.Media;
 
     public class EditorViewModel : ReactiveObject
     {
         public EditorViewModel()
         {
-            var fs = File.Open("CardLaminator.cpp", FileMode.Open);
-
-            StreamReader sr = new StreamReader(fs);
-
-            Text = sr.ReadToEnd();
-
-            sr.Close();
-            fs.Close();
-
             this.highlightingData = new ObservableCollection<SyntaxHighlightingData>();
 
             this.highlightingData.Add(new SyntaxHighlightingData() { Foreground = Brushes.Red, Start = 20, Length = 100 });
