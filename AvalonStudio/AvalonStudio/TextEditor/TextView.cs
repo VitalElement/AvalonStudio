@@ -78,7 +78,7 @@
             {
                 var start = Math.Min(selectionStart, selectionEnd);
                 var length = Math.Max(selectionStart, selectionEnd) - start;
-                var rects = FormattedText.HitTestTextRange(start, length);
+                var rects = FormattedText.HitTestTextRange(start, length);                
 
                 var brush = new SolidColorBrush(0xff086f9e);
 
@@ -88,12 +88,21 @@
                 }
             }
 
+            var charPos = FormattedText.HitTestTextPosition(CaretIndex);
+            var x = Math.Floor(charPos.X) + 0.5;
+            var y = Math.Floor(charPos.Y) + 0.5;
+            var b = Math.Ceiling(charPos.Bottom) - 0.5;
+
+            if (selectionStart == selectionEnd)
+            {
+                context.FillRectangle(Brush.Parse("#0e0e0e"), new Rect(Bounds.X, y, Bounds.Width, b - y));
+            }
+
+            // Render text
             base.Render(context);
 
             if (selectionStart == selectionEnd)
             {
-                var charPos = FormattedText.HitTestTextPosition(CaretIndex);
-
                 var backgroundColor = (((Control)TemplatedParent).GetValue(BackgroundProperty) as SolidColorBrush)?.Color;
                 var caretBrush = Brushes.Black;
 
@@ -108,10 +117,6 @@
 
                 if (_caretBlink)
                 {
-                    var x = Math.Floor(charPos.X) + 0.5;
-                    var y = Math.Floor(charPos.Y) + 0.5;
-                    var b = Math.Ceiling(charPos.Bottom) - 0.5;
-
                     context.DrawLine(
                         new Pen(caretBrush, 1),
                         new Point(x, y),
