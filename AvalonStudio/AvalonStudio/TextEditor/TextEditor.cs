@@ -66,7 +66,7 @@
         }
 
         public static readonly PerspexProperty<bool> AcceptsReturnProperty =
-            PerspexProperty.Register<TextEditor, bool>("AcceptsReturn");
+            PerspexProperty.Register<TextEditor, bool>("AcceptsReturn", defaultValue: true);
 
         public bool AcceptsReturn
         {
@@ -151,24 +151,24 @@
             return Text.Substring(start, end - start);
         }
 
-        private int GetLine(int caretIndex, IList<FormattedTextLine> lines)
-        {
-            int pos = 0;
-            int i;
+        //private int GetLine(int caretIndex, IList<FormattedTextLine> lines)
+        //{
+        //    int pos = 0;
+        //    int i;
 
-            for (i = 0; i < lines.Count; ++i)
-            {
-                var line = lines[i];
-                pos += line.Length;
+        //    for (i = 0; i < lines.Count; ++i)
+        //    {
+        //        var line = lines[i];
+        //        pos += line.Length;
 
-                if (pos > caretIndex)
-                {
-                    break;
-                }
-            }
+        //        if (pos > caretIndex)
+        //        {
+        //            break;
+        //        }
+        //    }
 
-            return i;
-        }
+        //    return i;
+        //}
 
         private static int ValidateCaretIndex(PerspexObject o, int value)
         {
@@ -217,7 +217,7 @@
             var formattedText = textView.FormattedText;
             var lines = formattedText.GetLines().ToList();
             var caretIndex = CaretIndex;
-            var lineIndex = GetLine(caretIndex, lines) + count;
+            var lineIndex = textView.GetLine(caretIndex) + count;
 
             if (lineIndex >= 0 && lineIndex < lines.Count)
             {
