@@ -8,8 +8,6 @@ namespace AvalonStudio.Controls
         public Editor()
         {
             this.InitializeComponent();
-
-            var editor = ControlExtensions.FindControl<TextBox>(this, "editor");
         }
 
         private void InitializeComponent()
