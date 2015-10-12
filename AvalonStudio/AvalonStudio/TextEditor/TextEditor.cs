@@ -10,6 +10,7 @@
     using Perspex.Media;
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Reactive.Linq;
 
@@ -43,7 +44,7 @@
 
         #region Private Data
         private TextView textView;
-
+        private StackPanel marginsContainer;
         #endregion
 
         #region Pespex Properties
@@ -108,6 +109,15 @@
         {
             get { return GetValue(SelectionEndProperty); }
             set { SetValue(SelectionEndProperty, value); }
+        }
+
+        public static readonly PerspexProperty<ObservableCollection<TextEditorMargin>> MarginsProperty = 
+            PerspexProperty.Register<TextEditor, ObservableCollection<TextEditorMargin>>("Margins");
+
+        public ObservableCollection<TextEditorMargin> Margins
+        {
+            get { return GetValue(MarginsProperty); }
+            set { SetValue(MarginsProperty, value); }
         }
         #endregion
 
@@ -313,11 +323,21 @@
         }
         #endregion
 
+        public void InstallMargin (Control margin)
+        {
+            marginsContainer.Children.Add(margin);
+        }
+
         #region Overrides
         protected override void OnTemplateApplied()
         {
-            textView = this.GetTemplateChild<TextView>("textView");
+            textView = this.GetTemplateChild<TextView>("textView");            
             textView.Cursor = new Cursor(StandardCursorType.Ibeam);
+
+            marginsContainer = this.GetTemplateChild<StackPanel>("marginContainer");
+
+            InstallMargin(new BreakPointMargin(textView));
+            InstallMargin(new LineNumberMargin(textView));            
         }
 
         protected override void OnPointerPressed(PointerPressEventArgs e)

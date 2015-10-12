@@ -181,7 +181,9 @@
     <Compile Include="Controls\ToolBar\ToolBarViewModel.cs" />
     <Compile Include="MVVM\ObservableCollectionExtensions.cs" />
     <Compile Include="MVVM\ViewModel.cs" />
+    <Compile Include="TextEditor\BreakPointMargin.cs" />
     <Compile Include="TextEditor\LineNumberMargin.cs" />
+    <Compile Include="TextEditor\Margin.cs" />
     <Compile Include="TextEditor\TextEditor.cs" />
     <Compile Include="TextEditor\TextEditorStyle.cs" />
     <Compile Include="TextEditor\TextView.cs" />
