@@ -4,7 +4,7 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <TextBlock Text="Solution Explorer"  Margin="10,4,0,0"/>
-      <TreeView Grid.Row="1" BorderThickness="0" Background="#1E1E1E" Items="{Binding Solution}">
+      <TreeView Grid.Row="1" BorderThickness="0" Background="#1E1E1E" Items="{Binding Solution}" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
         <TreeView.DataTemplates>
           <TreeDataTemplate DataType="ViewModels:SolutionViewModel" ItemsSource="{Binding Children}">
               <TextBlock Text="{Binding Title}" />
