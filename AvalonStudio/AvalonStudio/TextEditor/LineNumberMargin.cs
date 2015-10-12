@@ -26,7 +26,7 @@
                 context.DrawText(Brush.Parse("#5d5d5d"), new Point(-5, textInfo.LineHeight * i), new FormattedText((i + firstLine).ToString(), "Consolas", textEditor.FontSize, FontStyle.Normal, TextAlignment.Right, FontWeight.Normal) { Constraint = new Size(Width, Bounds.Height) });
             }
 
-            context.DrawLine(new Pen(Brush.Parse("#5d5d5d")), new Point(Width, 0), new Point(Width + 5, Bounds.Height));
+            context.DrawLine(new Pen(Brush.Parse("#5d5d5d")), new Point(Width, 0), new Point(Width, Bounds.Height));
             
         }
 
