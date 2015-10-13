@@ -48,6 +48,42 @@
         #endregion
 
         #region Pespex Properties
+        public static readonly PerspexProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
+            PerspexProperty.Register<TextEditor, System.Windows.Input.ICommand>("BeforeTextChangedCommand");
+
+        public System.Windows.Input.ICommand BeforeTextChangedCommand
+        {
+            get { return GetValue(BeforeTextChangedCommandProperty); }
+            set { SetValue(BeforeTextChangedCommandProperty, value); }
+        }
+
+        public static readonly PerspexProperty<System.Windows.Input.ICommand> TextChangedCommandProperty =
+            PerspexProperty.Register<TextEditor, System.Windows.Input.ICommand>("TextChangedCommand");
+
+        public System.Windows.Input.ICommand TextChangedCommand
+        {
+            get { return GetValue(TextChangedCommandProperty); }
+            set { SetValue(TextChangedCommandProperty, value); }
+        }
+
+        public static readonly PerspexProperty<System.Windows.Input.ICommand> EnteredIdleCommandProperty =
+            PerspexProperty.Register<TextEditor, System.Windows.Input.ICommand>("EnteredIdleCommand");
+
+        public System.Windows.Input.ICommand EnteredIdleCommand
+        {
+            get { return GetValue(EnteredIdleCommandProperty); }
+            set { SetValue(EnteredIdleCommandProperty, value); }
+        }
+
+        public static readonly PerspexProperty<int> IdleDelayProperty =
+            PerspexProperty.Register<TextEditor, int>("IdleDelay");
+
+        public int IdleDelay
+        {
+            get { return GetValue(IdleDelayProperty); }
+            set { SetValue(IdleDelayProperty, value); }
+        }
+
         public static readonly PerspexProperty<string> TextProperty =
             PerspexProperty.Register<TextEditor, string>("Text");
 
@@ -171,10 +207,12 @@
             var selectionEnd = SelectionEnd;
             var start = Math.Min(selectionStart, selectionEnd);
             var end = Math.Max(selectionStart, selectionEnd);
+
             if (start == end || (Text?.Length ?? 0) < end)
             {
                 return "";
             }
+
             return Text.Substring(start, end - start);
         }
 
@@ -206,8 +244,14 @@
 
         private void HandleTextInput(string input)
         {
+            if (BeforeTextChangedCommand != null)
+            {
+                BeforeTextChangedCommand.Execute(null);
+            }
+
             string text = Text ?? string.Empty;
             int caretIndex = CaretIndex;
+
             if (!string.IsNullOrEmpty(input))
             {
                 DeleteSelection();
@@ -216,6 +260,11 @@
                 Text = text.Substring(0, caretIndex) + input + text.Substring(caretIndex);
                 CaretIndex += input.Length;
                 SelectionStart = SelectionEnd = CaretIndex;
+            }
+
+            if (TextChangedCommand != null)
+            {
+                TextChangedCommand.Execute(null);
             }
         }
 
