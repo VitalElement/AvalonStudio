@@ -8,6 +8,7 @@ using System.IO;
 using System.Xml.Serialization;
 using AvalonStudio.Utils;
 using AvalonStudio.Models.Tools.Debuggers;
+using NClang;
 
 namespace AvalonStudio.Models.Solutions
 {
@@ -115,18 +116,18 @@ namespace AvalonStudio.Models.Solutions
         [XmlIgnore]
         public bool TranslationUnitIsDirty { get; set; }
 
-        //// Quickly reparse a file after it has been saved.
-        //public void QuickReparse()
-        //{
-        //    GenerateTranslationUnit();
-        //}
+        // Quickly reparse a file after it has been saved.
+        public void QuickReparse()
+        {
+            GenerateTranslationUnit();
+        }
 
-        //// Fully reparse file i.e. if compiler settings such as incldes or defines change. This does not mean in file includes.
-        //public void FullReparse()
-        //{
-        //    CleanTranslationUnit();
-        //    GenerateTranslationUnit();
-        //}
+        // Fully reparse file i.e. if compiler settings such as incldes or defines change. This does not mean in file includes.
+        public void FullReparse()
+        {
+            CleanTranslationUnit();
+            GenerateTranslationUnit();
+        }
 
         public FileType FileType
         {
@@ -167,99 +168,99 @@ namespace AvalonStudio.Models.Solutions
                 }
             }
         }
-            
 
-        //private NClang.ClangTranslationUnit GenerateTranslationUnit()
-        //{
-        //    var DefaultProject = Solution.DefaultProject;
 
-        //    NClang.ClangTranslationUnit result = null;
+        private NClang.ClangTranslationUnit GenerateTranslationUnit()
+        {
+            var DefaultProject = Solution.DefaultProject;
 
-        //    if (TranslationUnitActive)
-        //    {
-        //        if (File.Exists(this.Location) && this.IsCodeFile)
-        //        {
-        //            var args = new List<string>();
+            NClang.ClangTranslationUnit result = null;
 
-        //            var arguments = this.DefaultProject.IncludeArguments;
+            if (TranslationUnitActive)
+            {
+                if (File.Exists(this.Location) && this.IsCodeFile)
+                {
+                    var args = new List<string>();
 
-        //            foreach (string argument in arguments)
-        //            {
-        //                args.Add(argument.Replace("\"", ""));
-        //            }
+                    var arguments = this.DefaultProject.IncludeArguments;
 
-        //            foreach (var define in this.DefaultProject.SelectedConfiguration.Defines)
-        //            {
-        //                if (define != string.Empty)
-        //                {
-        //                    args.Add(string.Format("-D{0}", define));
-        //                }
-        //            }
+                    foreach (string argument in arguments)
+                    {
+                        args.Add(argument.Replace("\"", ""));
+                    }
 
-        //            if (this.FileType == Solutions.FileType.CPlusPlus || this.FileType == FileType.Header)
-        //            {
-        //                args.Add("-xc++");
-        //                args.Add("-std=c++14");
-        //            }
+                    foreach (var define in this.DefaultProject.SelectedConfiguration.Defines)
+                    {
+                        if (define != string.Empty)
+                        {
+                            args.Add(string.Format("-D{0}", define));
+                        }
+                    }
 
-        //            if (VEStudioSettings.This.ShowAllWarnings)
-        //            {
-        //                args.Add("-Weverything");
-        //            }
+                    if (this.FileType == Solutions.FileType.CPlusPlus || this.FileType == FileType.Header)
+                    {
+                        args.Add("-xc++");
+                        args.Add("-std=c++14");
+                    }
 
-        //            if (translationUnit == null || TranslationUnitIsDirty)
-        //            {
-        //                if (this.translationUnit != null)
-        //                {
-        //                    this.translationUnit.Reparse(Project.UnsavedFiles.ToArray(), this.translationUnit.DefaultReparseOptions);
+                    if (VEStudioSettings.This.ShowAllWarnings)
+                    {
+                        args.Add("-Weverything");
+                    }
 
-        //                    result = this.translationUnit;
-        //                }
-        //                else
-        //                {
-        //                    result = this.Solution.NClangIndex.ParseTranslationUnit(this.Location, args.ToArray(), Project.UnsavedFiles.ToArray(), TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
-        //                }
-        //            }
+                    if (translationUnit == null || TranslationUnitIsDirty)
+                    {
+                        if (this.translationUnit != null)
+                        {
+                            this.translationUnit.Reparse(Project.UnsavedFiles.ToArray(), this.translationUnit.DefaultReparseOptions);
 
-        //            TranslationUnitIsDirty = false;
-        //        }
-        //    }
+                            result = this.translationUnit;
+                        }
+                        else
+                        {
+                            result = this.Solution.NClangIndex.ParseTranslationUnit(this.Location, args.ToArray(), Project.UnsavedFiles.ToArray(), TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
+                        }
+                    }
 
-        //    return result;
-        //}
+                    TranslationUnitIsDirty = false;
+                }
+            }
 
-        //[XmlIgnore]
-        //public List<NClang.ClangDiagnostic> Diagnostics
-        //{
-        //    get
-        //    {
-        //        var results = new List<NClang.ClangDiagnostic>();
+            return result;
+        }
 
-        //        if (IsCodeFile)
-        //        {
-        //            if (TranslationUnit != null)
-        //            {
-        //                results.AddRange(TranslationUnit.DiagnosticSet.Items);
-        //            }
-        //        }
+        [XmlIgnore]
+        public List<NClang.ClangDiagnostic> Diagnostics
+        {
+            get
+            {
+                var results = new List<NClang.ClangDiagnostic>();
 
-        //        return results;
-        //    }
-        //}
+                if (IsCodeFile)
+                {
+                    if (TranslationUnit != null)
+                    {
+                        results.AddRange(TranslationUnit.DiagnosticSet.Items);
+                    }
+                }
 
-        //[XmlIgnore]
-        //public NClang.ClangTranslationUnit TranslationUnit
-        //{
-        //    get
-        //    {
-        //        if (TranslationUnitIsDirty || this.translationUnit == null)
-        //        {
-        //            this.translationUnit = GenerateTranslationUnit();
-        //        }
+                return results;
+            }
+        }
 
-        //        return translationUnit;
-        //    }
-        //}
+        [XmlIgnore]
+        public NClang.ClangTranslationUnit TranslationUnit
+        {
+            get
+            {
+                if (TranslationUnitIsDirty || this.translationUnit == null)
+                {
+                    this.translationUnit = GenerateTranslationUnit();
+                }
+
+                return translationUnit;
+            }
+        }
 
         private bool translationUnitActive;
         [XmlIgnore]
@@ -269,14 +270,14 @@ namespace AvalonStudio.Models.Solutions
             set { translationUnitActive = value; }
         }
 
-        //public void CleanTranslationUnit()
-        //{
-        //    if (translationUnit != null)
-        //    {
-        //        this.translationUnit.Dispose();
-        //        this.translationUnit = null;
-        //    }
-        //}  
+        public void CleanTranslationUnit()
+        {
+            if (translationUnit != null)
+            {
+                this.translationUnit.Dispose();
+                this.translationUnit = null;
+            }
+        }
 
         public override string CurrentDirectory
         {
@@ -308,7 +309,7 @@ namespace AvalonStudio.Models.Solutions
         #endregion
 
         #region Private Members
-        //private NClang.ClangTranslationUnit translationUnit;
+        private NClang.ClangTranslationUnit translationUnit;
         #endregion
     }
 

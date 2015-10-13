@@ -19,6 +19,8 @@
         static TextEditor()
         {
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
+
+            TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>((s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));
         }
 
         public TextEditor()
