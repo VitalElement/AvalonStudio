@@ -7,9 +7,7 @@
     using Perspex.Input;
     using Perspex.Input.Platform;
     using Perspex.Interactivity;
-    using Perspex.Media;
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Reactive.Linq;
