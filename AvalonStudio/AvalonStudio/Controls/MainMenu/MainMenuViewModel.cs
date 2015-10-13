@@ -23,7 +23,7 @@
                 dlg.Title = "Open Project";
                 dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = new List<string> { "vesln" } });
                 dlg.InitialFileName = string.Empty;
-                //dlg.InitialDirectory = "c:\\";
+                dlg.InitialDirectory = "c:\\";
                 var result = await dlg.ShowAsync();
 
                 if (result != null)
@@ -45,11 +45,8 @@
             BuildProjectCommand.Subscribe(async _ =>
             {
                 //new Thread(new ThreadStart(new Action(async () =>
-                {
-                    if (Workspace.This.SolutionExplorer.Model != null)
-                    {
-                        await Workspace.This.SolutionExplorer.Model.DefaultProject.Build(Workspace.This.Console, Workspace.This.ProcessCancellationToken);
-                    }
+                {                    
+                    await Workspace.This.SolutionExplorer.Model.DefaultProject.Build(Workspace.This.Console, Workspace.This.ProcessCancellationToken);
                 }//))).Start();
             });
 

@@ -50,7 +50,7 @@
         public ObservableCollection<SolutionViewModel> Solution
         {
             get { return solution; }
-            set { solution = value; this.RaisePropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref solution, value); }
         }
 
 
