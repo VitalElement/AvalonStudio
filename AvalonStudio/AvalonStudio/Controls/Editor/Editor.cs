@@ -11,7 +11,7 @@
         private ILanguageService languageService;
         private SemaphoreSlim textChangedSemaphore;
 
-        public EditorModel ()
+        public EditorModel()
         {
             editorLock = new ReaderWriterLockSlim();
             textChangedSemaphore = new SemaphoreSlim(0, 1);
@@ -36,27 +36,35 @@
         }
 
         public void OnTextChanged(object param)
-        {            
+        {
             editorLock.ExitWriteLock();
 
             if (textChangedSemaphore.CurrentCount == 0)
-            {                
+            {
                 textChangedSemaphore.Release();
             }
         }
 
         private void CodeAnalysisThread()
         {
-            while (true)
+            try
             {
-                textChangedSemaphore.Wait();
+                while (true)
+                {
+                    textChangedSemaphore.Wait();
 
-                editorLock.EnterReadLock();
+                    editorLock.EnterReadLock();
 
-                languageService.RunCodeAnalysis(() => editorLock.WaitingWriteCount > 0);
+                    languageService.RunCodeAnalysis(() => editorLock.WaitingWriteCount > 0);
 
-                editorLock.ExitReadLock();
+                    editorLock.ExitReadLock();
+                }
             }
+            catch (ThreadAbortException)
+            {
+
+            }
+
         }
     }
 }
