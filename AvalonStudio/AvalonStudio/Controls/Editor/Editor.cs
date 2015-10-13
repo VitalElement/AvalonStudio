@@ -15,7 +15,7 @@
             codeAnalysisThread.Start();
         }
 
-        ~EditorModel()
+        public void Shutdown()
         {
             codeAnalysisThread.Abort();
         }
