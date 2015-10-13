@@ -151,6 +151,7 @@
     <Compile Include="Controls\Editor.paml.cs">
       <DependentUpon>Editor.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Editor\Editor.cs" />
     <Compile Include="Controls\Editor\EditorViewModel.cs" />
     <Compile Include="Controls\MainMenu.paml.cs">
       <DependentUpon>MainMenu.paml</DependentUpon>

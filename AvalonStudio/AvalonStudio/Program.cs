@@ -1,4 +1,5 @@
-﻿using Perspex.Input;
+﻿using AvalonStudio.Controls;
+using Perspex.Input;
 using ReactiveUI;
 using System;
 
@@ -9,8 +10,8 @@ namespace AvalonStudio
         static void Main(string[] args)
         {            
             var app = new App();
-
-            Workspace.This = new Workspace();
+            EditorModel editorModel = new EditorModel();
+            Workspace.This = new Workspace(editorModel);
             
             ReactiveCommand.Create();
             var window = new MainWindow();
