@@ -22,8 +22,6 @@
                     return;
                 }
             }
-
-            Console.WriteLine("Code analysis complete.");
         }
     }
 }
