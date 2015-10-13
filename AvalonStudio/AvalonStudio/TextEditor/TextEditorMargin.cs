@@ -7,6 +7,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using Perspex.Media;
+    using Perspex.Rendering;
 
     public class TextInfo
     {
@@ -17,9 +18,21 @@
 
     public abstract class TextEditorMargin : Control
     {
-        public TextEditorMargin (TextEditor editor)
+        public TextEditorMargin ()
         {
-            this.textEditor = editor;
+            
+        }
+
+        protected override void OnAttachedToVisualTree(IRenderRoot root)
+        {            
+            base.OnAttachedToVisualTree(root);
+
+            textEditor = Parent.Parent.Parent.Parent.Parent.Parent as TextEditor;
+
+            if(textEditor == null)
+            {
+                throw new Exception("Margin must be contained inside a TextEditor control.");
+            }
         }
 
         public override void Render(DrawingContext context)
