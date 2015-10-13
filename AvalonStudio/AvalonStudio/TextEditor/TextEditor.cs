@@ -7,6 +7,7 @@
     using Perspex.Input;
     using Perspex.Input.Platform;
     using Perspex.Interactivity;
+    using Perspex.Threading;
     using System;
     using System.Collections.ObjectModel;
     using System.Linq;
@@ -22,6 +23,11 @@
 
         public TextEditor()
         {
+            textChangedDelayTimer = new DispatcherTimer();
+            textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 125);
+            textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
+            textChangedDelayTimer.Stop();
+
             var canScrollHorizontally = GetObservable(AcceptsReturnProperty)
                 .Select(x => !x);
 
@@ -43,6 +49,7 @@
         #region Private Data
         private TextView textView;
         private StackPanel marginsContainer;
+        private readonly DispatcherTimer textChangedDelayTimer;
         #endregion
 
         #region Pespex Properties
@@ -64,22 +71,22 @@
             set { SetValue(TextChangedCommandProperty, value); }
         }
 
-        public static readonly PerspexProperty<System.Windows.Input.ICommand> EnteredIdleCommandProperty =
-            PerspexProperty.Register<TextEditor, System.Windows.Input.ICommand>("EnteredIdleCommand");
+        //public static readonly PerspexProperty<System.Windows.Input.ICommand> EnteredIdleCommandProperty =
+        //    PerspexProperty.Register<TextEditor, System.Windows.Input.ICommand>("EnteredIdleCommand");
 
-        public System.Windows.Input.ICommand EnteredIdleCommand
+        //public System.Windows.Input.ICommand EnteredIdleCommand
+        //{
+        //    get { return GetValue(EnteredIdleCommandProperty); }
+        //    set { SetValue(EnteredIdleCommandProperty, value); }
+        //}
+
+        public static readonly PerspexProperty<int> TextChangedDelayProperty =
+            PerspexProperty.Register<TextEditor, int>("TextChangedDelay");
+
+        public int TextChangedDelay
         {
-            get { return GetValue(EnteredIdleCommandProperty); }
-            set { SetValue(EnteredIdleCommandProperty, value); }
-        }
-
-        public static readonly PerspexProperty<int> IdleDelayProperty =
-            PerspexProperty.Register<TextEditor, int>("IdleDelay");
-
-        public int IdleDelay
-        {
-            get { return GetValue(IdleDelayProperty); }
-            set { SetValue(IdleDelayProperty, value); }
+            get { return GetValue(TextChangedDelayProperty); }
+            set { SetValue(TextChangedDelayProperty, value); textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value); }
         }
 
         public static readonly PerspexProperty<string> TextProperty =
@@ -173,6 +180,16 @@
         #endregion
 
         #region Private Methods
+        private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
+        {
+            textChangedDelayTimer.Stop();
+
+            if (TextChangedCommand != null)
+            {
+                TextChangedCommand.Execute(null);
+            }
+        }
+
         private void SelectAll()
         {
             SelectionStart = 0;
@@ -260,10 +277,8 @@
                 SelectionStart = SelectionEnd = CaretIndex;
             }
 
-            if (TextChangedCommand != null)
-            {
-                TextChangedCommand.Execute(null);
-            }
+            textChangedDelayTimer.Stop();
+            textChangedDelayTimer.Start();
         }
 
         private void MoveHorizontal(int count, InputModifiers modifiers)
