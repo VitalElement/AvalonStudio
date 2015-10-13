@@ -14,7 +14,7 @@
         public EditorModel ()
         {
             editorLock = new ReaderWriterLockSlim();
-            textChangedSemaphore = new SemaphoreSlim(0);
+            textChangedSemaphore = new SemaphoreSlim(0, 1);
 
             codeAnalysisThread = new Thread(new ThreadStart(CodeAnalysisThread));
             codeAnalysisThread.Start();
@@ -32,16 +32,17 @@
             if (!editorLock.IsWriteLockHeld)
             {
                 editorLock.EnterWriteLock();
-            }                               
-
-            Workspace.This.Console.WriteLine("Write lock aquired.");
+            }
         }
 
         public void OnTextChanged(object param)
         {            
             editorLock.ExitWriteLock();
-            Workspace.This.Console.WriteLine("Write lock freed.");
-            textChangedSemaphore.Release();
+
+            if (textChangedSemaphore.CurrentCount == 0)
+            {                
+                textChangedSemaphore.Release();
+            }
         }
 
         private void CodeAnalysisThread()
@@ -50,17 +51,11 @@
             {
                 textChangedSemaphore.Wait();
 
-                if (editorLock.TryEnterReadLock(40))
-                {
-                    Workspace.This.Console.WriteLine("Read Lock aquired");
+                editorLock.EnterReadLock();
 
-                    // do some code analysis..
-                    languageService.RunCodeAnalysis(() => editorLock.WaitingWriteCount > 0);
+                languageService.RunCodeAnalysis(() => editorLock.WaitingWriteCount > 0);
 
-                    editorLock.ExitReadLock();
-                }                
-                
-                Workspace.This.Console.WriteLine("Read Lock released.");                
+                editorLock.ExitReadLock();
             }
         }
     }
