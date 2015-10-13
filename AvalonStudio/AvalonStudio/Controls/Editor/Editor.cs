@@ -5,17 +5,28 @@
     public class EditorModel
     {
         private ReaderWriterLockSlim editorLock;
+        private Thread codeAnalysisThread;
 
         public EditorModel ()
         {
             editorLock = new ReaderWriterLockSlim();
 
-            new Thread(new ThreadStart(CodeAnalysisThread)).Start();
+            codeAnalysisThread = new Thread(new ThreadStart(CodeAnalysisThread));
+            codeAnalysisThread.Start();
+        }
+
+        ~EditorModel()
+        {
+            codeAnalysisThread.Abort();
         }
 
         public void OnBeforeTextChanged(object param)
         {
-            editorLock.EnterWriteLock();
+            if (!editorLock.IsWriteLockHeld)
+            {
+                editorLock.EnterWriteLock();
+            }
+
             Workspace.This.Console.WriteLine("Write lock aquired.");
         }
 
@@ -48,6 +59,8 @@
                 }                
 
                 Workspace.This.Console.WriteLine("Read Lock released.");
+
+                Thread.Sleep(100); // Allow UI update before aquiring lock.
             }
         }
     }
