@@ -15,13 +15,13 @@
     {
         public static Workspace This = null;
 
-        public Workspace()
+        public Workspace(EditorModel editor)
         {
             AvalonStudioService.Initialise();
 
             MainMenu = new MainMenuViewModel();
             SolutionExplorer = new SolutionExplorerViewModel();
-            Editor = new EditorViewModel();
+            Editor = new EditorViewModel(editor);
             Console = new ConsoleViewModel();
             StatusBar = new StatusBarViewModel();
 
