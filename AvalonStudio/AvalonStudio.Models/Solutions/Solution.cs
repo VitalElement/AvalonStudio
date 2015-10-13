@@ -16,11 +16,11 @@
             Solution = this;
             LoadedProjects = new ObservableCollection<Project>();
             UnloadedChildren = new ObservableCollection<Item>();                                   
-           // NClangIndex = NClang.ClangService.CreateIndex ();
+            NClangIndex = NClang.ClangService.CreateIndex ();
             //FormattingOptions = ClangFormatSettings.Default;            
         }
 
-        //internal NClang.ClangIndex NClangIndex;
+        internal NClang.ClangIndex NClangIndex;
 
         [XmlIgnore]
         public string CurrentDirectory { get { return Path.GetDirectoryName (OpenedLocation) + "/"; } }

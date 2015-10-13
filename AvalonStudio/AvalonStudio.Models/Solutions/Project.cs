@@ -21,7 +21,7 @@
         {
             this.LoadedReferences = new List<Project>();
             this.References = new List<string>();        
-            //this.UnsavedFiles = new List<NClang.ClangUnsavedFile> ();
+            this.UnsavedFiles = new List<NClang.ClangUnsavedFile> ();
             this.Configurations = new List<ProjectConfiguration>();                        
         }
 
@@ -32,7 +32,7 @@
             this.LoadedReferences = new List<Project>();
             this.References = new List<string>();
             this.ExportedIncludes = new List<string>();            
-            //this.UnsavedFiles = new List<NClang.ClangUnsavedFile> ();
+            this.UnsavedFiles = new List<NClang.ClangUnsavedFile> ();
             this.Configurations = new List<ProjectConfiguration>();          
         }
         #endregion
@@ -378,8 +378,8 @@
             }
         }
 
-        //[XmlIgnore]
-        //public List<NClang.ClangUnsavedFile> UnsavedFiles { get; private set; }        
+        [XmlIgnore]
+        public List<NClang.ClangUnsavedFile> UnsavedFiles { get; private set; }        
         #endregion
 
         public static string NormalizePath (string path)
