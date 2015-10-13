@@ -1,6 +1,6 @@
 ﻿namespace AvalonStudio
 {
-    using AvalonStudio.Controls;
+    using Controls;
 
     class Program
     {        

@@ -1,18 +1,25 @@
 ﻿namespace AvalonStudio.Controls
 {
     using System.Threading;
+    using Models.LanguageServices;
+    using Models.LanguageServices.CPlusPlus;
 
     public class EditorModel
     {
         private ReaderWriterLockSlim editorLock;
         private Thread codeAnalysisThread;
+        private ILanguageService languageService;
+        private SemaphoreSlim textChangedSemaphore;
 
         public EditorModel ()
         {
             editorLock = new ReaderWriterLockSlim();
+            textChangedSemaphore = new SemaphoreSlim(0);
 
             codeAnalysisThread = new Thread(new ThreadStart(CodeAnalysisThread));
             codeAnalysisThread.Start();
+
+            languageService = new CPlusPlusLanguageService();
         }
 
         public void Shutdown()
@@ -25,42 +32,35 @@
             if (!editorLock.IsWriteLockHeld)
             {
                 editorLock.EnterWriteLock();
-            }
+            }                               
 
             Workspace.This.Console.WriteLine("Write lock aquired.");
         }
 
         public void OnTextChanged(object param)
-        {
+        {            
             editorLock.ExitWriteLock();
             Workspace.This.Console.WriteLine("Write lock freed.");
+            textChangedSemaphore.Release();
         }
 
         private void CodeAnalysisThread()
         {
-            Thread.Sleep(1000);
-
             while (true)
             {
+                textChangedSemaphore.Wait();
+
                 if (editorLock.TryEnterReadLock(40))
                 {
                     Workspace.This.Console.WriteLine("Read Lock aquired");
 
-                    while (editorLock.IsReadLockHeld)
-                    {
-                        Thread.Sleep(40);       // Work done here.
+                    // do some code analysis..
+                    languageService.RunCodeAnalysis(() => editorLock.WaitingWriteCount > 0);
 
-                        if (editorLock.WaitingWriteCount > 0)
-                        {
-                            editorLock.ExitReadLock();
-                            break;
-                        }
-                    }
+                    editorLock.ExitReadLock();
                 }                
-
-                Workspace.This.Console.WriteLine("Read Lock released.");
-
-                Thread.Sleep(100); // Allow UI update before aquiring lock.
+                
+                Workspace.This.Console.WriteLine("Read Lock released.");                
             }
         }
     }
