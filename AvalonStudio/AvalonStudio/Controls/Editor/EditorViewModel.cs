@@ -26,7 +26,7 @@
         public string Text
         {
             get { return text; }
-            set { this.RaiseAndSetIfChanged(ref text, value); }
+            set { Model.Text = value; this.RaiseAndSetIfChanged(ref text, value); }
         }
 
         private int caretIndex;

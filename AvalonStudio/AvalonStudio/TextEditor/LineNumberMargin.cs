@@ -8,7 +8,7 @@
 
     class LineNumberMargin : TextEditorMargin
     {
-        public LineNumberMargin(TextEditor textEditor) : base (textEditor)
+        public LineNumberMargin()
         {
             
         }

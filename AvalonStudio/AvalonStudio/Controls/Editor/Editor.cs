@@ -22,6 +22,14 @@
             languageService = new CPlusPlusLanguageService();
         }
 
+        private string text;
+        public string Text
+        {
+            get { return text; }
+            set { text = value; }
+        }
+
+
         public void Shutdown()
         {
             codeAnalysisThread.Abort();

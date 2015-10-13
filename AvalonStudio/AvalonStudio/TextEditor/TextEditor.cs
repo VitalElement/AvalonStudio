@@ -20,11 +20,12 @@
         {
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
 
-            TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>((s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));
+            TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>((s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));            
         }
 
         public TextEditor()
         {
+            Name = "textEditor";
             textChangedDelayTimer = new DispatcherTimer();
             textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 125);
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
@@ -417,8 +418,8 @@
 
             marginsContainer = this.GetTemplateChild<StackPanel>("marginContainer");
 
-            InstallMargin(new BreakPointMargin(this));
-            InstallMargin(new LineNumberMargin(this));
+            InstallMargin(new BreakPointMargin());
+            InstallMargin(new LineNumberMargin());
         }
 
         protected override void OnPointerPressed(PointerPressEventArgs e)
