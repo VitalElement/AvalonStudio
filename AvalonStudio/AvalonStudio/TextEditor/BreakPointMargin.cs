@@ -13,7 +13,7 @@
             FocusableProperty.OverrideDefaultValue(typeof(BreakPointMargin), true);
         }
 
-        public BreakPointMargin (TextEditor textEditor) : base (textEditor)
+        public BreakPointMargin ()
         {
             
         }
