@@ -31,6 +31,8 @@
             LanguageService = new CPlusPlusLanguageService(file.Project.Solution.NClangIndex, file);
         }
 
+        public event EventHandler<EventArgs> TextChanged;
+
         public event EventHandler<EventArgs> CodeAnalysisDataChanged;
 
         private List<SyntaxHighlightingData> syntaxHighlightingData;
