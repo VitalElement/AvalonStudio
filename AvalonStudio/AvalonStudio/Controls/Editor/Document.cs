@@ -10,6 +10,7 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using TextEditor;
 
     public class Document
     {
@@ -29,6 +30,24 @@
 
             LanguageService = new CPlusPlusLanguageService(file.Project.Solution.NClangIndex, file);
         }
+
+        public event EventHandler<EventArgs> CodeAnalysisDataChanged;
+
+        private List<SyntaxHighlightingData> syntaxHighlightingData;
+        public List<SyntaxHighlightingData> SyntaxHighlightingData
+        {
+            get { return syntaxHighlightingData; }
+            set
+            {
+                syntaxHighlightingData = value;
+
+                if (CodeAnalysisDataChanged != null)
+                {
+                    CodeAnalysisDataChanged(this, new EventArgs());
+                }
+            }
+        }
+
 
         public ILanguageService LanguageService { get; set; }
         public string Text { get; set; }
