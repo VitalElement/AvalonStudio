@@ -88,7 +88,7 @@
                                         [~TextView.CaretIndexProperty] = control[~TextEditor.CaretIndexProperty],
                                         [~TextView.SelectionStartProperty] = control[~TextEditor.SelectionStartProperty],
                                         [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],
-                                        [~TextBlock.TextProperty] = control[~TextEditor.TextProperty],
+                                        [~TextBlock.TextProperty] = control[~TextEditor.TextDocumentProperty],
                                         [~TextBlock.TextWrappingProperty] = control[~TextEditor.TextWrappingProperty],
                                         [Grid.ColumnProperty] = 2,
                                     }

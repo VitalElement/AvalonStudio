@@ -14,6 +14,7 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Reactive.Linq;
+    using Document;
 
     public class TextEditor : TemplatedControl
     {
@@ -100,13 +101,13 @@
             set { SetValue(TextChangedDelayProperty, value); textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value); }
         }
 
-        public static readonly PerspexProperty<string> TextProperty =
-            PerspexProperty.Register<TextEditor, string>("Text");
+        public static readonly PerspexProperty<TextDocument> TextDocumentProperty =
+            PerspexProperty.Register<TextEditor, TextDocument>("TextDocument");
 
-        public string Text
+        public TextDocument TextDocument
         {
-            get { return GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get { return GetValue(TextDocumentProperty); }
+            set { SetValue(TextDocumentProperty, value); }
         }
 
         public static readonly PerspexProperty<TextWrapping> TextWrappingProperty =
@@ -260,7 +261,7 @@
         private void SelectAll()
         {
             SelectionStart = 0;
-            SelectionEnd = Text.Length;
+            SelectionEnd = TextDocument.TextLength;
         }
 
         private bool DeleteSelection()
@@ -271,9 +272,8 @@
             if (selectionStart != selectionEnd)
             {
                 var start = Math.Min(selectionStart, selectionEnd);
-                var end = Math.Max(selectionStart, selectionEnd);
-                var text = Text;
-                Text = text.Substring(0, start) + text.Substring(end);
+                var end = Math.Max(selectionStart, selectionEnd);                
+                TextDocument.Remove(start, end);                
                 SelectionStart = SelectionEnd = CaretIndex = start;
                 return true;
             }
@@ -290,12 +290,12 @@
             var start = Math.Min(selectionStart, selectionEnd);
             var end = Math.Max(selectionStart, selectionEnd);
 
-            if (start == end || (Text?.Length ?? 0) < end)
+            if (start == end || (TextDocument?.TextLength ?? 0) < end)
             {
                 return "";
             }
 
-            return Text.Substring(start, end - start);
+            return TextDocument.GetText(start, end - start);
         }
 
         //private int GetLine(int caretIndex, IList<FormattedTextLine> lines)
@@ -319,8 +319,8 @@
 
         private static int ValidateCaretIndex(PerspexObject o, int value)
         {
-            var text = o.GetValue(TextProperty);
-            var length = (text != null) ? text.Length : 0;
+            var text = o.GetValue(TextDocumentProperty);
+            var length = (text != null) ? text.TextLength : 0;
             return Math.Max(0, Math.Min(length, value));
         }
 
@@ -331,41 +331,41 @@
                 BeforeTextChangedCommand.Execute(null);
             }
 
-            string text = Text ?? string.Empty;
-            int caretIndex = CaretIndex;
+            //string text = TextDocument ?? string.Empty;
+            //int caretIndex = CaretIndex;
 
-            if (!string.IsNullOrEmpty(input))
-            {
-                DeleteSelection();
-                caretIndex = CaretIndex;
-                text = Text ?? string.Empty;
-                Text = text.Substring(0, caretIndex) + input + text.Substring(caretIndex);
-                CaretIndex += input.Length;
-                SelectionStart = SelectionEnd = CaretIndex;
-            }
+            //if (!string.IsNullOrEmpty(input))
+            //{
+            //    DeleteSelection();
+            //    caretIndex = CaretIndex;
+            //    text = TextDocument ?? string.Empty;
+            //    TextDocument = text.Substring(0, caretIndex) + input + text.Substring(caretIndex);
+            //    CaretIndex += input.Length;
+            //    SelectionStart = SelectionEnd = CaretIndex;
+            //}
 
-            textChangedDelayTimer.Stop();
-            textChangedDelayTimer.Start();
+            //textChangedDelayTimer.Stop();
+            //textChangedDelayTimer.Start();
         }
 
         private void MoveHorizontal(int count, InputModifiers modifiers)
         {
-            var text = Text ?? string.Empty;
-            var caretIndex = CaretIndex;
+            //var text = TextDocument ?? string.Empty;
+            //var caretIndex = CaretIndex;
 
-            if ((modifiers & InputModifiers.Control) != 0)
-            {
-                if (count > 0)
-                {
-                    // count = StringUtils.NextWord(text, caretIndex, false) - caretIndex;
-                }
-                else
-                {
-                    //count = StringUtils.PreviousWord(text, caretIndex, false) - caretIndex;
-                }
-            }
+            //if ((modifiers & InputModifiers.Control) != 0)
+            //{
+            //    if (count > 0)
+            //    {
+            //        // count = StringUtils.NextWord(text, caretIndex, false) - caretIndex;
+            //    }
+            //    else
+            //    {
+            //        //count = StringUtils.PreviousWord(text, caretIndex, false) - caretIndex;
+            //    }
+            //}
 
-            CaretIndex = caretIndex += count;
+            //CaretIndex = caretIndex += count;
         }
 
         private void MoveVertical(int count, InputModifiers modifiers)
@@ -388,67 +388,67 @@
 
         private void MoveHome(InputModifiers modifiers)
         {
-            var text = Text ?? string.Empty;
-            var caretIndex = CaretIndex;
+            //var text = TextDocument ?? string.Empty;
+            //var caretIndex = CaretIndex;
 
-            if ((modifiers & InputModifiers.Control) != 0)
-            {
-                caretIndex = 0;
-            }
-            else
-            {
-                var lines = textView.FormattedText.GetLines();
-                var pos = 0;
+            //if ((modifiers & InputModifiers.Control) != 0)
+            //{
+            //    caretIndex = 0;
+            //}
+            //else
+            //{
+            //    var lines = textView.FormattedText.GetLines();
+            //    var pos = 0;
 
-                foreach (var line in lines)
-                {
-                    if (pos + line.Length > caretIndex || pos + line.Length == text.Length)
-                    {
-                        break;
-                    }
+            //    foreach (var line in lines)
+            //    {
+            //        if (pos + line.Length > caretIndex || pos + line.Length == text.Length)
+            //        {
+            //            break;
+            //        }
 
-                    pos += line.Length;
-                }
+            //        pos += line.Length;
+            //    }
 
-                caretIndex = pos;
-            }
+            //    caretIndex = pos;
+            //}
 
-            CaretIndex = caretIndex;
+            //CaretIndex = caretIndex;
         }
 
         private void MoveEnd(InputModifiers modifiers)
         {
-            var text = Text ?? string.Empty;
-            var caretIndex = CaretIndex;
+            //var text = TextDocument ?? string.Empty;
+            //var caretIndex = CaretIndex;
 
-            if ((modifiers & InputModifiers.Control) != 0)
-            {
-                caretIndex = text.Length;
-            }
-            else
-            {
-                var lines = textView.FormattedText.GetLines();
-                var pos = 0;
+            //if ((modifiers & InputModifiers.Control) != 0)
+            //{
+            //    caretIndex = text.Length;
+            //}
+            //else
+            //{
+            //    var lines = textView.FormattedText.GetLines();
+            //    var pos = 0;
 
-                foreach (var line in lines)
-                {
-                    pos += line.Length;
+            //    foreach (var line in lines)
+            //    {
+            //        pos += line.Length;
 
-                    if (pos > caretIndex)
-                    {
-                        if (pos < text.Length)
-                        {
-                            --pos;
-                        }
+            //        if (pos > caretIndex)
+            //        {
+            //            if (pos < text.Length)
+            //            {
+            //                --pos;
+            //            }
 
-                        break;
-                    }
-                }
+            //            break;
+            //        }
+            //    }
 
-                caretIndex = pos;
-            }
+            //    caretIndex = pos;
+            //}
 
-            CaretIndex = caretIndex;
+            //CaretIndex = caretIndex;
         }
 
         private async void Copy()
@@ -492,7 +492,7 @@
             {
                 var point = e.GetPosition(textView);
                 var index = CaretIndex = textView.GetCaretIndex(point);
-                var text = Text;
+                var text = TextDocument;
 
                 switch (e.ClickCount)
                 {
@@ -509,7 +509,7 @@
                         break;
                     case 3:
                         SelectionStart = 0;
-                        SelectionEnd = text.Length;
+                        SelectionEnd = text.TextLength;
                         break;
                 }
 
@@ -558,117 +558,117 @@
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            string text = Text ?? string.Empty;
-            int caretIndex = CaretIndex;
-            bool movement = false;
-            bool handled = true;
-            var modifiers = e.Modifiers;
+            //string text = TextDocument ?? string.Empty;
+            //int caretIndex = CaretIndex;
+            //bool movement = false;
+            //bool handled = true;
+            //var modifiers = e.Modifiers;
 
-            switch (e.Key)
-            {
-                case Key.A:
-                    if (modifiers == InputModifiers.Control)
-                    {
-                        SelectAll();
-                    }
+            //switch (e.Key)
+            //{
+            //    case Key.A:
+            //        if (modifiers == InputModifiers.Control)
+            //        {
+            //            SelectAll();
+            //        }
 
-                    break;
-                case Key.C:
-                    if (modifiers == InputModifiers.Control)
-                    {
-                        Copy();
-                    }
+            //        break;
+            //    case Key.C:
+            //        if (modifiers == InputModifiers.Control)
+            //        {
+            //            Copy();
+            //        }
 
-                    break;
-                case Key.V:
-                    if (modifiers == InputModifiers.Control)
-                    {
-                        Paste();
-                    }
+            //        break;
+            //    case Key.V:
+            //        if (modifiers == InputModifiers.Control)
+            //        {
+            //            Paste();
+            //        }
 
-                    break;
-                case Key.Left:
-                    MoveHorizontal(-1, modifiers);
-                    movement = true;
-                    break;
+            //        break;
+            //    case Key.Left:
+            //        MoveHorizontal(-1, modifiers);
+            //        movement = true;
+            //        break;
 
-                case Key.Right:
-                    MoveHorizontal(1, modifiers);
-                    movement = true;
-                    break;
+            //    case Key.Right:
+            //        MoveHorizontal(1, modifiers);
+            //        movement = true;
+            //        break;
 
-                case Key.Up:
-                    MoveVertical(-1, modifiers);
-                    movement = true;
-                    break;
+            //    case Key.Up:
+            //        MoveVertical(-1, modifiers);
+            //        movement = true;
+            //        break;
 
-                case Key.Down:
-                    MoveVertical(1, modifiers);
-                    movement = true;
-                    break;
+            //    case Key.Down:
+            //        MoveVertical(1, modifiers);
+            //        movement = true;
+            //        break;
 
-                case Key.Home:
-                    MoveHome(modifiers);
-                    movement = true;
-                    break;
+            //    case Key.Home:
+            //        MoveHome(modifiers);
+            //        movement = true;
+            //        break;
 
-                case Key.End:
-                    MoveEnd(modifiers);
-                    movement = true;
-                    break;
+            //    case Key.End:
+            //        MoveEnd(modifiers);
+            //        movement = true;
+            //        break;
 
-                case Key.Back:
-                    if (!DeleteSelection() && CaretIndex > 0)
-                    {
-                        Text = text.Substring(0, caretIndex - 1) + text.Substring(caretIndex);
-                        --CaretIndex;
-                    }
+            //    case Key.Back:
+            //        if (!DeleteSelection() && CaretIndex > 0)
+            //        {
+            //            TextDocument = text.Substring(0, caretIndex - 1) + text.Substring(caretIndex);
+            //            --CaretIndex;
+            //        }
 
-                    break;
+            //        break;
 
-                case Key.Delete:
-                    if (!DeleteSelection() && caretIndex < text.Length)
-                    {
-                        Text = text.Substring(0, caretIndex) + text.Substring(caretIndex + 1);
-                    }
+            //    case Key.Delete:
+            //        if (!DeleteSelection() && caretIndex < text.Length)
+            //        {
+            //            TextDocument = text.Substring(0, caretIndex) + text.Substring(caretIndex + 1);
+            //        }
 
-                    break;
+            //        break;
 
-                case Key.Enter:
-                    if (AcceptsReturn)
-                    {
-                        HandleTextInput("\r\n");
-                    }
+            //    case Key.Enter:
+            //        if (AcceptsReturn)
+            //        {
+            //            HandleTextInput("\r\n");
+            //        }
 
-                    break;
+            //        break;
 
-                case Key.Tab:
-                    if (AcceptsTab)
-                    {
-                        HandleTextInput("\t");
-                    }
-                    else
-                    {
-                        base.OnKeyDown(e);
-                        handled = false;
-                    }
+            //    case Key.Tab:
+            //        if (AcceptsTab)
+            //        {
+            //            HandleTextInput("\t");
+            //        }
+            //        else
+            //        {
+            //            base.OnKeyDown(e);
+            //            handled = false;
+            //        }
 
-                    break;
-            }
+            //        break;
+            //}
 
-            if (movement && ((modifiers & InputModifiers.Shift) != 0))
-            {
-                SelectionEnd = CaretIndex;
-            }
-            else if (movement)
-            {
-                SelectionStart = SelectionEnd = CaretIndex;
-            }
+            //if (movement && ((modifiers & InputModifiers.Shift) != 0))
+            //{
+            //    SelectionEnd = CaretIndex;
+            //}
+            //else if (movement)
+            //{
+            //    SelectionStart = SelectionEnd = CaretIndex;
+            //}
 
-            if (handled)
-            {
-                e.Handled = true;
-            }
+            //if (handled)
+            //{
+            //    e.Handled = true;
+            //}
         }
 
         #endregion
