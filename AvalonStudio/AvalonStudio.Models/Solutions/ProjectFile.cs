@@ -154,7 +154,7 @@ namespace AvalonStudio.Models.Solutions
             }
         }
 
-        Project DefaultProject
+        public Project DefaultProject
         {
             get
             {

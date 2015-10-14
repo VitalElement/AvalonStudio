@@ -33,14 +33,7 @@
             {
                 if (e is ProjectFileViewModel)
                 {
-                    var fs = File.Open((e as ProjectFileViewModel).Model.Location, FileMode.Open);
-
-                    StreamReader sr = new StreamReader(fs);
-
-                    Editor.Text = sr.ReadToEnd();
-
-                    sr.Close();
-                    fs.Close();
+                    Editor.Model.OpenFile((e as ProjectFileViewModel).Model);
                 }
             };
 
