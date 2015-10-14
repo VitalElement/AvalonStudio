@@ -20,7 +20,8 @@
             //FormattingOptions = ClangFormatSettings.Default;            
         }
 
-        internal NClang.ClangIndex NClangIndex;
+        [XmlIgnore]
+        public NClang.ClangIndex NClangIndex;
 
         [XmlIgnore]
         public string CurrentDirectory { get { return Path.GetDirectoryName (OpenedLocation) + "/"; } }

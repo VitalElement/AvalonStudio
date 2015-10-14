@@ -1,14 +1,13 @@
 ﻿namespace AvalonStudio.Controls
 {
     using System.Threading;
-    using Models.LanguageServices;
-    using Models.LanguageServices.CPlusPlus;
+    using Models.Solutions;
+    using System;
 
     public class EditorModel
     {
         private ReaderWriterLockSlim editorLock;
         private Thread codeAnalysisThread;
-        private ILanguageService languageService;
         private SemaphoreSlim textChangedSemaphore;
 
         public EditorModel()
@@ -18,17 +17,18 @@
 
             codeAnalysisThread = new Thread(new ThreadStart(CodeAnalysisThread));
             codeAnalysisThread.Start();
-
-            languageService = new CPlusPlusLanguageService();
         }
 
-        private string text;
-        public string Text
+        public event EventHandler<EventArgs> DocumentLoaded;
+
+        public void OpenFile (ProjectFile file)
         {
-            get { return text; }
-            set { text = value; }
+            Document = new Document(file);
+
+            DocumentLoaded(this, new EventArgs());
         }
 
+        public Document Document { get; set; }
 
         public void Shutdown()
         {
@@ -63,7 +63,10 @@
 
                     editorLock.EnterReadLock();
 
-                    languageService.RunCodeAnalysis(() => editorLock.WaitingWriteCount > 0);
+                    if (Document != null)
+                    {
+                        Document.LanguageService.RunCodeAnalysis(() => editorLock.WaitingWriteCount > 0);
+                    }
 
                     editorLock.ExitReadLock();
                 }

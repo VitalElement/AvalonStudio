@@ -54,6 +54,7 @@
     <Compile Include="LanguageServices\CodeCompletionData.cs" />
     <Compile Include="LanguageServices\CPlusPlus\CPlusPlusLanguageService.cs" />
     <Compile Include="LanguageServices\ILanguageService.cs" />
+    <Compile Include="LanguageServices\SyntaxHighlightingData.cs" />
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Solutions\BitThunderApplicationProject.cs" />
