@@ -189,6 +189,12 @@
     <Compile Include="TextEditor\TextEditorMargin.cs" />
     <Compile Include="TextEditor\TextEditorStyle.cs" />
     <Compile Include="TextEditor\TextView.cs" />
+    <Compile Include="TextEditor\Utils\CharRope.cs" />
+    <Compile Include="TextEditor\Utils\Empty.cs" />
+    <Compile Include="TextEditor\Utils\ImmutableStack.cs" />
+    <Compile Include="TextEditor\Utils\Rope.cs" />
+    <Compile Include="TextEditor\Utils\RopeNode.cs" />
+    <Compile Include="TextEditor\Utils\RopeTextReader.cs" />
     <Compile Include="Workspace.cs" />
     <Compile Include="MVVM\Extensions.cs" />
     <Compile Include="MVVM\ViewModelBaseExtensions.cs" />
