@@ -99,7 +99,7 @@ namespace AvalonStudio.Controls.ViewModels
             AddExistingProjectCommand = ReactiveCommand.Create();
             AddExistingProjectCommand.Subscribe(async (o) =>
             {
-                OpenFileDialog ofd = new OpenFileDialog();
+                Perspex.Controls.OpenFileDialog ofd = new Perspex.Controls.OpenFileDialog();
                 ofd.InitialDirectory = model.Solution.CurrentDirectory;
 
                 // ofd.Filter = "VEStudio Project Files (*" + VEStudioService.ProjectExtension + ")|*" + VEStudioService.ProjectExtension;
