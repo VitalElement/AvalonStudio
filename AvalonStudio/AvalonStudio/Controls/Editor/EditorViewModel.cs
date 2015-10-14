@@ -20,13 +20,33 @@
 
             TextChangedCommand = ReactiveCommand.Create();
             TextChangedCommand.Subscribe(model.OnTextChanged);
-        }
 
-        private string text;
+            model.DocumentLoaded += (sender, e) =>
+            {
+                this.RaisePropertyChanged(() => Text);
+            };     
+        }
+        
         public string Text
         {
-            get { return text; }
-            set { Model.Text = value; this.RaiseAndSetIfChanged(ref text, value); }
+            get
+            {
+                if (Model.Document != null)
+                {
+                    return Model.Document.Text;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (Model.Document != null)
+                {
+                    Model.Document.Text = value; this.RaisePropertyChanged();
+                }
+            }
         }
 
         private int caretIndex;
