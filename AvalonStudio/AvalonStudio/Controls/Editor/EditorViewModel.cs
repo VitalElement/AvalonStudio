@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Controls
 {
+    using TextEditor.Document;
     using MVVM;
     using Perspex.Media;
     using ReactiveUI;
@@ -26,7 +27,7 @@
                     HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.Document.SyntaxHighlightingData);
                 };
 
-                this.RaisePropertyChanged(() => Text);
+                this.RaisePropertyChanged(() => TextDocument);
             };
 
             
@@ -51,6 +52,14 @@
                 {
                     Model.Document.Text = value; this.RaisePropertyChanged();
                 }
+            }
+        }
+
+        public TextDocument TextDocument
+        {
+            get
+            {
+                return Model.TextDocument;
             }
         }
 

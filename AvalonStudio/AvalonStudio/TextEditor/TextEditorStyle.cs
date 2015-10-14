@@ -87,9 +87,7 @@
                                         Margin = new Thickness(5, 0),
                                         [~TextView.CaretIndexProperty] = control[~TextEditor.CaretIndexProperty],
                                         [~TextView.SelectionStartProperty] = control[~TextEditor.SelectionStartProperty],
-                                        [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],
-                                        [~TextBlock.TextProperty] = control[~TextEditor.TextDocumentProperty],
-                                        [~TextBlock.TextWrappingProperty] = control[~TextEditor.TextWrappingProperty],
+                                        [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],                                        
                                         [Grid.ColumnProperty] = 2,
                                     }
                                 }
