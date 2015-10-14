@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.TextEditor
 {
+    using Utils;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Controls.Primitives;
@@ -49,6 +50,10 @@
                 ScrollViewer.HorizontalScrollBarVisibilityProperty,
                 horizontalScrollBarVisibility,
                 BindingPriority.Style);
+
+            var rope = CharRope.Create("testing.");
+
+            Console.WriteLine(rope.Length);
         }
         #endregion
 

@@ -97,6 +97,7 @@
       <HintPath>..\packages\Perspex.9999.0.620-nightly\lib\portable-windows8+net45\Perspex.Themes.Default.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.1.5.9\lib\net45\Serilog.dll</HintPath>
       <Private>True</Private>
@@ -184,17 +185,51 @@
     <Compile Include="MVVM\ObservableCollectionExtensions.cs" />
     <Compile Include="MVVM\ViewModel.cs" />
     <Compile Include="TextEditor\BreakPointMargin.cs" />
+    <Compile Include="TextEditor\Document\DocumentChangedEventArgs.cs" />
+    <Compile Include="TextEditor\Document\DocumentChangeOperation.cs" />
+    <Compile Include="TextEditor\Document\DocumentLine.cs" />
+    <Compile Include="TextEditor\Document\DocumentLineTree.cs" />
+    <Compile Include="TextEditor\Document\DocumentTextWriter.cs" />
+    <Compile Include="TextEditor\Document\IDocument.cs" />
+    <Compile Include="TextEditor\Document\ILineTracker.cs" />
+    <Compile Include="TextEditor\Document\ITextAnchor.cs" />
+    <Compile Include="TextEditor\Document\ITextSource.cs" />
+    <Compile Include="TextEditor\Document\IUndoableOperation.cs" />
+    <Compile Include="TextEditor\Document\LineManager.cs" />
+    <Compile Include="TextEditor\Document\LineNode.cs" />
+    <Compile Include="TextEditor\Document\NewLineFinder.cs" />
+    <Compile Include="TextEditor\Document\OffsetChangeMap.cs" />
+    <Compile Include="TextEditor\Document\RopeTextSource.cs" />
+    <Compile Include="TextEditor\Document\SimpleSegment.cs" />
+    <Compile Include="TextEditor\Document\TextAnchor.cs" />
+    <Compile Include="TextEditor\Document\TextAnchorNode.cs" />
+    <Compile Include="TextEditor\Document\TextAnchorTree.cs" />
+    <Compile Include="TextEditor\Document\TextDocument.cs" />
+    <Compile Include="TextEditor\Document\TextDocumentWeakEventManager.cs" />
+    <Compile Include="TextEditor\Document\TextLocation.cs" />
+    <Compile Include="TextEditor\Document\TextSegment.cs" />
+    <Compile Include="TextEditor\Document\TextSegmentCollection.cs" />
+    <Compile Include="TextEditor\Document\TextSourceVersionProvider.cs" />
+    <Compile Include="TextEditor\Document\TextUtilities.cs" />
+    <Compile Include="TextEditor\Document\UndoOperationGroup.cs" />
+    <Compile Include="TextEditor\Document\UndoStack.cs" />
+    <Compile Include="TextEditor\Document\WeakLineTracker.cs" />
     <Compile Include="TextEditor\LineNumberMargin.cs" />
     <Compile Include="TextEditor\TextEditor.cs" />
     <Compile Include="TextEditor\TextEditorMargin.cs" />
     <Compile Include="TextEditor\TextEditorStyle.cs" />
     <Compile Include="TextEditor\TextView.cs" />
+    <Compile Include="TextEditor\Utils\CallbackOnDispose.cs" />
     <Compile Include="TextEditor\Utils\CharRope.cs" />
+    <Compile Include="TextEditor\Utils\DelayedEvents.cs" />
+    <Compile Include="TextEditor\Utils\Deque.cs" />
     <Compile Include="TextEditor\Utils\Empty.cs" />
     <Compile Include="TextEditor\Utils\ImmutableStack.cs" />
     <Compile Include="TextEditor\Utils\Rope.cs" />
     <Compile Include="TextEditor\Utils\RopeNode.cs" />
     <Compile Include="TextEditor\Utils\RopeTextReader.cs" />
+    <Compile Include="TextEditor\Utils\ThrowUtil.cs" />
+    <Compile Include="TextEditor\Utils\WeakEventManagerBase.cs" />
     <Compile Include="Workspace.cs" />
     <Compile Include="MVVM\Extensions.cs" />
     <Compile Include="MVVM\ViewModelBaseExtensions.cs" />
