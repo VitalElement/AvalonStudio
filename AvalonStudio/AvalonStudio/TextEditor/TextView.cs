@@ -79,7 +79,8 @@
             {
                 foreach (var highlightData in editor.SyntaxHighlightingData)
                 {
-                    FormattedText.SetForegroundBrush(highlightData.Foreground, highlightData.Start, highlightData.Length);
+                    var foreground = new SolidColorBrush(Color.FromRgb(highlightData.Foreground.R, highlightData.Foreground.G, highlightData.Foreground.B));
+                    FormattedText.SetForegroundBrush(foreground, highlightData.Start, highlightData.Length);
                 }
             }
 
