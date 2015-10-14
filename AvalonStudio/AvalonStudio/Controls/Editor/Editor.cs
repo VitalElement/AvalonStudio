@@ -4,6 +4,8 @@
     using Models.Solutions;
     using System;
     using Perspex.Threading;
+    using TextEditor.Document;
+    using System.IO;
 
     public class EditorModel
     {
@@ -24,6 +26,14 @@
 
         public void OpenFile (ProjectFile file)
         {
+            if (File.Exists(file.Location))
+            {
+                using (var fs = File.OpenText(file.Location))
+                {
+                    TextDocument = new TextDocument(fs.ReadToEnd());
+                }
+            }
+
             Document = new Document(file);
 
             DocumentLoaded(this, new EventArgs());
@@ -34,6 +44,7 @@
             }
         }
 
+        public TextDocument TextDocument { get; set; }
         public Document Document { get; set; }
 
         public void Shutdown()
