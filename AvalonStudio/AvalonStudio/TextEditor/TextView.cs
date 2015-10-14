@@ -19,7 +19,8 @@
             TextBox.SelectionStartProperty.AddOwner<TextView>();
 
         public static readonly PerspexProperty<int> SelectionEndProperty =
-            TextBox.SelectionEndProperty.AddOwner<TextView>();
+            TextBox.SelectionEndProperty.AddOwner<TextView>();       
+
 
         private readonly DispatcherTimer _caretTimer;
 
@@ -79,8 +80,40 @@
             {
                 foreach (var highlightData in editor.SyntaxHighlightingData)
                 {
-                    var foreground = new SolidColorBrush(Color.FromRgb(highlightData.Foreground.R, highlightData.Foreground.G, highlightData.Foreground.B));
-                    FormattedText.SetForegroundBrush(foreground, highlightData.Start, highlightData.Length);
+                    Brush brush;
+
+                    switch(highlightData.Type)
+                    {
+                        case HighlightType.Comment:
+                            brush = editor.CommentBrush;
+                            break;
+
+                        case HighlightType.Identifier:
+                            brush = editor.IdentifierBrush;
+                            break;
+
+                        case HighlightType.Keyword:
+                            brush = editor.KeywordBrush;
+                            break;
+
+                        case HighlightType.Literal:
+                            brush = editor.LiteralBrush;
+                            break;
+
+                        case HighlightType.Punctuation:
+                            brush = editor.PunctuationBrush;
+                            break;
+
+                        case HighlightType.UserType:
+                            brush = editor.UserTypeBrush;
+                            break;
+
+                        default:
+                            brush = Foreground;
+                            break;
+                    }
+                    
+                    FormattedText.SetForegroundBrush(brush, highlightData.Start, highlightData.Length);
                 }
             }
 

@@ -7,6 +7,7 @@
     using Perspex.Input;
     using Perspex.Input.Platform;
     using Perspex.Interactivity;
+    using Perspex.Media;
     using Perspex.Threading;
     using System;
     using System.Collections.ObjectModel;
@@ -172,6 +173,62 @@
             get { return GetValue(SyntaxHighlightingDataProperty); }
             set { SetValue(SyntaxHighlightingDataProperty, value); }
         }
+
+        public static readonly PerspexProperty<Brush> PunctuationBrushProperty =
+            PerspexProperty.Register<TextEditor, Brush>("PunctuationBrush");
+
+        public Brush PunctuationBrush
+        {
+            get { return GetValue(PunctuationBrushProperty); }
+            set { SetValue(PunctuationBrushProperty, value); }
+        }
+
+        public static readonly PerspexProperty<Brush> KeywordBrushProperty =
+            PerspexProperty.Register<TextEditor, Brush>("KeywordBrush");
+
+        public Brush KeywordBrush
+        {
+            get { return GetValue(KeywordBrushProperty); }
+            set { SetValue(KeywordBrushProperty, value); }
+        }
+
+        public static readonly PerspexProperty<Brush> IdentifierBrushProperty =
+            PerspexProperty.Register<TextEditor, Brush>("IdentifierBrush");
+
+        public Brush IdentifierBrush
+        {
+            get { return GetValue(IdentifierBrushProperty); }
+            set { SetValue(IdentifierBrushProperty, value); }
+        }
+
+        public static readonly PerspexProperty<Brush> LiteralBrushProperty =
+            PerspexProperty.Register<TextEditor, Brush>("LiteralBrush");
+
+        public Brush LiteralBrush
+        {
+            get { return GetValue(LiteralBrushProperty); }
+            set { SetValue(LiteralBrushProperty, value); }
+        }
+
+        public static readonly PerspexProperty<Brush> UserTypeBrushProperty =
+            PerspexProperty.Register<TextEditor, Brush>("UserTypeBrush");
+
+        public Brush UserTypeBrush
+        {
+            get { return GetValue(UserTypeBrushProperty); }
+            set { SetValue(UserTypeBrushProperty, value); }
+        }
+
+        public static readonly PerspexProperty<Brush> CommentBrushProperty =
+            PerspexProperty.Register<TextEditor, Brush>("CommentBrush");
+
+        public Brush CommentBrush
+        {
+            get { return GetValue(CommentBrushProperty); }
+            set { SetValue(CommentBrushProperty, value); }
+        }
+
+
 
         public TextView TextView
         {
