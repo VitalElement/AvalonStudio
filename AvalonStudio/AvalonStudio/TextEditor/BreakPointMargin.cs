@@ -31,10 +31,10 @@
         protected override void OnPointerMoved(PointerEventArgs e)
         {
             previewPointVisible = true;
-            var result = textEditor.TextView.FormattedText.HitTestPoint(e.GetPosition(this));
-            var line = textEditor.TextView.GetLine(result.TextPosition);
+            //var result = textEditor.TextView.FormattedText.HitTestPoint(e.GetPosition(this));
+            //var line = textEditor.TextView.GetLine(result.TextPosition);
 
-            BpLine = line;
+            //BpLine = line;
 
             InvalidateVisual();
             
@@ -49,8 +49,8 @@
 
         protected override void OnPointerPressed(PointerPressEventArgs e)
         {
-            var result = textEditor.TextView.FormattedText.HitTestPoint(e.GetPosition(this));
-            var line = textEditor.TextView.GetLine(result.TextPosition);
+            //var result = textEditor.TextView.FormattedText.HitTestPoint(e.GetPosition(this));
+           // var line = textEditor.TextView.GetLine(result.TextPosition);
 
             InvalidateVisual();
         }
