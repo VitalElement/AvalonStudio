@@ -5,7 +5,13 @@
       <TextBlock Text="main.cpp" Margin="0,0,0,0" TextAlignment="Center" />
       <te:TextEditor Grid.Row="1" Text="{Binding Text, Mode=TwoWay}" FontFamily="Consolas" FontSize="14" Foreground="#D4D4D4" BorderThickness="0"
                      SyntaxHighlightingData ="{Binding HighlightingData}" BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
-                     TextChangedCommand="{Binding TextChangedCommand}" TextChangedDelay="125" CaretIndex="{Binding CaretIndex}" >
+                     TextChangedCommand="{Binding TextChangedCommand}" TextChangedDelay="125" CaretIndex="{Binding CaretIndex}" 
+                     CommentBrush="#559A3F"
+                     IdentifierBrush="#D4D4D4"
+                     KeywordBrush ="#569CD6"                     
+                     LiteralBrush="#D69D85"
+                     PunctuationBrush="#D4D4D4"
+                     UserTypeBrush="#4BB289">        
         <!--
         <te:TextEditor.Margins>
           <te:LineNumberMargin/>

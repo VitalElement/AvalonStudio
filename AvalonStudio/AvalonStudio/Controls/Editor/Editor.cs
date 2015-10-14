@@ -27,6 +27,11 @@
             Document = new Document(file);
 
             DocumentLoaded(this, new EventArgs());
+
+            if (textChangedSemaphore.CurrentCount == 0)
+            {
+                textChangedSemaphore.Release();
+            }
         }
 
         public Document Document { get; set; }

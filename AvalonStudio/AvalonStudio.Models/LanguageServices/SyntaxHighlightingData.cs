@@ -1,22 +1,18 @@
 ﻿namespace AvalonStudio.TextEditor
-{    
-    public class Colour
+{        
+    public enum HighlightType
     {
-        public Colour(byte r, byte g, byte b)
-        {
-            R = r;
-            G = g;
-            B = b;
-        }
-
-        public byte R;
-        public byte G;
-        public byte B;
+        Punctuation,
+        Keyword,
+        Identifier,
+        Literal,
+        Comment,
+        UserType
     }
 
     public class SyntaxHighlightingData
     {  
-        public Colour Foreground { get; set; }
+        public HighlightType Type { get; set; }
         public int Start { get; set; }
         public int Length { get; set; }
     }
