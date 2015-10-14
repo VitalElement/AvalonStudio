@@ -3,6 +3,7 @@
     using System.Threading;
     using Models.Solutions;
     using System;
+    using Perspex.Threading;
 
     public class EditorModel
     {
@@ -65,7 +66,12 @@
 
                     if (Document != null)
                     {
-                        Document.LanguageService.RunCodeAnalysis(() => editorLock.WaitingWriteCount > 0);
+                        var result = Document.LanguageService.RunCodeAnalysis(() => editorLock.WaitingWriteCount > 0);
+
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            Document.SyntaxHighlightingData = result;
+                        });
                     }
 
                     editorLock.ExitReadLock();

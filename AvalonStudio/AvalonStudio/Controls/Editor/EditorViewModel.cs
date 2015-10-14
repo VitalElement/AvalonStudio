@@ -13,8 +13,6 @@
         {
             this.highlightingData = new ObservableCollection<SyntaxHighlightingData>();
 
-            this.highlightingData.Add(new SyntaxHighlightingData() { Foreground = Brushes.Red, Start = 20, Length = 100 });
-
             BeforeTextChangedCommand = ReactiveCommand.Create();
             BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged);
 
@@ -23,8 +21,15 @@
 
             model.DocumentLoaded += (sender, e) =>
             {
+                model.Document.CodeAnalysisDataChanged += (s, ee) =>
+                {
+                    HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.Document.SyntaxHighlightingData);
+                };
+
                 this.RaisePropertyChanged(() => Text);
-            };     
+            };
+
+            
         }
         
         public string Text
