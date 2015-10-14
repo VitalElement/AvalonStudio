@@ -114,12 +114,10 @@
                             case CursorKind.ClassTemplate:
                             case CursorKind.EnumDeclaration:
                             case CursorKind.UnionDeclaration:                                                           
-                                //result.Add(new SyntaxHighlightingData() { Start=e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type= HighlightType.UserType });
-                                //Insert(Cursor.FromClangCursor(e.Cursor), Entries);
+                                // TODO return code folding data.
                                 break;
                         }
-
-                        //Console.WriteLine("C:" + e.Cursor.Spelling + ", " + e.Cursor.Kind);
+                        
 
                         switch (e.Cursor.Kind)
                         {
@@ -130,12 +128,7 @@
                             case CursorKind.EnumDeclaration:
                             case CursorKind.UnionDeclaration:
                             case CursorKind.CXXBaseSpecifier:                            
-                                //Insert(UserTypeLocationIndexEntry.FromClangCursor(e.Cursor), MainFileTypes);
                                 result.Add(new SyntaxHighlightingData() { Start = e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type = HighlightType.UserType });
-                                break;
-
-                            case CursorKind.CallExpression:
-                                
                                 break;
 
                         }
@@ -145,18 +138,13 @@
                 callbacks.IndexEntityReference += (handle, e) =>
                 {
                     if (e.Cursor.Spelling != null && e.Location.SourceLocation.IsFromMainFile)
-                    {
-
-                       // Console.WriteLine("C:" + e.Cursor.Spelling + ", " + e.Cursor.Kind);
+                    {                        
                         switch (e.Cursor.Kind)
                         {                            
                             case CursorKind.TypeReference:
                             case CursorKind.CXXBaseSpecifier:                            
                             case CursorKind.TemplateReference:
-                            case CursorKind.DeclarationReferenceExpression:
-                            default:
                                 result.Add(new SyntaxHighlightingData() { Start = e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type = HighlightType.UserType });
-                                //Insert(UserTypeLocationIndexEntry.FromClangCursor(e.Cursor), MainFileTypes);
                                 break;
                         }
                     }
@@ -172,7 +160,6 @@
                         highlightData.Start = token.Extent.Start.FileLocation.Offset;
                         highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start; ;
 
-                        //Console.WriteLine("T:" + token.Spelling + ", " + token.Kind);
                         switch (token.Kind)
                         {
                             case TokenKind.Comment:
