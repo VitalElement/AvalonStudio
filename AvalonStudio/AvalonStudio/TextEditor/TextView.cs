@@ -46,6 +46,9 @@
             //    GetObservable(SelectionEndProperty))
             //    .Subscribe(_ => InvalidateFormattedText());
 
+           
+
+
             GetObservable(CaretIndexProperty)
                 .Subscribe(CaretIndexChanged);
         }
@@ -75,13 +78,30 @@
             //return hit.TextPosition + (hit.IsTrailing ? 1 : 0);
         }
 
+        private const string FontFamily = "Consolas";
+        private const double FontSize = 14;
+        private Size charSize = new Size();
+
+        private void GenerateTextProperties()
+        {
+            var formattedText = new FormattedText("x", FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+            charSize = formattedText.Measure();
+        }
+
         public override void Render(DrawingContext context)
         {
+            GenerateTextProperties();
+
             if (editor.TextDocument != null && editor.TextDocument.LineCount > 0)
             {                
-                var formattedText = new FormattedText(editor.TextDocument.GetText(editor.TextDocument.Lines[0].Offset, editor.TextDocument.Lines[0].EndOffset), "Consolas", 14, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+                for(int i = 0; i <editor.TextDocument.LineCount; i++)
+                {
+                    var line = editor.TextDocument.Lines[i];
 
-                context.DrawText(Brushes.WhiteSmoke, new Point(0, 0), formattedText);
+                    var formattedText = new FormattedText(editor.TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), "Consolas", 14, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+
+                    context.DrawText(Brushes.WhiteSmoke, new Point(0, charSize.Height * i), formattedText);
+                }                
             }
         }
 
@@ -152,7 +172,18 @@
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            return base.MeasureOverride(availableSize);
+            GenerateTextProperties();
+
+            if (editor.TextDocument != null)
+            {
+                //return base.MeasureOverride(availableSize);
+                return new Size(availableSize.Width, editor.TextDocument.LineCount * charSize.Height);
+            }
+            else
+            {
+                return base.MeasureOverride(availableSize);
+            }            
+
             //var text = Text;
 
             //if (!string.IsNullOrWhiteSpace(text))
