@@ -11,13 +11,14 @@
                      KeywordBrush ="#569CD6"                     
                      LiteralBrush="#D69D85"
                      PunctuationBrush="#D4D4D4"
-                     UserTypeBrush="#4BB289">        
-       
+                     UserTypeBrush="#4BB289">
+        <!--
         <te:TextEditor.Margins>
           <te:LineNumberMargin/>
         </te:TextEditor.Margins>
-        
-      </te:TextEditor>
+        -->
+
+                   </te:TextEditor>
     </Grid>
   </Border>
 </UserControl>
