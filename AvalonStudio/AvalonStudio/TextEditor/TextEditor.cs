@@ -51,10 +51,6 @@
                 ScrollViewer.HorizontalScrollBarVisibilityProperty,
                 horizontalScrollBarVisibility,
                 BindingPriority.Style);
-
-            var rope = CharRope.Create("testing.");
-
-            Console.WriteLine(rope.Length);
         }
         #endregion
 
@@ -581,7 +577,12 @@
 
             InstallMargin(new BreakPointMargin());
             InstallMargin(new LineNumberMargin());
+
+
+            ScrollViewer = this.GetTemplateChild<ScrollViewer>("scrollViewer");                        
         }
+
+        public ScrollViewer ScrollViewer { get; set; }
 
         protected override void OnPointerPressed(PointerPressEventArgs e)
         {
