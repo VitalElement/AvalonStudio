@@ -15,6 +15,16 @@
     [XmlInclude(typeof(HiddenProject))]
     public class Project : ProjectFolder
     {
+        public override bool ShouldSerializeId()
+        {
+            return false;
+        }
+
+        public override bool ShouldSerializeParentId()
+        {
+            return false;
+        }
+
         #region Constructors
         protected Project ()
             : base (null, null, null)
