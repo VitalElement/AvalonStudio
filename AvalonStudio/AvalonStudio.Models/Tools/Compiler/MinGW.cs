@@ -34,7 +34,7 @@ namespace AvalonStudio.Models.Tools.Compiler
 
             if (file.FileType == FileType.CPlusPlus)
             {
-                fileArguments = "-x c++ -std=c++11 -fno-use-cxa-atexit";
+                fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
             }
 
             startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", GetCompilerArguments(superProject, file.FileType), fileArguments, file.Location, outputFile);
