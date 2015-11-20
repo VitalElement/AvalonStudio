@@ -21,10 +21,20 @@
                 ParentId = parent.Id;
             }
         }
-        
-        public Guid Id { get; set; }
 
-        public Guid ParentId { get; set; }
+        public virtual bool ShouldSerializeId()
+        {
+            return true;
+        }
+
+        public virtual Guid Id { get; set; }
+
+        public virtual bool ShouldSerializeParentId()
+        {
+            return true;
+        }
+
+        public virtual Guid ParentId { get; set; }
 
         [XmlIgnore]
         public abstract string FileName { get; set; }
