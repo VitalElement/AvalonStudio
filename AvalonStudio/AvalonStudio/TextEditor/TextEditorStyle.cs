@@ -23,7 +23,7 @@
                 {
                     Setters = new[]
                     {
-                        new Setter(TemplatedControl.TemplateProperty, new ControlTemplate<TextEditor>(Template)),
+                        new Setter(TemplatedControl.TemplateProperty, new FuncControlTemplate<TextEditor>(Template)),
                         new Setter(TemplatedControl.BackgroundProperty, Brush.Parse ("#1e1e1e")),
                         new Setter(TemplatedControl.BorderBrushProperty, new SolidColorBrush(0xff707070)),
                         new Setter(TemplatedControl.BorderThicknessProperty, 2.0),

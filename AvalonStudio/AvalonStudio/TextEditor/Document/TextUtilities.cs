@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Documents;
 
 namespace AvalonStudio.TextEditor.Document
 {
