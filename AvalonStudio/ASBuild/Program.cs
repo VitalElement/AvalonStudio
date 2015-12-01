@@ -1,7 +1,6 @@
 ﻿namespace ASBuild
 {
     using AvalonStudio.Models.Solutions;
-    using System;
     using System.IO;
 
     class Program
