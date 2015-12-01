@@ -12,7 +12,7 @@
 
     public class Editor : TemplatedControl
     {
-        public override void Render(IDrawingContext context)
+        public override void Render(DrawingContext context)        
         {            
             Brush background = Brushes.Black;
 

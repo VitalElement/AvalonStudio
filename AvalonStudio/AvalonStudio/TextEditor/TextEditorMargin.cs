@@ -8,6 +8,7 @@
     using System.Threading.Tasks;
     using Perspex.Media;
     using Perspex.Rendering;
+    using Perspex;
 
     public class TextInfo
     {
@@ -23,9 +24,9 @@
             
         }
 
-        protected override void OnAttachedToVisualTree(IRenderRoot root)
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {            
-            base.OnAttachedToVisualTree(root);
+            base.OnAttachedToVisualTree(e);
 
             textEditor = Parent.Parent.Parent.Parent.Parent.Parent as TextEditor;
 

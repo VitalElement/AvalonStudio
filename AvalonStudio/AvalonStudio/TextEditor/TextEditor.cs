@@ -568,18 +568,18 @@
         }
 
         #region Overrides
-        protected override void OnTemplateApplied()
+        protected override void OnTemplateApplied(INameScope nameScope)
         {
-            textView = this.GetTemplateChild<TextView>("textView");
+            textView = nameScope.Find<TextView>("textView");
             textView.Cursor = new Cursor(StandardCursorType.Ibeam);
 
-            marginsContainer = this.GetTemplateChild<StackPanel>("marginContainer");
+            marginsContainer = nameScope.Find<StackPanel>("marginContainer");
 
             InstallMargin(new BreakPointMargin());
             InstallMargin(new LineNumberMargin());
 
 
-            ScrollViewer = this.GetTemplateChild<ScrollViewer>("scrollViewer");                        
+            ScrollViewer = nameScope.Find<ScrollViewer>("scrollViewer");
         }
 
         public ScrollViewer ScrollViewer { get; set; }
