@@ -5,7 +5,7 @@
     class Program
     {        
         static void Main(string[] args)
-        {            
+        {
             var app = new App();
             var window = new MainWindow();
 
