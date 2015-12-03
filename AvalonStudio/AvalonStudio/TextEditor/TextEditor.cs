@@ -439,9 +439,8 @@
         }
 
         private void MoveHorizontal(int count, InputModifiers modifiers)
-        {
-            //var text = TextDocument ?? string.Empty;
-            //var caretIndex = CaretIndex;
+        {            
+            var caretIndex = CaretIndex;
 
             //if ((modifiers & InputModifiers.Control) != 0)
             //{
@@ -455,25 +454,24 @@
             //    }
             //}
 
-            //CaretIndex = caretIndex += count;
+            CaretIndex = caretIndex += count;
         }
 
         private void MoveVertical(int count, InputModifiers modifiers)
-        {
-            //var formattedText = textView.FormattedText;
-            //var lines = formattedText.GetLines().ToList();
-            //var caretIndex = CaretIndex;
-            //var lineIndex = textView.GetLine(caretIndex) + count;
+        {                        
+            var caretIndex = CaretIndex;
+            var lineIndex = textView.GetLine(caretIndex) + count;
 
-            //if (lineIndex >= 0 && lineIndex < lines.Count)
-            //{
-            //    var line = lines[lineIndex];
-            //    var rect = formattedText.HitTestTextPosition(caretIndex);
-            //    var y = count < 0 ? rect.Y : rect.Bottom;
-            //    var point = new Point(rect.X, y + (count * (line.Height / 2)));
-            //    var hit = formattedText.HitTestPoint(point);
-            //    CaretIndex = hit.TextPosition + (hit.IsTrailing ? 1 : 0);
-            //}
+            if (lineIndex >= 0 && lineIndex < TextDocument.LineCount)
+            {
+                var line = TextDocument.Lines[lineIndex];
+
+                var rect = VisualLineGeometryBuilder.GetTextPosition(TextView, caretIndex);                
+                var y = count < 0 ? rect.Y : rect.Bottom;
+                var point = new Point(rect.X, y + (count * (TextView.CharSize.Height / 2)));
+
+                CaretIndex = TextView.GetOffsetFromPoint(point);
+            }
         }
 
         private void MoveHome(InputModifiers modifiers)
