@@ -15,7 +15,7 @@
 
         public override void Render(DrawingContext context, TextInfo textInfo)
         {            
-            //var charPos = textEditor.TextView.FormattedText.HitTestTextPosition(0);
+            //var charPos = textEditor.TextView.HitTestTextPosition(0);
 
             Width = textInfo.CharWidth * textInfo.NumLines.ToString().Length + 5;
 

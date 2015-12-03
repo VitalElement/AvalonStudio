@@ -172,31 +172,73 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="Controls\Console.paml.cs" />
-    <Compile Include="Controls\Console\ConsoleViewModel.cs" />
-    <Compile Include="Controls\Editor.paml.cs" />
+    <Compile Include="Controls\Console.paml.cs">
+      <DependentUpon>Console.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ConsoleViewModel.cs">
+      <DependentUpon>Console.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Editor.paml.cs">
+      <DependentUpon>Editor.paml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Editor\Document.cs" />
     <Compile Include="Controls\Editor\Editor.cs" />
     <Compile Include="Controls\Editor\EditorViewModel.cs" />
-    <Compile Include="Controls\MainMenu.paml.cs" />
-    <Compile Include="Controls\MainMenu\MainMenuViewModel.cs" />
-    <Compile Include="Controls\ModalDialog.paml.cs" />
-    <Compile Include="Controls\ModalDialog\Dialogs\PackageManagerDialogViewModel.cs" />
-    <Compile Include="Controls\ModalDialog\ModalDialogViewModelBase.cs" />
-    <Compile Include="Controls\PackageManagerDialog.paml.cs" />
-    <Compile Include="Controls\SolutionExplorerView.paml.cs" />
-    <Compile Include="Controls\SolutionExplorer\ViewModels\ProjectFileViewModel.cs" />
-    <Compile Include="Controls\SolutionExplorer\ViewModels\ProjectFolderViewModel.cs" />
-    <Compile Include="Controls\SolutionExplorer\ViewModels\ProjectItemViewModel.cs" />
-    <Compile Include="Controls\SolutionExplorer\ViewModels\ProjectViewModel.cs" />
-    <Compile Include="Controls\SolutionExplorer\ViewModels\SolutionExplorerViewModel.cs" />
-    <Compile Include="Controls\SolutionExplorer\ViewModels\SolutionFolderViewModel.cs" />
-    <Compile Include="Controls\SolutionExplorer\ViewModels\SolutionViewModel.cs" />
-    <Compile Include="Controls\SolutionExplorer\ViewModels\StandardProjectViewModel.cs" />
-    <Compile Include="Controls\StatusBar.paml.cs" />
-    <Compile Include="Controls\StatusBar\StatusBarViewModel.cs" />
-    <Compile Include="Controls\ToolBar.paml.cs" />
-    <Compile Include="Controls\ToolBar\ToolBarViewModel.cs" />
+    <Compile Include="Controls\MainMenu.paml.cs">
+      <DependentUpon>MainMenu.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MainMenuViewModel.cs">
+      <DependentUpon>MainMenu.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ModalDialog.paml.cs">
+      <DependentUpon>ModalDialog.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dialogs\PackageManagerDialogViewModel.cs" />
+    <Compile Include="Controls\ModalDialogViewModelBase.cs">
+      <DependentUpon>ModalDialog.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PackageManagerDialog.paml.cs">
+      <DependentUpon>PackageManagerDialog.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProjectFileViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProjectFolderViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProjectItemViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProjectViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SolutionExplorerView.paml.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SolutionExplorerViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SolutionFolderViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SolutionViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\StandardProjectViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\StatusBar.paml.cs">
+      <DependentUpon>StatusBar.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\StatusBarViewModel.cs">
+      <DependentUpon>StatusBar.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ToolBar.paml.cs">
+      <DependentUpon>ToolBar.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ToolBarViewModel.cs">
+      <DependentUpon>ToolBar.paml</DependentUpon>
+    </Compile>
     <Compile Include="Editor.cs" />
     <Compile Include="MVVM\Extensions.cs" />
     <Compile Include="MVVM\ObservableCollectionExtensions.cs" />
@@ -234,10 +276,13 @@
     <Compile Include="TextEditor\Document\UndoStack.cs" />
     <Compile Include="TextEditor\Document\WeakLineTracker.cs" />
     <Compile Include="TextEditor\LineNumberMargin.cs" />
+    <Compile Include="TextEditor\Rendering\IBackgroundRenderer.cs" />
+    <Compile Include="TextEditor\Rendering\SelectedLineBackgroundRenderer.cs" />
     <Compile Include="TextEditor\TextEditor.cs" />
     <Compile Include="TextEditor\TextEditorMargin.cs" />
     <Compile Include="TextEditor\TextEditorStyle.cs" />
-    <Compile Include="TextEditor\TextView.cs" />
+    <Compile Include="TextEditor\Rendering\TextView.cs" />
+    <Compile Include="TextEditor\Rendering\TextViewPosition.cs" />
     <Compile Include="TextEditor\Utils\CallbackOnDispose.cs" />
     <Compile Include="TextEditor\Utils\CharRope.cs" />
     <Compile Include="TextEditor\Utils\DelayedEvents.cs" />
