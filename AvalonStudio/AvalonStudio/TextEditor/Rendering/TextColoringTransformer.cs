@@ -57,13 +57,23 @@
         {
             foreach(var transform in editor.SyntaxHighlightingData)
             {               
-                if (transform.Start >= line.Offset)
+                if (transform.Start + transform.Length >= line.Offset)
                 {
-                    var formattedOffset = transform.Start - line.Offset;
+                    var formattedOffset = 0;
+
+                    if (transform.Start > line.Offset)
+                    {
+                        formattedOffset = transform.Start - line.Offset;
+                    }
 
                     var brush = GetBrush(transform.Type);
 
                     formattedText.SetForegroundBrush(brush, formattedOffset, transform.Length);
+                }
+
+                if(transform.Start > line.EndOffset)
+                {
+                    break;
                 }
             }
         }
