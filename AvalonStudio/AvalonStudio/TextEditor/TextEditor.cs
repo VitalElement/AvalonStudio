@@ -40,6 +40,11 @@
             var canScrollHorizontally = GetObservable(AcceptsReturnProperty)
                 .Select(x => !x);
 
+            SyntaxHighlightingDataProperty.Changed.Subscribe((args) =>
+            {
+                TextColorizer.SetTransformations();
+            });
+
             Bind(
                 ScrollViewer.CanScrollHorizontallyProperty,
                 canScrollHorizontally,
