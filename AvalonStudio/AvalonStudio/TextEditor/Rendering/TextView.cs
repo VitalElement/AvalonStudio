@@ -26,7 +26,6 @@
         public static readonly PerspexProperty<Brush> BackgroundProperty =
             Border.BackgroundProperty.AddOwner<TextBlock>();
 
-
         private readonly DispatcherTimer _caretTimer;
 
         private bool _caretBlink;
@@ -214,8 +213,10 @@
                 _caretTimer.Start();
                 InvalidateVisual();
 
-               // var rect = FormattedText.HitTestTextPosition(caretIndex);
-               // this.BringIntoView(rect);
+                if (caretIndex >= 0)
+                {
+                    this.BringIntoView(VisualLineGeometryBuilder.GetTextPosition(this, caretIndex));
+                }
             }
         }
 
