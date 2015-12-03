@@ -80,9 +80,9 @@
             throw new NotImplementedException();
         }
 
-        public List<SyntaxHighlightingData> RunCodeAnalysis(Func<bool> interruptRequested)
+        public SyntaxHighlightDataList RunCodeAnalysis(Func<bool> interruptRequested)
         {
-            List<SyntaxHighlightingData> result = new List<SyntaxHighlightingData>();
+            SyntaxHighlightDataList result = new SyntaxHighlightDataList();
 
             if (translationUnit == null)
             {

@@ -9,6 +9,6 @@
     {
         List<CodeCompletionData> CodeCompleteAt(uint line, uint column);
 
-        List<SyntaxHighlightingData> RunCodeAnalysis(Func<bool> interruptRequested);
+        SyntaxHighlightDataList RunCodeAnalysis(Func<bool> interruptRequested);
     }
 }
