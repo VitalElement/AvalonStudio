@@ -423,20 +423,19 @@
             }
 
             //string text = TextDocument ?? string.Empty;
-            //int caretIndex = CaretIndex;
+            int caretIndex = CaretIndex;
 
-            //if (!string.IsNullOrEmpty(input))
-            //{
-            //    DeleteSelection();
-            //    caretIndex = CaretIndex;
-            //    text = TextDocument ?? string.Empty;
-            //    TextDocument = text.Substring(0, caretIndex) + input + text.Substring(caretIndex);
-            //    CaretIndex += input.Length;
-            //    SelectionStart = SelectionEnd = CaretIndex;
-            //}
+            if (!string.IsNullOrEmpty(input))
+            {
+                DeleteSelection();
+                caretIndex = CaretIndex;
+                TextDocument.Insert(caretIndex, input);
+                CaretIndex += input.Length;
+                SelectionStart = SelectionEnd = CaretIndex;
+            }
 
-            //textChangedDelayTimer.Stop();
-            //textChangedDelayTimer.Start();
+            textChangedDelayTimer.Stop();
+            textChangedDelayTimer.Start();
         }
 
         private void MoveHorizontal(int count, InputModifiers modifiers)
@@ -656,118 +655,118 @@
 
 
         protected override void OnKeyDown(KeyEventArgs e)
-        {
-            //string text = TextDocument ?? string.Empty;
-            //int caretIndex = CaretIndex;
-            //bool movement = false;
-            //bool handled = true;
-            //var modifiers = e.Modifiers;
+        {            
+            int caretIndex = CaretIndex;
+            bool movement = false;
+            bool handled = true;
+            var modifiers = e.Modifiers;
 
-            //switch (e.Key)
-            //{
-            //    case Key.A:
-            //        if (modifiers == InputModifiers.Control)
-            //        {
-            //            SelectAll();
-            //        }
+            switch (e.Key)
+            {
+                case Key.A:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        SelectAll();
+                    }
 
-            //        break;
-            //    case Key.C:
-            //        if (modifiers == InputModifiers.Control)
-            //        {
-            //            Copy();
-            //        }
+                    break;
+                case Key.C:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        Copy();
+                    }
 
-            //        break;
-            //    case Key.V:
-            //        if (modifiers == InputModifiers.Control)
-            //        {
-            //            Paste();
-            //        }
+                    break;
+                case Key.V:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        Paste();
+                    }
 
-            //        break;
-            //    case Key.Left:
-            //        MoveHorizontal(-1, modifiers);
-            //        movement = true;
-            //        break;
+                    break;
 
-            //    case Key.Right:
-            //        MoveHorizontal(1, modifiers);
-            //        movement = true;
-            //        break;
+                case Key.Left:
+                    MoveHorizontal(-1, modifiers);
+                    movement = true;
+                    break;
 
-            //    case Key.Up:
-            //        MoveVertical(-1, modifiers);
-            //        movement = true;
-            //        break;
+                case Key.Right:
+                    MoveHorizontal(1, modifiers);
+                    movement = true;
+                    break;
 
-            //    case Key.Down:
-            //        MoveVertical(1, modifiers);
-            //        movement = true;
-            //        break;
+                case Key.Up:
+                    MoveVertical(-1, modifiers);
+                    movement = true;
+                    break;
 
-            //    case Key.Home:
-            //        MoveHome(modifiers);
-            //        movement = true;
-            //        break;
+                case Key.Down:
+                    MoveVertical(1, modifiers);
+                    movement = true;
+                    break;
 
-            //    case Key.End:
-            //        MoveEnd(modifiers);
-            //        movement = true;
-            //        break;
+                case Key.Home:
+                    MoveHome(modifiers);
+                    movement = true;
+                    break;
 
-            //    case Key.Back:
-            //        if (!DeleteSelection() && CaretIndex > 0)
-            //        {
-            //            TextDocument = text.Substring(0, caretIndex - 1) + text.Substring(caretIndex);
-            //            --CaretIndex;
-            //        }
+                case Key.End:
+                    MoveEnd(modifiers);
+                    movement = true;
+                    break;
 
-            //        break;
+                case Key.Back:
+                    if (!DeleteSelection() && CaretIndex > 0)
+                    {
+                        TextDocument.Remove(caretIndex - 1, 1);
+                        --CaretIndex;
+                    }
 
-            //    case Key.Delete:
-            //        if (!DeleteSelection() && caretIndex < text.Length)
-            //        {
-            //            TextDocument = text.Substring(0, caretIndex) + text.Substring(caretIndex + 1);
-            //        }
+                    break;
 
-            //        break;
+                case Key.Delete:
+                    if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
+                    {
+                        TextDocument.Remove(caretIndex, 1);                        
+                    }
 
-            //    case Key.Enter:
-            //        if (AcceptsReturn)
-            //        {
-            //            HandleTextInput("\r\n");
-            //        }
+                    break;
 
-            //        break;
+                case Key.Enter:
+                    if (AcceptsReturn)
+                    {
+                        HandleTextInput("\r\n");
+                    }
 
-            //    case Key.Tab:
-            //        if (AcceptsTab)
-            //        {
-            //            HandleTextInput("\t");
-            //        }
-            //        else
-            //        {
-            //            base.OnKeyDown(e);
-            //            handled = false;
-            //        }
+                    break;
 
-            //        break;
-            //}
+                case Key.Tab:
+                    if (AcceptsTab)
+                    {
+                        HandleTextInput("\t");
+                    }
+                    else
+                    {
+                        base.OnKeyDown(e);
+                        handled = false;
+                    }
 
-            //if (movement && ((modifiers & InputModifiers.Shift) != 0))
-            //{
-            //    SelectionEnd = CaretIndex;
-            //}
-            //else if (movement)
-            //{
-            //    SelectionStart = SelectionEnd = CaretIndex;
-            //}
+                    break;
+            }
 
-            //if (handled)
-            //{
-            //    e.Handled = true;
-            //}
+            if (movement && ((modifiers & InputModifiers.Shift) != 0))
+            {
+                SelectionEnd = CaretIndex;
+            }
+            else if (movement)
+            {
+                SelectionStart = SelectionEnd = CaretIndex;
+            }
+
+            if (handled)
+            {
+                e.Handled = true;
+            }
         }
 
         public void LineLeft()
