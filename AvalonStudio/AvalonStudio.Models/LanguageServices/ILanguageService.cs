@@ -9,6 +9,6 @@
     {
         List<CodeCompletionData> CodeCompleteAt(uint line, uint column);
 
-        SyntaxHighlightDataList RunCodeAnalysis(Func<bool> interruptRequested);
+        SyntaxHighlightDataList RunCodeAnalysis(List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
     }
 }

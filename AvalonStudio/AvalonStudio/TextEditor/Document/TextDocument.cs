@@ -37,7 +37,7 @@
         public void VerifyAccess()
         {
             if (Thread.CurrentThread != owner)
-                throw new InvalidOperationException("TextDocument can be accessed only from the thread that owns it.");
+                 throw new InvalidOperationException("TextDocument can be accessed only from the thread that owns it.");
         }
 
         /// <summary>
