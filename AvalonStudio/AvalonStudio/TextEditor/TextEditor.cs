@@ -15,6 +15,7 @@
     using System.Linq;
     using System.Reactive.Linq;
     using Document;
+    using Rendering;
 
     public class TextEditor : TemplatedControl, IScrollInfo
     {
@@ -97,15 +98,6 @@
             set { SetValue(TextChangedDelayProperty, value); textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value); }
         }
 
-        public static readonly PerspexProperty<TextDocument> TextDocumentProperty =
-            PerspexProperty.Register<TextEditor, TextDocument>("TextDocument");
-
-        public TextDocument TextDocument
-        {
-            get { return GetValue(TextDocumentProperty); }
-            set { SetValue(TextDocumentProperty, value); }
-        }
-
         public static readonly PerspexProperty<TextWrapping> TextWrappingProperty =
         TextBlock.TextWrappingProperty.AddOwner<TextEditor>();
 
@@ -134,7 +126,7 @@
         }
 
         public static readonly PerspexProperty<int> CaretIndexProperty =
-            PerspexProperty.Register<TextEditor, int>("CaretIndex", validate: ValidateCaretIndex, defaultBindingMode: BindingMode.TwoWay);
+            PerspexProperty.Register<TextEditor, int>("CaretIndex", defaultBindingMode: BindingMode.TwoWay);
 
         public int CaretIndex
         {
@@ -143,7 +135,7 @@
         }
 
         public static readonly PerspexProperty<int> SelectionStartProperty =
-            PerspexProperty.Register<TextEditor, int>("SelectionStart", validate: ValidateCaretIndex);
+            PerspexProperty.Register<TextEditor, int>("SelectionStart");
 
         public int SelectionStart
         {
@@ -152,7 +144,7 @@
         }
 
         public static readonly PerspexProperty<int> SelectionEndProperty =
-            PerspexProperty.Register<TextEditor, int>("SelectionEnd", validate: ValidateCaretIndex);
+            PerspexProperty.Register<TextEditor, int>("SelectionEnd");
 
         public int SelectionEnd
         {
@@ -232,7 +224,13 @@
             set { SetValue(CommentBrushProperty, value); }
         }
 
+        public static readonly PerspexProperty<TextDocument> TextDocumentProperty = TextView.TextDocumentProperty.AddOwner<TextEditor>();
 
+        public TextDocument TextDocument
+        {
+            get { return GetValue(TextDocumentProperty); }
+            set { SetValue(TextDocumentProperty, value); }
+        }
 
         public TextView TextView
         {
@@ -354,7 +352,7 @@
         private void SelectAll()
         {
             SelectionStart = 0;
-            SelectionEnd = TextDocument.TextLength;
+            SelectionEnd = textView.TextDocument.TextLength;
         }
 
         private bool DeleteSelection()
@@ -365,8 +363,8 @@
             if (selectionStart != selectionEnd)
             {
                 var start = Math.Min(selectionStart, selectionEnd);
-                var end = Math.Max(selectionStart, selectionEnd);                
-                TextDocument.Remove(start, end);                
+                var end = Math.Max(selectionStart, selectionEnd);
+                textView.TextDocument.Remove(start, end);
                 SelectionStart = SelectionEnd = CaretIndex = start;
                 return true;
             }
@@ -383,12 +381,12 @@
             var start = Math.Min(selectionStart, selectionEnd);
             var end = Math.Max(selectionStart, selectionEnd);
 
-            if (start == end || (TextDocument?.TextLength ?? 0) < end)
+            if (start == end || (textView.TextDocument?.TextLength ?? 0) < end)
             {
                 return "";
             }
 
-            return TextDocument.GetText(start, end - start);
+            return textView.TextDocument.GetText(start, end - start);
         }
 
         //private int GetLine(int caretIndex, IList<FormattedTextLine> lines)
@@ -410,12 +408,12 @@
         //    return i;
         //}
 
-        private static int ValidateCaretIndex(PerspexObject o, int value)
-        {
-            var text = o.GetValue(TextDocumentProperty);
-            var length = (text != null) ? text.TextLength : 0;
-            return Math.Max(0, Math.Min(length, value));
-        }
+        //private static int ValidateCaretIndex(PerspexObject o, int value)
+        //{
+        //    var textDocument = o.GetValue(DocumentProperty);
+        //    var length = (text != null) ? text.TextLength : 0;
+        //    return Math.Max(0, Math.Min(length, value));
+        //}
 
         private void HandleTextInput(string input)
         {
@@ -570,8 +568,11 @@
         #region Overrides
         protected override void OnTemplateApplied(INameScope nameScope)
         {
-            textView = nameScope.Find<TextView>("textView");
+            textView = nameScope.Find<AvalonStudio.TextEditor.Rendering.TextView>("textView");
             textView.Cursor = new Cursor(StandardCursorType.Ibeam);
+
+
+            TextView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer(this));
 
             marginsContainer = nameScope.Find<StackPanel>("marginContainer");
 
@@ -590,7 +591,7 @@
             {
                 var point = e.GetPosition(textView);
                 var index = CaretIndex = textView.GetCaretIndex(point);
-                var text = TextDocument;
+                var text = textView.TextDocument;
 
                 switch (e.ClickCount)
                 {

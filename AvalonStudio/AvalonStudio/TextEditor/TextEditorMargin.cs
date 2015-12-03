@@ -40,13 +40,13 @@
         {
             TextInfo info = new TextInfo();
 
-           // var charPos = textEditor.TextView.FormattedText.HitTestTextPosition(0);
+            // var charPos = textEditor.TextView.FormattedText.HitTestTextPosition(0);
 
-            //info.LineHeight = charPos.Height;
-            //info.CharWidth = charPos.Width;
-            //info.NumLines = (int)(Bounds.Height / info.LineHeight);
+            info.LineHeight = 10;// charPos.Height;
+            info.CharWidth = 10;//charPos.Width;
+            info.NumLines = (int)(Bounds.Height / info.LineHeight);
 
-            //Render(context, info);
+            Render(context, info);
         }
 
         public abstract void Render(DrawingContext context, TextInfo textInfo);

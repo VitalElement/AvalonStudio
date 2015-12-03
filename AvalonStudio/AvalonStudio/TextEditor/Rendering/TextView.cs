@@ -1,10 +1,12 @@
-﻿namespace AvalonStudio.TextEditor
+﻿namespace AvalonStudio.TextEditor.Rendering
 {
+    using Document;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Media;
     using Perspex.Threading;
     using Perspex.VisualTree;
+    using Rendering;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -27,6 +29,15 @@
         private bool _caretBlink;
 
         private IObservable<bool> _canScrollHorizontally;
+
+        public static readonly PerspexProperty<TextDocument> TextDocumentProperty =
+            PerspexProperty.Register<TextView, TextDocument>("TextDocument");
+
+        public TextDocument TextDocument
+        {
+            get { return GetValue(TextDocumentProperty); }
+            set { SetValue(TextDocumentProperty, value); }
+        }
 
         private TextEditor editor;
 
@@ -51,6 +62,8 @@
 
             GetObservable(CaretIndexProperty)
                 .Subscribe(CaretIndexChanged);
+
+            backgroundRenderers = new List<IBackgroundRenderer>();
         }
 
         public int CaretIndex
@@ -73,34 +86,67 @@
 
         public int GetCaretIndex(Point point)
         {
-            return 1;
-            //var hit = FormattedText.HitTestPoint(point);
-            //return hit.TextPosition + (hit.IsTrailing ? 1 : 0);
+            int result = -1;
+
+            if(TextDocument != null)
+            {
+                var column = Math.Ceiling(point.X / CharSize.Width);
+                var line = Math.Ceiling(point.Y / CharSize.Height);
+
+                result = TextDocument.GetOffset((int)line, (int)column);
+            }
+
+            return result;            
         }
 
         private const string FontFamily = "Consolas";
         private const double FontSize = 14;
-        private Size charSize = new Size();
+        public Size CharSize = new Size();
 
         private void GenerateTextProperties()
         {
             var formattedText = new FormattedText("x", FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
-            charSize = formattedText.Measure();
+            CharSize = formattedText.Measure();
+        }
+
+        private void RenderBackground (DrawingContext context)
+        {
+            foreach(var renderer in BackgroundRenderers)
+            {
+                renderer.Draw(this, context);
+            }
         }
 
         public override void Render(DrawingContext context)
         {
             GenerateTextProperties();
 
-            if (editor.TextDocument != null && editor.TextDocument.LineCount > 0)
-            {                
-                for(int i = 0; i <editor.TextDocument.LineCount; i++)
+            if (TextDocument != null)
+            {
+                // Render background layer.
+                RenderBackground(context);
+
+                foreach (var line in TextDocument.Lines)
                 {
-                    var line = editor.TextDocument.Lines[i];
+                    // Render text background layer.
 
-                    var formattedText = new FormattedText(editor.TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), "Consolas", 14, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+                    // Render text layer.
 
-                    context.DrawText(Brushes.WhiteSmoke, new Point(0, charSize.Height * i), formattedText);
+                    // Render text decoration layer.
+                }
+            }
+
+
+
+            if (TextDocument != null && TextDocument.LineCount > 0)
+            {                
+                for(int i = 0; i <TextDocument.LineCount; i++)
+                {
+                    var line = TextDocument.Lines[i];
+
+                    var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), "Consolas", 14, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+
+                    context.DrawText(Brushes.WhiteSmoke, new Point(0, CharSize.Height * i), formattedText);
                 }                
             }
         }
@@ -174,10 +220,10 @@
         {
             GenerateTextProperties();
 
-            if (editor.TextDocument != null)
+            if (TextDocument != null)
             {
                 //return base.MeasureOverride(availableSize);
-                return new Size(availableSize.Width, editor.TextDocument.LineCount * charSize.Height);
+                return new Size(availableSize.Width, TextDocument.LineCount * CharSize.Height);
             }
             else
             {
@@ -211,5 +257,13 @@
             _caretBlink = !_caretBlink;
             InvalidateVisual();
         }
+
+        private List<IBackgroundRenderer> backgroundRenderers;
+        public List<IBackgroundRenderer> BackgroundRenderers
+        {
+            get { return backgroundRenderers; }
+            set { backgroundRenderers = value; }
+        }
+
     }   
 }
