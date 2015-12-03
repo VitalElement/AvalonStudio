@@ -1,5 +1,6 @@
 ﻿
 
+using AvalonStudio.TextEditor.Document;
 using Perspex.Media;
 
 namespace AvalonStudio.TextEditor.Rendering
@@ -7,7 +8,7 @@ namespace AvalonStudio.TextEditor.Rendering
     public class TextTransformation
     {
         public Brush Foreground;
-        public int Offset;
-        public int Length;
+        public TextAnchor StartAnchor;
+        public TextAnchor EndAnchor;
     }
 }

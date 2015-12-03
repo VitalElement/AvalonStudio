@@ -9,11 +9,25 @@
         public TextColoringTransformer (TextEditor editor)
         {
             this.editor = editor;
+                        
+            TextTransformations = new List<TextTransformation>();
         }
 
         private TextEditor editor;
 
-        public List<TextTransformation> TextTransformations;
+        public void SetTransformations ()
+        {
+            var transformations = new List<TextTransformation>();
+
+            foreach (var transform in editor.SyntaxHighlightingData)
+            {
+                transformations.Add(new TextTransformation { Foreground = GetBrush(transform.Type), StartAnchor = editor.TextDocument.CreateAnchor(transform.Start), EndAnchor = editor.TextDocument.CreateAnchor(transform.Start + transform.Length) });
+            }
+
+            TextTransformations = transformations;
+        }
+
+        public List<TextTransformation> TextTransformations;        
 
         public Brush GetBrush(HighlightType type)
         {
@@ -55,23 +69,21 @@
 
         public void ColorizeLine(DocumentLine line, FormattedText formattedText)
         {
-            foreach(var transform in editor.SyntaxHighlightingData)
+            foreach (var transform in TextTransformations)
             {               
-                if (transform.Start + transform.Length >= line.Offset)
+                if (transform.EndAnchor.Offset >= line.Offset)
                 {
                     var formattedOffset = 0;
 
-                    if (transform.Start > line.Offset)
+                    if (transform.StartAnchor.Offset > line.Offset)
                     {
-                        formattedOffset = transform.Start - line.Offset;
-                    }
+                        formattedOffset = transform.StartAnchor.Offset - line.Offset;
+                    }                    
 
-                    var brush = GetBrush(transform.Type);
-
-                    formattedText.SetForegroundBrush(brush, formattedOffset, transform.Length);
+                    formattedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndAnchor.Offset);
                 }
 
-                if(transform.Start > line.EndOffset)
+                if(transform.StartAnchor.Offset > line.EndOffset)
                 {
                     break;
                 }
