@@ -80,7 +80,7 @@
             throw new NotImplementedException();
         }
 
-        public SyntaxHighlightDataList RunCodeAnalysis(Func<bool> interruptRequested)
+        public SyntaxHighlightDataList RunCodeAnalysis(List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             SyntaxHighlightDataList result = new SyntaxHighlightDataList();
 
@@ -89,7 +89,14 @@
                 translationUnit = GenerateTranslationUnit();
             }
 
-            translationUnit.Reparse(file.Project.UnsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
+            List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
+
+            foreach (var unsavedFile in unsavedFiles)
+            {
+                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+            }
+
+            translationUnit.Reparse(clangUnsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
 
             if (file != null && file.IsCodeFile)
             {
