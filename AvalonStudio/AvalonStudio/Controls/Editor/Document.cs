@@ -50,7 +50,6 @@
             }
         }
 
-
         public ILanguageService LanguageService { get; set; }
         public TextDocument TextDocument { get; set; }
     }
