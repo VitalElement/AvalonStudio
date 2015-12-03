@@ -7,6 +7,7 @@
     using Perspex.Controls.Templates;
     using Perspex.Media;
     using Perspex.Styling;
+    using Rendering;
     using System.Linq;
     using System.Reactive.Linq;
 
@@ -89,6 +90,7 @@
                                         [~TextView.CaretIndexProperty] = control[~TextEditor.CaretIndexProperty],
                                         [~TextView.SelectionStartProperty] = control[~TextEditor.SelectionStartProperty],
                                         [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],                                        
+                                        [~TextView.TextDocumentProperty] = control[~TextEditor.TextDocumentProperty],
                                         [Grid.ColumnProperty] = 2,
                                     }
                                 }
