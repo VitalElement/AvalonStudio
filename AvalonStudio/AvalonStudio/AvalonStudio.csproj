@@ -278,6 +278,7 @@
     <Compile Include="TextEditor\LineNumberMargin.cs" />
     <Compile Include="TextEditor\Rendering\IBackgroundRenderer.cs" />
     <Compile Include="TextEditor\Rendering\SelectedLineBackgroundRenderer.cs" />
+    <Compile Include="TextEditor\Rendering\VisualLineGeometryBuilder.cs" />
     <Compile Include="TextEditor\TextEditor.cs" />
     <Compile Include="TextEditor\TextEditorMargin.cs" />
     <Compile Include="TextEditor\TextEditorStyle.cs" />
