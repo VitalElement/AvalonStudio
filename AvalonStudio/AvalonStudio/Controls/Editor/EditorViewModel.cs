@@ -24,35 +24,11 @@
             {
                 model.Document.CodeAnalysisDataChanged += (s, ee) =>
                 {
-                    HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.Document.SyntaxHighlightingData);
+                    HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.Document.SyntaxHighlightingData);                                        
                 };
 
                 this.RaisePropertyChanged(() => TextDocument);
             };
-
-            
-        }
-        
-        public string Text
-        {
-            get
-            {
-                if (Model.Document != null)
-                {
-                    return Model.Document.Text;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            set
-            {
-                if (Model.Document != null)
-                {
-                    Model.Document.Text = value; this.RaisePropertyChanged();
-                }
-            }
         }
 
         public TextDocument TextDocument

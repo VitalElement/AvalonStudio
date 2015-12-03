@@ -277,7 +277,10 @@
     <Compile Include="TextEditor\Document\WeakLineTracker.cs" />
     <Compile Include="TextEditor\LineNumberMargin.cs" />
     <Compile Include="TextEditor\Rendering\IBackgroundRenderer.cs" />
+    <Compile Include="TextEditor\Rendering\IDocumentLineTransformer.cs" />
     <Compile Include="TextEditor\Rendering\SelectedLineBackgroundRenderer.cs" />
+    <Compile Include="TextEditor\Rendering\TextColoringTransformer.cs" />
+    <Compile Include="TextEditor\Rendering\TextTransformation.cs" />
     <Compile Include="TextEditor\Rendering\VisualLineGeometryBuilder.cs" />
     <Compile Include="TextEditor\TextEditor.cs" />
     <Compile Include="TextEditor\TextEditorMargin.cs" />

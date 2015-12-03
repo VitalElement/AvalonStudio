@@ -52,6 +52,8 @@
                 ScrollViewer.HorizontalScrollBarVisibilityProperty,
                 horizontalScrollBarVisibility,
                 BindingPriority.Style);
+
+            TextColorizer = new TextColoringTransformer(this);
         }        
         #endregion
 
@@ -231,6 +233,8 @@
             get { return GetValue(TextDocumentProperty); }
             set { SetValue(TextDocumentProperty, value); }
         }
+
+        public TextColoringTransformer TextColorizer { get; set; }
 
         public TextView TextView
         {
@@ -568,8 +572,8 @@
             textView = nameScope.Find<AvalonStudio.TextEditor.Rendering.TextView>("textView");
             textView.Cursor = new Cursor(StandardCursorType.Ibeam);
 
-
             TextView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer(this));
+            TextView.DocumentLineTransformers.Add(TextColorizer);
 
             marginsContainer = nameScope.Find<StackPanel>("marginContainer");
 

@@ -28,16 +28,7 @@
 
                 if (result != null)
                 {
-                    Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);
-                    using (var fs = File.OpenText(Workspace.This.SolutionExplorer.Model.DefaultProject.Children.OfType<ProjectFile>().First().Location))
-                    {
-                        var content = fs.ReadToEnd();
-
-                        Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            Workspace.This.Editor.Text = content;
-                        });
-                    }
+                    Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);                    
                 }
             });
 
