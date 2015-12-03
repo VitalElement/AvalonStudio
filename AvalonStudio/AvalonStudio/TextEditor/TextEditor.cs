@@ -471,9 +471,9 @@
             var caretIndex = CaretIndex;
             var lineIndex = textView.GetLine(caretIndex) + count;
 
-            if (lineIndex >= 0 && lineIndex < TextDocument.LineCount)
+            if (lineIndex > 0 && lineIndex <= TextDocument.LineCount)
             {
-                var line = TextDocument.Lines[lineIndex];
+                var line = TextDocument.Lines[lineIndex-1];
 
                 var rect = VisualLineGeometryBuilder.GetTextPosition(TextView, caretIndex);                
                 var y = count < 0 ? rect.Y : rect.Bottom;

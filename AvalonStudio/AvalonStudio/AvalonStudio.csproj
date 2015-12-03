@@ -239,7 +239,6 @@
     <Compile Include="Controls\ToolBarViewModel.cs">
       <DependentUpon>ToolBar.paml</DependentUpon>
     </Compile>
-    <Compile Include="Editor.cs" />
     <Compile Include="MVVM\Extensions.cs" />
     <Compile Include="MVVM\ObservableCollectionExtensions.cs" />
     <Compile Include="MVVM\ViewModel.cs" />
@@ -310,7 +309,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\Console.paml" />
-    <EmbeddedResource Include="Controls\Editor.paml" />
+    <EmbeddedResource Include="Controls\Editor.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\MainMenu.paml" />
     <EmbeddedResource Include="Controls\ModalDialog.paml" />
     <EmbeddedResource Include="Controls\PackageManagerDialog.paml" />
