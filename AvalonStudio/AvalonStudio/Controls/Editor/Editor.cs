@@ -26,15 +26,8 @@
 
         public void OpenFile (ProjectFile file)
         {
-            if (File.Exists(file.Location))
-            {
-                using (var fs = File.OpenText(file.Location))
-                {
-                    TextDocument = new TextDocument(fs.ReadToEnd());
-                }
-            }
-
             Document = new Document(file);
+            TextDocument = Document.TextDocument;
 
             DocumentLoaded(this, new EventArgs());
 
