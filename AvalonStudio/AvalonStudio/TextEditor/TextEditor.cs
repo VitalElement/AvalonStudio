@@ -52,13 +52,13 @@
                 ScrollViewer.HorizontalScrollBarVisibilityProperty,
                 horizontalScrollBarVisibility,
                 BindingPriority.Style);
-        }
+        }        
         #endregion
 
         #region Private Data
         private TextView textView;
         private StackPanel marginsContainer;
-        private readonly DispatcherTimer textChangedDelayTimer;
+        private readonly DispatcherTimer textChangedDelayTimer;        
         #endregion
 
         #region Pespex Properties
@@ -833,6 +833,11 @@
         public Rect MakeVisible(Visual visual, Rect rectangle)
         {
             throw new NotImplementedException();
+        }
+
+        private void CaretTimer_Tick(object sender, EventArgs e)
+        {
+
         }
 
         #endregion
