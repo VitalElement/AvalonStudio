@@ -99,14 +99,12 @@
 
             return result;            
         }
-
-        private const string FontFamily = "Consolas";
-        private const double FontSize = 14;
+        
         public Size CharSize = new Size();
 
         private void GenerateTextProperties()
         {
-            var formattedText = new FormattedText("x", FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+            var formattedText = new FormattedText("x", editor.FontFamily, editor.FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
             CharSize = formattedText.Measure();
         }
 
@@ -130,7 +128,7 @@
 
         private void RenderText (DrawingContext context, DocumentLine line)
         {
-            var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), "Consolas", 14, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);            
+            var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), editor.FontFamily, editor.FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);            
 
             foreach(var lineTransformer in DocumentLineTransformers)
             {

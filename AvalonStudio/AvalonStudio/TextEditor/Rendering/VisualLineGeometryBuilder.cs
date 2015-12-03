@@ -15,7 +15,7 @@
 
         public static Rect GetTextPosition (TextView textView, TextViewPosition position)
         {
-            return new Rect(textView.CharSize.Width * (position.Column - 1) + 1, textView.CharSize.Height * (position.Line - 1) + 1, textView.CharSize.Width, textView.CharSize.Height);
+            return new Rect(textView.CharSize.Width * (position.Column - 1), textView.CharSize.Height * (position.Line - 1), textView.CharSize.Width, textView.CharSize.Height);
         }
 
         public static IEnumerable<Rect> GetRectsForSegment(TextView textView, ISegment segment, bool extendToFullWidthAtLineEnd = false)
