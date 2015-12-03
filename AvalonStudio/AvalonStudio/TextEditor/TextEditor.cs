@@ -590,7 +590,7 @@
             if (e.Source == textView)
             {
                 var point = e.GetPosition(textView);
-                var index = CaretIndex = textView.GetCaretIndex(point);
+                var index = CaretIndex = textView.GetOffsetFromPoint(point);
                 var text = textView.TextDocument;
 
                 switch (e.ClickCount)
@@ -622,7 +622,7 @@
             if (e.Device.Captured == textView)
             {
                 var point = e.GetPosition(textView);
-                CaretIndex = SelectionEnd = textView.GetCaretIndex(point);
+                CaretIndex = SelectionEnd = textView.GetOffsetFromPoint(point);
             }
         }
 

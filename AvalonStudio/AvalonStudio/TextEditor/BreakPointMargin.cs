@@ -3,7 +3,7 @@
     using Perspex;
     using Perspex.Input;
     using Perspex.Media;
-
+    using Rendering;
     class BreakPointMargin : TextEditorMargin
     {
         private bool previewPointVisible = false;
@@ -32,10 +32,9 @@
         {
             previewPointVisible = true;
 
-            //var result = textEditor.TextView.FormattedText.HitTestPoint(e.GetPosition(this));
-            //var line = textEditor.TextView.GetLine(result.TextPosition);
+            var offset = textEditor.TextView.GetOffsetFromPoint(e.GetPosition(this));
 
-            //BpLine = line;
+            BpLine = textEditor.TextDocument.GetLineByOffset(offset).LineNumber - 1; // convert from text line to visual line.
 
             InvalidateVisual();
             
