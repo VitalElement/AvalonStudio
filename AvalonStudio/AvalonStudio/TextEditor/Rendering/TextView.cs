@@ -87,7 +87,7 @@
             set { SetValue(SelectionEndProperty, value); }
         }
 
-        public int GetCaretIndex(Point point)
+        public int GetOffsetFromPoint(Point point)
         {
             int result = -1;
 
@@ -120,6 +120,24 @@
             }
         }
 
+        private void RenderTextBackground (DrawingContext context, DocumentLine line)
+        {
+
+        }
+
+        private void RenderTextDecoration (DrawingContext context, DocumentLine line)
+        {
+
+        }
+
+        private void RenderText (DrawingContext context, DocumentLine line)
+        {
+            var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), "Consolas", 14, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+
+            
+            context.DrawText(Brushes.WhiteSmoke, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
+        }
+
         public override void Render(DrawingContext context)
         {
             GenerateTextProperties();
@@ -132,11 +150,13 @@
                 foreach (var line in TextDocument.Lines)
                 {
                     // Render text background layer.
+                    RenderTextBackground(context, line);
 
                     // Render text layer.
+                    RenderText(context, line);
 
                     // Render text decoration layer.
-
+                    RenderTextDecoration(context, line);
                 }
 
                 var backgroundColor = (((Control)TemplatedParent).GetValue(BackgroundProperty) as SolidColorBrush)?.Color;
@@ -164,41 +184,11 @@
                         new Point(x, b));
                 }
             }
-
-
-
-            if (TextDocument != null && TextDocument.LineCount > 0)
-            {                
-                for(int i = 0; i <TextDocument.LineCount; i++)
-                {
-                    var line = TextDocument.Lines[i];
-
-                    var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), "Consolas", 14, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
-
-                    context.DrawText(Brushes.WhiteSmoke, new Point(0, CharSize.Height * i), formattedText);
-                }                
-            }
         }
 
         public int GetLine(int caretIndex)
         {
-            //var lines = FormattedText.GetLines().ToList();
-
-            //int pos = 0;
-            //int i;
-
-            //for (i = 0; i < lines.Count; ++i)
-            //{
-            //    var line = lines[i];
-            //    pos += line.Length;
-
-            //    if (pos > caretIndex)
-            //    {
-            //        break;
-            //    }
-            //}
-
-            return 1;
+            return TextDocument.GetLineByOffset(caretIndex).LineNumber;
         }
 
         public void ShowCaret()
@@ -229,22 +219,6 @@
             }
         }
 
-        //protected override FormattedText CreateFormattedText(Size constraint)
-        //{
-        //    var result = base.CreateFormattedText(constraint);
-        //    var selectionStart = SelectionStart;
-        //    var selectionEnd = SelectionEnd;
-        //    var start = Math.Min(selectionStart, selectionEnd);
-        //    var length = Math.Max(selectionStart, selectionEnd) - start;
-
-        //    if (length > 0)
-        //    {
-        //        result.SetForegroundBrush(Brushes.White, start, length);
-        //    }
-
-        //    return result;
-        //}
-
         protected override Size MeasureOverride(Size availableSize)
         {
             GenerateTextProperties();
@@ -257,28 +231,7 @@
             else
             {
                 return base.MeasureOverride(availableSize);
-            }            
-
-            //var text = Text;
-
-            //if (!string.IsNullOrWhiteSpace(text))
-            //{
-            //    return base.MeasureOverride(availableSize);
-            //}
-            //else
-            //{
-            //    //// TODO: Pretty sure that measuring "X" isn't the right way to do this...
-            //    //using (var formattedText = new FormattedText(
-            //    //    "X",
-            //    //    FontFamily,
-            //    //    FontSize,
-            //    //    FontStyle,
-            //    //    TextAlignment.Left,
-            //    //    FontWeight))
-            //    //{
-            //    //    return formattedText.Measure();
-            //    //}
-            //}
+            }
         }
 
         private void CaretTimerTick(object sender, EventArgs e)
