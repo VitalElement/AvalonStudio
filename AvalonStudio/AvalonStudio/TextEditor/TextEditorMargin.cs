@@ -9,7 +9,7 @@
     using Perspex.Media;
     using Perspex.Rendering;
     using Perspex;
-
+    using Rendering;
     public class TextInfo
     {
         public double LineHeight { get; set; }
@@ -38,15 +38,19 @@
 
         public override void Render(DrawingContext context)
         {
-            TextInfo info = new TextInfo();
+            if (textEditor.TextDocument != null)
+            {
+                TextInfo info = new TextInfo();
 
-            // var charPos = textEditor.TextView.FormattedText.HitTestTextPosition(0);
+                var charRect = VisualLineGeometryBuilder.GetTextPosition(textEditor.TextView, 0);
 
-            info.LineHeight = 10;// charPos.Height;
-            info.CharWidth = 10;//charPos.Width;
-            info.NumLines = (int)(Bounds.Height / info.LineHeight);
+                info.LineHeight = charRect.Height;
+                info.CharWidth = charRect.Width;
 
-            Render(context, info);
+                info.NumLines = (int)(Bounds.Height / info.LineHeight);
+
+                Render(context, info);
+            }
         }
 
         public abstract void Render(DrawingContext context, TextInfo textInfo);
