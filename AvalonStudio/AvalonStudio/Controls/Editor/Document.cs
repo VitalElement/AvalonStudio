@@ -11,7 +11,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using TextEditor;
-
+    using TextEditor.Document;
     public class Document
     {
         private ProjectFile file;
@@ -24,7 +24,7 @@
             {
                 using (var fs = File.OpenText(file.Location))
                 {
-                    Text = fs.ReadToEnd();
+                    TextDocument = new TextDocument(fs.ReadToEnd());
                 }
             }
 
@@ -52,6 +52,6 @@
 
 
         public ILanguageService LanguageService { get; set; }
-        public string Text { get; set; }
+        public TextDocument TextDocument { get; set; }
     }
 }

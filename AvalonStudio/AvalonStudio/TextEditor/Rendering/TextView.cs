@@ -59,14 +59,12 @@
             //    GetObservable(SelectionStartProperty),
             //    GetObservable(SelectionEndProperty))
             //    .Subscribe(_ => InvalidateFormattedText());
-
-           
-
-
+            
             GetObservable(CaretIndexProperty)
                 .Subscribe(CaretIndexChanged);
 
             backgroundRenderers = new List<IBackgroundRenderer>();
+            documentLineTransformers = new List<IDocumentLineTransformer>();
         }
 
         public int CaretIndex
@@ -132,8 +130,12 @@
 
         private void RenderText (DrawingContext context, DocumentLine line)
         {
-            var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), "Consolas", 14, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+            var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), "Consolas", 14, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);            
 
+            foreach(var lineTransformer in DocumentLineTransformers)
+            {
+                lineTransformer.ColorizeLine(line, formattedText);
+            }
             
             context.DrawText(Brushes.WhiteSmoke, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
         }
@@ -245,6 +247,13 @@
         {
             get { return backgroundRenderers; }
             set { backgroundRenderers = value; }
+        }
+
+        private List<IDocumentLineTransformer> documentLineTransformers;
+        public List<IDocumentLineTransformer> DocumentLineTransformers
+        {
+            get { return documentLineTransformers; }
+            set { documentLineTransformers = value; }
         }
 
     }   
