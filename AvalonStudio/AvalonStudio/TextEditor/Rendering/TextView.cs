@@ -17,10 +17,8 @@
         {
         }
 
-        public TextView(TextEditor editor)
+        public TextView()
         {
-            this.editor = editor;
-
             _caretTimer = new DispatcherTimer();
             _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
             _caretTimer.Tick += CaretTimerTick;
@@ -41,6 +39,22 @@
         {
             get { return GetValue(TextWrappingProperty); }
             set { SetValue(TextWrappingProperty, value); }
+        }
+
+        public static readonly PerspexProperty<string> FontFamilyProperty = TextEditor.FontFamilyProperty.AddOwner<TextView>();
+
+        public string FontFamily
+        {
+            get { return GetValue(FontFamilyProperty); }
+            set { SetValue(FontFamilyProperty, value); }
+        }
+
+        public static readonly PerspexProperty<double> FontSizeProperty = TextEditor.FontSizeProperty.AddOwner<TextView>();
+
+        public double FontSize
+        {
+            get { return GetValue(FontSizeProperty); }
+            set { SetValue(FontSizeProperty, value); }
         }
 
         public static readonly PerspexProperty<bool> AcceptsReturnProperty =
@@ -205,15 +219,13 @@
         private readonly DispatcherTimer _caretTimer;
 
         private bool _caretBlink;
-
-        private TextEditor editor;
         #endregion
 
 
         #region Private Methods
         private void GenerateTextProperties()
         {
-            var formattedText = new FormattedText("x", editor.FontFamily, editor.FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+            var formattedText = new FormattedText("x", FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
             CharSize = formattedText.Measure();
         }
 
@@ -237,7 +249,7 @@
 
         private void RenderText(DrawingContext context, DocumentLine line)
         {
-            var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), editor.FontFamily, editor.FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+            var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
 
             foreach (var lineTransformer in DocumentLineTransformers)
             {
