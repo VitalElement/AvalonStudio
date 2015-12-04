@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LocationRelativeToParent>IntegratedDebugProtocol\IntegratedDebugProtocol.veproj</LocationRelativeToParent>
+  <Children>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>38723905-6506-4a13-86a6-3515f9addca3</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>IDP.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>58d9312b-c20d-423b-b87e-8c9a607977c2</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>IDP.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>6fd26e89-46a6-4b60-bdda-e13c756954a3</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>IDPPacket.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>a6096e1c-ff1b-4d50-9a80-a915a0a8b727</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>IDPPacket.h</LocationRelativeToParent>
+    </ProjectItem>
+  </Children>
+  <ExportedIncludes>
+    <string>IntegratedDebugProtocol</string>
+  </ExportedIncludes>
+  <Configurations>
+    <ProjectConfiguration>
+      <Name>Default</Name>
+      <ToolChain xsi:type="GCCToolChain">
+        <Optimization>Off</Optimization>
+        <OptimizationPriority>None</OptimizationPriority>
+      </ToolChain>
+      <CppSupport>false</CppSupport>
+      <DebugSymbols>false</DebugSymbols>
+      <Rtti>false</Rtti>
+      <Exceptions>false</Exceptions>
+      <IncludePaths />
+      <Defines />
+      <UseMemoryLayout>false</UseMemoryLayout>
+      <DiscardUnusedSections>false</DiscardUnusedSections>
+      <NotUseStandardStartupFiles>false</NotUseStandardStartupFiles>
+      <Fpu>None</Fpu>
+      <Library>None</Library>
+      <Optimization>None</Optimization>
+      <OptimizationPreference>None</OptimizationPreference>
+      <LinkedLibraries />
+      <SelectedDeviceId>0</SelectedDeviceId>
+      <InRom1Start>0</InRom1Start>
+      <InRom1Size>0</InRom1Size>
+      <InRom2Start>0</InRom2Start>
+      <InRom2Size>0</InRom2Size>
+      <InRam1Start>0</InRam1Start>
+      <InRam1Size>0</InRam1Size>
+      <InRam2Start>0</InRam2Start>
+      <InRam2Size>0</InRam2Size>
+      <DebugInRam>false</DebugInRam>
+      <IsLibrary>true</IsLibrary>
+    </ProjectConfiguration>
+  </Configurations>
+  <References />
+</Project>

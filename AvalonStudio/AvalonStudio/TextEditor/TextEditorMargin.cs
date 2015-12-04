@@ -28,7 +28,7 @@
         {            
             base.OnAttachedToVisualTree(e);
 
-            textEditor = Parent.Parent.Parent.Parent.Parent.Parent as TextEditor;
+            textEditor = Parent.Parent.Parent.Parent.Parent as TextEditor;
 
             if(textEditor == null)
             {
