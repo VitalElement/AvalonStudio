@@ -5,20 +5,18 @@
 
     public class SelectedLineBackgroundRenderer : IBackgroundRenderer
     {
-        private TextEditor editor;
         private Brush selectedLineBg;
 
-        public SelectedLineBackgroundRenderer(TextEditor editor)
+        public SelectedLineBackgroundRenderer()
         {
             selectedLineBg = Brush.Parse("#FF0E0E0E");
-            this.editor = editor;
         }
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            if (editor.CaretIndex != -1)
+            if (textView.CaretIndex != -1)
             {
-                var currentLine = editor.TextDocument.GetLineByOffset(editor.CaretIndex);
+                var currentLine = textView.TextDocument.GetLineByOffset(textView.CaretIndex);
 
                 var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, currentLine);
 
