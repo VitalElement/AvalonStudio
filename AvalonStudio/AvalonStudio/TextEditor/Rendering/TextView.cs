@@ -33,7 +33,7 @@
 
         #region Perspex Properties
         public static readonly PerspexProperty<TextWrapping> TextWrappingProperty =
-           TextBlock.TextWrappingProperty.AddOwner<TextEditor>();
+           TextBlock.TextWrappingProperty.AddOwner<TextView>();
 
         public TextWrapping TextWrapping
         {
