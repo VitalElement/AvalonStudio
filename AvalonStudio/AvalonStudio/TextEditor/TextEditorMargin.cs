@@ -42,7 +42,7 @@
             {
                 TextInfo info = new TextInfo();
 
-                var charRect = VisualLineGeometryBuilder.GetTextPosition(textEditor.TextView, 0);
+                var charRect = textEditor.TextView.CharSize;
 
                 info.LineHeight = charRect.Height;
                 info.CharWidth = charRect.Width;
