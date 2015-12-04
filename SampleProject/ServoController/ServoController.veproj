@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LocationRelativeToParent>ServoController\ServoController.veproj</LocationRelativeToParent>
+  <Children>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>61f6b5e4-16b5-4f3f-960f-dfb665e79711</Id>
+      <ParentId>95fb1b73-4f68-42b1-835b-6d18faf0175a</ParentId>
+      <LocationRelativeToParent>ServoController.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>0bcfd564-c48a-4245-bb45-fa3498116c3e</Id>
+      <ParentId>95fb1b73-4f68-42b1-835b-6d18faf0175a</ParentId>
+      <LocationRelativeToParent>ServoController.h</LocationRelativeToParent>
+    </ProjectItem>
+  </Children>
+  <ExportedIncludes>
+    <string>ServoController</string>
+  </ExportedIncludes>
+  <Configurations>
+    <ProjectConfiguration>
+      <Name>Default</Name>
+      <ToolChain xsi:type="ClangToolChain">
+        <Optimization>Off</Optimization>
+        <OptimizationPriority>None</OptimizationPriority>
+      </ToolChain>
+      <CppSupport>false</CppSupport>
+      <DebugSymbols>true</DebugSymbols>
+      <Rtti>false</Rtti>
+      <Exceptions>false</Exceptions>
+      <IncludePaths />
+      <Defines />
+      <UseMemoryLayout>false</UseMemoryLayout>
+      <DiscardUnusedSections>false</DiscardUnusedSections>
+      <NotUseStandardStartupFiles>false</NotUseStandardStartupFiles>
+      <Fpu>None</Fpu>
+      <Library>None</Library>
+      <Optimization>None</Optimization>
+      <OptimizationPreference>None</OptimizationPreference>
+      <LinkedLibraries />
+      <SelectedDeviceId>0</SelectedDeviceId>
+      <InRom1Start>0</InRom1Start>
+      <InRom1Size>0</InRom1Size>
+      <InRom2Start>0</InRom2Start>
+      <InRom2Size>0</InRom2Size>
+      <InRam1Start>0</InRam1Start>
+      <InRam1Size>0</InRam1Size>
+      <InRam2Start>0</InRam2Start>
+      <InRam2Size>0</InRam2Size>
+      <DebugInRam>false</DebugInRam>
+      <IsLibrary>true</IsLibrary>
+    </ProjectConfiguration>
+  </Configurations>
+  <References />
+</Project>
