@@ -454,7 +454,7 @@
         {
             if (e.Source == textView)
             {
-                var point = e.GetPosition(this);
+                var point = e.GetPosition(textView);
                 var index = CaretIndex = textView.GetOffsetFromPoint(point);
                 var text = TextDocument;
 
