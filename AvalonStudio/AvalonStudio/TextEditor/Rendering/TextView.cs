@@ -15,6 +15,7 @@
         #region Constructors
         static TextView()
         {
+            AffectsMeasure(TextDocumentProperty);
         }
 
         public TextView()
@@ -206,11 +207,11 @@
             if (TextDocument != null)
             {
                 //return base.MeasureOverride(availableSize);
-                return new Size(availableSize.Width, TextDocument.LineCount * CharSize.Height);
+                return new Size(1000, TextDocument.LineCount * CharSize.Height);
             }
             else
             {
-                return base.MeasureOverride(availableSize);
+                return new Size();
             }
         }
         #endregion
@@ -249,14 +250,15 @@
 
         private void RenderText(DrawingContext context, DocumentLine line)
         {
-            var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
-
-            foreach (var lineTransformer in DocumentLineTransformers)
+            using (var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
             {
-                lineTransformer.ColorizeLine(line, formattedText);
-            }
+                foreach (var lineTransformer in DocumentLineTransformers)
+                {
+                    lineTransformer.ColorizeLine(line, formattedText);
+                }
 
-            context.DrawText(Brushes.WhiteSmoke, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
+                context.DrawText(Brushes.WhiteSmoke, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
+            }
         }
 
         private void CaretIndexChanged(int caretIndex)
