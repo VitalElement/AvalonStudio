@@ -283,9 +283,11 @@
     <Compile Include="TextEditor\Rendering\VisualLineGeometryBuilder.cs" />
     <Compile Include="TextEditor\TextEditor.cs" />
     <Compile Include="TextEditor\TextEditorMargin.cs" />
-    <Compile Include="TextEditor\TextEditorStyle.cs" />
     <Compile Include="TextEditor\Rendering\TextView.cs" />
     <Compile Include="TextEditor\Rendering\TextViewPosition.cs" />
+    <Compile Include="TextEditor\TextEditorTheme.paml.cs">
+      <DependentUpon>TextEditorTheme.paml</DependentUpon>
+    </Compile>
     <Compile Include="TextEditor\Utils\CallbackOnDispose.cs" />
     <Compile Include="TextEditor\Utils\CharRope.cs" />
     <Compile Include="TextEditor\Utils\DelayedEvents.cs" />
@@ -319,6 +321,8 @@
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="TextEditor\TextEditor.paml" />
+    <EmbeddedResource Include="TextEditor\TextEditorTheme.paml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Models\AvalonStudio.Models.csproj">
