@@ -86,10 +86,7 @@
                                     {
                                         Name = "textView",
                                         HorizontalAlignment = Perspex.Layout.HorizontalAlignment.Stretch,
-                                        Margin = new Thickness(5, 0),
-                                        [~TextView.CaretIndexProperty] = control[~TextEditor.CaretIndexProperty],
-                                        [~TextView.SelectionStartProperty] = control[~TextEditor.SelectionStartProperty],
-                                        [~TextView.SelectionEndProperty] = control[~TextEditor.SelectionEndProperty],                                        
+                                        Margin = new Thickness(5, 0),                                        
                                         [~TextView.TextDocumentProperty] = control[~TextEditor.TextDocumentProperty],
                                         [Grid.ColumnProperty] = 2,
                                     }
