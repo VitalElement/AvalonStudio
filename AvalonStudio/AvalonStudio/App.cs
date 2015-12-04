@@ -15,7 +15,7 @@ namespace AvalonStudio
             RegisterServices();
             InitializeSubsystems((int)Environment.OSVersion.Platform);
             Styles = new DefaultTheme();
-            Styles.Add(new TextEditorStyle());
+            Styles.Add(new TextEditorTheme());
         }
 
         public static void AttachDevTools(Window window)
