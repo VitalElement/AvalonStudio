@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LocationRelativeToParent>STM32HalPlatform\STM32HalPlatform.veproj</LocationRelativeToParent>
+  <Children>
+    <ProjectItem xsi:type="ProjectFolder">
+      <Id>1ac0227b-70d1-40a7-a628-6ab139b61ea1</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>SignalGeneration\</LocationRelativeToParent>
+      <Children>
+        <ProjectItem xsi:type="ProjectFile">
+          <Id>4fd0b5a1-1dae-42a4-b914-e80ee215fc4b</Id>
+          <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+          <LocationRelativeToParent>STM32FrequencyChannel.cpp</LocationRelativeToParent>
+        </ProjectItem>
+        <ProjectItem xsi:type="ProjectFile">
+          <Id>e0f05282-ff5c-4bd4-b91f-5444fed62cc9</Id>
+          <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+          <LocationRelativeToParent>STM32FrequencyChannel.h</LocationRelativeToParent>
+        </ProjectItem>
+        <ProjectItem xsi:type="ProjectFile">
+          <Id>e71e3ce0-6f7f-42ce-9f0b-cbe0a0d15070</Id>
+          <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+          <LocationRelativeToParent>STM32PwmChannel.cpp</LocationRelativeToParent>
+        </ProjectItem>
+        <ProjectItem xsi:type="ProjectFile">
+          <Id>81c70e41-c059-4e0c-87d2-a2404bb14b63</Id>
+          <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+          <LocationRelativeToParent>STM32PwmChannel.h</LocationRelativeToParent>
+        </ProjectItem>
+      </Children>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFolder">
+      <Id>07c3b6b5-28e2-4bb1-84f1-87f57680c0f7</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>USB\</LocationRelativeToParent>
+      <Children>
+        <ProjectItem xsi:type="ProjectFolder">
+          <Id>a4238c5b-d424-41ec-9975-3ca766ba3ded</Id>
+          <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+          <LocationRelativeToParent>CustomHID\</LocationRelativeToParent>
+          <Children>
+            <ProjectItem xsi:type="ProjectFile">
+              <Id>e25a6f11-cf5b-49ea-8f09-f358d15b2cee</Id>
+              <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+              <LocationRelativeToParent>usb_device.c</LocationRelativeToParent>
+            </ProjectItem>
+            <ProjectItem xsi:type="ProjectFile">
+              <Id>c2294015-30e4-4fef-a1bc-39976f90c2f6</Id>
+              <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+              <LocationRelativeToParent>usb_device.h</LocationRelativeToParent>
+            </ProjectItem>
+            <ProjectItem xsi:type="ProjectFile">
+              <Id>d74ada56-c918-4279-b385-933d8f161ccf</Id>
+              <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+              <LocationRelativeToParent>usbd_conf.c</LocationRelativeToParent>
+            </ProjectItem>
+            <ProjectItem xsi:type="ProjectFile">
+              <Id>f1ffb2a3-90bf-4e25-ba2b-3060b29827e1</Id>
+              <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+              <LocationRelativeToParent>usbd_conf.h</LocationRelativeToParent>
+            </ProjectItem>
+            <ProjectItem xsi:type="ProjectFile">
+              <Id>408dbf31-94e4-407f-97a7-c93cf4f40617</Id>
+              <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+              <LocationRelativeToParent>usbd_customhid.c</LocationRelativeToParent>
+            </ProjectItem>
+            <ProjectItem xsi:type="ProjectFile">
+              <Id>027db457-bf64-4081-9851-4071eb2f9b8a</Id>
+              <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+              <LocationRelativeToParent>usbd_customhid.h</LocationRelativeToParent>
+            </ProjectItem>
+            <ProjectItem xsi:type="ProjectFile">
+              <Id>10dc7fff-edc9-4d84-91d5-52f68eb8f3f3</Id>
+              <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+              <LocationRelativeToParent>usbd_desc.c</LocationRelativeToParent>
+            </ProjectItem>
+            <ProjectItem xsi:type="ProjectFile">
+              <Id>e5e0b0a7-f977-4fae-8f7c-119765b9cc6f</Id>
+              <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+              <LocationRelativeToParent>usbd_desc.h</LocationRelativeToParent>
+            </ProjectItem>
+          </Children>
+        </ProjectItem>
+        <ProjectItem xsi:type="ProjectFile">
+          <Id>71637c1d-c89b-4f0e-ae2b-7de277a3b75a</Id>
+          <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+          <LocationRelativeToParent>STM32UsbHidDevice.cpp</LocationRelativeToParent>
+        </ProjectItem>
+        <ProjectItem xsi:type="ProjectFile">
+          <Id>92a41f96-f234-476c-b99a-11dff3547b94</Id>
+          <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+          <LocationRelativeToParent>STM32UsbHidDevice.h</LocationRelativeToParent>
+        </ProjectItem>
+      </Children>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>4652cefc-5be4-4abf-aff4-919187a4225f</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>PinPacks.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>ca986fc6-b8ff-48d4-bc09-a797353a0f9e</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>STM32Adc.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>75a36ca6-c565-43d5-ab6d-12313e2a3a78</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>STM32Adc.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>b0c16915-af26-4ccd-bbd1-2ad2c8557b1d</Id>
+      <ParentId>ff75663c-3e46-4918-8f88-5432a75d5a2f</ParentId>
+      <LocationRelativeToParent>STM32BootloaderService.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>83a25846-af05-44fb-a698-36e0b9a71dfb</Id>
+      <ParentId>ff75663c-3e46-4918-8f88-5432a75d5a2f</ParentId>
+      <LocationRelativeToParent>STM32BootloaderService.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>2e92cb2e-c8f7-40ea-b629-6f87009f2288</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>STM32InputCaptureChannel.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>fd50421e-1d52-4daa-8efd-dd581d269d5a</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>STM32InputCaptureChannel.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>e5f9569c-88c6-4039-afbe-446b705e1777</Id>
+      <ParentId>d0c55329-a405-4297-bc0f-8888a12bbd48</ParentId>
+      <LocationRelativeToParent>STM32QuadratureEncoder.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>00b98499-e3fa-43f3-922e-7b4fdd25852b</Id>
+      <ParentId>d0c55329-a405-4297-bc0f-8888a12bbd48</ParentId>
+      <LocationRelativeToParent>STM32QuadratureEncoder.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>37effdf5-4e21-486e-9e8d-9c5472a95a26</Id>
+      <ParentId>d0c55329-a405-4297-bc0f-8888a12bbd48</ParentId>
+      <LocationRelativeToParent>STM32Timer.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>498a10e5-b6df-45dd-ab74-707bf0607fa9</Id>
+      <ParentId>d0c55329-a405-4297-bc0f-8888a12bbd48</ParentId>
+      <LocationRelativeToParent>STM32Timer.h</LocationRelativeToParent>
+    </ProjectItem>
+  </Children>
+  <ExportedIncludes>
+    <string>STM32HalPlatform\USB</string>
+    <string>STM32HalPlatform\USB\CustomHID</string>
+    <string>STM32HalPlatform</string>
+  </ExportedIncludes>
+  <Configurations>
+    <ProjectConfiguration>
+      <Name>Default</Name>
+      <ToolChain xsi:type="GCCToolChain">
+        <Optimization>Off</Optimization>
+        <OptimizationPriority>None</OptimizationPriority>
+      </ToolChain>
+      <CppSupport>false</CppSupport>
+      <DebugSymbols>false</DebugSymbols>
+      <Rtti>false</Rtti>
+      <Exceptions>false</Exceptions>
+      <IncludePaths>
+        <string>STM32HalPlatform\USB\CustomHID</string>
+      </IncludePaths>
+      <Defines />
+      <UseMemoryLayout>false</UseMemoryLayout>
+      <DiscardUnusedSections>false</DiscardUnusedSections>
+      <NotUseStandardStartupFiles>false</NotUseStandardStartupFiles>
+      <Fpu>None</Fpu>
+      <Library>None</Library>
+      <Optimization>None</Optimization>
+      <OptimizationPreference>None</OptimizationPreference>
+      <LinkedLibraries />
+      <SelectedDeviceId>0</SelectedDeviceId>
+      <InRom1Start>0</InRom1Start>
+      <InRom1Size>0</InRom1Size>
+      <InRom2Start>0</InRom2Start>
+      <InRom2Size>0</InRom2Size>
+      <InRam1Start>0</InRam1Start>
+      <InRam1Size>0</InRam1Size>
+      <InRam2Start>0</InRam2Start>
+      <InRam2Size>0</InRam2Size>
+      <DebugInRam>false</DebugInRam>
+      <IsLibrary>true</IsLibrary>
+    </ProjectConfiguration>
+  </Configurations>
+  <References>
+    <string>CommonHal\CommonHal.veproj</string>
+    <string>STM32F4Cube\STM32F4Cube.veproj</string>
+    <string>Utils\Utils.veproj</string>
+  </References>
+</Project>

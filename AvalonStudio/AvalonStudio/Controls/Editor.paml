@@ -3,15 +3,15 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <TextBlock Text="main.cpp" Margin="0,0,0,0" TextAlignment="Center" />
-      <te:TextEditor Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" FontFamily="Consolas" FontSize="12" Foreground="#D4D4D4" BorderThickness="0"
+      <te:TextEditor Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" FontFamily="Consolas" FontSize="12" Foreground="#D4D4D4" BorderThickness="5"
                      SyntaxHighlightingData ="{Binding HighlightingData}" BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
-                     TextChangedCommand="{Binding TextChangedCommand}" TextChangedDelay="125" CaretIndex="{Binding CaretIndex}"
+                     TextChangedCommand="{Binding TextChangedCommand}" TextChangedDelay="125" CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
                      CommentBrush="#559A3F"
                      IdentifierBrush="#D4D4D4"
                      KeywordBrush ="#569CD6"                     
                      LiteralBrush="#D69D85"
                      PunctuationBrush="#D4D4D4"
-                     UserTypeBrush="#4BB289">
+                     UserTypeBrush="#4BB289" BorderBrush="Red">
         <!--
         <te:TextEditor.Margins>
           <te:LineNumberMargin/>
