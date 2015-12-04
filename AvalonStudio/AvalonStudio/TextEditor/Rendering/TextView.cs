@@ -303,7 +303,7 @@
 
             if (TextDocument != null)
             {
-                var column = Math.Ceiling(point.X / CharSize.Width);
+                var column = Math.Ceiling((point.X / CharSize.Width) + 0.5 );
                 var line = Math.Ceiling(point.Y / CharSize.Height);
 
                 result = TextDocument.GetOffset((int)line, (int)column);
