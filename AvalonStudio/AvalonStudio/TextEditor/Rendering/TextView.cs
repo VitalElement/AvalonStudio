@@ -3,54 +3,27 @@
     using Document;
     using Perspex;
     using Perspex.Controls;
-    using Perspex.Input;
-    using Perspex.Input.Platform;
     using Perspex.Media;
     using Perspex.Threading;
     using Perspex.VisualTree;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Reactive.Linq;
-    using Perspex.Interactivity;
-    using Perspex.Controls.Primitives;
 
     public class TextView : Control
     {
         #region Constructors
         static TextView()
         {
-            TextChangedDelayProperty.Changed.AddClassHandler<TextView>((s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));
         }
 
         public TextView(TextEditor editor)
         {
             this.editor = editor;
 
-            textChangedDelayTimer = new DispatcherTimer();
-            textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 125);
-            textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
-            textChangedDelayTimer.Stop();
-
             _caretTimer = new DispatcherTimer();
             _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
             _caretTimer.Tick += CaretTimerTick;
-
-            var canScrollHorizontally = GetObservable(AcceptsReturnProperty)
-                .Select(x => !x);
-
-            Bind(
-                ScrollViewer.CanScrollHorizontallyProperty,
-                canScrollHorizontally,
-                BindingPriority.Style);
-
-            var horizontalScrollBarVisibility = GetObservable(AcceptsReturnProperty)
-                .Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
-
-            Bind(
-                ScrollViewer.HorizontalScrollBarVisibilityProperty,
-                horizontalScrollBarVisibility,
-                BindingPriority.Style);
 
             GetObservable(CaretIndexProperty)
                 .Subscribe(CaretIndexChanged);
@@ -71,7 +44,7 @@
         }
 
         public static readonly PerspexProperty<bool> AcceptsReturnProperty =
-            PerspexProperty.Register<TextView, bool>("AcceptsReturn", defaultValue: true);
+            PerspexProperty.Register<TextView, bool>(nameof(AcceptsReturn), defaultValue: true);
 
         public bool AcceptsReturn
         {
@@ -80,7 +53,7 @@
         }
 
         public static readonly PerspexProperty<bool> AcceptsTabProperty =
-            PerspexProperty.Register<TextView, bool>("AcceptsTab");
+            PerspexProperty.Register<TextView, bool>(nameof(AcceptsTab));
 
         public bool AcceptsTab
         {
@@ -89,16 +62,16 @@
         }
 
         public static readonly PerspexProperty<TextDocument> TextDocumentProperty =
-            PerspexProperty.Register<TextView, TextDocument>("TextDocument");
+            PerspexProperty.Register<TextView, TextDocument>(nameof(TextDocument));
 
         public TextDocument TextDocument
         {
             get { return GetValue(TextDocumentProperty); }
-            set { SetValue(TextDocumentProperty, value); }
+            set { SetValue(TextDocumentProperty, value); InvalidateMeasure(); }
         }
 
         public static readonly PerspexProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
-            PerspexProperty.Register<TextView, System.Windows.Input.ICommand>("BeforeTextChangedCommand");
+            PerspexProperty.Register<TextView, System.Windows.Input.ICommand>(nameof(BeforeTextChangedCommand));
 
         public System.Windows.Input.ICommand BeforeTextChangedCommand
         {
@@ -107,7 +80,7 @@
         }
 
         public static readonly PerspexProperty<System.Windows.Input.ICommand> TextChangedCommandProperty =
-            PerspexProperty.Register<TextView, System.Windows.Input.ICommand>("TextChangedCommand");
+            PerspexProperty.Register<TextView, System.Windows.Input.ICommand>(nameof(TextChangedCommand));
 
         public System.Windows.Input.ICommand TextChangedCommand
         {
@@ -115,17 +88,14 @@
             set { SetValue(TextChangedCommandProperty, value); }
         }
 
-        public static readonly PerspexProperty<int> TextChangedDelayProperty =
-            PerspexProperty.Register<TextView, int>("TextChangedDelay");
-
-        public int TextChangedDelay
-        {
-            get { return GetValue(TextChangedDelayProperty); }
-            set { SetValue(TextChangedDelayProperty, value); textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value); }
-        }
-
         public static readonly PerspexProperty<int> CaretIndexProperty =
-            TextBox.CaretIndexProperty.AddOwner<TextView>();
+            PerspexProperty.Register<TextView, int>(nameof(CaretIndex));
+
+        public int CaretIndex
+        {
+            get { return GetValue(CaretIndexProperty); }
+            set { SetValue(CaretIndexProperty, value); }
+        }
 
         public static readonly PerspexProperty<int> SelectionStartProperty =
             TextBox.SelectionStartProperty.AddOwner<TextView>();
@@ -135,13 +105,6 @@
 
         public static readonly PerspexProperty<Brush> BackgroundProperty =
             Border.BackgroundProperty.AddOwner<TextBlock>();
-
-        public int CaretIndex
-        {
-            get { return GetValue(CaretIndexProperty); }
-            set { SetValue(CaretIndexProperty, value); }
-        }
-
         public int SelectionStart
         {
             get { return GetValue(SelectionStartProperty); }
@@ -222,189 +185,6 @@
             }
         }
 
-        protected override void OnPointerPressed(PointerPressEventArgs e)
-        {
-            if (e.Source == this)
-            {
-                var point = e.GetPosition(this);
-                var index = CaretIndex = GetOffsetFromPoint(point);
-                var text = TextDocument;
-
-                switch (e.ClickCount)
-                {
-                    case 1:
-                        SelectionStart = SelectionEnd = index;
-                        break;
-                    case 2:
-                        //if (!StringUtils.IsStartOfWord(text, index))
-                        //{
-                        //    SelectionStart = StringUtils.PreviousWord(text, index, false);
-                        //}
-
-                        //SelectionEnd = StringUtils.NextWord(text, index, false);
-                        break;
-                    case 3:
-                        SelectionStart = 0;
-                        SelectionEnd = text.TextLength;
-                        break;
-                }
-
-                e.Device.Capture(this);
-                e.Handled = true;
-            }
-        }
-
-        protected override void OnPointerMoved(PointerEventArgs e)
-        {
-            if (e.Device.Captured == this)
-            {
-                var point = e.GetPosition(this);
-                CaretIndex = SelectionEnd = GetOffsetFromPoint(point);
-            }
-        }
-
-        protected override void OnPointerReleased(PointerEventArgs e)
-        {
-            if (e.Device.Captured == this)
-            {
-                e.Device.Capture(null);
-            }
-        }
-
-        protected override void OnGotFocus(GotFocusEventArgs e)
-        {
-            base.OnGotFocus(e);
-            ShowCaret();
-        }
-
-        protected override void OnLostFocus(RoutedEventArgs e)
-        {
-            base.OnLostFocus(e);
-            SelectionStart = 0;
-            SelectionEnd = 0;
-            HideCaret();
-        }
-
-        protected override void OnTextInput(TextInputEventArgs e)
-        {
-            HandleTextInput(e.Text);
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            int caretIndex = CaretIndex;
-            bool movement = false;
-            bool handled = true;
-            var modifiers = e.Modifiers;
-
-            switch (e.Key)
-            {
-                case Key.A:
-                    if (modifiers == InputModifiers.Control)
-                    {
-                        SelectAll();
-                    }
-
-                    break;
-                case Key.C:
-                    if (modifiers == InputModifiers.Control)
-                    {
-                        Copy();
-                    }
-
-                    break;
-                case Key.V:
-                    if (modifiers == InputModifiers.Control)
-                    {
-                        Paste();
-                    }
-
-                    break;
-
-                case Key.Left:
-                    MoveHorizontal(-1, modifiers);
-                    movement = true;
-                    break;
-
-                case Key.Right:
-                    MoveHorizontal(1, modifiers);
-                    movement = true;
-                    break;
-
-                case Key.Up:
-                    MoveVertical(-1, modifiers);
-                    movement = true;
-                    break;
-
-                case Key.Down:
-                    MoveVertical(1, modifiers);
-                    movement = true;
-                    break;
-
-                case Key.Home:
-                    MoveHome(modifiers);
-                    movement = true;
-                    break;
-
-                case Key.End:
-                    MoveEnd(modifiers);
-                    movement = true;
-                    break;
-
-                case Key.Back:
-                    if (!DeleteSelection() && CaretIndex > 0)
-                    {
-                        TextDocument.Remove(caretIndex - 1, 1);
-                        --CaretIndex;
-                    }
-
-                    break;
-
-                case Key.Delete:
-                    if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
-                    {
-                        TextDocument.Remove(caretIndex, 1);
-                    }
-
-                    break;
-
-                case Key.Enter:
-                    if (AcceptsReturn)
-                    {
-                        HandleTextInput("\r\n");
-                    }
-
-                    break;
-
-                case Key.Tab:
-                    if (AcceptsTab)
-                    {
-                        HandleTextInput("\t");
-                    }
-                    else
-                    {
-                        base.OnKeyDown(e);
-                        handled = false;
-                    }
-
-                    break;
-            }
-
-            if (movement && ((modifiers & InputModifiers.Shift) != 0))
-            {
-                SelectionEnd = CaretIndex;
-            }
-            else if (movement)
-            {
-                SelectionStart = SelectionEnd = CaretIndex;
-            }
-
-            if (handled)
-            {
-                e.Handled = true;
-            }
-        }
-
         protected override Size MeasureOverride(Size availableSize)
         {
             GenerateTextProperties();
@@ -422,13 +202,9 @@
         #endregion
 
         #region Private Fields
-        private readonly DispatcherTimer textChangedDelayTimer;
-
         private readonly DispatcherTimer _caretTimer;
 
         private bool _caretBlink;
-
-        private IObservable<bool> _canScrollHorizontally;
 
         private TextEditor editor;
         #endregion
@@ -471,30 +247,6 @@
             context.DrawText(Brushes.WhiteSmoke, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
         }
 
-        private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
-        {
-            textChangedDelayTimer.Stop();
-
-            if (TextChangedCommand != null)
-            {
-                TextChangedCommand.Execute(null);
-            }
-        }
-
-        private void ShowCaret()
-        {
-            _caretBlink = true;
-            _caretTimer.Start();
-            InvalidateVisual();
-        }
-
-        private void HideCaret()
-        {
-            _caretBlink = false;
-            _caretTimer.Stop();
-            InvalidateVisual();
-        }
-
         private void CaretIndexChanged(int caretIndex)
         {
             if (this.GetVisualParent() != null)
@@ -516,190 +268,23 @@
             _caretBlink = !_caretBlink;
             InvalidateVisual();
         }
-
-        private void SelectAll()
-        {
-            SelectionStart = 0;
-            SelectionEnd = TextDocument.TextLength;
-        }
-
-        private bool DeleteSelection()
-        {
-            var selectionStart = SelectionStart;
-            var selectionEnd = SelectionEnd;
-
-            if (selectionStart != selectionEnd)
-            {
-                var start = Math.Min(selectionStart, selectionEnd);
-                var end = Math.Max(selectionStart, selectionEnd);
-                TextDocument.Remove(start, end);
-                SelectionStart = SelectionEnd = CaretIndex = start;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private string GetSelection()
-        {
-            var selectionStart = SelectionStart;
-            var selectionEnd = SelectionEnd;
-            var start = Math.Min(selectionStart, selectionEnd);
-            var end = Math.Max(selectionStart, selectionEnd);
-
-            if (start == end || (TextDocument?.TextLength ?? 0) < end)
-            {
-                return "";
-            }
-
-            return TextDocument.GetText(start, end - start);
-        }
-
-        private void HandleTextInput(string input)
-        {
-            if (BeforeTextChangedCommand != null)
-            {
-                BeforeTextChangedCommand.Execute(null);
-            }
-
-            //string text = TextDocument ?? string.Empty;
-            int caretIndex = CaretIndex;
-
-            if (!string.IsNullOrEmpty(input))
-            {
-                DeleteSelection();
-                caretIndex = CaretIndex;
-                TextDocument.Insert(caretIndex, input);
-                CaretIndex += input.Length;
-                SelectionStart = SelectionEnd = CaretIndex;
-            }
-
-            textChangedDelayTimer.Stop();
-            textChangedDelayTimer.Start();
-        }
-
-        private void MoveHorizontal(int count, InputModifiers modifiers)
-        {
-            var caretIndex = CaretIndex;
-
-            //if ((modifiers & InputModifiers.Control) != 0)
-            //{
-            //    if (count > 0)
-            //    {
-            //        // count = StringUtils.NextWord(text, caretIndex, false) - caretIndex;
-            //    }
-            //    else
-            //    {
-            //        //count = StringUtils.PreviousWord(text, caretIndex, false) - caretIndex;
-            //    }
-            //}
-
-            CaretIndex = caretIndex += count;
-        }
-
-        private void MoveVertical(int count, InputModifiers modifiers)
-        {
-            var caretIndex = CaretIndex;
-            var lineIndex = GetLine(caretIndex) + count;
-
-            if (lineIndex > 0 && lineIndex <= TextDocument.LineCount)
-            {
-                var line = TextDocument.Lines[lineIndex - 1];
-
-                var rect = VisualLineGeometryBuilder.GetTextPosition(this, caretIndex);
-                var y = count < 0 ? rect.Y : rect.Bottom;
-                var point = new Point(rect.X, y + (count * (CharSize.Height / 2)));
-
-                CaretIndex = GetOffsetFromPoint(point);
-            }
-        }
-
-        private void MoveHome(InputModifiers modifiers)
-        {
-            //var text = TextDocument ?? string.Empty;
-            //var caretIndex = CaretIndex;
-
-            //if ((modifiers & InputModifiers.Control) != 0)
-            //{
-            //    caretIndex = 0;
-            //}
-            //else
-            //{
-            //    var lines = textView.FormattedText.GetLines();
-            //    var pos = 0;
-
-            //    foreach (var line in lines)
-            //    {
-            //        if (pos + line.Length > caretIndex || pos + line.Length == text.Length)
-            //        {
-            //            break;
-            //        }
-
-            //        pos += line.Length;
-            //    }
-
-            //    caretIndex = pos;
-            //}
-
-            //CaretIndex = caretIndex;
-        }
-
-        private void MoveEnd(InputModifiers modifiers)
-        {
-            //var text = TextDocument ?? string.Empty;
-            //var caretIndex = CaretIndex;
-
-            //if ((modifiers & InputModifiers.Control) != 0)
-            //{
-            //    caretIndex = text.Length;
-            //}
-            //else
-            //{
-            //    var lines = textView.FormattedText.GetLines();
-            //    var pos = 0;
-
-            //    foreach (var line in lines)
-            //    {
-            //        pos += line.Length;
-
-            //        if (pos > caretIndex)
-            //        {
-            //            if (pos < text.Length)
-            //            {
-            //                --pos;
-            //            }
-
-            //            break;
-            //        }
-            //    }
-
-            //    caretIndex = pos;
-            //}
-
-            //CaretIndex = caretIndex;
-        }
-
-        private async void Copy()
-        {
-            await ((IClipboard)PerspexLocator.Current.GetService(typeof(IClipboard)))
-                .SetTextAsync(GetSelection());
-        }
-
-        private async void Paste()
-        {
-            var text = await ((IClipboard)PerspexLocator.Current.GetService(typeof(IClipboard))).GetTextAsync();
-            if (text == null)
-            {
-                return;
-            }
-
-            HandleTextInput(text);
-        }
         #endregion
 
         #region Public Methods
+        public void ShowCaret()
+        {
+            _caretBlink = true;
+            _caretTimer.Start();
+            InvalidateVisual();
+        }
+
+        public void HideCaret()
+        {
+            _caretBlink = false;
+            _caretTimer.Stop();
+            InvalidateVisual();
+        }
+
         public int GetOffsetFromPoint(Point point)
         {
             int result = -1;
