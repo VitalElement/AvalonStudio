@@ -9,25 +9,25 @@
         public TextColoringTransformer (TextEditor editor)
         {
             this.editor = editor;
-                        
-            TextTransformations = new List<TextTransformation>();
+
+            TextTransformations = new TextSegmentCollection<TextTransformation>(editor.TextDocument);            
         }
 
         private TextEditor editor;
 
         public void SetTransformations ()
         {
-            var transformations = new List<TextTransformation>();
+            var transformations = new TextSegmentCollection<TextTransformation>(editor.TextDocument);
 
             foreach (var transform in editor.SyntaxHighlightingData)
             {
-                transformations.Add(new TextTransformation { Foreground = GetBrush(transform.Type), StartAnchor = editor.TextDocument.CreateAnchor(transform.Start), EndAnchor = editor.TextDocument.CreateAnchor(transform.Start + transform.Length) });
+                transformations.Add(new TextTransformation { Foreground = GetBrush(transform.Type), StartOffset = transform.Start, EndOffset = transform.Start + transform.Length });
             }
 
             TextTransformations = transformations;
         }
 
-        public List<TextTransformation> TextTransformations;        
+        public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }        
 
         public Brush GetBrush(HighlightType type)
         {
@@ -67,26 +67,20 @@
             return result;
         }
 
-        public void ColorizeLine(DocumentLine line, FormattedText formattedText)
+        public void TransformLine(DocumentLine line, FormattedText formattedText)
         {
-            foreach (var transform in TextTransformations)
-            {               
-                if (transform.EndAnchor.Offset >= line.Offset)
+            var markers = TextTransformations.FindOverlappingSegments(line);
+
+            foreach(var marker in markers)
+            {
+                var formattedOffset = 0;
+
+                if (marker.StartOffset > line.Offset)
                 {
-                    var formattedOffset = 0;
-
-                    if (transform.StartAnchor.Offset > line.Offset)
-                    {
-                        formattedOffset = transform.StartAnchor.Offset - line.Offset;
-                    }                    
-
-                    formattedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndAnchor.Offset);
+                    formattedOffset = marker.StartOffset - line.Offset;
                 }
 
-                if(transform.StartAnchor.Offset > line.EndOffset)
-                {
-                    break;
-                }
+                formattedText.SetForegroundBrush(marker.Foreground, formattedOffset, marker.EndOffset);
             }
         }
     }

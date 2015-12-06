@@ -22,7 +22,7 @@
 
                 foreach (var rect in rects)
                 {
-                    var drawRect = new Rect(rect.TopLeft.X + 4, rect.TopLeft.Y, textView.Bounds.Width, rect.Height);
+                    var drawRect = new Rect(rect.TopLeft.X, rect.TopLeft.Y, textView.Bounds.Width, rect.Height);
                     drawingContext.FillRectangle(selectedLineBg, drawRect);
                 }
             }            
