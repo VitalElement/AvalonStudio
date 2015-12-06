@@ -69,18 +69,18 @@
 
         public void TransformLine(DocumentLine line, FormattedText formattedText)
         {
-            var markers = TextTransformations.FindOverlappingSegments(line);
+            var transformsInLine = TextTransformations.FindOverlappingSegments(line);
 
-            foreach(var marker in markers)
+            foreach(var transform in transformsInLine)
             {
                 var formattedOffset = 0;
 
-                if (marker.StartOffset > line.Offset)
+                if (transform.StartOffset > line.Offset)
                 {
-                    formattedOffset = marker.StartOffset - line.Offset;
+                    formattedOffset = transform.StartOffset - line.Offset;
                 }
 
-                formattedText.SetForegroundBrush(marker.Foreground, formattedOffset, marker.EndOffset);
+                formattedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset);
             }
         }
     }
