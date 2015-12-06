@@ -38,31 +38,25 @@
                     continue;
                 }
 
-                int visualColumnStart;
+                // find start and begining in current line.
+                var lineStartOffset = line.Offset;
 
-                if (segmentStart < line.Offset)
+                if (segment.Offset > line.Offset)
                 {
-                    visualColumnStart = 0;
-                }
-                else
-                {
-                    visualColumnStart = start.Column;
+                    lineStartOffset = line.Offset + (segment.Offset - line.Offset);
                 }
 
-                int visualColumnEnd;
+                var lineEndOffset = line.EndOffset;
 
-                if (segmentEnd > line.EndOffset)
+                if(segment.EndOffset < line.EndOffset)
                 {
-                    // Here for later when we cope with variable char sizes.
-                    visualColumnEnd = end.Column;
-                }
-                else
-                {
-                    visualColumnEnd = end.Column;
+                    lineEndOffset = line.EndOffset - (line.EndOffset - segment.EndOffset);
                 }
 
-                var width = GetTextPosition(textView, end).TopLeft.X - GetTextPosition(textView, start).TopLeft.X;
-                yield return new Rect(GetTextPosition(textView, start).TopLeft, new Size(width, textView.CharSize.Height));
+
+                // generate rect for section in this line.
+
+                yield return new Rect(GetTextPosition(textView, lineStartOffset).TopLeft, GetTextPosition(textView, lineEndOffset).BottomLeft);
             }
 
         }
