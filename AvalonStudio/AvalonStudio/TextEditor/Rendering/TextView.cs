@@ -240,30 +240,7 @@
 
         private void RenderTextDecoration(DrawingContext context, DocumentLine line)
         {
-            //Point startPoint = new Point(0, 116);
-            //Point endPoint = new Point(190, 116);
-
-            //var usedPen = new Pen(Brush.Parse("#FD2D2D"), 0.01);
             
-            //const double offset = 2.5;
-
-            //int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
-
-            //var geometry = new StreamGeometry();
-
-            //using (StreamGeometryContext ctx = geometry.Open())
-            //{                
-            //    ctx.BeginFigure(startPoint, false);
-
-            //    foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
-            //    {
-            //        ctx.LineTo(point);
-            //    }
-                
-            //    ctx.EndFigure(false);
-            //}
-
-            //context.DrawGeometry(Brushes.Transparent, usedPen, geometry);
         }
 
         private void RenderText(DrawingContext context, DocumentLine line)

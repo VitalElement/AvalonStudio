@@ -13,7 +13,7 @@
         private Brush selectionBrush;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
-        {
+        {            
             if (textView.SelectionStart != textView.SelectionEnd)
             {
                 TextSegment selection;
