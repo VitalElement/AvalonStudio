@@ -6,7 +6,6 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.IO;
-    using TextEditor;
 
     public class CPlusPlusLanguageService : ILanguageService
     {
@@ -80,9 +79,9 @@
             throw new NotImplementedException();
         }
 
-        public SyntaxHighlightDataList RunCodeAnalysis(List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public CodeAnalysisResults RunCodeAnalysis(List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            SyntaxHighlightDataList result = new SyntaxHighlightDataList();
+            var result = new CodeAnalysisResults();
 
             if (translationUnit == null)
             {
@@ -101,7 +100,7 @@
             if (file != null && file.IsCodeFile)
             {
                 var callbacks = new NClang.ClangIndexerCallbacks();
-                
+
 
                 callbacks.IndexDeclaration += (handle, e) =>
                 {
@@ -120,11 +119,11 @@
                             case CursorKind.TypedefDeclaration:
                             case CursorKind.ClassTemplate:
                             case CursorKind.EnumDeclaration:
-                            case CursorKind.UnionDeclaration:                                                           
+                            case CursorKind.UnionDeclaration:
                                 // TODO return code folding data.
                                 break;
                         }
-                        
+
 
                         switch (e.Cursor.Kind)
                         {
@@ -134,24 +133,24 @@
                             case CursorKind.ClassTemplate:
                             case CursorKind.EnumDeclaration:
                             case CursorKind.UnionDeclaration:
-                            case CursorKind.CXXBaseSpecifier:                            
-                                result.Add(new SyntaxHighlightingData() { Start = e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type = HighlightType.UserType });
+                            case CursorKind.CXXBaseSpecifier:
+                                result.SyntaxHighlightingData.Add(new SyntaxHighlightingData() { Start = e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type = HighlightType.UserType });
                                 break;
 
                         }
                     }
-                };                
+                };
 
                 callbacks.IndexEntityReference += (handle, e) =>
                 {
                     if (e.Cursor.Spelling != null && e.Location.SourceLocation.IsFromMainFile)
-                    {                        
+                    {
                         switch (e.Cursor.Kind)
-                        {                            
+                        {
                             case CursorKind.TypeReference:
-                            case CursorKind.CXXBaseSpecifier:                            
+                            case CursorKind.CXXBaseSpecifier:
                             case CursorKind.TemplateReference:
-                                result.Add(new SyntaxHighlightingData() { Start = e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type = HighlightType.UserType });
+                                result.SyntaxHighlightingData.Add(new SyntaxHighlightingData() { Start = e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type = HighlightType.UserType });
                                 break;
                         }
                     }
@@ -170,7 +169,7 @@
                         switch (token.Kind)
                         {
                             case TokenKind.Comment:
-                                highlightData.Type = HighlightType.Comment;                                
+                                highlightData.Type = HighlightType.Comment;
                                 break;
 
                             case TokenKind.Identifier:
@@ -190,7 +189,7 @@
                                 break;
                         }
 
-                        result.Add(highlightData);
+                        result.SyntaxHighlightingData.Add(highlightData);
                     }
 
                     var indexAction = file.Solution.NClangIndex.CreateIndexAction();
@@ -199,8 +198,17 @@
                     indexAction.Dispose();
                 }
             }
-            
-            Console.WriteLine("Code Analysis completed.");
+
+            var diags = translationUnit.DiagnosticSet.Items;
+
+            foreach (var diag in diags)
+            {
+                result.Diagnostics.Add(new Diagnostic()
+                {
+                    Offset = diag.Location.FileLocation.Offset,
+                    Spelling = diag.Spelling,
+                });                
+            }
 
             return result;
         }

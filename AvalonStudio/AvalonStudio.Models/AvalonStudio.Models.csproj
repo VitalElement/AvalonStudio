@@ -51,8 +51,10 @@
     <Compile Include="AvalonStudioService.cs" />
     <Compile Include="AvalonStudioSettings.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="LanguageServices\CodeAnalysisResults.cs" />
     <Compile Include="LanguageServices\CodeCompletionData.cs" />
     <Compile Include="LanguageServices\CPlusPlus\CPlusPlusLanguageService.cs" />
+    <Compile Include="LanguageServices\Diagnostic.cs" />
     <Compile Include="LanguageServices\ILanguageService.cs" />
     <Compile Include="LanguageServices\SyntaxHighlightingData.cs" />
     <Compile Include="LanguageServices\UnsavedFile.cs" />

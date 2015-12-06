@@ -110,7 +110,7 @@
 
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            Document.SyntaxHighlightingData = result;
+                            Document.CodeAnalysisResults = result;
                         });
                     }
 

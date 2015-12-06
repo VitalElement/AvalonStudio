@@ -1,6 +1,5 @@
 ﻿namespace AvalonStudio.Models.LanguageServices
 {
-    using TextEditor;
     using System;
     using System.Collections.Generic;
 
@@ -9,6 +8,6 @@
     {
         List<CodeCompletionData> CodeCompleteAt(uint line, uint column);
 
-        SyntaxHighlightDataList RunCodeAnalysis(List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
+        CodeAnalysisResults RunCodeAnalysis(List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
     }
 }

@@ -16,6 +16,8 @@
     using System.Reactive.Linq;
     using Document;
     using Rendering;
+    using Models.LanguageServices;
+    using System.Collections.Generic;
 
     public class TextEditor : TemplatedControl
     {
@@ -60,6 +62,24 @@
                 {
                     TextColorizer.SetTransformations();
                 }
+            });
+
+            DiagnosticsProperty.Changed.Subscribe((args) =>
+            {
+                if(textMarkerService != null && args.NewValue != null)
+                {
+                    var diags = args.NewValue as List<Diagnostic>;
+
+                    textMarkerService.Clear();
+
+                    foreach(var diag in diags)
+                    {
+                        var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, diag.Offset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
+                        var length = endoffset - diag.Offset;
+                        textMarkerService.Create(diag.Offset, length, diag.Spelling, Color.FromRgb(243, 45, 45));
+                    }
+                }
+
             });
         }
         #endregion
@@ -161,6 +181,15 @@
             set { SetValue(SyntaxHighlightingDataProperty, value); }
         }
 
+        public static readonly PerspexProperty<List<Diagnostic>> DiagnosticsProperty =
+            PerspexProperty.Register<TextEditor, List<Diagnostic>>(nameof(Diagnostics));
+
+        public List<Diagnostic> Diagnostics
+        {
+            get { return GetValue(DiagnosticsProperty); }
+            set { SetValue(DiagnosticsProperty, value); }
+        }
+
         public static readonly PerspexProperty<Brush> PunctuationBrushProperty =
             PerspexProperty.Register<TextEditor, Brush>(nameof(PunctuationBrush));
 
@@ -233,11 +262,6 @@
         #region Private Methods
         private void HandleTextInput(string input)
         {
-            if (BeforeTextChangedCommand != null)
-            {
-                BeforeTextChangedCommand.Execute(null);
-            }
-
             //string text = TextDocument ?? string.Empty;
             int caretIndex = CaretIndex;
 
@@ -249,9 +273,6 @@
                 CaretIndex += input.Length;
                 SelectionStart = SelectionEnd = CaretIndex;
             }
-
-            textChangedDelayTimer.Stop();
-            textChangedDelayTimer.Start();
         }
 
         private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
@@ -446,9 +467,9 @@
             InstallMargin(new BreakPointMargin());
             InstallMargin(new LineNumberMargin());
 
-            TextDocumentProperty.Changed.Subscribe((srgs) =>
+            TextDocumentProperty.Changed.Subscribe((args) =>
             {
-                if (srgs.NewValue != null)
+                if (args.NewValue != null)
                 {
                     textView.BackgroundRenderers.Clear();
                     textView.DocumentLineTransformers.Clear();
@@ -458,6 +479,20 @@
                     textView.DocumentLineTransformers.Add(TextColorizer);
                     textMarkerService = new TextMarkerService(this);
                     textView.BackgroundRenderers.Add(textMarkerService);
+
+                    TextDocument.Changing += (sender, e) =>
+                    {
+                        if (BeforeTextChangedCommand != null)
+                        {
+                            BeforeTextChangedCommand.Execute(null);
+                        }
+                    };
+
+                    TextDocument.Changed += (sender, e) =>
+                    {
+                        textChangedDelayTimer.Stop();
+                        textChangedDelayTimer.Start();
+                    };
                 }
             });
 
