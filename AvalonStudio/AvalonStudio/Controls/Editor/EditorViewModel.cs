@@ -22,10 +22,10 @@
 
             model.DocumentLoaded += (sender, e) =>
             {
-                model.Document.CodeAnalysisDataChanged += (s, ee) =>
+                model.CodeAnalysisCompleted += (s, ee) =>
                 {
-                    Diagnostics = model.Document.CodeAnalysisResults.Diagnostics;
-                    HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.Document.CodeAnalysisResults.SyntaxHighlightingData);                                        
+                    Diagnostics = model.CodeAnalysisResults.Diagnostics;
+                    HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);                                        
                 };
 
                 this.RaisePropertyChanged(() => TextDocument);
