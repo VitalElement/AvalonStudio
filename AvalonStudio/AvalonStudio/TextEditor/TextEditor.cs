@@ -56,12 +56,11 @@
 
             SyntaxHighlightingDataProperty.Changed.Subscribe((args) =>
             {
-                TextColorizer.SetTransformations();
+                if (TextColorizer != null)
+                {
+                    TextColorizer.SetTransformations();
+                }
             });
-
-            TextColorizer = new TextColoringTransformer(this);
-
-           
         }
         #endregion
 
@@ -440,24 +439,25 @@
         protected override void OnTemplateApplied(INameScope nameScope)
         {
             textView = nameScope.Find<TextView>("textView");
-            textView.Cursor = new Cursor(StandardCursorType.Ibeam);
-
-            textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());           
-            textView.DocumentLineTransformers.Add(TextColorizer);
+            textView.Cursor = new Cursor(StandardCursorType.Ibeam);            
 
             marginsContainer = nameScope.Find<StackPanel>("marginContainer");
 
             InstallMargin(new BreakPointMargin());
             InstallMargin(new LineNumberMargin());
 
-            textMarkerService = new TextMarkerService(this.TextView);
-            textView.BackgroundRenderers.Add(textMarkerService);
-
             TextDocumentProperty.Changed.Subscribe((srgs) =>
             {
                 if (srgs.NewValue != null)
                 {
-                    textMarkerService.Install((TextDocument)srgs.NewValue);
+                    textView.BackgroundRenderers.Clear();
+                    textView.DocumentLineTransformers.Clear();
+
+                    TextColorizer = new TextColoringTransformer(this);
+                    textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
+                    textView.DocumentLineTransformers.Add(TextColorizer);
+                    textMarkerService = new TextMarkerService(this);
+                    textView.BackgroundRenderers.Add(textMarkerService);
                 }
             });
 
