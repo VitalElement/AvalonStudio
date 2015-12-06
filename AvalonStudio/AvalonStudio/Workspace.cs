@@ -5,6 +5,7 @@
     using Models.Platform;
     using System.Threading.Tasks;
     using Models.PackageManager;
+	using System;
     using System.Threading;
     using System.Windows.Input;
     using ReactiveUI;
@@ -31,10 +32,14 @@
 
             SolutionExplorer.SelectedItemChanged += (sender, e) =>
             {
-                if (e is ProjectFileViewModel)
-                {
-                    Editor.Model.OpenFile((e as ProjectFileViewModel).Model);
-                }
+				try {
+	                if (e is ProjectFileViewModel)
+	                {
+	                    Editor.Model.OpenFile((e as ProjectFileViewModel).Model);
+	                }
+				} catch(Exception) {
+
+				}
             };
 
             //Task.Factory.StartNew(async () =>

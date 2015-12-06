@@ -20,14 +20,15 @@
 
                 Width = textInfo.CharWidth * textInfo.NumLines.ToString().Length + 5;
 
-                var firstLine = textEditor.TextView.GetLine(0);
+				if (textEditor.TextView != null) {
+					var firstLine = textEditor.TextView.GetLine (0);
 
-                for (int i = 0; i < textInfo.NumLines; i++)
-                {
-                    context.DrawText(Brush.Parse("#5d5d5d"), new Point(-5, textInfo.LineHeight * i), new FormattedText((i + firstLine).ToString(), "Consolas", textEditor.FontSize, FontStyle.Normal, TextAlignment.Right, FontWeight.Normal) { Constraint = new Size(Width, Bounds.Height) });
-                }
+					for (int i = 0; i < textInfo.NumLines; i++) {
+						context.DrawText (Brush.Parse ("#5d5d5d"), new Point (-5, textInfo.LineHeight * i), new FormattedText ((i + firstLine).ToString (), "Consolas", textEditor.FontSize, FontStyle.Normal, TextAlignment.Right, FontWeight.Normal) { Constraint = new Size (Width, Bounds.Height) });
+					}
 
-                context.DrawLine(new Pen(Brush.Parse("#5d5d5d")), new Point(Width, 0), new Point(Width, Bounds.Height));
+					context.DrawLine (new Pen (Brush.Parse ("#5d5d5d")), new Point (Width, 0), new Point (Width, Bounds.Height));
+				}
             }            
         }
     }
