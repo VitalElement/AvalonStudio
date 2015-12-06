@@ -36,6 +36,7 @@ namespace AvalonStudio.TextEditor.Rendering
         public void Install(TextDocument doc)
         {
             markers = new TextSegmentCollection<TextMarker>(doc);
+            Create(555, 7, "This is a warning", Color.FromRgb(255, 207, 40));
             Create(591, 7, "This is an error", Color.FromRgb(243, 45, 45));
         }
 
