@@ -342,7 +342,15 @@
 
         public int GetLine(int caretIndex)
         {
-            return TextDocument.GetLineByOffset(caretIndex).LineNumber;
+			var line = TextDocument.GetLineByOffset (caretIndex);
+
+			var result = 1;
+
+			if (line != null) {
+				result = line.LineNumber;
+			}
+
+			return result;
         }
         #endregion
     }
