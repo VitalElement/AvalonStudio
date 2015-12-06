@@ -35,13 +35,13 @@
 
         public event EventHandler<EventArgs> CodeAnalysisDataChanged;
 
-        private List<SyntaxHighlightingData> syntaxHighlightingData;
-        public List<SyntaxHighlightingData> SyntaxHighlightingData
+        private CodeAnalysisResults codeAnalysisResults;
+        public CodeAnalysisResults CodeAnalysisResults
         {
-            get { return syntaxHighlightingData; }
+            get { return codeAnalysisResults; }
             set
             {
-                syntaxHighlightingData = value;
+                codeAnalysisResults = value;
 
                 if (CodeAnalysisDataChanged != null)
                 {
