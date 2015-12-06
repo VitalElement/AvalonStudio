@@ -18,28 +18,6 @@
             InstalledDebugAdaptors = new List<GDBDebugAdaptor> ();
         }
 
-
-		public void TestInterface (IConsole console)
-		{
-			NClang.ClangIndex index = NClang.ClangService.CreateIndex();
-
-			var tu = index.ParseTranslationUnit("CardLaminator.cpp", new string[] { }, new NClang.ClangUnsavedFile[] { }, NClang.TranslationUnitFlags.None);
-
-			var results = tu.CodeCompleteAt("CardLaminator.cpp", 49, 16, new NClang.ClangUnsavedFile[] { }, NClang.CodeCompleteFlags.None);
-
-			console.WriteLine(results.ResultCount.ToString());
-
-			foreach (var result in results.Results)
-			{
-				foreach (var chunk in result.CompletionString.Chunks)
-				{
-					console.Write(chunk.Text);
-				}
-
-				console.WriteLine();
-			}
-		}
-
         private static VEStudioSettings CreateNew ()
         {
             VEStudioSettings result = new VEStudioSettings ();
