@@ -182,30 +182,7 @@
                     }
                 }
 
-                var backgroundColor = (((Control)TemplatedParent).GetValue(BackgroundProperty) as SolidColorBrush)?.Color;
-                var caretBrush = Brushes.Black;
-
-                if (backgroundColor.HasValue)
-                {
-                    byte red = (byte)~(backgroundColor.Value.R);
-                    byte green = (byte)~(backgroundColor.Value.G);
-                    byte blue = (byte)~(backgroundColor.Value.B);
-
-                    caretBrush = new SolidColorBrush(Color.FromRgb(red, green, blue));
-                }
-
-                if (_caretBlink)
-                {
-                    var charPos = VisualLineGeometryBuilder.GetTextPosition(this, CaretIndex);
-                    var x = Math.Floor(charPos.X) + 0.5;
-                    var y = Math.Floor(charPos.Y) + 0.5;
-                    var b = Math.Ceiling(charPos.Bottom) - 0.5;
-
-                    context.DrawLine(
-                        new Pen(caretBrush, 1),
-                        new Point(x, y),
-                        new Point(x, b));
-                }
+                RenderCaret(context);
             }
         }
 
@@ -299,6 +276,37 @@
                 }
 
                 context.DrawText(Brushes.WhiteSmoke, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
+            }
+        }
+
+        private void RenderCaret (DrawingContext context)
+        {
+            if (SelectionStart == SelectionEnd)
+            {
+                var backgroundColor = (((Control)TemplatedParent).GetValue(BackgroundProperty) as SolidColorBrush)?.Color;
+                var caretBrush = Brushes.Black;
+
+                if (backgroundColor.HasValue)
+                {
+                    byte red = (byte)~(backgroundColor.Value.R);
+                    byte green = (byte)~(backgroundColor.Value.G);
+                    byte blue = (byte)~(backgroundColor.Value.B);
+
+                    caretBrush = new SolidColorBrush(Color.FromRgb(red, green, blue));
+                }
+
+                if (_caretBlink)
+                {
+                    var charPos = VisualLineGeometryBuilder.GetTextPosition(this, CaretIndex);
+                    var x = Math.Floor(charPos.X) + 0.5;
+                    var y = Math.Floor(charPos.Y) + 0.5;
+                    var b = Math.Ceiling(charPos.Bottom) - 0.5;
+
+                    context.DrawLine(
+                        new Pen(caretBrush, 1),
+                        new Point(x, y),
+                        new Point(x, b));
+                }
             }
         }
 
