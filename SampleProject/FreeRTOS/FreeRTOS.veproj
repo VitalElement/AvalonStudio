@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <LocationRelativeToParent>FreeRTOS\FreeRTOS.veproj</LocationRelativeToParent>
+<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <LocationRelativeToParent>FreeRTOS/FreeRTOS.veproj</LocationRelativeToParent>
   <Children>
     <ProjectItem xsi:type="ProjectFolder">
       <Id>d3ee9f45-375e-4316-abb6-79c66ce676b9</Id>
