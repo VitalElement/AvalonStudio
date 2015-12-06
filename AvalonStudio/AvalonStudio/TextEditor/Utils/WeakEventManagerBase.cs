@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.TextEditor.Utils
 {
+    using Perspex.Utilities;
     using System;
     using System.Diagnostics;
     using System.Windows;
@@ -22,17 +23,16 @@
 
         /// <summary>
         /// Adds a weak event listener.
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
+        /// </summary>        
         public static void AddListener(TEventSource source, IWeakEventListener listener)
         {
+            
             CurrentManager.ProtectedAddListener(source, listener);
         }
 
         /// <summary>
         /// Removes a weak event listener.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static void RemoveListener(TEventSource source, IWeakEventListener listener)
         {
             CurrentManager.ProtectedRemoveListener(source, listener);
@@ -67,7 +67,6 @@
         /// <summary>
         /// Gets the current manager.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
         protected static TManager CurrentManager
         {
             get

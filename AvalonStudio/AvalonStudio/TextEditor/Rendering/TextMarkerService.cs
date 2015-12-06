@@ -29,7 +29,16 @@
         public TextMarkerService(TextEditor textView)
         {
             this.editor = textView;
-            markers = new TextSegmentCollection<TextMarker>(textView.TextDocument);
+            markers = new TextSegmentCollection<TextMarker>();
+
+        }
+
+        public void UpdateOffsets(DocumentChangeEventArgs e)
+        {
+            if (markers != null)
+            {
+                markers.UpdateOffsets(e);
+            }
         }
 
         public void Draw(TextView textView, DrawingContext drawingContext)
