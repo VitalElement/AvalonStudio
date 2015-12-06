@@ -32,9 +32,9 @@
 
         public void OpenFile(ProjectFile file)
         {
-            if (File.Exists(file.Location))
+			if (File.Exists(file.Location.Replace("\\",string.Empty)))
             {
-                using (var fs = File.OpenText(file.Location))
+				using (var fs = File.OpenText(file.Location.Replace("\\",string.Empty)))
                 {
                     TextDocument = new TextDocument(fs.ReadToEnd());
                 }
