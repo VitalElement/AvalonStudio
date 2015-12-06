@@ -61,7 +61,8 @@
                     visualColumnEnd = end.Column;
                 }
 
-                yield return new Rect(GetTextPosition(textView, start).TopLeft, new Size(textView.Bounds.Width, textView.CharSize.Height));
+                var width = GetTextPosition(textView, end).TopLeft.X - GetTextPosition(textView, start).TopLeft.X;
+                yield return new Rect(GetTextPosition(textView, start).TopLeft, new Size(width, textView.CharSize.Height));
             }
 
         }

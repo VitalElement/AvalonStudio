@@ -60,6 +60,8 @@
             });
 
             TextColorizer = new TextColoringTransformer(this);
+
+           
         }
         #endregion
 
@@ -432,19 +434,32 @@
         }
         #endregion
 
+        private TextMarkerService textMarkerService;
+
         #region Overrides
         protected override void OnTemplateApplied(INameScope nameScope)
         {
             textView = nameScope.Find<TextView>("textView");
             textView.Cursor = new Cursor(StandardCursorType.Ibeam);
 
-            textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
+            textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());           
             textView.DocumentLineTransformers.Add(TextColorizer);
 
             marginsContainer = nameScope.Find<StackPanel>("marginContainer");
 
             InstallMargin(new BreakPointMargin());
             InstallMargin(new LineNumberMargin());
+
+            textMarkerService = new TextMarkerService(this.TextView);
+            textView.BackgroundRenderers.Add(textMarkerService);
+
+            TextDocumentProperty.Changed.Subscribe((srgs) =>
+            {
+                if (srgs.NewValue != null)
+                {
+                    textMarkerService.Install((TextDocument)srgs.NewValue);
+                }
+            });
 
 
             ScrollViewer = nameScope.Find<ScrollViewer>("scrollViewer");
