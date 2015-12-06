@@ -279,6 +279,7 @@
     <Compile Include="TextEditor\Rendering\IDocumentLineTransformer.cs" />
     <Compile Include="TextEditor\Rendering\SelectedLineBackgroundRenderer.cs" />
     <Compile Include="TextEditor\Rendering\TextColoringTransformer.cs" />
+    <Compile Include="TextEditor\Rendering\TextMarkerService.cs" />
     <Compile Include="TextEditor\Rendering\TextTransformation.cs" />
     <Compile Include="TextEditor\Rendering\VisualLineGeometryBuilder.cs" />
     <Compile Include="TextEditor\TextEditor.cs" />

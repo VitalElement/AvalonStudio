@@ -28,9 +28,10 @@
                 .Subscribe(CaretIndexChanged);
 
             backgroundRenderers = new List<IBackgroundRenderer>();
-            documentLineTransformers = new List<IDocumentLineTransformer>();
+            documentLineTransformers = new List<IDocumentLineTransformer>();            
         }
         #endregion
+        
 
         #region Perspex Properties
         public static readonly PerspexProperty<TextWrapping> TextWrappingProperty =
@@ -154,7 +155,7 @@
         #region Control Overrides
         public override void Render(DrawingContext context)
         {
-            GenerateTextProperties();
+            GenerateTextProperties();            
 
             if (TextDocument != null)
             {
@@ -243,9 +244,41 @@
 
         }
 
+        private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                yield return new Point(start.X + (i * offset), start.Y - ((i + 1) % 2 == 0 ? offset : 0));
+            }
+        }
+
+
         private void RenderTextDecoration(DrawingContext context, DocumentLine line)
         {
+            //Point startPoint = new Point(0, 116);
+            //Point endPoint = new Point(190, 116);
 
+            //var usedPen = new Pen(Brush.Parse("#FD2D2D"), 0.01);
+            
+            //const double offset = 2.5;
+
+            //int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
+
+            //var geometry = new StreamGeometry();
+
+            //using (StreamGeometryContext ctx = geometry.Open())
+            //{                
+            //    ctx.BeginFigure(startPoint, false);
+
+            //    foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+            //    {
+            //        ctx.LineTo(point);
+            //    }
+                
+            //    ctx.EndFigure(false);
+            //}
+
+            //context.DrawGeometry(Brushes.Transparent, usedPen, geometry);
         }
 
         private void RenderText(DrawingContext context, DocumentLine line)
