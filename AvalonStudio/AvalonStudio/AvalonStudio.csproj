@@ -274,6 +274,7 @@
     <Compile Include="TextEditor\Document\UndoStack.cs" />
     <Compile Include="TextEditor\Document\WeakLineTracker.cs" />
     <Compile Include="TextEditor\LineNumberMargin.cs" />
+    <Compile Include="TextEditor\Rendering\ColumnLimitBackgroundRenderer.cs" />
     <Compile Include="TextEditor\Rendering\IBackgroundRenderer.cs" />
     <Compile Include="TextEditor\Rendering\IDocumentLineTransformer.cs" />
     <Compile Include="TextEditor\Rendering\SelectedLineBackgroundRenderer.cs" />

@@ -476,6 +476,7 @@
 
                     TextColorizer = new TextColoringTransformer(this);
                     textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
+                    textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
                     textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
                     textView.DocumentLineTransformers.Add(TextColorizer);
                     textMarkerService = new TextMarkerService(this);
