@@ -11,7 +11,8 @@ namespace AvalonStudio.TextEditor.Rendering
 {
     public class TextMarkerService : IBackgroundRenderer
     {
-        private readonly TextView textView;
+        private readonly TextEditor editor;
+
         private TextSegmentCollection<TextMarker> markers;
 
         public sealed class TextMarker : TextSegment
@@ -27,15 +28,10 @@ namespace AvalonStudio.TextEditor.Rendering
             public string ToolTip { get; set; }
         }
 
-        public TextMarkerService(TextView textView)
+        public TextMarkerService(TextEditor textView)
         {
-            this.textView = textView;
-            
-        }
-
-        public void Install(TextDocument doc)
-        {
-            markers = new TextSegmentCollection<TextMarker>(doc);
+            this.editor = textView;
+            markers = new TextSegmentCollection<TextMarker>(textView.TextDocument);
             Create(555, 7, "This is a warning", Color.FromRgb(255, 207, 40));
             Create(591, 7, "This is an error", Color.FromRgb(243, 45, 45));
         }

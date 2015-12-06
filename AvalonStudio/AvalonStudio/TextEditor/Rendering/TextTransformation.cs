@@ -5,10 +5,8 @@ using Perspex.Media;
 
 namespace AvalonStudio.TextEditor.Rendering
 {
-    public class TextTransformation
+    public class TextTransformation : TextSegment
     {
         public Brush Foreground;
-        public TextAnchor StartAnchor;
-        public TextAnchor EndAnchor;
     }
 }

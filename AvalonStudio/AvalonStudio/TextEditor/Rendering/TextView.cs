@@ -162,8 +162,10 @@
                 // Render background layer.
                 RenderBackground(context);
 
+                int lines = 0;
                 foreach (var line in TextDocument.Lines)
                 {
+                    lines++;
                     // Render text background layer.
                     RenderTextBackground(context, line);
 
@@ -172,6 +174,12 @@
 
                     // Render text decoration layer.
                     RenderTextDecoration(context, line);
+
+                    // Temperary until scroll info is available... to prevent processor overload.
+                    if(lines > 60)
+                    {
+                        break;
+                    }
                 }
 
                 var backgroundColor = (((Control)TemplatedParent).GetValue(BackgroundProperty) as SolidColorBrush)?.Color;
@@ -287,7 +295,7 @@
             {
                 foreach (var lineTransformer in DocumentLineTransformers)
                 {
-                    lineTransformer.ColorizeLine(line, formattedText);
+                    lineTransformer.TransformLine(line, formattedText);
                 }
 
                 context.DrawText(Brushes.WhiteSmoke, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
