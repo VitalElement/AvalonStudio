@@ -1,14 +1,12 @@
-﻿using AvalonStudio.TextEditor.Document;
-using Perspex;
-using Perspex.Media;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AvalonStudio.TextEditor.Rendering
+﻿namespace AvalonStudio.TextEditor.Rendering
 {
+    using AvalonStudio.TextEditor.Document;
+    using Perspex;
+    using Perspex.Media;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class TextMarkerService : IBackgroundRenderer
     {
         private readonly TextEditor editor;
@@ -32,8 +30,6 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             this.editor = textView;
             markers = new TextSegmentCollection<TextMarker>(textView.TextDocument);
-            Create(555, 7, "This is a warning", Color.FromRgb(255, 207, 40));
-            Create(591, 7, "This is an error", Color.FromRgb(243, 45, 45));
         }
 
         public void Draw(TextView textView, DrawingContext drawingContext)
@@ -46,22 +42,10 @@ namespace AvalonStudio.TextEditor.Rendering
             int viewStart = textView.TextDocument.Lines.First().Offset;
             int viewEnd = textView.TextDocument.Lines.Last().EndOffset;
 
-            foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart))
-            {
-                //if (marker.BackgroundColor != null)
-                //{
-                //    var geoBuilder = new BackgroundGeometryBuilder { AlignToWholePixels = true, CornerRadius = 3 };
-                //    geoBuilder.AddSegment(textView, marker);
-                //    Geometry geometry = geoBuilder.CreateGeometry();
-                //    if (geometry != null)
-                //    {
-                //        Color color = marker.BackgroundColor.Value;
-                //        var brush = new SolidColorBrush(color);
-                //        brush.Freeze();
-                //        drawingContext.DrawGeometry(brush, null, geometry);
-                //    }
-                //}
+            var markersOnScreen = markers.FindOverlappingSegments(viewStart, viewEnd - viewStart);
 
+            foreach (TextMarker marker in markersOnScreen)
+            {
                 foreach (Rect r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
                 {
                     Point startPoint = r.BottomLeft;
@@ -110,11 +94,6 @@ namespace AvalonStudio.TextEditor.Rendering
                 toRemove.Add(marker);
                 markers.Remove(marker);
             }
-
-            foreach (TextMarker marker in toRemove)
-            {
-                //Redraw(marker);
-            }
         }
 
         public void Create(int offset, int length, string message, Color markerColor)
@@ -123,7 +102,6 @@ namespace AvalonStudio.TextEditor.Rendering
             markers.Add(m);
             m.MarkerColor = markerColor;
             m.ToolTip = message;
-            //Redraw(m);
         }
 
         public IEnumerable<TextMarker> GetMarkersAtOffset(int offset)
