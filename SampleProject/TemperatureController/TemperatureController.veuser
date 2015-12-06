@@ -2,7 +2,7 @@
 <ArrayOfProjectItemUserData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ProjectItemUserData>
     <Id>2db10d92-818b-499f-b9a3-b3d2c5e94b5e</Id>
-    <IsExpanded>false</IsExpanded>
+    <IsExpanded>true</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
     <BreakOnMain>false</BreakOnMain>

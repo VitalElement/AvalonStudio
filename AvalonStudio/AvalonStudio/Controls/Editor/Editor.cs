@@ -1,13 +1,16 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using System.Threading;
-    using Models.Solutions;
-    using System;
-    using Perspex.Threading;
-    using TextEditor.Document;
-    using System.IO;
+    using Models.LanguageServices.CPlusPlus;
     using Models.LanguageServices;
+    using Models.Solutions;
+    using Perspex.Threading;
+    using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Threading;
+    using TextEditor.Document;
+
+
     public class EditorModel
     {
         private ReaderWriterLockSlim editorLock;
@@ -27,14 +30,23 @@
 
         public event EventHandler<EventArgs> DocumentLoaded;
 
-        public void OpenFile (ProjectFile file)
+        public void OpenFile(ProjectFile file)
         {
+            if (File.Exists(file.Location))
+            {
+                using (var fs = File.OpenText(file.Location))
+                {
+                    TextDocument = new TextDocument(fs.ReadToEnd());
+                }
+            }
+
+            // TODO use factory to create the correct language service.
+            LanguageService = new CPlusPlusLanguageService(file.Project.Solution.NClangIndex, file);
+
             projectFile = file;
-            Document = new Document(file);
-            TextDocument = Document.TextDocument;
 
             DocumentLoaded(this, new EventArgs());
-            
+
             TextDocument.TextChanged += TextDocument_TextChanged;
 
             if (textChangedSemaphore.CurrentCount == 0)
@@ -46,7 +58,7 @@
         private UnsavedFile unsavedFile = null;
         private void TextDocument_TextChanged(object sender, EventArgs e)
         {
-            if(unsavedFile != null)
+            if (unsavedFile != null)
             {
                 UnsavedFiles.Remove(unsavedFile);
             }
@@ -59,7 +71,26 @@
 
         public static List<UnsavedFile> UnsavedFiles = new List<UnsavedFile>();
         public TextDocument TextDocument { get; set; }
-        public Document Document { get; set; }
+        public string Title { get; set; }
+
+        public event EventHandler<EventArgs> CodeAnalysisCompleted;
+
+        private CodeAnalysisResults codeAnalysisResults;
+        public CodeAnalysisResults CodeAnalysisResults
+        {
+            get { return codeAnalysisResults; }
+            set
+            {
+                codeAnalysisResults = value;
+
+                if(CodeAnalysisCompleted != null)
+                {
+                    CodeAnalysisCompleted(this, new EventArgs());
+                }
+            }
+        }
+
+        public ILanguageService LanguageService { get; set; }
 
         public void Shutdown()
         {
@@ -80,7 +111,7 @@
             get { return isDirty; }
             set { isDirty = value; }
         }
-        
+
 
         public void OnTextChanged(object param)
         {
@@ -104,13 +135,13 @@
 
                     editorLock.EnterReadLock();
 
-                    if (Document != null)
+                    if (LanguageService != null)
                     {
-                        var result = Document.LanguageService.RunCodeAnalysis(UnsavedFiles, () => editorLock.WaitingWriteCount > 0);
+                        var result = LanguageService.RunCodeAnalysis(UnsavedFiles, () => editorLock.WaitingWriteCount > 0);
 
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            Document.CodeAnalysisResults = result;
+                            CodeAnalysisResults = result;
                         });
                     }
 
