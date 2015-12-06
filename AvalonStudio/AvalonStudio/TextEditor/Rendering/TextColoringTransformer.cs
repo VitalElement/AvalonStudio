@@ -1,8 +1,8 @@
 ﻿namespace AvalonStudio.TextEditor.Rendering
 {
     using AvalonStudio.TextEditor.Document;
+    using Models.LanguageServices;
     using Perspex.Media;
-    using System.Collections.Generic;
 
     public class TextColoringTransformer : IDocumentLineTransformer
     {

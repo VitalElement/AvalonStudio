@@ -1,12 +1,12 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using TextEditor.Document;
+    using Models.LanguageServices;
     using MVVM;
-    using Perspex.Media;
     using ReactiveUI;
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using TextEditor;
+    using TextEditor.Document;
 
     public class EditorViewModel : ViewModel<EditorModel>
     {
@@ -24,7 +24,8 @@
             {
                 model.Document.CodeAnalysisDataChanged += (s, ee) =>
                 {
-                    HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.Document.SyntaxHighlightingData);                                        
+                    Diagnostics = model.Document.CodeAnalysisResults.Diagnostics;
+                    HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.Document.CodeAnalysisResults.SyntaxHighlightingData);                                        
                 };
 
                 this.RaisePropertyChanged(() => TextDocument);
@@ -52,6 +53,14 @@
             get { return highlightingData; }
             set { this.RaiseAndSetIfChanged(ref highlightingData, value); }
         }
+
+        private List<Diagnostic> diagnostics;
+        public List<Diagnostic> Diagnostics
+        {
+            get { return diagnostics; }
+            set { this.RaiseAndSetIfChanged(ref diagnostics, value); }
+        }
+
 
         public ReactiveCommand<object> BeforeTextChangedCommand { get; private set; }
         public ReactiveCommand<object> TextChangedCommand { get; private set; }

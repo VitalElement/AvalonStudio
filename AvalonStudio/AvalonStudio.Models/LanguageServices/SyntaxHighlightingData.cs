@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AvalonStudio.TextEditor
+namespace AvalonStudio.Models.LanguageServices
 {        
     public enum HighlightType
     {
