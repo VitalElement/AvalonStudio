@@ -9,7 +9,7 @@
             var app = new App();
             var window = new MainWindow();
 
-            EditorModel editorModel = new EditorModel();
+            var editorModel = new EditorModel();
 
             Workspace.This = new Workspace(editorModel);
             window.DataContext = Workspace.This;
