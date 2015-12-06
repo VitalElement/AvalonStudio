@@ -2,12 +2,15 @@
 {
     using Utils;
     using System;
+    using Perspex.Utilities;
+
 
     /// <summary>
     /// Contains weak event managers for the TextDocument events.
     /// </summary>
     public static class TextDocumentWeakEventManager
     {
+        
         /// <summary>
         /// Weak event manager for the <see cref="TextDocument.UpdateStarted"/> event.
         /// </summary>
@@ -130,6 +133,7 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         public sealed class TextChanged : WeakEventManagerBase<TextChanged, TextDocument>
         {
+            
             /// <inheritdoc/>
             protected override void StartListening(TextDocument source)
             {

@@ -494,6 +494,9 @@
                     {
                         textChangedDelayTimer.Stop();
                         textChangedDelayTimer.Start();
+
+                        TextColorizer.UpdateOffsets(e);
+                        textMarkerService.UpdateOffsets(e);
                     };
                 }
             });

@@ -10,14 +10,14 @@
         {
             this.editor = editor;
 
-            TextTransformations = new TextSegmentCollection<TextTransformation>(editor.TextDocument);            
+            TextTransformations = new TextSegmentCollection<TextTransformation>();            
         }
 
         private TextEditor editor;
 
         public void SetTransformations ()
         {
-            var transformations = new TextSegmentCollection<TextTransformation>(editor.TextDocument);
+            var transformations = new TextSegmentCollection<TextTransformation>();
 
             foreach (var transform in editor.SyntaxHighlightingData)
             {
@@ -28,6 +28,14 @@
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }        
+
+        public void UpdateOffsets (DocumentChangeEventArgs e)
+        {
+            if(TextTransformations != null)
+            {
+                TextTransformations.UpdateOffsets(e);
+            }
+        }
 
         public Brush GetBrush(HighlightType type)
         {
