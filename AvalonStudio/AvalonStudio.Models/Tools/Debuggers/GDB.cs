@@ -174,7 +174,7 @@ namespace AvalonStudio.Models.Tools.Debuggers
 
             string result = string.Empty;
 
-            transmitDispatcher.Invoke(() =>
+			transmitDispatcher.Invoke((Action)(() =>
             {
                 transmitSemaphore.WaitOne();
 
@@ -193,7 +193,7 @@ namespace AvalonStudio.Models.Tools.Debuggers
                 ClearCommand();
 
                 transmitSemaphore.Release();
-            });
+				}));
 
             return result;
         }
@@ -432,7 +432,7 @@ namespace AvalonStudio.Models.Tools.Debuggers
         {
             bool result = true;
 
-            transmitDispatcher.Invoke(() =>
+			transmitDispatcher.Invoke((Action)(() =>
             {
                 if (currentState == DebuggerState.Paused)
                 {
@@ -470,7 +470,7 @@ namespace AvalonStudio.Models.Tools.Debuggers
                 this.InternalStopped -= onStoppedHandler;
 
                 transmitSemaphore.Release();
-            });
+				}));
 
             return result;
         }
@@ -507,12 +507,12 @@ namespace AvalonStudio.Models.Tools.Debuggers
         {
             //SafelyExecuteCommandWithoutResume(() =>
             //{
-                transmitDispatcher.Invoke(() =>
+			transmitDispatcher.Invoke((Action)(() =>
                 {
                     transmitSemaphore.WaitOne();
                     input.WriteLine("-gdb-exit");
                     transmitSemaphore.Release();
-                });
+				}));
             //});
         }
 
@@ -588,10 +588,10 @@ namespace AvalonStudio.Models.Tools.Debuggers
                    {
                        //console.WriteLine(e.Data);
 
-                       receiveDispatcher.Invoke(() =>
+							receiveDispatcher.Invoke((Action)(() =>
                        {
                            ProcessOutput(e.Data);
-                       });
+								}));
                    }
                };
 
