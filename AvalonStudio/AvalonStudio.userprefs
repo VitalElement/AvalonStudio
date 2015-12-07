@@ -1,14 +1,15 @@
-﻿<Properties>
+﻿<Properties StartupItem="AvalonStudio/AvalonStudio.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="AvalonStudio/Controls/MainMenu/MainMenuViewModel.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="AvalonStudio/Controls/Editor.paml">
     <Files>
       <File FileName="nclang/NClang/NClang.Native/NativeTopLevel.cs" Line="1" Column="1" />
       <File FileName="nclang/NClang/NClang.Native/CSharpSpecific.cs" Line="1" Column="1" />
-      <File FileName="AvalonStudio.Models/AvalonStudioSettings.cs" Line="21" Column="21" />
+      <File FileName="AvalonStudio.Models/AvalonStudioSettings.cs" Line="1" Column="1" />
       <File FileName="AvalonStudio/App.cs" Line="1" Column="1" />
-      <File FileName="AvalonStudio/Workspace.cs" Line="34" Column="34" />
-      <File FileName="AvalonStudio/Controls/Console/ConsoleViewModel.cs" Line="54" Column="54" />
-      <File FileName="AvalonStudio/Controls/MainMenu/MainMenuViewModel.cs" Line="66" Column="66" />
+      <File FileName="AvalonStudio/Workspace.cs" Line="1" Column="1" />
+      <File FileName="AvalonStudio.Models/Tools/Debuggers/GDB.cs" Line="594" Column="12" />
+      <File FileName="AvalonStudio.Models/Solutions/Project.cs" Line="377" Column="47" />
+      <File FileName="AvalonStudio/Controls/Editor.paml" Line="23" Column="12" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

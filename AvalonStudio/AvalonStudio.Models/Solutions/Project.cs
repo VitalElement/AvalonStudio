@@ -374,7 +374,7 @@
         [XmlIgnore]
         public List<Project> LoadedReferences { get; private set; }
 
-        public List<string> References { get; private set; }
+        public List<string> References { get; set; }
 
         public override string Location
         {
