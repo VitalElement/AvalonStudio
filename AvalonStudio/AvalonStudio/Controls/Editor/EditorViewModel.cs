@@ -60,7 +60,15 @@
         public int CaretIndex
         {
             get { return caretIndex; }
-            set { this.RaiseAndSetIfChanged(ref caretIndex, value); Workspace.This.StatusBar.Offset = value; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref caretIndex, value);
+                Workspace.This.StatusBar.Offset = value;
+
+                var location = TextDocument.GetLocation(value);
+                Workspace.This.StatusBar.LineNumber = location.Line;
+                Workspace.This.StatusBar.Column = location.Column;
+            }
         }
 
         private ObservableCollection<SyntaxHighlightingData> highlightingData;
