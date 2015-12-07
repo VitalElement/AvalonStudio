@@ -105,7 +105,7 @@
         }
 
         public static readonly PerspexProperty<int> CaretIndexProperty =
-            PerspexProperty.Register<TextView, int>(nameof(CaretIndex));
+            PerspexProperty.Register<TextView, int>(nameof(CaretIndex), defaultBindingMode: BindingMode.TwoWay);
 
         public int CaretIndex
         {
