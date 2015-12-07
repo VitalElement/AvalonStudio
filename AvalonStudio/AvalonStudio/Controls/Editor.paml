@@ -3,7 +3,7 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <TextBlock Text="main.cpp" Margin="0,0,0,0" TextAlignment="Center" />
-      <te:TextEditor Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" FontFamily="Consolas" FontSize="12" Foreground="#D4D4D4" BorderThickness="0"
+      <te:TextEditor Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" FontFamily="{Binding FontFamily}" FontSize="12" Foreground="#D4D4D4" BorderThickness="0"
                      SyntaxHighlightingData ="{Binding HighlightingData}"  BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
                      TextChangedCommand="{Binding TextChangedCommand}" Diagnostics="{Binding Diagnostics}" TextChangedDelay="125" CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
                      CommentBrush="#559A3F"
