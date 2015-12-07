@@ -300,8 +300,10 @@
             {
                 var start = Math.Min(selectionStart, selectionEnd);
                 var end = Math.Max(selectionStart, selectionEnd);
-                TextDocument.Remove(start, end);
+                TextDocument.Remove(start, end - start);
+
                 SelectionStart = SelectionEnd = CaretIndex = start;
+
                 return true;
             }
             else
