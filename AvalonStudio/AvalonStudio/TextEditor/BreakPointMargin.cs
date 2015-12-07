@@ -22,8 +22,10 @@
         {            
             Width = textInfo.LineHeight;
 
+            context.FillRectangle(Brush.Parse("#333333"), Bounds);
+
             if (previewPointVisible)
-            {
+            {                
                 context.FillRectangle(Brush.Parse("#631912"), new Rect(Bounds.Size.Width / 4, textInfo.LineHeight * BpLine + Bounds.Size.Width / 4, Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
             }
         }
