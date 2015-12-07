@@ -605,6 +605,7 @@
                 case Key.Back:
                     if (!DeleteSelection() && CaretIndex > 0)
                     {
+                        // TODO implement deleting newline...
                         TextDocument.Remove(caretIndex - 1, 1);
                         --CaretIndex;
                     }
@@ -620,7 +621,7 @@
                     break;
 
                 case Key.Enter:
-                    if (AcceptsReturn)
+                    //if (AcceptsReturn)
                     {
                         HandleTextInput("\r\n");
                     }
@@ -628,15 +629,15 @@
                     break;
 
                 case Key.Tab:
-                    if (AcceptsTab)
+                    //if (AcceptsTab)
                     {
-                        HandleTextInput("\t");
+                        HandleTextInput("    ");
                     }
-                    else
-                    {
-                        base.OnKeyDown(e);
-                        handled = false;
-                    }
+                    //else
+                    //{
+                    //    base.OnKeyDown(e);
+                    //    handled = false;
+                    //}
 
                     break;
             }
