@@ -367,67 +367,36 @@
 
         private void MoveHome(InputModifiers modifiers)
         {
-            //var text = TextDocument ?? string.Empty;
-            //var caretIndex = CaretIndex;
+            var text = TextDocument ?? null;
+            var caretIndex = CaretIndex;
 
-            //if ((modifiers & InputModifiers.Control) != 0)
-            //{
-            //    caretIndex = 0;
-            //}
-            //else
-            //{
-            //    var lines = textView.FormattedText.GetLines();
-            //    var pos = 0;
+            if ((modifiers & InputModifiers.Control) != 0)
+            {
+                caretIndex = 0;
+            }
+            else
+            {
+                caretIndex = TextDocument.GetLineByOffset(CaretIndex).Offset;
+            }
 
-            //    foreach (var line in lines)
-            //    {
-            //        if (pos + line.Length > caretIndex || pos + line.Length == text.Length)
-            //        {
-            //            break;
-            //        }
-
-            //        pos += line.Length;
-            //    }
-
-            //    caretIndex = pos;
-            //}
-
-            //CaretIndex = caretIndex;
+            CaretIndex = caretIndex;
         }
 
         private void MoveEnd(InputModifiers modifiers)
         {
-            //var text = TextDocument ?? string.Empty;
-            //var caretIndex = CaretIndex;
+            var text = TextDocument ?? null;
+            var caretIndex = CaretIndex;
 
-            //if ((modifiers & InputModifiers.Control) != 0)
-            //{
-            //    caretIndex = text.Length;
-            //}
-            //else
-            //{
-            //    var lines = textView.FormattedText.GetLines();
-            //    var pos = 0;
+            if ((modifiers & InputModifiers.Control) != 0)
+            {
+                caretIndex = TextDocument.TextLength;
+            }
+            else
+            {
+                caretIndex = TextDocument.GetLineByOffset(CaretIndex).EndOffset;
+            }
 
-            //    foreach (var line in lines)
-            //    {
-            //        pos += line.Length;
-
-            //        if (pos > caretIndex)
-            //        {
-            //            if (pos < text.Length)
-            //            {
-            //                --pos;
-            //            }
-
-            //            break;
-            //        }
-            //    }
-
-            //    caretIndex = pos;
-            //}
-
-            //CaretIndex = caretIndex;
+            CaretIndex = caretIndex;
         }
 
         private async void Copy()
@@ -521,12 +490,9 @@
                         SelectionStart = SelectionEnd = index;
                         break;
                     case 2:
-                        //if (!StringUtils.IsStartOfWord(text, index))
-                        //{
-                        //    SelectionStart = StringUtils.PreviousWord(text, index, false);
-                        //}
+                        SelectionStart = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
 
-                        //SelectionEnd = StringUtils.NextWord(text, index, false);
+                        SelectionEnd = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorder);
                         break;
                     case 3:
                         SelectionStart = 0;
