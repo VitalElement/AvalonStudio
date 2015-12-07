@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <LocationRelativeToParent>Retarget/Retarget.veproj</LocationRelativeToParent>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LocationRelativeToParent>Retarget\Retarget.veproj</LocationRelativeToParent>
   <Children>
     <ProjectItem xsi:type="ProjectFile">
       <Id>62d4984d-5350-49d1-8ca3-1ca5c25b0394</Id>

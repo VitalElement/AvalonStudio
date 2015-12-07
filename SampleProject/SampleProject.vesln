@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Solution xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Solution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Id>390ef733-3446-4431-ac40-fef25ba1e04c</Id>
   <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
   <Name>SampleProject</Name>
