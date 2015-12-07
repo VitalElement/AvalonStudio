@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <LocationRelativeToParent>Utils\Utils.veproj</LocationRelativeToParent>
+<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <LocationRelativeToParent>Utils/Utils.veproj</LocationRelativeToParent>
   <Children>
     <ProjectItem xsi:type="ProjectFile">
       <Id>1bc423a4-99b1-4ef2-89ec-1403cdab4d3a</Id>

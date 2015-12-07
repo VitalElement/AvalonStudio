@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <LocationRelativeToParent>DCMotor\DCMotor.veproj</LocationRelativeToParent>
+<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <LocationRelativeToParent>DCMotor/DCMotor.veproj</LocationRelativeToParent>
   <Children>
     <ProjectItem xsi:type="ProjectFile">
       <Id>c9ce51a8-5b11-4042-88f8-0015c705df05</Id>
