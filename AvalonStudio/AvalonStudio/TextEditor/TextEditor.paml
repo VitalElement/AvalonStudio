@@ -2,21 +2,21 @@
   <Style Selector="local|TextEditor">
     <Setter Property="Background" Value="#1e1e1e"/>
     <Setter Property="BorderBrush" Value="#ff707070"/>
-    <Setter Property="BorderThickness" Value="2"/>
-    <Setter Property="Padding" Value="2"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
     <Setter Property="Template">
       <ControlTemplate>
         <Border Name="border"
                 Background="{TemplateBinding Background}"
                 BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}"
-                Padding="2">
+                BorderThickness="0"
+                Padding="0">
           <ScrollViewer CanScrollHorizontally="{TemplateBinding CanScrollHorizontally}"
                         HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}"
                         VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}">
-              <Grid Margin="0 5" ColumnDefinitions="Auto, *">
+              <Grid Margin="0 0" ColumnDefinitions="Auto, *">
                 <StackPanel Orientation="Horizontal" Name="marginContainer"/>
-                <tv:TextView Name="textView" HorizontalAlignment="Stretch" Margin="5, 0" Grid.Column="1" 
+                <tv:TextView Name="textView" HorizontalAlignment="Stretch" Margin="0, 0" Grid.Column="1" 
                                 CaretIndex="{TemplateBinding CaretIndex}"
                                 SelectionStart="{TemplateBinding SelectionStart}"
                                 SelectionEnd="{TemplateBinding SelectionEnd}"

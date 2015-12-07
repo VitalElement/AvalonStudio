@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Controls
 {
+    using Models.Platform;
     using Models.LanguageServices;
     using MVVM;
     using ReactiveUI;
@@ -30,6 +31,21 @@
 
                 this.RaisePropertyChanged(() => TextDocument);
             };
+        }
+
+        public string FontFamily
+        {
+            get
+            {
+                switch(Platform.PlatformID)
+                {
+                    case PlatformID.Unix:
+                        return "Monospace";
+
+                    default:
+                        return "Consolas";                        
+                }
+            }
         }
 
         public TextDocument TextDocument
