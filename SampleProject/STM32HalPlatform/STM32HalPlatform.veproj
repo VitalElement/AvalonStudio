@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <LocationRelativeToParent>STM32HalPlatform/STM32HalPlatform.veproj</LocationRelativeToParent>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LocationRelativeToParent>STM32HalPlatform\STM32HalPlatform.veproj</LocationRelativeToParent>
   <Children>
     <ProjectItem xsi:type="ProjectFolder">
       <Id>1ac0227b-70d1-40a7-a628-6ab139b61ea1</Id>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <LocationRelativeToParent>FreeRTOSCortexM4Port/FreeRTOSCortexM4Port.veproj</LocationRelativeToParent>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LocationRelativeToParent>FreeRTOSCortexM4Port\FreeRTOSCortexM4Port.veproj</LocationRelativeToParent>
   <Children>
     <ProjectItem xsi:type="ProjectFile">
       <Id>42d645c6-738a-47f3-9960-fdeb20c1c344</Id>
