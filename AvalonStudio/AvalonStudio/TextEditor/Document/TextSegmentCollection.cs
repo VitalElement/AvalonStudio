@@ -9,7 +9,7 @@
     using System.Windows;
     using System.Threading.Tasks;
     using Utils;
-
+    using Perspex.Utilities;
     /// <summary>
     /// Interface to allow TextSegments to access the TextSegmentCollection - we cannot use a direct reference
     /// because TextSegmentCollection is generic.
@@ -29,7 +29,7 @@
     /// </summary>
     /// <remarks><inheritdoc cref="TextSegment"/></remarks>
     /// <see cref="TextSegment"/>
-    public sealed class TextSegmentCollection<T> : ICollection<T>, ISegmentTree, IWeakEventListener where T : TextSegment
+    public sealed class TextSegmentCollection<T> : ICollection<T>, ISegmentTree, IWeakSubscriber<DocumentChangeEventArgs> where T : TextSegment
     {
         // Implementation: this is basically a mixture of an augmented interval tree
         // and the TextAnchorTree.
@@ -76,19 +76,15 @@
 
             textDocument.VerifyAccess();
             isConnectedToDocument = true;
-            TextDocumentWeakEventManager.Changed.AddListener(textDocument, this);
+            WeakSubscriptionManager.Subscribe(textDocument, nameof(textDocument.Changed), this);
         }
         #endregion
 
         #region OnDocumentChanged / UpdateOffsets
-        bool IWeakEventListener.ReceiveWeakEvent(Type managerType, object sender, EventArgs e)
+
+        public void OnEvent(object sender, DocumentChangeEventArgs ev)
         {
-            if (managerType == typeof(TextDocumentWeakEventManager.Changed))
-            {
-                OnDocumentChanged((DocumentChangeEventArgs)e);
-                return true;
-            }
-            return false;
+            OnDocumentChanged((DocumentChangeEventArgs)ev);
         }
 
         /// <summary>
