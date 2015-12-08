@@ -517,12 +517,11 @@
 
                         TextDocument?.UndoStack.EndUndoGroup();
 
-                        TextColorizer.UpdateOffsets(e);
-                        textMarkerService.UpdateOffsets(e);
+                        //TextColorizer.UpdateOffsets(e);
+                        //textMarkerService.UpdateOffsets(e);
                     };
                 }
             });
-
 
             ScrollViewer = nameScope.Find<ScrollViewer>("scrollViewer");
         }

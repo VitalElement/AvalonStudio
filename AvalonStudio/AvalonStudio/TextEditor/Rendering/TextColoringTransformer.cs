@@ -10,14 +10,14 @@
         {
             this.editor = editor;
 
-            TextTransformations = new TextSegmentCollection<TextTransformation>();            
+            TextTransformations = new TextSegmentCollection<TextTransformation>(editor.TextDocument);            
         }
 
         private TextEditor editor;
 
         public void SetTransformations ()
         {
-            var transformations = new TextSegmentCollection<TextTransformation>();
+            var transformations = new TextSegmentCollection<TextTransformation>(editor.TextDocument);
 
             foreach (var transform in editor.SyntaxHighlightingData)
             {
