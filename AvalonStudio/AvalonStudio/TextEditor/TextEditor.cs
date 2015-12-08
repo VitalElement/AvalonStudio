@@ -416,6 +416,52 @@
             HandleTextInput(text);
         }
 
+        private void Undo ()
+        {            
+            TextDocument?.UndoStack.Undo();
+        }
+
+        private void Redo ()
+        {            
+            TextDocument?.UndoStack.Redo();
+        }
+
+        sealed class RestoreCaretAndSelectionUndoAction : IUndoableOperation
+        {
+            // keep textarea in weak reference because the IUndoableOperation is stored with the document
+            WeakReference textAreaReference;
+            int caretPosition;
+            int selectionStart;
+            int selectionEnd;
+
+            public RestoreCaretAndSelectionUndoAction(TextEditor editor)
+            {
+                this.textAreaReference = new WeakReference(editor);
+                // Just save the old caret position, no need to validate here.
+                // If we restore it, we'll validate it anyways.
+                this.caretPosition = editor.CaretIndex;
+                this.selectionStart = editor.SelectionStart;
+                this.selectionEnd = editor.SelectionEnd;
+            }
+
+            public void Undo()
+            {
+                var textEditor = (TextEditor)textAreaReference.Target;
+                if (textEditor != null)
+                {
+                    textEditor.CaretIndex = caretPosition;
+                    textEditor.SelectionStart = selectionStart;
+                    textEditor.SelectionEnd = selectionEnd;
+                }
+            }
+
+            public void Redo()
+            {
+                // redo=undo: we just restore the caret/selection state
+                Undo();
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -455,6 +501,9 @@
 
                     TextDocument.Changing += (sender, e) =>
                     {
+                        TextDocument?.UndoStack.StartUndoGroup();
+                        TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));                        
+
                         if (BeforeTextChangedCommand != null)
                         {
                             BeforeTextChangedCommand.Execute(null);
@@ -465,6 +514,8 @@
                     {
                         textChangedDelayTimer.Stop();
                         textChangedDelayTimer.Start();
+
+                        TextDocument?.UndoStack.EndUndoGroup();
 
                         TextColorizer.UpdateOffsets(e);
                         textMarkerService.UpdateOffsets(e);
@@ -502,6 +553,8 @@
 
                 e.Device.Capture(textView);
                 e.Handled = true;
+
+                InvalidateVisual();
             }
         }
 
@@ -557,6 +610,7 @@
                     }
 
                     break;
+
                 case Key.C:
                     if (modifiers == InputModifiers.Control)
                     {
@@ -564,12 +618,26 @@
                     }
 
                     break;
+
                 case Key.V:
                     if (modifiers == InputModifiers.Control)
                     {
                         Paste();
                     }
+                    break;
 
+                case Key.Y:
+                    if(modifiers == InputModifiers.Control)
+                    {
+                        Redo();
+                    }
+                    break;
+
+                case Key.Z:
+                    if(modifiers == InputModifiers.Control)
+                    {
+                        Undo();
+                    }
                     break;
 
                 case Key.Left:
