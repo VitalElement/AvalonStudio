@@ -404,19 +404,19 @@
         {
             var caretIndex = CaretIndex;
 
-            //if ((modifiers & InputModifiers.Control) != 0)
-            //{
-            //    if (count > 0)
-            //    {
-            //        // count = StringUtils.NextWord(text, caretIndex, false) - caretIndex;
-            //    }
-            //    else
-            //    {
-            //        //count = StringUtils.PreviousWord(text, caretIndex, false) - caretIndex;
-            //    }
-            //}
+            if ((modifiers & InputModifiers.Control) != 0)
+            {
+                if (count > 0)
+                {
+                    count = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
+                }
+                else
+                {
+                    count = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
+                }
+            }
 
-            CaretIndex = caretIndex += count;
+            CaretIndex += count;
         }
 
         private void MoveVertical(int count, InputModifiers modifiers)
@@ -594,8 +594,7 @@
 
                         TextDocument?.UndoStack.EndUndoGroup();
 
-                        //TextColorizer.UpdateOffsets(e);
-                        //textMarkerService.UpdateOffsets(e);
+                        InvalidateVisual();
                     };
                 }
             });
@@ -806,6 +805,7 @@
 
             if (handled)
             {
+                InvalidateVisual();
                 e.Handled = true;
             }
         }
