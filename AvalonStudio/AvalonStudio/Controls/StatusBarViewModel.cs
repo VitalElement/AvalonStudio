@@ -44,13 +44,13 @@
         {
             get
             {
-                if (this.Offset == 0)
+                if (this.Offset >= 0)
                 {
-                    return string.Empty;
+                    return string.Format("Loc {0}", Offset);
                 }
                 else
                 {
-                    return string.Format("Loc {0}", Offset);
+                    return string.Empty;                    
                 }
             }
         }

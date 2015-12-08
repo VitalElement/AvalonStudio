@@ -75,9 +75,12 @@
                 this.RaiseAndSetIfChanged(ref caretIndex, value);
                 Workspace.This.StatusBar.Offset = value;
 
-                var location = TextDocument.GetLocation(value);
-                Workspace.This.StatusBar.LineNumber = location.Line;
-                Workspace.This.StatusBar.Column = location.Column;
+                if (value >= 0)
+                {
+                    var location = TextDocument.GetLocation(value);
+                    Workspace.This.StatusBar.LineNumber = location.Line;
+                    Workspace.This.StatusBar.Column = location.Column;
+                }
             }
         }
 

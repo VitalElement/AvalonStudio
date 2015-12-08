@@ -7,16 +7,16 @@
 
     public class TextColoringTransformer : IDocumentLineTransformer
     {
-        public TextColoringTransformer (TextEditor editor)
+        public TextColoringTransformer(TextEditor editor)
         {
             this.editor = editor;
 
-            TextTransformations = new TextSegmentCollection<TextTransformation>(editor.TextDocument);            
+            TextTransformations = new TextSegmentCollection<TextTransformation>(editor.TextDocument);
         }
 
         private TextEditor editor;
 
-        public void SetTransformations ()
+        public void SetTransformations()
         {
             var transformations = new TextSegmentCollection<TextTransformation>(editor.TextDocument);
 
@@ -28,11 +28,11 @@
             TextTransformations = transformations;
         }
 
-        public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }        
+        public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
 
-        public void UpdateOffsets (DocumentChangeEventArgs e)
+        public void UpdateOffsets(DocumentChangeEventArgs e)
         {
-            if(TextTransformations != null)
+            if (TextTransformations != null)
             {
                 TextTransformations.UpdateOffsets(e);
             }
@@ -42,14 +42,14 @@
         {
             Brush result;
 
-            switch(type)
+            switch (type)
             {
                 case HighlightType.Comment:
                     result = editor.CommentBrush;
                     break;
 
                 case HighlightType.Identifier:
-                    result= editor.IdentifierBrush;
+                    result = editor.IdentifierBrush;
                     break;
 
                 case HighlightType.Keyword:
@@ -68,6 +68,10 @@
                     result = editor.UserTypeBrush;
                     break;
 
+                case HighlightType.CallExpression:
+                    result = editor.CallExpressionBrush;
+                    break;
+
                 default:
                     result = Brushes.Red;
                     break;
@@ -80,7 +84,7 @@
         {
             var transformsInLine = TextTransformations.FindOverlappingSegments(line);
 
-            foreach(var transform in transformsInLine)
+            foreach (var transform in transformsInLine)
             {
                 var formattedOffset = 0;
 
