@@ -3,9 +3,12 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <TextBlock Text="main.cpp" Margin="0,0,0,0" TextAlignment="Center" />
-      <te:TextEditor Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" FontFamily="{Binding FontFamily}" FontSize="12" Foreground="#D4D4D4" BorderThickness="0"
+      <te:TextEditor Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" 
+                     FontFamily="{Binding FontFamily}" FontSize="12" Foreground="#D4D4D4" BorderThickness="0"
                      SyntaxHighlightingData ="{Binding HighlightingData}"  BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
-                     TextChangedCommand="{Binding TextChangedCommand}" Diagnostics="{Binding Diagnostics}" TextChangedDelay="225" CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
+                     TextChangedCommand="{Binding TextChangedCommand}" Diagnostics="{Binding Diagnostics}" 
+                     TextChangedDelay="225" CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
+                     AcceptsReturn="true" AcceptsTab="true"
                      CommentBrush="#559A3F"
                      IdentifierBrush="#D4D4D4"
                      KeywordBrush ="#569CD6"                     
