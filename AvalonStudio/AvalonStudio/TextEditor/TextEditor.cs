@@ -506,6 +506,7 @@
                     textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
                     textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
                     textView.DocumentLineTransformers.Add(TextColorizer);
+                    TextView.DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
                     textMarkerService = new TextMarkerService(this);
                     textView.BackgroundRenderers.Add(textMarkerService);
 
