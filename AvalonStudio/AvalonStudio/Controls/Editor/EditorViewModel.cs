@@ -21,6 +21,8 @@
             TextChangedCommand = ReactiveCommand.Create();
             TextChangedCommand.Subscribe(model.OnTextChanged);
 
+            tabCharacter = "    ";
+
             model.DocumentLoaded += (sender, e) =>
             {
                 model.CodeAnalysisCompleted += (s, ee) =>
@@ -32,6 +34,14 @@
                 this.RaisePropertyChanged(() => TextDocument);
             };
         }
+
+        private string tabCharacter;
+        public string TabCharacter
+        {
+            get { return tabCharacter; }
+            set { this.RaiseAndSetIfChanged(ref tabCharacter, value); }
+        }
+
 
         public string FontFamily
         {
