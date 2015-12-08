@@ -33,7 +33,6 @@
         }
         #endregion
         
-
         #region Perspex Properties
         public static readonly PerspexProperty<TextWrapping> TextWrappingProperty =
            TextBlock.TextWrappingProperty.AddOwner<TextView>();
@@ -120,8 +119,24 @@
         public static readonly PerspexProperty<int> SelectionEndProperty =
             TextBox.SelectionEndProperty.AddOwner<TextView>();
 
+        public static readonly PerspexProperty<Brush> ForegoundProperty =
+            TextBlock.ForegroundProperty.AddOwner<TextView>();
+
+        public Brush Foreground
+        {
+            get { return GetValue(ForegoundProperty); }
+            set { SetValue(ForegoundProperty, value); }
+        }
+
         public static readonly PerspexProperty<Brush> BackgroundProperty =
-            Border.BackgroundProperty.AddOwner<TextBlock>();
+            Border.BackgroundProperty.AddOwner<TextView>();
+
+        public Brush Background
+        {
+            get { return GetValue(BackgroundProperty); }
+            set { SetValue(BackgroundProperty, value); }
+        }
+
         public int SelectionStart
         {
             get { return GetValue(SelectionStartProperty); }
@@ -255,7 +270,7 @@
                     lineTransformer.TransformLine(this, context, boundary, line, formattedText);
                 }
 
-                context.DrawText(Brushes.WhiteSmoke, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
+                context.DrawText(Foreground, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
             }
         }
 
@@ -337,7 +352,10 @@
                 var column = Math.Ceiling((point.X / CharSize.Width) + 0.5 );
                 var line = Math.Ceiling(point.Y / CharSize.Height);
 
-                result = TextDocument.GetOffset((int)line, (int)column);
+                if (line > 0 && column > 0)
+                {
+                    result = TextDocument.GetOffset((int)line, (int)column);
+                }
             }
 
             return result;

@@ -74,7 +74,13 @@
 
                     foreach (var diag in diags)
                     {
-                        var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, diag.Offset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
+                        var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, diag.Offset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);                        
+
+                        if(endoffset == -1)
+                        {
+                            endoffset = diag.Offset;
+                        }
+
                         var length = endoffset - diag.Offset;
                         textMarkerService.Create(diag.Offset, length, diag.Spelling, Color.FromRgb(243, 45, 45));
                     }
@@ -258,6 +264,15 @@
             set { SetValue(UserTypeBrushProperty, value); }
         }
 
+        public static readonly PerspexProperty<Brush> CallExpressionBrushProperty =
+            PerspexProperty.Register<TextEditor, Brush>(nameof(CallExpressionBrush));
+
+        public Brush CallExpressionBrush
+        {
+            get { return GetValue(CallExpressionBrushProperty); }
+            set { SetValue(CallExpressionBrushProperty, value); }
+        }
+
         public static readonly PerspexProperty<Brush> CommentBrushProperty =
             PerspexProperty.Register<TextEditor, Brush>(nameof(CommentBrush));
 
@@ -285,7 +300,7 @@
         #region Private Methods
         private void InvalidateSelectedWord()
         {
-            if (CaretIndex >= 0)
+            if (CaretIndex >= 0 && TextDocument.TextLength > CaretIndex)
             {
                 bool wordFound = false;
 
@@ -548,12 +563,16 @@
                     textView.DocumentLineTransformers.Clear();
 
                     TextColorizer = new TextColoringTransformer(this);
+
                     textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
                     textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
                     textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
                     textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));
                     textView.DocumentLineTransformers.Add(TextColorizer);
-                    TextView.DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
+                    textView.DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
+                    textView.DocumentLineTransformers.Add(new DefineTextLineTransformer());
+                    textView.DocumentLineTransformers.Add(new IncludeTextLineTransformer());
+
                     textMarkerService = new TextMarkerService(this);
                     textView.BackgroundRenderers.Add(textMarkerService);
 
@@ -620,7 +639,16 @@
             if (e.Device.Captured == textView)
             {
                 var point = e.GetPosition(textView);
-                CaretIndex = SelectionEnd = textView.GetOffsetFromPoint(point);
+                CaretIndex = textView.GetOffsetFromPoint(point);
+
+                if (CaretIndex >= 0)
+                {
+                    SelectionEnd = CaretIndex;
+                }
+                else
+                {
+                    SelectionEnd = 0;
+                }
             }
         }
 

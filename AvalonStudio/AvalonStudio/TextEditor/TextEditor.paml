@@ -20,7 +20,8 @@
                                 CaretIndex="{TemplateBinding CaretIndex}"
                                 SelectionStart="{TemplateBinding SelectionStart}"
                                 SelectionEnd="{TemplateBinding SelectionEnd}"
-                                TextDocument="{TemplateBinding TextDocument}"/>
+                                Foreground="{TemplateBinding Foreground}"
+                                TextDocument="{TemplateBinding TextDocument}"/>                                
               </Grid>            
           </ScrollViewer>
         </Border>
