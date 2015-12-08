@@ -91,6 +91,16 @@
         #endregion
 
         #region Pespex Properties
+        public static readonly PerspexProperty<string> TabCharacterProperty = 
+            PerspexProperty.Register<TextEditor, string>(nameof(TabCharacter), defaultValue: "    ");
+
+        public string TabCharacter
+        {
+            get { return GetValue(TabCharacterProperty); }
+            set { SetValue(TabCharacterProperty, value); }
+        }
+
+
         public static readonly PerspexProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
         TextView.BeforeTextChangedCommandProperty.AddOwner<TextEditor>();
 
@@ -698,7 +708,7 @@
                 case Key.Tab:
                     if (AcceptsTab)
                     {
-                        HandleTextInput("    ");
+                        HandleTextInput(TabCharacter);
                     }
                     else
                     {
