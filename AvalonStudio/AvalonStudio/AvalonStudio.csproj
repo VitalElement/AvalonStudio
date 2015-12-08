@@ -235,7 +235,6 @@
     <Compile Include="TextEditor\Document\TextAnchorNode.cs" />
     <Compile Include="TextEditor\Document\TextAnchorTree.cs" />
     <Compile Include="TextEditor\Document\TextDocument.cs" />
-    <Compile Include="TextEditor\Document\TextDocumentWeakEventManager.cs" />
     <Compile Include="TextEditor\Document\TextLocation.cs" />
     <Compile Include="TextEditor\Document\TextSegment.cs" />
     <Compile Include="TextEditor\Document\TextSegmentCollection.cs" />

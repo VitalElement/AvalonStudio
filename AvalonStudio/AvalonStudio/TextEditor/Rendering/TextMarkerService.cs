@@ -29,7 +29,7 @@
         public TextMarkerService(TextEditor textView)
         {
             this.editor = textView;
-            markers = new TextSegmentCollection<TextMarker>();
+            markers = new TextSegmentCollection<TextMarker>(textView.TextDocument);
 
         }
 

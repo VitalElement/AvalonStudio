@@ -71,7 +71,6 @@
         /// <summary>
         /// Weak event manager for the <see cref="TextDocument.Changed"/> event.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         public sealed class Changed : WeakEventManagerBase<Changed, TextDocument>
         {
             /// <inheritdoc/>
