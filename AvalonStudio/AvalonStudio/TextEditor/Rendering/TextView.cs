@@ -8,6 +8,7 @@
     using Perspex.VisualTree;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Reactive.Linq;
 
     public class TextView : Control
@@ -247,9 +248,11 @@
         {
             using (var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
             {
+                var boundary = VisualLineGeometryBuilder.GetRectsForSegment(this, line).First();
+
                 foreach (var lineTransformer in DocumentLineTransformers)
                 {
-                    lineTransformer.TransformLine(line, formattedText);
+                    lineTransformer.TransformLine(this, context, boundary, line, formattedText);
                 }
 
                 context.DrawText(Brushes.WhiteSmoke, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
