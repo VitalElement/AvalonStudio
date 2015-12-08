@@ -130,6 +130,22 @@
             EveryCodepoint
         }
 
+        public static bool ContainsNumber(string text)
+        {
+            bool result = false;
+
+            foreach (var character in text)
+            {
+                if (char.IsDigit(character))
+                {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Finds the next new line character starting at offset.
         /// </summary>

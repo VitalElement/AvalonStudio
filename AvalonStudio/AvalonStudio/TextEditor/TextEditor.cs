@@ -66,13 +66,13 @@
 
             DiagnosticsProperty.Changed.Subscribe((args) =>
             {
-                if(textMarkerService != null && args.NewValue != null)
+                if (textMarkerService != null && args.NewValue != null)
                 {
                     var diags = args.NewValue as List<Diagnostic>;
 
                     textMarkerService.Clear();
 
-                    foreach(var diag in diags)
+                    foreach (var diag in diags)
                     {
                         var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, diag.Offset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
                         var length = endoffset - diag.Offset;
@@ -91,7 +91,7 @@
         #endregion
 
         #region Pespex Properties
-        public static readonly PerspexProperty<string> TabCharacterProperty = 
+        public static readonly PerspexProperty<string> TabCharacterProperty =
             PerspexProperty.Register<TextEditor, string>(nameof(TabCharacter), defaultValue: "    ");
 
         public string TabCharacter
@@ -100,6 +100,14 @@
             set { SetValue(TabCharacterProperty, value); }
         }
 
+        public static readonly PerspexProperty<string> SelectedWordProperty =
+            PerspexProperty.Register<TextEditor, string>(nameof(SelectedWord), defaultValue: string.Empty);
+
+        public string SelectedWord
+        {
+            get { return GetValue(SelectedWordProperty); }
+            set { SetValue(SelectedWordProperty, value); }
+        }
 
         public static readonly PerspexProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
         TextView.BeforeTextChangedCommandProperty.AddOwner<TextEditor>();
@@ -152,7 +160,12 @@
         public int CaretIndex
         {
             get { return GetValue(CaretIndexProperty); }
-            set { SetValue(CaretIndexProperty, value); }
+            set
+            {
+                SetValue(CaretIndexProperty, value);
+
+                InvalidateSelectedWord();
+            }
         }
 
         public static readonly PerspexProperty<int> SelectionStartProperty =
@@ -270,6 +283,39 @@
         #endregion
 
         #region Private Methods
+        private void InvalidateSelectedWord()
+        {
+            if (CaretIndex >= 0)
+            {
+                bool wordFound = false;
+
+                var charClass = TextUtilities.GetCharacterClass(TextDocument.GetCharAt(CaretIndex));
+
+                if (charClass == TextUtilities.CharacterClass.IdentifierPart)
+                {
+                    int start = TextUtilities.GetNextCaretPosition(TextDocument, CaretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordBorder);
+
+                    if (TextUtilities.GetCharacterClass(TextDocument.GetCharAt(start)) == TextUtilities.CharacterClass.IdentifierPart)
+                    {
+                        int end = TextUtilities.GetNextCaretPosition(TextDocument, CaretIndex, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorder);
+
+                        string word = TextDocument.GetText(start, end - start);
+
+                        if(!TextUtilities.ContainsNumber(word))
+                        {
+                            SelectedWord = word;
+                            wordFound = true;
+                        }
+                    }
+                }
+
+                if (!wordFound)
+                {
+                    SelectedWord = string.Empty;
+                }
+            }
+        }
+
         private void HandleTextInput(string input)
         {
             //string text = TextDocument ?? string.Empty;
@@ -426,13 +472,13 @@
             HandleTextInput(text);
         }
 
-        private void Undo ()
-        {            
+        private void Undo()
+        {
             TextDocument?.UndoStack.Undo();
         }
 
-        private void Redo ()
-        {            
+        private void Redo()
+        {
             TextDocument?.UndoStack.Redo();
         }
 
@@ -487,7 +533,7 @@
         protected override void OnTemplateApplied(INameScope nameScope)
         {
             textView = nameScope.Find<TextView>("textView");
-            textView.Cursor = new Cursor(StandardCursorType.Ibeam);            
+            textView.Cursor = new Cursor(StandardCursorType.Ibeam);
 
             marginsContainer = nameScope.Find<StackPanel>("marginContainer");
 
@@ -505,6 +551,7 @@
                     textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
                     textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
                     textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
+                    textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));
                     textView.DocumentLineTransformers.Add(TextColorizer);
                     TextView.DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
                     textMarkerService = new TextMarkerService(this);
@@ -513,7 +560,7 @@
                     TextDocument.Changing += (sender, e) =>
                     {
                         TextDocument?.UndoStack.StartUndoGroup();
-                        TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));                        
+                        TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
 
                         if (BeforeTextChangedCommand != null)
                         {
@@ -637,14 +684,14 @@
                     break;
 
                 case Key.Y:
-                    if(modifiers == InputModifiers.Control)
+                    if (modifiers == InputModifiers.Control)
                     {
                         Redo();
                     }
                     break;
 
                 case Key.Z:
-                    if(modifiers == InputModifiers.Control)
+                    if (modifiers == InputModifiers.Control)
                     {
                         Undo();
                     }
