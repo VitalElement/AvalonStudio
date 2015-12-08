@@ -4,12 +4,12 @@
     <Grid RowDefinitions="25,*">
       <TextBlock Text="main.cpp" Margin="0,0,0,0" TextAlignment="Center" />
       <te:TextEditor Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" 
-                     FontFamily="{Binding FontFamily}" FontSize="12" Foreground="#D4D4D4" BorderThickness="0"
+                     FontFamily="{Binding FontFamily}" FontSize="14" Foreground="#D4D4D4" BorderThickness="0"
                      SyntaxHighlightingData ="{Binding HighlightingData}"  BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
                      TextChangedCommand="{Binding TextChangedCommand}" Diagnostics="{Binding Diagnostics}" 
                      TextChangedDelay="225" CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
                      AcceptsReturn="true" AcceptsTab="true" TabCharacter="{Binding TabCharacter}"
-                     CommentBrush="#559A3F"
+                     CommentBrush="#559A3F" CallExpressionBrush="Yellow"
                      IdentifierBrush="#D4D4D4"
                      KeywordBrush ="#569CD6"                     
                      LiteralBrush="#D69D85"

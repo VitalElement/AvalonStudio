@@ -5,6 +5,7 @@ namespace AvalonStudio.Models.LanguageServices
 {        
     public enum HighlightType
     {
+        CallExpression,
         Punctuation,
         Keyword,
         Identifier,
