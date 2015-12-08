@@ -2,6 +2,7 @@
 {
     using AvalonStudio.TextEditor.Document;
     using Models.LanguageServices;
+    using Perspex;
     using Perspex.Media;
 
     public class TextColoringTransformer : IDocumentLineTransformer
@@ -75,7 +76,7 @@
             return result;
         }
 
-        public void TransformLine(DocumentLine line, FormattedText formattedText)
+        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, DocumentLine line, FormattedText formattedText)
         {
             var transformsInLine = TextTransformations.FindOverlappingSegments(line);
 

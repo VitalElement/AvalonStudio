@@ -248,6 +248,7 @@
     <Compile Include="TextEditor\Rendering\IDocumentLineTransformer.cs" />
     <Compile Include="TextEditor\Rendering\PragmaMarkTextLineTransformer.cs" />
     <Compile Include="TextEditor\Rendering\SelectedLineBackgroundRenderer.cs" />
+    <Compile Include="TextEditor\Rendering\SelectedWordTextLineTransformer.cs" />
     <Compile Include="TextEditor\Rendering\SelectionBackgroundRenderer.cs" />
     <Compile Include="TextEditor\Rendering\TextColoringTransformer.cs" />
     <Compile Include="TextEditor\Rendering\TextMarkerService.cs" />
