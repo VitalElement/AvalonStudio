@@ -1,23 +1,21 @@
 ﻿namespace AvalonStudio.TextEditor
 {
-    using Utils;
+    using Document;
+    using Models.LanguageServices;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Controls.Primitives;
-    using Perspex.Controls.Templates;
     using Perspex.Input;
     using Perspex.Input.Platform;
     using Perspex.Interactivity;
     using Perspex.Media;
     using Perspex.Threading;
+    using Rendering;
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Reactive.Linq;
-    using Document;
-    using Rendering;
-    using Models.LanguageServices;
-    using System.Collections.Generic;
 
     public class TextEditor : TemplatedControl
     {
@@ -132,7 +130,7 @@
             get { return GetValue(TextChangedCommandProperty); }
             set { SetValue(TextChangedCommandProperty, value); }
         }
-
+        
         public static readonly PerspexProperty<int> TextChangedDelayProperty =
                     PerspexProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
 

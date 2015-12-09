@@ -15,6 +15,6 @@ namespace AvalonStudio.Models.LanguageServices
         }
 
         public readonly string FileName;
-        public readonly string Contents;
+        public string Contents;
     }
 }

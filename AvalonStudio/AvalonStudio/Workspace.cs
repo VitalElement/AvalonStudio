@@ -5,13 +5,14 @@
     using Models.Platform;
     using System.Threading.Tasks;
     using Models.PackageManager;
-	using System;
+    using System;
     using System.Threading;
     using System.Windows.Input;
     using ReactiveUI;
     using Models;
     using System.IO;
-
+    using Perspex.Input;
+    using Perspex.Controls;
     public class Workspace : ReactiveObject
     {
         public static Workspace This = null;
