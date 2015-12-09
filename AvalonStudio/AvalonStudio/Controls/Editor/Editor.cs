@@ -29,6 +29,7 @@
         }
 
         public event EventHandler<EventArgs> DocumentLoaded;
+        public event EventHandler<EventArgs> TextChanged;
 
         public void OpenFile(ProjectFile file)
         {
@@ -55,18 +56,49 @@
             }
         }
 
+        public void Save ()
+        {
+            if (projectFile != null && TextDocument != null)
+            {
+                File.WriteAllText(projectFile.Location, TextDocument.Text);
+                IsDirty = false;
+
+                if (unsavedFile != null)
+                {
+                    UnsavedFiles.Remove(unsavedFile);
+                    unsavedFile = null;
+                }
+            }
+        }
+
         private UnsavedFile unsavedFile = null;
         private void TextDocument_TextChanged(object sender, EventArgs e)
         {
-            if (unsavedFile != null)
+            if (unsavedFile == null)
             {
-                UnsavedFiles.Remove(unsavedFile);
+                unsavedFile = new UnsavedFile(projectFile.Location, TextDocument.Text);
+
+                UnsavedFiles.Add(unsavedFile);
+            }
+            else
+            {
+                unsavedFile.Contents = TextDocument.Text;
             }
 
-            unsavedFile = new UnsavedFile(projectFile.Location, TextDocument.Text);
-
-            UnsavedFiles.Add(unsavedFile);
             IsDirty = true;
+
+            if(TextChanged != null)
+            {
+                TextChanged(this, new EventArgs());
+            }
+        }
+
+        public ProjectFile ProjectFile
+        {
+            get
+            {
+                return projectFile;
+            }
         }
 
         public static List<UnsavedFile> UnsavedFiles = new List<UnsavedFile>();
