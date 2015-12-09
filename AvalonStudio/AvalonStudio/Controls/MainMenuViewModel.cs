@@ -32,6 +32,13 @@
                 }
             });
 
+            SaveCommand = ReactiveCommand.Create();
+
+            SaveCommand.Subscribe(_ =>
+            {
+                Workspace.This.Editor.Save();
+            });
+
             BuildProjectCommand = ReactiveCommand.Create();
             BuildProjectCommand.Subscribe(async _ =>
             {
@@ -46,10 +53,12 @@
             {
                 Workspace.This.ModalDialog = new PackageManagerDialogViewModel();
                 Workspace.This.ModalDialog.ShowDialog();
-            });
+            });            
         }
 
 
+
+        public ReactiveCommand<object> SaveCommand { get; private set; }
         public ReactiveCommand<object> LoadProjectCommand { get; private set; }
         public ReactiveCommand<object> BuildProjectCommand { get; private set; }
         public ReactiveCommand<object> PackagesCommand { get; private set; }

@@ -11,6 +11,7 @@
 
     public class EditorViewModel : ViewModel<EditorModel>
     {
+        #region Constructors
         public EditorViewModel(EditorModel model) : base(model)
         {
             this.highlightingData = new ObservableCollection<SyntaxHighlightingData>();
@@ -20,6 +21,9 @@
 
             TextChangedCommand = ReactiveCommand.Create();
             TextChangedCommand.Subscribe(model.OnTextChanged);
+
+            SaveCommand = ReactiveCommand.Create();
+            SaveCommand.Subscribe((param) => Save());
 
             tabCharacter = "    ";
 
@@ -31,17 +35,24 @@
                     HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);                                        
                 };
 
-                this.RaisePropertyChanged(() => TextDocument);
+                this.RaisePropertyChanged(nameof(TextDocument));
+                this.RaisePropertyChanged(nameof(Title));
+            };
+
+            model.TextChanged += (sender, e) =>
+            {
+                this.RaisePropertyChanged(nameof(Title));
             };
         }
+        #endregion
 
+        #region Properties
         private string tabCharacter;
         public string TabCharacter
         {
             get { return tabCharacter; }
             set { this.RaiseAndSetIfChanged(ref tabCharacter, value); }
         }
-
 
         public string FontFamily
         {
@@ -64,7 +75,7 @@
             {
                 return Model.TextDocument;
             }
-        }
+        }    
 
         private int caretIndex;
         public int CaretIndex
@@ -98,8 +109,35 @@
             set { this.RaiseAndSetIfChanged(ref diagnostics, value); }
         }
 
+        public string Title
+        {
+            get
+            {
+                string result = Model.ProjectFile?.Title;
 
+                if(Model.IsDirty)
+                {
+                    result += '*';
+                }
+
+                return result;
+            }
+        }
+        #endregion
+
+        #region Commands
         public ReactiveCommand<object> BeforeTextChangedCommand { get; private set; }
         public ReactiveCommand<object> TextChangedCommand { get; private set; }
+        public ReactiveCommand<object> SaveCommand { get; private set; }        
+        #endregion
+
+        #region Public Methods
+        public void Save ()
+        {
+            Model.Save();
+
+            this.RaisePropertyChanged(nameof(Title));
+        }
+        #endregion
     }
 }

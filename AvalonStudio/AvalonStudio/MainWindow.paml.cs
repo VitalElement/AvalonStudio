@@ -1,6 +1,7 @@
 ﻿namespace AvalonStudio
 {
     using Perspex.Controls;
+    using Perspex.Input;
     using Perspex.Markup.Xaml;
 
     public class MainWindow : Window
@@ -14,6 +15,6 @@
         private void InitializeComponent()
         {
             PerspexXamlLoader.Load(this);
-        }
+        }        
     }
 }
