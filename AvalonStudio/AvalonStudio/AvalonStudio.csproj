@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Controls\CompletionDataViewModel.cs" />
     <Compile Include="Controls\Console.paml.cs">
       <DependentUpon>Console.paml</DependentUpon>
     </Compile>
@@ -172,6 +173,10 @@
     </Compile>
     <Compile Include="Controls\Editor\Editor.cs" />
     <Compile Include="Controls\Editor\EditorViewModel.cs" />
+    <Compile Include="Controls\Intellisense.paml.cs">
+      <DependentUpon>Intellisense.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\IntellisenseViewModel.cs" />
     <Compile Include="Controls\MainMenu.paml.cs">
       <DependentUpon>MainMenu.paml</DependentUpon>
     </Compile>
@@ -314,6 +319,7 @@
     <EmbeddedResource Include="Controls\SolutionExplorer.paml" />
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
+    <EmbeddedResource Include="Controls\Intellisense.paml" />
     <None Include="packages.config" />
     <EmbeddedResource Include="TextEditor\TextEditor.paml">
       <SubType>Designer</SubType>

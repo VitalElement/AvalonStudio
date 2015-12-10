@@ -21,7 +21,11 @@
                                 SelectionStart="{TemplateBinding SelectionStart}"
                                 SelectionEnd="{TemplateBinding SelectionEnd}"
                                 Foreground="{TemplateBinding Foreground}"
-                                TextDocument="{TemplateBinding TextDocument}"/>                                
+                                TextDocument="{TemplateBinding TextDocument}"/>
+                <ContentPresenter Content="{TemplateBinding Content}" Grid.Column="1" IsHitTestVisible="false"
+                           Margin="{TemplateBinding Margin}"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"/>
               </Grid>            
           </ScrollViewer>
         </Border>
