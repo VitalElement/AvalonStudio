@@ -10,6 +10,7 @@
     using Perspex.Interactivity;
     using Perspex.Media;
     using Perspex.Threading;
+    using ReactiveUI;
     using Rendering;
     using System;
     using System.Collections.Generic;
@@ -17,7 +18,7 @@
     using System.Linq;
     using System.Reactive.Linq;
 
-    public class TextEditor : TemplatedControl
+    public class TextEditor : ContentControl
     {
         #region Contructors
         static TextEditor()
@@ -105,7 +106,7 @@
         }
 
         public static readonly PerspexProperty<string> SelectedWordProperty =
-            PerspexProperty.Register<TextEditor, string>(nameof(SelectedWord), defaultValue: string.Empty);
+            PerspexProperty.Register<TextEditor, string>(nameof(SelectedWord), defaultValue: string.Empty, defaultBindingMode: BindingMode.TwoWay);
 
         public string SelectedWord
         {
@@ -129,7 +130,7 @@
         {
             get { return GetValue(TextChangedCommandProperty); }
             set { SetValue(TextChangedCommandProperty, value); }
-        }
+        }        
         
         public static readonly PerspexProperty<int> TextChangedDelayProperty =
                     PerspexProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
@@ -168,8 +169,19 @@
             {
                 SetValue(CaretIndexProperty, value);
 
+                InvalidateCaretPosition();
+
                 InvalidateSelectedWord();
             }
+        }        
+
+        public static readonly PerspexProperty<Point> CaretLocationProperty =
+            PerspexProperty.Register<TextEditor, Point>(nameof(CaretLocation), defaultBindingMode: BindingMode.TwoWay);
+
+        public Point CaretLocation
+        {
+            get { return GetValue(CaretLocationProperty); }
+            set { SetValue(CaretLocationProperty, value); }
         }
 
         public static readonly PerspexProperty<int> SelectionStartProperty =
@@ -296,30 +308,32 @@
         #endregion
 
         #region Private Methods
+        private void InvalidateCaretPosition()
+        {
+            CaretLocation = VisualLineGeometryBuilder.GetTextPosition(TextView, CaretIndex).TopLeft;
+        }
+
         private void InvalidateSelectedWord()
         {
             if (CaretIndex >= 0 && TextDocument.TextLength > CaretIndex)
             {
                 bool wordFound = false;
 
-                var charClass = TextUtilities.GetCharacterClass(TextDocument.GetCharAt(CaretIndex));
+                int start = CaretIndex;
 
-                if (charClass == TextUtilities.CharacterClass.IdentifierPart)
+                if (TextUtilities.GetCharacterClass(TextDocument.GetCharAt(CaretIndex)) == TextUtilities.CharacterClass.IdentifierPart)
                 {
-                    int start = TextUtilities.GetNextCaretPosition(TextDocument, CaretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordBorder);
+                    start = TextUtilities.GetNextCaretPosition(TextDocument, CaretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                }
 
-                    if (TextUtilities.GetCharacterClass(TextDocument.GetCharAt(start)) == TextUtilities.CharacterClass.IdentifierPart)
-                    {
-                        int end = TextUtilities.GetNextCaretPosition(TextDocument, CaretIndex, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorder);
+                int end = TextUtilities.GetNextCaretPosition(TextDocument, start, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorder);
 
-                        string word = TextDocument.GetText(start, end - start);
+                string word = TextDocument.GetText(start, end - start);
 
-                        if(!TextUtilities.ContainsNumber(word))
-                        {
-                            SelectedWord = word;
-                            wordFound = true;
-                        }
-                    }
+                if (!TextUtilities.ContainsNumber(word))
+                {
+                    SelectedWord = word;
+                    wordFound = true;
                 }
 
                 if (!wordFound)
@@ -331,6 +345,7 @@
 
         private void HandleTextInput(string input)
         {
+            InvalidateSelectedWord();
             //string text = TextDocument ?? string.Empty;
             int caretIndex = CaretIndex;
 
@@ -804,7 +819,7 @@
             if (handled)
             {
                 InvalidateVisual();
-                e.Handled = true;
+                //e.Handled = true;
             }
         }
         #endregion       
