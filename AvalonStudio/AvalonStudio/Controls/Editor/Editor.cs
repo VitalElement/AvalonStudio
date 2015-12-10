@@ -26,6 +26,7 @@
 
             codeAnalysisThread = new Thread(new ThreadStart(CodeAnalysisThread));
             codeAnalysisThread.Start();
+            
         }
 
         public event EventHandler<EventArgs> DocumentLoaded;
@@ -154,7 +155,7 @@
             if (textChangedSemaphore.CurrentCount == 0)
             {
                 textChangedSemaphore.Release();
-            }
+            }            
         }
 
         private void CodeAnalysisThread()

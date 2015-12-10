@@ -74,9 +74,43 @@
             return result;
         }
 
-        public List<CodeCompletionData> CodeCompleteAt(uint line, uint column)
+        public List<CodeCompletionData> CodeCompleteAt(string fileName, int line, int column, List<UnsavedFile> unsavedFiles)
         {
-            throw new NotImplementedException();
+            List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
+
+            foreach (var unsavedFile in unsavedFiles)
+            {
+                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+            }
+
+            var completionResults = translationUnit.CodeCompleteAt(fileName, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
+            completionResults.Sort();
+
+            var result = new List<CodeCompletionData>();
+
+            foreach (var codeCompletion in completionResults.Results)
+            {
+                if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available)
+                {
+                    string typedText = string.Empty;
+
+                    string hint = string.Empty;
+
+                    foreach (var chunk in codeCompletion.CompletionString.Chunks)
+                    {
+                        if (chunk.Kind == CompletionChunkKind.TypedText)
+                        {
+                            typedText = chunk.Text;
+                        }
+
+                        hint += chunk.Text + " ";
+                    }
+
+                    result.Add(new CodeCompletionData { Suggestion = typedText });                   
+                }
+            }
+
+            return result;
         }
 
         public CodeAnalysisResults RunCodeAnalysis(List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)

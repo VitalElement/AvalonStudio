@@ -8,7 +8,8 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using TextEditor.Document;
-
+    using Perspex;
+    using Perspex.Input;
     public class EditorViewModel : ViewModel<EditorModel>
     {
         #region Constructors
@@ -21,6 +22,11 @@
 
             TextChangedCommand = ReactiveCommand.Create();
             TextChangedCommand.Subscribe(model.OnTextChanged);
+
+            TextChangedCommand.Subscribe(_=>
+            {
+                Intellisense.IsVisible = true;
+            });
 
             SaveCommand = ReactiveCommand.Create();
             SaveCommand.Subscribe((param) => Save());
@@ -43,6 +49,12 @@
             {
                 this.RaisePropertyChanged(nameof(Title));
             };
+
+            this.intellisense = new IntellisenseViewModel(model, this);
+            intellisense.Add(new CodeCompletionData { Suggestion = "Test1" });
+            intellisense.Add(new CodeCompletionData { Suggestion = "Test2" });
+            intellisense.Add(new CodeCompletionData { Suggestion = "Test3" });
+            intellisense.Add(new CodeCompletionData { Suggestion = "Test4" });
         }
         #endregion
 
@@ -52,6 +64,25 @@
         {
             get { return tabCharacter; }
             set { this.RaiseAndSetIfChanged(ref tabCharacter, value); }
+        }
+
+        private string wordAtCaret;
+        public string WordAtCaret
+        {
+            get { return wordAtCaret; }
+            set { this.RaiseAndSetIfChanged(ref wordAtCaret, value); }
+        }
+
+
+        private Point caretLocation;
+        public Point CaretLocation
+        {
+            get { return caretLocation; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref caretLocation, value);
+                Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
+            }
         }
 
         public string FontFamily
@@ -68,6 +99,14 @@
                 }
             }
         }
+
+        public IntellisenseViewModel intellisense;
+        public IntellisenseViewModel Intellisense
+        {
+            get { return intellisense; }
+            set { this.RaiseAndSetIfChanged(ref intellisense, value); }
+        }
+
 
         public TextDocument TextDocument
         {
@@ -124,6 +163,11 @@
             }
         }
         #endregion
+
+        public void OnKeyDowm (KeyEventArgs e)
+        {
+            Intellisense.OnKeyDown(e);            
+        }
 
         #region Commands
         public ReactiveCommand<object> BeforeTextChangedCommand { get; private set; }
