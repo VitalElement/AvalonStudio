@@ -169,9 +169,12 @@
             {
                 SetValue(CaretIndexProperty, value);
 
-                InvalidateCaretPosition();
+                if (TextDocument != null)
+                {
+                    InvalidateCaretPosition();
 
-                InvalidateSelectedWord();
+                    InvalidateSelectedWord();
+                }
             }
         }        
 
