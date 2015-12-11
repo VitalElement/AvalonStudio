@@ -5,10 +5,13 @@
     <Setter Property="HasSystemDecorations" Value="false"/>
     <Setter Property="Template">      
       <ControlTemplate>
-        <Border BorderThickness="12" BorderBrush="Red" Background="{TemplateBinding Background}">
-          <AdornerDecorator>
-            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
-          </AdornerDecorator>
+        <Border Background="{TemplateBinding Background}">
+          <Grid RowDefinitions="Auto, *">
+            <TextBlock Text="TitleBar"/>
+            <AdornerDecorator Grid.Row="1" >
+              <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
+            </AdornerDecorator>
+          </Grid>
         </Border>
       </ControlTemplate>
     </Setter>
