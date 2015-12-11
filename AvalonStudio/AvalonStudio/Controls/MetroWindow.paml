@@ -7,7 +7,20 @@
       <ControlTemplate>
         <Border Background="{TemplateBinding Background}">
           <Grid RowDefinitions="Auto, *">
-            <TextBlock Text="TitleBar"/>
+            <Grid ColumnDefinitions="*,*,*">
+              <Grid>
+                <StackPanel Orientation="Horizontal">                  
+                  <TextBlock Text="{TemplateBinding Title}" />
+                </StackPanel>                
+              </Grid>
+              
+              <Grid Grid.Column="2" HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                  <Button Content="_" />
+                  <Button Content="X"/>
+                </StackPanel>
+              </Grid>
+            </Grid>
             <AdornerDecorator Grid.Row="1" >
               <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
             </AdornerDecorator>
