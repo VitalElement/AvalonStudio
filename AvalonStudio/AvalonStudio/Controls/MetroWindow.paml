@@ -1,0 +1,16 @@
+﻿<Styles xmlns="https://github.com/perspex" xmlns:local="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+  <Style Selector="local|MetroWindow">
+    <Setter Property="FontFamily" Value="Segoe UI"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="HasSystemDecorations" Value="false"/>
+    <Setter Property="Template">      
+      <ControlTemplate>
+        <Border BorderThickness="12" BorderBrush="Red" Background="{TemplateBinding Background}">
+          <AdornerDecorator>
+            <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
+          </AdornerDecorator>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

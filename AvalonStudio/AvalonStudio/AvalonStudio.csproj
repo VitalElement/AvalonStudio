@@ -232,6 +232,9 @@
     <Compile Include="Controls\ToolBarViewModel.cs">
       <DependentUpon>ToolBar.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MetroWindowTheme.paml.cs">
+      <DependentUpon>MetroWindowTheme.paml</DependentUpon>
+    </Compile>
     <Compile Include="MVVM\Extensions.cs" />
     <Compile Include="MVVM\ObservableCollectionExtensions.cs" />
     <Compile Include="MVVM\ViewModel.cs" />
@@ -267,6 +270,7 @@
     <Compile Include="TextEditor\Document\UndoStack.cs" />
     <Compile Include="TextEditor\Document\WeakLineTracker.cs" />
     <Compile Include="TextEditor\LineNumberMargin.cs" />
+    <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="TextEditor\Rendering\ColumnLimitBackgroundRenderer.cs" />
     <Compile Include="TextEditor\Rendering\DefineTextLineTransformer.cs" />
     <Compile Include="TextEditor\Rendering\IBackgroundRenderer.cs" />
@@ -320,6 +324,8 @@
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
     <EmbeddedResource Include="Controls\Intellisense.paml" />
+    <EmbeddedResource Include="Controls\MetroWindow.paml" />
+    <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
     <None Include="packages.config" />
     <EmbeddedResource Include="TextEditor\TextEditor.paml">
       <SubType>Designer</SubType>

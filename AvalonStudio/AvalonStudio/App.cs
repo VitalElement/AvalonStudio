@@ -5,6 +5,7 @@ using Perspex.Controls;
 using Perspex.Diagnostics;
 using Perspex.Themes.Default;
 using AvalonStudio.TextEditor;
+using AvalonStudio.Controls;
 
 namespace AvalonStudio
 {
@@ -16,6 +17,7 @@ namespace AvalonStudio
             InitializeSubsystems((int)Environment.OSVersion.Platform);
             Styles = new DefaultTheme();
             Styles.Add(new TextEditorTheme());
+            Styles.Add(new MetroWindowTheme());
         }
 
         public static void AttachDevTools(Window window)
