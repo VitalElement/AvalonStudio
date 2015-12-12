@@ -19,6 +19,8 @@ static const float PwmMaximum = 100.0f;
 static const float PwmMinimum = -100.0f;
 static const float TempMin = 10.0f;
 static const float TempMax = 210.0f;
+uint8_t myVar = 0;
+
 
 #pragma mark Static Data
 
@@ -38,7 +40,7 @@ TemperatureController::TemperatureController (IPwmChannel& pwmChannel,
       outputScaler (*new StraightLineFormula ())
 {
     inputScaler.CalculateFrom (TempMin, TempMax, PidMinimum, PidMaximum);
-
+    
     outputScaler.CalculateFrom (PidMinimum, PidMaximum, PwmMinimum, PwmMaximum);
 
     hasReportedTarget = false;
