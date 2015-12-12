@@ -57,13 +57,13 @@
               <Grid Background="Transparent" Width="10" Height="4" Grid.Column="4" Grid.Row="2" />
             </Grid>
 
-            <Grid Background="Transparent" Width="4" Height="10" Name="topLeftGrip" Cursor="SizeAll" />
+            <Grid Background="Transparent" Width="4" Height="10" Name="topLeftGrip" Cursor="TopLeftCorner" />
             <Grid Background="Transparent" Width="4" Grid.Row="1" Grid.RowSpan="2" Cursor="SizeWestEast" Name="leftVerticalGrip" />
-            <Grid Background="Transparent" Width="4" Height="10" Grid.Row="4" Name="bottomLeftGrip" Cursor="SizeAll" />
+            <Grid Background="Transparent" Width="4" Height="10" Grid.Row="4" Name="bottomLeftGrip" Cursor="BottomLeftCorner" />
 
-            <Grid Background="Transparent" Width="4" Height="10" Grid.Column="2" Name="topRightGrip" Cursor="SizeAll" />
+            <Grid Background="Transparent" Width="4" Height="10" Grid.Column="2" Name="topRightGrip" Cursor="TopRightCorner" />
             <Grid Background="Transparent" Width="4" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Cursor="SizeWestEast" Name="rightVerticalGrip" />
-            <Grid Background="Transparent" Width="4" Height="10" Grid.Row="4" Grid.Column="2" Name="bottomRightGrip" Cursor="SizeAll" />
+            <Grid Background="Transparent" Width="4" Height="10" Grid.Row="4" Grid.Column="2" Name="bottomRightGrip" Cursor="BottomRightCorner" />
           </Grid>
         </Border>
       </ControlTemplate>
