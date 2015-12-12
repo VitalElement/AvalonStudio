@@ -91,8 +91,15 @@
         private string currentFilter = string.Empty;
 
         public void OnTextInput(TextInputEventArgs e)
-        {                        
-            currentFilter += e.Text;
+        {
+            if (e.Text == ".")
+            {
+                currentFilter = string.Empty;
+            }
+            else
+            {
+                currentFilter += e.Text;
+            }
         }
 
         public void OnKeyDown(KeyEventArgs e)
@@ -110,7 +117,7 @@
 
         private List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
 
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
         public async void OnKeyUp(KeyEventArgs e)
         {
@@ -122,19 +129,10 @@
 
                 if (!IsVisible)
                 {
-                    
                     var caret = editorViewModel.CaretTextLocation;
 
-                    Workspace.This.Console.WriteLine("Starting Completion request");
-                    sw.Reset();
-                    sw.Start();
                     await editor.DoCompletionRequestAsync(caret.Line, caret.Column, currentFilter);
-                    sw.Stop();
-                    Workspace.This.Console.WriteLine(sw.ElapsedMilliseconds.ToString());
-
-                    Workspace.This.Console.WriteLine("Generating Completion List");
-                    sw.Reset();
-                    sw.Start();                    
+                
                     await Task.Factory.StartNew(() =>
                     {
                         unfilteredCompletions.Clear();
@@ -159,8 +157,6 @@
                             }
                         }
                     });
-                    sw.Stop();
-                    Workspace.This.Console.WriteLine(sw.ElapsedMilliseconds.ToString());
 
                     filteredResults = unfilteredCompletions;
                 }
@@ -171,24 +167,17 @@
                 }
                 else
                 {
-                    Workspace.This.Console.WriteLine("Starting Completion filter");
-                    sw.Reset();
-                    sw.Start();
                     await Task.Factory.StartNew(() =>
                     {
                         filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower())).ToList();
                     });
-                    sw.Stop();
-                    Workspace.This.Console.WriteLine(sw.ElapsedMilliseconds.ToString());
                 }
-
-                Workspace.This.Console.WriteLine("Finding selection");
-                sw.Reset();
-                sw.Start();
 
                 if (currentFilter != string.Empty)
                 {
                     var newSelectedCompletions = filteredResults.Where((s) => s.Title.StartsWith(currentFilter));
+
+                    SelectedCompletion = null;
 
                     if (newSelectedCompletions.Count() == 0)
                     {
@@ -204,16 +193,10 @@
                 else
                 {
                     SelectedCompletion = noSelectedCompletion;
-                }
-                sw.Stop();
-                Workspace.This.Console.WriteLine(sw.ElapsedMilliseconds.ToString());
+                }                
 
                 if (filteredResults?.Count > 0)
                 {
-                    Workspace.This.Console.WriteLine("Setting Completion List");
-                    sw.Reset();
-                    sw.Start();
-
                     if (selectedCompletion != noSelectedCompletion)
                     {
                         var index = filteredResults.IndexOf(selectedCompletion);
@@ -226,8 +209,6 @@
                     }
 
                     IsVisible = true;
-                    sw.Stop();
-                    Workspace.This.Console.WriteLine(sw.ElapsedMilliseconds.ToString());
                 }
                 else
                 {
