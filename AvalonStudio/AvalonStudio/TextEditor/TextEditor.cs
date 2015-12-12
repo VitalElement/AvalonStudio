@@ -114,6 +114,15 @@
             set { SetValue(SelectedWordProperty, value); }
         }
 
+        public static readonly PerspexProperty<double> LineHeightProperty =
+            PerspexProperty.Register<TextEditor, double>(nameof(LineHeight), defaultBindingMode: BindingMode.TwoWay);
+
+        public double LineHeight
+        {
+            get { return GetValue(LineHeightProperty); }
+            set { SetValue(LineHeightProperty, value); }
+        }
+
         public static readonly PerspexProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
         TextView.BeforeTextChangedCommandProperty.AddOwner<TextEditor>();
 
@@ -571,7 +580,7 @@
             textView.Cursor = new Cursor(StandardCursorType.Ibeam);
 
             marginsContainer = nameScope.Find<StackPanel>("marginContainer");
-
+            
             InstallMargin(new BreakPointMargin());
             InstallMargin(new LineNumberMargin());
 
@@ -615,6 +624,8 @@
                         TextDocument?.UndoStack.EndUndoGroup();
 
                         InvalidateVisual();
+
+                        LineHeight = textView.CharSize.Height;
                     };
                 }
             });

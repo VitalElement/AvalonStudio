@@ -22,7 +22,7 @@
 
             TextChangedCommand = ReactiveCommand.Create();
             TextChangedCommand.Subscribe(model.OnTextChanged);
-            
+
 
             SaveCommand = ReactiveCommand.Create();
             SaveCommand.Subscribe((param) => Save());
@@ -34,7 +34,7 @@
                 model.CodeAnalysisCompleted += (s, ee) =>
                 {
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
-                    HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);                                        
+                    HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
                 };
 
                 model.CodeCompletionRequestCompleted += (s, ee) =>
@@ -70,6 +70,12 @@
             set { this.RaiseAndSetIfChanged(ref wordAtCaret, value); }
         }
 
+        private double lineHeight;
+        public double LineHeight
+        {
+            get { return lineHeight; }
+            set { this.RaiseAndSetIfChanged(ref lineHeight, value); }
+        }
 
         private Point caretLocation;
         public Point CaretLocation
@@ -78,7 +84,11 @@
             set
             {
                 this.RaiseAndSetIfChanged(ref caretLocation, value);
-                Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
+
+                if (!Intellisense.IsVisible)
+                {
+                    Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y + LineHeight, 0, 0);
+                }
             }
         }
 
@@ -86,13 +96,13 @@
         {
             get
             {
-                switch(Platform.PlatformID)
+                switch (Platform.PlatformID)
                 {
                     case PlatformID.Unix:
                         return "Monospace";
 
                     default:
-                        return "Consolas";                        
+                        return "Consolas";
                 }
             }
         }
@@ -111,7 +121,7 @@
             {
                 return Model.TextDocument;
             }
-        }    
+        }
 
         private int caretIndex;
         public int CaretIndex
@@ -151,7 +161,7 @@
             {
                 string result = Model.ProjectFile?.Title;
 
-                if(Model.IsDirty)
+                if (Model.IsDirty)
                 {
                     result += '*';
                 }
@@ -161,13 +171,13 @@
         }
         #endregion
 
-        public void OnKeyUp (KeyEventArgs e)
+        public void OnKeyUp(KeyEventArgs e)
         {
-            Intellisense.OnKeyUp(e);                          
+            Intellisense.OnKeyUp(e);
         }
 
         public void OnKeyDown(KeyEventArgs e)
-        {
+        {            
             Intellisense.OnKeyDown(e);
         }
 
@@ -187,11 +197,11 @@
         #region Commands
         public ReactiveCommand<object> BeforeTextChangedCommand { get; private set; }
         public ReactiveCommand<object> TextChangedCommand { get; private set; }
-        public ReactiveCommand<object> SaveCommand { get; private set; }        
+        public ReactiveCommand<object> SaveCommand { get; private set; }
         #endregion
 
         #region Public Methods
-        public void Save ()
+        public void Save()
         {
             Model.Save();
 
