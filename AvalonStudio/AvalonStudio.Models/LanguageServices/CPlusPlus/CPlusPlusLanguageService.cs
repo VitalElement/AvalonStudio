@@ -74,7 +74,7 @@
             return result;
         }
 
-        public List<CodeCompletionData> CodeCompleteAt(string fileName, int line, int column, List<UnsavedFile> unsavedFiles)
+        public List<CodeCompletionData> CodeCompleteAt(string fileName, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
         {
             List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
 
@@ -106,7 +106,10 @@
                         hint += chunk.Text + " ";
                     }
 
-                    result.Add(new CodeCompletionData { Suggestion = typedText });                   
+                    if (typedText.ToLower().Contains(filter))
+                    {
+                        result.Add(new CodeCompletionData { Suggestion = typedText });
+                    }
                 }
             }
 
@@ -241,7 +244,7 @@
                 {
                     Offset = diag.Location.FileLocation.Offset,
                     Spelling = diag.Spelling,
-                });                
+                });
             }
 
             return result;

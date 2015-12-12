@@ -22,11 +22,7 @@
 
             TextChangedCommand = ReactiveCommand.Create();
             TextChangedCommand.Subscribe(model.OnTextChanged);
-
-            TextChangedCommand.Subscribe(_=>
-            {
-                Intellisense.IsVisible = true;
-            });
+            
 
             SaveCommand = ReactiveCommand.Create();
             SaveCommand.Subscribe((param) => Save());
@@ -41,6 +37,11 @@
                     HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);                                        
                 };
 
+                model.CodeCompletionRequestCompleted += (s, ee) =>
+                {
+                    Intellisense.SetCompletionResults(model.CodeCompletionResults);
+                };
+
                 this.RaisePropertyChanged(nameof(TextDocument));
                 this.RaisePropertyChanged(nameof(Title));
             };
@@ -51,10 +52,6 @@
             };
 
             this.intellisense = new IntellisenseViewModel(model, this);
-            intellisense.Add(new CodeCompletionData { Suggestion = "Test1" });
-            intellisense.Add(new CodeCompletionData { Suggestion = "Test2" });
-            intellisense.Add(new CodeCompletionData { Suggestion = "Test3" });
-            intellisense.Add(new CodeCompletionData { Suggestion = "Test4" });
         }
         #endregion
 
@@ -164,9 +161,27 @@
         }
         #endregion
 
-        public void OnKeyDowm (KeyEventArgs e)
+        public void OnKeyUp (KeyEventArgs e)
         {
-            Intellisense.OnKeyDown(e);            
+            Intellisense.OnKeyUp(e);                          
+        }
+
+        public void OnKeyDown(KeyEventArgs e)
+        {
+            Intellisense.OnKeyDown(e);
+        }
+
+        public void OnTextInput(TextInputEventArgs e)
+        {
+            Intellisense.OnTextInput(e);
+        }
+
+        public TextLocation CaretTextLocation
+        {
+            get
+            {
+                return TextDocument.GetLocation(caretIndex);
+            }
         }
 
         #region Commands
