@@ -1,6 +1,6 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/perspex"        
         xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"        
-        Background="#2d2d30" Foreground="#C7C7C7" Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A">
+        Background="#2d2d30" Foreground="#C7C7C7" Title="AvalonStudio" BorderThickness="5" BorderBrush="#FF004C8A">
   <Grid RowDefinitions="20,0,*,200,25" ColumnDefinitions="220,*,200">
     <Grid Grid.ColumnSpan="3">
       <Controls:MainMenu DataContext="{Binding MainMenu}" />
@@ -16,7 +16,7 @@
 
     <Grid Grid.Row="2" Grid.Column="1" Margin="1 2 2 1">
       <Controls:Editor DataContext="{Binding Editor}" />
-    </Grid>
+    </Grid>       
     
     <Grid Grid.Row="3" Grid.Column="1" Margin="1 1 2 2">      
         <Controls:Console DataContext="{Binding Console}" />      
