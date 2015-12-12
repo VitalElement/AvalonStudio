@@ -15,6 +15,8 @@
 
         private Grid titleBar;
         private Border windowBorder;
+        private Button restoreButton;
+        private Button closeButton;
 
         protected override void OnPointerPressed(PointerPressEventArgs e)
         {
@@ -30,6 +32,18 @@
         {
             titleBar = nameScope.Find<Grid>("titlebar");
             windowBorder = nameScope.Find<Border>("windowBorder");
+            restoreButton = nameScope.Find<Button>("restoreButton");
+            closeButton = nameScope.Find<Button>("closeButton");
+
+            restoreButton.Click += (sender, e) =>
+            {
+                
+            };
+
+            closeButton.Click += (sender, e) =>
+            {
+                Close();
+            };
 
             windowBorder.Cursor = new Cursor(StandardCursorType.SizeAll);
             base.OnTemplateApplied(nameScope);
