@@ -324,7 +324,11 @@
 
                 int start = CaretIndex;
 
-                if (TextUtilities.GetCharacterClass(TextDocument.GetCharAt(CaretIndex)) == TextUtilities.CharacterClass.IdentifierPart)
+                var currentChar = TextDocument.GetCharAt(CaretIndex);
+                var prevChar = TextDocument.GetCharAt(CaretIndex-1);
+                var charClass = TextUtilities.GetCharacterClass(currentChar);
+
+                if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ')
                 {
                     start = TextUtilities.GetNextCaretPosition(TextDocument, CaretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
                 }

@@ -9,24 +9,52 @@
     using System.IO;
     using System.Threading;
     using TextEditor.Document;
-
+    using System.Threading.Tasks;
 
     public class EditorModel
     {
         private ReaderWriterLockSlim editorLock;
         private Thread codeAnalysisThread;
+        private Thread codeCompletionThread;
         private SemaphoreSlim textChangedSemaphore;
+        private SemaphoreSlim startCompletionRequestSemaphore;
+        private SemaphoreSlim endCompletionRequestSemaphore;
+        private ReaderWriterLockSlim completionRequestLock;
         private ProjectFile projectFile;
 
         public EditorModel()
         {
             editorLock = new ReaderWriterLockSlim();
+            completionRequestLock = new ReaderWriterLockSlim();
+
             textChangedSemaphore = new SemaphoreSlim(0, 1);
-            UnsavedFiles = new List<UnsavedFile>();
+            startCompletionRequestSemaphore = new SemaphoreSlim(0, 1);
+            endCompletionRequestSemaphore = new SemaphoreSlim(0, 1);
 
             codeAnalysisThread = new Thread(new ThreadStart(CodeAnalysisThread));
             codeAnalysisThread.Start();
+
+            codeCompletionThread = new Thread(new ThreadStart(CodeCompletionThread));
+            codeCompletionThread.Start();
             
+        }
+
+        private bool completionRequested = false;
+        private TextLocation beginCompletionLocation = new TextLocation();
+        private string filter;
+
+        public async Task DoCompletionRequestAsync (int line, int column, string filter)
+        {
+            if (!completionRequested)
+            {
+                beginCompletionLocation = new TextLocation(line, column);
+                this.filter = filter;
+                completionRequested = true;
+
+                DoCodeCompletionRequest();
+
+                await endCompletionRequestSemaphore.WaitAsync();
+            }
         }
 
         public event EventHandler<EventArgs> DocumentLoaded;
@@ -85,7 +113,7 @@
             {
                 unsavedFile.Contents = TextDocument.Text;
             }
-
+            
             IsDirty = true;
 
             if(TextChanged != null)
@@ -123,6 +151,24 @@
             }
         }
 
+        public event EventHandler<EventArgs> CodeCompletionRequestCompleted;
+
+        private CodeCompletionResults codeCompletionResults;
+        public CodeCompletionResults CodeCompletionResults
+        {
+            get { return codeCompletionResults; }
+            set
+            {
+                codeCompletionResults = value;
+
+                //if(CodeCompletionRequestCompleted != null)
+                //{
+                //    CodeCompletionRequestCompleted(this, new EventArgs());
+                //}
+            }
+        }
+
+
         public ILanguageService LanguageService { get; set; }
 
         public void Shutdown()
@@ -135,7 +181,7 @@
             if (!editorLock.IsWriteLockHeld)
             {
                 editorLock.EnterWriteLock();
-            }
+            }            
         }
 
         private bool isDirty;
@@ -145,6 +191,15 @@
             set { isDirty = value; }
         }
 
+        private void DoCodeCompletionRequest()
+        {
+            completionRequestLock.EnterWriteLock();
+            
+            if (startCompletionRequestSemaphore.CurrentCount == 0)
+            {
+                startCompletionRequestSemaphore.Release();
+            }            
+        }
 
         public void OnTextChanged(object param)
         {
@@ -158,6 +213,32 @@
             }            
         }
 
+        private void CodeCompletionThread()
+        {
+            try
+            {
+                while(true)
+                {
+                    startCompletionRequestSemaphore.Wait();
+                                        
+                    var results = LanguageService.CodeCompleteAt(projectFile.Location, beginCompletionLocation.Line, beginCompletionLocation.Column, UnsavedFiles, filter);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        CodeCompletionResults = new CodeCompletionResults() { Completions = results };
+                        completionRequestLock.ExitWriteLock();
+                        endCompletionRequestSemaphore.Release();
+                    });
+                    
+                    completionRequested = false;
+                }
+            }
+            catch(ThreadAbortException)
+            {
+
+            }
+        }
+
         private void CodeAnalysisThread()
         {
             try
@@ -166,6 +247,7 @@
                 {
                     textChangedSemaphore.Wait();
 
+                    completionRequestLock.EnterWriteLock();
                     editorLock.EnterReadLock();
 
                     if (LanguageService != null)
@@ -179,6 +261,7 @@
                     }
 
                     editorLock.ExitReadLock();
+                    completionRequestLock.ExitWriteLock();
                 }
             }
             catch (ThreadAbortException)

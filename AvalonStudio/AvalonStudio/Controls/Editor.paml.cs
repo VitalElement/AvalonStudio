@@ -22,7 +22,27 @@ namespace AvalonStudio.Controls
 
             if(editorVm != null)
             {
-                editorVm.OnKeyDowm(e);
+                editorVm.OnKeyUp(e);
+            }
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            var editorVm = DataContext as EditorViewModel;
+
+            if (editorVm != null)
+            {
+                editorVm.OnKeyDown(e);
+            }
+        }
+
+        protected override void OnTextInput(TextInputEventArgs e)
+        {
+            var editorVm = DataContext as EditorViewModel;
+
+            if (editorVm != null)
+            {
+                editorVm.OnTextInput(e);
             }
         }
     }
