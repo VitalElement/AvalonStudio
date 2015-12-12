@@ -39,19 +39,28 @@
             set { this.RaiseAndSetIfChanged(ref selectedCompletion, value); }
         }
 
-        private bool IsIntellisenseFilterModificationKey (Key key)
+        private bool IsIntellisenseFilterModificationKey (KeyEventArgs e)
         {
             bool result = false;
 
-            result = (key >= Key.D0 && key <= Key.Z) || (key >= Key.NumPad0 && key <= Key.NumPad9);
+            result = (e.Key >= Key.D0 && e.Key <= Key.Z) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9);
 
             if (!result)
             {
-                switch (key)
+                switch (e.Key)
                 {
-                    case Key.Back:
-                    case Key.OemMinus:
+                    case Key.Back:                    
                     case Key.OemPeriod:
+                        result = true;
+                        break;
+                }
+            }
+
+            if(!result && e.Modifiers == InputModifiers.Shift)
+            {
+                switch (e.Key)
+                {
+                    case Key.OemMinus:
                         result = true;
                         break;
                 }
@@ -60,18 +69,18 @@
             return result;
         }
 
-        private bool IsAllowedNonFilterModificationKey (Key key)
+        private bool IsAllowedNonFilterModificationKey (KeyEventArgs e)
         {
             bool result = false;
 
-            if (key >= Key.LeftShift && key <= Key.RightShift)
+            if (e.Key >= Key.LeftShift && e.Key <= Key.RightShift)
             {
                 result = true;
             }
 
             if (!result)
             {
-                switch (key)
+                switch (e.Key)
                 {
                     case Key.None:
                         result = true;
@@ -82,25 +91,31 @@
             return result;
         }
 
-        private bool IsIntellisenseKey(Key key)
+        private bool IsIntellisenseKey(KeyEventArgs e)
         {
-            return IsIntellisenseFilterModificationKey(key) || IsAllowedNonFilterModificationKey(key); 
+            return IsIntellisenseFilterModificationKey(e) || IsAllowedNonFilterModificationKey(e); 
         }
 
+        private bool IsIntellisenseResetKey (KeyEventArgs e)
+        {
+            bool result = false;
+
+            if(e.Key == Key.OemPeriod)
+            {
+                result = true;
+            }
+
+            return result;
+        }
 
         private string currentFilter = string.Empty;
 
         public void OnTextInput(TextInputEventArgs e)
         {
-            if (e.Text == ".")
-            {
-                currentFilter = string.Empty;
-            }
-            else
-            {
-                currentFilter += e.Text;
-            }
+            currentFilter += e.Text;            
         }
+
+
 
         public void OnKeyDown(KeyEventArgs e)
         {
@@ -120,14 +135,18 @@
         //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
         public async void OnKeyUp(KeyEventArgs e)
-        {
-            Workspace.This.Console.Clear();
-             
-            if (IsIntellisenseKey(e.Key))
+        {    
+            if (IsIntellisenseKey(e))
             {
+                if(IsIntellisenseResetKey(e))
+                {
+                    isVisible = false;  // We dont actually want to hide, so use backing field.
+                    currentFilter = string.Empty;
+                }
+
                 List<CompletionDataViewModel> filteredResults = null;
 
-                if (!IsVisible)
+                if (!IsVisible && (IsIntellisenseFilterModificationKey(e) || IsIntellisenseResetKey(e)))
                 {
                     var caret = editorViewModel.CaretTextLocation;
 
@@ -159,11 +178,6 @@
                     });
 
                     filteredResults = unfilteredCompletions;
-                }
-                else if (currentFilter == string.Empty)
-                {
-
-                    IsVisible = false;
                 }
                 else
                 {
