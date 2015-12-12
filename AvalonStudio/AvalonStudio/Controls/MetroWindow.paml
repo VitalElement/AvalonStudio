@@ -3,22 +3,39 @@
     <Setter Property="FontFamily" Value="Segoe UI"/>
     <Setter Property="FontSize" Value="12"/>
     <Setter Property="HasSystemDecorations" Value="false"/>
-    <Setter Property="Template">      
+    <Setter Property="Template">
       <ControlTemplate>
-        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Name="windowBorder">
           <Grid RowDefinitions="Auto, *">
-            <Grid ColumnDefinitions="*,*,*">
-              <Grid Margin="5 5">
+            <Grid ColumnDefinitions="*,*,*" Name="titlebar">
+              <Grid Margin="5 2.5 5 5">
                 <StackPanel Orientation="Horizontal">
-                  <Rectangle Fill="WhiteSmoke" Height="20" Width="20" />
-                  <TextBlock Text="{TemplateBinding Title}" Margin="20 0 5 0" />
-                </StackPanel>                
+                  <Panel Height="20" Width="20">
+                    <Image Source="Resources/Icons/Templarian/dark/appbar.3d.3ds.png" Opacity="0.5" />
+                  </Panel>
+                  <TextBlock Text="{TemplateBinding Title}" Margin="20 6 5 0" Foreground="{TemplateBinding Foreground}" />
+                </StackPanel>
               </Grid>
               <ContentPresenter Grid.Column="1" />
-              <Grid Grid.Column="2" HorizontalAlignment="Right">
+              <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="5 4 0 5">
                 <StackPanel Orientation="Horizontal">
-                  <Button Content="_" />
-                  <Button Content="X"/>
+                  <Button Background="{TemplateBinding Background}" BorderThickness="0">
+                    <Panel Height="20" Width="20">
+                      <Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />
+                    </Panel>                                        
+                  </Button>
+
+                  <Button Background="{TemplateBinding Background}" BorderThickness="0">
+                    <Panel Height="20" Width="20">
+                      <Image Source="Resources/Icons/Templarian/dark/appbar.window.restore.png" Opacity="0.5" />
+                    </Panel>
+                  </Button>
+
+                  <Button Background="{TemplateBinding Background}" BorderThickness="0">
+                    <Panel Height="20" Width="20">
+                      <Image Source="Resources/Icons/Templarian/dark/appbar.close.png" Opacity="0.5" />
+                    </Panel>
+                  </Button>
                 </StackPanel>
               </Grid>
             </Grid>
