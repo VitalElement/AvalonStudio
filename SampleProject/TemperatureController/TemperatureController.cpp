@@ -43,6 +43,8 @@ TemperatureController::TemperatureController (IPwmChannel& pwmChannel,
     
     outputScaler.CalculateFrom (PidMinimum, PidMaximum, PwmMinimum, PwmMaximum);
 
+    inputScaler.CalculateFrom (TempMin, TempMax, PidMaximum, PidMinimum, PidMaximum);
+    
     hasReportedTarget = false;
 
     this->R25 = r25;

@@ -106,10 +106,7 @@
                         hint += chunk.Text + " ";
                     }
 
-                    if (typedText.ToLower().Contains(filter))
-                    {
-                        result.Add(new CodeCompletionData { Suggestion = typedText });
-                    }
+                    result.Add(new CodeCompletionData { Suggestion = typedText });
                 }
             }
 
