@@ -9,6 +9,7 @@
     {
         public MetroWindow()
         {
+            
         }
 
         Type IStyleable.StyleKey => typeof(MetroWindow);
