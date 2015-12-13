@@ -352,7 +352,7 @@
                 var column = Math.Ceiling((point.X / CharSize.Width) + 0.5 );
                 var line = (int)Math.Ceiling(point.Y / CharSize.Height);
 
-                if (line > 0 && column > 0 && line < TextDocument.LineCount && column <= TextDocument.Lines[line].Length + 1)
+                if (line > 0 && column > 0 && line < TextDocument.LineCount)
                 {
                     result = TextDocument.GetOffset((int)line, (int)column);
                 }
