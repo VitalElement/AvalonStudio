@@ -173,9 +173,12 @@
 
         private void StartBackgroundWorkers()
         {
-            if (codeAnalysisThread.IsAlive || codeCompletionThread.IsAlive)
+            if (codeAnalysisThread != null && codeCompletionThread != null)
             {
-                throw new Exception("Worker threads already active.");
+                if (codeAnalysisThread.IsAlive || codeCompletionThread.IsAlive)
+                {
+                    throw new Exception("Worker threads already active.");
+                }
             }
 
             codeAnalysisThread = new Thread(new ThreadStart(CodeAnalysisThread));
