@@ -18,7 +18,7 @@
 
             app.Run(window);
 
-            editorModel.Shutdown();
+            editorModel.ShutdownBackgroundWorkers();
         }
     }
 }

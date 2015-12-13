@@ -31,19 +31,15 @@
             startCompletionRequestSemaphore = new SemaphoreSlim(0, 1);
             endCompletionRequestSemaphore = new SemaphoreSlim(0, 1);
 
-            codeAnalysisThread = new Thread(new ThreadStart(CodeAnalysisThread));
-            codeAnalysisThread.Start();
-
-            codeCompletionThread = new Thread(new ThreadStart(CodeCompletionThread));
-            codeCompletionThread.Start();
-            
+            codeCompletionResults = new CodeCompletionResults();
+            TextDocument = new TextDocument();
         }
 
         private bool completionRequested = false;
         private TextLocation beginCompletionLocation = new TextLocation();
         private string filter;
 
-        public async Task DoCompletionRequestAsync (int line, int column, string filter)
+        public async Task DoCompletionRequestAsync(int line, int column, string filter)
         {
             if (!completionRequested)
             {
@@ -62,16 +58,20 @@
 
         public void OpenFile(ProjectFile file)
         {
-			if (File.Exists(file.Location))
+            if (File.Exists(file.Location))
             {
-				using (var fs = File.OpenText(file.Location))
+                using (var fs = File.OpenText(file.Location))
                 {
                     TextDocument = new TextDocument(fs.ReadToEnd());
                 }
             }
 
+            ShutdownBackgroundWorkers();
+
             // TODO use factory to create the correct language service.
             LanguageService = new CPlusPlusLanguageService(file.Project.Solution.NClangIndex, file);
+
+            StartBackgroundWorkers();
 
             projectFile = file;
 
@@ -85,7 +85,7 @@
             }
         }
 
-        public void Save ()
+        public void Save()
         {
             if (projectFile != null && TextDocument != null)
             {
@@ -113,10 +113,10 @@
             {
                 unsavedFile.Contents = TextDocument.Text;
             }
-            
+
             IsDirty = true;
 
-            if(TextChanged != null)
+            if (TextChanged != null)
             {
                 TextChanged(this, new EventArgs());
             }
@@ -144,7 +144,7 @@
             {
                 codeAnalysisResults = value;
 
-                if(CodeAnalysisCompleted != null)
+                if (CodeAnalysisCompleted != null)
                 {
                     CodeAnalysisCompleted(this, new EventArgs());
                 }
@@ -171,9 +171,31 @@
 
         public ILanguageService LanguageService { get; set; }
 
-        public void Shutdown()
+        private void StartBackgroundWorkers()
         {
-            codeAnalysisThread.Abort();
+            if (codeAnalysisThread.IsAlive || codeCompletionThread.IsAlive)
+            {
+                throw new Exception("Worker threads already active.");
+            }
+
+            codeAnalysisThread = new Thread(new ThreadStart(CodeAnalysisThread));
+            codeAnalysisThread.Start();
+
+            codeCompletionThread = new Thread(new ThreadStart(CodeCompletionThread));
+            codeCompletionThread.Start();
+        }
+
+        public void ShutdownBackgroundWorkers()
+        {
+            if (codeAnalysisThread != null && codeAnalysisThread.IsAlive)
+            {
+                codeAnalysisThread.Abort();
+            }
+
+            if (codeAnalysisThread != null && codeCompletionThread.IsAlive)
+            {
+                codeCompletionThread.Abort();
+            }
         }
 
         public void OnBeforeTextChanged(object param)
@@ -181,7 +203,7 @@
             if (!editorLock.IsWriteLockHeld)
             {
                 editorLock.EnterWriteLock();
-            }            
+            }
         }
 
         private bool isDirty;
@@ -194,11 +216,11 @@
         private void DoCodeCompletionRequest()
         {
             completionRequestLock.EnterWriteLock();
-            
+
             if (startCompletionRequestSemaphore.CurrentCount == 0)
             {
                 startCompletionRequestSemaphore.Release();
-            }            
+            }
         }
 
         public void OnTextChanged(object param)
@@ -210,17 +232,17 @@
             if (textChangedSemaphore.CurrentCount == 0)
             {
                 textChangedSemaphore.Release();
-            }            
+            }
         }
 
         private void CodeCompletionThread()
         {
             try
             {
-                while(true)
+                while (true)
                 {
                     startCompletionRequestSemaphore.Wait();
-                                        
+
                     var results = LanguageService.CodeCompleteAt(projectFile.Location, beginCompletionLocation.Line, beginCompletionLocation.Column, UnsavedFiles, filter);
 
                     Dispatcher.UIThread.InvokeAsync(() =>
@@ -229,11 +251,11 @@
                         completionRequestLock.ExitWriteLock();
                         endCompletionRequestSemaphore.Release();
                     });
-                    
+
                     completionRequested = false;
                 }
             }
-            catch(ThreadAbortException)
+            catch (ThreadAbortException)
             {
 
             }
