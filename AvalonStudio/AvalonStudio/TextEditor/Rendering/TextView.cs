@@ -105,7 +105,7 @@
         }
 
         public static readonly PerspexProperty<int> CaretIndexProperty =
-            PerspexProperty.Register<TextView, int>(nameof(CaretIndex), defaultBindingMode: BindingMode.TwoWay);
+            PerspexProperty.Register<TextView, int>(nameof(CaretIndex), defaultValue:0, defaultBindingMode: BindingMode.TwoWay);
 
         public int CaretIndex
         {
@@ -350,9 +350,9 @@
             if (TextDocument != null)
             {
                 var column = Math.Ceiling((point.X / CharSize.Width) + 0.5 );
-                var line = Math.Ceiling(point.Y / CharSize.Height);
+                var line = (int)Math.Ceiling(point.Y / CharSize.Height);
 
-                if (line > 0 && column > 0)
+                if (line > 0 && column > 0 && line < TextDocument.LineCount && column <= TextDocument.Lines[line].Length + 1)
                 {
                     result = TextDocument.GetOffset((int)line, (int)column);
                 }

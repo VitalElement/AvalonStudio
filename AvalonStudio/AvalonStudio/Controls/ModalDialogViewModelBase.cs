@@ -10,7 +10,7 @@
             OKButtonVisible = okButton;
             CancelButtonVisible = cancelButton;
 
-            visible = false;
+            isVisible = false;
             this.title = title;
 
             CancelCommand = ReactiveCommand.Create();
@@ -41,22 +41,22 @@
             private set { this.RaiseAndSetIfChanged(ref title, value); }
         }
 
-        private bool visible;
-        public bool Visible
+        private bool isVisible;
+        public bool IsVisible
         {
-            get { return visible; }
-            set { this.RaiseAndSetIfChanged(ref visible, value); }
+            get { return isVisible; }
+            set { this.RaiseAndSetIfChanged(ref isVisible, value); }
         }
 
         public void ShowDialog()
         {
             Workspace.This.HideWhenModalVisibility = false;
-            this.Visible = true;
+            this.IsVisible = true;
         }
 
         public void Close()
         {
-            this.Visible = false;
+            this.IsVisible = false;
             Workspace.This.HideWhenModalVisibility = true;
         }
     }

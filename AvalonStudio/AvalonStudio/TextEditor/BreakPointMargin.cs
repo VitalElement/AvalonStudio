@@ -36,7 +36,10 @@
 
             var offset = textEditor.TextView.GetOffsetFromPoint(e.GetPosition(this));
 
-            BpLine = textEditor.TextDocument.GetLineByOffset(offset).LineNumber - 1; // convert from text line to visual line.
+            if (offset != -1)
+            {
+                BpLine = textEditor.TextDocument.GetLineByOffset(offset).LineNumber - 1; // convert from text line to visual line.
+            }
 
             InvalidateVisual();
             
