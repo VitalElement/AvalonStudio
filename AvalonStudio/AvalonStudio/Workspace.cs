@@ -33,14 +33,14 @@
 
             SolutionExplorer.SelectedItemChanged += (sender, e) =>
             {
-				try {
+				//try {
 	                if (e is ProjectFileViewModel)
 	                {
 	                    Editor.Model.OpenFile((e as ProjectFileViewModel).Model);
 	                }
-				} catch(Exception) {
+				//} catch(Exception) {
 
-				}
+				//}
             };
 
             //Task.Factory.StartNew(async () =>
