@@ -73,9 +73,9 @@
 
                     foreach (var diag in diags)
                     {
-                        var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, diag.Offset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);                        
+                        var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, diag.Offset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
 
-                        if(endoffset == -1)
+                        if (endoffset == -1)
                         {
                             endoffset = diag.Offset;
                         }
@@ -139,8 +139,8 @@
         {
             get { return GetValue(TextChangedCommandProperty); }
             set { SetValue(TextChangedCommandProperty, value); }
-        }        
-        
+        }
+
         public static readonly PerspexProperty<int> TextChangedDelayProperty =
                     PerspexProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
 
@@ -178,14 +178,14 @@
             {
                 SetValue(CaretIndexProperty, value);
 
-                if (TextDocument != null)
+                if (TextDocument != null && CaretIndex != -1)
                 {
                     InvalidateCaretPosition();
 
                     InvalidateSelectedWord();
                 }
             }
-        }        
+        }
 
         public static readonly PerspexProperty<Point> CaretLocationProperty =
             PerspexProperty.Register<TextEditor, Point>(nameof(CaretLocation), defaultBindingMode: BindingMode.TwoWay);
@@ -334,7 +334,13 @@
                 int start = CaretIndex;
 
                 var currentChar = TextDocument.GetCharAt(CaretIndex);
-                var prevChar = TextDocument.GetCharAt(CaretIndex-1);
+                char prevChar = '\0';
+
+                if (CaretIndex > 0)
+                {
+                    prevChar = TextDocument.GetCharAt(CaretIndex - 1);
+                }
+
                 var charClass = TextUtilities.GetCharacterClass(currentChar);
 
                 if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ')
@@ -344,17 +350,20 @@
 
                 int end = TextUtilities.GetNextCaretPosition(TextDocument, start, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorder);
 
-                string word = TextDocument.GetText(start, end - start);
-
-                if (!TextUtilities.ContainsNumber(word))
+                if (start != -1 && end != -1)
                 {
-                    SelectedWord = word;
-                    wordFound = true;
-                }
+                    string word = TextDocument.GetText(start, end - start);
 
-                if (!wordFound)
-                {
-                    SelectedWord = string.Empty;
+                    if (!TextUtilities.ContainsNumber(word))
+                    {
+                        SelectedWord = word;
+                        wordFound = true;
+                    }
+
+                    if (!wordFound)
+                    {
+                        SelectedWord = string.Empty;
+                    }
                 }
             }
         }
@@ -445,23 +454,29 @@
                 }
             }
 
-            CaretIndex += count;
+            if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
+            {
+                CaretIndex += count;
+            }
         }
 
         private void MoveVertical(int count, InputModifiers modifiers)
         {
             var caretIndex = CaretIndex;
-            var lineIndex = textView.GetLine(caretIndex) + count;
+            var currentPosition = TextDocument.GetLocation(caretIndex);
 
-            if (lineIndex > 0 && lineIndex <= TextDocument.LineCount)
+            if (currentPosition.Line + count > 0 && currentPosition.Line + count <= TextDocument.LineCount)
             {
-                var line = TextDocument.Lines[lineIndex - 1];
+                var line = TextDocument.Lines[currentPosition.Line-1 + count];
 
-                var rect = VisualLineGeometryBuilder.GetTextPosition(textView, caretIndex);
-                var y = count < 0 ? rect.Y : rect.Bottom;
-                var point = new Point(rect.X, y + (count * (textView.CharSize.Height / 2)));
+                var col = line.EndOffset;
 
-                CaretIndex = textView.GetOffsetFromPoint(point);
+                if (currentPosition.Column <= line.Length)
+                {
+                    col = currentPosition.Column;
+                }
+
+                CaretIndex = TextDocument.GetOffset(currentPosition.Line + count, col);
             }
         }
 
@@ -580,7 +595,7 @@
             textView.Cursor = new Cursor(StandardCursorType.Ibeam);
 
             marginsContainer = nameScope.Find<StackPanel>("marginContainer");
-            
+
             InstallMargin(new BreakPointMargin());
             InstallMargin(new LineNumberMargin());
 
@@ -638,29 +653,36 @@
             if (e.Source == textView)
             {
                 var point = e.GetPosition(textView);
-                var index = CaretIndex = textView.GetOffsetFromPoint(point);
-                var text = TextDocument;
 
-                switch (e.ClickCount)
+                var index = textView.GetOffsetFromPoint(point);
+
+                if (index != -1)
                 {
-                    case 1:
-                        SelectionStart = SelectionEnd = index;
-                        break;
-                    case 2:
-                        SelectionStart = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                    CaretIndex = index;
 
-                        SelectionEnd = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorder);
-                        break;
-                    case 3:
-                        SelectionStart = 0;
-                        SelectionEnd = text.TextLength;
-                        break;
+                    var text = TextDocument;
+
+                    switch (e.ClickCount)
+                    {
+                        case 1:
+                            SelectionStart = SelectionEnd = index;
+                            break;
+                        case 2:
+                            SelectionStart = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+
+                            SelectionEnd = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorder);
+                            break;
+                        case 3:
+                            SelectionStart = 0;
+                            SelectionEnd = text.TextLength;
+                            break;
+                    }
+
+                    e.Device.Capture(textView);
+                    e.Handled = true;
+
+                    InvalidateVisual();
                 }
-
-                e.Device.Capture(textView);
-                e.Handled = true;
-
-                InvalidateVisual();
             }
         }
 

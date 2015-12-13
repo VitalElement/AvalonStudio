@@ -10,6 +10,7 @@
     using TextEditor.Document;
     using Perspex;
     using Perspex.Input;
+    using System.Windows.Input;
     public class EditorViewModel : ViewModel<EditorModel>
     {
         #region Constructors

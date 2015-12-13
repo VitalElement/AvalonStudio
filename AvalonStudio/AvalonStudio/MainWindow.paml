@@ -30,6 +30,6 @@
       <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
-    <Controls:ModalDialog Grid.RowSpan="5" Grid.ColumnSpan="3" Background="#2d2d30" DataContext="{Binding ModalDialog}" IsVisible="false" />
+    <Controls:ModalDialog Grid.RowSpan="5" Grid.ColumnSpan="3" Background="#2d2d30" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" />
   </Grid>
 </Controls:MetroWindow>
