@@ -12,5 +12,7 @@
         }
 
         public string Title { get { return Model.Suggestion; } }
+
+        public uint Priority { get { return Model.Priority; } }
     }
 }

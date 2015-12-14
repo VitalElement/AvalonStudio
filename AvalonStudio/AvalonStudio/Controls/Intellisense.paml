@@ -8,7 +8,10 @@
               <Setter Property="Background" Value="Red" />
             </Style>
           </Grid.Styles>
+          <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding Title}"  />
+            <TextBlock Text="{Binding Priority}"  />
+          </StackPanel>
         </Grid>        
       </DataTemplate>
     </ListBox.DataTemplates>      
