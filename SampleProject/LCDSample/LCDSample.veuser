@@ -10,7 +10,7 @@
   </ProjectItemUserData>
   <ProjectItemUserData>
     <Id>9f93c3a9-027b-47d1-9e62-91ead7b41782</Id>
-    <IsExpanded>true</IsExpanded>
+    <IsExpanded>false</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
     <BreakOnMain>false</BreakOnMain>
@@ -26,7 +26,7 @@
   </ProjectItemUserData>
   <ProjectItemUserData>
     <Id>9f93c3a9-027b-47d1-9e62-91ead7b41782</Id>
-    <IsExpanded>true</IsExpanded>
+    <IsExpanded>false</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
     <BreakOnMain>false</BreakOnMain>
@@ -34,7 +34,7 @@
   </ProjectItemUserData>
   <ProjectItemUserData>
     <Id>3b3f1a71-3930-4e4e-ab21-dc26cfda6f6c</Id>
-    <IsExpanded>false</IsExpanded>
+    <IsExpanded>true</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
     <BreakOnMain>false</BreakOnMain>
@@ -298,7 +298,7 @@
   </ProjectItemUserData>
   <ProjectItemUserData>
     <Id>3b3f1a71-3930-4e4e-ab21-dc26cfda6f6c</Id>
-    <IsExpanded>false</IsExpanded>
+    <IsExpanded>true</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
     <BreakOnMain>false</BreakOnMain>
@@ -306,7 +306,7 @@
   </ProjectItemUserData>
   <ProjectItemUserData>
     <Id>9de7fe5f-c519-4837-b957-e862c3266b52</Id>
-    <IsExpanded>true</IsExpanded>
+    <IsExpanded>false</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
     <BreakOnMain>false</BreakOnMain>
@@ -465,7 +465,7 @@
     <RunImmediately>false</RunImmediately>
   </ProjectItemUserData>
   <ProjectItemUserData>
-    <Id>96e4a5c1-5971-4291-bb71-9447af0f0c5b</Id>
+    <Id>1ceec06f-3df1-466d-b642-2e89de52e087</Id>
     <IsExpanded>false</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
@@ -473,7 +473,7 @@
     <RunImmediately>false</RunImmediately>
   </ProjectItemUserData>
   <ProjectItemUserData>
-    <Id>fc3e71cc-dcda-4341-9e69-f4bee75fa94d</Id>
+    <Id>72c6d388-7832-4939-9c76-70d27a847e5a</Id>
     <IsExpanded>false</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
@@ -1826,7 +1826,7 @@
   </ProjectItemUserData>
   <ProjectItemUserData>
     <Id>9de7fe5f-c519-4837-b957-e862c3266b52</Id>
-    <IsExpanded>true</IsExpanded>
+    <IsExpanded>false</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
     <BreakOnMain>false</BreakOnMain>
