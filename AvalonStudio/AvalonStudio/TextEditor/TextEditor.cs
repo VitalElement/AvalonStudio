@@ -733,6 +733,13 @@
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            base.OnKeyDown(e);
+
+            if(e.Handled)
+            {
+                return;
+            }
+
             int caretIndex = CaretIndex;
             bool movement = false;
             bool handled = true;
