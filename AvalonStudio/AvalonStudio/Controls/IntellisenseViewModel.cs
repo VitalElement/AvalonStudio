@@ -253,7 +253,7 @@
         public async void OnKeyUp(KeyEventArgs e)
         {             
             if (IsIntellisenseKey(e))
-            {
+           {
                 var caretIndex = editorViewModel.CaretIndex;
 
                 if (caretIndex <= intellisenseStartedAt)
@@ -276,7 +276,27 @@
                 {
                     var caret = editorViewModel.CaretTextLocation;
 
-                    intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editorViewModel.TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                    char behindCaretChar = '\0';
+                    char behindBehindCaretChar = '\0';
+
+                    if (editorViewModel.CaretIndex > 0)
+                    {
+                        behindCaretChar = editorViewModel.TextDocument.GetCharAt(editorViewModel.CaretIndex - 1);
+                    }
+
+                    if (editorViewModel.CaretIndex > 1)
+                    {
+                        behindBehindCaretChar = editorViewModel.TextDocument.GetCharAt(editorViewModel.CaretIndex - 2);
+                    }
+
+                    if (behindCaretChar != '>')
+                    {
+                        intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editorViewModel.TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                    }
+                    else
+                    {
+                        intellisenseStartedAt = caretIndex - 1;
+                    }
 
                     if (IsIntellisenseResetKey(e))
                     {
