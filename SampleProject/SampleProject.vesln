@@ -4,7 +4,7 @@
   <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
   <Name>SampleProject</Name>
   <FileName>SampleProject</FileName>
-  <DefaultProjectIndex>4</DefaultProjectIndex>
+  <DefaultProjectIndex>17</DefaultProjectIndex>
   <UnloadedChildren>
     <Item xsi:type="SolutionFolder">
       <Id>88cd51cf-650e-41ee-9af9-63f26e9c0d55</Id>
@@ -124,5 +124,72 @@
       <Name>GxInstrumentationHidDevice</Name>
       <FileName>GxIntrumentationHidDevice\GxInstrumentationHidDevice.veproj</FileName>
     </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>3b3689da-dd9d-4a1e-a8e0-cc2e26e20661</Id>
+      <ParentId>88cd51cf-650e-41ee-9af9-63f26e9c0d55</ParentId>
+      <FileName>SampleProject\SampleProject.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>30437416-d016-48e7-95ad-12607c5f8830</Id>
+      <ParentId>a0f514c0-6484-4a50-9524-1c31bbad91c9</ParentId>
+      <Name>STM32F4Cube</Name>
+      <FileName>STM32F4Cube\STM32F4Cube.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>f0f77bcb-621b-4453-89b1-4f27f91320d0</Id>
+      <ParentId>390ef733-3446-4431-ac40-fef25ba1e04c</ParentId>
+      <Name>LCDSample</Name>
+      <FileName>LCDSample\LCDSample.veproj</FileName>
+    </Item>
   </UnloadedChildren>
+  <FormattingOptions>
+    <AccessModifierOffset>-2</AccessModifierOffset>
+    <AlignAfterOpenBracket>false</AlignAfterOpenBracket>
+    <AlignConsecutiveAssignments>true</AlignConsecutiveAssignments>
+    <AlignEscapedNewLinesLeft>true</AlignEscapedNewLinesLeft>
+    <AlignTrainlingComments>true</AlignTrainlingComments>
+    <AllowAllParameterDeclarationsOnNextLine>true</AllowAllParameterDeclarationsOnNextLine>
+    <AllowShortFunctionsOnASingleLine>false</AllowShortFunctionsOnASingleLine>
+    <AllowShortIfStatementsOnASingleLine>false</AllowShortIfStatementsOnASingleLine>
+    <AllowShortLoopsOnASingleLine>false</AllowShortLoopsOnASingleLine>
+    <AlwaysBreakBeforeMultiLineStrings>false</AlwaysBreakBeforeMultiLineStrings>
+    <AlwaysBreakTemplateDeclarations>false</AlwaysBreakTemplateDeclarations>
+    <BinPackParameters>true</BinPackParameters>
+    <BreakBeforeBinaryOperators>false</BreakBeforeBinaryOperators>
+    <BreakBeforeBraces>Allman</BreakBeforeBraces>
+    <BreakBeforeTernaryOperators>true</BreakBeforeTernaryOperators>
+    <BreakConstructorInitializersBeforeComma>false</BreakConstructorInitializersBeforeComma>
+    <ColumnLimit>80</ColumnLimit>
+    <ConstructorInitializerAllOnOneLineOrOnePerLine>false</ConstructorInitializerAllOnOneLineOrOnePerLine>
+    <ConstructorInitializerIndentWidth>4</ConstructorInitializerIndentWidth>
+    <ContinuationIndentWidth>0</ContinuationIndentWidth>
+    <Cpp11BracedListStyle>false</Cpp11BracedListStyle>
+    <DerivePointerBinding>false</DerivePointerBinding>
+    <IndentCaseLabels>false</IndentCaseLabels>
+    <IndentFunctionDeclarationAfterType>false</IndentFunctionDeclarationAfterType>
+    <IndentationWidth>4</IndentationWidth>
+    <Language>Cpp</Language>
+    <MaxEmptyLinesToKeep>2</MaxEmptyLinesToKeep>
+    <NamespaceIndentation>None</NamespaceIndentation>
+    <ObjCSpaceAfterProperty>true</ObjCSpaceAfterProperty>
+    <ObjCSpaceBeforeProtocolList>true</ObjCSpaceBeforeProtocolList>
+    <PenaltyBreakBeforeFirstCallParameter>19</PenaltyBreakBeforeFirstCallParameter>
+    <PenaltyBreakComment>300</PenaltyBreakComment>
+    <PenaltyBreakFirstLessLess>120</PenaltyBreakFirstLessLess>
+    <PenaltyBreakString>1000</PenaltyBreakString>
+    <PenaltyExcessCharacter>1000000</PenaltyExcessCharacter>
+    <PenaltyReturnTypeOnItsOwnLine>60</PenaltyReturnTypeOnItsOwnLine>
+    <PointerBindsToType>true</PointerBindsToType>
+    <SpaceBeforeAssignmentOperators>true</SpaceBeforeAssignmentOperators>
+    <SpaceBeforeParenthesis>Always</SpaceBeforeParenthesis>
+    <SpaceInEmptyParenthesis>false</SpaceInEmptyParenthesis>
+    <SpacesBeforeTrailingComments>1</SpacesBeforeTrailingComments>
+    <SpacesInAngles>false</SpacesInAngles>
+    <SpacesInCStyleCastParenthesis>false</SpacesInCStyleCastParenthesis>
+    <SpacesInContainerLiterals>false</SpacesInContainerLiterals>
+    <SpacesInParenthesis>false</SpacesInParenthesis>
+    <Standard>Cpp11</Standard>
+    <TabWidth>4</TabWidth>
+    <UseTab>Never</UseTab>
+  </FormattingOptions>
 </Solution>
