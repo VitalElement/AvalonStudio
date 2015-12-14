@@ -86,6 +86,8 @@
                 }
 
             });
+
+            AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
         }
         #endregion
 
@@ -731,9 +733,9 @@
             HandleTextInput(e.Text);
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
+        protected void OnKeyDown(object sender, KeyEventArgs e)
         {
-            base.OnKeyDown(e);
+           // base.OnKeyDown(e);
 
             if(e.Handled)
             {

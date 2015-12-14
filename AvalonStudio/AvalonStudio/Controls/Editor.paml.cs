@@ -9,6 +9,8 @@ namespace AvalonStudio.Controls
         public Editor()
         {
             this.InitializeComponent();
+
+            AddHandler(InputElement.KeyDownEvent, OnKeyDown, Perspex.Interactivity.RoutingStrategies.Tunnel);
         }
 
         private void InitializeComponent()
@@ -26,7 +28,7 @@ namespace AvalonStudio.Controls
             }
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
+        protected void OnKeyDown(object sender, KeyEventArgs e)
         {
             var editorVm = DataContext as EditorViewModel;
 
