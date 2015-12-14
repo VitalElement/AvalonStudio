@@ -193,11 +193,13 @@
             if (codeAnalysisThread != null && codeAnalysisThread.IsAlive)
             {
                 codeAnalysisThread.Abort();
+                codeAnalysisThread.Join();
             }
 
             if (codeAnalysisThread != null && codeCompletionThread.IsAlive)
             {
                 codeCompletionThread.Abort();
+                codeCompletionThread.Join();
             }
         }
 
