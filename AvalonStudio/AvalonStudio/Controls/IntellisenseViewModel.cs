@@ -91,6 +91,8 @@
             {
                 switch (e.Key)
                 {
+                    case Key.Up:
+                    case Key.Down:
                     case Key.None:
                         result = true;
                         break;
@@ -102,7 +104,7 @@
 
         private bool IsIntellisenseKey(KeyEventArgs e)
         {
-            return IsIntellisenseFilterModificationKey(e) || IsAllowedNonFilterModificationKey(e);
+            return IsIntellisenseFilterModificationKey(e);
         }
 
         private bool IsIntellisenseResetKey(KeyEventArgs e)
@@ -129,14 +131,6 @@
         public void OnKeyDown(KeyEventArgs e)
         {
             CompleteOnKeyDown(e);
-
-            if (e.Key == Key.Back)
-            {
-                //if (currentFilter.Length > 0)
-                //{
-                //    currentFilter = currentFilter.Substring(0, currentFilter.Length - 1);
-                //}
-            }
         }
 
         private CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
@@ -161,7 +155,7 @@
                 editorViewModel.TextDocument.Replace(intellisenseStartedAt, editorViewModel.CaretIndex - intellisenseStartedAt - offset, SelectedCompletion.Title);
                 editorViewModel.CaretIndex = intellisenseStartedAt + SelectedCompletion.Title.Length + offset;
 
-                result = false;
+                result = true;
             }
 
             return result;
@@ -240,7 +234,7 @@
                     case ' ':
                     case ':':
                     case '.':
-                        DoComplete(true);
+                      DoComplete(true);
                         return;
                 }
             }
@@ -257,11 +251,11 @@
         }
 
         public async void OnKeyUp(KeyEventArgs e)
-        {
-            CompleteOnKeyUp();
-
+        {             
             if (IsIntellisenseKey(e))
             {
+                CompleteOnKeyUp();
+
                 var caretIndex = editorViewModel.CaretIndex;
 
                 if (caretIndex <= intellisenseStartedAt)
@@ -387,6 +381,10 @@
                 {
                     Close();
                 }
+            }
+            else if (IsAllowedNonFilterModificationKey(e))
+            {
+                // do nothing
             }
             else
             {

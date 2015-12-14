@@ -1141,5 +1141,7 @@
   </Configurations>
   <References>
     <string>ArmSystem\ArmSystem.veproj</string>
+    <string>Utils\Utils.veproj</string>
+    <string>TemperatureController\TemperatureController.veproj</string>
   </References>
 </Project>
