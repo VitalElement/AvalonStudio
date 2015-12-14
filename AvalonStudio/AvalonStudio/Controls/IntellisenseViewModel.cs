@@ -303,9 +303,7 @@
                         intellisenseStartedAt++;
                     }
 
-                    currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);
-
-                    IsVisible = true;
+                    currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);                    
 
                     Workspace.This.Console.WriteLine("Set started at: " + intellisenseStartedAt + ", " + currentFilter);
 
@@ -340,6 +338,11 @@
                     });
 
                     filteredResults = unfilteredCompletions;
+
+                    if(filteredResults.Count > 0)
+                    {
+                        IsVisible = true;
+                    }
                 }
                 else
                 {
