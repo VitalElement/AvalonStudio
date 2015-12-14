@@ -254,8 +254,6 @@
         {             
             if (IsIntellisenseKey(e))
             {
-                CompleteOnKeyUp();
-
                 var caretIndex = editorViewModel.CaretIndex;
 
                 if (caretIndex <= intellisenseStartedAt)
@@ -269,6 +267,8 @@
                     isVisible = false;  // We dont actually want to hide, so use backing field.
                     //currentFilter = string.Empty;
                 }
+
+                CompleteOnKeyUp();
 
                 List<CompletionDataViewModel> filteredResults = null;
 
