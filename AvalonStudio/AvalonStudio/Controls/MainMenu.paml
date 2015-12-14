@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex" Foreground="WhiteSmoke">
+﻿<UserControl xmlns="https://github.com/perspex">
   <Menu Grid.ColumnSpan="2">
     <MenuItem Header="File">
       <MenuItem Header="New Project"/>
