@@ -10,7 +10,7 @@
         public MainWindow()
         {
             this.InitializeComponent();
-           // App.AttachDevTools(this);
+            App.AttachDevTools(this);
         }
 
         private void InitializeComponent()
