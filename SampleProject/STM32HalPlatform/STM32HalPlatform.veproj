@@ -119,6 +119,16 @@
       <LocationRelativeToParent>STM32BootloaderService.h</LocationRelativeToParent>
     </ProjectItem>
     <ProjectItem xsi:type="ProjectFile">
+      <Id>faa1b3d0-68d5-43a5-93df-8d1616e1eb9b</Id>
+      <ParentId>d0c55329-a405-4297-bc0f-8888a12bbd48</ParentId>
+      <LocationRelativeToParent>STM32F4Spi.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>b5fdbb83-b1f1-41f9-9936-b8476049655d</Id>
+      <ParentId>d0c55329-a405-4297-bc0f-8888a12bbd48</ParentId>
+      <LocationRelativeToParent>STM32F4Spi.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
       <Id>2e92cb2e-c8f7-40ea-b629-6f87009f2288</Id>
       <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
       <LocationRelativeToParent>STM32InputCaptureChannel.cpp</LocationRelativeToParent>

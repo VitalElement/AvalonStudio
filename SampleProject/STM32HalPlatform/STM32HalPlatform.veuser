@@ -2,7 +2,7 @@
 <ArrayOfProjectItemUserData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ProjectItemUserData>
     <Id>d0c55329-a405-4297-bc0f-8888a12bbd48</Id>
-    <IsExpanded>false</IsExpanded>
+    <IsExpanded>true</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
     <BreakOnMain>false</BreakOnMain>
@@ -202,6 +202,22 @@
   </ProjectItemUserData>
   <ProjectItemUserData>
     <Id>83a25846-af05-44fb-a698-36e0b9a71dfb</Id>
+    <IsExpanded>false</IsExpanded>
+    <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
+    <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
+    <BreakOnMain>false</BreakOnMain>
+    <RunImmediately>false</RunImmediately>
+  </ProjectItemUserData>
+  <ProjectItemUserData>
+    <Id>faa1b3d0-68d5-43a5-93df-8d1616e1eb9b</Id>
+    <IsExpanded>false</IsExpanded>
+    <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
+    <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
+    <BreakOnMain>false</BreakOnMain>
+    <RunImmediately>false</RunImmediately>
+  </ProjectItemUserData>
+  <ProjectItemUserData>
+    <Id>b5fdbb83-b1f1-41f9-9936-b8476049655d</Id>
     <IsExpanded>false</IsExpanded>
     <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
     <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
