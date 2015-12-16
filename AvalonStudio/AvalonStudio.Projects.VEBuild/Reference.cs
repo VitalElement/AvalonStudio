@@ -1,12 +1,12 @@
-﻿using LibGit2Sharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AvalonStudio.Projects
+﻿namespace AvalonStudio.Projects.VEBuild
 {
+    using LibGit2Sharp;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
     public class Reference
     {
         /// <summary>
