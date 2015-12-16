@@ -11,32 +11,32 @@
         public const string solutionExtension = "vsln";
         public const string projectExtension = "vproj";
 
-        //public static Solution Load (string directory)
-        //{
-        //    var solution = new Solution();
-        //    solution.CurrentDirectory = directory;
+        public static Solution Load(string directory)
+        {
+            var solution = new Solution();
+            solution.CurrentDirectory = directory;
 
-        //    if(!Directory.Exists(directory))
-        //    {
-        //        throw new Exception(string.Format("Directory does not exist {0}", directory));
-        //    }
+            if (!Directory.Exists(directory))
+            {
+                throw new Exception(string.Format("Directory does not exist {0}", directory));
+            }
 
-        //    var subfolders = Directory.GetDirectories(directory);
+            var subfolders = Directory.GetDirectories(directory);
 
-        //    foreach(var subfolder in subfolders)
-        //    {
-        //        var projectFile = string.Format("{0}.{1}", Path.GetFileName(subfolder), projectExtension);
-        //        var projectLocation = Path.Combine(subfolder, projectFile);
+            foreach (var subfolder in subfolders)
+            {
+                var projectFile = string.Format("{0}.{1}", Path.GetFileName(subfolder), projectExtension);
+                var projectLocation = Path.Combine(subfolder, projectFile);
 
-        //        if (File.Exists(projectLocation))
-        //        {
-        //            solution.Projects.Add(Project.Load(projectLocation, solution));
+                if (File.Exists(projectLocation))
+                {
+                    solution.Projects.Add(VEBuildProject.Load(projectLocation, solution));
 
-        //        }                
-        //    }
+                }
+            }
 
-        //    return solution;
-        //}
+            return solution;
+        }
 
         public IProject FindProject (string name)
         {

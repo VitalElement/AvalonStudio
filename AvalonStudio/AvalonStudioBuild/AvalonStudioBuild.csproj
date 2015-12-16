@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D7720520-9184-45D3-9817-7C12983C075C}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ASBuild</RootNamespace>
+    <AssemblyName>asb</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CommandLine, Version=2.0.275.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.0.275-beta\lib\net45\CommandLine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Options.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ProgramConsole.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Models\AvalonStudio.Models.csproj">
+      <Project>{EACBFF14-438D-4311-8D8C-18E7E6769C8F}</Project>
+      <Name>AvalonStudio.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
+      <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
+      <Name>AvalonStudio.Projects.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects.VEBuild\AvalonStudio.Projects.VEBuild.csproj">
+      <Project>{47e266ea-bbc4-4794-96da-b1f3ecb5bb9b}</Project>
+      <Name>AvalonStudio.Projects.VEBuild</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects\AvalonStudio.Projects.csproj">
+      <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
+      <Name>AvalonStudio.Projects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.STM32.csproj">
+      <Project>{b5a1b781-da72-4d34-97fe-ca6e29490b9d}</Project>
+      <Name>AvalonStudio.Toolchains.STM32</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
+      <Project>{72c71854-5897-4e14-a1ae-b3b48f139af7}</Project>
+      <Name>AvalonStudio.Toolchains.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains\AvalonStudio.Toolchains.csproj">
+      <Project>{fc693e81-70bc-4972-bfa8-19d3db8fb1cc}</Project>
+      <Name>AvalonStudio.Toolchains</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Utils\AvalonStudio.Utils.csproj">
+      <Project>{f010db06-9780-4c54-86fd-2d80e666d019}</Project>
+      <Name>AvalonStudio.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
