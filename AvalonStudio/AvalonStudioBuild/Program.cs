@@ -52,6 +52,7 @@
             }
             catch (Exception e)
             {
+                console.WriteLine(e.Message);
                 return null;
             }
         }
