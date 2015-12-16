@@ -6,8 +6,8 @@
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    using System.IO;    
-
+    using System.IO;
+    using System.Linq;
     public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
     {
         public const string solutionExtension = "vsln";
@@ -59,11 +59,19 @@
             Serialize(this.Location);
         }
 
+        [JsonConstructor]
+        public VEBuildProject(List<SourceFile> sourceFiles) : this()
+        {
+            SourceFiles = sourceFiles.Cast<ISourceFile>().ToList();
+        }
+
         public VEBuildProject()
         {
             //Languages = new List<Language>();
             UnloadedReferences = new List<Reference>();
             References = new List<IProject>();
+            PublicIncludes = new List<string>();
+            GlobalIncludes = new List<string>();
             PublicIncludes = new List<string>();
             Includes = new List<string>();
             SourceFiles = new List<ISourceFile>();
@@ -186,7 +194,16 @@
                 if (File.Exists(projectFile))
                 {
                     var project = VEBuildProject.Load(projectFile, Solution);
-                    Solution.AddProject(project);
+
+                    project = Solution.AddProject(project) as VEBuildProject;
+                    // This is done to make sure there is only ever 1 instance of the project.
+
+                    var currentReference = References.Where((p) => p.Name == project.Name).FirstOrDefault();
+
+                    if (currentReference == null)
+                    {
+                        References.Add(project);
+                    }
 
                     project.ResolveReferences(console);
                 }
@@ -235,6 +252,25 @@
                 var standardReference = reference as VEBuildProject;
 
                 result.AddRange(standardReference.GenerateReferencedIncludes());
+            }
+
+            return result;
+        }
+
+        public IList<string> GetGlobalIncludes()
+        {
+            List<string> result = new List<string>();
+
+            foreach (var reference in References)
+            {
+                var standardReference = reference as VEBuildProject;
+
+                result.AddRange(standardReference.GetGlobalIncludes());
+            }
+
+            foreach (var include in GlobalIncludes)
+            {
+                result.Add(Path.Combine(CurrentDirectory, include));
             }
 
             return result;
@@ -308,6 +344,14 @@
 
         public IList<string> PublicIncludes { get; private set; }
 
+
+        public bool ShouldSerializeGlobalIncludes ()
+        {
+            return GlobalIncludes.Count > 0;
+        }
+
+        public IList<string> GlobalIncludes { get; private set; }
+
         public bool ShouldSerializeIncludes()
         {
             return Includes.Count > 0;
@@ -371,17 +415,34 @@
 
         public string GetObjectDirectory(IStandardProject superProject)
         {
-            throw new NotImplementedException();
+            return Path.Combine(GetOutputDirectory(superProject), "obj");
         }
 
         public string GetBuildDirectory(IStandardProject superProject)
         {
-            throw new NotImplementedException();
+            return Path.Combine(GetOutputDirectory(superProject), "bin");
         }
 
         public string GetOutputDirectory(IStandardProject superProject)
         {
-            throw new NotImplementedException();
+            string outputDirectory = string.Empty;
+
+            if (string.IsNullOrEmpty(superProject.BuildDirectory))
+            {
+                outputDirectory = Path.Combine(superProject.CurrentDirectory, "build");
+            }
+
+            if (!string.IsNullOrEmpty(superProject.BuildDirectory))
+            {
+                outputDirectory = Path.Combine(superProject.CurrentDirectory, superProject.BuildDirectory);
+            }
+
+            if (this != superProject)
+            {
+                outputDirectory = Path.Combine(outputDirectory, Name);
+            }
+
+            return outputDirectory;
         }
 
         public IList<string> BuiltinLibraries { get; set; }

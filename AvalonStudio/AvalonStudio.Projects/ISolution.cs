@@ -4,7 +4,7 @@
 
     public interface ISolution
     {        
-        void AddProject(IProject project);
+        IProject AddProject(IProject project);
 
         IList<IProject> Projects { get; }
 
