@@ -43,7 +43,10 @@
 
         IList<string> PublicIncludes { get; }
 
+        IList<string> GlobalIncludes { get; }
+
         IList<string> Includes { get; }
         IList<string> GetReferencedIncludes();
+        IList<string> GetGlobalIncludes();
     }
 }

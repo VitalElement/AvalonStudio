@@ -64,13 +64,14 @@
 
             toolchain.Jobs = options.Jobs;
             var console = new ProgramConsole();
-            
+
             if (project != null)
             {
                 var stopWatch = new System.Diagnostics.Stopwatch();
                 stopWatch.Start();
 
-                try {
+                try
+                {
                     project.ResolveReferences(console);
                 }
                 catch (Exception e)
@@ -120,7 +121,7 @@
             return 1;
         }
 
-        static string NormalizePath (string path)
+        static string NormalizePath(string path)
         {
             if (path != null)
             {
@@ -133,7 +134,7 @@
             }
         }
 
-        static int RunRemove (RemoveOptions options)
+        static int RunRemove(RemoveOptions options)
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), options.File);
 
@@ -149,7 +150,7 @@
 
                     if (currentFile != null)
                     {
-                        project.SourceFiles.RemoveAt(project.SourceFiles.IndexOf(currentFile));                        
+                        project.SourceFiles.RemoveAt(project.SourceFiles.IndexOf(currentFile));
                         project.Save();
 
                         Console.WriteLine("File removed.");
@@ -161,7 +162,7 @@
                         Console.WriteLine("File not found in project.");
                         return -1;
                     }
-                    
+
                 }
                 else
                 {
@@ -185,7 +186,7 @@
                 var solution = LoadSolution(options);
                 var project = FindProject(solution, options.Project);
 
-                if(project != null)
+                if (project != null)
                 {
                     project.SourceFiles.Add(new SourceFile { File = options.File });
                     project.Save();
@@ -213,7 +214,7 @@
             if (project != null)
             {
                 var currentReference = project.References.Where((r) => r.Name == options.Name).FirstOrDefault();
-                
+
                 if (currentReference != null)
                 {
                     project.UnloadedReferences[project.References.IndexOf(currentReference)] = new Reference { Name = options.Name, GitUrl = options.GitUrl, Revision = options.Revision };
@@ -223,18 +224,18 @@
                 {
                     bool add = true;
 
-                    if(string.IsNullOrEmpty(options.GitUrl))
+                    if (string.IsNullOrEmpty(options.GitUrl))
                     {
                         var reference = FindProject(solution, options.Name);
 
-                        if(reference == null)
+                        if (reference == null)
                         {
                             add = false;
                         }
                     }
 
                     if (add)
-                    {                       
+                    {
                         project.UnloadedReferences.Add(new Reference { Name = options.Name, GitUrl = options.GitUrl, Revision = options.Revision });
                         Console.WriteLine("Reference added successfully.");
                     }
@@ -246,7 +247,7 @@
 
                 project.Save();
             }
-            
+
             return 1;
         }
 
@@ -264,14 +265,14 @@
                 projectPath = Path.Combine(Directory.GetCurrentDirectory(), options.Project);
             }
 
-            if(!Directory.Exists(projectPath))
+            if (!Directory.Exists(projectPath))
             {
-                Directory.CreateDirectory(projectPath);                
+                Directory.CreateDirectory(projectPath);
             }
 
             var project = VEBuildProject.Create(projectPath, options.Project);
 
-            if(project != null)
+            if (project != null)
             {
                 Console.WriteLine("Project created successfully.");
                 return 1;
@@ -293,7 +294,7 @@
                 (AddReferenceOptions opts) => RunAddReference(opts),
               (CleanOptions opts) => RunClean(opts),
               (CreateOptions opts) => RunCreate(opts),
-              (RemoveOptions opts)=>RunRemove(opts),
+              (RemoveOptions opts) => RunRemove(opts),
               errs => 1);
 
             return result;
