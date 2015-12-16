@@ -591,12 +591,12 @@
         private TextMarkerService textMarkerService;
 
         #region Overrides
-        protected override void OnTemplateApplied(INameScope nameScope)
+        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
-            textView = nameScope.Find<TextView>("textView");
+            textView = e.NameScope.Find<TextView>("textView");
             textView.Cursor = new Cursor(StandardCursorType.Ibeam);
 
-            marginsContainer = nameScope.Find<StackPanel>("marginContainer");
+            marginsContainer = e.NameScope.Find<StackPanel>("marginContainer");
 
             InstallMargin(new BreakPointMargin());
             InstallMargin(new LineNumberMargin());
@@ -622,7 +622,7 @@
                     textMarkerService = new TextMarkerService(this);
                     textView.BackgroundRenderers.Add(textMarkerService);
 
-                    TextDocument.Changing += (sender, e) =>
+                    TextDocument.Changing += (sender, ee) =>
                     {
                         TextDocument?.UndoStack.StartUndoGroup();
                         TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
@@ -633,7 +633,7 @@
                         }
                     };
 
-                    TextDocument.Changed += (sender, e) =>
+                    TextDocument.Changed += (sender, ee) =>
                     {
                         textChangedDelayTimer.Stop();
                         textChangedDelayTimer.Start();
@@ -647,7 +647,7 @@
                 }
             });
 
-            ScrollViewer = nameScope.Find<ScrollViewer>("scrollViewer");
+            ScrollViewer = e.NameScope.Find<ScrollViewer>("scrollViewer");
         }
 
         protected override void OnPointerPressed(PointerPressEventArgs e)
