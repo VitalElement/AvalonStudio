@@ -2,6 +2,8 @@
 {
     using AvalonStudio.Toolchains.Standard;
     using Projects;
+    using Projects.Standard;
+    using System;
     using System.Diagnostics;
     using System.IO;
     using Utils;
@@ -12,7 +14,7 @@
         {
         }
         
-        public override CompileResult Compile(IConsole console, Project superProject, Project project, SourceFile file, string outputFile)
+        public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
         {
             CompileResult result = new CompileResult();
 
@@ -36,7 +38,7 @@
                     fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
                 }
 
-                startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", GetCompilerArguments(superProject, project, file.Language), fileArguments, file.Location, outputFile);
+                startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", GetCompilerArguments(superProject, project, file), fileArguments, file.Location, outputFile);
 
                 // Hide console window
                 startInfo.UseShellExecute = false;
@@ -75,7 +77,7 @@
             return result;
         }
 
-        public override LinkResult Link(IConsole console, Project superProject, Project project, CompileResult assemblies, string outputDirectory)
+        public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputDirectory)
         {
             LinkResult result = new LinkResult();
 
@@ -191,7 +193,7 @@
             return result;
         }
 
-        public override ProcessResult Size(IConsole console, Project project, LinkResult linkResult)
+        public override ProcessResult Size(IConsole console, IStandardProject project, LinkResult linkResult)
         {
             ProcessResult result = new ProcessResult();
 
@@ -272,7 +274,7 @@
         public string LinkerScript { get; set; }
         #endregion
 
-        public override string GetLinkerArguments(Project project)
+        public override string GetLinkerArguments(IStandardProject project)
         {
             string result = string.Empty;
 
@@ -291,7 +293,7 @@
             return result;
         }
 
-        public override string GetCompilerArguments(Project superProject, Project project, Language language)
+        public override string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile file)
         {
             string result = string.Empty;
 
@@ -331,7 +333,7 @@
                 result += string.Format(" {0}", arg);
             }
 
-            switch (language)
+            switch (file.Language)
             {
                 case Language.C:
                     {

@@ -1,19 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\LibGit2Sharp.NativeBinaries.1.0.106\build\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.106\build\LibGit2Sharp.NativeBinaries.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</ProjectGuid>
+    <ProjectGuid>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AvalonStudio.Projects.VEBuild</RootNamespace>
-    <AssemblyName>AvalonStudio.Projects.VEBuild</AssemblyName>
+    <RootNamespace>AvalonStudio.Projects.Standard</RootNamespace>
+    <AssemblyName>AvalonStudio.Projects.Standard</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,10 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LibGit2Sharp, Version=0.22.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LibGit2Sharp.0.22.0-pre20151023210959\lib\net40\LibGit2Sharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.1-beta3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -52,36 +45,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reference.cs" />
-    <Compile Include="SerializedObject.cs" />
-    <Compile Include="Solution.cs" />
-    <Compile Include="SourceFile.cs" />
-    <Compile Include="VEBuildProject.cs" />
+    <Compile Include="IStandardProject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
-      <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
-      <Name>AvalonStudio.Projects.Standard</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects\AvalonStudio.Projects.csproj">
       <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
       <Name>AvalonStudio.Projects</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Utils\AvalonStudio.Utils.csproj">
-      <Project>{f010db06-9780-4c54-86fd-2d80e666d019}</Project>
-      <Name>AvalonStudio.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.106\build\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.1.0.106\build\LibGit2Sharp.NativeBinaries.props'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

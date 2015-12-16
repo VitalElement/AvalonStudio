@@ -2,6 +2,7 @@
 {
     using AvalonStudio.Toolchains;
     using Projects;
+    using Projects.Standard;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -23,7 +24,7 @@
             ExecutableLocations = new List<string>();
         }
 
-        public Project Project { get; set; }
+        public IStandardProject Project { get; set; }
         public List<string> ObjectLocations { get; set; }
         public List<string> LibraryLocations { get; set; }
         public List<string> ExecutableLocations { get; set; }
@@ -55,26 +56,29 @@
 
         protected ToolchainSettings Settings { get; private set; }
 
-        public abstract CompileResult Compile(IConsole console, Project superProject, Project project, SourceFile file, string outputFile);
+        public abstract CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile);
 
-        public abstract LinkResult Link(IConsole console, Project superProject, Project project, CompileResult assemblies, string outputDirectory);
+        public abstract LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputDirectory);
 
-        public abstract ProcessResult Size(IConsole console, Project project, LinkResult linkResult);
+        public abstract ProcessResult Size(IConsole console, IStandardProject project, LinkResult linkResult);
 
-        public abstract string GetCompilerArguments(Project superProject, Project project, Language language);
+        public abstract string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile sourceFile); 
 
-        public abstract string GetLinkerArguments(Project project);
+        public abstract string GetLinkerArguments(IStandardProject project);
 
         private object resultLock = new object();
         private int numTasks = 0;
 
-        private void ClearBuildFlags(Project project)
+        private void ClearBuildFlags(IStandardProject project)
         {
             foreach (var reference in project.References)
             {
-                var loadedReference = project.GetReference(reference);
+                var standardReference = reference as IStandardProject;
 
-                ClearBuildFlags(loadedReference);
+                if (standardReference != null)
+                {
+                    ClearBuildFlags(standardReference);
+                }
             }
 
             project.IsBuilding = false;
@@ -82,15 +86,18 @@
 
         bool terminateBuild = false;
 
-        private int GetFileCount(Project project)
+        private int GetFileCount(IStandardProject project)
         {
             int result = 0;
 
             foreach (var reference in project.References)
             {
-                var loadedReference = project.GetReference(reference);
+                var standardReference = reference as IStandardProject;
 
-                result += GetFileCount(loadedReference);
+                if (standardReference != null)
+                {
+                    result += GetFileCount(standardReference);
+                }
             }
 
             if (!project.IsBuilding)
@@ -106,7 +113,7 @@
         private int fileCount = 0;
         private int buildCount = 0;
 
-        private void SetFileCount(Project project)
+        private void SetFileCount(IStandardProject project)
         {
             ClearBuildFlags(project);
 
@@ -115,21 +122,21 @@
             ClearBuildFlags(project);
         }
 
-        public async Task<bool> Build(IConsole console, Project project)
+        public async Task<bool> Build(IConsole console, IProject project)
         {
             console.WriteLine("Starting Build...");
 
             bool result = true;
             terminateBuild = false;
 
-            SetFileCount(project);
+            SetFileCount(project as IStandardProject);
             buildCount = 0;
 
             var compiledProjects = new List<CompileResult>();
 
             if (!terminateBuild)
             {
-                await CompileProject(console, project, project, compiledProjects);
+                await CompileProject(console, project as IStandardProject, project as IStandardProject, compiledProjects);
 
                 if (!terminateBuild)
                 {
@@ -148,20 +155,20 @@
                     if (result)
                     {
                         var linkedReferences = new CompileResult();
-                        linkedReferences.Project = project;
+                        linkedReferences.Project = project as IStandardProject;
 
                         foreach (var compiledProject in compiledProjects)
                         {
                             if (compiledProject.Project != project)
                             {
-                                Link(console, project, compiledProject, linkedReferences);
+                                Link(console, project as IStandardProject, compiledProject, linkedReferences);
                             }
                             else
                             {
                                 if (linkedReferences.Count > 0)
                                 {
                                     linkedReferences.ObjectLocations = compiledProject.ObjectLocations;
-                                    Link(console, project, linkedReferences, linkedReferences);
+                                    Link(console, project as IStandardProject, linkedReferences, linkedReferences);
                                 }
                             }
 
@@ -173,7 +180,7 @@
                         }
                     }
 
-                    ClearBuildFlags(project);
+                    ClearBuildFlags(project as IStandardProject);
                 }
             }
 
@@ -202,7 +209,7 @@
             });
         }
 
-        private void Link(IConsole console, Project superProject, CompileResult compileResult, CompileResult linkResults)
+        private void Link(IConsole console, IStandardProject superProject, CompileResult compileResult, CompileResult linkResults)
         {
             var binDirectory = compileResult.Project.GetBinDirectory(superProject);
 
@@ -253,7 +260,7 @@
             }
         }
 
-        private async Task CompileProject(IConsole console, Project superProject, Project project, List<CompileResult> results = null)
+        private async Task CompileProject(IConsole console, IStandardProject superProject, IStandardProject project, List<CompileResult> results = null)
         {
             if (project.Type == ProjectType.Executable && superProject != project)
             {
@@ -270,9 +277,12 @@
 
                     foreach (var reference in project.References)
                     {
-                        var loadedReference = project.GetReference(reference);
+                        var standardReference = reference as IStandardProject;
 
-                        await CompileProject(console, superProject, loadedReference, results);
+                        if (standardReference != null)
+                        {
+                            await CompileProject(console, superProject, standardReference, results);
+                        }
                     }
 
                     var outputDirectory = project.GetOutputDirectory(superProject);
@@ -392,19 +402,22 @@
             }
         }
 
-        private async Task CleanAll(IConsole console, Project superProject, Project project)
+        private async Task CleanAll(IConsole console, IStandardProject superProject, IStandardProject project)
         {
             foreach (var reference in project.References)
             {
-                var loadedReference = project.GetReference(reference);
+                var loadedReference = reference as IStandardProject;
 
-                if (loadedReference.Type == ProjectType.Executable)
+                if (loadedReference != null)
                 {
-                    await CleanAll(console, loadedReference, loadedReference);
-                }
-                else
-                {
-                    await CleanAll(console, superProject, loadedReference);
+                    if (loadedReference.Type == ProjectType.Executable)
+                    {
+                        await CleanAll(console, loadedReference, loadedReference);
+                    }
+                    else
+                    {
+                        await CleanAll(console, superProject, loadedReference);
+                    }
                 }
             }
 
@@ -448,13 +461,13 @@
             }
         }
 
-        public async Task Clean(IConsole console, Project project)
+        public async Task Clean(IConsole console, IProject project)
         {
             await Task.Factory.StartNew(async () =>
             {
                 console.WriteLine("Starting Clean...");
 
-                await CleanAll(console, project, project);
+                await CleanAll(console, project as IStandardProject, project as IStandardProject);
 
                 console.WriteLine("Clean Completed.");
             });
