@@ -8,7 +8,7 @@ namespace AvalonStudio.Projects
         public string File { get; set; }
         public string Flags { get; set; }
 
-        public void SetProject (Project project)
+        public void SetProject(Project project)
         {
             this.Project = project;
         }
@@ -23,6 +23,28 @@ namespace AvalonStudio.Projects
         }
 
         [JsonIgnore]
-        public Project Project { get; private set; }       
+        public Project Project { get; private set; }
+
+        [JsonIgnore]
+        public Language Language
+        {
+            get
+            {
+                var result = Language.C;
+
+                switch (Path.GetExtension(File))
+                {
+                    case ".c":
+                        result = Language.C;
+                        break;
+
+                    case ".cpp":
+                        result = Language.Cpp;
+                        break;
+                }
+
+                return result;
+            }
+        }
     }
 }

@@ -16,6 +16,13 @@
         SuperProject
     }
 
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum Language
+    {
+        C,
+        Cpp
+    }
+
     public class Project : SerializedObject<Project>
     {
         public static string GenerateProjectFileName (string name)
