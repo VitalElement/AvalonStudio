@@ -1,13 +1,14 @@
 ﻿namespace AvalonStudio.Toolchains
 {
     using Projects;
+    using Projects.Standard;
     using System.Collections.Generic;
     using System.IO;
 
     public static class ProjectExtensions
     {
 
-        public static string GetOutputDirectory(this Project project, Project superProject)
+        public static string GetOutputDirectory(this IStandardProject project, IStandardProject superProject)
         {
             string outputDirectory = string.Empty;
 
@@ -29,12 +30,12 @@
             return outputDirectory;
         }
 
-        public static string GetObjectDirectory (this Project project, Project superProject)
+        public static string GetObjectDirectory (this IStandardProject project, IStandardProject superProject)
         {
             return Path.Combine(project.GetOutputDirectory(superProject), "obj");
         }
 
-        public static string GetBinDirectory (this Project project, Project superProject)
+        public static string GetBinDirectory (this IStandardProject project, IStandardProject superProject)
         {
             return Path.Combine(project.GetOutputDirectory(superProject), "bin");
         }

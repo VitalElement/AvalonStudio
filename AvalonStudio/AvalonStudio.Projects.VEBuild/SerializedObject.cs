@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Projects
+﻿namespace AvalonStudio.Projects.VEBuild
 {
     using Newtonsoft.Json;
     using System.IO;

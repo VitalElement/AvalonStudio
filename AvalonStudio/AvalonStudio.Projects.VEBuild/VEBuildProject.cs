@@ -1,39 +1,27 @@
-﻿namespace AvalonStudio.Projects
+﻿namespace AvalonStudio.Projects.VEBuild
 {
+    using AvalonStudio.Projects.Standard;
+    using AvalonStudio.Utils;
+    using LibGit2Sharp;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using LibGit2Sharp;
-    using Utils;
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum ProjectType
-    {
-        Executable,
-        SharedLibrary,
-        StaticLibrary,
-        SuperProject
-    }
+    using System.IO;    
 
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum Language
+    public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
     {
-        C,
-        Cpp
-    }
+        public const string solutionExtension = "vsln";
+        public const string ProjectExtension = "vproj";
 
-    public class Project : SerializedObject<Project>
-    {
-        public static string GenerateProjectFileName (string name)
+        public static string GenerateProjectFileName(string name)
         {
-            return string.Format("{0}.{1}", name, Solution.projectExtension);
+            return string.Format("{0}.{1}", name, ProjectExtension);
         }
 
         [JsonIgnore]
         public bool IsBuilding { get; set; }
 
-        public static Project Load(string filename, Solution solution)
+        public static VEBuildProject Load(string filename, ISolution solution)
         {
             var project = Deserialize(filename);
 
@@ -42,21 +30,21 @@
 
             foreach (var file in project.SourceFiles)
             {
-                file.SetProject(project);
+                (file as SourceFile)?.SetProject(project);
             }
 
             return project;
         }
 
-        public static Project Create (string directory, string name)
+        public static VEBuildProject Create(string directory, string name)
         {
-            Project result = null;
-                       
-            var projectFile = Path.Combine(directory, Project.GenerateProjectFileName(name));
+            VEBuildProject result = null;
+
+            var projectFile = Path.Combine(directory, VEBuildProject.GenerateProjectFileName(name));
 
             if (!File.Exists(projectFile))
             {
-                var project = new Project { Name = name };
+                var project = new VEBuildProject { Name = name };
                 project.Location = projectFile;
                 project.Save();
 
@@ -66,18 +54,19 @@
             return result;
         }
 
-        public void Save ()
+        public void Save()
         {
             Serialize(this.Location);
         }
 
-        public Project()
+        public VEBuildProject()
         {
             //Languages = new List<Language>();
-            References = new List<Reference>();
+            UnloadedReferences = new List<Reference>();
+            References = new List<IProject>();
             PublicIncludes = new List<string>();
             Includes = new List<string>();
-            SourceFiles = new List<SourceFile>();
+            SourceFiles = new List<ISourceFile>();
             CompilerArguments = new List<string>();
             ToolChainArguments = new List<string>();
             LinkerArguments = new List<string>();
@@ -94,8 +83,8 @@
         /// Resolves each reference, cloning and updating Git referenced projects where possible.
         /// </summary>
         public void ResolveReferences(IConsole console)
-        {            
-            foreach (var reference in References)
+        {
+            foreach (var reference in UnloadedReferences)
             {
                 var referenceDirectory = Path.Combine(SolutionDirectory, reference.Name);
 
@@ -116,7 +105,7 @@
                             return true;
                         };
 
-                        options.CredentialsProvider = (url, user, cred) => 
+                        options.CredentialsProvider = (url, user, cred) =>
                         {
                             var domain = new Uri(url).GetLeftPart(UriPartial.Authority);
                             var credentials = new UsernamePasswordCredentials();
@@ -129,9 +118,9 @@
                                 credentials.Password = userNamePassword.Item2;
                             }
                             else
-                            { 
+                            {
                                 Console.WriteLine("Credentials required for: " + url);
-                            
+
                                 Console.WriteLine("Please enter your username: ");
                                 credentials.Username = Console.ReadLine();
 
@@ -166,7 +155,7 @@
                                 passwordCache.Add(domain, new Tuple<string, string>(credentials.Username, credentials.Password));
                             }
 
-                            return credentials;  
+                            return credentials;
                         };
 
                         console.WriteLine();
@@ -192,11 +181,11 @@
                     }
                 }
 
-                var projectFile = Path.Combine(referenceDirectory, reference.Name + "." + Solution.projectExtension);
+                var projectFile = Path.Combine(referenceDirectory, reference.Name + "." + ProjectExtension);
 
                 if (File.Exists(projectFile))
                 {
-                    var project = Project.Load(projectFile, Solution);
+                    var project = VEBuildProject.Load(projectFile, Solution);
                     Solution.AddProject(project);
 
                     project.ResolveReferences(console);
@@ -204,7 +193,7 @@
             }
         }
 
-        public void SetSolution(Solution solution)
+        public void SetSolution(ISolution solution)
         {
             this.Solution = solution;
         }
@@ -218,15 +207,15 @@
             }
         }
 
-        protected List<string> GenerateReferenceIncludes()
+        protected IList<string> GenerateReferencedIncludes()
         {
             List<string> result = new List<string>();
 
-            foreach (var reference in References)
+            foreach (var reference in UnloadedReferences)
             {
                 var loadedReference = GetReference(reference);
 
-                result.AddRange(loadedReference.GenerateReferenceIncludes());
+                result.AddRange(loadedReference.GenerateReferencedIncludes());
             }
 
             foreach (var includePath in PublicIncludes)
@@ -237,22 +226,22 @@
             return result;
         }
 
-        public List<string> GetReferencedIncludes()
+        public IList<string> GetReferencedIncludes()
         {
             List<string> result = new List<string>();
 
             foreach (var reference in References)
             {
-                var loadedReference = GetReference(reference);
+                var standardReference = reference as VEBuildProject;
 
-                result.AddRange(loadedReference.GenerateReferenceIncludes());
+                result.AddRange(standardReference.GenerateReferencedIncludes());
             }
 
             return result;
         }
 
         [JsonIgnore]
-        public Solution Solution { get; private set; }
+        public ISolution Solution { get; private set; }
 
         [JsonIgnore]
         public string CurrentDirectory
@@ -266,15 +255,15 @@
         [JsonIgnore]
         public string Location { get; internal set; }
 
-        public Project GetReference(Reference reference)
+        public VEBuildProject GetReference(Reference reference)
         {
-            Project result = null;
+            VEBuildProject result = null;
 
             foreach (var project in Solution.Projects)
             {
                 if (project.Name == reference.Name)
                 {
-                    result = project;
+                    result = project as VEBuildProject;
                     break;
                 }
             }
@@ -303,77 +292,101 @@
             return References.Count > 0;
         }
 
-        public List<Reference> References { get; set; }
+        [JsonProperty(PropertyName = "References")]
+        public List<Reference> UnloadedReferences { get; set; }
+
+        [JsonIgnore]
+        public IList<IProject> References
+        {
+            get; private set;
+        }
 
         public bool ShouldSerializePublicIncludes()
         {
             return PublicIncludes.Count > 0;
         }
 
-        public List<string> PublicIncludes { get; set; }
+        public IList<string> PublicIncludes { get; private set; }
 
         public bool ShouldSerializeIncludes()
         {
             return Includes.Count > 0;
         }
 
-        public List<string> Includes { get; set; }
+        public IList<string> Includes { get; private set; }
 
         public bool ShouldSerializeDefines()
         {
             return Defines.Count > 0;
         }
 
-        public List<string> Defines { get; set; }
+        public IList<string> Defines { get; private set; }
 
         public bool ShouldSerializeSourceFiles()
-        {
+        {            
             return SourceFiles.Count > 0;
         }
-        public List<SourceFile> SourceFiles { get; set; }
+        
+        public IList<ISourceFile> SourceFiles { get; }
 
         public bool ShouldSerializeCompilerArguments()
         {
             return CompilerArguments.Count > 0;
         }
 
-        public List<string> CompilerArguments { get; set; }
+        public IList<string> CompilerArguments { get; private set; }
 
         public bool ShouldSerializeCCompilerArguments()
         {
             return CCompilerArguments.Count > 0;
         }
 
-        public List<string> CCompilerArguments { get; set; }
+        public IList<string> CCompilerArguments { get; private set; }
 
         public bool ShouldSerializeCppCompilerArguments()
         {
             return CppCompilerArguments.Count > 0;
         }
 
-        public List<string> CppCompilerArguments { get; set; }
+        public IList<string> CppCompilerArguments { get; private set; }
 
         public bool ShouldSerializeToolChainArguments()
         {
             return ToolChainArguments.Count > 0;
         }
-        public List<string> ToolChainArguments { get; set; }
+
+        public IList<string> ToolChainArguments { get; private set; }
 
         public bool ShouldSerializeLinkerArguments()
         {
             return LinkerArguments.Count > 0;
         }
 
-        public List<string> LinkerArguments { get; set; }
+        public IList<string> LinkerArguments { get; private set; }
 
         public bool ShouldSerializeBuiltinLibraries()
         {
             return BuiltinLibraries.Count > 0;
         }
-        public List<string> BuiltinLibraries { get; set; }
+
+        public string GetObjectDirectory(IStandardProject superProject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetBuildDirectory(IStandardProject superProject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetOutputDirectory(IStandardProject superProject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<string> BuiltinLibraries { get; set; }
 
         public string BuildDirectory { get; set; }
         public string LinkerScript { get; set; }
-
     }
 }

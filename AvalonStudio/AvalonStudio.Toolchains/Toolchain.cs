@@ -6,9 +6,9 @@
 
     public interface IToolChain
     {
-        Task<bool> Build(IConsole console, Project project);
+        Task<bool> Build(IConsole console, IProject project);
 
-        Task Clean(IConsole console, Project project);        
+        Task Clean(IConsole console, IProject project);        
     }
 }
 
