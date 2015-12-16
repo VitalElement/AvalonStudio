@@ -20,7 +20,15 @@
 
             var startInfo = new ProcessStartInfo();
 
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc.exe");
+            if (file.Language == Language.Cpp)
+            {
+                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-g++.exe");
+            }
+            else
+            {
+                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc.exe");
+            }
+
 
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
@@ -309,6 +317,14 @@
                 result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
             }
 
+            // global includes
+            var globalIncludes = superProject.GetGlobalIncludes();
+
+            foreach (var include in globalIncludes)
+            {
+                result += string.Format("-I\"{0}\" ", include);
+            }
+
             // public includes
             foreach (var include in project.PublicIncludes)
             {
@@ -316,6 +332,10 @@
             }
 
             // includes
+            foreach (var include in project.Includes)
+            {
+                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
+            }
 
 
             foreach (var define in superProject.Defines)

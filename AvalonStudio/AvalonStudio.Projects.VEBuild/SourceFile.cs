@@ -26,31 +26,26 @@ namespace AvalonStudio.Projects.VEBuild
         [JsonIgnore]
         public VEBuildProject Project { get; private set; }
 
+        [JsonIgnore]
         public Language Language
         {
-            get;
+            get
+            {
+                var result = Language.C;
+
+                switch (Path.GetExtension(File))
+                {
+                    case ".c":
+                        result = Language.C;
+                        break;
+
+                    case ".cpp":
+                        result = Language.Cpp;
+                        break;
+                }
+
+                return result;
+            }
         }
-
-        //[JsonIgnore]
-        //public Language Language
-        //{
-        //    get
-        //    {
-        //        var result = Language.C;
-
-        //        switch (Path.GetExtension(File))
-        //        {
-        //            case ".c":
-        //                result = Language.C;
-        //                break;
-
-        //            case ".cpp":
-        //                result = Language.Cpp;
-        //                break;
-        //        }
-
-        //        return result;
-        //    }
-        //}
     }
 }

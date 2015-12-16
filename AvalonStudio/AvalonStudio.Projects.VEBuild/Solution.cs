@@ -59,14 +59,17 @@
             return result;
         }
 
-        public void AddProject (IProject project)
+        public IProject AddProject (IProject project)
         {
             var currentProject = Projects.Where((p) => p.Name == project.Name).FirstOrDefault();
 
             if(currentProject == null)
             {
                 Projects.Add(project);
+                currentProject = project;
             }
+
+            return currentProject;
         }
 
         public Solution()
