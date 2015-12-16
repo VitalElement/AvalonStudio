@@ -4,6 +4,7 @@
     using Perspex.Styling;
     using System;
     using Perspex.Input;
+    using Perspex.Controls.Primitives;
 
     public class MetroWindow : Window, IStyleable
     {
@@ -68,33 +69,32 @@
             base.OnPointerPressed(e);
         }
 
-        protected override void OnTemplateApplied(INameScope nameScope)
+        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
-            titleBar = nameScope.Find<Grid>("titlebar");
-            restoreButton = nameScope.Find<Button>("restoreButton");
-            closeButton = nameScope.Find<Button>("closeButton");
+            
+            titleBar = e.NameScope.Find<Grid>("titlebar");
+            restoreButton = e.NameScope.Find<Button>("restoreButton");
+            closeButton = e.NameScope.Find<Button>("closeButton");
 
-            topHorizontalGrip = nameScope.Find<Grid>("topHorizontalGrip");
-            bottomHorizontalGrip = nameScope.Find<Grid>("bottomHorizontalGrip");
-            leftVerticalGrip = nameScope.Find<Grid>("leftVerticalGrip");
-            rightVerticalGrip = nameScope.Find<Grid>("rightVerticalGrip");
+            topHorizontalGrip = e.NameScope.Find<Grid>("topHorizontalGrip");
+            bottomHorizontalGrip = e.NameScope.Find<Grid>("bottomHorizontalGrip");
+            leftVerticalGrip = e.NameScope.Find<Grid>("leftVerticalGrip");
+            rightVerticalGrip = e.NameScope.Find<Grid>("rightVerticalGrip");
 
-            topLeftGrip = nameScope.Find<Grid>("topLeftGrip");
-            bottomLeftGrip = nameScope.Find<Grid>("bottomLeftGrip");
-            topRightGrip = nameScope.Find<Grid>("topRightGrip");
-            bottomRightGrip = nameScope.Find<Grid>("bottomRightGrip");            
+            topLeftGrip = e.NameScope.Find<Grid>("topLeftGrip");
+            bottomLeftGrip = e.NameScope.Find<Grid>("bottomLeftGrip");
+            topRightGrip = e.NameScope.Find<Grid>("topRightGrip");
+            bottomRightGrip = e.NameScope.Find<Grid>("bottomRightGrip");            
 
-            restoreButton.Click += (sender, e) =>
+            restoreButton.Click += (sender, ee) =>
             {
                 
             };
 
-            closeButton.Click += (sender, e) =>
+            closeButton.Click += (sender, ee) =>
             {
                 Close();
-            };
-
-            base.OnTemplateApplied(nameScope);
+            };            
         }
     }
 }
