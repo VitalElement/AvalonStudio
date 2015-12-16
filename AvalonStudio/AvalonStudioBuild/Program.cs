@@ -13,6 +13,8 @@
     {
         const string baseDir = @"c:\development\vebuild\test";
 
+        static ProgramConsole console = new ProgramConsole();
+
         static Solution LoadSolution(ProjectOption options)
         {
             bool inProjectDirectory = false;
@@ -41,6 +43,11 @@
             {
                 var result = solution.FindProject(project);
 
+                if(result != null)
+                {
+                    (result as VEBuildProject).ResolveReferences(console);
+                }
+
                 return result;
             }
             catch (Exception e)
@@ -63,21 +70,11 @@
             var toolchain = new GccToolChain(gccSettings);
 
             toolchain.Jobs = options.Jobs;
-            var console = new ProgramConsole();
-
+            
             if (project != null)
             {
                 var stopWatch = new System.Diagnostics.Stopwatch();
                 stopWatch.Start();
-
-                try
-                {
-                    project.ResolveReferences(console);
-                }
-                catch (Exception e)
-                {
-                    console.WriteLine(e.Message);
-                }
 
                 var awaiter = toolchain.Build(console, project);
                 awaiter.Wait();
