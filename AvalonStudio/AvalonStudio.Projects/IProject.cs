@@ -27,5 +27,7 @@
         /// The location of the project file
         /// </summary>
         string Location { get; }
+
+        void Save();
     }
 }
