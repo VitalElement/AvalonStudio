@@ -40,7 +40,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GccToolChain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Projects\AvalonStudio.Projects.csproj">
+      <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
+      <Name>AvalonStudio.Projects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
+      <Project>{72c71854-5897-4e14-a1ae-b3b48f139af7}</Project>
+      <Name>AvalonStudio.Toolchains.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Utils\AvalonStudio.Utils.csproj">
+      <Project>{f010db06-9780-4c54-86fd-2d80e666d019}</Project>
+      <Name>AvalonStudio.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
