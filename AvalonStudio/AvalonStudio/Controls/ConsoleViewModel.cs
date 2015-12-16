@@ -4,6 +4,7 @@
     using Perspex.Threading;
     using Models;
     using ReactiveUI;
+    using Models.Tools;
 
     public class ConsoleViewModel : ReactiveObject, IConsole
     {        

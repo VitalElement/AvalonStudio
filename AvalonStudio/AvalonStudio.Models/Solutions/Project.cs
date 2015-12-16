@@ -1,6 +1,5 @@
 ﻿namespace AvalonStudio.Models.Solutions
 {
-    //using Tools.Debuggers;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -8,6 +7,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml.Serialization;
+    using Tools;
     using Utils;
 
     [XmlInclude(typeof(BitThunderApplicationProject))]

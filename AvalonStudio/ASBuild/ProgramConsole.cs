@@ -1,6 +1,6 @@
 ﻿namespace ASBuild
 {
-    using AvalonStudio.Models;
+    using AvalonStudio.Models.Tools;
     using System;
 
     class ProgramConsole : IConsole
