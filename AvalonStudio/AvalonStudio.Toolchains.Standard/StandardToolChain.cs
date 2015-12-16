@@ -1,16 +1,49 @@
-﻿namespace AvalonStudio.Toolchains
+﻿namespace AvalonStudio.Toolchains.Standard
 {
-    using AvalonStudio.Utils;
+    using AvalonStudio.Toolchains;
     using Projects;
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Utils;
 
-    public abstract class StandardToolChain : ToolChain
+    public class ProcessResult
+    {
+        public int ExitCode { get; set; }
+    }
+
+    public class CompileResult : ProcessResult
+    {
+        public CompileResult()
+        {
+            ObjectLocations = new List<string>();
+            LibraryLocations = new List<string>();
+            ExecutableLocations = new List<string>();
+        }
+
+        public Project Project { get; set; }
+        public List<string> ObjectLocations { get; set; }
+        public List<string> LibraryLocations { get; set; }
+        public List<string> ExecutableLocations { get; set; }
+        public int NumberOfObjectsCompiled { get; set; }
+
+        public int Count
+        {
+            get
+            {
+                return ObjectLocations.Count + LibraryLocations.Count + ExecutableLocations.Count;
+            }
+        }
+    }
+
+    public class LinkResult : ProcessResult
+    {
+        public string Executable { get; set; }
+    }
+
+    public abstract class StandardToolChain : IToolChain
     {
         public StandardToolChain(ToolchainSettings settings)
         {
@@ -28,7 +61,7 @@
 
         public abstract ProcessResult Size(IConsole console, Project project, LinkResult linkResult);
 
-        public abstract string GetCompilerArguments(Project superProject, Project project);
+        public abstract string GetCompilerArguments(Project superProject, Project project, Language language);
 
         public abstract string GetLinkerArguments(Project project);
 
@@ -49,7 +82,7 @@
 
         bool terminateBuild = false;
 
-        private int GetFileCount (Project project)
+        private int GetFileCount(Project project)
         {
             int result = 0;
 
@@ -57,10 +90,10 @@
             {
                 var loadedReference = project.GetReference(reference);
 
-                result += GetFileCount(loadedReference);                
+                result += GetFileCount(loadedReference);
             }
 
-            if(!project.IsBuilding)
+            if (!project.IsBuilding)
             {
                 project.IsBuilding = true;
 
@@ -82,7 +115,7 @@
             ClearBuildFlags(project);
         }
 
-        public override async Task<bool> Build(IConsole console, Project project)
+        public async Task<bool> Build(IConsole console, Project project)
         {
             console.WriteLine("Starting Build...");
 
@@ -91,7 +124,7 @@
 
             SetFileCount(project);
             buildCount = 0;
-            
+
             var compiledProjects = new List<CompileResult>();
 
             if (!terminateBuild)
@@ -101,12 +134,12 @@
                 if (!terminateBuild)
                 {
                     await WaitForCompileJobs();
-                    
+
                     foreach (var compiledReference in compiledProjects)
                     {
                         result = compiledReference.ExitCode == 0;
 
-                        if(!result)
+                        if (!result)
                         {
                             break;
                         }
@@ -132,7 +165,7 @@
                                 }
                             }
 
-                            if(linkedReferences.ExitCode != 0)
+                            if (linkedReferences.ExitCode != 0)
                             {
                                 result = false;
                                 break;
@@ -146,7 +179,7 @@
 
             console.WriteLine();
 
-            if(result)
+            if (result)
             {
                 console.WriteLine("Build Successful");
             }
@@ -214,7 +247,7 @@
                     linkResults.ExecutableLocations.Add(executable);
                 }
             }
-            else if(linkResults.ExitCode == 0)
+            else if (linkResults.ExitCode == 0)
             {
                 linkResults.ExitCode = linkResult.ExitCode;
             }
@@ -362,7 +395,7 @@
         private async Task CleanAll(IConsole console, Project superProject, Project project)
         {
             foreach (var reference in project.References)
-            {               
+            {
                 var loadedReference = project.GetReference(reference);
 
                 if (loadedReference.Type == ProjectType.Executable)
@@ -415,7 +448,7 @@
             }
         }
 
-        public override async Task Clean(IConsole console, Project project)
+        public async Task Clean(IConsole console, Project project)
         {
             await Task.Factory.StartNew(async () =>
             {
@@ -426,5 +459,7 @@
                 console.WriteLine("Clean Completed.");
             });
         }
+
+        public abstract string GDBExecutable { get; }        
     }
 }
