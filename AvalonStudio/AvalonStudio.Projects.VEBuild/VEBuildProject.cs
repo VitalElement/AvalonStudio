@@ -72,7 +72,6 @@
             References = new List<IProject>();
             PublicIncludes = new List<string>();
             GlobalIncludes = new List<string>();
-            PublicIncludes = new List<string>();
             Includes = new List<string>();
             SourceFiles = new List<ISourceFile>();
             CompilerArguments = new List<string>();
