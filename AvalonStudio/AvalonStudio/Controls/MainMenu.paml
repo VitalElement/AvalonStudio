@@ -1,5 +1,10 @@
 ﻿<UserControl xmlns="https://github.com/perspex">
-  <Menu Grid.ColumnSpan="2">
+  <Menu Grid.ColumnSpan="2" Background="#2d2d30">
+    <Menu.Styles>
+      <Style Selector="MenuItem">
+        <Setter Property="Background" Value="#2d2d30" />
+      </Style>
+    </Menu.Styles>
     <MenuItem Header="File">
       <MenuItem Header="New Project"/>
       <MenuItem Header="Open Project" Command="{Binding LoadProjectCommand}"/>
