@@ -228,3 +228,4 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+/AvalonStudio/AvalonStudio.Languages.CPlusPlus/NativeBinaries
