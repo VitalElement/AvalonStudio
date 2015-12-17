@@ -1,7 +1,6 @@
 ﻿namespace AvalonStudio.Models.PackageManager
 {
     using AvalonStudio.Models.Tools.Compiler;
-    using AvalonStudio.Models.Tools.Debuggers;
     using LibGit2Sharp;
     using LibGit2Sharp.Handlers;
     using System;
@@ -172,30 +171,30 @@
             return package;
         }
 
-        public override bool Install()
-        {
-            bool result = false;
+        //public override bool Install()
+        //{
+        //    bool result = false;
 
-            var debugAdaptor = new JLinkDebugAdaptor();
-            debugAdaptor.Location = Path.Combine(LocalFolder, "JLinkGDBServerCL.exe");
-            var currentInstallation = VEStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(JLinkDebugAdaptor));
+        //    var debugAdaptor = new Jlink();
+        //    debugAdaptor.Location = Path.Combine(LocalFolder, "JLinkGDBServerCL.exe");
+        //    var currentInstallation = VEStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(JLinkDebugAdaptor));
 
-            if (currentInstallation != null)
-            {
-                var index = VEStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentInstallation);
-                VEStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
-            }
-            else
-            {
-                VEStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
-            }
+        //    if (currentInstallation != null)
+        //    {
+        //        var index = VEStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentInstallation);
+        //        VEStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
+        //    }
+        //    else
+        //    {
+        //        VEStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
+        //    }
 
-            VEStudioSettings.This.Save();
+        //    VEStudioSettings.This.Save();
 
-            result = true;
+        //    result = true;
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public string Executable { get; set; }
     }
@@ -221,30 +220,30 @@
 
         public string Executable { get; set; }
 
-        public override bool Install()
-        {
-            bool result = false;
+        //public override bool Install()
+        //{
+        //    bool result = false;
 
-            var debugAdaptor = new OpenOCDDebugAdaptor();
-            debugAdaptor.Location = Path.Combine(LocalFolder, "bin\\openocd.exe");
-            var currentOpenOCDInstallation = VEStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(OpenOCDDebugAdaptor));
+        //    var debugAdaptor = new OpenOCDDebugAdaptor();
+        //    debugAdaptor.Location = Path.Combine(LocalFolder, "bin\\openocd.exe");
+        //    var currentOpenOCDInstallation = VEStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(OpenOCDDebugAdaptor));
 
-            if (currentOpenOCDInstallation != null)
-            {
-                var index = VEStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentOpenOCDInstallation);
-                VEStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
-            }
-            else
-            {
-                VEStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
-            }
+        //    if (currentOpenOCDInstallation != null)
+        //    {
+        //        var index = VEStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentOpenOCDInstallation);
+        //        VEStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
+        //    }
+        //    else
+        //    {
+        //        VEStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
+        //    }
 
-            VEStudioSettings.This.Save();
+        //    VEStudioSettings.This.Save();
 
-            result = true;
+        //    result = true;
 
-            return result;
-        }
+        //    return result;
+        //}
     }
 
     public class ClangToolChainPackage : ToolChainPackage
@@ -495,45 +494,45 @@
             return package;
         }
 
-        public override bool Install()
-        {
-            bool result = false;
+        //public override bool Install()
+        //{
+        //    bool result = false;
 
-            var toolChain = VEStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(MinGWToolChain));
+        //    var toolChain = VEStudioSettings.This.ToolchainSettings.FirstOrDefault((tcs) => tcs.ToolChainRealType == typeof(MinGWToolChain));
 
-            if (toolChain == null)
-            {
-                toolChain = new ToolChainSettings(typeof(MinGWToolChain));
-                VEStudioSettings.This.ToolchainSettings.Add(toolChain);
-                VEStudioSettings.This.Save();
-            }
+        //    if (toolChain == null)
+        //    {
+        //        toolChain = new ToolChainSettings(typeof(MinGWToolChain));
+        //        VEStudioSettings.This.ToolchainSettings.Add(toolChain);
+        //        VEStudioSettings.This.Save();
+        //    }
 
-            toolChain.ToolChainLocation = this.LocalFolder;
-            toolChain.IncludePaths = this.IncludePaths;
-            result = true;
+        //    toolChain.ToolChainLocation = this.LocalFolder;
+        //    toolChain.IncludePaths = this.IncludePaths;
+        //    result = true;
 
-            // Install debugger.
-            if (result)
-            {
-                var debugAdaptor = new LocalDebugAdaptor();
-                var currentInstallation = VEStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(LocalDebugAdaptor));
+        //    // Install debugger.
+        //    if (result)
+        //    {
+        //        var debugAdaptor = new LocalDebugAdaptor();
+        //        var currentInstallation = VEStudioSettings.This.InstalledDebugAdaptors.FirstOrDefault((dba) => dba.GetType() == typeof(LocalDebugAdaptor));
 
-                if (currentInstallation != null)
-                {
-                    var index = VEStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentInstallation);
-                    VEStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
-                }
-                else
-                {
-                    VEStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
-                }
+        //        if (currentInstallation != null)
+        //        {
+        //            var index = VEStudioSettings.This.InstalledDebugAdaptors.IndexOf(currentInstallation);
+        //            VEStudioSettings.This.InstalledDebugAdaptors[index] = debugAdaptor;
+        //        }
+        //        else
+        //        {
+        //            VEStudioSettings.This.InstalledDebugAdaptors.Add(debugAdaptor);
+        //        }
 
-                VEStudioSettings.This.Save();
-            }
+        //        VEStudioSettings.This.Save();
+        //    }
 
-            VEStudioSettings.This.Save();
+        //    VEStudioSettings.This.Save();
 
-            return result;
-        }
+        //    return result;
+        //}
     }
 }

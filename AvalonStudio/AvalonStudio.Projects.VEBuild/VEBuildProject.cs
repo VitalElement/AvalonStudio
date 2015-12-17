@@ -8,6 +8,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+
     public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
     {
         public const string solutionExtension = "vsln";
@@ -448,5 +449,13 @@
 
         public string BuildDirectory { get; set; }
         public string LinkerScript { get; set; }
+
+        public string Executable
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

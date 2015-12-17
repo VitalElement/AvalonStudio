@@ -7,7 +7,6 @@ using System.Linq;
 using System.IO;
 using System.Xml.Serialization;
 using AvalonStudio.Utils;
-using AvalonStudio.Models.Tools.Debuggers;
 using NClang;
 
 namespace AvalonStudio.Models.Solutions
