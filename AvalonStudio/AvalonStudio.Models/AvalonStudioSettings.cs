@@ -1,11 +1,11 @@
 ﻿namespace AvalonStudio.Models
 {
     using Tools.Compiler;
-    using Tools.Debuggers;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Xml.Serialization;
+    using Debugging.GDB;
 
     public class VEStudioSettings
     {
@@ -15,7 +15,7 @@
 
             ToolchainSettings = new List<ToolChainSettings> ();
 
-            InstalledDebugAdaptors = new List<GDBDebugAdaptor> ();
+            InstalledDebugAdaptors = new List<GDBDebugAdaptor>();
         }
 
         private static VEStudioSettings CreateNew ()

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\LibGit2Sharp.NativeBinaries.1.0.72\build\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.72\build\LibGit2Sharp.NativeBinaries.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -10,10 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AvalonStudio.Models</RootNamespace>
     <AssemblyName>AvalonStudio.Models</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -51,6 +52,7 @@
     <Compile Include="AvalonStudioService.cs" />
     <Compile Include="AvalonStudioSettings.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Solutions\BitThunderApplicationProject.cs" />
@@ -83,49 +85,6 @@
     <Compile Include="Tools\Compiler\StandardToolChain.cs" />
     <Compile Include="Tools\Compiler\ToolChain.cs" />
     <Compile Include="Tools\ConsoleWriter.cs" />
-    <Compile Include="Tools\Debuggers\BreakPoint.cs" />
-    <Compile Include="Tools\Debuggers\Commands.cs" />
-    <Compile Include="Tools\Debuggers\ContinueCommand.cs" />
-    <Compile Include="Tools\Debuggers\DataDisassembleCommand.cs" />
-    <Compile Include="Tools\Debuggers\DataListChangedRegistersCommand.cs" />
-    <Compile Include="Tools\Debuggers\DataListRegisterNamesCommand.cs" />
-    <Compile Include="Tools\Debuggers\DataListRegisterValuesCommand.cs" />
-    <Compile Include="Tools\Debuggers\DataReadMemoryBytesCommand.cs" />
-    <Compile Include="Tools\Debuggers\Debugger.cs" />
-    <Compile Include="Tools\Debuggers\DisassembledLine.cs" />
-    <Compile Include="Tools\Debuggers\ExecNextInstructionCommand.cs" />
-    <Compile Include="Tools\Debuggers\Extensions.cs" />
-    <Compile Include="Tools\Debuggers\FinishCommand.cs" />
-    <Compile Include="Tools\Debuggers\Frame.cs" />
-    <Compile Include="Tools\Debuggers\GDB.cs" />
-    <Compile Include="Tools\Debuggers\GDBResponse.cs" />
-    <Compile Include="Tools\Debuggers\InterruptCommand.cs" />
-    <Compile Include="Tools\Debuggers\JLinkDebugAdaptor.cs" />
-    <Compile Include="Tools\Debuggers\LocalDebugger.cs" />
-    <Compile Include="Tools\Debuggers\MonitorCommand.cs" />
-    <Compile Include="Tools\Debuggers\NameValuePair.cs" />
-    <Compile Include="Tools\Debuggers\ObjDump.cs" />
-    <Compile Include="Tools\Debuggers\OpenOCD.cs" />
-    <Compile Include="Tools\Debuggers\Register.cs" />
-    <Compile Include="Tools\Debuggers\RemoveBreakPointCommand.cs" />
-    <Compile Include="Tools\Debuggers\RunCommand.cs" />
-    <Compile Include="Tools\Debuggers\SetBreakPointCommand.cs" />
-    <Compile Include="Tools\Debuggers\SetCommand.cs" />
-    <Compile Include="Tools\Debuggers\StackListFramesCommand.cs" />
-    <Compile Include="Tools\Debuggers\StackListVariablesCommand.cs" />
-    <Compile Include="Tools\Debuggers\StepIntoCommand.cs" />
-    <Compile Include="Tools\Debuggers\StepOverCommand.cs" />
-    <Compile Include="Tools\Debuggers\StopRecord.cs" />
-    <Compile Include="Tools\Debuggers\TargetDownloadCommand.cs" />
-    <Compile Include="Tools\Debuggers\TargetSelectCommand.cs" />
-    <Compile Include="Tools\Debuggers\VarCreateCommand.cs" />
-    <Compile Include="Tools\Debuggers\VarDeleteCommand.cs" />
-    <Compile Include="Tools\Debuggers\VarEvaluateExpressionCommand.cs" />
-    <Compile Include="Tools\Debuggers\Variable.cs" />
-    <Compile Include="Tools\Debuggers\VariableObject.cs" />
-    <Compile Include="Tools\Debuggers\VarListChildrenCommand.cs" />
-    <Compile Include="Tools\Debuggers\VarUpdateCommand.cs" />
-    <Compile Include="Tools\Debuggers\VerSetFormatCommand.cs" />
     <Compile Include="Tools\IConsole.cs" />
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Templates\ArmGCCLinkTemplate.cs" />
@@ -158,6 +117,10 @@
     <ProjectReference Include="..\..\nclang\NClang\NClang.csproj">
       <Project>{5ae560f9-0e8e-488e-b6c4-3c8196f9013a}</Project>
       <Name>NClang</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Debugging.GDB\AvalonStudio.Debugging.GDB.csproj">
+      <Project>{a9b2958a-0b02-4598-b7b1-42eec7e2fae4}</Project>
+      <Name>AvalonStudio.Debugging.GDB</Name>
     </ProjectReference>
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
