@@ -12,7 +12,7 @@
         private LanguageServices()
         {
             var location = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            var catalog = new DirectoryCatalog(location);
+            var catalog = new DirectoryCatalog(Path.Combine(location, "plugins"));
                           
             var container = new CompositionContainer(catalog);
 
