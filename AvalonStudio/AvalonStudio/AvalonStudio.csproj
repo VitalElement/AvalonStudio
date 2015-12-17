@@ -163,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="CompositionRoot.cs" />
     <Compile Include="Controls\CompletionDataViewModel.cs" />
     <Compile Include="Controls\Console.paml.cs">
       <DependentUpon>Console.paml</DependentUpon>
@@ -5402,6 +5403,9 @@
     <Resource Include="Resources\Icons\Templarian\light\appbar.youtube.play.png" />
     <Resource Include="Resources\Icons\Templarian\light\appbar.youtube.png" />
     <Resource Include="Resources\Icons\Templarian\light\appbar.zune.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Plugins\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SharpDX.2.6.3\build\SharpDX.targets" Condition="Exists('..\packages\SharpDX.2.6.3\build\SharpDX.targets')" />

@@ -20,7 +20,7 @@
             CloseCommand = ReactiveCommand.Create();
             CloseCommand.Subscribe((o) =>
             {
-               // Workspace.This.Tools.Remove (this);
+               // Workspace.Instance.Tools.Remove (this);
             });
         }
 

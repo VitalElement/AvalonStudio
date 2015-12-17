@@ -20,7 +20,7 @@ namespace AvalonStudio.Controls.ViewModels
 
             ToggleEditingModeCommand.Subscribe(args =>
             {
-                if (((object)Workspace.This.SolutionExplorer.SelectedItem) == (object)this && NumberOfSelections > 1)
+                if (((object)Workspace.Instance.SolutionExplorer.SelectedItem) == (object)this && NumberOfSelections > 1)
                 {
                     IsEditingTitle = (bool)args;
                 }
@@ -152,16 +152,16 @@ namespace AvalonStudio.Controls.ViewModels
             AddNewFolderCommand = ReactiveCommand.Create();
             AddNewFolderCommand.Subscribe((args) =>
           {
-               //Workspace.This.ModalDialog = new NewFolderDialogViewModel (this.model as ProjectFolder);
-               // Workspace.This.ModalDialog.ShowDialog ();
+               //Workspace.Instance.ModalDialog = new NewFolderDialogViewModel (this.model as ProjectFolder);
+               // Workspace.Instance.ModalDialog.ShowDialog ();
            });
 
 
             AddNewFileCommand = ReactiveCommand.Create();
             AddNewFileCommand.Subscribe((args) =>
            {
-               //Workspace.This.ModalDialog = new NewFileDialogViewModel (this.model as ProjectFolder);
-               //Workspace.This.ModalDialog.ShowDialog ();
+               //Workspace.Instance.ModalDialog = new NewFileDialogViewModel (this.model as ProjectFolder);
+               //Workspace.Instance.ModalDialog.ShowDialog ();
            });
 
 
@@ -197,8 +197,8 @@ namespace AvalonStudio.Controls.ViewModels
             AddNewItemCommand = ReactiveCommand.Create();
             AddNewItemCommand.Subscribe((o) =>
            {
-               //Workspace.This.ModalDialog = new NewItemDialogViewModel (model as ProjectFolder);
-               //Workspace.This.ModalDialog.ShowDialog ();
+               //Workspace.Instance.ModalDialog = new NewItemDialogViewModel (model as ProjectFolder);
+               //Workspace.Instance.ModalDialog.ShowDialog ();
            });
         }
 
