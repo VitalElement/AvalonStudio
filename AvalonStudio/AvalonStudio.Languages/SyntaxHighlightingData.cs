@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace AvalonStudio.Languages
+{
+    using System;
+    using System.Collections.Generic;
 
-namespace AvalonStudio.Models.LanguageServices
-{        
     public enum HighlightType
     {
         CallExpression,

@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Models.LanguageServices
+﻿namespace AvalonStudio.Languages
 {
     public class CodeCompletionData
     {

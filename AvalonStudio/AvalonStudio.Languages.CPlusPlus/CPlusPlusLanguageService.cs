@@ -1,10 +1,10 @@
-﻿namespace AvalonStudio.Models.LanguageServices.CPlusPlus
+﻿namespace AvalonStudio.Languages.CPlusPlus
 {
-    using Solutions;
+    using Models;
+    using Models.Solutions;
     using NClang;
     using System;
     using System.Collections.Generic;
-    using System.Threading;
     using System.IO;
 
     public class CPlusPlusLanguageService : ILanguageService
@@ -43,7 +43,7 @@
                     }
                 }
 
-                if (file.FileType == Solutions.FileType.CPlusPlus || file.FileType == FileType.Header)
+                if (file.FileType == FileType.CPlusPlus || file.FileType == FileType.Header)
                 {
                     args.Add("-xc++");
                     args.Add("-std=c++14");

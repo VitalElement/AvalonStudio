@@ -1,7 +1,6 @@
 ﻿namespace AvalonStudio.Controls
 {
     using Models.Platform;
-    using Models.LanguageServices;
     using MVVM;
     using ReactiveUI;
     using System;
@@ -11,6 +10,7 @@
     using Perspex;
     using Perspex.Input;
     using System.Windows.Input;
+    using Languages;
     public class EditorViewModel : ViewModel<EditorModel>
     {
         #region Constructors
@@ -33,7 +33,7 @@
             model.DocumentLoaded += (sender, e) =>
             {
                 model.CodeAnalysisCompleted += (s, ee) =>
-                {
+                {                    
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
                     HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
                 };
