@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Controls
 {
     using AvalonStudio.MVVM;
-    using Models.LanguageServices;
+    using Languages;
     using Perspex;
     using Perspex.Input;
     using ReactiveUI;

@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Models.LanguageServices
+﻿namespace AvalonStudio.Languages
 {
     using System;
     using System.Collections.Generic;

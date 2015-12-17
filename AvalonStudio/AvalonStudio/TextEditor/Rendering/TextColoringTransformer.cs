@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.TextEditor.Rendering
 {
     using AvalonStudio.TextEditor.Document;
-    using Models.LanguageServices;
+    using Languages;
     using Perspex;
     using Perspex.Media;
 

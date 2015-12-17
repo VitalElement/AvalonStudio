@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.TextEditor
 {
     using Document;
-    using Models.LanguageServices;
+    using Languages;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Controls.Primitives;

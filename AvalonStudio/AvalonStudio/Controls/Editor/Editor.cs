@@ -1,7 +1,5 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using Models.LanguageServices.CPlusPlus;
-    using Models.LanguageServices;
     using Models.Solutions;
     using Perspex.Threading;
     using System;
@@ -10,7 +8,8 @@
     using System.Threading;
     using TextEditor.Document;
     using System.Threading.Tasks;
-
+    using Languages.CPlusPlus;
+    using Languages;
     public class EditorModel
     {
         private ReaderWriterLockSlim editorLock;
