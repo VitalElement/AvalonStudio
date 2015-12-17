@@ -122,6 +122,10 @@
       <Project>{a9b2958a-0b02-4598-b7b1-42eec7e2fae4}</Project>
       <Name>AvalonStudio.Debugging.GDB</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects\AvalonStudio.Projects.csproj">
+      <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
+      <Name>AvalonStudio.Projects</Name>
+    </ProjectReference>
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
