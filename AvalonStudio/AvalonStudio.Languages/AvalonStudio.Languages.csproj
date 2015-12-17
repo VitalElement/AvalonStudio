@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -45,6 +46,7 @@
     <Compile Include="CodeCompletionResults.cs" />
     <Compile Include="Diagnostic.cs" />
     <Compile Include="ILanguageService.cs" />
+    <Compile Include="LanguageServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyntaxHighlightingData.cs" />
     <Compile Include="UnsavedFile.cs" />
@@ -53,6 +55,10 @@
     <ProjectReference Include="..\AvalonStudio.Models\AvalonStudio.Models.csproj">
       <Project>{eacbff14-438d-4311-8d8c-18e7e6769c8f}</Project>
       <Name>AvalonStudio.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects\AvalonStudio.Projects.csproj">
+      <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
+      <Name>AvalonStudio.Projects</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

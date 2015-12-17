@@ -93,7 +93,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Solutions\SolutionExplorer.cd" />
-    <None Include="libclang.so">
+    <None Include="NativeLibs\libclang.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -109,7 +109,7 @@
   </Target>
   -->
   <ItemGroup>
-    <Content Include="libclang.dll">
+    <Content Include="NativeLibs\libclang.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
