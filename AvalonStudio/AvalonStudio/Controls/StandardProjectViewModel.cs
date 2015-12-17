@@ -19,15 +19,15 @@
             //{
             //    if (model.SelectedConfiguration.ToolChain is BitThunderToolChain)
             //    {
-            //        (model.SelectedConfiguration.ToolChain as BitThunderToolChain).MenuConfig(Workspace.This.VEConsole, this.Model, Workspace.This.ProcessCancellationToken);
+            //        (model.SelectedConfiguration.ToolChain as BitThunderToolChain).MenuConfig(Workspace.Instance.VEConsole, this.Model, Workspace.Instance.ProcessCancellationToken);
             //    }
             //});
 
             ConfigureCommand = ReactiveCommand.Create();
             ConfigureCommand.Subscribe((o) =>
             {
-                //Workspace.This.ModalDialog = new ProjectConfigurationDialogViewModel(Model, () => this.RaisePropertyChanged(() => Icon));
-                //Workspace.This.ModalDialog.ShowDialog();
+                //Workspace.Instance.ModalDialog = new ProjectConfigurationDialogViewModel(Model, () => this.RaisePropertyChanged(() => Icon));
+                //Workspace.Instance.ModalDialog.ShowDialog();
             });
 
             SetDefaultProjectCommand = ReactiveCommand.Create();
@@ -36,7 +36,7 @@
                 Model.Solution.DefaultProject = Model;
                 Model.Solution.SaveChanges();
 
-                Workspace.This.SolutionExplorer.Solution.First().VisitAllChildren((p) =>
+                Workspace.Instance.SolutionExplorer.Solution.First().VisitAllChildren((p) =>
                 {
                     if (p is StandardProjectViewModel)
                     {

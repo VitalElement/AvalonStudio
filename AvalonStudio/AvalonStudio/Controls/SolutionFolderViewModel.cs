@@ -85,15 +85,15 @@ namespace AvalonStudio.Controls.ViewModels
             AddNewFolderCommand = ReactiveCommand.Create();
             AddNewFolderCommand.Subscribe((args) =>
             {
-                //Workspace.This.ModalDialog = new NewSolutionFolderViewModel(this.model as SolutionFolder);
-                //Workspace.This.ModalDialog.ShowDialog();
+                //Workspace.Instance.ModalDialog = new NewSolutionFolderViewModel(this.model as SolutionFolder);
+                //Workspace.Instance.ModalDialog.ShowDialog();
             });
 
             AddNewProjectCommand = ReactiveCommand.Create();
             AddNewProjectCommand.Subscribe((o) =>
             {
-                //Workspace.This.ModalDialog = new NewProjectDialogViewModel(Workspace.This, Model, false);
-                //Workspace.This.ModalDialog.ShowDialog();
+                //Workspace.Instance.ModalDialog = new NewProjectDialogViewModel(Workspace.Instance, Model, false);
+                //Workspace.Instance.ModalDialog.ShowDialog();
             });
 
             AddExistingProjectCommand = ReactiveCommand.Create();

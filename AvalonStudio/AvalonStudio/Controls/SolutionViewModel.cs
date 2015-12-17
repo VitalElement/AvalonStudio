@@ -23,8 +23,8 @@
             ConfigurationCommand = ReactiveCommand.Create();
             ConfigurationCommand.Subscribe((o) =>
             {
-                //Workspace.This.ModalDialog = new SolutionConfigurationDialogViewModel(Workspace.This.SolutionExplorer.Model);
-                //Workspace.This.ModalDialog.ShowDialog();
+                //Workspace.Instance.ModalDialog = new SolutionConfigurationDialogViewModel(Workspace.Instance.SolutionExplorer.Model);
+                //Workspace.Instance.ModalDialog.ShowDialog();
             });
 
             BuildSolutionCommand = ReactiveCommand.Create();
@@ -56,13 +56,13 @@
 
         private async void CleanSolution()
         {
-            // await Model.Solution.DefaultProject.SelectedConfiguration.ToolChain.Clean(Workspace.This.StudioConsole, Model.Solution.DefaultProject, Workspace.This.ProcessCancellationToken);
+            // await Model.Solution.DefaultProject.SelectedConfiguration.ToolChain.Clean(Workspace.Instance.StudioConsole, Model.Solution.DefaultProject, Workspace.Instance.ProcessCancellationToken);
         }
 
         private async void BuildSolution()
         {
-            //Workspace.This.SaveAllCommand.Execute(null);
-            //await Model.Solution.DefaultProject.SelectedConfiguration.ToolChain.Build(Workspace.This.StudioConsole, this.Model.Solution.DefaultProject, Workspace.This.ProcessCancellationToken);
+            //Workspace.Instance.SaveAllCommand.Execute(null);
+            //await Model.Solution.DefaultProject.SelectedConfiguration.ToolChain.Build(Workspace.Instance.StudioConsole, this.Model.Solution.DefaultProject, Workspace.Instance.ProcessCancellationToken);
         }
 
         private async void RunTests()
@@ -72,13 +72,13 @@
 
             //foreach(var testProject in testProjects)
             //{
-            //    await testProject.Build(Workspace.This.StudioConsole, Workspace.This.ProcessCancellationToken);
+            //    await testProject.Build(Workspace.Instance.StudioConsole, Workspace.Instance.ProcessCancellationToken);
 
-            //    tests.AddRange(testProject.EnumerateTests(Workspace.This.StudioConsole));            
+            //    tests.AddRange(testProject.EnumerateTests(Workspace.Instance.StudioConsole));            
             //}
 
-            //Workspace.This.TestRunner.AddTests(tests);
-            //Workspace.This.TestRunner.RunTests();
+            //Workspace.Instance.TestRunner.AddTests(tests);
+            //Workspace.Instance.TestRunner.RunTests();
 
         }
 

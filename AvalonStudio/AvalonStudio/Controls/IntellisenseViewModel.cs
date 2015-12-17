@@ -1,12 +1,11 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using AvalonStudio.MVVM;
+    using MVVM;
     using Languages;
     using Perspex;
     using Perspex.Input;
     using ReactiveUI;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
     using TextEditor.Document;
@@ -305,7 +304,7 @@
 
                     currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);                    
 
-                    Workspace.This.Console.WriteLine("Set started at: " + intellisenseStartedAt + ", " + currentFilter);
+                    Workspace.Instance.Console.WriteLine("Set started at: " + intellisenseStartedAt + ", " + currentFilter);
 
                     await editor.DoCompletionRequestAsync(caret.Line, caret.Column, currentFilter);
 

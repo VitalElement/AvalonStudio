@@ -1,27 +1,28 @@
 ﻿namespace AvalonStudio
 {
-    using Controls;
-    using Languages;
-    using System.ComponentModel.Composition.Hosting;
+    using System;
 
-    class Program
-    {        
-        static void Main(string[] args)
-        {            
+    public class Program
+    {
+        private static void Main(string[] args)
+        {
+            if (args == null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             var app = new App();
+            var container = CompositionRoot.CreateContainer();
             var window = new MainWindow();
 
-            var editorModel = new EditorModel();
+            Workspace.Instance = container.GetExportedValue<Workspace>();
 
-            Workspace.This = new Workspace(editorModel);                  
-
-            window.DataContext = Workspace.This;
-
+            window.DataContext = Workspace.Instance;
             window.Show();
 
             app.Run(window);
 
-            editorModel.ShutdownBackgroundWorkers();
+            Workspace.Instance.Cleanup();
         }
     }
 }

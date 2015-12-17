@@ -1,15 +1,17 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using Models.Solutions;
     using Perspex.Threading;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.Composition;
     using System.IO;
     using System.Threading;
     using TextEditor.Document;
     using System.Threading.Tasks;
     using Languages;
     using Projects;
+
+    [Export(typeof(EditorModel))]
     public class EditorModel
     {
         private ReaderWriterLockSlim editorLock;

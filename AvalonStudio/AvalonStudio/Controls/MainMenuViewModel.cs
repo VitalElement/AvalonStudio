@@ -28,7 +28,7 @@
 
                 if (result != null)
                 {
-                    Workspace.This.SolutionExplorer.Model = Solution.LoadSolution(result[0]);                    
+                    Workspace.Instance.SolutionExplorer.Model = Solution.LoadSolution(result[0]);                    
                 }
             });
 
@@ -36,7 +36,7 @@
 
             SaveCommand.Subscribe(_ =>
             {
-                Workspace.This.Editor.Save();
+                Workspace.Instance.Editor.Save();
             });
 
             BuildProjectCommand = ReactiveCommand.Create();
@@ -44,15 +44,15 @@
             {
                 //new Thread(new ThreadStart(new Action(async () =>
                 {                    
-                    await Workspace.This.SolutionExplorer.Model.DefaultProject.Build(Workspace.This.Console, Workspace.This.ProcessCancellationToken);
+                    await Workspace.Instance.SolutionExplorer.Model.DefaultProject.Build(Workspace.Instance.Console, Workspace.Instance.ProcessCancellationToken);
                 }//))).Start();
             });
 
             PackagesCommand = ReactiveCommand.Create();
             PackagesCommand.Subscribe((o) =>
             {
-                Workspace.This.ModalDialog = new PackageManagerDialogViewModel();
-                Workspace.This.ModalDialog.ShowDialog();
+                Workspace.Instance.ModalDialog = new PackageManagerDialogViewModel();
+                Workspace.Instance.ModalDialog.ShowDialog();
             });            
         }
 
