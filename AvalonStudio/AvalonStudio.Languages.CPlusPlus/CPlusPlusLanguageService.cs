@@ -10,15 +10,13 @@
 
     public class CPlusPlusLanguageService : ILanguageService
     {
-        private ClangIndex index;
         private ProjectFile file;
         private ClangTranslationUnit translationUnit;
         private bool translationUnitIsDirty;
+        private static ClangIndex index = ClangService.CreateIndex();
 
-        public CPlusPlusLanguageService(ClangIndex index, ProjectFile file)
-        {
-            this.index = index;
-            this.file = file;
+        public CPlusPlusLanguageService()
+        {            
         }
 
         private NClang.ClangTranslationUnit GenerateTranslationUnit()
