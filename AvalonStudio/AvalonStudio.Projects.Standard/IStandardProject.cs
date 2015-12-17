@@ -26,6 +26,7 @@
 
         string BuildDirectory { get; }
         string LinkerScript { get;  }
+        string Executable { get; }
 
         IList<string> BuiltinLibraries { get; }
 

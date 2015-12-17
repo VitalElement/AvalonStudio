@@ -44,10 +44,6 @@
     <Compile Include="Toolchain.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Models\AvalonStudio.Models.csproj">
-      <Project>{eacbff14-438d-4311-8d8c-18e7e6769c8f}</Project>
-      <Name>AvalonStudio.Models</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects\AvalonStudio.Projects.csproj">
       <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
       <Name>AvalonStudio.Projects</Name>
