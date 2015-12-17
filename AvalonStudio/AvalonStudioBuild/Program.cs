@@ -9,6 +9,7 @@
     using AvalonStudio.Toolchains;
     using AvalonStudio.Toolchains.STM32;
     using AvalonStudio.Projects.Standard;
+
     class Program
     {
         const string baseDir = @"c:\development\vebuild\test";
