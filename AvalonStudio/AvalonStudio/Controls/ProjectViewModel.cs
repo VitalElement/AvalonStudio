@@ -35,7 +35,7 @@
              //DebugCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
            // DebugCommand.Subscribe((o) =>
            //{
-           //    //Workspace.This.DebugManager.StartDebuggingCommand.Execute(Model);            
+           //    //Workspace.Instance.DebugManager.StartDebuggingCommand.Execute(Model);            
            //});
 
            // CleanCommand = ReactiveCommand.Create(this.WhenAnyValue(x => CanExecuteCompileTask(x)));
@@ -53,8 +53,8 @@
             ManageReferencesCommand = ReactiveCommand.Create();
             ManageReferencesCommand.Subscribe((o) =>
             {
-                //Workspace.This.ModalDialog = new ManageReferencesDialogViewModel(Model);
-                // Workspace.This.ModalDialog.ShowDialog();
+                //Workspace.Instance.ModalDialog = new ManageReferencesDialogViewModel(Model);
+                // Workspace.Instance.ModalDialog.ShowDialog();
             });
         }
 
@@ -62,7 +62,7 @@
         {
             bool result = true;
 
-            // if (Workspace.This.ExecutingCompileTask || Workspace.This.CurrentPerspective == Perspective.Debug)
+            // if (Workspace.Instance.ExecutingCompileTask || Workspace.Instance.CurrentPerspective == Perspective.Debug)
             /// {
             //     result = false;
             // }
@@ -78,11 +78,11 @@
 
         public async Task Build(Project project)
         {
-            //Workspace.This.SaveAllCommand.Execute(null);
+            //Workspace.Instance.SaveAllCommand.Execute(null);
 
             //if (project.SelectedConfiguration.ToolChain is CustomProcessToolChain)
             //{
-            //    await project.Build(Workspace.This.StudioConsole, Workspace.This.ProcessCancellationToken);
+            //    await project.Build(Workspace.Instance.StudioConsole, Workspace.Instance.ProcessCancellationToken);
             //}
             //else
             //{
@@ -90,20 +90,20 @@
             //    {
             //        if (project.SelectedConfiguration.ToolChain.Settings != null)
             //        {
-            //            await project.Build(Workspace.This.StudioConsole, Workspace.This.ProcessCancellationToken);
+            //            await project.Build(Workspace.Instance.StudioConsole, Workspace.Instance.ProcessCancellationToken);
             //        }
             //        else
             //        {
-            //            Workspace.This.StudioConsole.WriteLine("Tool chain has not been configured. Please check VEStudio Settings.");
+            //            Workspace.Instance.StudioConsole.WriteLine("Tool chain has not been configured. Please check VEStudio Settings.");
             //        }
             //    }
             //    else
             //    {
-            //        Workspace.This.StudioConsole.WriteLine("No compiler has been selected. Check project settings.");
+            //        Workspace.Instance.StudioConsole.WriteLine("No compiler has been selected. Check project settings.");
             //    }
             //}
 
-            //Workspace.This.ExecutingCompileTask = false;
+            //Workspace.Instance.ExecutingCompileTask = false;
         }
 
         public void Clean(Project project)
@@ -112,11 +112,11 @@
             {
                 try
                 {
-                    project.SelectedConfiguration.ToolChain.Clean(Workspace.This.Console, this.Model as Project, Workspace.This.ProcessCancellationToken);
+                    project.SelectedConfiguration.ToolChain.Clean(Workspace.Instance.Console, this.Model as Project, Workspace.Instance.ProcessCancellationToken);
                 }
                 catch (Exception e)
                 {
-                    Workspace.This.Console.WriteLine(e.Message);
+                    Workspace.Instance.Console.WriteLine(e.Message);
                 }
             }
         }

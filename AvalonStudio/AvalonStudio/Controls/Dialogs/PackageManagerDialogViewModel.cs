@@ -47,7 +47,7 @@
 
             OKCommand.Subscribe(_ =>
             {
-                Workspace.This.InvalidateCodeAnalysis();
+                Workspace.Instance.InvalidateCodeAnalysis();
                 this.Close();                
             });
 

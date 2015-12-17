@@ -3,23 +3,26 @@
     using Controls.ViewModels;
     using Controls;
     using Models.Platform;
-    using System.Threading.Tasks;
-    using Models.PackageManager;
-    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.Composition;
     using System.Threading;
-    using System.Windows.Input;
     using ReactiveUI;
     using Models;
-    using System.IO;
-    using Perspex.Input;
-    using Perspex.Controls;
+    using Languages;
     using Projects;
+
+    [Export(typeof(Workspace))]
     public class Workspace : ReactiveObject
     {
-        public static Workspace This = null;
+        private readonly EditorModel editor;
+        private readonly IEnumerable<ILanguageService> languageServices;
+        public static Workspace Instance = null;
 
-        public Workspace(EditorModel editor)
+        [ImportingConstructor]
+        public Workspace(EditorModel editor, [ImportMany] IEnumerable<ILanguageService> languageServices)
         {
+            this.editor = editor;
+            this.languageServices = languageServices;
             AvalonStudioService.Initialise();
 
             MainMenu = new MainMenuViewModel();
@@ -90,6 +93,11 @@
         {
             get { return hideWhenModalVisibility; }
             set { hideWhenModalVisibility = value; this.RaisePropertyChanged(); }
+        }
+
+        public void Cleanup()
+        {
+            editor.ShutdownBackgroundWorkers();
         }
     }
 }
