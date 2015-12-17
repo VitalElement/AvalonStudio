@@ -8,6 +8,7 @@ using System.IO;
 using System.Xml.Serialization;
 using AvalonStudio.Utils;
 using NClang;
+using AvalonStudio.Projects;
 
 namespace AvalonStudio.Models.Solutions
 {
@@ -39,7 +40,7 @@ namespace AvalonStudio.Models.Solutions
         Inherit
     }
 
-    public class ProjectFile : ProjectItem
+    public class ProjectFile : ProjectItem, ISourceFile
     {
         #region Constructors
         private ProjectFile()
@@ -64,7 +65,7 @@ namespace AvalonStudio.Models.Solutions
         public void MoveTo (ProjectFolder destination)
         {
             var destinationPath = Path.Combine(destination.CurrentDirectory, FileName);
-            File.Move(Location, destinationPath);
+            System.IO.File.Move(Location, destinationPath);
 
             Container.RemoveItem(this);            
             
@@ -177,7 +178,7 @@ namespace AvalonStudio.Models.Solutions
 
             if (TranslationUnitActive)
             {
-                if (File.Exists(this.Location) && this.IsCodeFile)
+                if (System.IO.File.Exists(this.Location) && this.IsCodeFile)
                 {
                     var args = new List<string>();
 
@@ -296,12 +297,45 @@ namespace AvalonStudio.Models.Solutions
 
                 if (newLocation.NormalizePath() != this.Location.NormalizePath())
                 {
-                    File.Move(this.Location, newLocation);
+                    System.IO.File.Move(this.Location, newLocation);
                     this.LocationRelativeToParent = Container.CurrentDirectory.MakeRelativePath(newLocation);
                     this.SaveChanges();
 
                     Container.Children.Remove(this);
                     Container.AddChild(this);
+                }
+            }
+        }
+
+        public string File
+        {
+            get
+            {
+                return Location;
+            }
+        }
+
+        public Language Language
+        {
+            get
+            {
+                switch(System.IO.Path.GetExtension(File))
+                {
+                    case ".cpp":
+                        return Language.Cpp;
+
+                    case ".c":
+                        return Language.C;
+
+                    case ".h":
+                        return Language.C;
+
+                    case ".hpp":
+                        return Language.Cpp;
+
+                    default:
+                        throw new Exception("Unknown extension.");
+                        
                 }
             }
         }
