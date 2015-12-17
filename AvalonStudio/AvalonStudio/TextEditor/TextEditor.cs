@@ -584,7 +584,7 @@
         #region Public Methods
         public void InstallMargin(Control margin)
         {
-            marginsContainer.Children.Add(margin);
+            //marginsContainer.Children.Add(margin);
         }
         #endregion
 
