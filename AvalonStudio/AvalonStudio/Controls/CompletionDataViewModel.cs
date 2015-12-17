@@ -1,8 +1,7 @@
 ﻿namespace AvalonStudio.Controls
 {
     using AvalonStudio.MVVM;
-    using Models.LanguageServices;
-
+    using Languages;
 
     public class CompletionDataViewModel : ViewModel<CodeCompletionData>
     {

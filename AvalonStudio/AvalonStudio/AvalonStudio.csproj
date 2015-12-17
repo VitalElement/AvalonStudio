@@ -341,6 +341,14 @@
       <Project>{5ae560f9-0e8e-488e-b6c4-3c8196f9013a}</Project>
       <Name>NClang</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj">
+      <Project>{5d5fe113-ffef-4e49-a011-00a167efa36e}</Project>
+      <Name>AvalonStudio.Languages.CPlusPlus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Languages\AvalonStudio.Languages.csproj">
+      <Project>{86eba4c1-70a3-4e20-a40a-652b7d6aaadd}</Project>
+      <Name>AvalonStudio.Languages</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Models\AvalonStudio.Models.csproj">
       <Project>{EACBFF14-438D-4311-8D8C-18E7E6769C8F}</Project>
       <Name>AvalonStudio.Models</Name>
