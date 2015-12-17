@@ -47,5 +47,13 @@ namespace AvalonStudio.Projects.VEBuild
                 return result;
             }
         }
+
+        public string Title
+        {
+            get
+            {
+                return Path.GetFileName(Location);
+            }
+        }
     }
 }
