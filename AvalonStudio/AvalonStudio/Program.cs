@@ -1,17 +1,20 @@
 ﻿namespace AvalonStudio
 {
     using Controls;
+    using Languages;
+    using System.ComponentModel.Composition.Hosting;
 
     class Program
     {        
         static void Main(string[] args)
-        {
+        {            
             var app = new App();
             var window = new MainWindow();
 
             var editorModel = new EditorModel();
 
-            Workspace.This = new Workspace(editorModel);
+            Workspace.This = new Workspace(editorModel);                  
+
             window.DataContext = Workspace.This;
 
             window.Show();

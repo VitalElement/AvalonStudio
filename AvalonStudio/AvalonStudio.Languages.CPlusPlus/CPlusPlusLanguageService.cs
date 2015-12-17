@@ -6,6 +6,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using Projects;
 
     public class CPlusPlusLanguageService : ILanguageService
     {
@@ -249,6 +250,23 @@
                     Offset = diag.Location.FileLocation.Offset,
                     Spelling = diag.Spelling,
                 });
+            }
+
+            return result;
+        }
+
+        public bool SupportsFile(ISourceFile file)
+        {
+            bool result = false;
+
+            switch(Path.GetExtension(file.Location))
+            {
+                case ".h":
+                case ".cpp":
+                case ".hpp":
+                case ".c":
+                    result = true;
+                    break;
             }
 
             return result;

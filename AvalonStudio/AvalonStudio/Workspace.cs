@@ -13,6 +13,7 @@
     using System.IO;
     using Perspex.Input;
     using Perspex.Controls;
+    using Projects;
     public class Workspace : ReactiveObject
     {
         public static Workspace This = null;
@@ -33,14 +34,14 @@
 
             SolutionExplorer.SelectedItemChanged += (sender, e) =>
             {
-				//try {
-	                if (e is ProjectFileViewModel)
-	                {
-	                    Editor.Model.OpenFile((e as ProjectFileViewModel).Model);
-	                }
-				//} catch(Exception) {
+                //try {
+                if (e is ProjectFileViewModel)
+                {
+                    Editor.Model.OpenFile((e as ProjectFileViewModel).Model as ISourceFile);
+                }
+                //} catch(Exception) {
 
-				//}
+                //}
             };
 
             //Task.Factory.StartNew(async () =>
@@ -66,11 +67,11 @@
 
         public EditorViewModel Editor { get; private set; }
 
-        public ConsoleViewModel Console { get; private set; }        
+        public ConsoleViewModel Console { get; private set; }
 
         public StatusBarViewModel StatusBar { get; private set; }
 
-        public CancellationTokenSource ProcessCancellationToken { get; private set; }        
+        public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
         private ModalDialogViewModelBase modalDialog;
         public ModalDialogViewModelBase ModalDialog

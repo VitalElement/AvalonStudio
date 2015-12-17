@@ -8,8 +8,8 @@
     using System.Threading;
     using TextEditor.Document;
     using System.Threading.Tasks;
-    using Languages.CPlusPlus;
     using Languages;
+    using Projects;
     public class EditorModel
     {
         private ReaderWriterLockSlim editorLock;
@@ -19,7 +19,7 @@
         private SemaphoreSlim startCompletionRequestSemaphore;
         private SemaphoreSlim endCompletionRequestSemaphore;
         private ReaderWriterLockSlim completionRequestLock;
-        private ProjectFile projectFile;
+        private ISourceFile sourceFile;
 
         public EditorModel()
         {
@@ -55,7 +55,7 @@
         public event EventHandler<EventArgs> DocumentLoaded;
         public event EventHandler<EventArgs> TextChanged;
 
-        public void OpenFile(ProjectFile file)
+        public void OpenFile(ISourceFile file)
         {
             if (File.Exists(file.Location))
             {
@@ -68,11 +68,11 @@
             ShutdownBackgroundWorkers();
 
             // TODO use factory to create the correct language service.
-            LanguageService = new CPlusPlusLanguageService(file.Project.Solution.NClangIndex, file);
+            LanguageService = LanguageServices.Instance.GetLanguageService(file);
 
             StartBackgroundWorkers();
 
-            projectFile = file;
+            sourceFile = file;
 
             DocumentLoaded(this, new EventArgs());
 
@@ -86,9 +86,9 @@
 
         public void Save()
         {
-            if (projectFile != null && TextDocument != null)
+            if (sourceFile != null && TextDocument != null)
             {
-                File.WriteAllText(projectFile.Location, TextDocument.Text);
+                File.WriteAllText(sourceFile.Location, TextDocument.Text);
                 IsDirty = false;
 
                 if (unsavedFile != null)
@@ -104,7 +104,7 @@
         {
             if (unsavedFile == null)
             {
-                unsavedFile = new UnsavedFile(projectFile.Location, TextDocument.Text);
+                unsavedFile = new UnsavedFile(sourceFile.Location, TextDocument.Text);
 
                 UnsavedFiles.Add(unsavedFile);
             }
@@ -121,11 +121,11 @@
             }
         }
 
-        public ProjectFile ProjectFile
+        public ISourceFile ProjectFile
         {
             get
             {
-                return projectFile;
+                return sourceFile;
             }
         }
 
@@ -247,7 +247,7 @@
                 {
                     startCompletionRequestSemaphore.Wait();
 
-                    var results = LanguageService.CodeCompleteAt(projectFile.Location, beginCompletionLocation.Line, beginCompletionLocation.Column, UnsavedFiles, filter);
+                    var results = LanguageService.CodeCompleteAt(sourceFile.Location, beginCompletionLocation.Line, beginCompletionLocation.Column, UnsavedFiles, filter);
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
