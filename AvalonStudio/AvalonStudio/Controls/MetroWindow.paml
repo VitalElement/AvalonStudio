@@ -23,19 +23,19 @@
                       <ContentPresenter Grid.Column="1" />
                       <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="5 4 0 5">
                         <StackPanel Orientation="Horizontal">
-                          <Button Background="{TemplateBinding Background}" BorderThickness="0">
+                          <Button Background="Transparent" BorderThickness="0">
                             <Panel Height="20" Width="20">
                               <Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />
                             </Panel>
                           </Button>
 
-                          <Button Background="{TemplateBinding Background}" BorderThickness="0" Name="restoreButton">
+                          <Button Background="Transparent" BorderThickness="0" Name="restoreButton">
                             <Panel Height="20" Width="20">
                               <Image Source="Resources/Icons/Templarian/dark/appbar.window.restore.png" Opacity="0.5" />
                             </Panel>
                           </Button>
 
-                          <Button Background="{TemplateBinding Background}" BorderThickness="0" Name="closeButton">
+                          <Button Background="Transparent" BorderThickness="0" Name="closeButton">
                             <Panel Height="20" Width="20">
                               <Image Source="Resources/Icons/Templarian/dark/appbar.close.png" Opacity="0.5" />
                             </Panel>
