@@ -3,6 +3,7 @@
     using Document;
     using Perspex;
     using Perspex.Controls;
+    using Perspex.Controls.Primitives;
     using Perspex.Media;
     using Perspex.Threading;
     using Perspex.VisualTree;
@@ -11,7 +12,7 @@
     using System.Linq;
     using System.Reactive.Linq;
 
-    public class TextView : Control
+    public class TextView : Control, IScrollable
     {
         #region Constructors
         static TextView()
@@ -29,10 +30,10 @@
                 .Subscribe(CaretIndexChanged);
 
             backgroundRenderers = new List<IBackgroundRenderer>();
-            documentLineTransformers = new List<IDocumentLineTransformer>();            
+            documentLineTransformers = new List<IDocumentLineTransformer>();
         }
         #endregion
-        
+
         #region Perspex Properties
         public static readonly PerspexProperty<TextWrapping> TextWrappingProperty =
            TextBlock.TextWrappingProperty.AddOwner<TextView>();
@@ -105,7 +106,7 @@
         }
 
         public static readonly PerspexProperty<int> CaretIndexProperty =
-            PerspexProperty.Register<TextView, int>(nameof(CaretIndex), defaultValue:0, defaultBindingMode: BindingMode.TwoWay);
+            PerspexProperty.Register<TextView, int>(nameof(CaretIndex), defaultValue: 0, defaultBindingMode: BindingMode.TwoWay);
 
         public int CaretIndex
         {
@@ -166,36 +167,67 @@
             get { return documentLineTransformers; }
             set { documentLineTransformers = value; }
         }
+
+        public Action InvalidateScroll
+        {
+            get;
+            set;
+        }
+
+        private Size extent;
+        public Size Extent { get { return extent; } }
+
+        private Vector offset;
+        public Vector Offset
+        {
+            get { return offset; }
+            set
+            {
+                offset = value;
+                InvalidateVisual();
+            }
+        }
+
+        private Size viewport;
+        public Size Viewport
+        {
+            get { return viewport; }
+        }
         #endregion
 
         #region Control Overrides
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
+            extent = new Size(800, TextDocument.LineCount + 1);
+            InvalidateScroll?.Invoke();
+            return finalSize;
+
+        }
+
         public override void Render(DrawingContext context)
         {
-            GenerateTextProperties();            
+            var y = offset.Y;
+
+            GenerateTextProperties();
 
             if (TextDocument != null)
             {
                 // Render background layer.
                 RenderBackground(context);
-
-                int lines = 0;
-                foreach (var line in TextDocument.Lines)
+               
+                for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount ; i++)
                 {
-                    lines++;
+                    var line = TextDocument.Lines[i];
+
                     // Render text background layer.
                     RenderTextBackground(context, line);
 
                     // Render text layer.
-                    RenderText(context, line);
+                    RenderText(context, line, i - (int)offset.Y);
 
                     // Render text decoration layer.
                     RenderTextDecoration(context, line);
-
-                    // Temperary until scroll info is available... to prevent processor overload.
-                    if(lines > 60)
-                    {
-                        break;
-                    }
                 }
 
                 RenderCaret(context);
@@ -208,8 +240,9 @@
 
             if (TextDocument != null)
             {
+                // scan visual lines, find largest for width....
                 //return base.MeasureOverride(availableSize);
-                return new Size(1000, TextDocument.LineCount * CharSize.Height);
+                return new Size(1000, (TextDocument.LineCount) * CharSize.Height);
             }
             else
             {
@@ -223,7 +256,6 @@
 
         private bool _caretBlink;
         #endregion
-
 
         #region Private Methods
         private void GenerateTextProperties()
@@ -256,10 +288,10 @@
 
         private void RenderTextDecoration(DrawingContext context, DocumentLine line)
         {
-            
+
         }
 
-        private void RenderText(DrawingContext context, DocumentLine line)
+        private void RenderText(DrawingContext context, DocumentLine line, int visualLine)
         {
             using (var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
             {
@@ -270,11 +302,11 @@
                     lineTransformer.TransformLine(this, context, boundary, line, formattedText);
                 }
 
-                context.DrawText(Foreground, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
+                context.DrawText(Foreground, new Point (0, visualLine * CharSize.Height), formattedText);
             }
         }
 
-        private void RenderCaret (DrawingContext context)
+        private void RenderCaret(DrawingContext context)
         {
             if (SelectionStart == SelectionEnd)
             {
@@ -349,7 +381,7 @@
 
             if (TextDocument != null)
             {
-                var column = Math.Ceiling((point.X / CharSize.Width) + 0.5 );
+                var column = Math.Ceiling((point.X / CharSize.Width) + 0.5);
                 var line = (int)Math.Ceiling(point.Y / CharSize.Height);
 
                 if (line > 0 && column > 0 && line < TextDocument.LineCount)
@@ -363,15 +395,16 @@
 
         public int GetLine(int caretIndex)
         {
-			var line = TextDocument.GetLineByOffset (caretIndex);
+            var line = TextDocument.GetLineByOffset(caretIndex);
 
-			var result = 1;
+            var result = 1;
 
-			if (line != null) {
-				result = line.LineNumber;
-			}
+            if (line != null)
+            {
+                result = line.LineNumber;
+            }
 
-			return result;
+            return result;
         }
         #endregion
     }

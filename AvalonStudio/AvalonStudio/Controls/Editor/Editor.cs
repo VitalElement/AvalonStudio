@@ -68,7 +68,7 @@
             ShutdownBackgroundWorkers();
 
             // TODO use factory to create the correct language service.
-            LanguageService = LanguageServices.Instance.GetLanguageService(file);
+            //LanguageService = LanguageServices.Instance.GetLanguageService(file);
 
             StartBackgroundWorkers();
 
@@ -219,11 +219,14 @@
 
         private void DoCodeCompletionRequest()
         {
-            completionRequestLock.EnterWriteLock();
-
-            if (startCompletionRequestSemaphore.CurrentCount == 0)
+            if (LanguageService != null)
             {
-                startCompletionRequestSemaphore.Release();
+                completionRequestLock.EnterWriteLock();
+
+                if (startCompletionRequestSemaphore.CurrentCount == 0)
+                {
+                    startCompletionRequestSemaphore.Release();
+                }
             }
         }
 
@@ -247,14 +250,22 @@
                 {
                     startCompletionRequestSemaphore.Wait();
 
-                    var results = LanguageService.CodeCompleteAt(sourceFile.Location, beginCompletionLocation.Line, beginCompletionLocation.Column, UnsavedFiles, filter);
-
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    if (LanguageService != null)
                     {
-                        CodeCompletionResults = new CodeCompletionResults() { Completions = results };
-                        completionRequestLock.ExitWriteLock();
+                        var results = LanguageService.CodeCompleteAt(sourceFile.Location, beginCompletionLocation.Line, beginCompletionLocation.Column, UnsavedFiles, filter);
+
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            CodeCompletionResults = new CodeCompletionResults() { Completions = results };
+                            completionRequestLock.ExitWriteLock();
+                            endCompletionRequestSemaphore.Release();
+                        });
+                    }
+                    else
+                    {                        
                         endCompletionRequestSemaphore.Release();
-                    });
+                    }
+                    
 
                     completionRequested = false;
                 }
