@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B761D8E3-611E-434F-887A-8225416F51B8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AvalonStudio.Toolchains.Clang</RootNamespace>
+    <AssemblyName>AvalonStudio.Toolchains.Clang</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GCCToolchain.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
+      <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
+      <Name>AvalonStudio.Projects.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects\AvalonStudio.Projects.csproj">
+      <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
+      <Name>AvalonStudio.Projects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
+      <Project>{72c71854-5897-4e14-a1ae-b3b48f139af7}</Project>
+      <Name>AvalonStudio.Toolchains.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains\AvalonStudio.Toolchains.csproj">
+      <Project>{fc693e81-70bc-4972-bfa8-19d3db8fb1cc}</Project>
+      <Name>AvalonStudio.Toolchains</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Utils\AvalonStudio.Utils.csproj">
+      <Project>{f010db06-9780-4c54-86fd-2d80e666d019}</Project>
+      <Name>AvalonStudio.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
