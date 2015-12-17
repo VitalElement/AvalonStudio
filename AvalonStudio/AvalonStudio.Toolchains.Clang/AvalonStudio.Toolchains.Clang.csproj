@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{84823C17-A44E-47D6-96A6-37E014F5F0B7}</ProjectGuid>
+    <ProjectGuid>{1FC43C7D-5758-42D7-9977-986074E9CBC0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AvalonStudio.Toolchains.Clang</RootNamespace>
