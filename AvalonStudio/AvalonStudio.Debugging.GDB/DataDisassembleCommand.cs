@@ -5,7 +5,7 @@
     using AvalonStudio.Debugging;
 
     public class DataDisassembleCommand : Command<GDBResponse<List<InstructionLine>>>
-    {
+    {        
         public DataDisassembleCommand(string file, int line, int numLines)
         {
             commandText = string.Format("-data-disassemble -f \"{0}\" -l {1} -n {2} -- 2)", file, line, numLines);
