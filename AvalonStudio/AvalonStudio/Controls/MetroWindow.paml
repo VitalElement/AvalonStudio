@@ -6,65 +6,67 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
-          <Grid Margin="{TemplateBinding !BorderThickness}" ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto,Auto,*,Auto,Auto" Background="Transparent">
-            <Grid Grid.Row="0" Grid.RowSpan="5" Margin="-4 0" Grid.Column="1" RowDefinitions="Auto * Auto" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
-              <Grid Grid.Row="1" Margin="-4" Grid.Column="0" Grid.ColumnSpan="5" Background="{TemplateBinding Background}">
-                <Grid Margin="4 0" RowDefinitions="Auto, *">
-                  <Grid ColumnDefinitions="*,*,*" Name="titlebar">
-                    <Grid Margin="5 2.5 5 5">
-                      <StackPanel Orientation="Horizontal">
-                        <Panel Height="20" Width="20">
-                          <Image Source="Resources/Icons/Templarian/dark/appbar.3d.3ds.png" Opacity="0.5" />
-                        </Panel>
-                        <TextBlock Text="{TemplateBinding Title}" Margin="20 6 5 0" Foreground="{TemplateBinding Foreground}" />
-                      </StackPanel>
+          <AdornerDecorator>
+            <Grid Margin="{TemplateBinding !BorderThickness}" ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto,Auto,*,Auto,Auto" Background="Transparent">
+              <Grid Grid.Row="0" Grid.RowSpan="5" Margin="-4 0" Grid.Column="1" RowDefinitions="Auto * Auto" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+                <Grid Grid.Row="1" Margin="-4" Grid.Column="0" Grid.ColumnSpan="5" Background="{TemplateBinding Background}">
+                  <Grid Margin="4 0" RowDefinitions="Auto, *">
+                    <Grid ColumnDefinitions="*,*,*" Name="titlebar">
+                      <Grid Margin="5 2.5 5 5">
+                        <StackPanel Orientation="Horizontal">
+                          <Panel Height="20" Width="20">
+                            <Image Source="Resources/Icons/Templarian/dark/appbar.3d.3ds.png" Opacity="0.5" />
+                          </Panel>
+                          <TextBlock Text="{TemplateBinding Title}" Margin="20 6 5 0" Foreground="{TemplateBinding Foreground}" />
+                        </StackPanel>
+                      </Grid>
+                      <ContentPresenter Grid.Column="1" />
+                      <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="5 4 0 5">
+                        <StackPanel Orientation="Horizontal">
+                          <Button Background="{TemplateBinding Background}" BorderThickness="0">
+                            <Panel Height="20" Width="20">
+                              <Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />
+                            </Panel>
+                          </Button>
+
+                          <Button Background="{TemplateBinding Background}" BorderThickness="0" Name="restoreButton">
+                            <Panel Height="20" Width="20">
+                              <Image Source="Resources/Icons/Templarian/dark/appbar.window.restore.png" Opacity="0.5" />
+                            </Panel>
+                          </Button>
+
+                          <Button Background="{TemplateBinding Background}" BorderThickness="0" Name="closeButton">
+                            <Panel Height="20" Width="20">
+                              <Image Source="Resources/Icons/Templarian/dark/appbar.close.png" Opacity="0.5" />
+                            </Panel>
+                          </Button>
+                        </StackPanel>
+                      </Grid>
                     </Grid>
-                    <ContentPresenter Grid.Column="1" />
-                    <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="5 4 0 5">
-                      <StackPanel Orientation="Horizontal">
-                        <Button Background="{TemplateBinding Background}" BorderThickness="0">
-                          <Panel Height="20" Width="20">
-                            <Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />
-                          </Panel>
-                        </Button>
-
-                        <Button Background="{TemplateBinding Background}" BorderThickness="0" Name="restoreButton">
-                          <Panel Height="20" Width="20">
-                            <Image Source="Resources/Icons/Templarian/dark/appbar.window.restore.png" Opacity="0.5" />
-                          </Panel>
-                        </Button>
-
-                        <Button Background="{TemplateBinding Background}" BorderThickness="0" Name="closeButton">
-                          <Panel Height="20" Width="20">
-                            <Image Source="Resources/Icons/Templarian/dark/appbar.close.png" Opacity="0.5" />
-                          </Panel>
-                        </Button>
-                      </StackPanel>
+                    <Grid Grid.Row="1">
+                      <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
                     </Grid>
                   </Grid>
-                  <AdornerDecorator Grid.Row="1" >
-                    <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
-                  </AdornerDecorator>
                 </Grid>
+
+                <Grid Background="Transparent" Width="10" Height="4" />
+                <Grid Background="Transparent" Grid.Column="1" Height="4" Grid.ColumnSpan="2" Cursor="SizeNorthSouth" Name="topHorizontalGrip" />
+                <Grid Background="Transparent" Width="10" Height="4" Grid.Column="4" />
+
+                <Grid Background="Transparent" Width="10" Height="4" Grid.Row="2"/>
+                <Grid Background="Transparent" Grid.Column="1" Height="4" Grid.ColumnSpan="2" Grid.Row="2" Cursor="SizeNorthSouth" Name="bottomHorizontalGrip" />
+                <Grid Background="Transparent" Width="10" Height="4" Grid.Column="4" Grid.Row="2" />
               </Grid>
 
-              <Grid Background="Transparent" Width="10" Height="4" />
-              <Grid Background="Transparent" Grid.Column="1" Height="4" Grid.ColumnSpan="2" Cursor="SizeNorthSouth" Name="topHorizontalGrip" />
-              <Grid Background="Transparent" Width="10" Height="4" Grid.Column="4" />
+              <Grid Background="Transparent" Width="4" Height="10" Name="topLeftGrip" Cursor="TopLeftCorner" />
+              <Grid Background="Transparent" Width="4" Grid.Row="1" Grid.RowSpan="2" Cursor="SizeWestEast" Name="leftVerticalGrip" />
+              <Grid Background="Transparent" Width="4" Height="10" Grid.Row="4" Name="bottomLeftGrip" Cursor="BottomLeftCorner" />
 
-              <Grid Background="Transparent" Width="10" Height="4" Grid.Row="2"/>
-              <Grid Background="Transparent" Grid.Column="1" Height="4" Grid.ColumnSpan="2" Grid.Row="2" Cursor="SizeNorthSouth" Name="bottomHorizontalGrip" />
-              <Grid Background="Transparent" Width="10" Height="4" Grid.Column="4" Grid.Row="2" />
+              <Grid Background="Transparent" Width="4" Height="10" Grid.Column="2" Name="topRightGrip" Cursor="TopRightCorner" />
+              <Grid Background="Transparent" Width="4" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Cursor="SizeWestEast" Name="rightVerticalGrip" />
+              <Grid Background="Transparent" Width="4" Height="10" Grid.Row="4" Grid.Column="2" Name="bottomRightGrip" Cursor="BottomRightCorner" />
             </Grid>
-
-            <Grid Background="Transparent" Width="4" Height="10" Name="topLeftGrip" Cursor="TopLeftCorner" />
-            <Grid Background="Transparent" Width="4" Grid.Row="1" Grid.RowSpan="2" Cursor="SizeWestEast" Name="leftVerticalGrip" />
-            <Grid Background="Transparent" Width="4" Height="10" Grid.Row="4" Name="bottomLeftGrip" Cursor="BottomLeftCorner" />
-
-            <Grid Background="Transparent" Width="4" Height="10" Grid.Column="2" Name="topRightGrip" Cursor="TopRightCorner" />
-            <Grid Background="Transparent" Width="4" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Cursor="SizeWestEast" Name="rightVerticalGrip" />
-            <Grid Background="Transparent" Width="4" Height="10" Grid.Row="4" Grid.Column="2" Name="bottomRightGrip" Cursor="BottomRightCorner" />
-          </Grid>
+          </AdornerDecorator>
         </Border>
       </ControlTemplate>
     </Setter>
