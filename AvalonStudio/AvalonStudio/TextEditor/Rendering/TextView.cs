@@ -49,7 +49,6 @@
             this.Children.Add(mainGrid);
 
             VisualLines = new List<VisualLine>();
-
         }
         #endregion
 
@@ -229,41 +228,30 @@
         #endregion
 
         #region Control Overrides
-        //protected override Size ArrangeOverride(Size finalSize)
-        //{
-        //    viewport = new Size(finalSize.Width, finalSize.Height);
-        //    extent = new Size(800, (TextDocument.LineCount + 1) * CharSize.Height);
-        //    InvalidateScroll?.Invoke();
-        //    return finalSize;
-
-        //}
 
         public override void Render(DrawingContext context)
         {
             if (TextDocument != null)
             {
                 GenerateTextProperties();
-
                 GenerateVisualLines();
-
-                var y = offset.Y;
 
                 // Render background layer.
                 RenderBackground(context);
-
+               
                 foreach (var line in VisualLines)
                 {
                     // Render text background layer.
                     RenderTextBackground(context, line);
-
+                   
                     // Render text layer.
                     RenderText(context, line);
-
+                    
                     // Render text decoration layer.
                     RenderTextDecoration(context, line);
                 }
 
-                RenderCaret(context);
+                RenderCaret(context);              
             }
         }
 
@@ -344,6 +332,7 @@
 
         }
 
+        private int lastLineCount;
         private void GenerateVisualLines()
         {
             VisualLines.Clear();
@@ -353,6 +342,14 @@
             for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount; i++)
             {
                 VisualLines.Add(new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ });
+            }
+
+            if(TextDocument.LineCount != lastLineCount)
+            {
+                lastLineCount = TextDocument.LineCount;
+
+                InvalidateMeasure();
+                InvalidateScroll.Invoke();
             }
         }
 
@@ -415,7 +412,7 @@
                 if (caretIndex >= 0)
                 {
                     var position = TextDocument.GetLocation(caretIndex);
-                    this.BringIntoView(new Rect(position.Column, position.Line - 1, 0, 0));
+                    this.BringIntoView(new Rect(position.Column, position.Line - 2, 0, 4));
                 }
             }
         }
