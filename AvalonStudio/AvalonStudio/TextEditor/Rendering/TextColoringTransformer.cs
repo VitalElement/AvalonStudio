@@ -80,7 +80,7 @@
             return result;
         }
 
-        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, DocumentLine line, FormattedText formattedText)
+        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
         {
             var transformsInLine = TextTransformations.FindOverlappingSegments(line);
 
@@ -93,7 +93,7 @@
                     formattedOffset = transform.StartOffset - line.Offset;
                 }
 
-                formattedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset);
+                line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset);
             }
         }
     }

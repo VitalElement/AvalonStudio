@@ -14,19 +14,14 @@
           <ScrollViewer CanScrollHorizontally="{TemplateBinding CanScrollHorizontally}"
                         HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}"
                         VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}">
-              <Grid Margin="0 0" ColumnDefinitions="Auto, *">
-                <StackPanel Orientation="Horizontal" Name="marginContainer"/>
-                <tv:TextView Name="textView" HorizontalAlignment="Stretch" Margin="0, 0" Grid.Column="1" 
-                                CaretIndex="{TemplateBinding CaretIndex}"
-                                SelectionStart="{TemplateBinding SelectionStart}"
-                                SelectionEnd="{TemplateBinding SelectionEnd}"
-                                Foreground="{TemplateBinding Foreground}"
-                                TextDocument="{TemplateBinding TextDocument}"/>
-                <ContentPresenter Content="{TemplateBinding Content}" Grid.Column="1" IsHitTestVisible="false"
-                           Margin="{TemplateBinding Margin}"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"/>
-              </Grid>            
+
+
+            <tv:TextView Name="textView" HorizontalAlignment="Stretch" Margin="0, 0" Grid.Column="1"
+                            CaretIndex="{TemplateBinding CaretIndex}"
+                            SelectionStart="{TemplateBinding SelectionStart}"
+                            SelectionEnd="{TemplateBinding SelectionEnd}"
+                            Foreground="{TemplateBinding Foreground}"
+                            TextDocument="{TemplateBinding TextDocument}"/>
           </ScrollViewer>
         </Border>
       </ControlTemplate>

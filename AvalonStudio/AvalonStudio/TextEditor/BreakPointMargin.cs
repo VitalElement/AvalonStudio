@@ -4,7 +4,8 @@
     using Perspex.Input;
     using Perspex.Media;
     using Rendering;
-    class BreakPointMargin : TextEditorMargin
+    using System.Linq;
+    class BreakPointMargin : TextViewMargin
     {
         private bool previewPointVisible = false;
 
@@ -26,7 +27,7 @@
 
             if (previewPointVisible)
             {                
-                context.FillRectangle(Brush.Parse("#631912"), new Rect(Bounds.Size.Width / 4, textInfo.LineHeight * BpLine + Bounds.Size.Width / 4, Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
+                context.FillRectangle(Brush.Parse("#631912"), new Rect(Bounds.Size.Width / 4, textInfo.LineHeight *(BpLine - textView.VisualLines.First().DocumentLine.LineNumber) + Bounds.Size.Width / 4, Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
             }
         }
 
@@ -34,15 +35,20 @@
         {
             previewPointVisible = true;
 
-            var offset = textEditor.TextView.GetOffsetFromPoint(e.GetPosition(this));
+            var offset = textView.GetOffsetFromPoint(e.GetPosition(this));
 
             if (offset != -1)
             {
-                BpLine = textEditor.TextDocument.GetLineByOffset(offset).LineNumber - 1; // convert from text line to visual line.
+                BpLine = textView.TextDocument.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
             }
 
             InvalidateVisual();
             
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            return new Size(100, availableSize.Height);
         }
 
         protected override void OnPointerLeave(PointerEventArgs e)

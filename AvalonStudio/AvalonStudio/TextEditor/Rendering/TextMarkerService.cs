@@ -48,8 +48,8 @@
                 return;
             }
 
-            int viewStart = textView.TextDocument.Lines.First().Offset;
-            int viewEnd = textView.TextDocument.Lines.Last().EndOffset;
+            int viewStart = textView.VisualLines.First().Offset;
+            int viewEnd = textView.VisualLines.Last().Offset;
 
             var markersOnScreen = markers.FindOverlappingSegments(viewStart, viewEnd - viewStart);
 
