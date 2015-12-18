@@ -324,7 +324,7 @@
         #region Private Methods
         private void InvalidateCaretPosition()
         {
-            CaretLocation = VisualLineGeometryBuilder.GetTextPosition(TextView, CaretIndex).TopLeft;
+            CaretLocation = VisualLineGeometryBuilder.GetTextViewPosition(TextView, CaretIndex).TopLeft;
         }
 
         private void InvalidateSelectedWord()

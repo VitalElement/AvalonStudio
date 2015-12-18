@@ -6,7 +6,14 @@
 
     public class VisualLineGeometryBuilder
     {
-        public static Rect GetTextPosition (TextView textView, int offset)
+        public static Rect GetTextViewPosition (TextView textView, int offset)
+        {
+            var position = new TextViewPosition(textView.GetLocation(offset));
+
+            return GetTextPosition(textView, position);
+        }
+
+        public static Rect GetDocumentTextPosition (TextView textView, int offset)
         {
             var position = new TextViewPosition(textView.TextDocument.GetLocation(offset));
 
@@ -26,7 +33,7 @@
             TextViewPosition start = new TextViewPosition(textView.TextDocument.GetLocation(segmentStart));
             TextViewPosition end = new TextViewPosition(textView.TextDocument.GetLocation(segmentEnd));
 
-            foreach (var line in textView.TextDocument.Lines)
+            foreach (var line in textView.VisualLines)
             {
                 if (line.Offset > segmentEnd)
                 {
@@ -55,8 +62,7 @@
 
 
                 // generate rect for section in this line.
-
-                yield return new Rect(GetTextPosition(textView, lineStartOffset).TopLeft, GetTextPosition(textView, lineEndOffset).BottomLeft);
+                yield return new Rect(GetTextViewPosition(textView, lineStartOffset).TopLeft, GetTextViewPosition(textView, lineEndOffset).BottomLeft);
             }
 
         }
