@@ -60,7 +60,6 @@
                     lineEndOffset = line.EndOffset - (line.EndOffset - segment.EndOffset);
                 }
 
-
                 // generate rect for section in this line.
                 yield return new Rect(GetTextViewPosition(textView, lineStartOffset).TopLeft, GetTextViewPosition(textView, lineEndOffset).BottomLeft);
             }
