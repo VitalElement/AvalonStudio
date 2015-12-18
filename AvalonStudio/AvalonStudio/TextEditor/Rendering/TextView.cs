@@ -43,23 +43,23 @@
             margins.Orientation = Orientation.Horizontal;
 
             textViewGrid = new Grid();
-                        
+
             mainGrid.Children.Add(margins);
 
             this.Children.Add(mainGrid);
 
             VisualLines = new List<VisualLine>();
-            
+
         }
         #endregion
 
-        public TextLocation GetLocation (int offset)
+        public TextLocation GetLocation(int offset)
         {
             var documentLocation = TextDocument.GetLocation(offset);
 
             var result = new TextLocation(documentLocation.Line - firstVisualLine, documentLocation.Column);
 
-            return result;            
+            return result;
         }
 
         #region Perspex Properties
@@ -239,7 +239,7 @@
         //}
 
         public override void Render(DrawingContext context)
-        {            
+        {
             if (TextDocument != null)
             {
                 GenerateTextProperties();
@@ -250,9 +250,9 @@
 
                 // Render background layer.
                 RenderBackground(context);
-               
-                foreach(var line in VisualLines)
-                {                    
+
+                foreach (var line in VisualLines)
+                {
                     // Render text background layer.
                     RenderTextBackground(context, line);
 
@@ -267,22 +267,39 @@
             }
         }
 
-        protected override Size MeasureOverride(Size availableSize)
+        protected override Size ArrangeOverride(Size finalSize)
         {
-            GenerateTextProperties();
+            var result = finalSize;
 
             if (TextDocument != null)
             {
-                extent = new Size(availableSize.Width, TextDocument.LineCount * CharSize.Height);
-                viewport = availableSize;
+                GenerateTextProperties();
 
-                InvalidateScroll();
+                viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
+                extent = new Size(finalSize.Width, TextDocument.LineCount + 20);
+
+
+                InvalidateScroll.Invoke();
                 // scan visual lines, find largest for width....
                 //return base.MeasureOverride(availableSize);
-                //return new Size(1000, (TextDocument.LineCount) * CharSize.Height);
-            }            
+                //return new Size(1000, (TextDocument.LineCount) * CharSize.Height);                
+            }
 
-            return availableSize;
+            return result;
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            Size result = availableSize;
+
+            if (TextDocument != null)
+            {
+                GenerateTextProperties();
+
+                result = new Size(availableSize.Width, TextDocument.LineCount * CharSize.Height);
+            }
+
+            return result;
         }
         #endregion
 
@@ -327,13 +344,13 @@
 
         }
 
-        private void GenerateVisualLines ()
+        private void GenerateVisualLines()
         {
             VisualLines.Clear();
 
             uint visualLineNumber = 0;
 
-            for(var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount; i++)
+            for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount; i++)
             {
                 VisualLines.Add(new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ });
             }
@@ -397,8 +414,8 @@
 
                 if (caretIndex >= 0)
                 {
-                    var position = VisualLineGeometryBuilder.GetDocumentTextPosition(this, caretIndex);
-                    this.BringIntoView(position);
+                    var position = TextDocument.GetLocation(caretIndex);
+                    this.BringIntoView(new Rect(position.Column, position.Line - 1, 0, 0));
                 }
             }
         }
@@ -427,7 +444,7 @@
 
         public int GetOffsetFromPoint(Point point)
         {
-            int result = -1;
+            int result = TextDocument.TextLength;
 
             if (TextDocument != null)
             {
@@ -438,7 +455,7 @@
                 {
                     if (line < VisualLines.Count)
                     {
-                        result = TextDocument.GetOffset(VisualLines[line].DocumentLine.LineNumber, (int)column);
+                        result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
                     }
                 }
             }
