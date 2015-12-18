@@ -6,27 +6,31 @@
     using System;
     using System.Linq;
 
-    class LineNumberMargin : TextEditorMargin
+    class LineNumberMargin : TextViewMargin
     {
         public LineNumberMargin()
         {
 
         }
 
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            return new Size(100, availableSize.Height);
+        }
+
         public override void Render(DrawingContext context, TextInfo textInfo)
         {
-            if (textEditor.TextDocument != null)
-            {
-
+            if (textView.TextDocument != null)
+            {                
                 Width = textInfo.CharWidth * textInfo.NumLines.ToString().Length + 5;
 
-                if (textEditor.TextView != null)
+                if (textView != null)
                 {
-                    var firstLine = textEditor.TextView.GetLine(0);
+                    var firstLine = textView.VisualLines.First().DocumentLine.LineNumber;
 
-                    for (int i = 0; i < textInfo.NumLines && (i + firstLine) <= textEditor.TextDocument.LineCount; i++)
+                    for (int i = 0; i < textInfo.NumLines && (i + firstLine) <= textView.TextDocument.LineCount; i++)
                     {
-                        context.DrawText(Brush.Parse("#5d5d5d"), new Point(-5, textInfo.LineHeight * i), new FormattedText((i + firstLine).ToString(), "Consolas", textEditor.FontSize, FontStyle.Normal, TextAlignment.Right, FontWeight.Normal) { Constraint = new Size(Width, Bounds.Height) });
+                        context.DrawText(Brush.Parse("#5d5d5d"), new Point(-5, textInfo.LineHeight * i), new FormattedText((i + firstLine).ToString(), "Consolas", textView.FontSize, FontStyle.Normal, TextAlignment.Right, FontWeight.Normal) { Constraint = new Size(Width, Bounds.Height) });
                     }
 
                     context.DrawLine(new Pen(Brush.Parse("#5d5d5d")), new Point(Width, 0), new Point(Width, Bounds.Height));
