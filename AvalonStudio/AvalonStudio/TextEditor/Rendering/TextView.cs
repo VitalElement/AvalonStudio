@@ -3,6 +3,8 @@
     using Document;
     using Perspex;
     using Perspex.Controls;
+    using Perspex.Controls.Primitives;
+    using Perspex.Controls.Shapes;
     using Perspex.Media;
     using Perspex.Threading;
     using Perspex.VisualTree;
@@ -11,8 +13,12 @@
     using System.Linq;
     using System.Reactive.Linq;
 
-    public class TextView : Control
+    public class TextView : TemplatedControl, IScrollable
     {
+        private Grid mainGrid;
+        private Grid textViewGrid;
+        private StackPanel margins;
+
         #region Constructors
         static TextView()
         {
@@ -29,10 +35,36 @@
                 .Subscribe(CaretIndexChanged);
 
             backgroundRenderers = new List<IBackgroundRenderer>();
-            documentLineTransformers = new List<IDocumentLineTransformer>();            
+            documentLineTransformers = new List<IDocumentLineTransformer>();
+            VisualLines = new List<VisualLine>();
         }
         #endregion
-        
+
+        public IVisual TextSurface
+        {
+            get
+            {
+                return textSurface;
+            }
+        }
+
+        public Rect TextSurfaceBounds
+        {
+            get
+            {
+                return textSurface.Bounds;
+            }
+        }
+
+        public TextLocation GetLocation(int offset)
+        {
+            var documentLocation = TextDocument.GetLocation(offset);
+
+            var result = new TextLocation(documentLocation.Line - firstVisualLine, documentLocation.Column);
+
+            return result;
+        }
+
         #region Perspex Properties
         public static readonly PerspexProperty<TextWrapping> TextWrappingProperty =
            TextBlock.TextWrappingProperty.AddOwner<TextView>();
@@ -105,7 +137,7 @@
         }
 
         public static readonly PerspexProperty<int> CaretIndexProperty =
-            PerspexProperty.Register<TextView, int>(nameof(CaretIndex), defaultValue:0, defaultBindingMode: BindingMode.TwoWay);
+            PerspexProperty.Register<TextView, int>(nameof(CaretIndex), defaultValue: 0, defaultBindingMode: BindingMode.TwoWay);
 
         public int CaretIndex
         {
@@ -166,22 +198,68 @@
             get { return documentLineTransformers; }
             set { documentLineTransformers = value; }
         }
+
+        public Action InvalidateScroll
+        {
+            get;
+            set;
+        }
+
+        private Size extent;
+        public Size Extent { get { return extent; } }
+
+        int firstVisualLine = 0;
+
+        private Vector offset;
+        public Vector Offset
+        {
+            get { return offset; }
+            set
+            {
+                offset = value;
+
+                firstVisualLine = (int)(offset.Y);
+
+                InvalidateVisual();
+            }
+        }
+
+        private Size viewport;
+        public Size Viewport
+        {
+            get { return viewport; }
+        }
         #endregion
 
         #region Control Overrides
+        private StackPanel marginContainer;
+        private Rectangle textSurface;
+        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        {
+            marginContainer = e.NameScope.Find<StackPanel>("marginContainer");
+            textSurface = e.NameScope.Find<Rectangle>("textSurface");
+        }
+
+        public void InstallMargin(Control margin)
+        {
+            if (marginContainer != null)
+            {
+                marginContainer.Children.Add(margin);
+            }
+        }
+
         public override void Render(DrawingContext context)
         {
-            GenerateTextProperties();            
-
             if (TextDocument != null)
             {
+                GenerateTextProperties();
+                GenerateVisualLines();
+
                 // Render background layer.
                 RenderBackground(context);
 
-                int lines = 0;
-                foreach (var line in TextDocument.Lines)
+                foreach (var line in VisualLines)
                 {
-                    lines++;
                     // Render text background layer.
                     RenderTextBackground(context, line);
 
@@ -190,31 +268,47 @@
 
                     // Render text decoration layer.
                     RenderTextDecoration(context, line);
-
-                    // Temperary until scroll info is available... to prevent processor overload.
-                    if(lines > 60)
-                    {
-                        break;
-                    }
                 }
 
                 RenderCaret(context);
             }
+
+            base.Render(context);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var result = finalSize;
+
+            if (TextDocument != null)
+            {
+                GenerateTextProperties();
+
+                viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
+                extent = new Size(finalSize.Width, TextDocument.LineCount + 20);
+                
+                InvalidateScroll.Invoke();                
+            }
+
+            base.ArrangeOverride(finalSize);
+
+            return result;
         }
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            GenerateTextProperties();
+            Size result = availableSize;
 
             if (TextDocument != null)
             {
-                //return base.MeasureOverride(availableSize);
-                return new Size(1000, TextDocument.LineCount * CharSize.Height);
+                GenerateTextProperties();
+
+                result = new Size(availableSize.Width, TextDocument.LineCount * CharSize.Height);
             }
-            else
-            {
-                return new Size();
-            }
+
+            base.MeasureOverride(availableSize);
+
+            return result;
         }
         #endregion
 
@@ -223,7 +317,6 @@
 
         private bool _caretBlink;
         #endregion
-
 
         #region Private Methods
         private void GenerateTextProperties()
@@ -240,7 +333,7 @@
             }
         }
 
-        private void RenderTextBackground(DrawingContext context, DocumentLine line)
+        private void RenderTextBackground(DrawingContext context, VisualLine line)
         {
 
         }
@@ -253,28 +346,51 @@
             }
         }
 
+        public List<VisualLine> VisualLines { get; private set; }
 
-        private void RenderTextDecoration(DrawingContext context, DocumentLine line)
+        private void RenderTextDecoration(DrawingContext context, VisualLine line)
         {
-            
+
         }
 
-        private void RenderText(DrawingContext context, DocumentLine line)
+        private int lastLineCount;
+        private void GenerateVisualLines()
         {
-            using (var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
+            VisualLines.Clear();
+
+            uint visualLineNumber = 0;
+
+            for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount; i++)
             {
+                VisualLines.Add(new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ });
+            }
+
+            if(TextDocument.LineCount != lastLineCount)
+            {
+                lastLineCount = TextDocument.LineCount;
+
+                InvalidateMeasure();
+                InvalidateScroll.Invoke();
+            }
+        }
+
+        private void RenderText(DrawingContext context, VisualLine line)
+        {
+            using (var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
+            {
+                line.RenderedText = formattedText;
                 var boundary = VisualLineGeometryBuilder.GetRectsForSegment(this, line).First();
 
                 foreach (var lineTransformer in DocumentLineTransformers)
                 {
-                    lineTransformer.TransformLine(this, context, boundary, line, formattedText);
+                    lineTransformer.TransformLine(this, context, boundary, line);
                 }
 
-                context.DrawText(Foreground, VisualLineGeometryBuilder.GetTextPosition(this, line.Offset).TopLeft, formattedText);
+                context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), formattedText);
             }
         }
 
-        private void RenderCaret (DrawingContext context)
+        private void RenderCaret(DrawingContext context)
         {
             if (SelectionStart == SelectionEnd)
             {
@@ -292,7 +408,7 @@
 
                 if (_caretBlink)
                 {
-                    var charPos = VisualLineGeometryBuilder.GetTextPosition(this, CaretIndex);
+                    var charPos = VisualLineGeometryBuilder.GetTextViewPosition(this, CaretIndex);
                     var x = Math.Floor(charPos.X) + 0.5;
                     var y = Math.Floor(charPos.Y) + 0.5;
                     var b = Math.Ceiling(charPos.Bottom) - 0.5;
@@ -316,7 +432,8 @@
 
                 if (caretIndex >= 0)
                 {
-                    this.BringIntoView(VisualLineGeometryBuilder.GetTextPosition(this, caretIndex));
+                    var position = TextDocument.GetLocation(caretIndex);
+                    this.BringIntoView(new Rect(position.Column, position.Line - 2, 0, 4));
                 }
             }
         }
@@ -345,16 +462,19 @@
 
         public int GetOffsetFromPoint(Point point)
         {
-            int result = -1;
+            int result = TextDocument.TextLength;
 
             if (TextDocument != null)
             {
-                var column = Math.Ceiling((point.X / CharSize.Width) + 0.5 );
+                var column = Math.Ceiling((point.X / CharSize.Width) + 0.5);
                 var line = (int)Math.Ceiling(point.Y / CharSize.Height);
 
                 if (line > 0 && column > 0 && line < TextDocument.LineCount)
                 {
-                    result = TextDocument.GetOffset((int)line, (int)column);
+                    if (line < VisualLines.Count)
+                    {
+                        result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
+                    }
                 }
             }
 
@@ -363,15 +483,16 @@
 
         public int GetLine(int caretIndex)
         {
-			var line = TextDocument.GetLineByOffset (caretIndex);
+            var line = TextDocument.GetLineByOffset(caretIndex);
 
-			var result = 1;
+            var result = 1;
 
-			if (line != null) {
-				result = line.LineNumber;
-			}
+            if (line != null)
+            {
+                result = line.LineNumber;
+            }
 
-			return result;
+            return result;
         }
         #endregion
     }

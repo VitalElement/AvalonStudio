@@ -1,0 +1,17 @@
+﻿<Styles xmlns="https://github.com/perspex" xmlns:local="clr-namespace:AvalonStudio.TextEditor.Rendering;assembly=AvalonStudio">
+  <Style Selector="local|TextView">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="border" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"                
+                BorderThickness="0"
+                Padding="0">
+          <Grid ColumnDefinitions="Auto,*">
+            <StackPanel Name="marginContainer" Orientation="Horizontal" Cursor="Arrow">
+            </StackPanel>
+            <Rectangle Name="textSurface" Grid.Column="1" IsHitTestVisible="false" /> 
+          </Grid>          
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>
