@@ -287,7 +287,7 @@
     <Compile Include="TextEditor\Rendering\TextTransformation.cs" />
     <Compile Include="TextEditor\Rendering\VisualLineGeometryBuilder.cs" />
     <Compile Include="TextEditor\TextEditor.cs" />
-    <Compile Include="TextEditor\TextEditorMargin.cs" />
+    <Compile Include="TextEditor\Rendering\TextViewMargin.cs" />
     <Compile Include="TextEditor\Rendering\TextView.cs" />
     <Compile Include="TextEditor\Rendering\TextViewPosition.cs" />
     <Compile Include="TextEditor\TextEditorTheme.paml.cs">
@@ -339,6 +339,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TextEditor\TextEditorTheme.paml" />
+    <EmbeddedResource Include="TextEditor\Rendering\TextView.paml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\nclang\NClang\NClang.csproj">

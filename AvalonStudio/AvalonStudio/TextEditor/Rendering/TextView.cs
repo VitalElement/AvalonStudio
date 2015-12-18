@@ -4,6 +4,7 @@
     using Perspex;
     using Perspex.Controls;
     using Perspex.Controls.Primitives;
+    using Perspex.Controls.Shapes;
     using Perspex.Media;
     using Perspex.Threading;
     using Perspex.VisualTree;
@@ -12,7 +13,7 @@
     using System.Linq;
     using System.Reactive.Linq;
 
-    public class TextView : Panel, IScrollable
+    public class TextView : TemplatedControl, IScrollable
     {
         private Grid mainGrid;
         private Grid textViewGrid;
@@ -35,22 +36,25 @@
 
             backgroundRenderers = new List<IBackgroundRenderer>();
             documentLineTransformers = new List<IDocumentLineTransformer>();
-
-            mainGrid = new Grid();
-            mainGrid.ColumnDefinitions = new ColumnDefinitions("Auto, *");
-
-            margins = new StackPanel();
-            margins.Orientation = Orientation.Horizontal;
-
-            textViewGrid = new Grid();
-
-            mainGrid.Children.Add(margins);
-
-            this.Children.Add(mainGrid);
-
             VisualLines = new List<VisualLine>();
         }
         #endregion
+
+        public IVisual TextSurface
+        {
+            get
+            {
+                return textSurface;
+            }
+        }
+
+        public Rect TextSurfaceBounds
+        {
+            get
+            {
+                return textSurface.Bounds;
+            }
+        }
 
         public TextLocation GetLocation(int offset)
         {
@@ -228,6 +232,21 @@
         #endregion
 
         #region Control Overrides
+        private StackPanel marginContainer;
+        private Rectangle textSurface;
+        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        {
+            marginContainer = e.NameScope.Find<StackPanel>("marginContainer");
+            textSurface = e.NameScope.Find<Rectangle>("textSurface");
+        }
+
+        public void InstallMargin(Control margin)
+        {
+            if (marginContainer != null)
+            {
+                marginContainer.Children.Add(margin);
+            }
+        }
 
         public override void Render(DrawingContext context)
         {
@@ -238,21 +257,23 @@
 
                 // Render background layer.
                 RenderBackground(context);
-               
+
                 foreach (var line in VisualLines)
                 {
                     // Render text background layer.
                     RenderTextBackground(context, line);
-                   
+
                     // Render text layer.
                     RenderText(context, line);
-                    
+
                     // Render text decoration layer.
                     RenderTextDecoration(context, line);
                 }
 
-                RenderCaret(context);              
+                RenderCaret(context);
             }
+
+            base.Render(context);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -265,13 +286,11 @@
 
                 viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
                 extent = new Size(finalSize.Width, TextDocument.LineCount + 20);
-
-
-                InvalidateScroll.Invoke();
-                // scan visual lines, find largest for width....
-                //return base.MeasureOverride(availableSize);
-                //return new Size(1000, (TextDocument.LineCount) * CharSize.Height);                
+                
+                InvalidateScroll.Invoke();                
             }
+
+            base.ArrangeOverride(finalSize);
 
             return result;
         }
@@ -286,6 +305,8 @@
 
                 result = new Size(availableSize.Width, TextDocument.LineCount * CharSize.Height);
             }
+
+            base.MeasureOverride(availableSize);
 
             return result;
         }
@@ -365,7 +386,7 @@
                     lineTransformer.TransformLine(this, context, boundary, line);
                 }
 
-                context.DrawText(Foreground, new Point(0, line.VisualLineNumber * CharSize.Height), formattedText);
+                context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), formattedText);
             }
         }
 

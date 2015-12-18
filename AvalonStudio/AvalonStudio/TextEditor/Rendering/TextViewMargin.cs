@@ -1,15 +1,11 @@
 ﻿namespace AvalonStudio.TextEditor
 {
-    using Perspex.Controls;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Perspex.Media;
-    using Perspex.Rendering;
     using Perspex;
+    using Perspex.Controls;
+    using Perspex.Media;
     using Rendering;
+    using System;
+
     public class TextInfo
     {
         public double LineHeight { get; set; }
@@ -17,9 +13,9 @@
         public int NumLines { get; set; }
     }
 
-    public abstract class TextEditorMargin : Control
+    public abstract class TextViewMargin : Control
     {
-        public TextEditorMargin ()
+        public TextViewMargin ()
         {
             
         }
@@ -28,21 +24,21 @@
         {            
             base.OnAttachedToVisualTree(e);
 
-            textEditor = Parent.Parent.Parent.Parent.Parent as TextEditor;
+            textView = Parent.Parent.Parent.Parent as TextView;
 
-            if(textEditor == null)
+            if(textView == null)
             {
                 throw new Exception("Margin must be contained inside a TextEditor control.");
             }
-        }
+        }        
 
         public override void Render(DrawingContext context)
         {
-            if (textEditor.TextDocument != null)
+            if (textView.TextDocument != null)
             {
                 TextInfo info = new TextInfo();
 
-                var charRect = textEditor.TextView.CharSize;
+                var charRect = textView.CharSize;
 
                 info.LineHeight = charRect.Height;
                 info.CharWidth = charRect.Width;
@@ -55,6 +51,6 @@
 
         public abstract void Render(DrawingContext context, TextInfo textInfo);
 
-        protected TextEditor textEditor;
+        protected TextView textView;
     }
 }
