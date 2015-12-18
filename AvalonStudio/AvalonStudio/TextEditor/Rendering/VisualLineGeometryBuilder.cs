@@ -6,7 +6,14 @@
 
     public class VisualLineGeometryBuilder
     {
-        public static Rect GetTextPosition (TextView textView, int offset)
+        public static Rect GetTextViewPosition (TextView textView, int offset)
+        {
+            var position = new TextViewPosition(textView.GetLocation(offset));
+
+            return GetTextPosition(textView, position);
+        }
+
+        public static Rect GetDocumentTextPosition (TextView textView, int offset)
         {
             var position = new TextViewPosition(textView.TextDocument.GetLocation(offset));
 
@@ -15,7 +22,7 @@
 
         public static Rect GetTextPosition (TextView textView, TextViewPosition position)
         {
-            return new Rect(textView.CharSize.Width * (position.Column - 1), textView.CharSize.Height * (position.Line - 1), textView.CharSize.Width, textView.CharSize.Height);
+            return new Rect(textView.TextSurfaceBounds.X + textView.CharSize.Width * (position.Column - 1), textView.CharSize.Height * (position.Line - 1), textView.CharSize.Width, textView.CharSize.Height);
         }
 
         public static IEnumerable<Rect> GetRectsForSegment(TextView textView, ISegment segment, bool extendToFullWidthAtLineEnd = false)
@@ -26,7 +33,7 @@
             TextViewPosition start = new TextViewPosition(textView.TextDocument.GetLocation(segmentStart));
             TextViewPosition end = new TextViewPosition(textView.TextDocument.GetLocation(segmentEnd));
 
-            foreach (var line in textView.TextDocument.Lines)
+            foreach (var line in textView.VisualLines)
             {
                 if (line.Offset > segmentEnd)
                 {
@@ -53,10 +60,8 @@
                     lineEndOffset = line.EndOffset - (line.EndOffset - segment.EndOffset);
                 }
 
-
                 // generate rect for section in this line.
-
-                yield return new Rect(GetTextPosition(textView, lineStartOffset).TopLeft, GetTextPosition(textView, lineEndOffset).BottomLeft);
+                yield return new Rect(GetTextViewPosition(textView, lineStartOffset).TopLeft, GetTextViewPosition(textView, lineEndOffset).BottomLeft);
             }
 
         }

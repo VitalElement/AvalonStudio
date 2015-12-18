@@ -9,13 +9,13 @@
     {
         private Brush brush = Brush.Parse("#D69D85");
 
-        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, DocumentLine line, FormattedText formattedText)
+        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
         {
-            if (formattedText.Text.Contains("#include"))
+            if (line.RenderedText.Text.Contains("#include"))
             {
-                int startIndex = formattedText.Text.IndexOf("#include");
+                int startIndex = line.RenderedText.Text.IndexOf("#include");
 
-                formattedText.SetForegroundBrush(brush, startIndex, formattedText.Text.Length - startIndex);                
+                line.RenderedText.SetForegroundBrush(brush, startIndex, line.RenderedText.Text.Length - startIndex);                
             }
         }
     }
