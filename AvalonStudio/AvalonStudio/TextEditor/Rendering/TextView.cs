@@ -12,8 +12,12 @@
     using System.Linq;
     using System.Reactive.Linq;
 
-    public class TextView : Control, IScrollable
+    public class TextView : Panel, IScrollable
     {
+        private Grid mainGrid;
+        private Grid textViewGrid;
+        private StackPanel margins;
+
         #region Constructors
         static TextView()
         {
@@ -31,8 +35,32 @@
 
             backgroundRenderers = new List<IBackgroundRenderer>();
             documentLineTransformers = new List<IDocumentLineTransformer>();
+
+            mainGrid = new Grid();
+            mainGrid.ColumnDefinitions = new ColumnDefinitions("Auto, *");
+
+            margins = new StackPanel();
+            margins.Orientation = Orientation.Horizontal;
+
+            textViewGrid = new Grid();
+                        
+            mainGrid.Children.Add(margins);
+
+            this.Children.Add(mainGrid);
+
+            VisualLines = new List<VisualLine>();
+            
         }
         #endregion
+
+        public TextLocation GetLocation (int offset)
+        {
+            var documentLocation = TextDocument.GetLocation(offset);
+
+            var result = new TextLocation(documentLocation.Line - firstVisualLine, documentLocation.Column);
+
+            return result;            
+        }
 
         #region Perspex Properties
         public static readonly PerspexProperty<TextWrapping> TextWrappingProperty =
@@ -177,6 +205,8 @@
         private Size extent;
         public Size Extent { get { return extent; } }
 
+        int firstVisualLine = 0;
+
         private Vector offset;
         public Vector Offset
         {
@@ -184,6 +214,9 @@
             set
             {
                 offset = value;
+
+                firstVisualLine = (int)(offset.Y);
+
                 InvalidateVisual();
             }
         }
@@ -196,35 +229,35 @@
         #endregion
 
         #region Control Overrides
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
-            extent = new Size(800, TextDocument.LineCount + 1);
-            InvalidateScroll?.Invoke();
-            return finalSize;
+        //protected override Size ArrangeOverride(Size finalSize)
+        //{
+        //    viewport = new Size(finalSize.Width, finalSize.Height);
+        //    extent = new Size(800, (TextDocument.LineCount + 1) * CharSize.Height);
+        //    InvalidateScroll?.Invoke();
+        //    return finalSize;
 
-        }
+        //}
 
         public override void Render(DrawingContext context)
-        {
-            var y = offset.Y;
-
-            GenerateTextProperties();
-
+        {            
             if (TextDocument != null)
             {
+                GenerateTextProperties();
+
+                GenerateVisualLines();
+
+                var y = offset.Y;
+
                 // Render background layer.
                 RenderBackground(context);
                
-                for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount ; i++)
-                {
-                    var line = TextDocument.Lines[i];
-
+                foreach(var line in VisualLines)
+                {                    
                     // Render text background layer.
                     RenderTextBackground(context, line);
 
                     // Render text layer.
-                    RenderText(context, line, i - (int)offset.Y);
+                    RenderText(context, line);
 
                     // Render text decoration layer.
                     RenderTextDecoration(context, line);
@@ -240,14 +273,16 @@
 
             if (TextDocument != null)
             {
+                extent = new Size(availableSize.Width, TextDocument.LineCount * CharSize.Height);
+                viewport = availableSize;
+
+                InvalidateScroll();
                 // scan visual lines, find largest for width....
                 //return base.MeasureOverride(availableSize);
-                return new Size(1000, (TextDocument.LineCount) * CharSize.Height);
-            }
-            else
-            {
-                return new Size();
-            }
+                //return new Size(1000, (TextDocument.LineCount) * CharSize.Height);
+            }            
+
+            return availableSize;
         }
         #endregion
 
@@ -272,7 +307,7 @@
             }
         }
 
-        private void RenderTextBackground(DrawingContext context, DocumentLine line)
+        private void RenderTextBackground(DrawingContext context, VisualLine line)
         {
 
         }
@@ -285,24 +320,38 @@
             }
         }
 
+        public List<VisualLine> VisualLines { get; private set; }
 
-        private void RenderTextDecoration(DrawingContext context, DocumentLine line)
+        private void RenderTextDecoration(DrawingContext context, VisualLine line)
         {
 
         }
 
-        private void RenderText(DrawingContext context, DocumentLine line, int visualLine)
+        private void GenerateVisualLines ()
         {
-            using (var formattedText = new FormattedText(TextDocument.GetText(line.Offset, line.EndOffset - line.Offset), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
+            VisualLines.Clear();
+
+            uint visualLineNumber = 0;
+
+            for(var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount; i++)
             {
+                VisualLines.Add(new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ });
+            }
+        }
+
+        private void RenderText(DrawingContext context, VisualLine line)
+        {
+            using (var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
+            {
+                line.RenderedText = formattedText;
                 var boundary = VisualLineGeometryBuilder.GetRectsForSegment(this, line).First();
 
                 foreach (var lineTransformer in DocumentLineTransformers)
                 {
-                    lineTransformer.TransformLine(this, context, boundary, line, formattedText);
+                    lineTransformer.TransformLine(this, context, boundary, line);
                 }
 
-                context.DrawText(Foreground, new Point (0, visualLine * CharSize.Height), formattedText);
+                context.DrawText(Foreground, new Point(0, line.VisualLineNumber * CharSize.Height), formattedText);
             }
         }
 
@@ -324,7 +373,7 @@
 
                 if (_caretBlink)
                 {
-                    var charPos = VisualLineGeometryBuilder.GetTextPosition(this, CaretIndex);
+                    var charPos = VisualLineGeometryBuilder.GetTextViewPosition(this, CaretIndex);
                     var x = Math.Floor(charPos.X) + 0.5;
                     var y = Math.Floor(charPos.Y) + 0.5;
                     var b = Math.Ceiling(charPos.Bottom) - 0.5;
@@ -348,7 +397,8 @@
 
                 if (caretIndex >= 0)
                 {
-                    this.BringIntoView(VisualLineGeometryBuilder.GetTextPosition(this, caretIndex));
+                    var position = VisualLineGeometryBuilder.GetDocumentTextPosition(this, caretIndex);
+                    this.BringIntoView(position);
                 }
             }
         }
@@ -386,7 +436,10 @@
 
                 if (line > 0 && column > 0 && line < TextDocument.LineCount)
                 {
-                    result = TextDocument.GetOffset((int)line, (int)column);
+                    if (line < VisualLines.Count)
+                    {
+                        result = TextDocument.GetOffset(VisualLines[line].DocumentLine.LineNumber, (int)column);
+                    }
                 }
             }
 

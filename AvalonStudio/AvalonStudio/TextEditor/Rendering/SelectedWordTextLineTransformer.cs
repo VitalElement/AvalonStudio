@@ -16,15 +16,15 @@
         private TextEditor editor;
         private Brush highlightBrush;
 
-        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, DocumentLine line, FormattedText formattedText)
+        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
         {
-            if(!string.IsNullOrEmpty(editor.SelectedWord) && formattedText.Text.Contains (editor.SelectedWord))
+            if(!string.IsNullOrEmpty(editor.SelectedWord) && line.RenderedText.Text.Contains (editor.SelectedWord))
             {
                 int startIndex = 0;
 
                 while (startIndex != -1)
                 {
-                    startIndex = formattedText.Text.IndexOf(editor.SelectedWord, startIndex);
+                    startIndex = line.RenderedText.Text.IndexOf(editor.SelectedWord, startIndex);
 
                     if (startIndex != -1)
                     {
