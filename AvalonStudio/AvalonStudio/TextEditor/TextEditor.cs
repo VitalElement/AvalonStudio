@@ -216,10 +216,10 @@
             set { SetValue(SelectionEndProperty, value); }
         }
 
-        public static readonly PerspexProperty<ObservableCollection<TextEditorMargin>> MarginsProperty =
-            PerspexProperty.Register<TextEditor, ObservableCollection<TextEditorMargin>>(nameof(Margins));
+        public static readonly PerspexProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
+            PerspexProperty.Register<TextEditor, ObservableCollection<TextViewMargin>>(nameof(Margins));
 
-        public ObservableCollection<TextEditorMargin> Margins
+        public ObservableCollection<TextViewMargin> Margins
         {
             get { return GetValue(MarginsProperty); }
             set { SetValue(MarginsProperty, value); }
@@ -584,7 +584,7 @@
         #region Public Methods
         public void InstallMargin(Control margin)
         {
-            //marginsContainer.Children.Add(margin);
+            textView.InstallMargin(margin);
         }
         #endregion
 
@@ -601,19 +601,19 @@
             InstallMargin(new BreakPointMargin());
             InstallMargin(new LineNumberMargin());
 
+            textView.BackgroundRenderers.Clear();
+            textView.DocumentLineTransformers.Clear();
+
+            textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
+            textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
+            textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
+            textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));         
+
             TextDocumentProperty.Changed.Subscribe((args) =>
             {
                 if (args.NewValue != null)
-                {
-                    textView.BackgroundRenderers.Clear();
-                    textView.DocumentLineTransformers.Clear();
-
-                    TextColorizer = new TextColoringTransformer(this);
-
-                    textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
-                    textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
-                    textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
-                    textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));
+                {                    
+                    TextColorizer = new TextColoringTransformer(this);                    
                     textView.DocumentLineTransformers.Add(TextColorizer);
                     textView.DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
                     textView.DocumentLineTransformers.Add(new DefineTextLineTransformer());
@@ -652,9 +652,9 @@
 
         protected override void OnPointerPressed(PointerPressEventArgs e)
         {
-            if (e.Source == textView)
+            if (e.Source.InteractiveParent.InteractiveParent == textView)
             {
-                var point = e.GetPosition(textView);
+                var point = e.GetPosition(textView.TextSurface);
 
                 var index = textView.GetOffsetFromPoint(point);
 
@@ -692,7 +692,7 @@
         {
             if (e.Device.Captured == textView)
             {
-                var point = e.GetPosition(textView);
+                var point = e.GetPosition(textView.TextSurface);
                 CaretIndex = textView.GetOffsetFromPoint(point);
 
                 if (CaretIndex >= 0)
