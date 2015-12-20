@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.IO;
 using System.Xml.Serialization;
-using AvalonStudio.Utils;
+using AvalonStudio.VEUtils;
 using NClang;
 using AvalonStudio.Projects;
 

@@ -6,6 +6,8 @@
     using System.Diagnostics;
     using System.IO;
     using Utils;
+    using System;
+    using System.Collections.Generic;
 
     public class GccToolChain : StandardToolChain
     {
@@ -374,6 +376,17 @@
             }
 
             return result;
+        }
+
+        public override List<string> GetToolchainIncludes()
+        {
+            return new List<string>()
+            {
+                @"arm-none-eabi\include",
+                @"arm-none-eabi\include\c++\4.9.3",
+                @"arm-none-eabi\include\c++\4.9.3\arm-none-eabi\thumb",
+                @"lib\gcc\arm-none-eabi\4.9.3\include"
+            };
         }
 
         //public void GenerateLinkerScript(Project project)

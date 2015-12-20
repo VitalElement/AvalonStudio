@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using AvalonStudio.Utils;
+using AvalonStudio.VEUtils;
 using AvalonStudio.Projects.Standard;
 
 namespace AvalonStudio.Models.Solutions

@@ -8,7 +8,7 @@ namespace AvalonStudio.Controls.ViewModels
     using AvalonStudio.Models;
     using AvalonStudio.Models.Solutions;
     using AvalonStudio.MVVM;
-    using AvalonStudio.Utils;
+    using AvalonStudio.VEUtils;
     using Perspex.Controls;
     using ReactiveUI;
 

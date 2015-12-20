@@ -66,6 +66,8 @@
 
         public abstract string GetLinkerArguments(IStandardProject project);
 
+        public abstract List<string> GetToolchainIncludes();
+
         private object resultLock = new object();
         private int numTasks = 0;
 
@@ -473,6 +475,14 @@
             });
         }
 
-        public abstract string GDBExecutable { get; }        
+        public abstract string GDBExecutable { get; }
+
+        public List<string> Includes
+        {
+            get
+            {
+                return GetToolchainIncludes();
+            }
+        }
     }
 }

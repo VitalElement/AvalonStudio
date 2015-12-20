@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Toolchain.cs" />
+    <Compile Include="IToolchain.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Projects\AvalonStudio.Projects.csproj">
