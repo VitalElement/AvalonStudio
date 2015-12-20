@@ -31,11 +31,19 @@
 
                 var superProject = file.Project.Solution.StartupProject as IStandardProject;
                 var project = file.Project as IStandardProject;
-                
+
+                var toolchainIncludes = project.ToolChain.Includes;
+
+                foreach (var include in toolchainIncludes)
+                {
+                    args.Add(string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include)));
+                }
 
                 // toolchain includes
                 // This code is same as in toolchain, get compiler arguments... does this need a refactor, or toolchain get passed in? Clang take GCC compatible arguments.
                 // perhaps this language service has its own clang tool chain, to generate compiler arguments from project configuration?
+
+
                 // Referenced includes
                 var referencedIncludes = project.GetReferencedIncludes();
 

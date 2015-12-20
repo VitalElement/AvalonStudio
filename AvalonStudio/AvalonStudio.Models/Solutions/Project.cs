@@ -9,8 +9,9 @@
     using System.Threading.Tasks;
     using System.Xml.Serialization;
     using Tools;
-    using Utils;
+    using VEUtils;
     using Projects;
+    using Toolchains;
 
     [XmlInclude(typeof(BitThunderApplicationProject))]
     [XmlInclude(typeof(CatchTestProject))]
@@ -534,6 +535,14 @@
                 throw new NotImplementedException();
             }
         }
+
+        public IToolChain ToolChain
+        {
+            get
+            {
+                return SelectedConfiguration.ToolChain;
+            }
+        }
         #endregion
 
         public static string NormalizePath (string path)
@@ -543,12 +552,12 @@
         }
 
         #region Public Methods
-        public async Task<bool> Build (IConsole console, CancellationTokenSource cancellationSource)
+        public async Task<bool> Build (Tools.IConsole console, CancellationTokenSource cancellationSource)
         {		
             return await this.SelectedConfiguration.ToolChain.Build(console, this, cancellationSource);
         }
 
-        public async Task Clean (IConsole console, CancellationTokenSource cancellationSource)
+        public async Task Clean (Tools.IConsole console, CancellationTokenSource cancellationSource)
         {
             await this.SelectedConfiguration.ToolChain.Clean(console, this, cancellationSource);
         }

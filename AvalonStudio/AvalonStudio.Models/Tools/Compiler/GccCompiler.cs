@@ -3,12 +3,20 @@ using System.IO;
 namespace AvalonStudio.Models.Tools.Compiler
 {
     using AvalonStudio.Models.Solutions;
+    using System.Collections.Generic;
     using Templates;
 
     public class GCCToolChain : StandardToolChain
     {
         public GCCToolChain ()
         {
+            Settings.IncludePaths = new List<string>()
+            {
+                @"arm-none-eabi\include",
+                @"arm-none-eabi\include\c++\4.9.3",
+                @"arm-none-eabi\include\c++\4.9.3\arm-none-eabi\thumb",
+                @"lib\gcc\arm-none-eabi\4.9.3\include"
+            };
         }
 
         public override void Compile (IConsole console, Project superProject, Project project, ProjectFile file, string outputFile, CompileResult result)

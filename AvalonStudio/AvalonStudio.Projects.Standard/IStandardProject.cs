@@ -3,6 +3,7 @@
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using System.Collections.Generic;
+    using Toolchains;
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ProjectType
     {
@@ -49,5 +50,7 @@
         IList<string> Includes { get; }
         IList<string> GetReferencedIncludes();
         IList<string> GetGlobalIncludes();
+
+        IToolChain ToolChain { get; }
     }
 }
