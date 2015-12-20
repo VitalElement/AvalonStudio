@@ -54,4 +54,5 @@
     <string>CommonHal\CommonHal.veproj</string>
     <string>Utils\Utils.veproj</string>
   </References>
+  <IsBuilding>false</IsBuilding>
 </Project>

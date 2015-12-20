@@ -10,6 +10,7 @@
     using System.Threading.Tasks;
     using Languages;
     using Projects;
+    using System.Linq;
 
     [Export(typeof(EditorModel))]
     public class EditorModel
@@ -69,8 +70,14 @@
 
             ShutdownBackgroundWorkers();
 
-            // TODO use factory to create the correct language service.
-            //LanguageService = LanguageServices.Instance.GetLanguageService(file);
+            try
+            {
+                LanguageService = Workspace.Instance.LanguageServices.Single((o) => o.CanHandle(file));
+            }
+            catch 
+            {
+
+            }
 
             StartBackgroundWorkers();
 
@@ -291,7 +298,7 @@
 
                     if (LanguageService != null)
                     {
-                        var result = LanguageService.RunCodeAnalysis(UnsavedFiles, () => editorLock.WaitingWriteCount > 0);
+                        var result = LanguageService.RunCodeAnalysis(sourceFile, UnsavedFiles, () => editorLock.WaitingWriteCount > 0);
 
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {

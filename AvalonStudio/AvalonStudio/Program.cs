@@ -12,7 +12,7 @@
             }
 
             var app = new App();
-            var container = CompositionRoot.CreateContainer();
+            var container = CompositionRoot.CreateContainer();            
             var window = new MainWindow();
 
             Workspace.Instance = container.GetExportedValue<Workspace>();

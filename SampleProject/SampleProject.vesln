@@ -4,7 +4,7 @@
   <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
   <Name>SampleProject</Name>
   <FileName>SampleProject</FileName>
-  <DefaultProjectIndex>16</DefaultProjectIndex>
+  <DefaultProjectIndex>15</DefaultProjectIndex>
   <UnloadedChildren>
     <Item xsi:type="SolutionFolder">
       <Id>88cd51cf-650e-41ee-9af9-63f26e9c0d55</Id>

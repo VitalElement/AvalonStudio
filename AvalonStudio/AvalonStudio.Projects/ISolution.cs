@@ -4,6 +4,8 @@
 
     public interface ISolution
     {        
+        IProject StartupProject { get; }
+
         IProject AddProject(IProject project);
 
         IList<IProject> Projects { get; }
