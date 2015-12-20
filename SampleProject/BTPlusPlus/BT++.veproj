@@ -55,6 +55,7 @@
     <ProjectConfiguration>
       <Name>Default</Name>
       <ToolChain xsi:type="ClangToolChain">
+        <Includes />
         <Optimization>Off</Optimization>
         <OptimizationPriority>None</OptimizationPriority>
       </ToolChain>

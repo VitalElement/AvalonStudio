@@ -40,6 +40,12 @@
     <ProjectConfiguration>
       <Name>Default</Name>
       <ToolChain xsi:type="GCCToolChain">
+        <Includes>
+          <string>arm-none-eabi\include</string>
+          <string>arm-none-eabi\include\c++\4.9.3</string>
+          <string>arm-none-eabi\include\c++\4.9.3\arm-none-eabi\thumb</string>
+          <string>lib\gcc\arm-none-eabi\4.9.3\include</string>
+        </Includes>
         <Optimization>Off</Optimization>
         <OptimizationPriority>None</OptimizationPriority>
       </ToolChain>

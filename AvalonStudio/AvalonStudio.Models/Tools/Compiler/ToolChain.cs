@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using AvalonStudio.Models.Solutions;
+using AvalonStudio.Projects;
+using AvalonStudio.Toolchains;
 //using AvalonStudio.Models.Tools.Debuggers;
 
 namespace AvalonStudio.Models.Tools.Compiler
@@ -16,7 +18,7 @@ namespace AvalonStudio.Models.Tools.Compiler
     [XmlInclude (typeof (BitThunderToolChain))]
     [XmlInclude (typeof (MinGWToolChain))]
     [XmlInclude (typeof (PicXC32ToolChain))]
-    public abstract class ToolChain
+    public abstract class ToolChain : IToolChain
     {
         public static string AppendPath (string path, string addition)
         {
@@ -35,6 +37,16 @@ namespace AvalonStudio.Models.Tools.Compiler
 
         public abstract Task Clean (IConsole console, Project project, CancellationTokenSource cancellationSource);
 
+        public Task<bool> Build(Utils.IConsole console, IProject project)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Clean(Utils.IConsole console, IProject project)
+        {
+            throw new NotImplementedException();
+        }
+
         public string Name
         {
             get
@@ -50,6 +62,14 @@ namespace AvalonStudio.Models.Tools.Compiler
                 ToolChainSettings result = VEStudioSettings.This.ToolchainSettings.FirstOrDefault ((tcs) => tcs.ToolChainRealType == this.GetType ());
 
                 return result;
+            }
+        }
+
+        public List<string> Includes
+        {
+            get
+            {
+                return this.Settings.IncludePaths;
             }
         }
     }

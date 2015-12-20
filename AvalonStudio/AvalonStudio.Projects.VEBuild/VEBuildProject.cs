@@ -8,6 +8,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using Toolchains;
 
     public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
     {
@@ -451,6 +452,14 @@
         public string LinkerScript { get; set; }
 
         public string Executable
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IToolChain ToolChain
         {
             get
             {

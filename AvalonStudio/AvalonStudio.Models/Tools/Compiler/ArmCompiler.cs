@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Models.Tools.Compiler
 {
     using Solutions;
-    using Utils;
+    using VEUtils;
     using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;

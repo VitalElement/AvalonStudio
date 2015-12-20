@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using AvalonStudio.Utils;
+using AvalonStudio.VEUtils;
 
 namespace AvalonStudio.Models.Solutions
 {
