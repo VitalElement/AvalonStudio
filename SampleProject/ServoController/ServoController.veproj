@@ -51,4 +51,5 @@
     </ProjectConfiguration>
   </Configurations>
   <References />
+  <IsBuilding>false</IsBuilding>
 </Project>

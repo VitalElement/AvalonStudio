@@ -1,15 +1,17 @@
 ﻿namespace AvalonStudio.Models.Solutions
 {
-    //using NClang;
+    using Projects;    //using NClang;
     using System;
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
     using System.Xml.Serialization;
+    using System.Collections.Generic;
+
     //using AvalonStudio.Models.Settings;
 
     [Serializable]
-    public class Solution : SolutionFolder
+    public class Solution : SolutionFolder, ISolution
     {
         public Solution () : base (null, null, string.Empty)
         {
@@ -210,6 +212,11 @@
             }
         }
 
+        public IProject AddProject(IProject project)
+        {
+            throw new NotImplementedException();
+        }
+
         public string FileName
         {
             get {  { return Path.GetFileNameWithoutExtension (this.OpenedLocation); } }
@@ -220,6 +227,22 @@
         /// This is a flat list of all the loaded projects, where as children holds the structure of the solution.
         [XmlIgnore]
         public ObservableCollection<Project> LoadedProjects { get; set; }
+
+        public IProject StartupProject
+        {
+            get
+            {
+                return DefaultProject;
+            }
+        }
+
+        public IList<IProject> Projects
+        {
+            get
+            {
+                return LoadedProjects.Cast<IProject>().ToList();
+            }
+        }
 
         //public ClangFormatSettings FormattingOptions { get; set; }        
     }

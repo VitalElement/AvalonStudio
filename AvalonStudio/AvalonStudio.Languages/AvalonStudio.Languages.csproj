@@ -46,7 +46,6 @@
     <Compile Include="CodeCompletionResults.cs" />
     <Compile Include="Diagnostic.cs" />
     <Compile Include="ILanguageService.cs" />
-    <Compile Include="LanguageServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyntaxHighlightingData.cs" />
     <Compile Include="UnsavedFile.cs" />

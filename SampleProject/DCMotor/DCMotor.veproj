@@ -53,4 +53,5 @@
   <References>
     <string>Utils\Utils.veproj</string>
   </References>
+  <IsBuilding>false</IsBuilding>
 </Project>

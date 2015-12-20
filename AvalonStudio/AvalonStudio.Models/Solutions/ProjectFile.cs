@@ -339,6 +339,14 @@ namespace AvalonStudio.Models.Solutions
                 }
             }
         }
+
+        IProject ISourceFile.Project
+        {
+            get
+            {
+                return Project as IProject; 
+            }
+        }
         #endregion
 
         #region Private Members

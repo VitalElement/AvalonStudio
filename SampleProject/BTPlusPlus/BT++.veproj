@@ -89,4 +89,5 @@
     <string>Dispatcher\Dispatcher.veproj</string>
     <string>FreeRTOS\FreeRTOS.veproj</string>
   </References>
+  <IsBuilding>false</IsBuilding>
 </Project>

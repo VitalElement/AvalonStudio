@@ -239,4 +239,5 @@
     <string>STM32HalPlatform\STM32HalPlatform.veproj</string>
     <string>STM32F4Cube\STM32F4Cube.veproj</string>
   </References>
+  <IsBuilding>false</IsBuilding>
 </Project>

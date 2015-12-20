@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Models.Solutions
 {
+    using Projects.Standard;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -9,11 +10,12 @@
     using System.Xml.Serialization;
     using Tools;
     using Utils;
+    using Projects;
 
     [XmlInclude(typeof(BitThunderApplicationProject))]
     [XmlInclude(typeof(CatchTestProject))]
     [XmlInclude(typeof(HiddenProject))]
-    public class Project : ProjectFolder
+    public class Project : ProjectFolder, IStandardProject
     {
         public override bool ShouldSerializeId()
         {
@@ -390,7 +392,148 @@
         }
 
         [XmlIgnore]
-        public List<NClang.ClangUnsavedFile> UnsavedFiles { get; private set; }        
+        public List<NClang.ClangUnsavedFile> UnsavedFiles { get; private set; }
+
+        public ProjectType Type
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public bool IsBuilding
+        {
+            get; set;
+        }
+
+        public string BuildDirectory
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public string LinkerScript
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<string> BuiltinLibraries
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<string> ToolChainArguments
+        {
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public IList<string> LinkerArguments
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<string> CompilerArguments
+        {
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public IList<string> CCompilerArguments
+        {
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public IList<string> CppCompilerArguments
+        {
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public IList<string> Defines
+        {
+            get
+            {
+                return this.SelectedConfiguration.Defines;
+            }
+        }
+
+        public IList<string> PublicIncludes
+        {
+            get
+            {
+                return this.ExportedIncludes;                
+            }
+        }
+
+        public IList<string> GlobalIncludes
+        {
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public IList<string> Includes
+        {
+            get
+            {
+                return this.SelectedConfiguration.IncludePaths;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        ISolution IProject.Solution
+        {
+            get
+            {
+                return Solution;
+            }
+        }
+
+        IList<IProject> IProject.References
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<ISourceFile> SourceFiles
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
         #endregion
 
         public static string NormalizePath (string path)
@@ -460,6 +603,60 @@
                 Console.WriteLine(e);
             }
         }
-        #endregion   
+
+        public string GetObjectDirectory(IStandardProject superProject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetBuildDirectory(IStandardProject superProject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetOutputDirectory(IStandardProject superProject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<string> GetReferencedIncludes()
+        {
+            List<string> result = new List<string>();
+            foreach (var reference in this.LoadedReferences)
+            {
+                var includes = GetReferenceIncludes(reference);
+
+                result.AddRange(includes);                
+            }
+
+            //List<string> arguments = new List<string>();
+
+            //if (SelectedConfiguration.ToolChain != null && SelectedConfiguration.ToolChain.Settings != null)
+            //{
+            //    if (SelectedConfiguration.ToolChain.Settings.IncludePaths != null)
+            //    {
+            //        foreach (var include in SelectedConfiguration.ToolChain.Settings.IncludePaths)
+            //        {
+            //            string formatString = "-I\"{0}\"";
+            //            string includeArgument = Path.Combine(SelectedConfiguration.ToolChain.Settings.ToolChainLocation, include.ConvertPathForOS());
+
+            //            arguments.Add(string.Format(formatString, includeArgument));
+            //        }
+            //    }
+            //}
+
+            return result;
+        }
+
+        public IList<string> GetGlobalIncludes()
+        {
+            return new List<string>();
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }
