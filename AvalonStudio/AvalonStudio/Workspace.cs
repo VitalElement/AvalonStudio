@@ -64,6 +64,14 @@
             ModalDialog = new ModalDialogViewModelBase("Dialog");// new PackageManagerDialogViewModel();
         }
 
+        public IEnumerable<ILanguageService> LanguageServices
+        {
+            get
+            {
+                return languageServices;
+            }
+        }
+
         public MainMenuViewModel MainMenu { get; private set; }
 
         public SolutionExplorerViewModel SolutionExplorer { get; private set; }

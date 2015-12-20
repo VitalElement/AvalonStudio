@@ -12,5 +12,7 @@
         string Title { get; }
         string Location { get; }
         Language Language { get; }
+
+        IProject Project { get; }
     }
 }

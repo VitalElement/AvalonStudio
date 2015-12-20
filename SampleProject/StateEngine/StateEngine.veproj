@@ -53,4 +53,5 @@
   <References>
     <string>Dispatcher\Dispatcher.veproj</string>
   </References>
+  <IsBuilding>false</IsBuilding>
 </Project>

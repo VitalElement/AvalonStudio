@@ -113,4 +113,5 @@
   <References>
     <string>CommonHal\CommonHal.veproj</string>
   </References>
+  <IsBuilding>false</IsBuilding>
 </Project>

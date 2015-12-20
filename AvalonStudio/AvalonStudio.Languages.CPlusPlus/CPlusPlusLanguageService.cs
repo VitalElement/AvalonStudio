@@ -7,47 +7,106 @@
     using System.Collections.Generic;
     using System.IO;
     using Projects;
-
+    using Projects.Standard;
     public class CPlusPlusLanguageService : ILanguageService
     {
-        private ProjectFile file;
+        private ClangIndex clangIndex;
+
         private ClangTranslationUnit translationUnit;
         private bool translationUnitIsDirty;
         private static ClangIndex index = ClangService.CreateIndex();
 
         public CPlusPlusLanguageService()
-        {            
+        {
+            clangIndex = ClangService.CreateIndex();
         }
 
-        private NClang.ClangTranslationUnit GenerateTranslationUnit()
+        private NClang.ClangTranslationUnit GenerateTranslationUnit(ISourceFile file, List<ClangUnsavedFile> unsavedFiles)
         {
             NClang.ClangTranslationUnit result = null;
 
-            if (File.Exists(file.Location) && file.IsCodeFile)
+            if (File.Exists(file.Location))
             {
                 var args = new List<string>();
 
-                var arguments = file.DefaultProject.IncludeArguments;
+                var superProject = file.Project.Solution.StartupProject as IStandardProject;
+                var project = file.Project as IStandardProject;
+                
 
-                foreach (string argument in arguments)
+                // toolchain includes
+                // This code is same as in toolchain, get compiler arguments... does this need a refactor, or toolchain get passed in? Clang take GCC compatible arguments.
+                // perhaps this language service has its own clang tool chain, to generate compiler arguments from project configuration?
+                // Referenced includes
+                var referencedIncludes = project.GetReferencedIncludes();
+
+                foreach (var include in referencedIncludes)
                 {
-                    args.Add(argument.Replace("\"", ""));
+                    args.Add(string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include)));
                 }
 
-                foreach (var define in file.DefaultProject.SelectedConfiguration.Defines)
+                // global includes
+                var globalIncludes = superProject.GetGlobalIncludes();
+
+                foreach (var include in globalIncludes)
                 {
-                    if (define != string.Empty)
-                    {
-                        args.Add(string.Format("-D{0}", define));
-                    }
+                    args.Add(string.Format("-I\"{0}\" ", include));
                 }
 
-                if (file.FileType == FileType.CPlusPlus || file.FileType == FileType.Header)
+                // public includes
+                foreach (var include in project.PublicIncludes)
+                {
+                    args.Add(string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include)));
+                }
+
+                // includes
+                foreach (var include in project.Includes)
+                {
+                    args.Add(string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include)));
+                }
+
+                foreach (var define in superProject.Defines)
+                {
+                    args.Add(string.Format("-D{0} ", define));
+                }
+
+                foreach (var arg in superProject.ToolChainArguments)
+                {
+                    args.Add(string.Format(" {0}", arg));
+                }
+
+                foreach (var arg in superProject.CompilerArguments)
+                {
+                    args.Add(string.Format(" {0}", arg));
+                }
+
+                switch (file.Language)
+                {
+                    case Language.C:
+                        {
+                            foreach (var arg in superProject.CCompilerArguments)
+                            {
+                                args.Add(string.Format(" {0}", arg));
+                            }
+                        }
+                        break;
+
+                    case Language.Cpp:
+                        {
+                            foreach (var arg in superProject.CppCompilerArguments)
+                            {
+                                args.Add(string.Format(" {0}", arg));
+                            }
+                        }
+                        break;
+                }
+
+                if (file.Language == Language.Cpp)
                 {
                     args.Add("-xc++");
                     args.Add("-std=c++14");
                 }
 
+                // this is a dependency on VEStudioSettings.
                 if (VEStudioSettings.This.ShowAllWarnings)
                 {
                     args.Add("-Weverything");
@@ -57,13 +116,13 @@
                 {
                     if (this.translationUnit != null)
                     {
-                        this.translationUnit.Reparse(file.Project.UnsavedFiles.ToArray(), this.translationUnit.DefaultReparseOptions);
+                        this.translationUnit.Reparse(unsavedFiles.ToArray(), this.translationUnit.DefaultReparseOptions);
 
                         result = this.translationUnit;
                     }
                     else
                     {
-                        result = file.Solution.NClangIndex.ParseTranslationUnit(file.Location, args.ToArray(), file.Project.UnsavedFiles.ToArray(), TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
+                        result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
                     }
                 }
 
@@ -119,14 +178,9 @@
             return result;
         }
 
-        public CodeAnalysisResults RunCodeAnalysis(List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public CodeAnalysisResults RunCodeAnalysis(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
-
-            if (translationUnit == null)
-            {
-                translationUnit = GenerateTranslationUnit();
-            }
 
             List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
 
@@ -135,9 +189,14 @@
                 clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
             }
 
+            if (translationUnit == null)
+            {
+                translationUnit = GenerateTranslationUnit(file, clangUnsavedFiles);
+            }            
+
             translationUnit.Reparse(clangUnsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
 
-            if (file != null && file.IsCodeFile)
+            if (file != null)
             {
                 var callbacks = new NClang.ClangIndexerCallbacks();
 
@@ -232,8 +291,7 @@
                         result.SyntaxHighlightingData.Add(highlightData);
                     }
 
-                    var indexAction = file.Solution.NClangIndex.CreateIndexAction();
-
+                    var indexAction = index.CreateIndexAction();
                     indexAction.IndexTranslationUnit(IntPtr.Zero, new NClang.ClangIndexerCallbacks[] { callbacks }, NClang.IndexOptionFlags.SkipParsedBodiesInSession, translationUnit);
                     indexAction.Dispose();
                 }
@@ -253,7 +311,7 @@
             return result;
         }
 
-        public bool SupportsFile(ISourceFile file)
+        public bool CanHandle(ISourceFile file)
         {
             bool result = false;
 
@@ -265,6 +323,14 @@
                 case ".c":
                     result = true;
                     break;
+            }
+            
+            if(result)
+            {
+                if (!(file.Project is IStandardProject))
+                {
+                    result = false;
+                }
             }
 
             return result;

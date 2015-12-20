@@ -82,5 +82,7 @@
         
         [JsonIgnore]
         public IList<IProject> Projects { get; set; }
+
+        public IProject StartupProject { get; private set; }
     }
 }
