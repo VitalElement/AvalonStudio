@@ -12,11 +12,6 @@
       "Revision": "HEAD"
     },
     {
-      "Name": "STM32F4Cube",
-      "GitUrl": "http://gxgroup.duia.eu/gx/STM32F4Cube.git",
-      "Revision": "HEAD"
-    },
-    {
       "Name": "Utils",
       "GitUrl": "http://gxgroup.duia.eu/gx/Utils.git",
       "Revision": "HEAD"
