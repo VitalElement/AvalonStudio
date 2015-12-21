@@ -76,7 +76,6 @@ namespace AvalonStudio.Controls.ViewModels
     public abstract class SolutionParentViewModel<T> : ProjectItemViewModel where T : SolutionFolder
     {
         public SolutionParentViewModel(T model)
-            : base(model)
         {
             Children = new ObservableCollection<ViewModel>();
             Children.BindCollections(Model.Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.Model == m);

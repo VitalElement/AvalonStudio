@@ -208,6 +208,7 @@
     <Compile Include="Controls\ProjectViewModel.cs">
       <DependentUpon>SolutionExplorer.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ReferenceFolderViewModel.cs" />
     <Compile Include="Controls\ReferenceViewModel.cs" />
     <Compile Include="Controls\SolutionExplorerView.paml.cs">
       <DependentUpon>SolutionExplorer.paml</DependentUpon>

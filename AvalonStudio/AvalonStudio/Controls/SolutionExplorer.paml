@@ -10,16 +10,21 @@
               <TextBlock Text="{Binding Title}" />
           </TreeDataTemplate>
           
-          <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Children}">
+          <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding References}">
+            <Grid RowDefinitions="*,*">
+              <TextBlock Text="{Binding Title}" />              
+            </Grid>
+          </TreeDataTemplate>
+
+          <TreeDataTemplate DataType="ViewModels:ReferenceFolderViewModel" ItemsSource="{Binding References}">
             <Grid RowDefinitions="*,*">
               <TextBlock Text="{Binding Title}" />
-              <ListBox Items="{Binding References}" Grid.Row="2">
-                <ListBox.DataTemplates>
-                  <DataTemplate DataType="ViewModels:ReferenceViewModel">
-                    <TextBlock Text="{Binding Name}" />
-                  </DataTemplate>
-                </ListBox.DataTemplates>
-              </ListBox>
+            </Grid>
+          </TreeDataTemplate>
+
+          <TreeDataTemplate DataType="ViewModels:ReferenceViewModel">
+            <Grid RowDefinitions="*,*">
+              <TextBlock Text="{Binding Name}" />
             </Grid>
           </TreeDataTemplate>
 
