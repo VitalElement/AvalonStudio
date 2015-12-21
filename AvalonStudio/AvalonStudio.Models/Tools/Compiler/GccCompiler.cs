@@ -12,10 +12,10 @@ namespace AvalonStudio.Models.Tools.Compiler
         {
             Settings.IncludePaths = new List<string>()
             {
-                @"arm-none-eabi\include",
-                @"arm-none-eabi\include\c++\4.9.3",
-                @"arm-none-eabi\include\c++\4.9.3\arm-none-eabi\thumb",
-                @"lib\gcc\arm-none-eabi\4.9.3\include"
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include",
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include\\c++\\4.9.3",
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\c++\\4.9.3\\arm-none-eabi\\thumb",
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\lib\\gcc\\arm-none-eabi\\4.9.3\\include"
             };
         }
 
