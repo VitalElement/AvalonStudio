@@ -35,7 +35,12 @@
                 }
             }
 
-            solution.Name = Path.GetFileNameWithoutExtension(directory);
+            foreach(var project in solution.Projects)
+            {
+                project.ResolveReferences();
+            }
+
+            solution.Name = Path.GetFileNameWithoutExtension(directory);            
 
             return solution;
         }
