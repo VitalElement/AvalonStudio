@@ -1,6 +1,8 @@
 ﻿namespace AvalonStudio.TextEditor
 {
     using Document;
+    using Indentation;
+    using Indentation.CSharp;
     using Languages;
     using Perspex;
     using Perspex.Controls;
@@ -88,6 +90,8 @@
             });
 
             AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
+
+            IndentationStrategy = new CSharpIndentationStrategy();
         }
         #endregion
 
@@ -319,6 +323,7 @@
         public TextColoringTransformer TextColorizer { get; set; }
         public TextView TextView { get { return textView; } }
         public ScrollViewer ScrollViewer { get; set; }
+        public IIndentationStrategy IndentationStrategy { get; set; }
         #endregion
 
         #region Private Methods
@@ -469,7 +474,7 @@
 
             if (currentPosition.Line + count > 0 && currentPosition.Line + count <= TextDocument.LineCount)
             {
-                var line = TextDocument.Lines[currentPosition.Line-1 + count];
+                var line = TextDocument.Lines[currentPosition.Line - 1 + count];
 
                 var col = line.EndOffset;
 
@@ -607,13 +612,13 @@
             textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
             textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
             textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
-            textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));         
+            textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));
 
             TextDocumentProperty.Changed.Subscribe((args) =>
             {
                 if (args.NewValue != null)
-                {                    
-                    TextColorizer = new TextColoringTransformer(this);                    
+                {
+                    TextColorizer = new TextColoringTransformer(this);
                     textView.DocumentLineTransformers.Add(TextColorizer);
                     textView.DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
                     textView.DocumentLineTransformers.Add(new DefineTextLineTransformer());
@@ -735,9 +740,9 @@
 
         protected void OnKeyDown(object sender, KeyEventArgs e)
         {
-           // base.OnKeyDown(e);
+            // base.OnKeyDown(e);
 
-            if(e.Handled)
+            if (e.Handled)
             {
                 return;
             }
@@ -837,7 +842,17 @@
                 case Key.Enter:
                     if (AcceptsReturn)
                     {
-                        HandleTextInput("\r\n");
+                        using (this.TextDocument.RunUpdate())
+                        {
+                            HandleTextInput("\r\n");
+
+                            if (IndentationStrategy != null)
+                            {
+                                IndentationStrategy.IndentLine(TextDocument, TextDocument.GetLineByOffset(CaretIndex));
+
+                                MoveEnd(InputModifiers.None);
+                            }
+                        }
                     }
 
                     break;
