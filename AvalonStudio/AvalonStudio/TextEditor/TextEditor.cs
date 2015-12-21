@@ -83,7 +83,28 @@
                         }
 
                         var length = endoffset - diag.Offset;
-                        textMarkerService.Create(diag.Offset, length, diag.Spelling, Color.FromRgb(243, 45, 45));
+
+                        Color markerColor;
+
+                        switch(diag.Level)
+                        {
+                            case DiagnosticLevel.Error:
+                            case DiagnosticLevel.Fatal:
+                                markerColor = Color.FromRgb(253, 45, 45);
+                                break;
+
+                            case DiagnosticLevel.Warning:
+                                markerColor = Color.FromRgb(255, 207, 40);
+                                break;
+
+                            default:
+                                markerColor = Color.FromRgb(0, 42, 74);
+                                break;
+
+                        }
+                        
+
+                        textMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
                     }
                 }
 
