@@ -12,7 +12,7 @@
         public const string projectExtension = "vproj";
 
         public static Solution Load(string directory)
-        {
+        {            
             var solution = new Solution();
             solution.CurrentDirectory = directory;
 
@@ -34,6 +34,8 @@
 
                 }
             }
+
+            solution.Name = Path.GetFileNameWithoutExtension(directory);
 
             return solution;
         }
@@ -72,6 +74,11 @@
             return currentProject;
         }
 
+        public void Save()
+        {
+            Serialize(Path.Combine(CurrentDirectory, Name + "." + solutionExtension));
+        }
+
         public Solution()
         {
             Projects = new List<IProject>();
@@ -83,6 +90,9 @@
         [JsonIgnore]
         public IList<IProject> Projects { get; set; }
 
+        [JsonIgnore]
         public IProject StartupProject { get; private set; }
+
+        public string Name { get; private set; }
     }
 }

@@ -2,6 +2,7 @@
 {
     using AvalonStudio.Models.Solutions;
     using AvalonStudio.MVVM;
+    using Projects;
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
@@ -14,13 +15,12 @@
                         
         }                           
 
-        new private Solution model = null;
-        public Solution Model
+        new private ISolution model = null;
+        public ISolution Model
         {
             get { return model; }
             set
-            {
-                this.ContentId = ToolId + value.OpenedLocation;
+            {                
                 Projects = new ObservableCollection<ProjectItemViewModel> ();
                 model = value;
 
@@ -30,9 +30,9 @@
                     //    (p) => { return ProjectItemViewModel.Create(p); },
                     //    ((pvm, p) => pvm.BaseModel == p));
 
-                    if (Model.LoadedProjects.Count > 0)
+                    if (Model.Projects.Count > 0)
                     {
-                        SelectedProject = this.Model.LoadedProjects.FirstOrDefault();
+                        SelectedProject = this.Model.StartupProject;
                     }
                 }
 
@@ -54,8 +54,8 @@
         }
 
 
-        private Project selectedProject;
-        public Project SelectedProject
+        private IProject selectedProject;
+        public IProject SelectedProject
         {
             get
             {
@@ -80,67 +80,7 @@
             get { return selectedItem; }
             set
             {
-                if (selectedItem != value)
-                {
-                    if (selectedItem is ProjectFileViewModel)
-                    {
-                        (selectedItem as ProjectFileViewModel).IsEditingTitle = false;
-                        (selectedItem as ProjectFileViewModel).NumberOfSelections = 0;
-                    }
-
-                    if (selectedItem is ProjectFolderViewModel)
-                    {
-                        (selectedItem as ProjectFolderViewModel).IsEditingTitle = false;
-                        (selectedItem as ProjectFolderViewModel).NumberOfSelections = 0;
-                    }
-
-                    if (selectedItem is ProjectViewModel)
-                    {
-                        (selectedItem as ProjectViewModel).IsEditingTitle = false;
-                        (selectedItem as ProjectViewModel).NumberOfSelections = 0;
-                    }
-
-                    selectedItem = value;
-
-                    if (selectedItem is ProjectFileViewModel)
-                    {
-                        SelectedProject = (value as ProjectFileViewModel).Model.Project;
-                    }
-
-                    if (selectedItem is ProjectFolderViewModel)
-                    {
-                        SelectedProject = (value as ProjectFolderViewModel).Model.Project;
-                    }
-
-                    if (selectedItem is ProjectViewModel)
-                    {
-                        SelectedProject = (value as ProjectViewModel).Model.Project;
-                    }
-
-                    this.RaisePropertyChanged();
-
-                    if (this.SelectedItemChanged != null)
-                    {
-                        this.SelectedItemChanged(this, value);
-                    }
-                }
-                else
-                {
-                    if (selectedItem is ProjectFileViewModel)
-                    {                        
-                        (selectedItem as ProjectFileViewModel).NumberOfSelections++;
-                    }
-
-                    if (selectedItem is ProjectFolderViewModel)
-                    {
-                        (selectedItem as ProjectFolderViewModel).NumberOfSelections++;
-                    }
-
-                    if (selectedItem is ProjectViewModel)
-                    {
-                        (selectedItem as ProjectViewModel).NumberOfSelections++;
-                    }
-                }                
+                this.RaiseAndSetIfChanged(ref selectedItem, value);
             }
         }
 
