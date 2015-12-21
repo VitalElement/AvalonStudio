@@ -269,9 +269,15 @@
     <Compile Include="TextEditor\Document\TextSegment.cs" />
     <Compile Include="TextEditor\Document\TextSegmentCollection.cs" />
     <Compile Include="TextEditor\Document\TextSourceVersionProvider.cs" />
+    <Compile Include="TextEditor\Document\TextUtilities.cs" />
     <Compile Include="TextEditor\Document\UndoOperationGroup.cs" />
     <Compile Include="TextEditor\Document\UndoStack.cs" />
     <Compile Include="TextEditor\Document\WeakLineTracker.cs" />
+    <Compile Include="TextEditor\Indentation\CSharp\CSharpIndentationStrategy.cs" />
+    <Compile Include="TextEditor\Indentation\CSharp\DocumentAssessor.cs" />
+    <Compile Include="TextEditor\Indentation\CSharp\IndentationReformatter.cs" />
+    <Compile Include="TextEditor\Indentation\DefaultIndentationStrategy.cs" />
+    <Compile Include="TextEditor\Indentation\IIndentationStrategy.cs" />
     <Compile Include="TextEditor\LineNumberMargin.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="TextEditor\Rendering\ColumnLimitBackgroundRenderer.cs" />
