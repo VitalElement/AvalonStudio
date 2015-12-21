@@ -36,18 +36,18 @@
             //{
             //    result = new TestProjectViewModel(model as CatchTestProject);
             //}
-            else if (model is Project)
-            {
-                result = new StandardProjectViewModel(model as Project);
-            }
-            else if (model is ProjectFolder)
-            {
-                result = new ProjectFolderViewModel(model as ProjectFolder);
-            }
-            else if (model is SolutionFolder)
-            {
-                result = new SolutionFolderViewModel(model as SolutionFolder);
-            }
+            //else if (model is Project)
+            //{
+            //    result = new StandardProjectViewModel(model as Project);
+            //}
+            //else if (model is ProjectFolder)
+            //{
+            //    result = new ProjectFolderViewModel(model as ProjectFolder);
+            //}
+            //else if (model is SolutionFolder)
+            //{
+            //    result = new SolutionFolderViewModel(model as SolutionFolder);
+            //}
 
             return result;
         }
