@@ -36,7 +36,7 @@
 
                 foreach (var include in toolchainIncludes)
                 {
-                    args.Add(string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include)));
+                    args.Add(string.Format("-I{0}", include));
                 }
 
                 // toolchain includes
@@ -49,7 +49,7 @@
 
                 foreach (var include in referencedIncludes)
                 {
-                    args.Add(string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include)));
+                    args.Add(string.Format("-I\"{0}\"", Path.Combine(project.CurrentDirectory, include)));
                 }
 
                 // global includes
@@ -57,34 +57,34 @@
 
                 foreach (var include in globalIncludes)
                 {
-                    args.Add(string.Format("-I\"{0}\" ", include));
+                    args.Add(string.Format("-I\"{0}\"", include));
                 }
 
                 // public includes
                 foreach (var include in project.PublicIncludes)
                 {
-                    args.Add(string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include)));
+                    args.Add(string.Format("-I\"{0}\"", Path.Combine(project.CurrentDirectory, include)));
                 }
 
                 // includes
                 foreach (var include in project.Includes)
                 {
-                    args.Add(string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include)));
+                    args.Add(string.Format("-I\"{0}\"", Path.Combine(project.CurrentDirectory, include)));
                 }
 
                 foreach (var define in superProject.Defines)
                 {
-                    args.Add(string.Format("-D{0} ", define));
+                    args.Add(string.Format("-D{0}", define));
                 }
 
                 foreach (var arg in superProject.ToolChainArguments)
                 {
-                    args.Add(string.Format(" {0}", arg));
+                    args.Add(string.Format("{0}", arg));
                 }
 
                 foreach (var arg in superProject.CompilerArguments)
                 {
-                    args.Add(string.Format(" {0}", arg));
+                    args.Add(string.Format("{0}", arg));
                 }
 
                 switch (file.Language)
@@ -93,7 +93,7 @@
                         {
                             foreach (var arg in superProject.CCompilerArguments)
                             {
-                                args.Add(string.Format(" {0}", arg));
+                                args.Add(string.Format("{0}", arg));
                             }
                         }
                         break;
@@ -102,7 +102,7 @@
                         {
                             foreach (var arg in superProject.CppCompilerArguments)
                             {
-                                args.Add(string.Format(" {0}", arg));
+                                args.Add(string.Format("{0}", arg));
                             }
                         }
                         break;
@@ -200,9 +200,11 @@
             if (translationUnit == null)
             {
                 translationUnit = GenerateTranslationUnit(file, clangUnsavedFiles);
-            }            
-
-            translationUnit.Reparse(clangUnsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
+            }
+            else
+            {
+                translationUnit.Reparse(clangUnsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
+            }
 
             if (file != null)
             {
