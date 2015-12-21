@@ -11,33 +11,67 @@
           </TreeDataTemplate>
           
           <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding References}">
-            <Grid RowDefinitions="*,*">
-              <TextBlock Text="{Binding Title}" />              
-            </Grid>
+            <StackPanel Orientation="Horizontal">
+              <Panel Width="15" Height="15" Background="#8631c7" Margin="0 0 5 0">
+
+                <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
+              </Panel>
+              <TextBlock Text="{Binding Title}" Height="15" />
+            </StackPanel>
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:ReferenceFolderViewModel" ItemsSource="{Binding References}">
             <Grid RowDefinitions="*,*">
-              <TextBlock Text="{Binding Title}" />
+              <StackPanel Orientation="Horizontal">
+                <Panel Width="15" Height="15" Background="#c4c4c4" Margin="0 0 5 0">
+                  
+                  <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
+                </Panel>                
+                <TextBlock Text="{Binding Title}" Height="15" />
+              </StackPanel>              
             </Grid>
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:ReferenceViewModel">
             <Grid RowDefinitions="*,*">
-              <TextBlock Text="{Binding Name}" />
+              <StackPanel Orientation="Horizontal">
+                <Panel Width="15" Height="15" Background="#c4c4c4" Margin="0 0 5 0">
+
+                  <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
+                </Panel>
+                <TextBlock Text="{Binding Name}" Height="15" />
+              </StackPanel>
             </Grid>
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:ProjectFileViewModel">
-            <TextBlock Text="{Binding Title}" />  
+            <StackPanel Orientation="Horizontal">
+              <Panel Width="15" Height="15" Background="Gray" Margin="0 0 5 0">
+
+                <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
+              </Panel>
+              <TextBlock Text="{Binding Title}" Height="15" />
+            </StackPanel>
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:ProjectFolderViewModel" ItemsSource="{Binding Children}">
-            <TextBlock Text="{Binding Title}" />
+            <StackPanel Orientation="Horizontal">
+              <Panel Width="15" Height="15" Background="Gray" Margin="0 0 5 0">
+
+                <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
+              </Panel>
+              <TextBlock Text="{Binding Title}" Height="15" />
+            </StackPanel>
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:ProjectViewModel" ItemsSource="{Binding Children}">
-            <TextBlock Text="{Binding Title}" />
+            <StackPanel Orientation="Horizontal">
+              <Panel Width="15" Height="15" Background="#8631c7" Margin="0 0 5 0">
+
+                <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
+              </Panel>
+              <TextBlock Text="{Binding Title}" Height="15" />
+            </StackPanel>
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Children}">
