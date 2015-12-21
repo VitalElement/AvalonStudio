@@ -4,11 +4,18 @@
     using Projects;
     using ReactiveUI;
     using System;
-
+    using System.Collections.ObjectModel;
     public class SolutionViewModel : ViewModel<ISolution>
     {
         public SolutionViewModel(ISolution model) : base(model)
         {
+            this.Projects = new ObservableCollection<ProjectViewModel>();
+
+            foreach (var project in model.Projects)
+            {
+                Projects.Add(ProjectViewModel.Create(project));
+            }
+
             //OpenInExplorerCommand = ReactiveCommand.Create();
             //OpenInExplorerCommand.Subscribe((o) =>
             //{
@@ -48,6 +55,14 @@
                 RunTests();
             });
         }
+
+        private ObservableCollection<ProjectViewModel> projects;
+        public ObservableCollection<ProjectViewModel> Projects
+        {
+            get { return projects; }
+            set { this.RaiseAndSetIfChanged(ref projects, value); }
+        }
+
 
         private async void CleanSolution()
         {

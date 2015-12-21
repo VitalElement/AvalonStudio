@@ -50,26 +50,26 @@ namespace AvalonStudio.Controls.ViewModels
 
         public override void Drop(ProjectItemViewModel item)
         {
-            var project = item as ProjectViewModel;
+            //var project = item as ProjectViewModel;
 
-            if (project != null)
-            {
-                var parent = project.Model.Solution.GetParent(project.Model);
+            //if (project != null)
+            //{
+            //    var parent = project.Model.Solution.GetParent(project.Model);
 
-                parent.RemoveItem(project.Model);
+            //    parent.RemoveItem(project.Model);
 
-                Model.AttachItem(project.Model);
-            }
-            else if (item is SolutionFolderViewModel)
-            {
-                var folder = item as SolutionFolderViewModel;
+            //    Model.AttachItem(project.Model);
+            //}
+            //else if (item is SolutionFolderViewModel)
+            //{
+            //    var folder = item as SolutionFolderViewModel;
 
-                var parent = folder.Model.Solution.GetParent(folder.Model);
+            //    var parent = folder.Model.Solution.GetParent(folder.Model);
 
-                parent.DetachItem(folder.Model);
+            //    parent.DetachItem(folder.Model);
 
-                Model.AttachItem(folder.Model);
-            }
+            //    Model.AttachItem(folder.Model);
+            //}
         }
     }
 
