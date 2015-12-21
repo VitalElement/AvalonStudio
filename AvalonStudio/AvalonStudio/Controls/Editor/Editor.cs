@@ -79,6 +79,11 @@
 
             }
 
+            if(LanguageService != null)
+            {
+                Workspace.Instance.StatusBar.Language = LanguageService.Title;
+            }
+
             StartBackgroundWorkers();
 
             sourceFile = file;

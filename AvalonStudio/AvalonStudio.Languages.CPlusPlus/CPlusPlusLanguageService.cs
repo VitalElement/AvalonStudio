@@ -16,6 +16,11 @@
         private bool translationUnitIsDirty;
         private static ClangIndex index = ClangService.CreateIndex();
 
+        public string Title
+        {
+            get { return "C/C++"; }
+        }
+
         public CPlusPlusLanguageService()
         {
             clangIndex = ClangService.CreateIndex();
