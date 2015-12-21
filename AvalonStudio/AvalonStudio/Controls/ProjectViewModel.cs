@@ -12,12 +12,9 @@
         public ProjectViewModel(IProject model)
             : base(model)
         {
-            references = new ObservableCollection<ReferenceViewModel>();
+            references = new ObservableCollection<ReferenceFolderViewModel>();
 
-            foreach(var reference in model.References)
-            {
-                references.Add(new ReferenceViewModel(reference));
-            }
+            references.Add(new ReferenceFolderViewModel(model));
         }             
 
         public string Title
@@ -28,8 +25,8 @@
             }
         }
 
-        private ObservableCollection<ReferenceViewModel> references;
-        public ObservableCollection<ReferenceViewModel> References
+        private ObservableCollection<ReferenceFolderViewModel> references;
+        public ObservableCollection<ReferenceFolderViewModel> References
         {
             get { return references; }
             set { this.RaiseAndSetIfChanged(ref references, value); }
