@@ -13,5 +13,10 @@
         CodeAnalysisResults RunCodeAnalysis(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
         bool CanHandle(ISourceFile file);
+
+        /// <summary>
+        /// A description of the language supported by the service, i.e. C/C++
+        /// </summary>
+        string Title { get; }
     } 
 }

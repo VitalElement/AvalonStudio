@@ -55,6 +55,14 @@
             }
         }
 
+        private string language;
+        public string Language
+        {
+            get { return language; }
+            set { this.RaiseAndSetIfChanged(ref language, value); }
+        }
+
+
 
         public string LineText
         {
