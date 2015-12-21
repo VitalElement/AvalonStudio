@@ -217,6 +217,11 @@
             throw new NotImplementedException();
         }
 
+        public void Save()
+        {
+            this.SaveChanges();
+        }
+
         public string FileName
         {
             get {  { return Path.GetFileNameWithoutExtension (this.OpenedLocation); } }

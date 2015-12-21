@@ -36,15 +36,15 @@
                 Model.Solution.DefaultProject = Model;
                 Model.Solution.SaveChanges();
 
-                Workspace.Instance.SolutionExplorer.Solution.First().VisitAllChildren((p) =>
-                {
-                    if (p is StandardProjectViewModel)
-                    {
-                        (p as StandardProjectViewModel).InvalidateFontWeight();
-                    }
+                //Workspace.Instance.SolutionExplorer.Solution.First().VisitAllChildren((p) =>
+                //{
+                //    if (p is StandardProjectViewModel)
+                //    {
+                //        (p as StandardProjectViewModel).InvalidateFontWeight();
+                //    }
 
-                    return false;
-                });
+                //    return false;
+                //});
             });
         }
 

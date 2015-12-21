@@ -35,6 +35,8 @@
 
             var solution = Solution.Load(solutionDirectory);
 
+            solution.Save();
+
             return solution;
         }
 
