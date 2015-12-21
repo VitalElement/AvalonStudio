@@ -14,9 +14,8 @@ namespace AvalonStudio.Controls.ViewModels
 
     public abstract class ProjectItemViewModel : ViewModel
     {
-        public ProjectItemViewModel(object model) : base (model)
-        {
-
+        public ProjectItemViewModel()
+        { 
             ToggleEditingModeCommand = ReactiveCommand.Create();
 
             ToggleEditingModeCommand.Subscribe(args =>
@@ -30,24 +29,24 @@ namespace AvalonStudio.Controls.ViewModels
             RemoveItemCommand = ReactiveCommand.Create();
             RemoveItemCommand.Subscribe((o) =>
             {
-                if (model is EditorViewModel)
-                {
-                    //(this.model as EditorViewModel).CloseCommand.Execute (null);
-                }
+                //if (model is EditorViewModel)
+                //{
+                //    //(this.model as EditorViewModel).CloseCommand.Execute (null);
+                //}
 
-                if (model is ProjectItem)
-                {
-                    (model as ProjectItem).Container.RemoveItem(model as ProjectItem);
-                }
+                //if (model is ProjectItem)
+                //{
+                //    (model as ProjectItem).Container.RemoveItem(model as ProjectItem);
+                //}
             });
 
             OpenInExplorerCommand = ReactiveCommand.Create();
             OpenInExplorerCommand.Subscribe((o) =>
             {
-                if (model is ProjectItem)
-                {
-                    Process.Start((model as ProjectItem).CurrentDirectory);
-                }
+                //if (model is ProjectItem)
+                //{
+                //    Process.Start((model as ProjectItem).CurrentDirectory);
+                //}
             });
 
             textBoxVisibility = false;
@@ -145,7 +144,6 @@ namespace AvalonStudio.Controls.ViewModels
     public abstract class ProjectParentViewModel<T> : ProjectItemViewModel where T : ProjectFolder
     {
         public ProjectParentViewModel(T model)
-            : base(model)
         {
             Children = new ObservableCollection<ViewModel>();
             Children.BindCollections((model as ProjectFolder).Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.Model == m);

@@ -4,7 +4,7 @@
 
     public abstract class ViewModel : ViewModel<object>
     {
-        public ViewModel(object model) : base(model)
+        public ViewModel() : base(null)
         {
 
         }

@@ -5,8 +5,7 @@
 
     public class ProjectFileViewModel : ProjectItemViewModel
     {
-        public ProjectFileViewModel(ProjectFile model)
-            : base(model)
+        public ProjectFileViewModel(ProjectFile model)            
         {
         }
 
