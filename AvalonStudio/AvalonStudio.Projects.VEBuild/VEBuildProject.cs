@@ -104,13 +104,13 @@
                         var options = new CloneOptions();
                         options.OnProgress = (serveroutput) =>
                         {
-                            console.OverWrite(serveroutput);
+                            console?.OverWrite(serveroutput);
                             return true;
                         };
 
                         options.OnTransferProgress = (progress) =>
                         {
-                            console.OverWrite(string.Format("{0} / {1} objects, {2} bytes transferred", progress.ReceivedObjects, progress.TotalObjects, progress.ReceivedBytes));
+                            console?.OverWrite(string.Format("{0} / {1} objects, {2} bytes transferred", progress.ReceivedObjects, progress.TotalObjects, progress.ReceivedBytes));
                             return true;
                         };
 
@@ -167,8 +167,8 @@
                             return credentials;
                         };
 
-                        console.WriteLine();
-                        console.WriteLine(string.Format("Cloning Reference {0}", reference.Name));
+                        console?.WriteLine();
+                        console?.WriteLine(string.Format("Cloning Reference {0}", reference.Name));
 
                         options.Checkout = false;
 
@@ -194,6 +194,7 @@
 
                 if (File.Exists(projectFile))
                 {
+                    // Here it would be better to find the existing project first, then load.
                     var project = VEBuildProject.Load(projectFile, Solution);
 
                     project = Solution.AddProject(project) as VEBuildProject;
@@ -209,6 +210,11 @@
                     project.ResolveReferences(console);
                 }
             }
+        }
+
+        public void ResolveReferences()
+        {
+            ResolveReferences(null);
         }
 
         public void SetSolution(ISolution solution)
@@ -444,7 +450,7 @@
             }
 
             return outputDirectory;
-        }
+        }       
 
         public IList<string> BuiltinLibraries { get; set; }
 

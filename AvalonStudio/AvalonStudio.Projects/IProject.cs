@@ -28,6 +28,11 @@
         /// </summary>
         string Location { get; }
 
+        /// <summary>
+        /// Resolves all references in the project.
+        /// </summary>
+        void ResolveReferences();
+
         void Save();
     }
 }

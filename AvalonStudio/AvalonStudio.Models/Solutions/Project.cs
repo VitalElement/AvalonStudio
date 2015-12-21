@@ -666,6 +666,11 @@
         {
             throw new NotImplementedException();
         }
+
+        public void ResolveReferences()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

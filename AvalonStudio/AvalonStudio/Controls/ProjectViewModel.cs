@@ -11,8 +11,13 @@
     {
         public ProjectViewModel(IProject model)
             : base(model)
-        {            
-           
+        {
+            references = new ObservableCollection<ReferenceViewModel>();
+
+            foreach(var reference in model.References)
+            {
+                references.Add(new ReferenceViewModel(reference));
+            }
         }             
 
         public string Title
@@ -21,6 +26,13 @@
             {
                 return Model.Name;
             }
+        }
+
+        private ObservableCollection<ReferenceViewModel> references;
+        public ObservableCollection<ReferenceViewModel> References
+        {
+            get { return references; }
+            set { this.RaiseAndSetIfChanged(ref references, value); }
         }
 
         public ReactiveCommand<object> BuildCommand { get; protected set; }
