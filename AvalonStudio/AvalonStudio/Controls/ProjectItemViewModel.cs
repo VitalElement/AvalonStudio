@@ -4,6 +4,7 @@ namespace AvalonStudio.Controls.ViewModels
     using AvalonStudio.Models.Solutions;
     using AvalonStudio.MVVM;
     using Perspex.Controls;
+    using Projects;
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
@@ -107,15 +108,15 @@ namespace AvalonStudio.Controls.ViewModels
         {
             ProjectItemViewModel result = null;
 
-            if (item is Project)
-            {
-                result = ProjectViewModel.Create(item as Project);
-            }
+            //if (item is Project)
+            //{
+            //    result = ProjectViewModel.Create(item as IProject);
+            //}
 
-            if (item is SolutionFolder)
-            {
-                result = SolutionFolderViewModel.Create(item as SolutionFolder);
-            }
+            //if (item is SolutionFolder)
+            //{
+            //    result = SolutionFolderViewModel.Create(item as SolutionFolder);
+            //}
 
             return result;
         }
