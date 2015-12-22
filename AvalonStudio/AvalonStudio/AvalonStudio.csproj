@@ -329,7 +329,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\Console.paml" />
+    <EmbeddedResource Include="Controls\Console.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Editor.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -381,6 +383,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\grip_pattern.png" />
     <Content Include="Resources\Icons\Templarian\dark\appbar.3d.3ds.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
