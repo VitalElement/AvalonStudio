@@ -25,52 +25,6 @@ namespace AvalonStudio.Controls.ViewModels
 
             return result;
         }
-
-        public override bool CanAcceptDrop(Type type)
-        {
-            bool result = false;
-
-            if (type == typeof(StandardProjectViewModel))
-            {
-                result = true;
-            }
-
-            //if (type == typeof(TestProjectViewModel))
-            //{
-            //    result = true;
-            //}
-
-            if (type == typeof(SolutionFolderViewModel))
-            {
-                result = true;
-            }
-
-            return result;
-        }
-
-        public override void Drop(ProjectItemViewModel item)
-        {
-            //var project = item as ProjectViewModel;
-
-            //if (project != null)
-            //{
-            //    var parent = project.Model.Solution.GetParent(project.Model);
-
-            //    parent.RemoveItem(project.Model);
-
-            //    Model.AttachItem(project.Model);
-            //}
-            //else if (item is SolutionFolderViewModel)
-            //{
-            //    var folder = item as SolutionFolderViewModel;
-
-            //    var parent = folder.Model.Solution.GetParent(folder.Model);
-
-            //    parent.DetachItem(folder.Model);
-
-            //    Model.AttachItem(folder.Model);
-            //}
-        }
     }
 
     public abstract class SolutionParentViewModel<T> : ProjectItemViewModel where T : SolutionFolder
