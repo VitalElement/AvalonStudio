@@ -2,7 +2,6 @@
 {
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Utils;
-    using LibGit2Sharp;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -97,98 +96,98 @@
             {
                 var referenceDirectory = Path.Combine(SolutionDirectory, reference.Name);
 
-                if (!string.IsNullOrEmpty(reference.GitUrl))
-                {
-                    if (!Directory.Exists(referenceDirectory))
-                    {
-                        var options = new CloneOptions();
-                        options.OnProgress = (serveroutput) =>
-                        {
-                            console?.OverWrite(serveroutput);
-                            return true;
-                        };
+                //if (!string.IsNullOrEmpty(reference.GitUrl))
+                //{
+                //    if (!Directory.Exists(referenceDirectory))
+                //    {
+                //        var options = new CloneOptions();
+                //        options.OnProgress = (serveroutput) =>
+                //        {
+                //            console?.OverWrite(serveroutput);
+                //            return true;
+                //        };
 
-                        options.OnTransferProgress = (progress) =>
-                        {
-                            console?.OverWrite(string.Format("{0} / {1} objects, {2} bytes transferred", progress.ReceivedObjects, progress.TotalObjects, progress.ReceivedBytes));
-                            return true;
-                        };
+                //        options.OnTransferProgress = (progress) =>
+                //        {
+                //            console?.OverWrite(string.Format("{0} / {1} objects, {2} bytes transferred", progress.ReceivedObjects, progress.TotalObjects, progress.ReceivedBytes));
+                //            return true;
+                //        };
 
-                        options.CredentialsProvider = (url, user, cred) =>
-                        {
-                            var domain = new Uri(url).GetLeftPart(UriPartial.Authority);
-                            var credentials = new UsernamePasswordCredentials();
+                //        options.CredentialsProvider = (url, user, cred) =>
+                //        {
+                //            var domain = new Uri(url).GetLeftPart(UriPartial.Authority);
+                //            var credentials = new UsernamePasswordCredentials();
 
-                            Tuple<string, string> userNamePassword;
+                //            Tuple<string, string> userNamePassword;
 
-                            if (passwordCache.TryGetValue(domain, out userNamePassword))
-                            {
-                                credentials.Username = userNamePassword.Item1;
-                                credentials.Password = userNamePassword.Item2;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Credentials required for: " + url);
+                //            if (passwordCache.TryGetValue(domain, out userNamePassword))
+                //            {
+                //                credentials.Username = userNamePassword.Item1;
+                //                credentials.Password = userNamePassword.Item2;
+                //            }
+                //            else
+                //            {
+                //                Console.WriteLine("Credentials required for: " + url);
 
-                                Console.WriteLine("Please enter your username: ");
-                                credentials.Username = Console.ReadLine();
+                //                Console.WriteLine("Please enter your username: ");
+                //                credentials.Username = Console.ReadLine();
 
-                                string pass = "";
-                                Console.WriteLine("Please enter your password:");
+                //                string pass = "";
+                //                Console.WriteLine("Please enter your password:");
 
-                                ConsoleKeyInfo key;
+                //                ConsoleKeyInfo key;
 
-                                do
-                                {
-                                    key = Console.ReadKey(true);
+                //                do
+                //                {
+                //                    key = Console.ReadKey(true);
 
-                                    if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
-                                    {
-                                        pass += key.KeyChar;
-                                        Console.Write("*");
-                                    }
-                                    else
-                                    {
-                                        if (key.Key == ConsoleKey.Backspace && pass.Length > 0)
-                                        {
-                                            pass = pass.Substring(0, (pass.Length - 1));
-                                            Console.Write("\b \b");
-                                        }
-                                    }
-                                }
-                                // Stops Receving Keys Once Enter is Pressed
-                                while (key.Key != ConsoleKey.Enter);
+                //                    if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
+                //                    {
+                //                        pass += key.KeyChar;
+                //                        Console.Write("*");
+                //                    }
+                //                    else
+                //                    {
+                //                        if (key.Key == ConsoleKey.Backspace && pass.Length > 0)
+                //                        {
+                //                            pass = pass.Substring(0, (pass.Length - 1));
+                //                            Console.Write("\b \b");
+                //                        }
+                //                    }
+                //                }
+                //                // Stops Receving Keys Once Enter is Pressed
+                //                while (key.Key != ConsoleKey.Enter);
 
-                                credentials.Password = pass;
+                //                credentials.Password = pass;
 
-                                passwordCache.Add(domain, new Tuple<string, string>(credentials.Username, credentials.Password));
-                            }
+                //                passwordCache.Add(domain, new Tuple<string, string>(credentials.Username, credentials.Password));
+                //            }
 
-                            return credentials;
-                        };
+                //            return credentials;
+                //        };
 
-                        console?.WriteLine();
-                        console?.WriteLine(string.Format("Cloning Reference {0}", reference.Name));
+                //        console?.WriteLine();
+                //        console?.WriteLine(string.Format("Cloning Reference {0}", reference.Name));
 
-                        options.Checkout = false;
+                //        options.Checkout = false;
 
-                        Repository.Clone(reference.GitUrl, referenceDirectory, options);
-                    }
+                //        Repository.Clone(reference.GitUrl, referenceDirectory, options);
+                //    }
 
-                    if (Repository.IsValid(referenceDirectory))
-                    {
-                        var repo = new Repository(referenceDirectory);
+                //    if (Repository.IsValid(referenceDirectory))
+                //    {
+                //        var repo = new Repository(referenceDirectory);
 
-                        string checkout = "HEAD";
+                //        string checkout = "HEAD";
 
-                        if (!string.IsNullOrEmpty(reference.Revision))
-                        {
-                            checkout = reference.Revision;
-                        }
+                //        if (!string.IsNullOrEmpty(reference.Revision))
+                //        {
+                //            checkout = reference.Revision;
+                //        }
 
-                        repo.Checkout(checkout);
-                    }
-                }
+                //        repo.Checkout(checkout);
+                //    }
+                //}
 
                 var projectFile = Path.Combine(referenceDirectory, reference.Name + "." + ProjectExtension);
 

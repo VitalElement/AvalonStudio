@@ -52,5 +52,7 @@
         IList<string> GetGlobalIncludes();
 
         IToolChain ToolChain { get; }
+
+        IList<ISourceFile> SourceFiles { get; }
     }
 }

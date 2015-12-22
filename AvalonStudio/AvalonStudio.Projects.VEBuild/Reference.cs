@@ -1,6 +1,5 @@
 ﻿namespace AvalonStudio.Projects.VEBuild
 {
-    using LibGit2Sharp;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -26,11 +25,11 @@
         /// </summary>
         public string Revision { get; set; }
 
-        public static bool IsValidGitRepo (string gitUrl)
-        {
-            var result = Repository.ListRemoteReferences(gitUrl);
+        //public static bool IsValidGitRepo (string gitUrl)
+        //{
+        //    var result = Repository.ListRemoteReferences(gitUrl);
 
-            return true;
-        }
+        //    return true;
+        //}
     }
 }

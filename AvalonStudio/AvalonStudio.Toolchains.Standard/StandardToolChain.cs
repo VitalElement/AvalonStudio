@@ -106,7 +106,7 @@
             {
                 project.IsBuilding = true;
 
-                result += project.Items.Count;
+                result += project.SourceFiles.Count;
             }
 
             return result;
@@ -323,7 +323,7 @@
                         //var parallelResult = Parallel.ForEach(project.SourceFiles, (file) =>
                         int numLocalTasks = 0;
 
-                        foreach (ISourceFile file in project.Items)
+                        foreach (ISourceFile file in project.SourceFiles)
                         {
                             if (terminateBuild)
                             {
