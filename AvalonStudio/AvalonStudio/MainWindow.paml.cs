@@ -11,6 +11,13 @@
         {
             this.InitializeComponent();
             App.AttachDevTools(this);
+
+            var names = System.Reflection.Assembly.GetEntryAssembly().GetManifestResourceNames();
+
+            foreach(var name in names)
+            {
+                System.Console.WriteLine(name);
+            }
         }
 
         private void InitializeComponent()
