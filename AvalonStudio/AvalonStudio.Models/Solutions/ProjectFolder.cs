@@ -139,8 +139,8 @@ namespace AvalonStudio.Models.Solutions
 
         public void SortChildren()
         {
-            var folders = Children.Where((c) => c is ProjectFolder).OrderBy((c) => c.Title);
-            var files = Children.Where((c) => c is ProjectFile).OrderBy((c) => c.Title);
+            var folders = Children.Where((c) => c is ProjectFolder).OrderBy((c) => c.Name);
+            var files = Children.Where((c) => c is ProjectFile).OrderBy((c) => c.Name);
             Children = new ObservableCollection<ProjectItem>(folders.Concat(files));
         }
 

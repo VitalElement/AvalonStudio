@@ -147,11 +147,11 @@
                 if (project != null)
                 {
                     // todo normalize paths.
-                    var currentFile = project.SourceFiles.Where((s) => s.File.Normalize() == options.File.Normalize()).FirstOrDefault();
+                    var currentFile = project.Items.OfType<ISourceFile>().Where((s) => s.File.Normalize() == options.File.Normalize()).FirstOrDefault();
 
                     if (currentFile != null)
                     {
-                        project.SourceFiles.RemoveAt(project.SourceFiles.IndexOf(currentFile));
+                        project.Items.RemoveAt(project.Items.IndexOf(currentFile));
                         project.Save();
 
                         Console.WriteLine("File removed.");
@@ -189,7 +189,7 @@
 
                 if (project != null)
                 {
-                    project.SourceFiles.Add(new SourceFile { File = options.File });
+                    project.Items.Add(new SourceFile { File = options.File });
                     project.Save();
                     Console.WriteLine("File added.");
                     return 1;
@@ -316,10 +316,10 @@
 
             project.PublicIncludes.Add("./");
 
-            project.SourceFiles.Add(new SourceFile { File = "allocator.c" });
-            project.SourceFiles.Add(new SourceFile { File = "startup.c" });
-            project.SourceFiles.Add(new SourceFile { File = "syscalls.c" });
-            project.SourceFiles.Add(new SourceFile { File = "CPPSupport.cpp" });
+            project.Items.Add(new SourceFile { File = "allocator.c" });
+            project.Items.Add(new SourceFile { File = "startup.c" });
+            project.Items.Add(new SourceFile { File = "syscalls.c" });
+            project.Items.Add(new SourceFile { File = "CPPSupport.cpp" });
 
             var projectDir = Path.Combine(baseDir, project.Name);
 
@@ -344,75 +344,75 @@
             project.PublicIncludes.Add("Drivers/CMSIS/Device/ST/STM32F4xx/Include");
             project.PublicIncludes.Add("Drivers/CMSIS/Include");
 
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cec.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_crc.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cryp.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cryp_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dcmi.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dcmi_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma2d.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_fmpi2c.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_fmpi2c_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hash.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hash_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hcd.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_irda.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_iwdg.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_ltdc.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_msp_template.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_nand.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_nor.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pccard.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_qspi.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rng.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sd.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sdram.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_smartcard.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spdifrx.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sram.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_usart.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_wwdg.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fmc.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fsmc.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_sdmmc.c" });
-            project.SourceFiles.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.c" });
-            project.SourceFiles.Add(new SourceFile { File = "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_conf_template.c" });
-            project.SourceFiles.Add(new SourceFile { File = "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c" });
-            project.SourceFiles.Add(new SourceFile { File = "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c" });
-            project.SourceFiles.Add(new SourceFile { File = "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c" });
-            project.SourceFiles.Add(new SourceFile { File = "Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cec.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_crc.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cryp.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cryp_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dac_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dcmi.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dcmi_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma2d.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_fmpi2c.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_fmpi2c_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hash.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hash_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_hcd.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2s_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_irda.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_iwdg.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_ltdc.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_msp_template.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_nand.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_nor.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pccard.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_qspi.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rng.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sd.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sdram.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_smartcard.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spdifrx.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sram.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_usart.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_wwdg.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fmc.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fsmc.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_sdmmc.c" });
+            project.Items.Add(new SourceFile { File = "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.c" });
+            project.Items.Add(new SourceFile { File = "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_conf_template.c" });
+            project.Items.Add(new SourceFile { File = "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c" });
+            project.Items.Add(new SourceFile { File = "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c" });
+            project.Items.Add(new SourceFile { File = "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c" });
+            project.Items.Add(new SourceFile { File = "Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c" });
 
 
             projectDir = Path.Combine(baseDir, project.Name);
@@ -433,8 +433,8 @@
 
             project.PublicIncludes.Add("./");
 
-            project.SourceFiles.Add(new SourceFile { File = "IDP.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "IDPPacket.cpp" });
+            project.Items.Add(new SourceFile { File = "IDP.cpp" });
+            project.Items.Add(new SourceFile { File = "IDPPacket.cpp" });
 
             project.UnloadedReferences.Add(new Reference { Name = "Utils" });
 
@@ -458,11 +458,11 @@
 
             project.UnloadedReferences.Add(new Reference { Name = "Utils" });
 
-            project.SourceFiles.Add(new SourceFile { File = "II2C.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "Interrupt.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "IPort.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "ISpi.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "IUsbHidDevice.cpp" });
+            project.Items.Add(new SourceFile { File = "II2C.cpp" });
+            project.Items.Add(new SourceFile { File = "Interrupt.cpp" });
+            project.Items.Add(new SourceFile { File = "IPort.cpp" });
+            project.Items.Add(new SourceFile { File = "ISpi.cpp" });
+            project.Items.Add(new SourceFile { File = "IUsbHidDevice.cpp" });
             //project.SourceFiles.Add(new SourceFile { File = "SerialPort.cpp" });
 
             projectDir = Path.Combine(baseDir, project.Name);
@@ -484,18 +484,18 @@
             project.PublicIncludes.Add("./");
             project.PublicIncludes.Add("./USB");
 
-            project.SourceFiles.Add(new SourceFile { File = "SignalGeneration/STM32FrequencyChannel.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "SignalGeneration/STM32PwmChannel.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "USB/CustomHID/usb_device.c" });
-            project.SourceFiles.Add(new SourceFile { File = "USB/CustomHID/usbd_conf.c" });
-            project.SourceFiles.Add(new SourceFile { File = "USB/CustomHID/usbd_customhid.c" });
-            project.SourceFiles.Add(new SourceFile { File = "USB/CustomHID/usbd_desc.c" });
-            project.SourceFiles.Add(new SourceFile { File = "USB/STM32UsbHidDevice.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "STM32Adc.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "STM32BootloaderService.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "STM32InputCaptureChannel.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "STM32QuadratureEncoder.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "STM32Timer.cpp" });
+            project.Items.Add(new SourceFile { File = "SignalGeneration/STM32FrequencyChannel.cpp" });
+            project.Items.Add(new SourceFile { File = "SignalGeneration/STM32PwmChannel.cpp" });
+            project.Items.Add(new SourceFile { File = "USB/CustomHID/usb_device.c" });
+            project.Items.Add(new SourceFile { File = "USB/CustomHID/usbd_conf.c" });
+            project.Items.Add(new SourceFile { File = "USB/CustomHID/usbd_customhid.c" });
+            project.Items.Add(new SourceFile { File = "USB/CustomHID/usbd_desc.c" });
+            project.Items.Add(new SourceFile { File = "USB/STM32UsbHidDevice.cpp" });
+            project.Items.Add(new SourceFile { File = "STM32Adc.cpp" });
+            project.Items.Add(new SourceFile { File = "STM32BootloaderService.cpp" });
+            project.Items.Add(new SourceFile { File = "STM32InputCaptureChannel.cpp" });
+            project.Items.Add(new SourceFile { File = "STM32QuadratureEncoder.cpp" });
+            project.Items.Add(new SourceFile { File = "STM32Timer.cpp" });
 
             project.UnloadedReferences.Add(new Reference { Name = "CommonHal" });
             project.UnloadedReferences.Add(new Reference { Name = "STM32F4Cube" });
@@ -519,10 +519,10 @@
 
             project.PublicIncludes.Add("./");
 
-            project.SourceFiles.Add(new SourceFile { File = "CRC.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "Event.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "PidController.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "StraightLineFormula.cpp" });
+            project.Items.Add(new SourceFile { File = "CRC.cpp" });
+            project.Items.Add(new SourceFile { File = "Event.cpp" });
+            project.Items.Add(new SourceFile { File = "PidController.cpp" });
+            project.Items.Add(new SourceFile { File = "StraightLineFormula.cpp" });
 
             projectDir = Path.Combine(baseDir, project.Name);
 
@@ -542,7 +542,7 @@
 
             project.PublicIncludes.Add("./");
 
-            project.SourceFiles.Add(new SourceFile { File = "GxInstrumentationHidDevice.cpp" });
+            project.Items.Add(new SourceFile { File = "GxInstrumentationHidDevice.cpp" });
 
             project.UnloadedReferences.Add(new Reference { Name = "CommonHal" });
             project.UnloadedReferences.Add(new Reference { Name = "IntegratedDebugProtocol" });
@@ -566,7 +566,7 @@
 
             project.PublicIncludes.Add("./");
 
-            project.SourceFiles.Add(new SourceFile { File = "Dispatcher.cpp" });
+            project.Items.Add(new SourceFile { File = "Dispatcher.cpp" });
 
             project.UnloadedReferences.Add(new Reference { Name = "Utils" });
 
@@ -588,8 +588,8 @@
 
             project.PublicIncludes.Add("./");
 
-            project.SourceFiles.Add(new SourceFile { File = "GxBootloader.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "GxBootloaderHidDevice.cpp" });
+            project.Items.Add(new SourceFile { File = "GxBootloader.cpp" });
+            project.Items.Add(new SourceFile { File = "GxBootloaderHidDevice.cpp" });
 
             project.UnloadedReferences.Add(new Reference { Name = "IntegratedDebugProtocol" });
             project.UnloadedReferences.Add(new Reference { Name = "Utils" });
@@ -620,10 +620,10 @@
             project.UnloadedReferences.Add(new Reference { Name = "STM32F4Cube" });
             project.UnloadedReferences.Add(new Reference { Name = "STM32HalPlatform" });
 
-            project.SourceFiles.Add(new SourceFile { File = "startup_stm32f40xx.c" });
-            project.SourceFiles.Add(new SourceFile { File = "main.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "Startup.cpp" });
-            project.SourceFiles.Add(new SourceFile { File = "DiscoveryBoard.cpp" });
+            project.Items.Add(new SourceFile { File = "startup_stm32f40xx.c" });
+            project.Items.Add(new SourceFile { File = "main.cpp" });
+            project.Items.Add(new SourceFile { File = "Startup.cpp" });
+            project.Items.Add(new SourceFile { File = "DiscoveryBoard.cpp" });
 
             project.ToolChainArguments.Add("-mcpu=cortex-m4");
             project.ToolChainArguments.Add("-mthumb");

@@ -46,11 +46,11 @@ namespace AvalonStudio.Models.Solutions
 
         public int CompareTo(ProjectItem other)
         {
-            return this.Title.CompareTo(other.Title);
+            return this.Name.CompareTo(other.Name);
         }        
 
         [XmlIgnore]
-        public virtual string Title
+        public virtual string Name
         {
             get
             {

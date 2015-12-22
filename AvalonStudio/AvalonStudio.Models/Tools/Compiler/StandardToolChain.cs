@@ -15,7 +15,7 @@
 
             if (project != superProject)
             {
-                outputDirectory = Path.Combine(outputDirectory, superProject.Title);
+                outputDirectory = Path.Combine(outputDirectory, superProject.Name);
             }
 
             return outputDirectory;
@@ -292,7 +292,7 @@
 
             if (!File.Exists(superProject.Executable) || compilationResults.NumberOfObjectsCompiled > 0)
             {
-                console.WriteLine(string.Format("[LL]    [{0}]", project.Title));
+                console.WriteLine(string.Format("[LL]    [{0}]", project.Name));
                 
                 var linkResults = superProjectToolchain.Link(console, superProject, project, compilationResults, outputLocation);
 
@@ -490,7 +490,7 @@
                                compileJobs++;
                            }
 
-                           console.WriteLine(string.Format("[CC]    [{0}]    {1}", project.Title, Path.GetFileName(file.Location)));
+                           console.WriteLine(string.Format("[CC]    [{0}]    {1}", project.Name, Path.GetFileName(file.Location)));
 
                            new Thread(() =>
                            {
@@ -634,7 +634,7 @@
 
             if (hasCleaned)
             {
-                console.WriteLine(string.Format("[BB] - Cleaning Project - {0}", project.Title));
+                console.WriteLine(string.Format("[BB] - Cleaning Project - {0}", project.Name));
             }
         }
 

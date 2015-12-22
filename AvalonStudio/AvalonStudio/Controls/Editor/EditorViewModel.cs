@@ -160,7 +160,7 @@
         {
             get
             {
-                string result = Model.ProjectFile?.Title;
+                string result = Model.ProjectFile?.Name;
 
                 if (Model.IsDirty)
                 {
