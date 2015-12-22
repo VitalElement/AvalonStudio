@@ -1,46 +1,25 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
-    using AvalonStudio.Models.Solutions;
-    using System;
-
-    class ProjectFolderViewModel : ProjectParentViewModel<ProjectFolder>
+    using Projects;
+    using System.Collections.Generic;
+    class ProjectFolderViewModel : ProjectItemViewModel<IProjectFolder>
     {
-        public ProjectFolderViewModel(ProjectFolder model)
+        public ProjectFolderViewModel(IProjectFolder model)
             : base(model)
         {
+            Items = new List<ProjectItemViewModel>();
 
+            foreach(var item in model.Items)
+            {
+                Items.Add(ProjectItemViewModel.Create(item));
+            }
         }
 
-        public static ProjectFolderViewModel Create(ProjectFolder model)
+        public static ProjectFolderViewModel Create(IProjectFolder model)
         {
             return new ProjectFolderViewModel(model);
         }
 
-        public override bool CanAcceptDrop(Type type)
-        {
-            bool result = false;
-
-            if (type == typeof(ProjectFileViewModel))
-            {
-                result = true;
-            }
-
-            return result;
-        }
-
-        public override void Drop(ProjectItemViewModel item)
-        {
-            if (item is ProjectFileViewModel)
-            {
-                var file = item as ProjectFileViewModel;
-
-                file.Model.MoveTo(this.Model);
-            }
-        }
-        
-        new public ProjectFolder Model
-        {
-            get { return base.Model as ProjectFolder; }            
-        }        
+        public List<ProjectItemViewModel> Items { get; private set; }
     }
 }
