@@ -55,7 +55,6 @@
     <ProjectConfiguration>
       <Name>Default</Name>
       <ToolChain xsi:type="ClangToolChain">
-        <Includes />
         <Optimization>Off</Optimization>
         <OptimizationPriority>None</OptimizationPriority>
       </ToolChain>
@@ -90,5 +89,4 @@
     <string>Dispatcher\Dispatcher.veproj</string>
     <string>FreeRTOS\FreeRTOS.veproj</string>
   </References>
-  <IsBuilding>false</IsBuilding>
 </Project>

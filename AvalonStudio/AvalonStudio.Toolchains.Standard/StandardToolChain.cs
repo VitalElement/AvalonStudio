@@ -54,7 +54,7 @@
 
         public int Jobs { get; set; }
 
-        protected ToolchainSettings Settings { get; private set; }
+        public ToolchainSettings Settings { get; private set; }
 
         public abstract CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile);
 

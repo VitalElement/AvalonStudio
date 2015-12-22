@@ -8,7 +8,7 @@
     using System.IO;
     using System.Linq;
     using Toolchains;
-
+    using Toolchains.STM32;
     public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
     {
         public const string solutionExtension = "vsln";
@@ -22,19 +22,31 @@
         [JsonIgnore]
         public bool IsBuilding { get; set; }
 
-        public static StandardProjectFolder GetSubFolders(string path)
+        public static void PopulateFiles(IProject project, StandardProjectFolder folder)
         {
-            StandardProjectFolder result = new StandardProjectFolder(Path.GetFileName(path));
+            var files = Directory.GetFiles(folder.Path);
+
+            foreach (var file in files)
+            {
+                folder.Items.Add(new SourceFile() { Project = project, File = file });
+            }
+        }
+
+        public static StandardProjectFolder GetSubFolders(IProject project, string path)
+        {
+            StandardProjectFolder result = new StandardProjectFolder(path);
 
             var folders = Directory.GetDirectories(path);
 
-            if(folders.Count() > 0)
-            {                
-                foreach(var folder in folders)
+            if (folders.Count() > 0)
+            {
+                foreach (var folder in folders)
                 {
-                    result.Items.Add(GetSubFolders(folder));
+                    result.Items.Add(GetSubFolders(project, folder));
                 }
             }
+
+            PopulateFiles(project, result);
 
             return result;
         }
@@ -46,11 +58,11 @@
             project.Location = filename;
             project.SetSolution(solution);
 
-            var folders = GetSubFolders(project.CurrentDirectory);
+            var folders = GetSubFolders(project, project.CurrentDirectory);
 
             project.Items = new List<IProjectItem>();
 
-            foreach(var item in folders.Items)
+            foreach (var item in folders.Items)
             {
                 project.Items.Add(item);
             }
@@ -60,18 +72,18 @@
                 (file as SourceFile)?.SetProject(project);
 
                 var pathStructure = file.Location.Split(Path.DirectorySeparatorChar);
-                
 
-                foreach(var part in pathStructure)
+
+                foreach (var part in pathStructure)
                 {
 
                 }
-            }            
+            }
 
             return project;
         }
 
-        
+
 
         public static VEBuildProject Create(string directory, string name)
         {
@@ -387,7 +399,7 @@
         public IList<string> PublicIncludes { get; private set; }
 
 
-        public bool ShouldSerializeGlobalIncludes ()
+        public bool ShouldSerializeGlobalIncludes()
         {
             return GlobalIncludes.Count > 0;
         }
@@ -409,10 +421,10 @@
         public IList<string> Defines { get; private set; }
 
         public bool ShouldSerializeSourceFiles()
-        {            
+        {
             return SourceFiles.Count > 0;
         }
-        
+
         public IList<ISourceFile> SourceFiles { get; }
 
         public bool ShouldSerializeCompilerArguments()
@@ -485,7 +497,7 @@
             }
 
             return outputDirectory;
-        }       
+        }
 
         public IList<string> BuiltinLibraries { get; set; }
 
@@ -504,7 +516,17 @@
         {
             get
             {
-                throw new NotImplementedException();
+                var result = new GccToolChain(new ToolchainSettings());
+
+                result.Settings.IncludePaths = new List<string>()
+                {
+                    "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include",
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include\\c++\\4.9.3",
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\c++\\4.9.3\\arm-none-eabi\\thumb",
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\lib\\gcc\\arm-none-eabi\\4.9.3\\include"
+                };
+
+                return result;
             }
         }
 

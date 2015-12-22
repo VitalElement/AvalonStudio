@@ -143,7 +143,6 @@
     <ProjectConfiguration>
       <Name>Default</Name>
       <ToolChain xsi:type="PicXC32ToolChain">
-        <Includes />
         <Optimization>Off</Optimization>
         <OptimizationPriority>None</OptimizationPriority>
       </ToolChain>
@@ -182,5 +181,4 @@
     </ProjectConfiguration>
   </Configurations>
   <References />
-  <IsBuilding>false</IsBuilding>
 </Project>
