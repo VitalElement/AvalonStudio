@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IProject.cs" />
+    <Compile Include="IProjectFolder.cs" />
+    <Compile Include="IProjectItem.cs" />
     <Compile Include="ISolution.cs" />
     <Compile Include="ISourceFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

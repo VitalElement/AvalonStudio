@@ -48,7 +48,7 @@ namespace AvalonStudio.Projects.VEBuild
             }
         }
 
-        public string Title
+        public string Name
         {
             get
             {

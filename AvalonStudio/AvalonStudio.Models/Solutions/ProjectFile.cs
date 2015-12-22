@@ -76,7 +76,7 @@ namespace AvalonStudio.Models.Solutions
             destination.AddChild(this);
         }
 
-        public override string Title
+        public override string Name
         {
             get
             {

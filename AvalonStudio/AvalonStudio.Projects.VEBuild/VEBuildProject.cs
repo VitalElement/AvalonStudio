@@ -472,5 +472,11 @@
                 throw new NotImplementedException();
             }
         }
+
+        [JsonIgnore]
+        public IList<IProjectItem> Items
+        {
+            get; private set;
+        }
     }
 }

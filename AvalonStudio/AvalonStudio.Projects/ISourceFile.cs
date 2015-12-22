@@ -6,10 +6,9 @@
         Cpp
     }
 
-    public interface ISourceFile
+    public interface ISourceFile : IProjectItem
     {
         string File { get; }
-        string Title { get; }
         string Location { get; }
         Language Language { get; }
 
