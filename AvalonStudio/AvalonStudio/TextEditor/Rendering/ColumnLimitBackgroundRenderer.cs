@@ -9,7 +9,7 @@
 
     class ColumnLimitBackgroundRenderer : IBackgroundRenderer
     {
-        private Brush brush = Brush.Parse("#50C4C4C4");
+        private Brush brush = Brush.Parse("#30E4E4E4");
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {

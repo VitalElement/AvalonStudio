@@ -38,9 +38,9 @@
             SolutionExplorer.SelectedItemChanged += (sender, e) =>
             {
                 //try {
-                if (e is ProjectFileViewModel)
+                if (e is SourceFileViewModel)
                 {
-                    Editor.Model.OpenFile((e as ProjectFileViewModel).Model as ISourceFile);
+                    Editor.Model.OpenFile((e as SourceFileViewModel).Model as ISourceFile);
                 }
                 //} catch(Exception) {
 

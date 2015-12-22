@@ -26,7 +26,7 @@
 
             if (model is ProjectFile)
             {
-                result = new ProjectFileViewModel(model as ProjectFile);
+                result = new SourceFileViewModel(model as ProjectFile);
             }
             //else if (model is BitThunderApplicationProject)
             //{

@@ -20,12 +20,6 @@
     <ProjectConfiguration>
       <Name>Default</Name>
       <ToolChain xsi:type="GCCToolChain">
-        <Includes>
-          <string>c:\VEStudio\AppData\Repos\GCCToolChain\arm-none-eabi\include</string>
-          <string>c:\VEStudio\AppData\Repos\GCCToolChain\arm-none-eabi\include\c++\4.9.3</string>
-          <string>c:\VEStudio\AppData\Repos\GCCToolChain\arm-none-eabi\c++\4.9.3\arm-none-eabi\thumb</string>
-          <string>c:\VEStudio\AppData\Repos\GCCToolChain\lib\gcc\arm-none-eabi\4.9.3\include</string>
-        </Includes>
         <Optimization>Off</Optimization>
         <OptimizationPriority>None</OptimizationPriority>
       </ToolChain>
@@ -60,5 +54,4 @@
     <string>CommonHal\CommonHal.veproj</string>
     <string>Utils\Utils.veproj</string>
   </References>
-  <IsBuilding>false</IsBuilding>
 </Project>
