@@ -23,6 +23,11 @@ namespace AvalonStudio.Controls.ViewModels
                 result = new ProjectFolderViewModel(item as IProjectFolder) as ProjectItemViewModel<IProjectFolder>;
             }
 
+            if(item is ISourceFile)
+            {
+                result = new SourceFileViewModel(item as ISourceFile);
+            }
+
             return result;
         }
     }

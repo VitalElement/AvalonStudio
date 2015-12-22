@@ -44,9 +44,9 @@
             </Grid>
           </TreeDataTemplate>
 
-          <TreeDataTemplate DataType="ViewModels:ProjectFileViewModel">
+          <TreeDataTemplate DataType="ViewModels:SourceFileViewModel">
             <StackPanel Orientation="Horizontal">
-              <Panel Width="15" Height="15" Background="Gray" Margin="0 0 5 0">
+              <Panel Width="15" Height="15" Background="#A07cbb78" Margin="0 0 5 0">
 
                 <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
               </Panel>

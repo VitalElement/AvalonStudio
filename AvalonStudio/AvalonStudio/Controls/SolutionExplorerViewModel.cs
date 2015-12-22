@@ -74,17 +74,22 @@
             solution.OpenedLocation = location;
         }
 
-        private ReactiveObject selectedItem;
-        public ReactiveObject SelectedItem 
+        private ProjectItemViewModel selectedItem;
+        public ProjectItemViewModel SelectedItem 
         {
             get { return selectedItem; }
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedItem, value);
+
+                if(SelectedItemChanged != null)
+                {
+                    SelectedItemChanged(this, value);
+                }
             }
         }
 
-        public event EventHandler<ReactiveObject> SelectedItemChanged;
+        public event EventHandler<ProjectItemViewModel> SelectedItemChanged;
 
         public ObservableCollection<ProjectItemViewModel> Projects { get; set; }
 

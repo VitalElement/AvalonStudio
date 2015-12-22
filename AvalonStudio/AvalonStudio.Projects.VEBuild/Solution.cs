@@ -40,7 +40,10 @@
                 project.ResolveReferences();
             }
 
-            solution.Name = Path.GetFileNameWithoutExtension(directory);            
+            solution.Name = Path.GetFileNameWithoutExtension(directory);
+
+            //Hard coded for demonstration.
+            solution.StartupProject = solution.Projects.Single((p) => p.Name.Contains("LCD"));
 
             return solution;
         }

@@ -196,9 +196,6 @@
     <Compile Include="Controls\PackageManagerDialog.paml.cs">
       <DependentUpon>PackageManagerDialog.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ProjectFileViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ProjectFolderViewModel.cs">
       <DependentUpon>SolutionExplorer.paml</DependentUpon>
     </Compile>
@@ -208,8 +205,12 @@
     <Compile Include="Controls\ProjectViewModel.cs">
       <DependentUpon>SolutionExplorer.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ReferenceFolderViewModel.cs" />
-    <Compile Include="Controls\ReferenceViewModel.cs" />
+    <Compile Include="Controls\ReferenceFolderViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ReferenceViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SolutionExplorerView.paml.cs">
       <DependentUpon>SolutionExplorer.paml</DependentUpon>
     </Compile>
@@ -220,6 +221,9 @@
       <DependentUpon>SolutionExplorer.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SolutionViewModel.cs">
+      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SourceFileViewModel.cs">
       <DependentUpon>SolutionExplorer.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\StandardProjectViewModel.cs">

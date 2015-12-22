@@ -24,7 +24,7 @@ namespace AvalonStudio.Projects.VEBuild
         }
 
         [JsonIgnore]
-        public IProject Project { get; private set; }
+        public IProject Project { get; set; }
 
         [JsonIgnore]
         public Language Language
