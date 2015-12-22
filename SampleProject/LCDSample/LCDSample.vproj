@@ -1,0 +1,18 @@
+{
+  "Name": "LCDSample",
+  "Type": "StaticLibrary",
+  "References": [
+    {
+      "Name": "STM32F4Cube",
+      "GitUrl": "https://gitlab.com/GXDesign/STM32F4Cube.git"
+    }
+  ],
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "ServoController.cpp"
+    }
+  ]
+}
