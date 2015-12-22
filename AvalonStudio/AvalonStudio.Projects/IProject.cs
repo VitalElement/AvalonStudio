@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public interface IProject
+    public interface IProject : IProjectFolder
     {
         string Name { get; }
 
@@ -11,12 +11,7 @@
         /// <summary>
         /// List of references with the project.
         /// </summary>
-        IList<IProject> References { get; }
-
-        /// <summary>
-        /// List of files within the project.
-        /// </summary>
-        IList<ISourceFile> SourceFiles { get; }
+        IList<IProject> References { get; }        
 
         /// <summary>
         /// The directory the project file resides in.

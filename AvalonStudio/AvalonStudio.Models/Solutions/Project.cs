@@ -528,7 +528,7 @@
             }
         }
 
-        public IList<ISourceFile> SourceFiles
+        public IList<ISourceFile> Items
         {
             get
             {
@@ -541,6 +541,14 @@
             get
             {
                 return SelectedConfiguration.ToolChain;
+            }
+        }
+
+        IList<IProjectItem> IProjectFolder.Items
+        {
+            get
+            {
+                throw new NotImplementedException();
             }
         }
         #endregion
