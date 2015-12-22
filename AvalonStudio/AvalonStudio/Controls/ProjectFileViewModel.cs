@@ -9,15 +9,15 @@
         {
         }
 
-        public override bool CanAcceptDrop(Type type)
-        {
-            return false;
-        }
+        //public override bool CanAcceptDrop(Type type)
+        //{
+        //    return false;
+        //}
 
-        public override void Drop(ProjectItemViewModel item)
-        {
+        //public override void Drop(ProjectItemViewModel item)
+        //{
 
-        }
+        //}
 
         
         new public ProjectFile Model

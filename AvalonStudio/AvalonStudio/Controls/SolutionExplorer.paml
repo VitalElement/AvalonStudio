@@ -10,9 +10,9 @@
               <TextBlock Text="{Binding Title}" />
           </TreeDataTemplate>
           
-          <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding References}">
+          <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Items}">
             <StackPanel Orientation="Horizontal">
-              <Panel Width="15" Height="15" Background="#8631c7" Margin="0 0 5 0">
+              <Panel Width="15" Height="15" Background="#A08631c7" Margin="0 0 5 0">
 
                 <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
               </Panel>
@@ -23,7 +23,7 @@
           <TreeDataTemplate DataType="ViewModels:ReferenceFolderViewModel" ItemsSource="{Binding References}">
             <Grid RowDefinitions="*,*">
               <StackPanel Orientation="Horizontal">
-                <Panel Width="15" Height="15" Background="#c4c4c4" Margin="0 0 5 0">
+                <Panel Width="15" Height="15" Background="#A0c4c4c4" Margin="0 0 5 0">
                   
                   <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
                 </Panel>                
@@ -35,7 +35,7 @@
           <TreeDataTemplate DataType="ViewModels:ReferenceViewModel">
             <Grid RowDefinitions="*,*">
               <StackPanel Orientation="Horizontal">
-                <Panel Width="15" Height="15" Background="#c4c4c4" Margin="0 0 5 0">
+                <Panel Width="15" Height="15" Background="#A0c4c4c4" Margin="0 0 5 0">
 
                   <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
                 </Panel>
@@ -54,9 +54,9 @@
             </StackPanel>
           </TreeDataTemplate>
 
-          <TreeDataTemplate DataType="ViewModels:ProjectFolderViewModel" ItemsSource="{Binding Children}">
+          <TreeDataTemplate DataType="ViewModels:ProjectFolderViewModel" ItemsSource="{Binding Items}">
             <StackPanel Orientation="Horizontal">
-              <Panel Width="15" Height="15" Background="Gray" Margin="0 0 5 0">
+              <Panel Width="15" Height="15" Background="#A0DBA769" Margin="0 0 5 0">
 
                 <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
               </Panel>
@@ -66,7 +66,7 @@
 
           <TreeDataTemplate DataType="ViewModels:ProjectViewModel" ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal">
-              <Panel Width="15" Height="15" Background="#8631c7" Margin="0 0 5 0">
+              <Panel Width="15" Height="15" Background="#A08631c7" Margin="0 0 5 0">
 
                 <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
               </Panel>

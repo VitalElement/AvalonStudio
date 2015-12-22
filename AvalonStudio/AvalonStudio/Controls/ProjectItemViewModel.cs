@@ -14,8 +14,25 @@ namespace AvalonStudio.Controls.ViewModels
 
     public abstract class ProjectItemViewModel : ViewModel
     {
-        public ProjectItemViewModel()
-        { 
+        public static ProjectItemViewModel Create(IProjectItem item)
+        {
+            ProjectItemViewModel result = null;
+
+            if (item is IProjectFolder)
+            {
+                result = new ProjectFolderViewModel(item as IProjectFolder) as ProjectItemViewModel<IProjectFolder>;
+            }
+
+            return result;
+        }
+    }
+
+    public abstract class ProjectItemViewModel<T> : ProjectItemViewModel  where T : IProjectItem
+    {
+        public ProjectItemViewModel(T model)
+        {
+            Model = model;
+
             ToggleEditingModeCommand = ReactiveCommand.Create();
 
             ToggleEditingModeCommand.Subscribe(args =>
@@ -53,14 +70,16 @@ namespace AvalonStudio.Controls.ViewModels
             labelVisibility = true;
         }
 
-        public abstract bool CanAcceptDrop(Type type);
-
-        public abstract void Drop(ProjectItemViewModel item);
+        new T Model
+        {
+            get { return (T)base.Model; }
+            set { base.Model = value; }
+        }
 
         public string Title
         {
-            get { return this.Model.FileName; }
-            set { this.Model.FileName = value; this.RaisePropertyChanged(); IsEditingTitle = false; }
+            get { return this.Model.Name; }
+           // set { this.Model.Name = value; this.RaisePropertyChanged(); IsEditingTitle = false; }
         }
 
         public int NumberOfSelections { get; set; }
@@ -85,41 +104,6 @@ namespace AvalonStudio.Controls.ViewModels
             }
         }
 
-        public bool IsExpanded
-        {
-            get { return Model.UserData.IsExpanded; }
-            set
-            {
-                if (!IsEditingTitle)
-                {
-                    Model.UserData.IsExpanded = value;
-                    this.RaisePropertyChanged();
-                }
-            }
-        }
-        
-        new public Item Model
-        {
-            get { return base.Model as Item; }            
-        }
-
-        public static ProjectItemViewModel Create(Item item)
-        {
-            ProjectItemViewModel result = null;
-
-            //if (item is Project)
-            //{
-            //    result = ProjectViewModel.Create(item as IProject);
-            //}
-
-            //if (item is SolutionFolder)
-            //{
-            //    result = SolutionFolderViewModel.Create(item as SolutionFolder);
-            //}
-
-            return result;
-        }
-
         public ReactiveCommand<object> RemoveItemCommand { get; private set; }
         public ReactiveCommand<object> ToggleEditingModeCommand { get; private set; }
         public ReactiveCommand<object> OpenInExplorerCommand { get; protected set; }
@@ -139,80 +123,5 @@ namespace AvalonStudio.Controls.ViewModels
         }
 
 
-    }
-
-    public abstract class ProjectParentViewModel<T> : ProjectItemViewModel where T : ProjectFolder
-    {
-        public ProjectParentViewModel(T model)
-        {
-            Children = new ObservableCollection<ViewModel>();
-            Children.BindCollections((model as ProjectFolder).Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.Model == m);
-
-            AddNewFolderCommand = ReactiveCommand.Create();
-            AddNewFolderCommand.Subscribe((args) =>
-          {
-               //Workspace.Instance.ModalDialog = new NewFolderDialogViewModel (this.model as ProjectFolder);
-               // Workspace.Instance.ModalDialog.ShowDialog ();
-           });
-
-
-            AddNewFileCommand = ReactiveCommand.Create();
-            AddNewFileCommand.Subscribe((args) =>
-           {
-               //Workspace.Instance.ModalDialog = new NewFileDialogViewModel (this.model as ProjectFolder);
-               //Workspace.Instance.ModalDialog.ShowDialog ();
-           });
-
-
-            AddExistingFileCommand = ReactiveCommand.Create();
-            AddExistingFileCommand.Subscribe(async (o) =>
-          {
-              var ofd = new OpenFileDialog();
-
-              ofd.InitialDirectory = (model as ProjectFolder).CurrentDirectory;
-               //ofd.Filters.Add(new FileDialogFilter() {  = "C Source Files (*.c;*.h;*.cpp;*.hpp)|*.c;*.h;*.cpp;*.hpp|All Files (*.*)|*.*";
-
-               var result = await ofd.ShowAsync();
-
-              if (result.Length == 1)
-              {
-                  (this.Model as ProjectFolder).AddExistingFile(result[0]);
-              }
-          });
-
-            ImportFolderCommand = ReactiveCommand.Create();
-            ImportFolderCommand.Subscribe((o) =>
-           {
-               //FolderBrowserDialog fbd = new FolderBrowserDialog();
-
-               //fbd.SelectedPath = (model as ProjectFolder).CurrentDirectory;
-
-               //if (fbd.ShowDialog () == DialogResult.OK)
-               //{
-               //    (model as ProjectFolder).ImportFolder (fbd.SelectedPath);
-               //}
-           });
-
-            AddNewItemCommand = ReactiveCommand.Create();
-            AddNewItemCommand.Subscribe((o) =>
-           {
-               //Workspace.Instance.ModalDialog = new NewItemDialogViewModel (model as ProjectFolder);
-               //Workspace.Instance.ModalDialog.ShowDialog ();
-           });
-        }
-
-        public ReactiveCommand<object> AddNewFolderCommand { get; private set; }
-        public ReactiveCommand<object> AddNewFileCommand { get; private set; }
-        public ReactiveCommand<object> AddNewItemCommand { get; private set; }
-        public ReactiveCommand<object> AddExistingFileCommand { get; private set; }
-        public ReactiveCommand<object> ImportFolderCommand { get; private set; }
-
-
-        private ObservableCollection<ViewModel> children;
-        public ObservableCollection<ViewModel> Children
-        {
-            get { return children; }
-            set { this.RaiseAndSetIfChanged(ref children, value); }
-        }
-    }
+    }    
 }

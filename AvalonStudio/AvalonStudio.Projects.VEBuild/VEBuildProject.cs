@@ -22,6 +22,23 @@
         [JsonIgnore]
         public bool IsBuilding { get; set; }
 
+        public static StandardProjectFolder GetSubFolders(string path)
+        {
+            StandardProjectFolder result = new StandardProjectFolder(Path.GetFileName(path));
+
+            var folders = Directory.GetDirectories(path);
+
+            if(folders.Count() > 0)
+            {                
+                foreach(var folder in folders)
+                {
+                    result.Items.Add(GetSubFolders(folder));
+                }
+            }
+
+            return result;
+        }
+
         public static VEBuildProject Load(string filename, ISolution solution)
         {
             var project = Deserialize(filename);
@@ -29,13 +46,32 @@
             project.Location = filename;
             project.SetSolution(solution);
 
+            var folders = GetSubFolders(project.CurrentDirectory);
+
+            project.Items = new List<IProjectItem>();
+
+            foreach(var item in folders.Items)
+            {
+                project.Items.Add(item);
+            }
+
             foreach (var file in project.SourceFiles)
             {
                 (file as SourceFile)?.SetProject(project);
-            }
+
+                var pathStructure = file.Location.Split(Path.DirectorySeparatorChar);
+                
+
+                foreach(var part in pathStructure)
+                {
+
+                }
+            }            
 
             return project;
         }
+
+        
 
         public static VEBuildProject Create(string directory, string name)
         {
