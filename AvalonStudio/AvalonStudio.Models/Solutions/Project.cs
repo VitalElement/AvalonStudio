@@ -551,6 +551,14 @@
                 throw new NotImplementedException();
             }
         }
+
+        public IList<ISourceFile> SourceFiles
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
         #endregion
 
         public static string NormalizePath (string path)
