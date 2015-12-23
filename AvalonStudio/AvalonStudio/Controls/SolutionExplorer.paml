@@ -3,7 +3,15 @@
              Background="#2D2D30" Foreground="WhiteSmoke">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
-      <TextBlock Text="Solution Explorer"  Margin="10,4,0,0"/>
+      <Grid Height="6" Margin="0 0 10 0">
+        <Grid.Background>
+          <ImageBrush Source="resource://application/AvalonStudio.Resources.grip_pattern.png" TileMode="FlipY" Stretch="Uniform"
+                               AlignmentY="Center" SourceRect="0,0,4,3000" DestinationRect="0,0,4,3000" />
+        </Grid.Background>
+      </Grid>
+      <Panel Background="#2d2d2d" HorizontalAlignment="Left">
+        <TextBlock Text="Solution Explorer" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0"/>
+      </Panel>
       <TreeView Grid.Row="1" BorderThickness="0" Background="#252526" Items="{Binding Solution}" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
         <TreeView.DataTemplates>
           <TreeDataTemplate DataType="ViewModels:SolutionViewModel" ItemsSource="{Binding Projects}">
