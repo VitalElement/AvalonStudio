@@ -1,4 +1,5 @@
 # AvalonStudio
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/VitalElement/AvalonStudio?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge)
 Cross platform IDE on Perspex for Perspex
 
 A very early look.
