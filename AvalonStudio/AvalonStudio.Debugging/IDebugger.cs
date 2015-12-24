@@ -1,12 +1,12 @@
 ﻿namespace AvalonStudio.Debugging
 {
-    using Projects;
     using Projects.Standard;
     using System;
     using System.Collections.Generic;
-    using Toolchains;
+    using System.ComponentModel.Composition;
     using Toolchains.Standard;
     using Utils;
+
     public enum DebuggerState
     {
         NotRunning,
@@ -23,6 +23,7 @@
         Natural
     }
 
+    [InheritedExport(typeof(IDebugger))]
     public interface IDebugger
     {
         DebuggerState State { get; }
