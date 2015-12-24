@@ -36,7 +36,7 @@
 
         public TextEditor()
         {
-            Name = "textEditor";            
+            Name = "textEditor";
             textChangedDelayTimer = new DispatcherTimer();
             textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
@@ -87,7 +87,7 @@
 
                         Color markerColor;
 
-                        switch(diag.Level)
+                        switch (diag.Level)
                         {
                             case DiagnosticLevel.Error:
                             case DiagnosticLevel.Fatal:
@@ -103,7 +103,7 @@
                                 break;
 
                         }
-                        
+
 
                         textMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
                     }
@@ -152,7 +152,7 @@
         }
 
         public static readonly PerspexProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
-        TextView.BeforeTextChangedCommandProperty.AddOwner<TextEditor>();        
+        TextView.BeforeTextChangedCommandProperty.AddOwner<TextEditor>();
 
         public System.Windows.Input.ICommand BeforeTextChangedCommand
         {
@@ -654,7 +654,7 @@
                     textView.DocumentLineTransformers.Add(new DefineTextLineTransformer());
                     textView.DocumentLineTransformers.Add(new IncludeTextLineTransformer());
 
-                    if(textMarkerService != null)
+                    if (textMarkerService != null)
                     {
                         textView.BackgroundRenderers.Remove(textMarkerService);
                     }

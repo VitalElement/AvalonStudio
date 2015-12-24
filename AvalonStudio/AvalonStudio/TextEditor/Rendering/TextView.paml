@@ -6,8 +6,8 @@
                 BorderThickness="0"
                 Padding="0">
           <Grid ColumnDefinitions="Auto,*">
-            <StackPanel Name="marginContainer" Orientation="Horizontal" Cursor="Arrow">
-            </StackPanel>
+            <StackPanel Name="marginContainer" Orientation="Horizontal" Cursor="Arrow" />
+            
             <Rectangle Name="textSurface" Grid.Column="1" IsHitTestVisible="false" />           
                         
             <ContentPresenter Content="{TemplateBinding Content}" Grid.Column="1" IsHitTestVisible="false"
