@@ -11,10 +11,16 @@
         <TextBlock Text="Error List" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0"/>
       </Panel>
 
-      <ListBox Grid.Row="1"  Items="{Binding Errors}" BorderThickness="0">
+      <ListBox Grid.Row="1"  Items="{Binding Errors}" BorderThickness="0" Background="#252526">
         <ListBox.DataTemplates>
           <DataTemplate DataType="vm:ErrorViewModel">
-            <TextBlock Text="{Binding Spelling}" />
+            <Grid ColumnDefinitions="50, *, 200, 200, 100">
+              <Rectangle Height="18" Width="18" Fill="{Binding LevelBrush}" />
+              <TextBlock Grid.Column="1"  Text="{Binding Spelling}" />
+              <TextBlock Grid.Column="2"  Text="{Binding Project}" />
+              <TextBlock Grid.Column="3"  Text="{Binding File}" />
+              <TextBlock Grid.Column="4"  Text="{Binding Line}" />              
+            </Grid>            
           </DataTemplate>
         </ListBox.DataTemplates>
       </ListBox>

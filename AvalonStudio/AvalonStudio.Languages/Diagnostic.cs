@@ -1,4 +1,6 @@
-﻿namespace AvalonStudio.Languages
+﻿using AvalonStudio.Projects;
+
+namespace AvalonStudio.Languages
 {
     public enum DiagnosticLevel
     {
@@ -11,7 +13,9 @@
 
     public class Diagnostic
     {
+        public IProject Project { get; set; }
         public int Offset { get; set; }
+        public int Line { get; set; }
         public int Length { get; set; }
         public string File { get; set; }
         public string Spelling { get; set; }

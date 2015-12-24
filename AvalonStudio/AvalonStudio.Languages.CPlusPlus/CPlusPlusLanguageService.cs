@@ -324,7 +324,9 @@
                 {
                     result.Diagnostics.Add(new Diagnostic()
                     {
+                        Project = file.Project,
                         Offset = diag.Location.FileLocation.Offset,
+                        Line = diag.Location.FileLocation.Line,
                         Spelling = diag.Spelling,
                         File = diag.Location.FileLocation.File.FileName,
                         Level = (DiagnosticLevel)diag.Severity
