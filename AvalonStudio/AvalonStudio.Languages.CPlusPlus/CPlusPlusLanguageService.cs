@@ -8,13 +8,14 @@
     using System.IO;
     using Projects;
     using Projects.Standard;
+    using System.Runtime.CompilerServices;
     public class CPlusPlusLanguageService : ILanguageService
     {
         private ClangIndex clangIndex;
 
-        private ClangTranslationUnit translationUnit;
         private bool translationUnitIsDirty;
         private static ClangIndex index = ClangService.CreateIndex();
+        private static ConditionalWeakTable<ISourceFile, ClangTranslationUnit> translationUnits = new ConditionalWeakTable<ISourceFile, ClangTranslationUnit>();
 
         public string Title
         {
@@ -125,28 +126,37 @@
                     args.Add("-Weverything");
                 }
 
-                if (translationUnit == null || translationUnitIsDirty)
-                {
-                    if (this.translationUnit != null)
-                    {
-                        this.translationUnit.Reparse(unsavedFiles.ToArray(), this.translationUnit.DefaultReparseOptions);
+                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
+            }
 
-                        result = this.translationUnit;
-                    }
-                    else
-                    {
-                        result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
-                    }
-                }
-
-                translationUnitIsDirty = false;
+            if(result == null)
+            {
+                throw new Exception("Error generating translation unit.");
             }
 
             return result;
         }
 
-        public List<CodeCompletionData> CodeCompleteAt(string fileName, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
+        private ClangTranslationUnit GetAndParseTranslationUnit(ISourceFile sourceFile, List<ClangUnsavedFile> unsavedFiles)
         {
+            ClangTranslationUnit result = null;
+
+            if(!translationUnits.TryGetValue(sourceFile, out result))
+            {
+                result = GenerateTranslationUnit(sourceFile, unsavedFiles);
+
+                translationUnits.Add(sourceFile, result);
+            }
+            else
+            {
+                result.Reparse(unsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
+            }
+
+            return result;
+        }
+
+        public List<CodeCompletionData> CodeCompleteAt(ISourceFile file, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
+        {            
             List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
 
             foreach (var unsavedFile in unsavedFiles)
@@ -154,7 +164,9 @@
                 clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
             }
 
-            var completionResults = translationUnit.CodeCompleteAt(fileName, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
+            var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+
+            var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
             completionResults.Sort();
 
             Console.WriteLine(completionResults.Contexts);
@@ -202,19 +214,11 @@
                 clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
             }
 
-            if (translationUnit == null)
-            {
-                translationUnit = GenerateTranslationUnit(file, clangUnsavedFiles);
-            }
-            else
-            {
-                translationUnit.Reparse(clangUnsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
-            }
+            var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);            
 
             if (file != null)
             {
                 var callbacks = new NClang.ClangIndexerCallbacks();
-
 
                 callbacks.IndexDeclaration += (handle, e) =>
                 {
@@ -316,12 +320,15 @@
 
             foreach (var diag in diags)
             {
-                result.Diagnostics.Add(new Diagnostic()
+                if (diag.Location.IsFromMainFile)
                 {
-                    Offset = diag.Location.FileLocation.Offset,
-                    Spelling = diag.Spelling,
-                    Level = (DiagnosticLevel)diag.Severity
-                });
+                    result.Diagnostics.Add(new Diagnostic()
+                    {
+                        Offset = diag.Location.FileLocation.Offset,
+                        Spelling = diag.Spelling,
+                        Level = (DiagnosticLevel)diag.Severity
+                    });
+                }
             }
 
             return result;
