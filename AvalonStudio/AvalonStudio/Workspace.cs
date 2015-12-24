@@ -10,7 +10,7 @@
     using Models;
     using Languages;
     using Projects;
-
+    using System.Linq;
     [Export(typeof(Workspace))]
     public class Workspace : ReactiveObject
     {
@@ -29,6 +29,7 @@
             SolutionExplorer = new SolutionExplorerViewModel();
             Editor = new EditorViewModel(editor);
             Console = new ConsoleViewModel();
+            ErrorList = new ErrorListViewModel();
             StatusBar = new StatusBarViewModel();
 
             StatusBar.LineNumber = 1;
@@ -45,6 +46,53 @@
                 //} catch(Exception) {
 
                 //}
+            };
+
+            this.editor.CodeAnalysisCompleted += (sender, e)=>
+            {
+                var allErrors = new List<ErrorViewModel>();
+                var toRemove = new List<ErrorViewModel>();
+
+
+                foreach (var diagnostic in editor.CodeAnalysisResults.Diagnostics)
+                {
+                    //if (diagnostic.Location.FileLocation.File.FileName.NormalizePath() == document.FilePath.NormalizePath())
+                    {
+                        var error = new ErrorViewModel(diagnostic);
+                        var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
+
+                        if (matching == null)
+                        {
+                            allErrors.Add(error);
+                        }
+                    }
+                }
+
+                foreach (var error in ErrorList.Errors)
+                {
+                    var matching = allErrors.SingleOrDefault((err) => err.IsEqual(error));
+
+                    if (matching == null)
+                    {
+                        toRemove.Add(error);
+                    }
+                }
+
+                foreach (var error in toRemove)
+                {                    
+                    ErrorList.Errors.Remove(error);
+                }
+
+                foreach(var error in allErrors)
+                {
+                    var matching = ErrorList.Errors.SingleOrDefault((err) => err.IsEqual(error));
+
+                    if (matching == null)
+                    {
+                        //hasChanged = true;
+                        ErrorList.Errors.Add(error);
+                    }
+                }
             };
 
             //Task.Factory.StartNew(async () =>
@@ -79,6 +127,8 @@
         public EditorViewModel Editor { get; private set; }
 
         public ConsoleViewModel Console { get; private set; }
+
+        public ErrorListViewModel ErrorList { get; private set; }
 
         public StatusBarViewModel StatusBar { get; private set; }
 

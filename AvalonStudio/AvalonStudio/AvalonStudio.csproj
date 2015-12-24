@@ -171,11 +171,16 @@
     <Compile Include="Controls\ConsoleViewModel.cs">
       <DependentUpon>Console.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ErrorViewModel.cs" />
     <Compile Include="Controls\Editor.paml.cs">
       <DependentUpon>Editor.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Editor\Editor.cs" />
     <Compile Include="Controls\Editor\EditorViewModel.cs" />
+    <Compile Include="Controls\ErrorList.paml.cs">
+      <DependentUpon>ErrorList.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ErrorListViewModel.cs" />
     <Compile Include="Controls\Intellisense.paml.cs">
       <DependentUpon>Intellisense.paml</DependentUpon>
     </Compile>
@@ -343,12 +348,15 @@
     <EmbeddedResource Include="Controls\SolutionExplorer.paml" />
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
-    <EmbeddedResource Include="Controls\Intellisense.paml" />
+    <EmbeddedResource Include="Controls\Intellisense.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\MetroWindow.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
     <None Include="app.config" />
+    <EmbeddedResource Include="Controls\ErrorList.paml" />
     <None Include="packages.config" />
     <EmbeddedResource Include="TextEditor\TextEditor.paml">
       <SubType>Designer</SubType>
