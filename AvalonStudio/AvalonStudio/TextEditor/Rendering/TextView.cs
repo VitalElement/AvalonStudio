@@ -13,7 +13,7 @@
     using System.Linq;
     using System.Reactive.Linq;
 
-    public class TextView : TemplatedControl, IScrollable
+    public class TextView : ContentControl, IScrollable
     {
         private Grid mainGrid;
         private Grid textViewGrid;

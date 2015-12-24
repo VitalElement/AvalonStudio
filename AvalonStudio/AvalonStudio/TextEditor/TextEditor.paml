@@ -21,7 +21,9 @@
                             SelectionStart="{TemplateBinding SelectionStart}"
                             SelectionEnd="{TemplateBinding SelectionEnd}"
                             Foreground="{TemplateBinding Foreground}"
-                            TextDocument="{TemplateBinding TextDocument}"/>
+                            TextDocument="{TemplateBinding TextDocument}" 
+                            Content="{TemplateBinding Content}"/>
+            
           </ScrollViewer>
         </Border>
       </ControlTemplate>
