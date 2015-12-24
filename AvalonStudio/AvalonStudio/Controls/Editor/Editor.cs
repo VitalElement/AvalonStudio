@@ -97,6 +97,10 @@
             {
                 textChangedSemaphore.Release();
             }
+
+            OnBeforeTextChanged(null);
+
+            
         }
 
         public void Save()
@@ -245,16 +249,24 @@
             }
         }
 
-        public void OnTextChanged(object param)
+        /// <summary>
+        /// Write lock must be held before calling this.
+        /// </summary>
+        private void TriggerCodeAnalysis()
         {
-            IsDirty = true;
-
             editorLock.ExitWriteLock();
 
             if (textChangedSemaphore.CurrentCount == 0)
             {
                 textChangedSemaphore.Release();
             }
+        }
+
+        public void OnTextChanged(object param)
+        {
+            IsDirty = true;
+
+            TriggerCodeAnalysis();
         }
 
         private void CodeCompletionThread()
