@@ -389,6 +389,10 @@
       <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
       <Name>AvalonStudio.Projects</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains\AvalonStudio.Toolchains.csproj">
+      <Project>{fc693e81-70bc-4972-bfa8-19d3db8fb1cc}</Project>
+      <Name>AvalonStudio.Toolchains</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\grip_pattern.png" />

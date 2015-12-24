@@ -11,18 +11,24 @@
     using Languages;
     using Projects;
     using System.Linq;
+    using Toolchains;
+
     [Export(typeof(Workspace))]
     public class Workspace : ReactiveObject
     {
         private readonly EditorModel editor;
         private readonly IEnumerable<ILanguageService> languageServices;
+        private readonly IEnumerable<IToolChain> toolChains;
+
         public static Workspace Instance = null;
 
         [ImportingConstructor]
-        public Workspace(EditorModel editor, [ImportMany] IEnumerable<ILanguageService> languageServices)
+        public Workspace(EditorModel editor, [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IToolChain> toolChains)
         {
             this.editor = editor;
             this.languageServices = languageServices;
+            this.toolChains = toolChains;
+
             AvalonStudioService.Initialise();
 
             MainMenu = new MainMenuViewModel();
@@ -38,78 +44,20 @@
 
             SolutionExplorer.SelectedItemChanged += (sender, e) =>
             {
-                //try {
                 if (e is SourceFileViewModel)
                 {
                     Editor.Model.OpenFile((e as SourceFileViewModel).Model as ISourceFile);
                 }
-                //} catch(Exception) {
-
-                //}
             };
 
-            this.editor.CodeAnalysisCompleted += (sender, e)=>
+            this.editor.CodeAnalysisCompleted += (sender, e) =>
             {
-                var allErrors = new List<ErrorViewModel>();
-                var toRemove = new List<ErrorViewModel>();
-
-
-                foreach (var diagnostic in editor.CodeAnalysisResults.Diagnostics)
-                {
-                    //if (diagnostic.Location.FileLocation.File.FileName.NormalizePath() == document.FilePath.NormalizePath())
-                    {
-                        var error = new ErrorViewModel(diagnostic);
-                        var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
-
-                        if (matching == null)
-                        {
-                            allErrors.Add(error);
-                        }
-                    }
-                }
-
-                foreach (var error in ErrorList.Errors)
-                {
-                    var matching = allErrors.SingleOrDefault((err) => err.IsEqual(error));
-
-                    if (matching == null)
-                    {
-                        toRemove.Add(error);
-                    }
-                }
-
-                foreach (var error in toRemove)
-                {                    
-                    ErrorList.Errors.Remove(error);
-                }
-
-                foreach(var error in allErrors)
-                {
-                    var matching = ErrorList.Errors.SingleOrDefault((err) => err.IsEqual(error));
-
-                    if (matching == null)
-                    {
-                        //hasChanged = true;
-                        ErrorList.Errors.Add(error);
-                    }
-                }
+                InvalidateErrors();
             };
-
-            //Task.Factory.StartNew(async () =>
-            //{
-            //   var repo = await Repository.DownloadCatalog();
-
-            //    foreach(var package in repo.Packages)
-            //    {
-            //        Console.WriteLine(package.Name);
-            //    }
-
-            //   // MainMenu.LoadProjectCommand.Execute(null);
-            //});
 
             ProcessCancellationToken = new CancellationTokenSource();
 
-            ModalDialog = new ModalDialogViewModelBase("Dialog");// new PackageManagerDialogViewModel();
+            ModalDialog = new ModalDialogViewModelBase("Dialog");
         }
 
         public IEnumerable<ILanguageService> LanguageServices
@@ -117,6 +65,61 @@
             get
             {
                 return languageServices;
+            }
+        }
+
+        public IEnumerable<IToolChain> ToolChains
+        {
+            get
+            {
+                return toolChains;
+            }
+        }
+
+        public void InvalidateErrors()
+        {
+            var allErrors = new List<ErrorViewModel>();
+            var toRemove = new List<ErrorViewModel>();
+
+
+            foreach (var diagnostic in editor.CodeAnalysisResults.Diagnostics)
+            {
+                //if (diagnostic.Location.FileLocation.File.FileName.NormalizePath() == document.FilePath.NormalizePath())
+                {
+                    var error = new ErrorViewModel(diagnostic);
+                    var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
+
+                    if (matching == null)
+                    {
+                        allErrors.Add(error);
+                    }
+                }
+            }
+
+            foreach (var error in ErrorList.Errors)
+            {
+                var matching = allErrors.SingleOrDefault((err) => err.IsEqual(error));
+
+                if (matching == null)
+                {
+                    toRemove.Add(error);
+                }
+            }
+
+            foreach (var error in toRemove)
+            {
+                ErrorList.Errors.Remove(error);
+            }
+
+            foreach (var error in allErrors)
+            {
+                var matching = ErrorList.Errors.SingleOrDefault((err) => err.IsEqual(error));
+
+                if (matching == null)
+                {
+                    //hasChanged = true;
+                    ErrorList.Errors.Add(error);
+                }
             }
         }
 
