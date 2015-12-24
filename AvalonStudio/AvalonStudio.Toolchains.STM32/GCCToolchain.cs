@@ -11,6 +11,11 @@
 
     public class GccToolChain : StandardToolChain
     {
+        public GccToolChain() : base (new ToolchainSettings())
+        {
+
+        }
+
         public GccToolChain(ToolchainSettings settings) : base(settings)
         {
         }
