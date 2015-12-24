@@ -644,6 +644,11 @@
                     textView.DocumentLineTransformers.Add(new DefineTextLineTransformer());
                     textView.DocumentLineTransformers.Add(new IncludeTextLineTransformer());
 
+                    if(textMarkerService != null)
+                    {
+                        textView.BackgroundRenderers.Remove(textMarkerService);
+                    }
+
                     textMarkerService = new TextMarkerService(this);
                     textView.BackgroundRenderers.Add(textMarkerService);
 
