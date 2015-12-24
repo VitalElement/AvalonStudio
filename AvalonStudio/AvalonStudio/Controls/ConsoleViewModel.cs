@@ -5,28 +5,46 @@
     using Models;
     using ReactiveUI;
     using Models.Tools;
+    using TextEditor.Document;
+    using ReactiveUI;
 
     public class ConsoleViewModel : ReactiveObject, IConsole
-    {        
-        private string text;
-        public string Text
+    {
+        public ConsoleViewModel()
         {
-            get { return text; }
-            set { this.RaiseAndSetIfChanged(ref text, value); }
+            Document = new TextDocument();
+        }
+
+
+        public TextDocument Document { get; private set; }
+
+        private int caretIndex;
+        public int CaretIndex
+        {
+            get { return caretIndex; }
+            set { this.RaiseAndSetIfChanged(ref caretIndex, value); }
+        }
+
+        private void ScrollToEnd ()
+        {
+            CaretIndex = Document.TextLength;
         }
 
         public void Clear()
         {
-			Dispatcher.UIThread.InvokeAsync (() => {
-				Text = string.Empty;
-			});
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Document.Text = string.Empty;                
+            });
         }
 
         public void Write(char data)
-		{
-			Dispatcher.UIThread.InvokeAsync (() => {
-				Text += data;
-			});
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Document.Insert(Document.TextLength, data.ToString());
+                ScrollToEnd();
+            });
         }
 
         public void Write(string data)
@@ -35,16 +53,19 @@
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Text += data;
+                    Document.Insert(Document.TextLength, data);
+                    ScrollToEnd();
                 });
             }
         }
 
         public void WriteLine()
-        {            
-			Dispatcher.UIThread.InvokeAsync (() => {
-				Text += Environment.NewLine;
-			});
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Document.Insert(Document.TextLength, Environment.NewLine);
+                ScrollToEnd();
+            });
         }
 
         public void WriteLine(string data)
@@ -53,7 +74,8 @@
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Text += data + Environment.NewLine;
+                    Document.Insert(Document.TextLength, data + Environment.NewLine);
+                    ScrollToEnd();
                 });
             }
         }
