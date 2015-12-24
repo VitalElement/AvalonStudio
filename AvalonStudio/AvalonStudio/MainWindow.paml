@@ -15,7 +15,15 @@
     </Grid>
 
     <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="1 1 2 2">
-      <Controls:Console DataContext="{Binding Console}" />
+      <TabControl TabStripPlacement="Bottom">
+        <TabItem Header="Console">
+          <Controls:Console DataContext="{Binding Console}" />
+        </TabItem>
+
+        <TabItem Header="Error List">
+          <Controls:ErrorList DataContext="{Binding ErrorList}" />
+        </TabItem>
+      </TabControl>      
     </Grid>
 
     <Grid Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Margin="2 2 1 2">

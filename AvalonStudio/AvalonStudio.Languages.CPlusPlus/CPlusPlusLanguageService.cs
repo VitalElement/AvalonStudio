@@ -326,6 +326,7 @@
                     {
                         Offset = diag.Location.FileLocation.Offset,
                         Spelling = diag.Spelling,
+                        File = diag.Location.FileLocation.File.FileName,
                         Level = (DiagnosticLevel)diag.Severity
                     });
                 }
