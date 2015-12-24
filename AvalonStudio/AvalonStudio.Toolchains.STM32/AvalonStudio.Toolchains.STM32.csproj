@@ -7,8 +7,8 @@
     <ProjectGuid>{B761D8E3-611E-434F-887A-8225416F51B8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AvalonStudio.Toolchains.Clang</RootNamespace>
-    <AssemblyName>AvalonStudio.Toolchains.Clang</AssemblyName>
+    <RootNamespace>AvalonStudio.Toolchains.STM32</RootNamespace>
+    <AssemblyName>AvalonStudio.Toolchains.STM32</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
