@@ -15,10 +15,6 @@
 
     public class TextView : ContentControl, IScrollable
     {
-        private Grid mainGrid;
-        private Grid textViewGrid;
-        private StackPanel margins;
-
         #region Constructors
         static TextView()
         {
