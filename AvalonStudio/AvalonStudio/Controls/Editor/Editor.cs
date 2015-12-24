@@ -179,10 +179,10 @@
             {
                 codeCompletionResults = value;
 
-                //if(CodeCompletionRequestCompleted != null)
-                //{
-                //    CodeCompletionRequestCompleted(this, new EventArgs());
-                //}
+                if (CodeCompletionRequestCompleted != null)
+                {
+                    CodeCompletionRequestCompleted(this, new EventArgs());
+                }
             }
         }
 

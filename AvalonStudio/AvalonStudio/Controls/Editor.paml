@@ -17,8 +17,8 @@
                        PunctuationBrush="#D4D4D4"
                        UserTypeBrush="#4BB289">
 
-          <te:TextEditor.Content>
-            <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="{Binding Position}" />     
+          <te:TextEditor.Content>            
+            <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="{Binding Position}" />            
           </te:TextEditor.Content>
         </te:TextEditor>
     </Grid>
