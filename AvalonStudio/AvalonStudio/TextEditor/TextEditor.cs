@@ -4,6 +4,7 @@
     using Indentation;
     using Indentation.CSharp;
     using Languages;
+    using OmniXaml.Attributes;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Controls.Primitives;
@@ -20,7 +21,8 @@
     using System.Linq;
     using System.Reactive.Linq;
 
-    public class TextEditor : ContentControl
+    [ContentProperty("Content")]
+    public class TextEditor : TemplatedControl
     {
         #region Contructors
         static TextEditor()
@@ -150,12 +152,20 @@
         }
 
         public static readonly PerspexProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
-        TextView.BeforeTextChangedCommandProperty.AddOwner<TextEditor>();
+        TextView.BeforeTextChangedCommandProperty.AddOwner<TextEditor>();        
 
         public System.Windows.Input.ICommand BeforeTextChangedCommand
         {
             get { return GetValue(BeforeTextChangedCommandProperty); }
             set { SetValue(BeforeTextChangedCommandProperty, value); }
+        }
+
+        public static readonly PerspexProperty<object> ContentProperty = TextView.ContentProperty.AddOwner<TextEditor>();
+
+        public object Content
+        {
+            get { return GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
         }
 
         public static readonly PerspexProperty<System.Windows.Input.ICommand> TextChangedCommandProperty =
