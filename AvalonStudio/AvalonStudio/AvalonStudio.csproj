@@ -389,6 +389,10 @@
       <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
       <Name>AvalonStudio.Projects</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj">
+      <Project>{b761d8e3-611e-434f-887a-8225416f51b8}</Project>
+      <Name>AvalonStudio.Toolchains.STM32</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains\AvalonStudio.Toolchains.csproj">
       <Project>{fc693e81-70bc-4972-bfa8-19d3db8fb1cc}</Project>
       <Name>AvalonStudio.Toolchains</Name>
