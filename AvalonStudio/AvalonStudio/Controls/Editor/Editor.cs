@@ -68,6 +68,7 @@
                 }
             }
 
+            unsavedFile = null;
             ShutdownBackgroundWorkers();
 
             try
@@ -266,7 +267,7 @@
 
                     if (LanguageService != null)
                     {
-                        var results = LanguageService.CodeCompleteAt(sourceFile.Location, beginCompletionLocation.Line, beginCompletionLocation.Column, UnsavedFiles, filter);
+                        var results = LanguageService.CodeCompleteAt(sourceFile, beginCompletionLocation.Line, beginCompletionLocation.Column, UnsavedFiles, filter);
 
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
