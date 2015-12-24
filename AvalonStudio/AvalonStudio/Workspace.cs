@@ -1,16 +1,17 @@
 ﻿namespace AvalonStudio
 {
-    using Controls.ViewModels;
     using Controls;
+    using Controls.ViewModels;
+    using Debugging;
+    using Languages;
+    using Models;
     using Models.Platform;
+    using Projects;
+    using ReactiveUI;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
-    using System.Threading;
-    using ReactiveUI;
-    using Models;
-    using Languages;
-    using Projects;
     using System.Linq;
+    using System.Threading;
     using Toolchains;
 
     [Export(typeof(Workspace))]
@@ -19,15 +20,17 @@
         private readonly EditorModel editor;
         private readonly IEnumerable<ILanguageService> languageServices;
         private readonly IEnumerable<IToolChain> toolChains;
+        private readonly IEnumerable<IDebugger> debuggers;
 
         public static Workspace Instance = null;
 
         [ImportingConstructor]
-        public Workspace(EditorModel editor, [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IToolChain> toolChains)
+        public Workspace(EditorModel editor, [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers)
         {
             this.editor = editor;
             this.languageServices = languageServices;
             this.toolChains = toolChains;
+            this.debuggers = debuggers;
 
             AvalonStudioService.Initialise();
 
@@ -73,6 +76,14 @@
             get
             {
                 return toolChains;
+            }
+        }
+
+        public IEnumerable<IDebugger> Debuggers
+        {
+            get
+            {
+                return debuggers;
             }
         }
 
