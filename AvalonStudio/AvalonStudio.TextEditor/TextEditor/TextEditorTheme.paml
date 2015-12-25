@@ -1,4 +1,0 @@
-﻿<Styles xmlns="https://github.com/perspex">
-  <StyleInclude Source="resource://application/AvalonStudio.TextEditor/TextEditor.TextEditor.paml"/>
-  <StyleInclude Source="resource://application/AvalonStudio.TextEditor/TextEditor.Rendering.TextView.paml"/>
-</Styles>
