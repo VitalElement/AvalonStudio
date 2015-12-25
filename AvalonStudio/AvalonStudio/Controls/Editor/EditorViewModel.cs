@@ -11,6 +11,7 @@
     using Perspex.Input;
     using Languages;
     using TextEditor.Rendering;
+    using TextEditor;
     public class EditorViewModel : ViewModel<EditorModel>
     {
         #region Constructors
@@ -76,7 +77,11 @@
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
             backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
             backgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
-            backgroundRenderers.Add(new SelectionBackgroundRenderer());            
+            backgroundRenderers.Add(new SelectionBackgroundRenderer());
+
+            margins = new ObservableCollection<TextViewMargin>();
+            margins.Add(new BreakPointMargin());
+            margins.Add(new LineNumberMargin());  
         }
         #endregion
 
@@ -104,7 +109,12 @@
             set { this.RaiseAndSetIfChanged(ref documentLineTransformers, value); }
         }
 
-
+        private ObservableCollection<TextViewMargin> margins;
+        public ObservableCollection<TextViewMargin> Margins
+        {
+            get { return margins; }
+            set { this.RaiseAndSetIfChanged(ref margins, value); }
+        }
 
         private string wordAtCaret;
         public string WordAtCaret

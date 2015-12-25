@@ -112,7 +112,6 @@
 
         #region Private Data
         private TextView textView;
-        private StackPanel marginsContainer;
         private readonly DispatcherTimer textChangedDelayTimer;
         #endregion
 
@@ -159,6 +158,15 @@
         {
             get { return GetValue(ContentProperty); }
             set { SetValue(ContentProperty, value); }
+        }
+
+        public static readonly PerspexProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
+            TextView.MarginsProperty.AddOwner<TextEditor>();
+
+        public ObservableCollection<TextViewMargin> Margins
+        {
+            get { return GetValue(MarginsProperty); }
+            set { SetValue(MarginsProperty, value); }
         }
 
         public static readonly PerspexProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
@@ -259,15 +267,6 @@
         {
             get { return GetValue(SelectionEndProperty); }
             set { SetValue(SelectionEndProperty, value); }
-        }
-
-        public static readonly PerspexProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
-            PerspexProperty.Register<TextEditor, ObservableCollection<TextViewMargin>>(nameof(Margins));
-
-        public ObservableCollection<TextViewMargin> Margins
-        {
-            get { return GetValue(MarginsProperty); }
-            set { SetValue(MarginsProperty, value); }
         }
         
         public static readonly PerspexProperty<IIndentationStrategy> IndentationStrategyProperty = PerspexProperty.Register<TextEditor, IIndentationStrategy>(nameof(IndentationStrategy));
@@ -552,23 +551,14 @@
 
         #endregion
 
-        #region Public Methods
-        public void InstallMargin(Control margin)
-        {
-            textView.InstallMargin(margin);
-        }
+        #region Public Methods        
         #endregion
 
         #region Overrides
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             textView = e.NameScope.Find<TextView>("textView");
-            textView.Cursor = new Cursor(StandardCursorType.Ibeam);
-
-            marginsContainer = e.NameScope.Find<StackPanel>("marginContainer");
-
-            InstallMargin(new BreakPointMargin());
-            InstallMargin(new LineNumberMargin());
+            textView.Cursor = new Cursor(StandardCursorType.Ibeam);            
 
             //textView.BackgroundRenderers.Clear();
             //textView.DocumentLineTransformers.Clear();

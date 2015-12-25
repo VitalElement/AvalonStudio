@@ -6,7 +6,13 @@
                 BorderThickness="0"
                 Padding="0">
           <Grid ColumnDefinitions="Auto,*">
-            <StackPanel Name="marginContainer" Orientation="Horizontal" Cursor="Arrow" />
+            <ItemsControl Items="{TemplateBinding Margins}" Cursor="Arrow">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+            </ItemsControl>
             
             <Rectangle Name="textSurface" Grid.Column="1" IsHitTestVisible="false" />           
                         
