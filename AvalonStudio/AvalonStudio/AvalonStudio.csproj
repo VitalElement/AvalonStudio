@@ -255,74 +255,7 @@
     <Compile Include="MVVM\ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="TextEditor\BreakPointMargin.cs" />
-    <Compile Include="TextEditor\Document\DocumentChangedEventArgs.cs" />
-    <Compile Include="TextEditor\Document\DocumentChangeOperation.cs" />
-    <Compile Include="TextEditor\Document\DocumentLine.cs" />
-    <Compile Include="TextEditor\Document\DocumentLineTree.cs" />
-    <Compile Include="TextEditor\Document\DocumentTextWriter.cs" />
-    <Compile Include="TextEditor\Document\IDocument.cs" />
-    <Compile Include="TextEditor\Document\ILineTracker.cs" />
-    <Compile Include="TextEditor\Document\ITextAnchor.cs" />
-    <Compile Include="TextEditor\Document\ITextSource.cs" />
-    <Compile Include="TextEditor\Document\IUndoableOperation.cs" />
-    <Compile Include="TextEditor\Document\LineManager.cs" />
-    <Compile Include="TextEditor\Document\LineNode.cs" />
-    <Compile Include="TextEditor\Document\NewLineFinder.cs" />
-    <Compile Include="TextEditor\Document\OffsetChangeMap.cs" />
-    <Compile Include="TextEditor\Document\RopeTextSource.cs" />
-    <Compile Include="TextEditor\Document\SimpleSegment.cs" />
-    <Compile Include="TextEditor\Document\TextAnchor.cs" />
-    <Compile Include="TextEditor\Document\TextAnchorNode.cs" />
-    <Compile Include="TextEditor\Document\TextAnchorTree.cs" />
-    <Compile Include="TextEditor\Document\TextDocument.cs" />
-    <Compile Include="TextEditor\Document\TextLocation.cs" />
-    <Compile Include="TextEditor\Document\TextSegment.cs" />
-    <Compile Include="TextEditor\Document\TextSegmentCollection.cs" />
-    <Compile Include="TextEditor\Document\TextSourceVersionProvider.cs" />
-    <Compile Include="TextEditor\Document\TextUtilities.cs" />
-    <Compile Include="TextEditor\Document\UndoOperationGroup.cs" />
-    <Compile Include="TextEditor\Document\UndoStack.cs" />
-    <Compile Include="TextEditor\Document\WeakLineTracker.cs" />
-    <Compile Include="TextEditor\Indentation\CSharp\CSharpIndentationStrategy.cs" />
-    <Compile Include="TextEditor\Indentation\CSharp\DocumentAssessor.cs" />
-    <Compile Include="TextEditor\Indentation\CSharp\IndentationReformatter.cs" />
-    <Compile Include="TextEditor\Indentation\DefaultIndentationStrategy.cs" />
-    <Compile Include="TextEditor\Indentation\IIndentationStrategy.cs" />
-    <Compile Include="TextEditor\LineNumberMargin.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
-    <Compile Include="TextEditor\Rendering\ColumnLimitBackgroundRenderer.cs" />
-    <Compile Include="TextEditor\Rendering\DefineTextLineTransformer.cs" />
-    <Compile Include="TextEditor\Rendering\IBackgroundRenderer.cs" />
-    <Compile Include="TextEditor\Rendering\IDocumentLineTransformer.cs" />
-    <Compile Include="TextEditor\Rendering\IncludeTextLineTransformer.cs" />
-    <Compile Include="TextEditor\Rendering\PragmaMarkTextLineTransformer.cs" />
-    <Compile Include="TextEditor\Rendering\SelectedLineBackgroundRenderer.cs" />
-    <Compile Include="TextEditor\Rendering\SelectedWordTextLineTransformer.cs" />
-    <Compile Include="TextEditor\Rendering\SelectionBackgroundRenderer.cs" />
-    <Compile Include="TextEditor\Rendering\TextColoringTransformer.cs" />
-    <Compile Include="TextEditor\Rendering\TextMarkerService.cs" />
-    <Compile Include="TextEditor\Rendering\TextTransformation.cs" />
-    <Compile Include="TextEditor\Rendering\VisualLineGeometryBuilder.cs" />
-    <Compile Include="TextEditor\TextEditor.cs" />
-    <Compile Include="TextEditor\Rendering\TextViewMargin.cs" />
-    <Compile Include="TextEditor\Rendering\TextView.cs" />
-    <Compile Include="TextEditor\Rendering\TextViewPosition.cs" />
-    <Compile Include="TextEditor\TextEditorTheme.paml.cs">
-      <DependentUpon>TextEditorTheme.paml</DependentUpon>
-    </Compile>
-    <Compile Include="TextEditor\Utils\CallbackOnDispose.cs" />
-    <Compile Include="TextEditor\Utils\CharRope.cs" />
-    <Compile Include="TextEditor\Utils\DelayedEvents.cs" />
-    <Compile Include="TextEditor\Utils\Deque.cs" />
-    <Compile Include="TextEditor\Utils\Empty.cs" />
-    <Compile Include="TextEditor\Utils\ImmutableStack.cs" />
-    <Compile Include="TextEditor\Utils\Rope.cs" />
-    <Compile Include="TextEditor\Utils\RopeNode.cs" />
-    <Compile Include="TextEditor\Utils\RopeTextReader.cs" />
-    <Compile Include="TextEditor\Utils\ThrowUtil.cs" />
-    <Compile Include="TextEditor\Utils\WeakEventManagerBase.cs" />
-    <Compile Include="TextEditor\Rendering\VisualLine.cs" />
     <Compile Include="ToolViewModel.cs" />
     <Compile Include="Workspace.cs" />
     <EmbeddedResource Include="MainWindow.paml">
@@ -358,11 +291,6 @@
     <None Include="app.config" />
     <EmbeddedResource Include="Controls\ErrorList.paml" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="TextEditor\TextEditor.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TextEditor\TextEditorTheme.paml" />
-    <EmbeddedResource Include="TextEditor\Rendering\TextView.paml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\nclang\NClang\NClang.csproj">
@@ -392,6 +320,10 @@
     <ProjectReference Include="..\AvalonStudio.Projects\AvalonStudio.Projects.csproj">
       <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
       <Name>AvalonStudio.Projects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
+      <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
+      <Name>AvalonStudio.TextEditor</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj">
       <Project>{b761d8e3-611e-434f-887a-8225416f51b8}</Project>
