@@ -22,7 +22,10 @@
                             SelectionEnd="{TemplateBinding SelectionEnd}"
                             Foreground="{TemplateBinding Foreground}"
                             TextDocument="{TemplateBinding TextDocument}" 
-                            Content="{TemplateBinding Content}"/>
+                            Content="{TemplateBinding Content}" 
+                            BackgroundRenderers="{TemplateBinding BackgroundRenderers}"
+                            DocumentLineTransformers="{TemplateBinding DocumentLineTransformers}"     
+                         />
             
           </ScrollViewer>
         </Border>

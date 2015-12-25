@@ -161,6 +161,24 @@
             set { SetValue(ContentProperty, value); }
         }
 
+        public static readonly PerspexProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
+            TextView.BackgroundRenderersProperty.AddOwner<TextEditor>();
+
+        public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
+        {
+            get { return GetValue(BackgroundRenderersProperty); }
+            set { SetValue(BackgroundRenderersProperty, value); }
+        }
+
+        public static readonly PerspexProperty<ObservableCollection<IDocumentLineTransformer>> DocumentLineTransformersProperty =
+            TextView.DocumentLineTransformersProperty.AddOwner<TextEditor>();
+
+        public ObservableCollection<IDocumentLineTransformer> DocumentLineTransformers
+        {
+            get { return GetValue(DocumentLineTransformersProperty); }
+            set { SetValue(DocumentLineTransformersProperty, value); }
+        }
+
         public static readonly PerspexProperty<System.Windows.Input.ICommand> TextChangedCommandProperty =
             TextView.TextChangedCommandProperty.AddOwner<TextEditor>();
 
@@ -552,13 +570,13 @@
             InstallMargin(new BreakPointMargin());
             InstallMargin(new LineNumberMargin());
 
-            textView.BackgroundRenderers.Clear();
-            textView.DocumentLineTransformers.Clear();
+            //textView.BackgroundRenderers.Clear();
+            //textView.DocumentLineTransformers.Clear();
 
-            textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
-            textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
-            textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
-            textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));
+            //textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
+            //textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
+            //textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
+            //textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));
 
             TextDocumentProperty.Changed.Subscribe((args) =>
             {
