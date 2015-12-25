@@ -3,7 +3,7 @@
     using Document;
     using Perspex.Media;
 
-    class SelectionBackgroundRenderer : IBackgroundRenderer
+    public class SelectionBackgroundRenderer : IBackgroundRenderer
     {
         public SelectionBackgroundRenderer()
         {

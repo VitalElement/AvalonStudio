@@ -10,6 +10,7 @@
     using Perspex.VisualTree;
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Reactive.Linq;
 
@@ -29,9 +30,7 @@
 
             GetObservable(CaretIndexProperty)
                 .Subscribe(CaretIndexChanged);
-
-            backgroundRenderers = new List<IBackgroundRenderer>();
-            documentLineTransformers = new List<IDocumentLineTransformer>();
+            
             VisualLines = new List<VisualLine>();
         }
         #endregion
@@ -69,6 +68,24 @@
         {
             get { return GetValue(TextWrappingProperty); }
             set { SetValue(TextWrappingProperty, value); }
+        }
+
+        public static readonly PerspexProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
+            PerspexProperty.Register<TextView, ObservableCollection<IBackgroundRenderer>>(nameof(BackgroundRenderers), new ObservableCollection<IBackgroundRenderer>());
+
+        public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
+        {
+            get { return GetValue(BackgroundRenderersProperty); }
+            set { SetValue(BackgroundRenderersProperty, value); }
+        }
+
+        public static readonly PerspexProperty<ObservableCollection<IDocumentLineTransformer>> DocumentLineTransformersProperty =
+            PerspexProperty.Register<TextView, ObservableCollection<IDocumentLineTransformer>>(nameof(DocumentLineTransformers), new ObservableCollection<IDocumentLineTransformer>());
+
+        public ObservableCollection<IDocumentLineTransformer> DocumentLineTransformers
+        {
+            get { return GetValue(DocumentLineTransformersProperty); }
+            set { SetValue(DocumentLineTransformersProperty, value); }
         }
 
         public static readonly PerspexProperty<string> FontFamilyProperty = TextEditor.FontFamilyProperty.AddOwner<TextView>();
@@ -180,21 +197,7 @@
 
         #region Properties
         public Size CharSize { get; set; }
-
-        private List<IBackgroundRenderer> backgroundRenderers;
-        public List<IBackgroundRenderer> BackgroundRenderers
-        {
-            get { return backgroundRenderers; }
-            set { backgroundRenderers = value; }
-        }
-
-        private List<IDocumentLineTransformer> documentLineTransformers;
-        public List<IDocumentLineTransformer> DocumentLineTransformers
-        {
-            get { return documentLineTransformers; }
-            set { documentLineTransformers = value; }
-        }
-
+        
         public Action InvalidateScroll
         {
             get;

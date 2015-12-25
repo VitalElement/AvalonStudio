@@ -7,32 +7,32 @@
 
     public class SelectedWordTextLineTransformer : IDocumentLineTransformer
     {
-        public SelectedWordTextLineTransformer(TextEditor editor)
+        public SelectedWordTextLineTransformer()
         {
-            this.editor = editor;
             this.highlightBrush = Brush.Parse("#113D6F");
         }
-
-        private TextEditor editor;
+                
         private Brush highlightBrush;
+
+        public string SelectedWord { get; set; }
 
         public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
         {
-            if(!string.IsNullOrEmpty(editor.SelectedWord) && line.RenderedText.Text.Contains (editor.SelectedWord))
+            if(!string.IsNullOrEmpty(SelectedWord) && line.RenderedText.Text.Contains (SelectedWord))
             {
                 int startIndex = 0;
 
                 while (startIndex != -1)
                 {
-                    startIndex = line.RenderedText.Text.IndexOf(editor.SelectedWord, startIndex);
+                    startIndex = line.RenderedText.Text.IndexOf(SelectedWord, startIndex);
 
                     if (startIndex != -1)
                     {
-                        var rect = VisualLineGeometryBuilder.GetRectsForSegment(textView, new TextSegment() { StartOffset = startIndex + line.Offset, EndOffset = startIndex + line.Offset + editor.SelectedWord.Length }).First();
+                        var rect = VisualLineGeometryBuilder.GetRectsForSegment(textView, new TextSegment() { StartOffset = startIndex + line.Offset, EndOffset = startIndex + line.Offset + SelectedWord.Length }).First();
 
                         context.FillRectangle(highlightBrush, rect);
 
-                        startIndex += editor.SelectedWord.Length;
+                        startIndex += SelectedWord.Length;
                     }                    
                 }
             }

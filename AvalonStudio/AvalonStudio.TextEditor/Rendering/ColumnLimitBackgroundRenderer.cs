@@ -1,13 +1,8 @@
 ﻿namespace AvalonStudio.TextEditor.Rendering
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Perspex.Media;
 
-    class ColumnLimitBackgroundRenderer : IBackgroundRenderer
+    public class ColumnLimitBackgroundRenderer : IBackgroundRenderer
     {
         private Brush brush = Brush.Parse("#30E4E4E4");
 

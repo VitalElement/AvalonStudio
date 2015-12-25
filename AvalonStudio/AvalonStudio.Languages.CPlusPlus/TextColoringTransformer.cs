@@ -3,10 +3,10 @@
     using Languages;
     using Perspex;
     using Perspex.Media;
-    using TextEditor.Rendering;
-    using TextEditor;
-    using TextEditor.Document;
     using Perspex.Threading;
+    using TextEditor.Document;
+    using TextEditor.Rendering;
+
     public class TextColoringTransformer : IDocumentLineTransformer
     {
         public TextColoringTransformer(TextDocument document)
@@ -15,13 +15,13 @@
 
             TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
-            //CommentBrush = "#559A3F" CallExpressionBrush = "Yellow" CaretLocation = "{Binding CaretLocation}" SelectedWord = "{Binding WordAtCaret}"
-            //           LineHeight = "{Binding LineHeight}"
-            //           IdentifierBrush = "#D4D4D4"
-            //           KeywordBrush = "#569CD6"
-            //           LiteralBrush = "#D69D85"
-            //           PunctuationBrush = "#D4D4D4"
-            //           UserTypeBrush = "#4BB289"
+            CommentBrush = Brush.Parse("#559A3F");
+            CallExpressionBrush = Brush.Parse("Yellow");
+            IdentifierBrush = Brush.Parse("#D4D4D4");
+            KeywordBrush = Brush.Parse("#569CD6");
+            LiteralBrush = Brush.Parse("#D69D85");
+            PunctuationBrush = Brush.Parse("#D4D4D4");
+            UserTypeBrush = Brush.Parse("#4BB289");
         }
 
         private TextDocument document;
