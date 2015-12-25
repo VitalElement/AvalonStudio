@@ -24,7 +24,8 @@
                             TextDocument="{TemplateBinding TextDocument}" 
                             Content="{TemplateBinding Content}" 
                             BackgroundRenderers="{TemplateBinding BackgroundRenderers}"
-                            DocumentLineTransformers="{TemplateBinding DocumentLineTransformers}"     
+                            DocumentLineTransformers="{TemplateBinding DocumentLineTransformers}"    
+                            Margins="{TemplateBinding Margins}"
                          />
             
           </ScrollViewer>

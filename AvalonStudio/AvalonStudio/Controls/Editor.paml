@@ -10,7 +10,7 @@
                        TextChangedDelay="225" CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
                        AcceptsReturn="true" AcceptsTab="true" TabCharacter="{Binding TabCharacter}"
                        CaretLocation="{Binding CaretLocation}" SelectedWord="{Binding WordAtCaret}"
-                       LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}">
+                       LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}" Margins="{Binding Margins}">
           
           <te:TextEditor.Content>            
             <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="{Binding Position}" />            
