@@ -83,6 +83,8 @@
             if(LanguageService != null)
             {
                 Workspace.Instance.StatusBar.Language = LanguageService.Title;
+
+                LanguageService.RegisterSourceFile(file, TextDocument);
             }
 
             StartBackgroundWorkers();
@@ -99,8 +101,6 @@
             }
 
             OnBeforeTextChanged(null);
-
-            
         }
 
         public void Save()
