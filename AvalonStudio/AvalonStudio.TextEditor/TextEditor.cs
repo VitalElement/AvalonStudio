@@ -2,8 +2,6 @@
 {
     using Document;
     using Indentation;
-    using Indentation.CSharp;
-    using Languages;
     using OmniXaml.Attributes;
     using Perspex;
     using Perspex.Controls;
@@ -13,7 +11,6 @@
     using Perspex.Interactivity;
     using Perspex.Media;
     using Perspex.Threading;
-    using ReactiveUI;
     using Rendering;
     using System;
     using System.Collections.Generic;
@@ -30,8 +27,6 @@
             TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>((s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));
 
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
-
-            SyntaxHighlightingDataProperty.Changed.AddClassHandler<TextEditor>((s, v) => s.InvalidateVisual());
         }
 
         public TextEditor()
@@ -58,58 +53,58 @@
                 horizontalScrollBarVisibility,
                 BindingPriority.Style);
 
-            SyntaxHighlightingDataProperty.Changed.Subscribe((args) =>
-            {
-                if (TextColorizer != null)
-                {
-                    TextColorizer.SetTransformations();
-                }
-            });
+            //SyntaxHighlightingDataProperty.Changed.Subscribe((args) =>
+            //{
+            //    if (TextColorizer != null)
+            //    {
+            //        TextColorizer.SetTransformations();
+            //    }
+            //});
 
-            DiagnosticsProperty.Changed.Subscribe((args) =>
-            {
-                if (textMarkerService != null && args.NewValue != null)
-                {
-                    var diags = args.NewValue as List<Diagnostic>;
+            //DiagnosticsProperty.Changed.Subscribe((args) =>
+            //{
+            //    if (textMarkerService != null && args.NewValue != null)
+            //    {
+            //        var diags = args.NewValue as List<Diagnostic>;
 
-                    textMarkerService.Clear();
+            //        textMarkerService.Clear();
 
-                    foreach (var diag in diags)
-                    {
-                        var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, diag.Offset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
+            //        foreach (var diag in diags)
+            //        {
+            //            var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, diag.Offset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
 
-                        if (endoffset == -1)
-                        {
-                            endoffset = diag.Offset;
-                        }
+            //            if (endoffset == -1)
+            //            {
+            //                endoffset = diag.Offset;
+            //            }
 
-                        var length = endoffset - diag.Offset;
+            //            var length = endoffset - diag.Offset;
 
-                        Color markerColor;
+            //            Color markerColor;
 
-                        switch (diag.Level)
-                        {
-                            case DiagnosticLevel.Error:
-                            case DiagnosticLevel.Fatal:
-                                markerColor = Color.FromRgb(253, 45, 45);
-                                break;
+            //            switch (diag.Level)
+            //            {
+            //                case DiagnosticLevel.Error:
+            //                case DiagnosticLevel.Fatal:
+            //                    markerColor = Color.FromRgb(253, 45, 45);
+            //                    break;
 
-                            case DiagnosticLevel.Warning:
-                                markerColor = Color.FromRgb(255, 207, 40);
-                                break;
+            //                case DiagnosticLevel.Warning:
+            //                    markerColor = Color.FromRgb(255, 207, 40);
+            //                    break;
 
-                            default:
-                                markerColor = Color.FromRgb(0, 42, 74);
-                                break;
+            //                default:
+            //                    markerColor = Color.FromRgb(0, 42, 74);
+            //                    break;
 
-                        }
+            //            }
 
 
-                        textMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
-                    }
-                }
+            //            textMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
+            //        }
+            //    }
 
-            });
+            //});
 
             AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);            
         }
@@ -256,88 +251,7 @@
             get { return GetValue(MarginsProperty); }
             set { SetValue(MarginsProperty, value); }
         }
-
-        public static readonly PerspexProperty<ObservableCollection<SyntaxHighlightingData>> SyntaxHighlightingDataProperty =
-            PerspexProperty.Register<TextEditor, ObservableCollection<SyntaxHighlightingData>>(nameof(SyntaxHighlightingData));
-
-        public ObservableCollection<SyntaxHighlightingData> SyntaxHighlightingData
-        {
-            get { return GetValue(SyntaxHighlightingDataProperty); }
-            set { SetValue(SyntaxHighlightingDataProperty, value); }
-        }
-
-        public static readonly PerspexProperty<List<Diagnostic>> DiagnosticsProperty =
-            PerspexProperty.Register<TextEditor, List<Diagnostic>>(nameof(Diagnostics));
-
-        public List<Diagnostic> Diagnostics
-        {
-            get { return GetValue(DiagnosticsProperty); }
-            set { SetValue(DiagnosticsProperty, value); }
-        }
-
-        public static readonly PerspexProperty<Brush> PunctuationBrushProperty =
-            PerspexProperty.Register<TextEditor, Brush>(nameof(PunctuationBrush));
-
-        public Brush PunctuationBrush
-        {
-            get { return GetValue(PunctuationBrushProperty); }
-            set { SetValue(PunctuationBrushProperty, value); }
-        }
-
-        public static readonly PerspexProperty<Brush> KeywordBrushProperty =
-            PerspexProperty.Register<TextEditor, Brush>(nameof(KeywordBrush));
-
-        public Brush KeywordBrush
-        {
-            get { return GetValue(KeywordBrushProperty); }
-            set { SetValue(KeywordBrushProperty, value); }
-        }
-
-        public static readonly PerspexProperty<Brush> IdentifierBrushProperty =
-            PerspexProperty.Register<TextEditor, Brush>(nameof(IdentifierBrush));
-
-        public Brush IdentifierBrush
-        {
-            get { return GetValue(IdentifierBrushProperty); }
-            set { SetValue(IdentifierBrushProperty, value); }
-        }
-
-        public static readonly PerspexProperty<Brush> LiteralBrushProperty =
-            PerspexProperty.Register<TextEditor, Brush>(nameof(LiteralBrush));
-
-        public Brush LiteralBrush
-        {
-            get { return GetValue(LiteralBrushProperty); }
-            set { SetValue(LiteralBrushProperty, value); }
-        }
-
-        public static readonly PerspexProperty<Brush> UserTypeBrushProperty =
-            PerspexProperty.Register<TextEditor, Brush>(nameof(UserTypeBrush));
-
-        public Brush UserTypeBrush
-        {
-            get { return GetValue(UserTypeBrushProperty); }
-            set { SetValue(UserTypeBrushProperty, value); }
-        }
-
-        public static readonly PerspexProperty<Brush> CallExpressionBrushProperty =
-            PerspexProperty.Register<TextEditor, Brush>(nameof(CallExpressionBrush));
-
-        public Brush CallExpressionBrush
-        {
-            get { return GetValue(CallExpressionBrushProperty); }
-            set { SetValue(CallExpressionBrushProperty, value); }
-        }
-
-        public static readonly PerspexProperty<Brush> CommentBrushProperty =
-            PerspexProperty.Register<TextEditor, Brush>(nameof(CommentBrush));
-
-        public Brush CommentBrush
-        {
-            get { return GetValue(CommentBrushProperty); }
-            set { SetValue(CommentBrushProperty, value); }
-        }
-
+        
         public static readonly PerspexProperty<IIndentationStrategy> IndentationStrategyProperty = PerspexProperty.Register<TextEditor, IIndentationStrategy>(nameof(IndentationStrategy));
 
         public IIndentationStrategy IndentationStrategy
@@ -356,7 +270,6 @@
         #endregion
 
         #region Properties
-        public TextColoringTransformer TextColorizer { get; set; }
         public TextView TextView { get { return textView; } }
         public ScrollViewer ScrollViewer { get; set; }        
         #endregion
@@ -628,8 +541,6 @@
         }
         #endregion
 
-        private TextMarkerService textMarkerService;
-
         #region Overrides
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
@@ -652,21 +563,7 @@
             TextDocumentProperty.Changed.Subscribe((args) =>
             {
                 if (args.NewValue != null)
-                {
-                    TextColorizer = new TextColoringTransformer(this);
-                    textView.DocumentLineTransformers.Add(TextColorizer);
-                    textView.DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
-                    textView.DocumentLineTransformers.Add(new DefineTextLineTransformer());
-                    textView.DocumentLineTransformers.Add(new IncludeTextLineTransformer());
-
-                    if (textMarkerService != null)
-                    {
-                        textView.BackgroundRenderers.Remove(textMarkerService);
-                    }
-
-                    textMarkerService = new TextMarkerService(this);
-                    textView.BackgroundRenderers.Add(textMarkerService);
-
+                {                                                            
                     TextDocument.Changing += (sender, ee) =>
                     {
                         TextDocument?.UndoStack.StartUndoGroup();

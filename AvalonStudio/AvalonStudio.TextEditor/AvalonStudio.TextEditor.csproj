@@ -170,15 +170,11 @@
     <Compile Include="Indentation\IIndentationStrategy.cs" />
     <Compile Include="LineNumberMargin.cs" />
     <Compile Include="Rendering\ColumnLimitBackgroundRenderer.cs" />
-    <Compile Include="Rendering\DefineTextLineTransformer.cs" />
     <Compile Include="Rendering\IBackgroundRenderer.cs" />
     <Compile Include="Rendering\IDocumentLineTransformer.cs" />
-    <Compile Include="Rendering\IncludeTextLineTransformer.cs" />
-    <Compile Include="Rendering\PragmaMarkTextLineTransformer.cs" />
     <Compile Include="Rendering\SelectedLineBackgroundRenderer.cs" />
     <Compile Include="Rendering\SelectedWordTextLineTransformer.cs" />
     <Compile Include="Rendering\SelectionBackgroundRenderer.cs" />
-    <Compile Include="Rendering\TextColoringTransformer.cs" />
     <Compile Include="Rendering\TextMarkerService.cs" />
     <Compile Include="Rendering\TextTransformation.cs" />
     <Compile Include="Rendering\TextView.cs" />
@@ -215,12 +211,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Languages\AvalonStudio.Languages.csproj">
-      <Project>{86eba4c1-70a3-4e20-a40a-652b7d6aaadd}</Project>
-      <Name>AvalonStudio.Languages</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
