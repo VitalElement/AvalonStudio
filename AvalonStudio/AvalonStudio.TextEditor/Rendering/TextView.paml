@@ -1,4 +1,4 @@
-﻿<Styles xmlns="https://github.com/perspex" xmlns:local="clr-namespace:AvalonStudio.TextEditor.Rendering;assembly=AvalonStudio">
+﻿<Styles xmlns="https://github.com/perspex" xmlns:local="clr-namespace:AvalonStudio.TextEditor.Rendering;assembly=AvalonStudio.TextEditor">
   <Style Selector="local|TextView">
     <Setter Property="Template">
       <ControlTemplate>
