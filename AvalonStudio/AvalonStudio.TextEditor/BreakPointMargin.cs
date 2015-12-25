@@ -3,9 +3,9 @@
     using Perspex;
     using Perspex.Input;
     using Perspex.Media;
-    using Rendering;
     using System.Linq;
-    class BreakPointMargin : TextViewMargin
+
+    public class BreakPointMargin : TextViewMargin
     {
         private bool previewPointVisible = false;
 
@@ -14,20 +14,20 @@
             FocusableProperty.OverrideDefaultValue(typeof(BreakPointMargin), true);
         }
 
-        public BreakPointMargin ()
+        public BreakPointMargin()
         {
-            
+
         }
 
         public override void Render(DrawingContext context, TextInfo textInfo)
-        {            
+        {
             Width = textInfo.LineHeight;
 
             context.FillRectangle(Brush.Parse("#333333"), Bounds);
 
             if (previewPointVisible)
-            {                
-                context.FillRectangle(Brush.Parse("#631912"), new Rect(Bounds.Size.Width / 4, textInfo.LineHeight *(BpLine - textView.VisualLines.First().DocumentLine.LineNumber) + Bounds.Size.Width / 4, Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
+            {
+                context.FillRectangle(Brush.Parse("#631912"), new Rect(Bounds.Size.Width / 4, textInfo.LineHeight * (BpLine - textView.VisualLines.First().DocumentLine.LineNumber) + Bounds.Size.Width / 4, Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
             }
         }
 
@@ -43,7 +43,7 @@
             }
 
             InvalidateVisual();
-            
+
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -61,7 +61,7 @@
         protected override void OnPointerPressed(PointerPressEventArgs e)
         {
             //var result = textEditor.TextView.FormattedText.HitTestPoint(e.GetPosition(this));
-           // var line = textEditor.TextView.GetLine(result.TextPosition);
+            // var line = textEditor.TextView.GetLine(result.TextPosition);
 
             InvalidateVisual();
         }

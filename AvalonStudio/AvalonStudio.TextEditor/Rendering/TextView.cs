@@ -158,6 +158,15 @@
             set { SetValue(CaretIndexProperty, value); }
         }
 
+        public static readonly PerspexProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
+            PerspexProperty.Register<TextView, ObservableCollection<TextViewMargin>>(nameof(Margins), new ObservableCollection<TextViewMargin>());
+
+        public ObservableCollection<TextViewMargin> Margins
+        {
+            get { return GetValue(MarginsProperty); }
+            set { SetValue(MarginsProperty, value); }
+        }
+
         public static readonly PerspexProperty<int> SelectionStartProperty =
             TextBox.SelectionStartProperty.AddOwner<TextView>();
 
