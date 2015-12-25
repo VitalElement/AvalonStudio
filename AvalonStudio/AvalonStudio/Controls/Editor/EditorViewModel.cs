@@ -10,7 +10,7 @@
     using Perspex;
     using Perspex.Input;
     using Languages;
-
+    using TextEditor.Rendering;
     public class EditorViewModel : ViewModel<EditorModel>
     {
         #region Constructors
@@ -32,6 +32,20 @@
 
             model.DocumentLoaded += (sender, e) =>
             {
+                var bgRenderers = model.LanguageService.GetBackgroundRenderers(model.ProjectFile);
+
+                foreach(var bgRenderer in bgRenderers)
+                {
+                    BackgroundRenderers.Add(bgRenderer);
+                }
+
+                var textTransformers = model.LanguageService.GetDocumentLineTransformers(model.ProjectFile);
+                
+                foreach(var textTransformer in textTransformers)
+                {
+                    DocumentLineTransformers.Add(textTransformer);
+                }
+                
                 model.CodeAnalysisCompleted += (s, ee) =>
                 {                    
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
@@ -53,8 +67,20 @@
             };
 
             this.intellisense = new IntellisenseViewModel(model, this);
+
+            documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
+
+            wordAtCaretHighlighter = new SelectedWordTextLineTransformer();
+            documentLineTransformers.Add(wordAtCaretHighlighter);
+
+            backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
+            backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
+            backgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
+            backgroundRenderers.Add(new SelectionBackgroundRenderer());            
         }
         #endregion
+
+        private SelectedWordTextLineTransformer wordAtCaretHighlighter;
 
         #region Properties
         private string tabCharacter;
@@ -64,11 +90,27 @@
             set { this.RaiseAndSetIfChanged(ref tabCharacter, value); }
         }
 
+        private ObservableCollection<IBackgroundRenderer> backgroundRenderers;
+        public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
+        {
+            get { return backgroundRenderers; }
+            set { this.RaiseAndSetIfChanged(ref backgroundRenderers, value); }
+        }
+
+        private ObservableCollection<IDocumentLineTransformer> documentLineTransformers;
+        public ObservableCollection<IDocumentLineTransformer> DocumentLineTransformers
+        {
+            get { return documentLineTransformers; }
+            set { this.RaiseAndSetIfChanged(ref documentLineTransformers, value); }
+        }
+
+
+
         private string wordAtCaret;
         public string WordAtCaret
         {
             get { return wordAtCaret; }
-            set { this.RaiseAndSetIfChanged(ref wordAtCaret, value); }
+            set { this.RaiseAndSetIfChanged(ref wordAtCaret, value); wordAtCaretHighlighter.SelectedWord = value; }
         }
 
         private double lineHeight;
