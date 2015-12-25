@@ -35,20 +35,20 @@
             {
                 var bgRenderers = model.LanguageService.GetBackgroundRenderers(model.ProjectFile);
 
-                foreach(var bgRenderer in bgRenderers)
+                foreach (var bgRenderer in bgRenderers)
                 {
                     BackgroundRenderers.Add(bgRenderer);
                 }
 
                 var textTransformers = model.LanguageService.GetDocumentLineTransformers(model.ProjectFile);
-                
-                foreach(var textTransformer in textTransformers)
+
+                foreach (var textTransformer in textTransformers)
                 {
                     DocumentLineTransformers.Add(textTransformer);
                 }
-                
+
                 model.CodeAnalysisCompleted += (s, ee) =>
-                {                    
+                {
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
                     HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
                 };
@@ -81,7 +81,7 @@
 
             margins = new ObservableCollection<TextViewMargin>();
             margins.Add(new BreakPointMargin());
-            margins.Add(new LineNumberMargin());  
+            margins.Add(new LineNumberMargin());
         }
         #endregion
 
@@ -241,7 +241,7 @@
 
                                 var currentLine = TextDocument.GetLineByOffset(CaretIndex);
 
-                                
+
                                 //Model.in indentationStrategy.IndentLine(TextDocument, currentLine);
                                 //indentationStrategy.IndentLine(TextDocument, currentLine.NextLine);
                             }
@@ -254,7 +254,7 @@
         }
 
         public void OnKeyDown(KeyEventArgs e)
-        {            
+        {
             Intellisense.OnKeyDown(e);
         }
 
