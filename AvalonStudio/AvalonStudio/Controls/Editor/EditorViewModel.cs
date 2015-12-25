@@ -9,8 +9,8 @@
     using TextEditor.Document;
     using Perspex;
     using Perspex.Input;
-    using System.Windows.Input;
     using Languages;
+
     public class EditorViewModel : ViewModel<EditorModel>
     {
         #region Constructors
@@ -175,6 +175,30 @@
         public void OnKeyUp(KeyEventArgs e)
         {
             Intellisense.OnKeyUp(e);
+
+            switch (e.Key)
+            {
+                case Key.Return:
+                    {
+                        if (CaretIndex < TextDocument.TextLength)
+                        {
+                            if (TextDocument.GetCharAt(CaretIndex) == '}')
+                            {
+                                TextDocument.Insert(CaretIndex, Environment.NewLine);
+                                CaretIndex--;
+
+                                var currentLine = TextDocument.GetLineByOffset(CaretIndex);
+
+                                
+                                //Model.in indentationStrategy.IndentLine(TextDocument, currentLine);
+                                //indentationStrategy.IndentLine(TextDocument, currentLine.NextLine);
+                            }
+
+                            //indentationStrategy.IndentLine(TextDocument, TextDocument.GetLineByOffset(CaretIndex));
+                        }
+                    }
+                    break;
+            }
         }
 
         public void OnKeyDown(KeyEventArgs e)

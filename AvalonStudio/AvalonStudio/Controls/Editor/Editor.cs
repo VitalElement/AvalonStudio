@@ -56,7 +56,7 @@
         }
 
         public event EventHandler<EventArgs> DocumentLoaded;
-        public event EventHandler<EventArgs> TextChanged;
+        public event EventHandler<EventArgs> TextChanged;        
 
         public void OpenFile(ISourceFile file)
         {
@@ -70,7 +70,7 @@
 
             unsavedFile = null;
             ShutdownBackgroundWorkers();
-
+            
             try
             {
                 LanguageService = Workspace.Instance.LanguageServices.Single((o) => o.CanHandle(file));

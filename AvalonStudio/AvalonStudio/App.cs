@@ -12,7 +12,7 @@ namespace AvalonStudio
     class App : Application
     {
         public App()
-        {
+        {            
             RegisterServices();
             InitializeSubsystems((int)Environment.OSVersion.Platform);
             Styles = new DefaultTheme();

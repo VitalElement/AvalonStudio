@@ -9,7 +9,7 @@
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
-            }
+            }            
 
             var app = new App();
             var container = CompositionRoot.CreateContainer();            
