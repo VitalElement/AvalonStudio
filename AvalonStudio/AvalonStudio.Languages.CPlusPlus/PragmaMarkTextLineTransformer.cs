@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.TextEditor.Rendering
+﻿namespace AvalonStudio.Languages.CPlusPlus.Rendering
 {
-    using Document;
     using Perspex;
     using Perspex.Media;
+    using TextEditor.Rendering;
 
     class PragmaMarkTextLineTransformer : IDocumentLineTransformer
     {

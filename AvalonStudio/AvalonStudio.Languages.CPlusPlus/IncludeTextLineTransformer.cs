@@ -1,10 +1,8 @@
-﻿namespace AvalonStudio.TextEditor.Rendering
+﻿namespace AvalonStudio.Languages.CPlusPlus.Rendering
 {
-    using Document;
     using Perspex;
     using Perspex.Media;
-    using System;
-
+    using TextEditor.Rendering;
     class IncludeTextLineTransformer : IDocumentLineTransformer
     {
         private Brush brush = Brush.Parse("#D69D85");

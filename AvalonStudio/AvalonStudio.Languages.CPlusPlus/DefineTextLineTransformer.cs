@@ -1,9 +1,8 @@
-﻿namespace AvalonStudio.TextEditor.Rendering
+﻿namespace AvalonStudio.Languages.CPlusPlus.Rendering
 {
-    using AvalonStudio.TextEditor.Document;
     using Perspex;
     using Perspex.Media;
-    using System;
+    using TextEditor.Rendering;
 
     class DefineTextLineTransformer : IDocumentLineTransformer
     {

@@ -5,17 +5,13 @@
       <TextBlock Text="{Binding Title}" Margin="0,0,0,0" TextAlignment="Center" />
         <te:TextEditor Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" 
                        FontFamily="{Binding FontFamily}" FontSize="14" Foreground="#D4D4D4" BorderThickness="0"
-                       SyntaxHighlightingData ="{Binding HighlightingData}"  BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
-                       TextChangedCommand="{Binding TextChangedCommand}" Diagnostics="{Binding Diagnostics}" 
+                       BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
+                       TextChangedCommand="{Binding TextChangedCommand}"
                        TextChangedDelay="225" CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
                        AcceptsReturn="true" AcceptsTab="true" TabCharacter="{Binding TabCharacter}"
-                       CommentBrush="#559A3F" CallExpressionBrush="Yellow" CaretLocation="{Binding CaretLocation}" SelectedWord="{Binding WordAtCaret}"
+                       CaretLocation="{Binding CaretLocation}" SelectedWord="{Binding WordAtCaret}"
                        LineHeight="{Binding LineHeight}"
-                       IdentifierBrush="#D4D4D4"
-                       KeywordBrush ="#569CD6"                     
-                       LiteralBrush="#D69D85"
-                       PunctuationBrush="#D4D4D4"
-                       UserTypeBrush="#4BB289">
+                       >
 
           <te:TextEditor.Content>            
             <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="{Binding Position}" />            

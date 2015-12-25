@@ -1,32 +1,54 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus
 {
     using Models;
-    using Models.Solutions;
     using NClang;
+    using Perspex.Threading;
+    using Projects;
+    using Projects.Standard;
+    using Rendering;
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using Projects;
-    using Projects.Standard;
     using System.Runtime.CompilerServices;
+    using TextEditor.Document;
+    using TextEditor.Rendering;
+
+    class CPlusPlusDataAssociation
+    {
+        public CPlusPlusDataAssociation(TextDocument textDocument)
+        {            
+            BackgroundRenderers = new List<IBackgroundRenderer>();
+            DocumentLineTransformers = new List<IDocumentLineTransformer>();
+
+            TextColorizer = new TextColoringTransformer(textDocument);
+
+            DocumentLineTransformers.Add(TextColorizer);
+            DocumentLineTransformers.Add(new DefineTextLineTransformer());
+            DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
+            DocumentLineTransformers.Add(new IncludeTextLineTransformer());
+        }
+
+        public ClangTranslationUnit TranslationUnit { get; set; }
+        public TextColoringTransformer TextColorizer { get; set; }        
+        public List<IBackgroundRenderer> BackgroundRenderers { get; private set; }
+        public List<IDocumentLineTransformer> DocumentLineTransformers { get; private set; }
+    }
+
     public class CPlusPlusLanguageService : ILanguageService
     {
-        private ClangIndex clangIndex;
-
-        private bool translationUnitIsDirty;
         private static ClangIndex index = ClangService.CreateIndex();
-        private static ConditionalWeakTable<ISourceFile, ClangTranslationUnit> translationUnits = new ConditionalWeakTable<ISourceFile, ClangTranslationUnit>();
+        private static ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations = new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
+
+        public CPlusPlusLanguageService()
+        {
+            
+        }
 
         public string Title
         {
             get { return "C/C++"; }
         }
-
-        public CPlusPlusLanguageService()
-        {
-            clangIndex = ClangService.CreateIndex();
-        }
-
+        
         private NClang.ClangTranslationUnit GenerateTranslationUnit(ISourceFile file, List<ClangUnsavedFile> unsavedFiles)
         {
             NClang.ClangTranslationUnit result = null;
@@ -137,22 +159,32 @@
             return result;
         }
 
-        private ClangTranslationUnit GetAndParseTranslationUnit(ISourceFile sourceFile, List<ClangUnsavedFile> unsavedFiles)
+        private CPlusPlusDataAssociation GetAssociatedData (ISourceFile sourceFile)
         {
-            ClangTranslationUnit result = null;
+            CPlusPlusDataAssociation result = null;
 
-            if(!translationUnits.TryGetValue(sourceFile, out result))
+            if (!dataAssociations.TryGetValue(sourceFile, out result))
             {
-                result = GenerateTranslationUnit(sourceFile, unsavedFiles);
-
-                translationUnits.Add(sourceFile, result);
-            }
-            else
-            {
-                result.Reparse(unsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
+                throw new Exception("Tried to parse file that has not been registered with the language service.");
             }
 
             return result;
+        }
+
+        private ClangTranslationUnit GetAndParseTranslationUnit(ISourceFile sourceFile, List<ClangUnsavedFile> unsavedFiles)
+        {
+            var dataAssociation = GetAssociatedData(sourceFile);
+
+            if (dataAssociation.TranslationUnit == null)
+            {
+                dataAssociation.TranslationUnit = GenerateTranslationUnit(sourceFile, unsavedFiles);
+            }
+            else
+            {
+                dataAssociation.TranslationUnit.Reparse(unsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
+            }
+
+            return dataAssociation.TranslationUnit;
         }
 
         public List<CodeCompletionData> CodeCompleteAt(ISourceFile file, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
@@ -206,6 +238,8 @@
         public CodeAnalysisResults RunCodeAnalysis(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
+
+            var dataAssociation = GetAssociatedData(file);
 
             List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
 
@@ -333,6 +367,8 @@
                     });
                 }
             }
+            
+            dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
         }
@@ -360,6 +396,32 @@
             }
 
             return result;
+        }
+
+        public void RegisterSourceFile(ISourceFile file, TextDocument textDocument)
+        {
+            CPlusPlusDataAssociation existingAssociation = null;
+
+            if(dataAssociations.TryGetValue(file, out existingAssociation))
+            {
+                throw new Exception("Source file already registered with language service.");
+            }
+
+            dataAssociations.Add(file, new CPlusPlusDataAssociation(textDocument));
+        }
+
+        public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
+        {
+            var associatedData = GetAssociatedData(file);
+
+            return associatedData.DocumentLineTransformers;
+        }
+
+        public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
+        {
+            var associatedData = GetAssociatedData(file);
+
+            return associatedData.BackgroundRenderers;
         }
     }
 }
