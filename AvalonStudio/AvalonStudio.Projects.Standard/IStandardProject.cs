@@ -4,6 +4,7 @@
     using Newtonsoft.Json.Converters;
     using System.Collections.Generic;
     using Toolchains;
+
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ProjectType
     {

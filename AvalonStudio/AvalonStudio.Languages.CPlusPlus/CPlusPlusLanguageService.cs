@@ -446,8 +446,8 @@
             CPlusPlusDataAssociation existingAssociation = null;
 
             if (dataAssociations.TryGetValue(file, out existingAssociation))
-            {
-                //throw new Exception("Source file already registered with language service.");
+            {                
+                throw new Exception("Source file already registered with language service.");
             }
             else
             {
@@ -467,6 +467,11 @@
             var associatedData = GetAssociatedData(file);
 
             return associatedData.BackgroundRenderers;
+        }
+
+        public void UnregisterSourceFile(ISourceFile file)
+        {
+            dataAssociations.Remove(file);
         }
     }
 }
