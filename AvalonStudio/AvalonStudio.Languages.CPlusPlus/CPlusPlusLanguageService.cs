@@ -2,6 +2,7 @@
 {
     using Models;
     using NClang;
+    using Perspex.Media;
     using Perspex.Threading;
     using Projects;
     using Projects.Standard;
@@ -21,6 +22,9 @@
             DocumentLineTransformers = new List<IDocumentLineTransformer>();
 
             TextColorizer = new TextColoringTransformer(textDocument);
+            TextMarkerService = new TextMarkerService(textDocument);
+
+            BackgroundRenderers.Add(TextMarkerService);
 
             DocumentLineTransformers.Add(TextColorizer);
             DocumentLineTransformers.Add(new DefineTextLineTransformer());
@@ -29,7 +33,8 @@
         }
 
         public ClangTranslationUnit TranslationUnit { get; set; }
-        public TextColoringTransformer TextColorizer { get; set; }        
+        public TextColoringTransformer TextColorizer { get; private set; }
+        public TextMarkerService TextMarkerService { get; private set; }        
         public List<IBackgroundRenderer> BackgroundRenderers { get; private set; }
         public List<IDocumentLineTransformer> DocumentLineTransformers { get; private set; }
     }
@@ -350,21 +355,60 @@
                 }
             }
 
+            dataAssociation.TextMarkerService.Clear();
+
             var diags = translationUnit.DiagnosticSet.Items;
 
-            foreach (var diag in diags)
+            foreach (var diagnostic in diags)
             {
-                if (diag.Location.IsFromMainFile)
+                if (diagnostic.Location.IsFromMainFile)
                 {
-                    result.Diagnostics.Add(new Diagnostic()
+                    var diag = new Diagnostic()
                     {
                         Project = file.Project,
-                        Offset = diag.Location.FileLocation.Offset,
-                        Line = diag.Location.FileLocation.Line,
-                        Spelling = diag.Spelling,
-                        File = diag.Location.FileLocation.File.FileName,
-                        Level = (DiagnosticLevel)diag.Severity
-                    });
+                        Offset = diagnostic.Location.FileLocation.Offset,
+                        Line = diagnostic.Location.FileLocation.Line,
+                        Spelling = diagnostic.Spelling,
+                        File = diagnostic.Location.FileLocation.File.FileName,
+                        Level = (DiagnosticLevel)diagnostic.Severity
+                    };
+
+                    
+                    result.Diagnostics.Add(diag);
+
+                    var data = dataAssociation.TranslationUnit.GetLocationForOffset(dataAssociation.TranslationUnit.GetFile(file.Location), diag.Offset);
+                    var length = 1;                                       
+
+                    if (diagnostic.RangeCount > 0)
+                    {
+                        length = Math.Abs(diagnostic.GetDiagnosticRange(0).End.FileLocation.Offset - diag.Offset);
+                    }
+
+                    if(diagnostic.FixItCount > 0)
+                    {
+                        // TODO implement fixits.
+                    }
+                    
+                    Color markerColor;
+
+                    switch (diag.Level)
+                    {
+                        case DiagnosticLevel.Error:
+                        case DiagnosticLevel.Fatal:
+                            markerColor = Color.FromRgb(253, 45, 45);
+                            break;
+
+                        case DiagnosticLevel.Warning:
+                            markerColor = Color.FromRgb(255, 207, 40);
+                            break;
+
+                        default:
+                            markerColor = Color.FromRgb(0, 42, 74);
+                            break;
+
+                    }
+
+                    dataAssociation.TextMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
                 }
             }
             
