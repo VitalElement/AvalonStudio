@@ -68,8 +68,13 @@
                 }
             }
 
-            unsavedFile = null;
             ShutdownBackgroundWorkers();
+
+            if (unsavedFile != null)
+            {
+                UnsavedFiles.Remove(unsavedFile);
+                unsavedFile = null;
+            }
             
             try
             {
@@ -82,25 +87,29 @@
 
             if(LanguageService != null)
             {
+                if (sourceFile != null)
+                {
+                    LanguageService.UnregisterSourceFile(sourceFile);
+                }
+
                 Workspace.Instance.StatusBar.Language = LanguageService.Title;
 
                 LanguageService.RegisterSourceFile(file, TextDocument);
             }
 
+            IsDirty = false;
+
             StartBackgroundWorkers();
 
-            sourceFile = file;
+            sourceFile = file;            
 
             DocumentLoaded(this, new EventArgs());
 
             TextDocument.TextChanged += TextDocument_TextChanged;
 
-            if (textChangedSemaphore.CurrentCount == 0)
-            {
-                textChangedSemaphore.Release();
-            }
-
             OnBeforeTextChanged(null);
+
+            TriggerCodeAnalysis();
         }
 
         public void Save()
@@ -330,7 +339,15 @@
             }
             catch (ThreadAbortException)
             {
+                if(completionRequestLock.IsWriteLockHeld)
+                {
+                    completionRequestLock.ExitWriteLock();
+                }
 
+                if(editorLock.IsReadLockHeld)
+                {
+                    editorLock.ExitReadLock();
+                }
             }
 
         }

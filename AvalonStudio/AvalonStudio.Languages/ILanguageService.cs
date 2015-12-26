@@ -18,7 +18,9 @@
 
         IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-        void RegisterSourceFile(ISourceFile file, TextDocument textDocument); 
+        void RegisterSourceFile(ISourceFile file, TextDocument textDocument);
+
+        void UnregisterSourceFile(ISourceFile file);
 
         bool CanHandle(ISourceFile file);
 
