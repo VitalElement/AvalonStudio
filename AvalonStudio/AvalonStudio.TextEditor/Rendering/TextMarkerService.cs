@@ -7,7 +7,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class TextMarkerService : IBackgroundRenderer
+    public class TextMarkerService : IDocumentLineTransformer
     {
         private TextSegmentCollection<TextMarker> markers;
 
@@ -30,20 +30,31 @@
 
         }
 
-        public void Draw(TextView textView, DrawingContext drawingContext)
+        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
         {
             if(markers == null)
             {
                 return;
             }
 
-            int viewStart = textView.VisualLines.First().Offset;
-            int viewEnd = textView.VisualLines.Last().Offset;
+            var markersInLine = markers.FindOverlappingSegments(line);
 
-            var markersOnScreen = markers.FindOverlappingSegments(viewStart, viewEnd - viewStart);
-
-            foreach (TextMarker marker in markersOnScreen)
+            foreach (TextMarker marker in markersInLine)
             {
+                if(marker.Length == 0)
+                {
+                    var endoffset = TextUtilities.GetNextCaretPosition(textView.TextDocument, marker.StartOffset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
+
+                    if (endoffset == -1)
+                    {
+                        marker.Length = line.Length;
+                    }
+                    else
+                    {
+                        marker.EndOffset = endoffset;
+                    }
+                }
+
                 foreach (Rect r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
                 {
                     Point startPoint = r.BottomLeft;
@@ -69,7 +80,7 @@
                         ctx.EndFigure(false);
                     }
 
-                    drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
+                    context.DrawGeometry(Brushes.Transparent, usedPen, geometry);
                     break;
                 }
             }
