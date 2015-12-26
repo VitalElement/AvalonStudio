@@ -28,7 +28,7 @@
 
                 if (result != null)
                 {
-                    Workspace.Instance.SolutionExplorer.Model = Solution.Load(Path.GetDirectoryName(result[0]));                    
+                    Workspace.Instance.SolutionExplorer.Model = Solution.Load(result[0]);                    
                 }
             });
 
