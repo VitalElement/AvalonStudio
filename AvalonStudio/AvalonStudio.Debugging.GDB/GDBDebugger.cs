@@ -535,15 +535,17 @@
             }
         }
 
-        public bool Start(StandardToolChain toolchain, IConsole console, IStandardProject project)
+        public bool Start(IToolChain toolchain, IConsole console, IProject project)
         {
             this.console = console;
             var startInfo = new ProcessStartInfo();
 
             console.WriteLine("[GDB] - Starting...");
 
-            startInfo.FileName = toolchain.GDBExecutable;
-            startInfo.Arguments = string.Format("\"{0}\" --interpreter=mi", project.Executable);
+            // This information should be part of this extension... or configurable internally?
+            // This maybe indicates that debuggers are part of toolchain?
+            //startInfo.FileName = toolchain.GDBExecutable;
+            //startInfo.Arguments = string.Format("\"{0}\" --interpreter=mi", project.Executable);
 
             if (!File.Exists(startInfo.FileName))
             {

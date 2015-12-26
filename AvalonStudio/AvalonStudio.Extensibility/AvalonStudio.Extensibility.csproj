@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,8 +41,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Debugging\BreakPoint.cs" />
+    <Compile Include="Debugging\DisassembledLine.cs" />
+    <Compile Include="Debugging\Extensions.cs" />
+    <Compile Include="Debugging\Frame.cs" />
+    <Compile Include="Debugging\IDebugger.cs" />
+    <Compile Include="Debugging\MemoryBytes.cs" />
+    <Compile Include="Debugging\NameValuePair.cs" />
+    <Compile Include="Debugging\Register.cs" />
+    <Compile Include="Debugging\StopRecord.cs" />
+    <Compile Include="Debugging\Variable.cs" />
+    <Compile Include="Debugging\VariableObject.cs" />
+    <Compile Include="Debugging\VarUpdateCommand.cs" />
+    <Compile Include="Languages\CodeAnalysisResults.cs" />
+    <Compile Include="Languages\CodeCompletionData.cs" />
+    <Compile Include="Languages\CodeCompletionResults.cs" />
+    <Compile Include="Languages\Diagnostic.cs" />
+    <Compile Include="Languages\ILanguageService.cs" />
+    <Compile Include="Languages\SyntaxHighlightingData.cs" />
+    <Compile Include="Languages\UnsavedFile.cs" />
     <Compile Include="Menus\IMenuItem.cs" />
+    <Compile Include="Projects\IProject.cs" />
+    <Compile Include="Projects\IProjectFolder.cs" />
+    <Compile Include="Projects\IProjectItem.cs" />
+    <Compile Include="Projects\ISolution.cs" />
+    <Compile Include="Projects\ISourceFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Toolchains\IToolchain.cs" />
+    <Compile Include="Utils\IConsole.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
+      <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
+      <Name>AvalonStudio.TextEditor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
