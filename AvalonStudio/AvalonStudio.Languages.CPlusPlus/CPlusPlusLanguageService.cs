@@ -23,10 +23,9 @@
 
             TextColorizer = new TextColoringTransformer(textDocument);
             TextMarkerService = new TextMarkerService(textDocument);
-
-            BackgroundRenderers.Add(TextMarkerService);
-
+           
             DocumentLineTransformers.Add(TextColorizer);
+            DocumentLineTransformers.Add(TextMarkerService);
             DocumentLineTransformers.Add(new DefineTextLineTransformer());
             DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
             DocumentLineTransformers.Add(new IncludeTextLineTransformer());
@@ -377,7 +376,7 @@
                     result.Diagnostics.Add(diag);
 
                     var data = dataAssociation.TranslationUnit.GetLocationForOffset(dataAssociation.TranslationUnit.GetFile(file.Location), diag.Offset);
-                    var length = 1;                                       
+                    var length = 0;                                       
 
                     if (diagnostic.RangeCount > 0)
                     {
