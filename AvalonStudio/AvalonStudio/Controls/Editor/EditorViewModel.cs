@@ -49,18 +49,21 @@
 
                 languageServiceDocumentLineTransformers.Clear();
 
-                languageServiceBackgroundRenderers.AddRange(model.LanguageService.GetBackgroundRenderers(model.ProjectFile));
-
-                foreach (var bgRenderer in languageServiceBackgroundRenderers)
+                if (model.LanguageService != null)
                 {
-                    BackgroundRenderers.Add(bgRenderer);
-                }
+                    languageServiceBackgroundRenderers.AddRange(model.LanguageService.GetBackgroundRenderers(model.ProjectFile));
 
-                languageServiceDocumentLineTransformers.AddRange(model.LanguageService.GetDocumentLineTransformers(model.ProjectFile));
+                    foreach (var bgRenderer in languageServiceBackgroundRenderers)
+                    {
+                        BackgroundRenderers.Add(bgRenderer);
+                    }
 
-                foreach (var textTransformer in languageServiceDocumentLineTransformers)
-                {
-                    DocumentLineTransformers.Add(textTransformer);
+                    languageServiceDocumentLineTransformers.AddRange(model.LanguageService.GetDocumentLineTransformers(model.ProjectFile));
+
+                    foreach (var textTransformer in languageServiceDocumentLineTransformers)
+                    {
+                        DocumentLineTransformers.Add(textTransformer);
+                    }
                 }
 
                 model.CodeAnalysisCompleted += (s, ee) =>

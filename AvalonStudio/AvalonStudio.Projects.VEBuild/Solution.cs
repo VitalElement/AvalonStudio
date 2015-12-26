@@ -11,17 +11,18 @@
         public const string solutionExtension = "vsln";
         public const string projectExtension = "vproj";
 
-        public static Solution Load(string directory)
+        public static Solution Load(string fileName)
         {            
-            var solution = new Solution();
-            solution.CurrentDirectory = directory;
+            var solution = Deserialize(fileName);
+            
+            solution.CurrentDirectory = Path.GetDirectoryName(fileName);
 
-            if (!Directory.Exists(directory))
+            if (!Directory.Exists(solution.CurrentDirectory))
             {
-                throw new Exception(string.Format("Directory does not exist {0}", directory));
+                throw new Exception(string.Format("Directory does not exist {0}", fileName));
             }
 
-            var subfolders = Directory.GetDirectories(directory);
+            var subfolders = Directory.GetDirectories(solution.CurrentDirectory);
 
             foreach (var subfolder in subfolders)
             {
@@ -31,7 +32,6 @@
                 if (File.Exists(projectLocation))
                 {
                     solution.Projects.Add(VEBuildProject.Load(projectLocation, solution));
-
                 }
             }
 
@@ -40,10 +40,9 @@
                 project.ResolveReferences();
             }
 
-            solution.Name = Path.GetFileNameWithoutExtension(directory);
-
-            //Hard coded for demonstration.
-            solution.StartupProject = solution.Projects.Single((p) => p.Name.Contains("LCD"));
+            solution.Name = Path.GetFileNameWithoutExtension(fileName);
+            
+            solution.StartupProject = solution.Projects.SingleOrDefault((p) => p.Name == solution.StartupItem);            
 
             return solution;
         }
@@ -99,8 +98,10 @@
         public IList<IProject> Projects { get; set; }
 
         [JsonIgnore]
-        public IProject StartupProject { get; private set; }
+        public IProject StartupProject { get; private set; }        
 
-        public string Name { get; private set; }
+        public string Name { get; set; }
+
+        public string StartupItem { get; set; }
     }
 }

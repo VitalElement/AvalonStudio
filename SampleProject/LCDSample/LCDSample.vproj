@@ -3,8 +3,8 @@
   "Type": "StaticLibrary",
   "References": [
     {
-      "Name": "STM32F4Cube",
-      "GitUrl": "https://gitlab.com/GXDesign/STM32F4Cube.git"
+      "Name": "Utils",
+      "GitUrl": "https://gitlab.com/GXDesign/Utils.git"
     }
   ],
   "PublicIncludes": [
@@ -12,7 +12,7 @@
   ],
   "SourceFiles": [
     {
-      "File": "ServoController.cpp"
+      "File": "startup_stm32f40xx.c"
     }
   ]
 }
