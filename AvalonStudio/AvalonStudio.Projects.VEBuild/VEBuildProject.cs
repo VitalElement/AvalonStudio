@@ -520,6 +520,8 @@
             {
                 var result = new GccToolChain(new ToolchainSettings());
 
+                result.Settings.ToolChainLocation = "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\bin";
+
                 result.Settings.IncludePaths = new List<string>()
                 {
                     "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include",
