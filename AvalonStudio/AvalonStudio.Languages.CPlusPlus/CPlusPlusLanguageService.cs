@@ -445,12 +445,14 @@
         {
             CPlusPlusDataAssociation existingAssociation = null;
 
-            if(dataAssociations.TryGetValue(file, out existingAssociation))
+            if (dataAssociations.TryGetValue(file, out existingAssociation))
             {
-                throw new Exception("Source file already registered with language service.");
+                //throw new Exception("Source file already registered with language service.");
             }
-
-            dataAssociations.Add(file, new CPlusPlusDataAssociation(textDocument));
+            else
+            {
+                dataAssociations.Add(file, new CPlusPlusDataAssociation(textDocument));
+            }
         }
 
         public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
