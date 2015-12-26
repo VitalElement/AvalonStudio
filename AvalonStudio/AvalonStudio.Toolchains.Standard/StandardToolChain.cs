@@ -49,7 +49,7 @@
         public StandardToolChain(ToolchainSettings settings)
         {
             this.Settings = settings;
-            this.Jobs = 1;
+            this.Jobs = 16;
         }
 
         public int Jobs { get; set; }
