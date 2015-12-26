@@ -5378,7 +5378,8 @@
     <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.106\build\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.1.0.106\build\LibGit2Sharp.NativeBinaries.props'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)AvalonStudio.Languages.CPlusPlus.dll $(TargetDir)Plugins\AvalonStudio.Languages.CPlusPlus.dll</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
