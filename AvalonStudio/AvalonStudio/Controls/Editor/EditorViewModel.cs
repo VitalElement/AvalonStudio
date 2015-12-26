@@ -14,6 +14,9 @@
     using TextEditor;
     public class EditorViewModel : ViewModel<EditorModel>
     {
+        private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
+        private List<IDocumentLineTransformer> languageServiceDocumentLineTransformers = new List<IDocumentLineTransformer>();
+
         #region Constructors
         public EditorViewModel(EditorModel model) : base(model)
         {
@@ -24,8 +27,7 @@
 
             TextChangedCommand = ReactiveCommand.Create();
             TextChangedCommand.Subscribe(model.OnTextChanged);
-
-
+            
             SaveCommand = ReactiveCommand.Create();
             SaveCommand.Subscribe((param) => Save());
 
@@ -33,16 +35,30 @@
 
             model.DocumentLoaded += (sender, e) =>
             {
-                var bgRenderers = model.LanguageService.GetBackgroundRenderers(model.ProjectFile);
+                foreach(var bgRenderer in languageServiceBackgroundRenderers)
+                {
+                    BackgroundRenderers.Remove(bgRenderer);
+                }
 
-                foreach (var bgRenderer in bgRenderers)
+                languageServiceBackgroundRenderers.Clear();
+
+                foreach(var transformer in languageServiceDocumentLineTransformers)
+                {
+                    DocumentLineTransformers.Remove(transformer);
+                }
+
+                languageServiceDocumentLineTransformers.Clear();
+
+                languageServiceBackgroundRenderers.AddRange(model.LanguageService.GetBackgroundRenderers(model.ProjectFile));
+
+                foreach (var bgRenderer in languageServiceBackgroundRenderers)
                 {
                     BackgroundRenderers.Add(bgRenderer);
                 }
 
-                var textTransformers = model.LanguageService.GetDocumentLineTransformers(model.ProjectFile);
+                languageServiceDocumentLineTransformers.AddRange(model.LanguageService.GetDocumentLineTransformers(model.ProjectFile));
 
-                foreach (var textTransformer in textTransformers)
+                foreach (var textTransformer in languageServiceDocumentLineTransformers)
                 {
                     DocumentLineTransformers.Add(textTransformer);
                 }
