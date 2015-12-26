@@ -11,7 +11,7 @@
         <TextBlock Text="Console" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0"/>
       </Panel>
 
-      <te:TextEditor Grid.Row="1" BorderThickness="0" Background="#252526" FontFamily="Consolas" FontSize="10" TextDocument="{Binding Document}" CaretIndex="{Binding CaretIndex}" />
+      <te:TextEditor Grid.Row="1" BorderThickness="0" Background="#252526" FontFamily="Consolas" FontSize="12" TextDocument="{Binding Document}" CaretIndex="{Binding CaretIndex}" />
     </Grid>
   </Border>
 </UserControl>
