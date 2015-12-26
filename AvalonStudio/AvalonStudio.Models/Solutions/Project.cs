@@ -7,11 +7,11 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Xml.Serialization;
-    using Tools;
+    using System.Xml.Serialization;   
     using VEUtils;
     using Projects;
     using Toolchains;
+    using Extensibility.Menus;
 
     [XmlInclude(typeof(BitThunderApplicationProject))]
     [XmlInclude(typeof(CatchTestProject))]
@@ -553,6 +553,14 @@
         }
 
         public IList<ISourceFile> SourceFiles
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<IMenuItem> ProjectMenuItems
         {
             get
             {

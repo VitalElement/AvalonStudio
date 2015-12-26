@@ -9,6 +9,8 @@
     using System.Linq;
     using Toolchains;
     using Toolchains.STM32;
+    using Extensibility.Menus;
+
     public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
     {
         public const string solutionExtension = "vsln";
@@ -534,6 +536,14 @@
         public IList<IProjectItem> Items
         {
             get; private set;
+        }
+
+        public IList<IMenuItem> ProjectMenuItems
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
