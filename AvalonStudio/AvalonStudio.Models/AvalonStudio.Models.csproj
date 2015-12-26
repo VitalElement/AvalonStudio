@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AvalonStudio.Models</RootNamespace>
     <AssemblyName>AvalonStudio.Models</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -93,7 +93,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Solutions\SolutionExplorer.cd" />
-    <None Include="NativeLibs\libclang.so">
+    <None Include="libclang.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -109,7 +109,7 @@
   </Target>
   -->
   <ItemGroup>
-    <Content Include="NativeLibs\libclang.dll">
+    <Content Include="libclang.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -130,6 +130,9 @@
       <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
       <Name>AvalonStudio.Projects.Standard</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NativeLibs\" />
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
