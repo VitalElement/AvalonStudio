@@ -13,7 +13,7 @@
     {
         public GccToolChain() : base (new ToolchainSettings())
         {
-
+            Settings.ToolChainLocation = @"c:\VEStudio\AppData\Repos\GCCToolChain\bin";
         }
 
         public GccToolChain(ToolchainSettings settings) : base(settings)
