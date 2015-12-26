@@ -39,14 +39,23 @@
                 Workspace.Instance.Editor.Save();
             });
 
+            CleanProjectCommand = ReactiveCommand.Create();
+            CleanProjectCommand.Subscribe(_ =>
+            {
+                new Thread(new ThreadStart(new Action(async () =>
+                {
+                    await Workspace.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Clean(Workspace.Instance.Console, Workspace.Instance.SolutionExplorer.Model.StartupProject);
+                }))).Start();
+            });
+
             BuildProjectCommand = ReactiveCommand.Create();
-            //BuildProjectCommand.Subscribe(async _ =>
-            //{
-            //    //new Thread(new ThreadStart(new Action(async () =>
-            //    {                    
-            //        //await Workspace.Instance.SolutionExplorer.Model.StartupProject.Build(Workspace.Instance.Console, Workspace.Instance.ProcessCancellationToken);
-            //    }//))).Start();
-            //});
+            BuildProjectCommand.Subscribe(_ =>
+            {
+                new Thread(new ThreadStart(new Action(async () =>
+                {
+                    await Workspace.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Build(Workspace.Instance.Console, Workspace.Instance.SolutionExplorer.Model.StartupProject);
+                }))).Start();
+            });
 
             PackagesCommand = ReactiveCommand.Create();
             PackagesCommand.Subscribe((o) =>
@@ -56,10 +65,10 @@
             });            
         }
 
-
-
         public ReactiveCommand<object> SaveCommand { get; private set; }
         public ReactiveCommand<object> LoadProjectCommand { get; private set; }
+
+        public ReactiveCommand<object> CleanProjectCommand { get; private set; }
         public ReactiveCommand<object> BuildProjectCommand { get; private set; }
         public ReactiveCommand<object> PackagesCommand { get; private set; }
     }

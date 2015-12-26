@@ -1,17 +1,17 @@
 ﻿namespace AvalonStudio.Projects
 {
     using System.Collections.Generic;
-
+    using Toolchains;
     public interface IProject : IProjectFolder
     {
-        string Name { get; }
-
         ISolution Solution { get; }
 
         /// <summary>
         /// List of references with the project.
         /// </summary>
         IList<IProject> References { get; }        
+
+        IToolChain ToolChain { get; }
 
         /// <summary>
         /// The directory the project file resides in.

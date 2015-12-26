@@ -4,9 +4,9 @@
     using Perspex.Threading;
     using Models;
     using ReactiveUI;
-    using Models.Tools;
     using TextEditor.Document;
     using ReactiveUI;
+    using Utils;
 
     public class ConsoleViewModel : ReactiveObject, IConsole
     {
@@ -78,6 +78,11 @@
                     ScrollToEnd();
                 });
             }
+        }
+
+        public void OverWrite(string data)
+        {
+            WriteLine(data);
         }
     }
 }
