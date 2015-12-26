@@ -9,8 +9,6 @@
 
     public class TextMarkerService : IBackgroundRenderer
     {
-        private readonly TextEditor editor;
-
         private TextSegmentCollection<TextMarker> markers;
 
         public sealed class TextMarker : TextSegment
@@ -26,19 +24,10 @@
             public string ToolTip { get; set; }
         }
 
-        public TextMarkerService(TextEditor textView)
+        public TextMarkerService(TextDocument document)
         {
-            this.editor = textView;
-            markers = new TextSegmentCollection<TextMarker>(textView.TextDocument);
+            markers = new TextSegmentCollection<TextMarker>(document);
 
-        }
-
-        public void UpdateOffsets(DocumentChangeEventArgs e)
-        {
-            if (markers != null)
-            {
-                markers.UpdateOffsets(e);
-            }
         }
 
         public void Draw(TextView textView, DrawingContext drawingContext)
