@@ -1,10 +1,10 @@
 ﻿namespace AvalonStudio.Debugging
 {
-    using Projects.Standard;
+    using Projects;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
-    using Toolchains.Standard;
+    using Toolchains;
     using Utils;
 
     public enum DebuggerState
@@ -77,7 +77,7 @@
 
         void Close();
 
-        bool Start(StandardToolChain toolChain, IConsole console, IStandardProject project);
+        bool Start(IToolChain toolChain, IConsole console, IProject project);
 
         void Reset(bool runAfter);
 

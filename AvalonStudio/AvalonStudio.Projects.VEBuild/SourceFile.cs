@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json;
-using System.IO;
-using System;
-
-namespace AvalonStudio.Projects.VEBuild
+﻿namespace AvalonStudio.Projects.VEBuild
 {
+    using Newtonsoft.Json;
+    using System.IO;
+
     public class SourceFile : ISourceFile
     {
         public string File { get; set; }

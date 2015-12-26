@@ -144,9 +144,9 @@
       <Project>{5ae560f9-0e8e-488e-b6c4-3c8196f9013a}</Project>
       <Name>NClang</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Languages\AvalonStudio.Languages.csproj">
-      <Project>{86eba4c1-70a3-4e20-a40a-652b7d6aaadd}</Project>
-      <Name>AvalonStudio.Languages</Name>
+    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
+      <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
+      <Name>AvalonStudio.Extensibility</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Models\AvalonStudio.Models.csproj">
       <Project>{eacbff14-438d-4311-8d8c-18e7e6769c8f}</Project>
@@ -156,17 +156,9 @@
       <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
       <Name>AvalonStudio.Projects.Standard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects\AvalonStudio.Projects.csproj">
-      <Project>{b5348415-ab76-48c1-8355-28090e0b0744}</Project>
-      <Name>AvalonStudio.Projects</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
       <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
       <Name>AvalonStudio.TextEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains\AvalonStudio.Toolchains.csproj">
-      <Project>{fc693e81-70bc-4972-bfa8-19d3db8fb1cc}</Project>
-      <Name>AvalonStudio.Toolchains</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
