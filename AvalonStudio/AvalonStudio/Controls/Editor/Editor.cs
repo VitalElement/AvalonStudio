@@ -37,6 +37,11 @@
             TextDocument = new TextDocument();
         }
 
+        ~EditorModel()
+        {
+            ShutdownBackgroundWorkers();
+        }
+
         private bool completionRequested = false;
         private TextLocation beginCompletionLocation = new TextLocation();
         private string filter;
@@ -76,32 +81,29 @@
                 unsavedFile = null;
             }
             
+            if(LanguageService != null && sourceFile != null)
+            {
+                LanguageService.UnregisterSourceFile(sourceFile);
+            }
+
             try
             {
                 LanguageService = Workspace.Instance.LanguageServices.Single((o) => o.CanHandle(file));
-            }
-            catch 
-            {
-
-            }
-
-            if(LanguageService != null)
-            {
-                if (sourceFile != null)
-                {
-                    LanguageService.UnregisterSourceFile(sourceFile);
-                }
 
                 Workspace.Instance.StatusBar.Language = LanguageService.Title;
 
                 LanguageService.RegisterSourceFile(file, TextDocument);
             }
+            catch 
+            {
+                LanguageService = null;
+            }
 
             IsDirty = false;
 
-            StartBackgroundWorkers();
+            sourceFile = file;
 
-            sourceFile = file;            
+            StartBackgroundWorkers();
 
             DocumentLoaded(this, new EventArgs());
 
@@ -221,12 +223,14 @@
             {
                 codeAnalysisThread.Abort();
                 codeAnalysisThread.Join();
+                codeAnalysisThread = null;
             }
 
             if (codeAnalysisThread != null && codeCompletionThread.IsAlive)
             {
                 codeCompletionThread.Abort();
                 codeCompletionThread.Join();
+                codeCompletionResults = null;
             }
         }
 
