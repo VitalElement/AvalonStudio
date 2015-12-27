@@ -1,6 +1,5 @@
 ﻿namespace AvalonStudio.Controls
-{
-    using Models.Platform;
+{    
     using MVVM;
     using ReactiveUI;
     using System;
@@ -12,6 +11,8 @@
     using Languages;
     using TextEditor.Rendering;
     using TextEditor;
+    using Extensibility.Platform;
+
     public class EditorViewModel : ViewModel<EditorModel>
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -168,7 +169,7 @@
         {
             get
             {
-                switch (Platform.PlatformID)
+                switch (Platform.PlatformIdentifier)
                 {
                     case PlatformID.Unix:
                         return "Monospace";

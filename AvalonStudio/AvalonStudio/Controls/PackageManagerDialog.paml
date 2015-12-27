@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex" xmlns:Packages="clr-namespace:AvalonStudio.Models.PackageManager;assembly=AvalonStudio.Models">
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:Packages="clr-namespace:AvalonStudio.Repositories;assembly=AvalonStudio.Repositories">
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="150"/>
@@ -7,7 +7,7 @@
 
     <ListBox Items="{Binding AvailablePackages}" SelectedItem="{Binding Path=SelectedPackage, Mode=TwoWay}" IsEnabled="{Binding EnableInterface}">
       <ListBox.DataTemplates>
-        <DataTemplate DataType="Packages:Package">
+        <DataTemplate DataType="Packages:PackageReference">
           <TextBlock Text="{Binding Name}"/>
         </DataTemplate>
       </ListBox.DataTemplates>

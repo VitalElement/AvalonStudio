@@ -1,66 +1,79 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
-    using Models.PackageManager;
     using MVVM;
     using Perspex.Threading;
     using ReactiveUI;
+    using Repositories;
     using System;
     using System.Collections.ObjectModel;
-
+    using System.Threading.Tasks;
     public class PackageManagerDialogViewModel : ModalDialogViewModelBase
-    {        
+    {
         public PackageManagerDialogViewModel()
             : base("Packages")
         {
-            this.AvailablePackages = new ObservableCollection<Package>();
+            this.AvailablePackages = new ObservableCollection<PackageReference>();
 
             DownloadCatalog();
 
-            InstallCommand = ReactiveCommand.Create();
-            InstallCommand.Subscribe(async (o) =>
-            {
-                EnableInterface = false;
+            //InstallCommand = ReactiveCommand.Create();
+            //InstallCommand.Subscribe(async (o) =>
+            //{
+            //    EnableInterface = false;
 
-                try
-                {
-                    var fullPackage = await SelectedPackage.DownloadPackage(ProgressUpdate);
+            //    try
+            //    {
+            //        var fullPackage = await SelectedPackage.DownloadPackage(ProgressUpdate);
 
-                    if (fullPackage.Install())
-                    {
-                        Status = "Package Installed Successfully.";
-                    }
-                    else
-                    {
-                        Status = "An error occurred trying to install package.";
-                    }
-                }
-                catch (Exception e)
-                {
-                    Status = "An error occurred trying to install package. " + e.Message;
-                }
+            //        if (fullPackage.Install())
+            //        {
+            //            Status = "Package Installed Successfully.";
+            //        }
+            //        else
+            //        {
+            //            Status = "An error occurred trying to install package.";
+            //        }
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Status = "An error occurred trying to install package. " + e.Message;
+            //    }
 
-                EnableInterface = true;
+            //    EnableInterface = true;
 
-            });
+            //});
 
-            OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x=>x.EnableInterface));
+            OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.EnableInterface));
 
             OKCommand.Subscribe(_ =>
             {
                 Workspace.Instance.InvalidateCodeAnalysis();
-                this.Close();                
+                this.Close();
             });
 
             EnableInterface = true;
         }
 
+        private void AddPackages(Repository repo)
+        {
+            foreach (var package in repo.Packages)
+            {
+                AvailablePackages.Add(package);
+            }
+        }
+
         private async void DownloadCatalog()
         {
-            var repo = await Repository.DownloadCatalog();
-
-            foreach (var p in repo.Packages)
+            foreach (var packageSource in PackageSources.Instance.Sources)
             {
-                AvailablePackages.Add(p);
+                Repository repo = null;
+
+                await Task.Factory.StartNew(() => repo = packageSource.DownloadCatalog());
+
+                if(repo != null)
+                {
+                    AddPackages(repo);
+                }
             }
         }
 
@@ -70,10 +83,10 @@
             {
                 if (selectedPackage != null)
                 {
-                    if (selectedPackage.IsInstalled)
-                    {
-                        return "Update";
-                    }
+                    //if (selectedPackage.IsInstalled)
+                    //{
+                    //    return "Update";
+                    //}
                 }
 
                 return "Install";
@@ -89,7 +102,7 @@
                 OKButtonVisible = value;
                 CancelButtonVisible = value;
 
-                this.RaiseAndSetIfChanged(ref enableInterface, value);                
+                this.RaiseAndSetIfChanged(ref enableInterface, value);
             }
         }
 
@@ -111,8 +124,8 @@
             set { this.RaiseAndSetIfChanged(ref status, value); }
         }
 
-        private Package selectedPackage;
-        public Package SelectedPackage
+        private PackageReference selectedPackage;
+        public PackageReference SelectedPackage
         {
             get { return selectedPackage; }
             set
@@ -123,8 +136,8 @@
         }
 
 
-        private ObservableCollection<Package> availablePackage;
-        public ObservableCollection<Package> AvailablePackages
+        private ObservableCollection<PackageReference> availablePackage;
+        public ObservableCollection<PackageReference> AvailablePackages
         {
             get { return availablePackage; }
             set { this.RaiseAndSetIfChanged(ref availablePackage, value); }
