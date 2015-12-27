@@ -3,11 +3,12 @@
     using Controls;
     using Controls.ViewModels;
     using Debugging;
+    using Extensibility.Platform;
     using Languages;
     using Models;
-    using Models.Platform;
     using Projects;
     using ReactiveUI;
+    using Repositories;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.Linq;
@@ -27,6 +28,10 @@
         [ImportingConstructor]
         public Workspace(EditorModel editor, [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers)
         {
+            var r = new Repository();
+            r.Packages.Add(new PackageReference() { Name = "AvalonStudio.Toolchains.STM32", Url = "https://github.com/VitalElement/AvalonStudio.Toolchains.STM32.git" });
+            r.Serialize("c:\\vestudio\\packages.json");
+
             this.editor = editor;
             this.languageServices = languageServices;
             this.toolChains = toolChains;

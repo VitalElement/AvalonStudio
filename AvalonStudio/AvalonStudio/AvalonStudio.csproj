@@ -313,6 +313,10 @@
       <Project>{47e266ea-bbc4-4794-96da-b1f3ecb5bb9b}</Project>
       <Name>AvalonStudio.Projects.VEBuild</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repositories.csproj">
+      <Project>{29c948e9-4d96-4490-b039-a5bbf6eec2e5}</Project>
+      <Name>AvalonStudio.Repositories</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
       <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
       <Name>AvalonStudio.TextEditor</Name>

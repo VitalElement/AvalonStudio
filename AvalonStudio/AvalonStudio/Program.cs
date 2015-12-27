@@ -1,5 +1,7 @@
 ﻿namespace AvalonStudio
 {
+    using Extensibility.Platform;
+    using Repositories;
     using System;
 
     public class Program
@@ -9,7 +11,11 @@
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
-            }            
+            }
+
+            Platform.Initialise();
+
+            PackageSources.InitialisePackageSources();
 
             var app = new App();
             var container = CompositionRoot.CreateContainer();            
