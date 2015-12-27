@@ -4,7 +4,8 @@
 
     public class Package : SerializedObject<Package>
     {
-        public string Name { get; set; }
-        public string Url { get; set; }
+        public Repository Repository { get; internal set; }
+        public const string PackageFile = "package.json";
+        public string Plugin { get; set; }
     }
 }
