@@ -49,7 +49,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reference.cs" />
-    <Compile Include="SerializedObject.cs" />
     <Compile Include="Solution.cs" />
     <Compile Include="SourceFile.cs" />
     <Compile Include="VEBuildProject.cs" />
