@@ -11,7 +11,7 @@
         private void Clone()
         {
             LibGit2Sharp.Repository.Clone(Url, CatalogDirectory);
-        }
+        }        
 
         public Repository DownloadCatalog ()
         {
@@ -35,6 +35,12 @@
             }
             
             var result = Repository.Deserialize(Path.Combine(CatalogDirectory, Repository.PackagesFileName));
+            result.Source = this;
+            
+            foreach(var package in result.Packages)
+            {
+                package.Repository = result;
+            }
 
             return result;
         }

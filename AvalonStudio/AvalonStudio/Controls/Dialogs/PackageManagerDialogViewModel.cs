@@ -130,6 +130,8 @@
             get { return selectedPackage; }
             set
             {
+                value.DownloadInfo();
+
                 this.RaiseAndSetIfChanged(ref selectedPackage, value);
                 this.RaisePropertyChanged(() => ButtonText);
             }
