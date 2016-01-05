@@ -1,3 +1,4 @@
 {
-  "Name": "SampleProject"
+  "Name": "SampleProject",
+  "StartupItem" : "LCDSample"
 }
