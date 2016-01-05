@@ -315,12 +315,14 @@
                 if (translationUnit != null)
                 {
                     var tokens = translationUnit.Tokenize(translationUnit.GetCursor().CursorExtent);
+                    //var annotatedTokens = tokens.Annotate();           //TODO see if this can provide us with additional data.
 
                     foreach (var token in tokens.Tokens)
                     {
                         var highlightData = new SyntaxHighlightingData();
                         highlightData.Start = token.Extent.Start.FileLocation.Offset;
-                        highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start; ;
+                        highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start;
+                        
 
                         switch (token.Kind)
                         {
