@@ -449,11 +449,11 @@ extern "C"
         __ASM volatile ("STR    LR, [R1]");
 
 
-#if __FPU_USED != 0
+//#if __FPU_USED != 0
         SVC_Handler_Zelig_VFP_NoFPContext();
-#else
-        SVC_Handler_Zelig();
-#endif
+//#else
+      //  SVC_Handler_Zelig();
+//#endif
 
         //
         // Push
@@ -497,11 +497,11 @@ extern "C"
 
         __ASM volatile ("STMDB    R0!, {R2-R11}");           // Stack the SW stack frame, a total of 10 registers, including R2/3
 
-#if __FPU_USED != 0
+//#if __FPU_USED != 0
         PendSV_Handler_Zelig_VFP();
-#else
-        PendSV_Handler_Zelig();                              // Perform context switch, practically setting the stack pointer for the next task
-#endif
+//#else
+ //       PendSV_Handler_Zelig();                              // Perform context switch, practically setting the stack pointer for the next task
+//#endif
 
         __ASM volatile ("LDMIA    R0!, {R2-R11}");           // Unstack the next tasks state
 
