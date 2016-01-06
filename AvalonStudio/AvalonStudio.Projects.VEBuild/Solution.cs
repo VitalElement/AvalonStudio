@@ -13,10 +13,19 @@
         public const string projectExtension = "vproj";
 
         public static Solution Load(string fileName)
-        {            
-            var solution = Deserialize(fileName);
-            
-            solution.CurrentDirectory = Path.GetDirectoryName(fileName);
+        {
+            Solution solution = null;
+
+            if (Path.GetExtension(fileName) != string.Empty)
+            {
+                solution = Deserialize(fileName);
+                solution.CurrentDirectory = Path.GetDirectoryName(fileName);
+            }
+            else
+            {
+                solution = new Solution();
+                solution.CurrentDirectory = fileName;
+            }            
 
             if (!Directory.Exists(solution.CurrentDirectory))
             {

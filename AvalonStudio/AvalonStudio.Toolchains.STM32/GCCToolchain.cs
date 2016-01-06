@@ -394,6 +394,18 @@
             };
         }
 
+        public override bool SupportsFile(ISourceFile file)
+        {
+            bool result = false;
+
+            if(Path.GetExtension(file.Location) == ".cpp" || Path.GetExtension(file.Location) == ".c")
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
         //public void GenerateLinkerScript(Project project)
         //{
         //    var template = new ArmGCCLinkTemplate(project.SelectedConfiguration);
