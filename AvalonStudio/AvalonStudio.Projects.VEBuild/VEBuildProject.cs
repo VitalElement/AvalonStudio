@@ -113,7 +113,10 @@
         [JsonConstructor]
         public VEBuildProject(List<SourceFile> sourceFiles) : this()
         {
-            SourceFiles = sourceFiles.Cast<ISourceFile>().ToList();
+            if (sourceFiles != null)
+            {
+                SourceFiles = sourceFiles.Cast<ISourceFile>().ToList();
+            }
         }
 
         public VEBuildProject()
@@ -506,6 +509,7 @@
         public string BuildDirectory { get; set; }
         public string LinkerScript { get; set; }
 
+        [JsonIgnore]
         public string Executable
         {
             get
@@ -514,6 +518,7 @@
             }
         }
 
+        [JsonIgnore]
         public IToolChain ToolChain
         {
             get
@@ -540,6 +545,7 @@
             get; private set;
         }
 
+        [JsonIgnore]
         public IList<IMenuItem> ProjectMenuItems
         {
             get

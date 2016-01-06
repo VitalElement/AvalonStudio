@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Extensibility"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Repositories", "AvalonStudio.Repository\AvalonStudio.Repositories.csproj", "{29C948E9-4D96-4490-B039-A5BBF6EEC2E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Toolchains.Llilum", "AvalonStudio.Toolchains.Llilum\AvalonStudio.Toolchains.Llilum.csproj", "{BAAB6832-377B-4115-BE7E-4C90898EAAA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -537,6 +539,22 @@ Global
 		{29C948E9-4D96-4490-B039-A5BBF6EEC2E5}.Release|x64.Build.0 = Release|Any CPU
 		{29C948E9-4D96-4490-B039-A5BBF6EEC2E5}.Release|x86.ActiveCfg = Release|Any CPU
 		{29C948E9-4D96-4490-B039-A5BBF6EEC2E5}.Release|x86.Build.0 = Release|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Debug|ARM.Build.0 = Debug|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Debug|x64.Build.0 = Debug|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Debug|x86.Build.0 = Debug|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Release|ARM.ActiveCfg = Release|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Release|ARM.Build.0 = Release|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Release|x64.ActiveCfg = Release|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Release|x64.Build.0 = Release|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Release|x86.ActiveCfg = Release|Any CPU
+		{BAAB6832-377B-4115-BE7E-4C90898EAAA3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
