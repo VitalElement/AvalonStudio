@@ -10,7 +10,7 @@
     using Toolchains;
     using Toolchains.STM32;
     using Extensibility.Menus;
-
+    using Toolchains.Llilum;
     public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
     {
         public const string solutionExtension = "vsln";
@@ -520,24 +520,37 @@
             }
         }
 
+        static LlilumToolchain GetLLilumToolchain()
+        {
+            var gccSettings = new ToolchainSettings();
+            gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
+            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3");
+            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
+            gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
+
+            return new LlilumToolchain(gccSettings);
+        }
+
         [JsonIgnore]
         public IToolChain ToolChain
         {
             get
             {
-                var result = new GccToolChain(new ToolchainSettings());
+                //var result = new GccToolChain(new ToolchainSettings());
 
-                result.Settings.ToolChainLocation = "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\bin";
+                //result.Settings.ToolChainLocation = "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\bin";
 
-                result.Settings.IncludePaths = new List<string>()
-                {
-                    "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include",
-                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include\\c++\\4.9.3",
-                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\c++\\4.9.3\\arm-none-eabi\\thumb",
-                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\lib\\gcc\\arm-none-eabi\\4.9.3\\include"
-                };
+                //result.Settings.IncludePaths = new List<string>()
+                //{
+                //    "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include",
+                //"c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include\\c++\\4.9.3",
+                //"c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\c++\\4.9.3\\arm-none-eabi\\thumb",
+                //"c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\lib\\gcc\\arm-none-eabi\\4.9.3\\include"
+                //};
 
-                return result;
+                //return result;
+
+                return GetLLilumToolchain();
             }
         }
 

@@ -85,7 +85,7 @@
             }
             else
             {
-                startInfo.WorkingDirectory = Path.Combine(Settings.ToolChainLocation, "Llilum\\ZeligBuild\\Host\\bin\\Debug");
+                //startInfo.WorkingDirectory = Path.Combine(Settings.ToolChainLocation, "Llilum\\ZeligBuild\\Host\\bin\\Debug");
 
                 startInfo.Arguments = string.Format("{0} -OutputName {1} {2}", GetZeligCompilerArguments(superProject, project, file), outputFile, outputFile);
 
@@ -371,6 +371,8 @@
             result += "-MaxProcs 8 ";
             result += "-NoSDK ";
 
+            result += string.Format("-LlvmBinPath {0} ", Path.Combine(Settings.ToolChainLocation, "LLVM"));
+
             return result;
         }
 
@@ -559,7 +561,15 @@
 
         public override List<string> GetToolchainIncludes()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+
+            return new List<string>()
+            {
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include",
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include\\c++\\4.9.3",
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\c++\\4.9.3\\arm-none-eabi\\thumb",
+                "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\lib\\gcc\\arm-none-eabi\\4.9.3\\include"
+            };
         }
 
 

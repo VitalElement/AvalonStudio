@@ -23,7 +23,7 @@
                 Directory.Delete(packageInfoDir, true);
             }
 
-            var repoPath = LibGit2Sharp.Repository.Clone(Url, packageInfoDir, new LibGit2Sharp.CloneOptions() { BranchName = "master", Checkout = false, IsBare = true });
+            var repoPath = LibGit2Sharp.Repository.Clone(Url, packageInfoDir, new LibGit2Sharp.CloneOptions() { BranchName = "master",  Checkout = false, IsBare = true });
 
             var repo = new LibGit2Sharp.Repository(repoPath);            
 
