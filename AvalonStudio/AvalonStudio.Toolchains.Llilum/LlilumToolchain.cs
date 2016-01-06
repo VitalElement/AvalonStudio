@@ -344,10 +344,10 @@
             result += string.Format("-DeviceAssemblyDir {0} ", Path.Combine(Settings.ToolChainLocation, "Llilum\\ZeligBuild\\Target\\bin\\Debug"));
             result += string.Format("-CompilationSetupPath {0} ", Path.Combine(Settings.ToolChainLocation, "Llilum\\ZeligBuild\\Host\\bin\\Debug\\Microsoft.Llilum.BoardConfigurations.STM32F411.dll"));
             result += string.Format("-CompilationSetup Microsoft.Llilum.BoardConfigurations.STM32F411MBEDHostedCompilationSetup ");
-            result += "-Reference Microsoft.CortexM3OnMBED ";
-            result += "-Reference Microsoft.CortexM3OnCMSISCore ";
-            result += "-Reference DeviceModels.ModelForCortexM3 ";
-            result += "-Reference STM32L152 ";
+            result += "-Reference Microsoft.CortexM4OnMBED ";
+            result += "-Reference Microsoft.CortexM4OnCMSISCore ";
+            result += "-Reference DeviceModels.ModelForCortexM4 ";
+            result += "-Reference STM32F411 ";
             result += "-Reference Microsoft.Zelig.LlilumCMSIS-RTOS ";
             result += "-Reference Microsoft.Zelig.Runtime ";
 
@@ -448,7 +448,7 @@
             startInfo.RedirectStandardInput = true;
             startInfo.CreateNoWindow = true;
 
-            startInfo.Arguments = string.Format("{0} -o{1} -Wl,--start-group {2} {3} {4} -Wl,--end-group", GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
+            startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group", GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
 
             if (project.Type == ProjectType.StaticLibrary)
             {
@@ -495,7 +495,7 @@
             ProcessResult result = new ProcessResult();
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-size.exe");
+            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "GCC\\bin", "arm-none-eabi-size.exe");
 
             if (!File.Exists(startInfo.FileName))
             {
