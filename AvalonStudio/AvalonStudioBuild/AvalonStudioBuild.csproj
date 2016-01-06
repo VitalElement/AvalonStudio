@@ -73,6 +73,10 @@
       <Project>{47e266ea-bbc4-4794-96da-b1f3ecb5bb9b}</Project>
       <Name>AvalonStudio.Projects.VEBuild</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.Llilum\AvalonStudio.Toolchains.Llilum.csproj">
+      <Project>{baab6832-377b-4115-be7e-4c90898eaaa3}</Project>
+      <Name>AvalonStudio.Toolchains.Llilum</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
       <Project>{72c71854-5897-4e14-a1ae-b3b48f139af7}</Project>
       <Name>AvalonStudio.Toolchains.Standard</Name>

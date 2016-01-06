@@ -9,7 +9,8 @@
     using AvalonStudio.Toolchains;
     using AvalonStudio.Toolchains.STM32;
     using AvalonStudio.Projects.Standard;
-
+    using AvalonStudio.Toolchains.Llilum;
+    using AvalonStudio.Models.Tools.Compiler;
     class Program
     {
         const string baseDir = @"c:\development\vebuild\test";
@@ -60,20 +61,39 @@
             }
         }
 
-        static int RunBuild(BuildOptions options)
+        static LlilumToolchain GetLLilumToolchain()
         {
-            var solution = LoadSolution(options);
-            var project = FindProject(solution, options.Project) as VEBuildProject;
+            var gccSettings = new ToolchainSettings();
+            gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
+            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3");
+            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
+            gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
 
+            return new LlilumToolchain(gccSettings);
+        }
+
+        static GccToolChain GetGccToolchain ()
+        {
             var gccSettings = new ToolchainSettings();
             gccSettings.ToolChainLocation = @"c:\vestudio\appdata\repos\GCCToolchain\bin";
             gccSettings.IncludePaths.Add("arm-none-eabi\\include\\c++\\4.9.3");
             gccSettings.IncludePaths.Add("arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
             gccSettings.IncludePaths.Add("lib\\gcc\\arm-none-eabi\\4.9.3\\include");
 
-            var toolchain = new GccToolChain(gccSettings);
+            return new GccToolChain(gccSettings);
+        }
 
-            toolchain.Jobs = options.Jobs;
+        static IToolChain GetToolchain()
+        {
+            return  GetLLilumToolchain();
+        }
+
+        static int RunBuild(BuildOptions options)
+        {
+            var solution = LoadSolution(options);
+            var project = FindProject(solution, options.Project) as VEBuildProject;
+
+            var toolchain = GetToolchain();
             
             if (project != null)
             {
@@ -98,13 +118,7 @@
         {
             var solution = LoadSolution(options);
 
-            var gccSettings = new ToolchainSettings();
-            gccSettings.ToolChainLocation = @"c:\vestudio\appdata\repos\GCCToolchain\bin";
-            gccSettings.IncludePaths.Add("arm-none-eabi\\include\\c++\\4.9.3");
-            gccSettings.IncludePaths.Add("arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
-            gccSettings.IncludePaths.Add("lib\\gcc\\arm-none-eabi\\4.9.3\\include");
-
-            var toolchain = new GccToolChain(gccSettings);
+            var toolchain = GetToolchain();
 
             var console = new ProgramConsole();
 
@@ -185,11 +199,13 @@
             if (File.Exists(file))
             {
                 var solution = LoadSolution(options);
-                var project = FindProject(solution, options.Project);
+                var project = FindProject(solution, options.Project) as VEBuildProject;
 
                 if (project != null)
                 {
-                    project.Items.Add(new SourceFile { File = options.File });
+                    var sourceFile = new SourceFile { File = options.File, Project = project };
+                    project.Items.Add(sourceFile);
+                    project.SourceFiles.Add(sourceFile);
                     project.Save();
                     Console.WriteLine("File added.");
                     return 1;
@@ -287,7 +303,7 @@
 
         static int Main(string[] args)
         {
-            Console.WriteLine("VEBuild - Dark Builder v1.0.0.0");
+            Console.WriteLine("VEBuild - Dark Builder v1.0.0.1");
 
             var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions>(args).MapResult(
               (BuildOptions opts) => RunBuild(opts),

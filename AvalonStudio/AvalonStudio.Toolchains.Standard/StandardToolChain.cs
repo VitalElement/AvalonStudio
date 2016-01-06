@@ -68,6 +68,8 @@
 
         public abstract List<string> GetToolchainIncludes();
 
+        public abstract bool SupportsFile(ISourceFile file);
+
         private object resultLock = new object();
         private int numTasks = 0;
 
@@ -161,13 +163,13 @@
 
                         foreach (var compiledProject in compiledProjects)
                         {
-                            if (compiledProject.Project != project)
+                            if (compiledProject.Project.Location != project.Location)
                             {
                                 Link(console, project as IStandardProject, compiledProject, linkedReferences);
                             }
                             else
                             {
-                                if (linkedReferences.Count > 0)
+                               // if (linkedReferences.Count > 0)
                                 {
                                     linkedReferences.ObjectLocations = compiledProject.ObjectLocations;
                                     Link(console, project as IStandardProject, linkedReferences, linkedReferences);
@@ -330,7 +332,7 @@
                                 break;
                             }
 
-                            if (Path.GetExtension(file.Location) == ".c" || Path.GetExtension(file.Location) == ".cpp")
+                            if (SupportsFile(file))
                             {
                                 var outputName = Path.GetFileNameWithoutExtension(file.Location) + ".o";
                                 var dependencyFile = Path.Combine(objDirectory, Path.GetFileNameWithoutExtension(file.Location) + ".d");
