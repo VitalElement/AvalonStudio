@@ -3,7 +3,7 @@
   "Type": "Executable",
   "References": [
     {
-      "Name": "STM32HalPlatform"
+      "Name": "STM32HalPlatform",
     },
   ],
   "CompilerArguments": [
@@ -42,7 +42,8 @@
     "lwip/lwip-eth/arch/TARGET_STM",
     "lwip/lwip-sys",
     "lwip/lwip/include/ipv4",
-    "lwip/lwip/include/lwip"
+    "lwip/lwip/include/lwip",
+    "lwip/lwip-sys/arch"
   ],
   "StaticLibraries":[
     "libMbed.a",
@@ -56,12 +57,32 @@
       "Name": "program.cs"
     },
     {
-      "File": "allocator.c",
-      "Name": "allocator.c"
+       "File": "startup_stm32f40xx.c"
     },
     {
-      "File": "syscalls.c",
-      "Name": "syscalls.c"
+      "File": "startup.c"
+    },
+    {
+      "File": "syscalls.c"
+    },
+    {
+      "File": "CPPSupport.cpp"
+    },
+    {
+        "File" : "checksum.c",
+        "Name" : "checksum.c"
+    },
+    {
+        "File" : "memcpy.c",
+        "Name" : "memcpy.c"
+    },
+    {
+        "File" : "stm32f4_emac.c",
+        "Name" : "stm32f4_emac.c"
+    },
+    {
+      "File": "allocator.c",
+      "Name": "allocator.c"
     },
     {
       "File": "mbed_adc.cpp",
