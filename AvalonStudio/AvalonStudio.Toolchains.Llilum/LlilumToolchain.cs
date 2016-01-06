@@ -348,6 +348,8 @@
             result += "-Reference Microsoft.CortexM3OnCMSISCore ";
             result += "-Reference DeviceModels.ModelForCortexM3 ";
             result += "-Reference STM32L152 ";
+            result += "-Reference Microsoft.Zelig.LlilumCMSIS-RTOS ";
+            result += "-Reference Microsoft.Zelig.Runtime ";
 
             result += "-CompilationPhaseDisabled InitializeReferenceCountingGarbageCollection ";
             result += "-CompilationPhaseDisabled EnableStrictReferenceCountingGarbageCollection ";
@@ -424,14 +426,14 @@
 
             string linkedLibraries = string.Empty;
 
-            //foreach (var libraryPath in project.SelectedConfiguration.LinkedLibraries)
-            //{
-            //    string relativePath = Path.GetDirectoryName(libraryPath);
+            foreach (var libraryPath in project.StaticLibraries)
+            {
+                string relativePath = project.CurrentDirectory;
 
-            //    string libName = Path.GetFileNameWithoutExtension(libraryPath).Substring(3);
+                string libName = Path.GetFileNameWithoutExtension(libraryPath).Substring(3);
 
-            //    linkedLibraries += string.Format(" -L\"{0}\" -l{1}", relativePath, libName);
-            //}
+                linkedLibraries += string.Format(" -L\"{0}\" -l{1} ", relativePath, libName);
+            }
 
             foreach (var lib in project.BuiltinLibraries)
             {
@@ -446,7 +448,7 @@
             startInfo.RedirectStandardInput = true;
             startInfo.CreateNoWindow = true;
 
-            startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group", GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
+            startInfo.Arguments = string.Format("{0} -o{1} -Wl,--start-group {2} {3} {4} -Wl,--end-group", GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
 
             if (project.Type == ProjectType.StaticLibrary)
             {

@@ -123,6 +123,7 @@
         {
             //Languages = new List<Language>();
             UnloadedReferences = new List<Reference>();
+            StaticLibraries = new List<string>();
             References = new List<IProject>();
             PublicIncludes = new List<string>();
             GlobalIncludes = new List<string>();
@@ -505,6 +506,7 @@
         }
 
         public IList<string> BuiltinLibraries { get; set; }
+        public IList<string> StaticLibraries { get; set; }
 
         public string BuildDirectory { get; set; }
         public string LinkerScript { get; set; }

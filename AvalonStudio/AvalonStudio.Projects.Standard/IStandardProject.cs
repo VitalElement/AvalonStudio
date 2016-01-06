@@ -32,6 +32,8 @@
 
         IList<string> BuiltinLibraries { get; }
 
+        IList<string> StaticLibraries { get; }
+
         IList<string> ToolChainArguments { get; }
 
         IList<string> LinkerArguments { get; }

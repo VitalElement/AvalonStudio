@@ -143,14 +143,14 @@
 
             string linkedLibraries = string.Empty;
 
-            //foreach (var libraryPath in project.SelectedConfiguration.LinkedLibraries)
-            //{
-            //    string relativePath = Path.GetDirectoryName(libraryPath);
+            foreach (var libraryPath in project.StaticLibraries)
+            {
+                string relativePath = Path.GetDirectoryName(libraryPath);
 
-            //    string libName = Path.GetFileNameWithoutExtension(libraryPath).Substring(3);
+                string libName = Path.GetFileNameWithoutExtension(libraryPath).Substring(3);
 
-            //    linkedLibraries += string.Format(" -L\"{0}\" -l{1}", relativePath, libName);
-            //}
+                linkedLibraries += string.Format(" -L\"{0}\" -l{1}", relativePath, libName);
+            }
 
             foreach (var lib in project.BuiltinLibraries)
             {

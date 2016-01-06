@@ -567,6 +567,14 @@
                 throw new NotImplementedException();
             }
         }
+
+        public IList<string> StaticLibraries
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
         #endregion
 
         public static string NormalizePath (string path)
