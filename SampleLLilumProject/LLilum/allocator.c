@@ -12,8 +12,8 @@
 #include <stddef.h>
 
 #pragma mark Definitions and Constants
-extern unsigned int _HEAP_START;
-extern unsigned int _HEAP_END;
+extern unsigned int __bss_end__;
+extern unsigned int __HeapLimit;
 
 typedef char* caddr_t;
 
@@ -26,6 +26,8 @@ static caddr_t heap = NULL;
 #pragma mark Function Implementations
 caddr_t _sbrk (int increment)
 {
+    auto _HEAP_START = __bss_end__;
+    auto _HEAP_END = __HeapLimit;
     caddr_t prevHeap;
     caddr_t nextHeap;
 

@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using AvalonStudio.Utils;
     using System.IO;
+    using System.Net;
+    using System.Threading.Tasks;
 
     public class PackageInfo
     {
@@ -12,31 +14,20 @@
 
     public class PackageReference
     {
-        public PackageInfo DownloadInfo()
+        public async Task<PackageIndex> DownloadInfoAsync()
         {
             var source = Repository.Source;
 
-            var packageInfoDir = Path.Combine(source.CatalogDirectory, Name);
+            PackageIndex result = null;
 
-            if (Directory.Exists(packageInfoDir))
+            using (var client = new WebClient())
             {
-                Directory.Delete(packageInfoDir, true);
+                var packageIndex = PackageIndex.FromString(await client.DownloadStringTaskAsync(Url));
+
+                result = packageIndex;
             }
 
-            var repoPath = LibGit2Sharp.Repository.Clone(Url, packageInfoDir, new LibGit2Sharp.CloneOptions() { BranchName = "master",  Checkout = false, IsBare = true });
-
-            var repo = new LibGit2Sharp.Repository(repoPath);            
-
-            var tags = repo.Tags;
-            var branches = repo.Branches;
-            
-            // Platform == Branch
-            // tag names are: [Platform].[Version]
-
-            //
-
-            var package = new PackageInfo();
-            return package;
+            return result;
         }
 
         public Repository Repository { get; internal set; }

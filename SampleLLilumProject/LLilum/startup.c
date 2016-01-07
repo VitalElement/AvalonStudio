@@ -18,11 +18,11 @@ typedef void (*func_ptr) (void);
 extern func_ptr __init_array_start[0], __init_array_end[0];
 extern func_ptr __fini_array_start[0], __fini_array_end[0];
 
-extern unsigned long _data_flash;
-extern unsigned long _data_begin;
-extern unsigned long _data_end;
-extern unsigned long _bss_begin;
-extern unsigned long _bss_end;
+extern unsigned long __exidx_start;
+extern unsigned long __data_start__;
+extern unsigned long __data_end__;
+extern unsigned long __bss_start__;
+extern unsigned long __bss_end__;
 
 #pragma mark Static Data
 
@@ -37,14 +37,14 @@ void system_startup (void)
     volatile unsigned long* destination;
 
     // Zero bss segment.
-    for (destination = &_bss_begin; destination < &_bss_end;)
+    for (destination = &__bss_start__; destination < &__bss_end__;)
     {
         *(destination++) = 0;
     }
 
-    source = &_data_flash;
+    source = &__exidx_start;
 
-    for (destination = &_data_begin; destination < &_data_end;)
+    for (destination = &__data_start__; destination < &__data_end__;)
     {
         *(destination++) = *(source++);
     } 
