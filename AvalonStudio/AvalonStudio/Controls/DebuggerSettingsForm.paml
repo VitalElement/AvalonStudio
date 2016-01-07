@@ -1,0 +1,41 @@
+﻿<UserControl xmlns="https://github.com/perspex">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="30"/>
+      <RowDefinition Height="30"/>
+      <RowDefinition Height="30"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+    </Grid.ColumnDefinitions>
+
+    <TextBlock Text="Select a debug adaptor. If there are none shown, use the package manager to install one."/>
+
+    <DropDown Grid.Row="1" Items="{Binding InstalledAdaptors}" SelectedItem="{Binding SelectedDebugAdaptor}">
+      <DropDown.DataTemplates>
+        <DataTemplate>
+          <TextBlock Text="{Binding Name}"/>
+        </DataTemplate>
+      </DropDown.DataTemplates>
+    </DropDown>
+
+    <CheckBox Grid.Column="1" Content="Run Immediately" Margin="5 0 0 0" IsChecked="{Binding RunImmediately}"/>
+    <CheckBox Grid.Column="1" Grid.Row="1" Content="Break on Main" Margin="5 0 0 0" IsChecked="{Binding BreakOnMain}"/>
+
+    <TextBlock Grid.Row="2" Text="Settings" VerticalAlignment="Bottom"/>
+
+    <ListBox Grid.Row="3" Items="{Binding Settings}" SelectedItem="{Binding SelectedSetting}" SelectedIndex="{Binding SelectedSettingIndex}">
+      <ListBox.DataTemplates>
+        <DataTemplate>
+          <TextBlock Text="{Binding Title}"/>
+        </DataTemplate>
+      </ListBox.DataTemplates>
+    </ListBox>
+
+    <!--
+    <Settings:Setting DataContext="{Binding SelectedSetting}" Grid.Row="3" Grid.Column="1"/>-->
+  </Grid>
+</UserControl>
