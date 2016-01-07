@@ -6,8 +6,11 @@
     using Repositories;
     using System;
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Threading.Tasks;
-    public class PackageManagerDialogViewModel : ModalDialogViewModelBase
+    using Utils;
+
+    public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole
     {
         public PackageManagerDialogViewModel()
             : base("Packages")
@@ -16,32 +19,32 @@
 
             DownloadCatalog();
 
-            //InstallCommand = ReactiveCommand.Create();
-            //InstallCommand.Subscribe(async (o) =>
-            //{
-            //    EnableInterface = false;
+            InstallCommand = ReactiveCommand.Create();
+            InstallCommand.Subscribe(async (o) =>
+            {
+                EnableInterface = false;
 
-            //    try
-            //    {
-            //        var fullPackage = await SelectedPackage.DownloadPackage(ProgressUpdate);
+                try
+                {
+                    await SelectedPackageIndex.Synchronize(SelectedTag, this);
 
-            //        if (fullPackage.Install())
-            //        {
-            //            Status = "Package Installed Successfully.";
-            //        }
-            //        else
-            //        {
-            //            Status = "An error occurred trying to install package.";
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        Status = "An error occurred trying to install package. " + e.Message;
-            //    }
+                    //if (fullPackage.Install())
+                    //{
+                    //    Status = "Package Installed Successfully.";
+                    //}
+                    //else
+                    //{
+                    //    Status = "An error occurred trying to install package.";
+                    //}
+                }
+                catch (Exception e)
+                {
+                    Status = "An error occurred trying to install package. " + e.Message;
+                }
 
-            //    EnableInterface = true;
+                EnableInterface = true;
 
-            //});
+            });
 
             OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.EnableInterface));
 
@@ -117,11 +120,57 @@
             return true;
         }
 
+        public void WriteLine(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteLine()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OverWrite(string data)
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Status = data;
+            });
+        }
+
+        public void Write(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write(char data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
         private string status;
         public string Status
         {
             get { return status; }
             set { this.RaiseAndSetIfChanged(ref status, value); }
+        }
+
+
+        private  async void GetPackageInfo (PackageReference reference)
+        {
+            try
+            {
+                SelectedPackageIndex = await reference.DownloadInfoAsync();
+            }
+            catch (Exception e)
+            {
+                
+            }
         }
 
         private PackageReference selectedPackage;
@@ -130,13 +179,27 @@
             get { return selectedPackage; }
             set
             {
-                value.DownloadInfo();
+                GetPackageInfo(value);
 
                 this.RaiseAndSetIfChanged(ref selectedPackage, value);
                 this.RaisePropertyChanged(() => ButtonText);
             }
         }
 
+        private PackageIndex selectedPackageIndex;
+        public PackageIndex SelectedPackageIndex
+        {
+            get { return selectedPackageIndex; }
+            set { this.RaiseAndSetIfChanged(ref selectedPackageIndex, value); SelectedTag = value.Tags.FirstOrDefault(); }
+        }
+
+        private string selectedTag;
+        public string SelectedTag
+        {
+            get { return selectedTag; }
+            set { this.RaiseAndSetIfChanged(ref selectedTag, value); }
+        }
+        
 
         private ObservableCollection<PackageReference> availablePackage;
         public ObservableCollection<PackageReference> AvailablePackages

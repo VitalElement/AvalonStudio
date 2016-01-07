@@ -12,6 +12,11 @@
             writer.Close();
         }
 
+        public static T FromString (string data)
+        {
+            return JsonConvert.DeserializeObject<T>(data);
+        }
+
         public static T Deserialize (string filename)
         {
             var reader = new StreamReader(filename);
