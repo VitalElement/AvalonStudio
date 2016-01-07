@@ -9,7 +9,7 @@
   "CompilerArguments": [
     "-ffunction-sections",
     "-fdata-sections",
-    "-Wno-unknown-pragmas"
+    "-Wno-unknown-pragmas"    
   ],
   "CppCompilerArguments": [
     "-fno-rtti",    

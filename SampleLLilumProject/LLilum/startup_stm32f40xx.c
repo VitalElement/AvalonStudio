@@ -154,7 +154,7 @@ typedef void (*const interruptVector) (void);
 
 __attribute__ ((
 used,
-section (".interrupt_vector"))) static interruptVector interruptVectorTable[] =
+section (".isr_vector"))) static interruptVector interruptVectorTable[] =
 {
   /*----------Core Exceptions------------------------------------------------ */
   (interruptVector)&stack[STACK_SIZE], /*!< The initial stack pointer         */

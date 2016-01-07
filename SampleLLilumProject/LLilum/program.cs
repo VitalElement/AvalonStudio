@@ -9,6 +9,10 @@ namespace UnsafeTest
              UInt32 x = 0;
              
              x++;
+
+             while(true)
+             {
+             }
         }
     }
 }
