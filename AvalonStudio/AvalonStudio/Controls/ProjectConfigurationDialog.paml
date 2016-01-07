@@ -1,0 +1,192 @@
+﻿<UserControl xmlns="https://github.com/perspex">
+  <!--
+  <UserControl.Resources>
+    <DataTemplate DataType="{x:Type ViewModels:CompileSettingsViewModel}">
+      <Views:CompileSettingsForm/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModels:LinkSettingsFormViewModel}">
+      <Views:LinkSettingsForm/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModels:DebuggerSettingsFormViewModel}">
+      <Views:DebuggerSettingsForm/>
+    </DataTemplate>
+  </UserControl.Resources>
+-->
+  <Grid>
+    <TabControl>
+      <TabItem Header="Type">
+        <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal">
+          <RadioButton Content="Executable (.elf)" IsChecked="True"/>
+          <RadioButton Margin="10 0 0 0" Content="Library (.a)" IsChecked="{Binding IsLibrary}"/>
+        </StackPanel>
+      </TabItem>
+
+      <TabItem Header="Target">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="180"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+
+          <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+          </Grid.RowDefinitions>
+
+          <Panel Grid.RowSpan="2">
+            <ListBox  Items="{Binding Manufacturers}" SelectedItem="{Binding SelectedManufacturer}">
+
+              <ListBox.DataTemplates>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+              </ListBox.DataTemplates>
+            </ListBox>
+
+          </Panel>
+
+
+          <Panel Grid.Column="1" Grid.RowSpan="2" >
+            <ListBox Grid.Column="1" Grid.RowSpan="2" Items="{Binding Devices}" SelectedItem="{Binding SelectedDevice}">
+              <ListBox.DataTemplates>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+              </ListBox.DataTemplates>
+            </ListBox>
+          </Panel>
+
+          <Panel Grid.Column="2" Grid.RowSpan="2" >
+            <Grid >
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition/>
+              </Grid.ColumnDefinitions>
+
+              <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition/>
+              </Grid.RowDefinitions>
+
+              <TextBlock Text="Name"/>
+              <TextBlock Grid.Column="1" Text="{Binding SelectedDevice.Name}"/>
+
+              <TextBlock Grid.Row="1" Text="Clock Speed"/>
+              <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDevice.Clock}"/>
+
+              <TextBlock Grid.Row="2" Text="Core"/>
+              <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDevice.Core.Name}"/>
+
+              <TextBlock Grid.Row="3" Text="Core Version"/>
+              <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedDevice.Core.Version}"/>
+
+              <TextBlock Grid.Row="4" Text="Floating Point"/>
+              <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedDevice.Core.Fpu}"/>
+
+              <TextBlock Grid.Row="5" Text="Internal ROM"/>
+              <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding SelectedDevice.RomSize}"/>
+
+              <TextBlock Grid.Row="6" Text="Internal RAM"/>
+              <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding SelectedDevice.RamSize}"/>
+
+              <TextBlock Grid.Row="7" Text="Description"/>
+              <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding SelectedDevice.Description}"/>
+            </Grid>
+          </Panel>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="ToolChain">
+        <Grid IsEnabled="{Binding IsEnabled}">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition />
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="282*"/>
+            <ColumnDefinition Width="115*"/>
+            <ColumnDefinition Width="397*"/>
+          </Grid.ColumnDefinitions>
+
+          <TextBlock Grid.Row="0" Text="Toolchain" Grid.ColumnSpan="2"/>
+          <DropDown Grid.Row="0" Grid.Column="2" Items="{Binding ToolChains}" SelectedItem="{Binding SelectedToolChain}">
+            <DropDown.DataTemplates>
+              <DataTemplate>
+                <TextBlock Text="{Binding Name}"/>
+              </DataTemplate>
+            </DropDown.DataTemplates>
+          </DropDown>
+
+          <Panel Grid.Row="1" Grid.ColumnSpan="3" DataContext="{Binding SelectedToolChain}"  >
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition/>
+                <RowDefinition Height="30"/>
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+              </Grid.ColumnDefinitions>
+
+              <TextBlock Text="Name: " HorizontalAlignment="Right"/>
+              <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="10 5 0 0"/>
+              <TextBlock Grid.Row="1" Text="Version:" HorizontalAlignment="Right"/>
+              <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Version}" Margin="10 5 0 0"/>
+              <TextBlock Grid.Row="2" Text="Description:" HorizontalAlignment="Right" />
+              <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description}" Margin="10 5 0 0"/>
+
+              <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{Binding ButtonText}" Command="{Binding InstallCommand}"/>
+
+
+              <TextBlock Grid.Row="3" Grid.ColumnSpan="3" Text="{Binding StatusMessage}"/>
+            </Grid>
+          </Panel>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Compile" Content="{Binding CompileSettings}"/>
+
+      <TabItem Header="Link" Content="{Binding LinkSettings}" IsVisible="{Binding ExecutableOptionsVisibility}"/>
+
+      <TabItem Header="Component">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+
+          <Panel Grid.Row="1"  >
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="80"/>
+              </Grid.ColumnDefinitions>
+
+              <ListBox Items="{Binding ExportedIncludes}" SelectedItem="{Binding SelectedExportedInclude}"/>
+
+              <StackPanel Grid.Column="1">
+                <Button Content="Add" Command="{Binding AddExportedIncludePathCommand}" Margin="5 0 0 0" />
+                <Button Content="Remove" Command="{Binding RemoveExportedIncludePathCommand}" Margin="5 5 0 0" />
+              </StackPanel>
+            </Grid>
+          </Panel>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Debugger" IsVisible="{Binding ExecutableOptionsVisibility}">
+        <ContentPresenter Content="{Binding DebugSettings}" />
+      </TabItem>
+    </TabControl>
+  </Grid>
+</UserControl>
