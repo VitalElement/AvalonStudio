@@ -1,24 +1,28 @@
 {
   "Name": "Utils",
-  "Languages": [
-    "Cpp"
-  ],
   "Type": "StaticLibrary",
+  "References": [],
   "PublicIncludes": [
     "./"
   ],
   "SourceFiles": [
     {
-      "File": "CRC.cpp"
+      "File": "CRC.cpp",
+      "Name": "CRC.cpp"
     },
     {
-      "File": "Event.cpp"
+      "File": "Event.cpp",
+      "Name": "Event.cpp"
     },
     {
-      "File": "PidController.cpp"
+      "File": "PidController.cpp",
+      "Name": "PidController.cpp"
     },
     {
-      "File": "StraightLineFormula.cpp"
+      "File": "StraightLineFormula.cpp",
+      "Name": "StraightLineFormula.cpp"
     }
-  ]
+  ],
+  "StaticLibraries": [],
+  "Toolchain": "AvalonStudio.Toolchains.Llilum.LlilumToolchain"
 }
