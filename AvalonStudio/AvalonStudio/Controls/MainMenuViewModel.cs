@@ -62,7 +62,14 @@
             {
                 Workspace.Instance.ModalDialog = new PackageManagerDialogViewModel();
                 Workspace.Instance.ModalDialog.ShowDialog();
-            });            
+            });
+
+            ProjectPropertiesCommand = ReactiveCommand.Create();
+            ProjectPropertiesCommand.Subscribe((o) =>
+            {
+                Workspace.Instance.ModalDialog = new ProjectConfigurationDialogViewModel(Workspace.Instance.SolutionExplorer.SelectedProject, () => { });
+                Workspace.Instance.ModalDialog.ShowDialog();
+            });
         }
 
         public ReactiveCommand<object> SaveCommand { get; private set; }
@@ -71,5 +78,6 @@
         public ReactiveCommand<object> CleanProjectCommand { get; private set; }
         public ReactiveCommand<object> BuildProjectCommand { get; private set; }
         public ReactiveCommand<object> PackagesCommand { get; private set; }
+        public ReactiveCommand<object> ProjectPropertiesCommand { get; private set; }
     }
 }

@@ -3,25 +3,8 @@
   "Type": "Executable",
   "References": [
     {
-      "Name": "STM32HalPlatform",
-    },
-  ],
-  "CompilerArguments": [
-    "-ffunction-sections",
-    "-fdata-sections",
-    "-Wno-unknown-pragmas"    
-  ],
-  "CppCompilerArguments": [
-    "-fno-rtti",    
-    "-fno-exceptions"
-  ],
-  "ToolChainArguments": [
-    "-mcpu=cortex-m4",
-    "-mthumb",
-  ],
-  "Defines": [
-    "TARGET_STM32F411RE",
-    "STM32F407xx"
+      "Name": "STM32HalPlatform"
+    }
   ],
   "GlobalIncludes": [
     "./"
@@ -45,11 +28,9 @@
     "lwip/lwip/include/lwip",
     "lwip/lwip-sys/arch"
   ],
-  "StaticLibraries":[
-    "libMbed.a",
-    "libMbedEth.a",
-    "liblwipsysarch.a",
-    "libLwIP.a"
+  "Defines": [
+    "TARGET_STM32F411RE",
+    "STM32F407xx"
   ],
   "SourceFiles": [
     {
@@ -57,28 +38,32 @@
       "Name": "program.cs"
     },
     {
-       "File": "startup_stm32f40xx.c"
+      "File": "startup_stm32f40xx.c",
+      "Name": "startup_stm32f40xx.c"
     },
     {
-      "File": "startup.c"
+      "File": "startup.c",
+      "Name": "startup.c"
     },
     {
-      "File": "syscalls.c"
+      "File": "syscalls.c",
+      "Name": "syscalls.c"
     },
     {
-      "File": "CPPSupport.cpp"
+      "File": "CPPSupport.cpp",
+      "Name": "CPPSupport.cpp"
     },
     {
-        "File" : "checksum.c",
-        "Name" : "checksum.c"
+      "File": "checksum.c",
+      "Name": "checksum.c"
     },
     {
-        "File" : "memcpy.c",
-        "Name" : "memcpy.c"
+      "File": "memcpy.c",
+      "Name": "memcpy.c"
     },
     {
-        "File" : "stm32f4_emac.c",
-        "Name" : "stm32f4_emac.c"
+      "File": "stm32f4_emac.c",
+      "Name": "stm32f4_emac.c"
     },
     {
       "File": "allocator.c",
@@ -156,5 +141,25 @@
       "File": "mbed_threading.cpp",
       "Name": "mbed_threading.cpp"
     }
-  ]
+  ],
+  "CompilerArguments": [
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-Wno-unknown-pragmas"
+  ],
+  "CppCompilerArguments": [
+    "-fno-rtti",
+    "-fno-exceptions"
+  ],
+  "ToolChainArguments": [
+    "-mcpu=cortex-m4",
+    "-mthumb"
+  ],
+  "StaticLibraries": [
+    "libMbed.a",
+    "libMbedEth.a",
+    "liblwipsysarch.a",
+    "libLwIP.a"
+  ],
+  "Toolchain": "AvalonStudio.Toolchains.Llilum.LlilumToolchain"
 }

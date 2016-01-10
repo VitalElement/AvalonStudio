@@ -1,12 +1,16 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls.ViewModels
 {
-    using AvalonStudio.Controls.ViewModels;
     using Projects;
     using System;
     using System.Threading.Tasks;
 
     public class ProjectConfigurationDialogViewModel : ModalDialogViewModelBase
     {
+        public ProjectConfigurationDialogViewModel() : base ("Project Properties", true, false)
+        {
+
+        }
+
         public ProjectConfigurationDialogViewModel(IProject project, Action onClose)
             : base("Project Configuration", true, false)
         {
