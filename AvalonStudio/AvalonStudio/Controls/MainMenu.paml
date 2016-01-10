@@ -28,6 +28,10 @@
       </MenuItem>
     </MenuItem>
 
+    <MenuItem Header="Project">
+      <MenuItem Header="Properties" Command="{Binding ProjectPropertiesCommand}" />
+    </MenuItem>
+
     <MenuItem Header="Build">
       <MenuItem Header="Clean Project" Command="{Binding CleanProjectCommand}" />
       <MenuItem Header="Build Project" Command="{Binding BuildProjectCommand}" />

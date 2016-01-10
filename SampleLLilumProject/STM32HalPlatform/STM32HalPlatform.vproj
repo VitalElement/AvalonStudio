@@ -1,9 +1,5 @@
 {
   "Name": "STM32HalPlatform",
-  "Languages": [
-    "Cpp",
-    "C"
-  ],
   "Type": "StaticLibrary",
   "References": [
     {
@@ -28,40 +24,54 @@
   ],
   "SourceFiles": [
     {
-      "File": "SignalGeneration/STM32FrequencyChannel.cpp"
+      "File": "SignalGeneration/STM32FrequencyChannel.cpp",
+      "Name": "STM32FrequencyChannel.cpp"
     },
     {
-      "File": "SignalGeneration/STM32PwmChannel.cpp"
+      "File": "SignalGeneration/STM32PwmChannel.cpp",
+      "Name": "STM32PwmChannel.cpp"
     },
     {
-      "File": "USB/CustomHID/usb_device.c"
+      "File": "USB/CustomHID/usb_device.c",
+      "Name": "usb_device.c"
     },
     {
-      "File": "USB/CustomHID/usbd_conf.c"
+      "File": "USB/CustomHID/usbd_conf.c",
+      "Name": "usbd_conf.c"
     },
     {
-      "File": "USB/CustomHID/usbd_customhid.c"
+      "File": "USB/CustomHID/usbd_customhid.c",
+      "Name": "usbd_customhid.c"
     },
     {
-      "File": "USB/CustomHID/usbd_desc.c"
+      "File": "USB/CustomHID/usbd_desc.c",
+      "Name": "usbd_desc.c"
     },
     {
-      "File": "USB/STM32UsbHidDevice.cpp"
+      "File": "USB/STM32UsbHidDevice.cpp",
+      "Name": "STM32UsbHidDevice.cpp"
     },
     {
-      "File": "STM32Adc.cpp"
+      "File": "STM32Adc.cpp",
+      "Name": "STM32Adc.cpp"
     },
     {
-      "File": "STM32BootloaderService.cpp"
+      "File": "STM32BootloaderService.cpp",
+      "Name": "STM32BootloaderService.cpp"
     },
     {
-      "File": "STM32InputCaptureChannel.cpp"
+      "File": "STM32InputCaptureChannel.cpp",
+      "Name": "STM32InputCaptureChannel.cpp"
     },
     {
-      "File": "STM32QuadratureEncoder.cpp"
+      "File": "STM32QuadratureEncoder.cpp",
+      "Name": "STM32QuadratureEncoder.cpp"
     },
     {
-      "File": "STM32Timer.cpp"
+      "File": "STM32Timer.cpp",
+      "Name": "STM32Timer.cpp"
     }
-  ]
+  ],
+  "StaticLibraries": [],
+  "Toolchain": "AvalonStudio.Toolchains.Llilum.LlilumToolchain"
 }

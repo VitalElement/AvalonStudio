@@ -11,6 +11,7 @@
     using Toolchains.STM32;
     using Extensibility.Menus;
     using Toolchains.Llilum;
+
     public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
     {
         public const string solutionExtension = "vsln";
@@ -81,7 +82,7 @@
 
                 }
             }
-
+            
             return project;
         }
 
@@ -136,7 +137,7 @@
             CppCompilerArguments = new List<string>();
             BuiltinLibraries = new List<string>();
             Defines = new List<string>();
-
+            ToolchainReference = ToolChain.GetType().ToString();
         }
 
         private static Dictionary<string, Tuple<string, string>> passwordCache = new Dictionary<string, Tuple<string, string>>();
@@ -536,6 +537,16 @@
         {
             get
             {
+                // Query the workspace for toolchains type == toolchain reference ... We need an IWorkspace for things like this.                
+
+                // if found then set with the result (not instantiated... only a single instantiation in program)
+
+                // if not... dialog... Group.Toolchains.Toolchain could not be found... do wish to install the toolchain....
+                // package manager with search filled out... user clicks install.
+
+                //
+
+
                 //var result = new GccToolChain(new ToolchainSettings());
 
                 //result.Settings.ToolChainLocation = "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\bin";
@@ -552,6 +563,16 @@
 
                 return GetLLilumToolchain();
             }
+            set
+            {
+                ToolchainReference = value.GetType().Name;
+            }
+        }
+
+        [JsonProperty(PropertyName = "Toolchain")]
+        public string ToolchainReference
+        {
+            get; set;
         }
 
         [JsonIgnore]
