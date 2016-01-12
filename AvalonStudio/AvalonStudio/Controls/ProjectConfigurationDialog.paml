@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex">
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
   <!--
   <UserControl.Resources>
     <DataTemplate DataType="{x:Type ViewModels:CompileSettingsViewModel}">
@@ -156,9 +156,13 @@
         </Grid>
       </TabItem>
 
-      <TabItem Header="Compile" Content="{Binding CompileSettings}"/>
+      <TabItem Header="Compile" DataContext="{Binding CompileSettings}">
+        <Controls:CompileSettingsForm />
+      </TabItem>
 
-      <TabItem Header="Link" Content="{Binding LinkSettings}" IsVisible="{Binding ExecutableOptionsVisibility}"/>
+      <TabItem Header="Link" DataContext="{Binding LinkSettings}" IsVisible="{Binding ExecutableOptionsVisibility}">
+        <Controls:LinkerSettingsForm />
+      </TabItem>
 
       <TabItem Header="Component">
         <Grid>
