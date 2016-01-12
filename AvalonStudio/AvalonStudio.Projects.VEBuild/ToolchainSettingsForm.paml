@@ -1,0 +1,50 @@
+﻿<TabItem xmlns="https://github.com/perspex" Header="ToolChain">
+    <Grid IsEnabled="{Binding IsEnabled}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="30"/>
+        <RowDefinition />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="282*"/>
+        <ColumnDefinition Width="115*"/>
+        <ColumnDefinition Width="397*"/>
+      </Grid.ColumnDefinitions>
+
+      <TextBlock Grid.Row="0" Text="Toolchain" Grid.ColumnSpan="2"/>
+      <DropDown Grid.Row="0" Grid.Column="2" Items="{Binding ToolChains}" SelectedItem="{Binding SelectedToolChain}">
+        <DropDown.DataTemplates>
+          <DataTemplate>
+            <TextBlock Text="{Binding Name}"/>
+          </DataTemplate>
+        </DropDown.DataTemplates>
+      </DropDown>
+
+      <Panel Grid.Row="1" Grid.ColumnSpan="3" DataContext="{Binding SelectedToolChain}"  >
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition/>
+            <RowDefinition Height="30"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+
+          <TextBlock Text="Name: " HorizontalAlignment="Right"/>
+          <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="10 5 0 0"/>
+          <TextBlock Grid.Row="1" Text="Version:" HorizontalAlignment="Right"/>
+          <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Version}" Margin="10 5 0 0"/>
+          <TextBlock Grid.Row="2" Text="Description:" HorizontalAlignment="Right" />
+          <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description}" Margin="10 5 0 0"/>
+
+          <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{Binding ButtonText}" Command="{Binding InstallCommand}"/>
+
+
+          <TextBlock Grid.Row="3" Grid.ColumnSpan="3" Text="{Binding StatusMessage}"/>
+        </Grid>
+      </Panel>
+    </Grid>
+  </TabItem>

@@ -7,11 +7,13 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Xml.Serialization;   
+    using System.Xml.Serialization;
     using VEUtils;
     using Projects;
     using Toolchains;
     using Extensibility.Menus;
+    using Extensibility;
+    using Perspex.Controls;
 
     [XmlInclude(typeof(BitThunderApplicationProject))]
     [XmlInclude(typeof(CatchTestProject))]
@@ -569,6 +571,22 @@
         }
 
         public IList<string> StaticLibraries
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<ConfigPage> ConfigurationPages
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        IList<TabItem> IProject.ConfigurationPages
         {
             get
             {

@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Toolchains
 {
+    using Perspex.Controls;
     using Projects;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
@@ -13,7 +14,9 @@
 
         Task Clean(IConsole console, IProject project);        
 
-        List<string> Includes { get; }
+        IList<string> Includes { get; }
+
+        IList<TabItem> ConfigurationPages { get; }
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿namespace AvalonStudio.Toolchains.Standard
 {
     using AvalonStudio.Toolchains;
+    using Perspex.Controls;
     using Projects;
     using Projects.Standard;
     using System;
@@ -50,6 +51,7 @@
         {
             this.Settings = settings;
             this.Jobs = 16;
+            ConfigurationPages = new List<TabItem>();
         }
 
         public int Jobs { get; set; }
@@ -486,5 +488,15 @@
                 return GetToolchainIncludes();
             }
         }
+
+        IList<string> IToolChain.Includes
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<TabItem> ConfigurationPages { get; protected set; }
     }
 }

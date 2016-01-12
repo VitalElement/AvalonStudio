@@ -1,11 +1,11 @@
 ﻿using Perspex.Controls;
 using Perspex.Markup.Xaml;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Projects.VEBuild
 {
-    public class CompileSettingsForm : UserControl
+    public class DebuggerSettingsForm : TabItem
     {
-        public CompileSettingsForm()
+        public DebuggerSettingsForm()
         {
             this.InitializeComponent();
         }

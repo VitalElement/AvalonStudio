@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex">
+﻿<TabItem xmlns="https://github.com/perspex" Header="Compiler">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="110"/>
@@ -84,4 +84,4 @@
             <TextBox Text="{Binding CompilerArguments}" IsEnabled="False"  />
         </Panel>
     </Grid>    
-</UserControl>
+</TabItem>

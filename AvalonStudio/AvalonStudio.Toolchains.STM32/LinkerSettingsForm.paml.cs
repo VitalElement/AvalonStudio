@@ -1,9 +1,9 @@
 ﻿using Perspex.Controls;
 using Perspex.Markup.Xaml;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Toolchains.STM32
 {
-    public class LinkerSettingsForm : UserControl
+    public class LinkerSettingsForm : TabItem
     {
         public LinkerSettingsForm()
         {

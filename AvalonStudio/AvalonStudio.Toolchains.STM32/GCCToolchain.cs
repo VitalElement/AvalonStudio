@@ -8,7 +8,7 @@
     using Utils;
     using System;
     using System.Collections.Generic;
-
+    using Perspex.Controls;
     public class GccToolChain : StandardToolChain
     {
         public GccToolChain() : base (new ToolchainSettings())
@@ -18,6 +18,8 @@
 
         public GccToolChain(ToolchainSettings settings) : base(settings)
         {
+            ConfigurationPages.Add(new CompileSettingsForm());
+            ConfigurationPages.Add(new LinkerSettingsForm());
         }
 
         public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)

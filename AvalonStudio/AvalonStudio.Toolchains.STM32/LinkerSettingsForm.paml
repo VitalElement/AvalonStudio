@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex">
+﻿<TabItem xmlns="https://github.com/perspex" Header="Linker">
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="150"/>
@@ -153,4 +153,4 @@
       <TextBox Text="{Binding LinkerArguments}" IsEnabled="False" />
     </Panel>
   </Grid>
-</UserControl>
+</TabItem>

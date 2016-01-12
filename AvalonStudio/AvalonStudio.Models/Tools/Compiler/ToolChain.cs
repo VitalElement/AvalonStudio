@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using AvalonStudio.Models.Solutions;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains;
+using Perspex.Controls;
 //using AvalonStudio.Models.Tools.Debuggers;
 
 namespace AvalonStudio.Models.Tools.Compiler
@@ -70,6 +71,22 @@ namespace AvalonStudio.Models.Tools.Compiler
             get
             {
                 return this.Settings.IncludePaths;
+            }
+        }
+
+        IList<string> IToolChain.Includes
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<TabItem> ConfigurationPages
+        {
+            get
+            {
+                throw new NotImplementedException();
             }
         }
     }
