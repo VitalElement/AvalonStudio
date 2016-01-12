@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Toolchains.STM32
 {
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;

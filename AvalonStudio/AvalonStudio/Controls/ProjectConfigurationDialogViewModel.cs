@@ -1,19 +1,27 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
+    using Perspex.Controls;
     using Projects;
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Toolchains.STM32;
 
     public class ProjectConfigurationDialogViewModel : ModalDialogViewModelBase
     {
         public ProjectConfigurationDialogViewModel() : base ("Project Properties", true, false)
         {
+            this.compileContent = new CompileSettingsForm();
 
         }
 
         public ProjectConfigurationDialogViewModel(IProject project, Action onClose)
             : base("Project Configuration", true, false)
         {
+            this.configPages = new List<TabItem>();
+            configPages.AddRange(project.ConfigurationPages);
+            configPages.AddRange(project.ToolChain.ConfigurationPages);
+
             //this.project = project;
             //isLibrary = project.SelectedConfiguration.IsLibrary;
             //this.debugSettings = new DebuggerSettingsFormViewModel(this, project);
@@ -103,6 +111,22 @@
         {
 
         }
+
+        private object compileContent;
+        public object CompileContent
+        {
+            get { return compileContent; }
+            set { compileContent = value; }
+        }
+
+        private List<TabItem> configPages;
+        public List<TabItem> ConfigPages
+        {
+            get { return configPages; }
+            set { configPages = value; }
+        }
+
+
 
         //private void SelectDevice()
         //{
