@@ -16,7 +16,7 @@
     </Grid>
     <Grid Grid.Row="1" RowDefinitions="*,30">      
       <Border BorderBrush="#FF585656" BorderThickness="1" Margin="50 0 50 0">
-        <ContentControl Content="{Binding DataContext}">
+        <ContentControl Content="{Binding }">
           <ContentControl.DataTemplates>
             <DataTemplate DataType="ViewModels:PackageManagerDialogViewModel">
               <Controls:PackageManagerDialog />
