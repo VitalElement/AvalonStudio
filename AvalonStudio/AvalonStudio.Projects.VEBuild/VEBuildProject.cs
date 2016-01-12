@@ -11,6 +11,8 @@
     using Toolchains.STM32;
     using Extensibility.Menus;
     using Toolchains.Llilum;
+    using Extensibility;
+    using Perspex.Controls;
 
     public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
     {
@@ -122,6 +124,13 @@
 
         public VEBuildProject()
         {
+            ConfigurationPages = new List<TabItem>();
+            ConfigurationPages.Add(new TypeSettingsForm());
+            ConfigurationPages.Add(new TargetSettingsForm());
+            ConfigurationPages.Add(new ToolchainSettingsForm());                        
+            ConfigurationPages.Add(new ComponentSettingsForm());
+            ConfigurationPages.Add(new DebuggerSettingsForm());
+
             //Languages = new List<Language>();
             UnloadedReferences = new List<Reference>();
             StaticLibraries = new List<string>();
@@ -532,6 +541,17 @@
             return new LlilumToolchain(gccSettings);
         }
 
+        static GccToolChain GetSTM32Toolchain()
+        {
+            var gccSettings = new ToolchainSettings();
+            gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
+            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3");
+            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
+            gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
+
+            return new GccToolChain(gccSettings);
+        }
+
         [JsonIgnore]
         public IToolChain ToolChain
         {
@@ -561,7 +581,7 @@
 
                 //return result;
 
-                return GetLLilumToolchain();
+                return GetSTM32Toolchain();
             }
             set
             {
@@ -589,5 +609,7 @@
                 throw new NotImplementedException();
             }
         }
+        
+       public IList<TabItem> ConfigurationPages { get; private set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex">
+﻿<TabItem xmlns="https://github.com/perspex" Header="Debugger">
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="30"/>
@@ -38,4 +38,4 @@
     <!--
     <Settings:Setting DataContext="{Binding SelectedSetting}" Grid.Row="3" Grid.Column="1"/>-->
   </Grid>
-</UserControl>
+</TabItem>

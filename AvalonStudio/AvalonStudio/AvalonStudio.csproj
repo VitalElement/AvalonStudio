@@ -164,19 +164,12 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="CompositionRoot.cs" />
-    <Compile Include="Controls\CompileSettingsForm.paml.cs">
-      <DependentUpon>CompileSettingsForm.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\CompileSettingsFormViewModel.cs" />
     <Compile Include="Controls\CompletionDataViewModel.cs" />
     <Compile Include="Controls\Console.paml.cs">
       <DependentUpon>Console.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ConsoleViewModel.cs">
       <DependentUpon>Console.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DebuggerSettingsForm.paml.cs">
-      <DependentUpon>DebuggerSettingsForm.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ErrorViewModel.cs" />
     <Compile Include="Controls\Editor.paml.cs">
@@ -192,10 +185,6 @@
       <DependentUpon>Intellisense.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\IntellisenseViewModel.cs" />
-    <Compile Include="Controls\LinkerSettingsForm.paml.cs">
-      <DependentUpon>LinkerSettingsForm.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\LinkerSettingsFormViewModel.cs" />
     <Compile Include="Controls\MainMenu.paml.cs">
       <DependentUpon>MainMenu.paml</DependentUpon>
     </Compile>
@@ -264,10 +253,7 @@
     <Compile Include="Controls\MetroWindowTheme.paml.cs">
       <DependentUpon>MetroWindowTheme.paml</DependentUpon>
     </Compile>
-    <Compile Include="MVVM\Extensions.cs" />
-    <Compile Include="MVVM\ObservableCollectionExtensions.cs" />
-    <Compile Include="MVVM\ViewModel.cs" />
-    <Compile Include="MVVM\ViewModelBaseExtensions.cs" />
+    <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
@@ -305,12 +291,9 @@
     <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
     <None Include="app.config" />
     <EmbeddedResource Include="Controls\ErrorList.paml" />
-    <EmbeddedResource Include="Controls\CompileSettingsForm.paml" />
-    <EmbeddedResource Include="Controls\LinkerSettingsForm.paml" />
     <EmbeddedResource Include="Controls\ProjectConfigurationDialog.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DebuggerSettingsForm.paml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

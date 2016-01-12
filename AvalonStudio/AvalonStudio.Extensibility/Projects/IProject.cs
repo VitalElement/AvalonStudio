@@ -1,7 +1,9 @@
 ﻿namespace AvalonStudio.Projects
-{
+{    
+    using Perspex.Controls;
     using System.Collections.Generic;
     using Toolchains;
+
     public interface IProject : IProjectFolder
     {
         ISolution Solution { get; }
@@ -9,7 +11,7 @@
         /// <summary>
         /// List of references with the project.
         /// </summary>
-        IList<IProject> References { get; }        
+        IList<IProject> References { get; }
 
         IToolChain ToolChain { get; }
 
@@ -27,6 +29,8 @@
         /// Resolves all references in the project.
         /// </summary>
         void ResolveReferences();
+
+        IList<TabItem> ConfigurationPages { get; }
 
         void Save();
     }
