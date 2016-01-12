@@ -155,6 +155,7 @@
     <Compile Include="ToolchainSettingsForm.paml.cs">
       <DependentUpon>ToolchainSettingsForm.paml</DependentUpon>
     </Compile>
+    <Compile Include="ToolchainSettingsFormViewModel.cs" />
     <Compile Include="TypeSettingsForm.paml.cs">
       <DependentUpon>TypeSettingsForm.paml</DependentUpon>
     </Compile>
