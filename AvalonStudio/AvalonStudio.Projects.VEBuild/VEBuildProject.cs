@@ -127,7 +127,7 @@
             ConfigurationPages = new List<TabItem>();
             ConfigurationPages.Add(new TypeSettingsForm());
             ConfigurationPages.Add(new TargetSettingsForm());
-            ConfigurationPages.Add(new ToolchainSettingsForm());                        
+            ConfigurationPages.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel() });                        
             ConfigurationPages.Add(new ComponentSettingsForm());
             ConfigurationPages.Add(new DebuggerSettingsForm());
 

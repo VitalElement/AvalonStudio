@@ -11,13 +11,7 @@
       </Grid.ColumnDefinitions>
 
       <TextBlock Grid.Row="0" Text="Toolchain" Grid.ColumnSpan="2"/>
-      <DropDown Grid.Row="0" Grid.Column="2" Items="{Binding ToolChains}" SelectedItem="{Binding SelectedToolChain}">
-        <DropDown.DataTemplates>
-          <DataTemplate>
-            <TextBlock Text="{Binding Name}"/>
-          </DataTemplate>
-        </DropDown.DataTemplates>
-      </DropDown>
+      <DropDown Grid.Row="0" Grid.Column="2" Items="{Binding Toolchains}" SelectedItem="{Binding SelectedToolChain}"/>
 
       <Panel Grid.Row="1" Grid.ColumnSpan="3" DataContext="{Binding SelectedToolChain}"  >
         <Grid>
