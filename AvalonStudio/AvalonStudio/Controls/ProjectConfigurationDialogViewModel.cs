@@ -2,6 +2,7 @@
 {
     using Perspex.Controls;
     using Projects;
+    using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -21,6 +22,8 @@
             this.configPages = new List<TabItem>();
             configPages.AddRange(project.ConfigurationPages);
             configPages.AddRange(project.ToolChain.ConfigurationPages);
+
+
 
             //this.project = project;
             //isLibrary = project.SelectedConfiguration.IsLibrary;
@@ -74,30 +77,32 @@
             //compileSettings = new CompileSettingsViewModel(project);
             //linkSettings = new LinkSettingsFormViewModel(project);
 
-            //OKCommand = new RoutingCommand(async (o) =>
-            //{
+            OKCommand = ReactiveCommand.Create();
 
-            //    project.ExportedIncludes = ExportedIncludes.ToList();
-            //    project.SelectedConfiguration.IsLibrary = isLibrary;
+            OKCommand.Subscribe((o)=>           
+            {
 
-            //    if (IsEnabled) //Otherwise we can still be downloading this toolchains....
-            //    {
-            //        project.SelectedConfiguration.ToolChain = VEStudioService.ToolChains.FirstOrDefault((tc) => tc.GetType() == selectedToolChain.Model.ToolChainType);
-            //    }
+                //project.ExportedIncludes = ExportedIncludes.ToList();
+                //project.SelectedConfiguration.IsLibrary = isLibrary;
 
-            //    compileSettings.Save();
-            //    linkSettings.Save();
-            //    debugSettings.Save();
+                //if (IsEnabled) //Otherwise we can still be downloading this toolchains....
+                //{
+                //    project.SelectedConfiguration.ToolChain = VEStudioService.ToolChains.FirstOrDefault((tc) => tc.GetType() == selectedToolChain.Model.ToolChainType);
+                //}
 
-            //    project.SaveChanges();
+                //compileSettings.Save();
+                //linkSettings.Save();
+                //debugSettings.Save();
 
-            //    Workspace.This.InvalidateCodeAnalysis();
+                //project.SaveChanges();
 
-            //    await project.Clean(Workspace.This.StudioConsole, Workspace.This.ProcessCancellationToken);
+                //Workspace.This.InvalidateCodeAnalysis();
 
-            //    onClose();
-            //    this.Close();
-            //});
+                //await project.Clean(Workspace.This.StudioConsole, Workspace.This.ProcessCancellationToken);
+
+                onClose();
+                this.Close();
+            });
         }
 
         //private DebuggerSettingsFormViewModel debugSettings;

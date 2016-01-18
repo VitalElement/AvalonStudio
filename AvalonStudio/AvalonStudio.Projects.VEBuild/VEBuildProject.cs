@@ -84,7 +84,7 @@
 
                 }
             }
-            
+
             return project;
         }
 
@@ -127,7 +127,7 @@
             ConfigurationPages = new List<TabItem>();
             ConfigurationPages.Add(new TypeSettingsForm());
             ConfigurationPages.Add(new TargetSettingsForm());
-            ConfigurationPages.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel(this) });                        
+            ConfigurationPages.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel(this) });
             ConfigurationPages.Add(new ComponentSettingsForm());
             ConfigurationPages.Add(new DebuggerSettingsForm());
 
@@ -558,7 +558,7 @@
             {
                 IToolChain result = Workspace.Instance.ToolChains.FirstOrDefault((tc) => tc.GetType().ToString() == ToolchainReference);
 
-                return result;                
+                return result;
             }
             set
             {
@@ -586,7 +586,8 @@
                 throw new NotImplementedException();
             }
         }
-        
-       public IList<TabItem> ConfigurationPages { get; private set; }
+
+        [JsonIgnore]
+        public IList<TabItem> ConfigurationPages { get; private set; }
     }
 }

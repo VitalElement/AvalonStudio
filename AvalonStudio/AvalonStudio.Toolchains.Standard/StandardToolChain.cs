@@ -490,5 +490,11 @@
         }      
 
         public IList<TabItem> ConfigurationPages { get; protected set; }
+
+        public string Name { get { return GetType().ToString(); } }
+
+        public abstract Version Version { get; }
+
+        public abstract string Description { get; }
     }
 }

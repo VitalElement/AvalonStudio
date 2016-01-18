@@ -29,6 +29,22 @@
             }
         }
 
+        public override Version Version
+        {
+            get
+            {
+                return new Version(1, 0, 0, 0);
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "Experimental toolchain for Llilum.";
+            }
+        }
+
         private void CompileCS(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
         {
             var startInfo = new ProcessStartInfo();
