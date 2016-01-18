@@ -146,7 +146,6 @@
             CppCompilerArguments = new List<string>();
             BuiltinLibraries = new List<string>();
             Defines = new List<string>();
-            ToolchainReference = ToolChain.GetType().ToString();
         }
 
         private static Dictionary<string, Tuple<string, string>> passwordCache = new Dictionary<string, Tuple<string, string>>();
@@ -541,7 +540,7 @@
             return new LlilumToolchain(gccSettings);
         }
 
-        static GccToolChain GetSTM32Toolchain()
+        static STM32Toolchain GetSTM32Toolchain()
         {
             var gccSettings = new ToolchainSettings();
             gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
@@ -549,7 +548,7 @@
             gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
             gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
 
-            return new GccToolChain(gccSettings);
+            return new STM32Toolchain(gccSettings);
         }
 
         [JsonIgnore]
@@ -557,31 +556,9 @@
         {
             get
             {
-                // Query the workspace for toolchains type == toolchain reference ... We need an IWorkspace for things like this.                
+                IToolChain result = Workspace.Instance.ToolChains.FirstOrDefault((tc) => tc.GetType().ToString() == ToolchainReference);
 
-                // if found then set with the result (not instantiated... only a single instantiation in program)
-
-                // if not... dialog... Group.Toolchains.Toolchain could not be found... do wish to install the toolchain....
-                // package manager with search filled out... user clicks install.
-
-                //
-
-
-                //var result = new GccToolChain(new ToolchainSettings());
-
-                //result.Settings.ToolChainLocation = "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\bin";
-
-                //result.Settings.IncludePaths = new List<string>()
-                //{
-                //    "c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include",
-                //"c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\include\\c++\\4.9.3",
-                //"c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\arm-none-eabi\\c++\\4.9.3\\arm-none-eabi\\thumb",
-                //"c:\\VEStudio\\AppData\\Repos\\GCCToolChain\\lib\\gcc\\arm-none-eabi\\4.9.3\\include"
-                //};
-
-                //return result;
-
-                return GetSTM32Toolchain();
+                return result;                
             }
             set
             {
