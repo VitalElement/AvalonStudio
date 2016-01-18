@@ -263,7 +263,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="ToolViewModel.cs" />
-    <Compile Include="Workspace.cs" />
+    <Compile Include="WorkspaceViewModel.cs" />
     <EmbeddedResource Include="MainWindow.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

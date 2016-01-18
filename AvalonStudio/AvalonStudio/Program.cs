@@ -21,14 +21,14 @@
             var container = CompositionRoot.CreateContainer();            
             var window = new MainWindow();
 
-            Workspace.Instance = container.GetExportedValue<Workspace>();
+            WorkspaceViewModel.Instance = container.GetExportedValue<WorkspaceViewModel>();
 
-            window.DataContext = Workspace.Instance;
+            window.DataContext = WorkspaceViewModel.Instance;
             window.Show();
 
             app.Run(window);
 
-            Workspace.Instance.Cleanup();
+            WorkspaceViewModel.Instance.Cleanup();
         }
     }
 }

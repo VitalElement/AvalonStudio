@@ -11,7 +11,7 @@
     using Languages;
     using Projects;
     using System.Linq;
-
+    using Extensibility;
     [Export(typeof(EditorModel))]
     public class EditorModel
     {
@@ -90,7 +90,7 @@
             {
                 LanguageService = Workspace.Instance.LanguageServices.Single((o) => o.CanHandle(file));
 
-                Workspace.Instance.StatusBar.Language = LanguageService.Title;
+                WorkspaceViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
                 LanguageService.RegisterSourceFile(file, TextDocument);
             }

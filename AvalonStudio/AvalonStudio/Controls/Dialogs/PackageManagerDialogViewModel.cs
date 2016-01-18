@@ -50,7 +50,7 @@
 
             OKCommand.Subscribe(_ =>
             {
-                Workspace.Instance.InvalidateCodeAnalysis();
+                WorkspaceViewModel.Instance.InvalidateCodeAnalysis();
                 this.Close();
             });
 

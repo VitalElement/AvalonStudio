@@ -28,7 +28,7 @@
 
                 if (result != null)
                 {
-                    Workspace.Instance.SolutionExplorer.Model = Solution.Load(result[0]);                    
+                    WorkspaceViewModel.Instance.SolutionExplorer.Model = Solution.Load(result[0]);                    
                 }
             });
 
@@ -36,7 +36,7 @@
 
             SaveCommand.Subscribe(_ =>
             {
-                Workspace.Instance.Editor.Save();
+                WorkspaceViewModel.Instance.Editor.Save();
             });
 
             CleanProjectCommand = ReactiveCommand.Create();
@@ -44,7 +44,7 @@
             {
                 new Thread(new ThreadStart(new Action(async () =>
                 {
-                    await Workspace.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Clean(Workspace.Instance.Console, Workspace.Instance.SolutionExplorer.Model.StartupProject);
+                    await WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Clean(WorkspaceViewModel.Instance.Console, WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject);
                 }))).Start();
             });
 
@@ -53,22 +53,22 @@
             {
                 new Thread(new ThreadStart(new Action(async () =>
                 {
-                    await Workspace.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Build(Workspace.Instance.Console, Workspace.Instance.SolutionExplorer.Model.StartupProject);
+                    await WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Build(WorkspaceViewModel.Instance.Console, WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject);
                 }))).Start();
             });
 
             PackagesCommand = ReactiveCommand.Create();
             PackagesCommand.Subscribe((o) =>
             {
-                Workspace.Instance.ModalDialog = new PackageManagerDialogViewModel();
-                Workspace.Instance.ModalDialog.ShowDialog();
+                WorkspaceViewModel.Instance.ModalDialog = new PackageManagerDialogViewModel();
+                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
             });
 
             ProjectPropertiesCommand = ReactiveCommand.Create();
             ProjectPropertiesCommand.Subscribe((o) =>
             {
-                Workspace.Instance.ModalDialog = new ProjectConfigurationDialogViewModel(Workspace.Instance.SolutionExplorer.SelectedProject, () => { });
-                Workspace.Instance.ModalDialog.ShowDialog();
+                WorkspaceViewModel.Instance.ModalDialog = new ProjectConfigurationDialogViewModel(WorkspaceViewModel.Instance.SolutionExplorer.SelectedProject, () => { });
+                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
             });
         }
 

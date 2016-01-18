@@ -42,7 +42,7 @@ namespace AvalonStudio.Controls.ViewModels
 
             ToggleEditingModeCommand.Subscribe(args =>
             {
-                if (((object)Workspace.Instance.SolutionExplorer.SelectedItem) == (object)this && NumberOfSelections > 1)
+                if (((object)WorkspaceViewModel.Instance.SolutionExplorer.SelectedItem) == (object)this && NumberOfSelections > 1)
                 {
                     IsEditingTitle = (bool)args;
                 }
