@@ -3,12 +3,11 @@
     using AvalonStudio.Toolchains.Standard;
     using Projects;
     using Projects.Standard;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using Utils;
-    using System;
-    using System.Collections.Generic;
-    using Perspex.Controls;
+
     public class GccToolChain : StandardToolChain
     {
         public GccToolChain() : base (new ToolchainSettings())

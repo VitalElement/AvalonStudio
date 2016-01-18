@@ -203,13 +203,13 @@
             set
             {
                 this.RaiseAndSetIfChanged(ref caretIndex, value);
-                Workspace.Instance.StatusBar.Offset = value;
+                WorkspaceViewModel.Instance.StatusBar.Offset = value;
 
                 if (value >= 0)
                 {
                     var location = TextDocument.GetLocation(value);
-                    Workspace.Instance.StatusBar.LineNumber = location.Line;
-                    Workspace.Instance.StatusBar.Column = location.Column;
+                    WorkspaceViewModel.Instance.StatusBar.LineNumber = location.Line;
+                    WorkspaceViewModel.Instance.StatusBar.Column = location.Column;
                 }
             }
         }
