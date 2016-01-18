@@ -64,11 +64,14 @@
                 var superProject = file.Project.Solution.StartupProject as IStandardProject;
                 var project = file.Project as IStandardProject;
 
-                var toolchainIncludes = project.ToolChain.Includes;
+                var toolchainIncludes = superProject.ToolChain?.Includes;
 
-                foreach (var include in toolchainIncludes)
+                if (toolchainIncludes != null)
                 {
-                    args.Add(string.Format("-I{0}", include));
+                    foreach (var include in toolchainIncludes)
+                    {
+                        args.Add(string.Format("-I{0}", include));
+                    }
                 }
 
                 // toolchain includes

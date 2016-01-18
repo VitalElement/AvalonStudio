@@ -8,14 +8,14 @@
     using System.IO;
     using Utils;
 
-    public class GccToolChain : StandardToolChain
+    public class STM32Toolchain : StandardToolChain
     {
-        public GccToolChain() : base (new ToolchainSettings())
+        public STM32Toolchain() : base (new ToolchainSettings())
         {
             Settings.ToolChainLocation = @"c:\VEStudio\AppData\Repos\GCCToolChain\bin";
         }
 
-        public GccToolChain(ToolchainSettings settings) : base(settings)
+        public STM32Toolchain(ToolchainSettings settings) : base(settings)
         {
             ConfigurationPages.Add(new CompileSettingsForm());
             ConfigurationPages.Add(new LinkerSettingsForm());

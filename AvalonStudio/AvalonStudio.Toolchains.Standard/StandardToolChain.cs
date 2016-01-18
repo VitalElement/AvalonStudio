@@ -481,21 +481,13 @@
 
         public abstract string GDBExecutable { get; }
 
-        public List<string> Includes
+        public IList<string> Includes
         {
             get
             {
                 return GetToolchainIncludes();
             }
-        }
-
-        IList<string> IToolChain.Includes
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        }      
 
         public IList<TabItem> ConfigurationPages { get; protected set; }
     }

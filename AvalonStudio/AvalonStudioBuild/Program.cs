@@ -72,7 +72,7 @@
             return new LlilumToolchain(gccSettings);
         }
 
-        static GccToolChain GetGccToolchain ()
+        static STM32Toolchain GetGccToolchain ()
         {
             var gccSettings = new ToolchainSettings();
             gccSettings.ToolChainLocation = @"c:\vestudio\appdata\repos\GCCToolchain\bin";
@@ -80,7 +80,7 @@
             gccSettings.IncludePaths.Add("arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
             gccSettings.IncludePaths.Add("lib\\gcc\\arm-none-eabi\\4.9.3\\include");
 
-            return new GccToolChain(gccSettings);
+            return new STM32Toolchain(gccSettings);
         }
 
         static IToolChain GetToolchain()
