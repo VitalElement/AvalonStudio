@@ -7,7 +7,8 @@
     using System.Diagnostics;
     using System.IO;
     using Utils;
-
+    using System;
+    using System.Reflection;
     public class STM32Toolchain : StandardToolChain
     {
         public STM32Toolchain() : base (new ToolchainSettings())
@@ -436,6 +437,22 @@
             {
                 string binDirectory = Path.Combine(Settings.ToolChainLocation, "bin");
                 return Path.Combine(binDirectory, "arm-none-eabi-gdb.exe");
+            }
+        }
+
+        public override Version Version
+        {
+            get
+            {
+                return new Version(1, 0, 0);
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "GCC based toolchain for STM32.";
             }
         }
     }

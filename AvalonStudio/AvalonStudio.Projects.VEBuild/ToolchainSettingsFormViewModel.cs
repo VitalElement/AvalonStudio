@@ -4,37 +4,34 @@
     using Extensibility;
     using ReactiveUI;
     using System.Collections.Generic;
+    using Toolchains;
 
     public class ToolchainSettingsFormViewModel : ViewModel<VEBuildProject>
     {
         public ToolchainSettingsFormViewModel(VEBuildProject project) : base (project)
         {
-            toolchains = new List<string>();
-            
-            foreach(var toolchain in Workspace.Instance.ToolChains)
-            {
-                toolchains.Add(toolchain.GetType().ToString());
-            }
+            toolchains = new List<IToolChain>(Workspace.Instance.ToolChains);
+            selectedToolchain = project.ToolChain;
         }
 
         public void Save ()
         {
-            Model.ToolchainReference = selectedToolchain;
+            Model.ToolchainReference = selectedToolchain?.GetType().ToString();
             Model.Save();
         }
 
-        private List<string> toolchains;
-        public List<string> Toolchains
+        private List<IToolChain> toolchains;
+        public List<IToolChain> Toolchains
         {
             get { return toolchains; }
             set { this.RaiseAndSetIfChanged(ref toolchains, value); }
         }
 
-        private string selectedToolchain;
-        public string SelectedToolchain
+        private IToolChain selectedToolchain;
+        public IToolChain SelectedToolchain
         {
             get { return selectedToolchain; }
-            set { this.RaiseAndSetIfChanged(ref selectedToolchain, value); }
+            set { this.RaiseAndSetIfChanged(ref selectedToolchain, value); Save(); }
         }
 
 

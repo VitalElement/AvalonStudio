@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Toolchains
 {
+    using Extensibility.Plugin;
     using Perspex.Controls;
     using Projects;
     using System.Collections.Generic;
@@ -8,7 +9,7 @@
     using Utils;
 
     [InheritedExport(typeof(IToolChain))]
-    public interface IToolChain
+    public interface IToolChain : IPlugin
     {
         Task<bool> Build(IConsole console, IProject project);
 
