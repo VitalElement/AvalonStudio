@@ -3,9 +3,11 @@
     using Controls;
     using Controls.ViewModels;
     using Debugging;
+    using Extensibility;
     using Extensibility.Platform;
     using Languages;
     using Models;
+    using MVVM;
     using Projects;
     using ReactiveUI;
     using Repositories;
@@ -15,27 +17,16 @@
     using System.Threading;
     using Toolchains;
 
-    [Export(typeof(Workspace))]
-    public class Workspace : ReactiveObject
+    [Export(typeof(WorkspaceViewModel))]
+    public class WorkspaceViewModel : ViewModel<Workspace>
     {
         private readonly EditorModel editor;
-        private readonly IEnumerable<ILanguageService> languageServices;
-        private readonly IEnumerable<IToolChain> toolChains;
-        private readonly IEnumerable<IDebugger> debuggers;
-
-        public static Workspace Instance = null;
+        public static WorkspaceViewModel Instance = null;
 
         [ImportingConstructor]
-        public Workspace(EditorModel editor, [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers)
+        public WorkspaceViewModel(EditorModel editor, [Import] Workspace workspace) : base(workspace)
         {
-            var r = new Repository();
-            r.Packages.Add(new PackageReference() { Name = "AvalonStudio.Toolchains.STM32", Url = "https://github.com/VitalElement/AvalonStudio.Toolchains.STM32.git" });
-            r.Serialize("c:\\vestudio\\packages.json");
-
             this.editor = editor;
-            this.languageServices = languageServices;
-            this.toolChains = toolChains;
-            this.debuggers = debuggers;
 
             AvalonStudioService.Initialise();
 
@@ -66,31 +57,7 @@
             ProcessCancellationToken = new CancellationTokenSource();
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
-        }
-
-        public IEnumerable<ILanguageService> LanguageServices
-        {
-            get
-            {
-                return languageServices;
-            }
-        }
-
-        public IEnumerable<IToolChain> ToolChains
-        {
-            get
-            {
-                return toolChains;
-            }
-        }
-
-        public IEnumerable<IDebugger> Debuggers
-        {
-            get
-            {
-                return debuggers;
-            }
-        }
+        }        
 
         public void InvalidateErrors()
         {

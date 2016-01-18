@@ -304,7 +304,7 @@
 
                     currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);                    
 
-                    Workspace.Instance.Console.WriteLine("Set started at: " + intellisenseStartedAt + ", " + currentFilter);
+                    WorkspaceViewModel.Instance.Console.WriteLine("Set started at: " + intellisenseStartedAt + ", " + currentFilter);
 
                     await editor.DoCompletionRequestAsync(caret.Line, caret.Column, currentFilter);
 

@@ -173,6 +173,7 @@
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\IConsole.cs" />
     <Compile Include="Utils\SerializedObject.cs" />
+    <Compile Include="Workspace.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

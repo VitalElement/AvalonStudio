@@ -50,14 +50,14 @@
 
         public void ShowDialog()
         {
-            Workspace.Instance.HideWhenModalVisibility = false;
+            WorkspaceViewModel.Instance.HideWhenModalVisibility = false;
             this.IsVisible = true;
         }
 
         public void Close()
         {
             this.IsVisible = false;
-            Workspace.Instance.HideWhenModalVisibility = true;
+            WorkspaceViewModel.Instance.HideWhenModalVisibility = true;
         }
     }
 
