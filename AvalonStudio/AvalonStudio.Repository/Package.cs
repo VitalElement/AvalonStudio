@@ -68,8 +68,8 @@
                         LibGit2Sharp.Repository.Clone(RepoUrl, repo, new LibGit2Sharp.CloneOptions() { OnTransferProgress = transferHandler, Checkout = false, OnCheckoutProgress = checkoutHandler });
                         repository = new LibGit2Sharp.Repository(repo);
                     }
-
-                    repository.Checkout(tag, new LibGit2Sharp.CheckoutOptions() { OnCheckoutProgress = checkoutHandler });
+                    
+                    repository.Checkout(tag, new LibGit2Sharp.CheckoutOptions() { OnCheckoutProgress = checkoutHandler }, new LibGit2Sharp.Signature("AvalonStudio", "avalon@studio", DateTime.Now));
 
                     console.OverWrite("Package installed Successfully.");
                 }
