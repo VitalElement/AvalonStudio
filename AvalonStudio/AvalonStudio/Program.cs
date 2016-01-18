@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio
 {
+    using Extensibility;
     using Extensibility.Platform;
     using Repositories;
     using System;
@@ -21,6 +22,7 @@
             var container = CompositionRoot.CreateContainer();            
             var window = new MainWindow();
 
+            Workspace.Instance = container.GetExportedValue<Workspace>();            
             WorkspaceViewModel.Instance = container.GetExportedValue<WorkspaceViewModel>();
 
             window.DataContext = WorkspaceViewModel.Instance;
