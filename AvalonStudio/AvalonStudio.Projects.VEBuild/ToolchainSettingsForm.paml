@@ -11,9 +11,9 @@
       </Grid.ColumnDefinitions>
 
       <TextBlock Grid.Row="0" Text="Toolchain" Grid.ColumnSpan="2"/>
-      <DropDown Grid.Row="0" Grid.Column="2" Items="{Binding Toolchains}" SelectedItem="{Binding SelectedToolchain}"/>
+      <DropDown Grid.Row="0" Grid.Column="2" Items="{Binding Toolchains}" SelectedItem="{Binding SelectedToolchain, Mode=TwoWay}"/>
 
-      <Panel Grid.Row="1" Grid.ColumnSpan="3" DataContext="{Binding SelectedToolChain}"  >
+      <Panel Grid.Row="1" Grid.ColumnSpan="3" DataContext="{Binding SelectedToolchain}"  >
         <Grid>
           <Grid.RowDefinitions>
             <RowDefinition Height="30"/>

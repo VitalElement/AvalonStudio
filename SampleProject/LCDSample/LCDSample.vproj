@@ -1,7 +1,6 @@
 {
   "Name": "LCDSample",
   "Type": "StaticLibrary",
-  "Toolchain" : "AvalonStudio.Toolchains.STM32.STM32Toolchain",
   "References": [
     {
       "Name": "Utils",
@@ -13,7 +12,10 @@
   ],
   "SourceFiles": [
     {
-      "File": "startup_stm32f40xx.c"
+      "File": "startup_stm32f40xx.c",
+      "Name": "startup_stm32f40xx.c"
     }
-  ]
+  ],
+  "StaticLibraries": [],
+  "Toolchain": "AvalonStudio.Toolchains.STM32.STM32Toolchain"
 }

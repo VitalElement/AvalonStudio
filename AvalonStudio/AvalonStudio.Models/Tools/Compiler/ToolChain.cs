@@ -89,6 +89,22 @@ namespace AvalonStudio.Models.Tools.Compiler
                 throw new NotImplementedException();
             }
         }
+
+        public Version Version
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
    
     public class ToolChainSettings
