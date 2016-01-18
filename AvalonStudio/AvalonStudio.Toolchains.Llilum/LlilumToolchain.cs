@@ -11,6 +11,11 @@
 
     public class LlilumToolchain : StandardToolChain
     {
+        public LlilumToolchain () : base (new ToolchainSettings())
+        {
+
+        }
+
         public LlilumToolchain(ToolchainSettings settings) : base(settings)
         {
 
