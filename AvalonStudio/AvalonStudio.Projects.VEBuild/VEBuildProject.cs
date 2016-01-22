@@ -123,14 +123,7 @@
         }
 
         public VEBuildProject()
-        {
-            ConfigurationPages = new List<TabItem>();
-            ConfigurationPages.Add(new TypeSettingsForm());
-            ConfigurationPages.Add(new TargetSettingsForm());
-            ConfigurationPages.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel(this) });
-            ConfigurationPages.Add(new ComponentSettingsForm());
-            ConfigurationPages.Add(new DebuggerSettingsForm());
-
+        {            
             //Languages = new List<Language>();
             UnloadedReferences = new List<Reference>();
             StaticLibraries = new List<string>();
@@ -588,6 +581,20 @@
         }
 
         [JsonIgnore]
-        public IList<TabItem> ConfigurationPages { get; private set; }
+        public IList<TabItem> ConfigurationPages
+        {
+            get
+            {
+                var result = new List<TabItem>();
+
+                result.Add(new TypeSettingsForm());
+                result.Add(new TargetSettingsForm());
+                result.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel(this) });
+                result.Add(new ComponentSettingsForm());
+                result.Add(new DebuggerSettingsForm());
+
+                return result;
+            }
+        }
     }
 }
