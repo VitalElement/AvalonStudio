@@ -21,7 +21,11 @@
         {
             this.configPages = new List<TabItem>();
             configPages.AddRange(project.ConfigurationPages);
-            configPages.AddRange(project.ToolChain.ConfigurationPages);
+
+            if (project.ToolChain != null)
+            {
+                configPages.AddRange(project.ToolChain.GetConfigurationPages(project));
+            }
 
 
 

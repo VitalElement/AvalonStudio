@@ -593,6 +593,30 @@
                 throw new NotImplementedException();
             }
         }
+
+        dynamic Settings
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public dynamic ToolchainSettings
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        dynamic IProject.Settings
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
         #endregion
 
         public static string NormalizePath (string path)

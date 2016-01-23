@@ -152,6 +152,7 @@
     <Compile Include="TargetSettingsForm.paml.cs">
       <DependentUpon>TargetSettingsForm.paml</DependentUpon>
     </Compile>
+    <Compile Include="TargetSettingsFormViewModel.cs" />
     <Compile Include="ToolchainSettingsForm.paml.cs">
       <DependentUpon>ToolchainSettingsForm.paml</DependentUpon>
     </Compile>
@@ -159,6 +160,7 @@
     <Compile Include="TypeSettingsForm.paml.cs">
       <DependentUpon>TypeSettingsForm.paml</DependentUpon>
     </Compile>
+    <Compile Include="TypeSettingsFormViewModel.cs" />
     <Compile Include="VEBuildProject.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿namespace AvalonStudio.Utils
 {
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
     using System.IO;
 
     public class SerializedObject<T>
