@@ -9,17 +9,18 @@
     using Utils;
     using System;
     using System.Reflection;
-    public class STM32Toolchain : StandardToolChain
+    using Perspex.Controls;
+
+    public class STM32GCCToolchain : StandardToolChain
     {
-        public STM32Toolchain() : base (new ToolchainSettings())
+        public STM32GCCToolchain() : base (new ToolchainSettings())
         {
             Settings.ToolChainLocation = @"c:\VEStudio\AppData\Repos\GCCToolChain\bin";
         }
 
-        public STM32Toolchain(ToolchainSettings settings) : base(settings)
+        public STM32GCCToolchain(ToolchainSettings settings) : base(settings)
         {
-            ConfigurationPages.Add(new CompileSettingsForm());
-            ConfigurationPages.Add(new LinkerSettingsForm());
+            
         }
 
         public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
@@ -454,6 +455,16 @@
             {
                 return "GCC based toolchain for STM32.";
             }
+        }
+
+        public override IList<TabItem> GetConfigurationPages(IProject project)
+        {
+            var result = new List<TabItem>();
+
+            result.Add(new CompileSettingsForm() { DataContext = new CompileSettingsViewModel(project) });
+            result.Add(new LinkerSettingsForm() { DataContext = new LinkSettingsFormViewModel(project) });
+
+            return result;
         }
     }
 }

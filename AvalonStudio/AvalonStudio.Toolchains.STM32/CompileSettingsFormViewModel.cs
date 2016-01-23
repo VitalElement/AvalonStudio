@@ -9,7 +9,7 @@
     public class CompileSettingsViewModel : ViewModel
     {
         public CompileSettingsViewModel(IProject project)
-        {
+        {           
             //var config = project.SelectedConfiguration;
             //cppSupport = config.CppSupport;
             //miscOptions = config.MiscCompilerArguments;
@@ -22,7 +22,7 @@
             //rtti = config.Rtti;
             //exceptions = config.Exceptions;
 
-            this.project = project;
+           // this.project = project;
             //AddDefineCommand = new RoutingCommand(AddDefine, (o) => DefineText != string.Empty && DefineText != null && !Defines.Contains(DefineText));
             //RemoveDefineCommand = new RoutingCommand(RemoveDefine, (o) => SelectedDefine != string.Empty && SelectedDefine != null);
             //AddIncludePathCommand = new RoutingCommand(AddIncludePath);
@@ -122,7 +122,8 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return null;
+                //throw new NotImplementedException();
                 //return Enum.GetNames(typeof(FPUSupport));
             }
         }
@@ -160,7 +161,8 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return null;
+                //throw new NotImplementedException();
                 //return Enum.GetNames(typeof(OptimizationPreference));
             }
         }
@@ -182,7 +184,8 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return null;
+                //throw new NotImplementedException();
                 //return Enum.GetNames(typeof(OptimizationLevel));
             }
         }

@@ -32,6 +32,12 @@
 
         IList<TabItem> ConfigurationPages { get; }
 
+        //IDictionary<string, string> Settings { get; }
+
+        dynamic Settings { get; } 
+
+        dynamic ToolchainSettings { get; }
+
         void Save();
     }
 }

@@ -17,5 +17,11 @@
     }
   ],
   "StaticLibraries": [],
-  "Toolchain": "AvalonStudio.Toolchains.STM32.STM32Toolchain"
+  "Toolchain": "AvalonStudio.Toolchains.STM32.STM32GCCToolchain",
+  "Settings": {
+    "ProjectType": "SharedLibrary",
+    "PublicIncludes": [
+      "Testing"
+    ]
+  }
 }

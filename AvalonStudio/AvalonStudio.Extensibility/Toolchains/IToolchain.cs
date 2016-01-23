@@ -17,7 +17,7 @@
 
         IList<string> Includes { get; }
 
-        IList<TabItem> ConfigurationPages { get; }
+        IList<TabItem> GetConfigurationPages(IProject project);
     }
 }
 

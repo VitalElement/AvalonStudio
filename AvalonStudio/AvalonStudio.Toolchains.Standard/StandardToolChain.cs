@@ -51,7 +51,6 @@
         {
             this.Settings = settings;
             this.Jobs = 16;
-            ConfigurationPages = new List<TabItem>();
         }
 
         public int Jobs { get; set; }
@@ -487,9 +486,9 @@
             {
                 return GetToolchainIncludes();
             }
-        }      
+        }
 
-        public IList<TabItem> ConfigurationPages { get; protected set; }
+        public abstract IList<TabItem> GetConfigurationPages(IProject project);
 
         public string Name { get { return GetType().ToString(); } }
 

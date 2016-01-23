@@ -1,6 +1,3 @@
 ﻿<TabItem xmlns="https://github.com/perspex" Header="Type">
-  <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal">
-    <RadioButton Content="Executable (.elf)" IsChecked="True"/>
-    <RadioButton Margin="10 0 0 0" Content="Library (.a)" IsChecked="{Binding IsLibrary}"/>
-  </StackPanel>
+  <DropDown Items="{Binding ProjectTypeOptions}" SelectedItem="{Binding ProjectType, Mode=TwoWay}" />
 </TabItem>

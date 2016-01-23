@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Extensibility.Platform
 {
+    using AvalonStudio.Utils;
     using System;
     using System.IO;
     using Utils;
