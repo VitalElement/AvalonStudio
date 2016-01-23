@@ -13,6 +13,9 @@
     using Toolchains.Llilum;
     using Extensibility;
     using Perspex.Controls;
+    using Newtonsoft.Json.Linq;
+    using Newtonsoft.Json.Converters;
+    using System.Dynamic;
 
     public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
     {
@@ -139,6 +142,8 @@
             CppCompilerArguments = new List<string>();
             BuiltinLibraries = new List<string>();
             Defines = new List<string>();
+            Settings = new ExpandoObject();
+            ToolchainSettings = new ExpandoObject();
         }
 
         private static Dictionary<string, Tuple<string, string>> passwordCache = new Dictionary<string, Tuple<string, string>>();
@@ -533,7 +538,7 @@
             return new LlilumToolchain(gccSettings);
         }
 
-        static STM32Toolchain GetSTM32Toolchain()
+        static STM32GCCToolchain GetSTM32Toolchain()
         {
             var gccSettings = new ToolchainSettings();
             gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
@@ -541,7 +546,7 @@
             gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
             gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
 
-            return new STM32Toolchain(gccSettings);
+            return new STM32GCCToolchain(gccSettings);
         }
 
         [JsonIgnore]
@@ -587,7 +592,7 @@
             {
                 var result = new List<TabItem>();
 
-                result.Add(new TypeSettingsForm());
+                result.Add(new TypeSettingsForm() { DataContext = new TypeSettingsFormViewModel(this) });
                 result.Add(new TargetSettingsForm());
                 result.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel(this) });
                 result.Add(new ComponentSettingsForm());
@@ -596,5 +601,12 @@
                 return result;
             }
         }
+
+
+        [JsonConverter(typeof(ExpandoObjectConverter))]
+        public dynamic Settings { get; set; }
+
+        [JsonConverter(typeof(ExpandoObjectConverter))]
+        public dynamic ToolchainSettings { get; set; }
     }
 }

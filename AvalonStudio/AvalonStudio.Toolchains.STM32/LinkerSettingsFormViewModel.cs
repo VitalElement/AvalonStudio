@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Toolchains.STM32
 {
     using AvalonStudio.MVVM;
     using Projects;
@@ -6,12 +6,13 @@
     using System.Collections.ObjectModel;
     using System.Linq.Expressions;
     using System.Windows.Input;
+    using Toolchains;
 
     public class LinkSettingsFormViewModel : ViewModel
     {
         public LinkSettingsFormViewModel(IProject project)
         {
-            this.project = project;
+           // this.project = project;
 
             //var config = project.SelectedConfiguration;
             //useMemoryLayout = config.UseMemoryLayout;
@@ -80,7 +81,7 @@
             //config.MiscLinkerArguments = miscOptions;
             //config.Library = (LibraryType)librarySelectedIndex;
 
-            project.Save();
+           // project.Save();
         }
 
         private void AddLinkedLibrary(object param)
@@ -191,7 +192,8 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return null;
+                //throw new NotImplementedException();
                 //return Enum.GetNames(typeof(LibraryType));
             }
         }

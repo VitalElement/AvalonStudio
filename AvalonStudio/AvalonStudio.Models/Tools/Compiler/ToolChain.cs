@@ -48,6 +48,11 @@ namespace AvalonStudio.Models.Tools.Compiler
             throw new NotImplementedException();
         }
 
+        public IList<TabItem> GetConfigurationPages(IProject project)
+        {
+            throw new NotImplementedException();
+        }
+
         public string Name
         {
             get
@@ -75,14 +80,6 @@ namespace AvalonStudio.Models.Tools.Compiler
         }
 
         IList<string> IToolChain.Includes
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public IList<TabItem> ConfigurationPages
         {
             get
             {
