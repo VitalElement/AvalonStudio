@@ -2,19 +2,29 @@
 {
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
+    using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Windows.Input;
 
-    public class CompileSettingsViewModel : ViewModel
+    public class CompileSettingsViewModel : ViewModel<IProject>
     {
-        public CompileSettingsViewModel(IProject project)
-        {           
+        public CompileSettingsViewModel(IProject project) : base (project)
+        {
             //var config = project.SelectedConfiguration;
             //cppSupport = config.CppSupport;
             //miscOptions = config.MiscCompilerArguments;
             //includePaths = new ObservableCollection<string>(config.IncludePaths);
-            //defines = new ObservableCollection<string>(config.Defines);
+            defines = new ObservableCollection<string>();
+
+            try { defines = new ObservableCollection<string>(); } catch (Exception e) { }
+
+            foreach (var define in Model.CompilerSettings.Defines)
+            {
+                defines.Add(define);
+            }
+
             //optimizationLevelSelectedIndex = (int)config.Optimization;
             //optimizationPreferenceSelectedIndex = (int)config.OptimizationPreference;
             //fpuSelectedIndex = (int)config.Fpu;
@@ -22,21 +32,23 @@
             //rtti = config.Rtti;
             //exceptions = config.Exceptions;
 
-           // this.project = project;
-            //AddDefineCommand = new RoutingCommand(AddDefine, (o) => DefineText != string.Empty && DefineText != null && !Defines.Contains(DefineText));
-            //RemoveDefineCommand = new RoutingCommand(RemoveDefine, (o) => SelectedDefine != string.Empty && SelectedDefine != null);
+            // this.project = project;
+            AddDefineCommand = ReactiveCommand.Create();// new RoutingCommand(AddDefine, (o) => DefineText != string.Empty && DefineText != null && !Defines.Contains(DefineText));
+            AddDefineCommand.Subscribe(AddDefine);
+
+            RemoveDefineCommand = ReactiveCommand.Create();// new RoutingCommand(RemoveDefine, (o) => SelectedDefine != string.Empty && SelectedDefine != null);
+            RemoveDefineCommand.Subscribe(RemoveDefine);
             //AddIncludePathCommand = new RoutingCommand(AddIncludePath);
             //RemoveIncludePathCommand = new RoutingCommand(RemoveIncludePath, RemoveIncludePathCanExecute);
 
             UpdateCompileString();
-        }
-
-        private IProject project;
+        }        
 
         public void UpdateCompileString()
         {
             Save();
 
+            
             //if (project.SelectedConfiguration.ToolChain is StandardToolChain)
             //{
             //    var cTc = project.SelectedConfiguration.ToolChain as StandardToolChain;
@@ -97,6 +109,7 @@
 
         public void Save()
         {
+            base.Model.CompilerSettings.Defines = defines.ToList();
             //var config = project.SelectedConfiguration;
 
             //config.CppSupport = cppSupport;
@@ -109,14 +122,14 @@
             //config.DebugSymbols = debugSymbols;
             //config.Exceptions = exceptions;
             //config.Rtti = rtti;
-
+            Model.Save();
             //project.SaveChanges();
         }
 
-        public ICommand AddIncludePathCommand { get; private set; }
-        public ICommand RemoveIncludePathCommand { get; private set; }
-        public ICommand AddDefineCommand { get; private set; }
-        public ICommand RemoveDefineCommand { get; private set; }
+        public ReactiveCommand<object> AddIncludePathCommand { get; private set; }
+        public ReactiveCommand<object> RemoveIncludePathCommand { get; private set; }
+        public ReactiveCommand<object> AddDefineCommand { get; private set; }
+        public ReactiveCommand<object> RemoveDefineCommand { get; private set; }
 
         public string[] FpuOptions
         {

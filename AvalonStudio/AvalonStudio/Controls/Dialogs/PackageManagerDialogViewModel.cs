@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
+    using System;
     using MVVM;
     using Perspex.Threading;
     using ReactiveUI;
