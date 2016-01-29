@@ -142,8 +142,8 @@
             CppCompilerArguments = new List<string>();
             BuiltinLibraries = new List<string>();
             Defines = new List<string>();
-            Settings = new ExpandoObject();
-            ToolchainSettings = new ExpandoObject();
+            LinkerSettings = new ExpandoObject();
+            CompilerSettings = new ExpandoObject();
         }
 
         private static Dictionary<string, Tuple<string, string>> passwordCache = new Dictionary<string, Tuple<string, string>>();
@@ -381,14 +381,7 @@
 
         public string Name { get; set; }
 
-        //public bool ShouldSerializeLanguages ()
-        //{
-        //    return Languages.Count > 0;
-        //}
-
-        //public List<Language> Languages { get; set; }
         public ProjectType Type { get; set; }
-
 
         public bool ShouldSerializeReferences()
         {
@@ -604,9 +597,12 @@
 
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
-        public dynamic Settings { get; set; }
+        public dynamic LinkerSettings { get; set; }
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
-        public dynamic ToolchainSettings { get; set; }
+        public dynamic CompilerSettings { get; set; }
+
+        [JsonConverter(typeof(ExpandoObjectConverter))]
+        public dynamic DebugSettings { get; set; }
     }
 }

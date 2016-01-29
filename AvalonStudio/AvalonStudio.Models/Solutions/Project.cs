@@ -594,7 +594,7 @@
             }
         }
 
-        dynamic Settings
+        dynamic DebugSettings
         {
             get
             {
@@ -602,7 +602,7 @@
             }
         }
 
-        public dynamic ToolchainSettings
+        public dynamic CompilerSettings
         {
             get
             {
@@ -610,7 +610,23 @@
             }
         }
 
-        dynamic IProject.Settings
+        dynamic LinkerSettings
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        dynamic IProject.LinkerSettings
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        dynamic IProject.DebugSettings
         {
             get
             {

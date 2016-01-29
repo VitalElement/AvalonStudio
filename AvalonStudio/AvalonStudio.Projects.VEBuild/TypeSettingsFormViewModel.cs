@@ -5,23 +5,17 @@
     using ReactiveUI;
     using System;
     using System.Collections.Generic;
-    public class TypeSettingsFormViewModel : ViewModel<IProject>
-    {
-        public TypeSettingsFormViewModel(IProject project) : base (project)
-        {
-            try
-            {
-                projectType = project.Settings.ProjectType?.ToString();
-            }
-            catch (Exception e)
-            {
 
-            }
+    public class TypeSettingsFormViewModel : ViewModel<VEBuildProject>
+    {
+        public TypeSettingsFormViewModel(VEBuildProject project) : base (project)
+        {
+            projectType = project.Type.ToString();
         }
 
         public void Save ()
         {
-            Model.Settings.ProjectType =  (ProjectType)Enum.Parse(typeof(ProjectType), projectType);
+            Model.Type =  (ProjectType)Enum.Parse(typeof(ProjectType), projectType);
             Model.Save();
         }
 

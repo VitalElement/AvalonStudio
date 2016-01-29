@@ -34,9 +34,11 @@
 
         //IDictionary<string, string> Settings { get; }
 
-        dynamic Settings { get; } 
+        dynamic CompilerSettings { get; }
 
-        dynamic ToolchainSettings { get; }
+        dynamic LinkerSettings { get; }
+
+        dynamic DebugSettings { get; }
 
         void Save();
     }
