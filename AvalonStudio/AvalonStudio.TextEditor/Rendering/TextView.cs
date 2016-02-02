@@ -5,6 +5,7 @@
     using Perspex.Controls;
     using Perspex.Controls.Primitives;
     using Perspex.Controls.Shapes;
+    using Perspex.Data;
     using Perspex.Media;
     using Perspex.Threading;
     using Perspex.VisualTree;
@@ -28,7 +29,7 @@
             _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
             _caretTimer.Tick += CaretTimerTick;
 
-            GetObservable(CaretIndexProperty)
+            this.GetObservable(CaretIndexProperty)
                 .Subscribe(CaretIndexChanged);
             
             VisualLines = new List<VisualLine>();
@@ -70,7 +71,7 @@
             set { SetValue(TextWrappingProperty, value); }
         }
 
-        public static readonly PerspexProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
+        public static readonly StyledProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
             PerspexProperty.Register<TextView, ObservableCollection<IBackgroundRenderer>>(nameof(BackgroundRenderers), new ObservableCollection<IBackgroundRenderer>());
 
         public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
@@ -79,7 +80,7 @@
             set { SetValue(BackgroundRenderersProperty, value); }
         }
 
-        public static readonly PerspexProperty<ObservableCollection<IDocumentLineTransformer>> DocumentLineTransformersProperty =
+        public static readonly StyledProperty<ObservableCollection<IDocumentLineTransformer>> DocumentLineTransformersProperty =
             PerspexProperty.Register<TextView, ObservableCollection<IDocumentLineTransformer>>(nameof(DocumentLineTransformers), new ObservableCollection<IDocumentLineTransformer>());
 
         public ObservableCollection<IDocumentLineTransformer> DocumentLineTransformers
@@ -122,7 +123,7 @@
             set { SetValue(AcceptsTabProperty, value); }
         }
 
-        public static readonly PerspexProperty<TextDocument> TextDocumentProperty =
+        public static readonly StyledProperty<TextDocument> TextDocumentProperty =
             PerspexProperty.Register<TextView, TextDocument>(nameof(TextDocument));
 
         public TextDocument TextDocument
@@ -131,7 +132,7 @@
             set { SetValue(TextDocumentProperty, value); InvalidateMeasure(); }
         }
 
-        public static readonly PerspexProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
+        public static readonly StyledProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
             PerspexProperty.Register<TextView, System.Windows.Input.ICommand>(nameof(BeforeTextChangedCommand));
 
         public System.Windows.Input.ICommand BeforeTextChangedCommand
@@ -140,7 +141,7 @@
             set { SetValue(BeforeTextChangedCommandProperty, value); }
         }
 
-        public static readonly PerspexProperty<System.Windows.Input.ICommand> TextChangedCommandProperty =
+        public static readonly StyledProperty<System.Windows.Input.ICommand> TextChangedCommandProperty =
             PerspexProperty.Register<TextView, System.Windows.Input.ICommand>(nameof(TextChangedCommand));
 
         public System.Windows.Input.ICommand TextChangedCommand
@@ -149,7 +150,7 @@
             set { SetValue(TextChangedCommandProperty, value); }
         }
 
-        public static readonly PerspexProperty<int> CaretIndexProperty =
+        public static readonly StyledProperty<int> CaretIndexProperty =
             PerspexProperty.Register<TextView, int>(nameof(CaretIndex), defaultValue: 0, defaultBindingMode: BindingMode.TwoWay);
 
         public int CaretIndex
@@ -158,7 +159,7 @@
             set { SetValue(CaretIndexProperty, value); }
         }
 
-        public static readonly PerspexProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
+        public static readonly StyledProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
             PerspexProperty.Register<TextView, ObservableCollection<TextViewMargin>>(nameof(Margins), new ObservableCollection<TextViewMargin>());
 
         public ObservableCollection<TextViewMargin> Margins
