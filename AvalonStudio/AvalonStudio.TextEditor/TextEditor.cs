@@ -6,6 +6,7 @@
     using Perspex;
     using Perspex.Controls;
     using Perspex.Controls.Primitives;
+    using Perspex.Data;
     using Perspex.Input;
     using Perspex.Input.Platform;
     using Perspex.Interactivity;
@@ -37,7 +38,7 @@
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
             textChangedDelayTimer.Stop();
 
-            var canScrollHorizontally = GetObservable(AcceptsReturnProperty)
+            var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
                .Select(x => !x);
 
             Bind(
@@ -45,7 +46,7 @@
                 canScrollHorizontally,
                 BindingPriority.Style);
 
-            var horizontalScrollBarVisibility = GetObservable(AcceptsReturnProperty)
+            var horizontalScrollBarVisibility = this.GetObservable(AcceptsReturnProperty)
                 .Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
 
             Bind(
@@ -143,7 +144,7 @@
             set { SetValue(LineHeightProperty, value); }
         }
 
-        public static readonly PerspexProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
+        public static readonly StyledProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
         TextView.BeforeTextChangedCommandProperty.AddOwner<TextEditor>();
 
         public System.Windows.Input.ICommand BeforeTextChangedCommand
@@ -160,7 +161,7 @@
             set { SetValue(ContentProperty, value); }
         }
 
-        public static readonly PerspexProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
+        public static readonly StyledProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
             TextView.MarginsProperty.AddOwner<TextEditor>();
 
         public ObservableCollection<TextViewMargin> Margins
@@ -277,7 +278,7 @@
             set { SetValue(IndentationStrategyProperty, value); }
         }
 
-        public static readonly PerspexProperty<TextDocument> TextDocumentProperty = TextView.TextDocumentProperty.AddOwner<TextEditor>();
+        public static readonly StyledProperty<TextDocument> TextDocumentProperty = TextView.TextDocumentProperty.AddOwner<TextEditor>();
 
         public TextDocument TextDocument
         {
