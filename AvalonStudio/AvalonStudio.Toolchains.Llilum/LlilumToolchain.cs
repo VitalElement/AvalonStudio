@@ -8,6 +8,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using Perspex.Controls;
 
     public class LlilumToolchain : StandardToolChain
     {
@@ -610,6 +611,11 @@
             }            
 
             return result;
+        }
+
+        public override IList<TabItem> GetConfigurationPages(IProject project)
+        {
+            throw new NotImplementedException();
         }
     }
 }
