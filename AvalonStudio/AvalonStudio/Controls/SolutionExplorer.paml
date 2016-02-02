@@ -72,15 +72,14 @@
             </StackPanel>
           </TreeDataTemplate>
 
-          <TreeDataTemplate DataType="ViewModels:ProjectViewModel" ItemsSource="{Binding Children}">
+          <!--<TreeDataTemplate DataType="ViewModels:ProjectViewModel" ItemsSource="{Binding Items}">
             <StackPanel Orientation="Horizontal">
               <Panel Width="15" Height="15" Background="#A08631c7" Margin="0 0 5 0">
-
-                <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
+          
               </Panel>
               <TextBlock Text="{Binding Title}" Height="15" />
             </StackPanel>
-          </TreeDataTemplate>
+          </TreeDataTemplate>!-->
 
           <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Children}">
             <TextBlock Text="{Binding Title}" />
