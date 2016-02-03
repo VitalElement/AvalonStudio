@@ -215,10 +215,8 @@
         public string[] LibraryOptions
         {
             get
-            {
-                return null;
-                //throw new NotImplementedException();
-                //return Enum.GetNames(typeof(LibraryType));
+            {               
+                return Enum.GetNames(typeof(LibraryType));
             }
         }
 

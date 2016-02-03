@@ -10,6 +10,7 @@
         public SolutionViewModel(ISolution model) : base(model)
         {
             this.Projects = new ObservableCollection<ProjectViewModel>();
+            IsExpanded = true;
 
             foreach (var project in model.Projects)
             {
@@ -55,6 +56,8 @@
                 RunTests();
             });
         }
+
+        public bool IsExpanded { get; set; }
 
         private ObservableCollection<ProjectViewModel> projects;
         public ObservableCollection<ProjectViewModel> Projects
