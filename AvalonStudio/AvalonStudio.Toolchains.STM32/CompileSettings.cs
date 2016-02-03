@@ -42,6 +42,7 @@
         public bool DebugInformation { get; set; }
         public bool Rtti { get; set; }
         public bool Exceptions { get; set; }
+        
         public OptimizationLevel Optimization { get; set; }
         public OptimizationPreference OptimizationPreference { get; set; }
         public FPUSupport Fpu { get; set; }

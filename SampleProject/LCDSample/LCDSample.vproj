@@ -28,17 +28,17 @@
         "DebugInformation": true,
         "Rtti": false,
         "Exceptions": false,
-        "Optimization": 4,
-        "OptimizationPreference": 1,
-        "Fpu": 2
+        "Optimization": "Level3",
+        "OptimizationPreference": "Speed",
+        "Fpu": "Hard"
       },
       "LinkSettings": {
         "LinkedLibraries": [],
         "UseMemoryLayout": true,
         "DiscardUnusedSections": true,
         "NotUseStandardStartupFiles": true,
-        "Fpu": 0,
-        "Library": 1,
+        "Fpu": "None",
+        "Library": "NanoCLib",
         "SelectedDeviceId": 0,
         "InRom1Start": 134217728,
         "InRom1Size": 40960,
