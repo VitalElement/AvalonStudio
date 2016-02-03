@@ -26,8 +26,13 @@
         "Defines": [
           "TEST1",
           "TEST2",
-          "Test3"
-        ]
+          "Test3",
+          "SUPPORT_CPLUSPLUS"
+        ],
+        "Includes": [],
+        "DebugInformation": true,
+        "Rtti": false,
+        "Exceptions": false
       }
     }
   }

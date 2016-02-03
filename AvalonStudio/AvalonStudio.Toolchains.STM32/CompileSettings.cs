@@ -11,8 +11,13 @@
         public CompileSettings()
         {
             Defines = new List<string>();
+            Includes = new List<string>();
         }
 
         public List<string> Defines { get; set; }
+        public List<string> Includes { get; set; }
+        public bool DebugInformation { get; set; }
+        public bool Rtti { get; set; }
+        public bool Exceptions { get; set; }
     }
 }
