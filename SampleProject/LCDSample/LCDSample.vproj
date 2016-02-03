@@ -19,10 +19,16 @@
   "StaticLibraries": [],
   "Toolchain": "AvalonStudio.Toolchains.STM32.STM32GCCToolchain",
   "LinkerSettings": {},
-  "CompilerSettings": {
-    "Defines": [
-      "TEST",
-      "TEST2"
-    ]
+  "CompilerSettings": {},
+  "ToolchainSettings": {
+    "STM32ToolchainSettings": {
+      "CompileSettings": {
+        "Defines": [
+          "TEST1",
+          "TEST2",
+          "Test3"
+        ]
+      }
+    }
   }
 }
