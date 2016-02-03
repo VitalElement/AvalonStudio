@@ -144,6 +144,7 @@
             Defines = new List<string>();
             LinkerSettings = new ExpandoObject();
             CompilerSettings = new ExpandoObject();
+            ToolchainSettings = new ExpandoObject();
         }
 
         private static Dictionary<string, Tuple<string, string>> passwordCache = new Dictionary<string, Tuple<string, string>>();
@@ -601,6 +602,9 @@
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public dynamic CompilerSettings { get; set; }
+
+        [JsonConverter(typeof(ExpandoObjectConverter))]
+        public dynamic ToolchainSettings { get; set; }
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public dynamic DebugSettings { get; set; }

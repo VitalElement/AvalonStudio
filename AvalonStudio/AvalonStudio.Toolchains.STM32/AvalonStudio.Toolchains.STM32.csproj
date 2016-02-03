@@ -133,6 +133,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompileSettings.cs" />
     <Compile Include="CompileSettingsForm.paml.cs">
       <DependentUpon>CompileSettingsForm.paml</DependentUpon>
     </Compile>
@@ -143,6 +144,7 @@
     </Compile>
     <Compile Include="LinkerSettingsFormViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="STM32ToolchainSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">

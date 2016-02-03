@@ -2,28 +2,44 @@
 {
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
+    using AvalonStudio.Utils;
+    using Extensibility.Utils;
     using ReactiveUI;
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Dynamic;
     using System.Linq;
     using System.Windows.Input;
 
     public class CompileSettingsViewModel : ViewModel<IProject>
     {
+        private CompileSettings settings = new CompileSettings();
         public CompileSettingsViewModel(IProject project) : base (project)
         {
             //var config = project.SelectedConfiguration;
             //cppSupport = config.CppSupport;
             //miscOptions = config.MiscCompilerArguments;
-            //includePaths = new ObservableCollection<string>(config.IncludePaths);
-            defines = new ObservableCollection<string>();
-
-            try { defines = new ObservableCollection<string>(); } catch (Exception e) { }
-
-            foreach (var define in Model.CompilerSettings.Defines)
+            //includePaths = new ObservableCollection<string>(config.IncludePaths);            
+            try
             {
-                defines.Add(define);
+                if (Model.ToolchainSettings.STM32ToolchainSettings.CompileSettings is ExpandoObject)
+                {
+                    settings = (Model.ToolchainSettings.STM32ToolchainSettings.CompileSettings as ExpandoObject).GetConcreteType<CompileSettings>();
+                }
+                else
+                {
+                    settings = Model.ToolchainSettings.STM32ToolchainSettings.CompileSettings;
+                }
             }
+            catch (Exception e)
+            {
+                Model.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
+            }
+           
+
+            defines = new ObservableCollection<string>(settings.Defines.ToList());
+            
 
             //optimizationLevelSelectedIndex = (int)config.Optimization;
             //optimizationPreferenceSelectedIndex = (int)config.OptimizationPreference;
@@ -109,7 +125,9 @@
 
         public void Save()
         {
-            base.Model.CompilerSettings.Defines = defines.ToList();
+            settings.Defines = defines.ToList();
+            base.Model.ToolchainSettings.STM32ToolchainSettings.CompileSettings = settings;
+            //base.Model.CompilerSettings.Defines = defines.ToList();
             //var config = project.SelectedConfiguration;
 
             //config.CppSupport = cppSupport;

@@ -1,5 +1,5 @@
 ﻿namespace AvalonStudio.Projects
-{    
+{
     using Perspex.Controls;
     using System.Collections.Generic;
     using Toolchains;
@@ -33,6 +33,8 @@
         IList<TabItem> ConfigurationPages { get; }
 
         //IDictionary<string, string> Settings { get; }
+
+        dynamic ToolchainSettings { get; }
 
         dynamic CompilerSettings { get; }
 
