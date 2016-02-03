@@ -20,7 +20,9 @@
             {
                 items.Add(ProjectItemViewModel.Create(item));
             }
-        }             
+        }
+
+        public bool IsExpanded { get; set; }
 
         public string Title
         {
