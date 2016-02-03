@@ -18,6 +18,12 @@
                 line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 12);
                 line.RenderedText.SetForegroundBrush(brush, startIndex + 12, line.RenderedText.Text.Length - 12);
             }
+            else if (line.RenderedText.Text.Contains("#pragma"))
+            {
+                int startIndex = line.RenderedText.Text.IndexOf("#pragma");
+
+                line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 7);
+            }
         }
     }
 }
