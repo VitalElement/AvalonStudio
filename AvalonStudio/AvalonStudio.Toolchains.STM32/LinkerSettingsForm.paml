@@ -15,9 +15,9 @@
 
     <Panel>
       <StackPanel>
-        <CheckBox IsChecked="{Binding UseMemoryLayout}" Margin="5 5 0 0" Content="Use Memory Layout from Memory Window"/>
-        <CheckBox IsChecked="{Binding DiscardUnusedSections}" Margin="5 5 0 0" Content="Discard unused sections"/>
-        <CheckBox IsChecked="{Binding NotUseStandardStartup}" Margin="5 5 0 0" Content="Don't use standard system startup files"/>
+        <CheckBox IsChecked="{Binding UseMemoryLayout, Mode=TwoWay}" Margin="5 5 0 0" Content="Use Memory Layout from Memory Window"/>
+        <CheckBox IsChecked="{Binding DiscardUnusedSections, Mode=TwoWay}" Margin="5 5 0 0" Content="Discard unused sections"/>
+        <CheckBox IsChecked="{Binding NotUseStandardStartup, Mode=TwoWay}" Margin="5 5 0 0" Content="Don't use standard system startup files"/>
 
         <Grid Margin="5 5 0 0">
           <Grid.ColumnDefinitions>
@@ -80,12 +80,12 @@
             <TextBlock Text="Size" Grid.Column="5"/>
 
             <TextBlock Text="INROM1" Grid.Row="1"/>
-            <TextBox Text="{Binding InRom1Start}" Grid.Row="1" Grid.ColumnSpan="3"  Grid.Column="1" />
-            <TextBox Text="{Binding InRom1Size}" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="5" />
+            <TextBox Text="{Binding InRom1Start, Mode=TwoWay}" Grid.Row="1" Grid.ColumnSpan="3"  Grid.Column="1" />
+            <TextBox Text="{Binding InRom1Size, Mode=TwoWay}" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="5" />
 
             <TextBlock Text="INROM2" Grid.Row="2"/>
-            <TextBox Text="{Binding InRom2Start}" Grid.Row="2" Grid.ColumnSpan="3"  Grid.Column="1" />
-            <TextBox Text="{Binding InRom2Size}" Grid.Row="2" Grid.ColumnSpan="3" Grid.Column="5" />
+            <TextBox Text="{Binding InRom2Start, Mode=TwoWay}" Grid.Row="2" Grid.ColumnSpan="3"  Grid.Column="1" />
+            <TextBox Text="{Binding InRom2Size, Mode=TwoWay}" Grid.Row="2" Grid.ColumnSpan="3" Grid.Column="5" />
           </Grid>
         </Panel>
 
@@ -113,12 +113,12 @@
             <TextBlock Text="Size" Grid.Column="5"/>
 
             <TextBlock Text="INRAM1" Grid.Row="1"/>
-            <TextBox Text="{Binding InRam1Start}" Grid.Row="1" Grid.ColumnSpan="3"  Grid.Column="1" />
-            <TextBox Text="{Binding InRam1Size}" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="5" />
+            <TextBox Text="{Binding InRam1Start, Mode=TwoWay}" Grid.Row="1" Grid.ColumnSpan="3"  Grid.Column="1" />
+            <TextBox Text="{Binding InRam1Size, Mode=TwoWay}" Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="5" />
 
             <TextBlock Text="INRAM2" Grid.Row="2"/>
-            <TextBox Text="{Binding InRam2Start}" Grid.Row="2" Grid.ColumnSpan="3"  Grid.Column="1" />
-            <TextBox Text="{Binding InRam2Size}" Grid.Row="2" Grid.ColumnSpan="3" Grid.Column="5" />
+            <TextBox Text="{Binding InRam2Start, Mode=TwoWay}" Grid.Row="2" Grid.ColumnSpan="3"  Grid.Column="1" />
+            <TextBox Text="{Binding InRam2Size, Mode=TwoWay}" Grid.Row="2" Grid.ColumnSpan="3" Grid.Column="5" />
           </Grid>
         </Panel>
 
@@ -146,7 +146,7 @@
     </Panel>
 
     <Panel Grid.Row="3" Grid.ColumnSpan="2" >
-      <TextBox Text="{Binding MiscOptions}" />
+      <TextBox Text="{Binding MiscOptions, Mode=TwoWay}" />
     </Panel>
 
     <Panel Grid.Row="4" Grid.ColumnSpan="2" >

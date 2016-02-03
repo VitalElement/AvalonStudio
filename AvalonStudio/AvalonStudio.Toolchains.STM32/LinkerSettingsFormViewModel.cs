@@ -1,35 +1,60 @@
 ﻿namespace AvalonStudio.Toolchains.STM32
 {
     using AvalonStudio.MVVM;
+    using Extensibility.Utils;
     using Projects;
     using System;
     using System.Collections.ObjectModel;
+    using System.Dynamic;
+    using System.Linq;
     using System.Linq.Expressions;
     using System.Windows.Input;
     using Toolchains;
 
-    public class LinkSettingsFormViewModel : ViewModel
+    public class LinkSettingsFormViewModel : ViewModel<IProject>
     {
-        public LinkSettingsFormViewModel(IProject project)
-        {
-           // this.project = project;
+        LinkSettings settings = new LinkSettings();
 
-            //var config = project.SelectedConfiguration;
-            //useMemoryLayout = config.UseMemoryLayout;
-            //discardUnusedSections = config.DiscardUnusedSections;
-            //notUseStandardStartup = config.NotUseStandardStartupFiles;
-            //linkedLibraries = new ObservableCollection<string>(config.LinkedLibraries);
-            //inRom1Start = string.Format("0x{0:X8}", config.InRom1Start);
-            //inRom1Size = string.Format("0x{0:X8}", config.InRom1Size);
-            //inRom2Start = string.Format("0x{0:X8}", config.InRom2Start);
-            //inRom2Size = string.Format("0x{0:X8}", config.InRom2Size);
-            //inRam1Start = string.Format("0x{0:X8}", config.InRam1Start);
-            //inRam1Size = string.Format("0x{0:X8}", config.InRam1Size);
-            //inRam2Start = string.Format("0x{0:X8}", config.InRam2Start);
-            //inRam2Size = string.Format("0x{0:X8}", config.InRam2Size);
-            //scatterFile = config.ScatterFile;
-            //miscOptions = config.MiscLinkerArguments;
-            //librarySelectedIndex = (int)config.Library;
+        public LinkSettingsFormViewModel(IProject project) : base (project)
+        {
+            try
+            {
+                if (Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings is ExpandoObject)
+                {
+                    settings = (Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings as ExpandoObject).GetConcreteType<LinkSettings>();
+                }
+                else
+                {
+                    settings = Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings;
+                }
+            }
+            catch (Exception e)
+            {
+                Model.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
+                settings = Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings;
+            }
+
+            if(settings == null)
+            {
+                settings = new LinkSettings();
+            }
+
+                        
+            useMemoryLayout = settings.UseMemoryLayout;
+            discardUnusedSections = settings.DiscardUnusedSections;
+            notUseStandardStartup = settings.NotUseStandardStartupFiles;
+            linkedLibraries = new ObservableCollection<string>(settings.LinkedLibraries);
+            inRom1Start = string.Format("0x{0:X8}", settings.InRom1Start);
+            inRom1Size = string.Format("0x{0:X8}", settings.InRom1Size);
+            inRom2Start = string.Format("0x{0:X8}", settings.InRom2Start);
+            inRom2Size = string.Format("0x{0:X8}", settings.InRom2Size);
+            inRam1Start = string.Format("0x{0:X8}", settings.InRam1Start);
+            inRam1Size = string.Format("0x{0:X8}", settings.InRam1Size);
+            inRam2Start = string.Format("0x{0:X8}", settings.InRam2Start);
+            inRam2Size = string.Format("0x{0:X8}", settings.InRam2Size);
+            scatterFile = settings.ScatterFile;
+            miscOptions = settings.MiscLinkerArguments;
+            librarySelectedIndex = (int)settings.Library;
 
             //AddLinkedLibraryCommand = new RoutingCommand(AddLinkedLibrary);
             //RemoveLinkedLibraryCommand = new RoutingCommand(RemoveLinkedLibrary);
@@ -63,25 +88,24 @@
 
         public void Save()
         {
-            //var config = project.SelectedConfiguration;
+            settings.UseMemoryLayout = useMemoryLayout;
+            settings.DiscardUnusedSections = discardUnusedSections;
+            settings.NotUseStandardStartupFiles = notUseStandardStartup;
+            settings.LinkedLibraries = linkedLibraries.ToList();
+            settings.InRom1Start = Convert.ToUInt32(inRom1Start, 16);
+            settings.InRom1Size = Convert.ToUInt32(inRom1Size, 16);
+            settings.InRom2Start = Convert.ToUInt32(inRom2Start, 16);
+            settings.InRom2Size = Convert.ToUInt32(inRom2Size, 16);
+            settings.InRam1Start = Convert.ToUInt32(inRam1Start, 16);
+            settings.InRam1Size = Convert.ToUInt32(inRam1Size, 16);
+            settings.InRam2Start = Convert.ToUInt32(inRam2Start, 16);
+            settings.InRam2Size = Convert.ToUInt32(inRam2Size, 16);
+            settings.ScatterFile = scatterFile;
+            settings.MiscLinkerArguments = miscOptions;
+            settings.Library = (LibraryType)librarySelectedIndex;
 
-            //config.UseMemoryLayout = useMemoryLayout;
-            //config.DiscardUnusedSections = discardUnusedSections;
-            //config.NotUseStandardStartupFiles = notUseStandardStartup;
-            //config.LinkedLibraries = linkedLibraries.ToList();
-            //config.InRom1Start = Convert.ToUInt32(inRom1Start, 16);
-            //config.InRom1Size = Convert.ToUInt32(inRom1Size, 16);
-            //config.InRom2Start = Convert.ToUInt32(inRom2Start, 16);
-            //config.InRom2Size = Convert.ToUInt32(inRom2Size, 16);
-            //config.InRam1Start = Convert.ToUInt32(inRam1Start, 16);
-            //config.InRam1Size = Convert.ToUInt32(inRam1Size, 16);
-            //config.InRam2Start = Convert.ToUInt32(inRam2Start, 16);
-            //config.InRam2Size = Convert.ToUInt32(inRam2Size, 16);
-            //config.ScatterFile = scatterFile;
-            //config.MiscLinkerArguments = miscOptions;
-            //config.Library = (LibraryType)librarySelectedIndex;
-
-           // project.Save();
+            Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings = settings;
+            Model.Save();
         }
 
         private void AddLinkedLibrary(object param)
@@ -217,56 +241,56 @@
         public string InRom1Start
         {
             get { return inRom1Start; }
-            set { inRom1Start = value; OnPropertyChanged(); }
+            set { inRom1Start = value; OnPropertyChanged(); UpdateLinkerString(); }
         }
 
         private string inRom1Size;
         public string InRom1Size
         {
             get { return inRom1Size; }
-            set { inRom1Size = value; OnPropertyChanged(); }
+            set { inRom1Size = value; OnPropertyChanged(); UpdateLinkerString(); }
         }
 
         private string inRom2Start;
         public string InRom2Start
         {
             get { return inRom2Start; }
-            set { inRom2Start = value; OnPropertyChanged(); }
+            set { inRom2Start = value; OnPropertyChanged(); UpdateLinkerString(); }
         }
 
         private string inRom2Size;
         public string InRom2Size
         {
             get { return inRom2Size; }
-            set { inRom2Size = value; OnPropertyChanged(); }
+            set { inRom2Size = value; OnPropertyChanged(); UpdateLinkerString(); }
         }
 
         private string inRam1Start;
         public string InRam1Start
         {
             get { return inRam1Start; }
-            set { inRam1Start = value; OnPropertyChanged(); }
+            set { inRam1Start = value; OnPropertyChanged(); UpdateLinkerString(); }
         }
 
         private string inRam1Size;
         public string InRam1Size
         {
             get { return inRam1Size; }
-            set { inRam1Size = value; OnPropertyChanged(); }
+            set { inRam1Size = value; OnPropertyChanged(); UpdateLinkerString(); }
         }
 
         private string inRam2Start;
         public string InRam2Start
         {
             get { return inRam2Start; }
-            set { inRam2Start = value; OnPropertyChanged(); }
+            set { inRam2Start = value; OnPropertyChanged(); UpdateLinkerString(); }
         }
 
         private string inRam2Size;
         public string InRam2Size
         {
             get { return inRam2Size; }
-            set { inRam2Size = value; OnPropertyChanged(); }
+            set { inRam2Size = value; OnPropertyChanged(); UpdateLinkerString(); }
         }
 
         private string scatterFile;
