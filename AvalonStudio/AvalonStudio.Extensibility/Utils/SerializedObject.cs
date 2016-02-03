@@ -9,7 +9,7 @@
         public void Serialize(string filename)
         {
             var writer = new StreamWriter(filename);
-            writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+            writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, Converters = new[] { new StringEnumConverter() } }));
             writer.Close();
         }
 
