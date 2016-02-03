@@ -38,22 +38,23 @@
             }
            
 
-            defines = new ObservableCollection<string>(settings.Defines.ToList());
-            
+            defines = new ObservableCollection<string>(settings.Defines);
+            includePaths = new ObservableCollection<string>(settings.Includes);
+
 
             //optimizationLevelSelectedIndex = (int)config.Optimization;
             //optimizationPreferenceSelectedIndex = (int)config.OptimizationPreference;
             //fpuSelectedIndex = (int)config.Fpu;
-            //debugSymbols = config.DebugSymbols;
-            //rtti = config.Rtti;
-            //exceptions = config.Exceptions;
+            debugSymbols = settings.DebugInformation;
+            rtti = settings.Rtti;
+            exceptions = settings.Exceptions;
 
-            // this.project = project;
             AddDefineCommand = ReactiveCommand.Create();// new RoutingCommand(AddDefine, (o) => DefineText != string.Empty && DefineText != null && !Defines.Contains(DefineText));
             AddDefineCommand.Subscribe(AddDefine);
 
             RemoveDefineCommand = ReactiveCommand.Create();// new RoutingCommand(RemoveDefine, (o) => SelectedDefine != string.Empty && SelectedDefine != null);
             RemoveDefineCommand.Subscribe(RemoveDefine);
+            
             //AddIncludePathCommand = new RoutingCommand(AddIncludePath);
             //RemoveIncludePathCommand = new RoutingCommand(RemoveIncludePath, RemoveIncludePathCanExecute);
 
@@ -126,7 +127,6 @@
         public void Save()
         {
             settings.Defines = defines.ToList();
-            base.Model.ToolchainSettings.STM32ToolchainSettings.CompileSettings = settings;
             //base.Model.CompilerSettings.Defines = defines.ToList();
             //var config = project.SelectedConfiguration;
 
@@ -137,9 +137,11 @@
             //config.Optimization = (OptimizationLevel)optimizationLevelSelectedIndex;
             //config.OptimizationPreference = (OptimizationPreference)optimizationPreferenceSelectedIndex;
             //config.Fpu = (FPUSupport)fpuSelectedIndex;
-            //config.DebugSymbols = debugSymbols;
-            //config.Exceptions = exceptions;
-            //config.Rtti = rtti;
+            settings.DebugInformation = debugSymbols;
+            settings.Exceptions = exceptions;
+            settings.Rtti = rtti;
+
+            Model.ToolchainSettings.STM32ToolchainSettings.CompileSettings = settings;
             Model.Save();
             //project.SaveChanges();
         }

@@ -24,13 +24,13 @@
                     <TextBlock Text="Optimization Preference" Margin="25 0 0 0"/>
                     <DropDown Items="{Binding OptimizationPreferenceOptions}" SelectedIndex="{Binding OptimizationPreferenceSelectedIndex}" />
                     
-                    <CheckBox IsChecked="{Binding DebugSymbols}" Content="Debug Symbols" Margin="25 0 0 0"/>
+                    <CheckBox IsChecked="{Binding DebugSymbols, Mode=TwoWay}" Content="Debug Symbols" Margin="25 0 0 0"/>
                 </StackPanel>
                 
                 <StackPanel Orientation="Horizontal" Margin="0 10 0 0 ">
-                    <CheckBox IsChecked="{Binding CppSupport}" Content="C++"/>
-                    <CheckBox IsChecked="{Binding Rtti}" Content="Runtime Type Info" Margin="25 0 0 0"/>
-                    <CheckBox IsChecked="{Binding Exceptions}" Content="Exceptions" Margin="25 0 0 0"/>
+                    <CheckBox IsChecked="{Binding CppSupport, Mode=TwoWay}" Content="C++"/>
+                    <CheckBox IsChecked="{Binding Rtti, Mode=TwoWay}" Content="Runtime Type Info" Margin="25 0 0 0"/>
+                    <CheckBox IsChecked="{Binding Exceptions, Mode=TwoWay}" Content="Exceptions" Margin="25 0 0 0"/>
                 </StackPanel>
             </StackPanel>
             
