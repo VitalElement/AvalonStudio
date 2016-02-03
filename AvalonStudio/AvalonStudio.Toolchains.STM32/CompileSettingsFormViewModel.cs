@@ -42,9 +42,9 @@
             includePaths = new ObservableCollection<string>(settings.Includes);
 
 
-            //optimizationLevelSelectedIndex = (int)config.Optimization;
-            //optimizationPreferenceSelectedIndex = (int)config.OptimizationPreference;
-            //fpuSelectedIndex = (int)config.Fpu;
+            optimizationLevelSelectedIndex = (int)settings.Optimization;
+            optimizationPreferenceSelectedIndex = (int)settings.OptimizationPreference;
+            fpuSelectedIndex = (int)settings.Fpu;
             debugSymbols = settings.DebugInformation;
             rtti = settings.Rtti;
             exceptions = settings.Exceptions;
@@ -134,9 +134,9 @@
             //config.MiscCompilerArguments = miscOptions;
             //config.Defines = defines.ToList();
             //config.IncludePaths = includePaths.ToList();
-            //config.Optimization = (OptimizationLevel)optimizationLevelSelectedIndex;
-            //config.OptimizationPreference = (OptimizationPreference)optimizationPreferenceSelectedIndex;
-            //config.Fpu = (FPUSupport)fpuSelectedIndex;
+            settings.Optimization = (OptimizationLevel)optimizationLevelSelectedIndex;
+            settings.OptimizationPreference = (OptimizationPreference)optimizationPreferenceSelectedIndex;
+            settings.Fpu = (FPUSupport)fpuSelectedIndex;
             settings.DebugInformation = debugSymbols;
             settings.Exceptions = exceptions;
             settings.Rtti = rtti;
@@ -155,9 +155,7 @@
         {
             get
             {
-                return null;
-                //throw new NotImplementedException();
-                //return Enum.GetNames(typeof(FPUSupport));
+                return Enum.GetNames(typeof(FPUSupport));
             }
         }
 
@@ -184,7 +182,7 @@
                 //            break;
                 //    }
 
-                //    UpdateCompileString();
+                   UpdateCompileString();
                 //});
             }
         }
@@ -194,9 +192,7 @@
         {
             get
             {
-                return null;
-                //throw new NotImplementedException();
-                //return Enum.GetNames(typeof(OptimizationPreference));
+                return Enum.GetNames(typeof(OptimizationPreference));
             }
         }
 
@@ -217,9 +213,7 @@
         {
             get
             {
-                return null;
-                //throw new NotImplementedException();
-                //return Enum.GetNames(typeof(OptimizationLevel));
+                return Enum.GetNames(typeof(OptimizationLevel));
             }
         }
 

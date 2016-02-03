@@ -25,7 +25,7 @@
             <ColumnDefinition/>
           </Grid.ColumnDefinitions>
           <TextBlock Text="Library:"/>
-          <DropDown Grid.Column="1" Items="{Binding LibraryOptions}" SelectedIndex="{Binding LibrarySelectedIndex}" />
+          <DropDown Grid.Column="1" Items="{Binding LibraryOptions}" SelectedIndex="{Binding LibrarySelectedIndex, Mode=TwoWay}" />
         </Grid>
       </StackPanel>
     </Panel>

@@ -12,29 +12,6 @@
         Retarget
     }
 
-    public enum FPUSupport
-    {
-        None,
-        Soft,
-        Hard
-    }
-
-    public enum OptimizationLevel
-    {
-        None,
-        Debug,
-        Level1,
-        Level2,
-        Level3
-    }
-
-    public enum OptimizationPreference
-    {
-        None,
-        Speed,
-        Size
-    }
-
     public class LinkSettings
     {        
         public LinkSettings()
@@ -51,10 +28,6 @@
         public FPUSupport Fpu { get; set; }
 
         public LibraryType Library { get; set; }
-
-        public OptimizationLevel Optimization { get; set; }
-
-        public OptimizationPreference OptimizationPreference { get; set; }
 
         public string SelectedDeviceName { get; set; }
         public int SelectedDeviceId { get; set; }
