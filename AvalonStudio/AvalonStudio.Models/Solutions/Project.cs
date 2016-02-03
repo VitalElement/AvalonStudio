@@ -633,6 +633,14 @@
                 throw new NotImplementedException();
             }
         }
+
+        public dynamic ToolchainSettings
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
         #endregion
 
         public static string NormalizePath (string path)
