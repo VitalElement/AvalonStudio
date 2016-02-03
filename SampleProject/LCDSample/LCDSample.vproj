@@ -25,9 +25,12 @@
       "CompileSettings": {
         "Defines": [],
         "Includes": [],
-        "DebugInformation": false,
+        "DebugInformation": true,
         "Rtti": false,
-        "Exceptions": false
+        "Exceptions": false,
+        "Optimization": 4,
+        "OptimizationPreference": 1,
+        "Fpu": 2
       },
       "LinkSettings": {
         "LinkedLibraries": [],
@@ -35,9 +38,7 @@
         "DiscardUnusedSections": true,
         "NotUseStandardStartupFiles": true,
         "Fpu": 0,
-        "Library": 0,
-        "Optimization": 0,
-        "OptimizationPreference": 0,
+        "Library": 1,
         "SelectedDeviceId": 0,
         "InRom1Start": 134217728,
         "InRom1Size": 40960,

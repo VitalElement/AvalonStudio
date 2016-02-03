@@ -6,6 +6,29 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    public enum OptimizationLevel
+    {
+        None,
+        Debug,
+        Level1,
+        Level2,
+        Level3
+    }
+
+    public enum OptimizationPreference
+    {
+        None,
+        Speed,
+        Size
+    }
+
+    public enum FPUSupport
+    {
+        None,
+        Soft,
+        Hard
+    }
+
     public class CompileSettings
     {
         public CompileSettings()
@@ -19,5 +42,8 @@
         public bool DebugInformation { get; set; }
         public bool Rtti { get; set; }
         public bool Exceptions { get; set; }
+        public OptimizationLevel Optimization { get; set; }
+        public OptimizationPreference OptimizationPreference { get; set; }
+        public FPUSupport Fpu { get; set; }
     }
 }
