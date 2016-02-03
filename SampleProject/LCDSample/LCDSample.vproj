@@ -23,16 +23,32 @@
   "ToolchainSettings": {
     "STM32ToolchainSettings": {
       "CompileSettings": {
-        "Defines": [
-          "TEST1",
-          "TEST2",
-          "Test3",
-          "SUPPORT_CPLUSPLUS"
-        ],
+        "Defines": [],
         "Includes": [],
-        "DebugInformation": true,
+        "DebugInformation": false,
         "Rtti": false,
         "Exceptions": false
+      },
+      "LinkSettings": {
+        "LinkedLibraries": [],
+        "UseMemoryLayout": true,
+        "DiscardUnusedSections": true,
+        "NotUseStandardStartupFiles": true,
+        "Fpu": 0,
+        "Library": 0,
+        "Optimization": 0,
+        "OptimizationPreference": 0,
+        "SelectedDeviceId": 0,
+        "InRom1Start": 134217728,
+        "InRom1Size": 40960,
+        "InRom2Start": 0,
+        "InRom2Size": 0,
+        "InRam1Start": 536870912,
+        "InRam1Size": 32768,
+        "InRam2Start": 0,
+        "InRam2Size": 0,
+        "DebugInRam": false,
+        "MiscLinkerArguments": ""
       }
     }
   }

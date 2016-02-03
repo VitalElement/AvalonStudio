@@ -138,6 +138,7 @@
       <DependentUpon>CompileSettingsForm.paml</DependentUpon>
     </Compile>
     <Compile Include="CompileSettingsFormViewModel.cs" />
+    <Compile Include="LinkSettings.cs" />
     <Compile Include="STM32GCCToolchain.cs" />
     <Compile Include="LinkerSettingsForm.paml.cs">
       <DependentUpon>LinkerSettingsForm.paml</DependentUpon>

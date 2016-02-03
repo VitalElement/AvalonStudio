@@ -8,5 +8,6 @@
         }
 
         public CompileSettings CompileSettings { get; set; }
+        public LinkSettings LinkSettings { get; set; }
     }
 }
