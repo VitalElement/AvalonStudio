@@ -1,6 +1,6 @@
 {
   "Name": "LCDSample",
-  "Type": "StaticLibrary",
+  "Type": "Executable",
   "References": [
     {
       "Name": "Utils",
