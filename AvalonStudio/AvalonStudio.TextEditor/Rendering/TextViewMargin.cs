@@ -43,7 +43,7 @@
                 info.LineHeight = charRect.Height;
                 info.CharWidth = charRect.Width;
 
-                info.NumLines = (int)(Bounds.Height / info.LineHeight);
+                info.NumLines = textView.TextDocument.LineCount;
 
                 Render(context, info);
             }
