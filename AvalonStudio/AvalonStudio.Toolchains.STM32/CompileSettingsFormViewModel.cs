@@ -23,14 +23,7 @@
             //includePaths = new ObservableCollection<string>(config.IncludePaths);            
             try
             {
-                if (Model.ToolchainSettings.STM32ToolchainSettings.CompileSettings is ExpandoObject)
-                {
-                    settings = (Model.ToolchainSettings.STM32ToolchainSettings.CompileSettings as ExpandoObject).GetConcreteType<CompileSettings>();
-                }
-                else
-                {
-                    settings = Model.ToolchainSettings.STM32ToolchainSettings.CompileSettings;
-                }
+                settings = STM32GCCToolchain.GetSettings(project).CompileSettings;
             }
             catch (Exception e)
             {

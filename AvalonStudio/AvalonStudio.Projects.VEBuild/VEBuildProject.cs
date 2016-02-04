@@ -142,8 +142,6 @@
             CppCompilerArguments = new List<string>();
             BuiltinLibraries = new List<string>();
             Defines = new List<string>();
-            LinkerSettings = new ExpandoObject();
-            CompilerSettings = new ExpandoObject();
             ToolchainSettings = new ExpandoObject();
         }
 
@@ -595,13 +593,6 @@
                 return result;
             }
         }
-
-
-        [JsonConverter(typeof(ExpandoObjectConverter))]
-        public dynamic LinkerSettings { get; set; }
-
-        [JsonConverter(typeof(ExpandoObjectConverter))]
-        public dynamic CompilerSettings { get; set; }
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public dynamic ToolchainSettings { get; set; }

@@ -600,31 +600,7 @@
             {
                 throw new NotImplementedException();
             }
-        }
-
-        public dynamic CompilerSettings
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        dynamic LinkerSettings
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        dynamic IProject.LinkerSettings
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        }   
 
         dynamic IProject.DebugSettings
         {

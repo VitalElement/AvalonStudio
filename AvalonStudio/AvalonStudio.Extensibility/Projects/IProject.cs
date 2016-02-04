@@ -36,10 +36,6 @@
 
         dynamic ToolchainSettings { get; }
 
-        dynamic CompilerSettings { get; }
-
-        dynamic LinkerSettings { get; }
-
         dynamic DebugSettings { get; }
 
         void Save();

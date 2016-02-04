@@ -12,6 +12,7 @@
     using Perspex.Controls;
     using System.Dynamic;
     using Extensibility.Utils;
+
     public class STM32GCCToolchain : StandardToolChain
     {
         public STM32GCCToolchain() : base (new ToolchainSettings())
@@ -27,14 +28,23 @@
         public static STM32ToolchainSettings GetSettings(IProject project)
         {
             STM32ToolchainSettings result = null;
-            
-            if (project.ToolchainSettings.STM32ToolchainSettings.CompileSettings is ExpandoObject)
+
+            try
             {
-                result = (project.ToolchainSettings.STM32ToolchainSettings as ExpandoObject).GetConcreteType<STM32ToolchainSettings>();
+                if (project.ToolchainSettings.STM32ToolchainSettings is ExpandoObject)
+                {
+                    result = (project.ToolchainSettings.STM32ToolchainSettings as ExpandoObject).GetConcreteType<STM32ToolchainSettings>();
+                }
+                else
+                {
+                    result = project.ToolchainSettings.STM32ToolchainSettings;
+                }
             }
-            else
+            catch(Exception e)
             {
-                result = project.ToolchainSettings.STM32ToolchainSettings.CompileSettings;
+                project.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
+                result = project.ToolchainSettings.STM32ToolchainSettings;
+                project.Save();
             }
 
             return result;
@@ -331,7 +341,15 @@
         {
             string result = string.Empty;
 
-            result += "-Wall -c -g ";
+            var settings = GetSettings(project).CompileSettings;
+            var superSettings = GetSettings(superProject).CompileSettings;
+
+            result += "-Wall -c ";
+
+            if (settings.DebugInformation)
+            {
+                result += "-g ";
+            }
 
             // toolchain includes
 
@@ -363,8 +381,7 @@
                 result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
             }
 
-
-            foreach (var define in superProject.Defines)
+            foreach (var define in superSettings.Defines)
             {
                 result += string.Format("-D{0} ", define);
             }

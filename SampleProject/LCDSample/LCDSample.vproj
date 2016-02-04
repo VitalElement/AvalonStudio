@@ -18,8 +18,6 @@
   ],
   "StaticLibraries": [],
   "Toolchain": "AvalonStudio.Toolchains.STM32.STM32GCCToolchain",
-  "LinkerSettings": {},
-  "CompilerSettings": {},
   "ToolchainSettings": {
     "STM32ToolchainSettings": {
       "CompileSettings": {
@@ -30,26 +28,25 @@
         "Exceptions": false,
         "Optimization": "Level3",
         "OptimizationPreference": "Speed",
-        "Fpu": "Hard"
+        "Fpu": "None"
       },
       "LinkSettings": {
         "LinkedLibraries": [],
-        "UseMemoryLayout": true,
-        "DiscardUnusedSections": true,
-        "NotUseStandardStartupFiles": true,
+        "UseMemoryLayout": false,
+        "DiscardUnusedSections": false,
+        "NotUseStandardStartupFiles": false,
         "Fpu": "None",
-        "Library": "NanoCLib",
+        "Library": "None",
         "SelectedDeviceId": 0,
         "InRom1Start": 134217728,
-        "InRom1Size": 40960,
+        "InRom1Size": 16384,
         "InRom2Start": 0,
         "InRom2Size": 0,
         "InRam1Start": 536870912,
-        "InRam1Size": 32768,
+        "InRam1Size": 4096,
         "InRam2Start": 0,
         "InRam2Size": 0,
-        "DebugInRam": false,
-        "MiscLinkerArguments": ""
+        "DebugInRam": false
       }
     }
   }

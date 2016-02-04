@@ -19,13 +19,13 @@
         {
             try
             {
-                if (Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings is ExpandoObject)
+                try
                 {
-                    settings = (Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings as ExpandoObject).GetConcreteType<LinkSettings>();
+                    settings = STM32GCCToolchain.GetSettings(project).LinkSettings;
                 }
-                else
+                catch (Exception e)
                 {
-                    settings = Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings;
+                    Model.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
                 }
             }
             catch (Exception e)
