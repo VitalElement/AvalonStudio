@@ -10,7 +10,8 @@
     using System;
     using System.Reflection;
     using Perspex.Controls;
-
+    using System.Dynamic;
+    using Extensibility.Utils;
     public class STM32GCCToolchain : StandardToolChain
     {
         public STM32GCCToolchain() : base (new ToolchainSettings())
@@ -21,6 +22,22 @@
         public STM32GCCToolchain(ToolchainSettings settings) : base(settings)
         {
             
+        }
+
+        public static STM32ToolchainSettings GetSettings(IProject project)
+        {
+            STM32ToolchainSettings result = null;
+            
+            if (project.ToolchainSettings.STM32ToolchainSettings.CompileSettings is ExpandoObject)
+            {
+                result = (project.ToolchainSettings.STM32ToolchainSettings as ExpandoObject).GetConcreteType<STM32ToolchainSettings>();
+            }
+            else
+            {
+                result = project.ToolchainSettings.STM32ToolchainSettings.CompileSettings;
+            }
+
+            return result;
         }
 
         public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
