@@ -5,6 +5,7 @@
         public STM32ToolchainSettings()
         {
             CompileSettings = new CompileSettings();
+            LinkSettings = new LinkSettings();
         }
 
         public CompileSettings CompileSettings { get; set; }
