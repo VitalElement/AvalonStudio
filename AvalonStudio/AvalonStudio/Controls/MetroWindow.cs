@@ -16,6 +16,7 @@
         Type IStyleable.StyleKey => typeof(MetroWindow);
 
         private Grid titleBar;
+        private Button minimiseButton;
         private Button restoreButton;
         private Button closeButton;
         private Grid topHorizontalGrip;
@@ -63,6 +64,7 @@
             }
             else if (titleBar.IsPointerOver)
             {
+                WindowState = WindowState.Normal;
                 BeginMoveDrag();
             }
 
@@ -70,9 +72,9 @@
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
-        {
-            
+        {            
             titleBar = e.NameScope.Find<Grid>("titlebar");
+            minimiseButton = e.NameScope.Find<Button>("minimiseButton");
             restoreButton = e.NameScope.Find<Button>("restoreButton");
             closeButton = e.NameScope.Find<Button>("closeButton");
 
@@ -84,11 +86,25 @@
             topLeftGrip = e.NameScope.Find<Grid>("topLeftGrip");
             bottomLeftGrip = e.NameScope.Find<Grid>("bottomLeftGrip");
             topRightGrip = e.NameScope.Find<Grid>("topRightGrip");
-            bottomRightGrip = e.NameScope.Find<Grid>("bottomRightGrip");            
+            bottomRightGrip = e.NameScope.Find<Grid>("bottomRightGrip");
+
+            minimiseButton.Click += (sender, ee) =>
+            {
+                WindowState = WindowState.Minimized;
+            };
 
             restoreButton.Click += (sender, ee) =>
             {
-                
+                switch (WindowState)
+                {
+                    case WindowState.Maximized:
+                        WindowState = WindowState.Normal;                        
+                        break;
+
+                    case WindowState.Normal:
+                        WindowState = WindowState.Maximized;
+                        break;
+                }
             };
 
             closeButton.Click += (sender, ee) =>

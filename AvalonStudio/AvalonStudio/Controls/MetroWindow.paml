@@ -23,7 +23,7 @@
                       <ContentPresenter Grid.Column="1" />
                       <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="5 4 0 5">
                         <StackPanel Orientation="Horizontal">
-                          <Button Background="Transparent" BorderThickness="0">
+                          <Button Background="Transparent" BorderThickness="0" Name="minimiseButton">
                             <Panel Height="20" Width="20">
                               <Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />
                             </Panel>
