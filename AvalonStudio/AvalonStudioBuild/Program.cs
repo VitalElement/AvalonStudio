@@ -303,7 +303,7 @@
 
         static int Main(string[] args)
         {
-            Console.WriteLine("VEBuild - Dark Builder v1.0.0.2");
+            Console.WriteLine("VEBuild - Dark Builder v1.0.0.3");
 
             var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions>(args).MapResult(
               (BuildOptions opts) => RunBuild(opts),
