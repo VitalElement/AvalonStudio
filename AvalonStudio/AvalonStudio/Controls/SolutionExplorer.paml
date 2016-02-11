@@ -1,6 +1,11 @@
 ﻿<UserControl xmlns="https://github.com/perspex"
              xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio"
              Background="#2D2D30" Foreground="WhiteSmoke">
+  <UserControl.Styles>
+    <Style Selector="ContextMenu">
+      <Setter Property="Background" Value="#2c2c2c" />
+    </Style>
+  </UserControl.Styles>
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <Grid Height="6" Margin="0 0 10 0">
@@ -20,11 +25,53 @@
         </TreeView.Styles>
         <TreeView.DataTemplates>
           <TreeDataTemplate DataType="ViewModels:SolutionViewModel" ItemsSource="{Binding Projects}">
-              <TextBlock Text="{Binding Title}" />
+              <TextBlock Text="{Binding Title}">
+                <TextBlock.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Header="Run All Tests" />
+                    <MenuItem Header="Configuration" />
+                    <MenuItem Header="Build Solution" />
+                    <MenuItem Header="Rebuild Solution" />
+                    <MenuItem Header="Clean Solution" />
+                    <Separator />
+                    <MenuItem Header="Add">
+                      <MenuItem Header="New Project..." />
+                      <MenuItem Header="Existing Project..." />
+                      <MenuItem Header="New Solution Folder..." />
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="Open Containing Folder" />
+                  </ContextMenu>
+                </TextBlock.ContextMenu>
+              </TextBlock>
           </TreeDataTemplate>
           
           <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Items}">
             <StackPanel Orientation="Horizontal">
+              <StackPanel.ContextMenu>
+                <ContextMenu>
+                  <MenuItem Header="Configure" />
+                  <MenuItem Header="Build" />
+                  <MenuItem Header="Debug" />
+                  <MenuItem Header="Clean" />
+                  <MenuItem Header="Set as Default Project" />
+                  <MenuItem Header="Manage References" />
+                  <Separator />
+                  <MenuItem Header="Add">
+                    <MenuItem Header="New Item..." />
+                    <MenuItem Header="Exisiting Item..." />
+                    <MenuItem Header="New Folder..." />
+                    <MenuItem Header="Import Folder..." />
+                    <Separator />
+                    <MenuItem Header="New File..." />
+                  </MenuItem>
+                  <Separator />
+                  <MenuItem Header="Rename" />
+                  <Separator />
+                  <MenuItem Header="Open Containing Folder" />
+                  <MenuItem Header="Remove" />
+                </ContextMenu>
+              </StackPanel.ContextMenu>
               <Panel Width="15" Height="15" Background="#A08631c7" Margin="0 0 5 0">
 
                 <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->

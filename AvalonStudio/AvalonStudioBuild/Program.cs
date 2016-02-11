@@ -90,6 +90,7 @@
 
         static int RunBuild(BuildOptions options)
         {
+            int result = 1;
             var solution = LoadSolution(options);
             var project = FindProject(solution, options.Project) as VEBuildProject;
 
@@ -105,13 +106,15 @@
 
                 stopWatch.Stop();
                 console.WriteLine(stopWatch.Elapsed.ToString());
+
+                result = awaiter.Result ? 0 : 1;
             }
             else
             {
                 console.WriteLine("Nothing to build.");
             }
 
-            return 1;
+            return result;
         }
 
         static int RunClean(CleanOptions options)
