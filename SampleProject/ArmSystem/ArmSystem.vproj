@@ -24,6 +24,5 @@
     }
   ],
   "StaticLibraries": [],
-  "LinkerSettings": {},
-  "CompilerSettings": {}
+  "ToolchainSettings": {}
 }
