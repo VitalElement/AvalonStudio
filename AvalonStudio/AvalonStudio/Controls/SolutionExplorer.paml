@@ -54,7 +54,7 @@
                   <MenuItem Header="Build" Command="{Binding BuildCommand}" />
                   <MenuItem Header="Debug" />
                   <MenuItem Header="Clean" Command="{Binding CleanCommand}" />
-                  <MenuItem Header="Set as Default Project" />
+                  <MenuItem Header="Set as Default Project" Command="{Binding SetProjectCommand}" />
                   <MenuItem Header="Manage References" />
                   <Separator />
                   <MenuItem Header="Add">
@@ -76,7 +76,7 @@
 
                 <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
               </Panel>
-              <TextBlock Text="{Binding Title}" Height="15" />
+              <TextBlock Text="{Binding Title}" Height="15" FontWeight="{Binding FontWeight}" />
             </StackPanel>
           </TreeDataTemplate>
 

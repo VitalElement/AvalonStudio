@@ -93,6 +93,7 @@
 
         public void Save()
         {
+            StartupItem = StartupProject?.Name;
             Serialize(Path.Combine(CurrentDirectory, Name + "." + solutionExtension));
         }
 
@@ -108,7 +109,7 @@
         public IList<IProject> Projects { get; set; }
 
         [JsonIgnore]
-        public IProject StartupProject { get; private set; }        
+        public IProject StartupProject { get; set; }        
 
         public string Name { get; set; }
 

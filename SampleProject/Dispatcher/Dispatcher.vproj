@@ -1,8 +1,5 @@
 {
   "Name": "Dispatcher",
-  "Languages": [
-    "Cpp"
-  ],
   "Type": "StaticLibrary",
   "References": [
     {
@@ -16,7 +13,10 @@
   ],
   "SourceFiles": [
     {
-      "File": "Dispatcher.cpp"
-    },
-  ]
+      "File": "Dispatcher.cpp",
+      "Name": "Dispatcher.cpp"
+    }
+  ],
+  "StaticLibraries": [],
+  "ToolchainSettings": {}
 }
