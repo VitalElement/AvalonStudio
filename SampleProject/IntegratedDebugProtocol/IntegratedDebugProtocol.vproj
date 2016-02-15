@@ -1,25 +1,26 @@
 {
   "Name": "IntegratedDebugProtocol",
-  "Languages": [
-    "Cpp"
-  ],
   "Type": "StaticLibrary",
-  "PublicIncludes": [
-    "./"
-  ],  
   "References": [
     {
       "Name": "Utils",
       "GitUrl": "http://gxgroup.duia.eu/gx/Utils.git",
       "Revision": "HEAD"
-    },    
+    }
+  ],
+  "PublicIncludes": [
+    "./"
   ],
   "SourceFiles": [
     {
-      "File": "IDP.cpp"
+      "File": "IDP.cpp",
+      "Name": "IDP.cpp"
     },
     {
-      "File": "IDPPacket.cpp"
+      "File": "IDPPacket.cpp",
+      "Name": "IDPPacket.cpp"
     }
-  ]
+  ],
+  "StaticLibraries": [],
+  "ToolchainSettings": {}
 }
