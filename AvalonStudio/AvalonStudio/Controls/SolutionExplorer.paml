@@ -12,11 +12,11 @@
         <Grid.Background>
           <ImageBrush Source="resm:AvalonStudio.Resources.grip_pattern.png?assembly=AvalonStudio" TileMode="FlipY" Stretch="Uniform"
                                AlignmentY="Center" SourceRect="0,0,4,3000" DestinationRect="0,0,4,3000" />
-        </Grid.Background>
+        </Grid.Background>      
       </Grid>
       <Panel Background="#2d2d2d" HorizontalAlignment="Left">
         <TextBlock Text="Solution Explorer" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0"/>
-      </Panel>
+      </Panel>      
       <TreeView Grid.Row="1" BorderThickness="0" Background="#252526" Items="{Binding Solution}" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
         <TreeView.Styles>
           <Style Selector="TreeViewItem">
@@ -50,10 +50,10 @@
             <StackPanel Orientation="Horizontal">
               <StackPanel.ContextMenu>
                 <ContextMenu>
-                  <MenuItem Header="Configure" />
-                  <MenuItem Header="Build" />
+                  <MenuItem Header="Configure" Command="{Binding ConfigureCommand}"/>
+                  <MenuItem Header="Build" Command="{Binding BuildCommand}" />
                   <MenuItem Header="Debug" />
-                  <MenuItem Header="Clean" />
+                  <MenuItem Header="Clean" Command="{Binding CleanCommand}" />
                   <MenuItem Header="Set as Default Project" />
                   <MenuItem Header="Manage References" />
                   <Separator />

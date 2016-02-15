@@ -16,10 +16,38 @@
 
             items.Add(new ReferenceFolderViewModel(model));
 
-            foreach(var item in model.Items)
+            foreach (var item in model.Items)
             {
                 items.Add(ProjectItemViewModel.Create(item));
             }
+
+            ConfigureCommand = ReactiveCommand.Create();
+
+            ConfigureCommand.Subscribe((o) =>
+            {
+                WorkspaceViewModel.Instance.ModalDialog = new ProjectConfigurationDialogViewModel(model, () => { });
+                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
+            });
+
+            BuildCommand = ReactiveCommand.Create();
+
+            BuildCommand.Subscribe(async (o) =>
+            {
+                await model.ToolChain?.Build(WorkspaceViewModel.Instance.Console, model);
+            });
+
+            CleanCommand = ReactiveCommand.Create();
+
+            CleanCommand.Subscribe(async (o) =>
+            {
+                await model.ToolChain?.Clean(WorkspaceViewModel.Instance.Console, model);
+            });
+
+            ManageReferencesCommand = ReactiveCommand.Create();
+
+            ManageReferencesCommand.Subscribe((o) =>
+            {
+            });
         }
 
         public bool IsExpanded { get; set; }
@@ -44,7 +72,7 @@
         public ReactiveCommand<object> DebugCommand { get; protected set; }
         public ReactiveCommand<object> ManageReferencesCommand { get; protected set; }
         public ReactiveCommand<object> RemoveCommand { get; protected set; }
-
+        public ReactiveCommand<object> ConfigureCommand { get; private set; }
 
         public static ProjectViewModel Create(IProject model)
         {
@@ -75,6 +103,8 @@
             }
         }
 
-        public ObservableCollection<string> IncludePaths { get; private set; }      
+        public ObservableCollection<string> IncludePaths { get; private set; }
+
+
     }
 }

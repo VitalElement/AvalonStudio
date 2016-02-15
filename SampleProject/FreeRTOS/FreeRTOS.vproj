@@ -1,30 +1,39 @@
 {
   "Name": "FreeRTOS",
   "Type": "StaticLibrary",
-  "Includes": [
-    "./",    
-  ],
+  "References": [],
   "PublicIncludes": [
-    "include",
+    "include"
+  ],
+  "Includes": [
+    "./"
   ],
   "SourceFiles": [
     {
-      "File": "croutine.c"
+      "File": "croutine.c",
+      "Name": "croutine.c"
     },
     {
-      "File": "event_groups.c"
+      "File": "event_groups.c",
+      "Name": "event_groups.c"
     },
     {
-      "File": "list.c"
+      "File": "list.c",
+      "Name": "list.c"
     },
     {
-      "File": "queue.c"
+      "File": "queue.c",
+      "Name": "queue.c"
     },
     {
-      "File": "tasks.c"
+      "File": "tasks.c",
+      "Name": "tasks.c"
     },
     {
-      "File": "timers.c"
+      "File": "timers.c",
+      "Name": "timers.c"
     }
-  ]
+  ],
+  "StaticLibraries": [],
+  "ToolchainSettings": {}
 }

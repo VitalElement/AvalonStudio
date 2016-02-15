@@ -11,6 +11,5 @@
         }
 
         public ReactiveCommand<object> SetDefaultProjectCommand { get; private set; }
-        public ReactiveCommand<object> ConfigureCommand { get; private set; }
     }
 }

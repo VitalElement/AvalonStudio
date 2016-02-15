@@ -21,14 +21,16 @@
   "ToolchainSettings": {
     "STM32ToolchainSettings": {
       "CompileSettings": {
-        "Defines": [],
+        "Defines": [
+          "TEST"
+        ],
         "Includes": [],
         "DebugInformation": true,
         "Rtti": false,
         "Exceptions": false,
         "Optimization": "Level3",
         "OptimizationPreference": "Speed",
-        "Fpu": "None"
+        "Fpu": "Hard"
       },
       "LinkSettings": {
         "LinkedLibraries": [],
