@@ -33,6 +33,7 @@
 
             BuildCommand.Subscribe(async (o) =>
             {
+                WorkspaceViewModel.Instance.Console.Clear();
                 await model.ToolChain?.Build(WorkspaceViewModel.Instance.Console, model);
             });
 
@@ -40,6 +41,7 @@
 
             CleanCommand.Subscribe(async (o) =>
             {
+                WorkspaceViewModel.Instance.Console.Clear();
                 await model.ToolChain?.Clean(WorkspaceViewModel.Instance.Console, model);
             });
 
