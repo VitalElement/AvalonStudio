@@ -12,7 +12,10 @@
   ],
   "SourceFiles": [
     {
-      "File": "ServoController.cpp"
+      "File": "ServoController.cpp",
+      "Name": "ServoController.cpp"
     }
-  ]
+  ],
+  "StaticLibraries": [],
+  "ToolchainSettings": {}
 }
