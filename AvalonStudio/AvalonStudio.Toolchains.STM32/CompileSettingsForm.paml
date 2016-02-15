@@ -1,5 +1,11 @@
 ﻿<TabItem xmlns="https://github.com/perspex" Header="Compiler">
     <Grid>
+      <Grid.Styles>
+        <Style Selector="TextBox">
+          <Setter Property="Background" Value="Transparent" />
+        </Style>
+      </Grid.Styles>
+      
         <Grid.RowDefinitions>
             <RowDefinition Height="110"/>
             <RowDefinition Height="150"/>
