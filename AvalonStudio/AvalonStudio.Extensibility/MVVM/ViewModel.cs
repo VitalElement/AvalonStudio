@@ -7,7 +7,7 @@
         public ViewModel() : base(null)
         {
 
-        }
+        }        
     }
 
     public abstract class ViewModel<T> : ReactiveObject
@@ -22,6 +22,11 @@
         {
             get { return model; }
             set { this.RaiseAndSetIfChanged(ref model, value); }
+        }
+
+        public void Invalidate ()
+        {
+            this.RaisePropertyChanged("");
         }
     }
 }

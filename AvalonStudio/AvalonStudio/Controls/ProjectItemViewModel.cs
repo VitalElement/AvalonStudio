@@ -29,7 +29,7 @@ namespace AvalonStudio.Controls.ViewModels
             }
 
             return result;
-        }
+        }        
     }
 
     public abstract class ProjectItemViewModel<T> : ProjectItemViewModel  where T : IProjectItem
@@ -85,6 +85,11 @@ namespace AvalonStudio.Controls.ViewModels
         {
             get { return this.Model.Name; }
            // set { this.Model.Name = value; this.RaisePropertyChanged(); IsEditingTitle = false; }
+        }
+
+        public void Invalidate()
+        {
+            this.RaisePropertyChanged();
         }
 
         public int NumberOfSelections { get; set; }

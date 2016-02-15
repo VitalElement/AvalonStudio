@@ -1,4 +1,4 @@
 {
   "Name": "SampleProject",
-  "StartupItem" : "LCDSample"
+  "StartupItem": "LCDSample"
 }

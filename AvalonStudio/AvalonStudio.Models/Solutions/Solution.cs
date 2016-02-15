@@ -239,6 +239,10 @@
             {
                 return DefaultProject;
             }
+            set
+            {
+                DefaultProject = value as Project;
+            }
         }
 
         public IList<IProject> Projects

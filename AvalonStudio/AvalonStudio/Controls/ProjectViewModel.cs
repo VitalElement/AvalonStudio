@@ -6,7 +6,7 @@
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
-
+    using System.Linq;
     public abstract class ProjectViewModel : ViewModel<IProject>
     {
         public ProjectViewModel(IProject model)
@@ -50,6 +50,21 @@
             ManageReferencesCommand.Subscribe((o) =>
             {
             });
+
+            SetProjectCommand = ReactiveCommand.Create();
+
+            SetProjectCommand.Subscribe((o) =>
+            {
+                model.Solution.StartupProject = model;
+                model.Solution.Save();
+
+                WorkspaceViewModel.Instance.InvalidateCodeAnalysis();
+
+                foreach(var project in WorkspaceViewModel.Instance.SolutionExplorer.Solution.First().Projects)
+                {
+                    project.Invalidate();
+                }
+            });
         }
 
         public bool IsExpanded { get; set; }
@@ -75,6 +90,7 @@
         public ReactiveCommand<object> ManageReferencesCommand { get; protected set; }
         public ReactiveCommand<object> RemoveCommand { get; protected set; }
         public ReactiveCommand<object> ConfigureCommand { get; private set; }
+        public ReactiveCommand<object> SetProjectCommand { get; private set; }
 
         public static ProjectViewModel Create(IProject model)
         {
