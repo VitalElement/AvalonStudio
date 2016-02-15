@@ -6,7 +6,7 @@
     {   
         string Name { get; }     
 
-        IProject StartupProject { get; }
+        IProject StartupProject { get; set; }
 
         IProject AddProject(IProject project);
 
