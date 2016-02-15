@@ -28,7 +28,7 @@
         private Grid topRightGrip;
         private Grid bottomRightGrip;
 
-        protected override void OnPointerPressed(PointerPressEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
             if (topHorizontalGrip.IsPointerOver)
             {

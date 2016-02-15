@@ -4,7 +4,9 @@
     using AvalonStudio.Projects;
     using AvalonStudio.Utils;
     using Extensibility.Utils;
+    using Projects.Standard;
     using ReactiveUI;
+    using Standard;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -16,11 +18,7 @@
     {
         private CompileSettings settings = new CompileSettings();
         public CompileSettingsViewModel(IProject project) : base (project)
-        {
-            //var config = project.SelectedConfiguration;
-            //cppSupport = config.CppSupport;
-            //miscOptions = config.MiscCompilerArguments;
-            //includePaths = new ObservableCollection<string>(config.IncludePaths);            
+        {            
             try
             {
                 settings = STM32GCCToolchain.GetSettings(project).CompileSettings;
@@ -28,11 +26,15 @@
             catch (Exception e)
             {
                 Model.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
-            }
-           
+            }           
 
             defines = new ObservableCollection<string>(settings.Defines);
             includePaths = new ObservableCollection<string>(settings.Includes);
+
+            //var config = project.SelectedConfiguration;
+            //cppSupport = config.CppSupport;
+            miscOptions = settings.CustomFlags;
+            //includePaths = new ObservableCollection<string>(config.IncludePaths);            
 
 
             optimizationLevelSelectedIndex = (int)settings.Optimization;
@@ -58,12 +60,15 @@
         {
             Save();
 
-            
+            if(Model.ToolChain != null && Model.ToolChain is StandardToolChain)
+            {
+                CompilerArguments = (Model.ToolChain as StandardToolChain).GetCompilerArguments(Model as IStandardProject, Model as IStandardProject, null);
+            }
             //if (project.SelectedConfiguration.ToolChain is StandardToolChain)
             //{
             //    var cTc = project.SelectedConfiguration.ToolChain as StandardToolChain;
 
-            //    CompilerArguments = cTc.GetCompilerArguments(project, FileType.CPlusPlus);
+
             //}
         }
 
@@ -118,8 +123,9 @@
         }
 
         public void Save()
-        {
+        {            
             settings.Defines = defines.ToList();
+            settings.CustomFlags = miscOptions;
             //base.Model.CompilerSettings.Defines = defines.ToList();
             //var config = project.SelectedConfiguration;
 
@@ -291,7 +297,7 @@
         public string CompilerArguments
         {
             get { return compilerArguments; }
-            set { compilerArguments = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref compilerArguments, value); }
         }
 
 
