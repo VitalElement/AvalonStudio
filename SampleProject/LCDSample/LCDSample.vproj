@@ -22,12 +22,16 @@
     "STM32ToolchainSettings": {
       "CompileSettings": {
         "Defines": [
-          "TEST"
+          "TEST",
+          "TEST2",
+          "TEST3",
+          "SUPPORT_CPLUSPLUS"
         ],
         "Includes": [],
         "DebugInformation": true,
-        "Rtti": false,
-        "Exceptions": false,
+        "Rtti": true,
+        "Exceptions": true,
+        "CustomFlags": "-Wno-unknown-pragmaS",
         "Optimization": "Level3",
         "OptimizationPreference": "Speed",
         "Fpu": "Hard"

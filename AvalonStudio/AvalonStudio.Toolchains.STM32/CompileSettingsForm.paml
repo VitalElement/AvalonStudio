@@ -77,11 +77,11 @@
         </Panel>
         
         <Panel Grid.Row="2" Grid.ColumnSpan="2" >
-            <TextBox Text="{Binding MiscOptions}"/>
+            <TextBox Text="{Binding MiscOptions, Mode=TwoWay}"/>
         </Panel>
         
         <Panel Grid.Row="3" Grid.ColumnSpan="2">
-            <TextBox Text="{Binding CompilerArguments}" IsEnabled="False"  />
+            <TextBox Text="{Binding CompilerArguments}" IsReadOnly="true" />
         </Panel>
     </Grid>    
 </TabItem>

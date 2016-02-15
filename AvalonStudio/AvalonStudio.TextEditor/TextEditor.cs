@@ -601,7 +601,7 @@
             ScrollViewer = e.NameScope.Find<ScrollViewer>("scrollViewer");
         }
 
-        protected override void OnPointerPressed(PointerPressEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
             if (e.Source.InteractiveParent.InteractiveParent == textView)
             {

@@ -58,11 +58,8 @@
             InvalidateVisual();
         }
 
-        protected override void OnPointerPressed(PointerPressEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
-            //var result = textEditor.TextView.FormattedText.HitTestPoint(e.GetPosition(this));
-            // var line = textEditor.TextView.GetLine(result.TextPosition);
-
             InvalidateVisual();
         }
 
