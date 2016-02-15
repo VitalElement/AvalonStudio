@@ -3,7 +3,7 @@
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
     using AvalonStudio.Utils;
-    using Extensibility.Utils;
+    using Perspex.Controls;
     using Projects.Standard;
     using ReactiveUI;
     using Standard;
@@ -17,8 +17,8 @@
     public class CompileSettingsViewModel : ViewModel<IProject>
     {
         private CompileSettings settings = new CompileSettings();
-        public CompileSettingsViewModel(IProject project) : base (project)
-        {            
+        public CompileSettingsViewModel(IProject project) : base(project)
+        {
             try
             {
                 settings = STM32GCCToolchain.GetSettings(project).CompileSettings;
@@ -26,7 +26,7 @@
             catch (Exception e)
             {
                 Model.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
-            }           
+            }
 
             defines = new ObservableCollection<string>(settings.Defines);
             includePaths = new ObservableCollection<string>(settings.Includes);
@@ -49,18 +49,21 @@
 
             RemoveDefineCommand = ReactiveCommand.Create();// new RoutingCommand(RemoveDefine, (o) => SelectedDefine != string.Empty && SelectedDefine != null);
             RemoveDefineCommand.Subscribe(RemoveDefine);
-            
-            //AddIncludePathCommand = new RoutingCommand(AddIncludePath);
-            //RemoveIncludePathCommand = new RoutingCommand(RemoveIncludePath, RemoveIncludePathCanExecute);
+
+            AddIncludePathCommand = ReactiveCommand.Create();
+            AddIncludePathCommand.Subscribe(AddIncludePath);
+
+            RemoveIncludePathCommand = ReactiveCommand.Create();
+            RemoveIncludePathCommand.Subscribe(RemoveIncludePath);
 
             UpdateCompileString();
-        }        
+        }
 
         public void UpdateCompileString()
         {
             Save();
 
-            if(Model.ToolChain != null && Model.ToolChain is StandardToolChain)
+            if (Model.ToolChain != null && Model.ToolChain is StandardToolChain)
             {
                 CompilerArguments = (Model.ToolChain as StandardToolChain).GetCompilerArguments(Model as IStandardProject, Model as IStandardProject, null);
             }
@@ -85,23 +88,25 @@
             UpdateCompileString();
         }
 
-        private void AddIncludePath(object param)
+        private async void AddIncludePath(object param)
         {
-            //FolderBrowserDialog fbd = new FolderBrowserDialog();
+            OpenFolderDialog fbd = new OpenFolderDialog();
 
-            //fbd.SelectedPath = project.CurrentDirectory;
+            fbd.InitialDirectory = Model.CurrentDirectory;
 
-            //if (fbd.ShowDialog() == DialogResult.OK)
-            //{
-            //    string newInclude = project.CurrentDirectory.MakeRelativePath(fbd.SelectedPath);
+            var result = await fbd.ShowAsync();
 
-            //    if (newInclude == string.Empty)
-            //    {
-            //        newInclude = "\\";
-            //    }
+            if (result != string.Empty)
+            {
+                string newInclude = Model.CurrentDirectory.MakeRelativePath(result);
 
-            //    IncludePaths.Add(newInclude);
-            //}
+                if (newInclude == string.Empty)
+                {
+                    newInclude = "\\";
+                }
+
+                IncludePaths.Add(newInclude);
+            }
 
             UpdateCompileString();
         }
@@ -123,7 +128,7 @@
         }
 
         public void Save()
-        {            
+        {
             settings.Defines = defines.ToList();
             settings.CustomFlags = miscOptions;
             //base.Model.CompilerSettings.Defines = defines.ToList();
@@ -132,7 +137,7 @@
             //config.CppSupport = cppSupport;
             //config.MiscCompilerArguments = miscOptions;
             //config.Defines = defines.ToList();
-            //config.IncludePaths = includePaths.ToList();
+            settings.Includes = includePaths.ToList();            
             settings.Optimization = (OptimizationLevel)optimizationLevelSelectedIndex;
             settings.OptimizationPreference = (OptimizationPreference)optimizationPreferenceSelectedIndex;
             settings.Fpu = (FPUSupport)fpuSelectedIndex;
@@ -181,7 +186,7 @@
                 //            break;
                 //    }
 
-                   UpdateCompileString();
+                UpdateCompileString();
                 //});
             }
         }
