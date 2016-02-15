@@ -72,7 +72,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBox Text="{Binding DefineText}" />
-                <ListBox Grid.Row="1" Items="{Binding Defines}" SelectedItem="{Binding SelectedDefine}"/>
+                <ListBox Grid.Row="1" Items="{Binding Defines}" SelectedItem="{Binding SelectedDefine, Mode=TwoWay}"/>
                 
                 <StackPanel Grid.RowSpan="2" Grid.Column="1">
                     <Button Content="Add" Command="{Binding AddDefineCommand}" Margin="5 0 0 0" />
@@ -83,7 +83,7 @@
         </Panel>
         
         <Panel Grid.Row="2" Grid.ColumnSpan="2" >
-            <TextBox Text="{Binding MiscOptions, Mode=TwoWay}"/>
+            <TextBox Text="{Binding MiscOptions, Mode=TwoWay}" />
         </Panel>
         
         <Panel Grid.Row="3" Grid.ColumnSpan="2">
