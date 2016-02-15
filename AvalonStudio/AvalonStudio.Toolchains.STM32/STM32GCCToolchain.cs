@@ -346,6 +346,8 @@
 
             result += "-Wall -c ";
 
+            result += superSettings.CustomFlags + " ";
+
             if (settings.DebugInformation)
             {
                 result += "-g ";
@@ -396,25 +398,29 @@
                 result += string.Format(" {0}", arg);
             }
 
-            switch (file.Language)
+            // TODO factor out this code from here!
+            if (file != null)
             {
-                case Language.C:
-                    {
-                        foreach (var arg in superProject.CCompilerArguments)
+                switch (file.Language)
+                {
+                    case Language.C:
                         {
-                            result += string.Format(" {0}", arg);
+                            foreach (var arg in superProject.CCompilerArguments)
+                            {
+                                result += string.Format(" {0}", arg);
+                            }
                         }
-                    }
-                    break;
+                        break;
 
-                case Language.Cpp:
-                    {
-                        foreach (var arg in superProject.CppCompilerArguments)
+                    case Language.Cpp:
                         {
-                            result += string.Format(" {0}", arg);
+                            foreach (var arg in superProject.CppCompilerArguments)
+                            {
+                                result += string.Format(" {0}", arg);
+                            }
                         }
-                    }
-                    break;
+                        break;
+                }
             }
 
             return result;
