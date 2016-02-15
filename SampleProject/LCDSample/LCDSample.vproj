@@ -22,9 +22,6 @@
     "STM32ToolchainSettings": {
       "CompileSettings": {
         "Defines": [
-          "TEST",
-          "TEST2",
-          "TEST3",
           "SUPPORT_CPLUSPLUS"
         ],
         "Includes": [],
