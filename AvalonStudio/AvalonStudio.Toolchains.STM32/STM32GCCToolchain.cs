@@ -286,35 +286,6 @@
         }
 
         #region Settings
-        public enum GCCOptimizationLevel
-        {
-            //[Description ("-O0")]
-            Off,
-            //[Description ("-O1")]
-            Level1,
-            //[Description ("-O2")]
-            Level2,
-            //[Description ("-O3")]
-            Level3
-        }
-
-        public enum GCCOptimizationPreference
-        {
-            //[Description("")]
-            None,
-            //[Description ("-Os")]
-            Size,
-            //[Description ("-Ofast")]
-            Speed
-        }
-
-        public GCCOptimizationLevel Optimization { get; set; }
-        public GCCOptimizationPreference OptimizationPriority { get; set; }
-
-        public string CompilerCustomArguments { get; set; }
-
-        public string LinkerCustomArguments { get; set; }
-
         public string LinkerScript { get; set; }
         #endregion
 
@@ -341,17 +312,83 @@
         {
             string result = string.Empty;
 
-            var settings = GetSettings(project).CompileSettings;
-            var superSettings = GetSettings(superProject).CompileSettings;
+            //var settings = GetSettings(project).CompileSettings;
+            var settings = GetSettings(superProject).CompileSettings;
 
-            result += "-Wall -c ";
-
-            result += superSettings.CustomFlags + " ";
+            result += "-Wall -c ";                                   
 
             if (settings.DebugInformation)
             {
                 result += "-g ";
             }
+
+            switch (settings.Fpu)
+            {
+                case FPUSupport.Soft:
+                    {
+                        result += "-mfpu=fpv4-sp-d16 -mfloat-abi=soft ";
+                    }
+                    break;
+
+                case FPUSupport.Hard:
+                    {
+                        result += "-mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
+                    }
+                    break;
+            }
+
+            // TODO make this an option.
+            result += "-ffunction-sections -fdata-sections ";
+
+            switch(settings.Optimization)
+            {
+                case OptimizationLevel.None:
+                    {
+                        result += "-O0 ";
+                    }
+                    break;
+
+                case OptimizationLevel.Debug:
+                    {
+                        result += "-Og ";
+                    }
+                    break;
+
+                case OptimizationLevel.Level1:
+                    {
+                        result += "-O1 ";
+                    }
+                    break;
+
+                case OptimizationLevel.Level2:
+                    {
+                        result += "-O2 ";
+                    }
+                    break;
+
+                case OptimizationLevel.Level3:
+                    {
+                        result += "-O3 ";
+                    }
+                    break;
+            }
+
+            switch(settings.OptimizationPreference)
+            {
+                case OptimizationPreference.Size:
+                    {
+                        result += "-Os ";
+                    }
+                    break;
+
+                case OptimizationPreference.Speed:
+                    {
+                        result += "-Ofast ";
+                    }
+                    break;
+            }
+
+            result += settings.CustomFlags + " ";
 
             // toolchain includes
 
@@ -383,7 +420,7 @@
                 result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
             }
 
-            foreach (var define in superSettings.Defines)
+            foreach (var define in settings.Defines)
             {
                 result += string.Format("-D{0} ", define);
             }
