@@ -70,8 +70,16 @@
                 WorkspaceViewModel.Instance.ModalDialog = new ProjectConfigurationDialogViewModel(WorkspaceViewModel.Instance.SolutionExplorer.SelectedProject, () => { });
                 WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
             });
+
+            NewProjectCommand = ReactiveCommand.Create();
+            NewProjectCommand.Subscribe((o) =>
+            {
+                WorkspaceViewModel.Instance.ModalDialog = new NewProjectDialogViewModel();
+                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
+            });
         }
 
+        public ReactiveCommand<object> NewProjectCommand { get; private set; }
         public ReactiveCommand<object> SaveCommand { get; private set; }
         public ReactiveCommand<object> LoadProjectCommand { get; private set; }
 

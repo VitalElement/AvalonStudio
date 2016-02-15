@@ -206,6 +206,10 @@
     <Compile Include="Controls\ModalDialogViewModelBase.cs">
       <DependentUpon>ModalDialog.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\NewProjectDialog.paml.cs">
+      <DependentUpon>NewProjectDialog.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\NewProjectDialogViewModel.cs" />
     <Compile Include="Controls\PackageManagerDialog.paml.cs">
       <DependentUpon>PackageManagerDialog.paml</DependentUpon>
     </Compile>
@@ -302,6 +306,7 @@
     <EmbeddedResource Include="Controls\ProjectConfigurationDialog.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\NewProjectDialog.paml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
