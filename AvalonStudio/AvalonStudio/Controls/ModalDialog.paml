@@ -24,6 +24,9 @@
             <DataTemplate DataType="ViewModels:ProjectConfigurationDialogViewModel">
               <Controls:ProjectConfigurationDialog />
             </DataTemplate>
+            <DataTemplate DataType="ViewModels:NewProjectDialogViewModel">
+              <Controls:NewProjectDialog />
+            </DataTemplate>
           </ContentControl.DataTemplates>
         </ContentControl>
         
