@@ -24,7 +24,9 @@
         "Defines": [
           "SUPPORT_CPLUSPLUS"
         ],
-        "Includes": [],
+        "Includes": [
+          "LCDSample\\include"
+        ],
         "DebugInformation": true,
         "Rtti": true,
         "Exceptions": true,
