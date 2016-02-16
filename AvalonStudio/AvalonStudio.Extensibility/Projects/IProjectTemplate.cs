@@ -1,6 +1,5 @@
-﻿namespace AvalonStudio.Extensibility.Projects
-{
-    using AvalonStudio.Projects;
+﻿namespace AvalonStudio.Projects
+{    
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
