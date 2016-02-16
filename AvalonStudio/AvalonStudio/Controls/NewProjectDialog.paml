@@ -60,7 +60,7 @@
         <Button Grid.Row="1" Grid.Column="2" Width="100" HorizontalAlignment="Left" Margin="19 0" Content="Browse..." Command="{Binding BrowseLocationCommand}" />
       
         <TextBlock Grid.Row="2" Text="Solution Name:" VerticalAlignment="Center" />
-        <TextBox Grid.Row="2" Grid.Column="1" Background="Transparent" />
+        <TextBox Grid.Row="2" Grid.Column="1" Background="Transparent" Text="{Binding SolutionName}" />
       </Grid>
     </Grid>
 </UserControl>
