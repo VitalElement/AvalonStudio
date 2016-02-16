@@ -8,6 +8,14 @@
       </TreeView>
           
       <ListBox Grid.Column="1" Background="#2c2c2c" BorderThickness="0" Margin="1">
+        <ListBox.Styles>
+          <Style Selector="ListBoxItem:selected /template/ Border#border">
+            <Setter Property="Background" Value="#5500557d" />
+          </Style>
+          <Style Selector="ListBoxItem:selected:focus /template/ Border#border">
+            <Setter Property="Background" Value="#5500557d" />
+          </Style>
+        </ListBox.Styles>
         <ListBoxItem>
           <Grid Height="45">
             <StackPanel Orientation="Horizontal">
