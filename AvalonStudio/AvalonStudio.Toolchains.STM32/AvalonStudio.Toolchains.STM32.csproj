@@ -133,12 +133,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArmCPlusPlusProjectTemplate.cs" />
     <Compile Include="CompileSettings.cs" />
     <Compile Include="CompileSettingsForm.paml.cs">
       <DependentUpon>CompileSettingsForm.paml</DependentUpon>
     </Compile>
     <Compile Include="CompileSettingsFormViewModel.cs" />
     <Compile Include="LinkSettings.cs" />
+    <Compile Include="STM32CPlusPlusProjectTemplate.cs" />
     <Compile Include="STM32GCCToolchain.cs" />
     <Compile Include="LinkerSettingsForm.paml.cs">
       <DependentUpon>LinkerSettingsForm.paml</DependentUpon>
@@ -151,6 +153,10 @@
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
       <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
       <Name>AvalonStudio.Extensibility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj">
+      <Project>{5d5fe113-ffef-4e49-a011-00a167efa36e}</Project>
+      <Name>AvalonStudio.Languages.CPlusPlus</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
@@ -170,8 +176,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\Debug\Plugins\$(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

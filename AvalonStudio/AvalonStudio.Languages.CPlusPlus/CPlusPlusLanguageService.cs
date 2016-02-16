@@ -12,8 +12,7 @@
     using System.IO;
     using System.Runtime.CompilerServices;
     using TextEditor.Document;
-    using TextEditor.Rendering;
-    using Extensibility.Projects;
+    using TextEditor.Rendering;    
 
     class CPlusPlusDataAssociation
     {
@@ -66,7 +65,7 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return typeof(BlankCPlusPlusLangaguageTemplate);
             }
         }
 

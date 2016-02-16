@@ -1,6 +1,5 @@
 ﻿namespace AvalonStudio.Languages
-{
-    using Extensibility.Projects;
+{    
     using Projects;
     using System;
     using System.Collections.Generic;
