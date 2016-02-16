@@ -86,7 +86,7 @@
             {
                 Projects.Add(project);
                 currentProject = project;
-            }
+            }            
 
             return currentProject;
         }

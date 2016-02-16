@@ -162,6 +162,10 @@
       <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
       <Name>AvalonStudio.Projects.Standard</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects.VEBuild\AvalonStudio.Projects.VEBuild.csproj">
+      <Project>{47e266ea-bbc4-4794-96da-b1f3ecb5bb9b}</Project>
+      <Name>AvalonStudio.Projects.VEBuild</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
       <Project>{72c71854-5897-4e14-a1ae-b3b48f139af7}</Project>
       <Name>AvalonStudio.Toolchains.Standard</Name>

@@ -519,7 +519,7 @@
             get
             {
                 return Solution;
-            }
+            }            
         }
 
         IList<IProject> IProject.References
