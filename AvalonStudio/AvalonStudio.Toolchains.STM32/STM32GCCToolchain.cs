@@ -25,6 +25,17 @@
             
         }
 
+        public static STM32ToolchainSettings ProvisionSettings (IProject project)
+        {
+            STM32ToolchainSettings result = null;
+
+            project.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
+            result = project.ToolchainSettings.STM32ToolchainSettings;
+            project.Save();
+
+            return result;
+        }
+
         public static STM32ToolchainSettings GetSettings(IProject project)
         {
             STM32ToolchainSettings result = null;
@@ -42,9 +53,7 @@
             }
             catch(Exception e)
             {
-                project.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
-                result = project.ToolchainSettings.STM32ToolchainSettings;
-                project.Save();
+                ProvisionSettings(project);    
             }
 
             return result;

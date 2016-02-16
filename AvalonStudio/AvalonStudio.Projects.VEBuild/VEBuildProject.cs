@@ -541,7 +541,7 @@
             }
             set
             {
-                ToolchainReference = value.GetType().Name;
+                ToolchainReference = value.GetType().ToString();
             }
         }
 
