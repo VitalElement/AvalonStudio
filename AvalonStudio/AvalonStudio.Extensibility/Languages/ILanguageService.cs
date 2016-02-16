@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Languages
 {
+    using Extensibility.Projects;
     using Projects;
     using System;
     using System.Collections.Generic;
@@ -28,5 +29,10 @@
         /// A description of the language supported by the service, i.e. C/C++
         /// </summary>
         string Title { get; }
+
+        /// <summary>
+        /// The base type that all Project templates for this language must inherit. This base class must implement IProjectTemplate.
+        /// </summary>
+        Type BaseTemplateType { get; }
     } 
 }

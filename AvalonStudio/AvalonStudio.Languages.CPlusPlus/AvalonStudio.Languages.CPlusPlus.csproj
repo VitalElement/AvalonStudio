@@ -133,6 +133,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlankCPlusPlusLangaguageTemplate.cs" />
     <Compile Include="CPlusPlusLanguageService.cs" />
     <Compile Include="DefineTextLineTransformer.cs" />
     <Compile Include="IncludeTextLineTransformer.cs" />
