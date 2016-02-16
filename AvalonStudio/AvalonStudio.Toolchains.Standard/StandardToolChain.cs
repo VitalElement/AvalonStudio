@@ -490,6 +490,8 @@
 
         public abstract IList<TabItem> GetConfigurationPages(IProject project);
 
+        public abstract bool CanHandle(IProject project);
+
         public string Name { get { return GetType().ToString(); } }
 
         public abstract Version Version { get; }

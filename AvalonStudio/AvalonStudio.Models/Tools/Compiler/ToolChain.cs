@@ -53,6 +53,11 @@ namespace AvalonStudio.Models.Tools.Compiler
             throw new NotImplementedException();
         }
 
+        public bool CanHandle(IProject project)
+        {
+            return false;
+        }
+
         public string Name
         {
             get

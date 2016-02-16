@@ -617,5 +617,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public override bool CanHandle(IProject project)
+        {
+            return false;
+        }
     }
 }
