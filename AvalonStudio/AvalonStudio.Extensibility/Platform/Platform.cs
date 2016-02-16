@@ -53,6 +53,11 @@
             }
         }
 
+        public static string ProjectDirectory
+        {
+            get { return Path.Combine(BaseDirectory, "Projects"); }
+        }
+
         public static string AppDataDirectory
         {
             get { return Path.Combine(BaseDirectory, "AppData"); }

@@ -276,7 +276,7 @@
         static int RunCreate(CreateOptions options)
         {
             string projectPath = string.Empty;
-
+            
             if (string.IsNullOrEmpty(options.Project))
             {
                 projectPath = Directory.GetCurrentDirectory();
@@ -292,7 +292,8 @@
                 Directory.CreateDirectory(projectPath);
             }
 
-            var project = VEBuildProject.Create(projectPath, options.Project);
+            throw new NotImplementedException();
+            var project = VEBuildProject.Create(null, projectPath, options.Project);
 
             if (project != null)
             {

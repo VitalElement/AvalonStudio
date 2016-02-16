@@ -8,7 +8,6 @@
     using System.IO;
     using System.Linq;
     using Toolchains;
-    using Toolchains.STM32;
     using Extensibility.Menus;
     using Toolchains.Llilum;
     using Extensibility;
@@ -93,7 +92,7 @@
 
 
 
-        public static VEBuildProject Create(string directory, string name)
+        public static VEBuildProject Create(ISolution solution, string directory, string name)
         {
             VEBuildProject result = null;
 
@@ -102,6 +101,7 @@
             if (!File.Exists(projectFile))
             {
                 var project = new VEBuildProject { Name = name };
+                project.SetSolution(solution);
                 project.Location = projectFile;
                 project.Save();
 
@@ -126,8 +126,8 @@
         }
 
         public VEBuildProject()
-        {            
-            //Languages = new List<Language>();
+        {
+            Items = new List<IProjectItem>();
             UnloadedReferences = new List<Reference>();
             StaticLibraries = new List<string>();
             References = new List<IProject>();
@@ -343,7 +343,7 @@
         }
 
         [JsonIgnore]
-        public ISolution Solution { get; private set; }
+        public ISolution Solution { get; set; }
 
         [JsonIgnore]
         public string CurrentDirectory
@@ -528,18 +528,7 @@
             gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
 
             return new LlilumToolchain(gccSettings);
-        }
-
-        static STM32GCCToolchain GetSTM32Toolchain()
-        {
-            var gccSettings = new ToolchainSettings();
-            gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
-            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3");
-            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
-            gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
-
-            return new STM32GCCToolchain(gccSettings);
-        }
+        }        
 
         [JsonIgnore]
         public IToolChain ToolChain

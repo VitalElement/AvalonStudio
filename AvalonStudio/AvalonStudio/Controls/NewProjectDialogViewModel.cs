@@ -21,7 +21,7 @@
             projectTemplates = new ObservableCollection<IProjectTemplate>();
             Languages = new List<ILanguageService>(WorkspaceViewModel.Instance.Model.LanguageServices);
 
-            location = Platform.BaseDirectory;
+            location = Platform.ProjectDirectory;
             SelectedLanguage = Languages.FirstOrDefault();
             SelectedTemplate = ProjectTemplates.FirstOrDefault();
 
@@ -29,7 +29,7 @@
             BrowseLocationCommand.Subscribe(async (o) =>
             {
                 OpenFolderDialog ofd = new OpenFolderDialog();
-                ofd.InitialDirectory = Platform.BaseDirectory;
+                ofd.InitialDirectory = location;
 
                 string result = await ofd.ShowAsync();
 
@@ -51,9 +51,9 @@
 
                 var solution = Solution.Create(destination, solutionName);
 
-                WorkspaceViewModel.Instance.SolutionExplorer.Model = solution;
-
                 selectedTemplate.Generate(solution, name);
+
+                WorkspaceViewModel.Instance.SolutionExplorer.Model = solution;                
 
                 Close();
             });                
