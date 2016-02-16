@@ -18,6 +18,8 @@
         IList<string> Includes { get; }
 
         IList<TabItem> GetConfigurationPages(IProject project);
+
+        bool CanHandle(IProject project);
     }
 }
 
