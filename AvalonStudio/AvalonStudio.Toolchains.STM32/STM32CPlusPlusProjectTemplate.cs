@@ -9,6 +9,14 @@
 
     public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
     {
+        public override string DefaultProjectName
+        {
+            get
+            {
+                return "STM32Project";
+            }
+        }
+
         public override string Title
         {
             get
