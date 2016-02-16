@@ -13,6 +13,7 @@
     using System.Runtime.CompilerServices;
     using TextEditor.Document;
     using TextEditor.Rendering;
+    using Extensibility.Projects;
 
     class CPlusPlusDataAssociation
     {
@@ -52,7 +53,23 @@
         {
             get { return "C/C++"; }
         }
-        
+
+        public IProjectTemplate EmptyProjectTemplate
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public Type BaseTemplateType
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         private NClang.ClangTranslationUnit GenerateTranslationUnit(ISourceFile file, List<ClangUnsavedFile> unsavedFiles)
         {
             NClang.ClangTranslationUnit result = null;
