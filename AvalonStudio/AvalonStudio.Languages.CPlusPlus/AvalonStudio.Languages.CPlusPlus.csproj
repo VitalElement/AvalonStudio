@@ -139,6 +139,7 @@
     <Compile Include="IncludeTextLineTransformer.cs" />
     <Compile Include="PragmaMarkTextLineTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StaticLibraryTemplate.cs" />
     <Compile Include="TextColoringTransformer.cs" />
   </ItemGroup>
   <ItemGroup>

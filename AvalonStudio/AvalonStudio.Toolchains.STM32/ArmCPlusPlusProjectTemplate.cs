@@ -9,6 +9,14 @@
 
     public class ArmCPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
     {
+        public override string DefaultProjectName
+        {
+            get
+            {
+                return "ArmProject";
+            }
+        }
+
         public override string Title
         {
             get
