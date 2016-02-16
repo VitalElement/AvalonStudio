@@ -1,6 +1,9 @@
-﻿<UserControl xmlns="https://github.com/perspex" xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility" Background="#3f3f3f" Foreground="WhiteSmoke">
+﻿<UserControl xmlns="https://github.com/perspex" 
+             xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
+             xmlns:proj="clr-namespace:AvalonStudio.Projects;assembly=AvalonStudio.Extensibility"
+             Background="#3f3f3f" Foreground="WhiteSmoke">
     <Grid RowDefinitions="*,180" ColumnDefinitions="200,*,200">
-      <TreeView Background="#2c2c2c" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedItem}">
+      <TreeView Background="#2c2c2c" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
         <TreeView.DataTemplates>
           <DataTemplate DataType="lang:ILanguageService">
             <TextBlock Text="{Binding Title}" />
@@ -14,7 +17,7 @@
         <TreeViewItem Header="Languages" IsExpanded="true" Items="{Binding Languages}"/>                  
       </TreeView>
           
-      <ListBox Grid.Column="1" Background="#2c2c2c" BorderThickness="0" Margin="1">
+      <ListBox Grid.Column="1" Background="#2c2c2c" BorderThickness="0" Margin="1" Items="{Binding ProjectTemplates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}">
         <ListBox.Styles>
           <Style Selector="ListBoxItem:selected /template/ Border#border">
             <Setter Property="Background" Value="#5500557d" />
@@ -23,54 +26,27 @@
             <Setter Property="Background" Value="#5500557d" />
           </Style>
         </ListBox.Styles>
-        <ListBoxItem>
-          <Grid Height="45">
-            <StackPanel Orientation="Horizontal">
-              <Rectangle Fill="#aa0055cc" Height="40" Width="40" Margin="5 0" />              
-              <TextBlock Text="Empty C++ Project" VerticalAlignment="Center" Margin="5 0" />                
-            </StackPanel>            
-            <TextBlock Text="C/C++" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0" />
-          </Grid>          
-        </ListBoxItem>
-      
-    <ListBoxItem>
-          <Grid Height="45">
-            <StackPanel Orientation="Horizontal">
-              <Rectangle Fill="#aa0055cc" Height="40" Width="40" Margin="5 0" />              
-              <TextBlock Text="ARM C++ Project" VerticalAlignment="Center" Margin="5 0" />                
-            </StackPanel>            
-            <TextBlock Text="C/C++" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0" />
-          </Grid>          
-        </ListBoxItem>
-      
-        <ListBoxItem>
-          <Grid Height="45">
-            <StackPanel Orientation="Horizontal">
-              <Rectangle Fill="#aa0055cc" Height="40" Width="40" Margin="5 0" />              
-              <TextBlock Text="STM32 C++ Project" VerticalAlignment="Center" Margin="5 0" />                
-            </StackPanel>            
-            <TextBlock Text="C/C++" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0" />
-          </Grid>          
-        </ListBoxItem>
-      
-        <ListBoxItem>
-          <Grid Height="45">
-            <StackPanel Orientation="Horizontal">
-              <Rectangle Fill="#aa0055cc" Height="40" Width="40" Margin="5 0" />              
-              <TextBlock Text="BitThunder C++ Project" VerticalAlignment="Center" Margin="5 0" />                
-            </StackPanel>            
-            <TextBlock Text="C/C++" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0" />
-          </Grid>          
-        </ListBoxItem>
+
+        <ListBox.DataTemplates>
+          <DataTemplate DataType="proj:IProjectTemplate">
+            <Grid Height="45">
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Fill="#aa0055cc" Height="40" Width="40" Margin="5 0" />
+                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Margin="5 0" />
+              </StackPanel>
+              <TextBlock Text="C/C++" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.DataTemplates>
       </ListBox>
             
       <Grid Grid.Column="2"  Background="#2c2c2c" Margin="1">
         <StackPanel Margin="10">
           <StackPanel Orientation="Horizontal">
             <TextBlock Text="Type:" FontWeight="Bold" />
-            <TextBlock Margin="5 0" Text="C/C++" />
+            <TextBlock Margin="5 0" Text="{Binding SelectedLanguage.Title}" />
           </StackPanel>
-          <TextBlock Margin="0 5" Text="A description of the project template, and what it provides." />
+          <TextBlock Margin="0 5" Text="{Binding SelectedTemplate.Description}" />
         </StackPanel>
       </Grid>
         

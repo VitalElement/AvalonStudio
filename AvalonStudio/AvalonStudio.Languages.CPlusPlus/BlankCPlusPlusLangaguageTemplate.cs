@@ -1,12 +1,11 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus
-{
-    using AvalonStudio.Extensibility.Projects;
+{    
     using AvalonStudio.Projects;
     using System;
 
     public class BlankCPlusPlusLangaguageTemplate : IProjectTemplate
     {
-        public string Description
+        public virtual string Description
         {
             get
             {
@@ -14,7 +13,7 @@
             }
         }
 
-        public string Title
+        public virtual string Title
         {
             get
             {
