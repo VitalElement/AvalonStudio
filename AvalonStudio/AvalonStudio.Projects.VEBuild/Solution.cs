@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Projects.VEBuild
+﻿namespace AvalonStudio.Projects
 {
     using Newtonsoft.Json;
     using System;
@@ -6,7 +6,7 @@
     using System.IO;
     using System.Linq;
     using Utils;
-
+    using VEBuild;
     public class Solution : SerializedObject<Solution>, ISolution
     {
         public const string solutionExtension = "vsln";
@@ -95,6 +95,17 @@
         {
             StartupItem = StartupProject?.Name;
             Serialize(Path.Combine(CurrentDirectory, Name + "." + solutionExtension));
+        }
+
+        public static Solution Create (string location, string name)
+        {
+            var result = new Solution();
+
+            result.Name = name;
+            result.CurrentDirectory = location;
+            result.Save();
+
+            return result;
         }
 
         public Solution()

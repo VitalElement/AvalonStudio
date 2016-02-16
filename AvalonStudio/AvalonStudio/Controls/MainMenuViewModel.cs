@@ -2,6 +2,7 @@
 {
     using Perspex.Controls;
     using Perspex.Threading;
+    using Projects;
     using Projects.VEBuild;
     using ReactiveUI;
     using System;
