@@ -1,10 +1,17 @@
-﻿<UserControl xmlns="https://github.com/perspex" Background="#3f3f3f" Foreground="WhiteSmoke">
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility" Background="#3f3f3f" Foreground="WhiteSmoke">
     <Grid RowDefinitions="*,180" ColumnDefinitions="200,*,200">
-      <TreeView Background="#2c2c2c" BorderThickness="0" Margin="1">
-        <TreeViewItem Header="Languages" IsExpanded="true">
-          <TreeViewItem Header="C/C++" />
-          <TreeViewItem Header="C#" />
-        </TreeViewItem>
+      <TreeView Background="#2c2c2c" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedItem}">
+        <TreeView.DataTemplates>
+          <DataTemplate DataType="lang:ILanguageService">
+            <TextBlock Text="{Binding Title}" />
+          </DataTemplate>
+        </TreeView.DataTemplates>
+        <TreeView.Styles>
+          <Style Selector="TreeViewItem:selected /template/ Border#header">
+            <Setter Property="Background" Value="#5500557d" />
+          </Style>
+        </TreeView.Styles>
+        <TreeViewItem Header="Languages" IsExpanded="true" Items="{Binding Languages}"/>                  
       </TreeView>
           
       <ListBox Grid.Column="1" Background="#2c2c2c" BorderThickness="0" Margin="1">
