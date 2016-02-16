@@ -9,6 +9,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -41,7 +42,20 @@
             OKCommand = ReactiveCommand.Create();
             OKCommand.Subscribe((o) =>
             {
+                var destination = Path.Combine(location, solutionName);
 
+                if(!Directory.Exists(destination))
+                {
+                    Directory.CreateDirectory(destination);
+                }
+
+                var solution = Solution.Create(destination, solutionName);
+
+                WorkspaceViewModel.Instance.SolutionExplorer.Model = solution;
+
+                selectedTemplate.Generate(solution, name);
+
+                Close();
             });                
         }
 
@@ -49,7 +63,15 @@
         public string Name
         {
             get { return name; }
-            set { this.RaiseAndSetIfChanged(ref name, value); }
+            set
+            {
+                if (solutionName == name)
+                {
+                    SolutionName = value;
+                }
+
+                this.RaiseAndSetIfChanged(ref name, value);                
+            }
         }
 
 
@@ -60,11 +82,23 @@
             set { this.RaiseAndSetIfChanged(ref location, value); }
         }
 
+        private string solutionName;
+        public string SolutionName
+        {
+            get { return solutionName; }
+            set { this.RaiseAndSetIfChanged(ref solutionName, value); }
+        }
+
         private IProjectTemplate selectedTemplate;
         public IProjectTemplate SelectedTemplate
         {
             get { return selectedTemplate; }
-            set { this.RaiseAndSetIfChanged(ref selectedTemplate, value); Name = value.DefaultProjectName + "1"; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedTemplate, value);
+                Name = value.DefaultProjectName + "1";
+                SolutionName = name;
+            }
         }
 
         private void GetTemplates (ILanguageService languageService)

@@ -1,6 +1,5 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
-{
-    using AvalonStudio.Models.Solutions;
+{    
     using AvalonStudio.MVVM;
     using Projects;
     using ReactiveUI;
@@ -64,16 +63,7 @@
 
             set { selectedProject = value; this.RaisePropertyChanged (); }
         }
-
-
-        public void CreateNewSolution (string location)
-        {
-            var solution = new Solution();
-
-
-            solution.OpenedLocation = location;
-        }
-
+        
         private ProjectItemViewModel selectedItem;
         public ProjectItemViewModel SelectedItem 
         {
