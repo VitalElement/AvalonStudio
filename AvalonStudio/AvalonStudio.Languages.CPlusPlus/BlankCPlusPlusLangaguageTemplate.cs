@@ -5,6 +5,14 @@
 
     public class BlankCPlusPlusLangaguageTemplate : IProjectTemplate
     {
+        public virtual string DefaultProjectName
+        {
+            get
+            {
+                return "EmptyProject";
+            }
+        }
+
         public virtual string Description
         {
             get
@@ -21,9 +29,9 @@
             }
         }
 
-        public void Generate(ISolution solution)
+        public void Generate(ISolution solution, string name)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

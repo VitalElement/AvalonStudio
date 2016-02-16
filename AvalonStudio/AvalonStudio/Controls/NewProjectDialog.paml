@@ -53,11 +53,11 @@
     
       <Grid Grid.Row="1" Grid.ColumnSpan="3" ColumnDefinitions="120,*,200" Margin="1" RowDefinitions="30, 30, 30"  Background="#2c2c2c">        
         <TextBlock Text="Name:" VerticalAlignment="Center" />
-        <TextBox Grid.Column="1" Background="Transparent" />
+        <TextBox Grid.Column="1" Background="Transparent" Text="{Binding Name, Mode=TwoWay}" />
         
         <TextBlock Grid.Row="1" Text="Location:" VerticalAlignment="Center" />
-        <TextBox Grid.Row="1" Grid.Column="1" Background="Transparent" />
-        <Button Grid.Row="1" Grid.Column="2" Width="100" HorizontalAlignment="Left" Margin="19 0" Content="Browse..." />
+        <TextBox Grid.Row="1" Grid.Column="1" Background="Transparent" Text="{Binding Location}" IsReadOnly="true" />
+        <Button Grid.Row="1" Grid.Column="2" Width="100" HorizontalAlignment="Left" Margin="19 0" Content="Browse..." Command="{Binding BrowseLocationCommand}" />
       
         <TextBlock Grid.Row="2" Text="Solution Name:" VerticalAlignment="Center" />
         <TextBox Grid.Row="2" Grid.Column="1" Background="Transparent" />
