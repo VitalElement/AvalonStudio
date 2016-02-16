@@ -8,9 +8,19 @@
         public string File { get; set; }
         public string Flags { get; set; }
 
-        public void SetProject(VEBuildProject project)
+        public void SetProject(IProject project)
         {
             this.Project = project;
+        }
+
+        public static SourceFile Create(IProject project, string location, string name, string text = "")
+        {
+            var filePath = Path.Combine(location, name);
+            var file = System.IO.File.CreateText(filePath);
+            file.Write(text);
+            file.Close();
+
+            return new SourceFile() { File = filePath, Project = project };
         }
 
         [JsonIgnore]

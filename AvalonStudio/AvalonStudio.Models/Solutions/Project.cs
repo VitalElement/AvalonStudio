@@ -544,6 +544,7 @@
             {
                 return SelectedConfiguration.ToolChain;
             }
+            set { }
         }
 
         IList<IProjectItem> IProjectFolder.Items

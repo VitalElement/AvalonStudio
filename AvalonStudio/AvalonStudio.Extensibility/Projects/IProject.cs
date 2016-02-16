@@ -13,7 +13,7 @@
         /// </summary>
         IList<IProject> References { get; }
 
-        IToolChain ToolChain { get; }
+        IToolChain ToolChain { get; set; }
 
         /// <summary>
         /// The directory the project file resides in.

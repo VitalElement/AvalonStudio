@@ -35,6 +35,7 @@
         {
             Defines = new List<string>();
             Includes = new List<string>();
+            DebugInformation = true;            
         }
 
         public List<string> Defines { get; set; }
