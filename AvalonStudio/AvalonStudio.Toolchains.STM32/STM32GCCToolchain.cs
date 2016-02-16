@@ -543,6 +543,18 @@
 
             return result;
         }
+
+        public override bool CanHandle(IProject project)
+        {
+            bool result = false;
+
+            if(project is IStandardProject)
+            {
+                result = true;
+            }
+
+            return result;
+        }
     }
 }
 
