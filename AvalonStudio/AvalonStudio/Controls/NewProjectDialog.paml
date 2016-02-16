@@ -1,13 +1,13 @@
-﻿<UserControl xmlns="https://github.com/perspex" Background="#2c2c2c" Foreground="WhiteSmoke">
+﻿<UserControl xmlns="https://github.com/perspex" Background="#3f3f3f" Foreground="WhiteSmoke">
     <Grid RowDefinitions="*,180" ColumnDefinitions="200,*,200">
-      <TreeView>
+      <TreeView Background="#2c2c2c" BorderThickness="0" Margin="1">
         <TreeViewItem Header="Languages" IsExpanded="true">
           <TreeViewItem Header="C/C++" />
           <TreeViewItem Header="C#" />
         </TreeViewItem>
       </TreeView>
           
-      <ListBox Grid.Column="1">
+      <ListBox Grid.Column="1" Background="#2c2c2c" BorderThickness="0" Margin="1">
         <ListBoxItem>
           <Grid Height="45">
             <StackPanel Orientation="Horizontal">
@@ -48,10 +48,9 @@
           </Grid>          
         </ListBoxItem>
       </ListBox>
-      
-      <Border Grid.Column="2" BorderThickness="1" BorderBrush="Black" />
-      <Grid Grid.Column="2" Margin="10">
-        <StackPanel>
+            
+      <Grid Grid.Column="2"  Background="#2c2c2c" Margin="1">
+        <StackPanel Margin="10">
           <StackPanel Orientation="Horizontal">
             <TextBlock Text="Type:" FontWeight="Bold" />
             <TextBlock Margin="5 0" Text="C/C++" />
@@ -61,7 +60,7 @@
       </Grid>
         
     
-      <Grid Grid.Row="1" Grid.ColumnSpan="3" ColumnDefinitions="120,*,200" Margin="5 10" RowDefinitions="30, 30, 30">
+      <Grid Grid.Row="1" Grid.ColumnSpan="3" ColumnDefinitions="120,*,200" Margin="1" RowDefinitions="30, 30, 30"  Background="#2c2c2c">        
         <TextBlock Text="Name:" VerticalAlignment="Center" />
         <TextBox Grid.Column="1" Background="Transparent" />
         
