@@ -49,7 +49,7 @@
 
                 if(result != null)
                 {
-                    (result as VEBuildProject).ResolveReferences(console);
+                    (result as CPlusPlusProject).ResolveReferences(console);
                 }
 
                 return result;
@@ -94,7 +94,7 @@
         {
             int result = 1;
             var solution = LoadSolution(options);
-            var project = FindProject(solution, options.Project) as VEBuildProject;
+            var project = FindProject(solution, options.Project) as CPlusPlusProject;
 
             var toolchain = GetToolchain();
             
@@ -204,7 +204,7 @@
             if (File.Exists(file))
             {
                 var solution = LoadSolution(options);
-                var project = FindProject(solution, options.Project) as VEBuildProject;
+                var project = FindProject(solution, options.Project) as CPlusPlusProject;
 
                 if (project != null)
                 {
@@ -231,7 +231,7 @@
         static int RunAddReference(AddReferenceOptions options)
         {
             var solution = LoadSolution(options);
-            var project = FindProject(solution, options.Project) as VEBuildProject;
+            var project = FindProject(solution, options.Project) as CPlusPlusProject;
 
             if (project != null)
             {
@@ -293,7 +293,7 @@
             }
 
             throw new NotImplementedException();
-            var project = VEBuildProject.Create(null, projectPath, options.Project);
+            var project = CPlusPlusProject.Create(null, projectPath, options.Project);
 
             if (project != null)
             {
@@ -351,7 +351,7 @@
                 Directory.CreateDirectory(baseDir);
             }
 
-            var project = new VEBuildProject();
+            var project = new CPlusPlusProject();
 
             project.Name = "ArmSystem";
 
@@ -374,7 +374,7 @@
             var projectFile = Path.Combine(projectDir, string.Format("{0}.{1}", project.Name, Solution.projectExtension));
             //project.Serialize(projectFile);
 
-            project = new VEBuildProject();
+            project = new CPlusPlusProject();
 
             project.Name = "STM32F4Cube";
 
@@ -468,7 +468,7 @@
             projectFile = Path.Combine(projectDir, string.Format("{0}.{1}", project.Name, Solution.projectExtension));
             project.Serialize(projectFile);
 
-            project = new VEBuildProject();
+            project = new CPlusPlusProject();
 
             project.Name = "IntegratedDebugProtocol";
 
@@ -491,7 +491,7 @@
             projectFile = Path.Combine(projectDir, string.Format("{0}.{1}", project.Name, Solution.projectExtension));
             project.Serialize(projectFile);
 
-            project = new VEBuildProject();
+            project = new CPlusPlusProject();
 
             project.Name = "CommonHal";
 
@@ -518,7 +518,7 @@
             projectFile = Path.Combine(projectDir, string.Format("{0}.{1}", project.Name, Solution.projectExtension));
             project.Serialize(projectFile);
 
-            project = new VEBuildProject();
+            project = new CPlusPlusProject();
 
             project.Name = "STM32HalPlatform";
 
@@ -554,7 +554,7 @@
             projectFile = Path.Combine(projectDir, string.Format("{0}.{1}", project.Name, Solution.projectExtension));
             project.Serialize(projectFile);
 
-            project = new VEBuildProject();
+            project = new CPlusPlusProject();
 
             project.Name = "Utils";
 
@@ -577,7 +577,7 @@
             projectFile = Path.Combine(projectDir, string.Format("{0}.{1}", project.Name, Solution.projectExtension));
             project.Serialize(projectFile);
 
-            project = new VEBuildProject();
+            project = new CPlusPlusProject();
 
             project.Name = "GxInstrumentationHidDevice";
 
@@ -601,7 +601,7 @@
             projectFile = Path.Combine(projectDir, string.Format("{0}.{1}", project.Name, Solution.projectExtension));
             project.Serialize(projectFile);
 
-            project = new VEBuildProject();
+            project = new CPlusPlusProject();
 
             project.Name = "Dispatcher";
 
@@ -623,7 +623,7 @@
             projectFile = Path.Combine(projectDir, string.Format("{0}.{1}", project.Name, Solution.projectExtension));
             project.Serialize(projectFile);
 
-            project = new VEBuildProject();
+            project = new CPlusPlusProject();
 
             project.Name = "GxBootloader";
 
@@ -649,7 +649,7 @@
             projectFile = Path.Combine(projectDir, string.Format("{0}.{1}", project.Name, Solution.projectExtension));
             project.Serialize(projectFile);
 
-            project = new VEBuildProject();
+            project = new CPlusPlusProject();
 
             project.Name = "STM32DiscoveryBootloader";
 

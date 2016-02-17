@@ -40,7 +40,7 @@
                 Directory.CreateDirectory(location);
             }
 
-            IProject project = VEBuildProject.Create(solution, location, name);
+            IProject project = CPlusPlusProject.Create(solution, location, name);
 
             project = solution.AddProject(project);
 

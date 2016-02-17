@@ -6,9 +6,9 @@
     using System;
     using System.Collections.Generic;
 
-    public class TypeSettingsFormViewModel : ViewModel<VEBuildProject>
+    public class TypeSettingsFormViewModel : ViewModel<CPlusPlusProject>
     {
-        public TypeSettingsFormViewModel(VEBuildProject project) : base (project)
+        public TypeSettingsFormViewModel(CPlusPlusProject project) : base (project)
         {
             projectType = project.Type.ToString();
         }

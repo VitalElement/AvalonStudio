@@ -161,7 +161,7 @@
       <DependentUpon>TypeSettingsForm.paml</DependentUpon>
     </Compile>
     <Compile Include="TypeSettingsFormViewModel.cs" />
-    <Compile Include="VEBuildProject.cs" />
+    <Compile Include="CPlusPlusProject.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
