@@ -6,7 +6,7 @@
     using System.IO;
     using System.Linq;
     using Utils;
-    using CPlusPlus;
+    
     public class Solution : SerializedObject<Solution>, ISolution
     {
         public const string solutionExtension = "vsln";
@@ -41,7 +41,7 @@
 
                 if (File.Exists(projectLocation))
                 {
-                    solution.Projects.Add(CPlusPlusProject.Load(projectLocation, solution));
+                    //solution.Projects.Add(CPlusPlusProject.Load(projectLocation, solution));
                 }
             }
 
