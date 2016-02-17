@@ -15,7 +15,7 @@
     using Newtonsoft.Json.Linq;
     using Newtonsoft.Json.Converters;
     using System.Dynamic;
-
+    using Extensibility.Platform;
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {        
         public const string ProjectExtension = "acproj";
@@ -28,9 +28,11 @@
         [JsonIgnore]
         public bool IsBuilding { get; set; }
 
-        public static void PopulateFiles(IProject project, StandardProjectFolder folder)
+        public static void PopulateFiles(CPlusPlusProject project, StandardProjectFolder folder)
         {
-            var files = Directory.GetFiles(folder.Path);
+            var files = Directory.EnumerateFiles(folder.Path);
+
+            files = files.Where((f) => !project.ExcludedFiles.Contains(project.CurrentDirectory.MakeRelativePath(f)) && Path.GetExtension(f) != '.' + ProjectExtension);                
 
             foreach (var file in files)
             {
@@ -38,7 +40,7 @@
             }
         }
 
-        public static StandardProjectFolder GetSubFolders(IProject project, string path)
+        public static StandardProjectFolder GetSubFolders(CPlusPlusProject project, string path)
         {
             StandardProjectFolder result = new StandardProjectFolder(path);
 
@@ -126,6 +128,7 @@
 
         public CPlusPlusProject()
         {
+            ExcludedFiles = new List<string>();
             Items = new List<IProjectItem>();
             UnloadedReferences = new List<Reference>();
             StaticLibraries = new List<string>();
@@ -349,7 +352,7 @@
         {
             get
             {
-                return Path.GetDirectoryName(Location);
+                return Path.GetDirectoryName(Location) + Platform.DirectorySeperator;
             }
         }
 
@@ -562,6 +565,11 @@
         {
             get; private set;
         }
+        
+        public List<string> ExcludedFiles
+        {
+            get; set;
+        }
 
         [JsonIgnore]
         public IList<IMenuItem> ProjectMenuItems
@@ -595,6 +603,7 @@
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public dynamic DebugSettings { get; set; }
 
+        [JsonIgnore]
         public string Extension
         {
             get
