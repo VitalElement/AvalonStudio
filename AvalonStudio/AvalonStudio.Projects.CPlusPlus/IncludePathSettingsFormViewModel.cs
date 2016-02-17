@@ -124,7 +124,15 @@
         public DefinitionViewModel SelectedDefine
         {
             get { return selectedDefine; }
-            set { this.RaiseAndSetIfChanged(ref selectedDefine, value); DefineText = value.Model.Value; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedDefine, value);
+
+                if (value != null)
+                {
+                    DefineText = value.Model.Value;
+                }
+            }
         }
 
         private ObservableCollection<DefinitionViewModel> defines;
