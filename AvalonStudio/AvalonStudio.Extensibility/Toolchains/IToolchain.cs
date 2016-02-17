@@ -19,6 +19,8 @@
 
         IList<TabItem> GetConfigurationPages(IProject project);
 
+        void ProvisionSettings(IProject project);
+
         bool CanHandle(IProject project);
     }
 }

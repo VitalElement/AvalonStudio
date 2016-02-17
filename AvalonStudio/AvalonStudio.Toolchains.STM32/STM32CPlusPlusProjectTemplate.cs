@@ -42,7 +42,7 @@
 
             project.ToolChain = Workspace.Instance.ToolChains.FirstOrDefault(tc => tc is STM32GCCToolchain);
 
-            var settings = STM32GCCToolchain.ProvisionSettings(project);
+            var settings = STM32GCCToolchain.ProvisionSTM32Settings(project);
 
             project.Items.Add(SourceFile.Create(project, project.CurrentDirectory, "main.cpp", "int main (void){}"));
             
