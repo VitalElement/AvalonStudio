@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NClang", "..\nclang\NClang\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Languages.CPlusPlus", "AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj", "{5D5FE113-FFEF-4E49-A011-00A167EFA36E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Projects.VEBuild", "AvalonStudio.Projects.VEBuild\AvalonStudio.Projects.VEBuild.csproj", "{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Projects.CPlusPlus", "AvalonStudio.Projects.VEBuild\AvalonStudio.Projects.CPlusPlus.csproj", "{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Projects.VEStudio", "AvalonStudio.Projects.VEStudio\AvalonStudio.Projects.VEStudio.csproj", "{3A9ED96A-C298-496C-AB46-1EB4E61EC282}"
 EndProject

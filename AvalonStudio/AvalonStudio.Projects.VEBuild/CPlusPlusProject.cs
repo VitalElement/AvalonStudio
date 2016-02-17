@@ -16,7 +16,7 @@
     using Newtonsoft.Json.Converters;
     using System.Dynamic;
 
-    public class VEBuildProject : SerializedObject<VEBuildProject>, IStandardProject
+    public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {
         public const string solutionExtension = "vsln";
         public const string ProjectExtension = "vproj";
@@ -58,7 +58,7 @@
             return result;
         }
 
-        public static VEBuildProject Load(string filename, ISolution solution)
+        public static CPlusPlusProject Load(string filename, ISolution solution)
         {
             var project = Deserialize(filename);
 
@@ -92,15 +92,15 @@
 
 
 
-        public static VEBuildProject Create(ISolution solution, string directory, string name)
+        public static CPlusPlusProject Create(ISolution solution, string directory, string name)
         {
-            VEBuildProject result = null;
+            CPlusPlusProject result = null;
 
-            var projectFile = Path.Combine(directory, VEBuildProject.GenerateProjectFileName(name));
+            var projectFile = Path.Combine(directory, CPlusPlusProject.GenerateProjectFileName(name));
 
             if (!File.Exists(projectFile))
             {
-                var project = new VEBuildProject { Name = name };
+                var project = new CPlusPlusProject { Name = name };
                 project.SetSolution(solution);
                 project.Location = projectFile;
                 project.Save();
@@ -117,7 +117,7 @@
         }
 
         [JsonConstructor]
-        public VEBuildProject(List<SourceFile> sourceFiles) : this()
+        public CPlusPlusProject(List<SourceFile> sourceFiles) : this()
         {
             if (sourceFiles != null)
             {
@@ -125,7 +125,7 @@
             }
         }
 
-        public VEBuildProject()
+        public CPlusPlusProject()
         {
             Items = new List<IProjectItem>();
             UnloadedReferences = new List<Reference>();
@@ -254,9 +254,9 @@
                 if (File.Exists(projectFile))
                 {
                     // Here it would be better to find the existing project first, then load.
-                    var project = VEBuildProject.Load(projectFile, Solution);
+                    var project = CPlusPlusProject.Load(projectFile, Solution);
 
-                    project = Solution.AddProject(project) as VEBuildProject;
+                    project = Solution.AddProject(project) as CPlusPlusProject;
                     // This is done to make sure there is only ever 1 instance of the project.
 
                     var currentReference = References.Where((p) => p.Name == project.Name).FirstOrDefault();
@@ -315,7 +315,7 @@
 
             foreach (var reference in References)
             {
-                var standardReference = reference as VEBuildProject;
+                var standardReference = reference as CPlusPlusProject;
 
                 result.AddRange(standardReference.GenerateReferencedIncludes());
             }
@@ -329,7 +329,7 @@
 
             foreach (var reference in References)
             {
-                var standardReference = reference as VEBuildProject;
+                var standardReference = reference as CPlusPlusProject;
 
                 result.AddRange(standardReference.GetGlobalIncludes());
             }
@@ -357,15 +357,15 @@
         [JsonIgnore]
         public string Location { get; internal set; }
 
-        public VEBuildProject GetReference(Reference reference)
+        public CPlusPlusProject GetReference(Reference reference)
         {
-            VEBuildProject result = null;
+            CPlusPlusProject result = null;
 
             foreach (var project in Solution.Projects)
             {
                 if (project.Name == reference.Name)
                 {
-                    result = project as VEBuildProject;
+                    result = project as CPlusPlusProject;
                     break;
                 }
             }

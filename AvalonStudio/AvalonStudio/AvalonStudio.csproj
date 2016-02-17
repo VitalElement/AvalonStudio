@@ -326,9 +326,9 @@
       <Project>{EACBFF14-438D-4311-8D8C-18E7E6769C8F}</Project>
       <Name>AvalonStudio.Models</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.VEBuild\AvalonStudio.Projects.VEBuild.csproj">
+    <ProjectReference Include="..\AvalonStudio.Projects.VEBuild\AvalonStudio.Projects.CPlusPlus.csproj">
       <Project>{47e266ea-bbc4-4794-96da-b1f3ecb5bb9b}</Project>
-      <Name>AvalonStudio.Projects.VEBuild</Name>
+      <Name>AvalonStudio.Projects.CPlusPlus</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repositories.csproj">
       <Project>{29c948e9-4d96-4490-b039-a5bbf6eec2e5}</Project>

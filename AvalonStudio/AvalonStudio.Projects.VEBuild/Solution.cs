@@ -41,7 +41,7 @@
 
                 if (File.Exists(projectLocation))
                 {
-                    solution.Projects.Add(VEBuildProject.Load(projectLocation, solution));
+                    solution.Projects.Add(CPlusPlusProject.Load(projectLocation, solution));
                 }
             }
 
