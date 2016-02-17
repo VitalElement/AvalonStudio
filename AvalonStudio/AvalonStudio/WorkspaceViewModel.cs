@@ -6,7 +6,6 @@
     using Extensibility;
     using Extensibility.Platform;
     using Languages;
-    using Models;
     using MVVM;
     using Projects;
     using ReactiveUI;

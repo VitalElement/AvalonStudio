@@ -1,7 +1,6 @@
 ﻿
 namespace AvalonStudio.Controls.ViewModels
 {
-    using AvalonStudio.Models.Solutions;
     using AvalonStudio.MVVM;
     using Perspex.Controls;
     using Projects;

@@ -136,9 +136,10 @@
             </StackPanel>
           </TreeDataTemplate>!-->
 
+          <!--
           <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Children}">
             <TextBlock Text="{Binding Title}" />
-          </TreeDataTemplate>
+          </TreeDataTemplate>-->
         </TreeView.DataTemplates>
       </TreeView>                     
     </Grid>

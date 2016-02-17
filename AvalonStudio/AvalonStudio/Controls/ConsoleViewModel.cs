@@ -1,11 +1,9 @@
 ﻿namespace AvalonStudio.Controls
 {
     using System;
-    using Perspex.Threading;
-    using Models;
+    using Perspex.Threading;    
     using ReactiveUI;
     using TextEditor.Document;
-    using ReactiveUI;
     using Utils;
 
     public class ConsoleViewModel : ReactiveObject, IConsole

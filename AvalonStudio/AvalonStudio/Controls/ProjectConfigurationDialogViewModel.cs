@@ -6,13 +6,13 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Toolchains.STM32;
+    //using Toolchains.STM32;
 
     public class ProjectConfigurationDialogViewModel : ModalDialogViewModelBase
     {
         public ProjectConfigurationDialogViewModel() : base ("Project Properties", true, false)
         {
-            this.compileContent = new CompileSettingsForm();
+            //this.compileContent = new CompileSettingsForm();
 
         }
 
