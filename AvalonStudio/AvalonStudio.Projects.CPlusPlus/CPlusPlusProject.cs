@@ -17,9 +17,8 @@
     using System.Dynamic;
 
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
-    {
-        public const string solutionExtension = "vsln";
-        public const string ProjectExtension = "vproj";
+    {        
+        public const string ProjectExtension = "acproj";
 
         public static string GenerateProjectFileName(string name)
         {
@@ -96,7 +95,7 @@
         {
             CPlusPlusProject result = null;
 
-            var projectFile = Path.Combine(directory, CPlusPlusProject.GenerateProjectFileName(name));
+            var projectFile = Path.Combine(directory, GenerateProjectFileName(name));
 
             if (!File.Exists(projectFile))
             {
@@ -249,7 +248,7 @@
                 //    }
                 //}
 
-                var projectFile = Path.Combine(referenceDirectory, reference.Name + "." + ProjectExtension);
+                var projectFile = Path.Combine(referenceDirectory, reference.Name + "." + Extension);
 
                 if (File.Exists(projectFile))
                 {
@@ -588,5 +587,13 @@
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public dynamic DebugSettings { get; set; }
+
+        public string Extension
+        {
+            get
+            {
+                return CPlusPlusProject.ProjectExtension;
+            }
+        }
     }
 }
