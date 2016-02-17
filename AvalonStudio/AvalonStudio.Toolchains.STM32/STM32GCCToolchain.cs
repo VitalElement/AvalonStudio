@@ -25,13 +25,21 @@
             
         }
 
-        public static STM32ToolchainSettings ProvisionSettings (IProject project)
+        public override void ProvisionSettings (IProject project)
         {
-            STM32ToolchainSettings result = null;
+            ProvisionSTM32Settings(project);
+        }
 
-            project.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
-            result = project.ToolchainSettings.STM32ToolchainSettings;
-            project.Save();
+        public static STM32ToolchainSettings ProvisionSTM32Settings(IProject project)
+        {
+            STM32ToolchainSettings result = GetSettings(project);
+
+            if (result == null)
+            {
+                project.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
+                result = project.ToolchainSettings.STM32ToolchainSettings;
+                project.Save();
+            }
 
             return result;
         }
@@ -52,8 +60,7 @@
                 }
             }
             catch(Exception e)
-            {
-                ProvisionSettings(project);    
+            {                
             }
 
             return result;
