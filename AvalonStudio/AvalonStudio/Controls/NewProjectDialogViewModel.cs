@@ -116,7 +116,12 @@
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedTemplate, value);
-                Name = value.DefaultProjectName + "1";
+
+                if (value != null)
+                {
+                    Name = value.DefaultProjectName + "1";
+                }
+
                 SolutionName = name;
             }
         }
