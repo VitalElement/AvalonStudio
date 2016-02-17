@@ -21,8 +21,8 @@
             LoadProjectCommand.Subscribe(async _=>
             {
                 var dlg = new OpenFileDialog();                
-                dlg.Title = "Open Project";
-                dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = new List<string> { "vsln" } });
+                dlg.Title = "Open Solution";
+                dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Solution", Extensions = new List<string> { Solution.Extension } });
                 dlg.InitialFileName = string.Empty;
                 dlg.InitialDirectory = Platform.ProjectDirectory;
                 var result = await dlg.ShowAsync();

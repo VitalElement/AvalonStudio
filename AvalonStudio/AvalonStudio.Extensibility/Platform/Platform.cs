@@ -30,6 +30,14 @@
             }
         }
 
+        public static char DirectorySeperator
+        {
+            get
+            {
+                return '\\';
+            }
+        }
+
         public static PlatformID PlatformIdentifier
         {
             get
