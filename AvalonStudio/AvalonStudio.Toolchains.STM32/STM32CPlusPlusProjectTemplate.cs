@@ -8,7 +8,8 @@
     using System.Threading.Tasks;
     using Projects;
     using Extensibility;
-    using Projects.VEBuild;
+    using Projects.CPlusPlus;
+
     public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
     {
         public override string DefaultProjectName

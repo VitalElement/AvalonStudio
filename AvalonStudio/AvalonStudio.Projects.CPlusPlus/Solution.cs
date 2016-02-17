@@ -6,7 +6,7 @@
     using System.IO;
     using System.Linq;
     using Utils;
-    using VEBuild;
+    using CPlusPlus;
     public class Solution : SerializedObject<Solution>, ISolution
     {
         public const string solutionExtension = "vsln";

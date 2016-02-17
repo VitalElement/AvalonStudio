@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus
 {
     using AvalonStudio.Projects;
-    using Projects.VEBuild;
+    using Projects.CPlusPlus;
     using System;
     using System.IO;
 
