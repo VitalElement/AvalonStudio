@@ -36,7 +36,9 @@
 
             foreach (var file in files)
             {
-                folder.Items.Add(new SourceFile() { Project = project, File = file });
+                var sourceFile = new SourceFile() { Project = project, File = file };
+                project.SourceFiles.Add(sourceFile);
+                folder.Items.Add(sourceFile);
             }
         }
 
@@ -120,10 +122,6 @@
         [JsonConstructor]
         public CPlusPlusProject(List<SourceFile> sourceFiles) : this()
         {
-            if (sourceFiles != null)
-            {
-                SourceFiles = sourceFiles.Cast<ISourceFile>().ToList();
-            }
         }
 
         public CPlusPlusProject()
@@ -427,12 +425,12 @@
 
         public IList<string> Defines { get; private set; }
 
-        public bool ShouldSerializeSourceFiles()
+        
+        [JsonIgnore]
+        public IList<ISourceFile> SourceFiles
         {
-            return SourceFiles.Count > 0;
+            get; private set;
         }
-
-        public IList<ISourceFile> SourceFiles { get; }
 
         public bool ShouldSerializeCompilerArguments()
         {
