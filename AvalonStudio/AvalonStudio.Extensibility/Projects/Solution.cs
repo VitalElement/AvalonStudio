@@ -32,6 +32,11 @@
                 // create an unloaded project type.
             }
 
+            if(result.ToolChain != null)
+            {
+                result.ToolChain.ProvisionSettings(result);
+            }
+
             return result;
         }
 
@@ -50,6 +55,11 @@
             else
             {
                 // create an unloaded project type.
+            }
+
+            if (result.ToolChain != null)
+            {
+                result.ToolChain.ProvisionSettings(result);
             }
 
             return result;

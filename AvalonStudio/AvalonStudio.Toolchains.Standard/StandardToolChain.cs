@@ -492,6 +492,8 @@
 
         public abstract bool CanHandle(IProject project);
 
+        public abstract void ProvisionSettings(IProject project);
+
         public string Name { get { return GetType().ToString(); } }
 
         public abstract Version Version { get; }
