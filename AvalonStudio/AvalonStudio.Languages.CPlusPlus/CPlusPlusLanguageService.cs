@@ -119,7 +119,7 @@
                 // includes
                 foreach (var include in project.Includes)
                 {
-                    args.Add(string.Format("-I\"{0}\"", Path.Combine(project.CurrentDirectory, include)));
+                    args.Add(string.Format("-I\"{0}\"", Path.Combine(project.CurrentDirectory, include.Value)));
                 }
 
                 foreach (var define in superProject.Defines)
