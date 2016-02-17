@@ -17,6 +17,7 @@
     using System.Dynamic;
     using Extensibility.Platform;
     using System.Collections.ObjectModel;
+
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {        
         public const string ProjectExtension = "acproj";
@@ -439,6 +440,11 @@
             var result = CPlusPlusProject.Load(filePath, solution);
 
             return result;
+        }        
+
+        public int CompareTo(IProject other)
+        {
+            return this.Name.CompareTo(other.Name);            
         }
 
         [JsonIgnore]

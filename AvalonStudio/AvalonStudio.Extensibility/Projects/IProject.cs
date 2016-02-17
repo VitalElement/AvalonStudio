@@ -1,13 +1,14 @@
 ﻿namespace AvalonStudio.Projects
 {
     using Perspex.Controls;
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
     using Toolchains;
 
     [InheritedExport(typeof(IProject))]
-    public interface IProject : IProjectFolder
+    public interface IProject : IProjectFolder, IComparable<IProject>
     {
         ISolution Solution { get; }
 
