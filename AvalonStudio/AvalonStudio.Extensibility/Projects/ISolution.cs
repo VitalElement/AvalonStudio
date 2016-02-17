@@ -11,6 +11,8 @@
 
         IProject AddProject(IProject project);
 
+        void RemoveProject(IProject project);
+
         ObservableCollection<IProject> Projects { get; }
 
         string CurrentDirectory { get; }

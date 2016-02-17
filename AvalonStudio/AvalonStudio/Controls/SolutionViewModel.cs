@@ -142,7 +142,7 @@
         public ReactiveCommand<object> RunAllTestsCommand { get; }
         public ReactiveCommand<object> NewProjectCommand { get; }
         public ReactiveCommand<object> AddExistingProjectCommand { get; }
-        public ReactiveCommand<object> OpenInExplorerCommand { get; }
+        public ReactiveCommand<object> OpenInExplorerCommand { get; }        
 
         new public string Title
         {

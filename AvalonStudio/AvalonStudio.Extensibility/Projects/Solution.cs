@@ -2,6 +2,7 @@
 {
     using Extensibility;
     using Extensibility.Platform;
+    using MVVM;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -107,16 +108,23 @@
             if (currentProject == null)
             {
                 ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
-                Projects.Add(project);
+                Projects.InsertSorted(project);
                 currentProject = project;
             }
 
             return currentProject;
         }
 
+        public void RemoveProject(IProject project)
+        {
+            Projects.Remove(project);
+            ProjectReferences.Remove(CurrentDirectory.MakeRelativePath(project.Location));
+        }
+
         public void Save()
         {
             StartupItem = StartupProject?.Name;
+            
             Serialize(Path.Combine(CurrentDirectory, Name + "." + Extension));
         }
 

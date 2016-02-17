@@ -72,6 +72,13 @@
             {
                 Process.Start(Model.CurrentDirectory);
             });
+
+            RemoveCommand = ReactiveCommand.Create();
+            RemoveCommand.Subscribe((o) =>
+            {
+                Model.Solution.RemoveProject(Model);
+                Model.Solution.Save();
+            });
         }
 
         public bool IsExpanded { get; set; }
