@@ -319,6 +319,10 @@
       <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
       <Name>AvalonStudio.Extensibility</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj">
+      <Project>{5d5fe113-ffef-4e49-a011-00a167efa36e}</Project>
+      <Name>AvalonStudio.Languages.CPlusPlus</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repositories.csproj">
       <Project>{29c948e9-4d96-4490-b039-a5bbf6eec2e5}</Project>
       <Name>AvalonStudio.Repositories</Name>
