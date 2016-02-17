@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Controls
 {
+    using Extensibility.Platform;
     using Perspex.Controls;
     using Perspex.Threading;
     using Projects;
@@ -23,7 +24,7 @@
                 dlg.Title = "Open Project";
                 dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = new List<string> { "vsln" } });
                 dlg.InitialFileName = string.Empty;
-                dlg.InitialDirectory = "c:\\";
+                dlg.InitialDirectory = Platform.ProjectDirectory;
                 var result = await dlg.ShowAsync();
 
                 if (result != null)
