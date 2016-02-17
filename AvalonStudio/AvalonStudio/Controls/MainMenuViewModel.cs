@@ -3,7 +3,7 @@
     using Perspex.Controls;
     using Perspex.Threading;
     using Projects;
-    using Projects.VEBuild;
+    using Projects.CPlusPlus;
     using ReactiveUI;
     using System;
     using System.Collections.Generic;

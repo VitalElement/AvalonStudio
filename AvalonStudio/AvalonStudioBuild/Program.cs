@@ -5,7 +5,7 @@
     using CommandLine;
     using System.Linq;
     using AvalonStudio.Projects;
-    using AvalonStudio.Projects.VEBuild;
+    using AvalonStudio.Projects.CPlusPlus;
     using AvalonStudio.Toolchains;
     using AvalonStudio.Toolchains.STM32;
     using AvalonStudio.Projects.Standard;

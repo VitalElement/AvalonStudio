@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Projects.VEBuild
+﻿namespace AvalonStudio.Projects.CPlusPlus
 {
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Utils;

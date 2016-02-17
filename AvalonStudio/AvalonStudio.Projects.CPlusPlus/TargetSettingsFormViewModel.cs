@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Projects.VEBuild
+namespace AvalonStudio.Projects.CPlusPlus
 {
     public class TargetSettingsFormViewModel
     { }
