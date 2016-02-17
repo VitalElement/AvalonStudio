@@ -1,0 +1,43 @@
+﻿<TabItem xmlns="https://github.com/perspex" Header="Includes / Defines">
+  <Grid RowDefinitions="40,*" ColumnDefinitions="*,*">
+    <Panel Grid.Row="1">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition Width="80"/>
+        </Grid.ColumnDefinitions>
+
+        <ListBox Items="{Binding IncludePaths}" SelectedItem="{Binding SelectedInclude}"/>
+
+        <StackPanel Grid.Column="1">
+          <Button Content="Add" Command="{Binding AddIncludePathCommand}" Margin="5 0 0 0" />
+          <Button Content="Remove" Command="{Binding RemoveIncludePathCommand}" Margin="5 5 0 0" />
+        </StackPanel>
+
+      </Grid>
+    </Panel>
+
+    <Panel Grid.Row="1" Grid.Column="2" >
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition Width="80"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+          <RowDefinition Height="30"/>
+          <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <TextBox Text="{Binding DefineText}" />
+        <ListBox Grid.Row="1" Items="{Binding Defines}" SelectedItem="{Binding SelectedDefine, Mode=TwoWay}"/>
+
+        <StackPanel Grid.RowSpan="2" Grid.Column="1">
+          <Button Content="Add" Command="{Binding AddDefineCommand}" Margin="5 0 0 0" />
+          <Button Content="Remove" Command="{Binding RemoveDefineCommand}" Margin="5 5 0 0" />
+        </StackPanel>
+
+      </Grid>
+    </Panel>
+  </Grid>
+</TabItem>
