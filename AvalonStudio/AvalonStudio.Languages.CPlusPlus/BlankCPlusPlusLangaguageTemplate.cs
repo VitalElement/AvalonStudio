@@ -44,7 +44,10 @@
 
             project = solution.AddProject(project);
 
-            solution.StartupProject = project;
+            if (solution.StartupProject == null)
+            {
+                solution.StartupProject = project;
+            }
 
             solution.Save();
 
