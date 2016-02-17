@@ -2,6 +2,7 @@
 {
     using Perspex.Controls;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
     using Toolchains;
 
@@ -13,7 +14,7 @@
         /// <summary>
         /// List of references with the project.
         /// </summary>
-        IList<IProject> References { get; }
+        ObservableCollection<IProject> References { get; }
 
         IToolChain ToolChain { get; set; }
 

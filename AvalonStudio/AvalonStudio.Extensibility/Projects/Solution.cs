@@ -5,6 +5,7 @@
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
     using Utils;
@@ -12,6 +13,26 @@
     public class Solution : SerializedObject<Solution>, ISolution
     {
         public const string Extension = "asln";
+
+        public static IProject LoadProjectFile (ISolution solution, string fileName)
+        {
+            IProject result = null;
+
+            var extension = Path.GetExtension(fileName).Remove(0, 1);
+
+            var projectType = Workspace.Instance.ProjectTypes.FirstOrDefault((p) => p.Extension == extension);
+
+            if (projectType != null)
+            {
+                result = projectType.Load(solution, fileName);
+            }
+            else
+            {
+                // create an unloaded project type.
+            }
+
+            return result;
+        }
 
         private static IProject LoadProject (ISolution solution, string reference)
         {
@@ -32,6 +53,7 @@
 
             return result;
         }
+        
 
         public static Solution Load(string fileName)
         {
@@ -112,14 +134,14 @@
         public Solution()
         {
             ProjectReferences = new List<string>();
-            Projects = new List<IProject>();
+            Projects = new ObservableCollection<IProject>();
         }
 
         [JsonIgnore]
         public string CurrentDirectory { get; private set; }
 
         [JsonIgnore]
-        public IList<IProject> Projects { get; set; }        
+        public ObservableCollection<IProject> Projects { get; set; }        
 
         [JsonIgnore]
         public IProject StartupProject { get; set; }        

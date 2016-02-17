@@ -1,0 +1,14 @@
+﻿<TabItem xmlns="https://github.com/perspex" xmlns:proj="clr-namespace:AvalonStudio.Projects.CPlusPlus;assembly=AvalonStudio.Projects.CPlusPlus" Header="References">
+  <Grid ColumnDefinitions="180,180,*">
+    <ListBox Items="{Binding Projects}" Grid.Column="1" >
+      <ListBox.DataTemplates>
+        <DataTemplate DataType="proj:ReferenceViewModel">
+          <Grid>
+            <TextBlock Text="{Binding Name}" Foreground="WhiteSmoke" />
+            <CheckBox IsChecked="{Binding IsReferenced}" HorizontalAlignment="Right" />
+          </Grid>
+        </DataTemplate>
+      </ListBox.DataTemplates>
+    </ListBox>
+  </Grid>
+</TabItem>

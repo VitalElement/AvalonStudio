@@ -39,11 +39,11 @@
                     <Separator />
                     <MenuItem Header="Add">
                       <MenuItem Header="New Project..." Command="{Binding NewProjectCommand}" />
-                      <MenuItem Header="Existing Project..." />
+                      <MenuItem Header="Existing Project..."  Command="{Binding AddExistingProjectCommand}"/>
                       <MenuItem Header="New Solution Folder..." />
                     </MenuItem>
                     <Separator />
-                    <MenuItem Header="Open Containing Folder" />
+                    <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}"/>
                   </ContextMenu>
                 </TextBlock.ContextMenu>
               </TextBlock>
@@ -71,7 +71,7 @@
                   <Separator />
                   <MenuItem Header="Rename" />
                   <Separator />
-                  <MenuItem Header="Open Containing Folder" />
+                  <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
                   <MenuItem Header="Remove" />
                 </ContextMenu>
               </StackPanel.ContextMenu>

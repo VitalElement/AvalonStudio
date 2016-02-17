@@ -49,7 +49,7 @@
 
                 if(result != null)
                 {
-                    (result as CPlusPlusProject).ResolveReferences(console);
+                    (result as CPlusPlusProject).ResolveReferences();
                 }
 
                 return result;

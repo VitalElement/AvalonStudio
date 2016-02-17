@@ -48,16 +48,16 @@
 
             OKCommand = ReactiveCommand.Create();
             OKCommand.Subscribe((o) =>
-            {
-                var destination = Path.Combine(location, solutionName);
-
-                if(!Directory.Exists(destination))
-                {
-                    Directory.CreateDirectory(destination);
-                }
-
+            {               
                 if (solution == null)
                 {
+                    var destination = Path.Combine(location, solutionName);
+
+                    if (!Directory.Exists(destination))
+                    {
+                        Directory.CreateDirectory(destination);
+                    }
+
                     solution = Solution.Create(destination, solutionName);
                 }
 
