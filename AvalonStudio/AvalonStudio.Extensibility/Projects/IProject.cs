@@ -34,6 +34,8 @@
 
         IList<TabItem> ConfigurationPages { get; }
 
+        // TODO should these 2 methods be in seperate class?
+        IProject Load(ISolution solution, string filePath);
         string Extension { get; }
 
         //IDictionary<string, string> Settings { get; }

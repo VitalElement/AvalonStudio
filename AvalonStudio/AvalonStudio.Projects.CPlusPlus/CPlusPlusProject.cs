@@ -527,7 +527,14 @@
             gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
 
             return new LlilumToolchain(gccSettings);
-        }        
+        }
+
+        public IProject Load(ISolution solution, string filePath)
+        {
+            var result = CPlusPlusProject.Load(filePath, solution);
+
+            return result;
+        }
 
         [JsonIgnore]
         public IToolChain ToolChain
