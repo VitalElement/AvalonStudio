@@ -426,7 +426,7 @@
             // includes
             foreach (var include in project.Includes)
             {
-                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
+                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include.Value));
             }
 
             foreach (var define in settings.Defines)

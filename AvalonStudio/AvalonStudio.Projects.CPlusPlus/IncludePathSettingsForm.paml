@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/perspex" Header="Includes / Defines">
+﻿<TabItem xmlns="https://github.com/perspex" xmlns:proj="clr-namespace:AvalonStudio.Projects.CPlusPlus;assembly=AvalonStudio.Projects.CPlusPlus" Header="Includes / Defines">
   <Grid RowDefinitions="40,*" ColumnDefinitions="*,*">
     <Panel Grid.Row="1">
       <Grid>
@@ -7,7 +7,17 @@
           <ColumnDefinition Width="80"/>
         </Grid.ColumnDefinitions>
 
-        <ListBox Items="{Binding IncludePaths}" SelectedItem="{Binding SelectedInclude}"/>
+        <ListBox Items="{Binding IncludePaths}" SelectedItem="{Binding SelectedInclude}">
+          <ListBox.DataTemplates>
+            <DataTemplate DataType="proj:IncludeViewModel">
+              <StackPanel Orientation="Horizontal" Gap="10">
+                <TextBlock Text="{Binding Value}" />
+                <CheckBox IsChecked="{Binding Exported}"  />
+                <CheckBox IsChecked="{Binding Global}" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.DataTemplates>
+        </ListBox>
 
         <StackPanel Grid.Column="1">
           <Button Content="Add" Command="{Binding AddIncludePathCommand}" Margin="5 0 0 0" />
@@ -30,7 +40,17 @@
         </Grid.RowDefinitions>
 
         <TextBox Text="{Binding DefineText}" />
-        <ListBox Grid.Row="1" Items="{Binding Defines}" SelectedItem="{Binding SelectedDefine, Mode=TwoWay}"/>
+        <ListBox Grid.Row="1" Items="{Binding Defines}" SelectedItem="{Binding SelectedDefine, Mode=TwoWay}">
+          <ListBox.DataTemplates>
+            <DataTemplate DataType="proj:DefinitionViewModel">
+              <StackPanel Orientation="Horizontal" Gap="10">
+                <TextBlock Text="{Binding Value}" />
+                <CheckBox IsChecked="{Binding Exported}" />
+                <CheckBox IsChecked="{Binding Global}" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.DataTemplates>
+        </ListBox>
 
         <StackPanel Grid.RowSpan="2" Grid.Column="1">
           <Button Content="Add" Command="{Binding AddDefineCommand}" Margin="5 0 0 0" />

@@ -16,6 +16,7 @@
     using Newtonsoft.Json.Converters;
     using System.Dynamic;
     using Extensibility.Platform;
+    
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {        
         public const string ProjectExtension = "acproj";
@@ -133,7 +134,8 @@
             References = new List<IProject>();
             PublicIncludes = new List<string>();
             GlobalIncludes = new List<string>();
-            Includes = new List<string>();
+            Includes = new List<Include>();
+            Defines = new List<Definition>();
             SourceFiles = new List<ISourceFile>();
             CompilerArguments = new List<string>();
             ToolChainArguments = new List<string>();
@@ -141,7 +143,6 @@
             CCompilerArguments = new List<string>();
             CppCompilerArguments = new List<string>();
             BuiltinLibraries = new List<string>();
-            Defines = new List<string>();
             ToolchainSettings = new ExpandoObject();
         }
 
@@ -416,14 +417,14 @@
             return Includes.Count > 0;
         }
 
-        public IList<string> Includes { get; private set; }
+        public IList<Include> Includes { get; private set; }
 
         public bool ShouldSerializeDefines()
         {
             return Defines.Count > 0;
         }
 
-        public IList<string> Defines { get; private set; }
+        public IList<Definition> Defines { get; private set; }
 
         
         [JsonIgnore]
