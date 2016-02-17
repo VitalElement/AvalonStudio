@@ -7,8 +7,8 @@
     <ProjectGuid>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AvalonStudio.Projects.VEBuild</RootNamespace>
-    <AssemblyName>AvalonStudio.Projects.VEBuild</AssemblyName>
+    <RootNamespace>AvalonStudio.Projects.CPlusPlus</RootNamespace>
+    <AssemblyName>AvalonStudio.Projects.CPlusPlus</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -147,7 +147,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reference.cs" />
-    <Compile Include="Solution.cs" />
     <Compile Include="SourceFile.cs" />
     <Compile Include="TargetSettingsForm.paml.cs">
       <DependentUpon>TargetSettingsForm.paml</DependentUpon>
@@ -190,6 +189,9 @@
     <EmbeddedResource Include="ToolchainSettingsForm.paml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\Debug\Plugins\$(TargetFileName)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

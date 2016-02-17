@@ -2,8 +2,10 @@
 {
     using Perspex.Controls;
     using System.Collections.Generic;
+    using System.ComponentModel.Composition;
     using Toolchains;
 
+    [InheritedExport(typeof(IProject))]
     public interface IProject : IProjectFolder
     {
         ISolution Solution { get; }
@@ -31,6 +33,8 @@
         void ResolveReferences();
 
         IList<TabItem> ConfigurationPages { get; }
+
+        string Extension { get; }
 
         //IDictionary<string, string> Settings { get; }
 

@@ -171,6 +171,7 @@
     <Compile Include="Projects\IProjectTemplate.cs" />
     <Compile Include="Projects\ISolution.cs" />
     <Compile Include="Projects\ISourceFile.cs" />
+    <Compile Include="Projects\Solution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Toolchains\IToolchain.cs" />
     <Compile Include="Utils\Constants.cs" />

@@ -618,6 +618,14 @@
                 throw new NotImplementedException();
             }
         }
+
+        public string Extension
+        {
+            get
+            {
+                return "veproj";
+            }
+        }
         #endregion
 
         public static string NormalizePath (string path)
