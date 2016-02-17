@@ -16,7 +16,7 @@
     using Newtonsoft.Json.Converters;
     using System.Dynamic;
     using Extensibility.Platform;
-    
+    using System.Collections.ObjectModel;
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {        
         public const string ProjectExtension = "acproj";
@@ -78,17 +78,12 @@
                 project.Items.Add(item);
             }
 
+            
             foreach (var file in project.SourceFiles)
             {
                 (file as SourceFile)?.SetProject(project);
 
                 var pathStructure = file.Location.Split(Path.DirectorySeparatorChar);
-
-
-                foreach (var part in pathStructure)
-                {
-
-                }
             }
 
             return project;
@@ -117,6 +112,13 @@
 
         public void Save()
         {
+            UnloadedReferences.Clear();
+
+            foreach(var reference in References)
+            {
+                UnloadedReferences.Add(new Reference() { Name = reference.Name });
+            }
+
             Serialize(this.Location);
         }
 
@@ -131,7 +133,7 @@
             Items = new List<IProjectItem>();
             UnloadedReferences = new List<Reference>();
             StaticLibraries = new List<string>();
-            References = new List<IProject>();
+            References = new ObservableCollection<IProject>();
             PublicIncludes = new List<string>();
             GlobalIncludes = new List<string>();
             Includes = new List<Include>();
@@ -151,130 +153,31 @@
         /// <summary>
         /// Resolves each reference, cloning and updating Git referenced projects where possible.
         /// </summary>
-        public void ResolveReferences(IConsole console)
+
+
+        public void ResolveReferences()
         {
             foreach (var reference in UnloadedReferences)
             {
-                var referenceDirectory = Path.Combine(SolutionDirectory, reference.Name);
+                var referenceDirectory = Path.Combine(Solution.CurrentDirectory, reference.Name);
 
-                //if (!string.IsNullOrEmpty(reference.GitUrl))
-                //{
-                //    if (!Directory.Exists(referenceDirectory))
-                //    {
-                //        var options = new CloneOptions();
-                //        options.OnProgress = (serveroutput) =>
-                //        {
-                //            console?.OverWrite(serveroutput);
-                //            return true;
-                //        };
-
-                //        options.OnTransferProgress = (progress) =>
-                //        {
-                //            console?.OverWrite(string.Format("{0} / {1} objects, {2} bytes transferred", progress.ReceivedObjects, progress.TotalObjects, progress.ReceivedBytes));
-                //            return true;
-                //        };
-
-                //        options.CredentialsProvider = (url, user, cred) =>
-                //        {
-                //            var domain = new Uri(url).GetLeftPart(UriPartial.Authority);
-                //            var credentials = new UsernamePasswordCredentials();
-
-                //            Tuple<string, string> userNamePassword;
-
-                //            if (passwordCache.TryGetValue(domain, out userNamePassword))
-                //            {
-                //                credentials.Username = userNamePassword.Item1;
-                //                credentials.Password = userNamePassword.Item2;
-                //            }
-                //            else
-                //            {
-                //                Console.WriteLine("Credentials required for: " + url);
-
-                //                Console.WriteLine("Please enter your username: ");
-                //                credentials.Username = Console.ReadLine();
-
-                //                string pass = "";
-                //                Console.WriteLine("Please enter your password:");
-
-                //                ConsoleKeyInfo key;
-
-                //                do
-                //                {
-                //                    key = Console.ReadKey(true);
-
-                //                    if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
-                //                    {
-                //                        pass += key.KeyChar;
-                //                        Console.Write("*");
-                //                    }
-                //                    else
-                //                    {
-                //                        if (key.Key == ConsoleKey.Backspace && pass.Length > 0)
-                //                        {
-                //                            pass = pass.Substring(0, (pass.Length - 1));
-                //                            Console.Write("\b \b");
-                //                        }
-                //                    }
-                //                }
-                //                // Stops Receving Keys Once Enter is Pressed
-                //                while (key.Key != ConsoleKey.Enter);
-
-                //                credentials.Password = pass;
-
-                //                passwordCache.Add(domain, new Tuple<string, string>(credentials.Username, credentials.Password));
-                //            }
-
-                //            return credentials;
-                //        };
-
-                //        console?.WriteLine();
-                //        console?.WriteLine(string.Format("Cloning Reference {0}", reference.Name));
-
-                //        options.Checkout = false;
-
-                //        Repository.Clone(reference.GitUrl, referenceDirectory, options);
-                //    }
-
-                //    if (Repository.IsValid(referenceDirectory))
-                //    {
-                //        var repo = new Repository(referenceDirectory);
-
-                //        string checkout = "HEAD";
-
-                //        if (!string.IsNullOrEmpty(reference.Revision))
-                //        {
-                //            checkout = reference.Revision;
-                //        }
-
-                //        repo.Checkout(checkout);
-                //    }
-                //}
 
                 var projectFile = Path.Combine(referenceDirectory, reference.Name + "." + Extension);
 
                 if (File.Exists(projectFile))
                 {
-                    // Here it would be better to find the existing project first, then load.
-                    var project = CPlusPlusProject.Load(projectFile, Solution);
+                    var loadedReference = Solution.Projects.FirstOrDefault((p) => p.Name == reference.Name);
 
-                    project = Solution.AddProject(project) as CPlusPlusProject;
-                    // This is done to make sure there is only ever 1 instance of the project.
-
-                    var currentReference = References.Where((p) => p.Name == project.Name).FirstOrDefault();
-
-                    if (currentReference == null)
+                    if (loadedReference != null)
                     {
-                        References.Add(project);
+                        References.Add(loadedReference);
                     }
-
-                    project.ResolveReferences(console);
+                    else
+                    {
+                        Console.WriteLine("Implement placeholder reference here.");
+                    }
                 }
             }
-        }
-
-        public void ResolveReferences()
-        {
-            ResolveReferences(null);
         }
 
         public void SetSolution(ISolution solution)
@@ -385,17 +288,17 @@
 
         public bool ShouldSerializeReferences()
         {
-            return References.Count > 0;
+            return UnloadedReferences.Count > 0;
         }
 
         [JsonProperty(PropertyName = "References")]
         public List<Reference> UnloadedReferences { get; set; }
 
         [JsonIgnore]
-        public IList<IProject> References
+        public ObservableCollection<IProject> References
         {
             get; private set;
-        }
+        }       
 
         public bool ShouldSerializePublicIncludes()
         {
@@ -589,6 +492,7 @@
                 result.Add(new TypeSettingsForm() { DataContext = new TypeSettingsFormViewModel(this) });
                 result.Add(new TargetSettingsForm());
                 result.Add(new IncludePathSettingsForm() { DataContext = new IncludePathSettingsFormViewModel(this) });
+                result.Add(new ReferencesSettingsForm() { DataContext = new ReferenceSettingsFormViewModel(this) });
                 result.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel(this) });
                 result.Add(new ComponentSettingsForm());
                 result.Add(new DebuggerSettingsForm());
