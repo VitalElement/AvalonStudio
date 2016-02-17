@@ -22,7 +22,7 @@ namespace AvalonStudio.MVVM
         /// <typeparam name="T">is the type of items in the collection.</typeparam>
         /// <param name="myself">is "this" reference.</param>
         /// <param name="item">is the item to insert.</param>
-        public static void InsertSorted<T>(this ObservableCollection<T> myself, T item) where T : IComparable
+        public static void InsertSorted<T>(this ObservableCollection<T> myself, T item) where T : IComparable<T>
         {
             if (myself.Count == 0)
             {
