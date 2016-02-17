@@ -199,16 +199,22 @@
         {
             List<string> result = new List<string>();
 
-            foreach (var reference in UnloadedReferences)
+            foreach (var reference in References)
             {
-                var loadedReference = GetReference(reference);
+                var loadedReference = reference as CPlusPlusProject;
+
+                if(loadedReference == null)
+                {
+                    // What to do in this situation?
+                    throw new NotImplementedException();
+                }
 
                 result.AddRange(loadedReference.GenerateReferencedIncludes());
             }
 
-            foreach (var includePath in PublicIncludes)
+            foreach (var includePath in Includes.Where(i=>i.Exported))
             {
-                result.Add(Path.Combine(CurrentDirectory, includePath));
+                result.Add(Path.Combine(CurrentDirectory, includePath.Value));
             }
 
             return result;
