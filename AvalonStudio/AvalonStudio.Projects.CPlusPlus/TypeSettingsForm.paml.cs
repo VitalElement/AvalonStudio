@@ -1,11 +1,11 @@
 ﻿using Perspex.Controls;
 using Perspex.Markup.Xaml;
 
-namespace AvalonStudio.Projects.VEBuild
+namespace AvalonStudio.Projects.CPlusPlus
 {
-    public class TargetSettingsForm : TabItem
+    public class TypeSettingsForm : TabItem
     {
-        public TargetSettingsForm()
+        public TypeSettingsForm()
         {
             this.InitializeComponent();
         }

@@ -155,13 +155,13 @@
       <Project>{eacbff14-438d-4311-8d8c-18e7e6769c8f}</Project>
       <Name>AvalonStudio.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
+      <Project>{47e266ea-bbc4-4794-96da-b1f3ecb5bb9b}</Project>
+      <Name>AvalonStudio.Projects.CPlusPlus</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
       <Name>AvalonStudio.Projects.Standard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.VEBuild\AvalonStudio.Projects.CPlusPlus.csproj">
-      <Project>{47e266ea-bbc4-4794-96da-b1f3ecb5bb9b}</Project>
-      <Name>AvalonStudio.Projects.CPlusPlus</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
       <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
