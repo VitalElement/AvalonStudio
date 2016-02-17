@@ -6,9 +6,9 @@
     using System.Collections.Generic;
     using Toolchains;
 
-    public class ToolchainSettingsFormViewModel : ViewModel<VEBuildProject>
+    public class ToolchainSettingsFormViewModel : ViewModel<CPlusPlusProject>
     {
-        public ToolchainSettingsFormViewModel(VEBuildProject project) : base (project)
+        public ToolchainSettingsFormViewModel(CPlusPlusProject project) : base (project)
         {
             toolchains = new List<IToolChain>(Workspace.Instance.ToolChains);
             selectedToolchain = project.ToolChain;
