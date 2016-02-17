@@ -6,6 +6,7 @@
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using System.Linq;
     public abstract class ProjectViewModel : ViewModel<IProject>
     {
@@ -65,6 +66,12 @@
                     project.Invalidate();
                 }
             });
+
+            OpenInExplorerCommand = ReactiveCommand.Create();
+            OpenInExplorerCommand.Subscribe((o) =>
+            {
+                Process.Start(Model.CurrentDirectory);
+            });
         }
 
         public bool IsExpanded { get; set; }
@@ -91,6 +98,7 @@
         public ReactiveCommand<object> RemoveCommand { get; protected set; }
         public ReactiveCommand<object> ConfigureCommand { get; private set; }
         public ReactiveCommand<object> SetProjectCommand { get; private set; }
+        public ReactiveCommand<object> OpenInExplorerCommand { get; }
 
         public static ProjectViewModel Create(IProject model)
         {

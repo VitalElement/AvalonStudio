@@ -10,11 +10,7 @@
         public ReferenceFolderViewModel (IProject project)
         {
             references = new ObservableCollection<ReferenceViewModel>();
-
-            foreach (var reference in project.References)
-            {
-                references.Add(new ReferenceViewModel(reference));
-            }
+            references.BindCollections<ReferenceViewModel, IProject>(project.References, (p) => { return new ReferenceViewModel(p); }, (rvm, p) => rvm.Model == p);
         }
        
         public string Title

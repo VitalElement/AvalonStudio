@@ -1,11 +1,14 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
+    using Extensibility;
     using MVVM;
+    using Perspex.Controls;
     using Projects;
     using ReactiveUI;
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-
+    using System.Diagnostics;
     public class SolutionViewModel : ViewModel<ISolution>
     {
         public SolutionViewModel(ISolution model) : base(model)
@@ -13,17 +16,7 @@
             this.Projects = new ObservableCollection<ProjectViewModel>();
             IsExpanded = true;
 
-            foreach (var project in model.Projects)
-            {
-                var vm = ProjectViewModel.Create(project);
-
-                if(model.StartupProject == project)
-                {
-                    vm.IsExpanded = true;
-                }
-
-                Projects.Add(vm);
-            }
+            Projects.BindCollections(model.Projects, (p) => { return ProjectViewModel.Create(p); }, (pvm, p) => pvm.Model == p);
 
             NewProjectCommand = ReactiveCommand.Create();
             NewProjectCommand.Subscribe((o) =>
@@ -32,11 +25,43 @@
                 WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
             });
 
-            //OpenInExplorerCommand = ReactiveCommand.Create();
-            //OpenInExplorerCommand.Subscribe((o) =>
-            //{
-            //    Process.Start(model.CurrentDirectory);
-            //});
+            AddExistingProjectCommand = ReactiveCommand.Create();
+            AddExistingProjectCommand.Subscribe(async (o) =>
+            {                
+                var dlg = new OpenFileDialog();
+                dlg.Title = "Open Project";
+
+                var extensions = new List<string>();
+
+                foreach (var projectType in Workspace.Instance.ProjectTypes)
+                {
+                    extensions.Add(projectType.Extension);
+                }
+
+                dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = extensions });
+                dlg.InitialFileName = string.Empty;
+                dlg.InitialDirectory = Model.CurrentDirectory;
+                dlg.AllowMultiple = false;
+
+                var result = await dlg.ShowAsync();
+
+                if (result != null && result.Length == 1)
+                {
+                    var proj = Solution.LoadProjectFile(model, result[0]);
+
+                    if (proj != null)
+                    {
+                        model.AddProject(proj);
+                        model.Save();
+                    }
+                }
+            });
+
+            OpenInExplorerCommand = ReactiveCommand.Create();
+            OpenInExplorerCommand.Subscribe((o) =>
+            {
+                Process.Start(model.CurrentDirectory);
+            });
 
             ConfigurationCommand = ReactiveCommand.Create();
             ConfigurationCommand.Subscribe((o) =>
@@ -110,12 +135,14 @@
 
         }
 
-        public ReactiveCommand<object> ConfigurationCommand { get; private set; }
-        public ReactiveCommand<object> CleanSolutionCommand { get; private set; }
-        public ReactiveCommand<object> BuildSolutionCommand { get; private set; }
-        public ReactiveCommand<object> RebuildSolutionCommand { get; private set; }
-        public ReactiveCommand<object> RunAllTestsCommand { get; private set; }
-        public ReactiveCommand<object> NewProjectCommand { get; private set; }
+        public ReactiveCommand<object> ConfigurationCommand { get; }
+        public ReactiveCommand<object> CleanSolutionCommand { get; }
+        public ReactiveCommand<object> BuildSolutionCommand { get; }
+        public ReactiveCommand<object> RebuildSolutionCommand { get; }
+        public ReactiveCommand<object> RunAllTestsCommand { get; }
+        public ReactiveCommand<object> NewProjectCommand { get; }
+        public ReactiveCommand<object> AddExistingProjectCommand { get; }
+        public ReactiveCommand<object> OpenInExplorerCommand { get; }
 
         new public string Title
         {

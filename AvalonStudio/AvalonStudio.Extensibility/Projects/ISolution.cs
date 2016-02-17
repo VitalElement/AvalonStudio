@@ -1,6 +1,7 @@
 ﻿namespace AvalonStudio.Projects
 {
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
 
     public interface ISolution
     {   
@@ -10,7 +11,7 @@
 
         IProject AddProject(IProject project);
 
-        IList<IProject> Projects { get; }
+        ObservableCollection<IProject> Projects { get; }
 
         string CurrentDirectory { get; }
 

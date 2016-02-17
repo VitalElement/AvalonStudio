@@ -153,6 +153,10 @@
     <Compile Include="IncludeViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reference.cs" />
+    <Compile Include="ReferenceSettingsFormViewModel.cs" />
+    <Compile Include="ReferencesSettingsForm.paml.cs">
+      <DependentUpon>ReferencesSettingsForm.paml</DependentUpon>
+    </Compile>
     <Compile Include="SourceFile.cs" />
     <Compile Include="TargetSettingsForm.paml.cs">
       <DependentUpon>TargetSettingsForm.paml</DependentUpon>
@@ -194,6 +198,7 @@
     <EmbeddedResource Include="TypeSettingsForm.paml" />
     <EmbeddedResource Include="TargetSettingsForm.paml" />
     <EmbeddedResource Include="ToolchainSettingsForm.paml" />
+    <EmbeddedResource Include="ReferencesSettingsForm.paml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
