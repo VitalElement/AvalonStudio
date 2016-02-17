@@ -587,6 +587,7 @@
 
                 result.Add(new TypeSettingsForm() { DataContext = new TypeSettingsFormViewModel(this) });
                 result.Add(new TargetSettingsForm());
+                result.Add(new IncludePathSettingsForm() { DataContext = new IncludePathSettingsFormViewModel(this) });
                 result.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel(this) });
                 result.Add(new ComponentSettingsForm());
                 result.Add(new DebuggerSettingsForm());
