@@ -38,7 +38,7 @@
                     <MenuItem Header="Clean Solution" />
                     <Separator />
                     <MenuItem Header="Add">
-                      <MenuItem Header="New Project..." />
+                      <MenuItem Header="New Project..." Command="{Binding NewProjectCommand}" />
                       <MenuItem Header="Existing Project..." />
                       <MenuItem Header="New Solution Folder..." />
                     </MenuItem>

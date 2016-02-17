@@ -16,6 +16,13 @@
 
     public class NewProjectDialogViewModel : ModalDialogViewModelBase
     {
+        private ISolution solution = null;
+
+        public NewProjectDialogViewModel(ISolution solution) : this()
+        {
+            this.solution = solution;
+        }
+
         public NewProjectDialogViewModel() : base("New Project", true, true)
         {
             projectTemplates = new ObservableCollection<IProjectTemplate>();
@@ -49,11 +56,15 @@
                     Directory.CreateDirectory(destination);
                 }
 
-                var solution = Solution.Create(destination, solutionName);
+                if (solution == null)
+                {
+                    solution = Solution.Create(destination, solutionName);
+                }
 
                 selectedTemplate.Generate(solution, name);
 
-                WorkspaceViewModel.Instance.SolutionExplorer.Model = solution;                
+                WorkspaceViewModel.Instance.SolutionExplorer.Model = solution;
+                solution = null;        
 
                 Close();
             });                
@@ -71,6 +82,15 @@
                 }
 
                 this.RaiseAndSetIfChanged(ref name, value);                
+            }
+        }
+
+        
+        public bool SolutionControlsVisible
+        {
+            get
+            {
+                return solution == null;
             }
         }
 

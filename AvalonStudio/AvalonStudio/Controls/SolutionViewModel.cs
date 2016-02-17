@@ -5,6 +5,7 @@
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
+
     public class SolutionViewModel : ViewModel<ISolution>
     {
         public SolutionViewModel(ISolution model) : base(model)
@@ -14,8 +15,22 @@
 
             foreach (var project in model.Projects)
             {
-                Projects.Add(ProjectViewModel.Create(project));
+                var vm = ProjectViewModel.Create(project);
+
+                if(model.StartupProject == project)
+                {
+                    vm.IsExpanded = true;
+                }
+
+                Projects.Add(vm);
             }
+
+            NewProjectCommand = ReactiveCommand.Create();
+            NewProjectCommand.Subscribe((o) =>
+            {
+                WorkspaceViewModel.Instance.ModalDialog = new NewProjectDialogViewModel(model);
+                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
+            });
 
             //OpenInExplorerCommand = ReactiveCommand.Create();
             //OpenInExplorerCommand.Subscribe((o) =>
@@ -100,6 +115,7 @@
         public ReactiveCommand<object> BuildSolutionCommand { get; private set; }
         public ReactiveCommand<object> RebuildSolutionCommand { get; private set; }
         public ReactiveCommand<object> RunAllTestsCommand { get; private set; }
+        public ReactiveCommand<object> NewProjectCommand { get; private set; }
 
         new public string Title
         {
@@ -107,7 +123,7 @@
             {
                 if (Model != null)
                 {
-                    return string.Format("Solution '{0}' ({1} {2})", "SolutionTitle", Model.Projects.Count, StringProjects);
+                    return string.Format("Solution '{0}' ({1} {2})", Model.Name, Model.Projects.Count, StringProjects);
                 }
                 else
                 {
