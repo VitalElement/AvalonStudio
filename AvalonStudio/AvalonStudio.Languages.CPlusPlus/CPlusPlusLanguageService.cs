@@ -1,6 +1,5 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus
 {
-    using Models;
     using NClang;
     using Perspex.Media;
     using Perspex.Threading;
@@ -166,10 +165,10 @@
                 }
 
                 // this is a dependency on VEStudioSettings.
-                if (VEStudioSettings.This.ShowAllWarnings)
-                {
-                    args.Add("-Weverything");
-                }
+                //if (VEStudioSettings.This.ShowAllWarnings)
+                //{
+                //    args.Add("-Weverything");
+                //}
 
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
             }
