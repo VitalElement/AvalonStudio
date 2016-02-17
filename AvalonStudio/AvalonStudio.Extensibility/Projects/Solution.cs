@@ -36,17 +36,9 @@
         public static Solution Load(string fileName)
         {
             Solution solution = null;
-
-            if (Path.GetExtension(fileName) != string.Empty)
-            {
+            
                 solution = Deserialize(fileName);
-                solution.CurrentDirectory = Path.GetDirectoryName(fileName) + Platform.DirectorySeperator;
-            }
-            else
-            {
-                solution = new Solution();
-                solution.CurrentDirectory = fileName;
-            }
+            solution.CurrentDirectory = Path.GetDirectoryName(fileName) + Platform.DirectorySeperator;            
 
             foreach(var projectReference in solution.ProjectReferences)
             {
