@@ -78,11 +78,17 @@
                 WorkspaceViewModel.Instance.ModalDialog = new NewProjectDialogViewModel();
                 WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
             });
+
+			ExitCommand = ReactiveCommand.Create ();
+			ExitCommand.Subscribe ((o) => {
+				Environment.Exit(1);
+			});
         }
 
         public ReactiveCommand<object> NewProjectCommand { get; private set; }
         public ReactiveCommand<object> SaveCommand { get; private set; }
         public ReactiveCommand<object> LoadProjectCommand { get; private set; }
+		public ReactiveCommand<object> ExitCommand { get; }
 
         public ReactiveCommand<object> CleanProjectCommand { get; private set; }
         public ReactiveCommand<object> BuildProjectCommand { get; private set; }
