@@ -226,7 +226,7 @@
             // includes
             foreach (var include in project.Includes)
             {
-                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
+                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include.Value));
             }
 
 
@@ -621,6 +621,11 @@
         public override bool CanHandle(IProject project)
         {
             return false;
+        }
+
+        public override void ProvisionSettings(IProject project)
+        {
+            throw new NotImplementedException();
         }
     }
 }

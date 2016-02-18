@@ -75,7 +75,7 @@
 
             foreach(var projectReference in solution.ProjectReferences)
             {
-                solution.Projects.Add(LoadProject(solution, projectReference));
+                solution.Projects.InsertSorted(LoadProject(solution, projectReference));
             }
 
             foreach (var project in solution.Projects)
