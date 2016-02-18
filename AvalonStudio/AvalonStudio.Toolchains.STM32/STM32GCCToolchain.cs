@@ -12,12 +12,12 @@
     using Perspex.Controls;
     using System.Dynamic;
     using Extensibility.Utils;
-
+    using Extensibility.Platform;
     public class STM32GCCToolchain : StandardToolChain
     {
         public STM32GCCToolchain() : base (new ToolchainSettings())
         {
-            Settings.ToolChainLocation = @"c:\VEStudio\AppData\Repos\GCCToolChain\bin";
+            Settings.ToolChainLocation = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32\\bin");
         }
 
         public STM32GCCToolchain(ToolchainSettings settings) : base(settings)

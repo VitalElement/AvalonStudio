@@ -15,12 +15,12 @@
     public class MainMenuViewModel : ReactiveObject
     {
         public MainMenuViewModel()
-        {            
+        {
             LoadProjectCommand = ReactiveCommand.Create();
 
-            LoadProjectCommand.Subscribe(async _=>
+            LoadProjectCommand.Subscribe(async _ =>
             {
-                var dlg = new OpenFileDialog();                
+                var dlg = new OpenFileDialog();
                 dlg.Title = "Open Solution";
                 dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Solution", Extensions = new List<string> { Solution.Extension } });
                 dlg.InitialFileName = string.Empty;
@@ -29,7 +29,7 @@
 
                 if (result != null)
                 {
-                    WorkspaceViewModel.Instance.SolutionExplorer.Model = Solution.Load(result[0]);                    
+                    WorkspaceViewModel.Instance.SolutionExplorer.Model = Solution.Load(result[0]);
                 }
             });
 
@@ -54,7 +54,28 @@
             {
                 new Thread(new ThreadStart(new Action(async () =>
                 {
-                    await WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Build(WorkspaceViewModel.Instance.Console, WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject);
+                    if (WorkspaceViewModel.Instance.SolutionExplorer.Model != null)
+                    {
+                        if (WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject != null)
+                        {
+                            if (WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain != null)
+                            {
+                                await WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Build(WorkspaceViewModel.Instance.Console, WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject);
+                            }
+                            else
+                            {
+                                WorkspaceViewModel.Instance.Console.WriteLine("No toolchain selected for project.");
+                            }
+                        }
+                        else
+                        {
+                            WorkspaceViewModel.Instance.Console.WriteLine("No Startup Project defined.");
+                        }
+                    }
+                    else
+                    {
+                        WorkspaceViewModel.Instance.Console.WriteLine("No project loaded.");
+                    }
                 }))).Start();
             });
 
@@ -79,16 +100,17 @@
                 WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
             });
 
-			ExitCommand = ReactiveCommand.Create ();
-			ExitCommand.Subscribe ((o) => {
-				Environment.Exit(1);
-			});
+            ExitCommand = ReactiveCommand.Create();
+            ExitCommand.Subscribe((o) =>
+            {
+                Environment.Exit(1);
+            });
         }
 
         public ReactiveCommand<object> NewProjectCommand { get; private set; }
         public ReactiveCommand<object> SaveCommand { get; private set; }
         public ReactiveCommand<object> LoadProjectCommand { get; private set; }
-		public ReactiveCommand<object> ExitCommand { get; }
+        public ReactiveCommand<object> ExitCommand { get; }
 
         public ReactiveCommand<object> CleanProjectCommand { get; private set; }
         public ReactiveCommand<object> BuildProjectCommand { get; private set; }
