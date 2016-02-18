@@ -35,7 +35,15 @@
             BuildCommand.Subscribe(async (o) =>
             {
                 WorkspaceViewModel.Instance.Console.Clear();
-                await model.ToolChain?.Build(WorkspaceViewModel.Instance.Console, model);
+
+                if (model.ToolChain != null)
+                {
+                    await model.ToolChain.Build(WorkspaceViewModel.Instance.Console, model);
+                }
+                else
+                {
+                    WorkspaceViewModel.Instance.Console.WriteLine("Project does not define a toolchain.");
+                }
             });
 
             CleanCommand = ReactiveCommand.Create();
@@ -43,7 +51,15 @@
             CleanCommand.Subscribe(async (o) =>
             {
                 WorkspaceViewModel.Instance.Console.Clear();
-                await model.ToolChain?.Clean(WorkspaceViewModel.Instance.Console, model);
+
+                if (model.ToolChain != null)
+                {
+                    await model.ToolChain.Clean(WorkspaceViewModel.Instance.Console, model);
+                }
+                else
+                {
+                    WorkspaceViewModel.Instance.Console.WriteLine("Project does not define a toolchain.");
+                }                                
             });
 
             ManageReferencesCommand = ReactiveCommand.Create();
