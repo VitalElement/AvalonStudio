@@ -10,7 +10,7 @@
       <MenuItem Header="Open Project" Command="{Binding LoadProjectCommand}"/>
       <MenuItem Header="Save" HotKey="Ctrl+S" Command="{Binding SaveCommand}" />
       <MenuItem Header="Save All"/>
-      <MenuItem Header="Exit"/>
+      <MenuItem Header="Exit" HotKey="Ctrl+Q" Command="{Binding ExitCommand}"/>
     </MenuItem>
 
     <MenuItem Header="View">
