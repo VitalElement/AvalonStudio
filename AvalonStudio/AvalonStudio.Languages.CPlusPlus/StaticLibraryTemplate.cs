@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AvalonStudio.Projects;
+using AvalonStudio.Projects.CPlusPlus;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -30,6 +32,17 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 return "Creates a Static Library project for C/C++";
             }
+        }
+
+        public override IProject Generate(ISolution solution, string name)
+        {
+            var project = base.Generate(solution, name) as CPlusPlusProject;
+
+            project.Type = Projects.Standard.ProjectType.StaticLibrary;
+
+            project.Save();
+
+            return project;
         }
     }
 }

@@ -63,6 +63,23 @@
             return result;
         }
 
+        private void LoadFiles ()
+        {
+            var folders = GetSubFolders(this, CurrentDirectory);
+
+            Items = new List<IProjectItem>();
+
+            foreach (var item in folders.Items)
+            {
+                Items.Add(item);
+            }
+
+            foreach (var file in SourceFiles)
+            {
+                (file as SourceFile)?.SetProject(this);
+            }
+        }
+
         public static CPlusPlusProject Load(string filename, ISolution solution)
         {
             var project = Deserialize(filename);
@@ -70,22 +87,7 @@
             project.Location = filename;
             project.SetSolution(solution);
 
-            var folders = GetSubFolders(project, project.CurrentDirectory);
-
-            project.Items = new List<IProjectItem>();
-
-            foreach (var item in folders.Items)
-            {
-                project.Items.Add(item);
-            }
-
-            
-            foreach (var file in project.SourceFiles)
-            {
-                (file as SourceFile)?.SetProject(project);
-
-                var pathStructure = file.Location.Split(Path.DirectorySeparatorChar);
-            }
+            project.LoadFiles();
 
             return project;
         }
@@ -103,6 +105,8 @@
                 var project = new CPlusPlusProject { Name = name };
                 project.SetSolution(solution);
                 project.Location = projectFile;
+
+                project.LoadFiles();
                 project.Save();
 
                 result = project;
