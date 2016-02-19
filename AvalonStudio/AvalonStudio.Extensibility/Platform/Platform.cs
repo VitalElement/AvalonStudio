@@ -34,7 +34,21 @@
         {
             get
             {
-                return '\\';
+				switch (PlatformIdentifier) 
+				{
+				case  PlatformID.Unix:
+					{
+						return '/';
+					}
+
+				case PlatformID.Win32NT:
+					{
+						return '\\';
+					}
+
+				default:
+					throw new NotImplementedException("Not implemented for your platform.");
+				}                
             }
         }
 
