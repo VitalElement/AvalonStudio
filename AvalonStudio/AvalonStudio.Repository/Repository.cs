@@ -37,7 +37,7 @@
 
     public class Repository : SerializedObject<Repository>
     {        
-        public const string PackagesFileName = "Packages.json";        
+        public const string PackagesFileName = "packages.json";        
          
         public Repository()
         {

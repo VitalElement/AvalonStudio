@@ -27,8 +27,6 @@
         {
             this.editor = editor;
 
-            AvalonStudioService.Initialise();
-
             MainMenu = new MainMenuViewModel();
             SolutionExplorer = new SolutionExplorerViewModel();
             Editor = new EditorViewModel(editor);
