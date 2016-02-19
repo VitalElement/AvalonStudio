@@ -34,7 +34,21 @@
         {
             get
             {
-                return '\\';
+				switch (PlatformIdentifier) 
+				{
+				case  PlatformID.Unix:
+					{
+						return '/';
+					}
+
+				case PlatformID.Win32NT:
+					{
+						return '\\';
+					}
+
+				default:
+					throw new NotImplementedException("Not implemented for your platform.");
+				}                
             }
         }
 
@@ -54,6 +68,11 @@
                 {
                     case PlatformID.Win32NT:
                         return "c:\\AvalonStudio";
+
+				case PlatformID.Unix:
+					var homeDir = Environment.GetEnvironmentVariable ("HOME");
+
+					return Path.Combine (homeDir, "AvalonStudio");
 
                     default:
                         throw new NotImplementedException("Not implemented for your platform.");
