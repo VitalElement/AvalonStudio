@@ -109,6 +109,14 @@
 
           <TreeDataTemplate DataType="ViewModels:SourceFileViewModel">
             <StackPanel Orientation="Horizontal">
+              <StackPanel.ContextMenu>
+                <ContextMenu>                  
+                  <MenuItem Header="Rename" />
+                  <Separator />
+                  <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
+                  <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+                </ContextMenu>
+              </StackPanel.ContextMenu>
               <Panel Width="15" Height="15" Background="#A07cbb78" Margin="0 0 5 0">
 
                 <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
@@ -119,6 +127,14 @@
 
           <TreeDataTemplate DataType="ViewModels:ProjectFolderViewModel" ItemsSource="{Binding Items}">
             <StackPanel Orientation="Horizontal">
+               <StackPanel.ContextMenu>
+                <ContextMenu>                  
+                  <MenuItem Header="Rename" />
+                  <Separator />
+                  <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
+                  <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+                </ContextMenu>
+              </StackPanel.ContextMenu>
               <Panel Width="15" Height="15" Background="#A0DBA769" Margin="0 0 5 0">
 
                 <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
