@@ -27,6 +27,7 @@
         private Grid bottomLeftGrip;
         private Grid topRightGrip;
         private Grid bottomRightGrip;
+        private Panel icon;
 
         protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
@@ -77,6 +78,7 @@
             minimiseButton = e.NameScope.Find<Button>("minimiseButton");
             restoreButton = e.NameScope.Find<Button>("restoreButton");
             closeButton = e.NameScope.Find<Button>("closeButton");
+            icon = e.NameScope.Find<Panel>("icon");
 
             topHorizontalGrip = e.NameScope.Find<Grid>("topHorizontalGrip");
             bottomHorizontalGrip = e.NameScope.Find<Grid>("bottomHorizontalGrip");
@@ -110,7 +112,12 @@
             closeButton.Click += (sender, ee) =>
             {
                 Close();
-            };            
+            };
+
+            icon.DoubleTapped += (sender, ee) =>
+            {
+                Close();
+            };
         }
     }
 }
