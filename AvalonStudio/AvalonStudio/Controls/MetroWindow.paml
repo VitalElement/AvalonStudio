@@ -14,7 +14,7 @@
                     <Grid ColumnDefinitions="*,*,*" Name="titlebar">
                       <Grid Margin="5 2.5 5 5">
                         <StackPanel Orientation="Horizontal">
-                          <Panel Height="20" Width="20">
+                          <Panel Height="20" Width="20" Name="icon">
                             <Image Source="Resources/Icons/Templarian/dark/appbar.3d.3ds.png" Opacity="0.5" />
                           </Panel>
                           <TextBlock Text="{TemplateBinding Title}" Margin="20 6 5 0" Foreground="{TemplateBinding Foreground}" />
