@@ -31,7 +31,12 @@
 
             this.GetObservable(CaretIndexProperty)
                 .Subscribe(CaretIndexChanged);
-            
+
+            this.GetObservable(TextDocumentProperty).Subscribe((o) =>
+            {
+                invalidateVisualLines = true;
+            });
+
             VisualLines = new List<VisualLine>();
         }
         #endregion
@@ -207,7 +212,7 @@
 
         #region Properties
         public Size CharSize { get; set; }
-        
+
         public Action InvalidateScroll
         {
             get;
@@ -229,6 +234,7 @@
 
                 firstVisualLine = (int)(offset.Y);
 
+                invalidateVisualLines = true;
                 InvalidateVisual();
             }
         }
@@ -295,8 +301,8 @@
 
                 viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
                 extent = new Size(finalSize.Width, TextDocument.LineCount + 20);
-                
-                InvalidateScroll.Invoke();                
+
+                InvalidateScroll.Invoke();
             }
 
             base.ArrangeOverride(finalSize);
@@ -362,24 +368,30 @@
 
         }
 
+        private bool invalidateVisualLines = true;
         private int lastLineCount;
         private void GenerateVisualLines()
         {
-            VisualLines.Clear();
-
-            uint visualLineNumber = 0;
-
-            for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount; i++)
+            if (invalidateVisualLines)
             {
-                VisualLines.Add(new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ });
-            }
+                VisualLines.Clear();
 
-            if(TextDocument.LineCount != lastLineCount)
-            {
-                lastLineCount = TextDocument.LineCount;
+                uint visualLineNumber = 0;               
 
-                InvalidateMeasure();
-                InvalidateScroll.Invoke();
+                for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount; i++)
+                {
+                    VisualLines.Add(new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ });
+                }
+
+                if (TextDocument.LineCount != lastLineCount)
+                {
+                    lastLineCount = TextDocument.LineCount;
+
+                    InvalidateMeasure();
+                    InvalidateScroll.Invoke();
+                }
+
+                invalidateVisualLines = false;
             }
         }
 
@@ -437,6 +449,8 @@
                 _caretBlink = true;
                 _caretTimer.Stop();
                 _caretTimer.Start();
+
+                invalidateVisualLines = true;
                 InvalidateVisual();
 
                 if (caretIndex >= 0)

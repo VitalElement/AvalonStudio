@@ -233,7 +233,7 @@
                     case ' ':
                     case ':':
                     case '.':
-                      DoComplete(true);
+                        DoComplete(true);
                         return;
                 }
             }
@@ -250,9 +250,9 @@
         }
 
         public async void OnKeyUp(KeyEventArgs e)
-        {             
+        {
             if (IsIntellisenseKey(e))
-           {
+            {
                 var caretIndex = editorViewModel.CaretIndex;
 
                 if (caretIndex <= intellisenseStartedAt)
@@ -302,7 +302,7 @@
                         intellisenseStartedAt++;
                     }
 
-                    currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);                    
+                    currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);
 
                     WorkspaceViewModel.Instance.Console.WriteLine("Set started at: " + intellisenseStartedAt + ", " + currentFilter);
 
@@ -338,7 +338,7 @@
 
                     filteredResults = unfilteredCompletions;
 
-                    if(filteredResults.Count > 0)
+                    if (filteredResults.Count > 0)
                     {
                         IsVisible = true;
                     }
@@ -430,7 +430,10 @@
         public bool IsVisible
         {
             get { return isVisible; }
-            set { this.RaiseAndSetIfChanged(ref isVisible, value); }
+            set
+            {                
+                this.RaiseAndSetIfChanged(ref isVisible, value);
+            }
         }
 
     }
