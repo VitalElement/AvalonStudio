@@ -17,7 +17,7 @@
     {
         public STM32GCCToolchain() : base (new ToolchainSettings())
         {
-            Settings.ToolChainLocation = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32\\bin");
+            Settings.ToolChainLocation = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin");
         }
 
         public STM32GCCToolchain(ToolchainSettings settings) : base(settings)
@@ -74,11 +74,11 @@
 
             if (file.Language == Language.Cpp)
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-g++.exe");
+				startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-g++" + Platform.ExecutableExtension);
             }
             else
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc.exe");
+				startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
             }
 
 
@@ -143,11 +143,11 @@
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
 
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc.exe");
+			startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-ar.exe");
+				startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-ar" + Platform.ExecutableExtension);
             }
 
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
@@ -258,7 +258,7 @@
             ProcessResult result = new ProcessResult();
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-size.exe");
+			startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-size" + Platform.ExecutableExtension);
 
             if (!File.Exists(startInfo.FileName))
             {
