@@ -30,6 +30,11 @@
             int segmentStart = segment.Offset;
             int segmentEnd = segment.Offset + segment.Length;
 
+            if(segmentEnd > textView.TextDocument.TextLength)
+            {
+                segmentEnd = textView.TextDocument.TextLength;
+            }
+
             TextViewPosition start = new TextViewPosition(textView.TextDocument.GetLocation(segmentStart));
             TextViewPosition end = new TextViewPosition(textView.TextDocument.GetLocation(segmentEnd));
 
