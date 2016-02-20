@@ -154,8 +154,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\Debug\Plugins\$(TargetFileName)
+copy $(TargetDir)\libclang.dll ..\..\..\AvalonStudio\bin\Debug\libclang.dll
+copy $(TargetDir)\libclang.so ..\..\..\AvalonStudio\bin\Debug\libclang.so</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
