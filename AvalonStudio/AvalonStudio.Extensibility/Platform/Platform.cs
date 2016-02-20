@@ -30,6 +30,28 @@
             }
         }
 
+		public static string ExecutableExtension
+		{
+			get
+			{
+				switch (PlatformIdentifier) 
+				{
+				case  PlatformID.Unix:
+					{
+						return string.Empty;
+					}
+
+				case PlatformID.Win32NT:
+					{
+						return ".exe";
+					}
+
+				default:
+					throw new NotImplementedException("Not implemented for your platform.");
+				}                
+			}
+		}
+
         public static char DirectorySeperator
         {
             get
