@@ -316,7 +316,7 @@
 
                 var charClass = TextUtilities.GetCharacterClass(currentChar);
 
-                if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ')
+                if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ' && TextUtilities.GetCharacterClass(prevChar) != TextUtilities.CharacterClass.LineTerminator)
                 {
                     start = TextUtilities.GetNextCaretPosition(TextDocument, CaretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
                 }
