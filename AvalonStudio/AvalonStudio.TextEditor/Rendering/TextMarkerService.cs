@@ -11,6 +11,8 @@
     {
         private TextSegmentCollection<TextMarker> markers;
 
+        public event EventHandler<EventArgs> DataChanged;
+
         public sealed class TextMarker : TextSegment
         {
             public TextMarker(int startOffset, int length)
@@ -110,7 +112,15 @@
             var m = new TextMarker(offset, length);
             markers.Add(m);
             m.MarkerColor = markerColor;
-            m.ToolTip = message;
+            m.ToolTip = message;            
+        }
+
+        public void Update()
+        {
+            if(this.DataChanged != null)
+            {
+                DataChanged(this, new EventArgs());
+            }
         }
 
         public IEnumerable<TextMarker> GetMarkersAtOffset(int offset)

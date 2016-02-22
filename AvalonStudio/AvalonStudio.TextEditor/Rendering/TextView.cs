@@ -8,6 +8,7 @@
     using Perspex.Data;
     using Perspex.Media;
     using Perspex.Threading;
+    using Perspex.Utilities;
     using Perspex.VisualTree;
     using System;
     using System.Collections.Generic;
@@ -17,6 +18,21 @@
 
     public class TextView : ContentControl, IScrollable
     {
+        class WeakDocumentLineTransformerSubscriber : IWeakSubscriber<EventArgs>
+        {
+            private readonly Action _onEvent;
+
+            public WeakDocumentLineTransformerSubscriber(Action onEvent)
+            {
+                _onEvent = onEvent;
+            }
+
+            public void OnEvent(object sender, EventArgs ev)
+            {
+                _onEvent?.Invoke();   
+            }
+        }
+
         #region Constructors
         static TextView()
         {
@@ -36,6 +52,21 @@
             {
                 invalidateVisualLines = true;
             });
+
+            this.GetObservable(DocumentLineTransformersProperty).Subscribe((o) =>
+            {
+                // TODO unsubscribe old?
+                DocumentLineTransformers.CollectionChanged += (sender, e) =>
+                {
+                    foreach(var newItem in e.NewItems)
+                    {
+                        WeakSubscriptionManager.Subscribe(newItem, nameof(IDocumentLineTransformer.DataChanged), new WeakDocumentLineTransformerSubscriber(() => 
+                        {
+                            InvalidateVisual();
+                        }));
+                    }
+                };
+            });         
 
             VisualLines = new List<VisualLine>();
         }
