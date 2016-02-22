@@ -325,7 +325,7 @@
 
                 if (start != -1 && end != -1)
                 {
-                    string word = TextDocument.GetText(start, end - start);
+                    string word = TextDocument.GetText(start, end - start).Trim();
 
                     if (!TextUtilities.ContainsNumber(word))
                     {
