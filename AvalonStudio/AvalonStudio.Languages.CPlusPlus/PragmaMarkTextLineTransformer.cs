@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus.Rendering
 {
+    using System;
     using Perspex;
     using Perspex.Media;
     using TextEditor.Rendering;
@@ -8,6 +9,8 @@
     {
         private SolidColorBrush pragmaBrush = new SolidColorBrush(Color.FromArgb(0x88, 0xB8, 0x48, 0xFF));
         private SolidColorBrush brush = new SolidColorBrush(Color.FromArgb(0xD0, 0xB8, 0x48, 0xFF));
+
+        public event EventHandler<EventArgs> DataChanged;
 
         public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
         {

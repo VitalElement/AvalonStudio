@@ -4,6 +4,7 @@
     using Perspex;
     using Perspex.Media;
     using System.Linq;
+    using System;
 
     public class SelectedWordTextLineTransformer : IDocumentLineTransformer
     {
@@ -14,7 +15,23 @@
                 
         private Brush highlightBrush;
 
-        public string SelectedWord { get; set; }
+        public event EventHandler<EventArgs> DataChanged;
+
+        private string selectedWord;
+        public string SelectedWord
+        {
+            get { return selectedWord; }
+            set
+            {
+                selectedWord = value;
+
+                if(DataChanged != null)
+                {
+                    DataChanged(this, new EventArgs());
+                }
+            }
+        }
+
 
         public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
         {
