@@ -150,7 +150,7 @@
         {
             bool result = false;
 
-            if(char.IsLetter(text[0]))
+            if(!string.IsNullOrEmpty(text) && char.IsLetter(text[0]))
             {
                 result = true;
             }
