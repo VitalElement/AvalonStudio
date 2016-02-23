@@ -13,6 +13,7 @@
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
     using System.Linq;
     using System.Reactive.Linq;
 
@@ -29,7 +30,22 @@
 
             public void OnEvent(object sender, EventArgs ev)
             {
-                _onEvent?.Invoke();   
+                _onEvent?.Invoke();
+            }
+        }
+
+        class WeakCollectionChangedSubscriber : IWeakSubscriber<NotifyCollectionChangedEventArgs>
+        {
+            private readonly Action<NotifyCollectionChangedEventArgs> _onEvent;
+
+            public WeakCollectionChangedSubscriber(Action<NotifyCollectionChangedEventArgs> onEvent)
+            {
+                _onEvent = onEvent;
+            }
+
+            public void OnEvent(object sender, NotifyCollectionChangedEventArgs ev)
+            {
+                _onEvent?.Invoke(ev);
             }
         }
 
@@ -37,10 +53,30 @@
         static TextView()
         {
             AffectsMeasure(TextDocumentProperty);
+            AffectsRender(DocumentLineTransformersProperty);
         }
+
+        private WeakCollectionChangedSubscriber documentLineTransformersChangedSubscriber;
+        private WeakDocumentLineTransformerSubscriber documentLineTransformerChangedSubscriber;
 
         public TextView()
         {
+            documentLineTransformersChangedSubscriber = new WeakCollectionChangedSubscriber((e) =>
+            {
+                if (e.NewItems != null)
+                {
+                    foreach (var item in e.NewItems)
+                    {
+                        WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), documentLineTransformerChangedSubscriber);
+                    }
+                }
+            });
+
+            documentLineTransformerChangedSubscriber = new WeakDocumentLineTransformerSubscriber(() =>
+            {
+                InvalidateVisual();
+            });
+
             _caretTimer = new DispatcherTimer();
             _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
             _caretTimer.Tick += CaretTimerTick;
@@ -53,20 +89,45 @@
                 invalidateVisualLines = true;
             });
 
-            this.GetObservable(DocumentLineTransformersProperty).Subscribe((o) =>
+
+            DocumentLineTransformersProperty.Changed.Subscribe((o) =>
             {
-                // TODO unsubscribe old?
-                DocumentLineTransformers.CollectionChanged += (sender, e) =>
+                foreach(var item in DocumentLineTransformers)
                 {
-                    foreach(var newItem in e.NewItems)
-                    {
-                        WeakSubscriptionManager.Subscribe(newItem, nameof(IDocumentLineTransformer.DataChanged), new WeakDocumentLineTransformerSubscriber(() => 
-                        {
-                            InvalidateVisual();
-                        }));
-                    }
-                };
-            });         
+                    WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), documentLineTransformerChangedSubscriber);
+                }
+
+                WeakSubscriptionManager.Subscribe(DocumentLineTransformers, nameof(DocumentLineTransformers.CollectionChanged), documentLineTransformersChangedSubscriber);
+            });
+
+            //this.GetObservable(DocumentLineTransformersProperty).Subscribe((o) =>
+            //{
+            //    foreach (var item in DocumentLineTransformers)
+            //    {
+            //        item.DataChanged += (sender, e) =>
+            //        {
+            //            InvalidateVisual();
+            //        };
+            //        WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), new WeakDocumentLineTransformerSubscriber(() =>
+            //        {
+            //            InvalidateVisual();
+            //        }));
+            //    }
+
+            //    WeakSubscriptionManager.Subscribe(DocumentLineTransformers, nameof(ObservableCollection<IDocumentLineTransformer>.CollectionChanged), new WeakCollectionChangedSubscriber((e) =>
+            //    {
+            //        if (e.NewItems != null)
+            //        {
+            //            foreach (var newItem in e.NewItems)
+            //            {
+            //                WeakSubscriptionManager.Subscribe(newItem, nameof(IDocumentLineTransformer.DataChanged), new WeakDocumentLineTransformerSubscriber(() =>
+            //                {
+            //                    InvalidateVisual();
+            //                }));
+            //            }
+            //        }
+            //    }));
+            //});
 
             VisualLines = new List<VisualLine>();
         }
@@ -403,11 +464,11 @@
         private int lastLineCount;
         private void GenerateVisualLines()
         {
-            if (invalidateVisualLines)
+            if (invalidateVisualLines) // This is a significant performance boost, we only need to re-generate when offset changes
             {
                 VisualLines.Clear();
 
-                uint visualLineNumber = 0;               
+                uint visualLineNumber = 0;
 
                 for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount; i++)
                 {
@@ -547,7 +608,7 @@
             }
 
             return result;
-        }
+        }        
         #endregion
     }
 }
