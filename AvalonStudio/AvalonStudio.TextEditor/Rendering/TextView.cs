@@ -19,11 +19,11 @@
 
     public class TextView : ContentControl, IScrollable
     {
-        class WeakDocumentLineTransformerSubscriber : IWeakSubscriber<EventArgs>
+        class WeakEventArgsSubscriber : IWeakSubscriber<EventArgs>
         {
             private readonly Action _onEvent;
 
-            public WeakDocumentLineTransformerSubscriber(Action onEvent)
+            public WeakEventArgsSubscriber(Action onEvent)
             {
                 _onEvent = onEvent;
             }
@@ -34,11 +34,11 @@
             }
         }
 
-        class WeakCollectionChangedSubscriber : IWeakSubscriber<NotifyCollectionChangedEventArgs>
+        class WeakCollectionChangedEventArgsSubscriber : IWeakSubscriber<NotifyCollectionChangedEventArgs>
         {
             private readonly Action<NotifyCollectionChangedEventArgs> _onEvent;
 
-            public WeakCollectionChangedSubscriber(Action<NotifyCollectionChangedEventArgs> onEvent)
+            public WeakCollectionChangedEventArgsSubscriber(Action<NotifyCollectionChangedEventArgs> onEvent)
             {
                 _onEvent = onEvent;
             }
@@ -56,12 +56,13 @@
             AffectsRender(DocumentLineTransformersProperty);
         }
 
-        private WeakCollectionChangedSubscriber documentLineTransformersChangedSubscriber;
-        private WeakDocumentLineTransformerSubscriber documentLineTransformerChangedSubscriber;
+        private WeakCollectionChangedEventArgsSubscriber documentLineTransformersChangedSubscriber;
+        private WeakEventArgsSubscriber documentLineTransformerChangedSubscriber;
+        private WeakEventArgsSubscriber documentTextChangedSubscriber;
 
         public TextView()
         {
-            documentLineTransformersChangedSubscriber = new WeakCollectionChangedSubscriber((e) =>
+            documentLineTransformersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
             {
                 if (e.NewItems != null)
                 {
@@ -72,9 +73,14 @@
                 }
             });
 
-            documentLineTransformerChangedSubscriber = new WeakDocumentLineTransformerSubscriber(() =>
+            documentLineTransformerChangedSubscriber = new WeakEventArgsSubscriber(() =>
             {
                 InvalidateVisual();
+            });
+
+            documentTextChangedSubscriber = new WeakEventArgsSubscriber(() =>
+            {
+                invalidateVisualLines = true;                
             });
 
             _caretTimer = new DispatcherTimer();
@@ -82,13 +88,7 @@
             _caretTimer.Tick += CaretTimerTick;
 
             this.GetObservable(CaretIndexProperty)
-                .Subscribe(CaretIndexChanged);
-
-            this.GetObservable(TextDocumentProperty).Subscribe((o) =>
-            {
-                invalidateVisualLines = true;
-            });
-
+                .Subscribe(CaretIndexChanged);            
 
             DocumentLineTransformersProperty.Changed.Subscribe((o) =>
             {
@@ -100,34 +100,15 @@
                 WeakSubscriptionManager.Subscribe(DocumentLineTransformers, nameof(DocumentLineTransformers.CollectionChanged), documentLineTransformersChangedSubscriber);
             });
 
-            //this.GetObservable(DocumentLineTransformersProperty).Subscribe((o) =>
-            //{
-            //    foreach (var item in DocumentLineTransformers)
-            //    {
-            //        item.DataChanged += (sender, e) =>
-            //        {
-            //            InvalidateVisual();
-            //        };
-            //        WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), new WeakDocumentLineTransformerSubscriber(() =>
-            //        {
-            //            InvalidateVisual();
-            //        }));
-            //    }
+            TextDocumentProperty.Changed.Subscribe((o) =>
+            {
+                invalidateVisualLines = true;
 
-            //    WeakSubscriptionManager.Subscribe(DocumentLineTransformers, nameof(ObservableCollection<IDocumentLineTransformer>.CollectionChanged), new WeakCollectionChangedSubscriber((e) =>
-            //    {
-            //        if (e.NewItems != null)
-            //        {
-            //            foreach (var newItem in e.NewItems)
-            //            {
-            //                WeakSubscriptionManager.Subscribe(newItem, nameof(IDocumentLineTransformer.DataChanged), new WeakDocumentLineTransformerSubscriber(() =>
-            //                {
-            //                    InvalidateVisual();
-            //                }));
-            //            }
-            //        }
-            //    }));
-            //});
+                TextDocument.TextChanged += (sender, e) =>
+                {
+                    WeakSubscriptionManager.Subscribe(TextDocument, nameof(TextDocument.Changed), documentTextChangedSubscriber);
+                };
+            });
 
             VisualLines = new List<VisualLine>();
         }
@@ -541,8 +522,7 @@
                 _caretBlink = true;
                 _caretTimer.Stop();
                 _caretTimer.Start();
-
-                invalidateVisualLines = true;
+                
                 InvalidateVisual();
 
                 if (caretIndex >= 0)
