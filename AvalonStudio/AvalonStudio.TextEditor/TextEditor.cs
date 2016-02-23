@@ -54,58 +54,10 @@
                 horizontalScrollBarVisibility,
                 BindingPriority.Style);
 
-            //SyntaxHighlightingDataProperty.Changed.Subscribe((args) =>
-            //{
-            //    if (TextColorizer != null)
-            //    {
-            //        TextColorizer.SetTransformations();
-            //    }
-            //});
-
-            //DiagnosticsProperty.Changed.Subscribe((args) =>
-            //{
-            //    if (textMarkerService != null && args.NewValue != null)
-            //    {
-            //        var diags = args.NewValue as List<Diagnostic>;
-
-            //        textMarkerService.Clear();
-
-            //        foreach (var diag in diags)
-            //        {
-            //            var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, diag.Offset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
-
-            //            if (endoffset == -1)
-            //            {
-            //                endoffset = diag.Offset;
-            //            }
-
-            //            var length = endoffset - diag.Offset;
-
-            //            Color markerColor;
-
-            //            switch (diag.Level)
-            //            {
-            //                case DiagnosticLevel.Error:
-            //                case DiagnosticLevel.Fatal:
-            //                    markerColor = Color.FromRgb(253, 45, 45);
-            //                    break;
-
-            //                case DiagnosticLevel.Warning:
-            //                    markerColor = Color.FromRgb(255, 207, 40);
-            //                    break;
-
-            //                default:
-            //                    markerColor = Color.FromRgb(0, 42, 74);
-            //                    break;
-
-            //            }
-
-
-            //            textMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
-            //        }
-            //    }
-
-            //});
+            TextDocumentProperty.Changed.Subscribe((e) =>
+            {
+                CaretIndex = -1;
+            });
 
             AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);            
         }

@@ -146,6 +146,18 @@
             return result;
         }
 
+        public static bool IsSymbol (string text)
+        {
+            bool result = false;
+
+            if(char.IsLetter(text[0]))
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Finds the next new line character starting at offset.
         /// </summary>
