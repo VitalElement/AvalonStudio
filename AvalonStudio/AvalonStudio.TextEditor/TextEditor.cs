@@ -279,7 +279,7 @@
                 {
                     string word = TextDocument.GetText(start, end - start).Trim();
 
-                    if (!TextUtilities.ContainsNumber(word))
+                    if (TextUtilities.IsSymbol(word))
                     {
                         SelectedWord = word;
                         wordFound = true;
