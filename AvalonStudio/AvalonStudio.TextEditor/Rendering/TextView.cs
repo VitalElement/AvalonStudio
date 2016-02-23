@@ -500,7 +500,7 @@
                     caretBrush = new SolidColorBrush(Color.FromRgb(red, green, blue));
                 }
 
-                if (_caretBlink)
+                if (_caretBlink && CaretIndex != -1)
                 {
                     var charPos = VisualLineGeometryBuilder.GetTextViewPosition(this, CaretIndex);
                     var x = Math.Floor(charPos.X) + 0.5;
