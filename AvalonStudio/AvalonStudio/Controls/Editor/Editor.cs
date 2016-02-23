@@ -216,7 +216,7 @@
             codeCompletionThread = new Thread(new ThreadStart(CodeCompletionThread));
             codeCompletionThread.Start();
         }
-
+        
         public void ShutdownBackgroundWorkers()
         {
             if (codeAnalysisThread != null && codeAnalysisThread.IsAlive)
@@ -226,9 +226,9 @@
                 codeAnalysisThread = null;
             }
 
-            if (codeAnalysisThread != null && codeCompletionThread.IsAlive)
+            if (codeCompletionThread != null && codeCompletionThread.IsAlive)
             {
-                codeCompletionThread.Abort();
+                codeCompletionThread.Abort();                
                 codeCompletionThread.Join();
                 codeCompletionResults = null;
             }
@@ -288,7 +288,7 @@
             {
                 while (true)
                 {
-                    startCompletionRequestSemaphore.Wait();
+                    startCompletionRequestSemaphore.Wait();                    
 
                     if (LanguageService != null)
                     {
@@ -322,7 +322,7 @@
             {
                 while (true)
                 {
-                    textChangedSemaphore.Wait();
+                    textChangedSemaphore.Wait();                                                           
 
                     completionRequestLock.EnterWriteLock();
                     editorLock.EnterReadLock();
