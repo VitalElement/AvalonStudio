@@ -1,16 +1,15 @@
 ﻿<UserControl xmlns="https://github.com/perspex" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" Focusable="false" IsVisible="{Binding IsVisible}">
-  <ListBox Items="{Binding Model}" Background="#252526" BorderBrush="#3e3e42" SelectedItem="{Binding SelectedCompletion}" MaxHeight="150" FontFamily="Segoi UI">
+  <UserControl.Styles>
+    <Style Selector="ListBoxItem:selected /template/ Border#border">
+      <Setter Property="Background" Value="#AA3399ff" />
+    </Style>
+  </UserControl.Styles>
+  <ListBox Items="{Binding Model}" Background="#252526" BorderBrush="#3e3e42" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="150" FontFamily="Segoi UI" FontSize="14">
     <ListBox.DataTemplates>
       <DataTemplate DataType="vm:CompletionDataViewModel"  >
-        <Grid>
-          <Grid.Styles>
-            <Style Selector="ListBoxItem:selected">
-              <Setter Property="Background" Value="Red" />
-            </Style>
-          </Grid.Styles>
+        <Grid>          
           <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding Title}"  />
-            <TextBlock Text="{Binding Priority}"  />
           </StackPanel>
         </Grid>        
       </DataTemplate>

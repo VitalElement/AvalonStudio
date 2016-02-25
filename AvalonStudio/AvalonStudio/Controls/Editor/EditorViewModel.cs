@@ -160,7 +160,7 @@
 
                 if (!Intellisense.IsVisible)
                 {
-                    Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y + LineHeight, 0, 0);
+                    Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
                 }
             }
         }

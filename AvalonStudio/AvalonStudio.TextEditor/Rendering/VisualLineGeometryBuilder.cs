@@ -8,7 +8,7 @@
     {
         public static Rect GetTextViewPosition (TextView textView, int offset)
         {
-            var position = new TextViewPosition(textView.GetLocation(offset));
+            var position = new TextViewPosition(textView.GetLocation(offset));            
 
             return GetTextPosition(textView, position);
         }

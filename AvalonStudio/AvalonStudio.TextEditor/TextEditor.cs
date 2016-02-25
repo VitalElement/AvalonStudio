@@ -204,6 +204,15 @@
             set { SetValue(CaretLocationProperty, value); }
         }
 
+        public static readonly PerspexProperty<Point> CaretLocationInTextViewProperty =
+            PerspexProperty.Register<TextEditor, Point>(nameof(CaretLocationInTextView), defaultBindingMode: BindingMode.TwoWay);
+
+        public Point CaretLocationInTextView
+        {
+            get { return GetValue(CaretLocationInTextViewProperty); }
+            set { SetValue(CaretLocationInTextViewProperty, value); }
+        }
+
         public static readonly PerspexProperty<int> SelectionStartProperty =
             PerspexProperty.Register<TextEditor, int>(nameof(SelectionStart));
 
@@ -248,6 +257,7 @@
         private void InvalidateCaretPosition()
         {
             CaretLocation = VisualLineGeometryBuilder.GetTextViewPosition(TextView, CaretIndex).TopLeft;
+            CaretLocationInTextView = new Point(CaretLocation.X - TextView.TextSurfaceBounds.X - TextView.CharSize.Width, CaretLocation.Y + TextView.CharSize.Height);
         }
 
         private void InvalidateSelectedWord()
