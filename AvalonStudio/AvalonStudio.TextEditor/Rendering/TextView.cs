@@ -509,8 +509,8 @@
 
                     context.DrawLine(
                         new Pen(caretBrush, 1),
-                        new Point(x, y),
-                        new Point(x, b));
+                        new Point(charPos.TopLeft.X, charPos.TopLeft.Y),
+                        new Point(charPos.TopLeft.X, charPos.BottomLeft.Y));
                 }
             }
         }

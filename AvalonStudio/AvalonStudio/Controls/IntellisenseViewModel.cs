@@ -35,7 +35,7 @@
         public CompletionDataViewModel SelectedCompletion
         {
             get { return selectedCompletion; }
-            set { selectedCompletion = value; this.RaisePropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref selectedCompletion, value); }
         }
 
         private bool IsIntellisenseOpenKey(KeyEventArgs e)
@@ -168,6 +168,7 @@
                 {
                     case Key.Enter:
                     case Key.Tab:
+                    case Key.Space:
                         e.Handled = DoComplete(false);
                         break;
 
@@ -192,7 +193,7 @@
                             {
                                 SelectedCompletion = Model[index - 1];
                             }
-
+                            
                             e.Handled = true;
                         }
                         break;
@@ -336,12 +337,7 @@
                         }
                     });
 
-                    filteredResults = unfilteredCompletions;
-
-                    if (filteredResults.Count > 0)
-                    {
-                        IsVisible = true;
-                    }
+                    filteredResults = unfilteredCompletions;                    
                 }
                 else
                 {
@@ -354,7 +350,7 @@
                             filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower())).ToList();
                         }
                     });
-                }
+                }                
 
                 if (currentFilter != string.Empty)
                 {
@@ -370,17 +366,21 @@
                     if (newSelectedCompletions.Count() == 0)
                     {
                         SelectedCompletion = noSelectedCompletion;
+                        SelectedCompletion = null;
+                        SelectedCompletion = noSelectedCompletion;
                     }
                     else
                     {
                         var newSelectedCompletion = newSelectedCompletions.FirstOrDefault();
 
                         SelectedCompletion = newSelectedCompletion;
+                        SelectedCompletion = null;
+                        SelectedCompletion = newSelectedCompletion;
                     }
                 }
                 else
                 {
-                    SelectedCompletion = noSelectedCompletion;
+                    SelectedCompletion = noSelectedCompletion;                    
                 }
 
                 if (filteredResults?.Count > 0)
