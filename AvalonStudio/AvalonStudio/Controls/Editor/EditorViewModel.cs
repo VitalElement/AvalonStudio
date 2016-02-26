@@ -274,13 +274,29 @@
         }
 
         public void OnKeyDown(KeyEventArgs e)
-        {
+        {            
             Intellisense.OnKeyDown(e);
         }
 
         public void OnTextInput(TextInputEventArgs e)
         {
+            switch(e.Text)
+            {
+                case "}":
+                case ";":
+                    FormatAll();
+                    break;                
+            }
+
             Intellisense.OnTextInput(e);
+        }
+
+        private void FormatAll()
+        {
+            if (Model?.LanguageService != null)
+            {
+                CaretIndex = Model.LanguageService.Format(Model.ProjectFile, TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
+            }
         }
 
         public TextLocation CaretTextLocation

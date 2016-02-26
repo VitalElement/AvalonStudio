@@ -24,6 +24,8 @@
 
         bool CanHandle(ISourceFile file);
 
+        int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor);
+
         /// <summary>
         /// A description of the language supported by the service, i.e. C/C++
         /// </summary>
