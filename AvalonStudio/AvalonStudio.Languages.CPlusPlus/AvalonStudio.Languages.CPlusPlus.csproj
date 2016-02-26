@@ -111,6 +111,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlankCPlusPlusLangaguageTemplate.cs" />
+    <Compile Include="ClangFormat.cs" />
+    <Compile Include="ClangFormatSettings.cs" />
     <Compile Include="CPlusPlusLanguageService.cs" />
     <Compile Include="DefineTextLineTransformer.cs" />
     <Compile Include="IncludeTextLineTransformer.cs" />
@@ -148,6 +150,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="clang-format.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="libclang.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -156,7 +161,8 @@
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\Debug\Plugins\$(TargetFileName)
 copy $(TargetDir)\libclang.dll ..\..\..\AvalonStudio\bin\Debug\libclang.dll
-copy $(TargetDir)\libclang.so ..\..\..\AvalonStudio\bin\Debug\libclang.so</PostBuildEvent>
+copy $(TargetDir)\libclang.so ..\..\..\AvalonStudio\bin\Debug\libclang.so
+copy $(TargetDir)\clang-format.exe ..\..\..\AvalonStudio\bin\Debug\Plugins\clang-format.exe</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
