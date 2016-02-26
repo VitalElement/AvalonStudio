@@ -26,6 +26,8 @@
             TextColorizer = new TextColoringTransformer(textDocument);
             TextMarkerService = new TextMarkerService(textDocument);
 
+            BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
+
             DocumentLineTransformers.Add(TextColorizer);
             DocumentLineTransformers.Add(TextMarkerService);
             DocumentLineTransformers.Add(new DefineTextLineTransformer());

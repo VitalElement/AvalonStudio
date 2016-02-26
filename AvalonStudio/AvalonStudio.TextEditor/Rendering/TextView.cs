@@ -139,6 +139,93 @@
             return result;
         }
 
+        public int FindMatchingBracketForward(int startOffset, char open, char close)
+        {
+            int result = startOffset;
+
+            char currentChar = TextDocument.GetCharAt(startOffset++);
+
+            if (currentChar == open)
+            {
+                int numOpen = 0;
+
+                while (true)
+                {
+                    if (startOffset >= TextDocument.TextLength)
+                    {
+                        break;
+                    }
+
+                    currentChar = TextDocument.GetCharAt(startOffset++);
+
+                    if (currentChar == close && numOpen == 0)
+                    {
+                        result = startOffset - 1;
+                        break;
+                    }
+                    else if (currentChar == open)
+                    {
+                        numOpen++;
+                    }
+                    else if (currentChar == close)
+                    {
+                        numOpen--;
+                    }
+
+                    if (startOffset >= TextDocument.TextLength)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+        
+
+        public int FindMatchingBracketBackward(int startOffset, char close, char open)
+        {
+            int result = startOffset;
+
+            char currentChar = TextDocument.GetCharAt(startOffset--);
+
+            if (currentChar == close)
+            {
+                int numOpen = 0;
+
+                while (true)
+                {
+                    if (startOffset < 0)
+                    {
+                        break;
+                    }
+
+                    currentChar = TextDocument.GetCharAt(startOffset--);
+
+                    if (currentChar == open && numOpen == 0)
+                    {
+                        result = startOffset + 1;
+                        break;
+                    }
+                    else if (currentChar == close)
+                    {
+                        numOpen++;
+                    }
+                    else if (currentChar == open)
+                    {
+                        numOpen--;
+                    }
+
+                    if (startOffset >= TextDocument.TextLength)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         #region Perspex Properties
         public static readonly PerspexProperty<TextWrapping> TextWrappingProperty =
            TextBlock.TextWrappingProperty.AddOwner<TextView>();
