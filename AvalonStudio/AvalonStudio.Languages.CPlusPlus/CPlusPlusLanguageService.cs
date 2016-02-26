@@ -9,20 +9,22 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Xml.Linq;
     using TextEditor.Document;
-    using TextEditor.Rendering;    
+    using TextEditor.Rendering;
 
     class CPlusPlusDataAssociation
     {
         public CPlusPlusDataAssociation(TextDocument textDocument)
-        {            
+        {
             BackgroundRenderers = new List<IBackgroundRenderer>();
             DocumentLineTransformers = new List<IDocumentLineTransformer>();
 
             TextColorizer = new TextColoringTransformer(textDocument);
             TextMarkerService = new TextMarkerService(textDocument);
-           
+
             DocumentLineTransformers.Add(TextColorizer);
             DocumentLineTransformers.Add(TextMarkerService);
             DocumentLineTransformers.Add(new DefineTextLineTransformer());
@@ -32,7 +34,7 @@
 
         public ClangTranslationUnit TranslationUnit { get; set; }
         public TextColoringTransformer TextColorizer { get; private set; }
-        public TextMarkerService TextMarkerService { get; private set; }        
+        public TextMarkerService TextMarkerService { get; private set; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; private set; }
         public List<IDocumentLineTransformer> DocumentLineTransformers { get; private set; }
     }
@@ -44,7 +46,7 @@
 
         public CPlusPlusLanguageService()
         {
-            
+
         }
 
         public string Title
@@ -173,7 +175,7 @@
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
             }
 
-            if(result == null)
+            if (result == null)
             {
                 throw new Exception("Error generating translation unit.");
             }
@@ -181,7 +183,7 @@
             return result;
         }
 
-        private CPlusPlusDataAssociation GetAssociatedData (ISourceFile sourceFile)
+        private CPlusPlusDataAssociation GetAssociatedData(ISourceFile sourceFile)
         {
             CPlusPlusDataAssociation result = null;
 
@@ -210,7 +212,7 @@
         }
 
         public List<CodeCompletionData> CodeCompleteAt(ISourceFile file, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
-        {            
+        {
             List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
 
             foreach (var unsavedFile in unsavedFiles)
@@ -221,12 +223,12 @@
             var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
             var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
-            completionResults.Sort();            
+            completionResults.Sort();
 
             var result = new List<CodeCompletionData>();
 
             foreach (var codeCompletion in completionResults.Results)
-            {                                  
+            {
                 if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available)
                 {
                     string typedText = string.Empty;
@@ -263,7 +265,7 @@
                 clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
             }
 
-            var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);            
+            var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
             if (file != null)
             {
@@ -333,7 +335,7 @@
                         var highlightData = new SyntaxHighlightingData();
                         highlightData.Start = token.Extent.Start.FileLocation.Offset;
                         highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start;
-                        
+
 
                         switch (token.Kind)
                         {
@@ -385,22 +387,22 @@
                         Level = (DiagnosticLevel)diagnostic.Severity
                     };
 
-                    
+
                     result.Diagnostics.Add(diag);
 
                     var data = dataAssociation.TranslationUnit.GetLocationForOffset(dataAssociation.TranslationUnit.GetFile(file.Location), diag.Offset);
-                    var length = 0;                                       
+                    var length = 0;
 
                     if (diagnostic.RangeCount > 0)
                     {
                         length = Math.Abs(diagnostic.GetDiagnosticRange(0).End.FileLocation.Offset - diag.Offset);
                     }
 
-                    if(diagnostic.FixItCount > 0)
+                    if (diagnostic.FixItCount > 0)
                     {
                         // TODO implement fixits.
                     }
-                    
+
                     Color markerColor;
 
                     switch (diag.Level)
@@ -423,7 +425,7 @@
                     dataAssociation.TextMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
                 }
             }
-            
+
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
@@ -433,7 +435,7 @@
         {
             bool result = false;
 
-            switch(Path.GetExtension(file.Location))
+            switch (Path.GetExtension(file.Location))
             {
                 case ".h":
                 case ".cpp":
@@ -442,8 +444,8 @@
                     result = true;
                     break;
             }
-            
-            if(result)
+
+            if (result)
             {
                 if (!(file.Project is IStandardProject))
                 {
@@ -459,7 +461,7 @@
             CPlusPlusDataAssociation existingAssociation = null;
 
             if (dataAssociations.TryGetValue(file, out existingAssociation))
-            {                
+            {
                 throw new Exception("Source file already registered with language service.");
             }
             else
@@ -485,6 +487,71 @@
         public void UnregisterSourceFile(ISourceFile file)
         {
             dataAssociations.Remove(file);
+        }
+
+        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
+        {
+            var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor, ClangFormatSettings.Default);
+
+            return ApplyReplacements(textDocument, cursor, replacements);
+        }
+
+        public static int ApplyReplacements(TextDocument document, int cursor, XDocument replacements)
+        {
+            var elements = replacements.Elements().First().Elements();
+
+            document.BeginUpdate();
+
+            int offsetChange = 0;
+            foreach (var element in elements)
+            {
+                switch (element.Name.LocalName)
+                {
+                    case "cursor":
+                        cursor = Convert.ToInt32(element.Value);
+                        break;
+
+                    case "replacement":
+                        int offset = -1;
+                        int replacementLength = -1;
+                        var attributes = element.Attributes();
+
+                        foreach (var attribute in attributes)
+                        {
+                            switch (attribute.Name.LocalName)
+                            {
+                                case "offset":
+                                    offset = Convert.ToInt32(attribute.Value);
+                                    break;
+
+                                case "length":
+                                    replacementLength = Convert.ToInt32(attribute.Value);
+                                    break;
+                            }
+                        }
+                        
+                        if (offset >= document.TextLength)
+                        {
+                            //document.Insert(offset, element.Value);
+                        }
+                        if (offset + replacementLength > document.TextLength)
+                        {
+                            //document.Replace(offset, document.TextLength - offset, element.Value);
+                        }
+                        else
+                        {
+                            document.Replace(offsetChange + offset, replacementLength, element.Value);
+                        }
+
+                        offsetChange += element.Value.Length - replacementLength;
+                        break;
+                }
+
+            }
+
+            document.EndUpdate();
+
+            return cursor;
         }
     }
 }
