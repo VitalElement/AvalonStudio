@@ -13,7 +13,7 @@
                        LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}" Margins="{Binding Margins}">
           
           <te:TextEditor.Content>            
-            <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="{Binding Position}" />            
+            <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />            
           </te:TextEditor.Content>
         </te:TextEditor>
     </Grid>
