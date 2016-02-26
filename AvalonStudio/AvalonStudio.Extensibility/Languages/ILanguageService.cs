@@ -1,10 +1,11 @@
 ﻿namespace AvalonStudio.Languages
-{    
+{
     using Projects;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using TextEditor.Document;
+    using TextEditor.Indentation;
     using TextEditor.Rendering;
 
     [InheritedExport(typeof(ILanguageService))]
@@ -25,6 +26,8 @@
         bool CanHandle(ISourceFile file);
 
         int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor);
+
+        IIndentationStrategy IndentationStrategy { get; }
 
         /// <summary>
         /// A description of the language supported by the service, i.e. C/C++
