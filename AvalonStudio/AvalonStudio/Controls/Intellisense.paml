@@ -46,9 +46,14 @@
         </ListBox.DataTemplates>
       </ListBox>
 
-      <Grid IsVisible="True">        
-        <Grid Background="Black" VerticalAlignment="Top" HorizontalAlignment="Stretch">
-          <TextBlock Text="int main (void)" />
+      <Grid IsVisible="True">
+        <Grid Background="#424245" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+          <Border BorderBrush="#4D4D50" BorderThickness="1">
+            <StackPanel>
+              <TextBlock Text="{Binding SelectedCompletion.Hint}" Foreground="WhiteSmoke" />
+              <TextBlock Text="{Binding SelectedCompletion.Comment}" Foreground="WhiteSmoke" />
+            </StackPanel>
+          </Border>
         </Grid>
       </Grid>
     </StackPanel>
