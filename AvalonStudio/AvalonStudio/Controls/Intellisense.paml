@@ -6,13 +6,41 @@
   </UserControl.Styles>
   <ListBox Items="{Binding Model}" Background="#252526" BorderBrush="#3e3e42" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="150" FontFamily="Segoi UI" FontSize="14">
     <ListBox.DataTemplates>
-      <DataTemplate DataType="vm:CompletionDataViewModel"  >
-        <Grid>          
+      <DataTemplate DataType="vm:MethodCompletionDataViewModel">
+        <Grid>
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding Title}"  />
+            <Rectangle Height="12" Width="12" Fill="#FFAD79D5" Margin="4"/>
+            <TextBlock Text="{Binding Title}" />
           </StackPanel>
-        </Grid>        
+        </Grid>
       </DataTemplate>
-    </ListBox.DataTemplates>      
+
+      <DataTemplate DataType="vm:MacroCompletionDataViewModel">
+        <Grid>
+          <StackPanel Orientation="Horizontal">
+            <Rectangle Height="12" Width="12" Fill="#FF686868" Margin="4"/>
+            <TextBlock Text="{Binding Title}" />
+          </StackPanel>
+        </Grid>
+      </DataTemplate>
+
+      <DataTemplate DataType="vm:VariableCompletionDataViewModel">
+        <Grid>
+          <StackPanel Orientation="Horizontal">
+            <Rectangle Height="12" Width="12" Fill="#FF6EBBFF" Margin="4"/>
+            <TextBlock Text="{Binding Title}" />
+          </StackPanel>
+        </Grid>
+      </DataTemplate>
+
+      <DataTemplate DataType="vm:ClassCompletionDataViewModel"  >
+        <Grid>
+          <StackPanel Orientation="Horizontal">
+            <Rectangle Height="12" Width="12" Fill="#FFF0CA95" Margin="4"/>
+            <TextBlock Text="{Binding Title}" />
+          </StackPanel>
+        </Grid>
+      </DataTemplate>
+    </ListBox.DataTemplates>
   </ListBox>
 </UserControl>

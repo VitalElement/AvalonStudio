@@ -155,6 +155,7 @@
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
     <Compile Include="Languages\CodeCompletionResults.cs" />
+    <Compile Include="Languages\CursorKind.cs" />
     <Compile Include="Languages\Diagnostic.cs" />
     <Compile Include="Languages\ILanguageService.cs" />
     <Compile Include="Languages\SyntaxHighlightingData.cs" />

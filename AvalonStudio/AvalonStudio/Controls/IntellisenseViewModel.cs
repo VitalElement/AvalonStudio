@@ -162,13 +162,15 @@
 
         private void CompleteOnKeyDown(KeyEventArgs e)
         {
-            if (IsVisible)
+            if (IsVisible && e.Modifiers == InputModifiers.None)
             {
                 switch (e.Key)
                 {
                     case Key.Enter:
                     case Key.Tab:
                     case Key.Space:
+                    case Key.OemPeriod:
+                    case Key.OemMinus:
                         e.Handled = DoComplete(false);
                         break;
 
@@ -193,7 +195,7 @@
                             {
                                 SelectedCompletion = Model[index - 1];
                             }
-                            
+
                             e.Handled = true;
                         }
                         break;
@@ -303,9 +305,7 @@
                         intellisenseStartedAt++;
                     }
 
-                    currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);
-
-                    WorkspaceViewModel.Instance.Console.WriteLine("Set started at: " + intellisenseStartedAt + ", " + currentFilter);
+                    currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);                    
 
                     await editor.DoCompletionRequestAsync(caret.Line, caret.Column, currentFilter);
 
@@ -325,8 +325,7 @@
 
                                     if (currentCompletion == null)
                                     {
-                                        unfilteredCompletions.Add(new CompletionDataViewModel(result));
-                                        //Completions.Add(new CodeSuggestionViewModel(DeclarationViewModel.Create(new Declaration() { Type = codeCompletion.CursorKind, Spelling = typedText }), hint));
+                                        unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
                                     }
                                     else
                                     {
@@ -337,7 +336,7 @@
                         }
                     });
 
-                    filteredResults = unfilteredCompletions;                    
+                    filteredResults = unfilteredCompletions;
                 }
                 else
                 {
@@ -350,7 +349,7 @@
                             filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower())).ToList();
                         }
                     });
-                }                
+                }
 
                 if (currentFilter != string.Empty)
                 {
@@ -380,7 +379,7 @@
                 }
                 else
                 {
-                    SelectedCompletion = noSelectedCompletion;                    
+                    SelectedCompletion = noSelectedCompletion;
                 }
 
                 if (filteredResults?.Count > 0)
@@ -414,11 +413,6 @@
             }
         }
 
-        public void Add(CodeCompletionData data)
-        {
-            Model.Add(new CompletionDataViewModel(data));
-        }
-
         private Thickness position;
         public Thickness Position
         {
@@ -431,7 +425,7 @@
         {
             get { return isVisible; }
             set
-            {                
+            {
                 this.RaiseAndSetIfChanged(ref isVisible, value);
             }
         }
