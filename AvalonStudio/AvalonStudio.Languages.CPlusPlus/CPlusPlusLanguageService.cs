@@ -255,10 +255,29 @@
                             typedText = chunk.Text;
                         }
 
-                        hint += chunk.Text + " ";
+                        hint += chunk.Text;
+
+                        switch (chunk.Kind)
+                        {
+                            case CompletionChunkKind.LeftParen:
+                            case CompletionChunkKind.LeftAngle:
+                            case CompletionChunkKind.LeftBrace:
+                            case CompletionChunkKind.LeftBracket:
+                            case CompletionChunkKind.RightAngle:
+                            case CompletionChunkKind.RightBrace:
+                            case CompletionChunkKind.RightBracket:
+                            case CompletionChunkKind.RightParen:
+                            case CompletionChunkKind.Placeholder:
+                            case CompletionChunkKind.Comma:
+                                break;
+
+                            default:
+                                hint += " ";
+                                break;
+                        }
                     }
 
-                    result.Add(new CodeCompletionData { Suggestion = typedText, Priority = codeCompletion.CompletionString.Priority, Kind = (AvalonStudio.Languages.CursorKind)codeCompletion.CursorKind });
+                    result.Add(new CodeCompletionData { Suggestion = typedText, Priority = codeCompletion.CompletionString.Priority, Kind = (AvalonStudio.Languages.CursorKind)codeCompletion.CursorKind, Hint = hint, BriefComment = codeCompletion.CompletionString.BriefComment });
                 }
             }
 
@@ -542,7 +561,7 @@
                                     break;
                             }
                         }
-                        
+
                         if (offset >= document.TextLength)
                         {
                             //document.Insert(offset, element.Value);
