@@ -35,6 +35,24 @@
             return relativePath;
         }
 
+        public static bool IsPunctuationChar(this char c)
+        {
+            bool result = false;
+
+            switch (c)
+            {
+                case '"':
+                case '\'':
+                case '.':
+                case '/':
+                    result = true;
+                    break;
+
+            }
+
+            return result;
+        }
+
         public static bool IsOpenBracketChar(this char c)
         {
             bool result = false;
@@ -48,6 +66,45 @@
                 case '"':
                 case '\'':
                     result = true;
+                    break;
+            }
+
+            return result;
+        }
+
+        public static char GetOpenBracketChar(this char c)
+        {
+            if (!c.IsCloseBracketChar())
+            {
+                throw new Exception("Character is not supported as bracket.");
+            }
+
+            char result = '(';
+
+            switch (c)
+            {
+                case ')':
+                    result = '(';
+                    break;
+
+                case '>':
+                    result = '<';
+                    break;
+
+                case ']':
+                    result = '[';
+                    break;
+
+                case '}':
+                    result = '{';
+                    break;
+
+                case '\'':
+                    result = '\'';
+                    break;
+
+                case '"':
+                    result = '"';
                     break;
             }
 

@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlankCPlusPlusLangaguageTemplate.cs" />
+    <Compile Include="BracketMatchingBackgroundRenderer.cs" />
     <Compile Include="ClangFormat.cs" />
     <Compile Include="ClangFormatSettings.cs" />
     <Compile Include="CPlusPlusLanguageService.cs" />
