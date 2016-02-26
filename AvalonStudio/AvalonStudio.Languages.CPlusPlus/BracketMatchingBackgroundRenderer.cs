@@ -26,8 +26,15 @@
                 char caretChar = '\0';
                 char behindCaretChar = '\0';
 
-                caretChar = textView.TextDocument.GetCharAt(textView.CaretIndex);
-                behindCaretChar = textView.TextDocument.GetCharAt(textView.CaretIndex - 1);
+                if (textView.CaretIndex < textView.TextDocument.TextLength)
+                {
+                    caretChar = textView.TextDocument.GetCharAt(textView.CaretIndex);
+                }
+
+                if (textView.CaretIndex - 1 > 0)
+                {
+                    behindCaretChar = textView.TextDocument.GetCharAt(textView.CaretIndex - 1);
+                }
 
                 if (caretChar.IsOpenBracketChar() && !caretChar.IsPunctuationChar())
                 {
