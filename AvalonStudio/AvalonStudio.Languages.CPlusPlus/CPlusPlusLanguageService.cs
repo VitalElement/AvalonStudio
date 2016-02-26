@@ -14,6 +14,7 @@
     using System.Xml.Linq;
     using TextEditor.Document;
     using TextEditor.Rendering;
+    using TextEditor.Indentation;
 
     class CPlusPlusDataAssociation
     {
@@ -46,6 +47,7 @@
 
         public CPlusPlusLanguageService()
         {
+            indentationStrategy = new CppIndentationStrategy();
 
         }
 
@@ -67,6 +69,15 @@
             get
             {
                 return typeof(BlankCPlusPlusLangaguageTemplate);
+            }
+        }
+
+        private IIndentationStrategy indentationStrategy;
+        public IIndentationStrategy IndentationStrategy
+        {
+            get
+            {
+                return indentationStrategy;
             }
         }
 

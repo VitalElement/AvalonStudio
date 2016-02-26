@@ -252,22 +252,26 @@
             {
                 case Key.Return:
                     {
-                        if (CaretIndex < TextDocument.TextLength)
+                        //if (CaretIndex < TextDocument.TextLength)
+                        //{
+                        //    if (TextDocument.GetCharAt(CaretIndex) == '}')
+                        //    {
+                        //        TextDocument.Insert(CaretIndex, Environment.NewLine);
+                        //        CaretIndex--;
+
+                        //        var currentLine = TextDocument.GetLineByOffset(CaretIndex);                                
+
+                        //        Model.LanguageService.IndentationStrategy.IndentLine(TextDocument, currentLine);
+                        //        Model.LanguageService.IndentationStrategy.IndentLine(TextDocument, currentLine.NextLine);
+                        //    }
+
+                        var newCaret = Model?.LanguageService?.IndentationStrategy?.IndentLine(TextDocument, TextDocument.GetLineByOffset(CaretIndex), CaretIndex);
+
+                        if (newCaret.HasValue)
                         {
-                            if (TextDocument.GetCharAt(CaretIndex) == '}')
-                            {
-                                TextDocument.Insert(CaretIndex, Environment.NewLine);
-                                CaretIndex--;
-
-                                var currentLine = TextDocument.GetLineByOffset(CaretIndex);
-
-
-                                //Model.in indentationStrategy.IndentLine(TextDocument, currentLine);
-                                //indentationStrategy.IndentLine(TextDocument, currentLine.NextLine);
-                            }
-
-                            //indentationStrategy.IndentLine(TextDocument, TextDocument.GetLineByOffset(CaretIndex));
+                            CaretIndex = newCaret.Value;
                         }
+                        //}
                     }
                     break;
             }
