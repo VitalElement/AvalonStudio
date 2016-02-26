@@ -11,11 +11,11 @@
         /// Sets the indentation for the specified line.
         /// Usually this is constructed from the indentation of the previous line.
         /// </summary>
-        void IndentLine(TextDocument document, DocumentLine line);
+        int IndentLine(TextDocument document, DocumentLine line, int caretOffset);
 
         /// <summary>
         /// Reindents a set of lines.
         /// </summary>
-        void IndentLines(TextDocument document, int beginLine, int endLine);
+        int IndentLines(TextDocument document, int beginLine, int endLine, int caretOffset);
     }
 }
