@@ -36,7 +36,7 @@ namespace AvalonStudio.Controls
             {
                 editorVm.OnKeyDown(e);
             }
-        }
+        }        
 
         protected override void OnTextInput(TextInputEventArgs e)
         {

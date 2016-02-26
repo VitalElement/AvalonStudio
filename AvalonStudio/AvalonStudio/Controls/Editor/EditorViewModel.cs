@@ -1,5 +1,5 @@
 ﻿namespace AvalonStudio.Controls
-{    
+{
     using MVVM;
     using ReactiveUI;
     using System;
@@ -12,7 +12,7 @@
     using TextEditor.Rendering;
     using TextEditor;
     using Extensibility.Platform;
-
+    using Utils;
     public class EditorViewModel : ViewModel<EditorModel>
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -252,26 +252,26 @@
             {
                 case Key.Return:
                     {
-                        //if (CaretIndex < TextDocument.TextLength)
-                        //{
-                        //    if (TextDocument.GetCharAt(CaretIndex) == '}')
-                        //    {
-                        //        TextDocument.Insert(CaretIndex, Environment.NewLine);
-                        //        CaretIndex--;
-
-                        //        var currentLine = TextDocument.GetLineByOffset(CaretIndex);                                
-
-                        //        Model.LanguageService.IndentationStrategy.IndentLine(TextDocument, currentLine);
-                        //        Model.LanguageService.IndentationStrategy.IndentLine(TextDocument, currentLine.NextLine);
-                        //    }
-
-                        var newCaret = Model?.LanguageService?.IndentationStrategy?.IndentLine(TextDocument, TextDocument.GetLineByOffset(CaretIndex), CaretIndex);
-
-                        if (newCaret.HasValue)
+                        if (CaretIndex < TextDocument.TextLength)
                         {
-                            CaretIndex = newCaret.Value;
+                            if (TextDocument.GetCharAt(CaretIndex) == '}')
+                            {
+                                TextDocument.Insert(CaretIndex, Environment.NewLine);
+                                CaretIndex--;
+
+                                var currentLine = TextDocument.GetLineByOffset(CaretIndex);
+
+                                CaretIndex = Model.LanguageService.IndentationStrategy.IndentLine(TextDocument, currentLine, CaretIndex);
+                                CaretIndex = Model.LanguageService.IndentationStrategy.IndentLine(TextDocument, currentLine.NextLine, CaretIndex);
+                            }
+
+                            var newCaret = Model?.LanguageService?.IndentationStrategy?.IndentLine(TextDocument, TextDocument.GetLineByOffset(CaretIndex), CaretIndex);
+
+                            if (newCaret.HasValue)
+                            {
+                                CaretIndex = newCaret.Value;
+                            }
                         }
-                        //}
                     }
                     break;
             }
@@ -282,9 +282,37 @@
             Intellisense.OnKeyDown(e);
         }
 
+        private void OpenBracket (string text)
+        {
+            if (text[0].IsOpenBracketChar() && this.CaretIndex < TextDocument.TextLength && this.CaretIndex > 0)
+            {
+                char nextChar = TextDocument.GetCharAt(CaretIndex);
+
+                if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
+                {
+                    TextDocument.Insert(CaretIndex, text[0].GetCloseBracketChar().ToString());
+                }
+            }
+        }
+
+        private void CloseBracket(string text)
+        {
+            if (text[0].IsCloseBracketChar() && this.CaretIndex < TextDocument.TextLength && this.CaretIndex > 0)
+            {
+                if (TextDocument.GetCharAt(CaretIndex) == text[0])
+                {
+                    TextDocument.Replace(CaretIndex - 1, 1, string.Empty);
+                }
+            }
+        }
+        
+
         public void OnTextInput(TextInputEventArgs e)
         {
-            switch(e.Text)
+            OpenBracket(e.Text);
+            CloseBracket(e.Text);
+
+            switch (e.Text)
             {
                 case "}":
                 case ";":
