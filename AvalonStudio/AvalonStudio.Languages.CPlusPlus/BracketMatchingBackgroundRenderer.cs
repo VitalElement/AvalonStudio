@@ -21,6 +21,7 @@
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
+           
             if (textView.CaretIndex != -1)
             {
                 char caretChar = '\0';
@@ -30,7 +31,7 @@
                 {
                     caretChar = textView.TextDocument.GetCharAt(textView.CaretIndex);
                 }
-
+                
                 if (textView.CaretIndex - 1 > 0)
                 {
                     behindCaretChar = textView.TextDocument.GetCharAt(textView.CaretIndex - 1);
