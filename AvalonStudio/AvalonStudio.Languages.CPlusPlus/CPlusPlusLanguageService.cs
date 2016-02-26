@@ -221,21 +221,14 @@
             var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
             var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
-            completionResults.Sort();
-
-            Console.WriteLine(completionResults.Contexts);
+            completionResults.Sort();            
 
             var result = new List<CodeCompletionData>();
 
             foreach (var codeCompletion in completionResults.Results)
-            {                                
+            {                                  
                 if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available)
                 {
-                    for(int i = 0; i < codeCompletion.CompletionString.AnnotationCount; i++)
-                    {
-                        Console.WriteLine(codeCompletion.CompletionString.GetAnnotation(i));
-                    }
-
                     string typedText = string.Empty;
 
                     string hint = string.Empty;
@@ -250,7 +243,7 @@
                         hint += chunk.Text + " ";
                     }
 
-                    result.Add(new CodeCompletionData { Suggestion = typedText, Priority = codeCompletion.CompletionString.Priority });
+                    result.Add(new CodeCompletionData { Suggestion = typedText, Priority = codeCompletion.CompletionString.Priority, Kind = (AvalonStudio.Languages.CursorKind)codeCompletion.CursorKind });
                 }
             }
 

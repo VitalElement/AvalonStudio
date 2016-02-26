@@ -4,5 +4,6 @@
     {
         public uint Priority { get; set; }
         public string Suggestion { get; set; }
+        public CursorKind Kind { get; set; }
     }
 }
