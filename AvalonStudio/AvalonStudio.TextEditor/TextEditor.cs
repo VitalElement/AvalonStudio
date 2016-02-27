@@ -366,7 +366,7 @@
         }
 
         private bool DeleteSelection()
-        {
+        {                        
             var selectionStart = SelectionStart;
             var selectionEnd = SelectionEnd;
 

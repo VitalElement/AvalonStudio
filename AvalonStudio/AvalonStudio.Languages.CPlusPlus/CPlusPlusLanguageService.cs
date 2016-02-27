@@ -20,6 +20,7 @@
     using Perspex.Input;
     using Utils;
     using Extensibility;
+
     public class CPlusPlusLanguageService : ILanguageService
     {
         private static ClangIndex index = ClangService.CreateIndex();
@@ -545,9 +546,13 @@
 
                     switch (e.Text)
                     {
-                        case "}":
+                        case "}":                        
                         case ";":
                             editor.CaretIndex = Format(file, editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+                            break;
+
+                        case "{":
+                            editor.CaretIndex = Format(file, editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex) - Environment.NewLine.Length;
                             break;
                     }
                 }
