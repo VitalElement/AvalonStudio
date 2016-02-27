@@ -14,12 +14,13 @@
 	public class DefaultIndentationStrategy : IIndentationStrategy
     {
         /// <inheritdoc/>
-        public virtual void IndentLine(TextDocument document, DocumentLine line)
+        public virtual int IndentLine(TextDocument document, DocumentLine line, int caretOffset)
         {
             if (document == null)
                 throw new ArgumentNullException("document");
             if (line == null)
                 throw new ArgumentNullException("line");
+
             DocumentLine previousLine = line.PreviousLine;
             if (previousLine != null)
             {
@@ -29,13 +30,16 @@
                 indentationSegment = TextUtilities.GetWhitespaceAfter(document, line.Offset);
                 document.Replace(indentationSegment, indentation);
             }
+
+            return caretOffset;
         }
 
         /// <summary>
         /// Does nothing: indenting multiple lines is useless without a smart indentation strategy.
         /// </summary>
-        public virtual void IndentLines(TextDocument document, int beginLine, int endLine)
+        public virtual int IndentLines(TextDocument document, int beginLine, int endLine, int caretOffset)
         {
+            return caretOffset;
         }
     }
 

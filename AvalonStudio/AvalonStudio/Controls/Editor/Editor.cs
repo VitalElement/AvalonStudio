@@ -12,6 +12,8 @@
     using Projects;
     using System.Linq;
     using Extensibility;
+    using TextEditor;
+
     [Export(typeof(EditorModel))]
     public class EditorModel
     {
@@ -22,7 +24,9 @@
         private SemaphoreSlim startCompletionRequestSemaphore;
         private SemaphoreSlim endCompletionRequestSemaphore;
         private ReaderWriterLockSlim completionRequestLock;
-        private ISourceFile sourceFile;
+        private ISourceFile sourceFile;   
+        
+        public TextEditor Editor { get; set; }
 
         public EditorModel()
         {
@@ -83,7 +87,7 @@
             
             if(LanguageService != null && sourceFile != null)
             {
-                LanguageService.UnregisterSourceFile(sourceFile);
+                LanguageService.UnregisterSourceFile(Editor, sourceFile);
             }
 
             try
@@ -92,7 +96,7 @@
 
                 WorkspaceViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
-                LanguageService.RegisterSourceFile(file, TextDocument);
+                LanguageService.RegisterSourceFile(Editor, file, TextDocument);
             }
             catch 
             {
@@ -216,7 +220,7 @@
             codeCompletionThread = new Thread(new ThreadStart(CodeCompletionThread));
             codeCompletionThread.Start();
         }
-
+        
         public void ShutdownBackgroundWorkers()
         {
             if (codeAnalysisThread != null && codeAnalysisThread.IsAlive)
@@ -226,9 +230,9 @@
                 codeAnalysisThread = null;
             }
 
-            if (codeAnalysisThread != null && codeCompletionThread.IsAlive)
+            if (codeCompletionThread != null && codeCompletionThread.IsAlive)
             {
-                codeCompletionThread.Abort();
+                codeCompletionThread.Abort();                
                 codeCompletionThread.Join();
                 codeCompletionResults = null;
             }
@@ -288,7 +292,7 @@
             {
                 while (true)
                 {
-                    startCompletionRequestSemaphore.Wait();
+                    startCompletionRequestSemaphore.Wait();                    
 
                     if (LanguageService != null)
                     {
@@ -322,7 +326,7 @@
             {
                 while (true)
                 {
-                    textChangedSemaphore.Wait();
+                    textChangedSemaphore.Wait();                                                           
 
                     completionRequestLock.EnterWriteLock();
                     editorLock.EnterReadLock();

@@ -48,7 +48,7 @@
         /// </summary>
         /// <param name="document">Object used for accessing the document line-by-line</param>
         /// <param name="keepEmptyLines">Specifies whether empty lines should be kept</param>
-        public void Indent(IDocumentAccessor document, bool keepEmptyLines)
+        public int Indent(IDocumentAccessor document, bool keepEmptyLines, int caretOffset)
         {
             if (document == null)
                 throw new ArgumentNullException("document");
@@ -58,27 +58,30 @@
 
             IndentationReformatter r = new IndentationReformatter();
             r.Reformat(document, settings);
+            return caretOffset;
         }
 
         /// <inheritdoc cref="IIndentationStrategy.IndentLine"/>
-        public override void IndentLine(TextDocument document, DocumentLine line)
+        public override int IndentLine(TextDocument document, DocumentLine line, int caretOffset)
         {
             int lineNr = line.LineNumber;
             TextDocumentAccessor acc = new TextDocumentAccessor(document, lineNr, lineNr);
-            Indent(acc, false);
+            var result = Indent(acc, false, caretOffset);
 
             string t = acc.Text;
             if (t.Length == 0)
             {
                 // use AutoIndentation for new lines in comments / verbatim strings.
-                base.IndentLine(document, line);
+                return base.IndentLine(document, line, caretOffset);
             }
+
+            return result;
         }
 
         /// <inheritdoc cref="IIndentationStrategy.IndentLines"/>
-        public override void IndentLines(TextDocument document, int beginLine, int endLine)
+        public override int IndentLines(TextDocument document, int beginLine, int endLine, int caretOffset)
         {
-            Indent(new TextDocumentAccessor(document, beginLine, endLine), true);
+            return Indent(new TextDocumentAccessor(document, beginLine, endLine), true, caretOffset);
         }
     }
 

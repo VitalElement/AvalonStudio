@@ -45,7 +45,28 @@
             {
                 new Thread(new ThreadStart(new Action(async () =>
                 {
-                    await WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Clean(WorkspaceViewModel.Instance.Console, WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject);
+                    if (WorkspaceViewModel.Instance.SolutionExplorer.Model != null)
+                    {
+                        if (WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject != null)
+                        {
+                            if (WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain != null)
+                            {
+                                await WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Clean(WorkspaceViewModel.Instance.Console, WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject);
+                            }
+                            else
+                            {
+                                WorkspaceViewModel.Instance.Console.WriteLine("No toolchain selected for project.");
+                            }
+                        }
+                        else
+                        {
+                            WorkspaceViewModel.Instance.Console.WriteLine("No Startup Project defined.");
+                        }
+                    }
+                    else
+                    {
+                        WorkspaceViewModel.Instance.Console.WriteLine("No project loaded.");
+                    }
                 }))).Start();
             });
 

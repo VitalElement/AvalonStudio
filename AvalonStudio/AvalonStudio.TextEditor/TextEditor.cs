@@ -38,6 +38,11 @@
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
             textChangedDelayTimer.Stop();
 
+            mouseHoverDelayTimer = new DispatcherTimer();
+            mouseHoverDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            mouseHoverDelayTimer.Tick += MouseHoverDelayTimer_Tick;
+            mouseHoverDelayTimer.Stop();
+
             var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
                .Select(x => !x);
 
@@ -54,66 +59,24 @@
                 horizontalScrollBarVisibility,
                 BindingPriority.Style);
 
-            //SyntaxHighlightingDataProperty.Changed.Subscribe((args) =>
-            //{
-            //    if (TextColorizer != null)
-            //    {
-            //        TextColorizer.SetTransformations();
-            //    }
-            //});
-
-            //DiagnosticsProperty.Changed.Subscribe((args) =>
-            //{
-            //    if (textMarkerService != null && args.NewValue != null)
-            //    {
-            //        var diags = args.NewValue as List<Diagnostic>;
-
-            //        textMarkerService.Clear();
-
-            //        foreach (var diag in diags)
-            //        {
-            //            var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, diag.Offset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
-
-            //            if (endoffset == -1)
-            //            {
-            //                endoffset = diag.Offset;
-            //            }
-
-            //            var length = endoffset - diag.Offset;
-
-            //            Color markerColor;
-
-            //            switch (diag.Level)
-            //            {
-            //                case DiagnosticLevel.Error:
-            //                case DiagnosticLevel.Fatal:
-            //                    markerColor = Color.FromRgb(253, 45, 45);
-            //                    break;
-
-            //                case DiagnosticLevel.Warning:
-            //                    markerColor = Color.FromRgb(255, 207, 40);
-            //                    break;
-
-            //                default:
-            //                    markerColor = Color.FromRgb(0, 42, 74);
-            //                    break;
-
-            //            }
-
-
-            //            textMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
-            //        }
-            //    }
-
-            //});
+            TextDocumentProperty.Changed.Subscribe((e) =>
+            {
+                CaretIndex = -1;
+            });
 
             AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);            
+        }
+
+        private void MouseHoverDelayTimer_Tick(object sender, EventArgs e)
+        {
+            MouseCursorOffset = currentMouseOffset;
         }
         #endregion
 
         #region Private Data
         private TextView textView;
         private readonly DispatcherTimer textChangedDelayTimer;
+        private readonly DispatcherTimer mouseHoverDelayTimer;
         #endregion
 
         #region Pespex Properties
@@ -124,6 +87,24 @@
         {
             get { return GetValue(TabCharacterProperty); }
             set { SetValue(TabCharacterProperty, value); }
+        }
+
+        public static readonly PerspexProperty<int> MouseCursorOffsetProperty = 
+            PerspexProperty.Register<TextEditor, int>(nameof(MouseCursorOffset));
+
+        public int MouseCursorOffset
+        {
+            get { return GetValue(MouseCursorOffsetProperty); }
+            set { SetValue(MouseCursorOffsetProperty, value); }
+        }
+
+        public static readonly PerspexProperty<Point> MouseCursorPositionProperty =
+            PerspexProperty.Register<TextEditor, Point>(nameof(MouseCursorPosition), defaultBindingMode: BindingMode.TwoWay);
+        
+        public Point MouseCursorPosition
+        {
+            get { return GetValue(MouseCursorPositionProperty); }
+            set { SetValue(MouseCursorPositionProperty, value); }
         }
 
         public static readonly PerspexProperty<string> SelectedWordProperty =
@@ -252,6 +233,15 @@
             set { SetValue(CaretLocationProperty, value); }
         }
 
+        public static readonly PerspexProperty<Point> CaretLocationInTextViewProperty =
+            PerspexProperty.Register<TextEditor, Point>(nameof(CaretLocationInTextView), defaultBindingMode: BindingMode.TwoWay);
+
+        public Point CaretLocationInTextView
+        {
+            get { return GetValue(CaretLocationInTextViewProperty); }
+            set { SetValue(CaretLocationInTextViewProperty, value); }
+        }
+
         public static readonly PerspexProperty<int> SelectionStartProperty =
             PerspexProperty.Register<TextEditor, int>(nameof(SelectionStart));
 
@@ -296,6 +286,7 @@
         private void InvalidateCaretPosition()
         {
             CaretLocation = VisualLineGeometryBuilder.GetTextViewPosition(TextView, CaretIndex).TopLeft;
+            CaretLocationInTextView = new Point(CaretLocation.X - TextView.TextSurfaceBounds.X - TextView.CharSize.Width, CaretLocation.Y + TextView.CharSize.Height);
         }
 
         private void InvalidateSelectedWord()
@@ -316,7 +307,7 @@
 
                 var charClass = TextUtilities.GetCharacterClass(currentChar);
 
-                if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ')
+                if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ' && TextUtilities.GetCharacterClass(prevChar) != TextUtilities.CharacterClass.LineTerminator)
                 {
                     start = TextUtilities.GetNextCaretPosition(TextDocument, CaretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
                 }
@@ -325,9 +316,9 @@
 
                 if (start != -1 && end != -1)
                 {
-                    string word = TextDocument.GetText(start, end - start);
+                    string word = TextDocument.GetText(start, end - start).Trim();
 
-                    if (!TextUtilities.ContainsNumber(word))
+                    if (TextUtilities.IsSymbol(word))
                     {
                         SelectedWord = word;
                         wordFound = true;
@@ -366,6 +357,7 @@
                 TextChangedCommand.Execute(null);
             }
         }
+        
 
         private void SelectAll()
         {
@@ -374,7 +366,7 @@
         }
 
         private bool DeleteSelection()
-        {
+        {                        
             var selectionStart = SelectionStart;
             var selectionEnd = SelectionEnd;
 
@@ -639,12 +631,18 @@
             }
         }
 
+        private int currentMouseOffset = -1;
         protected override void OnPointerMoved(PointerEventArgs e)
         {
+            var point = e.GetPosition(textView.TextSurface);
+            currentMouseOffset = textView.GetOffsetFromPoint(point);
+
+            mouseHoverDelayTimer.Stop();
+            mouseHoverDelayTimer.Start();            
+
             if (e.Device.Captured == textView)
-            {
-                var point = e.GetPosition(textView.TextSurface);
-                CaretIndex = textView.GetOffsetFromPoint(point);
+            {                                
+                CaretIndex = currentMouseOffset;
 
                 if (CaretIndex >= 0)
                 {
