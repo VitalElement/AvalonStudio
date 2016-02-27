@@ -40,33 +40,36 @@
 
             foreach (var line in textView.VisualLines)
             {
-                if (line.Offset > segmentEnd)
+                if (!line.DocumentLine.IsDeleted)
                 {
-                    break;
+                    if (line.Offset > segmentEnd)
+                    {
+                        break;
+                    }
+
+                    if (line.EndOffset < segmentStart)
+                    {
+                        continue;
+                    }
+
+                    // find start and begining in current line.
+                    var lineStartOffset = line.Offset;
+
+                    if (segment.Offset > line.Offset)
+                    {
+                        lineStartOffset = line.Offset + (segment.Offset - line.Offset);
+                    }
+
+                    var lineEndOffset = line.EndOffset;
+
+                    if (segment.EndOffset < line.EndOffset)
+                    {
+                        lineEndOffset = line.EndOffset - (line.EndOffset - segment.EndOffset);
+                    }
+
+                    // generate rect for section in this line.
+                    yield return new Rect(GetTextViewPosition(textView, lineStartOffset).TopLeft, GetTextViewPosition(textView, lineEndOffset).BottomLeft);
                 }
-
-                if (line.EndOffset < segmentStart)
-                {
-                    continue;
-                }
-
-                // find start and begining in current line.
-                var lineStartOffset = line.Offset;
-
-                if (segment.Offset > line.Offset)
-                {
-                    lineStartOffset = line.Offset + (segment.Offset - line.Offset);
-                }
-
-                var lineEndOffset = line.EndOffset;
-
-                if(segment.EndOffset < line.EndOffset)
-                {
-                    lineEndOffset = line.EndOffset - (line.EndOffset - segment.EndOffset);
-                }
-
-                // generate rect for section in this line.
-                yield return new Rect(GetTextViewPosition(textView, lineStartOffset).TopLeft, GetTextViewPosition(textView, lineEndOffset).BottomLeft);
             }
 
         }

@@ -532,7 +532,7 @@
         private int lastLineCount;
         private void GenerateVisualLines()
         {
-            if (invalidateVisualLines) // This is a significant performance boost, we only need to re-generate when offset changes
+            //if (invalidateVisualLines) // This is a significant performance boost, we only need to re-generate when offset changes
             {
                 VisualLines.Clear();
 
@@ -557,17 +557,20 @@
 
         private void RenderText(DrawingContext context, VisualLine line)
         {
-            using (var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
+            if (!line.DocumentLine.IsDeleted)
             {
-                line.RenderedText = formattedText;
-                var boundary = VisualLineGeometryBuilder.GetRectsForSegment(this, line).First();
-
-                foreach (var lineTransformer in DocumentLineTransformers)
+                using (var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
                 {
-                    lineTransformer.TransformLine(this, context, boundary, line);
-                }
+                    line.RenderedText = formattedText;
+                    var boundary = VisualLineGeometryBuilder.GetRectsForSegment(this, line).First();
 
-                context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), formattedText);
+                    foreach (var lineTransformer in DocumentLineTransformers)
+                    {
+                        lineTransformer.TransformLine(this, context, boundary, line);
+                    }
+
+                    context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), formattedText);
+                }
             }
         }
 
