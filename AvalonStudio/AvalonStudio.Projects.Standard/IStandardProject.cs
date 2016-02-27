@@ -54,6 +54,9 @@
         IList<string> GetReferencedIncludes();
         IList<string> GetGlobalIncludes();
 
+        IList<string> GetReferencedDefines();
+        IList<string> GetGlobalDefines();        
+
         IToolChain ToolChain { get; }
 
         IList<ISourceFile> SourceFiles { get; }

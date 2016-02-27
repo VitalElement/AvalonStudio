@@ -5,7 +5,7 @@
     using ReactiveUI;
     using System.Collections.ObjectModel;
 
-    public class ReferenceFolderViewModel : ViewModel
+    public class ReferenceFolderViewModel : ProjectItemViewModel
     {
         public ReferenceFolderViewModel (IProject project)
         {

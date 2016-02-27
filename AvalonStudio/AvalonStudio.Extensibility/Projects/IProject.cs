@@ -42,6 +42,9 @@
 
         //IDictionary<string, string> Settings { get; }
 
+        void RemoveFile(ISourceFile file);
+        void RemoveFolder(IProjectFolder folder);
+
         dynamic ToolchainSettings { get; }
 
         dynamic DebugSettings { get; }
