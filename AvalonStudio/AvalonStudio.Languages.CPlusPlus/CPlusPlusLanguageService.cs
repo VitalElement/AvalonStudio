@@ -18,32 +18,7 @@
     using TextEditor.Indentation;
     using Perspex.Utilities;
     using Perspex.Input;
-    using Utils;
-    class CPlusPlusDataAssociation
-    {
-        public CPlusPlusDataAssociation(TextDocument textDocument)
-        {
-            BackgroundRenderers = new List<IBackgroundRenderer>();
-            DocumentLineTransformers = new List<IDocumentLineTransformer>();
-
-            TextColorizer = new TextColoringTransformer(textDocument);
-            TextMarkerService = new TextMarkerService(textDocument);
-
-            BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
-
-            DocumentLineTransformers.Add(TextColorizer);
-            DocumentLineTransformers.Add(TextMarkerService);
-            DocumentLineTransformers.Add(new DefineTextLineTransformer());
-            DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
-            DocumentLineTransformers.Add(new IncludeTextLineTransformer());
-        }
-
-        public ClangTranslationUnit TranslationUnit { get; set; }
-        public TextColoringTransformer TextColorizer { get; private set; }
-        public TextMarkerService TextMarkerService { get; private set; }
-        public List<IBackgroundRenderer> BackgroundRenderers { get; private set; }
-        public List<IDocumentLineTransformer> DocumentLineTransformers { get; private set; }
-    }
+    using Utils;    
 
     public class CPlusPlusLanguageService : ILanguageService
     {
@@ -523,43 +498,49 @@
 
             keyUpWeakListener = WeakSubscriber<KeyEventArgs>.Subscribe(editor, nameof(editor.KeyUp), (e) =>
             {
-                switch (e.Key)
+                if (editor.TextDocument == textDocument)
                 {
-                    case Key.Return:
-                        {
-                            if (editor.CaretIndex < textDocument.TextLength)
+                    switch (e.Key)
+                    {
+                        case Key.Return:
                             {
-                                if (textDocument.GetCharAt(editor.CaretIndex) == '}')
+                                if (editor.CaretIndex < textDocument.TextLength)
                                 {
-                                    textDocument.Insert(editor.CaretIndex, Environment.NewLine);
-                                    editor.CaretIndex--;
+                                    if (textDocument.GetCharAt(editor.CaretIndex) == '}')
+                                    {
+                                        textDocument.Insert(editor.CaretIndex, Environment.NewLine);
+                                        editor.CaretIndex--;
 
-                                    var currentLine = textDocument.GetLineByOffset(editor.CaretIndex);
+                                        var currentLine = textDocument.GetLineByOffset(editor.CaretIndex);
 
-                                    editor.CaretIndex = IndentationStrategy.IndentLine(textDocument, currentLine, editor.CaretIndex);
-                                    editor.CaretIndex = IndentationStrategy.IndentLine(textDocument, currentLine.NextLine, editor.CaretIndex);
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(textDocument, currentLine, editor.CaretIndex);
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(textDocument, currentLine.NextLine, editor.CaretIndex);
+                                    }
+
+                                    var newCaret = IndentationStrategy.IndentLine(textDocument, textDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
+
+                                    editor.CaretIndex = newCaret;
                                 }
-
-                                var newCaret = IndentationStrategy.IndentLine(textDocument, textDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
-
-                                editor.CaretIndex = newCaret;
                             }
-                        }
-                        break;
+                            break;
+                    }
                 }
             });
 
             textInputWeakListener = WeakSubscriber<TextInputEventArgs>.Subscribe(editor, nameof(editor.TextInput), (e) =>
             {
-                OpenBracket(editor, textDocument, e.Text);
-                CloseBracket(editor, textDocument, e.Text);
-
-                switch (e.Text)
+                if (editor.TextDocument == textDocument)
                 {
-                    case "}":
-                    case ";":
-                        editor.CaretIndex = Format(file, textDocument, 0, (uint)textDocument.TextLength, editor.CaretIndex);
-                        break;
+                    OpenBracket(editor, textDocument, e.Text);
+                    CloseBracket(editor, textDocument, e.Text);
+
+                    switch (e.Text)
+                    {
+                        case "}":
+                        case ";":
+                            editor.CaretIndex = Format(file, textDocument, 0, (uint)textDocument.TextLength, editor.CaretIndex);
+                            break;
+                    }
                 }
             });
 
@@ -747,5 +728,31 @@
         {
             throw new NotImplementedException();
         }
+    }
+
+    class CPlusPlusDataAssociation
+    {
+        public CPlusPlusDataAssociation(TextDocument textDocument)
+        {
+            BackgroundRenderers = new List<IBackgroundRenderer>();
+            DocumentLineTransformers = new List<IDocumentLineTransformer>();
+
+            TextColorizer = new TextColoringTransformer(textDocument);
+            TextMarkerService = new TextMarkerService(textDocument);
+
+            BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
+
+            DocumentLineTransformers.Add(TextColorizer);
+            DocumentLineTransformers.Add(TextMarkerService);
+            DocumentLineTransformers.Add(new DefineTextLineTransformer());
+            DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
+            DocumentLineTransformers.Add(new IncludeTextLineTransformer());
+        }
+
+        public ClangTranslationUnit TranslationUnit { get; set; }
+        public TextColoringTransformer TextColorizer { get; private set; }
+        public TextMarkerService TextMarkerService { get; private set; }
+        public List<IBackgroundRenderer> BackgroundRenderers { get; private set; }
+        public List<IDocumentLineTransformer> DocumentLineTransformers { get; private set; }
     }
 }
