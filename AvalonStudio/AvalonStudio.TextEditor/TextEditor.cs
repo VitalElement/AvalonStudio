@@ -38,6 +38,11 @@
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
             textChangedDelayTimer.Stop();
 
+            mouseHoverDelayTimer = new DispatcherTimer();
+            mouseHoverDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            mouseHoverDelayTimer.Tick += MouseHoverDelayTimer_Tick;
+            mouseHoverDelayTimer.Stop();
+
             var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
                .Select(x => !x);
 
@@ -61,11 +66,17 @@
 
             AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);            
         }
+
+        private void MouseHoverDelayTimer_Tick(object sender, EventArgs e)
+        {
+            MouseCursorOffset = currentMouseOffset;
+        }
         #endregion
 
         #region Private Data
         private TextView textView;
         private readonly DispatcherTimer textChangedDelayTimer;
+        private readonly DispatcherTimer mouseHoverDelayTimer;
         #endregion
 
         #region Pespex Properties
@@ -76,6 +87,24 @@
         {
             get { return GetValue(TabCharacterProperty); }
             set { SetValue(TabCharacterProperty, value); }
+        }
+
+        public static readonly PerspexProperty<int> MouseCursorOffsetProperty = 
+            PerspexProperty.Register<TextEditor, int>(nameof(MouseCursorOffset));
+
+        public int MouseCursorOffset
+        {
+            get { return GetValue(MouseCursorOffsetProperty); }
+            set { SetValue(MouseCursorOffsetProperty, value); }
+        }
+
+        public static readonly PerspexProperty<Point> MouseCursorPositionProperty =
+            PerspexProperty.Register<TextEditor, Point>(nameof(MouseCursorPosition), defaultBindingMode: BindingMode.TwoWay);
+        
+        public Point MouseCursorPosition
+        {
+            get { return GetValue(MouseCursorPositionProperty); }
+            set { SetValue(MouseCursorPositionProperty, value); }
         }
 
         public static readonly PerspexProperty<string> SelectedWordProperty =
@@ -328,6 +357,7 @@
                 TextChangedCommand.Execute(null);
             }
         }
+        
 
         private void SelectAll()
         {
@@ -601,12 +631,18 @@
             }
         }
 
+        private int currentMouseOffset = -1;
         protected override void OnPointerMoved(PointerEventArgs e)
         {
+            var point = e.GetPosition(textView.TextSurface);
+            currentMouseOffset = textView.GetOffsetFromPoint(point);
+
+            mouseHoverDelayTimer.Stop();
+            mouseHoverDelayTimer.Start();            
+
             if (e.Device.Captured == textView)
-            {
-                var point = e.GetPosition(textView.TextSurface);
-                CaretIndex = textView.GetOffsetFromPoint(point);
+            {                                
+                CaretIndex = currentMouseOffset;
 
                 if (CaretIndex >= 0)
                 {

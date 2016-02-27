@@ -158,6 +158,8 @@
     <Compile Include="Languages\CursorKind.cs" />
     <Compile Include="Languages\Diagnostic.cs" />
     <Compile Include="Languages\ILanguageService.cs" />
+    <Compile Include="Languages\LinkageKind.cs" />
+    <Compile Include="Languages\Symbol.cs" />
     <Compile Include="Languages\SyntaxHighlightingData.cs" />
     <Compile Include="Languages\UnsavedFile.cs" />
     <Compile Include="Menus\IMenuItem.cs" />

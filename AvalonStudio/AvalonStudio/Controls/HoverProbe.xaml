@@ -1,0 +1,29 @@
+﻿<UserControl xmlns="https://github.com/perspex">
+  <Grid Background="#424245">
+    <Grid Margin="5">
+      <Grid>
+        <StackPanel Margin="4">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding ScopeDescription}" />
+            <TextBlock Text="{Binding BuiltInTypeDescription}" Foreground="#FF569CD6"/>
+            <TextBlock Text="{Binding EnumTypeDescription}" Foreground="#FFCEE4AE"/>
+            <TextBlock Text="{Binding TypeDescription}" Foreground="#FF4ec9b0"/>
+            <TextBlock Text="{Binding ClassDescription}" Foreground="#FF4ec9b0"/>
+            <TextBlock Text="{Binding Spelling}"/>
+            <TextBlock Text="{Binding EnumValue}" Foreground="#FFCEE4AE"/>
+            <TextBlock Margin="5 0 2 0" Text="(" IsVisible="{Binding ArgumentsVisibility}"/>
+            <!--            <ListBox Items="{Binding Arguments}" Padding="0" BorderThickness="0" Margin="0 -2 0 0">
+              <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Margin="0" Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ListView.ItemsPanel>
+            </ListBox>-->
+            <TextBlock Margin="2 0 0 0" Text=")" IsVisible="{Binding ArgumentsVisibility}"/>
+          </StackPanel>
+          <TextBlock Text="{Binding Description}" IsVisible="{Binding DescriptionVisibility}" MaxWidth="500" TextWrapping="Wrap"/>
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </Grid>
+</UserControl>
