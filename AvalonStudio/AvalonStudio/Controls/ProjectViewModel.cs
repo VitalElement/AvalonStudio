@@ -13,14 +13,11 @@
         public ProjectViewModel(IProject model)
             : base(model)
         {
-            items = new ObservableCollection<ViewModel>();
+            Items = new ObservableCollection<ProjectItemViewModel>();
 
-            items.Add(new ReferenceFolderViewModel(model));
+            Items.BindCollections(model.Items, (p) => { return ProjectItemViewModel.Create(p); }, (pivm, p) => pivm.Model == p);
 
-            foreach (var item in model.Items)
-            {
-                items.Add(ProjectItemViewModel.Create(item));
-            }
+            //Items.Insert(0, new ReferenceFolderViewModel(model));
 
             ConfigureCommand = ReactiveCommand.Create();
 
@@ -107,12 +104,7 @@
             }
         }
 
-        private ObservableCollection<ViewModel> items;
-        public ObservableCollection<ViewModel> Items
-        {
-            get { return items; }
-            set { this.RaiseAndSetIfChanged(ref items, value); }
-        }
+        public ObservableCollection<ProjectItemViewModel> Items { get; private set; }        
 
         public ReactiveCommand<object> BuildCommand { get; protected set; }
         public ReactiveCommand<object> CleanCommand { get; protected set; }

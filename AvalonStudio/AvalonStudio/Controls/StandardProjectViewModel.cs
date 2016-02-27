@@ -15,6 +15,8 @@
         }
 
         public ReactiveCommand<object> SetDefaultProjectCommand { get; private set; }
+
+        public ReactiveCommand<object> Remove { get; private set; }
         
     }
 }

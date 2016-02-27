@@ -1,18 +1,25 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
+    using System;
     using Projects;
+    using ReactiveUI;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using MVVM;
+
     class ProjectFolderViewModel : ProjectItemViewModel<IProjectFolder>
     {
         public ProjectFolderViewModel(IProjectFolder model)
             : base(model)
         {
-            Items = new List<ProjectItemViewModel>();
-
-            foreach(var item in model.Items)
+            Items = new ObservableCollection<ProjectItemViewModel>();
+            Items.BindCollections(model.Items, (p) => { return ProjectItemViewModel.Create(p); }, (pivm, p) => pivm.Model == p);
+            
+            RemoveCommand = ReactiveCommand.Create();
+            RemoveCommand.Subscribe(_ =>
             {
-                Items.Add(ProjectItemViewModel.Create(item));
-            }
+                model.Project.RemoveFolder(model);
+            });
         }
 
         public static ProjectFolderViewModel Create(IProjectFolder model)
@@ -20,6 +27,8 @@
             return new ProjectFolderViewModel(model);
         }
 
-        public List<ProjectItemViewModel> Items { get; private set; }
+        public ObservableCollection<ProjectItemViewModel> Items { get; private set; }
+
+        public ReactiveCommand<object> RemoveCommand { get; }
     }
 }

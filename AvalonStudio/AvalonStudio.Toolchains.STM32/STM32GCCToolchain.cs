@@ -98,7 +98,7 @@
                     fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
                 }
 
-                startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", GetCompilerArguments(superProject, project, file), fileArguments, file.Location, outputFile);
+                startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile);
 
                 // Hide console window
                 startInfo.UseShellExecute = false;
@@ -120,7 +120,7 @@
                         if (e.Data != null)
                         {
                             console.WriteLine();
-                            console.WriteLine(e.Data);
+                            console.WriteLine(file.Name + " " + e.Data);
                         }
                     };
 
@@ -436,9 +436,23 @@
                 result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include.Value));
             }
 
-            foreach (var define in settings.Defines)
+            var referencedDefines = project.GetReferencedDefines();
+            foreach (var define in referencedDefines)
             {
                 result += string.Format("-D{0} ", define);
+            }
+
+            // global includes
+            var globalDefines = superProject.GetGlobalDefines();
+
+            foreach (var define in globalDefines)
+            {
+                result += string.Format("-D{0} ", define);
+            }
+
+            foreach (var define in project.Defines)
+            {
+                result += string.Format("-D{0} ", define.Value);
             }
 
             foreach (var arg in superProject.ToolChainArguments)
