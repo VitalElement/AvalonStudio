@@ -5,49 +5,21 @@
     using ReactiveUI;
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
     public class SymbolViewModel : ViewModel<Symbol>
     {
-        private async void SetCursorDescriptionToFunction()
+        private void SetCursorDescriptionToFunction()
         {
             string arguments = string.Empty;
 
-            //for (int i = 0; i < cursor.ArgumentCount; i++)
-            //{
-            //    var argument = cursor.GetArgument(i);
-
-            //    ArgumentViewModel newArg;
-
-            //    if (IsBuiltInType(argument.CursorType))
-            //    {
-            //        newArg = new ArgumentViewModel() { BuiltInTypeDescription = argument.CursorType.Spelling.Replace(" &", "&").Replace(" *", "*") + " ", Spelling = argument.Spelling };
-            //    }
-            //    else
-            //    {
-            //        newArg = new ArgumentViewModel() { TypeDescription = argument.CursorType.Spelling.Replace(" &", "&").Replace(" *", "*") + " ", Spelling = argument.Spelling };
-            //    }
-
-            //    if (i < cursor.ArgumentCount - 1)
-            //    {
-            //        newArg.Spelling += ", ";
-            //    }
-
-            //    Workspace.This.DispatchUi(() =>
-            //    {
-            //        CursorDescription.AddArgument(newArg);
-            //    });
-            //}
-
-            //if (Arguments.Count == 0)
-            //{
-            //    Workspace.This.DispatchUi(() =>
-            //    {
-            //        AddArgument(new ArgumentViewModel() { BuiltInTypeDescription = "void" });
-            //    });
-            //}
+            foreach (var argument in Model.Arguments)
+            {
+                Arguments.Add(new ParameterSymbolViewModel(argument));
+            }
 
             if (Model.ResultType != null && Model.Name != null)
             {
@@ -58,7 +30,7 @@
                         break;
 
                     default:
-                        if(Model.IsBuiltInType)
+                        if (Model.IsBuiltInType)
                         {
                             BuiltInTypeDescription = Model.ResultType + " ";
                         }
@@ -74,8 +46,12 @@
             }
         }
 
+
         public SymbolViewModel(Symbol model) : base(model)
         {
+            Arguments = new ObservableCollection<ParameterSymbolViewModel>();
+
+
             switch (model.Kind)
             {
                 case CursorKind.FunctionDeclaration:
@@ -180,7 +156,7 @@
 
 
                 default:
-                   // dontShow = true;
+                    // dontShow = true;
                     //DebugData = cursor.Kind.ToString().Replace(" &", "&").Replace(" *", "*");
                     break;
             }
@@ -235,12 +211,12 @@
             set { this.RaiseAndSetIfChanged(ref spelling, value); }
         }
 
-        //private ObservableCollection<ArgumentViewModel> arguments;
-        //public ObservableCollection<ArgumentViewModel> Arguments
-        //{
-        //    get { return arguments; }
-        //    set { arguments = value; OnPropertyChanged(); }
-        //}
+        private ObservableCollection<ParameterSymbolViewModel> arguments;
+        public ObservableCollection<ParameterSymbolViewModel> Arguments
+        {
+            get { return arguments; }
+            set { this.RaiseAndSetIfChanged(ref arguments, value); }
+        }
 
         private string description;
         public string Description
@@ -260,16 +236,16 @@
         {
             get
             {
-                return (!string.IsNullOrEmpty(description));                
+                return (!string.IsNullOrEmpty(description));
             }
         }
 
-        //public bool ArgumentsVisibility
-        //{
-        //    get
-        //    {
-        //        return Arguments.Count != 0);
-        //    }
-        //}
+        public bool ArgumentsVisibility
+        {
+            get
+            {
+                return Arguments.Count != 0;
+            }
+        }
     }
 }
