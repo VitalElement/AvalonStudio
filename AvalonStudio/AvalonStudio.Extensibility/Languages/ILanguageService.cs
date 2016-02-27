@@ -7,6 +7,7 @@
     using TextEditor.Document;
     using TextEditor.Indentation;
     using TextEditor.Rendering;
+    using TextEditor;
 
     [InheritedExport(typeof(ILanguageService))]
     public interface ILanguageService
@@ -19,7 +20,7 @@
 
         IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-        void RegisterSourceFile(ISourceFile file, TextDocument textDocument);
+        void RegisterSourceFile(ISourceFile file, TextEditor editor, TextDocument textDocument);
 
         void UnregisterSourceFile(ISourceFile file);
 

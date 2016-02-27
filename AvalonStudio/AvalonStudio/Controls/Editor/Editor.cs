@@ -12,6 +12,8 @@
     using Projects;
     using System.Linq;
     using Extensibility;
+    using TextEditor;
+
     [Export(typeof(EditorModel))]
     public class EditorModel
     {
@@ -22,7 +24,9 @@
         private SemaphoreSlim startCompletionRequestSemaphore;
         private SemaphoreSlim endCompletionRequestSemaphore;
         private ReaderWriterLockSlim completionRequestLock;
-        private ISourceFile sourceFile;
+        private ISourceFile sourceFile;   
+        
+        public TextEditor Editor { get; set; }
 
         public EditorModel()
         {
@@ -92,7 +96,7 @@
 
                 WorkspaceViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
-                LanguageService.RegisterSourceFile(file, TextDocument);
+                LanguageService.RegisterSourceFile(file, Editor, TextDocument);
             }
             catch 
             {

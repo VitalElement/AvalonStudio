@@ -12,10 +12,13 @@
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Xml.Linq;
+    using TextEditor;
     using TextEditor.Document;
     using TextEditor.Rendering;
     using TextEditor.Indentation;
-
+    using Perspex.Utilities;
+    using Perspex.Input;
+    using Utils;
     class CPlusPlusDataAssociation
     {
         public CPlusPlusDataAssociation(TextDocument textDocument)
@@ -46,6 +49,8 @@
     {
         private static ClangIndex index = ClangService.CreateIndex();
         private static ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations = new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
+        private WeakSubscriber<KeyEventArgs> keyUpWeakListener;
+        private WeakSubscriber<TextInputEventArgs> textInputWeakListener;
 
         public CPlusPlusLanguageService()
         {
@@ -488,9 +493,75 @@
             return result;
         }
 
-        public void RegisterSourceFile(ISourceFile file, TextDocument textDocument)
+        private void OpenBracket(TextEditor editor, TextDocument document, string text)
+        {
+            if (text[0].IsOpenBracketChar() && editor.CaretIndex < document.TextLength && editor.CaretIndex > 0)
+            {
+                char nextChar = document.GetCharAt(editor.CaretIndex);
+
+                if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
+                {
+                    document.Insert(editor.CaretIndex, text[0].GetCloseBracketChar().ToString());
+                }
+            }
+        }
+
+        private void CloseBracket(TextEditor editor, TextDocument document, string text)
+        {
+            if (text[0].IsCloseBracketChar() && editor.CaretIndex < document.TextLength && editor.CaretIndex > 0)
+            {
+                if (document.GetCharAt(editor.CaretIndex) == text[0])
+                {
+                    document.Replace(editor.CaretIndex - 1, 1, string.Empty);
+                }
+            }
+        }
+
+        public void RegisterSourceFile(ISourceFile file, TextEditor editor, TextDocument textDocument)
         {
             CPlusPlusDataAssociation existingAssociation = null;
+
+            keyUpWeakListener = WeakSubscriber<KeyEventArgs>.Subscribe(editor, nameof(editor.KeyUp), (e) =>
+            {
+                switch (e.Key)
+                {
+                    case Key.Return:
+                        {
+                            if (editor.CaretIndex < textDocument.TextLength)
+                            {
+                                if (textDocument.GetCharAt(editor.CaretIndex) == '}')
+                                {
+                                    textDocument.Insert(editor.CaretIndex, Environment.NewLine);
+                                    editor.CaretIndex--;
+
+                                    var currentLine = textDocument.GetLineByOffset(editor.CaretIndex);
+
+                                    editor.CaretIndex = IndentationStrategy.IndentLine(textDocument, currentLine, editor.CaretIndex);
+                                    editor.CaretIndex = IndentationStrategy.IndentLine(textDocument, currentLine.NextLine, editor.CaretIndex);
+                                }
+
+                                var newCaret = IndentationStrategy.IndentLine(textDocument, textDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
+
+                                editor.CaretIndex = newCaret;
+                            }
+                        }
+                        break;
+                }
+            });
+
+            textInputWeakListener = WeakSubscriber<TextInputEventArgs>.Subscribe(editor, nameof(editor.TextInput), (e) =>
+            {
+                OpenBracket(editor, textDocument, e.Text);
+                CloseBracket(editor, textDocument, e.Text);
+
+                switch (e.Text)
+                {
+                    case "}":
+                    case ";":
+                        editor.CaretIndex = Format(file, textDocument, 0, (uint)textDocument.TextLength, editor.CaretIndex);
+                        break;
+                }
+            });
 
             if (dataAssociations.TryGetValue(file, out existingAssociation))
             {
@@ -638,7 +709,7 @@
                         arg.Comment = argument.BriefCommentText;
                         arg.TypeDescription = argument.CursorType.Spelling;
                         result.Arguments.Add(arg);
-                    }                    
+                    }
 
                     //if (cursor.ParsedComment.FullCommentAsXml != null)
                     //{
