@@ -24,6 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -178,6 +179,7 @@
     <Compile Include="Controls\ConsoleViewModel.cs">
       <DependentUpon>Console.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Editor\SymbolViewModel.cs" />
     <Compile Include="Controls\ErrorViewModel.cs" />
     <Compile Include="Controls\Editor.paml.cs">
       <DependentUpon>Editor.paml</DependentUpon>
@@ -212,6 +214,7 @@
     <Compile Include="Controls\PackageManagerDialog.paml.cs">
       <DependentUpon>PackageManagerDialog.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ParameterSymbolViewModel.cs" />
     <Compile Include="Controls\ProjectConfigurationDialog.paml.cs">
       <DependentUpon>ProjectConfigurationDialog.paml</DependentUpon>
     </Compile>
@@ -263,6 +266,9 @@
     </Compile>
     <Compile Include="Controls\MetroWindowTheme.paml.cs">
       <DependentUpon>MetroWindowTheme.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\HoverProbe.xaml.cs">
+      <DependentUpon>HoverProbe.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
@@ -5378,6 +5384,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Plugins\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\HoverProbe.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

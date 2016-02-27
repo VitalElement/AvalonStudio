@@ -155,8 +155,12 @@
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
     <Compile Include="Languages\CodeCompletionResults.cs" />
+    <Compile Include="Languages\CursorKind.cs" />
     <Compile Include="Languages\Diagnostic.cs" />
     <Compile Include="Languages\ILanguageService.cs" />
+    <Compile Include="Languages\LinkageKind.cs" />
+    <Compile Include="Languages\ParamterSymbol.cs" />
+    <Compile Include="Languages\Symbol.cs" />
     <Compile Include="Languages\SyntaxHighlightingData.cs" />
     <Compile Include="Languages\UnsavedFile.cs" />
     <Compile Include="Menus\IMenuItem.cs" />
@@ -180,6 +184,7 @@
     <Compile Include="Utils\IConsole.cs" />
     <Compile Include="Utils\IProjectExtensions.cs" />
     <Compile Include="Utils\SerializedObject.cs" />
+    <Compile Include="Utils\WeakSubscriber.cs" />
     <Compile Include="Workspace.cs" />
   </ItemGroup>
   <ItemGroup>

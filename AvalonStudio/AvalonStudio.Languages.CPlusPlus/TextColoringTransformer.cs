@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus.Rendering
 {
+    using System;
     using Languages;
     using Perspex;
     using Perspex.Media;
@@ -26,6 +27,8 @@
 
         private TextDocument document;
 
+        public event EventHandler<EventArgs> DataChanged;
+
         public void SetTransformations(SyntaxHighlightDataList highlightData)
         {
             Dispatcher.UIThread.InvokeAsync(() =>
@@ -38,6 +41,11 @@
                 }
 
                 TextTransformations = transformations;
+
+                if(this.DataChanged != null)
+                {
+                    this.DataChanged(this, new EventArgs());
+                }
             });
         }
 

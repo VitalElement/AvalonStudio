@@ -8,33 +8,106 @@
     using Perspex.Data;
     using Perspex.Media;
     using Perspex.Threading;
+    using Perspex.Utilities;
     using Perspex.VisualTree;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
     using System.Linq;
     using System.Reactive.Linq;
 
     public class TextView : ContentControl, IScrollable
     {
+        class WeakEventArgsSubscriber : IWeakSubscriber<EventArgs>
+        {
+            private readonly Action _onEvent;
+
+            public WeakEventArgsSubscriber(Action onEvent)
+            {
+                _onEvent = onEvent;
+            }
+
+            public void OnEvent(object sender, EventArgs ev)
+            {
+                _onEvent?.Invoke();
+            }
+        }
+
+        class WeakCollectionChangedEventArgsSubscriber : IWeakSubscriber<NotifyCollectionChangedEventArgs>
+        {
+            private readonly Action<NotifyCollectionChangedEventArgs> _onEvent;
+
+            public WeakCollectionChangedEventArgsSubscriber(Action<NotifyCollectionChangedEventArgs> onEvent)
+            {
+                _onEvent = onEvent;
+            }
+
+            public void OnEvent(object sender, NotifyCollectionChangedEventArgs ev)
+            {
+                _onEvent?.Invoke(ev);
+            }
+        }
+
         #region Constructors
         static TextView()
         {
             AffectsMeasure(TextDocumentProperty);
+            AffectsRender(DocumentLineTransformersProperty);
         }
+
+        private WeakCollectionChangedEventArgsSubscriber documentLineTransformersChangedSubscriber;
+        private WeakEventArgsSubscriber documentLineTransformerChangedSubscriber;
+        private WeakEventArgsSubscriber documentTextChangedSubscriber;
 
         public TextView()
         {
+            documentLineTransformersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
+            {
+                if (e.NewItems != null)
+                {
+                    foreach (var item in e.NewItems)
+                    {
+                        WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), documentLineTransformerChangedSubscriber);
+                    }
+                }
+            });
+
+            documentLineTransformerChangedSubscriber = new WeakEventArgsSubscriber(() =>
+            {
+                InvalidateVisual();
+            });
+
+            documentTextChangedSubscriber = new WeakEventArgsSubscriber(() =>
+            {
+                invalidateVisualLines = true;                
+            });
+
             _caretTimer = new DispatcherTimer();
             _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
             _caretTimer.Tick += CaretTimerTick;
 
             this.GetObservable(CaretIndexProperty)
-                .Subscribe(CaretIndexChanged);
+                .Subscribe(CaretIndexChanged);            
 
-            this.GetObservable(TextDocumentProperty).Subscribe((o) =>
+            DocumentLineTransformersProperty.Changed.Subscribe((o) =>
+            {
+                foreach(var item in DocumentLineTransformers)
+                {
+                    WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), documentLineTransformerChangedSubscriber);
+                }
+
+                WeakSubscriptionManager.Subscribe(DocumentLineTransformers, nameof(DocumentLineTransformers.CollectionChanged), documentLineTransformersChangedSubscriber);
+            });
+
+            TextDocumentProperty.Changed.Subscribe((o) =>
             {
                 invalidateVisualLines = true;
+
+                TextDocument.TextChanged += (sender, e) =>
+                {
+                    WeakSubscriptionManager.Subscribe(TextDocument, nameof(TextDocument.Changed), documentTextChangedSubscriber);
+                };
             });
 
             VisualLines = new List<VisualLine>();
@@ -62,6 +135,93 @@
             var documentLocation = TextDocument.GetLocation(offset);
 
             var result = new TextLocation(documentLocation.Line - firstVisualLine, documentLocation.Column);
+
+            return result;
+        }
+
+        public int FindMatchingBracketForward(int startOffset, char open, char close)
+        {
+            int result = startOffset;
+
+            char currentChar = TextDocument.GetCharAt(startOffset++);
+
+            if (currentChar == open)
+            {
+                int numOpen = 0;
+
+                while (true)
+                {
+                    if (startOffset >= TextDocument.TextLength)
+                    {
+                        break;
+                    }
+
+                    currentChar = TextDocument.GetCharAt(startOffset++);
+
+                    if (currentChar == close && numOpen == 0)
+                    {
+                        result = startOffset - 1;
+                        break;
+                    }
+                    else if (currentChar == open)
+                    {
+                        numOpen++;
+                    }
+                    else if (currentChar == close)
+                    {
+                        numOpen--;
+                    }
+
+                    if (startOffset >= TextDocument.TextLength)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+        
+
+        public int FindMatchingBracketBackward(int startOffset, char close, char open)
+        {
+            int result = startOffset;
+
+            char currentChar = TextDocument.GetCharAt(startOffset--);
+
+            if (currentChar == close)
+            {
+                int numOpen = 0;
+
+                while (true)
+                {
+                    if (startOffset < 0)
+                    {
+                        break;
+                    }
+
+                    currentChar = TextDocument.GetCharAt(startOffset--);
+
+                    if (currentChar == open && numOpen == 0)
+                    {
+                        result = startOffset + 1;
+                        break;
+                    }
+                    else if (currentChar == close)
+                    {
+                        numOpen++;
+                    }
+                    else if (currentChar == open)
+                    {
+                        numOpen--;
+                    }
+
+                    if (startOffset >= TextDocument.TextLength)
+                    {
+                        break;
+                    }
+                }
+            }
 
             return result;
         }
@@ -372,11 +532,11 @@
         private int lastLineCount;
         private void GenerateVisualLines()
         {
-            if (invalidateVisualLines)
+            //if (invalidateVisualLines) // This is a significant performance boost, we only need to re-generate when offset changes
             {
                 VisualLines.Clear();
 
-                uint visualLineNumber = 0;               
+                uint visualLineNumber = 0;
 
                 for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount; i++)
                 {
@@ -397,17 +557,20 @@
 
         private void RenderText(DrawingContext context, VisualLine line)
         {
-            using (var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
+            if (!line.DocumentLine.IsDeleted)
             {
-                line.RenderedText = formattedText;
-                var boundary = VisualLineGeometryBuilder.GetRectsForSegment(this, line).First();
-
-                foreach (var lineTransformer in DocumentLineTransformers)
+                using (var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
                 {
-                    lineTransformer.TransformLine(this, context, boundary, line);
-                }
+                    line.RenderedText = formattedText;
+                    var boundary = VisualLineGeometryBuilder.GetRectsForSegment(this, line).First();
 
-                context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), formattedText);
+                    foreach (var lineTransformer in DocumentLineTransformers)
+                    {
+                        lineTransformer.TransformLine(this, context, boundary, line);
+                    }
+
+                    context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), formattedText);
+                }
             }
         }
 
@@ -427,7 +590,7 @@
                     caretBrush = new SolidColorBrush(Color.FromRgb(red, green, blue));
                 }
 
-                if (_caretBlink)
+                if (_caretBlink && CaretIndex != -1)
                 {
                     var charPos = VisualLineGeometryBuilder.GetTextViewPosition(this, CaretIndex);
                     var x = Math.Floor(charPos.X) + 0.5;
@@ -436,8 +599,8 @@
 
                     context.DrawLine(
                         new Pen(caretBrush, 1),
-                        new Point(x, y),
-                        new Point(x, b));
+                        new Point(charPos.TopLeft.X, charPos.TopLeft.Y),
+                        new Point(charPos.TopLeft.X, charPos.BottomLeft.Y));
                 }
             }
         }
@@ -449,14 +612,13 @@
                 _caretBlink = true;
                 _caretTimer.Stop();
                 _caretTimer.Start();
-
-                invalidateVisualLines = true;
+                
                 InvalidateVisual();
 
                 if (caretIndex >= 0)
                 {
                     var position = TextDocument.GetLocation(caretIndex);
-                    this.BringIntoView(new Rect(position.Column, position.Line, 0, 1));
+                    this.BringIntoView(new Rect(position.Column, position.Line - 1, 0, 1));
                 }
             }
         }
@@ -516,7 +678,7 @@
             }
 
             return result;
-        }
+        }        
         #endregion
     }
 }

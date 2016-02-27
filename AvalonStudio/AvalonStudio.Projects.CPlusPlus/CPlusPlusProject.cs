@@ -434,16 +434,16 @@
             }
         }
 
-        static LlilumToolchain GetLLilumToolchain()
-        {
-            var gccSettings = new ToolchainSettings();
-            gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
-            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3");
-            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
-            gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
+        //static LlilumToolchain GetLLilumToolchain()
+        //{
+        //    var gccSettings = new ToolchainSettings();
+        //    gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
+        //    gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3");
+        //    gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
+        //    gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
 
-            return new LlilumToolchain(gccSettings);
-        }
+        //    return new LlilumToolchain(gccSettings);
+        //}
 
         public IProject Load(ISolution solution, string filePath)
         {
