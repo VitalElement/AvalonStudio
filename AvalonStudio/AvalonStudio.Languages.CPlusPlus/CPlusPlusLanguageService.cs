@@ -522,7 +522,8 @@
                                         var currentLine = editor.TextDocument.GetLineByOffset(editor.CaretIndex);
 
                                         editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine, editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine.NextLine, editor.CaretIndex);
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);                                        
                                     }
 
                                     var newCaret = IndentationStrategy.IndentLine(editor.TextDocument, editor.TextDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
