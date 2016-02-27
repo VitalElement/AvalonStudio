@@ -3,7 +3,7 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">     
       <TextBlock Text="{Binding Title}" Margin="0,0,0,0" TextAlignment="Center" />
-        <te:TextEditor Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" 
+        <te:TextEditor Name="editor" Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" 
                        FontFamily="{Binding FontFamily}" FontSize="14" Foreground="#D4D4D4" BorderThickness="0"
                        BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
                        TextChangedCommand="{Binding TextChangedCommand}"
