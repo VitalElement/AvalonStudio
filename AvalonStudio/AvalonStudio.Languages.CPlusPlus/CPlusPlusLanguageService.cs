@@ -93,7 +93,7 @@
 
                 foreach (var include in referencedIncludes)
                 {
-                    args.Add(string.Format("-I\"{0}\"", Path.Combine(project.CurrentDirectory, include)));
+                    args.Add(string.Format("-I{0}", include.NormalizePath()));
                 }
 
                 // global includes
@@ -101,24 +101,38 @@
 
                 foreach (var include in globalIncludes)
                 {
-                    args.Add(string.Format("-I\"{0}\"", include));
+                    args.Add(string.Format("-I{0}", include.NormalizePath()));
                 }
 
                 // public includes
                 foreach (var include in project.PublicIncludes)
                 {
-                    args.Add(string.Format("-I\"{0}\"", Path.Combine(project.CurrentDirectory, include)));
+                    args.Add(string.Format("-I{0}", include.NormalizePath()));
                 }
 
                 // includes
                 foreach (var include in project.Includes)
                 {
-                    args.Add(string.Format("-I\"{0}\"", Path.Combine(project.CurrentDirectory, include.Value)));
+                    args.Add(string.Format("-I{0}", Path.Combine(project.CurrentDirectory, include.Value).NormalizePath()));
                 }
 
-                foreach (var define in superProject.Defines)
+                var referencedDefines = project.GetReferencedDefines();
+                foreach (var define in referencedDefines)
                 {
                     args.Add(string.Format("-D{0}", define));
+                }
+
+                // global includes
+                var globalDefines = superProject.GetGlobalDefines();
+
+                foreach (var define in globalDefines)
+                {
+                    args.Add(string.Format("-D{0}", define));
+                }
+
+                foreach (var define in project.Defines)
+                {
+                    args.Add(string.Format("-D{0}", define.Value));
                 }
 
                 foreach (var arg in superProject.ToolChainArguments)
@@ -494,7 +508,7 @@
         public void RegisterSourceFile(TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CPlusPlusDataAssociation association = null;
-            
+
             if (dataAssociations.TryGetValue(file, out association))
             {
                 throw new Exception("Source file already registered with language service.");
@@ -524,7 +538,7 @@
 
                                         editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine, editor.CaretIndex);
                                         editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine.NextLine, editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);                                        
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);
                                     }
 
                                     var newCaret = IndentationStrategy.IndentLine(editor.TextDocument, editor.TextDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
@@ -546,7 +560,7 @@
 
                     switch (e.Text)
                     {
-                        case "}":                        
+                        case "}":
                         case ";":
                             editor.CaretIndex = Format(file, editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
                             break;
