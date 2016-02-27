@@ -19,7 +19,7 @@
             RemoveCommand = ReactiveCommand.Create();
             RemoveCommand.Subscribe((o) =>
             {
-
+                model.Project.RemoveFile(model);
             });          
         }
 

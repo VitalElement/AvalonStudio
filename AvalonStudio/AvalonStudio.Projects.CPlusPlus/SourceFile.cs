@@ -2,6 +2,7 @@
 {
     using Newtonsoft.Json;
     using System.IO;
+    using System;
 
     public class SourceFile : ISourceFile
     {
@@ -64,5 +65,7 @@
                 return Path.GetFileName(Location);
             }
         }
+
+        public IProjectFolder Parent { get; set; }
     }
 }

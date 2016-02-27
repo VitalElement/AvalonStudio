@@ -19,7 +19,7 @@
     using System.Collections.ObjectModel;
 
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
-    {        
+    {
         public const string ProjectExtension = "acproj";
 
         public static string GenerateProjectFileName(string name)
@@ -32,19 +32,20 @@
 
         public static void PopulateFiles(CPlusPlusProject project, StandardProjectFolder folder)
         {
-            var files = Directory.EnumerateFiles(folder.Path);
+            var files = Directory.EnumerateFiles(folder.Location);
 
-            files = files.Where((f) => !project.ExcludedFiles.Contains(project.CurrentDirectory.MakeRelativePath(f)) && Path.GetExtension(f) != '.' + ProjectExtension);                
+            files = files.Where((f) => !project.ExcludedFiles.Contains(project.CurrentDirectory.MakeRelativePath(f)) && Path.GetExtension(f) != '.' + ProjectExtension);
 
             foreach (var file in files)
             {
-                var sourceFile = new SourceFile() { Project = project, File = file };
+                var sourceFile = new SourceFile() { Project = project, Parent=folder, File = file };
                 project.SourceFiles.Add(sourceFile);
                 folder.Items.Add(sourceFile);
+
             }
         }
 
-        public static StandardProjectFolder GetSubFolders(CPlusPlusProject project, string path)
+        public static StandardProjectFolder GetSubFolders(CPlusPlusProject project, IProjectFolder parent, string path)
         {
             StandardProjectFolder result = new StandardProjectFolder(path);
 
@@ -52,31 +53,36 @@
 
             if (folders.Count() > 0)
             {
-                foreach (var folder in folders)
+                foreach (var folder in folders.Where((f) => !project.ExcludedFiles.Contains(project.CurrentDirectory.MakeRelativePath(f))))
                 {
-                    result.Items.Add(GetSubFolders(project, folder));
+                    result.Items.Add(GetSubFolders(project, result, folder));
                 }
             }
 
             PopulateFiles(project, result);
 
+            result.Parent = parent;
+            result.Project = project;
+
             return result;
         }
 
-        private void LoadFiles ()
+        private void LoadFiles()
         {
-            var folders = GetSubFolders(this, CurrentDirectory);
+            var folders = GetSubFolders(this, this, CurrentDirectory);
 
-            Items = new List<IProjectItem>();
+            //Items = new ObservableCollection<IProjectItem>();
 
             foreach (var item in folders.Items)
             {
+                item.Parent = this;
                 Items.Add(item);
             }
 
             foreach (var file in SourceFiles)
             {
-                (file as SourceFile)?.SetProject(this);
+                file.Project = this;
+                file.Parent = this;
             }
         }
 
@@ -119,7 +125,7 @@
         {
             UnloadedReferences.Clear();
 
-            foreach(var reference in References)
+            foreach (var reference in References)
             {
                 UnloadedReferences.Add(new Reference() { Name = reference.Name });
             }
@@ -135,7 +141,7 @@
         public CPlusPlusProject()
         {
             ExcludedFiles = new List<string>();
-            Items = new List<IProjectItem>();
+            Items = new ObservableCollection<IProjectItem>();
             UnloadedReferences = new List<Reference>();
             StaticLibraries = new List<string>();
             References = new ObservableCollection<IProject>();
@@ -207,7 +213,7 @@
             {
                 var loadedReference = reference as CPlusPlusProject;
 
-                if(loadedReference == null)
+                if (loadedReference == null)
                 {
                     // What to do in this situation?
                     throw new NotImplementedException();
@@ -216,9 +222,34 @@
                 result.AddRange(loadedReference.GenerateReferencedIncludes());
             }
 
-            foreach (var includePath in Includes.Where(i=>i.Exported))
+            foreach (var includePath in Includes.Where(i => i.Exported))
             {
                 result.Add(Path.Combine(CurrentDirectory, includePath.Value));
+            }
+
+            return result;
+        }
+
+        protected IList<string> GenerateReferencedDefines ()
+        {
+            List<string> result = new List<string>();
+
+            foreach (var reference in References)
+            {
+                var loadedReference = reference as CPlusPlusProject;
+
+                if (loadedReference == null)
+                {
+                    // What to do in this situation?
+                    throw new NotImplementedException();
+                }
+
+                result.AddRange(loadedReference.GenerateReferencedDefines());
+            }
+
+            foreach (var define in Defines.Where(i => i.Exported))
+            {
+                result.Add(define.Value);
             }
 
             return result;
@@ -238,6 +269,21 @@
             return result;
         }
 
+        public IList<string> GetReferencedDefines()
+        {
+            List<string> result = new List<string>();
+
+            foreach (var reference in References)
+            {
+                var standardReference = reference as CPlusPlusProject;
+
+                result.AddRange(standardReference.GenerateReferencedDefines());
+            }
+
+            return result;
+        } 
+
+
         public IList<string> GetGlobalIncludes()
         {
             List<string> result = new List<string>();
@@ -249,9 +295,28 @@
                 result.AddRange(standardReference.GetGlobalIncludes());
             }
 
-            foreach (var include in GlobalIncludes)
+            foreach (var include in Includes.Where((i)=>i.Global))
             {
-                result.Add(Path.Combine(CurrentDirectory, include));
+                result.Add(Path.Combine(CurrentDirectory, include.Value));
+            }
+
+            return result;
+        }
+
+        public IList<string> GetGlobalDefines()
+        {
+            List<string> result = new List<string>();
+
+            foreach (var reference in References)
+            {
+                var standardReference = reference as CPlusPlusProject;
+
+                result.AddRange(standardReference.GetGlobalDefines());
+            }
+
+            foreach (var define in Defines.Where((i) => i.Global))
+            {
+                result.Add(define.Value);
             }
 
             return result;
@@ -309,7 +374,7 @@
         public ObservableCollection<IProject> References
         {
             get; private set;
-        }       
+        }
 
         public bool ShouldSerializePublicIncludes()
         {
@@ -340,7 +405,7 @@
 
         public IList<Definition> Defines { get; private set; }
 
-        
+
         [JsonIgnore]
         public IList<ISourceFile> SourceFiles
         {
@@ -450,11 +515,47 @@
             var result = CPlusPlusProject.Load(filePath, solution);
 
             return result;
-        }        
+        }
 
         public int CompareTo(IProject other)
         {
-            return this.Name.CompareTo(other.Name);            
+            return this.Name.CompareTo(other.Name);
+        }
+
+        public void RemoveFile(ISourceFile file)
+        {
+            file.Parent.Items.Remove(file);
+
+            ExcludedFiles.Add(file.Project.CurrentDirectory.MakeRelativePath(file.Location));
+            this.SourceFiles.Remove(file);
+            Save();
+        }
+
+        private void RemoveFiles (CPlusPlusProject project, IProjectFolder folder)
+        {
+            foreach(var item in folder.Items)
+            {
+                if(item is IProjectFolder)
+                {
+                    RemoveFiles(project, item as IProjectFolder);
+                }
+
+                if(item is ISourceFile)
+                {
+                    project.SourceFiles.Remove(item as ISourceFile);
+                }
+            }
+        }
+
+        public void RemoveFolder(IProjectFolder folder)
+        {
+            folder.Parent.Items.Remove(folder);
+
+            ExcludedFiles.Add(folder.Project.CurrentDirectory.MakeRelativePath(folder.Location));
+
+            RemoveFiles(this, folder);
+
+            Save();
         }
 
         [JsonIgnore]
@@ -479,11 +580,11 @@
         }
 
         [JsonIgnore]
-        public IList<IProjectItem> Items
+        public ObservableCollection<IProjectItem> Items
         {
             get; private set;
         }
-        
+
         public List<string> ExcludedFiles
         {
             get; set;
@@ -531,5 +632,11 @@
                 return CPlusPlusProject.ProjectExtension;
             }
         }
+
+        [JsonIgnore]
+        public IProject Project { get; set; }
+
+        [JsonIgnore]
+        public IProjectFolder Parent { get; set; }
     }
 }
