@@ -585,5 +585,54 @@
 
             return cursor;
         }
+
+        public Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        {
+            Symbol result = new Symbol();
+            var associatedData = GetAssociatedData(file);
+
+            var tu = associatedData.TranslationUnit;
+            var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.File), offset));
+
+            switch (cursor.Kind)
+            {
+                case CursorKind.MemberReferenceExpression:
+                case CursorKind.DeclarationReferenceExpression:
+                case CursorKind.CallExpression:
+                case CursorKind.TypeReference:
+                    cursor = cursor.Referenced;
+                    break;
+            }
+
+            result.Name = cursor.Spelling;
+            result.Kind = (AvalonStudio.Languages.CursorKind)cursor.Kind;
+            result.BriefComment = cursor.BriefCommentText;
+            result.TypeDescription = cursor.CursorType?.Spelling;
+            result.EnumDescription = cursor.EnumConstantDeclValue.ToString();
+            result.Definition = cursor.Definition.DisplayName;
+            result.Linkage = (AvalonStudio.Languages.LinkageKind)cursor.Linkage;
+            result.IsBuiltInType = IsBuiltInType(cursor.CursorType);
+            result.SymbolType = cursor.CursorType?.Spelling.Replace(" &", "&").Replace(" *", "*") + " ";
+            result.ResultType = cursor.ResultType?.Spelling;
+
+            return result;
+        }
+
+        private bool IsBuiltInType(ClangType cursor)
+        {
+            bool result = false;
+
+            if (cursor != null && cursor.Kind >= TypeKind.FirstBuiltin && cursor.Kind <= TypeKind.LastBuiltin)
+            {
+                return true;
+            }
+
+            return result;
+        }
+
+        public Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

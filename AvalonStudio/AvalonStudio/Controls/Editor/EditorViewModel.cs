@@ -214,6 +214,52 @@
             }
         }
 
+        private bool isHoverProbeOpen;
+        public bool IsHoverProbeOpen
+        {
+            get { return isHoverProbeOpen; }
+            set { this.RaiseAndSetIfChanged(ref isHoverProbeOpen, value); }
+        }
+
+        private SymbolViewModel hoverProbe;
+        public SymbolViewModel HoverProbe
+        {
+            get { return hoverProbe; }
+            set { this.RaiseAndSetIfChanged(ref hoverProbe, value); }
+        }
+
+        
+        private void InvalidateCursorUnderMouse()
+        {
+            var symbol = Model.LanguageService.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, MouseCursorOffset);
+
+            if (IsHoverProbeOpen && hoverProbe.Model != symbol)
+            {
+                IsHoverProbeOpen = false;
+            }
+            switch(symbol.Kind)
+            {
+                case CursorKind.CompoundStatement:
+                case CursorKind.NoDeclarationFound:
+                case CursorKind.NotImplemented:
+                    break;
+
+                default:
+                    HoverProbe = new SymbolViewModel(symbol);
+                    IsHoverProbeOpen = true;
+                    WorkspaceViewModel.Instance.Console.WriteLine(symbol.Name + ", " + symbol.Kind);
+                    break;
+            }            
+        }
+
+        private int mouseCursorOffset;
+        public int MouseCursorOffset
+        {
+            get { return mouseCursorOffset; }
+            set { this.RaiseAndSetIfChanged(ref mouseCursorOffset, value); InvalidateCursorUnderMouse(); }
+        }
+
+
         private ObservableCollection<SyntaxHighlightingData> highlightingData;
         public ObservableCollection<SyntaxHighlightingData> HighlightingData
         {
@@ -323,6 +369,11 @@
             Intellisense.OnTextInput(e);
         }
 
+        public void OnPointerMoved (PointerEventArgs e)
+        {
+            
+        }
+
         private void FormatAll()
         {
             if (Model?.LanguageService != null)
@@ -330,6 +381,8 @@
                 CaretIndex = Model.LanguageService.Format(Model.ProjectFile, TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
             }
         }
+
+
 
         public TextLocation CaretTextLocation
         {

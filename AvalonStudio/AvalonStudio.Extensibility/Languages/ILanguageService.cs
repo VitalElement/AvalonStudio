@@ -29,6 +29,10 @@
 
         IIndentationStrategy IndentationStrategy { get; }
 
+        Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
+
+        Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
+
         /// <summary>
         /// A description of the language supported by the service, i.e. C/C++
         /// </summary>
