@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/perspex" xmlns:te="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              Background="#2D2D30" Foreground="WhiteSmoke">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
-    <Grid RowDefinitions="25,*">
+    <Grid RowDefinitions="25,*">     
       <TextBlock Text="{Binding Title}" Margin="0,0,0,0" TextAlignment="Center" />
         <te:TextEditor Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}" 
                        FontFamily="{Binding FontFamily}" FontSize="14" Foreground="#D4D4D4" BorderThickness="0"
@@ -10,12 +10,18 @@
                        TextChangedDelay="225" CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
                        AcceptsReturn="true" AcceptsTab="true" TabCharacter="{Binding TabCharacter}"
                        CaretLocationInTextView="{Binding CaretLocation}" SelectedWord="{Binding WordAtCaret}"
-                       LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}" Margins="{Binding Margins}">
+                       LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}" Margins="{Binding Margins}"
+                       MouseCursorOffset="{Binding MouseCursorOffset, Mode=TwoWay}">    
           
           <te:TextEditor.Content>            
-            <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />            
+            <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
+            
           </te:TextEditor.Content>
         </te:TextEditor>
+
+      <Popup PlacementMode="Pointer" IsOpen="{Binding IsHoverProbeOpen}" StaysOpen="false">
+        <cont:HoverProbe DataContext="{Binding HoverProbe}" />
+      </Popup>
     </Grid>
   </Border>
 </UserControl>
