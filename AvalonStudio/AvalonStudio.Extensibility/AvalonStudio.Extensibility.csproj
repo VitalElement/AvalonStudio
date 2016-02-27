@@ -184,6 +184,7 @@
     <Compile Include="Utils\IConsole.cs" />
     <Compile Include="Utils\IProjectExtensions.cs" />
     <Compile Include="Utils\SerializedObject.cs" />
+    <Compile Include="Utils\WeakSubscriber.cs" />
     <Compile Include="Workspace.cs" />
   </ItemGroup>
   <ItemGroup>
