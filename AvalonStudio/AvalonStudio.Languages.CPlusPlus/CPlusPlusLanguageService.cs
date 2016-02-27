@@ -185,7 +185,7 @@
                 //    args.Add("-Weverything");
                 //}
 
-                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
+                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
             }
 
             if (result == null)
@@ -235,7 +235,7 @@
 
             var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
-            var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
+            var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
             completionResults.Sort();
 
             var result = new List<CodeCompletionData>();
@@ -614,6 +614,48 @@
             result.IsBuiltInType = IsBuiltInType(cursor.CursorType);
             result.SymbolType = cursor.CursorType?.Spelling.Replace(" &", "&").Replace(" *", "*") + " ";
             result.ResultType = cursor.ResultType?.Spelling;
+            result.Arguments = new List<ParameterSymbol>();
+
+            switch (result.Kind)
+            {
+                case Languages.CursorKind.FunctionDeclaration:
+                case Languages.CursorKind.CXXMethod:
+                case Languages.CursorKind.Constructor:
+                case Languages.CursorKind.Destructor:
+                    for (int i = 0; i < cursor.ArgumentCount; i++)
+                    {
+                        var argument = cursor.GetArgument(i);
+
+                        var arg = new ParameterSymbol();
+                        arg.IsBuiltInType = IsBuiltInType(argument.CursorType);
+                        arg.Name = argument.Spelling;
+
+                        if (i < cursor.ArgumentCount - 1)
+                        {
+                            arg.Name += ", ";
+                        }
+
+                        arg.Comment = argument.BriefCommentText;
+                        arg.TypeDescription = argument.CursorType.Spelling;
+                        result.Arguments.Add(arg);
+                    }                    
+
+                    //if (cursor.ParsedComment.FullCommentAsXml != null)
+                    //{
+                    //    var documentation = XDocument.Parse(cursor.ParsedComment.FullCommentAsXml);
+
+                    //    var function = documentation.Element("Function");
+
+                    //    var parameters = documentation.Element("Parameters");
+                    //    //documentation.Elements().Where((e) => e.Name == );
+                    //}
+
+                    if (result.Arguments.Count == 0)
+                    {
+                        result.Arguments.Add(new ParameterSymbol() { Name = "void" });
+                    }
+                    break;
+            }
 
             return result;
         }

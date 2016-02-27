@@ -213,6 +213,7 @@
     <Compile Include="Controls\PackageManagerDialog.paml.cs">
       <DependentUpon>PackageManagerDialog.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ParameterSymbolViewModel.cs" />
     <Compile Include="Controls\ProjectConfigurationDialog.paml.cs">
       <DependentUpon>ProjectConfigurationDialog.paml</DependentUpon>
     </Compile>

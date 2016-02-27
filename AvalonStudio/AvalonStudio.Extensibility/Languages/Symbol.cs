@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Languages
 {
@@ -14,7 +16,8 @@ namespace AvalonStudio.Languages
         public string SymbolType { get; set; }
         public string ResultType { get; set; }
 
-        public bool IsBuiltInType { get; set; }        
+        public bool IsBuiltInType { get; set; }    
+        public IList<ParameterSymbol> Arguments { get; set; }    
 
         public int CompareTo(Symbol other)
         {
