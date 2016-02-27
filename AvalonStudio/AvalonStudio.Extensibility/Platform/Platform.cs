@@ -30,6 +30,22 @@
             }
         }
 
+        public static string ExecutionPath
+        {
+            get
+            {
+                return Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            }
+        }
+
+        public static string PluginsDirectory
+        {
+            get
+            {
+                return Path.Combine(ExecutionPath, "Plugins");
+            }
+        }
+
 		public static string ExecutableExtension
 		{
 			get

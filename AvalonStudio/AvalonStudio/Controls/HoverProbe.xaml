@@ -1,0 +1,39 @@
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+  <Grid Background="#424245">
+    <Grid Margin="5">
+      <Grid>
+        <StackPanel Margin="4">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding ScopeDescription}" />
+            <TextBlock Text="{Binding BuiltInTypeDescription}" Foreground="#FF569CD6"/>
+            <TextBlock Text="{Binding EnumTypeDescription}" Foreground="#FFCEE4AE"/>
+            <TextBlock Text="{Binding TypeDescription}" Foreground="#FF4ec9b0"/>
+            <TextBlock Text="{Binding ClassDescription}" Foreground="#FF4ec9b0"/>
+            <TextBlock Text="{Binding Spelling}"/>
+            <TextBlock Text="{Binding EnumValue}" Foreground="#FFCEE4AE"/>
+            <TextBlock Margin="5 0 2 0" Text="(" IsVisible="{Binding ArgumentsVisibility}"/>
+            <ListBox Items="{Binding Arguments}" BorderThickness="0">
+              <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <StackPanel Orientation="Horizontal" Margin="0" />
+                </ItemsPanelTemplate>
+              </ListBox.ItemsPanel>
+              <ListBox.DataTemplates>
+                <DataTemplate DataType="cont:ParameterSymbolViewModel">
+                  <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding BuiltInTypeDescription}" Foreground="#FF569CD6"/>
+                    <TextBlock Text="{Binding TypeDescription}" Foreground="#FF4ec9b0"/>
+                    <TextBlock Margin="0" Text="{Binding Name}"/>
+                    <TextBlock Margin="0" Text="{Binding Comment}"/>
+                  </StackPanel>
+                </DataTemplate>
+              </ListBox.DataTemplates>
+            </ListBox>
+            <TextBlock Margin="2 0 0 0" Text=")" IsVisible="{Binding ArgumentsVisibility}"/>
+          </StackPanel>
+          <TextBlock Text="{Binding Description}" IsVisible="{Binding DescriptionVisibility}" MaxWidth="500" TextWrapping="Wrap"/>
+        </StackPanel>
+      </Grid>
+    </Grid>
+  </Grid>
+</UserControl>

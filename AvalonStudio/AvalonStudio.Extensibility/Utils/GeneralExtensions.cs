@@ -34,5 +34,144 @@
 
             return relativePath;
         }
+
+        public static bool IsPunctuationChar(this char c)
+        {
+            bool result = false;
+
+            switch (c)
+            {
+                case '"':
+                case '\'':
+                case '.':
+                case '/':
+                    result = true;
+                    break;
+
+            }
+
+            return result;
+        }
+
+        public static bool IsOpenBracketChar(this char c)
+        {
+            bool result = false;
+
+            switch (c)
+            {
+                //case '<':
+                case '(':
+                case '{':
+                case '[':
+                case '"':
+                case '\'':
+                    result = true;
+                    break;
+            }
+
+            return result;
+        }
+
+        public static char GetOpenBracketChar(this char c)
+        {
+            if (!c.IsCloseBracketChar())
+            {
+                throw new Exception("Character is not supported as bracket.");
+            }
+
+            char result = '(';
+
+            switch (c)
+            {
+                case ')':
+                    result = '(';
+                    break;
+
+                case '>':
+                    result = '<';
+                    break;
+
+                case ']':
+                    result = '[';
+                    break;
+
+                case '}':
+                    result = '{';
+                    break;
+
+                case '\'':
+                    result = '\'';
+                    break;
+
+                case '"':
+                    result = '"';
+                    break;
+            }
+
+            return result;
+        }
+
+        public static char GetCloseBracketChar(this char c)
+        {
+            if (!c.IsOpenBracketChar())
+            {
+                throw new Exception("Character is not supported as bracket.");
+            }
+
+            char result = ')';
+
+            switch (c)
+            {
+                case '(':
+                    result = ')';
+                    break;
+
+                case '<':
+                    result = '>';
+                    break;
+
+                case '[':
+                    result = ']';
+                    break;
+
+                case '{':
+                    result = '}';
+                    break;
+
+                case '\'':
+                    result = '\'';
+                    break;
+
+                case '"':
+                    result = '"';
+                    break;
+            }
+
+            return result;
+        }
+
+        public static bool IsWhiteSpace(this char c)
+        {
+            return char.IsWhiteSpace(c);
+        }
+
+        public static bool IsCloseBracketChar(this char c)
+        {
+            bool result = false;
+
+            switch (c)
+            {
+                //case '>':
+                case ')':
+                case '}':
+                case ']':
+                case '"':
+                case '\'':
+                    result = true;
+                    break;
+            }
+
+            return result;
+        }
     }
 }
