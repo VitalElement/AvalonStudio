@@ -246,8 +246,7 @@
 
                 default:
                     HoverProbe = new SymbolViewModel(symbol);
-                    IsHoverProbeOpen = true;
-                    WorkspaceViewModel.Instance.Console.WriteLine(symbol.Name + ", " + symbol.Kind);
+                    IsHoverProbeOpen = true;                    
                     break;
             }            
         }
