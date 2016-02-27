@@ -492,32 +492,32 @@
             }
         }
 
-        public void RegisterSourceFile(ISourceFile file, TextEditor editor, TextDocument textDocument)
+        public void RegisterSourceFile(ISourceFile file, TextEditor editor, TextDocument doc)
         {
             CPlusPlusDataAssociation existingAssociation = null;
 
             keyUpWeakListener = WeakSubscriber<KeyEventArgs>.Subscribe(editor, nameof(editor.KeyUp), (e) =>
             {
-                if (editor.TextDocument == textDocument)
+                if (editor.TextDocument == doc)
                 {
                     switch (e.Key)
                     {
                         case Key.Return:
                             {
-                                if (editor.CaretIndex < textDocument.TextLength)
+                                if (editor.CaretIndex < editor.TextDocument.TextLength)
                                 {
-                                    if (textDocument.GetCharAt(editor.CaretIndex) == '}')
+                                    if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
                                     {
-                                        textDocument.Insert(editor.CaretIndex, Environment.NewLine);
+                                        editor.TextDocument.Insert(editor.CaretIndex, Environment.NewLine);
                                         editor.CaretIndex--;
 
-                                        var currentLine = textDocument.GetLineByOffset(editor.CaretIndex);
+                                        var currentLine = editor.TextDocument.GetLineByOffset(editor.CaretIndex);
 
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(textDocument, currentLine, editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(textDocument, currentLine.NextLine, editor.CaretIndex);
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine, editor.CaretIndex);
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);
                                     }
 
-                                    var newCaret = IndentationStrategy.IndentLine(textDocument, textDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
+                                    var newCaret = IndentationStrategy.IndentLine(editor.TextDocument, editor.TextDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
 
                                     editor.CaretIndex = newCaret;
                                 }
@@ -529,16 +529,16 @@
 
             textInputWeakListener = WeakSubscriber<TextInputEventArgs>.Subscribe(editor, nameof(editor.TextInput), (e) =>
             {
-                if (editor.TextDocument == textDocument)
+                if (editor.TextDocument == doc)
                 {
-                    OpenBracket(editor, textDocument, e.Text);
-                    CloseBracket(editor, textDocument, e.Text);
+                    OpenBracket(editor, editor.TextDocument, e.Text);
+                    CloseBracket(editor, editor.TextDocument, e.Text);
 
                     switch (e.Text)
                     {
                         case "}":
                         case ";":
-                            editor.CaretIndex = Format(file, textDocument, 0, (uint)textDocument.TextLength, editor.CaretIndex);
+                            editor.CaretIndex = Format(file, editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
                             break;
                     }
                 }
@@ -550,7 +550,7 @@
             }
             else
             {
-                dataAssociations.Add(file, new CPlusPlusDataAssociation(textDocument));
+                dataAssociations.Add(file, new CPlusPlusDataAssociation(doc));
             }
         }
 
