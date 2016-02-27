@@ -18,14 +18,12 @@
     using TextEditor.Indentation;
     using Perspex.Utilities;
     using Perspex.Input;
-    using Utils;    
-
+    using Utils;
+    using Extensibility;
     public class CPlusPlusLanguageService : ILanguageService
     {
         private static ClangIndex index = ClangService.CreateIndex();
         private static ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations = new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
-        private WeakSubscriber<KeyEventArgs> keyUpWeakListener;
-        private WeakSubscriber<TextInputEventArgs> textInputWeakListener;
 
         public CPlusPlusLanguageService()
         {
@@ -492,11 +490,21 @@
             }
         }
 
-        public void RegisterSourceFile(ISourceFile file, TextEditor editor, TextDocument doc)
+        public void RegisterSourceFile(TextEditor editor, ISourceFile file, TextDocument doc)
         {
-            CPlusPlusDataAssociation existingAssociation = null;
+            CPlusPlusDataAssociation association = null;
+            
+            if (dataAssociations.TryGetValue(file, out association))
+            {
+                throw new Exception("Source file already registered with language service.");
+            }
+            else
+            {
+                association = new CPlusPlusDataAssociation(doc);
+                dataAssociations.Add(file, association);
+            }
 
-            keyUpWeakListener = WeakSubscriber<KeyEventArgs>.Subscribe(editor, nameof(editor.KeyUp), (e) =>
+            association.KeyUpHandler = (sender, e) =>
             {
                 if (editor.TextDocument == doc)
                 {
@@ -525,9 +533,9 @@
                             break;
                     }
                 }
-            });
+            };
 
-            textInputWeakListener = WeakSubscriber<TextInputEventArgs>.Subscribe(editor, nameof(editor.TextInput), (e) =>
+            association.TextInputHandler = (sender, e) =>
             {
                 if (editor.TextDocument == doc)
                 {
@@ -542,16 +550,10 @@
                             break;
                     }
                 }
-            });
+            };
 
-            if (dataAssociations.TryGetValue(file, out existingAssociation))
-            {
-                throw new Exception("Source file already registered with language service.");
-            }
-            else
-            {
-                dataAssociations.Add(file, new CPlusPlusDataAssociation(doc));
-            }
+            editor.KeyUp += association.KeyUpHandler;
+            editor.TextInput += association.TextInputHandler;
         }
 
         public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
@@ -568,8 +570,13 @@
             return associatedData.BackgroundRenderers;
         }
 
-        public void UnregisterSourceFile(ISourceFile file)
+        public void UnregisterSourceFile(TextEditor editor, ISourceFile file)
         {
+            var association = GetAssociatedData(file);
+
+            editor.KeyUp -= association.KeyUpHandler;
+            editor.TextInput -= association.TextInputHandler;
+
             dataAssociations.Remove(file);
         }
 
@@ -754,5 +761,7 @@
         public TextMarkerService TextMarkerService { get; private set; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; private set; }
         public List<IDocumentLineTransformer> DocumentLineTransformers { get; private set; }
+        public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
+        public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
     }
 }

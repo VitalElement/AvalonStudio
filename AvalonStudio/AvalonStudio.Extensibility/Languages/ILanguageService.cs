@@ -20,9 +20,9 @@
 
         IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-        void RegisterSourceFile(ISourceFile file, TextEditor editor, TextDocument textDocument);
+        void RegisterSourceFile(TextEditor editor, ISourceFile file, TextDocument textDocument);
 
-        void UnregisterSourceFile(ISourceFile file);
+        void UnregisterSourceFile(TextEditor editor, ISourceFile file);
 
         bool CanHandle(ISourceFile file);
 
