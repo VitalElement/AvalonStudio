@@ -87,7 +87,7 @@
             
             if(LanguageService != null && sourceFile != null)
             {
-                LanguageService.UnregisterSourceFile(sourceFile);
+                LanguageService.UnregisterSourceFile(Editor, sourceFile);
             }
 
             try
@@ -96,7 +96,7 @@
 
                 WorkspaceViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
-                LanguageService.RegisterSourceFile(file, Editor, TextDocument);
+                LanguageService.RegisterSourceFile(Editor, file, TextDocument);
             }
             catch 
             {
