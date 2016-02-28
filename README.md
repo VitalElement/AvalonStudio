@@ -4,10 +4,11 @@
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/VitalElement/AvalonStudio?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge)
 Cross platform IDE on Perspex for Perspex
 
-A very early look.
-![](https://files.gitter.im/danwalmsley/wXSg/blob)
+We are now rapidly approaching the first BETA, here is a sneak preview.
+![](https://files.gitter.im/VitalElement/AvalonStudio/yVkV/image.png)
 
-... and on Ubuntu
+
+Older versions on Ubuntu
 ![](https://files.gitter.im/VitalElement/AvalonStudio/B9Vb/blob)
 
 
