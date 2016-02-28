@@ -1,0 +1,15 @@
+﻿<UserControl xmlns="https://github.com/perspex">
+  <StackPanel Gap="10">
+    <StackPanel Orientation="Horizontal" Gap="5">
+      <TextBlock Text="Interface Config File" />
+      <TextBox Text="{Binding InterfaceConfigFile}" IsReadOnly="true" />
+      <Button Content="Browse" Command="{BrowseInterfaceConfigFileCommand}" />
+    </StackPanel>
+
+    <StackPanel Orientation="Horizontal" Gap="5">
+      <TextBlock Text="Target Config File" />
+      <TextBox Text="{Binding TargetConfigFile}" IsReadOnly="true" />
+      <Button Content="Browse" Command="{BrowseTargetConfigFile}" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

@@ -2,7 +2,7 @@
 {
     public class OpenOCDSettings
     {
-        public string AdaptorFile { get; set; }
-        public string TargetFile { get; set; }        
+        public string InterfaceConfigFile { get; set; }
+        public string TargetConfigFile { get; set; }        
     }
 }
