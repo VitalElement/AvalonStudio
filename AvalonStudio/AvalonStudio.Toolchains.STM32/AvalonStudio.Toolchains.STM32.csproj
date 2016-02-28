@@ -134,6 +134,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArmCPlusPlusProjectTemplate.cs" />
+    <Compile Include="ArmGCCLinkTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ArmGCCLinkTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ArmGCCLinkTemplateCode.cs" />
     <Compile Include="CompileSettings.cs" />
     <Compile Include="CompileSettingsForm.paml.cs">
       <DependentUpon>CompileSettingsForm.paml</DependentUpon>
@@ -177,6 +183,15 @@
   <ItemGroup>
     <EmbeddedResource Include="LinkerSettingsForm.paml" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ArmGCCLinkTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>ArmGCCLinkTemplate.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

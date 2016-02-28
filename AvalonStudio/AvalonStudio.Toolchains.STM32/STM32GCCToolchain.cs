@@ -120,7 +120,7 @@
                         if (e.Data != null)
                         {
                             console.WriteLine();
-                            console.WriteLine(file.Name + " " + e.Data);
+                            console.WriteLine(e.Data);
                         }
                     };
 
@@ -137,8 +137,33 @@
             return result;
         }
 
+        private string GetLinkerScriptLocation(IStandardProject project)
+        {
+            return Path.Combine(project.CurrentDirectory, "link.ld");
+        }
+
+        private void GenerateLinkerScript(IStandardProject project)
+        {
+            var settings = GetSettings(project).LinkSettings;
+            var template = new ArmGCCLinkTemplate(settings);
+
+            string linkerScript = GetLinkerScriptLocation(project);
+
+            if (File.Exists(linkerScript))
+            {
+                File.Delete(linkerScript);
+            }
+
+            var sw = File.CreateText(linkerScript);
+
+            sw.Write(template.TransformText());
+
+            sw.Close();
+        }
+
         public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputDirectory)
         {
+            var settings = GetSettings(superProject);
             LinkResult result = new LinkResult();
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -157,9 +182,7 @@
                 result.ExitCode = -1;
                 console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
                 return result;
-            }
-
-            // GenerateLinkerScript(project);
+            }           
 
             string objectArguments = string.Empty;
             foreach (string obj in assemblies.ObjectLocations)
@@ -184,6 +207,10 @@
             {
                 outputName = "lib" + Path.GetFileNameWithoutExtension(project.Name) + ".a";
             }
+            else
+            {
+                GenerateLinkerScript(superProject);
+            }
 
             var executable = Path.Combine(outputDirectory, outputName);
 
@@ -195,7 +222,7 @@
 
                 string libName = Path.GetFileNameWithoutExtension(libraryPath).Substring(3);
 
-                linkedLibraries += string.Format(" -L\"{0}\" -l{1}", relativePath, libName);
+                linkedLibraries += string.Format("-L\"{0}\" -l{1} ", relativePath, libName);
             }
 
             foreach (var lib in project.BuiltinLibraries)
@@ -204,18 +231,40 @@
             }
 
 
+            // TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
+            switch (settings.LinkSettings.Library)
+            {
+                case LibraryType.NanoCLib:
+                    linkedLibraries = "-lm -lc_nano -lsupc++_nano -lstdc++_nano ";
+                    break;
+
+                case LibraryType.BaseCLib:
+                    linkedLibraries += "-lm -lc -lstdc++ -lsupc++ ";
+                    break;
+
+                case LibraryType.SemiHosting:
+                    linkedLibraries += "-lm -lgcc -lc -lrdimon ";
+                    break;
+
+                case LibraryType.Retarget:
+                    linkedLibraries += "-lm -lc -lnosys -lstdc++ -lsupc++ ";
+                    break;
+            }
+
             // Hide console window
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
             startInfo.RedirectStandardInput = true;
-            startInfo.CreateNoWindow = true;
-
-            startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group", GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
+            startInfo.CreateNoWindow = true;            
 
             if (project.Type == ProjectType.StaticLibrary)
             {
                 startInfo.Arguments = string.Format("rvs {0} {1}", executable, objectArguments);
+            }
+            else
+            {
+                startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group", GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
             }
 
             //console.WriteLine(Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
@@ -307,19 +356,53 @@
 
         public override string GetLinkerArguments(IStandardProject project)
         {
+            var settings = GetSettings(project);
+           
             string result = string.Empty;
 
-            foreach (var arg in project.ToolChainArguments)
+            result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);
+
+            switch(settings.CompileSettings.Fpu)
             {
-                result += string.Format(" {0}", arg);
+                case FPUSupport.Soft:
+                    result += " -mfpu=fpv4-sp-d16 -mfloat-abi=softfp ";
+                    break;
+
+                case FPUSupport.Hard:
+                    result += " -mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
+                    break;
             }
 
-            foreach (var arg in project.LinkerArguments)
+            if(settings.LinkSettings.NotUseStandardStartupFiles)
             {
-                result += string.Format(" {0}", arg);
+                result += "-nostartfiles ";
             }
 
-            result += string.Format(" -L{0} -Wl,-T\"{1}\"", project.CurrentDirectory, project.LinkerScript);
+            if(settings.LinkSettings.DiscardUnusedSections)
+            {
+                result += "-Wl,--gc-sections ";
+            }
+
+            switch (settings.CompileSettings.Optimization)
+            {
+                case OptimizationLevel.None:
+                    result += " -O0";
+                    break;
+
+                case OptimizationLevel.Level1:
+                    result += " -O1";
+                    break;
+
+                case OptimizationLevel.Level2:
+                    result += " -O2";
+                    break;
+
+                case OptimizationLevel.Level3:
+                    result += " -O3";
+                    break;
+            }
+
+            result += string.Format(" -L{0} -Wl,-T\"{1}\"", project.CurrentDirectory, GetLinkerScriptLocation(project));
 
             return result;
         }
@@ -329,16 +412,46 @@
             string result = string.Empty;
 
             //var settings = GetSettings(project).CompileSettings;
-            var settings = GetSettings(superProject).CompileSettings;
+            var settings = GetSettings(superProject);
 
             result += "-Wall -c ";                                   
 
-            if (settings.DebugInformation)
+            if (settings.CompileSettings.DebugInformation)
             {
                 result += "-g ";
             }
 
-            switch (settings.Fpu)
+
+            switch (settings.CompileSettings.Fpu)
+            {
+                case FPUSupport.Soft:
+                    result += "-mfpu=fpv4-sp-d16 -mfloat-abi=soft ";
+                    break;
+
+                case FPUSupport.Hard:
+                    result += "-mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
+                    break;
+            }
+
+
+            // TODO remove dependency on file?
+            if (file != null)
+            {
+                if (file.Language == Language.Cpp)
+                {
+                    if (!settings.CompileSettings.Rtti)
+                    {
+                        result += "-fno-rtti ";
+                    }
+
+                    if (!settings.CompileSettings.Exceptions)
+                    {
+                        result += "-fno-exceptions ";
+                    }
+                }
+            }
+
+            switch (settings.CompileSettings.Fpu)
             {
                 case FPUSupport.Soft:
                     {
@@ -356,7 +469,7 @@
             // TODO make this an option.
             result += "-ffunction-sections -fdata-sections ";
 
-            switch(settings.Optimization)
+            switch(settings.CompileSettings.Optimization)
             {
                 case OptimizationLevel.None:
                     {
@@ -389,7 +502,7 @@
                     break;
             }
 
-            switch(settings.OptimizationPreference)
+            switch(settings.CompileSettings.OptimizationPreference)
             {
                 case OptimizationPreference.Size:
                     {
@@ -404,7 +517,7 @@
                     break;
             }
 
-            result += settings.CustomFlags + " ";
+            result += settings.CompileSettings.CustomFlags + " ";
 
             // toolchain includes
 

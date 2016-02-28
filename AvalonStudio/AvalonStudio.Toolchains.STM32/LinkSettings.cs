@@ -23,9 +23,7 @@
 
         public bool UseMemoryLayout { get; set; }
         public bool DiscardUnusedSections { get; set; }
-        public bool NotUseStandardStartupFiles { get; set; }
-
-        public FPUSupport Fpu { get; set; }
+        public bool NotUseStandardStartupFiles { get; set; }        
 
         public LibraryType Library { get; set; }
 
