@@ -9,6 +9,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using AvalonStudio.Utils;
+    using Extensibility.Platform;
 
     public class OpenOCDSettingsFormViewModel : ViewModel<IProject>
     {
@@ -57,8 +58,8 @@
 
         private void Save()
         {
-            settings.InterfaceConfigFile = interfaceConfigFile;
-            settings.TargetConfigFile = targetConfigFile;
+            settings.InterfaceConfigFile = interfaceConfigFile.ToAvalonPath();
+            settings.TargetConfigFile = targetConfigFile.ToAvalonPath();
 
             OpenOCDDebugAdaptor.SetSettings(Model, settings);
             Model.Save();

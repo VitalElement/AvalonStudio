@@ -1,6 +1,7 @@
 ﻿namespace AvalonStudio.Toolchains.Standard
 {
     using AvalonStudio.Toolchains;
+    using Extensibility.Platform;
     using Perspex.Controls;
     using Projects;
     using Projects.Standard;
@@ -255,7 +256,7 @@
                 }
                 else
                 {
-                    superProject.Executable = linkResult.Executable;
+                    superProject.Executable = superProject.Location.MakeRelativePath(linkResult.Executable).ToAvalonPath();
                     console.WriteLine();
                     Size(console, compileResult.Project, linkResult);
                     linkResults.ExecutableLocations.Add(executable);
