@@ -1,20 +1,19 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/perspex"
         xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
         Background="#2d2d30" Foreground="#C7C7C7" Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Width="1600" Height="900">
-  <Grid RowDefinitions="20,0,*,350,25" ColumnDefinitions="220,*,300">
+  <Controls:MetroWindow.TitleBarContent>
+    <Controls:MainMenu DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
+  </Controls:MetroWindow.TitleBarContent>
+  <Grid RowDefinitions="0,*,350,25" ColumnDefinitions="220,*,300">    
     <Grid Grid.ColumnSpan="3">
-      <Controls:MainMenu DataContext="{Binding MainMenu}" />
-    </Grid>
-
-    <Grid Grid.Row ="1" Grid.ColumnSpan="3">
       <Controls:ToolBar />
     </Grid>    
 
-    <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="1 2 2 1">
+    <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="1 2 2 1">
       <Controls:Editor DataContext="{Binding Editor}" />
     </Grid>
 
-    <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="1 1 2 2">
+    <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="1 1 2 2">
       <TabControl TabStripPlacement="Bottom">
         <TabItem Header="Console">
           <Controls:Console DataContext="{Binding Console}" />
@@ -26,11 +25,11 @@
       </TabControl>      
     </Grid>
 
-    <Grid Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Margin="2 2 1 2">
+    <Grid Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Margin="2 2 1 2">
       <Controls:SolutionExplorer DataContext="{Binding SolutionExplorer}" />
     </Grid>
 
-    <Grid Grid.Row="4" Grid.ColumnSpan="3">
+    <Grid Grid.Row="3" Grid.ColumnSpan="3">
       <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
