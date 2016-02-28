@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Extensibility;
+﻿using AvalonStudio.Debuggers.GDB.OpenOCD;
+using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -63,7 +64,7 @@ namespace AvalonStudio.Debugging
                                     {
                                         //await WorkspaceViewModel.Instance.DispatchDebug((Action)(() =>
                                         {
-                                            StartDebug(masterProject, masterProject.ToolChain);
+                                            StartDebug(masterProject);
                                         }//));
                                     }
                                     else
@@ -357,9 +358,12 @@ namespace AvalonStudio.Debugging
         #endregion
 
         #region Methods
-        public async void StartDebug(IProject project, IToolChain toolChain)
+        public async void StartDebug(IProject project)
         {
             Project = project;
+
+            Debugger = new OpenOCDDebugAdaptor();
+            
 
            // Debugger.DebugMode = WorkspaceViewModel.Instance.DebugMode;
 
@@ -368,8 +372,10 @@ namespace AvalonStudio.Debugging
             WorkspaceViewModel.Instance.Console.WriteLine();
             WorkspaceViewModel.Instance.Console.WriteLine("Starting Debugger...");
 
+            Debugger.DebugMode = true;
+
             // disable documents, get rid of error list, solution explorer, etc.            
-            if (Debugger.Start(toolChain, WorkspaceViewModel.Instance.Console, project))
+            if (Debugger.Start(project.ToolChain, WorkspaceViewModel.Instance.Console, project))
             {
                 WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Debug;
 
