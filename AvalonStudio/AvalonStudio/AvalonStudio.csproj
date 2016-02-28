@@ -320,6 +320,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Debugging.GDB.OpenOCD\AvalonStudio.Debugging.GDB.OpenOCD.csproj">
+      <Project>{07d61ab2-d255-4f78-852f-455015d862ce}</Project>
+      <Name>AvalonStudio.Debugging.GDB.OpenOCD</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Debugging.GDB\AvalonStudio.Debugging.GDB.csproj">
+      <Project>{a9b2958a-0b02-4598-b7b1-42eec7e2fae4}</Project>
+      <Name>AvalonStudio.Debugging.GDB</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
       <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
       <Name>AvalonStudio.Extensibility</Name>

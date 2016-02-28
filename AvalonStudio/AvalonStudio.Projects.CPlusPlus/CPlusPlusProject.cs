@@ -488,16 +488,8 @@
         public IList<string> StaticLibraries { get; set; }
 
         public string BuildDirectory { get; set; }
-        public string LinkerScript { get; set; }
-
-        [JsonIgnore]
-        public string Executable
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public string LinkerScript { get; set; }        
+        public string Executable { get; set; }
 
         //static LlilumToolchain GetLLilumToolchain()
         //{
