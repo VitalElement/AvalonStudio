@@ -135,6 +135,11 @@
         {
             StartupItem = StartupProject?.Name;
             
+            for(int i = 0; i < ProjectReferences.Count; i++)
+            {
+                ProjectReferences[i] = ProjectReferences[i].ToAvalonPath();
+            }
+
             Serialize(Path.Combine(CurrentDirectory, Name + "." + Extension));
         }
 
