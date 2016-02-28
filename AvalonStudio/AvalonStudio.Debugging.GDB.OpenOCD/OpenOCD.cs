@@ -1,10 +1,10 @@
-﻿namespace AvalonStudio.Debuggers.GDB.OpenOCD
+﻿namespace AvalonStudio.Debugging.GDB.OpenOCD
 {
     using Debugging.GDB;
-    using Debugging.GDB.OpenOCD;
+    using Extensibility.Platform;
     using Extensibility.Utils;
+    using Perspex.Controls;
     using Projects;
-    using Projects.Standard;
     using System;
     using System.Diagnostics;
     using System.Dynamic;
@@ -12,7 +12,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Toolchains;
-    using Toolchains.Standard;
     using Utils;
 
     public class OpenOCDDebugAdaptor : GDBDebugAdaptor
@@ -29,6 +28,19 @@
 				openOcdProcess.Kill ();
 			}
 		}
+
+        public static string BaseDirectory
+        {
+            get
+            {
+                return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Debugging.OpenOCD");
+            }
+        }
+
+        public override UserControl GetSettingsControl(IProject project)
+        {
+            return new OpenOCDSettingsForm() { DataContext = new OpenOCDSettingsFormViewModel(project) };
+        }
 
         public override void ProvisionSettings(IProject project)
         {
@@ -66,9 +78,15 @@
             }
             catch (Exception e)
             {
+                result = project.DebugSettings.OpenOCDSettings = new OpenOCDSettings();
             }
 
             return result;
+        }
+
+        public static void SetSettings (IProject project, OpenOCDSettings settings)
+        {
+            project.DebugSettings.OpenOCDSettings = settings;
         }
 
         public string InterfaceConfiguration { get; set; }
