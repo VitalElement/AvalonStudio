@@ -1,10 +1,11 @@
 ﻿namespace AvalonStudio.Projects
-{
-    using Perspex.Controls;
+{        
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
+    using Perspex.Controls;
+    using Debugging;    
     using Toolchains;
 
     [InheritedExport(typeof(IProject))]
@@ -18,6 +19,7 @@
         ObservableCollection<IProject> References { get; }
 
         IToolChain ToolChain { get; set; }
+        IDebugger Debugger { get; set; }
 
         /// <summary>
         /// The directory the project file resides in.

@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Debugging
 {
+    using Extensibility.Plugin;
     using Projects;
     using System;
     using System.Collections.Generic;
@@ -26,6 +27,8 @@
     [InheritedExport(typeof(IDebugger))]
     public interface IDebugger
     {
+        void ProvisionSettings(IProject project);
+
         DebuggerState State { get; }
 
         bool DebugMode { get; set; }
