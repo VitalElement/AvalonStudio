@@ -4,6 +4,7 @@ namespace AvalonStudio.Controls.ViewModels
     using AvalonStudio.MVVM;
     using Perspex.Controls;
     using Projects;
+    using Projects.Standard;
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
@@ -25,6 +26,11 @@ namespace AvalonStudio.Controls.ViewModels
             if(item is ISourceFile)
             {
                 result = new SourceFileViewModel(item as ISourceFile);
+            }
+
+            if(item is ReferenceFolder)
+            {
+                result = new ReferenceFolderViewModel(item as ReferenceFolder);
             }
 
             return result;
