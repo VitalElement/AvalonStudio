@@ -45,6 +45,9 @@
         void RemoveFile(ISourceFile file);
         void RemoveFolder(IProjectFolder folder);
 
+        // TODO perhaps this shouldnt be tied to IProject?
+        string Executable { get; set; }
+
         dynamic ToolchainSettings { get; }
 
         dynamic DebugSettings { get; }

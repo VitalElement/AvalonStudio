@@ -1,6 +1,7 @@
 ﻿namespace AvalonStudio.Debugging.GDB
 {
     using AvalonStudio.Utils;
+    using Extensibility.Platform;
     using Projects;
     using Projects.Standard;
     using System;
@@ -13,7 +14,7 @@
     using System.Xml.Serialization;
     using Toolchains;
     using Toolchains.Standard;
-    
+
     public class GDBDebugger : IDebugger
     {
         public GDBDebugger()
@@ -535,7 +536,7 @@
             }
         }
 
-        public bool Start(IToolChain toolchain, IConsole console, IProject project)
+        public virtual bool Start(IToolChain toolchain, IConsole console, IProject project)
         {
             this.console = console;
             var startInfo = new ProcessStartInfo();
@@ -544,8 +545,8 @@
 
             // This information should be part of this extension... or configurable internally?
             // This maybe indicates that debuggers are part of toolchain?
-            //startInfo.FileName = toolchain.GDBExecutable;
-            //startInfo.Arguments = string.Format("\"{0}\" --interpreter=mi", project.Executable);
+            startInfo.FileName = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin", "arm-none-eabi-gdb" + Platform.ExecutableExtension);
+            startInfo.Arguments = string.Format("\"{0}\" --interpreter=mi", project.Executable);
 
             if (!File.Exists(startInfo.FileName))
             {

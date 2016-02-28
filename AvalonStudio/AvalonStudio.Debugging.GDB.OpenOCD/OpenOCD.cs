@@ -1,13 +1,16 @@
 ﻿namespace AvalonStudio.Debuggers.GDB.OpenOCD
 {
     using Debugging.GDB;
+    using Projects;
     using Projects.Standard;
     using System.Diagnostics;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
+    using Toolchains;
     using Toolchains.Standard;
     using Utils;
+
     public class OpenOCDDebugAdaptor : GDBDebugAdaptor
     {
         public OpenOCDDebugAdaptor()
@@ -47,7 +50,7 @@
 
         private Process openOcdProcess;
 
-        public bool Start(StandardToolChain toolchain, IConsole console, IStandardProject project)
+        public override bool Start(IToolChain toolchain, IConsole console, IProject project)
         {
             bool result = true;            
             console.WriteLine("[OpenOCD] - Starting GDB Server...");

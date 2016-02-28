@@ -55,7 +55,7 @@
                 <ContextMenu>
                   <MenuItem Header="Configure" Command="{Binding ConfigureCommand}"/>
                   <MenuItem Header="Build" Command="{Binding BuildCommand}" />
-                  <MenuItem Header="Debug" />
+                  <MenuItem Header="Debug" Command="{Binding DebugCommand}"/>
                   <MenuItem Header="Clean" Command="{Binding CleanCommand}" />
                   <MenuItem Header="Set as Default Project" Command="{Binding SetProjectCommand}" />
                   <MenuItem Header="Manage References" />
