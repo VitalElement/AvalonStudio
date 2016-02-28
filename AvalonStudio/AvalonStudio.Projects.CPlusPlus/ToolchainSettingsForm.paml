@@ -3,6 +3,7 @@
       <Grid.RowDefinitions>
         <RowDefinition Height="30"/>
         <RowDefinition />
+        <RowDefinition />
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="282*"/>
@@ -51,8 +52,10 @@
           <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{Binding ButtonText}" Command="{Binding InstallCommand}"/>
 
 
-          <TextBlock Grid.Row="3" Grid.ColumnSpan="3" Text="{Binding StatusMessage}"/>
+          <TextBlock Grid.Row="3" Grid.ColumnSpan="3" Text="{Binding StatusMessage}"/>        
         </Grid>
       </Panel>
+
+      <ContentPresenter Grid.Row="2" Grid.ColumnSpan="3" Content="{Binding ToolchainSettingsControl}" />
     </Grid>
   </TabItem>

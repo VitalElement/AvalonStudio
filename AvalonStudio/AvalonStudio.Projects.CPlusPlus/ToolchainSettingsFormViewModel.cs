@@ -2,6 +2,7 @@
 {
     using AvalonStudio.MVVM;
     using Extensibility;
+    using Perspex.Controls;
     using ReactiveUI;
     using System.Collections.Generic;
     using Toolchains;
@@ -11,7 +12,7 @@
         public ToolchainSettingsFormViewModel(CPlusPlusProject project) : base (project)
         {
             toolchains = new List<IToolChain>(Workspace.Instance.ToolChains);
-            selectedToolchain = project.ToolChain;
+            selectedToolchain = project.ToolChain;            
         }
 
         public void Save ()
@@ -20,6 +21,14 @@
             selectedToolchain.ProvisionSettings(Model);
             Model.Save();
         }
+
+        private Control toolchainSettingsControl;
+        public Control ToolchainSettingsControl
+        {
+            get { return toolchainSettingsControl; }
+            set { this.RaiseAndSetIfChanged(ref toolchainSettingsControl, value); }
+        }
+
 
         private List<IToolChain> toolchains;
         public List<IToolChain> Toolchains
@@ -32,7 +41,13 @@
         public IToolChain SelectedToolchain
         {
             get { return selectedToolchain; }
-            set { this.RaiseAndSetIfChanged(ref selectedToolchain, value); Save(); }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedToolchain, value);
+                Save();
+
+                ToolchainSettingsControl = value.GetSettingsControl(Model);
+            }
         }
 
 

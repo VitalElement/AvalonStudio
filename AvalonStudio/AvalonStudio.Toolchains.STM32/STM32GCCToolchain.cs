@@ -13,19 +13,20 @@
     using System.Dynamic;
     using Extensibility.Utils;
     using Extensibility.Platform;
+
     public class STM32GCCToolchain : StandardToolChain
     {
-        public STM32GCCToolchain() : base (new ToolchainSettings())
+        public STM32GCCToolchain() : base(new ToolchainSettings())
         {
             Settings.ToolChainLocation = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin");
         }
 
         public STM32GCCToolchain(ToolchainSettings settings) : base(settings)
         {
-            
+
         }
 
-        public override void ProvisionSettings (IProject project)
+        public override void ProvisionSettings(IProject project)
         {
             ProvisionSTM32Settings(project);
         }
@@ -59,8 +60,8 @@
                     result = project.ToolchainSettings.STM32ToolchainSettings;
                 }
             }
-            catch(Exception e)
-            {                
+            catch (Exception e)
+            {
             }
 
             return result;
@@ -74,11 +75,11 @@
 
             if (file.Language == Language.Cpp)
             {
-				startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-g++" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-g++" + Platform.ExecutableExtension);
             }
             else
             {
-				startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
             }
 
 
@@ -168,11 +169,11 @@
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
 
-			startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
+            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-				startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-ar" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-ar" + Platform.ExecutableExtension);
             }
 
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
@@ -182,7 +183,7 @@
                 result.ExitCode = -1;
                 console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
                 return result;
-            }           
+            }
 
             string objectArguments = string.Empty;
             foreach (string obj in assemblies.ObjectLocations)
@@ -256,7 +257,7 @@
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
             startInfo.RedirectStandardInput = true;
-            startInfo.CreateNoWindow = true;            
+            startInfo.CreateNoWindow = true;
 
             if (project.Type == ProjectType.StaticLibrary)
             {
@@ -307,7 +308,7 @@
             ProcessResult result = new ProcessResult();
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
-			startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-size" + Platform.ExecutableExtension);
+            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-size" + Platform.ExecutableExtension);
 
             if (!File.Exists(startInfo.FileName))
             {
@@ -357,12 +358,12 @@
         public override string GetLinkerArguments(IStandardProject project)
         {
             var settings = GetSettings(project);
-           
+
             string result = string.Empty;
 
             result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);
 
-            switch(settings.CompileSettings.Fpu)
+            switch (settings.CompileSettings.Fpu)
             {
                 case FPUSupport.Soft:
                     result += " -mfpu=fpv4-sp-d16 -mfloat-abi=softfp ";
@@ -373,12 +374,12 @@
                     break;
             }
 
-            if(settings.LinkSettings.NotUseStandardStartupFiles)
+            if (settings.LinkSettings.NotUseStandardStartupFiles)
             {
                 result += "-nostartfiles ";
             }
 
-            if(settings.LinkSettings.DiscardUnusedSections)
+            if (settings.LinkSettings.DiscardUnusedSections)
             {
                 result += "-Wl,--gc-sections ";
             }
@@ -414,7 +415,7 @@
             //var settings = GetSettings(project).CompileSettings;
             var settings = GetSettings(superProject);
 
-            result += "-Wall -c ";                                   
+            result += "-Wall -c ";
 
             if (settings.CompileSettings.DebugInformation)
             {
@@ -469,7 +470,7 @@
             // TODO make this an option.
             result += "-ffunction-sections -fdata-sections ";
 
-            switch(settings.CompileSettings.Optimization)
+            switch (settings.CompileSettings.Optimization)
             {
                 case OptimizationLevel.None:
                     {
@@ -502,7 +503,7 @@
                     break;
             }
 
-            switch(settings.CompileSettings.OptimizationPreference)
+            switch (settings.CompileSettings.OptimizationPreference)
             {
                 case OptimizationPreference.Size:
                     {
@@ -621,7 +622,7 @@
         {
             bool result = false;
 
-            if(Path.GetExtension(file.Location) == ".cpp" || Path.GetExtension(file.Location) == ".c")
+            if (Path.GetExtension(file.Location) == ".cpp" || Path.GetExtension(file.Location) == ".c")
             {
                 result = true;
             }
@@ -691,12 +692,17 @@
         {
             bool result = false;
 
-            if(project is IStandardProject)
+            if (project is IStandardProject)
             {
                 result = true;
             }
 
             return result;
+        }
+
+        public override UserControl GetSettingsControl(IProject project)
+        {
+            return new ToolchainSettingsForm() { DataContext = new ToolchainSettingsViewModel(project) };
         }
     }
 }

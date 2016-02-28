@@ -627,5 +627,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public override UserControl GetSettingsControl(IProject project)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
