@@ -20,7 +20,7 @@
     using Perspex.Input;
     using Utils;
     using Extensibility;
-
+    using System.Threading;
     public class CPlusPlusLanguageService : ILanguageService
     {
         private static ClangIndex index = ClangService.CreateIndex();
@@ -217,6 +217,8 @@
             return dataAssociation.TranslationUnit;
         }
 
+        private Semaphore clangAccessSemaphore = new Semaphore(1, 1);
+
         public List<CodeCompletionData> CodeCompleteAt(ISourceFile file, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
         {
             List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
@@ -226,6 +228,7 @@
                 clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
             }
 
+            clangAccessSemaphore.WaitOne();
             var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
             var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
@@ -274,6 +277,7 @@
                 }
             }
 
+            clangAccessSemaphore.Release();
             return result;
         }
 
@@ -290,6 +294,7 @@
                 clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
             }
 
+            clangAccessSemaphore.WaitOne();
             var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
             if (file != null)
@@ -451,6 +456,7 @@
                 }
             }
 
+            clangAccessSemaphore.Release();
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
@@ -670,6 +676,7 @@
             Symbol result = new Symbol();
             var associatedData = GetAssociatedData(file);
 
+            clangAccessSemaphore.WaitOne();
             var tu = associatedData.TranslationUnit;
             var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.File), offset));
 
@@ -735,6 +742,8 @@
                     }
                     break;
             }
+
+            clangAccessSemaphore.Release();
 
             return result;
         }
