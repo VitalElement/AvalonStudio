@@ -11,7 +11,7 @@
               <Grid Grid.Row="0" Grid.RowSpan="5" Margin="-4 0" Grid.Column="1" RowDefinitions="Auto * Auto" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                 <Grid Grid.Row="1" Margin="-4" Grid.Column="0" Grid.ColumnSpan="5" Background="{TemplateBinding Background}">
                   <Grid Margin="4 0" RowDefinitions="Auto, *">
-                    <Grid ColumnDefinitions="*,*,*" Name="titlebar">
+                    <Grid ColumnDefinitions="130,*,100" Name="titlebar">
                       <Grid Margin="5 2.5 5 5">
                         <StackPanel Orientation="Horizontal">
                           <Panel Height="20" Width="20" Name="icon">
@@ -20,7 +20,7 @@
                           <TextBlock Text="{TemplateBinding Title}" Margin="20 6 5 0" Foreground="{TemplateBinding Foreground}" />
                         </StackPanel>
                       </Grid>
-                      <ContentPresenter Grid.Column="1" />
+                      <ContentPresenter Grid.Column="1" Grid.ColumnSpan="1" Content="{TemplateBinding TitleBarContent}" />
                       <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="5 4 0 5">
                         <StackPanel Orientation="Horizontal">
                           <Button Background="Transparent" BorderThickness="0" Name="minimiseButton">
