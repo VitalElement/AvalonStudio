@@ -497,6 +497,8 @@
 
         public abstract void ProvisionSettings(IProject project);
 
+        public abstract UserControl GetSettingsControl(IProject project);
+
         public string Name { get { return GetType().ToString(); } }
 
         public abstract Version Version { get; }
