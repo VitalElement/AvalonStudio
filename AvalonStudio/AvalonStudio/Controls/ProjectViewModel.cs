@@ -8,6 +8,7 @@
     using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.Linq;
+    using System.Threading.Tasks;
     public abstract class ProjectViewModel : ViewModel<IProject>
     {
         public ProjectViewModel(IProject model)
@@ -35,7 +36,7 @@
 
                 if (model.ToolChain != null)
                 {
-                    await model.ToolChain.Build(WorkspaceViewModel.Instance.Console, model);
+                    await Task.Factory.StartNew(() => model.ToolChain.Build(WorkspaceViewModel.Instance.Console, model));
                 }
                 else
                 {

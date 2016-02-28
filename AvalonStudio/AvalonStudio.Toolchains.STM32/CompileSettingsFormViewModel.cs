@@ -67,12 +67,6 @@
             {
                 CompilerArguments = (Model.ToolChain as StandardToolChain).GetCompilerArguments(Model as IStandardProject, Model as IStandardProject, null);
             }
-            //if (project.SelectedConfiguration.ToolChain is StandardToolChain)
-            //{
-            //    var cTc = project.SelectedConfiguration.ToolChain as StandardToolChain;
-
-
-            //}
         }
 
         private void AddDefine(object param)

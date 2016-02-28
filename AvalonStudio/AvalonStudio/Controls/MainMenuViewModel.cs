@@ -10,6 +10,7 @@
     using System.IO;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Tasks;
     using ViewModels;
 
     public class MainMenuViewModel : ReactiveObject
@@ -81,7 +82,7 @@
                         {
                             if (WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain != null)
                             {
-                                await WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Build(WorkspaceViewModel.Instance.Console, WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject);
+                                await Task.Factory.StartNew(() => WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject.ToolChain.Build(WorkspaceViewModel.Instance.Console, WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject));
                             }
                             else
                             {
