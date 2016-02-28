@@ -3,6 +3,7 @@
       <Grid.RowDefinitions>
         <RowDefinition Height="30"/>
         <RowDefinition />
+        <RowDefinition />
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="282*"/>
@@ -54,5 +55,7 @@
           <TextBlock Grid.Row="3" Grid.ColumnSpan="3" Text="{Binding StatusMessage}"/>
         </Grid>
       </Panel>
+
+      <ContentPresenter Grid.Row="2" Grid.ColumnSpan="3" Content="{Binding DebugSettingsControl}" /> 
     </Grid>
   </TabItem>
