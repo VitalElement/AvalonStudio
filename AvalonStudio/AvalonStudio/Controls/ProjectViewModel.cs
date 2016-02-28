@@ -18,8 +18,6 @@
 
             Items.BindCollections(model.Items, (p) => { return ProjectItemViewModel.Create(p); }, (pivm, p) => pivm.Model == p);
 
-            //Items.Insert(0, new ReferenceFolderViewModel(model));
-
             ConfigureCommand = ReactiveCommand.Create();
 
             ConfigureCommand.Subscribe((o) =>

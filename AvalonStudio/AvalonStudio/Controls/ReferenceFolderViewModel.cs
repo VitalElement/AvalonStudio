@@ -2,15 +2,16 @@
 {
     using AvalonStudio.MVVM;
     using Projects;
+    using Projects.Standard;
     using ReactiveUI;
     using System.Collections.ObjectModel;
 
     public class ReferenceFolderViewModel : ProjectItemViewModel
     {
-        public ReferenceFolderViewModel (IProject project)
+        public ReferenceFolderViewModel (ReferenceFolder folder)
         {
             references = new ObservableCollection<ReferenceViewModel>();
-            references.BindCollections<ReferenceViewModel, IProject>(project.References, (p) => { return new ReferenceViewModel(p); }, (rvm, p) => rvm.Model == p);
+            references.BindCollections<ReferenceViewModel, IProject>(folder.References, (p) => { return new ReferenceViewModel(p); }, (rvm, p) => rvm.Model == p);
         }
        
         public string Title
