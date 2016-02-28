@@ -193,7 +193,7 @@
             console.WriteLine();
 
             if (result)
-            {
+            {                
                 console.WriteLine("Build Successful");
             }
             else
@@ -248,13 +248,14 @@
             var linkResult = Link(console, superProject, compileResult.Project, compileResult, outputLocation);
 
             if (linkResult.ExitCode == 0)
-            {
+            {                
                 if (compileResult.Project.Type == ProjectType.StaticLibrary)
                 {
                     linkResults.LibraryLocations.Add(executable);
                 }
                 else
                 {
+                    superProject.Executable = linkResult.Executable;
                     console.WriteLine();
                     Size(console, compileResult.Project, linkResult);
                     linkResults.ExecutableLocations.Add(executable);

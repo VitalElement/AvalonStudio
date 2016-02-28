@@ -28,8 +28,13 @@
                 WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
             });
 
-            BuildCommand = ReactiveCommand.Create();
+            DebugCommand = ReactiveCommand.Create();
+            DebugCommand.Subscribe(_ =>
+            {
+                WorkspaceViewModel.Instance.DebugManager.StartDebug(Model);
+            });
 
+            BuildCommand = ReactiveCommand.Create();
             BuildCommand.Subscribe(async (o) =>
             {
                 WorkspaceViewModel.Instance.Console.Clear();
