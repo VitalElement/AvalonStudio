@@ -318,10 +318,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\nclang\NClang\NClang.csproj">
-      <Project>{5ae560f9-0e8e-488e-b6c4-3c8196f9013a}</Project>
-      <Name>NClang</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
       <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
       <Name>AvalonStudio.Extensibility</Name>
