@@ -5,6 +5,7 @@
     using System;
     using Perspex.Input;
     using Perspex.Controls.Primitives;
+    using Perspex;
 
     public class MetroWindow : Window, IStyleable
     {
@@ -28,6 +29,15 @@
         private Grid topRightGrip;
         private Grid bottomRightGrip;
         private Panel icon;
+
+        public static readonly PerspexProperty<Control> TitleBarContentProperty =
+            PerspexProperty.Register<MetroWindow, Control>(nameof(TitleBarContent));
+
+        public Control TitleBarContent
+        {
+            get { return GetValue(TitleBarContentProperty); }
+            set { SetValue(TitleBarContentProperty, value); }
+        }
 
         protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
