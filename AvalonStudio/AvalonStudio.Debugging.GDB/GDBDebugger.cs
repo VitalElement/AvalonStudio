@@ -14,6 +14,7 @@
     using System.Xml.Serialization;
     using Toolchains;
     using Toolchains.Standard;
+    using Perspex.Controls;
 
     public class GDBDebugger : IDebugger
     {
@@ -849,6 +850,11 @@
         public virtual void ProvisionSettings(IProject project)
         {
 
+        }
+
+        public virtual UserControl GetSettingsControl(IProject project)
+        {
+            return new UserControl();
         }
     }
 }
