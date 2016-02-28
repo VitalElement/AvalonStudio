@@ -845,5 +845,10 @@
             new VarDeleteCommand(id).Execute(this);
             //});
         }
+
+        public virtual void ProvisionSettings(IProject project)
+        {
+
+        }
     }
 }

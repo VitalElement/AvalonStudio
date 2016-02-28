@@ -17,7 +17,7 @@
     using System.Dynamic;
     using Extensibility.Platform;
     using System.Collections.ObjectModel;
-
+    using Debugging;
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {
         public const string ProjectExtension = "acproj";
@@ -157,6 +157,7 @@
             CppCompilerArguments = new List<string>();
             BuiltinLibraries = new List<string>();
             ToolchainSettings = new ExpandoObject();
+            DebugSettings = new ExpandoObject();
         }
 
         private static Dictionary<string, Tuple<string, string>> passwordCache = new Dictionary<string, Tuple<string, string>>();
@@ -565,11 +566,26 @@
             }
         }
 
-        [JsonProperty(PropertyName = "Toolchain")]
-        public string ToolchainReference
+        [JsonIgnore]
+        public IDebugger Debugger
         {
-            get; set;
+            get
+            {
+                IDebugger result = Workspace.Instance.Debuggers.FirstOrDefault((tc) => tc.GetType().ToString() == DebuggerReference);
+
+                return result;
+            }
+            set
+            {
+                DebuggerReference = value.GetType().ToString();
+            }
         }
+
+        [JsonProperty(PropertyName = "Toolchain")]
+        public string ToolchainReference { get; set; }
+
+        [JsonProperty(PropertyName = "Debugger")]
+        public string DebuggerReference { get; set; }
 
         [JsonIgnore]
         public ObservableCollection<IProjectItem> Items
@@ -599,12 +615,12 @@
                 var result = new List<TabItem>();
 
                 result.Add(new TypeSettingsForm() { DataContext = new TypeSettingsFormViewModel(this) });
-                result.Add(new TargetSettingsForm());
+                //result.Add(new TargetSettingsForm());
                 result.Add(new IncludePathSettingsForm() { DataContext = new IncludePathSettingsFormViewModel(this) });
                 result.Add(new ReferencesSettingsForm() { DataContext = new ReferenceSettingsFormViewModel(this) });
                 result.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel(this) });
-                result.Add(new ComponentSettingsForm());
-                result.Add(new DebuggerSettingsForm());
+                //result.Add(new ComponentSettingsForm());
+                result.Add(new DebuggerSettingsForm() { DataContext = new DebuggerSettingsFormViewModel(this) });
 
                 return result;
             }

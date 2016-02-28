@@ -1,9 +1,13 @@
 ﻿namespace AvalonStudio.Debuggers.GDB.OpenOCD
 {
     using Debugging.GDB;
+    using Debugging.GDB.OpenOCD;
+    using Extensibility.Utils;
     using Projects;
     using Projects.Standard;
+    using System;
     using System.Diagnostics;
+    using System.Dynamic;
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
@@ -25,6 +29,47 @@
 				openOcdProcess.Kill ();
 			}
 		}
+
+        public override void ProvisionSettings(IProject project)
+        {
+            ProvisionOpenOCDSettings(project);
+        }
+
+        public static OpenOCDSettings ProvisionOpenOCDSettings(IProject project)
+        {
+            OpenOCDSettings result = GetSettings(project);
+
+            if (result == null)
+            {
+                project.DebugSettings.OpenOCDSettings = new OpenOCDSettings();
+                result = project.DebugSettings.OpenOCDSettings;
+                project.Save();
+            }
+
+            return result;
+        }
+
+        public static OpenOCDSettings GetSettings(IProject project)
+        {
+            OpenOCDSettings result = null;
+
+            try
+            {
+                if (project.DebugSettings.STM32ToolchainSettings is ExpandoObject)
+                {
+                    result = (project.DebugSettings.OpenOCDSettings as ExpandoObject).GetConcreteType<OpenOCDSettings>();
+                }
+                else
+                {
+                    result = project.DebugSettings.OpenOCDSettings;
+                }
+            }
+            catch (Exception e)
+            {
+            }
+
+            return result;
+        }
 
         public string InterfaceConfiguration { get; set; }
         public string TargetConfiguration { get; set; }
