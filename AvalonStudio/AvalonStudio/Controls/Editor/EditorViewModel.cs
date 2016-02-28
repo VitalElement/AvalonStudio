@@ -231,24 +231,28 @@
         
         private void InvalidateCursorUnderMouse()
         {
-            var symbol = Model.LanguageService.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, MouseCursorOffset);
+            var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, MouseCursorOffset);
 
-            if (IsHoverProbeOpen && hoverProbe.Model != symbol)
+            if (symbol != null)
             {
-                IsHoverProbeOpen = false;
-            }
-            switch(symbol.Kind)
-            {
-                case CursorKind.CompoundStatement:
-                case CursorKind.NoDeclarationFound:
-                case CursorKind.NotImplemented:
-                    break;
+                if (IsHoverProbeOpen && hoverProbe.Model != symbol)
+                {
+                    IsHoverProbeOpen = false;
+                }
 
-                default:
-                    HoverProbe = new SymbolViewModel(symbol);
-                    IsHoverProbeOpen = true;                    
-                    break;
-            }            
+                switch (symbol.Kind)
+                {
+                    case CursorKind.CompoundStatement:
+                    case CursorKind.NoDeclarationFound:
+                    case CursorKind.NotImplemented:
+                        break;
+
+                    default:
+                        HoverProbe = new SymbolViewModel(symbol);
+                        IsHoverProbeOpen = true;
+                        break;
+                }
+            }           
         }
 
         private int mouseCursorOffset;
