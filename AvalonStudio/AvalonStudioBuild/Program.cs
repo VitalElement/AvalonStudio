@@ -1,4 +1,4 @@
-﻿namespace VEBuild
+﻿namespace AvalonStudio
 {
     using System;
     using System.IO;
@@ -10,7 +10,7 @@
     using AvalonStudio.Toolchains.STM32;
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.Llilum;
-
+    using Extensibility;
     class Program
     {
         const string baseDir = @"c:\development\vebuild\test";
@@ -19,26 +19,16 @@
 
         static Solution LoadSolution(ProjectOption options)
         {
-            bool inProjectDirectory = false;
+            var currentDir = Directory.GetCurrentDirectory();
 
-            if (string.IsNullOrEmpty(options.Project))
+            var solutionFile = Path.Combine(currentDir, options.Solution);
+
+            if (File.Exists(solutionFile))
             {
-                inProjectDirectory = true;
-                options.Project = Path.GetFileNameWithoutExtension(Directory.GetCurrentDirectory());
+                return Solution.Load(solutionFile);
             }
 
-            var solutionDirectory = Directory.GetCurrentDirectory();
-
-            if (inProjectDirectory)
-            {
-                solutionDirectory = Directory.GetParent(solutionDirectory).FullName;
-            }
-
-            var solution = Solution.Load(solutionDirectory);
-
-            solution.Save();
-
-            return solution;
+            throw new Exception("Solution file: " + options.Solution + "could not be found.");
         }
 
         static IProject FindProject(Solution solution, string project)
@@ -61,49 +51,18 @@
             }
         }
 
-        static LlilumToolchain GetLLilumToolchain()
-        {
-            var gccSettings = new ToolchainSettings();
-            gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
-            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3");
-            gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
-            gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
-
-            return new LlilumToolchain(gccSettings);
-        }
-
-        static STM32GCCToolchain GetGccToolchain ()
-        {
-            var gccSettings = new ToolchainSettings();
-            gccSettings.ToolChainLocation = @"c:\vestudio\appdata\repos\GCCToolchain\bin";
-            gccSettings.IncludePaths.Add("arm-none-eabi\\include\\c++\\4.9.3");
-            gccSettings.IncludePaths.Add("arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
-            gccSettings.IncludePaths.Add("lib\\gcc\\arm-none-eabi\\4.9.3\\include");
-
-            return new STM32GCCToolchain(gccSettings);
-        }
-
-        
-
-        static IToolChain GetToolchain()
-        {
-            return  GetLLilumToolchain();
-        }
-
         static int RunBuild(BuildOptions options)
         {
             int result = 1;
             var solution = LoadSolution(options);
-            var project = FindProject(solution, options.Project) as CPlusPlusProject;
-
-            var toolchain = GetToolchain();
+            var project = FindProject(solution, options.Project) as CPlusPlusProject;            
             
             if (project != null)
             {
                 var stopWatch = new System.Diagnostics.Stopwatch();
                 stopWatch.Start();
 
-                var awaiter = toolchain.Build(console, project);
+                var awaiter = project.ToolChain.Build(console, project);
                 awaiter.Wait();
 
                 stopWatch.Stop();
@@ -320,6 +279,11 @@
 
         static int Main(string[] args)
         {
+
+            var container = CompositionRoot.CreateContainer();
+
+            Workspace.Instance = container.GetExportedValue<Workspace>();
+
             var packed = PackValues(3, 4);
 
             UInt16 a = 0;
@@ -330,7 +294,7 @@
             packed = PackValues(a, b);
 
 
-            Console.WriteLine("VEBuild - Dark Builder v1.0.0.3");
+            Console.WriteLine("VEBuild - Dark Builder v1.0.0.6");
 
             var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions>(args).MapResult(
               (BuildOptions opts) => RunBuild(opts),
