@@ -26,7 +26,7 @@
             this.toolChains = toolChains;
             this.debuggers = debuggers;
             this.projectTypes = projectTypes;
-        }
+        }        
 
         public IEnumerable<IProject> ProjectTypes
         {

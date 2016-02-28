@@ -16,6 +16,12 @@
     using System.Threading;
     using Toolchains;
 
+    public enum Perspective
+    {
+        Editor,
+        Debug
+    }    
+
     [Export(typeof(WorkspaceViewModel))]
     public class WorkspaceViewModel : ViewModel<Workspace>
     {
@@ -54,6 +60,9 @@
             ProcessCancellationToken = new CancellationTokenSource();
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
+
+            DebugManager = new DebugManager();
+            CurrentPerspective = Perspective.Editor;
         }        
 
         public void InvalidateErrors()
@@ -103,6 +112,8 @@
             }
         }
 
+        public DebugManager DebugManager { get; private set; }
+
         public MainMenuViewModel MainMenu { get; private set; }
 
         public SolutionExplorerViewModel SolutionExplorer { get; private set; }
@@ -116,6 +127,13 @@
         public StatusBarViewModel StatusBar { get; private set; }
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
+
+        private Perspective currentPerspective;
+        public Perspective CurrentPerspective
+        {
+            get { return currentPerspective; }
+            set { this.RaiseAndSetIfChanged(ref currentPerspective, value); }
+        }
 
         private ModalDialogViewModelBase modalDialog;
         public ModalDialogViewModelBase ModalDialog
