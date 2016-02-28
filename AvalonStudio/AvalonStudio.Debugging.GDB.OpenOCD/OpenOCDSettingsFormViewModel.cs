@@ -25,13 +25,13 @@
             {
                 var ofd = new OpenFileDialog();
                 ofd.InitialDirectory = Path.Combine(OpenOCDDebugAdaptor.BaseDirectory, "scripts", "interface");
-                ofd.Filters.Add(new FileDialogFilter { Name = "OpenOCD Config File", Extensions = new List<string> { ".cfg" } });
+                ofd.Filters.Add(new FileDialogFilter { Name = "OpenOCD Config File", Extensions = new List<string> { "cfg" } });
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Interface Config File";
 
                 var result = await ofd.ShowAsync();
 
-                if(!string.IsNullOrEmpty(result.First()))
+                if(result != null && !string.IsNullOrEmpty(result.First()))
                 {
                     InterfaceConfigFile = OpenOCDDebugAdaptor.BaseDirectory.MakeRelativePath(result.First());
                 }
@@ -42,13 +42,13 @@
             {
                 var ofd = new OpenFileDialog();
                 ofd.InitialDirectory = Path.Combine(OpenOCDDebugAdaptor.BaseDirectory, "scripts", "target");
-                ofd.Filters.Add(new FileDialogFilter { Name = "OpenOCD Config File", Extensions = new List<string> { ".cfg" } });
+                ofd.Filters.Add(new FileDialogFilter { Name = "OpenOCD Config File", Extensions = new List<string> { "cfg" } });
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Target Config File";
 
                 var result = await ofd.ShowAsync();
 
-                if (!string.IsNullOrEmpty(result.First()))
+                if (result != null && !string.IsNullOrEmpty(result.First()))
                 {
                     TargetConfigFile = OpenOCDDebugAdaptor.BaseDirectory.MakeRelativePath(result.First());
                 }
@@ -57,6 +57,9 @@
 
         private void Save()
         {
+            settings.InterfaceConfigFile = interfaceConfigFile;
+            settings.TargetConfigFile = targetConfigFile;
+
             OpenOCDDebugAdaptor.SetSettings(Model, settings);
             Model.Save();
         }

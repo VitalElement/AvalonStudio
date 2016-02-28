@@ -33,7 +33,7 @@
         {
             get
             {
-                return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Debugging.OpenOCD");
+                return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Debugging.OpenOCD\\");
             }
         }
 
@@ -67,7 +67,7 @@
 
             try
             {
-                if (project.DebugSettings.STM32ToolchainSettings is ExpandoObject)
+                if (project.DebugSettings.OpenOCDSettings is ExpandoObject)
                 {
                     result = (project.DebugSettings.OpenOCDSettings as ExpandoObject).GetConcreteType<OpenOCDSettings>();
                 }
