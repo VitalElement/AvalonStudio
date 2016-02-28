@@ -87,10 +87,7 @@
         public static void SetSettings (IProject project, OpenOCDSettings settings)
         {
             project.DebugSettings.OpenOCDSettings = settings;
-        }
-
-        public string InterfaceConfiguration { get; set; }
-        public string TargetConfiguration { get; set; }
+        }        
 
         new public void Reset(bool runAfter)
         {
@@ -107,9 +104,7 @@
                     StepInstruction();
                 }
             });
-		}        
-        
-        public string Location { get; set; }
+		}
 
         private Process openOcdProcess;
 
@@ -118,15 +113,22 @@
             bool result = true;            
             console.WriteLine("[OpenOCD] - Starting GDB Server...");
 
-            if (InterfaceConfiguration == null || InterfaceConfiguration == string.Empty)
+            var settings = GetSettings(project);
+
+            if(settings == null)
+            {
+                console.WriteLine("[OpenOCD] - No configuration found for open ocd, check debugger settings for the selected project.");
+            }
+
+            if (settings.InterfaceConfigFile == null || settings.TargetConfigFile == string.Empty)
             {
                 console.WriteLine("[OpenOCD] - No configuration file selected. Please configure debug settings for the project.");
                 return false;   //TODO implement error message on the console.
             }
 
             var startInfo = new ProcessStartInfo();
-            startInfo.Arguments = string.Format("-f \"{0}\" -f \"{1}\"", InterfaceConfiguration, TargetConfiguration);
-            startInfo.FileName = Location;
+            startInfo.Arguments = string.Format("-f \"{0}\" -f \"{1}\"", settings.InterfaceConfigFile, settings.TargetConfigFile);
+            startInfo.FileName = Path.Combine(BaseDirectory, "bin", "openocd" + Platform.ExecutableExtension);
 
             if (!File.Exists(startInfo.FileName))
             {
@@ -139,6 +141,7 @@
             startInfo.RedirectStandardError = true;
             startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = true;
+            startInfo.WorkingDirectory = BaseDirectory;
 
             var processes = Process.GetProcessesByName("openocd");
 
