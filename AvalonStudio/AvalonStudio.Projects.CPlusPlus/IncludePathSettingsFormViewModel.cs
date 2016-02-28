@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Projects.CPlusPlus
 {
+    using Extensibility.Platform;
     using MVVM;
     using Perspex.Controls;
     using ReactiveUI;
@@ -84,7 +85,7 @@
 
             if (result != string.Empty)
             {
-                string newInclude = Model.CurrentDirectory.MakeRelativePath(result);
+                string newInclude = Model.CurrentDirectory.MakeRelativePath(result).ToAvalonPath();
 
                 if (newInclude == string.Empty)
                 {
