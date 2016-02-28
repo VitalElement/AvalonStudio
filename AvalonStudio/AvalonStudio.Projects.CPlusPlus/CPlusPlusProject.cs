@@ -97,6 +97,11 @@
 
             project.LoadFiles();
 
+            for(int i = 0; i < project.Includes.Count; i++)
+            {
+                project.Includes[i].Value = project.Includes[i].Value.ToAvalonPath();
+            }
+
             return project;
         }
 
@@ -227,7 +232,7 @@
 
             foreach (var includePath in Includes.Where(i => i.Exported && !i.Global))
             {
-                result.Add(Path.Combine(CurrentDirectory, includePath.Value));
+                result.Add(Path.Combine(CurrentDirectory, includePath.Value).ToPlatformPath());
             }
 
             return result;
@@ -300,7 +305,7 @@
 
             foreach (var include in Includes.Where((i)=>i.Global))
             {
-                result.Add(Path.Combine(CurrentDirectory, include.Value));
+                result.Add(Path.Combine(CurrentDirectory, include.Value).ToPlatformPath());
             }
 
             return result;
