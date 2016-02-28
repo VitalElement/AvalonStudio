@@ -18,6 +18,7 @@
     using Extensibility.Platform;
     using System.Collections.ObjectModel;
     using Debugging;
+
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {
         public const string ProjectExtension = "acproj";
@@ -69,6 +70,7 @@
 
         private void LoadFiles()
         {
+            Items.Add(new ReferenceFolder(this));
             var folders = GetSubFolders(this, this, CurrentDirectory);
 
             //Items = new ObservableCollection<IProjectItem>();
@@ -182,7 +184,7 @@
 
                     if (loadedReference != null)
                     {
-                        References.Add(loadedReference);
+                        References.Add(loadedReference);                        
                     }
                     else
                     {
