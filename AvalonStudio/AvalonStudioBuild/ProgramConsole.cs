@@ -1,4 +1,4 @@
-﻿namespace VEBuild
+﻿namespace AvalonStudio
 {
     using AvalonStudio.Utils;
     using System;

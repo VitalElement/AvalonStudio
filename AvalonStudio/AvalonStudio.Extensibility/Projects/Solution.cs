@@ -70,7 +70,7 @@
         {
             Solution solution = null;
             
-                solution = Deserialize(fileName);
+            solution = Deserialize(fileName);
             solution.CurrentDirectory = Path.GetDirectoryName(fileName) + Platform.DirectorySeperator;            
 
             foreach(var projectReference in solution.ProjectReferences)
