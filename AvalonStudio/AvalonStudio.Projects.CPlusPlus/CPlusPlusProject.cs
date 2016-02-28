@@ -222,7 +222,7 @@
                 result.AddRange(loadedReference.GenerateReferencedIncludes());
             }
 
-            foreach (var includePath in Includes.Where(i => i.Exported))
+            foreach (var includePath in Includes.Where(i => i.Exported && !i.Global))
             {
                 result.Add(Path.Combine(CurrentDirectory, includePath.Value));
             }
@@ -247,7 +247,7 @@
                 result.AddRange(loadedReference.GenerateReferencedDefines());
             }
 
-            foreach (var define in Defines.Where(i => i.Exported))
+            foreach (var define in Defines.Where(i => i.Exported && !i.Global))
             {
                 result.Add(define.Value);
             }

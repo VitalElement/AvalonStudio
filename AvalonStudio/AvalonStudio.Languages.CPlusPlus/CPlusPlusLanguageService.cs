@@ -62,6 +62,14 @@
             }
         }
 
+        void AddArgument (List<string> list, string argument)
+        {
+            if(!list.Contains(argument))
+            {
+                list.Add(argument);
+            }
+        }
+
         private NClang.ClangTranslationUnit GenerateTranslationUnit(ISourceFile file, List<ClangUnsavedFile> unsavedFiles)
         {
             NClang.ClangTranslationUnit result = null;
@@ -79,7 +87,7 @@
                 {
                     foreach (var include in toolchainIncludes)
                     {
-                        args.Add(string.Format("-I{0}", include));
+                        AddArgument(args, string.Format("-I{0}", include));
                     }
                 }
 
@@ -93,7 +101,7 @@
 
                 foreach (var include in referencedIncludes)
                 {
-                    args.Add(string.Format("-I{0}", include.NormalizePath()));
+                    AddArgument(args, string.Format("-I{0}", include));
                 }
 
                 // global includes
@@ -101,25 +109,25 @@
 
                 foreach (var include in globalIncludes)
                 {
-                    args.Add(string.Format("-I{0}", include.NormalizePath()));
+                    AddArgument(args, string.Format("-I{0}", include));
                 }
 
                 // public includes
                 foreach (var include in project.PublicIncludes)
                 {
-                    args.Add(string.Format("-I{0}", include.NormalizePath()));
+                    AddArgument(args, string.Format("-I{0}", include));
                 }
 
                 // includes
                 foreach (var include in project.Includes)
                 {
-                    args.Add(string.Format("-I{0}", Path.Combine(project.CurrentDirectory, include.Value).NormalizePath()));
+                    AddArgument(args, string.Format("-I{0}", Path.Combine(project.CurrentDirectory, include.Value)));
                 }
 
                 var referencedDefines = project.GetReferencedDefines();
                 foreach (var define in referencedDefines)
                 {
-                    args.Add(string.Format("-D{0}", define));
+                    AddArgument(args, string.Format("-D{0}", define));
                 }
 
                 // global includes
@@ -127,23 +135,23 @@
 
                 foreach (var define in globalDefines)
                 {
-                    args.Add(string.Format("-D{0}", define));
+                    AddArgument(args, string.Format("-D{0}", define));
                 }
 
                 foreach (var define in project.Defines)
                 {
-                    args.Add(string.Format("-D{0}", define.Value));
+                    AddArgument(args, string.Format("-D{0}", define));
                 }
 
-                foreach (var arg in superProject.ToolChainArguments)
-                {
-                    args.Add(string.Format("{0}", arg));
-                }
+                //foreach (var arg in superProject.ToolChainArguments)
+                //{
+                //    args.Add(string.Format("{0}", arg));
+                //}
 
-                foreach (var arg in superProject.CompilerArguments)
-                {
-                    args.Add(string.Format("{0}", arg));
-                }
+                //foreach (var arg in superProject.CompilerArguments)
+                //{
+                //    args.Add(string.Format("{0}", arg));
+                //}
 
                 switch (file.Language)
                 {
@@ -178,7 +186,8 @@
                 //    args.Add("-Weverything");
                 //}
 
-                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.PrecompiledPreamble);
+                // TODO find out why TranslationUnitFlags.PreCompiledPreAmble causes crashing. in Libclang 3.8RC2
+                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble | TranslationUnitFlags.CacheCompletionResults);
             }
 
             if (result == null)
