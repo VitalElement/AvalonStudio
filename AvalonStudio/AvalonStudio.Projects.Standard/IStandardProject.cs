@@ -28,7 +28,6 @@
 
         string BuildDirectory { get; }
         string LinkerScript { get;  }
-        string Executable { get; }
 
         IList<string> BuiltinLibraries { get; }
 
@@ -56,9 +55,7 @@
 
         IList<string> GetReferencedDefines();
         IList<string> GetGlobalDefines();        
-
-        IToolChain ToolChain { get; }
-
+        
         IList<ISourceFile> SourceFiles { get; }
     }
 }
