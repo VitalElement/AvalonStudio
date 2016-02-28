@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Debuggers.GDB.OpenOCD;
+﻿using AvalonStudio.Debugging.GDB.OpenOCD;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using AvalonStudio.Projects;

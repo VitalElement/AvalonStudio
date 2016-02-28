@@ -3,6 +3,7 @@
     using AvalonStudio.Debugging;
     using AvalonStudio.MVVM;
     using Extensibility;
+    using Perspex.Controls;
     using ReactiveUI;
     using System.Collections.Generic;
 
@@ -21,6 +22,14 @@
             Model.Save();
         }
 
+        private UserControl debugSettingsControl;
+        public UserControl DebugSettingsControl
+        {
+            get { return debugSettingsControl; }
+            set { this.RaiseAndSetIfChanged(ref debugSettingsControl, value); }
+        }
+
+
         private List<IDebugger> debuggers;
         public List<IDebugger> Debuggers
         {
@@ -32,7 +41,13 @@
         public IDebugger SelectedDebugger
         {
             get { return selectedDebugger; }
-            set { this.RaiseAndSetIfChanged(ref selectedDebugger, value); Save(); }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedDebugger, value);
+                Save();
+
+                DebugSettingsControl = value.GetSettingsControl(Model);
+            }
         }
     }
 }
