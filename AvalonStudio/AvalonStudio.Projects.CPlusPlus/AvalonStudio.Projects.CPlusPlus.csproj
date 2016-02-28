@@ -145,6 +145,7 @@
     <Compile Include="DebuggerSettingsForm.paml.cs">
       <DependentUpon>DebuggerSettingsForm.paml</DependentUpon>
     </Compile>
+    <Compile Include="DebuggerSettingsFormViewModel.cs" />
     <Compile Include="DefineViewModel.cs" />
     <Compile Include="IncludePathSettingsForm.paml.cs">
       <DependentUpon>IncludePathSettingsForm.paml</DependentUpon>
@@ -191,7 +192,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DebuggerSettingsForm.paml" />
+    <EmbeddedResource Include="DebuggerSettingsForm.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ComponentSettingsForm.paml" />
     <EmbeddedResource Include="IncludePathSettingsForm.paml" />
     <None Include="packages.config" />
