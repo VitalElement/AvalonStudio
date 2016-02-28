@@ -82,15 +82,13 @@
         {
             var solution = LoadSolution(options);
 
-            var toolchain = GetToolchain();
-
             var console = new ProgramConsole();
 
             var project = FindProject(solution, options.Project);
 
             if (project != null)
             {
-                toolchain.Clean(console, project).Wait();
+                project.ToolChain.Clean(console, project).Wait();
             }
             else
             {

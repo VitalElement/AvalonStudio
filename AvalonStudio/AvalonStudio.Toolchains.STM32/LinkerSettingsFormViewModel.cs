@@ -3,6 +3,9 @@
     using AvalonStudio.MVVM;
     using Extensibility.Utils;
     using Projects;
+    using Projects.Standard;
+    using ReactiveUI;
+    using Standard;
     using System;
     using System.Collections.ObjectModel;
     using System.Dynamic;
@@ -68,12 +71,10 @@
         {
             Save();
 
-            //if (project.SelectedConfiguration.ToolChain is StandardToolChain)
-            //{
-            //    var cTC = project.SelectedConfiguration.ToolChain as StandardToolChain;
-
-            //    LinkerArguments = cTC.GetLinkerArguments(project);
-            //}
+            if (Model.ToolChain != null && Model.ToolChain is StandardToolChain)
+            {
+                LinkerArguments = (Model.ToolChain as StandardToolChain).GetLinkerArguments(Model as IStandardProject);
+            }
         }
 
         private void EditScatterFile(object obj)
@@ -172,28 +173,24 @@
             }
         }
 
-        private void OnPropertyChanged()
-        {
-
-        }
-
-        private void OnPropertyChanged<T> (Expression<Func<T>> changedProperty)
-        {
-
-        }
-
         private bool useMemoryLayout = true;
         public bool UseMemoryLayout
         {
             get { return useMemoryLayout; }
-            set { useMemoryLayout = value; OnPropertyChanged(); OnPropertyChanged(() => MemoryAreasVisible); OnPropertyChanged(() => ScatterFileVisible); UpdateLinkerString(); }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref useMemoryLayout, value);
+                this.RaisePropertyChanged(nameof(MemoryAreasVisible));
+                this.RaisePropertyChanged(nameof(ScatterFileVisible));
+                UpdateLinkerString();
+            }
         }
 
         private bool discardUnusedSections;
         public bool DiscardUnusedSections
         {
             get { return discardUnusedSections; }
-            set { discardUnusedSections = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref discardUnusedSections, value); UpdateLinkerString(); }
         }
 
 
@@ -201,14 +198,14 @@
         public bool NotUseStandardStartup
         {
             get { return notUseStandardStartup; }
-            set { notUseStandardStartup = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref notUseStandardStartup, value); UpdateLinkerString(); }
         }
 
         private int librarySelectedIndex;
         public int LibrarySelectedIndex
         {
             get { return librarySelectedIndex; }
-            set { librarySelectedIndex = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref librarySelectedIndex, value); UpdateLinkerString(); }
         }
 
 
@@ -224,7 +221,7 @@
         public string SelectedLinkedLibrary
         {
             get { return selectedLinkedLibrary; }
-            set { selectedLinkedLibrary = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref selectedLinkedLibrary, value); UpdateLinkerString(); }
         }
 
 
@@ -232,93 +229,84 @@
         public ObservableCollection<string> LinkedLibraries
         {
             get { return linkedLibraries; }
-            set { linkedLibraries = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref linkedLibraries, value); UpdateLinkerString(); }
         }
 
         private string inRom1Start;
         public string InRom1Start
         {
             get { return inRom1Start; }
-            set { inRom1Start = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref inRom1Start, value); UpdateLinkerString(); }
         }
 
         private string inRom1Size;
         public string InRom1Size
         {
             get { return inRom1Size; }
-            set { inRom1Size = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref inRom1Size, value); UpdateLinkerString(); }
         }
 
         private string inRom2Start;
         public string InRom2Start
         {
             get { return inRom2Start; }
-            set { inRom2Start = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref inRom2Start, value);  UpdateLinkerString(); }
         }
 
         private string inRom2Size;
         public string InRom2Size
         {
             get { return inRom2Size; }
-            set { inRom2Size = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref inRom2Size, value); UpdateLinkerString(); }
         }
 
         private string inRam1Start;
         public string InRam1Start
         {
             get { return inRam1Start; }
-            set { inRam1Start = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref inRam1Start, value); UpdateLinkerString(); }
         }
 
         private string inRam1Size;
         public string InRam1Size
         {
             get { return inRam1Size; }
-            set { inRam1Size = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref inRam1Size, value); UpdateLinkerString(); }
         }
 
         private string inRam2Start;
         public string InRam2Start
         {
             get { return inRam2Start; }
-            set { inRam2Start = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref inRam2Start, value); UpdateLinkerString(); }
         }
 
         private string inRam2Size;
         public string InRam2Size
         {
             get { return inRam2Size; }
-            set { inRam2Size = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref inRam2Size, value); UpdateLinkerString(); }
         }
 
         private string scatterFile;
         public string ScatterFile
         {
             get { return scatterFile; }
-            set { scatterFile = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref scatterFile, value); UpdateLinkerString(); }
         }
 
         private string miscOptions;
         public string MiscOptions
         {
             get { return miscOptions; }
-            set { miscOptions = value; OnPropertyChanged(); UpdateLinkerString(); }
+            set { this.RaiseAndSetIfChanged(ref miscOptions, value); UpdateLinkerString(); }
         }
 
         private string linkerArguments;
         public string LinkerArguments
         {
             get { return linkerArguments; }
-            set { linkerArguments = value; OnPropertyChanged(); }
+            set { this.RaiseAndSetIfChanged(ref linkerArguments, value); }
         }
-
-
-        //new private StandardToolChain model;
-        //public StandardToolChain Model
-        //{
-        //    get { return model; }
-        //    set { model = value; OnPropertyChanged(); }
-        //}
-
     }
 }
