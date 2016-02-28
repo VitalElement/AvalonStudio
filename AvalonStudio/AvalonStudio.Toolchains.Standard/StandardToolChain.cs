@@ -7,6 +7,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Utils;
@@ -109,7 +110,7 @@
             {
                 project.IsBuilding = true;
 
-                result += project.SourceFiles.Count;
+                result += project.SourceFiles.Where(sf=>SupportsFile(sf)).Count();
             }
 
             return result;
@@ -374,7 +375,7 @@
                                         console.OverWrite(string.Format("[CC {0}/{1}]    [{2}]    {3}", ++buildCount, fileCount, project.Name, Path.GetFileName(file.Location)));
                                     }
 
-                                    new Thread(new ThreadStart(() =>
+                                    new Thread(() =>
                                     {
                                         var compileResult = Compile(console, superProject, project, file, objectFile);
 
@@ -393,7 +394,7 @@
                                             numTasks--;
                                             numLocalTasks--;
                                         }
-                                    })).Start();
+                                    }).Start();
                                 }
                                 else
                                 {

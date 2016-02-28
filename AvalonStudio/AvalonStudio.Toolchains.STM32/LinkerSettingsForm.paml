@@ -156,7 +156,7 @@
     </Panel>
 
     <Panel Grid.Row="4" Grid.ColumnSpan="2" >
-      <TextBox Text="{Binding LinkerArguments}" IsEnabled="False" />
+      <TextBox Text="{Binding LinkerArguments}" IsReadOnly="true" />
     </Panel>
   </Grid>
 </TabItem>
