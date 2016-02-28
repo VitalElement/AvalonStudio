@@ -560,7 +560,7 @@
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
             startInfo.RedirectStandardInput = true;
-            startInfo.CreateNoWindow = false;
+            startInfo.CreateNoWindow = true;
 
             process = Process.Start(startInfo);
 
