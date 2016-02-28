@@ -270,6 +270,8 @@
     <Compile Include="Controls\HoverProbe.xaml.cs">
       <DependentUpon>HoverProbe.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Debugging\BreakPointManager.cs" />
+    <Compile Include="Debugging\DebugManager.cs" />
     <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Program.cs" />
@@ -325,6 +327,10 @@
     <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj">
       <Project>{5d5fe113-ffef-4e49-a011-00a167efa36e}</Project>
       <Name>AvalonStudio.Languages.CPlusPlus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
+      <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
+      <Name>AvalonStudio.Projects.Standard</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repositories.csproj">
       <Project>{29c948e9-4d96-4490-b039-a5bbf6eec2e5}</Project>
