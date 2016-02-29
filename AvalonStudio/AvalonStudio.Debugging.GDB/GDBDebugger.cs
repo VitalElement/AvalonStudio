@@ -547,7 +547,7 @@
             // This information should be part of this extension... or configurable internally?
             // This maybe indicates that debuggers are part of toolchain?
             startInfo.FileName = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin", "arm-none-eabi-gdb" + Platform.ExecutableExtension);
-            startInfo.Arguments = string.Format("\"{0}\" --interpreter=mi", project.Executable);
+            startInfo.Arguments = string.Format("\"{0}\" --interpreter=mi", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
 
             if (!File.Exists(startInfo.FileName))
             {
