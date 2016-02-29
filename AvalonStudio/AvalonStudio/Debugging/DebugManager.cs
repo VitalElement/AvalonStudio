@@ -5,6 +5,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
+using Perspex.Threading;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -200,7 +201,7 @@ namespace AvalonStudio.Debugging
             }//);
         }
 
-        private void StepInto()
+        public void StepInto()
         {
             //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
             {
@@ -209,12 +210,15 @@ namespace AvalonStudio.Debugging
             }//);
         }
 
-        private void StepOver()
+        public async void StepOver()
         {
             //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
             {
                 PrepareToRun();
-                Debugger.StepOver();
+                await Task.Factory.StartNew(() =>
+                {
+                    Debugger.StepOver();
+                });
             }//);
         }
 
@@ -395,7 +399,7 @@ namespace AvalonStudio.Debugging
                             await BreakPointManager.Add(Debugger.BreakMain());
                         }
 
-                        Debugger.Run();
+                        Debugger.Continue();
                     }
                     //else
                     //{
@@ -464,13 +468,17 @@ namespace AvalonStudio.Debugging
                         //}
 
                         var normalizedPath = e.Frame.File.NormalizePath();
-                        //var file = WorkspaceViewModel.Instance.SolutionExplorer.Model.FindFile(normalizedPath);
+                        var file = WorkspaceViewModel.Instance.SolutionExplorer.Model.FindFile(normalizedPath);
 
                         //WorkspaceViewModel.Instance.BeginDispatchUi(() =>
                         {
                             //EditorViewModel newDocument = null;
 
-                            //bool closeThisDocument = !WorkspaceViewModel.Instance.OpenDocument(file, e.Frame.Line, 1, false, out newDocument, true);
+                            //bool closeThisDocument = !
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                WorkspaceViewModel.Instance.Editor.OpenFile(file, e.Frame.Line, 1, true);
+                            });
 
                             //if (newDocument != lastDocument)
                             //{

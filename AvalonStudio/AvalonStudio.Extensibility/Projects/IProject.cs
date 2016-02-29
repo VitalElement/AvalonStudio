@@ -21,6 +21,8 @@
         IToolChain ToolChain { get; set; }
         IDebugger Debugger { get; set; }
 
+        ISourceFile FindFile(string path);
+
         /// <summary>
         /// The directory the project file resides in.
         /// </summary>

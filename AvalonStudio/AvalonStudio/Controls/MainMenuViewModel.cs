@@ -127,6 +127,27 @@
             {
                 Environment.Exit(1);
             });
+
+            StartDebuggingCommand = ReactiveCommand.Create();
+            StartDebuggingCommand.Subscribe(_ =>
+            {
+                if (WorkspaceViewModel.Instance.CurrentPerspective == Perspective.Editor)
+                {
+                    WorkspaceViewModel.Instance.DebugManager.StartDebug(WorkspaceViewModel.Instance.SolutionExplorer.SelectedProject);
+                }
+            });
+
+            StepIntoCommand = ReactiveCommand.Create();
+            StepIntoCommand.Subscribe(_ =>
+            {
+                WorkspaceViewModel.Instance.DebugManager.StepInto();
+            });
+
+            StepOverCommand = ReactiveCommand.Create();
+            StepOverCommand.Subscribe(_ =>
+            {
+                WorkspaceViewModel.Instance.DebugManager.StepOver();
+            });
         }
 
         public ReactiveCommand<object> NewProjectCommand { get; private set; }
@@ -138,5 +159,9 @@
         public ReactiveCommand<object> BuildProjectCommand { get; private set; }
         public ReactiveCommand<object> PackagesCommand { get; private set; }
         public ReactiveCommand<object> ProjectPropertiesCommand { get; private set; }
+
+        public ReactiveCommand<object> StartDebuggingCommand { get; private set; }
+        public ReactiveCommand<object> StepOverCommand { get; private set; }
+        public ReactiveCommand<object> StepIntoCommand { get; private set; }
     }
 }

@@ -178,14 +178,14 @@
             //}
 
             string result = string.Empty;
-
+            
             //transmitDispatcher.Invoke((Action)(() =>
+            Task.Factory.StartNew(() =>
             {
                 transmitSemaphore.WaitOne();
-
                 SetCommand(command);
 
-                if (DebugMode)
+                //if (DebugMode)
                 {
                     console.WriteLine("[Sending] " + command.Encode());
                 }
@@ -198,7 +198,7 @@
                 ClearCommand();
 
                 transmitSemaphore.Release();
-            }//));
+            }).Wait();
 
             return result;
         }
@@ -596,9 +596,10 @@
                        //console.WriteLine(e.Data);
 
                        //receiveDispatcher.Invoke((Action)(() =>
+                       Task.Factory.StartNew(()=>
                        {
                            ProcessOutput(e.Data);
-                       }//));
+                       });
                    }
                };
 

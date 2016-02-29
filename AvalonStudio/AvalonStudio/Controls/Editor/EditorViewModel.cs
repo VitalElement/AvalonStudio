@@ -13,6 +13,7 @@
     using TextEditor;
     using Extensibility.Platform;
     using Utils;
+    using Projects;
     public class EditorViewModel : ViewModel<EditorModel>
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -96,6 +97,10 @@
 
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
             backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
+
+            debugLineHighlighter = new SelectedDebugLineBackgroundRenderer();
+            backgroundRenderers.Add(debugLineHighlighter);
+
             backgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
@@ -105,6 +110,7 @@
         }
         #endregion
 
+        public SelectedDebugLineBackgroundRenderer debugLineHighlighter;
         private SelectedWordTextLineTransformer wordAtCaretHighlighter;
 
         #region Properties
@@ -312,6 +318,18 @@
         public void OnPointerMoved (PointerEventArgs e)
         {
             
+        }
+
+        public void OpenFile(ISourceFile file, int line, int column, bool debugHighlight = false)
+        {
+            Model.OpenFile(file);
+
+            if(debugHighlight)
+            {
+                debugLineHighlighter.Line = line;
+            }
+
+            CaretIndex = TextDocument.GetOffset(line, column);
         }
 
         private void FormatAll()
