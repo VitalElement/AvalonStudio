@@ -11,6 +11,8 @@
 
         IProject AddProject(IProject project);
 
+        ISourceFile FindFile(string path);
+
         void RemoveProject(IProject project);
 
         ObservableCollection<IProject> Projects { get; }

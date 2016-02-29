@@ -6,20 +6,6 @@
 
     public static class Extensions
     {
-        public static string NormalizePath (this string path)
-        {
-            if (path != null)
-            {
-                return Path.GetFullPath(new Uri(path).LocalPath)
-                           .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                           .ToUpperInvariant();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public static StopReason ToStopReason (this string data)
         {
             switch (data)

@@ -154,6 +154,23 @@
             return result;
         }
 
+        public ISourceFile FindFile(string path)
+        {
+            ISourceFile result = null;
+
+            foreach (var project in Projects)
+            {
+                result = project.FindFile(path);
+
+                if (result != null)
+                {
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         public Solution()
         {
             ProjectReferences = new List<string>();
