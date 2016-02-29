@@ -376,7 +376,7 @@ namespace AvalonStudio.Debugging
             WorkspaceViewModel.Instance.Console.WriteLine();
             WorkspaceViewModel.Instance.Console.WriteLine("Starting Debugger...");
 
-            Debugger.DebugMode = true;
+            //Debugger.DebugMode = true;
 
             // disable documents, get rid of error list, solution explorer, etc.            
             if (Debugger.Start(project.ToolChain, WorkspaceViewModel.Instance.Console, project))

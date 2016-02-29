@@ -185,7 +185,7 @@
                 transmitSemaphore.WaitOne();
                 SetCommand(command);
 
-                //if (DebugMode)
+                if (DebugMode)
                 {
                     console.WriteLine("[Sending] " + command.Encode());
                 }
