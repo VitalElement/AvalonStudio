@@ -11,6 +11,7 @@
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.Llilum;
     using Extensibility;
+    using Toolchains.Standard;
     class Program
     {
         const string baseDir = @"c:\development\vebuild\test";
@@ -61,6 +62,11 @@
             {
                 var stopWatch = new System.Diagnostics.Stopwatch();
                 stopWatch.Start();
+                
+                if(project.ToolChain is StandardToolChain)
+                {
+                    (project.ToolChain as StandardToolChain).Jobs = options.Jobs;
+                }
 
                 var awaiter = project.ToolChain.Build(console, project);
                 awaiter.Wait();
