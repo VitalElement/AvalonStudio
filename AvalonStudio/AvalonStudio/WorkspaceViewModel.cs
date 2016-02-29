@@ -63,7 +63,7 @@
 
             DebugManager = new DebugManager();
             CurrentPerspective = Perspective.Editor;
-        }        
+        }
 
         public void InvalidateErrors()
         {

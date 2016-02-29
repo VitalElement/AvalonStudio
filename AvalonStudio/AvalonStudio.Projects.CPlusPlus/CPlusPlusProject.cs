@@ -558,6 +558,12 @@
             Save();
         }
 
+        public ISourceFile FindFile(string path)
+        {
+            path = path.NormalizePath();
+            return Items.OfType<ISourceFile>().FirstOrDefault((f) => f.Location.NormalizePath() == path);
+        }
+
         [JsonIgnore]
         public IToolChain ToolChain
         {

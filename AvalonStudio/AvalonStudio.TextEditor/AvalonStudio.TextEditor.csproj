@@ -173,6 +173,7 @@
     <Compile Include="Rendering\ColumnLimitBackgroundRenderer.cs" />
     <Compile Include="Rendering\IBackgroundRenderer.cs" />
     <Compile Include="Rendering\IDocumentLineTransformer.cs" />
+    <Compile Include="Rendering\SelectedLineBackgroundRenderer - Copy.cs" />
     <Compile Include="Rendering\SelectedLineBackgroundRenderer.cs" />
     <Compile Include="Rendering\SelectedWordTextLineTransformer.cs" />
     <Compile Include="Rendering\SelectionBackgroundRenderer.cs" />
