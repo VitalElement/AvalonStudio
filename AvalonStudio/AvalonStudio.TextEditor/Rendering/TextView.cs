@@ -618,7 +618,7 @@
                 if (caretIndex >= 0)
                 {
                     var position = TextDocument.GetLocation(caretIndex);
-                    this.BringIntoView(new Rect(position.Column, position.Line - 1, 0, 1));
+                    this.BringIntoView(new Rect(position.Column, position.Line - (VisualLines.Count-1) / 2, 0, VisualLines.Count-1));
                 }
             }
         }
