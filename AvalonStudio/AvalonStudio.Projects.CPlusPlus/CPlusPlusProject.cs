@@ -17,7 +17,7 @@
     using System.Dynamic;
     using Extensibility.Platform;
     using System.Collections.ObjectModel;
-    using Debugging;
+    using Debugging;    
 
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {
@@ -39,10 +39,9 @@
 
             foreach (var file in files)
             {
-                var sourceFile = new SourceFile() { Project = project, Parent=folder, File = file };
-                project.SourceFiles.Add(sourceFile);
+                var sourceFile = SourceFile.FromPath(project, folder, file);
+                project.SourceFiles.InsertSorted(sourceFile);
                 folder.Items.Add(sourceFile);
-
             }
         }
 
@@ -559,9 +558,8 @@
         }
 
         public ISourceFile FindFile(string path)
-        {
-            path = path.NormalizePath();
-            return Items.OfType<ISourceFile>().FirstOrDefault((f) => f.Location.NormalizePath() == path);
+        {            
+            return SourceFiles.BinarySearch(f => f.File, path);
         }
 
         [JsonIgnore]

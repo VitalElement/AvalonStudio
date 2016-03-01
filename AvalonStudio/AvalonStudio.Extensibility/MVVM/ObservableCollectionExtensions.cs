@@ -13,46 +13,7 @@ namespace AvalonStudio.MVVM
     /// </summary>
     public static class ObservableCollectionExtensions
     {
-        #region Public methods
-        /// <summary>
-        /// Inserts an element into the collection, keeping it sorted. The collection must be sorted
-        /// already, i.e. populated only with this method. The template type for the collection must
-        /// implement IComparable.
-        /// </summary>
-        /// <typeparam name="T">is the type of items in the collection.</typeparam>
-        /// <param name="myself">is "this" reference.</param>
-        /// <param name="item">is the item to insert.</param>
-        public static void InsertSorted<T>(this ObservableCollection<T> myself, T item) where T : IComparable<T>
-        {
-            if (myself.Count == 0)
-            {
-                myself.Add(item);
-            }
-            else
-            {
-                bool last = true;
-
-                for (int i = 0; i < myself.Count; i++)
-                {
-                    int result = myself[i].CompareTo(item);
-
-                    if (result >= 1)
-                    {
-                        myself.Insert(i, item);
-
-                        last = false;
-
-                        break;
-                    }
-                }
-
-                if (last)
-                {
-                    myself.Add(item);
-                }
-            }
-        }
-
+        #region Public methods        
         /// <summary>
         /// Binds the collection to another one by subscribing to its CollectionChanged event.
         /// </summary>
