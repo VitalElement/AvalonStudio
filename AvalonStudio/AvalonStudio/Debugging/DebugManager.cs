@@ -48,7 +48,7 @@ namespace AvalonStudio.Debugging
                         }
 
                         if (o is IProject)
-                        {                            
+                        {
                             var masterProject = o as IProject;
 
                             //WorkspaceViewModel.Instance.SaveAllCommand.Execute(null);
@@ -140,7 +140,7 @@ namespace AvalonStudio.Debugging
             });
 
             StepIntoCommand = ReactiveCommand.Create();  //stepcommand can execute.
-            StepIntoCommand.Subscribe(_=>
+            StepIntoCommand.Subscribe(_ =>
             {
                 StepInto();
             });
@@ -152,7 +152,7 @@ namespace AvalonStudio.Debugging
             });
 
             StepOverCommand = ReactiveCommand.Create(); // }, StepCommandsCanExecute);
-            StepOverCommand.Subscribe(_=>
+            StepOverCommand.Subscribe(_ =>
             {
                 StepOver();
             });
@@ -203,23 +203,26 @@ namespace AvalonStudio.Debugging
 
         public void StepInto()
         {
-            //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
+            if(!IsExecuting)
             {
-                PrepareToRun();
-                Debugger.StepInto();
-            }//);
+                Task.Factory.StartNew(() =>
+                {
+                    PrepareToRun();
+                    Debugger.StepInto();
+                });
+            }            
         }
 
-        public async void StepOver()
+        public void StepOver()
         {
-            //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
+            if (!IsExecuting)
             {
-                PrepareToRun();
-                await Task.Factory.StartNew(() =>
+                Task.Factory.StartNew(() =>
                 {
+                    PrepareToRun();
                     Debugger.StepOver();
                 });
-            }//);
+            }
         }
 
         private bool ignoreEvents = false;
@@ -362,59 +365,28 @@ namespace AvalonStudio.Debugging
         #endregion
 
         #region Methods
-        public async void StartDebug(IProject project)
+        public void StartDebug(IProject project)
         {
-            Project = project;
-
-            Debugger = new OpenOCDDebugAdaptor();
-            
-
-           // Debugger.DebugMode = WorkspaceViewModel.Instance.DebugMode;
-
-            Debugger.Initialise();
-
-            WorkspaceViewModel.Instance.Console.WriteLine();
-            WorkspaceViewModel.Instance.Console.WriteLine("Starting Debugger...");
-
-            //Debugger.DebugMode = true;
-
-            // disable documents, get rid of error list, solution explorer, etc.            
-            if (Debugger.Start(project.ToolChain, WorkspaceViewModel.Instance.Console, project))
+            Task.Factory.StartNew(async () =>
             {
-                WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Debug;
+                Debugger = new OpenOCDDebugAdaptor();
 
-                //foreach (var document in WorkspaceViewModel.Instance.OpenDocuments)
-                //{
-                //    document.IntellisenseViewModel.Hide();
-                //}
+                Debugger.Initialise();
 
-                //await WorkspaceViewModel.Instance.DispatchDebug(async () =>
+                WorkspaceViewModel.Instance.Console.WriteLine();
+                WorkspaceViewModel.Instance.Console.WriteLine("Starting Debugger...");
+                      
+                if (Debugger.Start(project.ToolChain, WorkspaceViewModel.Instance.Console, project))
                 {
+                    WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Debug;
+
                     BreakPointManager.GoLive();
 
-                   // if (project.UserData.RunImmediately)
-                    {
-                        //if (project.UserData.BreakOnMain)
-                        {
-                            await BreakPointManager.Add(Debugger.BreakMain());
-                        }
+                    await BreakPointManager.Add(Debugger.BreakMain());
 
-                        Debugger.Continue();
-                    }
-                    //else
-                    //{
-                      //  Debugger.StepInstruction();
-                   // }
-                }//);
-
-                //WorkspaceViewModel.Instance.DispatchUi(() =>
-                {
-                    //if (WorkspaceViewModel.Instance.ActiveDocument != null && WorkspaceViewModel.Instance.ActiveDocument.BreakpointMargin != null)
-                    //{
-                    //    WorkspaceViewModel.Instance.ActiveDocument.BreakpointMargin.InvalidateVisual();
-                    //}
-                }//);
-            }
+                    Debugger.Continue();
+                }
+            });
         }
 
         private IProject project;
@@ -494,24 +466,24 @@ namespace AvalonStudio.Debugging
                     }
 
 
-                    List<Variable> stackVariables = null;
-                    List<Frame> stackFrames = null;
-                    List<VariableObjectChange> updates = null;
+                    //List<Variable> stackVariables = null;
+                    //List<Frame> stackFrames = null;
+                    //List<VariableObjectChange> updates = null;
 
                     //await WorkspaceViewModel.Instance.DispatchDebug(() =>
-                    {
-                        stackVariables = Debugger.ListStackVariables();
-                        stackFrames = Debugger.ListStackFrames();
-                        updates = debugger.UpdateVariables();
-                    }//);
+                   // {
+                        //stackVariables = Debugger.ListStackVariables();
+                       // stackFrames = Debugger.ListStackFrames();
+                        //updates = debugger.UpdateVariables();
+                    //});
 
                     //if (DissasemblyView.bool == bool.Visible)
                     //{
-                     //   WorkspaceViewModel.Instance.DispatchUi(() =>
+                    //   WorkspaceViewModel.Instance.DispatchUi(() =>
                     //    {
-                     //       DissasemblyView.SetAddress(e.Frame.Address);
-                      //  });
-                   // }
+                    //       DissasemblyView.SetAddress(e.Frame.Address);
+                    //  });
+                    // }
 
                     //if (MemoryView.bool == bool.Visible)
                     //{
@@ -541,7 +513,7 @@ namespace AvalonStudio.Debugging
 
         void debugger_StateChanged(object sender, EventArgs e)
         {
-           // WorkspaceViewModel.Instance.BeginDispatchUi(() =>
+            // WorkspaceViewModel.Instance.BeginDispatchUi(() =>
             {
                 //CommandManager.InvalidateRequerySuggested();
             }//);
