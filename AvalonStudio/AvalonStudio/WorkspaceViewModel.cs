@@ -132,7 +132,21 @@
         public Perspective CurrentPerspective
         {
             get { return currentPerspective; }
-            set { this.RaiseAndSetIfChanged(ref currentPerspective, value); }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref currentPerspective, value);
+
+                switch(value)
+                {
+                    case Perspective.Editor:
+                        break;
+
+                    case Perspective.Debug:
+                        // TODO close intellisense, and tooltips.
+                        // disable documents, get rid of error list, solution explorer, etc.    (isreadonly)   
+                        break;
+                }
+            }
         }
 
         private ModalDialogViewModelBase modalDialog;
