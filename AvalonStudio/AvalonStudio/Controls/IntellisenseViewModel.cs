@@ -10,6 +10,7 @@
     using System.Threading.Tasks;
     using TextEditor.Document;
     using Utils;
+    using Perspex.Threading;
     public class IntellisenseViewModel : ViewModel<List<CompletionDataViewModel>>
     {
         private EditorModel editor;
@@ -168,14 +169,14 @@
                 switch (e.Key)
                 {
                     case Key.Enter:
-                    case Key.Tab:                    
+                    case Key.Tab:
                     case Key.OemPeriod:
                     case Key.OemMinus:
                     case Key.Space:
                         e.Handled = DoComplete(false);
                         break;
 
-                    
+
                     // Below might make intellisense less anoying for people not used to it.
                     //case Key.Space:
                     //    if (SelectedCompletion.Title.StartsWith(currentFilter))
@@ -317,7 +318,7 @@
                         intellisenseStartedAt++;
                     }
 
-                    currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);                                                           
+                    currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);
 
                     await editor.DoCompletionRequestAsync(caret.Line, caret.Column, currentFilter);
 
@@ -348,7 +349,7 @@
                         }
                     });
 
-                    filteredResults = unfilteredCompletions;
+                    filteredResults = unfilteredCompletions.ToList();
                 }
                 else
                 {
@@ -358,20 +359,19 @@
                     {
                         lock (intellisenseLock)
                         {
-                            filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower()));
+                            filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower())).ToList();
                         }
                     });
                 }
 
+                CompletionDataViewModel suggestion = null;
                 if (currentFilter != string.Empty)
                 {
-                    SelectedCompletion = null;
-
                     IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
-                    lock(intellisenseLock)
+                    lock (intellisenseLock)
                     {
-                        newSelectedCompletions = filteredResults.Where((s) => s.Title.StartsWith(currentFilter));   // try find exact match case sensitive
+                        filteredResults = newSelectedCompletions = filteredResults.Where((s) => s.Title.StartsWith(currentFilter));   // try find exact match case sensitive
 
                         if (newSelectedCompletions.Count() == 0)
                         {
@@ -380,33 +380,26 @@
                     }
 
                     if (newSelectedCompletions.Count() == 0)
-                    {                        
-                        SelectedCompletion = noSelectedCompletion;
+                    {
+                        suggestion = noSelectedCompletion;
                     }
                     else
                     {
                         var newSelectedCompletion = newSelectedCompletions.FirstOrDefault();
-                        
-                        SelectedCompletion = newSelectedCompletion;
+
+                        suggestion = newSelectedCompletion;
                     }
                 }
                 else
                 {
-                    SelectedCompletion = noSelectedCompletion;
-                }
+                    suggestion = noSelectedCompletion;
+                }                
 
                 if (filteredResults?.Count() > 0)
                 {
-                    if (selectedCompletion != noSelectedCompletion)
-                    {
-                        var index = filteredResults.ToList().IndexOf(selectedCompletion);
+                    Model = filteredResults.ToList();                   
 
-                        Model = filteredResults.Skip(index - 4).Take(25).ToList();
-                    }
-                    else
-                    {
-                        Model = filteredResults.Take(25).ToList();
-                    }
+                    SelectedCompletion = suggestion;
 
                     // Triggers display update.
                     IsVisible = true;
