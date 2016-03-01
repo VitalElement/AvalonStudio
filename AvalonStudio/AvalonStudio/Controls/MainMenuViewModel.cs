@@ -128,8 +128,8 @@
                 Environment.Exit(1);
             });
 
-            StartDebuggingCommand = ReactiveCommand.Create();
-            StartDebuggingCommand.Subscribe(_ =>
+            StartDebugCommand = ReactiveCommand.Create();
+            StartDebugCommand.Subscribe(_ =>
             {
                 if (WorkspaceViewModel.Instance.CurrentPerspective == Perspective.Editor)
                 {
@@ -160,7 +160,7 @@
         public ReactiveCommand<object> PackagesCommand { get; private set; }
         public ReactiveCommand<object> ProjectPropertiesCommand { get; private set; }
 
-        public ReactiveCommand<object> StartDebuggingCommand { get; private set; }
+        public ReactiveCommand<object> StartDebugCommand { get; private set; }
         public ReactiveCommand<object> StepOverCommand { get; private set; }
         public ReactiveCommand<object> StepIntoCommand { get; private set; }
     }

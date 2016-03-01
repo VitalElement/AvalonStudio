@@ -3,9 +3,14 @@
     using Newtonsoft.Json;
     using System.IO;
     using System;
-
+    using Utils;
     public class SourceFile : ISourceFile
     {
+        private SourceFile()
+        {
+
+        }        
+
         public string File { get; set; }
         public string Flags { get; set; }
 
@@ -14,14 +19,24 @@
             this.Project = project;
         }
 
-        public static SourceFile Create(IProject project, string location, string name, string text = "")
+        public static SourceFile FromPath (IProject project, IProjectFolder parent, string filePath)
+        {
+            return new SourceFile() { Project = project, Parent = parent, File = filePath.NormalizePath() };
+        }
+
+        public static SourceFile Create(IProject project, IProjectFolder parent, string location, string name, string text = "")
         {
             var filePath = Path.Combine(location, name);
             var file = System.IO.File.CreateText(filePath);
             file.Write(text);
             file.Close();
 
-            return new SourceFile() { File = filePath, Project = project };
+            return new SourceFile() { File = filePath.NormalizePath(), Project = project };
+        }
+
+        public int CompareTo(ISourceFile other)
+        {
+            return File.CompareTo(other.File);
         }
 
         [JsonIgnore]

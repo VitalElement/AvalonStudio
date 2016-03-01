@@ -433,36 +433,27 @@ namespace AvalonStudio.Debugging
                     IsUpdating = true;
 
                     if (e.Frame != null && e.Frame.File != null)
-                    {
-                        //if (lastDocument != null)
-                        //{
-                        //    lastDocument.ClearDebugHighlight();
-                        //}
-
+                    {                        
                         var normalizedPath = e.Frame.File.NormalizePath();
-                        var file = WorkspaceViewModel.Instance.SolutionExplorer.Model.FindFile(normalizedPath);
 
-                        //WorkspaceViewModel.Instance.BeginDispatchUi(() =>
+                        var file = WorkspaceViewModel.Instance.Editor.Model.ProjectFile;
+
+                        if (file == null || file.File != normalizedPath)
                         {
-                            //EditorViewModel newDocument = null;
+                            file = WorkspaceViewModel.Instance.SolutionExplorer.Model.FindFile(normalizedPath);
+                        }
 
-                            //bool closeThisDocument = !
+                        if (file != null)
+                        {
                             Dispatcher.UIThread.InvokeAsync(() =>
                             {
                                 WorkspaceViewModel.Instance.Editor.OpenFile(file, e.Frame.Line, 1, true);
                             });
-
-                            //if (newDocument != lastDocument)
-                            //{
-                            //    if (closeLastDocument && lastDocument != null)
-                            //    {
-                            //        lastDocument.CloseCommand.Execute(null);
-                            //    }
-
-                            //    lastDocument = newDocument;
-                            //    closeLastDocument = closeThisDocument;
-                            //}
-                        }//);
+                        }
+                        else
+                        {
+                            WorkspaceViewModel.Instance.Console.WriteLine("Unable to find file: " + e.Frame.File);
+                        }
                     }
 
 

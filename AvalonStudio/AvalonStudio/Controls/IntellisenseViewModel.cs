@@ -9,6 +9,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using TextEditor.Document;
+    using Utils;
     public class IntellisenseViewModel : ViewModel<List<CompletionDataViewModel>>
     {
         private EditorModel editor;
