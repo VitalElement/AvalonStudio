@@ -168,19 +168,9 @@
 
         internal string SendCommand(Command command, Int32 timeout)
         {
-            //if(referenceDispathcer == null)
-            //{
-            //    referenceDispathcer = Dispatcher.CurrentDispatcher;
-            //}
-            //else if(referenceDispathcer != Dispatcher.CurrentDispatcher)
-            //{
-            //    //throw new Exception("Debugger being called from multiple threads.");
-            //}
-
             string result = string.Empty;
-            
-            //transmitDispatcher.Invoke((Action)(() =>
-            Task.Factory.StartNew(() =>
+
+            //Task.Factory.StartNew(() =>
             {
                 transmitSemaphore.WaitOne();
                 SetCommand(command);
@@ -198,7 +188,7 @@
                 ClearCommand();
 
                 transmitSemaphore.Release();
-            }).Wait();
+            }//).Wait();
 
             return result;
         }
