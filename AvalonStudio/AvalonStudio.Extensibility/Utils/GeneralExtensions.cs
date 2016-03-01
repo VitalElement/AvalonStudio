@@ -1,10 +1,85 @@
 ﻿namespace AvalonStudio.Utils
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
 
     public static class GeneralExtensions
     {
+        public static T BinarySearch<T, TKey>(this IList<T> list, Func<T, TKey> keySelector, TKey key)
+            where TKey : IComparable<TKey>
+        {
+            int min = 0;
+            int max = list.Count;
+            while (min < max)
+            {
+                int mid = min + ((max - min) / 2);
+                T midItem = list[mid];
+                TKey midKey = keySelector(midItem);
+                int comp = midKey.CompareTo(key);
+                if (comp < 0)
+                {
+                    min = mid + 1;
+                }
+                else if (comp > 0)
+                {
+                    max = mid - 1;
+                }
+                else
+                {
+                    return midItem;
+                }
+            }
+
+            if (min == max && min < list.Count &&
+                keySelector(list[min]).CompareTo(key) == 0)
+            {
+                return list[min];
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
+        /// Inserts an element into the collection, keeping it sorted. The collection must be sorted
+        /// already, i.e. populated only with this method. The template type for the collection must
+        /// implement IComparable.
+        /// </summary>
+        /// <typeparam name="T">is the type of items in the collection.</typeparam>
+        /// <param name="myself">is "this" reference.</param>
+        /// <param name="item">is the item to insert.</param>
+        public static void InsertSorted<T>(this IList<T> myself, T item) where T : IComparable<T>
+        {
+            if (myself.Count == 0)
+            {
+                myself.Add(item);
+            }
+            else
+            {
+                bool last = true;
+
+                for (int i = 0; i < myself.Count; i++)
+                {
+                    int result = myself[i].CompareTo(item);
+
+                    if (result >= 1)
+                    {
+                        myself.Insert(i, item);
+
+                        last = false;
+
+                        break;
+                    }
+                }
+
+                if (last)
+                {
+                    myself.Add(item);
+                }
+            }
+        }
+
+
         /// <summary>
         /// Creates a relative path from one file or folder to another.
         /// </summary>
@@ -39,9 +114,7 @@
         {
             if (path != null)
             {
-                return Path.GetFullPath(new Uri(path).LocalPath)
-                           .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
-                           .ToUpperInvariant();
+                return new FileInfo(path).FullName;
             }
             else
             {

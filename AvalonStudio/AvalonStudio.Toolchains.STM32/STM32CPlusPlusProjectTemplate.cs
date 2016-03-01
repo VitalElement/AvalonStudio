@@ -44,7 +44,7 @@
 
             var settings = STM32GCCToolchain.ProvisionSTM32Settings(project);
 
-            project.Items.Add(SourceFile.Create(project, project.CurrentDirectory, "main.cpp", "int main (void){}"));
+            project.Items.Add(SourceFile.Create(project, project, project.CurrentDirectory, "main.cpp", "int main (void){}"));
             
             project.Save();            
 

@@ -12,6 +12,7 @@
     using AvalonStudio.Toolchains.Llilum;
     using Extensibility;
     using Toolchains.Standard;
+    using Utils;
     class Program
     {
         const string baseDir = @"c:\development\vebuild\test";
@@ -171,9 +172,9 @@
 
                 if (project != null)
                 {
-                    var sourceFile = new SourceFile { File = options.File, Project = project };
+                    var sourceFile = SourceFile.FromPath(project, project, options.File);
                     project.Items.Add(sourceFile);
-                    project.SourceFiles.Add(sourceFile);
+                    project.SourceFiles.InsertSorted(sourceFile);
                     project.Save();
                     Console.WriteLine("File added.");
                     return 1;
