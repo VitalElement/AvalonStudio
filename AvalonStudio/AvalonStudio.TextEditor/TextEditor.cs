@@ -32,6 +32,8 @@
 
         public TextEditor()
         {
+            Styles.Add(new TextEditorTheme());
+
             Name = "textEditor";
             textChangedDelayTimer = new DispatcherTimer();
             textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
