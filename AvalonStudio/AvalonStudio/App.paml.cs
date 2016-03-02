@@ -14,17 +14,10 @@ namespace AvalonStudio
     class App : Application
     {
         public App()
-        {            
+        {
             RegisterServices();
             InitializeSubsystems((int)Environment.OSVersion.Platform);
-            Styles.Add(new DefaultTheme());
-
-            var loader = new PerspexXamlLoader();
-            var baseLight = (IStyle)loader.Load(
-                new Uri("resm:Perspex.Themes.Default.Accents.BaseLight.paml?assembly=Perspex.Themes.Default"));
-            Styles.Add(baseLight);
-            Styles.Add(new TextEditorTheme());
-            Styles.Add(new MetroWindowTheme());
+            InitializeComponent();
         }
 
         public static void AttachDevTools(Window window)
@@ -32,6 +25,11 @@ namespace AvalonStudio
 #if DEBUG
             DevTools.Attach(window);
 #endif
+        }
+
+        private void InitializeComponent()
+        {
+            PerspexXamlLoader.Load(this);
         }
     }
 }
