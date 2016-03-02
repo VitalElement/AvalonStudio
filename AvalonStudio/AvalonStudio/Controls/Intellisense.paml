@@ -6,7 +6,7 @@
   </UserControl.Styles>
   <Panel IsVisible="{Binding IsVisible}">
     <StackPanel Orientation="Horizontal" Gap="2" Background="Transparent">
-      <ListBox Items="{Binding Model}" Background="#252526" BorderBrush="#3e3e42" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="180" FontFamily="Segoi UI" FontSize="14" Width="240">
+      <ListBox Items="{Binding Model}" Background="{StyleResource ThemeControlMidBrush}" BorderBrush="#3e3e42" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="180" FontFamily="Segoi UI" FontSize="14" Width="240">
         <ListBox.DataTemplates>
           <DataTemplate DataType="vm:MethodCompletionDataViewModel">
             <Grid>
