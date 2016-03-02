@@ -1,5 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/perspex" xmlns:te="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-             Background="#2D2D30" Foreground="WhiteSmoke">
+             Foreground="WhiteSmoke">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">     
       <TextBlock Text="{Binding Title}" Margin="0,0,0,0" TextAlignment="Center" />
