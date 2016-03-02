@@ -8,14 +8,14 @@
     <SolidColorBrush x:Key="ThemeBorderMidBrush">#FF888888</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeBorderDarkBrush">#FF333333</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeControlLightBrush">#FFFFFFFF</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeControlMidBrush">#FF3E3E42</SolidColorBrush>    
+    <SolidColorBrush x:Key="ThemeControlMidBrush">#FF3E3E42</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeControlDarkBrush">#FF252526</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeForegroundBrush">#FFF1F1F1</SolidColorBrush>
+    <SolidColorBrush x:Key="ThemeForegroundBrush">Red</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeForegroundLightBrush">#FF808080</SolidColorBrush>
 
-    <SolidColorBrush x:Key="HighlightBrush">#FF086F9E</SolidColorBrush>    
+    <SolidColorBrush x:Key="HighlightBrush">#FF086F9E</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeAccentBrush">#FF004C8A</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeAccentBrush2">#99119EDA</SolidColorBrush>
+    <SolidColorBrush x:Key="ThemeAccentBrush2">#FF004C8A</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeAccentBrush3">#66119EDA</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeAccentBrush4">#33119EDA</SolidColorBrush>
 
