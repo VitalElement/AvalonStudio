@@ -6,6 +6,8 @@ using Perspex.Diagnostics;
 using Perspex.Themes.Default;
 using AvalonStudio.TextEditor;
 using AvalonStudio.Controls;
+using Perspex.Markup.Xaml;
+using Perspex.Styling;
 
 namespace AvalonStudio
 {
@@ -15,7 +17,12 @@ namespace AvalonStudio
         {            
             RegisterServices();
             InitializeSubsystems((int)Environment.OSVersion.Platform);
-            Styles = new DefaultTheme();
+            Styles.Add(new DefaultTheme());
+
+            var loader = new PerspexXamlLoader();
+            var baseLight = (IStyle)loader.Load(
+                new Uri("resm:Perspex.Themes.Default.Accents.BaseLight.paml?assembly=Perspex.Themes.Default"));
+            Styles.Add(baseLight);
             Styles.Add(new TextEditorTheme());
             Styles.Add(new MetroWindowTheme());
         }
