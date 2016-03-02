@@ -1,5 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/perspex"
-             xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio" Foreground="WhiteSmoke">
+             xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio">
   <UserControl.Styles>
   </UserControl.Styles>
   <Border BorderBrush="#3E3E42" BorderThickness="1">

@@ -1,6 +1,6 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/perspex"
         xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-        Title="AvalonStudio" BorderThickness="1" BorderBrush="{StyleResource ThemeAccentBrush2}" Foreground="{StyleResource ThemeForegroundBrush}" Width="1600" Height="900">
+        Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFC4C4C4" Width="1600" Height="900">
   <Controls:MetroWindow.TitleBarContent>
     <Controls:MainMenu DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
   </Controls:MetroWindow.TitleBarContent>
