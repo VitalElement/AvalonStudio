@@ -583,10 +583,7 @@
                {
                    if (e.Data != null)
                    {
-                       //console.WriteLine(e.Data);
-
-                       //receiveDispatcher.Invoke((Action)(() =>
-                       Task.Factory.StartNew(()=>
+                       Task.Factory.StartNew(() =>
                        {
                            ProcessOutput(e.Data);
                        });
