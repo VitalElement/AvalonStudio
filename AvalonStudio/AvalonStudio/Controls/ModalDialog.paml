@@ -1,20 +1,17 @@
-﻿<UserControl xmlns="https://github.com/perspex" 
+﻿<UserControl xmlns="https://github.com/perspex"
              xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio"
-             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">  
-  <UserControl.DataTemplates>    
-  </UserControl.DataTemplates>
-  <Grid RowDefinitions="70,*,100">    
+             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" Background="{StyleResource ThemeBackgroundBrush}">
+  <Grid RowDefinitions="70,*,100">
     <Grid Grid.Row="0">
       <Grid VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="50"/>
           <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Button Grid.Column="0"  Command="{Binding CancelCommand}" Height="50" IsVisible="{Binding CancelButtonVisible}" Content="Back" />
         <TextBlock Grid.Column="1" Text="{Binding Title}" Foreground="WhiteSmoke" FontSize="40" VerticalAlignment="Center" FontFamily="Segoe UI Light" FontWeight="Bold"/>
       </Grid>
     </Grid>
-    <Grid Grid.Row="1" RowDefinitions="*,30">      
+    <Grid Grid.Row="1" RowDefinitions="*,30">
       <Border BorderBrush="#FF585656" BorderThickness="1" Margin="50 0 50 0">
         <ContentControl Content="{Binding }">
           <ContentControl.DataTemplates>
@@ -29,12 +26,15 @@
             </DataTemplate>
           </ContentControl.DataTemplates>
         </ContentControl>
-        
+
       </Border>
     </Grid>
 
     <Grid Grid.Row="2">
-      <Button Height="40" Width="80" Margin="20" HorizontalAlignment="Right" Content="OK" Command="{Binding OKCommand}" IsVisible="{Binding OKButtonVisible}"/>
+      <StackPanel Orientation="Horizontal" Gap="20" HorizontalAlignment="Right">
+        <Button  Command="{Binding CancelCommand}" IsVisible="{Binding CancelButtonVisible}" Content="Cancel" Width="100" Height="30" />
+        <Button  Content="OK" Command="{Binding OKCommand}" IsVisible="{Binding OKButtonVisible}" Width="100" Height="30"/>
+      </StackPanel>
     </Grid>
   </Grid>
 </UserControl>

@@ -3,18 +3,18 @@
        xmlns:mut="https://github.com/perspex/mutable"
        xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <Style.Resources>
-    <SolidColorBrush x:Key="ThemeBackgroundBrush">#2D2D30</SolidColorBrush>
+    <SolidColorBrush x:Key="ThemeBackgroundBrush">#FF2D2D30</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeBorderLightBrush">#FFAAAAAA</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeBorderMidBrush">#FF888888</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeBorderDarkBrush">#FF333333</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeControlLightBrush">#FFFFFFFF</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeControlMidBrush">#FFAAAAAA</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeControlDarkBrush">#FF888888</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeForegroundBrush">#FF000000</SolidColorBrush>
+    <SolidColorBrush x:Key="ThemeControlMidBrush">#FF3E3E42</SolidColorBrush>    
+    <SolidColorBrush x:Key="ThemeControlDarkBrush">#FF252526</SolidColorBrush>
+    <SolidColorBrush x:Key="ThemeForegroundBrush">#FFF1F1F1</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeForegroundLightBrush">#FF808080</SolidColorBrush>
 
     <SolidColorBrush x:Key="HighlightBrush">#FF086F9E</SolidColorBrush>    
-    <SolidColorBrush x:Key="ThemeAccentBrush">#CC119EDA</SolidColorBrush>
+    <SolidColorBrush x:Key="ThemeAccentBrush">#FF004C8A</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeAccentBrush2">#99119EDA</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeAccentBrush3">#66119EDA</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeAccentBrush4">#33119EDA</SolidColorBrush>
