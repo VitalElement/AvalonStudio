@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/perspex" 
              xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
              xmlns:proj="clr-namespace:AvalonStudio.Projects;assembly=AvalonStudio.Extensibility"
-             Foreground="WhiteSmoke" Background="{StyleResource ThemeBackgroundBrush}">
+             Background="{StyleResource ThemeBackgroundBrush}">
     <Grid RowDefinitions="*,180" ColumnDefinitions="200,*,200">
       <TreeView Background="{StyleResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
         <TreeView.DataTemplates>

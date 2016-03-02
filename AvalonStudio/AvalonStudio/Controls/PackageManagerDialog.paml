@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex" xmlns:Packages="clr-namespace:AvalonStudio.Repositories;assembly=AvalonStudio.Repositories" xmlns:System="clr-namespace:System;assembly=mscorlib" Foreground="WhiteSmoke">
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:Packages="clr-namespace:AvalonStudio.Repositories;assembly=AvalonStudio.Repositories" xmlns:System="clr-namespace:System;assembly=mscorlib">
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="300"/>
@@ -37,7 +37,7 @@
       <DropDown Items="{Binding SelectedPackageIndex.Tags}" SelectedItem="{Binding SelectedTag}"  Grid.Row="3" Grid.Column="1">
         <DropDown.DataTemplates>
           <DataTemplate DataType="System:String">
-            <TextBlock Text="{Binding }" Foreground="WhiteSmoke" />
+            <TextBlock Text="{Binding }" />
           </DataTemplate>
         </DropDown.DataTemplates>
       </DropDown>

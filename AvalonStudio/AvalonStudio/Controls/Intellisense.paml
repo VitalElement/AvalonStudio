@@ -50,8 +50,8 @@
         <Grid Background="#424245" VerticalAlignment="Top" HorizontalAlignment="Stretch">
           <Border BorderBrush="#4D4D50" BorderThickness="1">
             <StackPanel>
-              <TextBlock Text="{Binding SelectedCompletion.Hint}" Foreground="WhiteSmoke" />
-              <TextBlock Text="{Binding SelectedCompletion.Comment}" Foreground="WhiteSmoke" />
+              <TextBlock Text="{Binding SelectedCompletion.Hint}" />
+              <TextBlock Text="{Binding SelectedCompletion.Comment}" />
             </StackPanel>
           </Border>
         </Grid>
