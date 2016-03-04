@@ -1,4 +1,8 @@
-﻿namespace AvalonStudio.Toolchains.STM32
+﻿using System.Linq.Expressions;
+using System.Linq;
+using System.Collections;
+
+namespace AvalonStudio.Toolchains.STM32
 {
     using AvalonStudio.Toolchains.Standard;
     using Projects;
@@ -13,6 +17,107 @@
     using System.Dynamic;
     using Extensibility.Utils;
     using Extensibility.Platform;
+
+	public static class Mapper
+	{
+		public static void Map(ExpandoObject source, Type resultType, object destination)
+		{			
+			Dictionary<string, PropertyInfo> _propertyMap = 
+				resultType
+					.GetProperties()
+					.ToDictionary(
+						p => p.Name.ToLower(), 
+						p => p
+					);
+			
+			// Might as well take care of null references early.
+			if (source == null)
+				throw new ArgumentNullException("source");			
+
+			// By iterating the KeyValuePair<string, object> of
+			// source we can avoid manually searching the keys of
+			// source as we see in your original code.
+			foreach (var kv in source)
+			{
+				PropertyInfo p;
+				if (_propertyMap.TryGetValue(kv.Key.ToLower(), out p))
+				{
+					var propType = p.PropertyType;
+					if (kv.Value == null) {
+						if (!propType.IsByRef && propType.Name != "Nullable`1") {
+							// Throw if type is a value type 
+							// but not Nullable<>
+							throw new ArgumentException ("not nullable");
+						}
+					} else if (kv.Value.GetType () == typeof(ExpandoObject)) {
+						var obj = Activator.CreateInstance(propType);
+						Mapper.Map (kv.Value as ExpandoObject, propType, obj);
+						p.SetValue (destination, obj);
+					}else if (kv.Value.GetType () == typeof(List<object>)) {
+						if (p.PropertyType == typeof(List<string>)) {
+							p.SetValue(destination, (kv.Value as List<object>).Cast<string> ().ToList (), null);
+						}
+					} else {
+						if (p.PropertyType.IsEnum) {
+							p.SetValue (destination, Enum.Parse (p.PropertyType, kv.Value as string));
+						} else if (kv.Value is IConvertible) {
+							p.SetValue(destination, Convert.ChangeType (kv.Value, p.PropertyType), null);
+						}
+						else {
+							
+							p.SetValue (destination, kv.Value, null);
+						}
+					}
+
+				}
+			}
+		}
+	}
+
+	public static class DynamicExtensions
+	{
+		public static object FromDynamic (this IDictionary<string, object> dictionary, Type resultType)
+		{
+			var bindings = new List<MemberBinding>();
+			foreach (var sourceProperty in resultType.GetProperties().Where(x => x.CanWrite))
+			{
+				var key = dictionary.Keys.SingleOrDefault(x => x.Equals(sourceProperty.Name, StringComparison.OrdinalIgnoreCase));
+				if (string.IsNullOrEmpty(key)) continue;
+				var propertyValue = dictionary[key];
+
+				if (propertyValue is ExpandoObject) {
+					propertyValue = (propertyValue as ExpandoObject).FromDynamic (sourceProperty.PropertyType);
+				}
+
+				if (propertyValue is IEnumerable) {
+					
+				}
+				else{
+					bindings.Add(Expression.Bind(sourceProperty, Expression.Constant(propertyValue)));
+				}
+			}
+			Expression memberInit = Expression.MemberInit(Expression.New(resultType), bindings);
+			return Expression.Lambda<Func<object>>(memberInit).Compile().Invoke();
+		}
+		
+		public static T FromDynamic<T>(this IDictionary<string, object> dictionary)
+		{
+			return (T)dictionary.FromDynamic (typeof(T));
+		}
+
+		public static dynamic ToDynamic<T>(this T obj)
+		{
+			IDictionary<string, object> expando = new ExpandoObject();
+
+			foreach (var propertyInfo in typeof(T).GetProperties())
+			{
+				var propertyExpression = Expression.Property(Expression.Constant(obj), propertyInfo);
+				var currentValue = Expression.Lambda<Func<string>>(propertyExpression).Compile().Invoke();
+				expando.Add(propertyInfo.Name.ToLower(), currentValue);
+			}
+			return expando as ExpandoObject;
+		}
+	}
 
     public class STM32GCCToolchain : StandardToolChain
     {
@@ -53,7 +158,9 @@
             {
                 if (project.ToolchainSettings.STM32ToolchainSettings is ExpandoObject)
                 {
-                    result = (project.ToolchainSettings.STM32ToolchainSettings as ExpandoObject).GetConcreteType<STM32ToolchainSettings>();
+					result = new STM32ToolchainSettings();
+					Mapper.Map(project.ToolchainSettings.STM32ToolchainSettings, typeof(STM32ToolchainSettings), result);
+					//result = (project.ToolchainSettings.STM32ToolchainSettings as ExpandoObject).FromDynamic<STM32ToolchainSettings>();
                 }
                 else
                 {
