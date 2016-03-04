@@ -91,16 +91,21 @@
         {
             var project = Deserialize(filename);
 
+			for(int i = 0; i < project.Includes.Count; i++)
+			{
+				project.Includes[i].Value = project.Includes[i].Value.ToAvalonPath();
+			}
+
+			for (int i = 0; i < project.ExcludedFiles.Count; i++) {
+				project.ExcludedFiles [i] = project.ExcludedFiles [i].ToAvalonPath ();
+			}
+
+
             project.Location = filename;
             project.SetSolution(solution);
 
             project.LoadFiles();
-
-            for(int i = 0; i < project.Includes.Count; i++)
-            {
-                project.Includes[i].Value = project.Includes[i].Value.ToAvalonPath();
-            }
-
+			           
             return project;
         }
 
