@@ -13,6 +13,9 @@
     using Extensibility;
     using Toolchains.Standard;
     using Utils;
+    using Extensibility.Platform;
+    using Repositories;
+    using System.Collections.Generic;
     class Program
     {
         const string baseDir = @"c:\development\vebuild\test";
@@ -50,6 +53,54 @@
             {
                 console.WriteLine(e.Message);
                 return null;
+            }
+        }
+        
+
+        static int RunInstallPackage (PackageOptions options)
+        {
+            console.Write("Downloading catalogs...");
+
+            var availablePackages = new List<PackageReference>();
+
+            foreach (var packageSource in PackageSources.Instance.Sources)
+            {
+                Repository repo = null;
+
+                repo = packageSource.DownloadCatalog();
+                console.WriteLine("Done");
+
+                console.WriteLine("Enumerating Packages...");
+
+                if (repo != null)
+                {
+                    foreach (var packageReference in repo.Packages)
+                    {
+                        availablePackages.Add(packageReference);
+                        console.WriteLine(packageReference.Name);
+                    }
+                }
+            }
+
+            var package = availablePackages.FirstOrDefault(p => p.Name == options.Package);
+
+            if(package != null)
+            {
+                var task = package.DownloadInfoAsync();
+                task.Wait();
+
+                var repo = task.Result;
+
+                var dlTask = repo.Synchronize(options.Tag, console);
+                dlTask.Wait();
+
+                return 1;
+                
+            }
+            else
+            {
+                console.WriteLine("Unable to find package " + options.Package);
+                return -1;
             }
         }
 
@@ -284,6 +335,9 @@
 
         static int Main(string[] args)
         {
+            Platform.Initialise();
+
+            PackageSources.InitialisePackageSources();
 
             var container = CompositionRoot.CreateContainer();
 
@@ -299,18 +353,19 @@
             packed = PackValues(a, b);
 
 
-            Console.WriteLine("VEBuild - Dark Builder v1.0.0.6");
+            Console.WriteLine("VEBuild - Dark Builder v1.0.0.8");
 
-            var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions>(args).MapResult(
+            var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions>(args).MapResult(
               (BuildOptions opts) => RunBuild(opts),
                 (AddOptions opts) => RunAdd(opts),
                 (AddReferenceOptions opts) => RunAddReference(opts),
+                (PackageOptions opts)=>RunInstallPackage(opts),
               (CleanOptions opts) => RunClean(opts),
               (CreateOptions opts) => RunCreate(opts),
               (RemoveOptions opts) => RunRemove(opts),
               errs => 1);
 
-            return result;
+            return result-1;
         }
 
         //static void GenerateTestProjects()

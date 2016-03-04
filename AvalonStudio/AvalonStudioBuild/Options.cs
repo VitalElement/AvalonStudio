@@ -21,12 +21,21 @@
         public string Project { get; set; }
     }
 
-    [Verb("build", HelpText ="Builds the project in the current directory.")]
+    [Verb("build", HelpText = "Builds the project in the current directory.")]
     class BuildOptions : ProjectOption
     {
-
         [Option('j', "jobs", Required = false, Default = 4, HelpText = "Number of jobs for compiling.")]
-        public int Jobs { get; set; }        
+        public int Jobs { get; set; }
+    }
+
+    [Verb("install-package", HelpText = "Installs a package manually.")]
+    class PackageOptions
+    {
+        [Value(0, MetaName = "PackageName", HelpText = "Package Name i.e. AvalonStudio.Toolchains.STM32")]
+        public string Package { get; set; }
+
+        [Value(1, MetaName ="Tag", HelpText ="")]
+        public string Tag { get; set; }
     }
 
     [Verb("clean", HelpText = "Cleans the specified project.")]
