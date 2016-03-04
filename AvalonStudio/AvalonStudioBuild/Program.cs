@@ -353,7 +353,7 @@
             packed = PackValues(a, b);
 
 
-            Console.WriteLine("VEBuild - Dark Builder v1.0.0.8");
+            Console.WriteLine("Avalon Build - Gravity Builder v1.0.0.10");
 
             var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions>(args).MapResult(
               (BuildOptions opts) => RunBuild(opts),
