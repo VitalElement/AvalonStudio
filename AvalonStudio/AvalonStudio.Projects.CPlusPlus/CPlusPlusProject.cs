@@ -31,11 +31,23 @@
         [JsonIgnore]
         public bool IsBuilding { get; set; }
 
+        private static bool IsExcluded (List<string> exclusionFilters, string path)
+        {
+            bool result = false;
+
+
+            var filter = exclusionFilters.FirstOrDefault(f => path.Contains(f));
+
+            result = !string.IsNullOrEmpty(filter);
+
+            return result;
+        }
+
         public static void PopulateFiles(CPlusPlusProject project, StandardProjectFolder folder)
         {
             var files = Directory.EnumerateFiles(folder.Location);
 
-            files = files.Where((f) => !project.ExcludedFiles.Contains(project.CurrentDirectory.MakeRelativePath(f)) && Path.GetExtension(f) != '.' + ProjectExtension);
+            files = files.Where((f) => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()) && Path.GetExtension(f) != '.' + ProjectExtension);
 
             foreach (var file in files)
             {
@@ -53,7 +65,7 @@
 
             if (folders.Count() > 0)
             {
-                foreach (var folder in folders.Where((f) => !project.ExcludedFiles.Contains(project.CurrentDirectory.MakeRelativePath(f))))
+                foreach (var folder in folders.Where((f) => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath())))
                 {
                     result.Items.Add(GetSubFolders(project, result, folder));
                 }
