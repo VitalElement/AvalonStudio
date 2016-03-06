@@ -3,7 +3,7 @@
     using Perspex.Utilities;
     using System;
 
-    public class WeakSubscriber<T> : IWeakSubscriber<T>
+    public class WeakSubscriber<T> : IWeakSubscriber<T> where T : EventArgs
     {
         private readonly Action<T> _onEvent;
 
