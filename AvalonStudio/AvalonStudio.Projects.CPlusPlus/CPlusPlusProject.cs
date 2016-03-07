@@ -101,6 +101,11 @@
 
         public static CPlusPlusProject Load(string filename, ISolution solution)
         {
+            if(!File.Exists(filename))
+            {
+                Console.WriteLine("Unable for find project file: " + filename);
+            }
+
             var project = Deserialize(filename);
 
 			for(int i = 0; i < project.Includes.Count; i++)

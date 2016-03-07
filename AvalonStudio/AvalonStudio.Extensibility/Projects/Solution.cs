@@ -50,7 +50,7 @@
 
             if(projectType != null)
             {
-                result = projectType.Load(solution, Path.Combine(solution.CurrentDirectory, reference));
+                result = projectType.Load(solution, Path.Combine(solution.CurrentDirectory, reference).ToPlatformPath());
             }
             else
             {
@@ -70,10 +70,13 @@
         {
             Solution solution = null;
             
-            solution = Deserialize(fileName);
-            solution.CurrentDirectory = Path.GetDirectoryName(fileName) + Platform.DirectorySeperator;            
+            solution = Deserialize(fileName);            
 
-            foreach(var projectReference in solution.ProjectReferences)
+            solution.CurrentDirectory = (Path.GetDirectoryName(fileName) + Platform.DirectorySeperator).ToPlatformPath();
+
+            Console.WriteLine("Solution directory is " + solution.CurrentDirectory);
+
+            foreach (var projectReference in solution.ProjectReferences)
             {
                 solution.Projects.InsertSorted(LoadProject(solution, projectReference));
             }

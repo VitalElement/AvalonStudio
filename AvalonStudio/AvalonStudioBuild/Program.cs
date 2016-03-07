@@ -20,7 +20,7 @@
 
     class Program
     {
-        const string version = "1.0.0.11";
+        const string version = "1.0.0.15";
         const string releaseName = "Gravity";        
 
         const string baseDir = @"c:\development\vebuild\test";
@@ -126,7 +126,7 @@
                 }
 
                 var awaiter = project.ToolChain.Build(console, project);
-                awaiter.Wait();
+                awaiter.Wait();                
 
                 stopWatch.Stop();
                 console.WriteLine(stopWatch.Elapsed.ToString());
