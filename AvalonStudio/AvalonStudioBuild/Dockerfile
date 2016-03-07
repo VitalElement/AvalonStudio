@@ -32,3 +32,5 @@ RUN asb install-package AvalonStudio.Toolchains.STM32 Linux-Slow-v0.03-5.2.1
 
 RUN asb version
 
+RUN cd /opt/AvalonBuild && git pull
+
