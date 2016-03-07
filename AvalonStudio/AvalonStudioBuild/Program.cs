@@ -131,7 +131,7 @@
                 stopWatch.Stop();
                 console.WriteLine(stopWatch.Elapsed.ToString());
 
-                result = awaiter.Result ? 0 : 1;
+                result = awaiter.Result ? 1 : 2;
             }
             else
             {
