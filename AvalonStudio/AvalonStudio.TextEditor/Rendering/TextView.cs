@@ -538,7 +538,7 @@
 
                 uint visualLineNumber = 0;
 
-                for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount; i++)
+                for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount && i >= 0; i++)
                 {
                     VisualLines.Add(new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ });
                 }
