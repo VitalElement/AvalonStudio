@@ -13,11 +13,11 @@ RUN echo "deb http://download.mono-project.com/repo/debian wheezy/snapshots/4.2.
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install Git    
-RUN apt-get update && apt-get install -y git libcurl3
+RUN apt-get update && apt-get install -y git libcurl3 lib32z1 lib32ncurses5
 
 # Install Built Tools
 RUN mkdir -p /opt/AvalonBuild
-RUN git clone  https://github.com/VitalElement/AvalonBuild.git  /opt/AvalonBuild
+RUN git clone  https://github.com/VitalElement/AvalonBuild.git   /opt/AvalonBuild
 
 # Install asb command
 RUN echo "#!/bin/sh" > /usr/bin/asb
