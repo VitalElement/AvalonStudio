@@ -16,8 +16,13 @@
     using Extensibility.Platform;
     using Repositories;
     using System.Collections.Generic;
+
+
     class Program
     {
+        const string version = "1.0.0.11";
+        const string releaseName = "Gravity";        
+
         const string baseDir = @"c:\development\vebuild\test";
 
         static ProgramConsole console = new ProgramConsole();
@@ -353,7 +358,7 @@
             packed = PackValues(a, b);
 
 
-            Console.WriteLine("Avalon Build - Gravity Builder v1.0.0.10");
+            Console.WriteLine(string.Format("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier.ToString()));
 
             var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions>(args).MapResult(
               (BuildOptions opts) => RunBuild(opts),
