@@ -14,7 +14,7 @@
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            if (textView.CaretIndex != -1)
+            if (textView.CaretIndex != -1 && textView.CaretIndex < textView.TextDocument.TextLength)
             {
                 var currentLine = textView.TextDocument.GetLineByOffset(textView.CaretIndex);
 

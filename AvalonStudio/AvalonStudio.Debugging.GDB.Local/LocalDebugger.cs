@@ -1,7 +1,9 @@
 ﻿namespace AvalonStudio.Models.Tools.Debuggers.Local
 {
     using AvalonStudio.Debugging.GDB;
+    using Projects;
     using AvalonStudio.Projects.Standard;
+    using Toolchains;
     using AvalonStudio.Toolchains.Standard;
     using AvalonStudio.Utils;
 
@@ -11,8 +13,7 @@
         {
 
         }
-
-        new public bool Start(StandardToolChain toolchain, IConsole console, IStandardProject project)
+        public override bool Start(IToolChain toolchain, IConsole console, IProject project)
         {
             bool result = base.Start(toolchain, console, project);
 

@@ -17,9 +17,12 @@
 
         public void Save()
         {
-            Model.DebuggerReference = selectedDebugger?.GetType().ToString();
-            selectedDebugger.ProvisionSettings(Model);
-            Model.Save();
+            if (selectedDebugger != null)
+            {
+                Model.DebuggerReference = selectedDebugger?.GetType().ToString();
+                selectedDebugger.ProvisionSettings(Model);
+                Model.Save();
+            }
         }
 
         private UserControl debugSettingsControl;
@@ -44,9 +47,13 @@
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedDebugger, value);
-                Save();
 
-                DebugSettingsControl = value.GetSettingsControl(Model);
+                if (value != null)
+                {
+                    Save();
+
+                    DebugSettingsControl = value.GetSettingsControl(Model);
+                }
             }
         }
     }

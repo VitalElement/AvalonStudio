@@ -27,7 +27,7 @@
             {                
                 Width = (textInfo.CharWidth * textInfo.NumLines.ToString().Length) + 8;
 
-                if (textView != null)
+                if (textView != null && textView.VisualLines.Count > 0)
                 {
                     var firstLine = textView.VisualLines.First().DocumentLine.LineNumber;
 

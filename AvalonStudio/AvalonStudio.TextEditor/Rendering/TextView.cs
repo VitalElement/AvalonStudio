@@ -592,6 +592,11 @@
 
                 if (_caretBlink && CaretIndex != -1)
                 {
+                    if (CaretIndex > TextDocument.TextLength)
+                    {
+                        CaretIndex = TextDocument.TextLength;
+                    }
+
                     var charPos = VisualLineGeometryBuilder.GetTextViewPosition(this, CaretIndex);
                     var x = Math.Floor(charPos.X) + 0.5;
                     var y = Math.Floor(charPos.Y) + 0.5;
@@ -618,7 +623,7 @@
                 if (caretIndex >= 0)
                 {
                     var position = TextDocument.GetLocation(caretIndex);
-                    this.BringIntoView(new Rect(position.Column, position.Line - (VisualLines.Count-1) / 2, 0, VisualLines.Count-1));
+                    this.BringIntoView(new Rect(position.Column, position.Line, 0, 1));
                 }
             }
         }
