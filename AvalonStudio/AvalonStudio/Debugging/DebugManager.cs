@@ -1,5 +1,6 @@
 ﻿using AvalonStudio.Debugging.GDB.OpenOCD;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Models.Tools.Debuggers.Local;
 using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -367,26 +368,34 @@ namespace AvalonStudio.Debugging
         #region Methods
         public void StartDebug(IProject project)
         {
-            Task.Factory.StartNew(async () =>
+            if (project?.Debugger != null)
             {
-                Debugger = new OpenOCDDebugAdaptor();
-
-                Debugger.Initialise();
-
-                WorkspaceViewModel.Instance.Console.WriteLine();
-                WorkspaceViewModel.Instance.Console.WriteLine("Starting Debugger...");
-                      
-                if (Debugger.Start(project.ToolChain, WorkspaceViewModel.Instance.Console, project))
+                Task.Factory.StartNew(async () =>
                 {
-                    WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Debug;
+                    Debugger = project.Debugger;
+                    Debugger.DebugMode = true;
 
-                    BreakPointManager.GoLive();
+                    Debugger.Initialise();
 
-                    await BreakPointManager.Add(Debugger.BreakMain());
+                    WorkspaceViewModel.Instance.Console.WriteLine();
+                    WorkspaceViewModel.Instance.Console.WriteLine("Starting Debugger...");
 
-                    Debugger.Continue();
-                }
-            });
+                    if (Debugger.Start(project.ToolChain, WorkspaceViewModel.Instance.Console, project))
+                    {
+                        WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Debug;
+
+                        BreakPointManager.GoLive();
+
+                        await BreakPointManager.Add(Debugger.BreakMain());
+
+                        Debugger.Run();
+                    }
+                });
+            }
+            else
+            {
+                WorkspaceViewModel.Instance.Console.WriteLine("No debugger selected.");
+            }
         }
 
         private IProject project;

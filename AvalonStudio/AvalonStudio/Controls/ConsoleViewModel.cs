@@ -43,7 +43,8 @@
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Document.Text = string.Empty;
+                // safe way other than document.text = string.empty
+                Document.Replace(0, Document.TextLength, string.Empty);
             });
         }
 
