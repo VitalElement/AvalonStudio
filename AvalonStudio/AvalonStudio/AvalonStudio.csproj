@@ -35,79 +35,79 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Perspex.Animation, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Animation.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Animation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Application, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Application.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Application.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Base, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Base.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Base.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Cairo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.Desktop.9999.0.1252-nightly\lib\net45\Perspex.Cairo.dll</HintPath>
+      <HintPath>..\packages\Perspex.Desktop.9999.0.1254-nightly\lib\net45\Perspex.Cairo.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Controls, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Controls.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Diagnostics, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Diagnostics.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Diagnostics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Direct2D1, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.Desktop.9999.0.1252-nightly\lib\net45\Perspex.Direct2D1.dll</HintPath>
+      <HintPath>..\packages\Perspex.Desktop.9999.0.1254-nightly\lib\net45\Perspex.Direct2D1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Perspex.Gtk, Version=1.0.5909.40431, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.Desktop.9999.0.1252-nightly\lib\net45\Perspex.Gtk.dll</HintPath>
+    <Reference Include="Perspex.Gtk, Version=1.0.5910.42982, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Perspex.Desktop.9999.0.1254-nightly\lib\net45\Perspex.Gtk.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.HtmlRenderer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.HtmlRenderer.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.HtmlRenderer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Input, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Input.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Input.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Layout, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Layout.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Layout.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Markup, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Markup.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Markup.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Markup.Xaml, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Markup.Xaml.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Markup.Xaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.ReactiveUI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.ReactiveUI.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.ReactiveUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.SceneGraph, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.SceneGraph.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.SceneGraph.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Styling, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Styling.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Styling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Themes.Default, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1252-nightly\lib\portable-windows8+net45\Perspex.Themes.Default.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1254-nightly\lib\portable-windows8+net45\Perspex.Themes.Default.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Win32, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.Desktop.9999.0.1252-nightly\lib\net45\Perspex.Win32.dll</HintPath>
+      <HintPath>..\packages\Perspex.Desktop.9999.0.1254-nightly\lib\net45\Perspex.Win32.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
@@ -318,6 +318,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Debugging.GDB.Local\AvalonStudio.Debugging.GDB.Local.csproj">
+      <Project>{0ead4429-5b5a-4ebb-87b6-ea91ce86b09e}</Project>
+      <Name>AvalonStudio.Debugging.GDB.Local</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.OpenOCD\AvalonStudio.Debugging.GDB.OpenOCD.csproj">
       <Project>{07d61ab2-d255-4f78-852f-455015d862ce}</Project>
       <Name>AvalonStudio.Debugging.GDB.OpenOCD</Name>
@@ -345,6 +349,10 @@
     <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
       <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
       <Name>AvalonStudio.TextEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj">
+      <Project>{7a82c777-039e-47aa-a77b-3a9544e147c5}</Project>
+      <Name>AvalonStudio.Toolchains.LocalGCC</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
       <Project>{72c71854-5897-4e14-a1ae-b3b48f139af7}</Project>
