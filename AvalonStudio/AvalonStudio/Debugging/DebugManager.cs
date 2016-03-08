@@ -373,7 +373,9 @@ namespace AvalonStudio.Debugging
                 Task.Factory.StartNew(async () =>
                 {
                     Debugger = project.Debugger;
-                    Debugger.DebugMode = true;
+
+                    await project.ToolChain.Build(WorkspaceViewModel.Instance.Console, project);
+                    //Debugger.DebugMode = true;
 
                     Debugger.Initialise();
 
