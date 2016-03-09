@@ -18,7 +18,7 @@
         public void Save ()
         {
             Model.ToolchainReference = selectedToolchain?.GetType().ToString();
-            selectedToolchain.ProvisionSettings(Model);
+            selectedToolchain?.ProvisionSettings(Model);
             Model.Save();
         }
 
@@ -44,9 +44,13 @@
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedToolchain, value);
+
                 Save();
 
-                ToolchainSettingsControl = value.GetSettingsControl(Model);
+                if (value != null)
+                {
+                    ToolchainSettingsControl = value.GetSettingsControl(Model);
+                }
             }
         }
 
