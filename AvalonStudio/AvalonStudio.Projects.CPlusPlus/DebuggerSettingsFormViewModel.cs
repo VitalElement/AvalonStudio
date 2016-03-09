@@ -48,10 +48,10 @@
             {
                 this.RaiseAndSetIfChanged(ref selectedDebugger, value);
 
-                if (value != null)
-                {
-                    Save();
+                Save();
 
+                if (value != null)
+                {                    
                     DebugSettingsControl = value.GetSettingsControl(Model);
                 }
             }
