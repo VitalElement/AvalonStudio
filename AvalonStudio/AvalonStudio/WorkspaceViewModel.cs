@@ -15,7 +15,7 @@
     using System.Linq;
     using System.Threading;
     using Toolchains;
-
+    using Utils;
     public enum Perspective
     {
         Editor,
@@ -120,7 +120,7 @@
 
         public EditorViewModel Editor { get; private set; }
 
-        public ConsoleViewModel Console { get; private set; }
+        public IConsole Console { get; private set; }
 
         public ErrorListViewModel ErrorList { get; private set; }
 

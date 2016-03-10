@@ -47,17 +47,19 @@
             var extension = Path.GetExtension(reference).Remove(0,1);
 
             var projectType = Workspace.Instance.ProjectTypes.FirstOrDefault((p) => p.Extension == extension);
+            var projectFilePath = Path.Combine(solution.CurrentDirectory, reference).ToPlatformPath();
 
-            if(projectType != null)
+            if (projectType != null && File.Exists(projectFilePath))
             {
-                result = projectType.Load(solution, Path.Combine(solution.CurrentDirectory, reference).ToPlatformPath());
+                result = projectType.Load(solution, projectFilePath);
             }
             else
             {
+                Console.WriteLine("Failed to load " + projectFilePath);
                 // create an unloaded project type.
             }
 
-            if (result.ToolChain != null)
+            if (result?.ToolChain != null)
             {
                 result.ToolChain.ProvisionSettings(result);
             }
@@ -78,7 +80,13 @@
 
             foreach (var projectReference in solution.ProjectReferences)
             {
-                solution.Projects.InsertSorted(LoadProject(solution, projectReference));
+                var proj = LoadProject(solution, projectReference);
+
+                // todo null returned here we need a placeholder.
+                if (proj != null)
+                {
+                    solution.Projects.InsertSorted(proj);
+                }
             }
 
             foreach (var project in solution.Projects)

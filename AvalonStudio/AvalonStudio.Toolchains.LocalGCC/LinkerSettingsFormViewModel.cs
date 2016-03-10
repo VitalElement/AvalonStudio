@@ -28,13 +28,13 @@
                 }
                 catch (Exception e)
                 {
-                    Model.ToolchainSettings.STM32ToolchainSettings = new LocalGccToolchainSettings();
+                    Model.ToolchainSettings.LocalGCC = new LocalGccToolchainSettings();
                 }
             }
             catch (Exception e)
             {
-                Model.ToolchainSettings.STM32ToolchainSettings = new LocalGccToolchainSettings();
-                settings = Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings;
+                Model.ToolchainSettings.LocalGCC = new LocalGccToolchainSettings();
+                settings = Model.ToolchainSettings.LocalGCC.LinkSettings;
             }
 
             if(settings == null)
@@ -105,7 +105,7 @@
             settings.MiscLinkerArguments = miscOptions;
             settings.Library = (LibraryType)librarySelectedIndex;
 
-            Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings = settings;
+            Model.ToolchainSettings.LocalGCC.LinkSettings = settings;
             Model.Save();
         }
 
