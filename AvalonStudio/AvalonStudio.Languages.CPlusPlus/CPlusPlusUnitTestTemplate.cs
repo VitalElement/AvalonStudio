@@ -61,8 +61,8 @@
 
             // Reference catch.
             project.References.Add(catchProject);
-
-            project.Items.Add(SourceFile.Create(project, project, project.CurrentDirectory, "UnitTest1.cpp", new UnitTestTemplate().TransformText()));
+            
+            project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "UnitTest1.cpp", new UnitTestTemplate().TransformText()));
             project.ToolChain = Workspace.Instance.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
             project.Debugger = Workspace.Instance.Debuggers.FirstOrDefault(d => d is LocalDebugAdaptor);
             var settings = LocalGCCToolchain.ProvisionLocalGccSettings(project);
@@ -70,6 +70,7 @@
             settings.CompileSettings.Exceptions = true;
             settings.CompileSettings.Rtti = true;
             settings.CompileSettings.Optimization = OptimizationLevel.Debug;
+            settings.CompileSettings.CustomFlags += " -Wno-unknown-pragmas ";
 
             project.Save();
 
