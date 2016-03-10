@@ -14,26 +14,23 @@
     using System.Xml.Linq;
     public class CatchTestFramework : ITestFramework
     {
-        public async Task<IEnumerable<Test>> EnumerateTestsAsync(IConsole console, IProject project)
+        public async Task<IEnumerable<Test>> EnumerateTestsAsync(IProject project)
         {
             List<Test> result = new List<Test>();
 
-            if(project.TestFramework != null && project.TestFramework is CatchTestFramework)
+            if (project.TestFramework != null && project.TestFramework is CatchTestFramework)
             {
-                if (await project.ToolChain?.Build(console, project))
+                var startInfo = new ProcessStartInfo();
+                startInfo.FileName = Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath();
+                startInfo.Arguments = "--list-test-names-only";
+
+                // Hide console window
+                startInfo.UseShellExecute = false;
+                startInfo.RedirectStandardOutput = true;
+                startInfo.CreateNoWindow = true;
+
+                await Task.Factory.StartNew(() =>
                 {
-                    var startInfo = new ProcessStartInfo();
-                    startInfo.FileName = Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath();
-                    startInfo.Arguments = "--list-test-names-only";
-                    
-                    // Hide console window
-                    startInfo.UseShellExecute = false;
-                    startInfo.RedirectStandardOutput = true;
-                    startInfo.RedirectStandardError = true;
-                    startInfo.CreateNoWindow = true;
-
-                    console.Write(string.Format("Enumerating {0} for tests...", project.Executable));
-
                     using (var process = Process.Start(startInfo))
                     {
                         process.OutputDataReceived += (sender, e) =>
@@ -44,28 +41,11 @@
                             }
                         };
 
-                        process.ErrorDataReceived += (sender, e) =>
-                        {
-                            if (e.Data != null)
-                            {
-                                console.WriteLine();
-                                console.WriteLine(e.Data);
-                            }
-                        };
-
                         process.BeginOutputReadLine();
 
-                        process.BeginErrorReadLine();
-
-                        process.WaitForExit();                        
-
-                        console.WriteLine("Done");
+                        process.WaitForExit();
                     }
-                }
-                else
-                {
-                    console.WriteLine("Unable to run tests, build failed.");
-                }
+                });
             }
 
             return result;
