@@ -199,23 +199,15 @@
         {
             foreach (var reference in UnloadedReferences)
             {
-                var referenceDirectory = Path.Combine(Solution.CurrentDirectory, reference.Name);
+                var loadedReference = Solution.Projects.FirstOrDefault((p) => p.Name == reference.Name);
 
-
-                var projectFile = Path.Combine(referenceDirectory, reference.Name + "." + Extension);
-
-                if (File.Exists(projectFile))
+                if (loadedReference != null)
                 {
-                    var loadedReference = Solution.Projects.FirstOrDefault((p) => p.Name == reference.Name);
-
-                    if (loadedReference != null)
-                    {
-                        References.Add(loadedReference);                        
-                    }
-                    else
-                    {
-                        Console.WriteLine("Implement placeholder reference here.");
-                    }
+                    References.Add(loadedReference);
+                }
+                else
+                {
+                    Console.WriteLine("Implement placeholder reference here.");
                 }
             }
         }

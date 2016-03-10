@@ -73,6 +73,7 @@
             settings.CompileSettings.CustomFlags += " -Wno-unknown-pragmas ";
 
             project.Save();
+            solution.Save();
 
             return project;
         }
