@@ -10,6 +10,12 @@
         /// </summary>
         ObservableCollection<IProjectItem> Items { get; }
 
+        void AddFile(ISourceFile file);
+        void AddFolder(IProjectFolder folder);
+
+        void RemoveFile(ISourceFile file);
+        void RemoveFolder(IProjectFolder folder);
+
         string Location { get; }
     }
 }

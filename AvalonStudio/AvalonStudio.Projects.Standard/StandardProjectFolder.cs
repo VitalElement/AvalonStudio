@@ -23,6 +23,27 @@
 
         public string Location { get; private set; }
 
-        public IProject Project { get; set; }}
+        public IProject Project { get; set; }
+
+        public void AddFile(ISourceFile file)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddFolder(IProjectFolder folder)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveFile(ISourceFile file)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveFolder(IProjectFolder folder)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
 
