@@ -120,8 +120,10 @@
             foreach (var project in solution.Projects)
             {
                 if(project.TestFramework != null)
-                {                    
-                    var awaiter = project.TestFramework.EnumerateTestsAsync(console, project);
+                {
+                    project.ToolChain.Build(console, project).Wait();                    
+
+                    var awaiter = project.TestFramework.EnumerateTestsAsync(project);
                     awaiter.Wait();
 
                     foreach(var test in awaiter.Result)
