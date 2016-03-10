@@ -438,6 +438,7 @@ namespace AvalonStudio.Debugging
                     IsExecuting = false;
                     IsUpdating = false;
                     this.StopDebuggingCommand.Execute(null);
+                    WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Editor;
                     break;
 
                 default:
