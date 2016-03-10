@@ -7,7 +7,7 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace AvalonStudio.Languages.CPlusPlus
+namespace AvalonStudio.TestFrameworks.Catch
 {
     using System.Linq;
     using System.Text;
@@ -18,7 +18,7 @@ namespace AvalonStudio.Languages.CPlusPlus
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Languages.CPlusPlus\UnitTestTemplate.tt"
+    #line 1 "C:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.TestFrameworks.Catch\UnitTestTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "14.0.0.0")]
     public partial class UnitTestTemplate : UnitTestTemplateBase
     {

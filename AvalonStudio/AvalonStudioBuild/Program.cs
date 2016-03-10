@@ -13,7 +13,7 @@
     using Extensibility;
     using Toolchains.Standard;
     using Utils;
-    using Extensibility.Platform;
+    using Platform;
     using Repositories;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -401,7 +401,7 @@
 
         static int Main(string[] args)
         {
-            Platform.Initialise();
+            Platform.Platform.Initialise();
 
             PackageSources.InitialisePackageSources();
 
@@ -419,7 +419,7 @@
             packed = PackValues(a, b);
 
 
-            Console.WriteLine(string.Format("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier.ToString()));
+            Console.WriteLine(string.Format("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.Platform.PlatformIdentifier.ToString()));
 
             var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions, TestOptions>(args).MapResult(
               (BuildOptions opts) => RunBuild(opts),

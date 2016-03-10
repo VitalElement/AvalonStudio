@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Projects
 {
     using Extensibility;
-    using Extensibility.Platform;
+    using Platform;
     using MVVM;
     using Newtonsoft.Json;
     using System;

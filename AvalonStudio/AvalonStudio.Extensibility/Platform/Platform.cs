@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Extensibility.Platform
+﻿namespace AvalonStudio.Platform
 {
     using AvalonStudio.Utils;
     using System;

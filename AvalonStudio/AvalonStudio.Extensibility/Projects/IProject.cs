@@ -1,12 +1,13 @@
 ﻿namespace AvalonStudio.Projects
-{        
+{
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
     using Perspex.Controls;
-    using Debugging;    
+    using Debugging;
     using Toolchains;
+    using TestFrameworks;
 
     [InheritedExport(typeof(IProject))]
     public interface IProject : IProjectFolder, IComparable<IProject>
@@ -20,6 +21,7 @@
 
         IToolChain ToolChain { get; set; }
         IDebugger Debugger { get; set; }
+        ITestFramework TestFramework { get; set; }
 
         ISourceFile FindFile(string path);
 

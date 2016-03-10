@@ -12,7 +12,7 @@
     using Perspex.Controls;
     using System.Dynamic;
     using Extensibility.Utils;
-    using Extensibility.Platform;
+    using Platform;
 
     public class LocalGCCToolchain : StandardToolChain
     {

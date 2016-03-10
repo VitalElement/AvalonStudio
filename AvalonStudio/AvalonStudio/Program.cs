@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio
 {
     using Extensibility;
-    using Extensibility.Platform;
+    using Platform;
     using Repositories;
     using System;
 
@@ -14,7 +14,7 @@
                 throw new ArgumentNullException(nameof(args));
             }
 
-            Platform.Initialise();
+            Platform.Platform.Initialise();
 
             PackageSources.InitialisePackageSources();
 

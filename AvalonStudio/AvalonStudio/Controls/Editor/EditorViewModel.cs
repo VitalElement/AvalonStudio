@@ -11,7 +11,7 @@
     using Languages;
     using TextEditor.Rendering;
     using TextEditor;
-    using Extensibility.Platform;
+    using Platform;
     using Utils;
     using Projects;
     public class EditorViewModel : ViewModel<EditorModel>

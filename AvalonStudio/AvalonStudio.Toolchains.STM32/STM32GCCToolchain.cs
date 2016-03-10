@@ -16,7 +16,7 @@ namespace AvalonStudio.Toolchains.STM32
     using Perspex.Controls;
     using System.Dynamic;
     using Extensibility.Utils;
-    using Extensibility.Platform;
+    using Platform;
 
     public class STM32GCCToolchain : StandardToolChain
     {

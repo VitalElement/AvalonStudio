@@ -1,6 +1,6 @@
 ﻿namespace AvalonStudio.Projects.CPlusPlus
 {
-    using Extensibility.Platform;
+    using Platform;
     using MVVM;
     using Perspex.Controls;
     using ReactiveUI;
