@@ -7,6 +7,7 @@
     using Toolchains;
     using Projects;
     using TestFrameworks;
+
     [Export(typeof(Workspace))]
     public class Workspace
     {

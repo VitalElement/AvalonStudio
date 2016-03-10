@@ -1,6 +1,6 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus
 {
-    using Extensibility.Platform;
+    using Platform;
     using System;
     using System.Diagnostics;
     using System.IO;

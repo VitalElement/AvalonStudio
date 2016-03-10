@@ -1,12 +1,14 @@
 ﻿namespace AvalonStudio.TestFrameworks
 {
-    using System;
+    using Projects;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    using System.ComponentModel.Composition;
     using System.Threading.Tasks;
+    using Utils;
 
+    [InheritedExport(typeof(ITestFramework))]
     public interface ITestFramework
     {
+        Task<IEnumerable<Test>> EnumerateTestsAsync(IConsole console, IProject project);        
     }
 }

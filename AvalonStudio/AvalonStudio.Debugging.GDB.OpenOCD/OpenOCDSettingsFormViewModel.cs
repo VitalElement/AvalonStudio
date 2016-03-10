@@ -9,7 +9,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using AvalonStudio.Utils;
-    using Extensibility.Platform;
+    using Platform;
 
     public class OpenOCDSettingsFormViewModel : ViewModel<IProject>
     {

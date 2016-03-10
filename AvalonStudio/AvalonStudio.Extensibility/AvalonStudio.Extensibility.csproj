@@ -186,6 +186,7 @@
     <Compile Include="Projects\Solution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestFrameworks\ITestFramework.cs" />
+    <Compile Include="TestFrameworks\Test.cs" />
     <Compile Include="Toolchains\IToolchain.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\DynamicExtensions.cs" />
