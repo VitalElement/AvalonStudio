@@ -257,6 +257,7 @@
                 else
                 {
                     superProject.Executable = superProject.Location.MakeRelativePath(linkResult.Executable).ToAvalonPath();
+                    superProject.Save();
                     console.WriteLine();
                     Size(console, compileResult.Project, linkResult);
                     linkResults.ExecutableLocations.Add(executable);
