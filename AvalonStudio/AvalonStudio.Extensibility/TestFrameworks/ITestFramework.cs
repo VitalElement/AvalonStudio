@@ -9,6 +9,8 @@
     [InheritedExport(typeof(ITestFramework))]
     public interface ITestFramework
     {
-        Task<IEnumerable<Test>> EnumerateTestsAsync(IConsole console, IProject project);        
+        Task<IEnumerable<Test>> EnumerateTestsAsync(IConsole console, IProject project);
+
+        Task RunTestAsync(Test test, IProject project);
     }
 }
