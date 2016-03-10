@@ -17,7 +17,13 @@
     using System.Dynamic;
     using Extensibility.Platform;
     using System.Collections.ObjectModel;
-    using Debugging;    
+    using Debugging;
+    using TestFrameworks;
+    public enum TestType
+    {
+        None,
+        Unit
+    }
 
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {
@@ -28,10 +34,12 @@
             return string.Format("{0}.{1}", name, ProjectExtension);
         }
 
+        public TestType TestProjectType { get; set; }
+
         [JsonIgnore]
         public bool IsBuilding { get; set; }
 
-        private static bool IsExcluded (List<string> exclusionFilters, string path)
+        private static bool IsExcluded(List<string> exclusionFilters, string path)
         {
             bool result = false;
 
@@ -101,28 +109,28 @@
 
         public static CPlusPlusProject Load(string filename, ISolution solution)
         {
-            if(!File.Exists(filename))
+            if (!File.Exists(filename))
             {
                 Console.WriteLine("Unable for find project file: " + filename);
             }
 
             var project = Deserialize(filename);
 
-			for(int i = 0; i < project.Includes.Count; i++)
-			{
-				project.Includes[i].Value = project.Includes[i].Value.ToAvalonPath();
-			}
+            for (int i = 0; i < project.Includes.Count; i++)
+            {
+                project.Includes[i].Value = project.Includes[i].Value.ToAvalonPath();
+            }
 
-			for (int i = 0; i < project.ExcludedFiles.Count; i++) {
-				project.ExcludedFiles [i] = project.ExcludedFiles [i].ToAvalonPath ();
-			}
+            for (int i = 0; i < project.ExcludedFiles.Count; i++) {
+                project.ExcludedFiles[i] = project.ExcludedFiles[i].ToAvalonPath();
+            }
 
 
             project.Location = filename;
             project.SetSolution(solution);
 
             project.LoadFiles();
-			           
+
             return project;
         }
 
@@ -251,7 +259,7 @@
             return result;
         }
 
-        protected IList<string> GenerateReferencedDefines ()
+        protected IList<string> GenerateReferencedDefines()
         {
             List<string> result = new List<string>();
 
@@ -302,7 +310,7 @@
             }
 
             return result;
-        } 
+        }
 
 
         public IList<string> GetGlobalIncludes()
@@ -316,7 +324,7 @@
                 result.AddRange(standardReference.GetGlobalIncludes());
             }
 
-            foreach (var include in Includes.Where((i)=>i.Global))
+            foreach (var include in Includes.Where((i) => i.Global))
             {
                 result.Add(Path.Combine(CurrentDirectory, include.Value).ToPlatformPath());
             }
@@ -509,7 +517,7 @@
         public IList<string> StaticLibraries { get; set; }
 
         public string BuildDirectory { get; set; }
-        public string LinkerScript { get; set; }        
+        public string LinkerScript { get; set; }
         public string Executable { get; set; }
 
         //static LlilumToolchain GetLLilumToolchain()
@@ -544,16 +552,16 @@
             Save();
         }
 
-        private void RemoveFiles (CPlusPlusProject project, IProjectFolder folder)
+        private void RemoveFiles(CPlusPlusProject project, IProjectFolder folder)
         {
-            foreach(var item in folder.Items)
+            foreach (var item in folder.Items)
             {
-                if(item is IProjectFolder)
+                if (item is IProjectFolder)
                 {
                     RemoveFiles(project, item as IProjectFolder);
                 }
 
-                if(item is ISourceFile)
+                if (item is ISourceFile)
                 {
                     project.SourceFiles.Remove(item as ISourceFile);
                 }
@@ -572,7 +580,7 @@
         }
 
         public ISourceFile FindFile(string path)
-        {            
+        {
             return SourceFiles.BinarySearch(f => f.File, path);
         }
 
@@ -618,11 +626,29 @@
             }
         }
 
+        [JsonIgnore]
+        public ITestFramework TestFramework
+        {
+            get
+            {
+                ITestFramework result = Workspace.Instance.TestFrameworks.FirstOrDefault((tf) => tf.GetType().ToString() == TestFrameworkReference);
+
+                return result;
+            }
+            set
+            {
+                TestFrameworkReference = value.GetType().ToString();
+            }
+        }   
+
         [JsonProperty(PropertyName = "Toolchain")]
         public string ToolchainReference { get; set; }
 
         [JsonProperty(PropertyName = "Debugger")]
         public string DebuggerReference { get; set; }
+
+        [JsonProperty(PropertyName ="TestFramework")]
+        public string TestFrameworkReference { get; set; }
 
         [JsonIgnore]
         public ObservableCollection<IProjectItem> Items
