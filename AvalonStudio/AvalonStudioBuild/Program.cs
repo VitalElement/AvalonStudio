@@ -18,6 +18,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Threading;
+    using TestFrameworks;
     class Program
     {
         const string version = "1.0.0.16";
@@ -111,63 +112,40 @@
 
         static int RunTest(TestOptions options)
         {
-            var solution = LoadSolution(options);            
+            int result = 1;
+            var solution = LoadSolution(options);
+
+            var tests = new List<Test>();
 
             foreach (var project in solution.Projects)
             {
-                var cppProject = project as CPlusPlusProject;
+                if(project.TestFramework != null)
+                {                    
+                    var awaiter = project.TestFramework.EnumerateTestsAsync(console, project);
+                    awaiter.Wait();
 
-                if (cppProject.Type == ProjectType.Executable)
-                {
-                    if (!string.IsNullOrEmpty(cppProject.Executable))
+                    foreach(var test in awaiter.Result)
                     {
-                        var startInfo = new ProcessStartInfo();
-                        startInfo.FileName = Path.Combine(project.CurrentDirectory, cppProject.Executable).ToPlatformPath();
-                        startInfo.Arguments = "--list-test-names-only";
-                        // Hide console window
-                        startInfo.UseShellExecute = false;
-                        startInfo.RedirectStandardOutput = true;
-                        startInfo.RedirectStandardError = true;
-                        startInfo.CreateNoWindow = true;
-
-                        try
-                        {
-                            console.Write(string.Format("Enumerating {0} for tests...", project.Executable));
-
-                            using (var process = Process.Start(startInfo))
-                            {
-                                process.OutputDataReceived += (sender, e) =>
-                                {
-                                    console.WriteLine(e.Data);
-                                };
-
-                                process.ErrorDataReceived += (sender, e) =>
-                                {
-                                    if (e.Data != null)
-                                    {
-                                        console.WriteLine();
-                                        console.WriteLine(e.Data);
-                                    }
-                                };
-
-                                process.BeginOutputReadLine();
-
-                                process.BeginErrorReadLine();
-
-                                process.WaitForExit();                                
-
-                                console.WriteLine("Done");
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            // assume wrong image type... might be able to make this cleaner one day.
-                        }
+                        tests.Add(test);
                     }
+                }
+                
+            }
+
+            foreach (var test in tests)
+            {
+                test.Run();
+
+                console.WriteLine(string.Format("Test: {0} Pass: {1}", test.Name, test.Pass));
+
+                if(!test.Pass)
+                {
+                    result = 0;
+                    break;
                 }
             }
 
-            return 1;
+            return result;
         }
 
         static int RunBuild(BuildOptions options)
