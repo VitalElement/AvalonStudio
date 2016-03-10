@@ -37,8 +37,8 @@
 
             if (result == null)
             {
-                project.ToolchainSettings.STM32ToolchainSettings = new LocalGccToolchainSettings();
-                result = project.ToolchainSettings.STM32ToolchainSettings;
+                project.ToolchainSettings.LocalGCC = new LocalGccToolchainSettings();
+                result = project.ToolchainSettings.LocalGCC;
                 project.Save();
             }
 
@@ -51,13 +51,13 @@
 
             try
             {
-                if (project.ToolchainSettings.STM32ToolchainSettings is ExpandoObject)
+                if (project.ToolchainSettings.LocalGCC is ExpandoObject)
                 {
-                    result = (project.ToolchainSettings.STM32ToolchainSettings as ExpandoObject).GetConcreteType<LocalGccToolchainSettings>();
+                    result = (project.ToolchainSettings.LocalGCC as ExpandoObject).GetConcreteType<LocalGccToolchainSettings>();
                 }
                 else
                 {
-                    result = project.ToolchainSettings.STM32ToolchainSettings;
+                    result = project.ToolchainSettings.LocalGCC;
                 }
             }
             catch (Exception e)

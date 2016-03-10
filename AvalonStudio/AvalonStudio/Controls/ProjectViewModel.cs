@@ -108,6 +108,14 @@
             }
         }
 
+        public bool IsVisible
+        {
+            get
+            {
+                return !Model.Hidden;
+            }
+        }
+
         public ObservableCollection<ProjectItemViewModel> Items { get; private set; }        
 
         public ReactiveCommand<object> BuildCommand { get; protected set; }

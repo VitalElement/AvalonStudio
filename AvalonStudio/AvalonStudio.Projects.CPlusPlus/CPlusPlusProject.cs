@@ -679,5 +679,7 @@
 
         [JsonIgnore]
         public IProjectFolder Parent { get; set; }
+
+        public bool Hidden { get; set; }
     }
 }

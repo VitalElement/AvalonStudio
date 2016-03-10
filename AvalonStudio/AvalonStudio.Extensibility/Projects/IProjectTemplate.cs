@@ -21,6 +21,6 @@
         /// Templates can add 1 or more projects to a solution.
         /// </summary>
         /// <param name="solution">Solution that the template will install to.</param>        
-        IProject Generate(ISolution solution, string name);        
+        Task<IProject> Generate(ISolution solution, string name);        
     }
 }
