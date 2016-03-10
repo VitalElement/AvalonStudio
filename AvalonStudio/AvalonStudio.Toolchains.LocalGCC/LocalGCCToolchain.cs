@@ -75,17 +75,31 @@
 
             if (file.Language == Language.Cpp)
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "g++" + Platform.ExecutableExtension);
+                if (Platform.PlatformIdentifier == PlatformID.Unix)
+                {
+                    startInfo.FileName = "g++";
+                }
+                else
+                {
+                    startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "g++" + Platform.ExecutableExtension);
+                }
             }
             else
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "gcc" + Platform.ExecutableExtension);
+                if (Platform.PlatformIdentifier == PlatformID.Unix)
+                {
+                    startInfo.FileName = "gcc";
+                }
+                else
+                {
+                    startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "gcc" + Platform.ExecutableExtension);
+                }
             }
 
             startInfo.EnvironmentVariables["Path"] = Settings.ToolChainLocation;
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-            if (!File.Exists(startInfo.FileName))
+            if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
             {
                 result.ExitCode = -1;
                 console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
@@ -150,16 +164,30 @@
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
 
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "g++" + Platform.ExecutableExtension);
+            if (Platform.PlatformIdentifier == PlatformID.Unix)
+            {
+                startInfo.FileName = "g++";
+            }
+            else
+            {
+                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "g++" + Platform.ExecutableExtension);
+            }
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "ar" + Platform.ExecutableExtension);
+                if (Platform.PlatformIdentifier == PlatformID.Unix)
+                {
+                    startInfo.FileName = "ar";
+                }
+                else
+                {
+                    startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "ar" + Platform.ExecutableExtension);
+                }
             }
 
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-            if (!File.Exists(startInfo.FileName))
+            if(!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
             {
                 result.ExitCode = -1;
                 console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
@@ -289,10 +317,18 @@
             ProcessResult result = new ProcessResult();
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "size" + Platform.ExecutableExtension);
 
-            if (!File.Exists(startInfo.FileName))
+            if (Platform.PlatformIdentifier == PlatformID.Unix)
             {
+                startInfo.FileName = "size";
+            }
+            else
+            {
+                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "size" + Platform.ExecutableExtension);
+            }
+
+            if(!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
+            {                
                 console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
                 result.ExitCode = -1;
                 return result;
