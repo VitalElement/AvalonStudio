@@ -4,7 +4,7 @@
     using Projects.CPlusPlus;
     using System;
     using System.IO;
-
+    using System.Threading.Tasks;
     public class BlankCPlusPlusLangaguageTemplate : IProjectTemplate
     {
         public virtual string DefaultProjectName
@@ -31,8 +31,8 @@
             }
         }
 
-        public virtual IProject Generate(ISolution solution, string name)
-        {
+        public async virtual Task<IProject> Generate(ISolution solution, string name)
+        {            
             var location = Path.Combine(solution.CurrentDirectory, name);
 
             if(!Directory.Exists(location))

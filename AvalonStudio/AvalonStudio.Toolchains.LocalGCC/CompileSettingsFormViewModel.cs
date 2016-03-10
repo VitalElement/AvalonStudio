@@ -25,7 +25,7 @@
             }
             catch (Exception e)
             {
-                Model.ToolchainSettings.STM32ToolchainSettings = new LocalGccToolchainSettings();
+                Model.ToolchainSettings.LocalGCC = new LocalGccToolchainSettings();
             }
 
             defines = new ObservableCollection<string>(settings.Defines);
@@ -139,7 +139,7 @@
             settings.Exceptions = exceptions;
             settings.Rtti = rtti;
 
-            Model.ToolchainSettings.STM32ToolchainSettings.CompileSettings = settings;
+            Model.ToolchainSettings.LocalGCC.CompileSettings = settings;
             Model.Save();
             //project.SaveChanges();
         }

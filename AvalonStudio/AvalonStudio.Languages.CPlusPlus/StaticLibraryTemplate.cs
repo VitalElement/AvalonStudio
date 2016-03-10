@@ -34,9 +34,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public override IProject Generate(ISolution solution, string name)
+        public override async Task<IProject> Generate(ISolution solution, string name)
         {
-            var project = base.Generate(solution, name) as CPlusPlusProject;
+            var project = await base.Generate(solution, name) as CPlusPlusProject;
 
             project.Type = Projects.Standard.ProjectType.StaticLibrary;
 

@@ -46,7 +46,7 @@
           </TreeDataTemplate>
           
           <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Items}">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding IsVisible}">
               <StackPanel.ContextMenu>
                 <ContextMenu>
                   <MenuItem Header="Configure" Command="{Binding ConfigureCommand}"/>

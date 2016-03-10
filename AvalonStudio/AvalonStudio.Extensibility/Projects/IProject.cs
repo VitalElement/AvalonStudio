@@ -23,6 +23,8 @@
 
         ISourceFile FindFile(string path);
 
+        bool Hidden { get; set; }
+
         /// <summary>
         /// The directory the project file resides in.
         /// </summary>
