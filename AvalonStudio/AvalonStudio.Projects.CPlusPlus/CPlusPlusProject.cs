@@ -584,6 +584,18 @@
             return SourceFiles.BinarySearch(f => f.File, path);
         }
 
+        public void AddFile(ISourceFile file)
+        {
+            // TODO how will this work with subdirs.
+            SourceFiles.InsertSorted(file);
+            Items.Add(file);
+        }
+
+        public void AddFolder(IProjectFolder folder)
+        {
+            throw new NotImplementedException();
+        }
+
         [JsonIgnore]
         public IToolChain ToolChain
         {

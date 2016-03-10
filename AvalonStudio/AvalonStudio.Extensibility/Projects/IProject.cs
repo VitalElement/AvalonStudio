@@ -46,10 +46,7 @@
         IProject Load(ISolution solution, string filePath);
         string Extension { get; }
 
-        //IDictionary<string, string> Settings { get; }
-
-        void RemoveFile(ISourceFile file);
-        void RemoveFolder(IProjectFolder folder);
+        //IDictionary<string, string> Settings { get; }        
 
         // TODO perhaps this shouldnt be tied to IProject?
         string Executable { get; set; }
