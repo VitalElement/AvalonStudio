@@ -4,7 +4,7 @@
     using Controls.ViewModels;
     using Debugging;
     using Extensibility;
-    using Extensibility.Platform;
+    using Platform;
     using Languages;
     using MVVM;
     using Projects;
@@ -42,7 +42,7 @@
 
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
-            StatusBar.PlatformString = Platform.PlatformString;
+            StatusBar.PlatformString = Platform.Platform.PlatformString;
 
             SolutionExplorer.SelectedItemChanged += (sender, e) =>
             {

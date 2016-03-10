@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Repositories
 {
     using AvalonStudio.Utils;
-    using Extensibility.Platform;
+    using Platform;
     using LibGit2Sharp.Handlers;
     using System;
     using System.Collections.Generic;

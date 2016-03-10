@@ -139,6 +139,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlankCPlusPlusLangaguageTemplate.cs" />
     <Compile Include="ComponentSettingsForm.paml.cs">
       <DependentUpon>ComponentSettingsForm.paml</DependentUpon>
     </Compile>
@@ -159,6 +160,7 @@
       <DependentUpon>ReferencesSettingsForm.paml</DependentUpon>
     </Compile>
     <Compile Include="SourceFile.cs" />
+    <Compile Include="StaticLibraryTemplate.cs" />
     <Compile Include="TargetSettingsForm.paml.cs">
       <DependentUpon>TargetSettingsForm.paml</DependentUpon>
     </Compile>

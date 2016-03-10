@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Repositories
 {
     using AvalonStudio.Utils;
-    using Extensibility.Platform;
+    using Platform;
     using System;
     using System.Collections.Generic;
     using System.IO;

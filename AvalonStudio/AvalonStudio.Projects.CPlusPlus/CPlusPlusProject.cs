@@ -15,7 +15,7 @@
     using Newtonsoft.Json.Linq;
     using Newtonsoft.Json.Converters;
     using System.Dynamic;
-    using Extensibility.Platform;
+    using Platform;
     using System.Collections.ObjectModel;
     using Debugging;
     using TestFrameworks;

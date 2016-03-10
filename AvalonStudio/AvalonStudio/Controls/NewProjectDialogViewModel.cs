@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
     using Extensibility;
-    using Extensibility.Platform;
+    using Platform;
     using Languages;
     using Perspex.Controls;
     using Projects;

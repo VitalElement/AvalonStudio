@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Script.Serialization;
-using System.Reflection;
-
-namespace AvalonStudio.Extensibility.Utils
+﻿namespace AvalonStudio.Utils
 {
-	public static class Mapper
+    using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Web.Script.Serialization;
+    using System.Reflection;
+
+    public static class Mapper
 	{
 		public static void Map(ExpandoObject source, Type resultType, object destination)
 		{			

@@ -1,6 +1,6 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using Extensibility.Platform;
+    using Platform;
     using Perspex.Controls;
     using Perspex.Threading;
     using Projects;

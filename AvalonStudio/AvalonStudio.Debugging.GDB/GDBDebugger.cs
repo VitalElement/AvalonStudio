@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Debugging.GDB
 {
     using AvalonStudio.Utils;
-    using Extensibility.Platform;
+    using Platform;
     using Projects;
     using Projects.Standard;
     using System;

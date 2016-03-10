@@ -9,6 +9,7 @@
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using TestFrameworks.Catch;
     using Toolchains.LocalGCC;
     using Utils;
 
@@ -65,6 +66,7 @@
             project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "UnitTest1.cpp", new UnitTestTemplate().TransformText()));
             project.ToolChain = Workspace.Instance.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
             project.Debugger = Workspace.Instance.Debuggers.FirstOrDefault(d => d is LocalDebugAdaptor);
+            project.TestFramework = Workspace.Instance.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);
             var settings = LocalGCCToolchain.ProvisionLocalGccSettings(project);
 
             settings.CompileSettings.Exceptions = true;
