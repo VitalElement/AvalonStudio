@@ -16,12 +16,12 @@
     using Extensibility.Platform;
     using Repositories;
     using System.Collections.Generic;
-
-
+    using System.Diagnostics;
+    using System.Threading;
     class Program
     {
-        const string version = "1.0.0.15";
-        const string releaseName = "Gravity";        
+        const string version = "1.0.0.16";
+        const string releaseName = "Gravity";
 
         const string baseDir = @"c:\development\vebuild\test";
 
@@ -47,7 +47,7 @@
             {
                 var result = solution.FindProject(project);
 
-                if(result != null)
+                if (result != null)
                 {
                     (result as CPlusPlusProject).ResolveReferences();
                 }
@@ -60,9 +60,9 @@
                 return null;
             }
         }
-        
 
-        static int RunInstallPackage (PackageOptions options)
+
+        static int RunInstallPackage(PackageOptions options)
         {
             console.Write("Downloading catalogs...");
 
@@ -89,7 +89,7 @@
 
             var package = availablePackages.FirstOrDefault(p => p.Name == options.Package);
 
-            if(package != null)
+            if (package != null)
             {
                 var task = package.DownloadInfoAsync();
                 task.Wait();
@@ -100,7 +100,7 @@
                 dlTask.Wait();
 
                 return 1;
-                
+
             }
             else
             {
@@ -109,24 +109,85 @@
             }
         }
 
+        static int RunTest(TestOptions options)
+        {
+            var solution = LoadSolution(options);            
+
+            foreach (var project in solution.Projects)
+            {
+                var cppProject = project as CPlusPlusProject;
+
+                if (cppProject.Type == ProjectType.Executable)
+                {
+                    if (!string.IsNullOrEmpty(cppProject.Executable))
+                    {
+                        var startInfo = new ProcessStartInfo();
+                        startInfo.FileName = Path.Combine(project.CurrentDirectory, cppProject.Executable).ToPlatformPath();
+                        startInfo.Arguments = "--list-test-names-only";
+                        // Hide console window
+                        startInfo.UseShellExecute = false;
+                        startInfo.RedirectStandardOutput = true;
+                        startInfo.RedirectStandardError = true;
+                        startInfo.CreateNoWindow = true;
+
+                        try
+                        {
+                            console.Write(string.Format("Enumerating {0} for tests...", project.Executable));
+
+                            using (var process = Process.Start(startInfo))
+                            {
+                                process.OutputDataReceived += (sender, e) =>
+                                {
+                                    console.WriteLine(e.Data);
+                                };
+
+                                process.ErrorDataReceived += (sender, e) =>
+                                {
+                                    if (e.Data != null)
+                                    {
+                                        console.WriteLine();
+                                        console.WriteLine(e.Data);
+                                    }
+                                };
+
+                                process.BeginOutputReadLine();
+
+                                process.BeginErrorReadLine();
+
+                                process.WaitForExit();                                
+
+                                console.WriteLine("Done");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // assume wrong image type... might be able to make this cleaner one day.
+                        }
+                    }
+                }
+            }
+
+            return 1;
+        }
+
         static int RunBuild(BuildOptions options)
         {
             int result = 1;
             var solution = LoadSolution(options);
-            var project = FindProject(solution, options.Project) as CPlusPlusProject;            
-            
+            var project = FindProject(solution, options.Project) as CPlusPlusProject;
+
             if (project != null)
             {
                 var stopWatch = new System.Diagnostics.Stopwatch();
                 stopWatch.Start();
-                
-                if(project.ToolChain is StandardToolChain)
+
+                if (project.ToolChain is StandardToolChain)
                 {
                     (project.ToolChain as StandardToolChain).Jobs = options.Jobs;
                 }
 
                 var awaiter = project.ToolChain.Build(console, project);
-                awaiter.Wait();                
+                awaiter.Wait();
 
                 stopWatch.Stop();
                 console.WriteLine(stopWatch.Elapsed.ToString());
@@ -296,7 +357,7 @@
         static int RunCreate(CreateOptions options)
         {
             string projectPath = string.Empty;
-            
+
             if (string.IsNullOrEmpty(options.Project))
             {
                 projectPath = Directory.GetCurrentDirectory();
@@ -332,7 +393,7 @@
             return (UInt32)(a << 16 | b);
         }
 
-        static void UnpackValues (UInt32 input, out UInt16 a, out UInt16 b)
+        static void UnpackValues(UInt32 input, out UInt16 a, out UInt16 b)
         {
             a = (UInt16)(input >> 16);
             b = (UInt16)(input & 0x00FF);
@@ -360,17 +421,18 @@
 
             Console.WriteLine(string.Format("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier.ToString()));
 
-            var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions>(args).MapResult(
+            var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions, TestOptions>(args).MapResult(
               (BuildOptions opts) => RunBuild(opts),
                 (AddOptions opts) => RunAdd(opts),
                 (AddReferenceOptions opts) => RunAddReference(opts),
-                (PackageOptions opts)=>RunInstallPackage(opts),
+                (PackageOptions opts) => RunInstallPackage(opts),
               (CleanOptions opts) => RunClean(opts),
               (CreateOptions opts) => RunCreate(opts),
               (RemoveOptions opts) => RunRemove(opts),
+              (TestOptions opts) => RunTest(opts),
               errs => 1);
 
-            return result-1;
+            return result - 1;
         }
 
         //static void GenerateTestProjects()
