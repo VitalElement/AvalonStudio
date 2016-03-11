@@ -98,7 +98,7 @@
         public override bool Start(IToolChain toolchain, IConsole console, IProject project)
         {
             bool result = true;
-            DebugMode = true;
+            //DebugMode = true;
 
             var settings = GetSettings(project);
 
@@ -106,7 +106,7 @@
             console.WriteLine("[JLink] - Starting GDB Server...");
             // TODO allow people to select the device.
             var startInfo = new ProcessStartInfo();
-            startInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed 12000", "Cortex-M4", Enum.GetName(typeof(JlinkInterfaceType), settings.Interface));
+            startInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed 12000 -noir", "STM32F407VG", Enum.GetName(typeof(JlinkInterfaceType), settings.Interface));
             startInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServerCL" + Platform.ExecutableExtension);
             if (!File.Exists(startInfo.FileName))
             {
@@ -137,7 +137,7 @@
                     {
                         if (base.DebugMode && !string.IsNullOrEmpty(e.Data))
                         {
-                           // console.WriteLine("[JLink] - " + e.Data);
+                           console.WriteLine("[JLink] - " + e.Data);
                         }
                     };
 
@@ -171,8 +171,6 @@
 
             StoppedEventIsEnabled = false;
 
-            //Thread.Sleep(500);
-
             if (result)
             {
                 result = base.Start(toolchain, console, project);
@@ -180,10 +178,11 @@
                 if (result)
                 {
                     console.WriteLine("[JLink] - Connecting...");
-                    result = new TargetSelectCommand("localhost:2331").Execute(this).Response == ResponseCode.Done;
+                    result = new TargetSelectCommand(":2331").Execute(this).Response == ResponseCode.Done;
 
                     if (result)
-                    {           
+                    {
+                        new MonitorCommand("halt").Execute(this);
                         new MonitorCommand("reset").Execute(this);
                         //new MonitorCommand("reg r13 = (0x00000000)").Execute(this);
                         //new MonitorCommand("reg pc = (0x00000004)").Execute(this);

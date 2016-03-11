@@ -58,8 +58,8 @@
 
         private void Save()
         {
-            settings.InterfaceConfigFile = interfaceConfigFile.ToAvalonPath();
-            settings.TargetConfigFile = targetConfigFile.ToAvalonPath();
+            settings.InterfaceConfigFile = interfaceConfigFile?.ToAvalonPath();
+            settings.TargetConfigFile = targetConfigFile?.ToAvalonPath();
 
             OpenOCDDebugAdaptor.SetSettings(Model, settings);
             Model.Save();
