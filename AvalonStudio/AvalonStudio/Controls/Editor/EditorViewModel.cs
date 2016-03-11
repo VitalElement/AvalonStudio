@@ -301,18 +301,18 @@
 
         public void OnKeyUp(KeyEventArgs e)
         {
-            Intellisense.OnKeyUp(e);
+            //Intellisense.OnKeyUp(e);
         }
 
         public void OnKeyDown(KeyEventArgs e)
         {            
-            Intellisense.OnKeyDown(e);
+            //Intellisense.OnKeyDown(e);
         }
 
 
         public void OnTextInput(TextInputEventArgs e)
         {
-            Intellisense.OnTextInput(e);
+            //Intellisense.OnTextInput(e);
         }
 
         public void OnPointerMoved (PointerEventArgs e)
