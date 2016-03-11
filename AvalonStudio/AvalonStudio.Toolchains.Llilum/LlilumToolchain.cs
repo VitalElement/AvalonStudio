@@ -12,23 +12,10 @@
 
     public class LlilumToolchain : StandardToolChain
     {
-        public LlilumToolchain () : base (new ToolchainSettings())
+        public LlilumToolchain () 
         {
 
-        }
-
-        public LlilumToolchain(ToolchainSettings settings) : base(settings)
-        {
-
-        }
-
-        public override string GDBExecutable
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        }        
 
         public override Version Version
         {
@@ -46,11 +33,19 @@
             }
         }
 
+        private string BaseDirectory
+        {
+            get
+            {
+                return Path.Combine(Platform.Platform.AppDataDirectory, "AvalonStudio.Toolchains.Lillum");
+            }
+        }
+
         private void CompileCS(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
         {
             var startInfo = new ProcessStartInfo();
 
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "Roslyn", "csc.exe");
+            startInfo.FileName = Path.Combine(BaseDirectory, "Roslyn", "csc.exe");
 
             if (!File.Exists(startInfo.FileName))
             {
@@ -99,7 +94,7 @@
         {
             var startInfo = new ProcessStartInfo();
 
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "Llilum\\ZeligBuild\\Host\\bin\\Debug", "Microsoft.Zelig.Compiler.exe");
+            startInfo.FileName = Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug", "Microsoft.Zelig.Compiler.exe");
 
             if (!File.Exists(startInfo.FileName))
             {
@@ -107,7 +102,7 @@
             }
             else
             {
-                //startInfo.WorkingDirectory = Path.Combine(Settings.ToolChainLocation, "Llilum\\ZeligBuild\\Host\\bin\\Debug");
+                //startInfo.WorkingDirectory = Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug");
 
                 startInfo.Arguments = string.Format("{0} -OutputName {1} {2}", GetZeligCompilerArguments(superProject, project, file), outputFile, outputFile);
 
@@ -148,7 +143,7 @@
         {
             var startInfo = new ProcessStartInfo();
 
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "LLVM", "llc.exe");
+            startInfo.FileName = Path.Combine(BaseDirectory, "LLVM", "llc.exe");
 
             if (!File.Exists(startInfo.FileName))
             {
@@ -156,7 +151,7 @@
             }
             else
             {
-                startInfo.WorkingDirectory = Path.Combine(Settings.ToolChainLocation, "Llilum\\ZeligBuild\\Host\\bin\\Debug");
+                startInfo.WorkingDirectory = Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug");
 
                 startInfo.Arguments = string.Format("-O0 -code-model=small -data-sections -relocation-model=pic -march=thumb -mcpu=cortex-m4 -filetype=obj -mtriple=Thumb-NoSubArch-UnknownVendor-UnknownOS-GNUEABI-ELF -o={0} {1}", outputFile, llvmBinary);
 
@@ -289,11 +284,11 @@
 
                 if (file.Language == Language.Cpp)
                 {
-                    startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "GCC\\bin", "arm-none-eabi-g++.exe");
+                    startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-g++.exe");
                 }
                 else
                 {
-                    startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "GCC\\bin", "arm-none-eabi-gcc.exe");
+                    startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-gcc.exe");
                 }
 
 
@@ -362,9 +357,9 @@
         {
             string result = string.Empty;
 
-            result += string.Format("-HostAssemblyDir {0} ", Path.Combine(Settings.ToolChainLocation, "Llilum\\ZeligBuild\\Host\\bin\\Debug"));
-            result += string.Format("-DeviceAssemblyDir {0} ", Path.Combine(Settings.ToolChainLocation, "Llilum\\ZeligBuild\\Target\\bin\\Debug"));
-            result += string.Format("-CompilationSetupPath {0} ", Path.Combine(Settings.ToolChainLocation, "Llilum\\ZeligBuild\\Host\\bin\\Debug\\Microsoft.Llilum.BoardConfigurations.STM32F411.dll"));
+            result += string.Format("-HostAssemblyDir {0} ", Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug"));
+            result += string.Format("-DeviceAssemblyDir {0} ", Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Target\\bin\\Debug"));
+            result += string.Format("-CompilationSetupPath {0} ", Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug\\Microsoft.Llilum.BoardConfigurations.STM32F411.dll"));
             result += string.Format("-CompilationSetup Microsoft.Llilum.BoardConfigurations.STM32F411MBEDHostedCompilationSetup ");
             result += "-Reference Microsoft.CortexM4OnMBED ";
             result += "-Reference Microsoft.CortexM4OnCMSISCore ";
@@ -393,7 +388,7 @@
             result += "-MaxProcs 8 ";
             result += "-NoSDK ";
 
-            result += string.Format("-LlvmBinPath {0} ", Path.Combine(Settings.ToolChainLocation, "LLVM"));
+            result += string.Format("-LlvmBinPath {0} ", Path.Combine(BaseDirectory, "LLVM"));
 
             return result;
         }
@@ -404,11 +399,11 @@
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
 
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "GCC\\bin", "arm-none-eabi-gcc.exe");
+            startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-gcc.exe");
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "GCC\\bin",  "arm-none-eabi-ar.exe");
+                startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin",  "arm-none-eabi-ar.exe");
             }
 
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
@@ -519,7 +514,7 @@
             ProcessResult result = new ProcessResult();
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "GCC\\bin", "arm-none-eabi-size.exe");
+            startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-size.exe");
 
             if (!File.Exists(startInfo.FileName))
             {
