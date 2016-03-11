@@ -17,15 +17,19 @@ namespace AvalonStudio.Toolchains.STM32
     using System.Dynamic;
     using Extensibility.Utils;
     using Platform;
+    using GCC;
 
-    public class STM32GCCToolchain : StandardToolChain
+    public class STM32GCCToolchain : GCCToolchain
     {
-        public STM32GCCToolchain() : base(new ToolchainSettings())
+        private string BaseDirectory
         {
-            Settings.ToolChainLocation = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin");
+            get
+            {
+                return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32");
+            }
         }
 
-        public STM32GCCToolchain(ToolchainSettings settings) : base(settings)
+        public STM32GCCToolchain()
         {
 
         }
@@ -79,11 +83,11 @@ namespace AvalonStudio.Toolchains.STM32
 
             if (file.Language == Language.Cpp)
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-g++" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-g++" + Platform.ExecutableExtension);
             }
             else
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
             }
 
 
@@ -173,11 +177,11 @@ namespace AvalonStudio.Toolchains.STM32
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
 
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
+            startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-ar" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-ar" + Platform.ExecutableExtension);
             }
 
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
@@ -312,7 +316,7 @@ namespace AvalonStudio.Toolchains.STM32
             ProcessResult result = new ProcessResult();
 
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "arm-none-eabi-size" + Platform.ExecutableExtension);
+            startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-size" + Platform.ExecutableExtension);
 
             if (!File.Exists(startInfo.FileName))
             {
@@ -615,10 +619,10 @@ namespace AvalonStudio.Toolchains.STM32
         {
             return new List<string>()
             {
-				Path.Combine(Settings.ToolChainLocation, "arm-none-eabi", "include"),
-				Path.Combine(Settings.ToolChainLocation, "arm-none-eabi", "include", "c++", "4.9.3"),
-				Path.Combine(Settings.ToolChainLocation, "arm-none-eabi", "include", "c++", "4.9.3", "arm-none-eabi", "thumb"),
-				Path.Combine(Settings.ToolChainLocation, "lib", "gcc", "arm-none-eabi", "4.9.3", "include")                
+				Path.Combine(BaseDirectory, "arm-none-eabi", "include"),
+				Path.Combine(BaseDirectory, "arm-none-eabi", "include", "c++", "4.9.3"),
+				Path.Combine(BaseDirectory, "arm-none-eabi", "include", "c++", "4.9.3", "arm-none-eabi", "thumb"),
+				Path.Combine(BaseDirectory, "lib", "gcc", "arm-none-eabi", "4.9.3", "include")                
             };
         }
 
@@ -657,14 +661,7 @@ namespace AvalonStudio.Toolchains.STM32
         //    return Path.Combine(project.CurrentDirectory, "link.ld");
         //}
 
-        public override string GDBExecutable
-        {
-            get
-            {
-                string binDirectory = Path.Combine(Settings.ToolChainLocation, "bin");
-                return Path.Combine(binDirectory, "arm-none-eabi-gdb.exe");
-            }
-        }
+        
 
         public override Version Version
         {
@@ -681,6 +678,15 @@ namespace AvalonStudio.Toolchains.STM32
                 return "GCC based toolchain for STM32.";
             }
         }
+
+        public override string GDBExecutable
+        {
+            get
+            {
+                string binDirectory = Path.Combine(BaseDirectory, "bin");
+                return Path.Combine(binDirectory, "arm-none-eabi-gdb.exe");
+            }
+        }        
 
         public override IList<TabItem> GetConfigurationPages(IProject project)
         {
