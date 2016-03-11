@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Debugging.GDB.OpenOCD;
+﻿using AvalonStudio.Controls;
+using AvalonStudio.Debugging.GDB.OpenOCD;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Models.Tools.Debuggers.Local;
 using AvalonStudio.MVVM;
@@ -23,7 +24,7 @@ namespace AvalonStudio.Debugging
             this.BreakPointManager = new BreakPointManager();
 
             //this.LocalsView = new LocalsViewModel(null);
-            //this.RegistersView = new RegistersViewModel();
+            this.Registers = new RegistersViewModel();
             //this.DissasemblyView = new DisassemblyViewModel();
             //this.MemoryView = new MemoryViewModel();
             //this.WatchList = new WatchListViewModel();
@@ -272,7 +273,7 @@ namespace AvalonStudio.Debugging
         private void SetDebuggers(IDebugger debugger)
         {
             //BreakPointManager.SetDebugger(debugger);
-            //RegistersView.SetDebugger(debugger);
+            Registers.SetDebugger(debugger);
             //DissasemblyView.SetDebugger(debugger);
             //MemoryView.SetDebugger(debugger);
             //WatchList.SetDebugger(debugger as GDBDebugger);
@@ -330,12 +331,12 @@ namespace AvalonStudio.Debugging
         //    set { callStack = value; OnPropertyChanged(); }
         //}
 
-        //private RegistersViewModel registersView;
-        //public RegistersViewModel RegistersView
-        //{
-        //    get { return registersView; }
-        //    set { registersView = value; OnPropertyChanged(); }
-        //}
+        private RegistersViewModel registersView;
+        public RegistersViewModel Registers
+        {
+            get { return registersView; }
+            set { this.RaiseAndSetIfChanged(ref registersView, value); }
+        }
 
         //private DisassemblyViewModel disassemblyViewModel;
         //public DisassemblyViewModel DissasemblyView
@@ -496,7 +497,7 @@ namespace AvalonStudio.Debugging
                     //LocalsView.Model = stackVariables;
                     //CallStack.Update(stackFrames);
                     //WatchList.Invalidate(updates);
-                    //RegistersView.Invalidate();
+                    Registers.Invalidate();
 
                     //while (await IsAsynchronousUIListsLoading())
                     //{

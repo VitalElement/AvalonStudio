@@ -7,9 +7,13 @@
   <Grid RowDefinitions="0,*,350,25" ColumnDefinitions="220,*,300">    
     <Grid Grid.ColumnSpan="3">
       <Controls:ToolBar />
-    </Grid>    
+    </Grid>
 
-    <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="1 2 2 1">
+    <Grid Grid.RowSpan="2" Margin="1 1 2 2">
+      <Controls:Registers DataContext="{Binding DebugManager.Registers}" />
+    </Grid>
+    
+    <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1" Margin="1 2 2 1">
       <Controls:Editor DataContext="{Binding Editor}" />
     </Grid>
 
