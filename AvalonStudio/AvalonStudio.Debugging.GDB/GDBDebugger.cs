@@ -374,7 +374,7 @@
         /// <summary>
         /// This method is not supported by embedded targets. Use continue instead.
         /// </summary>
-        public void Run()
+        public virtual void Run()
         {
             if (CurrentState != DebuggerState.Running)
             {
