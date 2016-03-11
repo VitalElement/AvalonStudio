@@ -10,13 +10,15 @@
         public MainWindow()
         {
             this.InitializeComponent();
+
             App.AttachDevTools(this);
+        }
 
-            var names = System.Reflection.Assembly.GetEntryAssembly().GetManifestResourceNames();
-
-            foreach(var name in names)
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if(DataContext != null && DataContext is WorkspaceViewModel)
             {
-                System.Console.WriteLine(name);
+                (DataContext as WorkspaceViewModel).OnKeyDown(e);
             }
         }
 

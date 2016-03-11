@@ -33,9 +33,9 @@
     </MenuItem>
 
     <MenuItem Header="Debug">
-      <MenuItem Header="Start Debugging" Command="{Binding StartDebugCommand}" HotKey="F5" />
-      <MenuItem Header="Step Into" Command="{Binding StepIntoCommand}" HotKey="F11" />
-      <MenuItem Header="Step Over" Command="{Binding StepOverCommand}" HotKey="F10" />      
+      <MenuItem Header="Start Debugging" Command="{Binding StartDebugCommand}" />
+      <MenuItem Header="Step Into" Command="{Binding StepIntoCommand}" />
+      <MenuItem Header="Step Over" Command="{Binding StepOverCommand}" />      
     </MenuItem>
 
     <MenuItem Header="Tools">

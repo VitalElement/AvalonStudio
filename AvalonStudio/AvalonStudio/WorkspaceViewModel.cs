@@ -16,6 +16,8 @@
     using System.Threading;
     using Toolchains;
     using Utils;
+    using Perspex.Controls;
+    using Perspex.Input;
     public enum Perspective
     {
         Editor,
@@ -30,7 +32,7 @@
 
         [ImportingConstructor]
         public WorkspaceViewModel(EditorModel editor, [Import] Workspace workspace) : base(workspace)
-        {
+        {            
             this.editor = editor;
 
             MainMenu = new MainMenuViewModel();
@@ -38,8 +40,7 @@
             Editor = new EditorViewModel(editor);
             Console = new ConsoleViewModel();
             ErrorList = new ErrorListViewModel();
-            StatusBar = new StatusBarViewModel();
-
+            StatusBar = new StatusBarViewModel();            
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
             StatusBar.PlatformString = Platform.Platform.PlatformString;
@@ -63,6 +64,27 @@
 
             DebugManager = new DebugManager();
             CurrentPerspective = Perspective.Editor;
+        }
+
+        public void OnKeyDown(KeyEventArgs e)
+        {
+            switch(e.Key)
+            {
+                case Key.F10:
+                    DebugManager.StepOver();
+                    break;
+
+                case Key.F11:
+                    DebugManager.StepInto();
+                    break;
+
+                case Key.F5:
+                    if (SolutionExplorer.Solution.FirstOrDefault()?.Model.StartupProject != null)
+                    {
+                        DebugManager.StartDebug(SolutionExplorer.Solution.FirstOrDefault()?.Model.StartupProject);
+                    }
+                    break;                    
+            }
         }
 
         public void InvalidateErrors()
