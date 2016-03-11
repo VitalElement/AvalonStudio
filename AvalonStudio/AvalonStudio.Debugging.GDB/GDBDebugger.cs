@@ -167,7 +167,7 @@
         }
 
         internal string SendCommand(Command command, Int32 timeout)
-        {
+        {            
             string result = string.Empty;
             transmitSemaphore.WaitOne();
             SetCommand(command);
@@ -320,7 +320,10 @@
 
             if (Stopped != null && StoppedEventIsEnabled)
             {
-                Stopped(this, stopRecord);
+                Task.Factory.StartNew(() =>
+                {
+                    Stopped(this, stopRecord);
+                });
             }
         }
 

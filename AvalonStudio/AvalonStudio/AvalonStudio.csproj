@@ -229,6 +229,11 @@
     <Compile Include="Controls\ReferenceViewModel.cs">
       <DependentUpon>SolutionExplorer.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Registers.xaml.cs">
+      <DependentUpon>Registers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RegistersViewModel.cs" />
+    <Compile Include="Controls\RegisterViewModel.cs" />
     <Compile Include="Controls\SolutionExplorerView.paml.cs">
       <DependentUpon>SolutionExplorer.paml</DependentUpon>
     </Compile>
@@ -293,7 +298,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ModalDialog.paml" />
     <EmbeddedResource Include="Controls\PackageManagerDialog.paml" />
-    <EmbeddedResource Include="Controls\SolutionExplorer.paml" />
+    <EmbeddedResource Include="Controls\SolutionExplorer.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
     <EmbeddedResource Include="Controls\Intellisense.paml">
@@ -5422,6 +5429,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\Registers.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
