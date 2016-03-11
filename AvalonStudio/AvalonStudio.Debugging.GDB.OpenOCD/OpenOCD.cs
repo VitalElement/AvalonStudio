@@ -33,7 +33,7 @@
         {
             get
             {
-                return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Debugging.OpenOCD\\");
+                return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Debugging.OpenOCD\\").ToPlatformPath();
             }
         }
 
@@ -113,6 +113,7 @@
             bool result = true;            
             console.WriteLine("[OpenOCD] - Starting GDB Server...");
 
+            DebugMode = true;
             var settings = GetSettings(project);
 
             if(settings == null)
@@ -232,10 +233,10 @@
             return result;
         }
 
-        new public void Run()
+        public override void Run()
         {
-            base.Continue();
-        }
+            Continue();
+        }        
 
         new public void Stop()
         {      

@@ -138,10 +138,19 @@
             {
                 test.Run();
 
+                if (test.Pass)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+
                 console.WriteLine(string.Format("Running Test: [{0}], [{1}]", test.Name, test.Pass ? "Passed" : "Failed"));
 
                 if (!test.Pass)
-                {
+                {                    
                     console.WriteLine(string.Format("Assertion = [{0}], File=[{1}], Line=[{2}]", test.Assertion, test.File, test.Line));
                 }
 
