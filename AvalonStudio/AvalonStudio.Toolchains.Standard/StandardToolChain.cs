@@ -49,16 +49,13 @@
 
     public abstract class StandardToolChain : IToolChain
     {
-        public StandardToolChain(ToolchainSettings settings)
+        public StandardToolChain()
         {
-            this.Settings = settings;
             this.Jobs = 4;
         }
 
         public int Jobs { get; set; }
-
-        public ToolchainSettings Settings { get; private set; }
-
+        
         public abstract CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile);
 
         public abstract LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputDirectory);
@@ -480,9 +477,7 @@
 
                 console.WriteLine("Clean Completed.");
             });
-        }
-
-        public abstract string GDBExecutable { get; }
+        }        
 
         public IList<string> Includes
         {

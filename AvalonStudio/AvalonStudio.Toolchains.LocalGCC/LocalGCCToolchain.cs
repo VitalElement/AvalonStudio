@@ -13,19 +13,15 @@
     using System.Dynamic;
     using Extensibility.Utils;
     using Platform;
+    using GCC;
 
-    public class LocalGCCToolchain : StandardToolChain
+    public class LocalGCCToolchain : GCCToolchain
     {
-        public LocalGCCToolchain() : base(new ToolchainSettings())
+        public LocalGCCToolchain()
         {
-            Settings.ToolChainLocation = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC", "bin");
+            //BaseDirectory = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC", "bin");
         }
-
-        public LocalGCCToolchain(ToolchainSettings settings) : base(settings)
-        {
-
-        }
-
+        
         public override void ProvisionSettings(IProject project)
         {
             ProvisionLocalGccSettings(project);
@@ -67,6 +63,14 @@
             return result;
         }
 
+        private string BaseDirectory
+        {
+            get
+            {
+                return Path.Combine(Platform.AppDataDirectory, "AvalonStudio.Toolchains.LocalGCC");
+            }
+        }
+
         public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
         {
             CompileResult result = new CompileResult();
@@ -81,7 +85,7 @@
                 }
                 else
                 {
-                    startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "g++" + Platform.ExecutableExtension);
+                    startInfo.FileName = Path.Combine(BaseDirectory, "g++" + Platform.ExecutableExtension);
                 }
             }
             else
@@ -92,11 +96,11 @@
                 }
                 else
                 {
-                    startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "gcc" + Platform.ExecutableExtension);
+                    startInfo.FileName = Path.Combine(BaseDirectory, "gcc" + Platform.ExecutableExtension);
                 }
             }
 
-            startInfo.EnvironmentVariables["Path"] = Settings.ToolChainLocation;
+            startInfo.EnvironmentVariables["Path"] = BaseDirectory;
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
             if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
@@ -170,7 +174,7 @@
             }
             else
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "g++" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(BaseDirectory, "g++" + Platform.ExecutableExtension);
             }
 
             if (project.Type == ProjectType.StaticLibrary)
@@ -181,7 +185,7 @@
                 }
                 else
                 {
-                    startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "ar" + Platform.ExecutableExtension);
+                    startInfo.FileName = Path.Combine(BaseDirectory, "ar" + Platform.ExecutableExtension);
                 }
             }
 
@@ -324,7 +328,7 @@
             }
             else
             {
-                startInfo.FileName = Path.Combine(Settings.ToolChainLocation, "size" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(BaseDirectory, "size" + Platform.ExecutableExtension);
             }
 
             if(!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
@@ -584,9 +588,9 @@
         {
             return new List<string>()
             {
-                Path.Combine(Settings.ToolChainLocation, "include"),
-                Path.Combine(Settings.ToolChainLocation, "include", "c++", "5.3.0"),
-                Path.Combine(Settings.ToolChainLocation, "lib", "gcc", "i686-w64-mingw32", "5.3.0", "include")
+                Path.Combine(BaseDirectory, "include"),
+                Path.Combine(BaseDirectory, "include", "c++", "5.3.0"),
+                Path.Combine(BaseDirectory, "lib", "gcc", "i686-w64-mingw32", "5.3.0", "include")
             };
         }
 
@@ -629,8 +633,8 @@
         {
             get
             {
-                string binDirectory = Path.Combine(Settings.ToolChainLocation, "bin");
-                return Path.Combine(binDirectory, "gdb.exe");
+                string binDirectory = Path.Combine(BaseDirectory, "bin");
+                return Path.Combine(binDirectory, "gdb" + Platform.ExecutableExtension);
             }
         }
 

@@ -63,6 +63,10 @@
       <Project>{47e266ea-bbc4-4794-96da-b1f3ecb5bb9b}</Project>
       <Name>AvalonStudio.Projects.CPlusPlus</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.GCC\AvalonStudio.Toolchains.GCC.csproj">
+      <Project>{f58ae4b2-6fd3-4f0d-b9c3-faefecefecb6}</Project>
+      <Name>AvalonStudio.Toolchains.GCC</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj">
       <Project>{7a82c777-039e-47aa-a77b-3a9544e147c5}</Project>
       <Name>AvalonStudio.Toolchains.LocalGCC</Name>
