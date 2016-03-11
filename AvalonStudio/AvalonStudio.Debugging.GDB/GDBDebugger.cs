@@ -169,26 +169,22 @@
         internal string SendCommand(Command command, Int32 timeout)
         {
             string result = string.Empty;
+            transmitSemaphore.WaitOne();
+            SetCommand(command);
 
-            //Task.Factory.StartNew(() =>
+            if (DebugMode)
             {
-                transmitSemaphore.WaitOne();
-                SetCommand(command);
+                console.WriteLine("[Sending] " + command.Encode());
+            }
 
-                if (DebugMode)
-                {
-                    console.WriteLine("[Sending] " + command.Encode());
-                }
+            input.WriteLine(command.Encode());
+            input.Flush();
 
-                input.WriteLine(command.Encode());
-                input.Flush();
+            result = WaitForResponse(-1);
 
-                result = WaitForResponse(-1);
+            ClearCommand();
 
-                ClearCommand();
-
-                transmitSemaphore.Release();
-            }//).Wait();
+            transmitSemaphore.Release();
 
             return result;
         }
@@ -536,8 +532,8 @@
 
             // This information should be part of this extension... or configurable internally?
             // This maybe indicates that debuggers are part of toolchain?
-            startInfo.FileName = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC", "bin", "gdb" + Platform.ExecutableExtension);
-            startInfo.Arguments = string.Format("\"{0}\" --interpreter=mi", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
+            startInfo.FileName = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin", "arm-none-eabi-gdb" + Platform.ExecutableExtension);
+            startInfo.Arguments = string.Format("--interpreter=mi \"{0}\"", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
 
             if (!File.Exists(startInfo.FileName))
             {
@@ -583,10 +579,7 @@
                {
                    if (e.Data != null)
                    {
-                       Task.Factory.StartNew(() =>
-                       {
-                           ProcessOutput(e.Data);
-                       });
+                       ProcessOutput(e.Data);
                    }
                };
 
