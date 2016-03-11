@@ -25,7 +25,7 @@ namespace AvalonStudio.Toolchains.STM32
         {
             get
             {
-                return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32");
+                return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin");
             }
         }
 
@@ -683,8 +683,7 @@ namespace AvalonStudio.Toolchains.STM32
         {
             get
             {
-                string binDirectory = Path.Combine(BaseDirectory, "bin");
-                return Path.Combine(binDirectory, "arm-none-eabi-gdb.exe");
+                return Path.Combine(BaseDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension);
             }
         }        
 

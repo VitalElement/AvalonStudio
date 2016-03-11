@@ -67,7 +67,7 @@
         {
             get
             {
-                return Path.Combine(Platform.AppDataDirectory, "AvalonStudio.Toolchains.LocalGCC");
+                return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC", "bin");
             }
         }
 
@@ -633,8 +633,7 @@
         {
             get
             {
-                string binDirectory = Path.Combine(BaseDirectory, "bin");
-                return Path.Combine(binDirectory, "gdb" + Platform.ExecutableExtension);
+                return Path.Combine(BaseDirectory, "gdb" + Platform.ExecutableExtension);
             }
         }
 

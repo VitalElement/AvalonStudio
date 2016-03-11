@@ -15,7 +15,7 @@
     using Toolchains;
     using Toolchains.Standard;
     using Perspex.Controls;
-
+    using Toolchains.GCC;
     public class GDBDebugger : IDebugger
     {
         public GDBDebugger()
@@ -532,7 +532,17 @@
 
             // This information should be part of this extension... or configurable internally?
             // This maybe indicates that debuggers are part of toolchain?
-            startInfo.FileName = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin", "arm-none-eabi-gdb" + Platform.ExecutableExtension);
+
+            if(toolchain is GCCToolchain)
+            {
+                startInfo.FileName = (toolchain as GCCToolchain).GDBExecutable;
+            }
+            else
+            {
+                console.WriteLine("[GDB] - Error GDB is not able to debug projects compiled on this kind of toolchain (" + toolchain.GetType().ToString() + ")");
+                return false;
+            }
+
             startInfo.Arguments = string.Format("--interpreter=mi \"{0}\"", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
 
             if (!File.Exists(startInfo.FileName))
