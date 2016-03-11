@@ -21,7 +21,7 @@
     using TestFrameworks;
     class Program
     {
-        const string version = "1.0.0.16";
+        const string version = "1.0.0.18";
         const string releaseName = "Gravity";
 
         const string baseDir = @"c:\development\vebuild\test";
@@ -138,7 +138,12 @@
             {
                 test.Run();
 
-                console.WriteLine(string.Format("Test: {0} Pass: {1}", test.Name, test.Pass));
+                console.WriteLine(string.Format("Running Test: [{0}], [{1}]", test.Name, test.Pass ? "Passed" : "Failed"));
+
+                if (!test.Pass)
+                {
+                    console.WriteLine(string.Format("Assertion = [{0}], File=[{1}], Line=[{2}]", test.Assertion, test.File, test.Line));
+                }
 
                 if(!test.Pass)
                 {
