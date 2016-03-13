@@ -19,16 +19,16 @@ RUN apt-get update && apt-get install -y git libcurl3 lib32z1 lib32ncurses5
 RUN mkdir -p /opt/AvalonBuild
 RUN git clone  https://github.com/VitalElement/AvalonBuild.git   /opt/AvalonBuild
 
-# Install asb command
-RUN echo "#!/bin/sh" > /usr/bin/asb
-RUN echo "/usr/bin/mono /opt/AvalonBuild/asb.exe \$*" >> /usr/bin/asb
-RUN chmod +x /usr/bin/asb
+# Install avalon command
+RUN echo "#!/bin/sh" > /usr/bin/avalon
+RUN echo "/usr/bin/mono /opt/AvalonBuild/avalon.exe \$*" >> /usr/bin/avalon
+RUN chmod +x /usr/bin/avalon
 
-# Test asb command
-RUN asb version
+# Test avalon command
+RUN avalon version
 
 # Install STM32 Toolchain
-RUN asb install-package AvalonStudio.Toolchains.STM32 Linux-Slow-v0.03-5.2.1
+RUN avalon install-package AvalonStudio.Toolchains.STM32 Linux-Slow-v0.03-5.2.1
 
-RUN asb version
+RUN avalon version
 
