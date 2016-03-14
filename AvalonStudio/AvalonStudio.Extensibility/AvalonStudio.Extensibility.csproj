@@ -172,6 +172,12 @@
     <Compile Include="Languages\SyntaxHighlightingData.cs" />
     <Compile Include="Languages\UnsavedFile.cs" />
     <Compile Include="Menus\IMenuItem.cs" />
+    <Compile Include="MVVM\DataVirtualization\AsyncVirtualizingCollection.cs" />
+    <Compile Include="MVVM\DataVirtualization\DataPage.cs" />
+    <Compile Include="MVVM\DataVirtualization\DataWrapper.cs" />
+    <Compile Include="MVVM\DataVirtualization\DynamicAsyncVirtualizingCollection.cs" />
+    <Compile Include="MVVM\DataVirtualization\IItemsProvider.cs" />
+    <Compile Include="MVVM\DataVirtualization\VirtualizingCollection.cs" />
     <Compile Include="MVVM\Extensions.cs" />
     <Compile Include="MVVM\ObservableCollectionExtensions.cs" />
     <Compile Include="MVVM\ViewModel.cs" />
