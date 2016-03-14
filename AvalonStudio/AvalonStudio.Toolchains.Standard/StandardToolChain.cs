@@ -24,7 +24,7 @@
         {
             ObjectLocations = new List<string>();
             LibraryLocations = new List<string>();
-            ExecutableLocations = new List<string>();
+            ExecutableLocations = new List<string>();           
         }
 
         public IStandardProject Project { get; set; }
@@ -172,6 +172,7 @@
                                // if (linkedReferences.Count > 0)
                                 {
                                     linkedReferences.ObjectLocations = compiledProject.ObjectLocations;
+                                    linkedReferences.NumberOfObjectsCompiled = compiledProject.NumberOfObjectsCompiled;
                                     Link(console, project as IStandardProject, linkedReferences, linkedReferences);
                                 }
                             }
@@ -241,9 +242,35 @@
                 Directory.CreateDirectory(outputLocation);
             }
 
-            console.OverWrite(string.Format("[LL]    [{0}]", compileResult.Project.Name));
+            bool link = false;
+            foreach(var objectFile in compileResult.ObjectLocations)
+            {
+                if(File.GetLastWriteTime(objectFile) > File.GetLastWriteTime(executable))
+                {
+                    link = true;
+                    break;
+                }
+            }
 
-            var linkResult = Link(console, superProject, compileResult.Project, compileResult, outputLocation);
+            if (!link)
+            {
+                foreach (var library in compileResult.LibraryLocations)
+                {
+                    if (File.GetLastWriteTime(library) > File.GetLastWriteTime(executable))
+                    {
+                        link = true;
+                        break;
+                    }
+                }
+            }
+
+            var linkResult = new LinkResult() { Executable = executable };
+
+            if (link)
+            {
+                console.OverWrite(string.Format("[LL]    [{0}]", compileResult.Project.Name));
+                linkResult = Link(console, superProject, compileResult.Project, compileResult, outputLocation);
+            }
 
             if (linkResult.ExitCode == 0)
             {                
@@ -389,6 +416,7 @@
                                             else
                                             {
                                                 compileResults.ObjectLocations.Add(objectFile);
+                                                compileResults.NumberOfObjectsCompiled++;
                                             }
 
                                             numTasks--;
