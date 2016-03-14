@@ -194,6 +194,10 @@
       <DependentUpon>Intellisense.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\IntellisenseViewModel.cs" />
+    <Compile Include="Controls\Locals.paml.cs">
+      <DependentUpon>Locals.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LocalsViewModel.cs" />
     <Compile Include="Controls\MainMenu.paml.cs">
       <DependentUpon>MainMenu.paml</DependentUpon>
     </Compile>
@@ -325,6 +329,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CallStack.paml" />
+    <EmbeddedResource Include="Controls\Locals.paml" />
     <None Include="libgit2-821131f.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
