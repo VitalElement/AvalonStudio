@@ -6,10 +6,13 @@
     using System.Collections.Generic;
     using TextEditor.Document;
     using Utils;
+    using System;
 
     public class BracketMatchingBackgroundRenderer : IBackgroundRenderer
     {
         private Brush bracketHighlightBrush = SolidColorBrush.Parse("#123e70");
+
+        public event EventHandler<EventArgs> DataChanged;
 
         private void Highlight(DrawingContext drawingContext, IEnumerable<Rect> rects)
         {

@@ -1,10 +1,13 @@
 ﻿namespace AvalonStudio.TextEditor.Rendering
 {
+    using System;
     using Perspex.Media;
 
     public class ColumnLimitBackgroundRenderer : IBackgroundRenderer
     {
         private Brush brush = Brush.Parse("#30E4E4E4");
+
+        public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {

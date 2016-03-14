@@ -135,7 +135,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="BreakPointMargin.cs" />
     <Compile Include="Document\DocumentChangedEventArgs.cs" />
     <Compile Include="Document\DocumentChangeOperation.cs" />
     <Compile Include="Document\DocumentLine.cs" />

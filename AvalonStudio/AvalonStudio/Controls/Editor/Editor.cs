@@ -76,6 +76,7 @@
                     using (var fs = File.OpenText(file.Location))
                     {
                         TextDocument = new TextDocument(fs.ReadToEnd());
+                        TextDocument.FileName = file.Location;
                     }
                 }
 

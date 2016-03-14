@@ -172,6 +172,7 @@ namespace AvalonStudio.Debugging
 
         private void PrepareToRun()
         {
+            WorkspaceViewModel.Instance.Editor.DebugLineHighlighter.Line = -1;
             //if (lastDocument != null)
             //{
             //    lastDocument.ClearDebugHighlight();
@@ -185,22 +186,40 @@ namespace AvalonStudio.Debugging
             IsExecuting = true;
         }
 
-        private void StepInstruction()
+        public void Continue ()
         {
-            //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
+            if (!IsExecuting)
             {
-                PrepareToRun();
-                Debugger.StepInstruction();
-            }//);
+                Task.Factory.StartNew(() =>
+                {
+                    PrepareToRun();
+                    Debugger.Continue();
+                });
+            }
         }
 
-        private void StepOut()
+        public void StepInstruction()
         {
-            //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
+            if (!IsExecuting)
             {
-                PrepareToRun();
-                Debugger.StepOver();
-            }//);
+                Task.Factory.StartNew(() =>
+                {
+                    PrepareToRun();
+                    Debugger.StepInstruction();
+                });
+            }
+        }
+
+        public void StepOut()
+        {
+            if (!IsExecuting)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    PrepareToRun();
+                    Debugger.StepOut();
+                });
+            }
         }
 
         public void StepInto()
@@ -245,7 +264,7 @@ namespace AvalonStudio.Debugging
                 //LocalsView.Clear();
                 //CallStack.Clear();
 
-                BreakPointManager.SetDebugger(null);
+                SetDebuggers(null);
 
                 ignoreEvents = false;
 
@@ -272,7 +291,7 @@ namespace AvalonStudio.Debugging
 
         private void SetDebuggers(IDebugger debugger)
         {
-            //BreakPointManager.SetDebugger(debugger);
+            BreakPointManager.SetDebugger(debugger);
             Registers.SetDebugger(debugger);
             Disassembly.SetDebugger(debugger);
             //MemoryView.SetDebugger(debugger);

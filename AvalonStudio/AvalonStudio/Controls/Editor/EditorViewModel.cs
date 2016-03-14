@@ -14,6 +14,7 @@
     using Platform;
     using Utils;
     using Projects;
+
     public class EditorViewModel : ViewModel<EditorModel>
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -98,19 +99,17 @@
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
             backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
 
-            debugLineHighlighter = new SelectedDebugLineBackgroundRenderer();
-            backgroundRenderers.Add(debugLineHighlighter);
+            DebugLineHighlighter = new SelectedDebugLineBackgroundRenderer();
+            backgroundRenderers.Add(DebugLineHighlighter);
 
             backgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
-            margins = new ObservableCollection<TextViewMargin>();
-            margins.Add(new BreakPointMargin());
-            margins.Add(new LineNumberMargin());
+            margins = new ObservableCollection<TextViewMargin>();            
         }
         #endregion
 
-        public SelectedDebugLineBackgroundRenderer debugLineHighlighter;
+        public SelectedDebugLineBackgroundRenderer DebugLineHighlighter;
         private SelectedWordTextLineTransformer wordAtCaretHighlighter;
 
         #region Properties
@@ -326,7 +325,7 @@
 
             if(debugHighlight)
             {
-                debugLineHighlighter.Line = line;
+                DebugLineHighlighter.Line = line;
             }
 
             CaretIndex = TextDocument.GetOffset(line, column);
