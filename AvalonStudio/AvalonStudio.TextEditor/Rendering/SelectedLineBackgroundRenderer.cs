@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.TextEditor.Rendering
 {
+    using System;
     using Perspex;
     using Perspex.Media;
 
@@ -11,6 +12,8 @@
         {
             selectedLineBg = Brush.Parse("#FF0E0E0E");
         }
+
+        public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {

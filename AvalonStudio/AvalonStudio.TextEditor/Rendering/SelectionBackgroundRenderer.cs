@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.TextEditor.Rendering
 {
+    using System;
     using Document;
     using Perspex.Media;
 
@@ -11,6 +12,8 @@
         }
 
         private Brush selectionBrush;
+
+        public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {            

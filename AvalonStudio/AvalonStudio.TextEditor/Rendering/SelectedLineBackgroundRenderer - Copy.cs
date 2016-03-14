@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.TextEditor.Rendering
 {
+    using System;
     using Perspex;
     using Perspex.Media;
 
@@ -13,10 +14,21 @@
         }
 
         private int line;
+
+        public event EventHandler<EventArgs> DataChanged;
+
         public int Line
         {
             get { return line; }
-            set { line = value; }
+            set
+            {
+                line = value;
+
+                if(DataChanged != null)
+                {
+                    DataChanged(this, new EventArgs());
+                }
+            }
         }
 
         public void Draw(TextView textView, DrawingContext drawingContext)
