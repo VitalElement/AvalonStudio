@@ -50,6 +50,15 @@
         }
 
         public UInt32 Address { get; set; }
+
+        public string FormattedAddress
+        {
+            get
+            {
+                return string.Format("0x{0:X8}", Address);
+            }
+        }
+
         public string FunctionName { get; set; }
         public int Offset { get; set; }
         public string OpCodes { get; set; }

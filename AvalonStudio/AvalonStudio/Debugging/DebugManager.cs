@@ -25,7 +25,7 @@ namespace AvalonStudio.Debugging
 
             Locals = new LocalsViewModel();
             Registers = new RegistersViewModel();
-            //DissasemblyView = new DisassemblyViewModel();
+            Disassembly = new DisassemblyViewModel();
             //MemoryView = new MemoryViewModel();
             //WatchList = new WatchListViewModel();
             //VariableProbes = new List<VariableProbeViewModel>();
@@ -274,7 +274,7 @@ namespace AvalonStudio.Debugging
         {
             //BreakPointManager.SetDebugger(debugger);
             Registers.SetDebugger(debugger);
-            //DissasemblyView.SetDebugger(debugger);
+            Disassembly.SetDebugger(debugger);
             //MemoryView.SetDebugger(debugger);
             //WatchList.SetDebugger(debugger as GDBDebugger);
         }
@@ -338,12 +338,12 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref registersView, value); }
         }
 
-        //private DisassemblyViewModel disassemblyViewModel;
-        //public DisassemblyViewModel DissasemblyView
-        //{
-        //    get { return disassemblyViewModel; }
-        //    set { disassemblyViewModel = value; OnPropertyChanged(); }
-        //}
+        private DisassemblyViewModel disassembly;
+        public DisassemblyViewModel Disassembly
+        {
+            get { return disassembly; }
+            set { this.RaiseAndSetIfChanged(ref disassembly, value); }
+        }
 
         //private MemoryViewModel memoryView;
         //public MemoryViewModel MemoryView
@@ -482,8 +482,7 @@ namespace AvalonStudio.Debugging
                     //if (DissasemblyView.bool == bool.Visible)
                     //{
                     //   WorkspaceViewModel.Instance.DispatchUi(() =>
-                    //    {
-                    //       DissasemblyView.SetAddress(e.Frame.Address);
+                    //    {                    
                     //  });
                     // }
 
@@ -498,6 +497,7 @@ namespace AvalonStudio.Debugging
                         Locals.Model = stackVariables;
                         CallStack.Update(stackFrames);
                         Registers.Invalidate();
+                        Disassembly.SetAddress(e.Frame.Address);
                     });
 
                     //WatchList.Invalidate(updates);
