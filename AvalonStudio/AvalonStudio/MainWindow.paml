@@ -29,8 +29,11 @@
       </TabControl>      
     </Grid>
 
-    <Grid Grid.Row="2" Grid.Column="1" Margin="1 1 2 2">     
-          <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" />      
+    <Grid Grid.Row="2" Grid.Column="1" Margin="1 1 2 2">
+      <StackPanel Orientation="Horizontal" Gap="4">
+        <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
+        <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400" />
+      </StackPanel>          
     </Grid>
 
     <Grid Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Margin="2 2 1 2">

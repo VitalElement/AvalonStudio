@@ -17,7 +17,7 @@
         public RegistersViewModel() : base(new ObservableCollection<RegisterViewModel>())
         {
             lastChangedRegisters = new List<RegisterViewModel>();
-        }        
+        }
 
         private double columnWidth;
         public double ColumnWidth
@@ -41,37 +41,34 @@
                 foreach (var register in registers)
                 {
                     this.Model.Add(new RegisterViewModel(register));
-                }               
+                }
 
                 ColumnWidth = 0;
                 ColumnWidth = double.NaN;
             }
         }
 
-        private bool firstStopInSession;        
+        private bool firstStopInSession;
         new public void Invalidate()
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
+            if (firstStopInSession)
             {
-                if (firstStopInSession)
-                {
-                    firstStopInSession = false;
+                firstStopInSession = false;
 
-                    List<Register> registers = null;
+                List<Register> registers = null;
 
-                    registers = debugger.GetRegisters().Values.ToList();
+                registers = debugger.GetRegisters().Values.ToList();
 
-                    SetRegisters(registers);
-                }
-                else
-                {
-                    Dictionary<int, string> changedRegisters = null;
+                SetRegisters(registers);
+            }
+            else
+            {
+                Dictionary<int, string> changedRegisters = null;
 
-                    changedRegisters = debugger.GetChangedRegisters();
+                changedRegisters = debugger.GetChangedRegisters();
 
-                    this.UpdateRegisters(changedRegisters);
-                }
-            });
+                this.UpdateRegisters(changedRegisters);
+            }
         }
 
         public void Clear()

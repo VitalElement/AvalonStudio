@@ -23,20 +23,20 @@ namespace AvalonStudio.Debugging
         {
             this.BreakPointManager = new BreakPointManager();
 
-            //this.LocalsView = new LocalsViewModel(null);
-            this.Registers = new RegistersViewModel();
-            //this.DissasemblyView = new DisassemblyViewModel();
-            //this.MemoryView = new MemoryViewModel();
-            //this.WatchList = new WatchListViewModel();
-            //this.VariableProbes = new List<VariableProbeViewModel>();
-            this.CallStack = new CallStackViewModel();
+            Locals = new LocalsViewModel();
+            Registers = new RegistersViewModel();
+            //DissasemblyView = new DisassemblyViewModel();
+            //MemoryView = new MemoryViewModel();
+            //WatchList = new WatchListViewModel();
+            //VariableProbes = new List<VariableProbeViewModel>();
+            CallStack = new CallStackViewModel();
 
-            //this.LocalsView.bool = bool.Hidden;
-            //this.RegistersView.bool = bool.Hidden;
-            //this.DissasemblyView.bool = bool.Hidden;
-            //this.MemoryView.bool = bool.Hidden;
-            //this.WatchList.bool = bool.Hidden;
-            //this.CallStack.bool = bool.Hidden;
+            //LocalsView.bool = bool.Hidden;
+            //RegistersView.bool = bool.Hidden;
+            //DissasemblyView.bool = bool.Hidden;
+            //MemoryView.bool = bool.Hidden;
+            //WatchList.bool = bool.Hidden;
+            //CallStack.bool = bool.Hidden;
 
             StartDebuggingCommand = ReactiveCommand.Create();
             StartDebuggingCommand.Subscribe((o) =>
@@ -310,12 +310,12 @@ namespace AvalonStudio.Debugging
         //public List<VariableProbeViewModel> VariableProbes { get; private set; }
         public BreakPointManager BreakPointManager { get; set; }
 
-        //private LocalsViewModel localsView;
-        //public LocalsViewModel LocalsView
-        //{
-        //    get { return localsView; }
-        //    set { localsView = value; OnPropertyChanged(); }
-        //}
+        private LocalsViewModel locals;
+        public LocalsViewModel Locals
+        {
+            get { return locals; }
+            set { this.RaiseAndSetIfChanged(ref locals, value); }
+        }
 
         //private WatchListViewModel watchList;
         //public WatchListViewModel WatchList
@@ -472,16 +472,12 @@ namespace AvalonStudio.Debugging
                     }
 
 
-                    //List<Variable> stackVariables = null;
+                    List<Variable> stackVariables = null;
                     List<Frame> stackFrames = null;
-                    //List<VariableObjectChange> updates = null;
 
-                    //await WorkspaceViewModel.Instance.DispatchDebug(() =>
-                   // {
-                        //stackVariables = Debugger.ListStackVariables();
-                        stackFrames = Debugger.ListStackFrames();
+                    stackVariables = Debugger.ListStackVariables();
+                    stackFrames = Debugger.ListStackFrames();
                     //updates = debugger.UpdateVariables();
-                    //});
 
                     //if (DissasemblyView.bool == bool.Visible)
                     //{
@@ -495,16 +491,17 @@ namespace AvalonStudio.Debugging
                     //{
                     //    MemoryView.Invalidate();
                     //}
-
-                    //LocalsView.Model = stackVariables;
+                    
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
+                        Locals.Model = stackVariables;
                         CallStack.Update(stackFrames);
+                        Registers.Invalidate();
                     });
 
                     //WatchList.Invalidate(updates);
-                    Registers.Invalidate();
+                    
 
                     //while (await IsAsynchronousUIListsLoading())
                     //{
