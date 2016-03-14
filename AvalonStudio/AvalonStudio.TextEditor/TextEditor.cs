@@ -635,27 +635,27 @@
 
         private int currentMouseOffset = -1;
         protected override void OnPointerMoved(PointerEventArgs e)
-        {
-            // TODO this is causing more trouble than its worth needs to be re-written using a hover mechanism / behaviour built into perspex.
-            //var point = e.GetPosition(textView.TextSurface);
-            //currentMouseOffset = textView.GetOffsetFromPoint(point);
+        {            
+            var point = e.GetPosition(textView.TextSurface);
+            currentMouseOffset = textView.GetOffsetFromPoint(point);
 
+            // TODO this is causing more trouble than its worth needs to be re-written using a hover mechanism / behaviour built into perspex.
             //mouseHoverDelayTimer.Stop();
             //mouseHoverDelayTimer.Start();            
 
-            //if (e.Device.Captured == textView)
-            //{                                
-            //    CaretIndex = currentMouseOffset;
+            if (e.Device.Captured == textView)
+            {
+                CaretIndex = currentMouseOffset;
 
-            //    if (CaretIndex >= 0)
-            //    {
-            //        SelectionEnd = CaretIndex;
-            //    }
-            //    else
-            //    {
-            //        SelectionEnd = 0;
-            //    }
-            //}
+                if (CaretIndex >= 0)
+                {
+                    SelectionEnd = CaretIndex;
+                }
+                else
+                {
+                    SelectionEnd = 0;
+                }
+            }
         }
 
         protected override void OnPointerReleased(PointerEventArgs e)
