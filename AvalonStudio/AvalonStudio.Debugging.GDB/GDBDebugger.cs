@@ -16,6 +16,7 @@
     using Toolchains.Standard;
     using Perspex.Controls;
     using Toolchains.GCC;
+
     public class GDBDebugger : IDebugger
     {
         public GDBDebugger()

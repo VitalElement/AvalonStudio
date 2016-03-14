@@ -167,6 +167,10 @@
   <ItemGroup>
     <Compile Include="App.paml.cs" />
     <Compile Include="CompositionRoot.cs" />
+    <Compile Include="Controls\CallStack.paml.cs">
+      <DependentUpon>CallStack.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CallStackViewModel.cs" />
     <Compile Include="Controls\CompletionDataViewModel.cs" />
     <Compile Include="Controls\Console.paml.cs">
       <DependentUpon>Console.paml</DependentUpon>
@@ -185,6 +189,7 @@
       <DependentUpon>ErrorList.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ErrorListViewModel.cs" />
+    <Compile Include="Controls\FrameViewModel.cs" />
     <Compile Include="Controls\Intellisense.paml.cs">
       <DependentUpon>Intellisense.paml</DependentUpon>
     </Compile>
@@ -319,6 +324,7 @@
     <EmbeddedResource Include="App.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CallStack.paml" />
     <None Include="libgit2-821131f.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

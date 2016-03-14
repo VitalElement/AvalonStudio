@@ -17,7 +17,7 @@
       <Controls:Editor DataContext="{Binding Editor}" />
     </Grid>
 
-    <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="1 1 2 2">
+    <Grid Grid.Row="2"  Margin="1 1 2 2">
       <TabControl TabStripPlacement="Bottom">
         <TabItem Header="Console">
           <Controls:Console DataContext="{Binding Console}" />
@@ -27,6 +27,10 @@
           <Controls:ErrorList DataContext="{Binding ErrorList}" />
         </TabItem>
       </TabControl>      
+    </Grid>
+
+    <Grid Grid.Row="2" Grid.Column="1" Margin="1 1 2 2">     
+          <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" />      
     </Grid>
 
     <Grid Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Margin="2 2 1 2">

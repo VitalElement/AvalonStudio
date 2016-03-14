@@ -29,7 +29,7 @@ namespace AvalonStudio.Debugging
             //this.MemoryView = new MemoryViewModel();
             //this.WatchList = new WatchListViewModel();
             //this.VariableProbes = new List<VariableProbeViewModel>();
-            //this.CallStack = new CallStackViewModel();
+            this.CallStack = new CallStackViewModel();
 
             //this.LocalsView.bool = bool.Hidden;
             //this.RegistersView.bool = bool.Hidden;
@@ -324,12 +324,12 @@ namespace AvalonStudio.Debugging
         //    set { watchList = value; OnPropertyChanged(); }
         //}
 
-        //private CallStackViewModel callStack;
-        //public CallStackViewModel CallStack
-        //{
-        //    get { return callStack; }
-        //    set { callStack = value; OnPropertyChanged(); }
-        //}
+        private CallStackViewModel callStack;
+        public CallStackViewModel CallStack
+        {
+            get { return callStack; }
+            set { this.RaiseAndSetIfChanged(ref callStack, value); }
+        }
 
         private RegistersViewModel registersView;
         public RegistersViewModel Registers
@@ -371,6 +371,8 @@ namespace AvalonStudio.Debugging
         {
             if (project?.Debugger != null)
             {
+                Project = project;
+
                 Task.Factory.StartNew(async () =>
                 {
                     Debugger = project.Debugger;
@@ -471,14 +473,14 @@ namespace AvalonStudio.Debugging
 
 
                     //List<Variable> stackVariables = null;
-                    //List<Frame> stackFrames = null;
+                    List<Frame> stackFrames = null;
                     //List<VariableObjectChange> updates = null;
 
                     //await WorkspaceViewModel.Instance.DispatchDebug(() =>
                    // {
                         //stackVariables = Debugger.ListStackVariables();
-                       // stackFrames = Debugger.ListStackFrames();
-                        //updates = debugger.UpdateVariables();
+                        stackFrames = Debugger.ListStackFrames();
+                    //updates = debugger.UpdateVariables();
                     //});
 
                     //if (DissasemblyView.bool == bool.Visible)
@@ -495,7 +497,12 @@ namespace AvalonStudio.Debugging
                     //}
 
                     //LocalsView.Model = stackVariables;
-                    //CallStack.Update(stackFrames);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        CallStack.Update(stackFrames);
+                    });
+
                     //WatchList.Invalidate(updates);
                     Registers.Invalidate();
 
