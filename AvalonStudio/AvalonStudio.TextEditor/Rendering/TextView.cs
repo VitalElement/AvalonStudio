@@ -57,7 +57,9 @@
         }
 
         private WeakCollectionChangedEventArgsSubscriber documentLineTransformersChangedSubscriber;
+        private WeakCollectionChangedEventArgsSubscriber backgroundRenderersChangedSubscriber;
         private WeakEventArgsSubscriber documentLineTransformerChangedSubscriber;
+        private WeakEventArgsSubscriber backgroundRendererChangedSubscriber;
         private WeakEventArgsSubscriber documentTextChangedSubscriber;
 
         public TextView()
@@ -73,7 +75,23 @@
                 }
             });
 
+            backgroundRenderersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
+            {
+                if (e.NewItems != null)
+                {
+                    foreach (var item in e.NewItems)
+                    {
+                        WeakSubscriptionManager.Subscribe(item, nameof(IBackgroundRenderer.DataChanged), backgroundRendererChangedSubscriber);
+                    }
+                }
+            });
+
             documentLineTransformerChangedSubscriber = new WeakEventArgsSubscriber(() =>
+            {
+                InvalidateVisual();
+            });
+
+            backgroundRendererChangedSubscriber = new WeakEventArgsSubscriber(() =>
             {
                 InvalidateVisual();
             });

@@ -167,6 +167,7 @@
   <ItemGroup>
     <Compile Include="App.paml.cs" />
     <Compile Include="CompositionRoot.cs" />
+    <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\CallStack.paml.cs">
       <DependentUpon>CallStack.paml</DependentUpon>
     </Compile>

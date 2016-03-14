@@ -18,6 +18,7 @@
     using Utils;
     using Perspex.Controls;
     using Perspex.Input;
+    using TextEditor;
     public enum Perspective
     {
         Editor,
@@ -36,11 +37,17 @@
             this.editor = editor;
 
             MainMenu = new MainMenuViewModel();
-            SolutionExplorer = new SolutionExplorerViewModel();
-            Editor = new EditorViewModel(editor);
+            SolutionExplorer = new SolutionExplorerViewModel();            
             Console = new ConsoleViewModel();
             ErrorList = new ErrorListViewModel();
-            StatusBar = new StatusBarViewModel();            
+            StatusBar = new StatusBarViewModel();
+
+            DebugManager = new DebugManager();
+            Editor = new EditorViewModel(editor);
+
+            Editor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
+            Editor.Margins.Add(new LineNumberMargin());
+
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
             StatusBar.PlatformString = Platform.Platform.PlatformString;
@@ -61,8 +68,7 @@
             ProcessCancellationToken = new CancellationTokenSource();
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
-
-            DebugManager = new DebugManager();
+            
             CurrentPerspective = Perspective.Editor;
         }
 
@@ -70,6 +76,10 @@
         {
             switch(e.Key)
             {
+                case Key.F9:
+                    DebugManager.StepInstruction();
+                    break;
+
                 case Key.F10:
                     DebugManager.StepOver();
                     break;
@@ -79,9 +89,16 @@
                     break;
 
                 case Key.F5:
-                    if (SolutionExplorer.Solution.FirstOrDefault()?.Model.StartupProject != null)
+                    if (CurrentPerspective == Perspective.Editor)
                     {
-                        DebugManager.StartDebug(SolutionExplorer.Solution.FirstOrDefault()?.Model.StartupProject);
+                        if (SolutionExplorer.Solution.FirstOrDefault()?.Model.StartupProject != null)
+                        {
+                            DebugManager.StartDebug(SolutionExplorer.Solution.FirstOrDefault()?.Model.StartupProject);
+                        }
+                    }
+                    else
+                    {
+                        DebugManager.Continue();
                     }
                     break;                    
             }
