@@ -178,6 +178,11 @@
     <Compile Include="Controls\ConsoleViewModel.cs">
       <DependentUpon>Console.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Disassembly.paml.cs">
+      <DependentUpon>Disassembly.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\DisassemblyDataProvider.cs" />
+    <Compile Include="Controls\DisassemblyViewModel.cs" />
     <Compile Include="Controls\Editor\SymbolViewModel.cs" />
     <Compile Include="Controls\ErrorViewModel.cs" />
     <Compile Include="Controls\Editor.paml.cs">
@@ -330,6 +335,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CallStack.paml" />
     <EmbeddedResource Include="Controls\Locals.paml" />
+    <EmbeddedResource Include="Controls\Disassembly.paml" />
     <None Include="libgit2-821131f.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

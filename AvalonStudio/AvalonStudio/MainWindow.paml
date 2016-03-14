@@ -33,6 +33,7 @@
       <StackPanel Orientation="Horizontal" Gap="4">
         <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
         <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400" />
+        <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Width="400" />
       </StackPanel>          
     </Grid>
 
