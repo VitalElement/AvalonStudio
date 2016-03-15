@@ -382,43 +382,6 @@
             }
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool AttachConsole(int dwProcessId);
-
-        [DllImport("kernel32.dll")]
-        private static extern bool AllocConsole();
-
-        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-        static extern bool FreeConsole();
-
-
-        [DllImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GenerateConsoleCtrlEvent(CtrlTypes dwCtrlEvent, uint dwProcessGroupId);
-
-        [DllImport("kernel32.dll")]
-        private static extern bool DebugBreakProcess(IntPtr processHandler);
-
-        delegate Boolean ConsoleCtrlDelegate(CtrlTypes CtrlType);
-
-        [DllImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add);
-
-        enum CtrlTypes : uint
-        {
-            CTRL_C_EVENT = 0,
-            CTRL_BREAK_EVENT,
-            CTRL_CLOSE_EVENT,
-            CTRL_LOGOFF_EVENT = 5,
-            CTRL_SHUTDOWN_EVENT
-        }
-
-        private void SendCtrlC()
-        {
-            GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0);
-        }
-
         private Semaphore waitForStop = new Semaphore(0, 1);
         private Semaphore transmitSemaphore = new Semaphore(1, 1);
         //private Semaphore receiveSemaphore = new Semaphore(1, 1);
@@ -458,7 +421,7 @@
 
                 this.InternalStopped += onStoppedHandler;
 
-                SendCtrlC();
+                Platform.SendSignal(process.Id, Platform.Signum.SIGINT);
 
                 waitForStop.WaitOne();
 
@@ -566,19 +529,19 @@
 
             input = process.StandardInput;
 
-            while (!FreeConsole())
+            while (!Platform.FreeConsole())
             {
                 Console.WriteLine(Marshal.GetLastWin32Error());
                 Thread.Sleep(10);
             }
 
-            while (!AttachConsole(process.Id))
+            while (!Platform.AttachConsole(process.Id))
             {
                 //Console.WriteLine(Marshal.GetLastWin32Error());
                 Thread.Sleep(10);
             }
 
-            while (!SetConsoleCtrlHandler(null, true))
+            while (!Platform.SetConsoleCtrlHandler(null, true))
             {
                 Console.WriteLine(Marshal.GetLastWin32Error());
                 Thread.Sleep(10);
@@ -612,9 +575,9 @@
                {
                    process.WaitForExit();
 
-                   FreeConsole();
+                   Platform.FreeConsole();
 
-                   SetConsoleCtrlHandler(null, false);
+                   Platform.SetConsoleCtrlHandler(null, false);
                }
                catch (Exception e)
                {
