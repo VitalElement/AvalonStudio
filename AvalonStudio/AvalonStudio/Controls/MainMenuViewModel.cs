@@ -148,6 +148,12 @@
             {
                 WorkspaceViewModel.Instance.DebugManager.StepOver();
             });
+
+            PauseCommand = ReactiveCommand.Create();
+            PauseCommand.Subscribe(_ =>
+            {
+                WorkspaceViewModel.Instance.DebugManager.Pause();
+            });
         }
 
         public ReactiveCommand<object> NewProjectCommand { get; private set; }
@@ -163,5 +169,6 @@
         public ReactiveCommand<object> StartDebugCommand { get; private set; }
         public ReactiveCommand<object> StepOverCommand { get; private set; }
         public ReactiveCommand<object> StepIntoCommand { get; private set; }
+        public ReactiveCommand<object> PauseCommand { get; private set; }
     }
 }

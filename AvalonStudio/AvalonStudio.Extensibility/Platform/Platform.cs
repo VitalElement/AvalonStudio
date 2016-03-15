@@ -163,10 +163,10 @@
             }
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "AttachConsole")]
         static extern bool Win32AttachConsole(int dwProcessId);
 
-        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true, EntryPoint ="FreeConsole")]
         static extern bool Win32FreeConsole();
 
 
@@ -176,7 +176,7 @@
 
         public delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", EntryPoint = "SetConsoleCtrlHandler")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool Win32SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add);
 

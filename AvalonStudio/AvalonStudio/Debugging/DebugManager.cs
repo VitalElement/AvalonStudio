@@ -246,6 +246,17 @@ namespace AvalonStudio.Debugging
             }
         }
 
+        public void Pause()
+        {
+            if (IsExecuting)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    Debugger.Pause();
+                });
+            }
+        }
+
         private bool ignoreEvents = false;
 
         private void StopDebugSession()
