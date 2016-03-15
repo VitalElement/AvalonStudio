@@ -8,29 +8,29 @@
 
     public static class Platform
     {
-        public static void Initialise ()
+        public static void Initialise()
         {
-            if(!Directory.Exists(BaseDirectory))
+            if (!Directory.Exists(BaseDirectory))
             {
                 Directory.CreateDirectory(BaseDirectory);
             }
 
-            if(!Directory.Exists(AppDataDirectory))
+            if (!Directory.Exists(AppDataDirectory))
             {
                 Directory.CreateDirectory(AppDataDirectory);
             }
 
-            if(!Directory.Exists(ReposDirectory))
+            if (!Directory.Exists(ReposDirectory))
             {
                 Directory.CreateDirectory(ReposDirectory);
             }
 
-            if(!Directory.Exists(RepoCatalogDirectory))
+            if (!Directory.Exists(RepoCatalogDirectory))
             {
                 Directory.CreateDirectory(RepoCatalogDirectory);
             }
         }
-        
+
         [Map]
         public enum Signum : int
         {
@@ -74,14 +74,14 @@
         internal const string LIBC = "libc";
         private const string LIB = "MonoPosixHelper";
 
-        [DllImport(LIB, EntryPoint = "Mono_Posix_FromSignum")] 
- 		private static extern int FromSignum(Signum value, out Int32 rval); 
- 
- 
- 		public static bool TryFromSignum(Signum value, out Int32 rval)
- 		{ 
- 			return FromSignum(value, out rval) == 0; 
- 		}
+        [DllImport(LIB, EntryPoint = "Mono_Posix_FromSignum")]
+        private static extern int FromSignum(Signum value, out Int32 rval);
+
+
+        public static bool TryFromSignum(Signum value, out Int32 rval)
+        {
+            return FromSignum(value, out rval) == 0;
+        }
 
 
         public static Int32 FromSignum(Signum value)
@@ -93,32 +93,40 @@
         }
 
 
-        [DllImport(LIBC, SetLastError = true, EntryPoint = "kill")] 
- 		private static extern int sys_kill(int pid, int sig); 
- 
- 		private static int kill(int pid, Signum sig)
- 		{ 
- 			int _sig = FromSignum(sig); 
- 			return sys_kill(pid, _sig); 
-		}
+        [DllImport(LIBC, SetLastError = true, EntryPoint = "kill")]
+        private static extern int sys_kill(int pid, int sig);
+
+        private static int kill(int pid, Signum sig)
+        {
+            int _sig = FromSignum(sig);
+            return sys_kill(pid, _sig);
+        }
 
 
         public static int SendSignal(int pid, Signum sig)
         {
-            return kill(pid, sig);
+            switch (PlatformIdentifier)
+            {
+                case PlatformID.Unix:
+                    return kill(pid, sig);
+
+                case PlatformID.Win32NT:
+                default:
+                    throw new NotImplementedException();
+            }
         }
-        
-        public static string ToAvalonPath (this string path)
+
+        public static string ToAvalonPath(this string path)
         {
             return path.Replace('\\', '/');
-        } 
+        }
 
-        public static string ToPlatformPath (this string path)
+        public static string ToPlatformPath(this string path)
         {
-            switch(PlatformIdentifier)
+            switch (PlatformIdentifier)
             {
                 case PlatformID.Win32NT:
-                    return path.Replace('/', '\\');                    
+                    return path.Replace('/', '\\');
 
                 default:
                     return path.ToAvalonPath();
@@ -141,47 +149,47 @@
             }
         }
 
-		public static string ExecutableExtension
-		{
-			get
-			{
-				switch (PlatformIdentifier) 
-				{
-				case  PlatformID.Unix:
-					{
-						return string.Empty;
-					}
+        public static string ExecutableExtension
+        {
+            get
+            {
+                switch (PlatformIdentifier)
+                {
+                    case PlatformID.Unix:
+                        {
+                            return string.Empty;
+                        }
 
-				case PlatformID.Win32NT:
-					{
-						return ".exe";
-					}
+                    case PlatformID.Win32NT:
+                        {
+                            return ".exe";
+                        }
 
-				default:
-					throw new NotImplementedException("Not implemented for your platform.");
-				}                
-			}
-		}
+                    default:
+                        throw new NotImplementedException("Not implemented for your platform.");
+                }
+            }
+        }
 
         public static char DirectorySeperator
         {
             get
             {
-				switch (PlatformIdentifier) 
-				{
-				case  PlatformID.Unix:
-					{
-						return '/';
-					}
+                switch (PlatformIdentifier)
+                {
+                    case PlatformID.Unix:
+                        {
+                            return '/';
+                        }
 
-				case PlatformID.Win32NT:
-					{
-						return '\\';
-					}
+                    case PlatformID.Win32NT:
+                        {
+                            return '\\';
+                        }
 
-				default:
-					throw new NotImplementedException("Not implemented for your platform.");
-				}                
+                    default:
+                        throw new NotImplementedException("Not implemented for your platform.");
+                }
             }
         }
 
@@ -202,10 +210,10 @@
                     case PlatformID.Win32NT:
                         return "c:\\AvalonStudio";
 
-				case PlatformID.Unix:
-					var homeDir = Environment.GetEnvironmentVariable ("HOME");
+                    case PlatformID.Unix:
+                        var homeDir = Environment.GetEnvironmentVariable("HOME");
 
-					return Path.Combine (homeDir, "AvalonStudio");
+                        return Path.Combine(homeDir, "AvalonStudio");
 
                     default:
                         throw new NotImplementedException("Not implemented for your platform.");
