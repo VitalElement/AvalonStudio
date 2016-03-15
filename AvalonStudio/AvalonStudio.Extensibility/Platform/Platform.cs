@@ -78,13 +78,13 @@
         private static extern int FromSignum(Signum value, out Int32 rval);
 
 
-        public static bool TryFromSignum(Signum value, out Int32 rval)
+        private static bool TryFromSignum(Signum value, out Int32 rval)
         {
             return FromSignum(value, out rval) == 0;
         }
 
 
-        public static Int32 FromSignum(Signum value)
+        private static Int32 FromSignum(Signum value)
         {
             Int32 rval;
             if (FromSignum(value, out rval) == -1)
@@ -102,7 +102,6 @@
             return sys_kill(pid, _sig);
         }
 
-
         public static int SendSignal(int pid, Signum sig)
         {
             switch (PlatformIdentifier)
@@ -111,9 +110,88 @@
                     return kill(pid, sig);
 
                 case PlatformID.Win32NT:
+                    switch(sig)
+                    {
+                        case Signum.SIGINT:
+                            return SendCtrlC();
+
+                        default:
+                            throw new NotImplementedException();
+                    }                    
+
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        public static bool AttachConsole (int pid)
+        {
+            switch (PlatformIdentifier)
+            {
+
+                case PlatformID.Win32NT:
+                    return Win32AttachConsole(pid);                    
+
+                default:
+                    return true;
+            }
+        }
+
+        public static bool FreeConsole()
+        {
+            switch (PlatformIdentifier)
+            {
+
+                case PlatformID.Win32NT:
+                    return Win32FreeConsole();
+
+                default:
+                    return true;
+            }
+        }
+
+        public static bool SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add)
+        {
+            switch (PlatformIdentifier)
+            {
+
+                case PlatformID.Win32NT:
+                    return Win32SetConsoleCtrlHandler(handlerRoutine, add);
+
+                default:
+                    return true;
+            }
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool Win32AttachConsole(int dwProcessId);
+
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        static extern bool Win32FreeConsole();
+
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GenerateConsoleCtrlEvent(CtrlTypes dwCtrlEvent, uint dwProcessGroupId);
+
+        public delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool Win32SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add);
+
+        public enum CtrlTypes : uint
+        {
+            CTRL_C_EVENT = 0,
+            CTRL_BREAK_EVENT,
+            CTRL_CLOSE_EVENT,
+            CTRL_LOGOFF_EVENT = 5,
+            CTRL_SHUTDOWN_EVENT
+        }
+
+        private static int SendCtrlC()
+        {
+            return GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0) ? 1 : 0;
         }
 
         public static string ToAvalonPath(this string path)
