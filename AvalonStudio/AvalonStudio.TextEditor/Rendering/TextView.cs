@@ -514,8 +514,10 @@
         #region Private Methods
         private void GenerateTextProperties()
         {
-            var formattedText = new FormattedText("x", FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
-            CharSize = formattedText.Measure();
+            using (var formattedText = new FormattedText("x", FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
+            {
+                CharSize = formattedText.Measure();
+            }
         }
 
         private void RenderBackground(DrawingContext context)

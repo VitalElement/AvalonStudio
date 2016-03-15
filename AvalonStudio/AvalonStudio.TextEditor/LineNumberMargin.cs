@@ -33,7 +33,10 @@
 
                     for (int i = 0; i < textInfo.NumLines && (i + firstLine) <= textView.TextDocument.LineCount; i++)
                     {
-                        context.DrawText(Brush.Parse("#5d5d5d"), new Point(-4, textInfo.LineHeight * i), new FormattedText((i + firstLine).ToString(), "Consolas", textView.FontSize, FontStyle.Normal, TextAlignment.Right, FontWeight.Normal) { Constraint = new Size(Width, Bounds.Height) });
+                        using (var formattedText = new FormattedText((i + firstLine).ToString(), "Consolas", textView.FontSize, FontStyle.Normal, TextAlignment.Right, FontWeight.Normal) { Constraint = new Size(Width, Bounds.Height) })
+                        {
+                            context.DrawText(Brush.Parse("#5d5d5d"), new Point(-4, textInfo.LineHeight * i), formattedText);
+                        }
                     }
 
                     context.DrawLine(new Pen(Brush.Parse("#5d5d5d")), new Point(Width, 0), new Point(Width, Bounds.Height));
