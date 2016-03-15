@@ -458,7 +458,9 @@
             }
             else
             {
-                caretIndex = TextDocument.GetLineByOffset(CaretIndex).Offset;
+                var lineOffset = TextDocument.GetLineByOffset(CaretIndex).Offset;
+                var whiteSpace = TextUtilities.GetWhitespaceAfter(TextDocument, lineOffset);
+                caretIndex = lineOffset + whiteSpace.Length;
             }
 
             CaretIndex = caretIndex;
@@ -475,7 +477,9 @@
             }
             else
             {
-                caretIndex = TextDocument.GetLineByOffset(CaretIndex).EndOffset;
+                var lineOffset = TextDocument.GetLineByOffset(CaretIndex).EndOffset;
+                var whiteSpace = TextUtilities.GetWhitespaceBefore(TextDocument, lineOffset);
+                caretIndex = lineOffset - whiteSpace.Length;                
             }
 
             CaretIndex = caretIndex;
