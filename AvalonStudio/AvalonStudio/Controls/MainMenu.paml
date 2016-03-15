@@ -35,7 +35,8 @@
     <MenuItem Header="Debug">
       <MenuItem Header="Start Debugging" Command="{Binding StartDebugCommand}" />
       <MenuItem Header="Step Into" Command="{Binding StepIntoCommand}" />
-      <MenuItem Header="Step Over" Command="{Binding StepOverCommand}" />      
+      <MenuItem Header="Step Over" Command="{Binding StepOverCommand}" />
+      <MenuItem Header="Pause" Command="{Binding PauseCommand}" />
     </MenuItem>
 
     <MenuItem Header="Tools">
