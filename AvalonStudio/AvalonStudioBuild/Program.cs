@@ -46,14 +46,7 @@
         {
             try
             {
-                var result = solution.FindProject(project);
-
-                if (result != null)
-                {
-                    (result as CPlusPlusProject).ResolveReferences();
-                }
-
-                return result;
+                return solution.FindProject(project);
             }
             catch (Exception e)
             {
