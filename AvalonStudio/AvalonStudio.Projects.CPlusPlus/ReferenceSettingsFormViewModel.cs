@@ -39,11 +39,11 @@
 
                     if (value)
                     {
-                        referencer.References.Add(Model);
+                        referencer.AddReference(Model);
                     }
                     else
                     {
-                        referencer.References.Remove(Model);
+                        referencer.RemoveReference(Model);
                     }
 
                     referencer.Save();

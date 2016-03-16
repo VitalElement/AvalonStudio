@@ -198,6 +198,16 @@
 
         private static Dictionary<string, Tuple<string, string>> passwordCache = new Dictionary<string, Tuple<string, string>>();
 
+        public void AddReference(IProject project)
+        {
+            References.InsertSorted(project);
+        }
+
+        public void RemoveReference(IProject project)
+        {
+            References.Remove(project);
+        }
+
         /// <summary>
         /// Resolves each reference, cloning and updating Git referenced projects where possible.
         /// </summary>
@@ -211,7 +221,16 @@
 
                 if (loadedReference != null)
                 {
-                    References.Add(loadedReference);
+                    var currentReference = References.FirstOrDefault((r) => r == loadedReference);
+
+                    if (currentReference == null)
+                    {
+                        AddReference(loadedReference);
+                    }
+                    else
+                    {
+                        throw new Exception("The same Reference can not be added more than once.");
+                    }
                 }
                 else
                 {
@@ -595,6 +614,8 @@
         {
             throw new NotImplementedException();
         }
+
+
 
         [JsonIgnore]
         public IToolChain ToolChain
