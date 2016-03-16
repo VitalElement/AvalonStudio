@@ -61,7 +61,7 @@
             solution.AddProject(catchProject);
 
             // Reference catch.
-            project.References.Add(catchProject);
+            project.AddReference(catchProject);
             
             project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "UnitTest1.cpp", new UnitTestTemplate().TransformText()));
             project.ToolChain = Workspace.Instance.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);

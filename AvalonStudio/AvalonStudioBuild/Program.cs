@@ -21,7 +21,7 @@
     using TestFrameworks;
     class Program
     {
-        const string version = "1.0.0.19";
+        const string version = "1.0.0.20";
         const string releaseName = "Gravity";
 
         const string baseDir = @"c:\development\vebuild\test";
