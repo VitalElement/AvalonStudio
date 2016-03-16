@@ -215,11 +215,11 @@
                 Directory.CreateDirectory(outputDirectory);
             }
 
-            string outputName = Path.GetFileNameWithoutExtension(project.Location) + ".exe";
+            string outputName = Path.GetFileNameWithoutExtension(project.Location) + ExecutableExtension;
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-                outputName = "lib" + Path.GetFileNameWithoutExtension(project.Name) + ".a";
+                outputName = "lib" + Path.GetFileNameWithoutExtension(project.Name) + StaticLibraryExtension;
             }
             else
             {
@@ -650,6 +650,22 @@
             get
             {
                 return "GCC based toolchain PC.";
+            }
+        }
+
+        public override string ExecutableExtension
+        {
+            get
+            {
+                return ".exe";
+            }
+        }
+
+        public override string StaticLibraryExtension
+        {
+            get
+            {
+                return ".a";
             }
         }
 

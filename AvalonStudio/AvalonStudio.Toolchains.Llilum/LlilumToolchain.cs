@@ -41,6 +41,22 @@
             }
         }
 
+        public override string ExecutableExtension
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override string StaticLibraryExtension
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         private void CompileCS(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
         {
             var startInfo = new ProcessStartInfo();
