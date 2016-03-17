@@ -18,7 +18,7 @@
                 Width = 0;
             }
 
-            return new Size(Width, availableSize.Height);
+            return new Size(Width, 0);
         }
 
         public override void Render(DrawingContext context, TextInfo textInfo)

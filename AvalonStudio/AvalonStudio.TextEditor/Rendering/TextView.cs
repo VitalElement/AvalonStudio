@@ -496,7 +496,7 @@
             {
                 GenerateTextProperties();
 
-                result = new Size(availableSize.Width, TextDocument.LineCount * CharSize.Height);
+                result = new Size(0, TextDocument.LineCount * CharSize.Height);
             }
 
             base.MeasureOverride(availableSize);
@@ -542,6 +542,22 @@
         }
 
         public List<VisualLine> VisualLines { get; private set; }
+
+        public Size ScrollSize
+        {
+            get
+            {
+                return new Size(Bounds.Width, 1);
+            }
+        }
+
+        public Size PageScrollSize
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         private void RenderTextDecoration(DrawingContext context, VisualLine line)
         {
