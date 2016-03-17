@@ -70,6 +70,9 @@
 
         public abstract bool SupportsFile(ISourceFile file);
 
+        public abstract string ExecutableExtension { get; }
+        public abstract string StaticLibraryExtension { get; }
+
         private object resultLock = new object();
         private int numTasks = 0;
 
@@ -230,11 +233,11 @@
             if (compileResult.Project.Type == ProjectType.StaticLibrary)
             {
                 executable = Path.Combine(outputLocation, "lib" + compileResult.Project.Name);
-                executable += ".a";
+                executable += StaticLibraryExtension;
             }
             else
             {
-                executable += ".elf";
+                executable += ExecutableExtension;
             }
 
             if (!Directory.Exists(outputLocation))
