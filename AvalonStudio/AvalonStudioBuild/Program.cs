@@ -21,7 +21,7 @@
     using TestFrameworks;
     class Program
     {
-        const string version = "1.0.0.19";
+        const string version = "1.0.0.21";
         const string releaseName = "Gravity";
 
         const string baseDir = @"c:\development\vebuild\test";
@@ -46,14 +46,7 @@
         {
             try
             {
-                var result = solution.FindProject(project);
-
-                if (result != null)
-                {
-                    (result as CPlusPlusProject).ResolveReferences();
-                }
-
-                return result;
+                return solution.FindProject(project);
             }
             catch (Exception e)
             {

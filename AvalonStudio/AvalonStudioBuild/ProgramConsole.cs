@@ -32,15 +32,15 @@
 
         public void OverWrite(string data)
         {
-            if (canOverwrite)
-            {
-                int currentLineCursor = Console.CursorTop;
-                Console.SetCursorPosition(0, Console.CursorTop);
-                Console.Write(new string(' ', Console.WindowWidth));
-                Console.SetCursorPosition(0, currentLineCursor);
-                Console.Write(data);
-            }
-            else
+            //if (canOverwrite)
+            //{
+            //    int currentLineCursor = Console.CursorTop;
+            //    Console.SetCursorPosition(0, Console.CursorTop);
+            //    Console.Write(new string(' ', Console.WindowWidth));
+            //    Console.SetCursorPosition(0, currentLineCursor);
+            //    Console.Write(data);
+            //}
+            //else
             {
                 WriteLine(data);
             }
