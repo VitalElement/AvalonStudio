@@ -84,7 +84,7 @@
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            return new Size(100, availableSize.Height);
+            return new Size(100, 0);
         }
 
         protected override void OnPointerLeave(PointerEventArgs e)
