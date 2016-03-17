@@ -547,7 +547,7 @@
         {
             get
             {
-                return new Size(Bounds.Width, 1);
+                return new Size(Bounds.Width, 2);
             }
         }
 
