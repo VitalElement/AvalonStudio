@@ -210,11 +210,11 @@ namespace AvalonStudio.Toolchains.STM32
                 Directory.CreateDirectory(outputDirectory);
             }
 
-            string outputName = Path.GetFileNameWithoutExtension(project.Location) + ".elf";
+            string outputName = Path.GetFileNameWithoutExtension(project.Location) + ExecutableExtension;
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-                outputName = "lib" + Path.GetFileNameWithoutExtension(project.Name) + ".a";
+                outputName = "lib" + Path.GetFileNameWithoutExtension(project.Name) + StaticLibraryExtension;
             }
             else
             {
@@ -685,7 +685,23 @@ namespace AvalonStudio.Toolchains.STM32
             {
                 return Path.Combine(BaseDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension);
             }
-        }        
+        }
+
+        public override string ExecutableExtension
+        {
+            get
+            {
+                return ".elf";
+            }
+        }
+
+        public override string StaticLibraryExtension
+        {
+            get
+            {
+                return ".a";
+            }
+        }
 
         public override IList<TabItem> GetConfigurationPages(IProject project)
         {

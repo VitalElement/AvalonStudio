@@ -17,7 +17,11 @@
         /// <summary>
         /// List of references with the project.
         /// </summary>
-        ObservableCollection<IProject> References { get; }
+        ObservableCollection<IProject> References { get; }        
+
+        void AddReference(IProject project);
+
+        void RemoveReference(IProject project);
 
         IToolChain ToolChain { get; set; }
         IDebugger Debugger { get; set; }
@@ -35,7 +39,8 @@
         /// <summary>
         /// The location of the project file
         /// </summary>
-        string Location { get; }
+        string Location { get; }        
+
 
         /// <summary>
         /// Resolves all references in the project.
