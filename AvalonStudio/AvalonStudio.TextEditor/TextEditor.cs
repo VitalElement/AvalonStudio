@@ -801,7 +801,16 @@
                 case Key.Tab:
                     if (AcceptsTab)
                     {
-                        HandleTextInput(TabCharacter);
+                        e.Handled = true;
+
+                        if (e.Modifiers == InputModifiers.Shift)
+                        {
+                            // TODO delete upto 4 whitespace chars.
+                        }
+                        else
+                        {
+                            HandleTextInput(TabCharacter);
+                        }
                     }
                     else
                     {
