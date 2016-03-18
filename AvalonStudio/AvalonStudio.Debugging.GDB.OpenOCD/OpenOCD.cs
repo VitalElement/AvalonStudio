@@ -112,8 +112,7 @@
         {
             bool result = true;            
             console.WriteLine("[OpenOCD] - Starting GDB Server...");
-
-            DebugMode = true;
+            
             var settings = GetSettings(project);
 
             if(settings == null)

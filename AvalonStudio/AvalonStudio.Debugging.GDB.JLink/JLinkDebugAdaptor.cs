@@ -98,7 +98,6 @@
         public override bool Start(IToolChain toolchain, IConsole console, IProject project)
         {
             bool result = true;
-            //DebugMode = true;
 
             var settings = GetSettings(project);
 
