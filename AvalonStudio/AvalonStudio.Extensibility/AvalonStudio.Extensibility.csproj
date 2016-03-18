@@ -184,6 +184,7 @@
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="Platform\Unix\MapAttribute.cs" />
     <Compile Include="Plugin\IPlugin.cs" />
+    <Compile Include="Projects\ICodeTemplate.cs" />
     <Compile Include="Projects\IProject.cs" />
     <Compile Include="Projects\IProjectFolder.cs" />
     <Compile Include="Projects\IProjectItem.cs" />

@@ -167,6 +167,9 @@
   <ItemGroup>
     <Compile Include="App.paml.cs" />
     <Compile Include="CompositionRoot.cs" />
+    <Compile Include="Controls\NewItemDialog.paml.cs">
+      <DependentUpon>NewItemDialog.paml</DependentUpon>
+    </Compile>
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\CallStack.paml.cs">
       <DependentUpon>CallStack.paml</DependentUpon>
@@ -287,6 +290,7 @@
     </Compile>
     <Compile Include="Debugging\BreakPointManager.cs" />
     <Compile Include="Debugging\DebugManager.cs" />
+    <Compile Include="Controls\NewItemDialogViewModel.cs" />
     <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Program.cs" />
@@ -337,6 +341,7 @@
     <EmbeddedResource Include="Controls\CallStack.paml" />
     <EmbeddedResource Include="Controls\Locals.paml" />
     <EmbeddedResource Include="Controls\Disassembly.paml" />
+    <EmbeddedResource Include="Controls\NewItemDialog.paml" />
     <None Include="libgit2-821131f.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

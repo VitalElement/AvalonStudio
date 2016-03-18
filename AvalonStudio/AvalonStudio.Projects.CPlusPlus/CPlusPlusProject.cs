@@ -96,7 +96,7 @@
 
             foreach (var item in folders.Items)
             {
-                item.Parent = this;
+                item.Parent = this;        
                 Items.Add(item);
             }
 
@@ -125,7 +125,7 @@
                 project.ExcludedFiles[i] = project.ExcludedFiles[i].ToAvalonPath();
             }
 
-
+            project.Project = project;
             project.Location = filename;
             project.SetSolution(solution);
 

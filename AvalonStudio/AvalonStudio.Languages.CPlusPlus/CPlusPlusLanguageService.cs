@@ -174,8 +174,10 @@
                         break;
                 }
 
-                if (file.Language == Language.Cpp)
+                // TODO do we mark files as class header? CAn clang auto detect this?
+                //if (file.Language == Language.Cpp)
                 {
+                    
                     args.Add("-xc++");
                     args.Add("-std=c++14");
                 }
@@ -185,7 +187,7 @@
                 //{
                 //    args.Add("-Weverything");
                 //}
-
+                
                 // TODO find out why TranslationUnitFlags.PreCompiledPreAmble causes crashing. in Libclang 3.8RC2
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble | TranslationUnitFlags.CacheCompletionResults);
             }
