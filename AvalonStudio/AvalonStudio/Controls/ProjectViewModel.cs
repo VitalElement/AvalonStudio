@@ -90,6 +90,13 @@
                 Process.Start(Model.CurrentDirectory);
             });
 
+            NewItemCommand = ReactiveCommand.Create();
+            NewItemCommand.Subscribe(_ =>
+            {
+                WorkspaceViewModel.Instance.ModalDialog = new NewItemDialogViewModel(model);
+                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
+            });
+
             RemoveCommand = ReactiveCommand.Create();
             RemoveCommand.Subscribe((o) =>
             {
@@ -126,6 +133,7 @@
         public ReactiveCommand<object> ConfigureCommand { get; private set; }
         public ReactiveCommand<object> SetProjectCommand { get; private set; }
         public ReactiveCommand<object> OpenInExplorerCommand { get; }
+        public ReactiveCommand<object> NewItemCommand { get; }
 
         public static ProjectViewModel Create(IProject model)
         {

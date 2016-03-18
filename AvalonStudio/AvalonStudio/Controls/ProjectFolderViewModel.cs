@@ -14,6 +14,13 @@
         {
             Items = new ObservableCollection<ProjectItemViewModel>();
             Items.BindCollections(model.Items, (p) => { return ProjectItemViewModel.Create(p); }, (pivm, p) => pivm.Model == p);
+
+            NewItemCommand = ReactiveCommand.Create();
+            NewItemCommand.Subscribe(_ =>
+            {
+                WorkspaceViewModel.Instance.ModalDialog = new NewItemDialogViewModel(model);
+                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
+            });
             
             RemoveCommand = ReactiveCommand.Create();
             RemoveCommand.Subscribe(_ =>
@@ -29,6 +36,7 @@
 
         public ObservableCollection<ProjectItemViewModel> Items { get; private set; }
 
+        public ReactiveCommand<object> NewItemCommand { get; }
         public ReactiveCommand<object> RemoveCommand { get; }
     }
 }
