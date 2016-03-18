@@ -5,6 +5,7 @@
     using System;
     using System.IO;
     using System.Threading.Tasks;
+
     public class BlankCPlusPlusLangaguageTemplate : IProjectTemplate
     {
         public virtual string DefaultProjectName

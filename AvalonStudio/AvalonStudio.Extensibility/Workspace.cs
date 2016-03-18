@@ -7,21 +7,22 @@
     using Toolchains;
     using Projects;
     using TestFrameworks;
-
+    using AvalonStudio.Projects;
     [Export(typeof(Workspace))]
     public class Workspace
     {
         private readonly IEnumerable<ILanguageService> languageServices;
         private readonly IEnumerable<IProjectTemplate> projectTemplates;
+        private readonly IEnumerable<ICodeTemplate> codeTemplates;
         private readonly IEnumerable<IToolChain> toolChains;
         private readonly IEnumerable<IDebugger> debuggers;
         private readonly IEnumerable<IProject> projectTypes;
-        private readonly IEnumerable<ITestFramework> testFrameworks;
+        private readonly IEnumerable<ITestFramework> testFrameworks;        
 
         public static Workspace Instance = null;
 
         [ImportingConstructor]
-        public Workspace([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks)
+        public Workspace([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates)
         {            
             this.languageServices = languageServices;
             this.projectTemplates = projectTemplates;
@@ -29,6 +30,7 @@
             this.debuggers = debuggers;
             this.projectTypes = projectTypes;
             this.testFrameworks = testFrameworks;
+            this.codeTemplates = codeTemplates;
         }        
 
         public IEnumerable<IProject> ProjectTypes
@@ -44,6 +46,14 @@
             get
             {
                 return projectTemplates;
+            }
+        }
+
+        public IEnumerable<ICodeTemplate> CodeTempates
+        {
+            get
+            {
+                return codeTemplates;
             }
         }
 

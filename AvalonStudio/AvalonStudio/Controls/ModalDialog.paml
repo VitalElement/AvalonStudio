@@ -24,6 +24,9 @@
             <DataTemplate DataType="ViewModels:NewProjectDialogViewModel">
               <Controls:NewProjectDialog />
             </DataTemplate>
+            <DataTemplate DataType="ViewModels:NewItemDialogViewModel">
+              <Controls:NewItemDialog />
+            </DataTemplate>
           </ContentControl.DataTemplates>
         </ContentControl>
 

@@ -57,7 +57,7 @@
                   <MenuItem Header="Manage References" />
                   <Separator />
                   <MenuItem Header="Add">
-                    <MenuItem Header="New Item..." />
+                    <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
                     <MenuItem Header="Exisiting Item..." />
                     <MenuItem Header="New Folder..." />
                     <MenuItem Header="Import Folder..." />
