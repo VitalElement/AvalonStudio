@@ -188,95 +188,125 @@ namespace AvalonStudio.Debugging
 
         public void Continue ()
         {
-            if (!IsExecuting)
+            if (Debugger != null)
             {
-                Task.Factory.StartNew(() =>
+                if (!IsExecuting)
                 {
-                    PrepareToRun();
-                    Debugger.Continue();
-                });
+                    Task.Factory.StartNew(() =>
+                    {
+                        PrepareToRun();
+                        Debugger.Continue();
+                    });
+                }
             }
         }
 
         public void StepInstruction()
         {
-            if (!IsExecuting)
+            if (Debugger != null)
             {
-                Task.Factory.StartNew(() =>
+                if (!IsExecuting)
                 {
-                    PrepareToRun();
-                    Debugger.StepInstruction();
-                });
+                    Task.Factory.StartNew(() =>
+                    {
+                        PrepareToRun();
+                        Debugger.StepInstruction();
+                    });
+                }
             }
         }
 
         public void StepOut()
         {
-            if (!IsExecuting)
+            if (Debugger != null)
             {
-                Task.Factory.StartNew(() =>
+                if (!IsExecuting)
                 {
-                    PrepareToRun();
-                    Debugger.StepOut();
-                });
+                    Task.Factory.StartNew(() =>
+                    {
+                        PrepareToRun();
+                        Debugger.StepOut();
+                    });
+                }
             }
         }
 
         public void StepInto()
         {
-            if(!IsExecuting)
+            if (Debugger != null)
             {
-                Task.Factory.StartNew(() =>
+                if (!IsExecuting)
                 {
-                    PrepareToRun();
-                    Debugger.StepInto();
-                });
+                    Task.Factory.StartNew(() =>
+                    {
+                        PrepareToRun();
+                        Debugger.StepInto();
+                    });
+                }
             }            
         }
 
         public void StepOver()
         {
-            if (!IsExecuting)
+            if (Debugger != null)
             {
-                Task.Factory.StartNew(() =>
+                if (!IsExecuting)
                 {
-                    PrepareToRun();
-                    Debugger.StepOver();
-                });
+                    Task.Factory.StartNew(() =>
+                    {
+                        PrepareToRun();
+                        Debugger.StepOver();
+                    });
+                }
             }
         }
 
         public void Pause()
         {
-            if (IsExecuting)
+            if (Debugger != null)
             {
-                Task.Factory.StartNew(() =>
+                if (IsExecuting)
                 {
-                    Debugger.Pause();
-                });
+                    Task.Factory.StartNew(() =>
+                    {
+                        Debugger.Pause();
+                    });
+                }
             }
         }
 
         public void Stop()
         {
-            PrepareToRun();
+            if (Debugger != null)
+            {                
+                Task.Factory.StartNew(() =>
+                {
+                    if (IsExecuting)
+                    {
+                        Debugger.Pause();                     
+                    }
 
-            Pause();
+                    PrepareToRun();
 
-            StopDebugSession();
+                    StopDebugSession();
+                });
+            }
         }
 
         public void Restart()
         {
-            Pause();
-
-            if (!IsExecuting)
+            if (Debugger != null)
             {
-                Task.Factory.StartNew(() =>
+                Pause();
+
+                if (!IsExecuting)
                 {
-                    PrepareToRun();
-                    Debugger.Reset(true);
-                });
+                    Task.Factory.StartNew(() =>
+                    {
+                        PrepareToRun();
+                        Debugger.Reset(true);
+                    });
+                }
             }
         }
 
@@ -310,7 +340,7 @@ namespace AvalonStudio.Debugging
                 //}
             }//);
 
-            //WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Editor;
+            WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Editor;
         }
         #region Commands
         public ReactiveCommand<object> StartDebuggingCommand { get; private set; }
