@@ -64,6 +64,14 @@
             }
         }
 
+        public void ScrollToLine (int line)
+        {
+            if(Editor != null)
+            {
+                Editor.ScrollToLine(line);
+            }
+        }
+
         public event EventHandler<EventArgs> DocumentLoaded;
         public event EventHandler<EventArgs> TextChanged;        
 
