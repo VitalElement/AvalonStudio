@@ -236,7 +236,7 @@
 
                     if (startOffset >= TextDocument.TextLength)
                     {
-                        break;
+                        break;                        
                     }
                 }
             }

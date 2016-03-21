@@ -31,6 +31,7 @@
         private void InitializeComponent()
         {
             PerspexXamlLoader.Load(this);
+            
         }
         
 
