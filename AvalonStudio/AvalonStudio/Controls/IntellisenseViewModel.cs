@@ -328,7 +328,7 @@
                         {
                             unfilteredCompletions.Clear();
 
-                            foreach (var result in editor.CodeCompletionResults.Completions)
+                            foreach (var result in editor.CodeCompletionResults?.Completions)
                             {
                                 if (result.Suggestion.ToLower().Contains(currentFilter.ToLower()))
                                 {
@@ -397,7 +397,10 @@
 
                 if (filteredResults?.Count() > 0)
                 {
-                    Model = filteredResults.ToList();                   
+                    var list = filteredResults.ToList();
+
+                    Model = list.Skip(list.IndexOf(suggestion) - 25).Take(50).ToList();
+                    //Model = filteredResults.ToList();                   
 
                     SelectedCompletion = suggestion;
 
