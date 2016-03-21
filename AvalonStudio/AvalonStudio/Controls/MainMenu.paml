@@ -37,6 +37,8 @@
       <MenuItem Header="Step Into" Command="{Binding StepIntoCommand}" />
       <MenuItem Header="Step Over" Command="{Binding StepOverCommand}" />
       <MenuItem Header="Pause" Command="{Binding PauseCommand}" />
+      <MenuItem Header="Stop" Command="{Binding StopCommand}" />
+      <MenuItem Header="Restart" Command="{Binding RestartCommand}" />
     </MenuItem>
 
     <MenuItem Header="Tools">

@@ -154,21 +154,35 @@
             {
                 WorkspaceViewModel.Instance.DebugManager.Pause();
             });
+
+            StopCommand = ReactiveCommand.Create();
+            StopCommand.Subscribe(_ =>
+            {
+                WorkspaceViewModel.Instance.DebugManager.Stop();
+            });
+
+            RestartCommand = ReactiveCommand.Create();
+            RestartCommand.Subscribe(_ =>
+            {
+                WorkspaceViewModel.Instance.DebugManager.Restart();
+            });
         }
 
-        public ReactiveCommand<object> NewProjectCommand { get; private set; }
-        public ReactiveCommand<object> SaveCommand { get; private set; }
-        public ReactiveCommand<object> LoadProjectCommand { get; private set; }
+        public ReactiveCommand<object> NewProjectCommand { get; }
+        public ReactiveCommand<object> SaveCommand { get; }
+        public ReactiveCommand<object> LoadProjectCommand { get; }
         public ReactiveCommand<object> ExitCommand { get; }
 
-        public ReactiveCommand<object> CleanProjectCommand { get; private set; }
-        public ReactiveCommand<object> BuildProjectCommand { get; private set; }
-        public ReactiveCommand<object> PackagesCommand { get; private set; }
-        public ReactiveCommand<object> ProjectPropertiesCommand { get; private set; }
+        public ReactiveCommand<object> CleanProjectCommand { get; }
+        public ReactiveCommand<object> BuildProjectCommand { get; }
+        public ReactiveCommand<object> PackagesCommand { get; }
+        public ReactiveCommand<object> ProjectPropertiesCommand { get; }
 
-        public ReactiveCommand<object> StartDebugCommand { get; private set; }
-        public ReactiveCommand<object> StepOverCommand { get; private set; }
-        public ReactiveCommand<object> StepIntoCommand { get; private set; }
-        public ReactiveCommand<object> PauseCommand { get; private set; }
+        public ReactiveCommand<object> StartDebugCommand { get; }
+        public ReactiveCommand<object> StepOverCommand { get; }
+        public ReactiveCommand<object> StepIntoCommand { get; }
+        public ReactiveCommand<object> PauseCommand { get; }
+        public ReactiveCommand<object> StopCommand { get; }
+        public ReactiveCommand<object> RestartCommand { get; }
     }
 }
