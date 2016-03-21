@@ -13,7 +13,7 @@
       <ListBox Grid.Row="1"  BorderThickness="0" Items="{Binding Model}" Background="{StyleResource ThemeControlDarkBrush}">
         <ListBox.DataTemplates>
           <DataTemplate DataType="debugging:Variable">
-            <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Background}">
+            <StackPanel Gap="5" Background="{Binding Background}">
               <TextBlock Text="{Binding Name}" Width="90" />
               <TextBlock Text="{Binding Value}" />
               <TextBlock Text="{Binding Type}" />              
