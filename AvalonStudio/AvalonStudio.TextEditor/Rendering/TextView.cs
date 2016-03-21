@@ -716,6 +716,7 @@
                 {
                     if (line < VisualLines.Count)
                     {
+                        Console.WriteLine("Why are we asking via visual lines here without verifying if visualline.line is within text document range?");
                         result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
                     }
                 }
