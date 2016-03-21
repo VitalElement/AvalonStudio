@@ -658,9 +658,26 @@
 
                 if (caretIndex >= 0)
                 {
-                    var position = TextDocument.GetLocation(caretIndex);
-                    this.BringIntoView(new Rect(position.Column, position.Line, 0, 1));
+                    var position = TextDocument.GetLocation(caretIndex);                    
+                    ScrollToLine(position.Line, 0.1);
                 }
+            }
+        }
+
+        public void ScrollToLine (int line, double borderSizePc = 0.5)
+        {                        
+            var offset = (line - (Viewport.Height * borderSizePc));
+
+            if (offset >= 0)
+            {
+                this.BringIntoView(new Rect(1, offset, 0, 1));
+            }
+
+            offset = (line + (Viewport.Height * borderSizePc));
+
+            if (offset >= 0)
+            {
+                this.BringIntoView(new Rect(1, offset, 0, 1));
             }
         }
 
