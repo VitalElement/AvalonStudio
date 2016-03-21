@@ -233,8 +233,7 @@
             set { this.RaiseAndSetIfChanged(ref hoverProbe, value); }
         }
 
-        
-        private void InvalidateCursorUnderMouse()
+        public void OnPointerHover ()
         {
             var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, MouseCursorOffset);
 
@@ -257,7 +256,12 @@
                         IsHoverProbeOpen = true;
                         break;
                 }
-            }           
+            }
+        }
+        
+        private void InvalidateCursorUnderMouse()
+        {
+            
         }
 
         private int mouseCursorOffset;
