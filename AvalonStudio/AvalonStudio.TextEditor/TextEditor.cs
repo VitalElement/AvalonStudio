@@ -66,7 +66,7 @@
                 CaretIndex = -1;
             });
 
-            AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);            
+            AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
         }
 
         private void MouseHoverDelayTimer_Tick(object sender, EventArgs e)
@@ -74,6 +74,11 @@
             MouseCursorOffset = currentMouseOffset;
         }
         #endregion
+
+        public void ScrollToLine(int line)
+        {
+            textView.ScrollToLine(line);
+        }
 
         #region Private Data
         private TextView textView;
@@ -91,7 +96,7 @@
             set { SetValue(TabCharacterProperty, value); }
         }
 
-        public static readonly PerspexProperty<int> MouseCursorOffsetProperty = 
+        public static readonly PerspexProperty<int> MouseCursorOffsetProperty =
             PerspexProperty.Register<TextEditor, int>(nameof(MouseCursorOffset));
 
         public int MouseCursorOffset
@@ -102,7 +107,7 @@
 
         public static readonly PerspexProperty<Point> MouseCursorPositionProperty =
             PerspexProperty.Register<TextEditor, Point>(nameof(MouseCursorPosition), defaultBindingMode: BindingMode.TwoWay);
-        
+
         public Point MouseCursorPosition
         {
             get { return GetValue(MouseCursorPositionProperty); }
@@ -261,7 +266,7 @@
             get { return GetValue(SelectionEndProperty); }
             set { SetValue(SelectionEndProperty, value); }
         }
-        
+
         public static readonly PerspexProperty<IIndentationStrategy> IndentationStrategyProperty = PerspexProperty.Register<TextEditor, IIndentationStrategy>(nameof(IndentationStrategy));
 
         public IIndentationStrategy IndentationStrategy
@@ -281,7 +286,7 @@
 
         #region Properties
         public TextView TextView { get { return textView; } }
-        public ScrollViewer ScrollViewer { get; set; }        
+        public ScrollViewer ScrollViewer { get; set; }
         #endregion
 
         #region Private Methods
@@ -359,7 +364,7 @@
                 TextChangedCommand.Execute(null);
             }
         }
-        
+
 
         private void SelectAll()
         {
@@ -368,7 +373,7 @@
         }
 
         private bool DeleteSelection()
-        {                        
+        {
             var selectionStart = SelectionStart;
             var selectionEnd = SelectionEnd;
 
@@ -479,7 +484,7 @@
             {
                 var lineOffset = TextDocument.GetLineByOffset(CaretIndex).EndOffset;
                 var whiteSpace = TextUtilities.GetWhitespaceBefore(TextDocument, lineOffset);
-                caretIndex = lineOffset - whiteSpace.Length;                
+                caretIndex = lineOffset - whiteSpace.Length;
             }
 
             CaretIndex = caretIndex;
@@ -557,7 +562,7 @@
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             textView = e.NameScope.Find<TextView>("textView");
-            textView.Cursor = new Cursor(StandardCursorType.Ibeam);            
+            textView.Cursor = new Cursor(StandardCursorType.Ibeam);
 
             //textView.BackgroundRenderers.Clear();
             //textView.DocumentLineTransformers.Clear();
@@ -570,7 +575,7 @@
             TextDocumentProperty.Changed.Subscribe((args) =>
             {
                 if (args.NewValue != null)
-                {                                                            
+                {
                     TextDocument.Changing += (sender, ee) =>
                     {
                         TextDocument?.UndoStack.StartUndoGroup();
@@ -639,7 +644,7 @@
 
         private int currentMouseOffset = -1;
         protected override void OnPointerMoved(PointerEventArgs e)
-        {            
+        {
             var point = e.GetPosition(textView.TextSurface);
             currentMouseOffset = textView.GetOffsetFromPoint(point);
 
@@ -790,7 +795,7 @@
 
                     break;
 
-                case Key.Enter:                
+                case Key.Enter:
                     if (AcceptsReturn)
                     {
                         HandleTextInput("\r\n");

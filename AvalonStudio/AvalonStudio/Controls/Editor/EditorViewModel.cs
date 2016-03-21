@@ -14,7 +14,7 @@
     using Platform;
     using Utils;
     using Projects;
-
+    using Perspex.Threading;
     public class EditorViewModel : ViewModel<EditorModel>
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -327,8 +327,8 @@
             {
                 DebugLineHighlighter.Line = line;
             }
-
-            CaretIndex = TextDocument.GetOffset(line, column);
+                        
+            Dispatcher.UIThread.InvokeAsync(() => Model.ScrollToLine(line));
         }
 
         private void FormatAll()
