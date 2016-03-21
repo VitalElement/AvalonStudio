@@ -103,12 +103,15 @@
         {
             if (this.debugger != null)
             {
-                debugger.StateChanged -= Debugger_StateChanged;
+                this.debugger.StateChanged -= Debugger_StateChanged;
             }
 
             this.debugger = debugger;
 
-            debugger.StateChanged += Debugger_StateChanged;
+            if (debugger != null)
+            {
+                debugger.StateChanged += Debugger_StateChanged;
+            }
 
             dataProvider.SetDebugger(debugger);
         }
