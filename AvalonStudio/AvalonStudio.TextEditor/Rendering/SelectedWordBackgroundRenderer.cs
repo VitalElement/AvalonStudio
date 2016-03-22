@@ -6,9 +6,9 @@
     using System.Linq;
     using System;
 
-    public class SelectedWordTextLineTransformer : IDocumentLineTransformer
+    public class SelectedWordBackgroundRenderer : IBackgroundRenderer
     {
-        public SelectedWordTextLineTransformer()
+        public SelectedWordBackgroundRenderer()
         {
             this.highlightBrush = Brush.Parse("#113D6F");
         }
@@ -30,12 +30,12 @@
                     DataChanged(this, new EventArgs());
                 }
             }
-        }
+        }   
 
 
-        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
+        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
         {
-            if(!string.IsNullOrEmpty(SelectedWord) && line.RenderedText.Text.Contains (SelectedWord))
+            if (!string.IsNullOrEmpty(SelectedWord) && line.RenderedText.Text.Contains(SelectedWord))
             {
                 int startIndex = 0;
 
@@ -47,12 +47,17 @@
                     {
                         var rect = VisualLineGeometryBuilder.GetRectsForSegment(textView, new TextSegment() { StartOffset = startIndex + line.Offset, EndOffset = startIndex + line.Offset + SelectedWord.Length }).First();
 
-                        context.FillRectangle(highlightBrush, rect);
+                        drawingContext.FillRectangle(highlightBrush, rect);
 
                         startIndex += SelectedWord.Length;
-                    }                    
+                    }
                 }
             }
+        }
+
+        public void Draw(TextView textView, DrawingContext drawingContext)
+        {
+            
         }
     }
 }
