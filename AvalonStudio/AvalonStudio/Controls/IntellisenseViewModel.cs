@@ -328,21 +328,24 @@
                         {
                             unfilteredCompletions.Clear();
 
-                            foreach (var result in editor.CodeCompletionResults?.Completions)
+                            if (editor.CodeCompletionResults != null)
                             {
-                                if (result.Suggestion.ToLower().Contains(currentFilter.ToLower()))
+                                foreach (var result in editor.CodeCompletionResults.Completions)
                                 {
-                                    CompletionDataViewModel currentCompletion = null;
-
-                                    currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
-
-                                    if (currentCompletion == null)
+                                    if (result.Suggestion.ToLower().Contains(currentFilter.ToLower()))
                                     {
-                                        unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
-                                    }
-                                    else
-                                    {
-                                        //currentCompletion.NumOverloads++;
+                                        CompletionDataViewModel currentCompletion = null;
+
+                                        currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
+
+                                        if (currentCompletion == null)
+                                        {
+                                            unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
+                                        }
+                                        else
+                                        {
+                                            //currentCompletion.NumOverloads++;
+                                        }
                                     }
                                 }
                             }
