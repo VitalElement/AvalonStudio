@@ -98,7 +98,6 @@
         public override bool Start(IToolChain toolchain, IConsole console, IProject project)
         {
             bool result = true;
-
             var settings = GetSettings(project);
 
             console.Clear();
@@ -214,7 +213,7 @@
             base.Continue();
         }
 
-        new public void Stop()
+        public override void Stop()
         {
             base.Stop();
 

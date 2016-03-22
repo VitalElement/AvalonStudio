@@ -110,18 +110,6 @@
             return relativePath;
         }
 
-        public static string NormalizePath(this string path)
-        {
-            if (path != null)
-            {
-                return new FileInfo(path).FullName;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public static bool IsPunctuationChar(this char c)
         {
             bool result = false;

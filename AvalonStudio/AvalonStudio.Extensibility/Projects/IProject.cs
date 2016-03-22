@@ -27,7 +27,7 @@
         IDebugger Debugger { get; set; }
         ITestFramework TestFramework { get; set; }
 
-        ISourceFile FindFile(string path);
+        ISourceFile FindFile(ISourceFile file);
 
         bool Hidden { get; set; }
 

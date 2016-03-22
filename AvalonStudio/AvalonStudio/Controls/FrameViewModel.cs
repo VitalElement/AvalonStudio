@@ -41,7 +41,7 @@
             {
                 if (Model.File != null)
                 {
-                    var filePath = Path.GetDirectoryName(Model.File.NormalizePath());
+                    var filePath = Path.GetDirectoryName(Model.File);
 
                     var file = Path.GetFileName(Model.File);
 
