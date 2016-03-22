@@ -115,7 +115,7 @@
             return result;
         }
 
-        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
+        public void TransformLine(TextView textView, VisualLine line)
         {
             var transformsInLine = TextTransformations.FindOverlappingSegments(line);
 

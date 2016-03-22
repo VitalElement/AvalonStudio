@@ -15,5 +15,10 @@
 
             drawingContext.DrawLine(new Pen(brush, 1), new Perspex.Point(xPos, 0), new Perspex.Point(xPos, textView.Bounds.Bottom));
         }
+
+        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
+        {
+            
+        }
     }
 }

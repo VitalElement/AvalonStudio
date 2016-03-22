@@ -7,7 +7,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class TextMarkerService : IDocumentLineTransformer
+    public class TextMarkerService : IBackgroundRenderer
     {
         private TextSegmentCollection<TextMarker> markers;
 
@@ -30,62 +30,6 @@
         {
             markers = new TextSegmentCollection<TextMarker>(document);
 
-        }
-
-        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
-        {
-            if(markers == null)
-            {
-                return;
-            }
-
-            var markersInLine = markers.FindOverlappingSegments(line);
-
-            foreach (TextMarker marker in markersInLine)
-            {
-                if(marker.Length == 0)
-                {
-                    var endoffset = TextUtilities.GetNextCaretPosition(textView.TextDocument, marker.StartOffset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
-
-                    if (endoffset == -1)
-                    {
-                        marker.Length = line.Length;
-                    }
-                    else
-                    {
-                        marker.EndOffset = endoffset;
-                    }
-                }
-
-                foreach (Rect r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
-                {
-                    Point startPoint = r.BottomLeft;
-                    Point endPoint = r.BottomRight;
-
-                    var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
-                    
-                    const double offset = 2.5;
-
-                    int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
-
-                    var geometry = new StreamGeometry();
-
-                    using (StreamGeometryContext ctx = geometry.Open())
-                    {
-                        ctx.BeginFigure(startPoint, false);
-
-                        foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
-                        {
-                            ctx.LineTo(point);
-                        }
-
-                        ctx.EndFigure(false);
-                    }
-
-                    context.DrawGeometry(Brushes.Transparent, usedPen, geometry);
-                    break;
-                }
-            }
         }
 
         private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
@@ -126,6 +70,67 @@
         public IEnumerable<TextMarker> GetMarkersAtOffset(int offset)
         {
             return markers == null ? Enumerable.Empty<TextMarker>() : markers.FindSegmentsContaining(offset);
+        }
+
+        public void Draw(TextView textView, DrawingContext drawingContext)
+        {
+            
+        }
+
+        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
+        {
+            if (markers == null)
+            {
+                return;
+            }
+
+            var markersInLine = markers.FindOverlappingSegments(line);
+
+            foreach (TextMarker marker in markersInLine)
+            {
+                if (marker.Length == 0)
+                {
+                    var endoffset = TextUtilities.GetNextCaretPosition(textView.TextDocument, marker.StartOffset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
+
+                    if (endoffset == -1)
+                    {
+                        marker.Length = line.Length;
+                    }
+                    else
+                    {
+                        marker.EndOffset = endoffset;
+                    }
+                }
+
+                foreach (Rect r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
+                {
+                    Point startPoint = r.BottomLeft;
+                    Point endPoint = r.BottomRight;
+
+                    var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
+
+                    const double offset = 2.5;
+
+                    int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
+
+                    var geometry = new StreamGeometry();
+
+                    using (StreamGeometryContext ctx = geometry.Open())
+                    {
+                        ctx.BeginFigure(startPoint, false);
+
+                        foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+                        {
+                            ctx.LineTo(point);
+                        }
+
+                        ctx.EndFigure(false);
+                    }
+
+                    drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
+                    break;
+                }
+            }
         }
     }
 }

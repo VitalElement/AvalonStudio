@@ -788,9 +788,9 @@
             TextMarkerService = new TextMarkerService(textDocument);
 
             BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
+            BackgroundRenderers.Add(TextMarkerService);
 
-            DocumentLineTransformers.Add(TextColorizer);
-            DocumentLineTransformers.Add(TextMarkerService);
+            DocumentLineTransformers.Add(TextColorizer);            
             DocumentLineTransformers.Add(new DefineTextLineTransformer());
             DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
             DocumentLineTransformers.Add(new IncludeTextLineTransformer());
