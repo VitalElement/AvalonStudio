@@ -57,9 +57,8 @@
                 beginCompletionLocation = new TextLocation(line, column);
                 this.filter = filter;
                 completionRequested = true;
-
-                DoCodeCompletionRequest();
-
+               
+                    DoCodeCompletionRequest();
                 await endCompletionRequestSemaphore.WaitAsync();
             }
         }
@@ -268,13 +267,15 @@
         private void DoCodeCompletionRequest()
         {
             if (LanguageService != null)
-            {
+            {                                
                 completionRequestLock.EnterWriteLock();
 
                 if (startCompletionRequestSemaphore.CurrentCount == 0)
                 {
                     startCompletionRequestSemaphore.Release();
                 }
+
+                completionRequestLock.ExitWriteLock();
             }
         }
 
@@ -309,12 +310,12 @@
                     if (LanguageService != null)
                     {
                         var results = LanguageService.CodeCompleteAt(sourceFile, beginCompletionLocation.Line, beginCompletionLocation.Column, UnsavedFiles, filter);
+                        
+                        endCompletionRequestSemaphore.Release();
 
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            CodeCompletionResults = new CodeCompletionResults() { Completions = results };
-                            completionRequestLock.ExitWriteLock();
-                            endCompletionRequestSemaphore.Release();
+                            CodeCompletionResults = new CodeCompletionResults() { Completions = results };                            
                         });
                     }
                     else
