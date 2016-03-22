@@ -4,6 +4,7 @@
     using System.IO;
     using System;
     using Utils;
+    using Platform;
     public class SourceFile : ISourceFile
     {
         private SourceFile()
@@ -21,7 +22,7 @@
 
         public static SourceFile FromPath (IProject project, IProjectFolder parent, string filePath)
         {
-            return new SourceFile() { Project = project, Parent = parent, File = filePath.NormalizePath() };
+            return new SourceFile() { Project = project, Parent = parent, File = filePath.ToPlatformPath() };
         }
 
         public static SourceFile Create(IProject project, IProjectFolder parent, string location, string name, string text = "")
@@ -31,12 +32,12 @@
             file.Write(text);
             file.Close();
 
-            return new SourceFile() { File = filePath.NormalizePath(), Project = project };
+            return new SourceFile() { File = filePath.ToPlatformPath(), Project = project };
         }
 
         public int CompareTo(ISourceFile other)
         {
-            return File.CompareTo(other.File);
+            return File.CompareFilePath(other.File);
         }
 
         [JsonIgnore]

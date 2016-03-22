@@ -237,7 +237,7 @@
             Continue();
         }        
 
-        new public void Stop()
+        public override void Stop()
         {      
             base.Stop();
 

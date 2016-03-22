@@ -11,7 +11,7 @@
 
         IProject AddProject(IProject project);
 
-        ISourceFile FindFile(string path);
+        ISourceFile FindFile(ISourceFile path);
 
         void RemoveProject(IProject project);
 
