@@ -490,6 +490,14 @@
             CaretIndex = caretIndex;
         }
 
+        private async void Cut()
+        {
+            await ((IClipboard)PerspexLocator.Current.GetService(typeof(IClipboard)))
+                .SetTextAsync(GetSelection());
+
+            DeleteSelection();
+        }
+
         private async void Copy()
         {
             await ((IClipboard)PerspexLocator.Current.GetService(typeof(IClipboard)))
@@ -646,6 +654,7 @@
         protected override void OnPointerMoved(PointerEventArgs e)
         {
             var point = e.GetPosition(textView.TextSurface);
+            // TODO remove this.
             currentMouseOffset = textView.GetOffsetFromPoint(point);
 
             // TODO this is causing more trouble than its worth needs to be re-written using a hover mechanism / behaviour built into perspex.
@@ -715,7 +724,6 @@
                     {
                         SelectAll();
                     }
-
                     break;
 
                 case Key.C:
@@ -723,13 +731,19 @@
                     {
                         Copy();
                     }
-
                     break;
 
                 case Key.V:
                     if (modifiers == InputModifiers.Control)
                     {
                         Paste();
+                    }
+                    break;
+
+                case Key.X:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        Cut();
                     }
                     break;
 
