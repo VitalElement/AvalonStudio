@@ -98,7 +98,7 @@
 
             documentTextChangedSubscriber = new WeakEventArgsSubscriber(() =>
             {
-                invalidateVisualLines = true;                
+                invalidateVisualLines = true;
             });
 
             _caretTimer = new DispatcherTimer();
@@ -106,11 +106,11 @@
             _caretTimer.Tick += CaretTimerTick;
 
             this.GetObservable(CaretIndexProperty)
-                .Subscribe(CaretIndexChanged);            
+                .Subscribe(CaretIndexChanged);
 
             DocumentLineTransformersProperty.Changed.Subscribe((o) =>
             {
-                foreach(var item in DocumentLineTransformers)
+                foreach (var item in DocumentLineTransformers)
                 {
                     WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), documentLineTransformerChangedSubscriber);
                 }
@@ -199,7 +199,7 @@
 
             return result;
         }
-        
+
 
         public int FindMatchingBracketBackward(int startOffset, char close, char open)
         {
@@ -236,7 +236,7 @@
 
                     if (startOffset >= TextDocument.TextLength)
                     {
-                        break;                        
+                        break;
                     }
                 }
             }
@@ -446,17 +446,13 @@
             if (TextDocument != null)
             {
                 GenerateTextProperties();
-                GenerateVisualLines();
+                GenerateVisualLines(context);                
 
                 // Render background layer.
                 RenderBackground(context);
 
                 foreach (var line in VisualLines)
-                {
-                    // Render text background layer.
-                    RenderTextBackground(context, line);
-
-                    // Render text layer.
+                {                    
                     RenderText(context, line);
 
                     // Render text decoration layer.
@@ -525,12 +521,20 @@
             foreach (var renderer in BackgroundRenderers)
             {
                 renderer.Draw(this, context);
+
+                foreach(var line in VisualLines)
+                {
+                    renderer.TransformLine(this, context, line);
+                }
             }
         }
 
         private void RenderTextBackground(DrawingContext context, VisualLine line)
         {
-
+            foreach (var renderer in BackgroundRenderers)
+            {
+                renderer.TransformLine(this, context, line);
+            }
         }
 
         private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
@@ -566,7 +570,7 @@
 
         private bool invalidateVisualLines = true;
         private int lastLineCount;
-        private void GenerateVisualLines()
+        private void GenerateVisualLines(DrawingContext context)
         {
             //if (invalidateVisualLines) // This is a significant performance boost, we only need to re-generate when offset changes
             {
@@ -576,7 +580,9 @@
 
                 for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount && i >= 0; i++)
                 {
-                    VisualLines.Add(new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ });
+                    var line = new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ };
+                    GenerateText(line);
+                    VisualLines.Add(line);
                 }
 
                 if (TextDocument.LineCount != lastLineCount)
@@ -591,58 +597,59 @@
             }
         }
 
-        private void RenderText(DrawingContext context, VisualLine line)
+        private void GenerateText(VisualLine line)
         {
             if (!line.DocumentLine.IsDeleted)
             {
-                using (var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
+                var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+
+                line.RenderedText = formattedText;                
+
+                foreach (var lineTransformer in DocumentLineTransformers)
                 {
-                    line.RenderedText = formattedText;
-                    var boundary = VisualLineGeometryBuilder.GetRectsForSegment(this, line).First();
-
-                    foreach (var lineTransformer in DocumentLineTransformers)
-                    {
-                        lineTransformer.TransformLine(this, context, boundary, line);
-                    }
-
-                    context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), formattedText);
+                    lineTransformer.TransformLine(this, line);
                 }
             }
         }
 
+        private void RenderText(DrawingContext context, VisualLine line)
+        {
+            context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), line.RenderedText);
+            line.RenderedText.Dispose();
+            line.RenderedText = null;
+        }
+
         private void RenderCaret(DrawingContext context)
         {
-            if (SelectionStart == SelectionEnd)
+
+            var backgroundColor = (((Control)TemplatedParent).GetValue(BackgroundProperty) as SolidColorBrush)?.Color;
+            var caretBrush = Brushes.Black;
+
+            if (backgroundColor.HasValue)
             {
-                var backgroundColor = (((Control)TemplatedParent).GetValue(BackgroundProperty) as SolidColorBrush)?.Color;
-                var caretBrush = Brushes.Black;
+                byte red = (byte)~(backgroundColor.Value.R);
+                byte green = (byte)~(backgroundColor.Value.G);
+                byte blue = (byte)~(backgroundColor.Value.B);
 
-                if (backgroundColor.HasValue)
+                caretBrush = new SolidColorBrush(Color.FromRgb(red, green, blue));
+            }
+
+            if (_caretBlink && CaretIndex != -1)
+            {
+                if (CaretIndex > TextDocument.TextLength)
                 {
-                    byte red = (byte)~(backgroundColor.Value.R);
-                    byte green = (byte)~(backgroundColor.Value.G);
-                    byte blue = (byte)~(backgroundColor.Value.B);
-
-                    caretBrush = new SolidColorBrush(Color.FromRgb(red, green, blue));
+                    CaretIndex = TextDocument.TextLength;
                 }
 
-                if (_caretBlink && CaretIndex != -1)
-                {
-                    if (CaretIndex > TextDocument.TextLength)
-                    {
-                        CaretIndex = TextDocument.TextLength;
-                    }
+                var charPos = VisualLineGeometryBuilder.GetTextViewPosition(this, CaretIndex);
+                var x = Math.Floor(charPos.X) + 0.5;
+                var y = Math.Floor(charPos.Y) + 0.5;
+                var b = Math.Ceiling(charPos.Bottom) - 0.5;
 
-                    var charPos = VisualLineGeometryBuilder.GetTextViewPosition(this, CaretIndex);
-                    var x = Math.Floor(charPos.X) + 0.5;
-                    var y = Math.Floor(charPos.Y) + 0.5;
-                    var b = Math.Ceiling(charPos.Bottom) - 0.5;
-
-                    context.DrawLine(
-                        new Pen(caretBrush, 1),
-                        new Point(charPos.TopLeft.X, charPos.TopLeft.Y),
-                        new Point(charPos.TopLeft.X, charPos.BottomLeft.Y));
-                }
+                context.DrawLine(
+                    new Pen(caretBrush, 1),
+                    new Point(charPos.TopLeft.X, charPos.TopLeft.Y),
+                    new Point(charPos.TopLeft.X, charPos.BottomLeft.Y));
             }
         }
 
@@ -653,19 +660,19 @@
                 _caretBlink = true;
                 _caretTimer.Stop();
                 _caretTimer.Start();
-                
+
                 InvalidateVisual();
 
                 if (caretIndex >= 0)
                 {
-                    var position = TextDocument.GetLocation(caretIndex);                    
+                    var position = TextDocument.GetLocation(caretIndex);
                     ScrollToLine(position.Line, 0.1);
                 }
             }
         }
 
-        public void ScrollToLine (int line, double borderSizePc = 0.5)
-        {                        
+        public void ScrollToLine(int line, double borderSizePc = 0.5)
+        {
             var offset = (line - (Viewport.Height * borderSizePc));
 
             if (offset >= 0)
@@ -737,7 +744,7 @@
             }
 
             return result;
-        }        
+        }
         #endregion
     }
 }

@@ -30,5 +30,10 @@
                 }
             }            
         }
+
+        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
+        {
+            
+        }
     }
 }

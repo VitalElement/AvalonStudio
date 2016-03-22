@@ -10,7 +10,7 @@
 
         public event EventHandler<EventArgs> DataChanged;
 
-        public void TransformLine(TextView textView, DrawingContext context, Rect lineBounds, VisualLine line)
+        public void TransformLine(TextView textView, VisualLine line)
         {
             if (line.RenderedText.Text.Contains("#include"))
             {

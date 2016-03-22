@@ -91,10 +91,7 @@
 
             this.intellisense = new IntellisenseViewModel(model, this);
 
-            documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
-
-            wordAtCaretHighlighter = new SelectedWordTextLineTransformer();
-            documentLineTransformers.Add(wordAtCaretHighlighter);
+            documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();                        
 
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
             backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
@@ -103,6 +100,8 @@
             backgroundRenderers.Add(DebugLineHighlighter);
 
             backgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
+            wordAtCaretHighlighter = new SelectedWordBackgroundRenderer();
+            backgroundRenderers.Add(wordAtCaretHighlighter);
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
             margins = new ObservableCollection<TextViewMargin>();            
@@ -110,7 +109,7 @@
         #endregion
 
         public SelectedDebugLineBackgroundRenderer DebugLineHighlighter;
-        private SelectedWordTextLineTransformer wordAtCaretHighlighter;
+        private SelectedWordBackgroundRenderer wordAtCaretHighlighter;
 
         #region Properties
         private string tabCharacter;
