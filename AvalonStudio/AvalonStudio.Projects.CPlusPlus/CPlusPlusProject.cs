@@ -59,7 +59,7 @@
 
             foreach (var file in files)
             {
-                var sourceFile = SourceFile.FromPath(project, folder, file);
+                var sourceFile = SourceFile.FromPath(project, folder, file.ToPlatformPath());
                 project.SourceFiles.InsertSorted(sourceFile);
                 folder.Items.Add(sourceFile);
             }
@@ -598,9 +598,9 @@
             Save();
         }
 
-        public ISourceFile FindFile(string path)
+        public ISourceFile FindFile(ISourceFile path)
         {
-            return SourceFiles.BinarySearch(f => f.File, path);
+            return SourceFiles.BinarySearch(f => f, path);
         }
 
         public void AddFile(ISourceFile file)

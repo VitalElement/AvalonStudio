@@ -3,7 +3,9 @@ using AvalonStudio.Debugging.GDB.OpenOCD;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Models.Tools.Debuggers.Local;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platform;
 using AvalonStudio.Projects;
+using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
@@ -281,14 +283,13 @@ namespace AvalonStudio.Debugging
             {                
                 Task.Factory.StartNew(() =>
                 {
-                    if (IsExecuting)
-                    {
-                        Debugger.Pause();                     
-                    }
-
                     PrepareToRun();
 
+                    ignoreEvents = true;                    
+
                     StopDebugSession();
+
+                    ignoreEvents = false;
                 });
             }
         }
@@ -531,14 +532,14 @@ namespace AvalonStudio.Debugging
                     IsUpdating = true;
 
                     if (e.Frame != null && e.Frame.File != null)
-                    {                        
-                        var normalizedPath = e.Frame.File.NormalizePath();
+                    {
+                        var normalizedPath = e.Frame.File.Replace("\\\\","\\").ToPlatformPath();
 
                         var file = WorkspaceViewModel.Instance.Editor.Model.ProjectFile;
 
                         if (file == null || file.File != normalizedPath)
                         {
-                            file = WorkspaceViewModel.Instance.SolutionExplorer.Model.FindFile(normalizedPath);
+                            file = WorkspaceViewModel.Instance.SolutionExplorer.Model.FindFile(SourceFile.FromPath(null, null, normalizedPath));
                         }
 
                         if (file != null)
@@ -550,7 +551,7 @@ namespace AvalonStudio.Debugging
                         }
                         else
                         {
-                            WorkspaceViewModel.Instance.Console.WriteLine("Unable to find file: " + e.Frame.File);
+                            WorkspaceViewModel.Instance.Console.WriteLine("Unable to find file: " + normalizedPath);
                         }
                     }
 

@@ -211,6 +211,19 @@
             }
         }
 
+        public static int CompareFilePath (this string path, string other)
+        {
+            switch (PlatformIdentifier)
+            {
+                case PlatformID.Win32NT:
+                    // TODO consider using directory info?                    
+                    return path.ToLower().CompareTo(other.ToLower());
+
+                default:
+                    return path.CompareTo(other);
+            }
+        }
+
         public static string ExecutionPath
         {
             get

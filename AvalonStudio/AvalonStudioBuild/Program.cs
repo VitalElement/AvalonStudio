@@ -214,19 +214,6 @@
             return 1;
         }
 
-        static string NormalizePath(string path)
-        {
-            if (path != null)
-            {
-                return Path.GetFullPath(new Uri(path).LocalPath)
-                           .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         static int RunRemove(RemoveOptions options)
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), options.File);

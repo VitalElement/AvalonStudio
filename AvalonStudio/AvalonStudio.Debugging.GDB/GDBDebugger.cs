@@ -1,9 +1,9 @@
 ﻿namespace AvalonStudio.Debugging.GDB
 {
     using AvalonStudio.Utils;
+    using Perspex.Controls;
     using Platform;
     using Projects;
-    using Projects.Standard;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -13,8 +13,6 @@
     using System.Threading.Tasks;
     using System.Xml.Serialization;
     using Toolchains;
-    using Toolchains.Standard;
-    using Perspex.Controls;
     using Toolchains.GCC;
 
     public class GDBDebugger : IDebugger
@@ -110,10 +108,7 @@
         {
             GDBResponse<List<VariableObjectChange>> response = null;
 
-            //SafelyExecuteCommand(() =>
-            //{
             response = new VarUpdateCommand().Execute(this);
-            //});
 
             if (response.Response == ResponseCode.Done)
             {
@@ -168,7 +163,7 @@
         }
 
         internal string SendCommand(Command command, Int32 timeout)
-        {            
+        {
             string result = string.Empty;
             transmitSemaphore.WaitOne();
             SetCommand(command);
@@ -194,31 +189,6 @@
 
         public void Initialise()
         {
-            //if (transmitDispatcher == null)
-            //{
-            //    Task.Factory.StartNew(() =>
-            //    {
-            //        //transmitDispatcher = Dispatcher.CurrentDispatcher;
-
-            //        //Dispatcher.Run();
-            //    });
-            //}
-
-            //if (receiveDispatcher == null)
-            //{
-            //    Task.Factory.StartNew(() =>
-            //    {
-            //        //receiveDispatcher = Dispatcher.CurrentDispatcher;
-
-            //        //Dispatcher.Run();
-            //    });
-            //}
-
-            //while (transmitDispatcher == null && receiveDispatcher == null)
-            //{
-            //    Thread.Yield();
-            //}
-
             responseReceived = new Semaphore(0, 1);
         }
 
@@ -226,8 +196,6 @@
         private Semaphore responseReceived;
         private string response = string.Empty;
         private Process process;
-        //private Dispatcher transmitDispatcher;
-        //private Dispatcher receiveDispatcher;
 
         private void ProcessOutput(string data)
         {
@@ -384,51 +352,47 @@
 
         private Semaphore waitForStop = new Semaphore(0, 1);
         private Semaphore transmitSemaphore = new Semaphore(1, 1);
-        //private Semaphore receiveSemaphore = new Semaphore(1, 1);
 
         public bool Pause()
         {
             bool result = true;
 
-            //transmitDispatcher.Invoke((Action)(() =>
+            if (currentState == DebuggerState.Paused)
             {
-                if (currentState == DebuggerState.Paused)
-                {
-                    result = false;
-                    return result;
-                }
+                result = false;
+                return result;
+            }
 
-                transmitSemaphore.WaitOne();
+            transmitSemaphore.WaitOne();
 
-                EventHandler<StopRecord> onStoppedHandler = (sender, e) =>
+            EventHandler<StopRecord> onStoppedHandler = (sender, e) =>
+            {
+                if (e != null)
                 {
-                    if (e != null)
+                    switch (e.Reason)
                     {
-                        switch (e.Reason)
-                        {
-                            case StopReason.SignalReceived:
-                                break;
+                        case StopReason.SignalReceived:
+                            break;
 
-                            default:
+                        default:
                                 // indicate that the debugger has been interrupted for a reason other than signalling, i.e. stepping range ended.
                                 result = false;
-                                break;
-                        }
+                            break;
                     }
+                }
 
-                    waitForStop.Release();
-                };
+                waitForStop.Release();
+            };
 
-                this.InternalStopped += onStoppedHandler;
+            this.InternalStopped += onStoppedHandler;
 
-                Platform.SendSignal(process.Id, Platform.Signum.SIGINT);
+            Platform.SendSignal(process.Id, Platform.Signum.SIGINT);
 
-                waitForStop.WaitOne();
+            waitForStop.WaitOne();
 
-                this.InternalStopped -= onStoppedHandler;
+            this.InternalStopped -= onStoppedHandler;
 
-                transmitSemaphore.Release();
-            }//));
+            transmitSemaphore.Release();
 
             return result;
         }
@@ -461,17 +425,11 @@
             new StepIntoCommand().Execute(this);
         }
 
-        public void Stop()
+        public virtual void Stop()
         {
-            //SafelyExecuteCommandWithoutResume(() =>
-            {
-                //transmitDispatcher.Invoke((Action)(() =>
-                {
-                    transmitSemaphore.WaitOne();
-                    input.WriteLine("-gdb-exit");
-                    transmitSemaphore.Release();
-                }//));
-            }//);
+            transmitSemaphore.WaitOne();
+            input.WriteLine("-gdb-exit");
+            transmitSemaphore.Release();
         }
 
         public void Close()
@@ -500,7 +458,7 @@
             // This information should be part of this extension... or configurable internally?
             // This maybe indicates that debuggers are part of toolchain?
 
-            if(toolchain is GCCToolchain)
+            if (toolchain is GCCToolchain)
             {
                 startInfo.FileName = (toolchain as GCCToolchain).GDBExecutable;
             }
@@ -537,7 +495,6 @@
 
             while (!Platform.AttachConsole(process.Id))
             {
-                //Console.WriteLine(Marshal.GetLastWin32Error());
                 Thread.Sleep(10);
             }
 
@@ -799,10 +756,7 @@
 
         public void DeleteWatch(string id)
         {
-            //SafelyExecuteCommand(() =>
-            //{
             new VarDeleteCommand(id).Execute(this);
-            //});
         }
 
         public virtual void ProvisionSettings(IProject project)

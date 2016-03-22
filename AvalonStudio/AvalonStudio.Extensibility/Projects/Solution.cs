@@ -165,13 +165,13 @@
             return result;
         }
 
-        public ISourceFile FindFile(string path)
+        public ISourceFile FindFile(ISourceFile file)
         {
-            ISourceFile result = null;
+            ISourceFile result = null;                
 
             foreach (var project in Projects)
             {
-                result = project.FindFile(path);
+                result = project.FindFile(file);
 
                 if (result != null)
                 {
