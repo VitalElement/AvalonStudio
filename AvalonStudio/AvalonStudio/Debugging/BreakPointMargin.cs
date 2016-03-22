@@ -29,12 +29,12 @@
 
             if (previewPointVisible)
             {
-                context.FillRectangle(Brush.Parse("#E67466"), new Rect(Bounds.Size.Width / 4, textInfo.LineHeight * (previewLine - textView.VisualLines.First().DocumentLine.LineNumber) + Bounds.Size.Width / 4, Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
+                context.FillRectangle(Brush.Parse("#E67466"), new Rect((Bounds.Size.Width / 4) - 1, textInfo.LineHeight * (previewLine - textView.VisualLines.First().DocumentLine.LineNumber) + Bounds.Size.Width / 4, Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
             }
 
             foreach (var breakPoint in manager.Where(bp => bp.File == textView.TextDocument.FileName))
             {
-                context.FillRectangle(Brush.Parse("#FF3737"), new Rect(Bounds.Size.Width / 4, textInfo.LineHeight * (breakPoint.Line - textView.VisualLines.First().DocumentLine.LineNumber) + Bounds.Size.Width / 4, Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
+                context.FillRectangle(Brush.Parse("#FF3737"), new Rect((Bounds.Size.Width / 4)-1, textInfo.LineHeight * (breakPoint.Line - textView.VisualLines.First().DocumentLine.LineNumber) + Bounds.Size.Width / 4, Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
             }
         }
 
