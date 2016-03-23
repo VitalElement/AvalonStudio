@@ -194,6 +194,11 @@
 
             console.WriteLine();
 
+            if(terminateBuild)
+            {
+                result = false;
+            }
+
             if (result)
             {                
                 console.WriteLine("Build Successful");
