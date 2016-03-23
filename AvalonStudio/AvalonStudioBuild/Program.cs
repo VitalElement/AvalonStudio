@@ -134,12 +134,12 @@
                 if (test.Pass)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    console.Write("\x1b[32m");
+                    console.Write("\x1b[32;1m");
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    console.Write("\x1b[31m");
+                    console.Write("\x1b[31;1m");
                 }
 
                 console.WriteLine(string.Format("Running Test: [{0}], [{1}]", test.Name, test.Pass ? "Passed" : "Failed"));
