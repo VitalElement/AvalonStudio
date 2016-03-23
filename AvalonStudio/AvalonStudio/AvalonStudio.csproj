@@ -176,6 +176,7 @@
     <Compile Include="Actions\PopupAction.cs" />
     <Compile Include="App.paml.cs" />
     <Compile Include="Behaviours\PointerHoverBehaviour.cs" />
+    <Compile Include="Behaviours\ToolTipBehaviour.cs" />
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="Controls\NewItemDialog.paml.cs">
       <DependentUpon>NewItemDialog.paml</DependentUpon>
