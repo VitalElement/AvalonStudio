@@ -33,9 +33,7 @@
         {
             return string.Format("{0}.{1}", name, ProjectExtension);
         }
-
-        public TestType TestProjectType { get; set; }
-
+        
         [JsonIgnore]
         public bool IsBuilding { get; set; }
 
@@ -730,6 +728,11 @@
 
         [JsonIgnore]
         public IProjectFolder Parent { get; set; }
+
+        public bool ShouldSerializeHidden()
+        {
+            return Hidden;
+        }
 
         public bool Hidden { get; set; }
     }
