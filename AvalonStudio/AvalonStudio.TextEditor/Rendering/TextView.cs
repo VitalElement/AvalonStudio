@@ -120,6 +120,7 @@
 
             TextDocumentProperty.Changed.Subscribe((o) =>
             {
+                VisualLines.Clear();
                 invalidateVisualLines = true;
 
                 TextDocument.TextChanged += (sender, e) =>
@@ -722,8 +723,7 @@
                 if (line > 0 && column > 0 && line < TextDocument.LineCount)
                 {
                     if (line < VisualLines.Count)
-                    {
-                        Console.WriteLine("Why are we asking via visual lines here without verifying if visualline.line is within text document range?");
+                    {                        
                         result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
                     }
                 }
