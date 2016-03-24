@@ -27,10 +27,6 @@
 
         <te:TextEditor.Content>
           <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
-
-          <Popup IsOpen="{Binding IsOpen}">
-            
-          </Popup>
         </te:TextEditor.Content>
 
       </te:TextEditor>

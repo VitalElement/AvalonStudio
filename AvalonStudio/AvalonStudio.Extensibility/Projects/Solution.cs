@@ -139,7 +139,7 @@
         public void RemoveProject(IProject project)
         {
             Projects.Remove(project);
-            ProjectReferences.Remove(CurrentDirectory.MakeRelativePath(project.Location));
+            ProjectReferences.Remove(CurrentDirectory.MakeRelativePath(project.Location).ToAvalonPath());
         }
 
         public void Save()
