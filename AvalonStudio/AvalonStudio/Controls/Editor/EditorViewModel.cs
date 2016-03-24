@@ -236,13 +236,13 @@
             {
                 switch (symbol.Kind)
                 {
-                    //case CursorKind.CompoundStatement:
-                    //case CursorKind.NoDeclarationFound:
-                    //case CursorKind.NotImplemented:
-                    //    break;
+                    case CursorKind.CompoundStatement:
+                    case CursorKind.NoDeclarationFound:
+                    case CursorKind.NotImplemented:
+                        break;
 
-                    default:
-                        HoverProbe = new SymbolViewModel(symbol);
+                    default:                        
+                        HoverProbe = new SymbolViewModel(symbol);                        
                         result = true;
                         break;
                 }
