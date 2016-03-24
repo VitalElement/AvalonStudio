@@ -39,12 +39,7 @@
             textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
             textChangedDelayTimer.Stop();
-
-            mouseHoverDelayTimer = new DispatcherTimer();
-            mouseHoverDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-            mouseHoverDelayTimer.Tick += MouseHoverDelayTimer_Tick;
-            mouseHoverDelayTimer.Stop();
-
+            
             var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
                .Select(x => !x);
 
@@ -653,15 +648,9 @@
         private int currentMouseOffset = -1;
         protected override void OnPointerMoved(PointerEventArgs e)
         {
-            var point = e.GetPosition(textView.TextSurface);
+            var point = e.GetPosition(textView.TextSurface);                        
             
-            Console.WriteLine(point.ToString());
-            // TODO remove this.
             currentMouseOffset = textView.GetOffsetFromPoint(point);
-
-            // TODO this is causing more trouble than its worth needs to be re-written using a hover mechanism / behaviour built into perspex.
-            //mouseHoverDelayTimer.Stop();
-            //mouseHoverDelayTimer.Start();            
 
             if (e.Device.Captured == textView)
             {
