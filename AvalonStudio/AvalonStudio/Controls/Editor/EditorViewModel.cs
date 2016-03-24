@@ -217,7 +217,7 @@
                 }
             }
         }
-        
+
 
         private SymbolViewModel hoverProbe;
         public SymbolViewModel HoverProbe
@@ -225,7 +225,11 @@
             get { return hoverProbe; }
             set { this.RaiseAndSetIfChanged(ref hoverProbe, value); }
         }
-
+        /// <summary>
+        /// Updates the contents of the HoverProbe (Code tooltip) to display content for specified offset.
+        /// </summary>
+        /// <param name="offset">the offset inside text document to retreive data for.</param>
+        /// <returns>true if data was found.</returns>
         public bool UpdateHoverProbe (int offset)
         {
             bool result = false;            
@@ -242,7 +246,7 @@
                         break;
 
                     default:                        
-                        HoverProbe = new SymbolViewModel(symbol);                        
+                        HoverProbe = new SymbolViewModel(symbol);
                         result = true;
                         break;
                 }
