@@ -217,13 +217,7 @@
                 }
             }
         }
-
-        private bool isHoverProbeOpen;
-        public bool IsHoverProbeOpen
-        {
-            get { return isHoverProbeOpen; }
-            set { this.RaiseAndSetIfChanged(ref isHoverProbeOpen, value); }
-        }
+        
 
         private SymbolViewModel hoverProbe;
         public SymbolViewModel HoverProbe
@@ -232,45 +226,31 @@
             set { this.RaiseAndSetIfChanged(ref hoverProbe, value); }
         }
 
-        public void OnPointerHover ()
+        public bool UpdateHoverProbe (int offset)
         {
-            var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, MouseCursorOffset);
+            bool result = false;            
+
+            var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
 
             if (symbol != null)
             {
-                if (IsHoverProbeOpen && hoverProbe.Model != symbol)
-                {
-                    IsHoverProbeOpen = false;
-                }
-
                 switch (symbol.Kind)
                 {
-                    case CursorKind.CompoundStatement:
-                    case CursorKind.NoDeclarationFound:
-                    case CursorKind.NotImplemented:
-                        break;
+                    //case CursorKind.CompoundStatement:
+                    //case CursorKind.NoDeclarationFound:
+                    //case CursorKind.NotImplemented:
+                    //    break;
 
                     default:
                         HoverProbe = new SymbolViewModel(symbol);
-                        IsHoverProbeOpen = true;
+                        result = true;
                         break;
                 }
             }
-        }
-        
-        private void InvalidateCursorUnderMouse()
-        {
-            
-        }
 
-        private int mouseCursorOffset;
-        public int MouseCursorOffset
-        {
-            get { return mouseCursorOffset; }
-            set { this.RaiseAndSetIfChanged(ref mouseCursorOffset, value); InvalidateCursorUnderMouse(); }
+            return result;
         }
-
-
+      
         private ObservableCollection<SyntaxHighlightingData> highlightingData;
         public ObservableCollection<SyntaxHighlightingData> HighlightingData
         {
