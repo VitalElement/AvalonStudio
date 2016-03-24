@@ -30,13 +30,11 @@
             };            
 
             ContentProperty.Changed.Subscribe((o) =>
-            {
-                ((ISetLogicalParent)popup).SetParent(AssociatedObject);                
+            {                                      
                 popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor).TextView;
-                popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };
-                
+                popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };                
             });
-        }
+        }        
 
         public static readonly PerspexProperty ContentProperty = PerspexProperty.Register<PopupBehavior, Control>(nameof(Content));
 
@@ -51,13 +49,22 @@
         {
             AssociatedObject.KeyDown += AssociatedObject_KeyDown;
             AssociatedObject.PointerMoved += AssociatedObject_PointerMoved;
+            AssociatedObject.AttachedToLogicalTree += AssociatedObject_AttachedToLogicalTree;
+        }
+
+        private void AssociatedObject_AttachedToLogicalTree(object sender, Perspex.LogicalTree.LogicalTreeAttachmentEventArgs e)
+        {
+            ((ISetLogicalParent)popup).SetParent(AssociatedObject);
         }
 
         protected override void OnDetaching()
         {
             AssociatedObject.KeyDown -= AssociatedObject_KeyDown;
             AssociatedObject.PointerMoved -= AssociatedObject_PointerMoved;
+            AssociatedObject.AttachedToLogicalTree -= AssociatedObject_AttachedToLogicalTree;
         }
+
+        
 
         public static double GetDistanceBetweenPoints(Point p, Point q)
         {
