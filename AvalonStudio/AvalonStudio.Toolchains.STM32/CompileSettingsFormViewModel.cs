@@ -39,6 +39,8 @@
 
             optimizationLevelSelectedIndex = (int)settings.Optimization;
             optimizationPreferenceSelectedIndex = (int)settings.OptimizationPreference;
+            cppLanguageStandardSelectedIndex = (int)settings.CppLanguageStandard;
+            cLanguageStandardSelectedIndex = (int)settings.CLanguageStandard;
             fpuSelectedIndex = (int)settings.Fpu;
             debugSymbols = settings.DebugInformation;
             rtti = settings.Rtti;
@@ -96,6 +98,7 @@
 
                 if (newInclude == string.Empty)
                 {
+                    // TODO Platform specific?
                     newInclude = "\\";
                 }
 
@@ -125,6 +128,8 @@
         {
             settings.Defines = defines.ToList();
             settings.CustomFlags = miscOptions;
+            settings.CppLanguageStandard = (CppLanguageStandard)cppLanguageStandardSelectedIndex;
+            settings.CLanguageStandard = (CLanguageStandard)cLanguageStandardSelectedIndex;
             //base.Model.CompilerSettings.Defines = defines.ToList();
             //var config = project.SelectedConfiguration;
 
@@ -148,6 +153,44 @@
         public ReactiveCommand<object> RemoveIncludePathCommand { get; private set; }
         public ReactiveCommand<object> AddDefineCommand { get; private set; }
         public ReactiveCommand<object> RemoveDefineCommand { get; private set; }
+
+        public string[] CLanguageStandards
+        {
+            get
+            {
+                return Enum.GetNames(typeof(CLanguageStandard));
+            }
+        }
+
+        private int cLanguageStandardSelectedIndex;
+        public int CLanguageStandardSelectedIndex
+        {
+            get { return cLanguageStandardSelectedIndex; }
+            set
+            {
+                cLanguageStandardSelectedIndex = value;
+                UpdateCompileString();
+            }
+        }
+
+        public string[] CppLanguageStandards
+        {
+            get
+            {
+                return Enum.GetNames(typeof(CppLanguageStandard));
+            }
+        }
+
+        private int cppLanguageStandardSelectedIndex;
+        public int CppLanguageStandardSelectedIndex
+        {
+            get { return cppLanguageStandardSelectedIndex; }
+            set
+            {
+                cppLanguageStandardSelectedIndex = value;
+                UpdateCompileString();
+            }
+        }
 
         public string[] FpuOptions
         {
