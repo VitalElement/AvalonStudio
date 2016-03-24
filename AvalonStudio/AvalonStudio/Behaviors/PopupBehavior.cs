@@ -24,14 +24,14 @@
             popup = new Popup
             {
                 PlacementMode = PlacementMode.Pointer,
-                StaysOpen = false,
-                Child = Content,
+                StaysOpen = false,                
             };            
 
             ContentProperty.Changed.Subscribe((o) =>
             {
-                popup.PlacementTarget = AssociatedObject;
-                popup.Child = o.NewValue as Control;
+                ((ISetLogicalParent)popup).SetParent(AssociatedObject);
+                popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor).TextView;
+                popup.Child = Content = o.NewValue as Control;
             });
         }
 
@@ -80,7 +80,7 @@
             }
             else
             {
-                lastPoint = e.GetPosition(AssociatedObject);
+                lastPoint = e.GetPosition((AssociatedObject as TextEditor.TextEditor).TextView);
                 timer.Stop();
                 timer.Start();                
             }
