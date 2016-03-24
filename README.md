@@ -5,6 +5,7 @@
 Cross platform IDE on Perspex for Perspex
 
 We are now rapidly approaching the first BETA, here is a sneak preview.
+[![Demo](http://share.gifyoutube.com/KzB6Gb.gif)](https://www.youtube.com/watch?v=zVGwwkJLFmY&feature=youtu.be)
 ![](https://files.gitter.im/VitalElement/AvalonStudio/yVkV/image.png)
 
 
