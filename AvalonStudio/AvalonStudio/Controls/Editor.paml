@@ -16,22 +16,24 @@
                      AcceptsReturn="true" AcceptsTab="true" TabCharacter="{Binding TabCharacter}"
                      CaretLocationInTextView="{Binding CaretLocation}" SelectedWord="{Binding WordAtCaret}"
                      LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}" Margins="{Binding Margins}"
-                     MouseCursorOffset="{Binding MouseCursorOffset, Mode=TwoWay}"                                              >
-        <i:Interaction.Behaviors>
-          <ia:EventTriggerBehavior EventName="PointerMoved" SourceObject="{Binding #editor}">
-            <actions:PopupAction />
-          </ia:EventTriggerBehavior>
-        </i:Interaction.Behaviors>
-        <te:TextEditor.Content>
-          <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
+                     MouseCursorOffset="{Binding MouseCursorOffset, Mode=TwoWay}">
 
+        <i:Interaction.Behaviors>        
+          <behaviours:CodeInformationToolTipBehavior>
+            <Grid Background="Red" Height="200" Width="400">
+              <cont:HoverProbe DataContext="{Binding HoverProbe}" />
+            </Grid>
+          </behaviours:CodeInformationToolTipBehavior>
+          
+        </i:Interaction.Behaviors>        
+        
+        <te:TextEditor.Content>
+        
+        <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
+                  
         </te:TextEditor.Content>
         
       </te:TextEditor>
-
-      <Popup PlacementMode="Pointer" IsOpen="{Binding IsHoverProbeOpen}" StaysOpen="false">
-        <cont:HoverProbe DataContext="{Binding HoverProbe}" />
-      </Popup>
     </Grid>
   </Border>
 </UserControl>

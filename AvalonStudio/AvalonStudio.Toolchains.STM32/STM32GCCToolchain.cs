@@ -104,7 +104,7 @@ namespace AvalonStudio.Toolchains.STM32
 
                 if (file.Language == Language.Cpp)
                 {
-                    fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
+                    fileArguments = "-x c++ -fno-use-cxa-atexit";
                 }
 
                 startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile);
@@ -428,6 +428,53 @@ namespace AvalonStudio.Toolchains.STM32
             if (settings.CompileSettings.DebugInformation)
             {
                 result += "-g ";
+            }
+
+            if (file == null || file.Language == Language.Cpp)
+            {
+                switch (settings.CompileSettings.CppLanguageStandard)
+                {
+                    case CppLanguageStandard.Cpp98:
+                        result += "-std=c++98 ";
+                        break;
+
+                    case CppLanguageStandard.Cpp03:
+                        result += "-std=c++03 ";
+                        break;
+
+                    case CppLanguageStandard.Cpp11:
+                        result += "-std=c++11 ";
+                        break;
+
+                    case CppLanguageStandard.Cpp14:
+                        result += "-std=c++14 ";
+                        break;
+
+                    case CppLanguageStandard.Cpp17:
+                        result += "-std=c++17 ";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            if(file == null || file.Language == Language.C)
+            {
+                switch(settings.CompileSettings.CLanguageStandard)
+                {
+                    case CLanguageStandard.C89:
+                        result += "-std=c89 ";
+                        break;
+
+                    case CLanguageStandard.C99:
+                        result += "-std=c99 ";
+                        break;
+
+                    case CLanguageStandard.C11:
+                        result += "-std=c11 ";
+                        break;
+                }
             }
 
 

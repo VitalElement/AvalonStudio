@@ -29,6 +29,24 @@
         Hard
     }
 
+    public enum CppLanguageStandard
+    {
+        Default,
+        Cpp98,
+        Cpp03,
+        Cpp11,
+        Cpp14,
+        Cpp17
+    }   
+    
+    public enum CLanguageStandard
+    {
+        Default,
+        C89,
+        C99,
+        C11,
+    } 
+
     public class CompileSettings
     {
         public CompileSettings()
@@ -44,7 +62,9 @@
         public bool Rtti { get; set; }
         public bool Exceptions { get; set; }
         public string CustomFlags { get; set; }
-        
+
+        public CLanguageStandard CLanguageStandard { get; set; }
+        public CppLanguageStandard CppLanguageStandard { get; set; }
         public OptimizationLevel Optimization { get; set; }
         public OptimizationPreference OptimizationPreference { get; set; }
         public FPUSupport Fpu { get; set; }

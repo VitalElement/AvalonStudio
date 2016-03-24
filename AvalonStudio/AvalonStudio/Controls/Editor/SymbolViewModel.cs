@@ -50,7 +50,7 @@
         public SymbolViewModel(Symbol model) : base(model)
         {
             Arguments = new ObservableCollection<ParameterSymbolViewModel>();
-
+            IsVisible = true;
 
             switch (model.Kind)
             {
