@@ -2,28 +2,21 @@
 {
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Utils;
+    using Debugging;
+    using Extensibility;
+    using Extensibility.Menus;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
+    using Perspex.Controls;
+    using Platform;
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Dynamic;
     using System.IO;
     using System.Linq;
-    using Toolchains;
-    using Extensibility.Menus;
-    using Toolchains.Llilum;
-    using Extensibility;
-    using Perspex.Controls;
-    using Newtonsoft.Json.Linq;
-    using Newtonsoft.Json.Converters;
-    using System.Dynamic;
-    using Platform;
-    using System.Collections.ObjectModel;
-    using Debugging;
     using TestFrameworks;
-    public enum TestType
-    {
-        None,
-        Unit
-    }
+    using Toolchains;
 
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {
@@ -449,7 +442,7 @@
             return Defines.Count > 0;
         }
 
-        public IList<Definition> Defines { get; private set; }
+        public IList<Definition> Defines { get; private set; }        
 
 
         [JsonIgnore]
