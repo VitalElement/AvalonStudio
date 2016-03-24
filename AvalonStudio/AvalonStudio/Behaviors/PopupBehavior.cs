@@ -2,8 +2,10 @@
 {
     using Perspex;
     using Perspex.Controls;
+    using Perspex.Controls.Presenters;
     using Perspex.Controls.Primitives;
     using Perspex.Input;
+    using Perspex.Media;
     using Perspex.Metadata;
     using Perspex.Threading;
     using Perspex.Xaml.Interactivity;
@@ -18,20 +20,21 @@
         public PopupBehavior()
         {
             timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
             timer.Tick += Timer_Tick;
 
             popup = new Popup
             {
                 PlacementMode = PlacementMode.Pointer,
-                StaysOpen = false,                
+                StaysOpen = false,                                                
             };            
 
             ContentProperty.Changed.Subscribe((o) =>
             {
-                ((ISetLogicalParent)popup).SetParent(AssociatedObject);
+                ((ISetLogicalParent)popup).SetParent(AssociatedObject);                
                 popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor).TextView;
-                popup.Child = Content = o.NewValue as Control;
+                popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };
+                
             });
         }
 
@@ -46,13 +49,13 @@
 
         protected override void OnAttached()
         {
-            AssociatedObject.PointerLeave += AssociatedObject_PointerLeave;
+            AssociatedObject.KeyDown += AssociatedObject_KeyDown;
             AssociatedObject.PointerMoved += AssociatedObject_PointerMoved;
         }
 
         protected override void OnDetaching()
         {
-            AssociatedObject.PointerLeave -= AssociatedObject_PointerLeave;
+            AssociatedObject.KeyDown -= AssociatedObject_KeyDown;
             AssociatedObject.PointerMoved -= AssociatedObject_PointerMoved;
         }
 
@@ -64,40 +67,36 @@
             return distance;
         }
 
+        private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
+        {
+            popup.Close();
+        }
+
         private void AssociatedObject_PointerMoved(object sender, PointerEventArgs e)
         {
             if (popup.IsOpen)
             {
-                if (!popup.IsPointerOver)
-                {
-                    var distance = GetDistanceBetweenPoints(e.GetPosition(AssociatedObject), lastPoint);
+                var distance = GetDistanceBetweenPoints(e.GetPosition(AssociatedObject), lastPoint);
 
-                    if(distance > 28)
-                    {
-                        popup.Close();
-                    }
+                if (distance > 14)
+                {
+                    popup.Close();
                 }
             }
             else
             {
-                lastPoint = e.GetPosition((AssociatedObject as TextEditor.TextEditor).TextView);
-                timer.Stop();
-                timer.Start();                
+                var newPoint = e.GetPosition((AssociatedObject as TextEditor.TextEditor).TextView.TextSurface);
+
+                if (newPoint != lastPoint)
+                {
+                    timer.Stop();
+                    timer.Start();
+                }
+
+                lastPoint = newPoint;
             }
         }
-
-        private void AssociatedObject_PointerLeave(object sender, PointerEventArgs e)
-        {
-            if (popup.IsOpen)
-            {
-                popup.Close();
-            }
-        }
-
-        private void AssociatedObject_PointerEnter(object sender, PointerEventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
+        
 
         private void Timer_Tick(object sender, EventArgs e)
         {
@@ -105,7 +104,10 @@
 
             if (OnBeforePopupOpen())
             {
-                popup.Open();
+                if (AssociatedObject.IsPointerOver)
+                {
+                    popup.Open();
+                }
             }
         }
 

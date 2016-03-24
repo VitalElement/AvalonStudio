@@ -6,7 +6,7 @@
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
              Foreground="WhiteSmoke">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
-    <Grid RowDefinitions="25,*">      
+    <Grid RowDefinitions="25,*">
       <TextBlock Text="{Binding Title}" Margin="0,0,0,0" TextAlignment="Center" />
       <te:TextEditor Name="editor" Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}"
                      FontFamily="{Binding FontFamily}" FontSize="14" Foreground="#D4D4D4" BorderThickness="0"
@@ -18,9 +18,10 @@
                      LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}" Margins="{Binding Margins}"
                      MouseCursorOffset="{Binding MouseCursorOffset, Mode=TwoWay}">
 
-        <i:Interaction.Behaviors>        
+        <i:Interaction.Behaviors>
           <behaviours:CodeInformationToolTipBehavior>
             <Grid Background="#424245" DataContext="{Binding HoverProbe}">
+
               <Grid Margin="5">
                 <Grid>
                   <StackPanel Margin="4">
@@ -33,7 +34,7 @@
                       <TextBlock Text="{Binding Spelling}"/>
                       <TextBlock Text="{Binding EnumValue}" Foreground="#FFCEE4AE"/>
                       <TextBlock Margin="5 0 2 0" Text="(" IsVisible="{Binding ArgumentsVisibility}"/>
-                      <ListBox Items="{Binding Arguments}" BorderThickness="0">
+                      <ListBox BorderThickness="0">
                         <ListBox.ItemsPanel>
                           <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal" Margin="0" />
@@ -49,6 +50,11 @@
                             </StackPanel>
                           </DataTemplate>
                         </ListBox.DataTemplates>
+                        <ListBox.Items>
+                          <ListBoxItem>
+                            <TextBlock Text="Test" />
+                          </ListBoxItem>
+                        </ListBox.Items>
                       </ListBox>
                       <TextBlock Margin="2 0 0 0" Text=")" IsVisible="{Binding ArgumentsVisibility}"/>
                     </StackPanel>
@@ -58,15 +64,17 @@
               </Grid>
             </Grid>
           </behaviours:CodeInformationToolTipBehavior>
-          
-        </i:Interaction.Behaviors>        
-        
+
+        </i:Interaction.Behaviors>
+
         <te:TextEditor.Content>
-        
-        <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
-                  
+          <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
+
+          <Popup IsOpen="{Binding IsOpen}">
+            
+          </Popup>
         </te:TextEditor.Content>
-        
+
       </te:TextEditor>
     </Grid>
   </Border>
