@@ -151,6 +151,14 @@
             }
         }
 
+        private bool debugControlsVisible;
+        public bool DebugControlsVisible
+        {
+            get { return debugControlsVisible; }
+            set { this.RaiseAndSetIfChanged(ref debugControlsVisible, value); }
+        }
+
+
         public DebugManager DebugManager { get; private set; }
 
         public MainMenuViewModel MainMenu { get; private set; }
@@ -178,11 +186,13 @@
                 switch(value)
                 {
                     case Perspective.Editor:
+                        DebugControlsVisible = false;
                         break;
 
                     case Perspective.Debug:
                         // TODO close intellisense, and tooltips.
                         // disable documents, get rid of error list, solution explorer, etc.    (isreadonly)   
+                        DebugControlsVisible = true;
                         break;
                 }
             }
