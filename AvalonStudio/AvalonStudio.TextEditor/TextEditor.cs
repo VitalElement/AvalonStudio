@@ -48,10 +48,10 @@
             var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
                .Select(x => !x);
 
-            Bind(
-                ScrollViewer.CanScrollHorizontallyProperty,
-                canScrollHorizontally,
-                BindingPriority.Style);
+            //Bind(
+            //    ScrollViewer.CanScrollHorizontallyProperty,
+            //    canScrollHorizontally,
+            //    BindingPriority.Style);
 
             var horizontalScrollBarVisibility = this.GetObservable(AcceptsReturnProperty)
                 .Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
