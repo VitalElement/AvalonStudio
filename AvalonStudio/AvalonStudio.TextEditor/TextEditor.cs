@@ -654,6 +654,8 @@
         protected override void OnPointerMoved(PointerEventArgs e)
         {
             var point = e.GetPosition(textView.TextSurface);
+            
+            Console.WriteLine(point.ToString());
             // TODO remove this.
             currentMouseOffset = textView.GetOffsetFromPoint(point);
 
