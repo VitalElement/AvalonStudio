@@ -74,14 +74,12 @@
                 BeginResizeDrag(WindowEdge.SouthEast);
             }
             else if (titleBar.IsPointerOver)
-            {
-                WorkspaceViewModel.Instance.Console.WriteLine("MD");
+            {                
                 mouseDown = true;
                 mouseDownPosition = e.GetPosition(this);
             }
             else
-            {
-                WorkspaceViewModel.Instance.Console.WriteLine("MU");
+            {                
                 mouseDown = false;
             }
             
@@ -93,8 +91,7 @@
         private Point mouseDownPosition;
         
         protected override void OnPointerReleased(PointerEventArgs e)
-        {
-            WorkspaceViewModel.Instance.Console.WriteLine("MU");
+        {            
             mouseDown = false;
             base.OnPointerReleased(e);
         }        
