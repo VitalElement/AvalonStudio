@@ -1,11 +1,20 @@
 ﻿namespace AvalonStudio.Utils
 {
+    using Perspex;
     using System;
     using System.Collections.Generic;
     using System.IO;
 
     public static class GeneralExtensions
     {
+        public static double DistanceTo(this Point p, Point q)
+        {
+            double a = p.X - q.X;
+            double b = p.Y - q.Y;
+            double distance = Math.Sqrt(a * a + b * b);
+            return distance;
+        }
+
         public static T BinarySearch<T, TKey>(this IList<T> list, Func<T, TKey> keySelector, TKey key)
             where TKey : IComparable<TKey>
         {

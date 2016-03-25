@@ -4,6 +4,20 @@
   <Controls:MetroWindow.TitleBarContent>
     <Controls:MainMenu DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
   </Controls:MetroWindow.TitleBarContent>
+  <Controls:MetroWindow.Styles>
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="#274452"/>
+    </Style>
+    <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
+      <Setter Property="Background" Value="#274452"/>
+    </Style>
+    <Style Selector="DropDownItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="#274452"/>
+    </Style>
+    <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#274452"/>
+    </Style>    
+  </Controls:MetroWindow.Styles>
   <Grid RowDefinitions="0,*,350,25" ColumnDefinitions="220, *, *, 300">
     <Grid Grid.ColumnSpan="3">
       <Controls:ToolBar />
