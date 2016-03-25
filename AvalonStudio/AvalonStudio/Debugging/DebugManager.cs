@@ -341,7 +341,10 @@ namespace AvalonStudio.Debugging
                 //}
             }//);
 
-            WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Editor;
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Editor;
+            });
         }
         #region Commands
         public ReactiveCommand<object> StartDebuggingCommand { get; private set; }
@@ -471,7 +474,10 @@ namespace AvalonStudio.Debugging
 
                     if (Debugger.Start(project.ToolChain, WorkspaceViewModel.Instance.Console, project))
                     {
-                        WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Debug;
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Debug;
+                        });
 
                         BreakPointManager.GoLive();
 
