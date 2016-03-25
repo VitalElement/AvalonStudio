@@ -4,44 +4,42 @@
   <Controls:MetroWindow.TitleBarContent>
     <Controls:MainMenu DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
   </Controls:MetroWindow.TitleBarContent>
-  <Grid RowDefinitions="0,*,350,25" ColumnDefinitions="220, *, *, 300">    
+  <Grid RowDefinitions="0,*,350,25" ColumnDefinitions="220, *, *, 300">
     <Grid Grid.ColumnSpan="3">
       <Controls:ToolBar />
     </Grid>
 
-    <Grid Grid.RowSpan="2" Margin="1 1 2 2">
-      <Controls:Registers DataContext="{Binding DebugManager.Registers}" />
-    </Grid>
-    
-    <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="1 2 2 1">
-      <Controls:Editor DataContext="{Binding Editor}" />
+    <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="1 2 2 1">
+      <DockPanel>
+        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Left" >
+          <Controls:Registers DataContext="{Binding DebugManager.Registers}" />
+        </Grid>
+        <Controls:Editor DataContext="{Binding Editor}" DockPanel.Dock="Right"  />
+      </DockPanel>
     </Grid>
 
-    <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="1 1 2 2">
-      <TabControl TabStripPlacement="Bottom">
-        <TabItem Header="Console">
+    <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="1 1 2 2">
+      <DockPanel>                                  
+          <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right" >
+            <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400"  />
+          </Grid>
+          <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
+            <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Width="400" />
+          </Grid>
+          <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
+            <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
+          </Grid>        
+        <Grid DockPanel.Dock="Left" >
           <Controls:Console DataContext="{Binding Console}" />
-        </TabItem>
-
-        <TabItem Header="Error List">
-          <Controls:ErrorList DataContext="{Binding ErrorList}" />
-        </TabItem>
-      </TabControl>      
-    </Grid>
-
-    <Grid Grid.Row="2" Grid.Column="2" Margin="1 1 2 2" >
-      <StackPanel Orientation="Horizontal" Gap="4">        
-        <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400" />
-        <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Width="400" />
-        <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
-      </StackPanel>          
+        </Grid>        
+      </DockPanel>
     </Grid>
 
     <Grid Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Margin="2 2 1 2">
       <Controls:SolutionExplorer DataContext="{Binding SolutionExplorer}" />
     </Grid>
 
-    <Grid Grid.Row="3" Grid.ColumnSpan="3">
+    <Grid Grid.Row="3" Grid.ColumnSpan="4">
       <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
