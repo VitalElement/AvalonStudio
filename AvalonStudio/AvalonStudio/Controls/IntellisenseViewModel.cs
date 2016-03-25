@@ -374,12 +374,14 @@
 
                     lock (intellisenseLock)
                     {
-                        filteredResults = newSelectedCompletions = filteredResults.Where((s) => s.Title.StartsWith(currentFilter));   // try find exact match case sensitive
+                        newSelectedCompletions = filteredResults.Where((s) => s.Title.StartsWith(currentFilter));   // try find exact match case sensitive
 
                         if (newSelectedCompletions.Count() == 0)
                         {
                             newSelectedCompletions = filteredResults.Where((s) => s.Title.ToLower().StartsWith(currentFilter.ToLower()));   // try find non-case sensitve match
                         }
+
+                        filteredResults = newSelectedCompletions;
                     }
 
                     if (newSelectedCompletions.Count() == 0)

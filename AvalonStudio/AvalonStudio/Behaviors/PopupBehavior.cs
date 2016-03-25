@@ -10,6 +10,7 @@
     using Perspex.Threading;
     using Perspex.Xaml.Interactivity;
     using System;
+    using Utils;
 
     public class PopupBehavior : Behavior<Control>
     {
@@ -64,15 +65,7 @@
             AssociatedObject.AttachedToLogicalTree -= AssociatedObject_AttachedToLogicalTree;
         }
 
-        
-
-        public static double GetDistanceBetweenPoints(Point p, Point q)
-        {
-            double a = p.X - q.X;
-            double b = p.Y - q.Y;
-            double distance = Math.Sqrt(a * a + b * b);
-            return distance;
-        }
+                
 
         private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
         {
@@ -83,7 +76,7 @@
         {
             if (popup.IsOpen)
             {
-                var distance = GetDistanceBetweenPoints(e.GetPosition(AssociatedObject), lastPoint);
+                var distance = e.GetPosition(AssociatedObject).DistanceTo(lastPoint);
 
                 if (distance > 14)
                 {
