@@ -35,6 +35,7 @@
         public WorkspaceViewModel(EditorModel editor, [Import] Workspace workspace) : base(workspace)
         {            
             this.editor = editor;
+            CurrentPerspective = Perspective.Editor;
 
             MainMenu = new MainMenuViewModel();
             SolutionExplorer = new SolutionExplorerViewModel();            
@@ -152,7 +153,7 @@
         }
 
         private bool debugControlsVisible;
-        public bool DebugControlsVisible
+        public bool DebugVisible
         {
             get { return debugControlsVisible; }
             set { this.RaiseAndSetIfChanged(ref debugControlsVisible, value); }
@@ -186,13 +187,13 @@
                 switch(value)
                 {
                     case Perspective.Editor:
-                        DebugControlsVisible = false;
+                        DebugVisible = false;
                         break;
 
                     case Perspective.Debug:
                         // TODO close intellisense, and tooltips.
                         // disable documents, get rid of error list, solution explorer, etc.    (isreadonly)   
-                        DebugControlsVisible = true;
+                        DebugVisible = true;
                         break;
                 }
             }
