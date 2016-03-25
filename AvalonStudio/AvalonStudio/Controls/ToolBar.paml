@@ -1,2 +1,120 @@
-﻿<UserControl xmlns="https://github.com/perspex">    
+﻿<UserControl xmlns="https://github.com/perspex">
+  <UserControl.Styles>
+    <Style Selector="Panel:pointerover">
+      <Setter Property="Background" Value="Red" />
+    </Style>
+
+    <Style Selector="Button /template/ ContentPresenter">
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+  </UserControl.Styles>
+  <StackPanel Orientation="Horizontal">
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.chevron.left.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.chevron.right.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.page.code.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.chevron.right.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.folder.open.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.save.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.undo.curve.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.redo.curve.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.alight.right.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.alight.right.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.chevron.right.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.box.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.chevron.right.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.clean.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.control.play.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.control.pause.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.stop.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.right.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+  </StackPanel>
 </UserControl>
