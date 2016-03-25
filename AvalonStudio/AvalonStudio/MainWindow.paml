@@ -18,8 +18,8 @@
       <Setter Property="Background" Value="#274452"/>
     </Style>    
   </Controls:MetroWindow.Styles>
-  <Grid RowDefinitions="0,*,350,25" ColumnDefinitions="220, *, *, 300">
-    <Grid Grid.ColumnSpan="3">
+  <Grid RowDefinitions="25,*,350,25" ColumnDefinitions="220, *, *, 300">
+    <Grid Grid.ColumnSpan="3" Margin="20 0 0 0">
       <Controls:ToolBar />
     </Grid>
 
