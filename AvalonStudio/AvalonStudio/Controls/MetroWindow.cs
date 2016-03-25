@@ -6,7 +6,7 @@
     using Perspex.Input;
     using Perspex.Controls.Primitives;
     using Perspex;
-
+    using Utils;
     public class MetroWindow : Window, IStyleable
     {
         public MetroWindow()
@@ -75,11 +75,57 @@
             }
             else if (titleBar.IsPointerOver)
             {
-                WindowState = WindowState.Normal;
-                BeginMoveDrag();
+                WorkspaceViewModel.Instance.Console.WriteLine("MD");
+                mouseDown = true;
+                mouseDownPosition = e.GetPosition(this);
             }
+            else
+            {
+                WorkspaceViewModel.Instance.Console.WriteLine("MU");
+                mouseDown = false;
+            }
+            
 
             base.OnPointerPressed(e);
+        }        
+
+        private bool mouseDown = false;
+        private Point mouseDownPosition;
+        
+        protected override void OnPointerReleased(PointerEventArgs e)
+        {
+            WorkspaceViewModel.Instance.Console.WriteLine("MU");
+            mouseDown = false;
+            base.OnPointerReleased(e);
+        }        
+
+        protected override void OnPointerMoved(PointerEventArgs e)
+        {
+            if(titleBar.IsPointerOver && mouseDown)
+            {
+                if (mouseDownPosition.DistanceTo(e.GetPosition(this)) > 12)
+                {
+                    WindowState = WindowState.Normal;
+                    BeginMoveDrag();
+                    mouseDown = false;
+                }
+            }
+
+            base.OnPointerMoved(e);
+        }        
+
+        private void ToggleWindowState ()
+        {
+            switch (WindowState)
+            {
+                case WindowState.Maximized:
+                    WindowState = WindowState.Normal;
+                    break;
+
+                case WindowState.Normal:
+                    WindowState = WindowState.Maximized;
+                    break;
+            }
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
@@ -107,16 +153,12 @@
 
             restoreButton.Click += (sender, ee) =>
             {
-                switch (WindowState)
-                {
-                    case WindowState.Maximized:
-                        WindowState = WindowState.Normal;                        
-                        break;
+                ToggleWindowState();   
+            };
 
-                    case WindowState.Normal:
-                        WindowState = WindowState.Maximized;
-                        break;
-                }
+            titleBar.DoubleTapped += (sender, ee) =>
+            {
+                ToggleWindowState();
             };
 
             closeButton.Click += (sender, ee) =>
