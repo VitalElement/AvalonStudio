@@ -22,98 +22,98 @@
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
+      <Panel Height="20" Width="20" Background="WhiteSmoke">
         <Image Source="Resources/Icons/Templarian/dark/appbar.page.code.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.chevron.right.png" IsHitTestVisible="false" />
-      </Panel>
-    </Button>
-
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
+      <Panel Height="20" Width="20" Background="#FFD7AC6A">
         <Image Source="Resources/Icons/Templarian/dark/appbar.folder.open.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
+      <Panel Height="20" Width="20" Background="#FF7AC1FF">
         <Image Source="Resources/Icons/Templarian/dark/appbar.save.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
+      <Panel Height="20" Width="20" Background="#FF7AC1FF">
         <Image Source="Resources/Icons/Templarian/dark/appbar.undo.curve.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
+      <Panel Height="20" Width="20" Background="#FF7AC1FF">
         <Image Source="Resources/Icons/Templarian/dark/appbar.redo.curve.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.alight.right.png" IsHitTestVisible="false" />
+      <Panel Height="20" Width="20" Background="#FF8DD28A">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.align.right.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.alight.right.png" IsHitTestVisible="false" />
+      <Panel Height="20" Width="20" Background="WhiteSmoke">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.align.right.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.chevron.right.png" IsHitTestVisible="false" />
-      </Panel>
-    </Button>
-
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
+      <Panel Height="20" Width="20" Background="#FFDAA107">
         <Image Source="Resources/Icons/Templarian/dark/appbar.box.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.chevron.right.png" IsHitTestVisible="false" />
-      </Panel>
-    </Button>
-
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
+      <Panel Height="20" Width="20" Background="#FF0F8CD3">
         <Image Source="Resources/Icons/Templarian/dark/appbar.clean.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
+      <Panel Height="20" Width="20" Background="#FF8DD28A">
         <Image Source="Resources/Icons/Templarian/dark/appbar.control.play.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
+      <Panel Height="20" Width="20" Background="#FF7AC1FF">
         <Image Source="Resources/Icons/Templarian/dark/appbar.control.pause.png" IsHitTestVisible="false" />
       </Panel>
-    </Button>
+    </Button>    
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
+      <Panel Height="20" Width="20" Background="#FFF38B76">
         <Image Source="Resources/Icons/Templarian/dark/appbar.debug.stop.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
     <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.right.png" IsHitTestVisible="false" />
+      <Panel Height="20" Width="20" Background="#FF8DD28A">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.restart.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#FF7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.step.over.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#FF7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.step.into.png" IsHitTestVisible="false" />
+      </Panel>
+    </Button>
+
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+      <Panel Height="20" Width="20" Background="#FF7AC1FF">
+        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.step.out.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
   </StackPanel>
