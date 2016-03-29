@@ -15,7 +15,7 @@ namespace AvalonStudio
     {
         public App()
         {
-            RegisterServices();
+            RegisterServices();            
             InitializeSubsystems((int)Environment.OSVersion.Platform);
             InitializeComponent();
         }

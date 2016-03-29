@@ -38,10 +38,6 @@
       <HintPath>..\packages\Perspex.9999.0.1338-nightly\lib\portable-windows8+net45\Perspex.Animation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Perspex.Application, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1315-nightly\lib\portable-windows8+net45\Perspex.Application.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Perspex.Base, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Perspex.9999.0.1338-nightly\lib\portable-windows8+net45\Perspex.Base.dll</HintPath>
       <Private>True</Private>
