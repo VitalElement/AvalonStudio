@@ -14,7 +14,7 @@
 
     abstract class ProjectOption
     {
-        [Value(0, MetaName = "Solution", HelpText = "Solution file (asln)")]
+        [Value(0, MetaName = "Solution", HelpText = "Solution file (asln)", Required = true)]
         public string Solution { get; set; }
 
         [Value(1, MetaName = "Project", HelpText = "Name of project to run command on")]
@@ -30,6 +30,9 @@
     [Verb("build", HelpText = "Builds the project in the current directory.")]
     class BuildOptions : ProjectOption
     {
+        [Option('l', "label", Required = false, Default = "", HelpText = "Provides a label to append to the output file name of the build process. Usually a build number.")]
+        public string Label { get; set; }
+
         [Option('j', "jobs", Required = false, Default = 4, HelpText = "Number of jobs for compiling.")]
         public int Jobs { get; set; }
     }
