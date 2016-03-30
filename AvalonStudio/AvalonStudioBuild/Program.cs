@@ -21,7 +21,7 @@
     using TestFrameworks;
     class Program
     {
-        const string version = "1.0.0.22";
+        const string version = "1.0.0.24";
         const string releaseName = "Gravity";
 
         const string baseDir = @"c:\development\vebuild\test";
@@ -114,7 +114,7 @@
             {
                 if(project.TestFramework != null)
                 {
-                    project.ToolChain.Build(console, project).Wait();                    
+                    project.ToolChain.Build(console, project, "").Wait();                    
 
                     var awaiter = project.TestFramework.EnumerateTestsAsync(project);
                     awaiter.Wait();
@@ -166,7 +166,17 @@
         {
             int result = 1;
             var solution = LoadSolution(options);
-            var project = FindProject(solution, options.Project) as CPlusPlusProject;
+
+            IProject project = null;
+
+            if (options.Project != null)
+            {
+                project = FindProject(solution, options.Project);
+            }
+            else
+            {
+                project = solution.StartupProject;
+            }            
 
             if (project != null)
             {
@@ -178,7 +188,7 @@
                     (project.ToolChain as StandardToolChain).Jobs = options.Jobs;
                 }
 
-                var awaiter = project.ToolChain.Build(console, project);
+                var awaiter = project.ToolChain.Build(console, project, options.Label);
                 awaiter.Wait();
 
                 stopWatch.Stop();
@@ -200,7 +210,16 @@
 
             var console = new ProgramConsole();
 
-            var project = FindProject(solution, options.Project);
+            IProject project = null;
+
+            if (options.Project != null)
+            {
+                project = FindProject(solution, options.Project);
+            }
+            else
+            {
+                project = solution.StartupProject;
+            }
 
             if (project != null)
             {
