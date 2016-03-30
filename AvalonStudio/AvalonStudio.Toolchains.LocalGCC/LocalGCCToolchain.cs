@@ -161,7 +161,7 @@
             return Path.Combine(project.CurrentDirectory, "link.ld");
         }
 
-        public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputDirectory)
+        public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputPath)
         {
             var settings = GetSettings(superProject);
             LinkResult result = new LinkResult();
@@ -210,23 +210,21 @@
                 libs += lib + " ";
             }
 
-            if (!Directory.Exists(outputDirectory))
+            var outputDir = Path.GetDirectoryName(outputPath);
+
+            if (!Directory.Exists(outputDir))
             {
-                Directory.CreateDirectory(outputDirectory);
+                Directory.CreateDirectory(outputDir);
             }
 
-            string outputName = Path.GetFileNameWithoutExtension(project.Location) + ExecutableExtension;
+            string outputName = Path.GetFileNameWithoutExtension(outputPath) + ExecutableExtension;
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-                outputName = "lib" + Path.GetFileNameWithoutExtension(project.Name) + StaticLibraryExtension;
-            }
-            else
-            {
-                //GenerateLinkerScript(superProject);
+                outputName = Path.GetFileNameWithoutExtension(outputPath) + StaticLibraryExtension;
             }
 
-            var executable = Path.Combine(outputDirectory, outputName);
+            var executable = Path.Combine(outputDir, outputName);
 
             string linkedLibraries = string.Empty;
 
@@ -243,27 +241,6 @@
             {
                 linkedLibraries += string.Format("-l{0} ", lib);
             }
-
-
-            // TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
-            //switch (settings.LinkSettings.Library)
-            //{
-            //    case LibraryType.NanoCLib:
-            //        linkedLibraries = "-lm -lc_nano -lsupc++_nano -lstdc++_nano ";
-            //        break;
-
-            //    case LibraryType.BaseCLib:
-            //        linkedLibraries += "-lm -lc -lstdc++ -lsupc++ ";
-            //        break;
-
-            //    case LibraryType.SemiHosting:
-            //        linkedLibraries += "-lm -lgcc -lc -lrdimon ";
-            //        break;
-
-            //    case LibraryType.Retarget:
-            //        linkedLibraries += "-lm -lc -lnosys -lstdc++ -lsupc++ ";
-            //        break;
-            //}
 
             // Hide console window
             startInfo.UseShellExecute = false;
