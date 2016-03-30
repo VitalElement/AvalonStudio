@@ -170,7 +170,7 @@ namespace AvalonStudio.Toolchains.STM32
             sw.Close();
         }
 
-        public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputDirectory)
+        public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputPath)
         {
             var settings = GetSettings(superProject);
             LinkResult result = new LinkResult();
@@ -205,23 +205,25 @@ namespace AvalonStudio.Toolchains.STM32
                 libs += lib + " ";
             }
 
-            if (!Directory.Exists(outputDirectory))
+            var outputDir = Path.GetDirectoryName(outputPath);
+
+            if (!Directory.Exists(outputDir))
             {
-                Directory.CreateDirectory(outputDirectory);
+                Directory.CreateDirectory(outputDir);
             }
 
-            string outputName = Path.GetFileNameWithoutExtension(project.Location) + ExecutableExtension;
+            string outputName = Path.GetFileNameWithoutExtension(outputPath) + ExecutableExtension;
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-                outputName = "lib" + Path.GetFileNameWithoutExtension(project.Name) + StaticLibraryExtension;
+                outputName = Path.GetFileNameWithoutExtension(outputPath) + StaticLibraryExtension;
             }
             else
             {
                 GenerateLinkerScript(superProject);
             }
 
-            var executable = Path.Combine(outputDirectory, outputName);
+            var executable = Path.Combine(outputDir, outputName);
 
             string linkedLibraries = string.Empty;
 

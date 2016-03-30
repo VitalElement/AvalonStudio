@@ -58,7 +58,7 @@
         
         public abstract CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile);
 
-        public abstract LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputDirectory);
+        public abstract LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputPath);
 
         public abstract ProcessResult Size(IConsole console, IStandardProject project, LinkResult linkResult);
 
@@ -129,7 +129,7 @@
             ClearBuildFlags(project);
         }
 
-        public async Task<bool> Build(IConsole console, IProject project)
+        public async Task<bool> Build(IConsole console, IProject project, string label = "")
         {
             console.WriteLine("Starting Build...");
 
@@ -176,7 +176,7 @@
                                 {
                                     linkedReferences.ObjectLocations = compiledProject.ObjectLocations;
                                     linkedReferences.NumberOfObjectsCompiled = compiledProject.NumberOfObjectsCompiled;
-                                    Link(console, project as IStandardProject, linkedReferences, linkedReferences);
+                                    Link(console, project as IStandardProject, linkedReferences, linkedReferences, label);
                                 }
                             }
 
@@ -222,7 +222,7 @@
             });
         }
 
-        private void Link(IConsole console, IStandardProject superProject, CompileResult compileResult, CompileResult linkResults)
+        private void Link(IConsole console, IStandardProject superProject, CompileResult compileResult, CompileResult linkResults, string label = "")
         {
             var binDirectory = compileResult.Project.GetBinDirectory(superProject);
 
@@ -234,6 +234,11 @@
             string outputLocation = binDirectory;
 
             string executable = Path.Combine(outputLocation, compileResult.Project.Name);
+
+            if(!string.IsNullOrEmpty(label))
+            {
+                executable += string.Format("-{0}", label);
+            }
 
             if (compileResult.Project.Type == ProjectType.StaticLibrary)
             {
@@ -277,7 +282,7 @@
             if (link)
             {
                 console.OverWrite(string.Format("[LL]    [{0}]", compileResult.Project.Name));
-                linkResult = Link(console, superProject, compileResult.Project, compileResult, outputLocation);
+                linkResult = Link(console, superProject, compileResult.Project, compileResult, executable);
             }
 
             if (linkResult.ExitCode == 0)

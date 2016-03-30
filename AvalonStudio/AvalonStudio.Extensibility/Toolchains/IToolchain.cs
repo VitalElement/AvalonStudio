@@ -11,7 +11,7 @@
     [InheritedExport(typeof(IToolChain))]
     public interface IToolChain : IPlugin
     {
-        Task<bool> Build(IConsole console, IProject project);
+        Task<bool> Build(IConsole console, IProject project, string label = "");
 
         Task Clean(IConsole console, IProject project);        
 
