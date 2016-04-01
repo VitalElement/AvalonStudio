@@ -91,7 +91,7 @@ namespace AvalonStudio.Toolchains.STM32
             }
 
 
-            startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
+            startInfo.WorkingDirectory = file.CurrentDirectory;
 
             if (!File.Exists(startInfo.FileName))
             {
