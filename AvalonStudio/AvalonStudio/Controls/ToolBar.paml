@@ -75,37 +75,37 @@
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22" Command="{Binding StartDebugCommand}">
       <Panel Height="20" Width="20" Background="#FF8DD28A">
         <Image Source="Resources/Icons/Templarian/dark/appbar.control.play.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22" Command="{Binding PauseCommand}">
       <Panel Height="20" Width="20" Background="#FF7AC1FF">
         <Image Source="Resources/Icons/Templarian/dark/appbar.control.pause.png" IsHitTestVisible="false" />
       </Panel>
     </Button>    
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22" Command="{Binding StopCommand}">
       <Panel Height="20" Width="20" Background="#FFF38B76">
         <Image Source="Resources/Icons/Templarian/dark/appbar.debug.stop.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22" Command="{Binding RestartCommand}">
       <Panel Height="20" Width="20" Background="#FF8DD28A">
         <Image Source="Resources/Icons/Templarian/dark/appbar.debug.restart.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22" Command="{Binding StepOverCommand}">
       <Panel Height="20" Width="20" Background="#FF7AC1FF">
         <Image Source="Resources/Icons/Templarian/dark/appbar.debug.step.over.png" IsHitTestVisible="false" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
+    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22" Command="{Binding StepIntoCommand}">
       <Panel Height="20" Width="20" Background="#FF7AC1FF">
         <Image Source="Resources/Icons/Templarian/dark/appbar.debug.step.into.png" IsHitTestVisible="false" />
       </Panel>

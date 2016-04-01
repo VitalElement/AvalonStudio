@@ -133,7 +133,14 @@
             {
                 if (WorkspaceViewModel.Instance.CurrentPerspective == Perspective.Editor)
                 {
-                    WorkspaceViewModel.Instance.DebugManager.StartDebug(WorkspaceViewModel.Instance.SolutionExplorer.SelectedProject);
+                    if (WorkspaceViewModel.Instance.SolutionExplorer.Model?.StartupProject != null)
+                    {
+                        WorkspaceViewModel.Instance.DebugManager.StartDebug(WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject);
+                    }
+                }
+                else
+                {
+                    WorkspaceViewModel.Instance.DebugManager.Continue();
                 }
             });
 
