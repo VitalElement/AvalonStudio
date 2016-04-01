@@ -63,11 +63,6 @@
 
             AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
         }
-
-        private void MouseHoverDelayTimer_Tick(object sender, EventArgs e)
-        {
-            MouseCursorOffset = currentMouseOffset;
-        }
         #endregion
 
         public void ScrollToLine(int line)
@@ -644,15 +639,14 @@
                 }
             }
         }
-
-        private int currentMouseOffset = -1;
+        
         protected override void OnPointerMoved(PointerEventArgs e)
         {
             var point = e.GetPosition(textView.TextSurface);                        
             
-            currentMouseOffset = textView.GetOffsetFromPoint(point);
+            var currentMouseOffset = textView.GetOffsetFromPoint(point);
 
-            if (e.Device.Captured == textView)
+            if (e.Device.Captured == textView && currentMouseOffset != -1)
             {
                 CaretIndex = currentMouseOffset;
 
