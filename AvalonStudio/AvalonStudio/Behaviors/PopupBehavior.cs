@@ -27,15 +27,28 @@
             popup = new Popup
             {
                 PlacementMode = PlacementMode.Pointer,
-                StaysOpen = false,                                                
-            };            
+                StaysOpen = false                              
+            };
+
+            popup.PointerWheelChanged += Popup_PointerWheelChanged;
+            popup.PointerPressed += Popup_PointerPressed;
 
             ContentProperty.Changed.Subscribe((o) =>
             {                                      
                 popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor).TextView;
                 popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };                
             });
-        }        
+        }
+
+        private void Popup_PointerPressed(object sender, PointerPressedEventArgs e)
+        {
+            popup.Close();
+        }
+
+        private void Popup_PointerWheelChanged(object sender, PointerWheelEventArgs e)
+        {
+            popup.Close();
+        }
 
         public static readonly PerspexProperty ContentProperty = PerspexProperty.Register<PopupBehavior, Control>(nameof(Content));
 
@@ -51,11 +64,12 @@
             AssociatedObject.KeyDown += AssociatedObject_KeyDown;
             AssociatedObject.PointerMoved += AssociatedObject_PointerMoved;
             AssociatedObject.AttachedToLogicalTree += AssociatedObject_AttachedToLogicalTree;
+            AssociatedObject.PointerWheelChanged += AssociatedObject_PointerWheelChanged;
         }
 
-        private void AssociatedObject_AttachedToLogicalTree(object sender, Perspex.LogicalTree.LogicalTreeAttachmentEventArgs e)
+        private void AssociatedObject_PointerWheelChanged(object sender, PointerWheelEventArgs e)
         {
-            ((ISetLogicalParent)popup).SetParent(AssociatedObject);
+            popup.Close();
         }
 
         protected override void OnDetaching()
@@ -63,8 +77,13 @@
             AssociatedObject.KeyDown -= AssociatedObject_KeyDown;
             AssociatedObject.PointerMoved -= AssociatedObject_PointerMoved;
             AssociatedObject.AttachedToLogicalTree -= AssociatedObject_AttachedToLogicalTree;
+            AssociatedObject.PointerWheelChanged -= AssociatedObject_PointerWheelChanged;
         }
 
+        private void AssociatedObject_AttachedToLogicalTree(object sender, Perspex.LogicalTree.LogicalTreeAttachmentEventArgs e)
+        {
+            ((ISetLogicalParent)popup).SetParent(AssociatedObject);
+        }        
                 
 
         private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)

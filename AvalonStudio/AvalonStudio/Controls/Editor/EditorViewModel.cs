@@ -245,6 +245,7 @@
                         case CursorKind.CompoundStatement:
                         case CursorKind.NoDeclarationFound:
                         case CursorKind.NotImplemented:
+                        case CursorKind.FirstDeclaration:
                             break;
 
                         default:
