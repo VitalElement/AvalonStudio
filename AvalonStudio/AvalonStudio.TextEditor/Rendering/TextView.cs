@@ -722,9 +722,14 @@
 
                 if (line > 0 && column > 0 && line < TextDocument.LineCount)
                 {
-                    if (line < VisualLines.Count)
+                    if (line < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted)
                     {                        
                         result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
+                    }
+                    else
+                    {
+                        // Invalid
+                        result = -1;
                     }
                 }
             }
