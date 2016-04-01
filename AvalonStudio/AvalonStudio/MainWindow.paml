@@ -20,7 +20,7 @@
   </Controls:MetroWindow.Styles>
   <Grid RowDefinitions="25,*,350,25" ColumnDefinitions="220, *, *, 300">
     <Grid Grid.ColumnSpan="3" Margin="20 0 0 0">
-      <Controls:ToolBar />
+      <Controls:ToolBar DataContext="{Binding ToolBar}" />
     </Grid>
 
     <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="1 2 2 1">
