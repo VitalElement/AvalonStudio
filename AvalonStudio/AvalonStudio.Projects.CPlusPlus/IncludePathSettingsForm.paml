@@ -8,8 +8,10 @@
       <Setter Property="BorderBrush" Value="WhiteSmoke" />
     </Style>
   </TabItem.Styles>
+
   
-  <Grid RowDefinitions="40,*" ColumnDefinitions="*,*">
+  <Grid RowDefinitions="20,*" ColumnDefinitions="*,*">
+    <TextBlock Text="Include Paths" Margin="10 0 0 0" />
     <Border Grid.Row="1" Margin="5 0" BorderThickness="1" BorderBrush="#1e1e1e">
       <Grid>
         <Grid.ColumnDefinitions>
@@ -17,7 +19,7 @@
           <ColumnDefinition Width="80" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel>
+        <StackPanel>                    
           <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="20">
             <TextBlock Text="Export" />
             <TextBlock Text="Global" />
@@ -50,6 +52,7 @@
       </Grid>
     </Border>
 
+    <TextBlock Grid.Column="1" Text="Definitions" Margin="10 0 0 0" />
     <Border Grid.Row="1" Grid.Column="1" Margin="5 0" BorderThickness="1" BorderBrush="#1e1e1e">
       <Grid>
         <Grid.ColumnDefinitions>
