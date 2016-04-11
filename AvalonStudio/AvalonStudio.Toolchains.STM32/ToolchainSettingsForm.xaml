@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/perspex">
   <TabControl>
-    <TabItem Header="Compiler" Foreground="WhiteSmoke" DataContext="{Binding CompileSettings}">
-      <Grid>
+    <TabItem Header="Compiler" Foreground="WhiteSmoke">
+      <Grid DataContext="{Binding CompileSettings}">
         <Grid.Styles>
           <Style Selector="TextBox">
             <Setter Property="Background" Value="Transparent" />
@@ -95,8 +95,8 @@
     </TabItem>
 
 
-    <TabItem Header="Linker" DataContext="{Binding LinkerSettings}">
-      <Grid>
+    <TabItem Header="Linker">
+       <Grid DataContext="{Binding LinkerSettings}">
         <Grid.Styles>
           <Style Selector="TextBox">
             <Setter Property="Background" Value="Transparent" />
