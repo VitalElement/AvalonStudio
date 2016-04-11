@@ -10,7 +10,7 @@
 
     public class BracketMatchingBackgroundRenderer : IBackgroundRenderer
     {
-        private Brush bracketHighlightBrush = SolidColorBrush.Parse("#123e70");
+        private IBrush bracketHighlightBrush = Brush.Parse("#123e70");
 
         public event EventHandler<EventArgs> DataChanged;
 
