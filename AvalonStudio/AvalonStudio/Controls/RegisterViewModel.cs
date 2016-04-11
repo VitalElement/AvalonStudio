@@ -27,8 +27,8 @@
 
         public ReactiveCommand<object> ShowInMemoryCommand { get; }
 
-        private Brush background;
-        public Brush Background
+        private IBrush background;
+        public IBrush Background
         {
             get { return background; }
             set { this.RaiseAndSetIfChanged(ref background, value); }

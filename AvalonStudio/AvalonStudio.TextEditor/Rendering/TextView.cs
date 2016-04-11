@@ -353,24 +353,24 @@
         }
 
         public static readonly PerspexProperty<int> SelectionStartProperty =
-            TextBox.SelectionStartProperty.AddOwner<TextView>();
+            PerspexProperty.Register<TextView, int>(nameof(SelectionStart));
 
         public static readonly PerspexProperty<int> SelectionEndProperty =
-            TextBox.SelectionEndProperty.AddOwner<TextView>();
+            PerspexProperty.Register<TextView, int>(nameof(SelectionEnd));
 
-        public static readonly PerspexProperty<Brush> ForegoundProperty =
+        public static readonly PerspexProperty<IBrush> ForegoundProperty =
             TextBlock.ForegroundProperty.AddOwner<TextView>();
 
-        public Brush Foreground
+        public IBrush Foreground
         {
             get { return GetValue(ForegoundProperty); }
             set { SetValue(ForegoundProperty, value); }
         }
 
-        public static readonly PerspexProperty<Brush> BackgroundProperty =
+        public static readonly PerspexProperty<IBrush> BackgroundProperty =
             Border.BackgroundProperty.AddOwner<TextView>();
 
-        public Brush Background
+        public IBrush Background
         {
             get { return GetValue(BackgroundProperty); }
             set { SetValue(BackgroundProperty, value); }
@@ -447,13 +447,13 @@
             if (TextDocument != null)
             {
                 GenerateTextProperties();
-                GenerateVisualLines(context);                
+                GenerateVisualLines(context);
 
                 // Render background layer.
                 RenderBackground(context);
 
                 foreach (var line in VisualLines)
-                {                    
+                {
                     RenderText(context, line);
 
                     // Render text decoration layer.
@@ -523,7 +523,7 @@
             {
                 renderer.Draw(this, context);
 
-                foreach(var line in VisualLines)
+                foreach (var line in VisualLines)
                 {
                     renderer.TransformLine(this, context, line);
                 }
@@ -604,7 +604,7 @@
             {
                 var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
 
-                line.RenderedText = formattedText;                
+                line.RenderedText = formattedText;
 
                 foreach (var lineTransformer in DocumentLineTransformers)
                 {
@@ -723,7 +723,7 @@
                 if (line > 0 && column > 0 && line < TextDocument.LineCount)
                 {
                     if (line < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted)
-                    {                        
+                    {
                         result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
                     }
                     else
