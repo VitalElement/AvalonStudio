@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/perspex" Header="ToolChain">
+﻿<TabItem xmlns="https://github.com/perspex" Header="Toolchain">
   <Grid IsEnabled="{Binding IsEnabled}">
     <Grid.RowDefinitions>
       <RowDefinition Height="30"/>
