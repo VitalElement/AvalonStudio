@@ -6,7 +6,7 @@
 
     public class SelectedLineBackgroundRenderer : IBackgroundRenderer
     {
-        private Brush selectedLineBg;
+        private IBrush selectedLineBg;
 
         public SelectedLineBackgroundRenderer()
         {
