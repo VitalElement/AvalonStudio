@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/perspex" Header="ToolChain">
+﻿<TabItem xmlns="https://github.com/perspex" Header="Toolchain">
   <Grid IsEnabled="{Binding IsEnabled}">
     <Grid.RowDefinitions>
       <RowDefinition Height="30"/>
@@ -57,7 +57,7 @@
     </Panel>
 
     <Grid Grid.Row="2" Grid.ColumnSpan="3">
-      <Grid Margin="4" Background="#333333">
+      <Grid Margin="4">
         <Border BorderThickness="1" BorderBrush="#3d3d3d">
           <ContentPresenter Content="{Binding ToolchainSettingsControl}" />
         </Border>
