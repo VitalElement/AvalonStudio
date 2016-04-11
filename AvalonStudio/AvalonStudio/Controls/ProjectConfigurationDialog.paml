@@ -1,19 +1,4 @@
 ﻿<UserControl xmlns="https://github.com/perspex" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
-  <!--
-  <UserControl.Resources>
-    <DataTemplate DataType="{x:Type ViewModels:CompileSettingsViewModel}">
-      <Views:CompileSettingsForm/>
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type ViewModels:LinkSettingsFormViewModel}">
-      <Views:LinkSettingsForm/>
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type ViewModels:DebuggerSettingsFormViewModel}">
-      <Views:DebuggerSettingsForm/>
-    </DataTemplate>
-  </UserControl.Resources>
--->
   <Grid>
     <TabControl Items="{Binding ConfigPages}"/>    
   </Grid>
