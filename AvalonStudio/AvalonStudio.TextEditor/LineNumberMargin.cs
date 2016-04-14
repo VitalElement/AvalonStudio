@@ -11,7 +11,7 @@
             foreground = Brush.Parse("#5d5d5d");
         }
 
-        private Brush foreground;
+        private IBrush foreground;
 
         protected override Size MeasureOverride(Size availableSize)
         {
