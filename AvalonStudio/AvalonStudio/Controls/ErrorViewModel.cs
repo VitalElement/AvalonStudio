@@ -23,7 +23,7 @@
 
         public DiagnosticLevel Level { get { return Model.Level; } }
 
-        public Brush LevelBrush
+        public IBrush LevelBrush
         {
             get
             {
