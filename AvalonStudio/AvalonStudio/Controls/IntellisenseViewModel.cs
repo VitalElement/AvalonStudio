@@ -44,7 +44,7 @@
         {
             bool result = false;
 
-            result = (e.Key >= Key.D0 && e.Key <= Key.D9 && e.Modifiers == InputModifiers.None) || (e.Key >= Key.A && e.Key <= Key.Z) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9);
+            result = (e.Key >= Key.D0 && e.Key <= Key.D9 && e.Modifiers == InputModifiers.None) || (e.Key >= Key.A && e.Key <= Key.Z) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || (e.Key == Key.Oem1);
 
             return result;
         }
@@ -61,6 +61,7 @@
                 {
                     case Key.Back:
                     case Key.OemPeriod:
+                    case Key.Oem1:
                         result = true;
                         break;
                 }
@@ -314,13 +315,17 @@
                         behindBehindCaretChar = editorViewModel.TextDocument.GetCharAt(editorViewModel.CaretIndex - 2);
                     }
 
-                    if (behindCaretChar != '>')
+                    if (behindCaretChar == ':' && behindBehindCaretChar == ':')
                     {
-                        intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editorViewModel.TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                        intellisenseStartedAt = caretIndex;
                     }
-                    else
+                    else if (behindCaretChar == '>' || behindBehindCaretChar == ':')
                     {
                         intellisenseStartedAt = caretIndex - 1;
+                    }                    
+                    else
+                    {
+                        intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editorViewModel.TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);                        
                     }
 
                     if (IsIntellisenseResetKey(e))
