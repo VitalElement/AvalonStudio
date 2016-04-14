@@ -823,6 +823,14 @@
                     }
 
                     break;
+
+                case Key.PageUp:
+                    textView.PageUp();
+                    break;
+
+                case Key.PageDown:
+                    textView.PageDown();
+                    break;
             }
 
             if (movement && ((modifiers & InputModifiers.Shift) != 0))
@@ -836,8 +844,7 @@
 
             if (handled)
             {
-                InvalidateVisual();
-                //e.Handled = true;
+                InvalidateVisual();                
             }
         }
         #endregion       
