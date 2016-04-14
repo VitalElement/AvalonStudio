@@ -1,8 +1,8 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus
 {
     using NClang;
+    using Perspex.Input;
     using Perspex.Media;
-    using Perspex.Threading;
     using Projects;
     using Projects.Standard;
     using Rendering;
@@ -11,16 +11,14 @@
     using System.IO;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Threading;
     using System.Xml.Linq;
     using TextEditor;
     using TextEditor.Document;
-    using TextEditor.Rendering;
     using TextEditor.Indentation;
-    using Perspex.Utilities;
-    using Perspex.Input;
+    using TextEditor.Rendering;
     using Utils;
-    using Extensibility;
-    using System.Threading;
+
     public class CPlusPlusLanguageService : ILanguageService
     {
         private static ClangIndex index = ClangService.CreateIndex();
@@ -62,9 +60,9 @@
             }
         }
 
-        void AddArgument (List<string> list, string argument)
+        void AddArgument(List<string> list, string argument)
         {
-            if(!list.Contains(argument))
+            if (!list.Contains(argument))
             {
                 list.Add(argument);
             }
@@ -177,7 +175,7 @@
                 // TODO do we mark files as class header? CAn clang auto detect this?
                 //if (file.Language == Language.Cpp)
                 {
-                    
+
                     args.Add("-xc++");
                     args.Add("-std=c++14");
                 }
@@ -187,7 +185,7 @@
                 //{
                 //    args.Add("-Weverything");
                 //}
-                                
+
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble | TranslationUnitFlags.CacheCompletionResults);
             }
 
@@ -789,7 +787,7 @@
             BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
             BackgroundRenderers.Add(TextMarkerService);
 
-            DocumentLineTransformers.Add(TextColorizer);            
+            DocumentLineTransformers.Add(TextColorizer);
             DocumentLineTransformers.Add(new DefineTextLineTransformer());
             DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
             DocumentLineTransformers.Add(new IncludeTextLineTransformer());
