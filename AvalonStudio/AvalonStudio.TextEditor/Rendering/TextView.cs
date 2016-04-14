@@ -713,7 +713,7 @@
 
         public int GetOffsetFromPoint(Point point)
         {
-            int result = TextDocument.TextLength;
+            int result = -1;
 
             if (TextDocument != null)
             {
