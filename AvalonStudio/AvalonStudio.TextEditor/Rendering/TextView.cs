@@ -677,10 +677,12 @@
         {
             var offset = (line - (Viewport.Height * borderSizePc));
 
-            if (offset >= 0)
+            if(offset <0)
             {
-                this.BringIntoView(new Rect(1, offset, 0, 1));
+                offset = 0;
             }
+
+            this.BringIntoView(new Rect(1, offset, 0, 1));            
 
             offset = (line + (Viewport.Height * borderSizePc));
 
