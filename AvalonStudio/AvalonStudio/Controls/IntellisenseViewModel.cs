@@ -79,6 +79,27 @@
             return result;
         }
 
+        private bool IsCompletionKey(KeyEventArgs e)
+        {
+            bool result = false;
+
+            if (e.Modifiers == InputModifiers.None)
+            {
+                switch (e.Key)
+                {
+                    case Key.Enter:
+                    case Key.Tab:
+                    case Key.OemPeriod:
+                    case Key.OemMinus:
+                    case Key.Space:
+                        result = true;
+                        break;
+                }
+            }
+
+            return result;
+        }
+
         private bool IsAllowedNonFilterModificationKey(KeyEventArgs e)
         {
             bool result = false;
@@ -166,50 +187,40 @@
         {
             if (IsVisible && e.Modifiers == InputModifiers.None)
             {
-                switch (e.Key)
+                if (IsCompletionKey(e))
                 {
-                    case Key.Enter:
-                    case Key.Tab:
-                    case Key.OemPeriod:
-                    case Key.OemMinus:
-                    case Key.Space:
-                        e.Handled = DoComplete(false);
-                        break;
-
-
-                    // Below might make intellisense less anoying for people not used to it.
-                    //case Key.Space:
-                    //    if (SelectedCompletion.Title.StartsWith(currentFilter))
-                    //    {
-                    //        e.Handled = DoComplete(false);
-                    //    }
-                    //    break;
-
-                    case Key.Down:
-                        {
-                            int index = Model.IndexOf(SelectedCompletion);
-
-                            if (index < Model.Count - 1)
+                    e.Handled = DoComplete(false);
+                }
+                else
+                {
+                    switch (e.Key)
+                    {
+                        case Key.Down:
                             {
-                                SelectedCompletion = Model[index + 1];
+                                int index = Model.IndexOf(SelectedCompletion);
+
+                                if (index < Model.Count - 1)
+                                {
+                                    SelectedCompletion = Model[index + 1];
+                                }
+
+                                e.Handled = true;
                             }
+                            break;
 
-                            e.Handled = true;
-                        }
-                        break;
-
-                    case Key.Up:
-                        {
-                            int index = Model.IndexOf(SelectedCompletion);
-
-                            if (index > 0)
+                        case Key.Up:
                             {
-                                SelectedCompletion = Model[index - 1];
-                            }
+                                int index = Model.IndexOf(SelectedCompletion);
 
-                            e.Handled = true;
-                        }
-                        break;
+                                if (index > 0)
+                                {
+                                    SelectedCompletion = Model[index - 1];
+                                }
+
+                                e.Handled = true;
+                            }
+                            break;
+                    }
                 }
             }
         }
@@ -287,8 +298,7 @@
                 IEnumerable<CompletionDataViewModel> filteredResults = null;
 
                 if (!IsVisible && (IsIntellisenseOpenKey(e) || IsIntellisenseResetKey(e)))
-                {
-                    IsVisible = true;
+                {                    
                     var caret = editorViewModel.CaretTextLocation;
 
                     char behindCaretChar = '\0';
@@ -423,6 +433,11 @@
             }
             else
             {
+                if(IsVisible && IsCompletionKey(e))
+                {
+                    e.Handled = true;
+                }
+
                 Close();
             }
         }
