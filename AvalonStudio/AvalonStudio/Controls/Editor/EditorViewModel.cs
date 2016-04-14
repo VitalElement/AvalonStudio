@@ -230,25 +230,29 @@
         /// </summary>
         /// <param name="offset">the offset inside text document to retreive data for.</param>
         /// <returns>true if data was found.</returns>
-        public bool UpdateHoverProbe (int offset)
+        public bool UpdateHoverProbe(int offset)
         {
-            bool result = false;            
+            bool result = false;
 
-            var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
-
-            if (symbol != null)
+            if (offset != -1)
             {
-                switch (symbol.Kind)
-                {
-                    case CursorKind.CompoundStatement:
-                    case CursorKind.NoDeclarationFound:
-                    case CursorKind.NotImplemented:
-                        break;
+                var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
 
-                    default:                        
-                        HoverProbe = new SymbolViewModel(symbol);
-                        result = true;
-                        break;
+                if (symbol != null)
+                {
+                    switch (symbol.Kind)
+                    {
+                        case CursorKind.CompoundStatement:
+                        case CursorKind.NoDeclarationFound:
+                        case CursorKind.NotImplemented:
+                        case CursorKind.FirstDeclaration:
+                            break;
+
+                        default:
+                            HoverProbe = new SymbolViewModel(symbol);
+                            result = true;
+                            break;
+                    }
                 }
             }
 

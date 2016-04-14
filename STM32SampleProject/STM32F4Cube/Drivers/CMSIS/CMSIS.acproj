@@ -1,0 +1,27 @@
+{
+  "Name": "CMSIS",
+  "Type": "StaticLibrary",
+  "References": [],
+  "Includes": [
+    {
+      "Value": "Device/ST/STM32F4xx/Include",
+      "Exported": true,
+      "Global": false
+    },
+    {
+      "Value": "Include",
+      "Exported": true,
+      "Global": false
+    }
+  ],
+  "StaticLibraries": [],
+  "ExcludedFiles": [
+    "index.html",
+    "CMSIS_END_USER_LICENCE_AGREEMENT.rtf",
+    "CMSIS_END_USER_LICENCE_AGREEMENT.pdf",
+    "Documentation",
+    "DSP_Lib"
+  ],
+  "ToolchainSettings": {},
+  "DebugSettings": {}
+}
