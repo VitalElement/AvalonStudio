@@ -15,7 +15,8 @@
             this.InitializeComponent();
 
             AddHandler(InputElement.KeyDownEvent, OnKeyDown, Perspex.Interactivity.RoutingStrategies.Tunnel);
-            editor = this.Find<TextEditor>("editor");
+            AddHandler(InputElement.KeyUpEvent, OnKeyUp, Perspex.Interactivity.RoutingStrategies.Tunnel);
+            editor = this.Find<TextEditor>("editor");            
 
             DataContextChanged += (sender, e) =>
             {
@@ -35,7 +36,7 @@
         }
         
 
-        protected override void OnKeyUp (KeyEventArgs e)
+        protected void OnKeyUp (object sender, KeyEventArgs e)
         {
             var editorVm = DataContext as EditorViewModel;
 

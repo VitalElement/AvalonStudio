@@ -16,6 +16,7 @@
     using System.Collections.Specialized;
     using System.Linq;
     using System.Reactive.Linq;
+    using Perspex.Input;
 
     public class TextView : ContentControl, IScrollable
     {
@@ -447,13 +448,13 @@
             if (TextDocument != null)
             {
                 GenerateTextProperties();
-                GenerateVisualLines(context);                
+                GenerateVisualLines(context);
 
                 // Render background layer.
                 RenderBackground(context);
 
                 foreach (var line in VisualLines)
-                {                    
+                {
                     RenderText(context, line);
 
                     // Render text decoration layer.
@@ -523,7 +524,7 @@
             {
                 renderer.Draw(this, context);
 
-                foreach(var line in VisualLines)
+                foreach (var line in VisualLines)
                 {
                     renderer.TransformLine(this, context, line);
                 }
@@ -604,7 +605,7 @@
             {
                 var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
 
-                line.RenderedText = formattedText;                
+                line.RenderedText = formattedText;
 
                 foreach (var lineTransformer in DocumentLineTransformers)
                 {
@@ -676,10 +677,12 @@
         {
             var offset = (line - (Viewport.Height * borderSizePc));
 
-            if (offset >= 0)
+            if (offset < 0)
             {
-                this.BringIntoView(new Rect(1, offset, 0, 1));
+                offset = 0;
             }
+
+            this.BringIntoView(new Rect(1, offset, 0, 1));
 
             offset = (line + (Viewport.Height * borderSizePc));
 
@@ -711,9 +714,25 @@
             InvalidateVisual();
         }
 
+        public void PageUp()
+        {
+            if (VisualLines.First().DocumentLine != null)
+            {
+                ScrollToLine(VisualLines.First().DocumentLine.LineNumber, 0.75);
+            }
+        }
+
+        public void PageDown()
+        {
+            if (VisualLines.Last().DocumentLine != null)
+            {
+                ScrollToLine(VisualLines.Last().DocumentLine.LineNumber, 0.75);
+            }
+        }
+
         public int GetOffsetFromPoint(Point point)
         {
-            int result = TextDocument.TextLength;
+            int result = -1;
 
             if (TextDocument != null)
             {
@@ -723,7 +742,7 @@
                 if (line > 0 && column > 0 && line < TextDocument.LineCount)
                 {
                     if (line < VisualLines.Count)
-                    {                        
+                    {
                         result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
                     }
                 }

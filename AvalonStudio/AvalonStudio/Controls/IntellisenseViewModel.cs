@@ -44,7 +44,7 @@
         {
             bool result = false;
 
-            result = (e.Key >= Key.D0 && e.Key <= Key.D9 && e.Modifiers == InputModifiers.None) || (e.Key >= Key.A && e.Key <= Key.Z) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9);
+            result = (e.Key >= Key.D0 && e.Key <= Key.D9 && e.Modifiers == InputModifiers.None) || (e.Key >= Key.A && e.Key <= Key.Z) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || (e.Key == Key.Oem1);
 
             return result;
         }
@@ -61,6 +61,7 @@
                 {
                     case Key.Back:
                     case Key.OemPeriod:
+                    case Key.Oem1:
                         result = true;
                         break;
                 }
@@ -71,6 +72,27 @@
                 switch (e.Key)
                 {
                     case Key.OemMinus:
+                        result = true;
+                        break;
+                }
+            }
+
+            return result;
+        }
+
+        private bool IsCompletionKey(KeyEventArgs e)
+        {
+            bool result = false;
+
+            if (e.Modifiers == InputModifiers.None)
+            {
+                switch (e.Key)
+                {
+                    case Key.Enter:
+                    case Key.Tab:
+                    case Key.OemPeriod:
+                    case Key.OemMinus:
+                    case Key.Space:
                         result = true;
                         break;
                 }
@@ -166,50 +188,40 @@
         {
             if (IsVisible && e.Modifiers == InputModifiers.None)
             {
-                switch (e.Key)
+                if (IsCompletionKey(e))
                 {
-                    case Key.Enter:
-                    case Key.Tab:
-                    case Key.OemPeriod:
-                    case Key.OemMinus:
-                    case Key.Space:
-                        e.Handled = DoComplete(false);
-                        break;
-
-
-                    // Below might make intellisense less anoying for people not used to it.
-                    //case Key.Space:
-                    //    if (SelectedCompletion.Title.StartsWith(currentFilter))
-                    //    {
-                    //        e.Handled = DoComplete(false);
-                    //    }
-                    //    break;
-
-                    case Key.Down:
-                        {
-                            int index = Model.IndexOf(SelectedCompletion);
-
-                            if (index < Model.Count - 1)
+                    e.Handled = DoComplete(false);
+                }
+                else
+                {
+                    switch (e.Key)
+                    {
+                        case Key.Down:
                             {
-                                SelectedCompletion = Model[index + 1];
+                                int index = Model.IndexOf(SelectedCompletion);
+
+                                if (index < Model.Count - 1)
+                                {
+                                    SelectedCompletion = Model[index + 1];
+                                }
+
+                                e.Handled = true;
                             }
+                            break;
 
-                            e.Handled = true;
-                        }
-                        break;
-
-                    case Key.Up:
-                        {
-                            int index = Model.IndexOf(SelectedCompletion);
-
-                            if (index > 0)
+                        case Key.Up:
                             {
-                                SelectedCompletion = Model[index - 1];
-                            }
+                                int index = Model.IndexOf(SelectedCompletion);
 
-                            e.Handled = true;
-                        }
-                        break;
+                                if (index > 0)
+                                {
+                                    SelectedCompletion = Model[index - 1];
+                                }
+
+                                e.Handled = true;
+                            }
+                            break;
+                    }
                 }
             }
         }
@@ -287,8 +299,7 @@
                 IEnumerable<CompletionDataViewModel> filteredResults = null;
 
                 if (!IsVisible && (IsIntellisenseOpenKey(e) || IsIntellisenseResetKey(e)))
-                {
-                    IsVisible = true;
+                {                    
                     var caret = editorViewModel.CaretTextLocation;
 
                     char behindCaretChar = '\0';
@@ -304,13 +315,17 @@
                         behindBehindCaretChar = editorViewModel.TextDocument.GetCharAt(editorViewModel.CaretIndex - 2);
                     }
 
-                    if (behindCaretChar != '>')
+                    if (behindCaretChar == ':' && behindBehindCaretChar == ':')
                     {
-                        intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editorViewModel.TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                        intellisenseStartedAt = caretIndex;
                     }
-                    else
+                    else if (behindCaretChar == '>' || behindBehindCaretChar == ':')
                     {
                         intellisenseStartedAt = caretIndex - 1;
+                    }                    
+                    else
+                    {
+                        intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editorViewModel.TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);                        
                     }
 
                     if (IsIntellisenseResetKey(e))
@@ -369,7 +384,7 @@
 
                 CompletionDataViewModel suggestion = null;
                 if (currentFilter != string.Empty)
-                {
+                {                                   
                     IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
                     lock (intellisenseLock)
@@ -402,15 +417,22 @@
 
                 if (filteredResults?.Count() > 0)
                 {
-                    var list = filteredResults.ToList();
+                    if (filteredResults?.Count() == 1 && filteredResults.First().Title == currentFilter)
+                    {
+                        Close();
+                    }
+                    else
+                    {
+                        var list = filteredResults.ToList();
 
-                    Model = list.Skip(list.IndexOf(suggestion) - 25).Take(50).ToList();
-                    //Model = filteredResults.ToList();                   
+                        Model = list.Skip(list.IndexOf(suggestion) - 25).Take(50).ToList();
+                        //Model = filteredResults.ToList();                   
 
-                    SelectedCompletion = suggestion;
+                        SelectedCompletion = suggestion;
 
-                    // Triggers display update.
-                    IsVisible = true;
+                        // Triggers display update.
+                        IsVisible = true;
+                    }
                 }
                 else
                 {
@@ -423,6 +445,11 @@
             }
             else
             {
+                if(IsVisible && IsCompletionKey(e))
+                {
+                    e.Handled = true;
+                }
+
                 Close();
             }
         }
