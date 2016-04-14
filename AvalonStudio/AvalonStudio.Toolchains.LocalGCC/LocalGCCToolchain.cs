@@ -101,7 +101,7 @@
             }
 
             startInfo.EnvironmentVariables["Path"] = BaseDirectory;
-            startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
+            startInfo.WorkingDirectory = file.CurrentDirectory;
 
             if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
             {

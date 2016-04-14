@@ -1,0 +1,33 @@
+image: danwalmsley/avalon
+before_script:
+  # install ssh-agent
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+
+  # run ssh-agent
+  - eval $(ssh-agent -s)
+  
+  # add ssh key stored in SSH_PRIVATE_KEY variable to the agent store
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+
+  # disable host key checking (NOTE: makes you susceptible to man-in-the-middle attacks)
+  # WARNING: use only in docker container, if you use it with shell you will overwrite your user's ssh config
+  - mkdir -p ~/.ssh
+  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+
+UltraLaminator:
+  script:  
+  # update all submodules.
+  - git submodule update --init
+  
+  # build and run all unit tests in the solution.
+  - avalon test CardLaminator.asln
+  
+  # Clean the RevBBoard output directory.
+  - avalon clean CardLaminator.asln
+  
+  # Build the firmware with a single job to make error messages cleaner.
+  - avalon build CardLaminator.asln -l $CI_BUILD_REF_NAME-$CI_BUILD_ID -j1  
+  
+  artifacts:
+    paths:
+    - ProductionBoardA/build/bin/

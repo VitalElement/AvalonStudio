@@ -1,0 +1,17 @@
+Additional FOSS License Exception Terms and Conditions for STMicroelectronics
+
+This notice extends the regular PolarSSL FOSS License Exception as found on https://polarssl.org/foss-license-exception
+All definitions and clauses from the original are the bases for this document.
+
+The FOSS License List is extended with the licenses in LICENSE LIST.
+
+LICENSE LIST
+============
+STMicroelectronics Liberty v2 - http://www.st.com/software_license_agreement_liberty_v2
+STMicroelectronics Image v2 - http://www.st.com/software_license_agreement_image_v2
+
+EXPLANATION
+===========
+PolarSSL's FOSS License Exception also encompasses the software present in this BSP / SDK that is licensed by STMicroelectronics under the licenses mentioned above.
+
+As a result you can use PolarSSL for testing and making 'FOSS Applications' as long as you abide by the terms of the original FOSS License Exception. In short that means, that you can use PolarSSL in non-GPL software licensed under the licenses in 'LICENSE LIST' and 'FOSS License List' as long as you make your source code available to others as per the GPL. If you don't you should contact us at https://polarssl.org to get a Closed Source License that allows you to use PolarSSL in you applications and products without FOSS restrictions.

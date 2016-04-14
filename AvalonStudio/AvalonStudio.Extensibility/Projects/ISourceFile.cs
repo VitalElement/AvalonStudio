@@ -11,6 +11,7 @@ namespace AvalonStudio.Projects
     public interface ISourceFile : IProjectItem, IComparable<ISourceFile>
     {
         string File { get; }
+        string CurrentDirectory { get; }
         string Location { get; }
         Language Language { get; }
     }

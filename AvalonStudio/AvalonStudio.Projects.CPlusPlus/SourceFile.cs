@@ -83,5 +83,13 @@
         }
 
         public IProjectFolder Parent { get; set; }
+
+        public string CurrentDirectory
+        {
+            get
+            {
+                return Path.GetDirectoryName(Location);
+            }
+        }
     }
 }

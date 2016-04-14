@@ -1,3 +1,5 @@
 ﻿<TabItem xmlns="https://github.com/perspex" Header="Type">
-  <DropDown Items="{Binding ProjectTypeOptions}" SelectedItem="{Binding ProjectType, Mode=TwoWay}" />
+  <StackPanel HorizontalAlignment="Left">    
+    <DropDown Items="{Binding ProjectTypeOptions}" SelectedItem="{Binding ProjectType, Mode=TwoWay}" Width="150" />
+  </StackPanel>
 </TabItem>

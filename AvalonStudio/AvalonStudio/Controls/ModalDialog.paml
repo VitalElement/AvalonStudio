@@ -8,7 +8,7 @@
           <ColumnDefinition Width="50"/>
           <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="40" VerticalAlignment="Center" FontFamily="Segoe UI Light" FontWeight="Bold"/>
+        <TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="40" VerticalAlignment="Center"/>
       </Grid>
     </Grid>
     <Grid Grid.Row="1" RowDefinitions="*,30">

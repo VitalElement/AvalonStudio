@@ -41,7 +41,9 @@
             SolutionExplorer = new SolutionExplorerViewModel();            
             Console = new ConsoleViewModel();
             ErrorList = new ErrorListViewModel();
+            ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
+            
 
             DebugManager = new DebugManager();
             Editor = new EditorViewModel(editor);
@@ -163,6 +165,8 @@
         public DebugManager DebugManager { get; private set; }
 
         public MainMenuViewModel MainMenu { get; private set; }
+
+        public ToolBarViewModel ToolBar { get; private set; }
 
         public SolutionExplorerViewModel SolutionExplorer { get; private set; }
 

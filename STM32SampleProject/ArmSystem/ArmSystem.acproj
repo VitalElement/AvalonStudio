@@ -1,0 +1,12 @@
+{
+  "Name": "ArmSystem",
+  "Type": "StaticLibrary",
+  "References": [],
+  "StaticLibraries": [],
+  "ExcludedFiles": [
+    "C:\\development\\repos\\UltraLaminator\\ArmSystem\\allocator.c",
+    "C:\\development\\repos\\UltraLaminator\\ArmSystem\\allocator.c"
+  ],
+  "ToolchainSettings": {},
+  "DebugSettings": {}
+}

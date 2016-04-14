@@ -11,7 +11,7 @@
             selectionBrush = Brush.Parse("#AA569CD6");
         }
 
-        private Brush selectionBrush;
+        private IBrush selectionBrush;
 
         public event EventHandler<EventArgs> DataChanged;
 

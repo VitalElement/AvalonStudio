@@ -1,0 +1,9 @@
+{
+  "Name": "STM32F4Cube",
+  "StartupItem": "STM32F4xx_HAL_Driver",
+  "Projects": [
+    "Drivers/STM32F4xx_HAL_Driver/STM32F4xx_HAL_Driver.acproj",
+    "Drivers/CMSIS/CMSIS.acproj",
+    "Middlewares/ST/STM32_USB_Device_Library/STM32_USB_Device_Library.acproj"
+  ]
+}
