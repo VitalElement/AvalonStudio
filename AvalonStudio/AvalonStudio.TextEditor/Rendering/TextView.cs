@@ -16,6 +16,7 @@
     using System.Collections.Specialized;
     using System.Linq;
     using System.Reactive.Linq;
+    using Perspex.Input;
 
     public class TextView : ContentControl, IScrollable
     {
@@ -710,6 +711,22 @@
             _caretTimer.Stop();
             InvalidateVisual();
         }
+
+        public void PageUp()
+        {
+            if (VisualLines.First().DocumentLine != null)
+            {
+                ScrollToLine(VisualLines.First().DocumentLine.LineNumber, 0.75);
+            }
+        }
+
+        public void PageDown ()
+        {
+            if (VisualLines.Last().DocumentLine != null)
+            {
+                ScrollToLine(VisualLines.Last().DocumentLine.LineNumber, 0.75);
+            }
+        }        
 
         public int GetOffsetFromPoint(Point point)
         {
