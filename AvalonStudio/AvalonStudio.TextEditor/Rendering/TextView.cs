@@ -89,17 +89,17 @@
 
             documentLineTransformerChangedSubscriber = new WeakEventArgsSubscriber(() =>
             {
-                InvalidateVisual();
+                Invalidate();                
             });
 
             backgroundRendererChangedSubscriber = new WeakEventArgsSubscriber(() =>
             {
-                InvalidateVisual();
+                Invalidate();
             });
 
             documentTextChangedSubscriber = new WeakEventArgsSubscriber(() =>
             {
-                invalidateVisualLines = true;
+                Invalidate();
             });
 
             _caretTimer = new DispatcherTimer();
@@ -121,13 +121,32 @@
 
             TextDocumentProperty.Changed.Subscribe((o) =>
             {
-                VisualLines.Clear();
-                invalidateVisualLines = true;
+                Invalidate();
 
                 TextDocument.TextChanged += (sender, e) =>
                 {
                     WeakSubscriptionManager.Subscribe(TextDocument, nameof(TextDocument.Changed), documentTextChangedSubscriber);
                 };
+            });
+
+            FontSizeProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
+            });
+
+            FontFamilyProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
+            });
+
+            FontStyleProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
+            });
+
+            FontWeightProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
             });
 
             VisualLines = new List<VisualLine>();
@@ -391,7 +410,12 @@
         #endregion
 
         #region Properties
-        public Size CharSize { get; set; }
+        private Size charSize;
+        public Size CharSize
+        {
+            get { return charSize; }
+            set { charSize = value; }
+        }
 
         public Action InvalidateScroll
         {
@@ -414,8 +438,7 @@
 
                 firstVisualLine = (int)(offset.Y);
 
-                invalidateVisualLines = true;
-                InvalidateVisual();
+                Invalidate();
             }
         }
 
@@ -443,12 +466,20 @@
             }
         }
 
+        public void Invalidate()
+        {
+            invalidateVisualLines = true;
+            InvalidateVisual();
+        }
+
         public override void Render(DrawingContext context)
         {
             if (TextDocument != null)
             {
-                GenerateTextProperties();
-                GenerateVisualLines(context);
+                if (invalidateVisualLines)
+                {
+                    GenerateVisualLines(context);                
+                }
 
                 // Render background layer.
                 RenderBackground(context);
@@ -463,8 +494,6 @@
 
                 RenderCaret(context);
             }
-
-            base.Render(context);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -574,29 +603,26 @@
         private int lastLineCount;
         private void GenerateVisualLines(DrawingContext context)
         {
-            //if (invalidateVisualLines) // This is a significant performance boost, we only need to re-generate when offset changes
+            VisualLines.Clear();
+
+            uint visualLineNumber = 0;
+
+            for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount && i >= 0; i++)
             {
-                VisualLines.Clear();
-
-                uint visualLineNumber = 0;
-
-                for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount && i >= 0; i++)
-                {
-                    var line = new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ };
-                    GenerateText(line);
-                    VisualLines.Add(line);
-                }
-
-                if (TextDocument.LineCount != lastLineCount)
-                {
-                    lastLineCount = TextDocument.LineCount;
-
-                    InvalidateMeasure();
-                    InvalidateScroll.Invoke();
-                }
-
-                invalidateVisualLines = false;
+                var line = new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ };
+                GenerateText(line);
+                VisualLines.Add(line);
             }
+
+            if (TextDocument.LineCount != lastLineCount)
+            {
+                lastLineCount = TextDocument.LineCount;
+
+                InvalidateMeasure();
+                InvalidateScroll.Invoke();
+            }
+
+            invalidateVisualLines = false;
         }
 
         private void GenerateText(VisualLine line)
@@ -616,9 +642,7 @@
 
         private void RenderText(DrawingContext context, VisualLine line)
         {
-            context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), line.RenderedText);
-            line.RenderedText.Dispose();
-            line.RenderedText = null;
+            context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), line.RenderedText);            
         }
 
         private void RenderCaret(DrawingContext context)
