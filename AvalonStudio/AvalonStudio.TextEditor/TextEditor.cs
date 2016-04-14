@@ -62,12 +62,7 @@
             });
 
             AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
-        }
-
-        private void MouseHoverDelayTimer_Tick(object sender, EventArgs e)
-        {
-            MouseCursorOffset = currentMouseOffset;
-        }
+        }        
         #endregion
 
         public void ScrollToLine(int line)
@@ -644,25 +639,27 @@
                 }
             }
         }
-
-        private int currentMouseOffset = -1;
+        
         protected override void OnPointerMoved(PointerEventArgs e)
         {
             var point = e.GetPosition(textView.TextSurface);                        
             
-            currentMouseOffset = textView.GetOffsetFromPoint(point);
+            var currentMouseOffset = textView.GetOffsetFromPoint(point);
 
-            if (e.Device.Captured == textView)
+            if (currentMouseOffset != -1)
             {
-                CaretIndex = currentMouseOffset;
+                if (e.Device.Captured == textView)
+                {
+                    CaretIndex = currentMouseOffset;
 
-                if (CaretIndex >= 0)
-                {
-                    SelectionEnd = CaretIndex;
-                }
-                else
-                {
-                    SelectionEnd = 0;
+                    if (CaretIndex >= 0)
+                    {
+                        SelectionEnd = CaretIndex;
+                    }
+                    else
+                    {
+                        SelectionEnd = 0;
+                    }             
                 }
             }
         }
@@ -684,8 +681,7 @@
         protected override void OnLostFocus(RoutedEventArgs e)
         {
             base.OnLostFocus(e);
-            SelectionStart = 0;
-            SelectionEnd = 0;
+
             textView.HideCaret();
         }
 
@@ -696,8 +692,6 @@
 
         protected void OnKeyDown(object sender, KeyEventArgs e)
         {
-            // base.OnKeyDown(e);
-
             if (e.Handled)
             {
                 return;
@@ -829,6 +823,14 @@
                     }
 
                     break;
+
+                case Key.PageUp:
+                    textView.PageUp();
+                    break;
+
+                case Key.PageDown:
+                    textView.PageDown();
+                    break;
             }
 
             if (movement && ((modifiers & InputModifiers.Shift) != 0))
@@ -842,8 +844,7 @@
 
             if (handled)
             {
-                InvalidateVisual();
-                //e.Handled = true;
+                InvalidateVisual();                
             }
         }
         #endregion       
