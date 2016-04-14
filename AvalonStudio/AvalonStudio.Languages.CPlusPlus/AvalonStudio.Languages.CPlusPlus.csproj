@@ -172,7 +172,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="clang-format" />
+    <None Include="clang-format">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="libclang.so">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

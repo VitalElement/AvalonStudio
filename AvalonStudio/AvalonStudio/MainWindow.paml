@@ -16,7 +16,7 @@
     </Style>
     <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
       <Setter Property="Background" Value="#274452"/>
-    </Style>    
+    </Style>
   </Controls:MetroWindow.Styles>
   <Grid RowDefinitions="25,*,350,25" ColumnDefinitions="220, *, *, 300">
     <Grid Grid.ColumnSpan="3" Margin="20 0 0 0">
@@ -33,19 +33,26 @@
     </Grid>
 
     <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="1 1 2 2">
-      <DockPanel>                                  
-          <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right" >
-            <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400"  />
-          </Grid>
-          <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
-            <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Width="400" />
-          </Grid>
-          <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
-            <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
-          </Grid>        
+      <DockPanel>
+        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right" >
+          <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400"  />
+        </Grid>
+        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
+          <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Width="400" />
+        </Grid>
+        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
+          <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
+        </Grid>
         <Grid DockPanel.Dock="Left" >
-          <Controls:Console DataContext="{Binding Console}" />
-        </Grid>        
+          <TabControl TabStripPlacement="Bottom">
+            <TabItem Header="Error List">
+              <Controls:ErrorList DataContext="{Binding ErrorList}" />
+            </TabItem>
+            <TabItem Header="Console">
+              <Controls:Console DataContext="{Binding Console}" />
+            </TabItem>
+          </TabControl>
+        </Grid>
       </DockPanel>
     </Grid>
 

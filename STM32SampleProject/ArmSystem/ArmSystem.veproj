@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LocationRelativeToParent>ArmSystem\ArmSystem.veproj</LocationRelativeToParent>
+  <Children>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>35a5416a-4358-4a8c-9949-a0c0471c9169</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>allocator.c</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>83766dc3-427d-41aa-8b12-83d293559a75</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>CPPSupport.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>eba7190b-f266-4788-a313-797976b64e34</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>startup.c</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>7e89e610-4664-4f63-b12f-436d1aa00421</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>startup.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>4218c29d-dae4-40bf-9d56-b4451aa667c5</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>syscalls.c</LocationRelativeToParent>
+    </ProjectItem>
+  </Children>
+  <ExportedIncludes>
+    <string>ArmSystem</string>
+  </ExportedIncludes>
+  <Configurations>
+    <ProjectConfiguration>
+      <Name>Default</Name>
+      <ToolChain xsi:type="GCCToolChain">
+        <Optimization>Off</Optimization>
+        <OptimizationPriority>None</OptimizationPriority>
+      </ToolChain>
+      <CppSupport>false</CppSupport>
+      <DebugSymbols>false</DebugSymbols>
+      <Rtti>false</Rtti>
+      <Exceptions>false</Exceptions>
+      <IncludePaths />
+      <Defines>
+        <string>__FPU_USED</string>
+      </Defines>
+      <UseMemoryLayout>true</UseMemoryLayout>
+      <DiscardUnusedSections>true</DiscardUnusedSections>
+      <NotUseStandardStartupFiles>true</NotUseStandardStartupFiles>
+      <Fpu>Hard</Fpu>
+      <Library>None</Library>
+      <Optimization>None</Optimization>
+      <OptimizationPreference>None</OptimizationPreference>
+      <LinkedLibraries />
+      <SelectedDeviceName>STM32F407VG</SelectedDeviceName>
+      <SelectedDeviceId>119</SelectedDeviceId>
+      <Mcpu>cortex-m4</Mcpu>
+      <InRom1Start>134217728</InRom1Start>
+      <InRom1Size>1048576</InRom1Size>
+      <InRom2Start>0</InRom2Start>
+      <InRom2Size>0</InRom2Size>
+      <InRam1Start>536870912</InRam1Start>
+      <InRam1Size>131072</InRam1Size>
+      <InRam2Start>0</InRam2Start>
+      <InRam2Size>0</InRam2Size>
+      <DebugInRam>false</DebugInRam>
+      <IsLibrary>true</IsLibrary>
+    </ProjectConfiguration>
+  </Configurations>
+  <References />
+</Project>
