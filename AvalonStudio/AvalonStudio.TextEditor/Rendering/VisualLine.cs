@@ -12,7 +12,7 @@
     {
         ~VisualLine()
         {
-            RenderedText.Dispose();
+            RenderedText?.Dispose();
             RenderedText = null;
             DocumentLine = null;
         }
