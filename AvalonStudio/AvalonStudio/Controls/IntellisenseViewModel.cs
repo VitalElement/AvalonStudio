@@ -379,7 +379,7 @@
 
                 CompletionDataViewModel suggestion = null;
                 if (currentFilter != string.Empty)
-                {
+                {                                   
                     IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
                     lock (intellisenseLock)
@@ -412,15 +412,22 @@
 
                 if (filteredResults?.Count() > 0)
                 {
-                    var list = filteredResults.ToList();
+                    if (filteredResults?.Count() == 1 && filteredResults.First().Title == currentFilter)
+                    {
+                        Close();
+                    }
+                    else
+                    {
+                        var list = filteredResults.ToList();
 
-                    Model = list.Skip(list.IndexOf(suggestion) - 25).Take(50).ToList();
-                    //Model = filteredResults.ToList();                   
+                        Model = list.Skip(list.IndexOf(suggestion) - 25).Take(50).ToList();
+                        //Model = filteredResults.ToList();                   
 
-                    SelectedCompletion = suggestion;
+                        SelectedCompletion = suggestion;
 
-                    // Triggers display update.
-                    IsVisible = true;
+                        // Triggers display update.
+                        IsVisible = true;
+                    }
                 }
                 else
                 {
