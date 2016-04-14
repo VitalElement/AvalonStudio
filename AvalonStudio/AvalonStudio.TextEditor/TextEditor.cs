@@ -696,8 +696,6 @@
 
         protected void OnKeyDown(object sender, KeyEventArgs e)
         {
-            // base.OnKeyDown(e);
-
             if (e.Handled)
             {
                 return;
