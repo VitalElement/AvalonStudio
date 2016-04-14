@@ -689,7 +689,7 @@
 
                 InvalidateVisual();
 
-                if (caretIndex >= 0)
+                if (caretIndex >= 0 && TextDocument != null)
                 {
                     var position = TextDocument.GetLocation(caretIndex);
                     ScrollToLine(position.Line, 0.1);
