@@ -20,11 +20,11 @@
 
             DataContextChanged += (sender, e) =>
             {
-                var editorVm = DataContext as WorkspaceViewModel;
+                var editorVm = DataContext as EditorViewModel;
 
                 if (editorVm != null)
                 {
-                    editorVm.Editor.Model.Editor = editor;
+                    editorVm.Model.Editor = editor;
                 }
             };            
         }
