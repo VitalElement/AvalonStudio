@@ -19,6 +19,7 @@
     using Perspex.Controls;
     using Perspex.Input;
     using TextEditor;
+    using System.Collections.ObjectModel;
     public enum Perspective
     {
         Editor,
@@ -43,13 +44,10 @@
             ErrorList = new ErrorListViewModel();
             ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
+
+            Documents = new ObservableCollection<EditorViewModel>();
             
-
-            DebugManager = new DebugManager();
-            Editor = new EditorViewModel(editor);
-
-            Editor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
-            Editor.Margins.Add(new LineNumberMargin());
+            DebugManager = new DebugManager();                        
 
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
@@ -59,7 +57,13 @@
             {
                 if (e is SourceFileViewModel)
                 {
-                    Editor.Model.OpenFile((e as SourceFileViewModel).Model as ISourceFile);
+                    var newEditor = new EditorViewModel(editor);
+
+                    newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
+                    newEditor.Margins.Add(new LineNumberMargin());
+                    newEditor.Model.OpenFile((e as SourceFileViewModel).Model as ISourceFile);
+
+                    Documents.Add(newEditor);
                 }
             };
 
@@ -170,7 +174,20 @@
 
         public SolutionExplorerViewModel SolutionExplorer { get; private set; }
 
-        public EditorViewModel Editor { get; private set; }
+        private ObservableCollection<EditorViewModel> documents;
+        public ObservableCollection<EditorViewModel> Documents
+        {
+            get { return documents; }
+            set { this.RaiseAndSetIfChanged(ref documents, value); }
+        }
+
+        private EditorViewModel selectedDocument;
+        public EditorViewModel SelectedDocument
+        {
+            get { return selectedDocument; }
+            set { this.RaiseAndSetIfChanged(ref selectedDocument, value); }
+        }
+
 
         public IConsole Console { get; private set; }
 
