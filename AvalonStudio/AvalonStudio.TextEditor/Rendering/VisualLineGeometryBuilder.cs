@@ -30,7 +30,12 @@
             int segmentStart = segment.Offset;
             int segmentEnd = segment.Offset + segment.Length;
 
-            if(segmentEnd > textView.TextDocument.TextLength)
+            if (segmentStart > textView.TextDocument.TextLength)
+            {
+                segmentStart = textView.TextDocument.TextLength;
+            }
+
+            if (segmentEnd > textView.TextDocument.TextLength)
             {
                 segmentEnd = textView.TextDocument.TextLength;
             }

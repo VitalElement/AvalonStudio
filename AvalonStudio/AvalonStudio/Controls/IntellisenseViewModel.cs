@@ -371,7 +371,14 @@
                 }
                 else
                 {
-                    currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);
+                    if (intellisenseStartedAt != -1)
+                    {
+                        currentFilter = editorViewModel.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);
+                    }
+                    else
+                    {
+                        currentFilter = string.Empty;
+                    }
 
                     await Task.Factory.StartNew(() =>
                     {
