@@ -131,12 +131,24 @@
             set { SetValue(BeforeTextChangedCommandProperty, value); }
         }
 
-        public static readonly PerspexProperty<object> ContentProperty = TextView.ContentProperty.AddOwner<TextEditor>();
+        public static readonly StyledProperty<object> ContentProperty = TextView.ContentProperty.AddOwner<TextEditor>();
 
         public object Content
         {
             get { return GetValue(ContentProperty); }
             set { SetValue(ContentProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="Header"/> property.
+        /// </summary>
+        public static readonly StyledProperty<object> HeaderProperty =
+            PerspexProperty.Register<TextEditor, object>(nameof(Header));
+
+        public object Header
+        {
+            get { return GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
         }
 
         public static readonly StyledProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
