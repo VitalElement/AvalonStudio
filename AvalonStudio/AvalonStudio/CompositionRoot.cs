@@ -39,7 +39,7 @@
             {
                 return new[]
                 {
-                    typeof (Program).GetTypeInfo().Assembly,
+                    typeof (App).GetTypeInfo().Assembly,
                     typeof (ILanguageService).GetTypeInfo().Assembly,                    
                 };
             }
