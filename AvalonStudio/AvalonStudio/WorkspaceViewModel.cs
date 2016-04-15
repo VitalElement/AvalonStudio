@@ -94,7 +94,7 @@
                 case Key.F5:
                     if (CurrentPerspective == Perspective.Editor)
                     {
-                        if (SolutionExplorer.Solution.FirstOrDefault()?.Model.StartupProject != null)
+                        if (SolutionExplorer.Solution?.FirstOrDefault()?.Model.StartupProject != null)
                         {
                             DebugManager.StartDebug(SolutionExplorer.Solution.FirstOrDefault()?.Model.StartupProject);
                         }
