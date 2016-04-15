@@ -476,7 +476,7 @@
         {
             if (TextDocument != null)
             {
-                if (invalidateVisualLines)
+                //if (invalidateVisualLines)
                 {
                     GenerateVisualLines(context);                
                 }
@@ -555,7 +555,10 @@
 
                 foreach (var line in VisualLines)
                 {
-                    renderer.TransformLine(this, context, line);
+                    if (!line.DocumentLine.IsDeleted)
+                    {
+                        renderer.TransformLine(this, context, line);
+                    }
                 }
             }
         }
@@ -763,9 +766,9 @@
                 var column = Math.Ceiling((point.X / CharSize.Width) + 0.5);
                 var line = (int)Math.Ceiling(point.Y / CharSize.Height);
 
-                if (line > 0 && column > 0 && line < TextDocument.LineCount)
+                if (line > 0 && column > 0 && line-1 < VisualLines.Count)
                 {
-                    if (line < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted)
+                    if (line < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted && VisualLines[line - 1].DocumentLine.LineNumber < TextDocument.LineCount)
                     {
                         result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
                     }

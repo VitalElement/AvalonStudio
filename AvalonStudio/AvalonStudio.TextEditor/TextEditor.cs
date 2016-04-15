@@ -342,7 +342,8 @@
                 TextDocument.Insert(caretIndex, input);
                 CaretIndex += input.Length;
                 SelectionStart = SelectionEnd = CaretIndex;
-            }
+                TextView.Invalidate();
+            }            
         }
 
         private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
@@ -372,6 +373,7 @@
                 var start = Math.Min(selectionStart, selectionEnd);
                 var end = Math.Max(selectionStart, selectionEnd);
                 TextDocument.Remove(start, end - start);
+                TextView.Invalidate();
 
                 SelectionStart = SelectionEnd = CaretIndex = start;
 
@@ -630,7 +632,16 @@
                             SelectionStart = 0;
                             SelectionEnd = text.TextLength;
                             break;
-                    }
+                    }                    
+
+                    e.Device.Capture(textView);
+                    e.Handled = true;
+
+                    InvalidateVisual();
+                }
+                else if (TextDocument.TextLength == 0)
+                {
+                    SelectionStart = SelectionEnd = CaretIndex = 0;
 
                     e.Device.Capture(textView);
                     e.Handled = true;
@@ -782,6 +793,7 @@
                         // TODO implement deleting newline...
                         TextDocument.Remove(caretIndex - 1, 1);
                         --CaretIndex;
+                        TextView.Invalidate();
                     }
 
                     break;
@@ -790,6 +802,7 @@
                     if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
                     {
                         TextDocument.Remove(caretIndex, 1);
+                        TextView.Invalidate();
                     }
 
                     break;
