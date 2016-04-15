@@ -34,9 +34,11 @@
             popup.PointerPressed += Popup_PointerPressed;
 
             ContentProperty.Changed.Subscribe((o) =>
-            {                                      
-                popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor).TextView;
-                popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };                
+            {   if (AssociatedObject != null)
+                {
+                    popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor).TextView;
+                    popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };
+                }           
             });
         }
 
