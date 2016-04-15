@@ -3,7 +3,7 @@
     using Perspex.Controls;
     using Perspex.Controls.Primitives;
     using Perspex.Input;
-    using Perspex.Markup.Xaml;
+    using Perspex;
     using AvalonStudio.TextEditor;
 
     public class Editor : UserControl
@@ -31,7 +31,7 @@
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
             
         }
         
