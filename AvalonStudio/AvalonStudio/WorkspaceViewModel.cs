@@ -4,22 +4,18 @@
     using Controls.ViewModels;
     using Debugging;
     using Extensibility;
-    using Platform;
-    using Languages;
     using MVVM;
+    using Perspex.Input;
     using Projects;
     using ReactiveUI;
-    using Repositories;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
     using System.Linq;
     using System.Threading;
-    using Toolchains;
-    using Utils;
-    using Perspex.Controls;
-    using Perspex.Input;
     using TextEditor;
-    using System.Collections.ObjectModel;
+    using Utils;
+
     public enum Perspective
     {
         Editor,
@@ -29,13 +25,11 @@
     [Export(typeof(WorkspaceViewModel))]
     public class WorkspaceViewModel : ViewModel<Workspace>
     {
-        private readonly EditorModel editor;
         public static WorkspaceViewModel Instance = null;
 
         [ImportingConstructor]
-        public WorkspaceViewModel(EditorModel editor, [Import] Workspace workspace) : base(workspace)
-        {            
-            this.editor = editor;
+        public WorkspaceViewModel([Import] Workspace workspace) : base(workspace)
+        { 
             CurrentPerspective = Perspective.Editor;
 
             MainMenu = new MainMenuViewModel();
@@ -57,7 +51,7 @@
             {
                 if (e is SourceFileViewModel)
                 {
-                    var newEditor = new EditorViewModel(editor);
+                    var newEditor = new EditorViewModel(new EditorModel());
 
                     newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
                     newEditor.Margins.Add(new LineNumberMargin());
@@ -67,10 +61,10 @@
                 }
             };
 
-            this.editor.CodeAnalysisCompleted += (sender, e) =>
-            {
-                InvalidateErrors();
-            };
+            //this.editor.CodeAnalysisCompleted += (sender, e) =>
+            //{
+            //    InvalidateErrors();
+            //};
 
             ProcessCancellationToken = new CancellationTokenSource();
 
@@ -117,19 +111,19 @@
             var toRemove = new List<ErrorViewModel>();
 
 
-            foreach (var diagnostic in editor.CodeAnalysisResults.Diagnostics)
-            {
-                //if (diagnostic.Location.FileLocation.File.FileName.NormalizePath() == document.FilePath.NormalizePath())
-                {
-                    var error = new ErrorViewModel(diagnostic);
-                    var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
+            //foreach (var diagnostic in editor.CodeAnalysisResults.Diagnostics)
+            //{
+            //    //if (diagnostic.Location.FileLocation.File.FileName.NormalizePath() == document.FilePath.NormalizePath())
+            //    {
+            //        var error = new ErrorViewModel(diagnostic);
+            //        var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
 
-                    if (matching == null)
-                    {
-                        allErrors.Add(error);
-                    }
-                }
-            }
+            //        if (matching == null)
+            //        {
+            //            allErrors.Add(error);
+            //        }
+            //    }
+            //}
 
             foreach (var error in ErrorList.Errors)
             {
@@ -241,7 +235,7 @@
 
         public void Cleanup()
         {
-            editor.ShutdownBackgroundWorkers();
+            //editor.ShutdownBackgroundWorkers();
         }
     }
 }
