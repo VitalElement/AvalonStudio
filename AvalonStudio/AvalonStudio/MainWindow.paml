@@ -45,6 +45,25 @@
         </Grid>
         <Grid DockPanel.Dock="Left" >
           <TabControl TabStripPlacement="Bottom">
+            <TabControl.Styles>
+              <Style Selector="TabStripItem">
+                <Setter Property="Padding" Value="5" />
+              </Style>
+              
+              <Style Selector="TabStripItem">
+                <Setter Property="Background" Value="#2D2D30" />                
+                <Setter Property="BorderBrush" Value="#3E3E42" />
+                <Setter Property="Margin" Value="0 -1 0 0" />
+                <Setter Property="FontSize" Value="12"/>
+              </Style>
+              <Style Selector="TabStripItem:pointerover">
+                <Setter Property="Background" Value="#424346" />
+              </Style>
+              <Style Selector="TabStripItem:selected">
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Background" Value="#252526" />
+              </Style>
+            </TabControl.Styles>
             <TabItem Header="Error List">
               <Controls:ErrorList DataContext="{Binding ErrorList}" />
             </TabItem>
