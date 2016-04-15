@@ -1,5 +1,6 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/perspex"
         xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+                      xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
         Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFC4C4C4" Width="1600" Height="900">
   <Controls:MetroWindow.TitleBarContent>
     <Controls:MainMenu DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
@@ -28,7 +29,15 @@
         <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Left" >
           <Controls:Registers DataContext="{Binding DebugManager.Registers}" />
         </Grid>
-        <Controls:Editor DataContext="{Binding Editor}" DockPanel.Dock="Right"  />
+        <TabControl DockPanel.Dock="Right" Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument}">
+          <TabControl.DataTemplates>
+            <DataTemplate DataType="vm:EditorViewModel">
+              <TabItem Header="Test">
+                <TextBlock Text="Test" />
+              </TabItem>
+            </DataTemplate>
+          </TabControl.DataTemplates>
+        </TabControl>        
       </DockPanel>
     </Grid>
 
@@ -49,9 +58,9 @@
               <Style Selector="TabStripItem">
                 <Setter Property="Padding" Value="5" />
               </Style>
-              
+
               <Style Selector="TabStripItem">
-                <Setter Property="Background" Value="#2D2D30" />                
+                <Setter Property="Background" Value="#2D2D30" />
                 <Setter Property="BorderBrush" Value="#3E3E42" />
                 <Setter Property="Margin" Value="0 -1 0 0" />
                 <Setter Property="FontSize" Value="12"/>

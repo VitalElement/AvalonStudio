@@ -38,7 +38,7 @@
 
             SaveCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.Editor.Save();
+                WorkspaceViewModel.Instance.SelectedDocument.Save();
             });
 
             CleanProjectCommand = ReactiveCommand.Create();
