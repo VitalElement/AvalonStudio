@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Controls
 {
     using Perspex.Controls;
-    using Perspex.Markup.Xaml;
+    using Perspex;
 
     public class HoverProbe : UserControl
     {
@@ -12,7 +12,7 @@
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }
