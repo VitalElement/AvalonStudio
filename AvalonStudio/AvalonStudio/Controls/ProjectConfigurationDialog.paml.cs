@@ -1,8 +1,8 @@
-﻿using Perspex.Controls;
-using Perspex.Markup.Xaml;
-
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
+    using Perspex;
+    using Perspex.Controls;
+
     public class ProjectConfigurationDialog : UserControl
     {
         public ProjectConfigurationDialog()
@@ -12,7 +12,7 @@ namespace AvalonStudio.Controls
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }

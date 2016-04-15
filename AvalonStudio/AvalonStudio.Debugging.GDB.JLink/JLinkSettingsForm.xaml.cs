@@ -1,5 +1,5 @@
 ﻿using Perspex.Controls;
-using Perspex.Markup.Xaml;
+using Perspex;
 
 namespace AvalonStudio.Debugging.GDB.JLink
 {
@@ -12,7 +12,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }

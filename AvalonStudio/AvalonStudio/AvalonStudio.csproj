@@ -309,7 +309,6 @@
     <Compile Include="Controls\NewItemDialogViewModel.cs" />
     <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="ToolViewModel.cs" />
     <Compile Include="WorkspaceViewModel.cs" />

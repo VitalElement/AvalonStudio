@@ -1,8 +1,8 @@
-﻿using Perspex.Controls;
-using Perspex.Markup.Xaml;
-
-namespace AvalonStudio.Projects.CPlusPlus
+﻿namespace AvalonStudio.Projects.CPlusPlus
 {
+    using Perspex;
+    using Perspex.Controls;
+
     public class ToolchainSettingsForm : TabItem
     {
         public ToolchainSettingsForm()
@@ -12,7 +12,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }

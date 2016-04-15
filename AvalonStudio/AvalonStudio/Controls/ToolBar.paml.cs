@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Controls
 {
+    using Perspex;
     using Perspex.Controls;
-    using Perspex.Markup.Xaml;
 
     public class ToolBar : UserControl
     {
@@ -12,7 +12,7 @@
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }

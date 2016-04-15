@@ -1,8 +1,8 @@
-﻿using Perspex.Controls;
-using Perspex.Markup.Xaml;
-
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
+    using Perspex.Controls;
+    using Perspex;
+
     public class ModalDialog : UserControl
     {
         public ModalDialog()
@@ -12,7 +12,7 @@ namespace AvalonStudio.Controls
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }

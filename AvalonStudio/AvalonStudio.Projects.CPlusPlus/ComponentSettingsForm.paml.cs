@@ -1,5 +1,5 @@
 ﻿using Perspex.Controls;
-using Perspex.Markup.Xaml;
+using Perspex;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
@@ -12,7 +12,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }
