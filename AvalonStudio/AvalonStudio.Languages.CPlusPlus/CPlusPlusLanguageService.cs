@@ -576,11 +576,11 @@
                     {
                         case "}":
                         case ";":
-                            editor.CaretIndex = Format(file, editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+                            editor.CaretIndex = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
                             break;
 
                         case "{":
-                            editor.CaretIndex = Format(file, editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex) - Environment.NewLine.Length;
+                            editor.CaretIndex = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex) - Environment.NewLine.Length;
                             break;
                     }
                 }
@@ -614,7 +614,7 @@
             dataAssociations.Remove(file);
         }
 
-        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
             var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor, ClangFormatSettings.Default);
 
@@ -772,6 +772,60 @@
         {
             throw new NotImplementedException();
         }
+
+        public int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
+        {
+            int result = caret;
+            
+            IEnumerable<IDocumentLine> lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+
+            textDocument.BeginUpdate();
+
+            foreach (var line in lines)
+            {
+                textDocument.Insert(line.Offset, "//");
+            }
+
+            if (format)
+            {
+                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
+            }
+
+            textDocument.EndUpdate();
+
+            return result;
+        }
+        
+
+        public int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
+        {
+            int result = caret;
+
+            IEnumerable<IDocumentLine> lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+
+            textDocument.BeginUpdate();
+
+            foreach (var line in lines)
+            {
+                var index = textDocument.GetText(line).IndexOf("//");
+
+                if (index >= 0)
+                {
+                    textDocument.Replace(line.Offset + index, 2, string.Empty);
+                }
+            }
+
+            if (format)
+            {
+                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
+            }
+
+            textDocument.EndUpdate();
+
+            return result;
+        }
+
+        
     }
 
     class CPlusPlusDataAssociation

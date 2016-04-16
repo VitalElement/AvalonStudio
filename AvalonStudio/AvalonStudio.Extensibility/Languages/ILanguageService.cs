@@ -26,7 +26,10 @@
 
         bool CanHandle(ISourceFile file);
 
-        int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor);
+        int Format(TextDocument textDocument, uint offset, uint length, int cursor);
+
+        int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
+        int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
 
         IIndentationStrategy IndentationStrategy { get; }
 
