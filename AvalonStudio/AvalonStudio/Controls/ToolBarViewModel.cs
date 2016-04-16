@@ -79,6 +79,18 @@
             {
                 ShellViewModel.Instance.SelectedDocument?.Redo();
             });
+
+            SaveCommand = ReactiveCommand.Create();
+            SaveCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.Save();
+            });
+
+            SaveAllCommand = ReactiveCommand.Create();
+            SaveAllCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.SaveAll();
+            });
         }
 
         public ReactiveCommand<object> StartDebugCommand { get; }
@@ -93,5 +105,7 @@
         public ReactiveCommand<object> UnCommentCommand { get; }
         public ReactiveCommand<object> UndoCommand { get; }
         public ReactiveCommand<object> RedoCommand { get; }
+        public ReactiveCommand<object> SaveCommand { get; }
+        public ReactiveCommand<object> SaveAllCommand { get; }
     }
 }
