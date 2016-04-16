@@ -11,47 +11,47 @@
             StartDebugCommand = ReactiveCommand.Create();
             StartDebugCommand.Subscribe(_ =>
             {
-                if (WorkspaceViewModel.Instance.CurrentPerspective == Perspective.Editor)
+                if (ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
                 {
-                    if (WorkspaceViewModel.Instance.SolutionExplorer.Model?.StartupProject != null)
+                    if (ShellViewModel.Instance.SolutionExplorer.Model?.StartupProject != null)
                     {
-                        WorkspaceViewModel.Instance.DebugManager.StartDebug(WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject);
+                        ShellViewModel.Instance.DebugManager.StartDebug(ShellViewModel.Instance.SolutionExplorer.Model.StartupProject);
                     }
                 }
                 else
                 {
-                    WorkspaceViewModel.Instance.DebugManager.Continue();
+                    ShellViewModel.Instance.DebugManager.Continue();
                 }
             });
 
             StepIntoCommand = ReactiveCommand.Create();
             StepIntoCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.StepInto();
+                ShellViewModel.Instance.DebugManager.StepInto();
             });
 
             StepOverCommand = ReactiveCommand.Create();
             StepOverCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.StepOver();
+                ShellViewModel.Instance.DebugManager.StepOver();
             });
 
             PauseCommand = ReactiveCommand.Create();
             PauseCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.Pause();
+                ShellViewModel.Instance.DebugManager.Pause();
             });
 
             StopCommand = ReactiveCommand.Create();
             StopCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.Stop();
+                ShellViewModel.Instance.DebugManager.Stop();
             });
 
             RestartCommand = ReactiveCommand.Create();
             RestartCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.Restart();
+                ShellViewModel.Instance.DebugManager.Restart();
             });
         }
 

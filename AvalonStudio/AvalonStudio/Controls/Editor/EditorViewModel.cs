@@ -11,7 +11,7 @@
     using Languages;
     using TextEditor.Rendering;
     using TextEditor;
-    using Platform;
+    using Platforms;
     using Utils;
     using Projects;
     using Perspex.Threading;
@@ -38,7 +38,7 @@
             CloseCommand.Subscribe(_ => 
             {
                 Save();
-                WorkspaceViewModel.Instance.Documents.Remove(this);
+                ShellViewModel.Instance.Documents.Remove(this);
                 Model.ShutdownBackgroundWorkers();
             });
 
@@ -81,7 +81,7 @@
                 {
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
                     HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
-                    WorkspaceViewModel.Instance.InvalidateErrors();
+                    ShellViewModel.Instance.InvalidateErrors();
                 };
 
                 model.CodeCompletionRequestCompleted += (s, ee) =>
@@ -231,13 +231,13 @@
             set
             {
                 this.RaiseAndSetIfChanged(ref caretIndex, value);
-                WorkspaceViewModel.Instance.StatusBar.Offset = value;
+                ShellViewModel.Instance.StatusBar.Offset = value;
 
                 if (value >= 0)
                 {
                     var location = TextDocument.GetLocation(value);
-                    WorkspaceViewModel.Instance.StatusBar.LineNumber = location.Line;
-                    WorkspaceViewModel.Instance.StatusBar.Column = location.Column;
+                    ShellViewModel.Instance.StatusBar.LineNumber = location.Line;
+                    ShellViewModel.Instance.StatusBar.Column = location.Column;
                 }
             }
         }

@@ -13,7 +13,7 @@
         {
             templates = new ObservableCollection<ICodeTemplate>();
 
-            var compatibleTemplates = Workspace.Instance.CodeTempates.Where(t => t.IsCompatible(folder.Project));
+            var compatibleTemplates = Shell.Instance.CodeTempates.Where(t => t.IsCompatible(folder.Project));
 
             foreach(var template in compatibleTemplates)
             {

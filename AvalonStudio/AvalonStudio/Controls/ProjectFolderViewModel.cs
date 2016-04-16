@@ -18,8 +18,8 @@
             NewItemCommand = ReactiveCommand.Create();
             NewItemCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.ModalDialog = new NewItemDialogViewModel(model);
-                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
+                ShellViewModel.Instance.ModalDialog = new NewItemDialogViewModel(model);
+                ShellViewModel.Instance.ModalDialog.ShowDialog();
             });
             
             RemoveCommand = ReactiveCommand.Create();

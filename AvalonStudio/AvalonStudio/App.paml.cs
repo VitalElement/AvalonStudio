@@ -31,12 +31,12 @@
             var container = CompositionRoot.CreateContainer();
             var app = new App();
 
-            Workspace.Instance = container.GetExportedValue<Workspace>();
-            WorkspaceViewModel.Instance = container.GetExportedValue<WorkspaceViewModel>();
+            Shell.Instance = container.GetExportedValue<Shell>();
+            ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
 
             app.RunWithMainWindow<MainWindow>();
 
-            WorkspaceViewModel.Instance.Cleanup();
+            ShellViewModel.Instance.Cleanup();
         }
 
         public static void AttachDevTools(Window window)

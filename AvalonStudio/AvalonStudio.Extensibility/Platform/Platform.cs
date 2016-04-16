@@ -1,10 +1,9 @@
-﻿namespace AvalonStudio.Platform
+﻿namespace AvalonStudio.Platforms
 {
     using AvalonStudio.Utils;
     using System;
     using System.IO;
-    using System.Runtime.InteropServices;
-    using Utils;
+    using System.Runtime.InteropServices;    
 
     public static class Platform
     {

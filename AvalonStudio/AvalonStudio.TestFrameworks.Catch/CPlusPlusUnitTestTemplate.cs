@@ -64,9 +64,9 @@
             project.AddReference(catchProject);
             
             project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "UnitTest1.cpp", new UnitTestTemplate().TransformText()));
-            project.ToolChain = Workspace.Instance.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
-            project.Debugger = Workspace.Instance.Debuggers.FirstOrDefault(d => d is LocalDebugAdaptor);
-            project.TestFramework = Workspace.Instance.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);
+            project.ToolChain = Shell.Instance.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
+            project.Debugger = Shell.Instance.Debuggers.FirstOrDefault(d => d is LocalDebugAdaptor);
+            project.TestFramework = Shell.Instance.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);
             var settings = LocalGCCToolchain.ProvisionLocalGccSettings(project);
 
             settings.CompileSettings.Exceptions = true;
