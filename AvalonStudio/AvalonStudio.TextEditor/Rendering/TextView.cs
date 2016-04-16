@@ -119,15 +119,18 @@
                 WeakSubscriptionManager.Subscribe(DocumentLineTransformers, nameof(DocumentLineTransformers.CollectionChanged), documentLineTransformersChangedSubscriber);
             });
 
-            TextDocumentProperty.Changed.Subscribe((o) =>
-            {
-                Invalidate();
+            //TextDocumentProperty.Changed.Subscribe((o) =>
+            //{
+            //    Invalidate();
 
-                TextDocument.TextChanged += (sender, e) =>
-                {
-                    WeakSubscriptionManager.Subscribe(TextDocument, nameof(TextDocument.Changed), documentTextChangedSubscriber);
-                };
-            });
+            //    if (o.NewValue != null)
+            //    {
+            //        TextDocument.TextChanged += (sender, e) =>
+            //        {
+            //            WeakSubscriptionManager.Subscribe(TextDocument, nameof(TextDocument.Changed), documentTextChangedSubscriber);
+            //        };
+            //    }
+            //});
 
             FontSizeProperty.Changed.Subscribe((o) =>
             {

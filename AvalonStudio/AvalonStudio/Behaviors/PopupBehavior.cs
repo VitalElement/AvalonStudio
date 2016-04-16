@@ -27,16 +27,19 @@
             popup = new Popup
             {
                 PlacementMode = PlacementMode.Pointer,
-                StaysOpen = false                              
+                StaysOpen = false
             };
 
             popup.PointerWheelChanged += Popup_PointerWheelChanged;
             popup.PointerPressed += Popup_PointerPressed;
 
             ContentProperty.Changed.Subscribe((o) =>
-            {                                      
-                popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor).TextView;
-                popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };                
+            {
+                if (AssociatedObject != null && popup.PlacementTarget == null)
+                {
+                    popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor).TextView;
+                    popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };
+                }
             });
         }
 
@@ -83,8 +86,8 @@
         private void AssociatedObject_AttachedToLogicalTree(object sender, Perspex.LogicalTree.LogicalTreeAttachmentEventArgs e)
         {
             ((ISetLogicalParent)popup).SetParent(AssociatedObject);
-        }        
-                
+        }
+
 
         private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
         {
@@ -115,7 +118,7 @@
                 lastPoint = newPoint;
             }
         }
-        
+
 
         private void Timer_Tick(object sender, EventArgs e)
         {

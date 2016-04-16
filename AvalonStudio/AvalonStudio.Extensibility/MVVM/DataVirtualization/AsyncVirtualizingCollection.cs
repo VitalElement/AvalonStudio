@@ -146,6 +146,7 @@
         /// <param name="args">None required.</param>
         private void LoadCountWork(object args)
         {
+            Console.WriteLine("Check this doesnt run ui thread.");
             int count = FetchCount();
             SynchronizationContext.Send(LoadCountCompleted, count);
         }
