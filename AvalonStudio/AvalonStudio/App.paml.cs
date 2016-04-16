@@ -14,7 +14,9 @@
     {
         public App()
         {
+            
             RegisterServices();
+            this.UseWin32().UseDirect2D().LoadFromXaml();
         }
 
         private static void Main(string[] args)
@@ -26,9 +28,8 @@
 
             PackageSources.InitialisePackageSources();
 
-            var container = CompositionRoot.CreateContainer();            
-
-            var app = new App().UseWin32().UseDirect2D().LoadFromXaml();
+            var container = CompositionRoot.CreateContainer();
+            var app = new App();
 
             Workspace.Instance = container.GetExportedValue<Workspace>();
             WorkspaceViewModel.Instance = container.GetExportedValue<WorkspaceViewModel>();

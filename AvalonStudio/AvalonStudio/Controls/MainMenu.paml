@@ -4,7 +4,7 @@
       <MenuItem Header="New Project" Command="{Binding NewProjectCommand}"/>
       <MenuItem Header="Open Project" Command="{Binding LoadProjectCommand}"/>
       <MenuItem Header="Save" HotKey="Ctrl+S" Command="{Binding SaveCommand}" />
-      <MenuItem Header="Save All"/>
+      <MenuItem Header="Save All" HotKey="Ctrl+Shift+S" Command="{Binding SaveAllCommand}" />
       <MenuItem Header="Exit" HotKey="Alt+F4" Command="{Binding ExitCommand}"/>
     </MenuItem>
 

@@ -34,6 +34,14 @@
             SaveCommand = ReactiveCommand.Create();
             SaveCommand.Subscribe((param) => Save());
 
+            CloseCommand = ReactiveCommand.Create();
+            CloseCommand.Subscribe(_ => 
+            {
+                Save();
+                WorkspaceViewModel.Instance.Documents.Remove(this);
+                Model.ShutdownBackgroundWorkers();
+            });
+
             tabCharacter = "    ";
 
             model.DocumentLoaded += (sender, e) =>
@@ -73,6 +81,7 @@
                 {
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
                     HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
+                    WorkspaceViewModel.Instance.InvalidateErrors();
                 };
 
                 model.CodeCompletionRequestCompleted += (s, ee) =>
@@ -105,6 +114,11 @@
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
             margins = new ObservableCollection<TextViewMargin>();            
+        }
+
+        ~EditorViewModel()
+        {
+            Model.ShutdownBackgroundWorkers();
         }
         #endregion
 
@@ -344,6 +358,7 @@
         public ReactiveCommand<object> BeforeTextChangedCommand { get; private set; }
         public ReactiveCommand<object> TextChangedCommand { get; private set; }
         public ReactiveCommand<object> SaveCommand { get; private set; }
+        public ReactiveCommand<object> CloseCommand { get; }
         #endregion
 
         #region Public Methods
