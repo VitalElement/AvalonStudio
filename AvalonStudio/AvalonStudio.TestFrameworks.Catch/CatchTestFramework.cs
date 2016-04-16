@@ -9,7 +9,7 @@
     using System.Diagnostics;
     using Utils;
     using System.IO;
-    using Platform;
+    using Platforms;
     using System.Threading;
     using System.Xml.Linq;
     public class CatchTestFramework : ITestFramework

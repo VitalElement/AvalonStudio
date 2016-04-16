@@ -12,16 +12,16 @@
         {
             this.InitializeComponent();
 
-            DataContext = WorkspaceViewModel.Instance;
+            DataContext = ShellViewModel.Instance;
 
             this.AttachDevTools();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if(DataContext != null && DataContext is WorkspaceViewModel)
+            if(DataContext != null && DataContext is ShellViewModel)
             {
-                (DataContext as WorkspaceViewModel).OnKeyDown(e);
+                (DataContext as ShellViewModel).OnKeyDown(e);
             }
         }
 

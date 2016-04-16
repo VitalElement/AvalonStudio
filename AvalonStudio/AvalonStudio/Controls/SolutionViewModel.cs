@@ -21,8 +21,8 @@
             NewProjectCommand = ReactiveCommand.Create();
             NewProjectCommand.Subscribe((o) =>
             {
-                WorkspaceViewModel.Instance.ModalDialog = new NewProjectDialogViewModel(model);
-                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
+                ShellViewModel.Instance.ModalDialog = new NewProjectDialogViewModel(model);
+                ShellViewModel.Instance.ModalDialog.ShowDialog();
             });
 
             AddExistingProjectCommand = ReactiveCommand.Create();
@@ -33,7 +33,7 @@
 
                 var extensions = new List<string>();
 
-                foreach (var projectType in Workspace.Instance.ProjectTypes)
+                foreach (var projectType in Shell.Instance.ProjectTypes)
                 {
                     extensions.Add(projectType.Extension);
                 }

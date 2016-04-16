@@ -3,7 +3,7 @@ using AvalonStudio.Debugging.GDB.OpenOCD;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Models.Tools.Debuggers.Local;
 using AvalonStudio.MVVM;
-using AvalonStudio.Platform;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
@@ -43,12 +43,12 @@ namespace AvalonStudio.Debugging
             StartDebuggingCommand = ReactiveCommand.Create();
             StartDebuggingCommand.Subscribe((o) =>
             {
-                switch (WorkspaceViewModel.Instance.CurrentPerspective)
+                switch (ShellViewModel.Instance.CurrentPerspective)
                 {
                     case Perspective.Editor:
                         if (o == null)
                         {
-                            o = WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject;
+                            o = ShellViewModel.Instance.SolutionExplorer.Model.StartupProject;
                         }
 
                         if (o is IProject)
@@ -61,7 +61,7 @@ namespace AvalonStudio.Debugging
                             {
                                 //WorkspaceViewModel.Instance.ExecutingCompileTask = true;
 
-                                if (await masterProject.ToolChain.Build(WorkspaceViewModel.Instance.Console, masterProject))
+                                if (await masterProject.ToolChain.Build(ShellViewModel.Instance.Console, masterProject))
                                 {
                                     //Debugger = masterProject.SelectedDebugAdaptor;
 
@@ -74,7 +74,7 @@ namespace AvalonStudio.Debugging
                                     }
                                     else
                                     {
-                                        WorkspaceViewModel.Instance.Console.WriteLine((string)"You have not selected a debug adaptor. Please goto Tools->Options to configure your debug adaptor.");
+                                        ShellViewModel.Instance.Console.WriteLine((string)"You have not selected a debug adaptor. Please goto Tools->Options to configure your debug adaptor.");
                                     }
                                 }
 
@@ -343,7 +343,7 @@ namespace AvalonStudio.Debugging
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Editor;
+                ShellViewModel.Instance.CurrentPerspective = Perspective.Editor;
             });
         }
         #region Commands
@@ -464,19 +464,19 @@ namespace AvalonStudio.Debugging
                 {
                     Debugger = project.Debugger;
 
-                    await project.ToolChain.Build(WorkspaceViewModel.Instance.Console, project);
+                    await project.ToolChain.Build(ShellViewModel.Instance.Console, project);
                     //Debugger.DebugMode = true;
 
                     Debugger.Initialise();
 
-                    WorkspaceViewModel.Instance.Console.WriteLine();
-                    WorkspaceViewModel.Instance.Console.WriteLine("Starting Debugger...");
+                    ShellViewModel.Instance.Console.WriteLine();
+                    ShellViewModel.Instance.Console.WriteLine("Starting Debugger...");
 
-                    if (Debugger.Start(project.ToolChain, WorkspaceViewModel.Instance.Console, project))
+                    if (Debugger.Start(project.ToolChain, ShellViewModel.Instance.Console, project))
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Debug;
+                            ShellViewModel.Instance.CurrentPerspective = Perspective.Debug;
                         });
 
                         BreakPointManager.GoLive();
@@ -489,7 +489,7 @@ namespace AvalonStudio.Debugging
             }
             else
             {
-                WorkspaceViewModel.Instance.Console.WriteLine("No debugger selected.");
+                ShellViewModel.Instance.Console.WriteLine("No debugger selected.");
             }
         }
 
@@ -531,7 +531,7 @@ namespace AvalonStudio.Debugging
                     IsExecuting = false;
                     IsUpdating = false;
                     this.StopDebuggingCommand.Execute(null);
-                    WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Editor;
+                    ShellViewModel.Instance.CurrentPerspective = Perspective.Editor;
                     break;
 
                 default:
@@ -541,24 +541,24 @@ namespace AvalonStudio.Debugging
                     {
                         var normalizedPath = e.Frame.File.Replace("\\\\","\\").ToPlatformPath();
                         
-                        var document = WorkspaceViewModel.Instance.GetDocument(normalizedPath);
+                        var document = ShellViewModel.Instance.GetDocument(normalizedPath);
                         ISourceFile file = document.Model.ProjectFile;
 
                         if (file == null)
                         {
-                            file = WorkspaceViewModel.Instance.SolutionExplorer.Model.FindFile(SourceFile.FromPath(null, null, normalizedPath));
+                            file = ShellViewModel.Instance.SolutionExplorer.Model.FindFile(SourceFile.FromPath(null, null, normalizedPath));
                         }
 
                         if (file != null)
                         {
                             Dispatcher.UIThread.InvokeAsync(() =>
                             {
-                                document = WorkspaceViewModel.Instance.OpenDocument(file, e.Frame.Line, 1, true);
+                                document = ShellViewModel.Instance.OpenDocument(file, e.Frame.Line, 1, true);
                             });
                         }
                         else
                         {
-                            WorkspaceViewModel.Instance.Console.WriteLine("Unable to find file: " + normalizedPath);
+                            ShellViewModel.Instance.Console.WriteLine("Unable to find file: " + normalizedPath);
                         }
 
                         lastDocument = document;
@@ -624,7 +624,7 @@ namespace AvalonStudio.Debugging
         {
             bool result = false;
 
-            if (WorkspaceViewModel.Instance.CurrentPerspective == Perspective.Debug && Debugger != null)
+            if (ShellViewModel.Instance.CurrentPerspective == Perspective.Debug && Debugger != null)
             {
                 if (Debugger.State == DebuggerState.Paused && !IsExecuting)
                 {

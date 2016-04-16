@@ -312,7 +312,7 @@
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="ToolViewModel.cs" />
-    <Compile Include="WorkspaceViewModel.cs" />
+    <Compile Include="ShellViewModel.cs" />
     <EmbeddedResource Include="MainWindow.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

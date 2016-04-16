@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Debugging.GDB.OpenOCD
 {
     using Debugging.GDB;
-    using Platform;
+    using Platforms;
     using Utils;
     using Perspex.Controls;
     using Projects;

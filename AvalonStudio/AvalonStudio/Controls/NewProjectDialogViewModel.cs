@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Controls.ViewModels
 {
     using Extensibility;
-    using Platform;
+    using Platforms;
     using Languages;
     using Perspex.Controls;
     using Projects;
@@ -26,7 +26,7 @@
         public NewProjectDialogViewModel() : base("New Project", true, true)
         {
             projectTemplates = new ObservableCollection<IProjectTemplate>();
-            Languages = new List<ILanguageService>(WorkspaceViewModel.Instance.Model.LanguageServices);
+            Languages = new List<ILanguageService>(ShellViewModel.Instance.Model.LanguageServices);
 
             location = Platform.ProjectDirectory;
             SelectedLanguage = Languages.FirstOrDefault();
@@ -63,7 +63,7 @@
 
                 selectedTemplate.Generate(solution, name);
 
-                WorkspaceViewModel.Instance.SolutionExplorer.Model = solution;
+                ShellViewModel.Instance.SolutionExplorer.Model = solution;
                 solution = null;        
 
                 Close();
@@ -128,7 +128,7 @@
 
         private void GetTemplates (ILanguageService languageService)
         {
-            var templates = Workspace.Instance.ProjectTemplates.Where(t => languageService.BaseTemplateType.IsAssignableFrom(t.GetType()));
+            var templates = Shell.Instance.ProjectTemplates.Where(t => languageService.BaseTemplateType.IsAssignableFrom(t.GetType()));
 
             ProjectTemplates = new ObservableCollection<IProjectTemplate>(templates);
         }

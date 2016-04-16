@@ -211,7 +211,7 @@
     <Compile Include="Utils\IProjectExtensions.cs" />
     <Compile Include="Utils\SerializedObject.cs" />
     <Compile Include="Utils\WeakSubscriber.cs" />
-    <Compile Include="Workspace.cs" />
+    <Compile Include="Shell.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
