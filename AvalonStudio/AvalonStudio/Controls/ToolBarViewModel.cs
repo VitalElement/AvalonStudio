@@ -67,6 +67,18 @@
             {
                 ShellViewModel.Instance.SelectedDocument?.UnComment();
             });
+
+            UndoCommand = ReactiveCommand.Create();
+            UndoCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.SelectedDocument?.Undo();
+            });
+
+            RedoCommand = ReactiveCommand.Create();
+            RedoCommand.Subscribe(_ => 
+            {
+                ShellViewModel.Instance.SelectedDocument?.Redo();
+            });
         }
 
         public ReactiveCommand<object> StartDebugCommand { get; }
@@ -79,5 +91,7 @@
         public ReactiveCommand<object> CleanCommand { get; }
         public ReactiveCommand<object> CommentCommand { get; }
         public ReactiveCommand<object> UnCommentCommand { get; }
+        public ReactiveCommand<object> UndoCommand { get; }
+        public ReactiveCommand<object> RedoCommand { get; }
     }
 }

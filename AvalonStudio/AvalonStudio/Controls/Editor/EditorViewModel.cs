@@ -395,6 +395,16 @@
                 Model.Editor.Focus();
             }
         }
+
+        public void Undo()
+        {
+            TextDocument?.UndoStack.Undo();
+        }
+
+        public void Redo()
+        {
+            TextDocument.UndoStack.Redo();
+        }
         
         private void FormatAll()
         {
