@@ -9,6 +9,7 @@
     public class Editor : UserControl
     {
         private TextEditor editor;
+        private EditorViewModel editorViewModel;
 
         public Editor()
         {
@@ -16,16 +17,20 @@
 
             AddHandler(InputElement.KeyDownEvent, OnKeyDown, Perspex.Interactivity.RoutingStrategies.Tunnel);
             AddHandler(InputElement.KeyUpEvent, OnKeyUp, Perspex.Interactivity.RoutingStrategies.Tunnel);
-            editor = this.Find<TextEditor>("editor");            
-
+            editor = this.Find<TextEditor>("editor");         
+            
             DataContextChanged += (sender, e) =>
             {
-                var editorVm = DataContext as WorkspaceViewModel;
-
-                if (editorVm != null)
+                if(editorViewModel != DataContext)
                 {
-                    editorVm.Editor.Model.Editor = editor;
-                }
+                    editorViewModel = DataContext as EditorViewModel;
+
+                    if (editorViewModel != null && editor != null)
+                    {
+                        editorViewModel.Model.Editor = editor;
+                        editor.Focus();                  
+                    }
+                }                
             };            
         }
 

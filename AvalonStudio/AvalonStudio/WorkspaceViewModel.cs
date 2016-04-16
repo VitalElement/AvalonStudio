@@ -1,55 +1,51 @@
 ﻿namespace AvalonStudio
 {
+    using Platform;
     using Controls;
     using Controls.ViewModels;
     using Debugging;
     using Extensibility;
-    using Platform;
-    using Languages;
     using MVVM;
+    using Perspex.Controls;
+    using Perspex.Input;
     using Projects;
     using ReactiveUI;
-    using Repositories;
+    using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
     using System.Linq;
     using System.Threading;
-    using Toolchains;
-    using Utils;
-    using Perspex.Controls;
-    using Perspex.Input;
+    using System.Threading.Tasks;
     using TextEditor;
+    using Utils;
+
     public enum Perspective
     {
         Editor,
         Debug
-    }    
+    }
 
     [Export(typeof(WorkspaceViewModel))]
     public class WorkspaceViewModel : ViewModel<Workspace>
     {
-        private readonly EditorModel editor;
         public static WorkspaceViewModel Instance = null;
 
         [ImportingConstructor]
-        public WorkspaceViewModel(EditorModel editor, [Import] Workspace workspace) : base(workspace)
-        {            
-            this.editor = editor;
+        public WorkspaceViewModel([Import] Workspace workspace) : base(workspace)
+        {
             CurrentPerspective = Perspective.Editor;
 
             MainMenu = new MainMenuViewModel();
-            SolutionExplorer = new SolutionExplorerViewModel();            
+            SolutionExplorer = new SolutionExplorerViewModel();
             Console = new ConsoleViewModel();
             ErrorList = new ErrorListViewModel();
             ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
-            
+
+            Documents = new ObservableCollection<EditorViewModel>();
 
             DebugManager = new DebugManager();
-            Editor = new EditorViewModel(editor);
-
-            Editor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
-            Editor.Margins.Add(new LineNumberMargin());
 
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
@@ -59,25 +55,161 @@
             {
                 if (e is SourceFileViewModel)
                 {
-                    Editor.Model.OpenFile((e as SourceFileViewModel).Model as ISourceFile);
-                }
-            };
+                    var currentTab = Documents.FirstOrDefault(t => t.Model.ProjectFile.File == ((ISourceFile)(e as SourceFileViewModel).Model).File);
 
-            this.editor.CodeAnalysisCompleted += (sender, e) =>
-            {
-                InvalidateErrors();
+                    if (currentTab == null)
+                    {
+                        var newEditor = new EditorViewModel(new EditorModel());
+                        Documents.Add(newEditor);
+                        SelectedDocument = newEditor;
+
+                        newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
+                        newEditor.Margins.Add(new LineNumberMargin());
+                        newEditor.Model.OpenFile((e as SourceFileViewModel).Model as ISourceFile);
+                    }
+                    else
+                    {
+                        SelectedDocument = currentTab;
+                    }
+                }
             };
 
             ProcessCancellationToken = new CancellationTokenSource();
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
-            
+
             CurrentPerspective = Perspective.Editor;
+        }
+
+        public void Save()
+        {
+            SelectedDocument?.Save();
+        }
+
+        public void SaveAll()
+        {
+            foreach (var document in Documents)
+            {
+                document.Save();
+            }
+        }
+
+        public void Clean()
+        {
+            new Thread(new ThreadStart(new Action(async () =>
+            {
+                if (SolutionExplorer.Model != null)
+                {
+                    if (SolutionExplorer.Model.StartupProject != null)
+                    {
+                        if (SolutionExplorer.Model.StartupProject.ToolChain != null)
+                        {
+                            await SolutionExplorer.Model.StartupProject.ToolChain.Clean(Console, SolutionExplorer.Model.StartupProject);
+                        }
+                        else
+                        {
+                            Console.WriteLine("No toolchain selected for project.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Startup Project defined.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No project loaded.");
+                }
+            }))).Start();
+        }
+
+        public void Build()
+        {
+            SaveAll();
+
+            new Thread(new ThreadStart(new Action(async () =>
+            {
+                if (SolutionExplorer.Model != null)
+                {
+                    if (SolutionExplorer.Model.StartupProject != null)
+                    {
+                        if (SolutionExplorer.Model.StartupProject.ToolChain != null)
+                        {
+                            await Task.Factory.StartNew(() => SolutionExplorer.Model.StartupProject.ToolChain.Build(Console, SolutionExplorer.Model.StartupProject));
+                        }
+                        else
+                        {
+                            Console.WriteLine("No toolchain selected for project.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Startup Project defined.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No project loaded.");
+                }
+            }))).Start();
+        }
+
+        public async void LoadSolution()
+        {
+            var dlg = new OpenFileDialog();
+            dlg.Title = "Open Solution";
+            dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Solution", Extensions = new List<string> { Solution.Extension } });
+            dlg.InitialFileName = string.Empty;
+            dlg.InitialDirectory = Platform.Platform.ProjectDirectory;
+            var result = await dlg.ShowAsync();
+
+            if (result != null)
+            {
+                WorkspaceViewModel.Instance.SolutionExplorer.Model = Solution.Load(result[0]);
+            }
+        }
+
+        public void ShowPackagesDialog()
+        {
+            ModalDialog = new PackageManagerDialogViewModel();
+            ModalDialog.ShowDialog();
+        }
+
+        public void ShowProjectPropertiesDialog()
+        {
+            ModalDialog = new ProjectConfigurationDialogViewModel(WorkspaceViewModel.Instance.SolutionExplorer.SelectedProject, () => { });
+            ModalDialog.ShowDialog();
+        }
+
+        public void ShowNewProjectDialog()
+        {
+            ModalDialog = new NewProjectDialogViewModel();
+            ModalDialog.ShowDialog();
+        }
+
+        public void ExitApplication()
+        {
+            Environment.Exit(1);
+        }
+
+        public void StartDebugSession()
+        {
+            if (CurrentPerspective == Perspective.Editor)
+            {
+                if (SolutionExplorer.Model?.StartupProject != null)
+                {
+                    DebugManager.StartDebug(SolutionExplorer.Model.StartupProject);
+                }
+            }
+            else
+            {
+                DebugManager.Continue();
+            }
         }
 
         public void OnKeyDown(KeyEventArgs e)
         {
-            switch(e.Key)
+            switch (e.Key)
             {
                 case Key.F9:
                     DebugManager.StepInstruction();
@@ -103,7 +235,7 @@
                     {
                         DebugManager.Continue();
                     }
-                    break;                    
+                    break;
             }
         }
 
@@ -112,17 +244,19 @@
             var allErrors = new List<ErrorViewModel>();
             var toRemove = new List<ErrorViewModel>();
 
-
-            foreach (var diagnostic in editor.CodeAnalysisResults.Diagnostics)
+            foreach (var document in documents)
             {
-                //if (diagnostic.Location.FileLocation.File.FileName.NormalizePath() == document.FilePath.NormalizePath())
+                foreach (var diagnostic in document.Model.CodeAnalysisResults.Diagnostics)
                 {
-                    var error = new ErrorViewModel(diagnostic);
-                    var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
-
-                    if (matching == null)
+                    //if (diagnostic.Location.FileLocation.File.FileName.NormalizePath() == document.FilePath.NormalizePath())
                     {
-                        allErrors.Add(error);
+                        var error = new ErrorViewModel(diagnostic);
+                        var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
+
+                        if (matching == null)
+                        {
+                            allErrors.Add(error);
+                        }
                     }
                 }
             }
@@ -170,7 +304,20 @@
 
         public SolutionExplorerViewModel SolutionExplorer { get; private set; }
 
-        public EditorViewModel Editor { get; private set; }
+        private ObservableCollection<EditorViewModel> documents;
+        public ObservableCollection<EditorViewModel> Documents
+        {
+            get { return documents; }
+            set { this.RaiseAndSetIfChanged(ref documents, value); }
+        }
+
+        private EditorViewModel selectedDocument;
+        public EditorViewModel SelectedDocument
+        {
+            get { return selectedDocument; }
+            set { this.RaiseAndSetIfChanged(ref selectedDocument, value); value?.Model.Editor?.Focus(); }
+        }
+
 
         public IConsole Console { get; private set; }
 
@@ -188,7 +335,7 @@
             {
                 this.RaiseAndSetIfChanged(ref currentPerspective, value);
 
-                switch(value)
+                switch (value)
                 {
                     case Perspective.Editor:
                         DebugVisible = false;
@@ -212,7 +359,10 @@
 
         public void InvalidateCodeAnalysis()
         {
-
+            foreach(var document in Documents)
+            {
+                //TODO implement code analysis trigger.
+            }
         }
 
         private bool hideWhenModalVisibility = true;
@@ -224,7 +374,10 @@
 
         public void Cleanup()
         {
-            editor.ShutdownBackgroundWorkers();
+            foreach(var document in Documents)
+            {
+                document.Model.ShutdownBackgroundWorkers();
+            }
         }
     }
 }

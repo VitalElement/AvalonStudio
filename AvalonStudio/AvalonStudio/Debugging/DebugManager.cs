@@ -174,7 +174,8 @@ namespace AvalonStudio.Debugging
 
         private void PrepareToRun()
         {
-            WorkspaceViewModel.Instance.Editor.DebugLineHighlighter.Line = -1;
+            WorkspaceViewModel.Instance.SelectedDocument.DebugLineHighlighter.Line = -1;
+            WorkspaceViewModel.Instance.Console.WriteLine("Work to be done.");
             //if (lastDocument != null)
             //{
             //    lastDocument.ClearDebugHighlight();
@@ -541,7 +542,9 @@ namespace AvalonStudio.Debugging
                     {
                         var normalizedPath = e.Frame.File.Replace("\\\\","\\").ToPlatformPath();
 
-                        var file = WorkspaceViewModel.Instance.Editor.Model.ProjectFile;
+                        WorkspaceViewModel.Instance.Console.WriteLine("Not implemented");
+
+                        ISourceFile file = null;// WorkspaceViewModel.Instance.Editor.Model.ProjectFile;
 
                         if (file == null || file.File != normalizedPath)
                         {
@@ -552,7 +555,8 @@ namespace AvalonStudio.Debugging
                         {
                             Dispatcher.UIThread.InvokeAsync(() =>
                             {
-                                WorkspaceViewModel.Instance.Editor.OpenFile(file, e.Frame.Line, 1, true);
+                                WorkspaceViewModel.Instance.Console.WriteLine("Not implemented");
+                                //WorkspaceViewModel.Instance.OpenFile(file, e.Frame.Line, 1, true);
                             });
                         }
                         else

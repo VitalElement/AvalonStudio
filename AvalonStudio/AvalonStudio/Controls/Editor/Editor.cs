@@ -72,7 +72,49 @@
         }
 
         public event EventHandler<EventArgs> DocumentLoaded;
-        public event EventHandler<EventArgs> TextChanged;        
+        public event EventHandler<EventArgs> TextChanged;     
+        
+        public void RegisterLanguageService()
+        {
+            ShutdownBackgroundWorkers();
+
+            if (unsavedFile != null)
+            {
+                UnsavedFiles.Remove(unsavedFile);
+                unsavedFile = null;
+            }
+
+            if (LanguageService != null && sourceFile != null)
+            {
+                LanguageService.UnregisterSourceFile(Editor, sourceFile);
+            }
+
+            try
+            {
+                LanguageService = Workspace.Instance.LanguageServices.Single((o) => o.CanHandle(sourceFile));
+
+                WorkspaceViewModel.Instance.StatusBar.Language = LanguageService.Title;
+
+                LanguageService.RegisterSourceFile(Editor, sourceFile, TextDocument);
+            }
+            catch
+            {
+                LanguageService = null;
+            }
+
+            IsDirty = false;
+
+
+            StartBackgroundWorkers();
+
+            DocumentLoaded(this, new EventArgs());
+
+            TextDocument.TextChanged += TextDocument_TextChanged;
+
+            OnBeforeTextChanged(null);
+
+            TriggerCodeAnalysis();
+        }   
 
         public void OpenFile(ISourceFile file)
         {
@@ -85,47 +127,11 @@
                         TextDocument = new TextDocument(fs.ReadToEnd());
                         TextDocument.FileName = file.Location;
                     }
+
+                    sourceFile = file;
+
+                    RegisterLanguageService();
                 }
-
-                ShutdownBackgroundWorkers();
-
-                if (unsavedFile != null)
-                {
-                    UnsavedFiles.Remove(unsavedFile);
-                    unsavedFile = null;
-                }
-
-                if (LanguageService != null && sourceFile != null)
-                {
-                    LanguageService.UnregisterSourceFile(Editor, sourceFile);
-                }
-
-                try
-                {
-                    LanguageService = Workspace.Instance.LanguageServices.Single((o) => o.CanHandle(file));
-
-                    WorkspaceViewModel.Instance.StatusBar.Language = LanguageService.Title;
-
-                    LanguageService.RegisterSourceFile(Editor, file, TextDocument);
-                }
-                catch
-                {
-                    LanguageService = null;
-                }
-
-                IsDirty = false;
-
-                sourceFile = file;
-
-                StartBackgroundWorkers();
-
-                DocumentLoaded(this, new EventArgs());
-
-                TextDocument.TextChanged += TextDocument_TextChanged;
-
-                OnBeforeTextChanged(null);
-
-                TriggerCodeAnalysis();
             }
         }
 
