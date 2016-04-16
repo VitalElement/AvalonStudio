@@ -404,12 +404,12 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref locals, value); }
         }
 
-        //private WatchListViewModel watchList;
-        //public WatchListViewModel WatchList
-        //{
-        //    get { return watchList; }
-        //    set { watchList = value; OnPropertyChanged(); }
-        //}
+        private WatchListViewModel watchList;
+        public WatchListViewModel WatchList
+        {
+            get { return watchList; }
+            set { this.RaiseAndSetIfChanged(ref watchList, value); }
+        }
 
         private CallStackViewModel callStack;
         public CallStackViewModel CallStack
@@ -567,10 +567,11 @@ namespace AvalonStudio.Debugging
 
                     List<Variable> stackVariables = null;
                     List<Frame> stackFrames = null;
+                    List<VariableObjectChange> updates = null;
 
                     stackVariables = Debugger.ListStackVariables();
                     stackFrames = Debugger.ListStackFrames();
-                    //updates = debugger.UpdateVariables();
+                    updates = debugger.UpdateVariables();
 
                     //if (DissasemblyView.bool == bool.Visible)
                     //{
@@ -591,9 +592,10 @@ namespace AvalonStudio.Debugging
                         CallStack.Update(stackFrames);
                         Registers.Invalidate();
                         Disassembly.SetAddress(e.Frame.Address);
+                        WatchList.Invalidate(updates);
                     });
 
-                    //WatchList.Invalidate(updates);
+                    
                     
 
                     //while (await IsAsynchronousUIListsLoading())
