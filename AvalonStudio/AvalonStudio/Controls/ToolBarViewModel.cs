@@ -55,6 +55,18 @@
             {
                 ShellViewModel.Instance.Clean();
             });
+
+            CommentCommand = ReactiveCommand.Create();
+            CommentCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.SelectedDocument?.Comment();
+            });
+
+            UnCommentCommand = ReactiveCommand.Create();
+            UnCommentCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.SelectedDocument?.UnComment();
+            });
         }
 
         public ReactiveCommand<object> StartDebugCommand { get; }
@@ -65,5 +77,7 @@
         public ReactiveCommand<object> RestartCommand { get; }
         public ReactiveCommand<object> BuildCommand { get; }
         public ReactiveCommand<object> CleanCommand { get; }
+        public ReactiveCommand<object> CommentCommand { get; }
+        public ReactiveCommand<object> UnCommentCommand { get; }
     }
 }
