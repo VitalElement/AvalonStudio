@@ -9,9 +9,9 @@
 
 
 #pragma mark Includes
+#include "Event.h"
 #include "Kernel.h"
 #include "Thread.h"
-#include "Event.h"
 
 #pragma mark Definitions and Constants
 extern "C" void system_init (void);
@@ -25,12 +25,16 @@ extern int main (void);
 #pragma mark Member Implementations
 extern "C" void Startup ()
 {
-    static Thread mainThread = Thread (
-    [&]
+    int y;
+    uint16_t x;
+
+    if (x == -1)
     {
-        main ();
-    },
-    2000);
+    }
+    
+    
+
+    static Thread mainThread = Thread ([&] { main (); }, 2000);
 
     GlobalEventHandlers::Initialise ();
     Kernel::Start ();
