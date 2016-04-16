@@ -37,7 +37,7 @@
   "StaticLibraries": [],
   "Executable": "build/bin/ProductionBoardA.elf",
   "Toolchain": "AvalonStudio.Toolchains.STM32.STM32GCCToolchain",
-  "Debugger": "AvalonStudio.Debugging.GDB.JLink.JLinkDebugAdaptor",
+  "Debugger": "AvalonStudio.Debugging.GDB.OpenOCD.OpenOCDDebugAdaptor",
   "ExcludedFiles": [],
   "ToolchainSettings": {
     "STM32ToolchainSettings": {
@@ -77,6 +77,10 @@
   "DebugSettings": {
     "JLinkSettings": {
       "Interface": "SWD"
+    },
+    "OpenOCDSettings": {
+      "InterfaceConfigFile": "scripts/interface/stlink-v2.cfg",
+      "TargetConfigFile": "scripts/target/stm32f4x_stlink.cfg"
     }
   }
 }

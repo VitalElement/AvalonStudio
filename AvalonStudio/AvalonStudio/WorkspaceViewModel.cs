@@ -19,7 +19,7 @@
     using System.Threading.Tasks;
     using TextEditor;
     using Utils;
-
+    using Perspex.Threading;
     public enum Perspective
     {
         Editor,
@@ -55,23 +55,8 @@
             {
                 if (e is SourceFileViewModel)
                 {
-                    var currentTab = Documents.FirstOrDefault(t => t.Model.ProjectFile.File == ((ISourceFile)(e as SourceFileViewModel).Model).File);
-
-                    if (currentTab == null)
-                    {
-                        var newEditor = new EditorViewModel(new EditorModel());
-                        Documents.Add(newEditor);
-                        SelectedDocument = newEditor;
-
-                        newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
-                        newEditor.Margins.Add(new LineNumberMargin());
-                        newEditor.Model.OpenFile((e as SourceFileViewModel).Model as ISourceFile);
-                    }
-                    else
-                    {
-                        SelectedDocument = currentTab;
-                    }
-                }
+                    OpenDocument(((ISourceFile)(e as SourceFileViewModel).Model), 1);
+                } 
             };
 
             ProcessCancellationToken = new CancellationTokenSource();
@@ -79,6 +64,40 @@
             ModalDialog = new ModalDialogViewModelBase("Dialog");
 
             CurrentPerspective = Perspective.Editor;
+        }
+
+        public EditorViewModel OpenDocument(ISourceFile file, int line, bool debugHighlight = false)
+        {
+            var currentTab = Documents.FirstOrDefault(t => t.Model.ProjectFile.File == file.File);
+
+            if (currentTab == null)
+            {
+                var newEditor = new EditorViewModel(new EditorModel());
+                Documents.Add(newEditor);
+                SelectedDocument = newEditor;
+
+                newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
+                newEditor.Margins.Add(new LineNumberMargin());
+                newEditor.Model.OpenFile(file);                
+            }
+            else
+            {
+                SelectedDocument = currentTab;
+            }
+
+            if (debugHighlight)
+            {
+                SelectedDocument.DebugLineHighlighter.Line = line;
+            }
+
+            Dispatcher.UIThread.InvokeAsync(() => SelectedDocument.Model.ScrollToLine(line));
+
+            return SelectedDocument;
+        }
+
+        public EditorViewModel GetDocument (string path)
+        {
+            return Documents.FirstOrDefault(d => d.Model.ProjectFile.File == path);
         }
 
         public void Save()
