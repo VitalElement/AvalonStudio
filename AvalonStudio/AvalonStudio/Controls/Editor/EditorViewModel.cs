@@ -328,12 +328,7 @@
         {
             Model.OpenFile(file);
 
-            if(debugHighlight)
-            {
-                DebugLineHighlighter.Line = line;
-            }
-                        
-            Dispatcher.UIThread.InvokeAsync(() => Model.ScrollToLine(line));
+            
         }
 
         private void FormatAll()

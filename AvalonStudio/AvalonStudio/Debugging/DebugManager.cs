@@ -171,15 +171,14 @@ namespace AvalonStudio.Debugging
 
         private bool IsExecuting = false;
         private bool IsUpdating = false;
+        private EditorViewModel lastDocument;
 
         private void PrepareToRun()
-        {
-            WorkspaceViewModel.Instance.SelectedDocument.DebugLineHighlighter.Line = -1;
-            WorkspaceViewModel.Instance.Console.WriteLine("Work to be done.");
-            //if (lastDocument != null)
-            //{
-            //    lastDocument.ClearDebugHighlight();
-            //}
+        {           
+            if (lastDocument != null)
+            {
+                lastDocument.DebugLineHighlighter.Line = -1;
+            }
 
             //foreach (var probe in VariableProbes)
             //{
@@ -541,12 +540,11 @@ namespace AvalonStudio.Debugging
                     if (e.Frame != null && e.Frame.File != null)
                     {
                         var normalizedPath = e.Frame.File.Replace("\\\\","\\").ToPlatformPath();
+                        
+                        var document = WorkspaceViewModel.Instance.GetDocument(normalizedPath);
+                        ISourceFile file = document.Model.ProjectFile;
 
-                        WorkspaceViewModel.Instance.Console.WriteLine("Not implemented");
-
-                        ISourceFile file = null;// WorkspaceViewModel.Instance.Editor.Model.ProjectFile;
-
-                        if (file == null || file.File != normalizedPath)
+                        if (file == null)
                         {
                             file = WorkspaceViewModel.Instance.SolutionExplorer.Model.FindFile(SourceFile.FromPath(null, null, normalizedPath));
                         }
@@ -555,14 +553,15 @@ namespace AvalonStudio.Debugging
                         {
                             Dispatcher.UIThread.InvokeAsync(() =>
                             {
-                                WorkspaceViewModel.Instance.Console.WriteLine("Not implemented");
-                                //WorkspaceViewModel.Instance.OpenFile(file, e.Frame.Line, 1, true);
+                                document = WorkspaceViewModel.Instance.OpenDocument(file, e.Frame.Line, true);
                             });
                         }
                         else
                         {
                             WorkspaceViewModel.Instance.Console.WriteLine("Unable to find file: " + normalizedPath);
                         }
+
+                        lastDocument = document;
                     }
 
 
