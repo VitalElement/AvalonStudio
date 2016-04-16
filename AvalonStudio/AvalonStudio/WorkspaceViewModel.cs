@@ -66,7 +66,7 @@
             CurrentPerspective = Perspective.Editor;
         }
 
-        public EditorViewModel OpenDocument(ISourceFile file, int line, bool debugHighlight = false)
+        public EditorViewModel OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
         {
             var currentTab = Documents.FirstOrDefault(t => t.Model.ProjectFile.File == file.File);
 
@@ -91,6 +91,11 @@
             }
 
             Dispatcher.UIThread.InvokeAsync(() => SelectedDocument.Model.ScrollToLine(line));
+
+            if(selectLine)
+            {
+                SelectedDocument.GotoPosition(line, column);
+            }
 
             return SelectedDocument;
         }

@@ -553,7 +553,7 @@ namespace AvalonStudio.Debugging
                         {
                             Dispatcher.UIThread.InvokeAsync(() =>
                             {
-                                document = WorkspaceViewModel.Instance.OpenDocument(file, e.Frame.Line, true);
+                                document = WorkspaceViewModel.Instance.OpenDocument(file, e.Frame.Line, 1, true);
                             });
                         }
                         else

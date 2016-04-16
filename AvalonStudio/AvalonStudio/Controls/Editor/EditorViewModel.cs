@@ -214,6 +214,16 @@
             }
         }
 
+        public void GotoPosition (int line, int column)
+        {
+            CaretIndex = TextDocument.GetOffset(line, column);
+        }
+
+        public void GotoOffset (int offset)
+        {
+            CaretIndex = offset;
+        }
+
         private int caretIndex;
         public int CaretIndex
         {
