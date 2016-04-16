@@ -46,9 +46,15 @@
       </Panel>
     </Button>
 
-    <Button BorderThickness="0" Margin="0"  Height="22" Width="22">
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding SaveCommand}">
       <Panel Height="15" Width="15">
          <Path Stretch="Uniform" UseLayoutRounding="False" Data="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z" Fill="#FF7AC1FF" />
+      </Panel>
+    </Button>
+
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding SaveAllCommand}">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Data="M17,7V3H7V7H17M14,17A3,3 0 0,0 17,14A3,3 0 0,0 14,11A3,3 0 0,0 11,14A3,3 0 0,0 14,17M19,1L23,5V17A2,2 0 0,1 21,19H7C5.89,19 5,18.1 5,17V3A2,2 0 0,1 7,1H19M1,7H3V21H17V23H3A2,2 0 0,1 1,21V7Z" Fill="#FF7AC1FF" />        
       </Panel>
     </Button>
 
