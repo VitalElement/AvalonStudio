@@ -51,13 +51,22 @@
             {
                 if (e is SourceFileViewModel)
                 {
-                    var newEditor = new EditorViewModel(new EditorModel());
-                    Documents.Add(newEditor);
-                    SelectedDocument = newEditor;
+                    var currentTab = Documents.FirstOrDefault(t => t.Model.ProjectFile.File == ((ISourceFile)(e as SourceFileViewModel).Model).File);
 
-                    newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
-                    newEditor.Margins.Add(new LineNumberMargin());                    
-                    newEditor.Model.OpenFile((e as SourceFileViewModel).Model as ISourceFile);                    
+                    if (currentTab == null)
+                    {
+                        var newEditor = new EditorViewModel(new EditorModel());
+                        Documents.Add(newEditor);
+                        SelectedDocument = newEditor;
+
+                        newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
+                        newEditor.Margins.Add(new LineNumberMargin());
+                        newEditor.Model.OpenFile((e as SourceFileViewModel).Model as ISourceFile);
+                    }
+                    else
+                    {
+                        SelectedDocument = currentTab;
+                    }
                 }
             };
 
@@ -179,7 +188,7 @@
         public EditorViewModel SelectedDocument
         {
             get { return selectedDocument; }
-            set { this.RaiseAndSetIfChanged(ref selectedDocument, value); value.Model.Editor?.Focus(); }
+            set { this.RaiseAndSetIfChanged(ref selectedDocument, value); value?.Model.Editor?.Focus(); }
         }
 
 
