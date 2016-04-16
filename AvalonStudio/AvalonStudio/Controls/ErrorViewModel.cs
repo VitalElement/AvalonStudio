@@ -4,6 +4,7 @@
     using AvalonStudio.MVVM;
     using Perspex.Media;
     using System.IO;
+
     public class ErrorViewModel : ViewModel<Diagnostic>
     {
         public ErrorViewModel (Diagnostic model) : base (model)

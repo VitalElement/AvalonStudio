@@ -11,7 +11,7 @@
         <TextBlock Text="Error List" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0"/>
       </Panel>
 
-      <ListBox Grid.Row="1"  Items="{Binding Errors}" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
+      <ListBox Grid.Row="1"  Items="{Binding Errors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
         <ListBox.DataTemplates>
           <DataTemplate DataType="vm:ErrorViewModel">
             <Grid ColumnDefinitions="50, *, 200, 200, 100">
