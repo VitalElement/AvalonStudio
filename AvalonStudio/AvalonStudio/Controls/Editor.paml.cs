@@ -69,16 +69,6 @@
             {
                 editorVm.OnTextInput(e);
             }
-        }
-
-        protected override void OnPointerMoved(PointerEventArgs e)
-        {
-            var editorVm = DataContext as EditorViewModel;
-
-            if (editorVm != null)
-            {
-                editorVm.OnPointerMoved(e);
-            }
-        }
+        }        
     }
 }
