@@ -32,7 +32,7 @@
 
         <DockPanel DockPanel.Dock="Right">
           <StackPanel DockPanel.Dock="Top">
-            <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedItem}">
+            <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}" Focusable="false">
               <TabStrip.Styles>
                 <Style Selector="TabStripItem">
                   <Setter Property="Height" Value="22" />
@@ -94,15 +94,16 @@
               </TabStrip.DataTemplates>
             </TabStrip>
             <Grid Background="#007ACC" Height="2" />
-          </StackPanel>          
-          
-          <Carousel Items="{Binding Documents}" SelectedIndex="{Binding #strip.SelectedIndex}">
+          </StackPanel>
+
+          <Carousel Items="{Binding Documents}" SelectedIndex="{Binding #strip.SelectedIndex}" IsVirtualized="false">
             <Carousel.DataTemplates>
               <DataTemplate>
                 <Controls:Editor />
               </DataTemplate>
             </Carousel.DataTemplates>
           </Carousel>
+          
         </DockPanel>       
       </DockPanel>
       
