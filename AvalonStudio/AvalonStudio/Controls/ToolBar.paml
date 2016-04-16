@@ -64,13 +64,13 @@
       </Panel>
     </Button>
 
-    <Button BorderThickness="0" Margin="0"  Height="22" Width="22">
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding CommentCommand}">
       <Panel Height="15" Width="15">
          <Path Stretch="Uniform" UseLayoutRounding="False" Data="M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z" Fill="#FF8DD28A" />
       </Panel>
     </Button>
 
-    <Button BorderThickness="0" Margin="0"  Height="22" Width="22">
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding UnCommentCommand}">
       <Panel Height="15" Width="15">
         <Path Stretch="Uniform" UseLayoutRounding="False" Data="M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z" Fill="WhiteSmoke" />
       </Panel>
