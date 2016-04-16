@@ -82,6 +82,19 @@
             CurrentPerspective = Perspective.Editor;
         }
 
+        public void Save()
+        {
+            SelectedDocument?.Save();
+        }
+
+        public void SaveAll()
+        {
+            foreach (var document in Documents)
+            {
+                document.Save();
+            }
+        }
+
         public void OnKeyDown(KeyEventArgs e)
         {
             switch(e.Key)

@@ -35,10 +35,15 @@
             });
 
             SaveCommand = ReactiveCommand.Create();
-
             SaveCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.SelectedDocument.Save();
+                WorkspaceViewModel.Instance.Save();
+            });
+
+            SaveAllCommand = ReactiveCommand.Create();
+            SaveAllCommand.Subscribe(_ =>
+            {
+                WorkspaceViewModel.Instance.SaveAll();
             });
 
             CleanProjectCommand = ReactiveCommand.Create();
@@ -177,6 +182,7 @@
 
         public ReactiveCommand<object> NewProjectCommand { get; }
         public ReactiveCommand<object> SaveCommand { get; }
+        public ReactiveCommand<object> SaveAllCommand { get; }
         public ReactiveCommand<object> LoadProjectCommand { get; }
         public ReactiveCommand<object> ExitCommand { get; }
 
