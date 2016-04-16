@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Toolchains.Standard
 {
     using AvalonStudio.Toolchains;
-    using Platform;
+    using Platforms;
     using Perspex.Controls;
     using Projects;
     using Projects.Standard;

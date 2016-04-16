@@ -11,91 +11,91 @@
 
             LoadProjectCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.LoadSolution();
+                ShellViewModel.Instance.LoadSolution();
             });
 
             SaveCommand = ReactiveCommand.Create();
             SaveCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.Save();
+                ShellViewModel.Instance.Save();
             });
 
             SaveAllCommand = ReactiveCommand.Create();
             SaveAllCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.SaveAll();
+                ShellViewModel.Instance.SaveAll();
             });
 
             CleanProjectCommand = ReactiveCommand.Create();
             CleanProjectCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.Clean();
+                ShellViewModel.Instance.Clean();
             });
 
             BuildProjectCommand = ReactiveCommand.Create();
             BuildProjectCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.Build();
+                ShellViewModel.Instance.Build();
             });
 
             PackagesCommand = ReactiveCommand.Create();
             PackagesCommand.Subscribe((o) =>
             {
-                WorkspaceViewModel.Instance.ShowPackagesDialog();
+                ShellViewModel.Instance.ShowPackagesDialog();
             });
 
             ProjectPropertiesCommand = ReactiveCommand.Create();
             ProjectPropertiesCommand.Subscribe((o) =>
             {
-                WorkspaceViewModel.Instance.ShowProjectPropertiesDialog();
+                ShellViewModel.Instance.ShowProjectPropertiesDialog();
             });
 
             NewProjectCommand = ReactiveCommand.Create();
             NewProjectCommand.Subscribe((o) =>
             {
-                WorkspaceViewModel.Instance.ShowNewProjectDialog();
+                ShellViewModel.Instance.ShowNewProjectDialog();
             });
 
             ExitCommand = ReactiveCommand.Create();
             ExitCommand.Subscribe((o) =>
             {
-                WorkspaceViewModel.Instance.ExitApplication();
+                ShellViewModel.Instance.ExitApplication();
             });
 
             StartDebugCommand = ReactiveCommand.Create();
             StartDebugCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.StartDebugSession();
+                ShellViewModel.Instance.StartDebugSession();
             });
 
             StepIntoCommand = ReactiveCommand.Create();
             StepIntoCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.StepInto();
+                ShellViewModel.Instance.DebugManager.StepInto();
             });
 
             StepOverCommand = ReactiveCommand.Create();
             StepOverCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.StepOver();
+                ShellViewModel.Instance.DebugManager.StepOver();
             });
 
             PauseCommand = ReactiveCommand.Create();
             PauseCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.Pause();
+                ShellViewModel.Instance.DebugManager.Pause();
             });
 
             StopCommand = ReactiveCommand.Create();
             StopCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.Stop();
+                ShellViewModel.Instance.DebugManager.Stop();
             });
 
             RestartCommand = ReactiveCommand.Create();
             RestartCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.Restart();
+                ShellViewModel.Instance.DebugManager.Restart();
             });
         }
 

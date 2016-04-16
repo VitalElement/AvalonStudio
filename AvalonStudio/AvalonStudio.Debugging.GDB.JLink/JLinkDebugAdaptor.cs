@@ -10,7 +10,7 @@
     using System.Threading.Tasks;
     using Toolchains;
     using Utils;
-    using Platform;
+    using Platforms;
     using Perspex.Controls;
     using System.Threading;
     public enum JlinkInterfaceType

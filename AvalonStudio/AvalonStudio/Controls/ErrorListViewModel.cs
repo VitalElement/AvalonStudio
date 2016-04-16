@@ -29,7 +29,7 @@
 
                 if (value != null)
                 {
-                    var document = WorkspaceViewModel.Instance.OpenDocument(WorkspaceViewModel.Instance.SolutionExplorer.Model.FindFile(SourceFile.FromPath(null, null, value.Model.File)), value.Line);
+                    var document = ShellViewModel.Instance.OpenDocument(ShellViewModel.Instance.SolutionExplorer.Model.FindFile(SourceFile.FromPath(null, null, value.Model.File)), value.Line);
 
                     if (document != null)
                     {

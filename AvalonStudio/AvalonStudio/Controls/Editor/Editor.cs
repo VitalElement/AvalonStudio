@@ -91,9 +91,9 @@
 
             try
             {
-                LanguageService = Workspace.Instance.LanguageServices.Single((o) => o.CanHandle(sourceFile));
+                LanguageService = Shell.Instance.LanguageServices.Single((o) => o.CanHandle(sourceFile));
 
-                WorkspaceViewModel.Instance.StatusBar.Language = LanguageService.Title;
+                ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
                 LanguageService.RegisterSourceFile(Editor, sourceFile, TextDocument);
             }

@@ -2,7 +2,7 @@
 {
     using AvalonStudio.Utils;
     using Perspex.Controls;
-    using Platform;
+    using Platforms;
     using Projects;
     using System;
     using System.Collections.Generic;

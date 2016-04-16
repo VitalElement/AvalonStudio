@@ -40,7 +40,7 @@
         {
             var project = await base.Generate(solution, name);
 
-            project.ToolChain = Workspace.Instance.ToolChains.FirstOrDefault(tc => tc is STM32GCCToolchain);
+            project.ToolChain = Shell.Instance.ToolChains.FirstOrDefault(tc => tc is STM32GCCToolchain);
 
             var settings = STM32GCCToolchain.ProvisionSTM32Settings(project);
 

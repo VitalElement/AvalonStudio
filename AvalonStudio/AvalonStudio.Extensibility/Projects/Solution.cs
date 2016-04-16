@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Projects
 {
     using Extensibility;
-    using Platform;
+    using Platforms;
     using MVVM;
     using Newtonsoft.Json;
     using System;
@@ -21,7 +21,7 @@
 
             var extension = Path.GetExtension(fileName).Remove(0, 1);
 
-            var projectType = Workspace.Instance.ProjectTypes.FirstOrDefault((p) => p.Extension == extension);
+            var projectType = Shell.Instance.ProjectTypes.FirstOrDefault((p) => p.Extension == extension);
 
             if (projectType != null)
             {
@@ -46,7 +46,7 @@
 
             var extension = Path.GetExtension(reference).Remove(0,1);
 
-            var projectType = Workspace.Instance.ProjectTypes.FirstOrDefault((p) => p.Extension == extension);
+            var projectType = Shell.Instance.ProjectTypes.FirstOrDefault((p) => p.Extension == extension);
             var projectFilePath = Path.Combine(solution.CurrentDirectory, reference).ToPlatformPath();
 
             if (projectType != null && File.Exists(projectFilePath))

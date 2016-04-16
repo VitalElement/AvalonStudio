@@ -22,27 +22,27 @@
 
             ConfigureCommand.Subscribe((o) =>
             {
-                WorkspaceViewModel.Instance.ModalDialog = new ProjectConfigurationDialogViewModel(model, () => { });
-                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
+                ShellViewModel.Instance.ModalDialog = new ProjectConfigurationDialogViewModel(model, () => { });
+                ShellViewModel.Instance.ModalDialog.ShowDialog();
             });
 
             DebugCommand = ReactiveCommand.Create();
             DebugCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.StartDebugSession();
+                ShellViewModel.Instance.StartDebugSession();
             });
 
             BuildCommand = ReactiveCommand.Create();
             BuildCommand.Subscribe((o) =>
             {
-                WorkspaceViewModel.Instance.Build();
+                ShellViewModel.Instance.Build();
             });
 
             CleanCommand = ReactiveCommand.Create();
 
             CleanCommand.Subscribe((o) =>
             {
-                WorkspaceViewModel.Instance.Clean();                    
+                ShellViewModel.Instance.Clean();                    
             });
 
             ManageReferencesCommand = ReactiveCommand.Create();
@@ -58,9 +58,9 @@
                 model.Solution.StartupProject = model;
                 model.Solution.Save();
 
-                WorkspaceViewModel.Instance.InvalidateCodeAnalysis();
+                ShellViewModel.Instance.InvalidateCodeAnalysis();
 
-                foreach(var project in WorkspaceViewModel.Instance.SolutionExplorer.Solution.First().Projects)
+                foreach(var project in ShellViewModel.Instance.SolutionExplorer.Solution.First().Projects)
                 {
                     project.Invalidate();
                 }
@@ -75,8 +75,8 @@
             NewItemCommand = ReactiveCommand.Create();
             NewItemCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.ModalDialog = new NewItemDialogViewModel(model);
-                WorkspaceViewModel.Instance.ModalDialog.ShowDialog();
+                ShellViewModel.Instance.ModalDialog = new NewItemDialogViewModel(model);
+                ShellViewModel.Instance.ModalDialog.ShowDialog();
             });
 
             RemoveCommand = ReactiveCommand.Create();
