@@ -39,6 +39,7 @@
             {
                 Save();
                 WorkspaceViewModel.Instance.Documents.Remove(this);
+                Model.ShutdownBackgroundWorkers();
             });
 
             tabCharacter = "    ";
@@ -80,6 +81,7 @@
                 {
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
                     HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
+                    WorkspaceViewModel.Instance.InvalidateErrors();
                 };
 
                 model.CodeCompletionRequestCompleted += (s, ee) =>
@@ -112,6 +114,11 @@
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
             margins = new ObservableCollection<TextViewMargin>();            
+        }
+
+        ~EditorViewModel()
+        {
+            Model.ShutdownBackgroundWorkers();
         }
         #endregion
 
