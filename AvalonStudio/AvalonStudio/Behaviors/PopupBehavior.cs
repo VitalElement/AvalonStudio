@@ -34,11 +34,12 @@
             popup.PointerPressed += Popup_PointerPressed;
 
             ContentProperty.Changed.Subscribe((o) =>
-            {   if (AssociatedObject != null)
+            {
+                if (AssociatedObject != null)
                 {
                     popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor).TextView;
                     popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };
-                }           
+                }
             });
         }
 
@@ -123,7 +124,7 @@
         {
             timer.Stop();
 
-            if (OnBeforePopupOpen())
+            if (popup.PlacementTarget != null && OnBeforePopupOpen())
             {
                 if (AssociatedObject.IsPointerOver)
                 {
