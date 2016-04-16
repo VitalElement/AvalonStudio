@@ -11,17 +11,7 @@
             StartDebugCommand = ReactiveCommand.Create();
             StartDebugCommand.Subscribe(_ =>
             {
-                if (ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
-                {
-                    if (ShellViewModel.Instance.SolutionExplorer.Model?.StartupProject != null)
-                    {
-                        ShellViewModel.Instance.DebugManager.StartDebug(ShellViewModel.Instance.SolutionExplorer.Model.StartupProject);
-                    }
-                }
-                else
-                {
-                    ShellViewModel.Instance.DebugManager.Continue();
-                }
+                ShellViewModel.Instance.StartDebugSession();
             });
 
             StepIntoCommand = ReactiveCommand.Create();
@@ -53,6 +43,30 @@
             {
                 ShellViewModel.Instance.DebugManager.Restart();
             });
+
+            BuildCommand = ReactiveCommand.Create();
+            BuildCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.Build();
+            });
+
+            CleanCommand = ReactiveCommand.Create();
+            CleanCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.Clean();
+            });
+
+            CommentCommand = ReactiveCommand.Create();
+            CommentCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.SelectedDocument?.Comment();
+            });
+
+            UnCommentCommand = ReactiveCommand.Create();
+            UnCommentCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.SelectedDocument?.UnComment();
+            });
         }
 
         public ReactiveCommand<object> StartDebugCommand { get; }
@@ -61,5 +75,9 @@
         public ReactiveCommand<object> PauseCommand { get; }
         public ReactiveCommand<object> StopCommand { get; }
         public ReactiveCommand<object> RestartCommand { get; }
+        public ReactiveCommand<object> BuildCommand { get; }
+        public ReactiveCommand<object> CleanCommand { get; }
+        public ReactiveCommand<object> CommentCommand { get; }
+        public ReactiveCommand<object> UnCommentCommand { get; }
     }
 }
