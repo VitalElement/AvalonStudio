@@ -17,12 +17,12 @@
                      LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}" Margins="{Binding Margins}"
                      MouseCursorOffset="{Binding MouseCursorOffset, Mode=TwoWay}">
 
-        <i:Interaction.Behaviors>
+        <!-- <i:Interaction.Behaviors>
           <behaviours:CodeInformationToolTipBehavior>
             <cont:HoverProbe DataContext="{Binding HoverProbe}" />
           </behaviours:CodeInformationToolTipBehavior>
 
-        </i:Interaction.Behaviors>
+        </i:Interaction.Behaviors>-->
 
         <te:TextEditor.Header>
         </te:TextEditor.Header>
