@@ -13,10 +13,14 @@
         <TextBlock Text="Watch List" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0"/>
       </Panel>
 
-      <TreeView Items="{Binding Items}" Grid.Row="1" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
+        <TreeView Items="{Binding Watches}" Grid.Row="1" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
         <TreeView.DataTemplates>
-          <TreeDataTemplate DataType="vm:WatchViewModel" ItemsSource="{Binding Children}">
-            
+          <TreeDataTemplate DataType="vm:WatchViewModel" ItemsSource="{Binding Children}">            
+              <Grid ColumnDefinitions="*,*,*">                
+                <TextBlock Text="{Binding Name}"/>
+                <TextBlock Margin="10 0 0 0" Grid.Column="1" Text="{Binding Value}"/>
+                <TextBlock Margin="10 0 0 0" Grid.Column="2" Text="{Binding Type}"/>
+              </Grid>
           </TreeDataTemplate>
         </TreeView.DataTemplates>
       </TreeView>          

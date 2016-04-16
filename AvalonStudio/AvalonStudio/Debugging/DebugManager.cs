@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Controls;
+using AvalonStudio.Controls.ViewModels;
 using AvalonStudio.Debugging.GDB.OpenOCD;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Models.Tools.Debuggers.Local;
