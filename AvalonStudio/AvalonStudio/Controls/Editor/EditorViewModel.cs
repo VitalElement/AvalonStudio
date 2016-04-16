@@ -34,6 +34,13 @@
             SaveCommand = ReactiveCommand.Create();
             SaveCommand.Subscribe((param) => Save());
 
+            CloseCommand = ReactiveCommand.Create();
+            CloseCommand.Subscribe(_ => 
+            {
+                Save();
+                WorkspaceViewModel.Instance.Documents.Remove(this);
+            });
+
             tabCharacter = "    ";
 
             model.DocumentLoaded += (sender, e) =>
@@ -344,6 +351,7 @@
         public ReactiveCommand<object> BeforeTextChangedCommand { get; private set; }
         public ReactiveCommand<object> TextChangedCommand { get; private set; }
         public ReactiveCommand<object> SaveCommand { get; private set; }
+        public ReactiveCommand<object> CloseCommand { get; }
         #endregion
 
         #region Public Methods
