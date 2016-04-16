@@ -1,20 +1,19 @@
 ﻿namespace AvalonStudio.Controls
 {
+    using Languages;
     using MVVM;
+    using Perspex;
+    using Perspex.Input;
+    using Platforms;
+    using Projects;
     using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using TextEditor.Document;
-    using Perspex;
-    using Perspex.Input;
-    using Languages;
-    using TextEditor.Rendering;
     using TextEditor;
-    using Platforms;
-    using Utils;
-    using Projects;
-    using Perspex.Threading;
+    using TextEditor.Document;
+    using TextEditor.Rendering;
+
     public class EditorViewModel : ViewModel<EditorModel>
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -30,12 +29,12 @@
 
             TextChangedCommand = ReactiveCommand.Create();
             TextChangedCommand.Subscribe(model.OnTextChanged);
-            
+
             SaveCommand = ReactiveCommand.Create();
             SaveCommand.Subscribe((param) => Save());
 
             CloseCommand = ReactiveCommand.Create();
-            CloseCommand.Subscribe(_ => 
+            CloseCommand.Subscribe(_ =>
             {
                 Save();
                 ShellViewModel.Instance.Documents.Remove(this);
@@ -46,14 +45,14 @@
 
             model.DocumentLoaded += (sender, e) =>
             {
-                foreach(var bgRenderer in languageServiceBackgroundRenderers)
+                foreach (var bgRenderer in languageServiceBackgroundRenderers)
                 {
                     BackgroundRenderers.Remove(bgRenderer);
                 }
 
                 languageServiceBackgroundRenderers.Clear();
 
-                foreach(var transformer in languageServiceDocumentLineTransformers)
+                foreach (var transformer in languageServiceDocumentLineTransformers)
                 {
                     DocumentLineTransformers.Remove(transformer);
                 }
@@ -100,7 +99,7 @@
 
             this.intellisense = new IntellisenseViewModel(model, this);
 
-            documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();                        
+            documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
 
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
             backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
@@ -113,7 +112,7 @@
             backgroundRenderers.Add(wordAtCaretHighlighter);
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
-            margins = new ObservableCollection<TextViewMargin>();            
+            margins = new ObservableCollection<TextViewMargin>();
         }
 
         ~EditorViewModel()
@@ -214,12 +213,12 @@
             }
         }
 
-        public void GotoPosition (int line, int column)
+        public void GotoPosition(int line, int column)
         {
             CaretIndex = TextDocument.GetOffset(line, column);
         }
 
-        public void GotoOffset (int offset)
+        public void GotoOffset(int offset)
         {
             CaretIndex = offset;
         }
@@ -282,7 +281,7 @@
 
             return result;
         }
-      
+
         private ObservableCollection<SyntaxHighlightingData> highlightingData;
         public ObservableCollection<SyntaxHighlightingData> HighlightingData
         {
@@ -319,7 +318,7 @@
         }
 
         public void OnKeyDown(KeyEventArgs e)
-        {            
+        {
             Intellisense.OnKeyDown(e);
         }
 
@@ -329,26 +328,81 @@
             Intellisense.OnTextInput(e);
         }
 
-        public void OnPointerMoved (PointerEventArgs e)
+        public TextSegment GetSelection()
         {
-            
+            TextSegment result = null;
+
+            if (Model.Editor != null)
+            {
+                if (Model.Editor.SelectionStart < Model.Editor.SelectionEnd)
+                {
+                    result = new TextSegment() { StartOffset = Model.Editor.SelectionStart, EndOffset = Model.Editor.SelectionEnd };
+                }
+                else
+                {
+                    result = new TextSegment() { StartOffset = Model.Editor.SelectionEnd, EndOffset = Model.Editor.SelectionStart };
+                }
+            }
+
+            return result;
         }
 
-        public void OpenFile(ISourceFile file, int line, int column, bool debugHighlight = false)
+        public void SetSelection(TextSegment segment)
         {
-            Model.OpenFile(file);
-
-            
+            if (Model.Editor != null)
+            {
+                Model.Editor.SelectionStart = segment.StartOffset;
+                Model.Editor.SelectionEnd = segment.EndOffset;
+            }
         }
 
+        public void Comment()
+        {
+            if (Model?.LanguageService != null && Model.Editor != null)
+            {
+                var selection = GetSelection();
+                
+                if (selection != null)
+                {
+                    var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
+                    anchors.Add(selection);
+
+                    CaretIndex = Model.LanguageService.Comment(TextDocument, selection, CaretIndex);
+
+                    SetSelection(selection);
+                }
+
+                Model.Editor.Focus();
+            }
+        }
+
+        public void UnComment()
+        {
+            if (Model?.LanguageService != null&& Model.Editor != null)
+            {
+                var selection = GetSelection();
+
+                if (selection != null)
+                {
+                    var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
+                    anchors.Add(selection);
+
+                    CaretIndex = Model.LanguageService.UnComment(TextDocument, selection, CaretIndex);
+
+                    SetSelection(selection);
+                }
+
+                Model.Editor.Focus();
+            }
+        }
+        
         private void FormatAll()
         {
             if (Model?.LanguageService != null)
             {
-                CaretIndex = Model.LanguageService.Format(Model.ProjectFile, TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
+                CaretIndex = Model.LanguageService.Format(TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
             }
         }
-
 
 
         public TextLocation CaretTextLocation
