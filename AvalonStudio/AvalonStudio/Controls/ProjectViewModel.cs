@@ -29,38 +29,20 @@
             DebugCommand = ReactiveCommand.Create();
             DebugCommand.Subscribe(_ =>
             {
-                WorkspaceViewModel.Instance.DebugManager.StartDebug(Model);
+                WorkspaceViewModel.Instance.StartDebugSession();
             });
 
             BuildCommand = ReactiveCommand.Create();
-            BuildCommand.Subscribe(async (o) =>
+            BuildCommand.Subscribe((o) =>
             {
-                WorkspaceViewModel.Instance.Console.Clear();
-
-                if (model.ToolChain != null)
-                {
-                    await Task.Factory.StartNew(() => model.ToolChain.Build(WorkspaceViewModel.Instance.Console, model));
-                }
-                else
-                {
-                    WorkspaceViewModel.Instance.Console.WriteLine("Project does not define a toolchain.");
-                }
+                WorkspaceViewModel.Instance.Build();
             });
 
             CleanCommand = ReactiveCommand.Create();
 
-            CleanCommand.Subscribe(async (o) =>
+            CleanCommand.Subscribe((o) =>
             {
-                WorkspaceViewModel.Instance.Console.Clear();
-
-                if (model.ToolChain != null)
-                {
-                    await model.ToolChain.Clean(WorkspaceViewModel.Instance.Console, model);
-                }
-                else
-                {
-                    WorkspaceViewModel.Instance.Console.WriteLine("Project does not define a toolchain.");
-                }                                
+                WorkspaceViewModel.Instance.Clean();                    
             });
 
             ManageReferencesCommand = ReactiveCommand.Create();
