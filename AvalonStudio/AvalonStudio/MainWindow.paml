@@ -33,16 +33,14 @@
         <DockPanel DockPanel.Dock="Right">
           <StackPanel DockPanel.Dock="Top">
             <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}" Focusable="false">
-              <TabStrip.Styles>
-                <Style Selector="TabStripItem">
-                  <Setter Property="Height" Value="22" />
-                </Style>
+              <TabStrip.Styles>                
 
                 <Style Selector="TabStripItem">
+                  <Setter Property="Height" Value="20" />
                   <Setter Property="Background" Value="#2D2D30" />
                   <Setter Property="BorderBrush" Value="#3E3E42" />
                   <Setter Property="BorderThickness" Value="0" />
-                  <Setter Property="Margin" Value="0" />
+                  <Setter Property="Margin" Value="0 0 0 -1" />
                   <Setter Property="Padding" Value="4 0 4 0" />
                   <Setter Property="FontSize" Value="12"/>
                 </Style>
@@ -58,7 +56,7 @@
                 <DataTemplate>
                   <StackPanel Orientation="Horizontal" Gap="2">
                     <TextBlock Text="{Binding Title}" Foreground="WhiteSmoke" Margin="2"/>                    
-                    <Button Height="10" Width="10">
+                    <Button Height="14" Width="14">
                       <Button.Styles>
                         <Style Selector="Button">
                           <Setter Property="BorderThickness" Value="0"/>
@@ -71,11 +69,11 @@
                           <Setter Property="Background" Value="#1c97ea" />
                         </Style>
                       </Button.Styles>
-                      <Path Stretch="Uniform" UseLayoutRounding="False" Data="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" Fill="WhiteSmoke" />
+                      <Path Margin="2" Stretch="Uniform" UseLayoutRounding="False" Data="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" Fill="WhiteSmoke" />
 
                     </Button>
 
-                    <Button Height="10" Width="10">
+                    <Button Height="14" Width="14" Command="{Binding CloseCommand}">
                       <Button.Styles>
                         <Style Selector="Button">
                           <Setter Property="BorderThickness" Value="0"/>
@@ -87,7 +85,7 @@
                           <Setter Property="Background" Value="#1c97ea" />
                         </Style>
                       </Button.Styles>
-                      <Path Stretch="Uniform" UseLayoutRounding="False" Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="WhiteSmoke" />
+                      <Path Margin="2" Stretch="Uniform" UseLayoutRounding="False" Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="WhiteSmoke" />
                     </Button>
                   </StackPanel>                  
                 </DataTemplate>
