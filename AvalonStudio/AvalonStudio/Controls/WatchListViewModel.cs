@@ -23,7 +23,7 @@
         }
 
         private IDebugger debugger;
-        public IDebugger Debugger { get; }
+        public IDebugger Debugger { get { return debugger; } }
 
         public void SetDebugger(IDebugger debugger)
         {
