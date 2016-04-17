@@ -1,7 +1,6 @@
 ﻿namespace AvalonStudio.Controls
 {
     using AvalonStudio.Debugging;
-    using AvalonStudio.MVVM;
     using System.Collections.Generic;
     using System.Linq;
     using ViewModels;
@@ -45,7 +44,7 @@
             foreach(var removedvar in  removed)
             {
                 locals.Remove(removedvar);
-                RemoveWatch(Watches.FirstOrDefault(w => w.Name == removedvar.Name));
+                RemoveWatch(Children.FirstOrDefault(w => w.Name == removedvar.Name));
             }
         }
 

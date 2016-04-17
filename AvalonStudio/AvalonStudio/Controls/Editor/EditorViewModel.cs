@@ -13,7 +13,7 @@
     using TextEditor;
     using TextEditor.Document;
     using TextEditor.Rendering;
-
+    using ViewModels;
     public class EditorViewModel : ViewModel<EditorModel>
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -242,6 +242,77 @@
             }
         }
 
+        private WatchListViewModel debugHoverProbe;
+        public WatchListViewModel DebugHoverProbe
+        {
+            get { return debugHoverProbe; }
+            set { this.RaiseAndSetIfChanged(ref debugHoverProbe, value); }
+        }
+
+        private string GetWordAtOffset(int offset)
+        {
+            string result = string.Empty;
+
+            if (offset >= 0 && TextDocument.TextLength > offset)
+            {
+                int start = offset;
+
+                var currentChar = TextDocument.GetCharAt(offset);
+                char prevChar = '\0';
+
+                if (offset > 0)
+                {
+                    prevChar = TextDocument.GetCharAt(offset - 1);
+                }
+
+                var charClass = TextUtilities.GetCharacterClass(currentChar);
+
+                if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ' && TextUtilities.GetCharacterClass(prevChar) != TextUtilities.CharacterClass.LineTerminator)
+                {
+                    start = TextUtilities.GetNextCaretPosition(TextDocument, offset, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                }
+
+                int end = TextUtilities.GetNextCaretPosition(TextDocument, start, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorder);
+
+                if (start != -1 && end != -1)
+                {
+                    string word = TextDocument.GetText(start, end - start).Trim();
+
+                    if (TextUtilities.IsSymbol(word))
+                    {
+                        result = word;                        
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public bool UpdateDebugHoverProbe (int offset)
+        {
+            bool result = false;
+
+            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
+            {                
+                var expression = GetWordAtOffset(offset);
+                
+                if (expression != string.Empty)
+                {
+                    var evaluatedExpression = ShellViewModel.Instance.DebugManager.ProbeExpression(expression);
+
+                    if(evaluatedExpression != null)
+                    {
+                        DebugHoverProbe = new WatchListViewModel();
+                        DebugHoverProbe.SetDebugger(ShellViewModel.Instance.DebugManager.Debugger);
+                        DebugHoverProbe.AddExistingWatch(evaluatedExpression);
+                        result = true;
+                    }                    
+                }
+            }
+
+            return result;
+        }
+
 
         private SymbolViewModel hoverProbe;
         public SymbolViewModel HoverProbe
@@ -258,7 +329,7 @@
         {
             bool result = false;
 
-            if (offset != -1)
+            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
             {
                 var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
 
