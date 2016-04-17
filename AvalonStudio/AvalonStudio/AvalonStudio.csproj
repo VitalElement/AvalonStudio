@@ -193,7 +193,6 @@
       <DependentUpon>CallStack.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CallStackViewModel.cs" />
-    <Compile Include="Controls\CompletionDataViewModel.cs" />
     <Compile Include="Controls\Console.paml.cs">
       <DependentUpon>Console.paml</DependentUpon>
     </Compile>
@@ -210,7 +209,7 @@
     <Compile Include="Controls\Editor.paml.cs">
       <DependentUpon>Editor.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Editor\Editor.cs" />
+    <Compile Include="Controls\Editor\EditorModel.cs" />
     <Compile Include="Controls\Editor\EditorViewModel.cs" />
     <Compile Include="Controls\ErrorList.paml.cs">
       <DependentUpon>ErrorList.paml</DependentUpon>

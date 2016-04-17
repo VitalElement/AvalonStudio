@@ -136,6 +136,7 @@
     <Compile Include="BracketMatchingBackgroundRenderer.cs" />
     <Compile Include="ClangFormat.cs" />
     <Compile Include="ClangFormatSettings.cs" />
+    <Compile Include="CPlusPlusIntellisenseManager.cs" />
     <Compile Include="CPlusPlusLanguageService.cs" />
     <Compile Include="CppIndentationStrategy.cs" />
     <Compile Include="DefineTextLineTransformer.cs" />
