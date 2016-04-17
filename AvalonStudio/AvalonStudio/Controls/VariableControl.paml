@@ -1,7 +1,8 @@
 ﻿<UserControl xmlns="https://github.com/perspex"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:vm="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio">
   <Grid>
-    <TreeView Items="{Binding Watches}" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
+    <TreeView Items="{Binding Children}" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
       <TreeView.Styles>
         <Style Selector="TreeViewItem">
           <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
