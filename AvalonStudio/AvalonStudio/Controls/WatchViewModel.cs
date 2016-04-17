@@ -8,10 +8,10 @@
 
     public class WatchViewModel : ViewModel<VariableObject>
     {
-        public WatchViewModel(WatchListViewModel container, VariableObject model)
+        public WatchViewModel(IDebugger debugger, VariableObject model)
             : base(model)
         {
-            this.container = container;
+            this.debugger = debugger;
 
             DeleteCommand = ReactiveCommand.Create();
             DeleteCommand.Subscribe(_ =>
@@ -48,12 +48,12 @@
                         break;
                 }
 
-                this.Invalidate(container.Debugger);
+                this.Invalidate(debugger);
 
             });
         }
 
-        private WatchListViewModel container;
+        private IDebugger debugger;
 
         private bool isExpanded;
         public bool IsExpanded
@@ -71,9 +71,9 @@
 
                         foreach (var child in Model.Children)
                         {
-                            var newChild = new WatchViewModel(container, child);
+                            var newChild = new WatchViewModel(debugger, child);
 
-                            newChild.Evaluate(container.Debugger);
+                            newChild.Evaluate(debugger);
 
                             newChildren.Add(newChild);
                         }

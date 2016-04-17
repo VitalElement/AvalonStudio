@@ -25,9 +25,15 @@
     </Grid>
 
     <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="1 2 2 1">
-      <DockPanel>
+      <DockPanel>        
         <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Left" >
-          <Controls:Registers DataContext="{Binding DebugManager.Registers}" />
+          <DockPanel>
+            <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Bottom">
+              <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Height="300" />
+            </Grid>
+            <Controls:Registers DataContext="{Binding DebugManager.Registers}" />           
+          </DockPanel>
+          
         </Grid>
 
         <DockPanel DockPanel.Dock="Right">
@@ -111,16 +117,11 @@
       <DockPanel>
         <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right" >
           <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400"  />
-        </Grid>
-        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
-          <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Width="400" />
-        </Grid>
+        </Grid>        
         <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
           <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
         </Grid>
-        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
-          <Controls:WatchList DataContext="{Binding DebugManager.WatchList}" Width="400" />
-        </Grid>
+        
         <Grid DockPanel.Dock="Left" >
           <TabControl TabStripPlacement="Bottom">
             <TabControl.Styles>
@@ -154,7 +155,13 @@
     </Grid>
 
     <Grid Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Margin="2 2 1 2">
-      <Controls:SolutionExplorer DataContext="{Binding SolutionExplorer}" />
+      <DockPanel>
+        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Bottom">
+          <Controls:WatchList DataContext="{Binding DebugManager.WatchList}" Height="400" />
+        </Grid>
+        <Controls:SolutionExplorer DataContext="{Binding SolutionExplorer}"  />        
+      </DockPanel>
+      
     </Grid>
 
     <Grid Grid.Row="3" Grid.ColumnSpan="4">
