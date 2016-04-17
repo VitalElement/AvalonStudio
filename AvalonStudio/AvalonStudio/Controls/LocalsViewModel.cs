@@ -1,7 +1,6 @@
 ﻿namespace AvalonStudio.Controls
 {
     using AvalonStudio.Debugging;
-    using AvalonStudio.MVVM;
     using System.Collections.Generic;
     using System.Linq;
     using ViewModels;
