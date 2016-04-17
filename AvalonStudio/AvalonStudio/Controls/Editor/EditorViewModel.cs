@@ -89,11 +89,6 @@
                     ShellViewModel.Instance.InvalidateErrors();
                 };
 
-                model.CodeCompletionRequestCompleted += (s, ee) =>
-                {
-                    Intellisense.SetCompletionResults(model.CodeCompletionResults);
-                };
-
                 this.RaisePropertyChanged(nameof(TextDocument));
                 this.RaisePropertyChanged(nameof(Title));
             };
@@ -317,22 +312,6 @@
             }
         }
         #endregion
-
-        public void OnKeyUp(KeyEventArgs e)
-        {
-            Intellisense.OnKeyUp(e);
-        }
-
-        public void OnKeyDown(KeyEventArgs e)
-        {
-            Intellisense.OnKeyDown(e);
-        }
-
-
-        public void OnTextInput(TextInputEventArgs e)
-        {
-            Intellisense.OnTextInput(e);
-        }
 
         public TextSegment GetSelection()
         {

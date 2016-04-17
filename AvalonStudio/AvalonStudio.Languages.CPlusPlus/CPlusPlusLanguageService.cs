@@ -21,7 +21,7 @@
 
     public class CPlusPlusLanguageService : ILanguageService
     {
-        private static ClangIndex index = ClangService.CreateIndex();
+        private static ClangIndex index = ClangService.CreateIndex();        
         private static ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations = new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
 
         public CPlusPlusLanguageService()
@@ -519,7 +519,7 @@
             }
         }
 
-        public void RegisterSourceFile(TextEditor editor, ISourceFile file, TextDocument doc)
+        public void RegisterSourceFile(IIntellisenseControl intellisense, TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CPlusPlusDataAssociation association = null;
 
@@ -533,6 +533,18 @@
                 dataAssociations.Add(file, association);
             }
 
+            association.IntellisenseManager = new CPlusPlusIntellisenseManager(intellisense, editor);
+
+            association.TunneledKeyUpHandler = (sender, e) =>
+            {
+                association.IntellisenseManager.OnKeyUp(e);
+            };
+
+            association.TunneledKeyDownHandler = (sender, e) =>
+            {
+                association.IntellisenseManager.OnKeyDown(e);
+            };            
+            
             association.KeyUpHandler = (sender, e) =>
             {
                 if (editor.TextDocument == doc)
@@ -540,7 +552,7 @@
                     switch (e.Key)
                     {
                         case Key.Return:
-                            {
+                            {                                
                                 if (editor.CaretIndex < editor.TextDocument.TextLength)
                                 {
                                     if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
@@ -585,6 +597,9 @@
                     }
                 }
             };
+
+            editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
+            editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
 
             editor.KeyUp += association.KeyUpHandler;
             editor.TextInput += association.TextInputHandler;
@@ -852,7 +867,11 @@
         public TextMarkerService TextMarkerService { get; private set; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; private set; }
         public List<IDocumentLineTransformer> DocumentLineTransformers { get; private set; }
+        public EventHandler<KeyEventArgs> TunneledKeyUpHandler { get; set; }
+        public EventHandler<KeyEventArgs> TunneledKeyDownHandler { get; set; }
         public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
+        public EventHandler<KeyEventArgs> KeyDownHandler { get; set; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
+        public CPlusPlusIntellisenseManager IntellisenseManager { get; set; }
     }
 }

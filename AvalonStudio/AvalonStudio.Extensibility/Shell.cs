@@ -3,10 +3,10 @@
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using Debugging;
-    using Languages;
     using Toolchains;
     using Projects;
     using TestFrameworks;
+    using AvalonStudio.Languages;
 
     [Export(typeof(Shell))]
     public class Shell
