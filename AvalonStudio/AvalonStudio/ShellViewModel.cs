@@ -270,7 +270,7 @@
 
             foreach (var document in documents)
             {
-                foreach (var diagnostic in document.Model.CodeAnalysisResults.Diagnostics)
+                foreach (var diagnostic in document.Model.CodeAnalysisResults?.Diagnostics)
                 {
                     //if (diagnostic.Location.FileLocation.File.FileName.NormalizePath() == document.FilePath.NormalizePath())
                     {
