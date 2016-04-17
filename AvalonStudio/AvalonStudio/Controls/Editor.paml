@@ -16,6 +16,12 @@
                      CaretLocationInTextView="{Binding CaretLocation}" SelectedWord="{Binding WordAtCaret}"
                      LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}" Margins="{Binding Margins}"
                      MouseCursorOffset="{Binding MouseCursorOffset, Mode=TwoWay}">
+        
+        <te:TextEditor.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="Add Watch" Command="{Binding AddWatchCommand}" />
+          </ContextMenu>
+        </te:TextEditor.ContextMenu>
 
         <!-- <i:Interaction.Behaviors>
           <behaviours:CodeInformationToolTipBehavior>

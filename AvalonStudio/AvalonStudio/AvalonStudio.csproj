@@ -187,6 +187,7 @@
     <Compile Include="Controls\NewItemDialog.paml.cs">
       <DependentUpon>NewItemDialog.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WatchViewModel.cs" />
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\CallStack.paml.cs">
       <DependentUpon>CallStack.paml</DependentUpon>
@@ -313,6 +314,10 @@
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="ToolViewModel.cs" />
     <Compile Include="ShellViewModel.cs" />
+    <Compile Include="Controls\WatchList.paml.cs">
+      <DependentUpon>WatchList.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\WatchListViewModel.cs" />
     <EmbeddedResource Include="MainWindow.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -364,6 +369,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <EmbeddedResource Include="Controls\WatchList.paml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">

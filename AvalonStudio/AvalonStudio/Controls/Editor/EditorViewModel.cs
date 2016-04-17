@@ -41,6 +41,12 @@
                 Model.ShutdownBackgroundWorkers();
             });
 
+            AddWatchCommand = ReactiveCommand.Create();
+            AddWatchCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.DebugManager.WatchList.AddWatch(WordAtCaret);
+            });
+
             tabCharacter = "    ";
 
             model.DocumentLoaded += (sender, e) =>
@@ -361,7 +367,7 @@
             if (Model?.LanguageService != null && Model.Editor != null)
             {
                 var selection = GetSelection();
-                
+
                 if (selection != null)
                 {
                     var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
@@ -378,7 +384,7 @@
 
         public void UnComment()
         {
-            if (Model?.LanguageService != null&& Model.Editor != null)
+            if (Model?.LanguageService != null && Model.Editor != null)
             {
                 var selection = GetSelection();
 
@@ -405,7 +411,7 @@
         {
             TextDocument.UndoStack.Redo();
         }
-        
+
         private void FormatAll()
         {
             if (Model?.LanguageService != null)
@@ -428,6 +434,9 @@
         public ReactiveCommand<object> TextChangedCommand { get; private set; }
         public ReactiveCommand<object> SaveCommand { get; private set; }
         public ReactiveCommand<object> CloseCommand { get; }
+
+        // todo this menu item and command should be injected via debugging module.
+        public ReactiveCommand<object> AddWatchCommand { get; }
         #endregion
 
         #region Public Methods
