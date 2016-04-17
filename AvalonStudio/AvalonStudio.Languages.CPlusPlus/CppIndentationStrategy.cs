@@ -74,10 +74,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             int lineNr = line.LineNumber;
             TextDocumentAccessor acc = new TextDocumentAccessor(document, lineNr, lineNr);
+
+            var leadingWhiteSpaceBefore = TextUtilities.GetLeadingWhitespace(document, line).Length;
             var result = Indent(acc, false, caretIndex);            
             string t = acc.Text;
-
-            result = document.GetOffset(acc.LineNumber-1, acc.Text.Length+1);
+            
+            result = caretIndex + TextUtilities.GetLeadingWhitespace(document, line).Length - leadingWhiteSpaceBefore;
             
             if (t.Length == 0)
             {
