@@ -5,6 +5,7 @@
     using ReactiveUI;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Linq;
 
     public class WatchListViewModel : ViewModel
     {
@@ -71,7 +72,7 @@
             }
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             Watches.Clear();
         }

@@ -1,4 +1,5 @@
-﻿<UserControl xmlns="https://github.com/perspex"  xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility">
+﻿<UserControl xmlns="https://github.com/perspex"
+             xmlns:vm="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <Grid Height="6"  Margin="0 0 10 0">
@@ -10,17 +11,24 @@
       <Panel HorizontalAlignment="Left">
         <TextBlock Text="Locals" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0"/>
       </Panel>
-      <ListBox Grid.Row="1"  BorderThickness="0" Items="{Binding Model}" Background="{StyleResource ThemeControlDarkBrush}">
-        <ListBox.DataTemplates>
-          <DataTemplate DataType="debugging:Variable">
-            <StackPanel Gap="5" Background="{Binding Background}">
-              <TextBlock Text="{Binding Name}" Width="90" />
-              <TextBlock Text="{Binding Value}" />
-              <TextBlock Text="{Binding Type}" />              
-            </StackPanel>
-          </DataTemplate>
-        </ListBox.DataTemplates>
-      </ListBox>
+
+      <TreeView Items="{Binding Watches}" Grid.Row="1" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
+        <TreeView.Styles>
+          <Style Selector="TreeViewItem">
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+          </Style>
+        </TreeView.Styles>
+
+        <TreeView.DataTemplates>
+          <TreeDataTemplate DataType="vm:WatchViewModel" ItemsSource="{Binding Children}">
+            <Grid ColumnDefinitions="*,*,*">
+              <TextBlock Text="{Binding Name}"/>
+              <TextBlock Margin="10 0 0 0" Grid.Column="1" Text="{Binding Value}"/>
+              <TextBlock Margin="10 0 0 0" Grid.Column="2" Text="{Binding Type}"/>
+            </Grid>
+          </TreeDataTemplate>
+        </TreeView.DataTemplates>
+      </TreeView>
     </Grid>
   </Border>
 </UserControl>

@@ -1,6 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/perspex"
-             xmlns:vm="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio"
-             Foreground="WhiteSmoke">
+             xmlns:vm="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid RowDefinitions="25,*">
       <Grid Height="6"  Margin="0 0 10 0">

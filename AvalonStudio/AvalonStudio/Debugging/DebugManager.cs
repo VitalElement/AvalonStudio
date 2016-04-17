@@ -358,6 +358,7 @@ namespace AvalonStudio.Debugging
             Disassembly.SetDebugger(debugger);
             //MemoryView.SetDebugger(debugger);
             WatchList.SetDebugger(debugger);
+            Locals.SetDebugger(debugger);
         }
 
         #region Properties
@@ -584,11 +585,12 @@ namespace AvalonStudio.Debugging
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        Locals.Model = stackVariables;
+                        Locals.InvalidateLocals(stackVariables);
+                        Locals.Invalidate(updates);
                         CallStack.Update(stackFrames);
                         Registers.Invalidate();
                         Disassembly.SetAddress(e.Frame.Address);
-                        WatchList.Invalidate(updates);
+                        WatchList.Invalidate(updates);                        
                     });
 
                     
