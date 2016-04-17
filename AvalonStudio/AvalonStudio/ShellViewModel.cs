@@ -270,17 +270,18 @@
 
             foreach (var document in documents)
             {
-                foreach (var diagnostic in document.Model.CodeAnalysisResults?.Diagnostics)
+                if (document.Model.CodeAnalysisResults != null)
                 {
-                    //if (diagnostic.Location.FileLocation.File.FileName.NormalizePath() == document.FilePath.NormalizePath())
+                    foreach (var diagnostic in document.Model.CodeAnalysisResults.Diagnostics)
                     {
-                        var error = new ErrorViewModel(diagnostic);
-                        var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
+                       
+                            var error = new ErrorViewModel(diagnostic);
+                            var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
 
-                        if (matching == null)
-                        {
-                            allErrors.Add(error);
-                        }
+                            if (matching == null)
+                            {
+                                allErrors.Add(error);
+                            }
                     }
                 }
             }
