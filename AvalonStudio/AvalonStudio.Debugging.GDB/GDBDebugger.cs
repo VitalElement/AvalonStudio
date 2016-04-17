@@ -450,7 +450,6 @@
 
         public virtual bool Start(IToolChain toolchain, IConsole console, IProject project)
         {
-            DebugMode = true;
             this.console = console;
             var startInfo = new ProcessStartInfo();
 

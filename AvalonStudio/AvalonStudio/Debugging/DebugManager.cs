@@ -182,6 +182,18 @@ namespace AvalonStudio.Debugging
             IsExecuting = true;
         }
 
+        public VariableObject ProbeExpression (string expression)
+        {
+            VariableObject result = null;
+
+            if(Debugger.State == DebuggerState.Paused)
+            {
+                result = Debugger.CreateWatch(string.Format("probe{0}", Debugger.GetVariableId()), expression);
+            }
+
+            return result;
+        }
+
         public void Continue ()
         {
             if (Debugger != null)
