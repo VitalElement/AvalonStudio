@@ -591,8 +591,12 @@
                             editor.CaretIndex = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
                             break;
 
-                        case "{":
-                            editor.CaretIndex = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex) - Environment.NewLine.Length;
+                        case "{":                            
+                            var offset = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+
+                            var newLine = editor.TextDocument.GetLineByOffset(offset);
+
+                            editor.CaretIndex = newLine.PreviousLine.EndOffset;
                             break;
                     }
                 }
@@ -600,8 +604,8 @@
 
             editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
             editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
-
-            editor.KeyUp += association.KeyUpHandler;
+            editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
+            
             editor.TextInput += association.TextInputHandler;
         }
 
@@ -623,7 +627,10 @@
         {
             var association = GetAssociatedData(file);
 
-            editor.KeyUp -= association.KeyUpHandler;
+            editor.RemoveHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler);
+            editor.RemoveHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler);
+            editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
+            
             editor.TextInput -= association.TextInputHandler;
 
             dataAssociations.Remove(file);
