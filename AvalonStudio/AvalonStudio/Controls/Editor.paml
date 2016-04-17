@@ -23,7 +23,8 @@
           </ContextMenu>
         </te:TextEditor.ContextMenu>
 
-         <i:Interaction.Behaviors>
+        <!--
+        <i:Interaction.Behaviors>
           <behaviours:CodeInformationToolTipBehavior>
             <cont:HoverProbe DataContext="{Binding HoverProbe}" />
           </behaviours:CodeInformationToolTipBehavior>
@@ -31,7 +32,7 @@
            <behaviours:DebugInformationToolTipBehaviour>
              <cont:VariableControl DataContext="{Binding DebugHoverProbe}" />
            </behaviours:DebugInformationToolTipBehaviour>
-        </i:Interaction.Behaviors>
+        </i:Interaction.Behaviors>-->
 
         <te:TextEditor.Header>
         </te:TextEditor.Header>
