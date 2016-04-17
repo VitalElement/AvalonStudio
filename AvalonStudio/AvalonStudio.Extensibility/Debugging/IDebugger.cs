@@ -75,7 +75,12 @@
 
         void Continue();
 
+        string EvaluateExpression(string expression);
+
+        List<VariableObject> ListChildren(VariableObject variable);
+
         VariableObject CreateWatch(string id, string expression);
+        void DeleteWatch(string id);
 
         void SetWatchFormat(string id, WatchFormat format);
 
