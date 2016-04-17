@@ -416,7 +416,10 @@
 
         private void SetHighestColumn ()
         {
-            highestUserSelectedColumn = TextDocument.GetLocation(CaretIndex).Column;
+            if (CaretIndex != -1)
+            {
+                highestUserSelectedColumn = TextDocument.GetLocation(CaretIndex).Column;
+            }
         }
 
 
@@ -441,7 +444,7 @@
                 CaretIndex += count;
             }
 
-            highestUserSelectedColumn = TextDocument.GetLocation(CaretIndex).Column;
+            SetHighestColumn();
         }
 
         private void MoveVertical(int count, InputModifiers modifiers)
@@ -452,12 +455,12 @@
             if (currentPosition.Line + count > 0 && currentPosition.Line + count <= TextDocument.LineCount)
             {
                 var line = TextDocument.Lines[currentPosition.Line - 1 + count];
-
+                
                 var col = line.EndOffset;
 
-                if (currentPosition.Column <= line.Length)
+                if (highestUserSelectedColumn <= line.Length)
                 {
-                    col = currentPosition.Column;
+                    col = highestUserSelectedColumn;
                 }
 
                 CaretIndex = TextDocument.GetOffset(currentPosition.Line + count, col);
@@ -670,6 +673,8 @@
 
                     InvalidateVisual();
                 }
+
+                SetHighestColumn();
             }
         }
         
