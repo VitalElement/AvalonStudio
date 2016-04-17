@@ -14,8 +14,6 @@
             Watches = new ObservableCollection<WatchViewModel>();
         }
 
-        private int watchId = 0;
-
         private ObservableCollection<WatchViewModel> watches;
         public ObservableCollection<WatchViewModel> Watches
         {
@@ -33,12 +31,10 @@
 
         public void AddWatch(string expression)
         {
-            var newWatch = debugger.CreateWatch(string.Format("var{0}", watchId), expression);
+            var newWatch = debugger.CreateWatch(string.Format("var{0}", debugger.GetVariableId()), expression);
 
             if (newWatch != null)
             {
-                watchId++;
-
                 this.Add(newWatch);
             }
         }
