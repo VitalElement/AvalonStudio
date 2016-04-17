@@ -120,7 +120,7 @@
             }
         }
 
-        internal string EvaluateExpression(string expression)
+        public string EvaluateExpression(string expression)
         {
             if (CurrentState != DebuggerState.Paused)
             {
@@ -143,7 +143,7 @@
             return result;
         }
 
-        internal List<VariableObject> ListChildren(VariableObject variable)
+        public List<VariableObject> ListChildren(VariableObject variable)
         {
             if (CurrentState != DebuggerState.Paused)
             {

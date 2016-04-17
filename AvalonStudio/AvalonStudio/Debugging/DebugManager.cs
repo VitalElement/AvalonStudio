@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Controls;
+using AvalonStudio.Controls.ViewModels;
 using AvalonStudio.Debugging.GDB.OpenOCD;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Models.Tools.Debuggers.Local;
@@ -29,17 +30,10 @@ namespace AvalonStudio.Debugging
             Registers = new RegistersViewModel();
             Disassembly = new DisassemblyViewModel();
             //MemoryView = new MemoryViewModel();
-            //WatchList = new WatchListViewModel();
+            WatchList = new WatchListViewModel();
             //VariableProbes = new List<VariableProbeViewModel>();
             CallStack = new CallStackViewModel();
-
-            //LocalsView.bool = bool.Hidden;
-            //RegistersView.bool = bool.Hidden;
-            //DissasemblyView.bool = bool.Hidden;
-            //MemoryView.bool = bool.Hidden;
-            //WatchList.bool = bool.Hidden;
-            //CallStack.bool = bool.Hidden;
-
+            
             StartDebuggingCommand = ReactiveCommand.Create();
             StartDebuggingCommand.Subscribe((o) =>
             {
@@ -363,7 +357,7 @@ namespace AvalonStudio.Debugging
             Registers.SetDebugger(debugger);
             Disassembly.SetDebugger(debugger);
             //MemoryView.SetDebugger(debugger);
-            //WatchList.SetDebugger(debugger as GDBDebugger);
+            WatchList.SetDebugger(debugger);
         }
 
         #region Properties
@@ -404,12 +398,12 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref locals, value); }
         }
 
-        //private WatchListViewModel watchList;
-        //public WatchListViewModel WatchList
-        //{
-        //    get { return watchList; }
-        //    set { watchList = value; OnPropertyChanged(); }
-        //}
+        private WatchListViewModel watchList;
+        public WatchListViewModel WatchList
+        {
+            get { return watchList; }
+            set { this.RaiseAndSetIfChanged(ref watchList, value); }
+        }
 
         private CallStackViewModel callStack;
         public CallStackViewModel CallStack
@@ -540,9 +534,11 @@ namespace AvalonStudio.Debugging
                     if (e.Frame != null && e.Frame.File != null)
                     {
                         var normalizedPath = e.Frame.File.Replace("\\\\","\\").ToPlatformPath();
-                        
+
+                        ISourceFile file = null;
+
                         var document = ShellViewModel.Instance.GetDocument(normalizedPath);
-                        ISourceFile file = document.Model.ProjectFile;
+                        file = document?.Model.ProjectFile;
 
                         if (file == null)
                         {
@@ -567,10 +563,11 @@ namespace AvalonStudio.Debugging
 
                     List<Variable> stackVariables = null;
                     List<Frame> stackFrames = null;
+                    List<VariableObjectChange> updates = null;
 
                     stackVariables = Debugger.ListStackVariables();
                     stackFrames = Debugger.ListStackFrames();
-                    //updates = debugger.UpdateVariables();
+                    updates = debugger.UpdateVariables();
 
                     //if (DissasemblyView.bool == bool.Visible)
                     //{
@@ -591,9 +588,10 @@ namespace AvalonStudio.Debugging
                         CallStack.Update(stackFrames);
                         Registers.Invalidate();
                         Disassembly.SetAddress(e.Frame.Address);
+                        WatchList.Invalidate(updates);
                     });
 
-                    //WatchList.Invalidate(updates);
+                    
                     
 
                     //while (await IsAsynchronousUIListsLoading())
