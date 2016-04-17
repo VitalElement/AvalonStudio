@@ -7,6 +7,7 @@
     using Perspex.Controls.Primitives;
     using Perspex;
     using Utils;
+
     public class MetroWindow : Window, IStyleable
     {
         public MetroWindow()

@@ -317,7 +317,7 @@
     <Compile Include="Controls\WatchList.paml.cs">
       <DependentUpon>WatchList.paml</DependentUpon>
     </Compile>
-    <Compile Include="WatchListViewModel.cs" />
+    <Compile Include="Controls\WatchListViewModel.cs" />
     <EmbeddedResource Include="MainWindow.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
