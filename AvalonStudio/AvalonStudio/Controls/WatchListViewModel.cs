@@ -11,16 +11,14 @@
     {
         public WatchListViewModel()
         {
-            Watches = new ObservableCollection<WatchViewModel>();
+            Children = new ObservableCollection<WatchViewModel>();
         }
 
-        private int watchId = 0;
-
-        private ObservableCollection<WatchViewModel> watches;
-        public ObservableCollection<WatchViewModel> Watches
+        private ObservableCollection<WatchViewModel> children;
+        public ObservableCollection<WatchViewModel> Children
         {
-            get { return watches; }
-            set { this.RaiseAndSetIfChanged(ref watches, value); }
+            get { return children; }
+            set { this.RaiseAndSetIfChanged(ref children, value); }
         }
 
         private IDebugger debugger;
@@ -31,39 +29,42 @@
             this.debugger = debugger;
         }
 
+        public void AddExistingWatch(VariableObject variable)
+        {
+            this.Add(variable);
+        }
+
         public void AddWatch(string expression)
         {
-            var newWatch = debugger.CreateWatch(string.Format("var{0}", watchId), expression);
+            var newWatch = debugger.CreateWatch(string.Format("var{0}", debugger.GetVariableId()), expression);
 
             if (newWatch != null)
             {
-                watchId++;
-
                 this.Add(newWatch);
             }
         }
 
         public void RemoveWatch(WatchViewModel watch)
         {
-            this.Watches.Remove(watch);
+            this.Children.Remove(watch);
 
             debugger.DeleteWatch(watch.Model.Id);
         }
 
         public void Add(VariableObject model)
         {
-            var newWatch = new WatchViewModel(this, model);
+            var newWatch = new WatchViewModel(debugger, model);
 
             newWatch.Evaluate(debugger);
 
-            this.Watches.Add(newWatch);
+            this.Children.Add(newWatch);
 
             //InvalidateColumnWidths();
         }
 
         private void ApplyChange(VariableObjectChange change)
         {
-            foreach (var watch in Watches)
+            foreach (var watch in Children)
             {
                 if (watch.ApplyChange(change))
                 {
@@ -74,7 +75,7 @@
 
         public virtual void Clear()
         {
-            Watches.Clear();
+            Children.Clear();
         }
 
         public void Invalidate(List<VariableObjectChange> updates)

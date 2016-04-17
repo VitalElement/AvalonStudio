@@ -178,12 +178,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\CodeInformationToolTipBehavior.cs" />
+    <Compile Include="Behaviors\DebugInformationToolTipBehaviour.cs" />
     <Compile Include="Behaviors\PopupBehavior.cs" />
     <Compile Include="App.paml.cs" />
     <Compile Include="Behaviors\PointerHoverBehaviour.cs" />
     <Compile Include="Behaviors\ToolTipBehaviour.cs" />
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="Controls\CachedContentControl.cs" />
+    <Compile Include="Controls\DebugHoverProbe.paml.cs">
+      <DependentUpon>DebugHoverProbe.paml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\NewItemDialog.paml.cs">
       <DependentUpon>NewItemDialog.paml</DependentUpon>
     </Compile>
@@ -308,6 +312,9 @@
     <Compile Include="Debugging\BreakPointManager.cs" />
     <Compile Include="Debugging\DebugManager.cs" />
     <Compile Include="Controls\NewItemDialogViewModel.cs" />
+    <Compile Include="Controls\VariableControl.paml.cs">
+      <DependentUpon>VariableControl.paml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
@@ -364,11 +371,13 @@
     <EmbeddedResource Include="Controls\Locals.paml" />
     <EmbeddedResource Include="Controls\Disassembly.paml" />
     <EmbeddedResource Include="Controls\NewItemDialog.paml" />
+    <EmbeddedResource Include="Controls\DebugHoverProbe.paml" />
     <None Include="libgit2-821131f.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
     <EmbeddedResource Include="Controls\WatchList.paml" />
+    <EmbeddedResource Include="Controls\VariableControl.paml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">

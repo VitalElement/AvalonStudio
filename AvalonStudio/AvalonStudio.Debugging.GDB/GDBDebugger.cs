@@ -602,6 +602,12 @@
 
         public DebuggerState State { get { return CurrentState; } }
 
+        private int variableId = 0;
+        public int GetVariableId()
+        {
+            return variableId++;
+        }
+
         public event EventHandler<EventArgs> StateChanged;
 
         public Dictionary<int, Register> GetRegisters()
