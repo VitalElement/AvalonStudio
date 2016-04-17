@@ -6,7 +6,6 @@
     using Perspex.Controls;
     using Perspex.Diagnostics;
     using Perspex.Logging.Serilog;
-    using Perspex;
     using Serilog;
     using System;
 
