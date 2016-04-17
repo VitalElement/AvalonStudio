@@ -35,6 +35,7 @@
             Styles.Add(new TextEditorTheme());
 
             Name = "textEditor";
+            highestUserSelectedColumn = 1;
             textChangedDelayTimer = new DispatcherTimer();
             textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
@@ -74,6 +75,7 @@
         private TextView textView;
         private readonly DispatcherTimer textChangedDelayTimer;
         private readonly DispatcherTimer mouseHoverDelayTimer;
+        private int highestUserSelectedColumn;
         #endregion
 
         #region Pespex Properties
@@ -412,6 +414,13 @@
             return TextDocument.GetText(start, end - start);
         }
 
+        private void SetHighestColumn ()
+        {
+            if (CaretIndex != -1)
+            {
+                highestUserSelectedColumn = TextDocument.GetLocation(CaretIndex).Column;
+            }
+        }
 
 
         private void MoveHorizontal(int count, InputModifiers modifiers)
@@ -434,6 +443,8 @@
             {
                 CaretIndex += count;
             }
+
+            SetHighestColumn();
         }
 
         private void MoveVertical(int count, InputModifiers modifiers)
@@ -444,12 +455,12 @@
             if (currentPosition.Line + count > 0 && currentPosition.Line + count <= TextDocument.LineCount)
             {
                 var line = TextDocument.Lines[currentPosition.Line - 1 + count];
-
+                
                 var col = line.EndOffset;
 
-                if (currentPosition.Column <= line.Length)
+                if (highestUserSelectedColumn <= line.Length)
                 {
-                    col = currentPosition.Column;
+                    col = highestUserSelectedColumn;
                 }
 
                 CaretIndex = TextDocument.GetOffset(currentPosition.Line + count, col);
@@ -473,6 +484,7 @@
             }
 
             CaretIndex = caretIndex;
+            SetHighestColumn();
         }
 
         private void MoveEnd(InputModifiers modifiers)
@@ -492,6 +504,7 @@
             }
 
             CaretIndex = caretIndex;
+            SetHighestColumn();
         }
 
         private async void Cut()
@@ -660,6 +673,8 @@
 
                     InvalidateVisual();
                 }
+
+                SetHighestColumn();
             }
         }
         
