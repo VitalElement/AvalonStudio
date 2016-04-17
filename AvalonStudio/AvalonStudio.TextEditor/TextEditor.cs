@@ -40,7 +40,7 @@
             textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
             textChangedDelayTimer.Stop();
-            
+
             var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
                .Select(x => !x);
 
@@ -63,7 +63,7 @@
             });
 
             AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
-        }        
+        }
         #endregion
 
         public void ScrollToLine(int line)
@@ -271,6 +271,28 @@
             set { SetValue(SelectionEndProperty, value); }
         }
 
+        public TextSegment GetSelectionAsSegment()
+        {
+            TextSegment result = null;
+
+            if (SelectionStart < SelectionEnd)
+            {
+                result = new TextSegment() { StartOffset = SelectionStart, EndOffset = SelectionEnd };
+            }
+            else
+            {
+                result = new TextSegment() { StartOffset = SelectionEnd, EndOffset = SelectionStart };
+            }
+
+            return result;
+        }
+
+        public void SetSelection(TextSegment segment)
+        {
+            SelectionStart = segment.StartOffset;
+            SelectionEnd = segment.EndOffset;
+        }
+
         public static readonly PerspexProperty<IIndentationStrategy> IndentationStrategyProperty = PerspexProperty.Register<TextEditor, IIndentationStrategy>(nameof(IndentationStrategy));
 
         public IIndentationStrategy IndentationStrategy
@@ -357,7 +379,7 @@
                 CaretIndex += input.Length;
                 SelectionStart = SelectionEnd = CaretIndex;
                 TextView.Invalidate();
-            }            
+            }
         }
 
         private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
@@ -414,7 +436,7 @@
             return TextDocument.GetText(start, end - start);
         }
 
-        private void SetHighestColumn ()
+        private void SetHighestColumn()
         {
             if (CaretIndex != -1)
             {
@@ -437,13 +459,50 @@
                 {
                     count = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
                 }
-            }
 
-            if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
+                if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
+                {
+                    CaretIndex += count;
+                }
+            }
+            else
             {
-                CaretIndex += count;
-            }
+                if (count > 0)
+                {
+                    for (int i = 0; i < Math.Abs(count); i++)
+                    {
+                        var line = TextDocument.GetLineByOffset(CaretIndex);
 
+                        if (caretIndex == line.EndOffset && line.NextLine != null)
+                        {
+                            caretIndex = line.NextLine.Offset;
+                        }
+                        else
+                        {
+                            caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.Normal);
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < Math.Abs(count); i++)
+                    {
+                        var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                        if (caretIndex == line.Offset && line.PreviousLine != null)
+                        {
+                            caretIndex = line.PreviousLine.EndOffset;
+                        }
+                        else
+                        {
+                            caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
+                        }
+                    }
+                }
+
+                CaretIndex = caretIndex;
+            }
+            
             SetHighestColumn();
         }
 
@@ -455,7 +514,7 @@
             if (currentPosition.Line + count > 0 && currentPosition.Line + count <= TextDocument.LineCount)
             {
                 var line = TextDocument.Lines[currentPosition.Line - 1 + count];
-                
+
                 var col = line.EndOffset;
 
                 if (highestUserSelectedColumn <= line.Length)
@@ -657,7 +716,7 @@
                             SelectionStart = 0;
                             SelectionEnd = text.TextLength;
                             break;
-                    }                    
+                    }
 
                     e.Device.Capture(textView);
                     e.Handled = true;
@@ -677,11 +736,11 @@
                 SetHighestColumn();
             }
         }
-        
+
         protected override void OnPointerMoved(PointerEventArgs e)
         {
-            var point = e.GetPosition(textView.TextSurface);                        
-            
+            var point = e.GetPosition(textView.TextSurface);
+
             var currentMouseOffset = textView.GetOffsetFromPoint(point);
 
             if (currentMouseOffset != -1)
@@ -697,7 +756,7 @@
                     else
                     {
                         SelectionEnd = 0;
-                    }             
+                    }
                 }
             }
         }
@@ -817,9 +876,20 @@
                 case Key.Back:
                     if (!DeleteSelection() && CaretIndex > 0)
                     {
-                        // TODO implement deleting newline...
-                        TextDocument.Remove(caretIndex - 1, 1);
-                        --CaretIndex;
+                        var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                        if (CaretIndex == line.Offset && line.PreviousLine != null)
+                        {
+                            TextDocument.Remove(CaretIndex - line.DelimiterLength, line.DelimiterLength);
+
+                            CaretIndex -= line.DelimiterLength;
+                        }
+                        else
+                        {
+                            TextDocument.Remove(caretIndex - 1, 1);
+                            --CaretIndex;
+                        }
+
                         TextView.Invalidate();
                     }
 
@@ -828,7 +898,17 @@
                 case Key.Delete:
                     if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
                     {
-                        TextDocument.Remove(caretIndex, 1);
+                        var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                        if (CaretIndex == line.EndOffset && line.NextLine != null)
+                        {
+                            TextDocument.Remove(CaretIndex, line.DelimiterLength);                            
+                        }
+                        else
+                        {
+                            TextDocument.Remove(caretIndex, 1);                            
+                        }
+                        
                         TextView.Invalidate();
                     }
 
@@ -847,13 +927,44 @@
                     {
                         e.Handled = true;
 
-                        if (e.Modifiers == InputModifiers.Shift)
+                        bool shiftedLines = false;
+
+                        if (SelectionStart != SelectionEnd)
                         {
-                            // TODO delete upto 4 whitespace chars.
+                            var selection = GetSelectionAsSegment();
+                            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+
+                            if (lines.Count() > 1)
+                            {
+                                var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
+                                
+                                anchors.Add(selection);
+
+                                TextDocument.BeginUpdate();
+
+                                foreach (var line in lines)
+                                {                                    
+                                    TextDocument.Insert(line.Offset, TabCharacter);
+                                }
+
+                                TextDocument.EndUpdate();
+
+                                SetSelection(selection);
+
+                                shiftedLines = true;
+                            }
                         }
-                        else
+
+                        if (!shiftedLines)
                         {
-                            HandleTextInput(TabCharacter);
+                            if (e.Modifiers == InputModifiers.Shift)
+                            {
+                                // TODO delete upto 4 whitespace chars.
+                            }
+                            else
+                            {
+                                HandleTextInput(TabCharacter);
+                            }
                         }
                     }
                     else
@@ -884,7 +995,7 @@
 
             if (handled)
             {
-                InvalidateVisual();                
+                InvalidateVisual();
             }
         }
         #endregion       
