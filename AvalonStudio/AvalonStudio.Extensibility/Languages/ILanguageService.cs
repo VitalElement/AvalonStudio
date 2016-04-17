@@ -20,7 +20,7 @@
 
         IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-        void RegisterSourceFile(TextEditor editor, ISourceFile file, TextDocument textDocument);
+        void RegisterSourceFile(IIntellisenseControl intellisenseControl, TextEditor editor, ISourceFile file, TextDocument textDocument);
 
         void UnregisterSourceFile(TextEditor editor, ISourceFile file);
 

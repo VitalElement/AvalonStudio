@@ -78,7 +78,7 @@
 
                 newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
                 newEditor.Margins.Add(new LineNumberMargin());
-                newEditor.Model.OpenFile(file);                
+                newEditor.Model.OpenFile(file, newEditor.Intellisense);                
             }
             else
             {
