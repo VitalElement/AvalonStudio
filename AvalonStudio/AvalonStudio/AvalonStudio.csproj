@@ -308,6 +308,9 @@
     <Compile Include="Debugging\BreakPointManager.cs" />
     <Compile Include="Debugging\DebugManager.cs" />
     <Compile Include="Controls\NewItemDialogViewModel.cs" />
+    <Compile Include="Controls\VariableControl.paml.cs">
+      <DependentUpon>VariableControl.paml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
@@ -369,6 +372,7 @@
     </None>
     <None Include="packages.config" />
     <EmbeddedResource Include="Controls\WatchList.paml" />
+    <EmbeddedResource Include="Controls\VariableControl.paml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">

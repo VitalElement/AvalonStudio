@@ -37,7 +37,7 @@
   "StaticLibraries": [],
   "Executable": "build/bin/ProductionBoardA.elf",
   "Toolchain": "AvalonStudio.Toolchains.STM32.STM32GCCToolchain",
-  "Debugger": "AvalonStudio.Debugging.GDB.OpenOCD.OpenOCDDebugAdaptor",
+  "Debugger": "AvalonStudio.Debugging.GDB.JLink.JLinkDebugAdaptor",
   "ExcludedFiles": [],
   "ToolchainSettings": {
     "STM32ToolchainSettings": {
