@@ -120,6 +120,8 @@
 
         public void Clean()
         {
+            Console.Clear();
+
             new Thread(new ThreadStart(new Action(async () =>
             {
                 if (SolutionExplorer.Model != null)
@@ -150,6 +152,8 @@
         public void Build()
         {
             SaveAll();
+
+            Console.Clear();
 
             new Thread(new ThreadStart(new Action(async () =>
             {
@@ -259,6 +263,10 @@
                     {
                         DebugManager.Continue();
                     }
+                    break;
+
+                case Key.F6:
+                    Build();
                     break;
             }
         }
