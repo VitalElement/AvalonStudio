@@ -78,7 +78,7 @@
         public event EventHandler<EventArgs> DocumentLoaded;
         public event EventHandler<EventArgs> TextChanged;
 
-        public void RegisterLanguageService(IIntellisenseControl intellisenseControl)
+        public void UnRegisterLanguageService ()
         {
             ShutdownBackgroundWorkers();
 
@@ -92,6 +92,11 @@
             {
                 LanguageService.UnregisterSourceFile(Editor, sourceFile);
             }
+        }
+
+        public void RegisterLanguageService(IIntellisenseControl intellisenseControl)
+        {
+            UnRegisterLanguageService();
 
             try
             {

@@ -7,7 +7,7 @@
              Foreground="WhiteSmoke">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid>      
-      <te:TextEditor Name="editor" TextDocument="{Binding TextDocument, Mode=TwoWay}"
+      <te:TextEditor Name="editor" TextDocument="{Binding TextDocument}"
                      FontFamily="{Binding FontFamily}" FontSize="12" Foreground="#D4D4D4" BorderThickness="0"
                      BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
                      TextChangedCommand="{Binding TextChangedCommand}"
