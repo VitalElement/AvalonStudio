@@ -39,6 +39,7 @@
                 Save();
                 ShellViewModel.Instance.Documents.Remove(this);
                 Model.ShutdownBackgroundWorkers();
+                Model.UnRegisterLanguageService();
             });
 
             AddWatchCommand = ReactiveCommand.Create();
@@ -89,7 +90,7 @@
                     ShellViewModel.Instance.InvalidateErrors();
                 };
 
-                this.RaisePropertyChanged(nameof(TextDocument));
+                TextDocument = model.TextDocument;
                 this.RaisePropertyChanged(nameof(Title));
             };
 
@@ -206,13 +207,12 @@
         }
 
 
+        private TextDocument textDocument;
         public TextDocument TextDocument
         {
-            get
-            {
-                return Model.TextDocument;
-            }
-        }
+            get { return textDocument; }
+            set { this.RaiseAndSetIfChanged(ref textDocument, value); }
+        }        
 
         public void GotoPosition(int line, int column)
         {
