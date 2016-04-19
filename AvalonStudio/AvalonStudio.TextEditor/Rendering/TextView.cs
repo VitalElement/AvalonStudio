@@ -648,7 +648,8 @@
 
         private void RenderText(DrawingContext context, VisualLine line)
         {
-            context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), line.RenderedText);            
+            context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), line.RenderedText);
+            line.RenderedText.Dispose();
         }
 
         private void RenderCaret(DrawingContext context)
