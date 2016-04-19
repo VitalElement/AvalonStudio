@@ -194,11 +194,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\Debug\Plugins\$(TargetFileName)
-copy $(TargetDir)\libclang.dll ..\..\..\AvalonStudio\bin\Debug\libclang.dll
-copy $(TargetDir)\libclang.so ..\..\..\AvalonStudio\bin\Debug\libclang.so
-copy $(TargetDir)\clang-format.exe ..\..\..\AvalonStudio\bin\Debug\Plugins\clang-format.exe
-copy $(TargetDir)\clang-format ..\..\..\AvalonStudio\bin\Debug\Plugins\clang-format</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\$(TargetFileName)
+copy $(TargetDir)\libclang.dll ..\..\..\AvalonStudio\bin\$(ConfigurationName)\libclang.dll
+copy $(TargetDir)\libclang.so ..\..\..\AvalonStudio\bin\$(ConfigurationName)\libclang.so
+copy $(TargetDir)\clang-format.exe ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\clang-format.exe
+copy $(TargetDir)\clang-format ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\clang-format</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
