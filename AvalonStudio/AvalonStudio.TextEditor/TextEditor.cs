@@ -17,14 +17,11 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
-    using System.Reactive.Disposables;
     using System.Reactive.Linq;
 
     [ContentProperty("Content")]
     public class TextEditor : TemplatedControl
     {
-        private CompositeDisposable disposables;
-
         #region Contructors
         static TextEditor()
         {
@@ -33,46 +30,8 @@
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
         }
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
-               .Select(x => !x);
-            
-
-            var horizontalScrollBarVisibility = this.GetObservable(AcceptsReturnProperty)
-                .Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
-
-            disposables.Add(Bind(
-                ScrollViewer.HorizontalScrollBarVisibilityProperty,
-                horizontalScrollBarVisibility,
-                BindingPriority.Style));
-
-            disposables.Add(TextDocumentProperty.Changed.Subscribe(_ =>
-            {
-                CaretIndex = -1;
-            }));
-
-            disposables.Add(AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel));
-        }
-
-        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            textView = null;
-            TextDocument = null;
-            Content = null;
-            disposables.Dispose();
-            textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;            
-        }
-
-        ~TextEditor()
-        {
-            System.Console.WriteLine(("Text Editor Control Destructed."));
-        }
-         
         public TextEditor()
         {
-            disposables = new CompositeDisposable();
-
             Styles.Add(new TextEditorTheme());
 
             Name = "textEditor";
@@ -80,7 +39,30 @@
             textChangedDelayTimer = new DispatcherTimer();
             textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
-            textChangedDelayTimer.Stop();            
+            textChangedDelayTimer.Stop();
+
+            var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
+               .Select(x => !x);
+
+            //Bind(
+            //    ScrollViewer.CanScrollHorizontallyProperty,
+            //    canScrollHorizontally,
+            //    BindingPriority.Style);
+
+            var horizontalScrollBarVisibility = this.GetObservable(AcceptsReturnProperty)
+                .Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
+
+            Bind(
+                ScrollViewer.HorizontalScrollBarVisibilityProperty,
+                horizontalScrollBarVisibility,
+                BindingPriority.Style);
+
+            TextDocumentProperty.Changed.Subscribe((e) =>
+            {
+                CaretIndex = -1;
+            });
+
+            AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
         }
         #endregion
 
@@ -329,7 +311,8 @@
         #endregion
 
         #region Properties
-        public TextView TextView { get { return textView; } }        
+        public TextView TextView { get { return textView; } }
+        public ScrollViewer ScrollViewer { get; set; }
         #endregion
 
         #region Private Methods
@@ -676,33 +659,33 @@
             TextDocumentProperty.Changed.Subscribe((args) =>
             {
                 if (args.NewValue != null)
-                {   
-                    
-                    // Todo unsubscribe these events.                 
-                //    TextDocument.Changing += (sender, ee) =>
-                //    {
-                //        TextDocument?.UndoStack.StartUndoGroup();
-                //        TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
+                {
+                    TextDocument.Changing += (sender, ee) =>
+                    {
+                        TextDocument?.UndoStack.StartUndoGroup();
+                        TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
 
-                //        if (BeforeTextChangedCommand != null)
-                //        {
-                //            BeforeTextChangedCommand.Execute(null);
-                //        }
-                //    };
+                        if (BeforeTextChangedCommand != null)
+                        {
+                            BeforeTextChangedCommand.Execute(null);
+                        }
+                    };
 
-                //    TextDocument.Changed += (sender, ee) =>
-                //    {
-                //        textChangedDelayTimer.Stop();
-                //        textChangedDelayTimer.Start();
+                    TextDocument.Changed += (sender, ee) =>
+                    {
+                        textChangedDelayTimer.Stop();
+                        textChangedDelayTimer.Start();
 
-                //        TextDocument?.UndoStack.EndUndoGroup();
+                        TextDocument?.UndoStack.EndUndoGroup();
 
-                //        InvalidateVisual();
+                        InvalidateVisual();
 
-                //        LineHeight = textView.CharSize.Height;
-                //    };
+                        LineHeight = textView.CharSize.Height;
+                    };
                 }
-            }));            
+            });
+
+            ScrollViewer = e.NameScope.Find<ScrollViewer>("scrollViewer");
         }
 
         protected override void OnPointerPressed(PointerPressedEventArgs e)
