@@ -4,12 +4,14 @@
     using MVVM;
     using Perspex;
     using Perspex.Input;
+    using Perspex.Threading;
     using Platforms;
     using Projects;
     using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Reactive.Disposables;
     using TextEditor;
     using TextEditor.Document;
     using TextEditor.Rendering;
@@ -18,6 +20,8 @@
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
         private List<IDocumentLineTransformer> languageServiceDocumentLineTransformers = new List<IDocumentLineTransformer>();
+        private CompositeDisposable disposables;
+
 
         #region Constructors
         public EditorViewModel(EditorModel model) : base(model)
@@ -115,11 +119,18 @@
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
             margins = new ObservableCollection<TextViewMargin>();
+
+            ShellViewModel.Instance.StatusBar.InstanceCount++;
         }
+
 
         ~EditorViewModel()
         {
+            Dispatcher.UIThread.InvokeAsync(() => {
+                                                      ShellViewModel.Instance.StatusBar.InstanceCount--; });
             Model.ShutdownBackgroundWorkers();
+
+            System.Console.WriteLine(("Editor VM Destructed."));
         }
         #endregion
 
