@@ -43,7 +43,7 @@
 
         ~EditorModel()
         {
-            ShutdownBackgroundWorkers();
+            System.Console.WriteLine(("Editor Model Destructed."));
         }
 
         private bool completionRequested = false;

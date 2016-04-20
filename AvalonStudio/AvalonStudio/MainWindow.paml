@@ -37,6 +37,8 @@
         </Grid>
 
         <DockPanel DockPanel.Dock="Right">
+          
+          <StackPanel DockPanel.Dock="Top">
           <StackPanel DockPanel.Dock="Top">
             <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}" Focusable="false">
               <TabStrip.Styles>                
