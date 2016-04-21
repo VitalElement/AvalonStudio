@@ -1,0 +1,16 @@
+﻿<Styles xmlns="https://github.com/perspex" xmlns:local="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor" xmlns:tv="clr-namespace:AvalonStudio.TextEditor.Rendering;assembly=AvalonStudio.TextEditor">
+  <Style Selector="local|ToolControl">
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter Name="PART_ContentPresenter"
+                         Background="{TemplateBinding Background}"
+                         BorderBrush="{TemplateBinding BorderBrush}"
+                         BorderThickness="{TemplateBinding BorderThickness}"
+                         Content="{TemplateBinding Content}"
+                         Padding="{TemplateBinding Padding}"/>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>
