@@ -49,7 +49,7 @@
 
         ~EditorModel()
         {
-            ShutdownBackgroundWorkers();
+            System.Console.WriteLine(("Editor Model Destructed."));
         }
 
         private bool completionRequested = false;
@@ -121,12 +121,7 @@
 
 
             StartBackgroundWorkers();
-
-            if (DocumentLoaded != null)
-            {
-                DocumentLoaded(this, new EventArgs());
-            }
-
+            
             TextDocument.TextChanged += TextDocument_TextChanged;
 
             OnBeforeTextChanged(null);
@@ -149,6 +144,11 @@
                     sourceFile = file;
 
                     RegisterLanguageService(intellisense);
+
+                    if (DocumentLoaded != null)
+                    {
+                        DocumentLoaded(this, new EventArgs());
+                    }
                 }
             }
         }
@@ -376,6 +376,6 @@
                 }
             }
 
-        }
+        }        
     }
 }

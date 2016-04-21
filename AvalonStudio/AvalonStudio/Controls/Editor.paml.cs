@@ -12,8 +12,13 @@
         private EditorViewModel editorViewModel;
         private CompositeDisposable disposables;
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        ~Editor()
         {
+            System.Console.WriteLine(("Editor UserControl Destructed."));
+        }
+
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {            
             editor = this.Find<TextEditor>("editor");
         }
 
@@ -26,9 +31,11 @@
         }
 
         public Editor()
-        {
-            disposables = new CompositeDisposable();
+        {                        
             InitializeComponent();
+
+            disposables = new CompositeDisposable();
+            editor = this.Find<TextEditor>("editor");
 
             disposables.Add(DataContextProperty.Changed.Subscribe((o) =>
             {

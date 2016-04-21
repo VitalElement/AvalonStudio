@@ -106,6 +106,7 @@
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            Margins.Clear();
             disposables.Dispose();
             _caretTimer.Tick -= CaretTimerTick;
             textSurface = null;
@@ -114,6 +115,7 @@
             Content = null;
         }
 
+        
         public TextView()
         {
             disposables = new CompositeDisposable();
@@ -163,6 +165,14 @@
 
         ~TextView()
         {
+            System.Console.WriteLine(("TextView  Destructed."));
+
+            foreach (var visualLine in VisualLines)
+            {
+                visualLine.RenderedText?.Dispose();
+            }
+
+            VisualLines.Clear();
 
         }
         #endregion
@@ -661,6 +671,7 @@
         {
             context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), line.RenderedText);
             line.RenderedText.Dispose();
+            line.RenderedText = null;
         }
 
         private void RenderCaret(DrawingContext context)
