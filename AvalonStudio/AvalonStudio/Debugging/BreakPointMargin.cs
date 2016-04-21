@@ -18,7 +18,13 @@
 
         public BreakPointMargin(BreakPointManager manager)
         {
-            this.manager = manager;
+            this.manager = manager;            
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            manager = null;
+            base.OnDetachedFromVisualTree(e);
         }
 
         public override void Render(DrawingContext context, TextInfo textInfo)

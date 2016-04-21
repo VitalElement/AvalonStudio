@@ -17,6 +17,7 @@
     using System.Linq;
     using System.Reactive.Linq;
     using Perspex.Input;
+    using System.Reactive.Disposables;
 
     public class TextView : ContentControl, IScrollable
     {
@@ -62,54 +63,16 @@
         private WeakEventArgsSubscriber documentLineTransformerChangedSubscriber;
         private WeakEventArgsSubscriber backgroundRendererChangedSubscriber;
         private WeakEventArgsSubscriber documentTextChangedSubscriber;
+        private CompositeDisposable disposables;
 
-        public TextView()
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            documentLineTransformersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
-            {
-                if (e.NewItems != null)
-                {
-                    foreach (var item in e.NewItems)
-                    {
-                        WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), documentLineTransformerChangedSubscriber);
-                    }
-                }
-            });
-
-            backgroundRenderersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
-            {
-                if (e.NewItems != null)
-                {
-                    foreach (var item in e.NewItems)
-                    {
-                        WeakSubscriptionManager.Subscribe(item, nameof(IBackgroundRenderer.DataChanged), backgroundRendererChangedSubscriber);
-                    }
-                }
-            });
-
-            documentLineTransformerChangedSubscriber = new WeakEventArgsSubscriber(() =>
-            {
-                Invalidate();                
-            });
-
-            backgroundRendererChangedSubscriber = new WeakEventArgsSubscriber(() =>
-            {
-                Invalidate();
-            });
-
-            documentTextChangedSubscriber = new WeakEventArgsSubscriber(() =>
-            {
-                Invalidate();
-            });
-
-            _caretTimer = new DispatcherTimer();
-            _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
             _caretTimer.Tick += CaretTimerTick;
 
-            this.GetObservable(CaretIndexProperty)
-                .Subscribe(CaretIndexChanged);
+            disposables.Add(this.GetObservable(CaretIndexProperty)
+                 .Subscribe(CaretIndexChanged));
 
-            DocumentLineTransformersProperty.Changed.Subscribe((o) =>
+            disposables.Add(DocumentLineTransformersProperty.Changed.Subscribe((o) =>
             {
                 foreach (var item in DocumentLineTransformers)
                 {
@@ -117,42 +80,90 @@
                 }
 
                 WeakSubscriptionManager.Subscribe(DocumentLineTransformers, nameof(DocumentLineTransformers.CollectionChanged), documentLineTransformersChangedSubscriber);
-            });
+            }));
 
-            //TextDocumentProperty.Changed.Subscribe((o) =>
+            
+            disposables.Add(FontSizeProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
+            }));
+
+            disposables.Add(FontFamilyProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
+            }));
+
+            disposables.Add(FontStyleProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
+            }));
+
+            disposables.Add(FontWeightProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
+            }));
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            disposables.Dispose();
+            _caretTimer.Tick -= CaretTimerTick;
+            textSurface = null;
+            marginContainer = null;
+            TextDocument = null;
+            Content = null;
+        }
+
+        public TextView()
+        {
+            disposables = new CompositeDisposable();
+
+            //documentLineTransformersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
             //{
-            //    Invalidate();
-
-            //    if (o.NewValue != null)
+            //    if (e.NewItems != null)
             //    {
-            //        TextDocument.TextChanged += (sender, e) =>
+            //        foreach (var item in e.NewItems)
             //        {
-            //            WeakSubscriptionManager.Subscribe(TextDocument, nameof(TextDocument.Changed), documentTextChangedSubscriber);
-            //        };
+            //            WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), documentLineTransformerChangedSubscriber);
+            //        }
             //    }
             //});
 
-            FontSizeProperty.Changed.Subscribe((o) =>
-            {
-                GenerateTextProperties();
-            });
+            //backgroundRenderersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
+            //{
+            //    if (e.NewItems != null)
+            //    {
+            //        foreach (var item in e.NewItems)
+            //        {
+            //            WeakSubscriptionManager.Subscribe(item, nameof(IBackgroundRenderer.DataChanged), backgroundRendererChangedSubscriber);
+            //        }
+            //    }
+            //});
 
-            FontFamilyProperty.Changed.Subscribe((o) =>
-            {
-                GenerateTextProperties();
-            });
+            //documentLineTransformerChangedSubscriber = new WeakEventArgsSubscriber(() =>
+            //{
+            //    Invalidate();                
+            //});
 
-            FontStyleProperty.Changed.Subscribe((o) =>
-            {
-                GenerateTextProperties();
-            });
+            //backgroundRendererChangedSubscriber = new WeakEventArgsSubscriber(() =>
+            //{
+            //    Invalidate();
+            //});
 
-            FontWeightProperty.Changed.Subscribe((o) =>
-            {
-                GenerateTextProperties();
-            });
+            //documentTextChangedSubscriber = new WeakEventArgsSubscriber(() =>
+            //{
+            //    Invalidate();
+            //});
+
+            _caretTimer = new DispatcherTimer();
+            _caretTimer.Interval = TimeSpan.FromMilliseconds(500);            
 
             VisualLines = new List<VisualLine>();
+        }
+
+        ~TextView()
+        {
+
         }
         #endregion
 
@@ -625,7 +636,7 @@
                 lastLineCount = TextDocument.LineCount;
 
                 InvalidateMeasure();
-                InvalidateScroll.Invoke();
+                InvalidateScroll?.Invoke();
             }
 
             invalidateVisualLines = false;
