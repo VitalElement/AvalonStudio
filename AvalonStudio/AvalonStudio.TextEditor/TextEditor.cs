@@ -37,7 +37,7 @@
         {
             var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
                .Select(x => !x);
-            
+
 
             var horizontalScrollBarVisibility = this.GetObservable(AcceptsReturnProperty)
                 .Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
@@ -80,7 +80,7 @@
             textChangedDelayTimer = new DispatcherTimer();
             textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
-            textChangedDelayTimer.Stop();            
+            textChangedDelayTimer.Stop();
         }
         #endregion
 
@@ -519,7 +519,7 @@
 
                 CaretIndex = caretIndex;
             }
-            
+
             SetHighestColumn();
         }
 
@@ -676,31 +676,31 @@
             disposables.Add(TextDocumentProperty.Changed.Subscribe((args) =>
             {
                 if (args.NewValue != null)
-                {   
-                    
+                {
+
                     // Todo unsubscribe these events.                 
-                //    TextDocument.Changing += (sender, ee) =>
-                //    {
-                //        TextDocument?.UndoStack.StartUndoGroup();
-                //        TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
+                    //    TextDocument.Changing += (sender, ee) =>
+                    //    {
+                    //        TextDocument?.UndoStack.StartUndoGroup();
+                    //        TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
 
-                //        if (BeforeTextChangedCommand != null)
-                //        {
-                //            BeforeTextChangedCommand.Execute(null);
-                //        }
-                //    };
+                    //        if (BeforeTextChangedCommand != null)
+                    //        {
+                    //            BeforeTextChangedCommand.Execute(null);
+                    //        }
+                    //    };
 
-                //    TextDocument.Changed += (sender, ee) =>
-                //    {
-                //        textChangedDelayTimer.Stop();
-                //        textChangedDelayTimer.Start();
+                    //    TextDocument.Changed += (sender, ee) =>
+                    //    {
+                    //        textChangedDelayTimer.Stop();
+                    //        textChangedDelayTimer.Start();
 
-                //        TextDocument?.UndoStack.EndUndoGroup();
+                    //        TextDocument?.UndoStack.EndUndoGroup();
 
-                //        InvalidateVisual();
+                    //        InvalidateVisual();
 
-                //        LineHeight = textView.CharSize.Height;
-                //    };
+                    //        LineHeight = textView.CharSize.Height;
+                    //    };
                 }
             }));            
         }
@@ -803,6 +803,32 @@
         {
             HandleTextInput(e.Text);
         }
+
+        void TransformSelectedLines(Action<IDocumentLine> transformLine)
+        {
+            var selection = GetSelectionAsSegment();
+            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+
+            if (lines.Count() > 0)
+            {
+                var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
+
+                anchors.Add(selection);
+                // TODO Add an achor to the caret index...
+
+                TextDocument.BeginUpdate();
+
+                foreach (var line in lines)
+                {
+                    transformLine(line);
+                }
+
+                TextDocument.EndUpdate();
+
+                SetSelection(selection);
+            }
+        }
+
 
         protected void OnKeyDown(object sender, KeyEventArgs e)
         {
@@ -946,29 +972,44 @@
 
                         bool shiftedLines = false;
 
+                        // TODO implement Selection.IsMultiLine
+
                         if (SelectionStart != SelectionEnd)
                         {
-                            var selection = GetSelectionAsSegment();
-                            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
-
-                            if (lines.Count() > 1)
+                            if (e.Modifiers == InputModifiers.Shift)
                             {
-                                var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
-                                
-                                anchors.Add(selection);
+                                var selection = GetSelectionAsSegment();
+                                var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
 
-                                TextDocument.BeginUpdate();
+                                if (lines.Count() > 1)
+                                {
+                                    TransformSelectedLines((line) =>
+                                    {
+                                        int offset = line.Offset;
+                                        ISegment s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
 
-                                foreach (var line in lines)
-                                {                                    
-                                    TextDocument.Insert(line.Offset, TabCharacter);
+                                        if (s.Length > 0)
+                                        {
+                                            TextDocument.Remove(s.Offset, s.Length);
+                                        }
+                                    });
                                 }
 
-                                TextDocument.EndUpdate();
+                            }
+                            else
+                            {
+                                var selection = GetSelectionAsSegment();
+                                var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
 
-                                SetSelection(selection);
-
-                                shiftedLines = true;
+                                if (lines.Count() > 1)
+                                {
+                                    TransformSelectedLines((line) =>
+                                    {
+                                        TextDocument.Insert(line.Offset, TabCharacter);
+                                    });
+                                                                        
+                                    shiftedLines = true;
+                                }
                             }
                         }
 
@@ -976,7 +1017,16 @@
                         {
                             if (e.Modifiers == InputModifiers.Shift)
                             {
-                                // TODO delete upto 4 whitespace chars.
+                                TransformSelectedLines((line) =>
+                                {
+                                    int offset = CaretIndex - TabCharacter.Length;
+                                    ISegment s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
+
+                                    if (s.Length > 0)
+                                    {
+                                        TextDocument.Remove(s.Offset, s.Length);
+                                    }
+                                });
                             }
                             else
                             {
