@@ -15,22 +15,25 @@
 
     public abstract class TextViewMargin : Control
     {
-        public TextViewMargin ()
+        public TextViewMargin()
         {
-            
+
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {            
-            base.OnAttachedToVisualTree(e);
-
+        {
             textView = Parent.Parent.Parent.Parent as TextView;
 
-            if(textView == null)
+            if (textView == null)
             {
                 throw new Exception("Margin must be contained inside a TextEditor control.");
             }
-        }        
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            textView = null;
+        }
 
         public override void Render(DrawingContext context)
         {
