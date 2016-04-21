@@ -304,16 +304,10 @@ namespace AvalonStudio.Debugging
         {
             if (Debugger != null)
             {
-                Pause();
-
-                if (!IsExecuting)
+                Task.Factory.StartNew(() =>
                 {
-                    Task.Factory.StartNew(() =>
-                    {
-                        PrepareToRun();
-                        Debugger.Reset(true);
-                    });
-                }
+                    Debugger.Reset(true);
+                });             
             }
         }
 
