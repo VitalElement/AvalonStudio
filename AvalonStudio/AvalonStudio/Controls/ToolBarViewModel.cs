@@ -83,7 +83,8 @@
             SaveCommand = ReactiveCommand.Create();
             SaveCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.Save();
+                //ShellViewModel.Instance.Save();
+                GC.Collect();
             });
 
             SaveAllCommand = ReactiveCommand.Create();

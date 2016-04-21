@@ -42,10 +42,12 @@
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Save();
-                ShellViewModel.Instance.Documents.Remove(this);
-                ShellViewModel.Instance.SelectedDocument = null;
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
+
+                ShellViewModel.Instance.Documents.Remove(this);
+                ShellViewModel.Instance.SelectedDocument = null;
+                ShellViewModel.Instance.InvalidateErrors();                
 
                 Model.Dispose();
                 Intellisense.Dispose();
@@ -127,11 +129,18 @@
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
             margins = new ObservableCollection<TextViewMargin>();
+
+            ShellViewModel.Instance.StatusBar.InstanceCount++;
         }
+
 
         ~EditorViewModel()
         {
+            Dispatcher.UIThread.InvokeAsync(() => {
+                                                      ShellViewModel.Instance.StatusBar.InstanceCount--; });
             Model.ShutdownBackgroundWorkers();
+
+            System.Console.WriteLine(("Editor VM Destructed."));
         }
         #endregion
 
