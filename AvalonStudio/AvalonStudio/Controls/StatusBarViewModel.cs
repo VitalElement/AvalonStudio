@@ -5,6 +5,14 @@
 
     public class StatusBarViewModel : ReactiveObject
     {
+        private int instanceCount;
+
+        public int InstanceCount
+        {
+            get { return instanceCount; }
+            set { this.RaiseAndSetIfChanged(ref instanceCount, value); }
+        }
+
         private bool debugMode;
         public bool DebugMode
         {

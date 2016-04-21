@@ -9,7 +9,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public class IntellisenseViewModel : ViewModel, IIntellisenseControl
+    public class IntellisenseViewModel : ViewModel, IIntellisenseControl, IDisposable
     {
         private EditorModel editor;
         private EditorViewModel editorViewModel;
@@ -25,6 +25,12 @@
         public Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column, string filter)
         {
             return editor.DoCompletionRequestAsync(line, column, filter);
+        }
+
+        public void Dispose()
+        {
+            editor = null;
+            editorViewModel = null;
         }
 
         private CompletionDataViewModel selectedCompletion;

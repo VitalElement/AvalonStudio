@@ -4,12 +4,14 @@
     using MVVM;
     using Perspex;
     using Perspex.Input;
+    using Perspex.Threading;
     using Platforms;
     using Projects;
     using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Reactive.Disposables;
     using TextEditor;
     using TextEditor.Document;
     using TextEditor.Rendering;
@@ -18,34 +20,47 @@
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
         private List<IDocumentLineTransformer> languageServiceDocumentLineTransformers = new List<IDocumentLineTransformer>();
+        private CompositeDisposable disposables;
+
 
         #region Constructors
         public EditorViewModel(EditorModel model) : base(model)
         {
+            disposables = new CompositeDisposable();
             this.highlightingData = new ObservableCollection<SyntaxHighlightingData>();
 
             BeforeTextChangedCommand = ReactiveCommand.Create();
-            BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged);
+            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
 
             TextChangedCommand = ReactiveCommand.Create();
-            TextChangedCommand.Subscribe(model.OnTextChanged);
+            disposables.Add(TextChangedCommand.Subscribe(model.OnTextChanged));
 
             SaveCommand = ReactiveCommand.Create();
-            SaveCommand.Subscribe((param) => Save());
+            disposables.Add(SaveCommand.Subscribe((param) => Save()));
 
             CloseCommand = ReactiveCommand.Create();
-            CloseCommand.Subscribe(_ =>
+            disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Save();
-                ShellViewModel.Instance.Documents.Remove(this);
                 Model.ShutdownBackgroundWorkers();
-            });
+                Model.UnRegisterLanguageService();
+
+                ShellViewModel.Instance.Documents.Remove(this);
+                ShellViewModel.Instance.SelectedDocument = null;
+                ShellViewModel.Instance.InvalidateErrors();                
+
+                Model.Dispose();
+                Intellisense.Dispose();
+                disposables.Dispose();
+                
+                Model.TextDocument = null;                
+            }));
 
             AddWatchCommand = ReactiveCommand.Create();
-            AddWatchCommand.Subscribe(_ =>
+            disposables.Add(AddWatchCommand.Subscribe(_ =>
             {
                 ShellViewModel.Instance.DebugManager.WatchList.AddWatch(WordAtCaret);
-            });
+            }));
 
             tabCharacter = "    ";
 
@@ -89,7 +104,7 @@
                     ShellViewModel.Instance.InvalidateErrors();
                 };
 
-                this.RaisePropertyChanged(nameof(TextDocument));
+                TextDocument = model.TextDocument;
                 this.RaisePropertyChanged(nameof(Title));
             };
 
@@ -114,11 +129,18 @@
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
             margins = new ObservableCollection<TextViewMargin>();
+
+            ShellViewModel.Instance.StatusBar.InstanceCount++;
         }
+
 
         ~EditorViewModel()
         {
+            Dispatcher.UIThread.InvokeAsync(() => {
+                                                      ShellViewModel.Instance.StatusBar.InstanceCount--; });
             Model.ShutdownBackgroundWorkers();
+
+            System.Console.WriteLine(("Editor VM Destructed."));
         }
         #endregion
 
@@ -206,12 +228,11 @@
         }
 
 
+        private TextDocument textDocument;
         public TextDocument TextDocument
         {
-            get
-            {
-                return Model.TextDocument;
-            }
+            get { return textDocument; }
+            set { this.RaiseAndSetIfChanged(ref textDocument, value); }
         }
 
         public void GotoPosition(int line, int column)
