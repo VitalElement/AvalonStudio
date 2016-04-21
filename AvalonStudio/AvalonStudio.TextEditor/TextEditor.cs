@@ -28,8 +28,6 @@
         #region Contructors
         static TextEditor()
         {
-            TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>((s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));
-
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
         }
 
@@ -60,8 +58,7 @@
             textView = null;
             TextDocument = null;
             Content = null;
-            disposables.Dispose();
-            textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;            
+            disposables.Dispose();        
         }
 
         ~TextEditor()
@@ -77,10 +74,6 @@
 
             Name = "textEditor";
             highestUserSelectedColumn = 1;
-            textChangedDelayTimer = new DispatcherTimer();
-            textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
-            textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
-            textChangedDelayTimer.Stop();
         }
         #endregion
 
@@ -91,8 +84,6 @@
 
         #region Private Data
         private TextView textView;
-        private readonly DispatcherTimer textChangedDelayTimer;
-        private readonly DispatcherTimer mouseHoverDelayTimer;
         private int highestUserSelectedColumn;
         #endregion
 
@@ -205,15 +196,6 @@
         {
             get { return GetValue(TextChangedCommandProperty); }
             set { SetValue(TextChangedCommandProperty, value); }
-        }
-
-        public static readonly PerspexProperty<int> TextChangedDelayProperty =
-                    PerspexProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
-
-        public int TextChangedDelay
-        {
-            get { return GetValue(TextChangedDelayProperty); }
-            set { SetValue(TextChangedDelayProperty, value); textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value); }
         }
 
         public static readonly PerspexProperty<bool> AcceptsReturnProperty =
@@ -398,17 +380,6 @@
                 TextView.Invalidate();
             }
         }
-
-        private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
-        {
-            textChangedDelayTimer.Stop();
-
-            if (TextChangedCommand != null)
-            {
-                TextChangedCommand.Execute(null);
-            }
-        }
-
 
         private void SelectAll()
         {
@@ -677,30 +648,31 @@
             {
                 if (args.NewValue != null)
                 {
-
                     // Todo unsubscribe these events.                 
-                    //    TextDocument.Changing += (sender, ee) =>
-                    //    {
-                    //        TextDocument?.UndoStack.StartUndoGroup();
-                    //        TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
+                    TextDocument.Changing += (sender, ee) =>
+                    {
+                        TextDocument?.UndoStack.StartUndoGroup();
+                        TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
 
-                    //        if (BeforeTextChangedCommand != null)
-                    //        {
-                    //            BeforeTextChangedCommand.Execute(null);
-                    //        }
-                    //    };
+                        if (BeforeTextChangedCommand != null)
+                        {
+                            BeforeTextChangedCommand.Execute(null);
+                        }
+                    };
 
-                    //    TextDocument.Changed += (sender, ee) =>
-                    //    {
-                    //        textChangedDelayTimer.Stop();
-                    //        textChangedDelayTimer.Start();
+                    TextDocument.Changed += (sender, ee) =>
+                    {
+                        TextDocument?.UndoStack.EndUndoGroup();
 
-                    //        TextDocument?.UndoStack.EndUndoGroup();
+                        InvalidateVisual();
 
-                    //        InvalidateVisual();
+                        LineHeight = textView.CharSize.Height;
 
-                    //        LineHeight = textView.CharSize.Height;
-                    //    };
+                        if (TextChangedCommand != null && TextChangedCommand.CanExecute(null))
+                        {
+                            TextChangedCommand.Execute(null);
+                        }
+                    };
                 }
             }));            
         }
