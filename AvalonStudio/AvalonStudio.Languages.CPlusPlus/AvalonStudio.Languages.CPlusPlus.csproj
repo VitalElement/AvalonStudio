@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Perspex.Animation, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Animation.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Animation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Application, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
@@ -40,63 +40,63 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Base, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Base.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Base.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Controls, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Controls.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.DesignerSupport, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.DesignerSupport.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.DesignerSupport.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Diagnostics, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Diagnostics.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Diagnostics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.HtmlRenderer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.HtmlRenderer.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.HtmlRenderer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Input, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Input.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Input.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Layout, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Layout.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Layout.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Logging.Serilog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Logging.Serilog.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Logging.Serilog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Markup, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Markup.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Markup.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Markup.Xaml, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Markup.Xaml.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Markup.Xaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.ReactiveUI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.ReactiveUI.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.ReactiveUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.SceneGraph, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.SceneGraph.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.SceneGraph.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Styling, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Styling.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Styling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Perspex.Themes.Default, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1409-nightly\lib\portable-windows8+net45\Perspex.Themes.Default.dll</HintPath>
+      <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Themes.Default.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -194,11 +194,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\Debug\Plugins\$(TargetFileName)
-copy $(TargetDir)\libclang.dll ..\..\..\AvalonStudio\bin\Debug\libclang.dll
-copy $(TargetDir)\libclang.so ..\..\..\AvalonStudio\bin\Debug\libclang.so
-copy $(TargetDir)\clang-format.exe ..\..\..\AvalonStudio\bin\Debug\Plugins\clang-format.exe
-copy $(TargetDir)\clang-format ..\..\..\AvalonStudio\bin\Debug\Plugins\clang-format</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\$(TargetFileName)
+copy $(TargetDir)\libclang.dll ..\..\..\AvalonStudio\bin\$(ConfigurationName)\libclang.dll
+copy $(TargetDir)\libclang.so ..\..\..\AvalonStudio\bin\$(ConfigurationName)\libclang.so
+copy $(TargetDir)\clang-format.exe ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\clang-format.exe
+copy $(TargetDir)\clang-format ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\clang-format</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

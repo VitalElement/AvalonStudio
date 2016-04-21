@@ -1,16 +1,29 @@
 ﻿using Perspex.Controls;
 using Perspex;
+using System.Reactive.Disposables;
 
 namespace AvalonStudio.Controls
 {
     public class Intellisense : UserControl
     {
+        private CompositeDisposable disposables;
+
         public Intellisense()
         {
-            this.InitializeComponent();
+            disposables = new CompositeDisposable();
 
-            RequestBringIntoViewEvent.AddClassHandler<Intellisense>(i => OnRequesteBringIntoView);
-        }                   
+            this.InitializeComponent();
+        }
+
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            disposables.Add(RequestBringIntoViewEvent.AddClassHandler<Intellisense>(i => OnRequesteBringIntoView));
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            disposables.Dispose();
+        }
 
         private void OnRequesteBringIntoView(RequestBringIntoViewEventArgs e)
         {

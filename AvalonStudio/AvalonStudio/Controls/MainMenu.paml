@@ -29,7 +29,7 @@
 
     <MenuItem Header="Build">
       <MenuItem Header="Clean Project" Command="{Binding CleanProjectCommand}" />
-      <MenuItem Header="Build Project" Command="{Binding BuildProjectCommand}" HotKey="F6" />
+      <MenuItem Header="Build Project" Command="{Binding BuildProjectCommand}" />
     </MenuItem>
 
     <MenuItem Header="Debug">

@@ -15,7 +15,7 @@
     using TextEditor;
 
     [Export(typeof(EditorModel))]
-    public class EditorModel
+    public class EditorModel : IDisposable
     {
         private ReaderWriterLockSlim editorLock;
         private Thread codeAnalysisThread;
@@ -27,6 +27,12 @@
         private ISourceFile sourceFile;
 
         public TextEditor Editor { get; set; }
+
+        public void Dispose()
+        {
+            Editor = null;
+            TextDocument.TextChanged -= TextDocument_TextChanged;
+        }
 
         public EditorModel()
         {
@@ -43,7 +49,7 @@
 
         ~EditorModel()
         {
-            ShutdownBackgroundWorkers();
+            System.Console.WriteLine(("Editor Model Destructed."));
         }
 
         private bool completionRequested = false;
@@ -78,7 +84,7 @@
         public event EventHandler<EventArgs> DocumentLoaded;
         public event EventHandler<EventArgs> TextChanged;
 
-        public void RegisterLanguageService(IIntellisenseControl intellisenseControl)
+        public void UnRegisterLanguageService()
         {
             ShutdownBackgroundWorkers();
 
@@ -92,6 +98,11 @@
             {
                 LanguageService.UnregisterSourceFile(Editor, sourceFile);
             }
+        }
+
+        public void RegisterLanguageService(IIntellisenseControl intellisenseControl)
+        {
+            UnRegisterLanguageService();
 
             try
             {
@@ -110,9 +121,7 @@
 
 
             StartBackgroundWorkers();
-
-            DocumentLoaded(this, new EventArgs());
-
+            
             TextDocument.TextChanged += TextDocument_TextChanged;
 
             OnBeforeTextChanged(null);
@@ -135,6 +144,11 @@
                     sourceFile = file;
 
                     RegisterLanguageService(intellisense);
+
+                    if (DocumentLoaded != null)
+                    {
+                        DocumentLoaded(this, new EventArgs());
+                    }
                 }
             }
         }
@@ -362,6 +376,6 @@
                 }
             }
 
-        }
+        }        
     }
 }
