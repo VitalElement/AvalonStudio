@@ -151,6 +151,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigPage.cs" />
+    <Compile Include="Controls\ControlTheme.paml.cs">
+      <DependentUpon>ControlTheme.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ToolControl.cs" />
     <Compile Include="Debugging\BreakPoint.cs" />
     <Compile Include="Debugging\DisassembledLine.cs" />
     <Compile Include="Debugging\Extensions.cs" />
@@ -212,6 +216,8 @@
     <Compile Include="Shell.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\ControlTheme.paml" />
+    <EmbeddedResource Include="Controls\ToolControl.paml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -220,9 +226,7 @@
       <Name>AvalonStudio.TextEditor</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controls\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

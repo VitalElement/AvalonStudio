@@ -192,9 +192,6 @@
       <DependentUpon>NewItemDialog.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\WatchViewModel.cs" />
-    <Compile Include="Controls\ControlTheme.paml.cs">
-      <DependentUpon>ControlTheme.paml</DependentUpon>
-    </Compile>
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\CallStack.paml.cs">
       <DependentUpon>CallStack.paml</DependentUpon>
@@ -318,7 +315,6 @@
     <Compile Include="Controls\VariableControl.paml.cs">
       <DependentUpon>VariableControl.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ToolControl.cs" />
     <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
@@ -376,14 +372,12 @@
     <EmbeddedResource Include="Controls\Disassembly.paml" />
     <EmbeddedResource Include="Controls\NewItemDialog.paml" />
     <EmbeddedResource Include="Controls\DebugHoverProbe.paml" />
-    <EmbeddedResource Include="Controls\ControlTheme.paml" />
     <None Include="libgit2-821131f.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
     <EmbeddedResource Include="Controls\WatchList.paml" />
     <EmbeddedResource Include="Controls\VariableControl.paml" />
-    <EmbeddedResource Include="Controls\ToolControl.paml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">

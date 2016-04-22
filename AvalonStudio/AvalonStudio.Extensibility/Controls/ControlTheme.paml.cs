@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Extensibility.Controls
 {
     using Perspex;
     using Perspex.Styling;
