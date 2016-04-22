@@ -39,19 +39,22 @@
 
             disposables.Add(DataContextProperty.Changed.Subscribe((o) =>
             {
-                if (o.OldValue is EditorViewModel)
+                if (o.NewValue is EditorViewModel)  // for some reason intellisense view model gets passed here! bug in perspex?
                 {
-                    (o.OldValue as EditorViewModel).Model.Editor = null;
-                }
-
-                if (editorViewModel != DataContext)
-                {
-                    editorViewModel = DataContext as EditorViewModel;
-
-                    if (editorViewModel != null && editor != null)
+                    if (o.OldValue is EditorViewModel && (o.OldValue as EditorViewModel).Model.Editor == editor)
                     {
-                        editorViewModel.Model.Editor = editor;
-                        editor.Focus();
+                        (o.OldValue as EditorViewModel).Model.Editor = null;
+                    }
+
+                    if (editorViewModel != DataContext)
+                    {
+                        editorViewModel = DataContext as EditorViewModel;
+
+                        if (editorViewModel != null && editor != null)
+                        {
+                            editorViewModel.Model.Editor = editor;
+                            editor.Focus();
+                        }
                     }
                 }
             }));
