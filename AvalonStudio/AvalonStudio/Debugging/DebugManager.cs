@@ -322,30 +322,29 @@ namespace AvalonStudio.Debugging
                 Debugger.Stop();
             }//);
 
-            //WorkspaceViewModel.Instance.DispatchUi(() =>
+            //WatchList.Clear();
+            //RegistersView.Clear();
+            //LocalsView.Clear();
+            //CallStack.Clear();
+
+            SetDebuggers(null);
+
+            ignoreEvents = false;
+
+            Project = null;
+
+            if (lastDocument != null)
             {
-                //WatchList.Clear();
-                //RegistersView.Clear();
-                //LocalsView.Clear();
-                //CallStack.Clear();
-
-                SetDebuggers(null);
-
-                ignoreEvents = false;
-
-                Project = null;
-
-                //if (lastDocument != null)
-                //{
-                //    lastDocument.ClearDebugHighlight();
-                //}
-            }//);
+                lastDocument.DebugLineHighlighter.Line = -1;
+                lastDocument = null;
+            }
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ShellViewModel.Instance.CurrentPerspective = Perspective.Editor;
             });
         }
+
         #region Commands
         public ReactiveCommand<object> StartDebuggingCommand { get; private set; }
         public ReactiveCommand<object> RestartDebuggingCommand { get; private set; }
@@ -554,7 +553,7 @@ namespace AvalonStudio.Debugging
 
                         if (file != null)
                         {
-                            Dispatcher.UIThread.InvokeAsync(async () =>
+                            await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                             {
                                 document = await ShellViewModel.Instance.OpenDocument(file, e.Frame.Line, 1, true);
                             });
