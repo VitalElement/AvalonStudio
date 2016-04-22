@@ -7,7 +7,7 @@
     using System.Collections.ObjectModel;
     using System.Linq;
 
-    public class SolutionExplorerViewModel : ToolViewModel
+    public class SolutionExplorerViewModel : AvalonStudio.ToolViewModel
     {
         public SolutionExplorerViewModel () : base (SolutionExplorerViewModel.ToolId, "Solution Explorer")
         {                                    

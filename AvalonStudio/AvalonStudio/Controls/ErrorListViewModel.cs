@@ -5,10 +5,12 @@
     using System.Collections.ObjectModel;
     using ReactiveUI;
     using Projects.CPlusPlus;
-    public class ErrorListViewModel : ViewModel
+
+    public class ErrorListViewModel : ToolViewModel
     {
         public ErrorListViewModel()
         {
+            Title = "Error List";
             errors = new ObservableCollection<ErrorViewModel>();
         }
 

@@ -8,10 +8,11 @@
     using TextEditor.Rendering;
     using System.Collections.ObjectModel;
 
-    public class ConsoleViewModel : ReactiveObject, IConsole
+    public class ConsoleViewModel : AvalonStudio.MVVM.ToolViewModel, IConsole
     {
         public ConsoleViewModel()
         {
+            Title = "Console";
             Document = new TextDocument();
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
             backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
@@ -45,6 +46,8 @@
             {
                 // safe way other than document.text = string.empty
                 Document.Replace(0, Document.TextLength, string.Empty);
+
+                ShellViewModel.Instance.SelectedTool = this;
             });
         }
 
