@@ -42,7 +42,7 @@
                 // Dispatcher invoke is hack to make sure the Editor propery has been generated.
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    value?.Model.Editor.Focus();
+                    value?.Model.Editor?.Focus();
                 });
                 
                 if(value == TemporaryDocument)
