@@ -210,6 +210,11 @@
             }
         }
 
+        public static bool IsSamePathAs (this string path, string other)
+        {
+            return path.CompareFilePath(other) == 0;
+        }
+
         public static int CompareFilePath (this string path, string other)
         {
             switch (PlatformIdentifier)
