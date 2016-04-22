@@ -19,13 +19,13 @@
     </Style>
   </Controls:MetroWindow.Styles>
   <Grid RowDefinitions="25,*,350,25" ColumnDefinitions="220, *, *, 300">
-
+    <Controls:ModalDialog Grid.RowSpan="4" Grid.ColumnSpan="4" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
     <!-- Move the modal dialog and status bar to bottom of this grid tag to upset omnixaml-->
     <Grid Grid.Row="3" Grid.ColumnSpan="4">
       <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
-    <Controls:ModalDialog Grid.RowSpan="5" Grid.ColumnSpan="4" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" />
+    
 
     <Grid Grid.ColumnSpan="3" Margin="20 0 0 0">
       <Controls:ToolBar DataContext="{Binding ToolBar}" />
@@ -40,10 +40,9 @@
             </Grid>
             <Controls:Registers DataContext="{Binding DebugManager.Registers}" />
           </DockPanel>
-
         </Grid>
 
-        <Controls:DocumentTabControl DockPanel.Dock="Right"  />        
+        <Controls:DocumentTabControl DockPanel.Dock="Right" DataContext="{Binding DocumentTabs}" />        
       </DockPanel>
 
     </Grid>
