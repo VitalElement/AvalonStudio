@@ -29,7 +29,7 @@
             DebugCommand = ReactiveCommand.Create();
             DebugCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.StartDebugSession();
+                ShellViewModel.Instance.Debug();
             });
 
             BuildCommand = ReactiveCommand.Create();
