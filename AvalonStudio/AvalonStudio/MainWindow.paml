@@ -1,5 +1,5 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/perspex"
-        xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+        xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
         Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFC4C4C4" Width="1600" Height="900">
   <Controls:MetroWindow.TitleBarContent>
     <Controls:MainMenu DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
@@ -57,33 +57,56 @@
         </Grid>
 
         <Grid DockPanel.Dock="Left" >
-          <TabControl TabStripPlacement="Bottom">
-            <TabControl.Styles>
-              <Style Selector="TabStripItem">
-                <Setter Property="Padding" Value="5" />
-              </Style>
+          <DockPanel>
+            <StackPanel DockPanel.Dock="Bottom">
+              <TabStrip Name="toolStrip" Items="{Binding Tools}" SelectedItem="{Binding SelectedTool, Mode=TwoWay}" Focusable="false">
+                <TabStrip.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <DockPanel  LastChildFill="false" />
+                  </ItemsPanelTemplate>
+                </TabStrip.ItemsPanel>
 
-              <Style Selector="TabStripItem">
-                <Setter Property="Background" Value="#2D2D30" />
-                <Setter Property="BorderBrush" Value="#3E3E42" />
-                <Setter Property="Margin" Value="0 -1 0 0" />
-                <Setter Property="FontSize" Value="12"/>
-              </Style>
-              <Style Selector="TabStripItem:pointerover">
-                <Setter Property="Background" Value="#424346" />
-              </Style>
-              <Style Selector="TabStripItem:selected">
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Background" Value="#252526" />
-              </Style>
-            </TabControl.Styles>
-            <TabItem Header="Error List">
-              <Controls:ErrorList DataContext="{Binding ErrorList}" />
-            </TabItem>
-            <TabItem Header="Console">
-              <Controls:Console DataContext="{Binding Console}" />
-            </TabItem>
-          </TabControl>
+                <TabStrip.Styles>
+                  <Style Selector="TabStripItem">
+                    <Setter Property="Height" Value="20" />
+                    <Setter Property="Background" Value="#2D2D30" />
+                    <Setter Property="BorderBrush" Value="#3E3E42" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Margin" Value="0 0 0 -1" />
+                    <Setter Property="Padding" Value="4 0 4 0" />
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
+                  </Style>
+                  <Style Selector="TabStripItem:pointerover">
+                    <Setter Property="Background" Value="#3E3E40" />
+                  </Style>
+                  <Style Selector="TabStripItem:selected">
+                    <Setter Property="Background" Value="#252526" />
+                  </Style>
+                </TabStrip.Styles>
+
+                <TabStrip.DataTemplates>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Gap="2">
+                      <TextBlock Text="{Binding Title}" Foreground="WhiteSmoke" Margin="2"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </TabStrip.DataTemplates>
+              </TabStrip>
+            </StackPanel>
+
+            <Carousel Items="{Binding Tools}" SelectedItem="{Binding #toolStrip.SelectedItem, Mode=TwoWay}" IsVirtualized="false">
+              <Carousel.DataTemplates>
+                <DataTemplate DataType="Controls:ConsoleViewModel">
+                  <Controls:Console />
+                </DataTemplate>
+
+                <DataTemplate DataType="Controls:ErrorListViewModel">
+                  <Controls:ErrorList />
+                </DataTemplate>
+              </Carousel.DataTemplates>
+            </Carousel>
+          </DockPanel>
         </Grid>
       </DockPanel>
     </Grid>
