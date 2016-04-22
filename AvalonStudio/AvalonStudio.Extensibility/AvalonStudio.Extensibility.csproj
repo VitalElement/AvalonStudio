@@ -46,10 +46,6 @@
       <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Animation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Perspex.Application, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.9999.0.1315-nightly\lib\portable-windows8+net45\Perspex.Application.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Perspex.Base, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Base.dll</HintPath>
       <Private>True</Private>
@@ -155,10 +151,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigPage.cs" />
-    <Compile Include="Controls\ControlTheme.paml.cs">
-      <DependentUpon>ControlTheme.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ToolControl.cs" />
     <Compile Include="Debugging\BreakPoint.cs" />
     <Compile Include="Debugging\DisassembledLine.cs" />
     <Compile Include="Debugging\Extensions.cs" />
@@ -220,8 +212,6 @@
     <Compile Include="Shell.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\ToolControl.paml" />
-    <EmbeddedResource Include="Controls\ControlTheme.paml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -230,7 +220,9 @@
       <Name>AvalonStudio.TextEditor</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

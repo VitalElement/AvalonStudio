@@ -1,5 +1,5 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/perspex"
-        xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+        xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"                      
                       xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
         Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFC4C4C4" Width="1600" Height="900">
   <Controls:MetroWindow.TitleBarContent>
@@ -168,6 +168,8 @@
       <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
+    
+    
     <Controls:ModalDialog Grid.RowSpan="5" Grid.ColumnSpan="4" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" />
   </Grid>
 </Controls:MetroWindow>

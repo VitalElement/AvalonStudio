@@ -27,7 +27,7 @@
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+           this.LoadFromXaml();
         }        
     }
 }
