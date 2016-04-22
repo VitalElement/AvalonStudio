@@ -87,7 +87,7 @@
     }
 
 
-    public class DisassemblyViewModel : ToolViewModel
+    public class DisassemblyViewModel : AvalonStudio.ToolViewModel
     {
         public const string ToolId = "CIDDIS001";
         public DisassemblyViewModel()
