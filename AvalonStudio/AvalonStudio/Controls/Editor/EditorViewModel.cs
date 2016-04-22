@@ -42,7 +42,7 @@
                     Dock = Dock.Left;
 
                     ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
-                }                    
+                }
             }));
 
             SaveCommand = ReactiveCommand.Create();
@@ -55,19 +55,25 @@
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
 
-                if(ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
+                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
                 {
                     ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
                 }
 
                 ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);
-                ShellViewModel.Instance.InvalidateErrors();                
+
+                if (ShellViewModel.Instance.DocumentTabs.SelectedDocument == this)
+                {
+                    ShellViewModel.Instance.DocumentTabs.SelectedDocument = null;
+                }
+
+                ShellViewModel.Instance.InvalidateErrors();
 
                 Model.Dispose();
                 Intellisense.Dispose();
                 disposables.Dispose();
-                
-                Model.TextDocument = null;                
+
+                Model.TextDocument = null;
             }));
 
             AddWatchCommand = ReactiveCommand.Create();
@@ -152,8 +158,10 @@
 
         ~EditorViewModel()
         {
-            Dispatcher.UIThread.InvokeAsync(() => {
-                                                      ShellViewModel.Instance.StatusBar.InstanceCount--; });
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ShellViewModel.Instance.StatusBar.InstanceCount--;
+            });
             Model.ShutdownBackgroundWorkers();
 
             System.Console.WriteLine(("Editor VM Destructed."));
@@ -317,7 +325,7 @@
 
                     if (TextUtilities.IsSymbol(word))
                     {
-                        result = word;                        
+                        result = word;
                     }
                 }
             }
@@ -325,25 +333,25 @@
             return result;
         }
 
-        public bool UpdateDebugHoverProbe (int offset)
+        public bool UpdateDebugHoverProbe(int offset)
         {
             bool result = false;
 
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
-            {                
+            {
                 var expression = GetWordAtOffset(offset);
-                
+
                 if (expression != string.Empty)
                 {
                     var evaluatedExpression = ShellViewModel.Instance.DebugManager.ProbeExpression(expression);
 
-                    if(evaluatedExpression != null)
+                    if (evaluatedExpression != null)
                     {
                         DebugHoverProbe = new WatchListViewModel();
                         DebugHoverProbe.SetDebugger(ShellViewModel.Instance.DebugManager.Debugger);
                         DebugHoverProbe.AddExistingWatch(evaluatedExpression);
                         result = true;
-                    }                    
+                    }
                 }
             }
 
