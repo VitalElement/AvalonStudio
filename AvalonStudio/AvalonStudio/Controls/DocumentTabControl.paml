@@ -3,8 +3,13 @@
   <DockPanel>
     <StackPanel DockPanel.Dock="Top">
       <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}" Focusable="false">
+        <TabStrip.ItemsPanel>
+          <ItemsPanelTemplate>
+            <DockPanel  LastChildFill="false" />
+          </ItemsPanelTemplate>  
+        </TabStrip.ItemsPanel>
+        
         <TabStrip.Styles>
-
           <Style Selector="TabStripItem">
             <Setter Property="Height" Value="20" />
             <Setter Property="Background" Value="#2D2D30" />
@@ -13,6 +18,7 @@
             <Setter Property="Margin" Value="0 0 0 -1" />
             <Setter Property="Padding" Value="4 0 4 0" />
             <Setter Property="FontSize" Value="12"/>
+            <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
           </Style>
           <Style Selector="TabStripItem:pointerover">
             <Setter Property="Background" Value="#1c97ea" />

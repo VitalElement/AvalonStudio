@@ -29,5 +29,13 @@
             get { return selectedDocument; }
             set { this.RaiseAndSetIfChanged(ref selectedDocument, value); value?.Model.Editor?.Focus(); }
         }
+
+        private EditorViewModel temporaryDocument;
+        public EditorViewModel TemporaryDocument
+        {
+            get { return temporaryDocument; }
+            set { temporaryDocument = value; }
+        }
+
     }
 }

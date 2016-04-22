@@ -31,9 +31,11 @@
                 {
                     var document = ShellViewModel.Instance.OpenDocument(ShellViewModel.Instance.SolutionExplorer.Model.FindFile(SourceFile.FromPath(null, null, value.Model.File)), value.Line);
 
+                    document.Wait();
+
                     if (document != null)
                     {
-                        document.GotoOffset(value.Model.Offset);
+                        document.Result.GotoOffset(value.Model.Offset);
                     }
                 }
             }
