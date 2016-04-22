@@ -1,27 +1,17 @@
-﻿<UserControl xmlns="https://github.com/perspex"  xmlns:controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
-  <Border BorderBrush="#3E3E42" BorderThickness="1">
-    <Grid RowDefinitions="25,*">
-      <Grid Height="6"  Margin="0 0 10 0">
-        <Grid.Background>
-          <ImageBrush Source="resm:AvalonStudio.Resources.grip_pattern.png?assembly=AvalonStudio" TileMode="FlipY" Stretch="Uniform"
-                               AlignmentY="Center" SourceRect="0,0,4,3000" DestinationRect="0,0,4,3000" />
-        </Grid.Background>
-      </Grid>
-      <Panel HorizontalAlignment="Left">
-        <TextBlock Text="Call Stack" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0"/>
-      </Panel>      
-      <ListBox Grid.Row="1"  BorderThickness="0" Items="{Binding Frames}" Background="{StyleResource ThemeControlDarkBrush}">
-        <ListBox.DataTemplates>
-          <DataTemplate DataType="controls:FrameViewModel">
-            <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Background}">
-              <TextBlock Text="{Binding Function}" Width="90" />
-              <TextBlock Text="{Binding Line}" />
-              <TextBlock Text="{Binding Address}" />
-              <TextBlock Text="{Binding File}" />
-            </StackPanel>
-          </DataTemplate>
-        </ListBox.DataTemplates>
-      </ListBox>
-    </Grid>
-  </Border>  
+﻿<UserControl xmlns="https://github.com/perspex"  xmlns:controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+  <controls:ToolControl Title="Call Stack">
+    <ListBox BorderThickness="0" Items="{Binding Frames}" Background="{StyleResource ThemeControlDarkBrush}">
+      <ListBox.DataTemplates>
+        <DataTemplate DataType="vm:FrameViewModel">
+          <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Background}">
+            <TextBlock Text="{Binding Function}" Width="90" />
+            <TextBlock Text="{Binding Line}" />
+            <TextBlock Text="{Binding Address}" />
+            <TextBlock Text="{Binding File}" />
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.DataTemplates>
+    </ListBox>
+  </controls:ToolControl> 
 </UserControl>

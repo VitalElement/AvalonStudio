@@ -1,7 +1,8 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Extensibility.Controls
 {
     using Perspex;
     using Perspex.Styling;
+    using System;
 
     public class ControlTheme : Styles
     {
