@@ -58,7 +58,7 @@
 
         <Grid DockPanel.Dock="Left" >
           <DockPanel>
-            <StackPanel DockPanel.Dock="Bottom">
+            <StackPanel DockPanel.Dock="Bottom" ZIndex="100">
               <TabStrip Name="toolStrip" Items="{Binding Tools}" SelectedItem="{Binding SelectedTool, Mode=TwoWay}" Focusable="false">
                 <TabStrip.ItemsPanel>
                   <ItemsPanelTemplate>
@@ -72,7 +72,7 @@
                     <Setter Property="Background" Value="#2D2D30" />
                     <Setter Property="BorderBrush" Value="#3E3E42" />
                     <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="Margin" Value="0 0 0 -1" />
+                    <Setter Property="Margin" Value="0 -1 0 0" />
                     <Setter Property="Padding" Value="4 0 4 0" />
                     <Setter Property="FontSize" Value="12"/>
                     <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
@@ -82,6 +82,7 @@
                   </Style>
                   <Style Selector="TabStripItem:selected">
                     <Setter Property="Background" Value="#252526" />
+                    <Setter Property="BorderThickness" Value="1" />
                   </Style>
                 </TabStrip.Styles>
 
@@ -95,7 +96,7 @@
               </TabStrip>
             </StackPanel>
 
-            <Carousel Items="{Binding Tools}" SelectedItem="{Binding #toolStrip.SelectedItem, Mode=TwoWay}" IsVirtualized="false">
+            <Carousel Items="{Binding Tools}" SelectedItem="{Binding #toolStrip.SelectedItem, Mode=TwoWay}" IsVirtualized="false" ZIndex="50">
               <Carousel.DataTemplates>
                 <DataTemplate DataType="Controls:ConsoleViewModel">
                   <Controls:Console />
