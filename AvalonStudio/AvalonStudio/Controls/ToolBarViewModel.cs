@@ -59,25 +59,25 @@
             CommentCommand = ReactiveCommand.Create();
             CommentCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.SelectedDocument?.Comment();
+                ShellViewModel.Instance.DocumentTabs.SelectedDocument?.Comment();
             });
 
             UnCommentCommand = ReactiveCommand.Create();
             UnCommentCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.SelectedDocument?.UnComment();
+                ShellViewModel.Instance.DocumentTabs.SelectedDocument?.UnComment();
             });
 
             UndoCommand = ReactiveCommand.Create();
             UndoCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.SelectedDocument?.Undo();
+                ShellViewModel.Instance.DocumentTabs.SelectedDocument?.Undo();
             });
 
             RedoCommand = ReactiveCommand.Create();
             RedoCommand.Subscribe(_ => 
             {
-                ShellViewModel.Instance.SelectedDocument?.Redo();
+                ShellViewModel.Instance.DocumentTabs.SelectedDocument?.Redo();
             });
 
             SaveCommand = ReactiveCommand.Create();
