@@ -37,9 +37,8 @@
         <te:TextEditor.Header>
         </te:TextEditor.Header>
         
-        <te:TextEditor.Content>
-          <!--
-          <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />-->
+        <te:TextEditor.Content>          
+          <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
         </te:TextEditor.Content>
 
       </te:TextEditor>
