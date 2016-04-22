@@ -82,10 +82,9 @@
                 newEditor.Margins.Add(new LineNumberMargin());
 
                 DocumentTabs.Documents.Add(newEditor);
-                DocumentTabs.SelectedDocument = newEditor;
-                newEditor.Model.OpenFile(file, newEditor.Intellisense);
-                
-                DocumentTabs.TemporaryDocument = newEditor;                
+                DocumentTabs.TemporaryDocument = newEditor;
+                DocumentTabs.SelectedDocument = newEditor;                
+                newEditor.Model.OpenFile(file, newEditor.Intellisense);                
             }
             else
             {
