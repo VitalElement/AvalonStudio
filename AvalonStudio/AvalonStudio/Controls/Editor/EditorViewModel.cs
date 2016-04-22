@@ -60,12 +60,7 @@
                     ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
                 }
 
-                ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);
-
-                if (ShellViewModel.Instance.DocumentTabs.SelectedDocument == this)
-                {
-                    ShellViewModel.Instance.DocumentTabs.SelectedDocument = null;
-                }
+                ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);                
 
                 ShellViewModel.Instance.InvalidateErrors();
 
