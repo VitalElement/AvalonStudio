@@ -46,6 +46,15 @@
 
             DebugManager = new DebugManager();
 
+            Tools = new ObservableCollection<object>();
+            tools.Add(Console);
+            tools.Add(ErrorList);
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                SelectedTool = ErrorList;
+            });
+
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
             StatusBar.PlatformString = Platforms.Platform.PlatformString;
@@ -281,6 +290,7 @@
         {
             var allErrors = new List<ErrorViewModel>();
             var toRemove = new List<ErrorViewModel>();
+            bool hasChanged = false;
 
             foreach (var document in DocumentTabs.Documents)
             {
@@ -312,6 +322,7 @@
 
             foreach (var error in toRemove)
             {
+                hasChanged = true;
                 ErrorList.Errors.Remove(error);
             }
 
@@ -321,9 +332,14 @@
 
                 if (matching == null)
                 {
-                    //hasChanged = true;
+                    hasChanged = true;
                     ErrorList.Errors.Add(error);
                 }
+            }
+
+            if (hasChanged)
+            {
+                SelectedTool = ErrorList;
             }
         }
 
@@ -345,6 +361,20 @@
 
         public DocumentTabsViewModel DocumentTabs { get; private set; }
 
+        private ObservableCollection<object> tools;
+        public ObservableCollection<object> Tools
+        {
+            get { return tools; }
+            set { this.RaiseAndSetIfChanged(ref tools, value); }
+        }
+
+        private object selectedTool;
+        public object SelectedTool
+        {
+            get { return selectedTool; }
+            set { this.RaiseAndSetIfChanged(ref selectedTool, value); }
+        }
+        
         public IConsole Console { get; private set; }
 
         public ErrorListViewModel ErrorList { get; private set; }
