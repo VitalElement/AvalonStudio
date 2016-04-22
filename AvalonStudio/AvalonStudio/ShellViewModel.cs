@@ -42,8 +42,7 @@
             ErrorList = new ErrorListViewModel();
             ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
-
-            Documents = new ObservableCollection<EditorViewModel>();
+            DocumentTabs = new DocumentTabsViewModel();
 
             DebugManager = new DebugManager();
 
@@ -51,12 +50,12 @@
             StatusBar.Column = 1;
             StatusBar.PlatformString = Platforms.Platform.PlatformString;
 
-            SolutionExplorer.SelectedItemChanged += (sender, e) =>
+            SolutionExplorer.SelectedItemChanged += async (sender, e) =>
             {
                 if (e is SourceFileViewModel)
                 {
-                    OpenDocument(((ISourceFile)(e as SourceFileViewModel).Model), 1);
-                } 
+                    await OpenDocument(((ISourceFile)(e as SourceFileViewModel).Model), 1);
+                }
             };
 
             ProcessCancellationToken = new CancellationTokenSource();
@@ -66,53 +65,60 @@
             CurrentPerspective = Perspective.Editor;
         }
 
-        public EditorViewModel OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
+        public async Task<EditorViewModel> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
         {
-            var currentTab = Documents.FirstOrDefault(t => t.Model.ProjectFile.File == file.File);
+            var currentTab = DocumentTabs.Documents.FirstOrDefault(t => t.Model.ProjectFile.File == file.File);
 
             if (currentTab == null)
             {
-                var newEditor = new EditorViewModel(new EditorModel());
-                Documents.Add(newEditor);
-                SelectedDocument = newEditor;
+                if (DocumentTabs.TemporaryDocument != null)
+                {
+                    await DocumentTabs.TemporaryDocument.CloseCommand.ExecuteAsyncTask(null);
+                    DocumentTabs.TemporaryDocument = null;
+                }
 
+                var newEditor = new EditorViewModel(new EditorModel());
                 newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
                 newEditor.Margins.Add(new LineNumberMargin());
+
+                DocumentTabs.Documents.Add(newEditor);
+                DocumentTabs.TemporaryDocument = newEditor;
+                DocumentTabs.SelectedDocument = newEditor;                
                 newEditor.Model.OpenFile(file, newEditor.Intellisense);                
             }
             else
             {
-                SelectedDocument = currentTab;
+                DocumentTabs.SelectedDocument = currentTab;
             }
 
             if (debugHighlight)
             {
-                SelectedDocument.DebugLineHighlighter.Line = line;
+                DocumentTabs.SelectedDocument.DebugLineHighlighter.Line = line;
             }
 
-            Dispatcher.UIThread.InvokeAsync(() => SelectedDocument.Model.ScrollToLine(line));
+            Dispatcher.UIThread.InvokeAsync(() => DocumentTabs.SelectedDocument.Model.ScrollToLine(line));
 
-            if(selectLine)
+            if (selectLine)
             {
-                SelectedDocument.GotoPosition(line, column);
+                DocumentTabs.SelectedDocument.GotoPosition(line, column);
             }
 
-            return SelectedDocument;
+            return DocumentTabs.SelectedDocument;
         }
 
-        public EditorViewModel GetDocument (string path)
+        public EditorViewModel GetDocument(string path)
         {
-            return Documents.FirstOrDefault(d => d.Model.ProjectFile.File == path);
+            return DocumentTabs.Documents.FirstOrDefault(d => d.Model.ProjectFile.File == path);
         }
 
         public void Save()
         {
-            SelectedDocument?.Save();
+            DocumentTabs.SelectedDocument?.Save();
         }
 
         public void SaveAll()
         {
-            foreach (var document in Documents)
+            foreach (var document in DocumentTabs.Documents)
             {
                 document.Save();
             }
@@ -276,20 +282,20 @@
             var allErrors = new List<ErrorViewModel>();
             var toRemove = new List<ErrorViewModel>();
 
-            foreach (var document in documents)
+            foreach (var document in DocumentTabs.Documents)
             {
                 if (document.Model.CodeAnalysisResults != null)
                 {
                     foreach (var diagnostic in document.Model.CodeAnalysisResults.Diagnostics)
                     {
-                       
-                            var error = new ErrorViewModel(diagnostic);
-                            var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
 
-                            if (matching == null)
-                            {
-                                allErrors.Add(error);
-                            }
+                        var error = new ErrorViewModel(diagnostic);
+                        var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
+
+                        if (matching == null)
+                        {
+                            allErrors.Add(error);
+                        }
                     }
                 }
             }
@@ -337,20 +343,7 @@
 
         public SolutionExplorerViewModel SolutionExplorer { get; private set; }
 
-        private ObservableCollection<EditorViewModel> documents;
-        public ObservableCollection<EditorViewModel> Documents
-        {
-            get { return documents; }
-            set { this.RaiseAndSetIfChanged(ref documents, value); }
-        }
-
-        private EditorViewModel selectedDocument;
-        public EditorViewModel SelectedDocument
-        {
-            get { return selectedDocument; }
-            set { this.RaiseAndSetIfChanged(ref selectedDocument, value); value?.Model.Editor?.Focus(); }
-        }
-
+        public DocumentTabsViewModel DocumentTabs { get; private set; }
 
         public IConsole Console { get; private set; }
 
@@ -392,7 +385,7 @@
 
         public void InvalidateCodeAnalysis()
         {
-            foreach(var document in Documents)
+            foreach (var document in DocumentTabs.Documents)
             {
                 //TODO implement code analysis trigger.
             }
@@ -407,7 +400,7 @@
 
         public void Cleanup()
         {
-            foreach(var document in Documents)
+            foreach (var document in DocumentTabs.Documents)
             {
                 document.Model.ShutdownBackgroundWorkers();
             }

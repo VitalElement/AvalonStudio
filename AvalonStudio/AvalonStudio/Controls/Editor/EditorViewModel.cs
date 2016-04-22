@@ -3,6 +3,7 @@
     using Languages;
     using MVVM;
     using Perspex;
+    using Perspex.Controls;
     using Perspex.Input;
     using Perspex.Threading;
     using Platforms;
@@ -34,6 +35,15 @@
 
             TextChangedCommand = ReactiveCommand.Create();
             disposables.Add(TextChangedCommand.Subscribe(model.OnTextChanged));
+            disposables.Add(TextChangedCommand.Subscribe(_ =>
+            {
+                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
+                {
+                    Dock = Dock.Left;
+
+                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
+                }                    
+            }));
 
             SaveCommand = ReactiveCommand.Create();
             disposables.Add(SaveCommand.Subscribe((param) => Save()));
@@ -45,8 +55,7 @@
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
 
-                ShellViewModel.Instance.Documents.Remove(this);
-                ShellViewModel.Instance.SelectedDocument = null;
+                ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);
                 ShellViewModel.Instance.InvalidateErrors();                
 
                 Model.Dispose();
@@ -131,6 +140,8 @@
             margins = new ObservableCollection<TextViewMargin>();
 
             ShellViewModel.Instance.StatusBar.InstanceCount++;
+
+            dock = Dock.Right;
         }
 
 
@@ -490,6 +501,14 @@
                 CaretIndex = Model.LanguageService.Format(TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
             }
         }
+
+        private Dock dock;
+        public Dock Dock
+        {
+            get { return dock; }
+            set { this.RaiseAndSetIfChanged(ref dock, value); }
+        }
+
 
 
         public TextLocation CaretTextLocation
