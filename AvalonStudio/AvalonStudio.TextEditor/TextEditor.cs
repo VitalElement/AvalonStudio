@@ -461,9 +461,13 @@
                     {
                         var line = TextDocument.GetLineByOffset(CaretIndex);
 
-                        if (caretIndex == line.EndOffset && line.NextLine != null)
+                        if (caretIndex == line.EndOffset)
                         {
-                            caretIndex = line.NextLine.Offset;
+                            if (line.NextLine != null)
+                            {
+                                caretIndex = line.NextLine.Offset;
+                            }
+                            
                         }
                         else
                         {
@@ -477,9 +481,12 @@
                     {
                         var line = TextDocument.GetLineByOffset(CaretIndex);
 
-                        if (caretIndex == line.Offset && line.PreviousLine != null)
+                        if (caretIndex == line.Offset)
                         {
-                            caretIndex = line.PreviousLine.EndOffset;
+                            if (line.PreviousLine != null)
+                            {
+                                caretIndex = line.PreviousLine.EndOffset;
+                            }
                         }
                         else
                         {
