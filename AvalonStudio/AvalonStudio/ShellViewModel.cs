@@ -50,12 +50,12 @@
             StatusBar.Column = 1;
             StatusBar.PlatformString = Platforms.Platform.PlatformString;
 
-            SolutionExplorer.SelectedItemChanged += (sender, e) =>
+            SolutionExplorer.SelectedItemChanged += async (sender, e) =>
             {
                 if (e is SourceFileViewModel)
                 {
-                    OpenDocument(((ISourceFile)(e as SourceFileViewModel).Model), 1);
-                } 
+                    await OpenDocument(((ISourceFile)(e as SourceFileViewModel).Model), 1);
+                }
             };
 
             ProcessCancellationToken = new CancellationTokenSource();
@@ -65,19 +65,27 @@
             CurrentPerspective = Perspective.Editor;
         }
 
-        public EditorViewModel OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
+        public async Task<EditorViewModel> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
         {
             var currentTab = DocumentTabs.Documents.FirstOrDefault(t => t.Model.ProjectFile.File == file.File);
 
             if (currentTab == null)
             {
-                var newEditor = new EditorViewModel(new EditorModel());
-                DocumentTabs.Documents.Add(newEditor);
-                DocumentTabs.SelectedDocument = newEditor;
+                if (DocumentTabs.TemporaryDocument != null)
+                {
+                    await DocumentTabs.TemporaryDocument.CloseCommand.ExecuteAsyncTask(null);
+                    DocumentTabs.TemporaryDocument = null;
+                }
 
+                var newEditor = new EditorViewModel(new EditorModel());
                 newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
                 newEditor.Margins.Add(new LineNumberMargin());
-                newEditor.Model.OpenFile(file, newEditor.Intellisense);                
+
+                DocumentTabs.Documents.Add(newEditor);
+                DocumentTabs.SelectedDocument = newEditor;
+                newEditor.Model.OpenFile(file, newEditor.Intellisense);
+                
+                DocumentTabs.TemporaryDocument = newEditor;                
             }
             else
             {
@@ -91,7 +99,7 @@
 
             Dispatcher.UIThread.InvokeAsync(() => DocumentTabs.SelectedDocument.Model.ScrollToLine(line));
 
-            if(selectLine)
+            if (selectLine)
             {
                 DocumentTabs.SelectedDocument.GotoPosition(line, column);
             }
@@ -99,7 +107,7 @@
             return DocumentTabs.SelectedDocument;
         }
 
-        public EditorViewModel GetDocument (string path)
+        public EditorViewModel GetDocument(string path)
         {
             return DocumentTabs.Documents.FirstOrDefault(d => d.Model.ProjectFile.File == path);
         }
@@ -281,14 +289,14 @@
                 {
                     foreach (var diagnostic in document.Model.CodeAnalysisResults.Diagnostics)
                     {
-                       
-                            var error = new ErrorViewModel(diagnostic);
-                            var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
 
-                            if (matching == null)
-                            {
-                                allErrors.Add(error);
-                            }
+                        var error = new ErrorViewModel(diagnostic);
+                        var matching = allErrors.FirstOrDefault((err) => err.IsEqual(error));
+
+                        if (matching == null)
+                        {
+                            allErrors.Add(error);
+                        }
                     }
                 }
             }
@@ -378,7 +386,7 @@
 
         public void InvalidateCodeAnalysis()
         {
-            foreach(var document in DocumentTabs.Documents)
+            foreach (var document in DocumentTabs.Documents)
             {
                 //TODO implement code analysis trigger.
             }
@@ -393,7 +401,7 @@
 
         public void Cleanup()
         {
-            foreach(var document in DocumentTabs.Documents)
+            foreach (var document in DocumentTabs.Documents)
             {
                 document.Model.ShutdownBackgroundWorkers();
             }

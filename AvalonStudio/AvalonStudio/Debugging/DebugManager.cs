@@ -554,9 +554,9 @@ namespace AvalonStudio.Debugging
 
                         if (file != null)
                         {
-                            Dispatcher.UIThread.InvokeAsync(() =>
+                            Dispatcher.UIThread.InvokeAsync(async () =>
                             {
-                                document = ShellViewModel.Instance.OpenDocument(file, e.Frame.Line, 1, true);
+                                document = await ShellViewModel.Instance.OpenDocument(file, e.Frame.Line, 1, true);
                             });
                         }
                         else
