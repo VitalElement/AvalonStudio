@@ -2,6 +2,17 @@
 {
     using ReactiveUI;
 
+    public class ToolViewModel : ViewModel
+    {
+        // TODO This should use ToolControl
+        private string title;
+        public string Title
+        {
+            get { return title; }
+            set { this.RaiseAndSetIfChanged(ref title, value); }
+        }
+    }
+
     public abstract class ViewModel : ViewModel<object>
     {
         public ViewModel() : base(null)
