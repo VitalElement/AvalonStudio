@@ -162,7 +162,7 @@
                     Console.WriteLine("No project loaded.");
                 }
             }))).Start();
-        }
+        }        
 
         public void Build()
         {
@@ -235,12 +235,13 @@
             Environment.Exit(1);
         }
 
-        public void StartDebugSession()
+        public void Debug()
         {
             if (CurrentPerspective == Perspective.Editor)
             {
                 if (SolutionExplorer.Model?.StartupProject != null)
                 {
+                    Console.Clear();
                     DebugManager.StartDebug(SolutionExplorer.Model.StartupProject);
                 }
             }
@@ -267,17 +268,7 @@
                     break;
 
                 case Key.F5:
-                    if (CurrentPerspective == Perspective.Editor)
-                    {
-                        if (SolutionExplorer.Solution?.FirstOrDefault()?.Model.StartupProject != null)
-                        {
-                            DebugManager.StartDebug(SolutionExplorer.Solution.FirstOrDefault()?.Model.StartupProject);
-                        }
-                    }
-                    else
-                    {
-                        DebugManager.Continue();
-                    }
+                    Debug();
                     break;
 
                 case Key.F6:
