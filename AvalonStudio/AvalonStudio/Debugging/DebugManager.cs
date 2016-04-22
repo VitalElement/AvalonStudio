@@ -531,7 +531,11 @@ namespace AvalonStudio.Debugging
                     IsExecuting = false;
                     IsUpdating = false;
                     this.StopDebuggingCommand.Execute(null);
-                    ShellViewModel.Instance.CurrentPerspective = Perspective.Editor;
+
+                    Dispatcher.UIThread.InvokeAsync( () =>
+                    {
+                        ShellViewModel.Instance.CurrentPerspective = Perspective.Editor;
+                    });
                     break;
 
                 default:
