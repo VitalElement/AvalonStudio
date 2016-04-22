@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/perspex"
              xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio"
-             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" Background="{StyleResource ThemeBackgroundBrush}">
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" Background="{StyleResource ThemeBackgroundBrush}">
   <Grid RowDefinitions="70,*,100">
     <Grid Grid.Row="0">
       <Grid VerticalAlignment="Top">
@@ -16,16 +16,16 @@
         <ContentControl Content="{Binding }">
           <ContentControl.DataTemplates>
             <DataTemplate DataType="ViewModels:PackageManagerDialogViewModel">
-              <Controls:PackageManagerDialog />
+              <cont:PackageManagerDialog />
             </DataTemplate>
             <DataTemplate DataType="ViewModels:ProjectConfigurationDialogViewModel">
-              <Controls:ProjectConfigurationDialog />
+              <cont:ProjectConfigurationDialog />
             </DataTemplate>
             <DataTemplate DataType="ViewModels:NewProjectDialogViewModel">
-              <Controls:NewProjectDialog />
+              <cont:NewProjectDialog />
             </DataTemplate>
             <DataTemplate DataType="ViewModels:NewItemDialogViewModel">
-              <Controls:NewItemDialog />
+              <cont:NewItemDialog />
             </DataTemplate>
           </ContentControl.DataTemplates>
         </ContentControl>

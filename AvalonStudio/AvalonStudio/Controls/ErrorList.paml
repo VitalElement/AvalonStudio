@@ -1,5 +1,5 @@
-﻿<UserControl xmlns="https://github.com/perspex" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
-  <vm:ToolControl Title="Error List">
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+  <cont:ToolControl Title="Error List">
     <ListBox  Items="{Binding Errors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
       <ListBox.DataTemplates>
         <DataTemplate DataType="vm:ErrorViewModel">
@@ -13,5 +13,5 @@
         </DataTemplate>
       </ListBox.DataTemplates>
     </ListBox>
-  </vm:ToolControl>
+  </cont:ToolControl>
 </UserControl>

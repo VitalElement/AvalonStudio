@@ -1,5 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/perspex" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <cont:ToolControl Title="Disassembly">
     <ListBox BorderThickness="0" Items="{Binding DisassemblyData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
       <ListBox.DataTemplates>
