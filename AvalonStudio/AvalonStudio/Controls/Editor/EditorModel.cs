@@ -26,7 +26,15 @@
         private ReaderWriterLockSlim completionRequestLock;
         private ISourceFile sourceFile;
 
-        public TextEditor Editor { get; set; }
+
+        private TextEditor textEditor;
+
+        public TextEditor Editor
+        {
+            get { return textEditor; }
+            set { textEditor = value; }
+        }
+
 
         public void Dispose()
         {

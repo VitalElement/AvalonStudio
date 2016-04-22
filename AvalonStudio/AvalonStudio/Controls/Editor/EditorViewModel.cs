@@ -17,6 +17,7 @@
     using TextEditor.Document;
     using TextEditor.Rendering;
     using ViewModels;
+
     public class EditorViewModel : ViewModel<EditorModel>
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
