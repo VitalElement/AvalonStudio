@@ -760,15 +760,12 @@
 
         protected override void OnGotFocus(GotFocusEventArgs e)
         {
-            base.OnGotFocus(e);
             textView.ShowCaret();
         }
 
         protected override void OnLostFocus(RoutedEventArgs e)
         {
-            base.OnLostFocus(e);
-
-            textView.HideCaret();
+            textView?.HideCaret();
         }
 
         protected override void OnTextInput(TextInputEventArgs e)
