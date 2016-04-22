@@ -2,6 +2,7 @@
 {
     using AvalonStudio.MVVM;
     using Perspex.Media;
+    using Perspex.Threading;
     using ReactiveUI;
     using System.Collections.ObjectModel;
 
@@ -37,8 +38,13 @@
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedDocument, value);
-                value?.Model.Editor?.Focus();
 
+                // Dispatcher invoke is hack to make sure the Editor propery has been generated.
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    value?.Model.Editor.Focus();
+                });
+                
                 if(value == TemporaryDocument)
                 {
                     TabBackgroundBrush = temporaryTabBrush;
