@@ -1,6 +1,5 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/perspex"
-        xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-                      xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+        xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
         Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFC4C4C4" Width="1600" Height="900">
   <Controls:MetroWindow.TitleBarContent>
     <Controls:MainMenu DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
@@ -20,26 +19,34 @@
     </Style>
   </Controls:MetroWindow.Styles>
   <Grid RowDefinitions="25,*,350,25" ColumnDefinitions="220, *, *, 300">
+
+    <!-- Move the modal dialog and status bar to bottom of this grid tag to upset omnixaml-->
+    <Grid Grid.Row="3" Grid.ColumnSpan="4">
+      <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
+    </Grid>
+
+    <Controls:ModalDialog Grid.RowSpan="5" Grid.ColumnSpan="4" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" />
+
     <Grid Grid.ColumnSpan="3" Margin="20 0 0 0">
       <Controls:ToolBar DataContext="{Binding ToolBar}" />
     </Grid>
 
     <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="1 2 2 1">
-      <DockPanel>        
+      <DockPanel>
         <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Left" Width="400" >
           <DockPanel>
             <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Bottom">
               <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Height="300" />
             </Grid>
-            <Controls:Registers DataContext="{Binding DebugManager.Registers}" />           
+            <Controls:Registers DataContext="{Binding DebugManager.Registers}" />
           </DockPanel>
-          
+
         </Grid>
 
         <DockPanel DockPanel.Dock="Right">
           <StackPanel DockPanel.Dock="Top">
             <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}" Focusable="false">
-              <TabStrip.Styles>                
+              <TabStrip.Styles>
 
                 <Style Selector="TabStripItem">
                   <Setter Property="Height" Value="20" />
@@ -61,7 +68,7 @@
               <TabStrip.DataTemplates>
                 <DataTemplate>
                   <StackPanel Orientation="Horizontal" Gap="2">
-                    <TextBlock Text="{Binding Title}" Foreground="WhiteSmoke" Margin="2"/>                    
+                    <TextBlock Text="{Binding Title}" Foreground="WhiteSmoke" Margin="2"/>
                     <Button Height="14" Width="14">
                       <Button.Styles>
                         <Style Selector="Button">
@@ -93,7 +100,7 @@
                       </Button.Styles>
                       <Path Margin="2" Stretch="Uniform" UseLayoutRounding="False" Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="WhiteSmoke" />
                     </Button>
-                  </StackPanel>                  
+                  </StackPanel>
                 </DataTemplate>
               </TabStrip.DataTemplates>
             </TabStrip>
@@ -107,21 +114,21 @@
               </DataTemplate>
             </Carousel.DataTemplates>
           </Carousel>
-          
-        </DockPanel>       
+
+        </DockPanel>
       </DockPanel>
-      
+
     </Grid>
 
     <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="1 1 2 2">
       <DockPanel>
         <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right" >
           <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400"  />
-        </Grid>        
+        </Grid>
         <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
           <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
         </Grid>
-        
+
         <Grid DockPanel.Dock="Left" >
           <TabControl TabStripPlacement="Bottom">
             <TabControl.Styles>
@@ -159,15 +166,8 @@
         <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Bottom">
           <Controls:WatchList DataContext="{Binding DebugManager.WatchList}" Height="400" />
         </Grid>
-        <Controls:SolutionExplorer DataContext="{Binding SolutionExplorer}"  />        
+        <Controls:SolutionExplorer DataContext="{Binding SolutionExplorer}"  />
       </DockPanel>
-      
-    </Grid>
-
-    <Grid Grid.Row="3" Grid.ColumnSpan="4">
-      <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
-    </Grid>
-
-    <Controls:ModalDialog Grid.RowSpan="5" Grid.ColumnSpan="4" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" />
+    </Grid>    
   </Grid>
 </Controls:MetroWindow>

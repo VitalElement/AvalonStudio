@@ -1,17 +1,5 @@
-﻿<UserControl xmlns="https://github.com/perspex" xmlns:te="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor">
-  <Border BorderBrush="#3E3E42" BorderThickness="1">
-    <Grid RowDefinitions="25,*">
-      <Grid Height="6"  Margin="0 0 10 0">
-        <Grid.Background>
-          <ImageBrush Source="resm:AvalonStudio.Resources.grip_pattern.png?assembly=AvalonStudio" TileMode="FlipY" Stretch="Uniform"
-                               AlignmentY="Center" SourceRect="0,0,4,3000" DestinationRect="0,0,4,3000" />
-        </Grid.Background>
-      </Grid>
-      <Panel HorizontalAlignment="Left">
-        <TextBlock Text="Console" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0"/>
-      </Panel>
-
-      <te:TextEditor Grid.Row="1" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}" FontFamily="Consolas" FontSize="12" TextDocument="{Binding Document}" CaretIndex="{Binding CaretIndex}" BackgroundRenderers="{Binding BackgroundRenderers}" />
-    </Grid>
-  </Border>
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility" xmlns:te="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor">
+  <cont:ToolControl Title="Console">
+    <te:TextEditor Grid.Row="1" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}" FontFamily="Consolas" FontSize="12" TextDocument="{Binding Document}" CaretIndex="{Binding CaretIndex}" BackgroundRenderers="{Binding BackgroundRenderers}" />
+  </cont:ToolControl>
 </UserControl>
