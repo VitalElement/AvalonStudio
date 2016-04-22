@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Controls
 {
+    using Extensibility.Controls;
     using Perspex;
     using Perspex.Controls;
 
