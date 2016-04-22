@@ -55,6 +55,11 @@
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
 
+                if(ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
+                {
+                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
+                }
+
                 ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);
                 ShellViewModel.Instance.InvalidateErrors();                
 
