@@ -11,7 +11,7 @@
             StartDebugCommand = ReactiveCommand.Create();
             StartDebugCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.StartDebugSession();
+                ShellViewModel.Instance.Debug();
             });
 
             StepIntoCommand = ReactiveCommand.Create();
