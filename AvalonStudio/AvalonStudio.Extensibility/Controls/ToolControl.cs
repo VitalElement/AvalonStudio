@@ -1,17 +1,23 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using Perspex.Controls.Presenters;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using Extensibility.Controls;
+    using Perspex;
+    using Perspex.Controls;
 
-    class ToolControl : ContentPresenter
+    public class ToolControl : ContentControl
     {
         public ToolControl()
-        {
+        {            
             Styles.Add(new ControlTheme());
+        }
+
+        public static readonly PerspexProperty<string> TitleProprty =
+            PerspexProperty.Register<ToolControl, string>(nameof(Title));
+
+        public string Title
+        {
+            get { return GetValue(TitleProprty); }
+            set { SetValue(TitleProprty, value); }
         }
     }
 }
