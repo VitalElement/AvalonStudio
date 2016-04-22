@@ -82,7 +82,7 @@
                 WeakSubscriptionManager.Subscribe(DocumentLineTransformers, nameof(DocumentLineTransformers.CollectionChanged), documentLineTransformersChangedSubscriber);
             }));
 
-            
+
             disposables.Add(FontSizeProperty.Changed.Subscribe((o) =>
             {
                 GenerateTextProperties();
@@ -115,7 +115,7 @@
             Content = null;
         }
 
-        
+
         public TextView()
         {
             disposables = new CompositeDisposable();
@@ -158,7 +158,7 @@
             //});
 
             _caretTimer = new DispatcherTimer();
-            _caretTimer.Interval = TimeSpan.FromMilliseconds(500);            
+            _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
 
             VisualLines = new List<VisualLine>();
         }
@@ -502,7 +502,7 @@
             {
                 //if (invalidateVisualLines)
                 {
-                    GenerateVisualLines(context);                
+                    GenerateVisualLines(context);
                 }
 
                 // Render background layer.
@@ -792,9 +792,9 @@
                 var column = Math.Ceiling((point.X / CharSize.Width) + 0.5);
                 var line = (int)Math.Ceiling(point.Y / CharSize.Height);
 
-                if (line > 0 && column > 0 && line-1 < VisualLines.Count)
+                if (line > 0 && column > 0 && line - 1 < VisualLines.Count)
                 {
-                    if (line < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted && VisualLines[line - 1].DocumentLine.LineNumber < TextDocument.LineCount)
+                    if (line-1 < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted && VisualLines[line - 1].DocumentLine.LineNumber - 1 < TextDocument.LineCount)
                     {
                         result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
                     }
