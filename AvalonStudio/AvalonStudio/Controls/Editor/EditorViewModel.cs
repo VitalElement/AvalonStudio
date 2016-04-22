@@ -45,8 +45,8 @@
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
 
-                ShellViewModel.Instance.Documents.Remove(this);
-                ShellViewModel.Instance.SelectedDocument = null;
+                ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);
+                ShellViewModel.Instance.DocumentTabs.SelectedDocument = null;
                 ShellViewModel.Instance.InvalidateErrors();                
 
                 Model.Dispose();
