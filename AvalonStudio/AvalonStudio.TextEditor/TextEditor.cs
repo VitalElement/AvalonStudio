@@ -728,23 +728,26 @@
 
         protected override void OnPointerMoved(PointerEventArgs e)
         {
-            var point = e.GetPosition(textView.TextSurface);
-
-            var currentMouseOffset = textView.GetOffsetFromPoint(point);
-
-            if (currentMouseOffset != -1)
+            if (textView != null)   // Need to check this incase control was virtualized?
             {
-                if (e.Device.Captured == textView)
-                {
-                    CaretIndex = currentMouseOffset;
+                var point = e.GetPosition(textView.TextSurface);
 
-                    if (CaretIndex >= 0)
+                var currentMouseOffset = textView.GetOffsetFromPoint(point);
+
+                if (currentMouseOffset != -1)
+                {
+                    if (e.Device.Captured == textView)
                     {
-                        SelectionEnd = CaretIndex;
-                    }
-                    else
-                    {
-                        SelectionEnd = 0;
+                        CaretIndex = currentMouseOffset;
+
+                        if (CaretIndex >= 0)
+                        {
+                            SelectionEnd = CaretIndex;
+                        }
+                        else
+                        {
+                            SelectionEnd = 0;
+                        }
                     }
                 }
             }
