@@ -28,18 +28,18 @@
         Debug
     }
 
+    [Export(typeof(IShell))]
     [Export(typeof(ShellViewModel))]
     public class ShellViewModel : ViewModel<Shell>, IShell
     {
         public static ShellViewModel Instance = null;
 
         [ImportingConstructor]
-        public ShellViewModel([Import] Shell workspace) : base(workspace)
+        public ShellViewModel([Import] Shell workspace, [ImportMany] IEnumerable<ToolViewModel> importedTools) : base(workspace)
         {
             CurrentPerspective = Perspective.Editor;
 
             MainMenu = new MainMenuViewModel();
-            SolutionExplorer = new SolutionExplorerViewModel();
             Console = new ConsoleViewModel();
             ErrorList = new ErrorListViewModel();
             ToolBar = new ToolBarViewModel();
@@ -49,8 +49,13 @@
             DebugManager = new DebugManager();
 
             Tools = new ObservableCollection<object>();
-            tools.Add(Console);
-            tools.Add(ErrorList);
+            //tools.Add(Console);
+            //tools.Add(ErrorList);
+            foreach(var tool in importedTools)
+            {
+                tool.Shell = this;
+                Tools.Add(tool);
+            }
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -416,10 +421,21 @@
         }
 
         private ISolution currentSolution;
+
+        public event EventHandler SolutionChanged;
+
         public ISolution CurrentSolution
         {
             get { return currentSolution; }
-            set { this.RaiseAndSetIfChanged(ref currentSolution, value); }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref currentSolution, value);
+
+                if(SolutionChanged != null)
+                {
+                    SolutionChanged(this, new EventArgs());
+                }
+            }
         }
 
 

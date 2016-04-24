@@ -6,6 +6,7 @@
     using ReactiveUI;
     using ViewModels;
     using Extensibility.MVVM;
+    using Extensibility;
 
     public class SolutionExplorerMetaData : IToolMetaData
     {
@@ -13,7 +14,7 @@
         {
             get
             {
-               return ()=> new SolutionExplorerView();
+                return () => new SolutionExplorerView();
             }
         }
 
@@ -30,7 +31,6 @@
     {
         public SolutionExplorerView()
         {
-            
             this.InitializeComponent();
         }
 
