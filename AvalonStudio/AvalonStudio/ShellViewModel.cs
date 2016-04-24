@@ -21,6 +21,7 @@
     using Utils;
     using Perspex.Threading;
     using Documents;
+    using Controls.Standard.ViewModels;
     public enum Perspective
     {
         Editor,
@@ -38,7 +39,7 @@
             CurrentPerspective = Perspective.Editor;
 
             MainMenu = new MainMenuViewModel();
-            //SolutionExplorer = new SolutionExplorerViewModel();
+            SolutionExplorer = new SolutionExplorerViewModel();
             Console = new ConsoleViewModel();
             ErrorList = new ErrorListViewModel();
             ToolBar = new ToolBarViewModel();
@@ -359,6 +360,8 @@
             set { this.RaiseAndSetIfChanged(ref selectedTool, value); }
         }
         
+        public SolutionExplorerViewModel SolutionExplorer { get; private set; }
+
         public IConsole Console { get; private set; }
 
         public ErrorListViewModel ErrorList { get; private set; }

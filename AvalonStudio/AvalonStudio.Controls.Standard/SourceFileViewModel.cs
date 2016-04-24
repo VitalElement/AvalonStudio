@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.ViewModels
+﻿namespace AvalonStudio.Controls.Standard.ViewModels
 {
     using Projects;
     using ReactiveUI;

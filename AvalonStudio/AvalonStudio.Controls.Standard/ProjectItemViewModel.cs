@@ -1,5 +1,5 @@
 ﻿
-namespace AvalonStudio.Controls.ViewModels
+namespace AvalonStudio.Controls.Standard.ViewModels
 {
     using AvalonStudio.MVVM;
     using Perspex.Controls;

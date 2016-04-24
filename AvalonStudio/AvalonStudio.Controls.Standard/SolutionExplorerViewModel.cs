@@ -1,13 +1,16 @@
-﻿namespace AvalonStudio.Controls.ViewModels
+﻿namespace AvalonStudio.Controls.Standard.ViewModels
 {
     using AvalonStudio.MVVM;
     using Extensibility;
+    using Extensibility.MVVM;
     using Projects;
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
+    using System.ComponentModel.Composition;
     using System.Linq;
 
+    [Export]
     public class SolutionExplorerViewModel : ToolViewModel
     {
         private IShell shell;

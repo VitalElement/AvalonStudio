@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/perspex"
              xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
-             xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio">
+             xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.Standard.ViewModels;assembly=AvalonStudio.Controls.Standard">
   <Controls:ToolControl Title="Solution Explorer">
     <TreeView BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}" Items="{Binding Solution}" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
       <TreeView.Styles>
