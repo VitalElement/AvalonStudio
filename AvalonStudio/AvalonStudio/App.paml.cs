@@ -2,11 +2,17 @@
 {
     using AvalonStudio.Extensibility;
     using AvalonStudio.Repositories;
+    using Controls;
+    using Controls.Standard;
+    using Controls.Standard.ViewModels;
+    using Controls.ViewModels;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Diagnostics;
     using Perspex.Logging.Serilog;
+    using ReactiveUI;
     using Serilog;
+    using Splat;
     using System;
 
     class App : Application
@@ -32,6 +38,8 @@
 
             Shell.Instance = container.GetExportedValue<Shell>();
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
+
+            var view = ViewLocator.Current.ResolveView(new SolutionExplorerViewModel());
 
             app.RunWithMainWindow<MainWindow>();
 

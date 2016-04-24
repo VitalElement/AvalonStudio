@@ -34,6 +34,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.Core.3.0.0\lib\net45\Caliburn.Micro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform.Core, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\Caliburn.Micro.Platform.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Perspex.Animation, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Animation.dll</HintPath>
       <Private>True</Private>
@@ -122,6 +134,10 @@
       <HintPath>..\packages\Perspex.Xaml.Behaviors.9999.0.114-nightly\lib\portable-windows8+net45\Perspex.Xaml.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Prism, Version=6.1.0.0, Culture=neutral, PublicKeyToken=91a96d2a154366d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Core.6.1.0\lib\net45\Prism.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.1.5.14\lib\net45\Serilog.dll</HintPath>
       <Private>True</Private>
@@ -151,6 +167,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -177,6 +197,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppBootstrapper.cs" />
     <Compile Include="Behaviors\CodeInformationToolTipBehavior.cs" />
     <Compile Include="Behaviors\DebugInformationToolTipBehaviour.cs" />
     <Compile Include="Behaviors\PopupBehavior.cs" />
@@ -195,6 +216,7 @@
     <Compile Include="Controls\NewItemDialog.paml.cs">
       <DependentUpon>NewItemDialog.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ViewModelViewHost.cs" />
     <Compile Include="Controls\WatchViewModel.cs" />
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\CallStack.paml.cs">
@@ -349,6 +371,10 @@
     <EmbeddedResource Include="Controls\VariableControl.paml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj">
+      <Project>{0b7c8f41-0122-40e8-9701-efcb89c32cc9}</Project>
+      <Name>AvalonStudio.Controls.Standard</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">
       <Project>{eb735b57-518a-4dc5-8dff-ca6d5db604d2}</Project>
       <Name>AvalonStudio.Debugging.GDB.JLink</Name>

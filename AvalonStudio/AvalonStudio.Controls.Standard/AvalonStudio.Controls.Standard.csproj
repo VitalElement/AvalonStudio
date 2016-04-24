@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AvalonStudio.Controls.Standard</RootNamespace>
     <AssemblyName>AvalonStudio.Controls.Standard</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -111,6 +112,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
@@ -137,42 +139,42 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ProjectFolderViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="ProjectItemViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="ProjectViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceFolderViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="ReferenceViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="SolutionExplorerView.paml.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="SolutionExplorerViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="SolutionFolderViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="SolutionViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="SourceFileViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="StandardProjectViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
+      <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SolutionExplorer.paml">
+    <EmbeddedResource Include="SolutionExplorerView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
@@ -186,6 +188,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\$(TargetFileName)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

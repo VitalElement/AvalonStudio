@@ -109,6 +109,8 @@
             </Carousel>
           </DockPanel>
         </Grid>
+      
+          
       </DockPanel>
     </Grid>
 
@@ -116,8 +118,8 @@
       <DockPanel>
         <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Bottom">
           <Controls:WatchList DataContext="{Binding DebugManager.WatchList}" Height="400" />
-        </Grid>
-        <Controls:SolutionExplorer DataContext="{Binding SolutionExplorer}"  />
+        </Grid>   
+		<Controls:ViewModelViewHost DataContext="{Binding SolutionExplorer}" />  
       </DockPanel>
     </Grid>    
   </Grid>
