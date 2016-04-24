@@ -44,7 +44,15 @@
 
                 Locator.CurrentMutable.Register(tool.Factory, viewType);
             }
-        }        
+        }       
+        
+        public IShell MainShell
+        {
+            get
+            {
+                return (IShell)Locator.Current.GetService(typeof(IShell));
+            }
+        } 
 
         public IEnumerable<IProject> ProjectTypes
         {

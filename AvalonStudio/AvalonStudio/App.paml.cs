@@ -39,7 +39,8 @@
             Shell.Instance = container.GetExportedValue<Shell>();
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
 
-            var view = ViewLocator.Current.ResolveView(new SolutionExplorerViewModel());
+            Locator.CurrentMutable.RegisterLazySingleton(() => ShellViewModel.Instance, typeof(IShell));
+            
 
             app.RunWithMainWindow<MainWindow>();
 

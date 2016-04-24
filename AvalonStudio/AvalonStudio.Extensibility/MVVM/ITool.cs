@@ -18,7 +18,7 @@ namespace AvalonStudio.Extensibility.MVVM
     [InheritedExport(typeof(ITool))]
     public interface ITool : IViewFor
     {
-
+        
     }
 
     [InheritedExport(typeof(IToolMetaData))]

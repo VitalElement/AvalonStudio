@@ -7,26 +7,22 @@
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
-    using System.ComponentModel.Composition;
     using System.Linq;
 
-    [Export]
     public class SolutionExplorerViewModel : ToolViewModel
     {
-        private IShell shell;
-
-        public SolutionExplorerViewModel ()
-        {                                    
-                        
-        }                           
+        public SolutionExplorerViewModel()
+        {
+            solution = new ObservableCollection<SolutionViewModel>();            
+        }
 
         new private ISolution model = null;
         public ISolution Model
         {
             get { return model; }
             set
-            {                
-                Projects = new ObservableCollection<ProjectItemViewModel> ();
+            {
+                Projects = new ObservableCollection<ProjectItemViewModel>();
                 model = value;
 
                 if (this.Model != null)
@@ -46,8 +42,8 @@
 
                 Solution = sol;
 
-                this.RaisePropertyChanged ();
-                this.RaisePropertyChanged (nameof(Projects));                
+                this.RaisePropertyChanged();
+                this.RaisePropertyChanged(nameof(Projects));
             }
         }
 
@@ -67,11 +63,11 @@
                 return selectedProject;
             }
 
-            set { selectedProject = value; this.RaisePropertyChanged (); }
+            set { selectedProject = value; this.RaisePropertyChanged(); }
         }
-        
+
         private ProjectItemViewModel selectedItem;
-        public ProjectItemViewModel SelectedItem 
+        public ProjectItemViewModel SelectedItem
         {
             get { return selectedItem; }
             set
@@ -81,13 +77,32 @@
                 if (value is SourceFileViewModel)
                 {
                     // might need wait here?
-                    shell.OpenDocument(((ISourceFile)(value as SourceFileViewModel).Model), 1);
+                    Shell.OpenDocument(((ISourceFile)(value as SourceFileViewModel).Model), 1);
                 }
             }
         }
 
         public ObservableCollection<ProjectItemViewModel> Projects { get; set; }
 
-        public const string ToolId = "CIDSEVM00";        
+        private IShell shell;
+        public override IShell Shell
+        {
+            get
+            {
+                return shell;
+            }
+
+            set
+            {
+                shell = value;
+
+                shell.SolutionChanged += (sender, e) =>
+                {
+                    Solution.Add(new SolutionViewModel(shell.CurrentSolution));
+                };
+            }
+        }
+
+        public const string ToolId = "CIDSEVM00";
     }
 }

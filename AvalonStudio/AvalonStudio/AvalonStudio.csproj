@@ -197,7 +197,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppBootstrapper.cs" />
     <Compile Include="Behaviors\CodeInformationToolTipBehavior.cs" />
     <Compile Include="Behaviors\DebugInformationToolTipBehaviour.cs" />
     <Compile Include="Behaviors\PopupBehavior.cs" />
