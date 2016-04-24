@@ -1,6 +1,7 @@
 ﻿using AvalonStudio.Controls;
 using AvalonStudio.Controls.ViewModels;
 using AvalonStudio.Debugging.GDB.OpenOCD;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Models.Tools.Debuggers.Local;
 using AvalonStudio.MVVM;
@@ -42,7 +43,7 @@ namespace AvalonStudio.Debugging
                     case Perspective.Editor:
                         if (o == null)
                         {
-                            o = ShellViewModel.Instance.SolutionExplorer.Model.StartupProject;
+                            o = ShellViewModel.Instance.CurrentSolution.StartupProject;
                         }
 
                         if (o is IProject)
@@ -165,13 +166,13 @@ namespace AvalonStudio.Debugging
 
         private bool IsExecuting = false;
         private bool IsUpdating = false;
-        private EditorViewModel lastDocument;
+        private IEditor lastDocument;
 
         private void PrepareToRun()
         {           
             if (lastDocument != null)
             {
-                lastDocument.DebugLineHighlighter.Line = -1;
+                lastDocument.ClearDebugHighlight();
             }
 
             //foreach (var probe in VariableProbes)
@@ -335,7 +336,7 @@ namespace AvalonStudio.Debugging
 
             if (lastDocument != null)
             {
-                lastDocument.DebugLineHighlighter.Line = -1;
+                lastDocument.ClearDebugHighlight();
                 lastDocument = null;
             }
 
@@ -548,11 +549,11 @@ namespace AvalonStudio.Debugging
                         ISourceFile file = null;
 
                         var document = ShellViewModel.Instance.GetDocument(normalizedPath);
-                        file = document?.Model.ProjectFile;
+                        file = document?.ProjectFile;
 
                         if (file == null)
                         {
-                            file = ShellViewModel.Instance.SolutionExplorer.Model.FindFile(SourceFile.FromPath(null, null, normalizedPath));
+                            file = ShellViewModel.Instance.CurrentSolution.FindFile(SourceFile.FromPath(null, null, normalizedPath));
                         }
 
                         if (file != null)

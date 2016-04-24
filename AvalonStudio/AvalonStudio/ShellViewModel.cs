@@ -20,6 +20,7 @@
     using TextEditor;
     using Utils;
     using Perspex.Threading;
+    using Documents;
     public enum Perspective
     {
         Editor,
@@ -27,7 +28,7 @@
     }
 
     [Export(typeof(ShellViewModel))]
-    public class ShellViewModel : ViewModel<Shell>
+    public class ShellViewModel : ViewModel<Shell>, IShell
     {
         public static ShellViewModel Instance = null;
 
@@ -37,7 +38,7 @@
             CurrentPerspective = Perspective.Editor;
 
             MainMenu = new MainMenuViewModel();
-            SolutionExplorer = new SolutionExplorerViewModel();
+            //SolutionExplorer = new SolutionExplorerViewModel();
             Console = new ConsoleViewModel();
             ErrorList = new ErrorListViewModel();
             ToolBar = new ToolBarViewModel();
@@ -59,14 +60,6 @@
             StatusBar.Column = 1;
             StatusBar.PlatformString = Platforms.Platform.PlatformString;
 
-            SolutionExplorer.SelectedItemChanged += async (sender, e) =>
-            {
-                if (e is SourceFileViewModel)
-                {
-                    await OpenDocument(((ISourceFile)(e as SourceFileViewModel).Model), 1);
-                }
-            };
-
             ProcessCancellationToken = new CancellationTokenSource();
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
@@ -74,7 +67,7 @@
             CurrentPerspective = Perspective.Editor;
         }
 
-        public async Task<EditorViewModel> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
+        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
         {
             var currentTab = DocumentTabs.Documents.FirstOrDefault(t => t.Model.ProjectFile.File == file.File);
 
@@ -115,7 +108,7 @@
             return DocumentTabs.SelectedDocument;
         }
 
-        public EditorViewModel GetDocument(string path)
+        public IEditor GetDocument(string path)
         {
             return DocumentTabs.Documents.FirstOrDefault(d => d.Model.ProjectFile.File == path);
         }
@@ -139,13 +132,13 @@
 
             new Thread(new ThreadStart(new Action(async () =>
             {
-                if (SolutionExplorer.Model != null)
+                if (CurrentSolution != null)
                 {
-                    if (SolutionExplorer.Model.StartupProject != null)
+                    if (CurrentSolution.StartupProject != null)
                     {
-                        if (SolutionExplorer.Model.StartupProject.ToolChain != null)
+                        if (CurrentSolution.StartupProject.ToolChain != null)
                         {
-                            await SolutionExplorer.Model.StartupProject.ToolChain.Clean(Console, SolutionExplorer.Model.StartupProject);
+                            await CurrentSolution.StartupProject.ToolChain.Clean(Console, CurrentSolution.StartupProject);
                         }
                         else
                         {
@@ -172,13 +165,13 @@
 
             new Thread(new ThreadStart(new Action(async () =>
             {
-                if (SolutionExplorer.Model != null)
+                if (CurrentSolution != null)
                 {
-                    if (SolutionExplorer.Model.StartupProject != null)
+                    if (CurrentSolution.StartupProject != null)
                     {
-                        if (SolutionExplorer.Model.StartupProject.ToolChain != null)
+                        if (CurrentSolution.StartupProject.ToolChain != null)
                         {
-                            await Task.Factory.StartNew(() => SolutionExplorer.Model.StartupProject.ToolChain.Build(Console, SolutionExplorer.Model.StartupProject));
+                            await Task.Factory.StartNew(() => CurrentSolution.StartupProject.ToolChain.Build(Console, CurrentSolution.StartupProject));
                         }
                         else
                         {
@@ -208,8 +201,14 @@
 
             if (result != null)
             {
-                ShellViewModel.Instance.SolutionExplorer.Model = Solution.Load(result[0]);
+                CurrentSolution = Solution.Load(result[0]);
             }
+        }
+
+        public void ShowProjectPropertiesDialog()
+        {
+            //ModalDialog = new ProjectConfigurationDialogViewModel(CurrentSolution.SelectedProject, () => { });
+            //ModalDialog.ShowDialog();
         }
 
         public void ShowPackagesDialog()
@@ -218,11 +217,7 @@
             ModalDialog.ShowDialog();
         }
 
-        public void ShowProjectPropertiesDialog()
-        {
-            ModalDialog = new ProjectConfigurationDialogViewModel(ShellViewModel.Instance.SolutionExplorer.SelectedProject, () => { });
-            ModalDialog.ShowDialog();
-        }
+       
 
         public void ShowNewProjectDialog()
         {
@@ -239,10 +234,10 @@
         {
             if (CurrentPerspective == Perspective.Editor)
             {
-                if (SolutionExplorer.Model?.StartupProject != null)
+                if (CurrentSolution.StartupProject != null)
                 {
                     Console.Clear();
-                    DebugManager.StartDebug(SolutionExplorer.Model.StartupProject);
+                    DebugManager.StartDebug(CurrentSolution.StartupProject);
                 }
             }
             else
@@ -348,8 +343,6 @@
 
         public ToolBarViewModel ToolBar { get; private set; }
 
-        public SolutionExplorerViewModel SolutionExplorer { get; private set; }
-
         public DocumentTabsViewModel DocumentTabs { get; private set; }
 
         private ObservableCollection<object> tools;
@@ -418,6 +411,14 @@
             get { return hideWhenModalVisibility; }
             set { hideWhenModalVisibility = value; this.RaisePropertyChanged(); }
         }
+
+        private ISolution currentSolution;
+        public ISolution CurrentSolution
+        {
+            get { return currentSolution; }
+            set { this.RaiseAndSetIfChanged(ref currentSolution, value); }
+        }
+
 
         public void Cleanup()
         {
