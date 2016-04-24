@@ -1,14 +1,22 @@
 ﻿namespace AvalonStudio.MVVM
 {
+    using Extensibility;
     using ReactiveUI;
+    using System.ComponentModel.Composition;
 
-    public class ToolViewModel : ToolViewModel<object>
+    [InheritedExport(typeof(ToolViewModel))]
+    public abstract class ToolViewModel : ToolViewModel<object>
     {
-        public ToolViewModel() : base (null)
+        public ToolViewModel() : base(null)
         {
-
+            //var shell = AvalonStudio.Extensibility.Shell.Instance.MainShell;
         }
-    }
+
+        
+        public virtual IShell Shell { get; set; }
+
+    }    
+
 
     public abstract class ToolViewModel<T> :ViewModel<T>
     {

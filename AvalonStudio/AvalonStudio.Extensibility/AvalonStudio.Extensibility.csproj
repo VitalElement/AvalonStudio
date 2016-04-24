@@ -184,7 +184,6 @@
     <Compile Include="Languages\SyntaxHighlightingData.cs" />
     <Compile Include="Languages\UnsavedFile.cs" />
     <Compile Include="Menus\IMenuItem.cs" />
-    <Compile Include="MVVM\ConventionalViewLocator.cs" />
     <Compile Include="MVVM\DataVirtualization\AsyncVirtualizingCollection.cs" />
     <Compile Include="MVVM\DataVirtualization\DataPage.cs" />
     <Compile Include="MVVM\DataVirtualization\DataWrapper.cs" />

@@ -118,8 +118,15 @@
       <DockPanel>
         <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Bottom">
           <Controls:WatchList DataContext="{Binding DebugManager.WatchList}" Height="400" />
-        </Grid>   
-		<Controls:ViewModelViewHost DataContext="{Binding SolutionExplorer}" />  
+        </Grid>
+        <ItemsPresenter Items="{Binding Tools}">
+          <ItemsPresenter.DataTemplates>
+            <DataTemplate>
+              <Controls:ViewModelViewHost />
+            </DataTemplate>
+          </ItemsPresenter.DataTemplates>
+        </ItemsPresenter>
+		
       </DockPanel>
     </Grid>    
   </Grid>
