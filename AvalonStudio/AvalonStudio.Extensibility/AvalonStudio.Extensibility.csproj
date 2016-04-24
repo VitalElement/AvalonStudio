@@ -167,7 +167,9 @@
     <Compile Include="Debugging\Variable.cs" />
     <Compile Include="Debugging\VariableObject.cs" />
     <Compile Include="Debugging\VarUpdateCommand.cs" />
+    <Compile Include="Documents\IEditor.cs" />
     <Compile Include="Git\Git.cs" />
+    <Compile Include="IShell.cs" />
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
     <Compile Include="Languages\CodeCompletionResults.cs" />
@@ -199,6 +201,7 @@
     <Compile Include="Projects\IProjectFolder.cs" />
     <Compile Include="Projects\IProjectItem.cs" />
     <Compile Include="Projects\IProjectTemplate.cs" />
+    <Compile Include="Projects\IReferenceFolder.cs" />
     <Compile Include="Projects\ISolution.cs" />
     <Compile Include="Projects\ISourceFile.cs" />
     <Compile Include="Projects\Solution.cs" />

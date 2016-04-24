@@ -1,13 +1,12 @@
 ﻿namespace AvalonStudio.Controls
 {
+    using Documents;
     using Languages;
     using MVVM;
     using Perspex;
     using Perspex.Controls;
-    using Perspex.Input;
     using Perspex.Threading;
     using Platforms;
-    using Projects;
     using ReactiveUI;
     using System;
     using System.Collections.Generic;
@@ -17,8 +16,9 @@
     using TextEditor.Document;
     using TextEditor.Rendering;
     using ViewModels;
+    using Projects;
 
-    public class EditorViewModel : ViewModel<EditorModel>
+    public class EditorViewModel : ViewModel<EditorModel>, IEditor
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
         private List<IDocumentLineTransformer> languageServiceDocumentLineTransformers = new List<IDocumentLineTransformer>();
@@ -536,6 +536,14 @@
 
         // todo this menu item and command should be injected via debugging module.
         public ReactiveCommand<object> AddWatchCommand { get; }
+
+        public ISourceFile ProjectFile
+        {
+            get
+            {
+                return Model.ProjectFile;
+            }
+        }
         #endregion
 
         #region Public Methods
@@ -544,6 +552,11 @@
             Model.Save();
 
             this.RaisePropertyChanged(nameof(Title));
+        }
+
+        public void ClearDebugHighlight()
+        {
+            DebugLineHighlighter.Line = -1;
         }
         #endregion
     }
