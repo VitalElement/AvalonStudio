@@ -7,6 +7,9 @@
     using Projects;
     using TestFrameworks;
     using AvalonStudio.Languages;
+    using ReactiveUI;
+    using MVVM;
+    using Splat;
 
     [Export(typeof(Shell))]
     public class Shell
@@ -17,13 +20,15 @@
         private readonly IEnumerable<IToolChain> toolChains;
         private readonly IEnumerable<IDebugger> debuggers;
         private readonly IEnumerable<IProject> projectTypes;
-        private readonly IEnumerable<ITestFramework> testFrameworks;        
+        private readonly IEnumerable<ITestFramework> testFrameworks;
+        private readonly IEnumerable<IToolMetaData> tools;
 
         public static Shell Instance = null;
 
         [ImportingConstructor]
-        public Shell([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates)
-        {            
+        public Shell([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IToolMetaData> tools)
+        {
+            this.tools = tools;            
             this.languageServices = languageServices;
             this.projectTemplates = projectTemplates;
             this.toolChains = toolChains;
@@ -31,6 +36,14 @@
             this.projectTypes = projectTypes;
             this.testFrameworks = testFrameworks;
             this.codeTemplates = codeTemplates;
+
+            foreach(var tool in tools)
+            {
+                var viewType = typeof(IViewFor<>);
+                viewType = viewType.MakeGenericType(tool.ViewModelType);
+
+                Locator.CurrentMutable.Register(tool.Factory, viewType);
+            }
         }        
 
         public IEnumerable<IProject> ProjectTypes
