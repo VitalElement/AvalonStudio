@@ -2,8 +2,21 @@
 {
     using ReactiveUI;
 
-    public class ToolViewModel : ViewModel
+    public class ToolViewModel : ToolViewModel<object>
     {
+        public ToolViewModel() : base (null)
+        {
+
+        }
+    }
+
+    public abstract class ToolViewModel<T> :ViewModel<T>
+    {
+        public ToolViewModel(T model) : base (model)
+        {
+
+        }
+
         // TODO This should use ToolControl
         private string title;
         public string Title

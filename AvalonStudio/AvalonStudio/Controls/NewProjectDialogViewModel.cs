@@ -63,7 +63,7 @@
 
                 selectedTemplate.Generate(solution, name);
 
-                ShellViewModel.Instance.SolutionExplorer.Model = solution;
+                ShellViewModel.Instance.CurrentSolution = solution;
                 solution = null;        
 
                 Close();

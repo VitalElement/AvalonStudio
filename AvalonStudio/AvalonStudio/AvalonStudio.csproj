@@ -257,44 +257,11 @@
       <DependentUpon>ProjectConfigurationDialog.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProjectConfigurationDialogViewModel.cs" />
-    <Compile Include="Controls\ProjectFolderViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ProjectItemViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ProjectViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ReferenceFolderViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ReferenceViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Registers.xaml.cs">
       <DependentUpon>Registers.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\RegistersViewModel.cs" />
     <Compile Include="Controls\RegisterViewModel.cs" />
-    <Compile Include="Controls\SolutionExplorerView.paml.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SolutionExplorerViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SolutionFolderViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SolutionViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SourceFileViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\StandardProjectViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\StatusBar.paml.cs">
       <DependentUpon>StatusBar.paml</DependentUpon>
     </Compile>
@@ -348,9 +315,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ModalDialog.paml" />
     <EmbeddedResource Include="Controls\PackageManagerDialog.paml" />
-    <EmbeddedResource Include="Controls\SolutionExplorer.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
     <EmbeddedResource Include="Controls\Intellisense.paml">
