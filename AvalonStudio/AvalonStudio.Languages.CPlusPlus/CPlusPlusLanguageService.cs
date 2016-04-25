@@ -180,11 +180,7 @@
                     args.Add("-std=c++14");
                 }
 
-                // this is a dependency on VEStudioSettings.
-                //if (VEStudioSettings.This.ShowAllWarnings)
-                //{
-                //    args.Add("-Weverything");
-                //}
+                args.Add("-Weverything");
 
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble | TranslationUnitFlags.CacheCompletionResults);
             }

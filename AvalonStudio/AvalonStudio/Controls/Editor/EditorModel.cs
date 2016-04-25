@@ -25,6 +25,7 @@
         private SemaphoreSlim endCompletionRequestSemaphore;
         private ReaderWriterLockSlim completionRequestLock;
         private ISourceFile sourceFile;
+        private IShell shell;
 
 
         private TextEditor textEditor;
@@ -44,6 +45,7 @@
 
         public EditorModel()
         {
+            shell = IoC.Get<IShell>();
             editorLock = new ReaderWriterLockSlim();
             completionRequestLock = new ReaderWriterLockSlim();
 
@@ -114,7 +116,7 @@
 
             try
             {
-                LanguageService = Shell.Instance.LanguageServices.Single((o) => o.CanHandle(sourceFile));
+                LanguageService = shell.LanguageServices.Single((o) => o.CanHandle(sourceFile));
 
                 ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
@@ -163,7 +165,7 @@
 
         public void Save()
         {
-            if (sourceFile != null && TextDocument != null)
+            if (sourceFile != null && TextDocument != null && IsDirty)
             {
                 File.WriteAllText(sourceFile.Location, TextDocument.Text);
                 IsDirty = false;

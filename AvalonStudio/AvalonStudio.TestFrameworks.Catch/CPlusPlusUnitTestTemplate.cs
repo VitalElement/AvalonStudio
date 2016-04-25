@@ -46,6 +46,7 @@
 
         public override async Task<IProject> Generate(ISolution solution, string name)
         {
+            var shell = IoC.Get<IShell>();
             var project = await base.Generate(solution, name);
             string catchProjectDir = Path.Combine(solution.CurrentDirectory, "AvalonStudio.Testing.Catch");
             string catchProjectFile = Path.Combine(catchProjectDir, "CatchTestFramework.acproj");
@@ -64,9 +65,9 @@
             project.AddReference(catchProject);
             
             project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "UnitTest1.cpp", new UnitTestTemplate().TransformText()));
-            project.ToolChain = Shell.Instance.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
-            project.Debugger = Shell.Instance.Debuggers.FirstOrDefault(d => d is LocalDebugAdaptor);
-            project.TestFramework = Shell.Instance.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);
+            project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
+            project.Debugger = shell.Debuggers.FirstOrDefault(d => d is LocalDebugAdaptor);
+            project.TestFramework = shell.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);
             var settings = LocalGCCToolchain.ProvisionLocalGccSettings(project);
 
             settings.CompileSettings.Exceptions = true;

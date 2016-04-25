@@ -53,7 +53,7 @@
             NewProjectCommand = ReactiveCommand.Create();
             NewProjectCommand.Subscribe((o) =>
             {
-                ShellViewModel.Instance.ShowNewProjectDialog();
+               // ShellViewModel.Instance.ShowNewProjectDialog();
             });
 
             ExitCommand = ReactiveCommand.Create();

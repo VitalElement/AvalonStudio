@@ -2,11 +2,16 @@
 {
     using AvalonStudio.Extensibility;
     using AvalonStudio.Repositories;
+    using Controls;
+    using Controls.ViewModels;
+    using MVVM;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Diagnostics;
     using Perspex.Logging.Serilog;
+    using ReactiveUI;
     using Serilog;
+    using Splat;
     using System;
 
     class App : Application
@@ -29,10 +34,14 @@
 
             var container = CompositionRoot.CreateContainer();
             var app = new App();
-
-            Shell.Instance = container.GetExportedValue<Shell>();
+            
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
-
+            
+            foreach(var tool in ShellViewModel.Instance.RightTools)
+            {
+                (tool as ToolViewModel).Activate();
+            }
+            
             app.RunWithMainWindow<MainWindow>();
 
             ShellViewModel.Instance.Cleanup();
