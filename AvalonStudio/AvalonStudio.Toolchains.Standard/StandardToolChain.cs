@@ -536,6 +536,16 @@
 
         public abstract UserControl GetSettingsControl(IProject project);
 
+        public void BeforeActivation()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void Activation()
+        {
+            //throw new NotImplementedException();
+        }
+
         public string Name { get { return GetType().ToString(); } }
 
         public abstract Version Version { get; }

@@ -167,7 +167,11 @@
     <Compile Include="Debugging\Variable.cs" />
     <Compile Include="Debugging\VariableObject.cs" />
     <Compile Include="Debugging\VarUpdateCommand.cs" />
+    <Compile Include="Dialogs\ModalDialogViewModelBase.cs" />
+    <Compile Include="Documents\IEditor.cs" />
     <Compile Include="Git\Git.cs" />
+    <Compile Include="IoC.cs" />
+    <Compile Include="IShell.cs" />
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
     <Compile Include="Languages\CodeCompletionResults.cs" />
@@ -190,6 +194,7 @@
     <Compile Include="MVVM\DataVirtualization\VirtualizingCollection.cs" />
     <Compile Include="MVVM\Extensions.cs" />
     <Compile Include="MVVM\ObservableCollectionExtensions.cs" />
+    <Compile Include="MVVM\ViewLocator.cs" />
     <Compile Include="MVVM\ViewModel.cs" />
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="Platform\Unix\MapAttribute.cs" />
@@ -199,6 +204,7 @@
     <Compile Include="Projects\IProjectFolder.cs" />
     <Compile Include="Projects\IProjectItem.cs" />
     <Compile Include="Projects\IProjectTemplate.cs" />
+    <Compile Include="Projects\IReferenceFolder.cs" />
     <Compile Include="Projects\ISolution.cs" />
     <Compile Include="Projects\ISourceFile.cs" />
     <Compile Include="Projects\Solution.cs" />
@@ -211,6 +217,7 @@
     <Compile Include="Utils\GeneralExtensions.cs" />
     <Compile Include="Utils\IConsole.cs" />
     <Compile Include="Utils\IProjectExtensions.cs" />
+    <Compile Include="Utils\PathSourceFile.cs" />
     <Compile Include="Utils\SerializedObject.cs" />
     <Compile Include="Utils\WeakSubscriber.cs" />
     <Compile Include="Shell.cs" />

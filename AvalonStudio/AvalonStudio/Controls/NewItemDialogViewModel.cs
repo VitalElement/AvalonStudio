@@ -6,14 +6,16 @@
     using ReactiveUI;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using Extensibility.Dialogs;
 
     public class NewItemDialogViewModel : ModalDialogViewModelBase
     {
         public NewItemDialogViewModel(IProjectFolder folder) : base("New Item")
         {
+            var shell = IoC.Get<IShell>();
             templates = new ObservableCollection<ICodeTemplate>();
 
-            var compatibleTemplates = Shell.Instance.CodeTempates.Where(t => t.IsCompatible(folder.Project));
+            var compatibleTemplates = shell.CodeTemplates.Where(t => t.IsCompatible(folder.Project));
 
             foreach(var template in compatibleTemplates)
             {
