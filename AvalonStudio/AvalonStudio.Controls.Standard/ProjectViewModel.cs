@@ -19,7 +19,8 @@
         public ProjectViewModel(SolutionViewModel solutionViewModel, IProject model)
             : base(model)
         {
-            
+            shell = IoC.Get<IShell>();
+
             Items = new ObservableCollection<ProjectItemViewModel>();
 
             Items.BindCollections(model.Items, (p) => { return ProjectItemViewModel.Create(p); }, (pivm, p) => pivm.Model == p);
@@ -27,9 +28,9 @@
             ConfigureCommand = ReactiveCommand.Create();
 
             ConfigureCommand.Subscribe((o) =>
-            {
-                //ShellViewModel.Instance.ModalDialog = new ProjectConfigurationDialogViewModel(model, () => { });
-                //ShellViewModel.Instance.ModalDialog.ShowDialog();
+            {                
+                shell.ModalDialog = new ProjectConfigurationDialogViewModel(model, () => { });
+                shell.ModalDialog.ShowDialog();
             });
 
             DebugCommand = ReactiveCommand.Create();

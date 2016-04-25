@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls.Standard
 {
     using Perspex;
     using Perspex.Controls;
