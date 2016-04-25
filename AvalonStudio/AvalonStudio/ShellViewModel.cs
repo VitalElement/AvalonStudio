@@ -39,7 +39,7 @@
         {
             CurrentPerspective = Perspective.Editor;
 
-            MainMenu = new MainMenuViewModel();            
+            MainMenu = new MainMenuViewModel();
             ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabsViewModel();
@@ -51,11 +51,11 @@
             rightTools = new ObservableCollection<object>();
             bottomTools = new ObservableCollection<object>();
 
-            foreach(var tool in importedTools)
+            foreach (var tool in importedTools)
             {
                 tools.Add(tool);
 
-                switch(tool.DefaultLocation)
+                switch (tool.DefaultLocation)
                 {
                     case Location.Bottom:
                         bottomTools.Add(tool);
@@ -70,14 +70,14 @@
                         rightTools.Add(tool);
                         RightSelectedTool = tool;
                         break;
-                } 
-                
-                if(tool is ErrorListViewModel)
+                }
+
+                if (tool is ErrorListViewModel)
                 {
                     ErrorList = tool as ErrorListViewModel;
-                }               
+                }
 
-                if(tool is ConsoleViewModel)
+                if (tool is ConsoleViewModel)
                 {
                     Console = tool as ConsoleViewModel;
                 }
@@ -112,8 +112,8 @@
 
                 DocumentTabs.Documents.Add(newEditor);
                 DocumentTabs.TemporaryDocument = newEditor;
-                DocumentTabs.SelectedDocument = newEditor;                
-                newEditor.Model.OpenFile(file, newEditor.Intellisense);                
+                DocumentTabs.SelectedDocument = newEditor;
+                newEditor.Model.OpenFile(file, newEditor.Intellisense);
             }
             else
             {
@@ -155,36 +155,58 @@
 
         public void Clean()
         {
+            var project = GetDefaultProject();
+
+            if(project != null)
+            {
+                Clean(project);
+            }
+        }
+
+        public void Build()
+        {
+            var project = GetDefaultProject();
+
+            if (project != null)
+            {
+                Build(project);
+            }
+        }
+
+        public void Debug()
+        {
+            var project = GetDefaultProject();
+
+            if (project != null)
+            {
+                Debug(project);
+            }
+        }
+
+        public void Debug(IProject project)
+        {
+            if (CurrentPerspective == Perspective.Editor)
+            {
+                Console.Clear();
+                DebugManager.StartDebug(project);
+            }
+            else
+            {
+                DebugManager.Continue();
+            }
+        }
+
+        public void Clean(IProject project)
+        {
             Console.Clear();
 
             new Thread(new ThreadStart(new Action(async () =>
             {
-                if (CurrentSolution != null)
-                {
-                    if (CurrentSolution.StartupProject != null)
-                    {
-                        if (CurrentSolution.StartupProject.ToolChain != null)
-                        {
-                            await CurrentSolution.StartupProject.ToolChain.Clean(Console, CurrentSolution.StartupProject);
-                        }
-                        else
-                        {
-                            Console.WriteLine("No toolchain selected for project.");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("No Startup Project defined.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No project loaded.");
-                }
+                await project.ToolChain.Clean(Console, project);
             }))).Start();
-        }        
+        }
 
-        public void Build()
+        public void Build(IProject project)
         {
             SaveAll();
 
@@ -192,28 +214,7 @@
 
             new Thread(new ThreadStart(new Action(async () =>
             {
-                if (CurrentSolution != null)
-                {
-                    if (CurrentSolution.StartupProject != null)
-                    {
-                        if (CurrentSolution.StartupProject.ToolChain != null)
-                        {
-                            await Task.Factory.StartNew(() => CurrentSolution.StartupProject.ToolChain.Build(Console, CurrentSolution.StartupProject));
-                        }
-                        else
-                        {
-                            Console.WriteLine("No toolchain selected for project.");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("No Startup Project defined.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No project loaded.");
-                }
+                await Task.Factory.StartNew(() => project.ToolChain.Build(Console, project));
             }))).Start();
         }
 
@@ -247,23 +248,7 @@
         public void ExitApplication()
         {
             Environment.Exit(1);
-        }
-
-        public void Debug()
-        {
-            if (CurrentPerspective == Perspective.Editor)
-            {
-                if (CurrentSolution.StartupProject != null)
-                {
-                    Console.Clear();
-                    DebugManager.StartDebug(CurrentSolution.StartupProject);
-                }
-            }
-            else
-            {
-                DebugManager.Continue();
-            }
-        }
+        }        
 
         public void OnKeyDown(KeyEventArgs e)
         {
@@ -282,7 +267,10 @@
                     break;
 
                 case Key.F5:
-                    Debug();
+                    if (CurrentSolution?.StartupProject != null)
+                    {
+                        Debug(CurrentSolution.StartupProject);
+                    }
                     break;
 
                 case Key.F6:
@@ -391,7 +379,7 @@
             get { return tools; }
             set { this.RaiseAndSetIfChanged(ref tools, value); }
         }
-        
+
         private object rightSelectedTool;
         public object RightSelectedTool
         {
@@ -474,7 +462,7 @@
             {
                 this.RaiseAndSetIfChanged(ref currentSolution, value);
 
-                if(SolutionChanged != null)
+                if (SolutionChanged != null)
                 {
                     SolutionChanged(this, new EventArgs());
                 }
@@ -488,6 +476,29 @@
             {
                 document.Model.ShutdownBackgroundWorkers();
             }
+        }
+
+        public IProject GetDefaultProject()
+        {
+            IProject result = null;
+
+            if (CurrentSolution != null)
+            {
+                if(CurrentSolution.StartupProject != null)
+                {
+                    result = CurrentSolution.StartupProject;
+                }
+                else
+                {
+                    Console.WriteLine("No Default project is set in the solution.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No Solution is loaded.");
+            }
+
+            return result;
         }
     }
 }
