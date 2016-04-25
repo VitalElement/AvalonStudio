@@ -169,6 +169,7 @@
     <Compile Include="Debugging\VarUpdateCommand.cs" />
     <Compile Include="Documents\IEditor.cs" />
     <Compile Include="Git\Git.cs" />
+    <Compile Include="IoC.cs" />
     <Compile Include="IShell.cs" />
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
