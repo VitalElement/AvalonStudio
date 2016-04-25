@@ -14,11 +14,12 @@
     public interface IShell
     {
         event EventHandler SolutionChanged;
-        ISolution CurrentSolution { get; }
+        ISolution CurrentSolution { get; set; }
 
         Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
         ObservableCollection<object> Tools { get; }
         ModalDialogViewModelBase ModalDialog { get; set; }
+        Shell Model { get; }
 
         void InvalidateCodeAnalysis();
         void Debug();
