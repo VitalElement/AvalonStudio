@@ -1,11 +1,10 @@
-﻿namespace AvalonStudio.Controls.Standard.ViewModels
+﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    using System;
+    using MVVM;
     using Projects;
     using ReactiveUI;
-    using System.Collections.Generic;
+    using System;
     using System.Collections.ObjectModel;
-    using MVVM;
 
     class ProjectFolderViewModel : ProjectItemViewModel<IProjectFolder>
     {

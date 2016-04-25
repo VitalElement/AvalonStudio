@@ -41,8 +41,7 @@
             {
                 (tool as ToolViewModel).Activate();
             }
-
-
+            
             app.RunWithMainWindow<MainWindow>();
 
             ShellViewModel.Instance.Cleanup();

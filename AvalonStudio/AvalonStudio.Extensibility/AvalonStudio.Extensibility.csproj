@@ -193,8 +193,8 @@
     <Compile Include="MVVM\DataVirtualization\IItemsProvider.cs" />
     <Compile Include="MVVM\DataVirtualization\VirtualizingCollection.cs" />
     <Compile Include="MVVM\Extensions.cs" />
-    <Compile Include="MVVM\ITool.cs" />
     <Compile Include="MVVM\ObservableCollectionExtensions.cs" />
+    <Compile Include="MVVM\ViewLocator.cs" />
     <Compile Include="MVVM\ViewModel.cs" />
     <Compile Include="Platform\Platform.cs" />
     <Compile Include="Platform\Unix\MapAttribute.cs" />

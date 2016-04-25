@@ -24,11 +24,11 @@
     using Extensibility.Dialogs;
     using Languages;
     using Toolchains;
-    using TestFrameworks;
-    using Extensibility.MVVM;
+    using TestFrameworks;    
     using Extensibility.Plugin;
     using Splat;
     using Controls.Standard.ErrorList;
+
     public enum Perspective
     {
         Editor,
@@ -47,8 +47,7 @@
         private readonly IEnumerable<IToolChain> toolChains;
         private readonly IEnumerable<IDebugger> debuggers;
         private readonly IEnumerable<IProject> projectTypes;
-        private readonly IEnumerable<ITestFramework> testFrameworks;
-        private readonly IEnumerable<IToolMetaData> toolMetaDatas;
+        private readonly IEnumerable<ITestFramework> testFrameworks;        
         private readonly IEnumerable<IPlugin> plugins;
 
         public IEnumerable<IProject> ProjectTypes
@@ -109,9 +108,8 @@
 
         [ImportingConstructor]
         public ShellViewModel([ImportMany] IEnumerable<ToolViewModel> importedTools,
-            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IToolMetaData> toolMetaDatas, [ImportMany] IEnumerable<IPlugin> plugins)
-        {
-            this.toolMetaDatas = toolMetaDatas;
+            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IPlugin> plugins)
+        {            
             this.languageServices = languageServices;
             this.projectTemplates = projectTemplates;
             this.toolChains = toolChains;
@@ -120,14 +118,7 @@
             this.testFrameworks = testFrameworks;
             this.codeTemplates = codeTemplates;
 
-            IoC.RegisterConstant(this, typeof(IShell));
-            foreach (var tool in toolMetaDatas)
-            {
-                var viewType = typeof(IViewFor<>);
-                viewType = viewType.MakeGenericType(tool.ViewModelType);
-
-                Locator.CurrentMutable.Register(tool.Factory, viewType);
-            }
+            IoC.RegisterConstant(this, typeof(IShell));            
 
             foreach (var plugin in plugins)
             {

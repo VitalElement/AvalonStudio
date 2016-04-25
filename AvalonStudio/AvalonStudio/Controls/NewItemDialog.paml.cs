@@ -3,9 +3,9 @@
     using Perspex;
     using Perspex.Controls;
 
-    public class NewItemDialog : UserControl
+    public class NewItemDialogView : UserControl
     {
-        public NewItemDialog()
+        public NewItemDialogView()
         {
             this.InitializeComponent();
         }
