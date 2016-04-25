@@ -24,8 +24,8 @@
             <DataTemplate DataType="extVM:ProjectConfigurationDialogViewModel">
               <extcont:ProjectConfigurationDialog />
             </DataTemplate>
-            <DataTemplate DataType="ViewModels:NewProjectDialogViewModel">
-              <cont:NewProjectDialog />
+            <DataTemplate DataType="extVM:NewProjectDialogViewModel">
+              <extcont:NewProjectDialog />
             </DataTemplate>
             <DataTemplate DataType="ViewModels:NewItemDialogViewModel">
               <cont:NewItemDialog />
