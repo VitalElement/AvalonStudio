@@ -34,6 +34,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.Core.3.0.0\lib\net45\Caliburn.Micro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform.Core, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\Caliburn.Micro.Platform.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Perspex.Animation, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Perspex.9999.0.1451-nightly\lib\portable-windows8+net45\Perspex.Animation.dll</HintPath>
       <Private>True</Private>
@@ -122,6 +134,10 @@
       <HintPath>..\packages\Perspex.Xaml.Behaviors.9999.0.114-nightly\lib\portable-windows8+net45\Perspex.Xaml.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Prism, Version=6.1.0.0, Culture=neutral, PublicKeyToken=91a96d2a154366d8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Core.6.1.0\lib\net45\Prism.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.1.5.14\lib\net45\Serilog.dll</HintPath>
       <Private>True</Private>
@@ -151,6 +167,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -193,36 +213,26 @@
     </Compile>
     <Compile Include="Controls\DocumentTabsViewModel.cs" />
     <Compile Include="Controls\NewItemDialog.paml.cs">
-      <DependentUpon>NewItemDialog.paml</DependentUpon>
+      <DependentUpon>NewItemDialogView.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ViewModelViewHost.cs" />
     <Compile Include="Controls\WatchViewModel.cs" />
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\CallStack.paml.cs">
       <DependentUpon>CallStack.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CallStackViewModel.cs" />
-    <Compile Include="Controls\Console.paml.cs">
-      <DependentUpon>Console.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ConsoleViewModel.cs">
-      <DependentUpon>Console.paml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Disassembly.paml.cs">
       <DependentUpon>Disassembly.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DisassemblyDataProvider.cs" />
     <Compile Include="Controls\DisassemblyViewModel.cs" />
     <Compile Include="Controls\Editor\SymbolViewModel.cs" />
-    <Compile Include="Controls\ErrorViewModel.cs" />
     <Compile Include="Controls\Editor.paml.cs">
       <DependentUpon>Editor.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Editor\EditorModel.cs" />
     <Compile Include="Controls\Editor\EditorViewModel.cs" />
-    <Compile Include="Controls\ErrorList.paml.cs">
-      <DependentUpon>ErrorList.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ErrorListViewModel.cs" />
     <Compile Include="Controls\FrameViewModel.cs" />
     <Compile Include="Controls\Intellisense.paml.cs">
       <DependentUpon>Intellisense.paml</DependentUpon>
@@ -241,60 +251,16 @@
     <Compile Include="Controls\ModalDialog.paml.cs">
       <DependentUpon>ModalDialog.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Dialogs\PackageManagerDialogViewModel.cs" />
-    <Compile Include="Controls\ModalDialogViewModelBase.cs">
-      <DependentUpon>ModalDialog.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\NewProjectDialog.paml.cs">
-      <DependentUpon>NewProjectDialog.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\NewProjectDialogViewModel.cs" />
+    <Compile Include="Controls\PackageManagerDialogViewModel.cs" />
     <Compile Include="Controls\PackageManagerDialog.paml.cs">
-      <DependentUpon>PackageManagerDialog.paml</DependentUpon>
+      <DependentUpon>PackageManagerDialogView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ParameterSymbolViewModel.cs" />
-    <Compile Include="Controls\ProjectConfigurationDialog.paml.cs">
-      <DependentUpon>ProjectConfigurationDialog.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ProjectConfigurationDialogViewModel.cs" />
-    <Compile Include="Controls\ProjectFolderViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ProjectItemViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ProjectViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ReferenceFolderViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ReferenceViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Registers.xaml.cs">
       <DependentUpon>Registers.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\RegistersViewModel.cs" />
     <Compile Include="Controls\RegisterViewModel.cs" />
-    <Compile Include="Controls\SolutionExplorerView.paml.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SolutionExplorerViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SolutionFolderViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SolutionViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SourceFileViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\StandardProjectViewModel.cs">
-      <DependentUpon>SolutionExplorer.paml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\StatusBar.paml.cs">
       <DependentUpon>StatusBar.paml</DependentUpon>
     </Compile>
@@ -337,9 +303,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\Console.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Editor.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -347,10 +310,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ModalDialog.paml" />
-    <EmbeddedResource Include="Controls\PackageManagerDialog.paml" />
-    <EmbeddedResource Include="Controls\SolutionExplorer.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
     <EmbeddedResource Include="Controls\Intellisense.paml">
@@ -361,20 +321,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
     <None Include="app.config" />
-    <EmbeddedResource Include="Controls\ErrorList.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ProjectConfigurationDialog.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\NewProjectDialog.paml" />
     <EmbeddedResource Include="App.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CallStack.paml" />
     <EmbeddedResource Include="Controls\Locals.paml" />
     <EmbeddedResource Include="Controls\Disassembly.paml" />
-    <EmbeddedResource Include="Controls\NewItemDialog.paml" />
+    <EmbeddedResource Include="Controls\NewItemDialogView.paml" />
     <EmbeddedResource Include="Controls\DebugHoverProbe.paml" />
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
     <None Include="libgit2-821131f.so">
@@ -385,6 +338,10 @@
     <EmbeddedResource Include="Controls\VariableControl.paml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj">
+      <Project>{0b7c8f41-0122-40e8-9701-efcb89c32cc9}</Project>
+      <Name>AvalonStudio.Controls.Standard</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">
       <Project>{eb735b57-518a-4dc5-8dff-ca6d5db604d2}</Project>
       <Name>AvalonStudio.Debugging.GDB.JLink</Name>

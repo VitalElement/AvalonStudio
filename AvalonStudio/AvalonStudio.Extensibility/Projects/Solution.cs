@@ -14,14 +14,15 @@
     public class Solution : SerializedObject<Solution>, ISolution
     {
         public const string Extension = "asln";
-
+        
         public static IProject LoadProjectFile (ISolution solution, string fileName)
         {
+            IShell shell = IoC.Get<IShell>();
             IProject result = null;
 
             var extension = Path.GetExtension(fileName).Remove(0, 1);
 
-            var projectType = Shell.Instance.ProjectTypes.FirstOrDefault((p) => p.Extension == extension);
+            var projectType = shell.ProjectTypes.FirstOrDefault((p) => p.Extension == extension);
 
             if (projectType != null)
             {
@@ -42,11 +43,12 @@
 
         private static IProject LoadProject (ISolution solution, string reference)
         {
+            IShell shell = IoC.Get<IShell>();
             IProject result = null;
 
             var extension = Path.GetExtension(reference).Remove(0,1);
 
-            var projectType = Shell.Instance.ProjectTypes.FirstOrDefault((p) => p.Extension == extension);
+            var projectType = shell.ProjectTypes.FirstOrDefault((p) => p.Extension == extension);
             var projectFilePath = Path.Combine(solution.CurrentDirectory, reference).ToPlatformPath();
 
             if (projectType != null && File.Exists(projectFilePath))
