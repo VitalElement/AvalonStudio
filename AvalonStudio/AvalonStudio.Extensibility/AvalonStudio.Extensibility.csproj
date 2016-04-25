@@ -167,6 +167,7 @@
     <Compile Include="Debugging\Variable.cs" />
     <Compile Include="Debugging\VariableObject.cs" />
     <Compile Include="Debugging\VarUpdateCommand.cs" />
+    <Compile Include="Dialogs\ModalDialogViewModelBase.cs" />
     <Compile Include="Documents\IEditor.cs" />
     <Compile Include="Git\Git.cs" />
     <Compile Include="IoC.cs" />

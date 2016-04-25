@@ -9,6 +9,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Utils;
+    using Extensibility.Dialogs;
 
     public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole
     {

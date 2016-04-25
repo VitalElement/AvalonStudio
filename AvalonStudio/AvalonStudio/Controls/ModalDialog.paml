@@ -1,6 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/perspex"
              xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" Background="{StyleResource ThemeBackgroundBrush}">
+             xmlns:extVM="clr-namespace:AvalonStudio.Controls.Standard.ViewModels;assembly=AvalonStudio.Controls.Standard"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:extcont="clr-namespace:AvalonStudio.Controls.Standard;assembly=AvalonStudio.Controls.Standard"
+              Background="{StyleResource ThemeBackgroundBrush}">
   <Grid RowDefinitions="70,*,100">
     <Grid Grid.Row="0">
       <Grid VerticalAlignment="Top">
@@ -18,8 +21,8 @@
             <DataTemplate DataType="ViewModels:PackageManagerDialogViewModel">
               <cont:PackageManagerDialog />
             </DataTemplate>
-            <DataTemplate DataType="ViewModels:ProjectConfigurationDialogViewModel">
-              <cont:ProjectConfigurationDialog />
+            <DataTemplate DataType="extVM:ProjectConfigurationDialogViewModel">
+              <extcont:ProjectConfigurationDialog />
             </DataTemplate>
             <DataTemplate DataType="ViewModels:NewProjectDialogViewModel">
               <cont:NewProjectDialog />

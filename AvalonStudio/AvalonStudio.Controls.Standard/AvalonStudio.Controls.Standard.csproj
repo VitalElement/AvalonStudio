@@ -138,6 +138,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ProjectConfigurationDialog.paml.cs">
+      <DependentUpon>ProjectConfigurationDialog.paml</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectConfigurationDialogViewModel.cs" />
     <Compile Include="ProjectFolderViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
@@ -186,6 +190,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <EmbeddedResource Include="ProjectConfigurationDialog.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

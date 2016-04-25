@@ -6,6 +6,7 @@
     using ReactiveUI;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using Extensibility.Dialogs;
 
     public class NewItemDialogViewModel : ModalDialogViewModelBase
     {

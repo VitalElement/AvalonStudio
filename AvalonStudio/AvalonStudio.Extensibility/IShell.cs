@@ -9,6 +9,7 @@
     using System.Threading.Tasks;
     using ReactiveUI;
     using Perspex.Reactive;
+    using Dialogs;
 
     public interface IShell
     {
@@ -17,7 +18,8 @@
 
         Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
         ObservableCollection<object> Tools { get; }
-        
+        ModalDialogViewModelBase ModalDialog { get; set; }
+
         void InvalidateCodeAnalysis();
         void Debug();
         void Build();
