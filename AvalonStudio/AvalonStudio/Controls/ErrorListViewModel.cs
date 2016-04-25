@@ -5,6 +5,7 @@
     using System.Collections.ObjectModel;
     using ReactiveUI;
     using Projects.CPlusPlus;
+    using System;
 
     public class ErrorListViewModel : ToolViewModel
     {
@@ -43,5 +44,17 @@
             }
         }
 
+        public override Location DefaultLocation
+        {
+            get
+            {
+                return Location.Bottom;
+            }
+        }
+
+        public override void Activate()
+        {
+            
+        }
     }
 }

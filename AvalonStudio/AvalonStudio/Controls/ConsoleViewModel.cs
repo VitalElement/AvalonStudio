@@ -7,8 +7,9 @@
     using Utils;
     using TextEditor.Rendering;
     using System.Collections.ObjectModel;
+    using MVVM;
 
-    public class ConsoleViewModel : AvalonStudio.MVVM.ToolViewModel, IConsole
+    public class ConsoleViewModel : ToolViewModel, IConsole
     {
         public ConsoleViewModel()
         {
@@ -35,6 +36,14 @@
             set { this.RaiseAndSetIfChanged(ref backgroundRenderers, value); }
         }
 
+        public override Location DefaultLocation
+        {
+            get
+            {
+                return Location.Bottom;
+            }
+        }
+
         private void ScrollToEnd()
         {
             CaretIndex = Document.TextLength;
@@ -46,8 +55,8 @@
             {
                 // safe way other than document.text = string.empty
                 Document.Replace(0, Document.TextLength, string.Empty);
-
-                ShellViewModel.Instance.SelectedTool = this;
+                
+                ShellViewModel.Instance.BottomSelectedTool = this;
             });
         }
 
@@ -96,6 +105,10 @@
         public void OverWrite(string data)
         {
             WriteLine(data);
+        }
+
+        public override void Activate()
+        {
         }
     }
 }
