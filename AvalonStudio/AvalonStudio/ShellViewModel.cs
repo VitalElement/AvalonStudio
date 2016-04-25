@@ -244,14 +244,6 @@
             ModalDialog.ShowDialog();
         }
 
-       
-
-        public void ShowNewProjectDialog()
-        {
-            ModalDialog = new NewProjectDialogViewModel();
-            ModalDialog.ShowDialog();
-        }
-
         public void ExitApplication()
         {
             Environment.Exit(1);

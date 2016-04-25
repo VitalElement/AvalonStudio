@@ -138,6 +138,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NewProjectDialog.paml.cs">
+      <DependentUpon>NewProjectDialog.paml</DependentUpon>
+    </Compile>
+    <Compile Include="NewProjectDialogViewModel.cs" />
     <Compile Include="ProjectConfigurationDialog.paml.cs">
       <DependentUpon>ProjectConfigurationDialog.paml</DependentUpon>
     </Compile>
@@ -189,6 +193,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="NewProjectDialog.paml" />
     <None Include="packages.config" />
     <EmbeddedResource Include="ProjectConfigurationDialog.paml">
       <SubType>Designer</SubType>
