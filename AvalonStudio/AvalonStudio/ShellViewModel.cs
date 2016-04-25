@@ -52,6 +52,8 @@
 
             foreach(var tool in importedTools)
             {
+                tools.Add(tool);
+
                 switch(tool.DefaultLocation)
                 {
                     case Location.Bottom:
@@ -390,8 +392,13 @@
             set { this.RaiseAndSetIfChanged(ref leftTools, value); }
         }
 
-
-
+        private ObservableCollection<object> tools;
+        public ObservableCollection<object> Tools
+        {
+            get { return tools; }
+            set { this.RaiseAndSetIfChanged(ref tools, value); }
+        }
+        
         private object rightSelectedTool;
         public object RightSelectedTool
         {
