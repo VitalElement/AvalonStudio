@@ -22,7 +22,7 @@
                 switch(pair.Name)
                 {
                     case "address":
-                        result.Address = Convert.ToUInt32 (pair.Value.Substring(2), 16);
+                        result.Address = Convert.ToUInt64 (pair.Value.Substring(2), 16);
                         break;
 
                     case "func-name":
@@ -49,7 +49,7 @@
             return result;
         }
 
-        public UInt32 Address { get; set; }
+        public UInt64 Address { get; set; }
 
         public string FormattedAddress
         {
