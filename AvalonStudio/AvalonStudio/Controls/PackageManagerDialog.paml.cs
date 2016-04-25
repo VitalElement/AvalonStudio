@@ -3,9 +3,9 @@ using Perspex;
 
 namespace AvalonStudio.Controls
 {
-    public class PackageManagerDialog : UserControl
+    public class PackageManagerDialogView : UserControl
     {
-        public PackageManagerDialog()
+        public PackageManagerDialogView()
         {
             this.InitializeComponent();
         }

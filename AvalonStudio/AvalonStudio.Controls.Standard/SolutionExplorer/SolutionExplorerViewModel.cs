@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.Standard.ViewModels
+﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using AvalonStudio.MVVM;
     using Extensibility;
@@ -12,7 +12,7 @@
         private IShell shell;
 
         public SolutionExplorerViewModel()
-        {
+        {            
             Title = "Solution Explorer";
             solution = new ObservableCollection<SolutionViewModel>();            
         }

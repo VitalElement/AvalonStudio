@@ -139,62 +139,62 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Console\Console.paml.cs">
-      <DependentUpon>Console.paml</DependentUpon>
+      <DependentUpon>ConsoleView.paml</DependentUpon>
     </Compile>
     <Compile Include="Console\ConsoleViewModel.cs">
-      <DependentUpon>Console.paml</DependentUpon>
+      <DependentUpon>ConsoleView.paml</DependentUpon>
     </Compile>
     <Compile Include="ErrorList\ErrorList.paml.cs">
-      <DependentUpon>ErrorList.paml</DependentUpon>
+      <DependentUpon>ErrorListView.paml</DependentUpon>
     </Compile>
     <Compile Include="ErrorList\ErrorListViewModel.cs" />
     <Compile Include="ErrorList\ErrorViewModel.cs" />
     <Compile Include="ErrorList\IErrorList.cs" />
-    <Compile Include="NewProjectDialog.paml.cs">
-      <DependentUpon>NewProjectDialog.paml</DependentUpon>
+    <Compile Include="SolutionExplorer\NewProjectDialog.paml.cs">
+      <DependentUpon>NewProjectDialogView.paml</DependentUpon>
     </Compile>
-    <Compile Include="NewProjectDialogViewModel.cs" />
-    <Compile Include="ProjectConfigurationDialog.paml.cs">
-      <DependentUpon>ProjectConfigurationDialog.paml</DependentUpon>
+    <Compile Include="SolutionExplorer\NewProjectDialogViewModel.cs" />
+    <Compile Include="SolutionExplorer\ProjectConfigurationDialog.paml.cs">
+      <DependentUpon>ProjectConfigurationDialogView.paml</DependentUpon>
     </Compile>
-    <Compile Include="ProjectConfigurationDialogViewModel.cs" />
-    <Compile Include="ProjectFolderViewModel.cs">
+    <Compile Include="SolutionExplorer\ProjectConfigurationDialogViewModel.cs" />
+    <Compile Include="SolutionExplorer\ProjectFolderViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
-    <Compile Include="ProjectItemViewModel.cs">
+    <Compile Include="SolutionExplorer\ProjectItemViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
-    <Compile Include="ProjectViewModel.cs">
+    <Compile Include="SolutionExplorer\ProjectViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReferenceFolderViewModel.cs">
+    <Compile Include="SolutionExplorer\ReferenceFolderViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
-    <Compile Include="ReferenceViewModel.cs">
+    <Compile Include="SolutionExplorer\ReferenceViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionExplorerView.paml.cs">
+    <Compile Include="SolutionExplorer\SolutionExplorerView.paml.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionExplorerViewModel.cs">
+    <Compile Include="SolutionExplorer\SolutionExplorerViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionFolderViewModel.cs">
+    <Compile Include="SolutionExplorer\SolutionFolderViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionViewModel.cs">
+    <Compile Include="SolutionExplorer\SolutionViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
-    <Compile Include="SourceFileViewModel.cs">
+    <Compile Include="SolutionExplorer\SourceFileViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
-    <Compile Include="StandardProjectViewModel.cs">
+    <Compile Include="SolutionExplorer\StandardProjectViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SolutionExplorerView.paml">
+    <EmbeddedResource Include="SolutionExplorer\SolutionExplorerView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
@@ -209,15 +209,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="NewProjectDialog.paml" />
-    <EmbeddedResource Include="Console\Console.paml">
+    <EmbeddedResource Include="SolutionExplorer\NewProjectDialogView.paml" />
+    <EmbeddedResource Include="Console\ConsoleView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ErrorList\ErrorList.paml">
+    <EmbeddedResource Include="ErrorList\ErrorListView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
-    <EmbeddedResource Include="ProjectConfigurationDialog.paml">
+    <EmbeddedResource Include="SolutionExplorer\ProjectConfigurationDialogView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

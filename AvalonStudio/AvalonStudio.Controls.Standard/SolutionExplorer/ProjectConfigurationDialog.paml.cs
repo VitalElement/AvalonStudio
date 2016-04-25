@@ -1,11 +1,11 @@
-﻿namespace AvalonStudio.Controls.Standard.ErrorList
+﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using Perspex;
     using Perspex.Controls;
 
-    public class ErrorListView : UserControl
+    public class ProjectConfigurationDialogView : UserControl
     {
-        public ErrorListView()
+        public ProjectConfigurationDialogView()
         {
             this.InitializeComponent();
         }
