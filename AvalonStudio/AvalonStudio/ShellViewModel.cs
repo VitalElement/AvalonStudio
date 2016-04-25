@@ -22,6 +22,13 @@
     using Perspex.Threading;
     using Documents;
     using Extensibility.Dialogs;
+    using Languages;
+    using Toolchains;
+    using TestFrameworks;
+    using Extensibility.MVVM;
+    using Extensibility.Plugin;
+    using Splat;
+    using Controls.Standard.ErrorList;
     public enum Perspective
     {
         Editor,
@@ -30,19 +37,117 @@
 
     [Export(typeof(IShell))]
     [Export(typeof(ShellViewModel))]
-    public class ShellViewModel : ViewModel<Shell>, IShell
+    public class ShellViewModel : ViewModel, IShell
     {
         public static ShellViewModel Instance = null;
 
-        [ImportingConstructor]
-        public ShellViewModel([Import] Shell workspace, [ImportMany] IEnumerable<ToolViewModel> importedTools) : base(workspace)
+        private readonly IEnumerable<ILanguageService> languageServices;
+        private readonly IEnumerable<IProjectTemplate> projectTemplates;
+        private readonly IEnumerable<ICodeTemplate> codeTemplates;
+        private readonly IEnumerable<IToolChain> toolChains;
+        private readonly IEnumerable<IDebugger> debuggers;
+        private readonly IEnumerable<IProject> projectTypes;
+        private readonly IEnumerable<ITestFramework> testFrameworks;
+        private readonly IEnumerable<IToolMetaData> toolMetaDatas;
+        private readonly IEnumerable<IPlugin> plugins;
+
+        public IEnumerable<IProject> ProjectTypes
         {
+            get
+            {
+                return projectTypes;
+            }
+        }
+
+        public IEnumerable<IProjectTemplate> ProjectTemplates
+        {
+            get
+            {
+                return projectTemplates;
+            }
+        }
+
+        public IEnumerable<ICodeTemplate> CodeTemplates
+        {
+            get
+            {
+                return codeTemplates;
+            }
+        }
+
+        public IEnumerable<ILanguageService> LanguageServices
+        {
+            get
+            {
+                return languageServices;
+            }
+        }
+
+        public IEnumerable<IToolChain> ToolChains
+        {
+            get
+            {
+                return toolChains;
+            }
+        }
+
+        public IEnumerable<IDebugger> Debuggers
+        {
+            get
+            {
+                return debuggers;
+            }
+        }
+
+        public IEnumerable<ITestFramework> TestFrameworks
+        {
+            get
+            {
+                return testFrameworks;
+            }
+        }
+
+        [ImportingConstructor]
+        public ShellViewModel([ImportMany] IEnumerable<ToolViewModel> importedTools,
+            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IToolMetaData> toolMetaDatas, [ImportMany] IEnumerable<IPlugin> plugins)
+        {
+            this.toolMetaDatas = toolMetaDatas;
+            this.languageServices = languageServices;
+            this.projectTemplates = projectTemplates;
+            this.toolChains = toolChains;
+            this.debuggers = debuggers;
+            this.projectTypes = projectTypes;
+            this.testFrameworks = testFrameworks;
+            this.codeTemplates = codeTemplates;
+
+            IoC.RegisterConstant(this, typeof(IShell));
+            foreach (var tool in toolMetaDatas)
+            {
+                var viewType = typeof(IViewFor<>);
+                viewType = viewType.MakeGenericType(tool.ViewModelType);
+
+                Locator.CurrentMutable.Register(tool.Factory, viewType);
+            }
+
+            foreach (var plugin in plugins)
+            {
+                plugin.BeforeActivation();
+            }
+
+            foreach (var plugin in plugins)
+            {
+                plugin.Activation();
+            }
+
             CurrentPerspective = Perspective.Editor;
 
             MainMenu = new MainMenuViewModel();
             ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabsViewModel();
+
+            Console = IoC.Get<IConsole>();
+            ErrorList = IoC.Get<IErrorList>();
 
             DebugManager = new DebugManager();
 
@@ -70,16 +175,6 @@
                         rightTools.Add(tool);
                         RightSelectedTool = tool;
                         break;
-                }
-
-                if (tool is ErrorListViewModel)
-                {
-                    ErrorList = tool as ErrorListViewModel;
-                }
-
-                if (tool is ConsoleViewModel)
-                {
-                    Console = tool as ConsoleViewModel;
                 }
             }
 
@@ -400,14 +495,10 @@
             get { return leftSelectedTool; }
             set { this.RaiseAndSetIfChanged(ref leftSelectedTool, value); }
         }
-
-
-
-
-
+        
         public IConsole Console { get; private set; }
 
-        public ErrorListViewModel ErrorList { get; private set; }
+        public IErrorList ErrorList { get; private set; }
 
         public StatusBarViewModel StatusBar { get; private set; }
 

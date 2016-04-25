@@ -34,11 +34,8 @@
 
             var container = CompositionRoot.CreateContainer();
             var app = new App();
-
-            Shell.Instance = container.GetExportedValue<Shell>();
-            ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
             
-            Locator.CurrentMutable.RegisterConstant(ShellViewModel.Instance, typeof(IShell));
+            ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
             
             foreach(var tool in ShellViewModel.Instance.RightTools)
             {

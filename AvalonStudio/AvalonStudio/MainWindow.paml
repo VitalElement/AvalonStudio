@@ -98,12 +98,8 @@
 
             <Carousel Items="{Binding BottomTools}" SelectedItem="{Binding BottomSelectedTool}" IsVirtualized="false" ZIndex="50">
               <Carousel.DataTemplates>
-                <DataTemplate DataType="Controls:ConsoleViewModel">
-                  <Controls:Console />
-                </DataTemplate>
-
-                <DataTemplate DataType="Controls:ErrorListViewModel">
-                  <Controls:ErrorList />
+                <DataTemplate>
+                  <Controls:ViewModelViewHost />
                 </DataTemplate>
               </Carousel.DataTemplates>
             </Carousel>

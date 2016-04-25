@@ -5,6 +5,7 @@
     using System;
     using Utils;
     using Platforms;
+
     public class SourceFile : ISourceFile
     {
         private SourceFile()
