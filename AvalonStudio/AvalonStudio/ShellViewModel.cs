@@ -21,7 +21,7 @@
     using Utils;
     using Perspex.Threading;
     using Documents;
-    using Controls.Standard.ViewModels;
+
     public enum Perspective
     {
         Editor,
@@ -39,28 +39,46 @@
         {
             CurrentPerspective = Perspective.Editor;
 
-            MainMenu = new MainMenuViewModel();
-            Console = new ConsoleViewModel();
-            ErrorList = new ErrorListViewModel();
+            MainMenu = new MainMenuViewModel();            
             ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabsViewModel();
 
             DebugManager = new DebugManager();
 
-            Tools = new ObservableCollection<object>();
-            //tools.Add(Console);
-            //tools.Add(ErrorList);
+            leftTools = new ObservableCollection<object>();
+            rightTools = new ObservableCollection<object>();
+            bottomTools = new ObservableCollection<object>();
+
             foreach(var tool in importedTools)
             {
-                tool.Shell = this;
-                Tools.Add(tool);
-            }
+                switch(tool.DefaultLocation)
+                {
+                    case Location.Bottom:
+                        bottomTools.Add(tool);
+                        BottomSelectedTool = tool;
+                        break;
 
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                SelectedTool = ErrorList;
-            });
+                    case Location.Left:
+                        leftTools.Add(tool);
+                        break;
+
+                    case Location.Right:
+                        rightTools.Add(tool);
+                        RightSelectedTool = tool;
+                        break;
+                } 
+                
+                if(tool is ErrorListViewModel)
+                {
+                    ErrorList = tool as ErrorListViewModel;
+                }               
+
+                if(tool is ConsoleViewModel)
+                {
+                    Console = tool as ConsoleViewModel;
+                }
+            }
 
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
@@ -331,7 +349,7 @@
 
             if (hasChanged)
             {
-                SelectedTool = ErrorList;
+                BottomSelectedTool = ErrorList;
             }
         }
 
@@ -351,21 +369,53 @@
 
         public DocumentTabsViewModel DocumentTabs { get; private set; }
 
-        private ObservableCollection<object> tools;
-        public ObservableCollection<object> Tools
+        private ObservableCollection<object> rightTools;
+        public ObservableCollection<object> RightTools
         {
-            get { return tools; }
-            set { this.RaiseAndSetIfChanged(ref tools, value); }
+            get { return rightTools; }
+            set { this.RaiseAndSetIfChanged(ref rightTools, value); }
         }
 
-        private object selectedTool;
-        public object SelectedTool
+        private ObservableCollection<object> bottomTools;
+        public ObservableCollection<object> BottomTools
         {
-            get { return selectedTool; }
-            set { this.RaiseAndSetIfChanged(ref selectedTool, value); }
+            get { return bottomTools; }
+            set { this.RaiseAndSetIfChanged(ref bottomTools, value); }
         }
-        
-        public SolutionExplorerViewModel SolutionExplorer { get; private set; }
+
+        private ObservableCollection<object> leftTools;
+        public ObservableCollection<object> LeftTools
+        {
+            get { return leftTools; }
+            set { this.RaiseAndSetIfChanged(ref leftTools, value); }
+        }
+
+
+
+        private object rightSelectedTool;
+        public object RightSelectedTool
+        {
+            get { return rightSelectedTool; }
+            set { this.RaiseAndSetIfChanged(ref rightSelectedTool, value); }
+        }
+
+        private object bottomSelectedTool;
+        public object BottomSelectedTool
+        {
+            get { return bottomSelectedTool; }
+            set { this.RaiseAndSetIfChanged(ref bottomSelectedTool, value); }
+        }
+
+        private object leftSelectedTool;
+        public object LeftSelectedTool
+        {
+            get { return leftSelectedTool; }
+            set { this.RaiseAndSetIfChanged(ref leftSelectedTool, value); }
+        }
+
+
+
+
 
         public IConsole Console { get; private set; }
 

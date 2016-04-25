@@ -3,9 +3,8 @@
     using AvalonStudio.Extensibility;
     using AvalonStudio.Repositories;
     using Controls;
-    using Controls.Standard;
-    using Controls.Standard.ViewModels;
     using Controls.ViewModels;
+    using MVVM;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Diagnostics;
@@ -38,9 +37,14 @@
 
             Shell.Instance = container.GetExportedValue<Shell>();
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
-
-            Locator.CurrentMutable.RegisterLazySingleton(() => ShellViewModel.Instance, typeof(IShell));
             
+            Locator.CurrentMutable.RegisterConstant(ShellViewModel.Instance, typeof(IShell));
+            
+            foreach(var tool in ShellViewModel.Instance.RightTools)
+            {
+                (tool as ToolViewModel).Activate();
+            }
+
 
             app.RunWithMainWindow<MainWindow>();
 

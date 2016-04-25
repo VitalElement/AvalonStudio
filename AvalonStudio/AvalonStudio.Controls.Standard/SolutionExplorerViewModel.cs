@@ -2,20 +2,31 @@
 {
     using AvalonStudio.MVVM;
     using Extensibility;
-    using Extensibility.MVVM;
     using Projects;
     using ReactiveUI;
-    using System;
     using System.Collections.ObjectModel;
-    using System.Linq;
+    using System;
 
     public class SolutionExplorerViewModel : ToolViewModel
     {
+        private IShell shell;
+
         public SolutionExplorerViewModel()
         {
+            Title = "Solution Explorer";
             solution = new ObservableCollection<SolutionViewModel>();            
         }
 
+        public override void Activate()
+        {
+            shell = IoC.Get<IShell>();
+
+            shell.SolutionChanged += (sender, e) =>
+            {
+                Model = shell.CurrentSolution;
+            };
+        }
+        
         new private ISolution model = null;
         public ISolution Model
         {
@@ -27,10 +38,6 @@
 
                 if (this.Model != null)
                 {
-                    //this.Projects.Bind (this.Model.Children,
-                    //    (p) => { return ProjectItemViewModel.Create(p); },
-                    //    ((pvm, p) => pvm.BaseModel == p));
-
                     if (Model.Projects.Count > 0)
                     {
                         SelectedProject = this.Model.StartupProject;
@@ -77,29 +84,18 @@
                 if (value is SourceFileViewModel)
                 {
                     // might need wait here?
-                    Shell.OpenDocument(((ISourceFile)(value as SourceFileViewModel).Model), 1);
+                    shell.OpenDocument(((ISourceFile)(value as SourceFileViewModel).Model), 1);
                 }
             }
         }
 
         public ObservableCollection<ProjectItemViewModel> Projects { get; set; }
 
-        private IShell shell;
-        public override IShell Shell
+        public override Location DefaultLocation
         {
             get
             {
-                return shell;
-            }
-
-            set
-            {
-                shell = value;
-
-                shell.SolutionChanged += (sender, e) =>
-                {
-                    Solution.Add(new SolutionViewModel(shell.CurrentSolution));
-                };
+                return Location.Right;
             }
         }
 

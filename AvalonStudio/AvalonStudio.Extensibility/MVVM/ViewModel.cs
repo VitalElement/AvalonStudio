@@ -4,17 +4,29 @@
     using ReactiveUI;
     using System.ComponentModel.Composition;
 
+    public interface IActivatable
+    {
+        void Activate();
+    }
+
+    public enum Location
+    {
+        Left,
+        Right,
+        Bottom
+    }
+
     [InheritedExport(typeof(ToolViewModel))]
-    public abstract class ToolViewModel : ToolViewModel<object>
+    public abstract class ToolViewModel : ToolViewModel<object>, IActivatable
     {
         public ToolViewModel() : base(null)
         {
-            //var shell = AvalonStudio.Extensibility.Shell.Instance.MainShell;
+         
         }
 
-        
-        public virtual IShell Shell { get; set; }
+        public abstract void Activate();
 
+        public abstract Location DefaultLocation { get; }
     }    
 
 
