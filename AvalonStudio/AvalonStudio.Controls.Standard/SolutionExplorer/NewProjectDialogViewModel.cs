@@ -1,9 +1,10 @@
-﻿namespace AvalonStudio.Controls.Standard.ViewModels
+﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using Extensibility;
-    using Platforms;
+    using Extensibility.Dialogs;
     using Languages;
     using Perspex.Controls;
+    using Platforms;
     using Projects;
     using ReactiveUI;
     using System;
@@ -11,9 +12,6 @@
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Extensibility.Dialogs;
 
     public class NewProjectDialogViewModel : ModalDialogViewModelBase
     {

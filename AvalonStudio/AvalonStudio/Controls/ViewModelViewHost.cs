@@ -67,15 +67,9 @@
         }
 
         protected override void OnDataContextChanged()
-        {
-            var view = ViewLocator.Current.ResolveView(DataContext);
-
-            Content = view;
-            
-            //(view as UserControl).DataContext = view.ViewModel;
+        {            
+            Content = AvalonStudio.MVVM.ViewLocator.Build(DataContext);
         }
-
-
 
         static void somethingChanged(IPerspexObject dependencyObject, bool changed)
         {

@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.Standard.ViewModels
+﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using Extensibility.Dialogs;
     using Perspex.Controls;

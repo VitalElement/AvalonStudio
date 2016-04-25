@@ -14,6 +14,7 @@
     using Debugging;
     using Toolchains;
     using Languages;
+
     public interface IShell
     {
         event EventHandler SolutionChanged;

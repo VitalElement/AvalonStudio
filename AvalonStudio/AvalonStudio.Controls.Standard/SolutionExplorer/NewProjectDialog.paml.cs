@@ -1,11 +1,11 @@
-﻿namespace AvalonStudio.Controls.Standard
+﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using Perspex;
     using Perspex.Controls;
 
-    public class ProjectConfigurationDialog : UserControl
+    public class NewProjectDialogView : UserControl
     {
-        public ProjectConfigurationDialog()
+        public NewProjectDialogView()
         {
             this.InitializeComponent();
         }
