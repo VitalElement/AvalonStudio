@@ -46,9 +46,12 @@
 
         public void RemoveWatch(WatchViewModel watch)
         {
-            this.Children.Remove(watch);
+            if (watch != null)
+            {
+                this.Children.Remove(watch);
 
-            debugger.DeleteWatch(watch.Model.Id);
+                debugger.DeleteWatch(watch.Model.Id);
+            }
         }
 
         public void Add(VariableObject model)
