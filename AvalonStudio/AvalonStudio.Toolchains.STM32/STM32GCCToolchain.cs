@@ -246,7 +246,7 @@ namespace AvalonStudio.Toolchains.STM32
             switch (settings.LinkSettings.Library)
             {
                 case LibraryType.NanoCLib:
-                    linkedLibraries = "-lm -lc_nano -lsupc++_nano -lstdc++_nano ";
+                    linkedLibraries += "-lm -lc_nano -lsupc++_nano -lstdc++_nano ";
                     break;
 
                 case LibraryType.BaseCLib:
