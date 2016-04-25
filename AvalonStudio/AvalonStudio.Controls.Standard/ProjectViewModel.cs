@@ -36,20 +36,20 @@
             DebugCommand = ReactiveCommand.Create();
             DebugCommand.Subscribe(_ =>
             {
-                shell.Debug();                
+                shell.Debug(model);                
             });
 
             BuildCommand = ReactiveCommand.Create();
             BuildCommand.Subscribe((o) =>
             {
-                shell.Build();
+                shell.Build(model);
             });
 
             CleanCommand = ReactiveCommand.Create();
 
             CleanCommand.Subscribe((o) =>
             {
-                shell.Clean();
+                shell.Clean(model);
             });
 
             ManageReferencesCommand = ReactiveCommand.Create();
