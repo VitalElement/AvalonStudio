@@ -1,5 +1,0 @@
-﻿<UserControl xmlns="https://github.com/perspex" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility" xmlns:te="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor">
-  <cont:ToolControl Title="Console">
-    <te:TextEditor Grid.Row="1" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}" FontFamily="Consolas" FontSize="12" TextDocument="{Binding Document}" CaretIndex="{Binding CaretIndex}" BackgroundRenderers="{Binding BackgroundRenderers}" />
-  </cont:ToolControl>
-</UserControl>

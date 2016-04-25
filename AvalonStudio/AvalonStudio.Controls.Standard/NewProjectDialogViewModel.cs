@@ -29,7 +29,7 @@
         {
             shell = IoC.Get<IShell>();
             projectTemplates = new ObservableCollection<IProjectTemplate>();
-            Languages = new List<ILanguageService>(shell.Model.LanguageServices);
+            Languages = new List<ILanguageService>(shell.LanguageServices);
 
             location = Platform.ProjectDirectory;
             SelectedLanguage = Languages.FirstOrDefault();
@@ -131,7 +131,7 @@
 
         private void GetTemplates (ILanguageService languageService)
         {
-            var templates = Shell.Instance.ProjectTemplates.Where(t => languageService.BaseTemplateType.IsAssignableFrom(t.GetType()));
+            var templates = shell.ProjectTemplates.Where(t => languageService.BaseTemplateType.IsAssignableFrom(t.GetType()));
 
             ProjectTemplates = new ObservableCollection<IProjectTemplate>(templates);
         }

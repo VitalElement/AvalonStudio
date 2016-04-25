@@ -11,7 +11,7 @@
     {
         public DebuggerSettingsFormViewModel(CPlusPlusProject project) : base(project)
         {
-            debuggers = new List<IDebugger>(Shell.Instance.Debuggers);
+            debuggers = new List<IDebugger>(IoC.Get<IShell>().Debuggers);
             selectedDebugger = project.Debugger;
         }
 

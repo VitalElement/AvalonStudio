@@ -11,7 +11,7 @@
     {
         public ToolchainSettingsFormViewModel(CPlusPlusProject project) : base (project)
         {
-            toolchains = new List<IToolChain>(Shell.Instance.ToolChains);
+            toolchains = new List<IToolChain>(IoC.Get<IShell>().ToolChains);
             selectedToolchain = project.ToolChain;            
         }
 

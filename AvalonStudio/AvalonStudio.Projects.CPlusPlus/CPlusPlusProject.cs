@@ -613,7 +613,7 @@
         {
             get
             {
-                IToolChain result = Shell.Instance.ToolChains.FirstOrDefault((tc) => tc.GetType().ToString() == ToolchainReference);
+                IToolChain result = IoC.Get<IShell>().ToolChains.FirstOrDefault((tc) => tc.GetType().ToString() == ToolchainReference);
 
                 return result;
             }
@@ -628,7 +628,7 @@
         {
             get
             {
-                IDebugger result = Shell.Instance.Debuggers.FirstOrDefault((tc) => tc.GetType().ToString() == DebuggerReference);
+                IDebugger result = IoC.Get<IShell>().Debuggers.FirstOrDefault((tc) => tc.GetType().ToString() == DebuggerReference);
 
                 return result;
             }
@@ -643,7 +643,7 @@
         {
             get
             {
-                ITestFramework result = Shell.Instance.TestFrameworks.FirstOrDefault((tf) => tf.GetType().ToString() == TestFrameworkReference);
+                ITestFramework result = IoC.Get<IShell>().TestFrameworks.FirstOrDefault((tf) => tf.GetType().ToString() == TestFrameworkReference);
 
                 return result;
             }

@@ -37,13 +37,14 @@
 
         public override async Task<IProject> Generate(ISolution solution, string name)
         {
+            var shell = IoC.Get<IShell>();
             var project = await base.Generate(solution, name);
 
-            project.ToolChain = Shell.Instance.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
+            project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
 
             var settings = LocalGCCToolchain.ProvisionLocalGccSettings(project);
 
-            project.Debugger = Shell.Instance.Debuggers.FirstOrDefault(db => db is LocalDebugAdaptor);
+            project.Debugger = shell.Debuggers.FirstOrDefault(db => db is LocalDebugAdaptor);
 
             var code = new StringBuilder();
 

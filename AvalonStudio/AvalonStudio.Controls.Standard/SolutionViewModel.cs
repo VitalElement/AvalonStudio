@@ -38,7 +38,7 @@
 
                 var extensions = new List<string>();
 
-                foreach (var projectType in Shell.Instance.ProjectTypes)
+                foreach (var projectType in shell.ProjectTypes)
                 {
                     extensions.Add(projectType.Extension);
                 }
