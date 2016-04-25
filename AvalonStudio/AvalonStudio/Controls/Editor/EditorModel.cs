@@ -163,7 +163,7 @@
 
         public void Save()
         {
-            if (sourceFile != null && TextDocument != null)
+            if (sourceFile != null && TextDocument != null && IsDirty)
             {
                 File.WriteAllText(sourceFile.Location, TextDocument.Text);
                 IsDirty = false;
