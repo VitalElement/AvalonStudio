@@ -12,8 +12,12 @@
 
     public class SolutionViewModel : ViewModel<ISolution>
     {
+        private IShell shell;
+
         public SolutionViewModel(ISolution model) : base(model)
         {
+            shell = IoC.Get<IShell>();
+
             this.Projects = new ObservableCollection<ProjectViewModel>();
             IsExpanded = true;
 
@@ -22,8 +26,8 @@
             NewProjectCommand = ReactiveCommand.Create();
             NewProjectCommand.Subscribe((o) =>
             {
-                //ShellViewModel.Instance.ModalDialog = new NewProjectDialogViewModel(model);
-                //ShellViewModel.Instance.ModalDialog.ShowDialog();
+                shell.ModalDialog = new NewProjectDialogViewModel(model);
+                shell.ModalDialog.ShowDialog();
             });
 
             AddExistingProjectCommand = ReactiveCommand.Create();
