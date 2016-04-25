@@ -22,8 +22,14 @@
         Shell Model { get; }
 
         void InvalidateCodeAnalysis();
+        void Debug(IProject project);
+        void Build(IProject project);
+        void Clean(IProject project);
+
         void Debug();
         void Build();
         void Clean();
+
+        IProject GetDefaultProject();
     }
 }
