@@ -405,8 +405,6 @@
 
             var container = CompositionRoot.CreateContainer();
 
-            Shell.Instance = container.GetExportedValue<Shell>();
-
             var packed = PackValues(3, 4);
 
             UInt16 a = 0;

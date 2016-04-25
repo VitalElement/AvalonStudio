@@ -222,28 +222,17 @@
       <DependentUpon>CallStack.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CallStackViewModel.cs" />
-    <Compile Include="Controls\Console.paml.cs">
-      <DependentUpon>Console.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ConsoleViewModel.cs">
-      <DependentUpon>Console.paml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Disassembly.paml.cs">
       <DependentUpon>Disassembly.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DisassemblyDataProvider.cs" />
     <Compile Include="Controls\DisassemblyViewModel.cs" />
     <Compile Include="Controls\Editor\SymbolViewModel.cs" />
-    <Compile Include="Controls\ErrorViewModel.cs" />
     <Compile Include="Controls\Editor.paml.cs">
       <DependentUpon>Editor.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Editor\EditorModel.cs" />
     <Compile Include="Controls\Editor\EditorViewModel.cs" />
-    <Compile Include="Controls\ErrorList.paml.cs">
-      <DependentUpon>ErrorList.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ErrorListViewModel.cs" />
     <Compile Include="Controls\FrameViewModel.cs" />
     <Compile Include="Controls\Intellisense.paml.cs">
       <DependentUpon>Intellisense.paml</DependentUpon>
@@ -314,9 +303,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\Console.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Editor.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -335,9 +321,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
     <None Include="app.config" />
-    <EmbeddedResource Include="Controls\ErrorList.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="App.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
