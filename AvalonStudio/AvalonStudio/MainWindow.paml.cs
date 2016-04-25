@@ -4,7 +4,6 @@
     using Perspex;
     using Perspex.Controls;
     using Perspex.Input;
-    using Perspex;
 
     public class MainWindow : MetroWindow
     {

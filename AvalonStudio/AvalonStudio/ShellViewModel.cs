@@ -21,7 +21,7 @@
     using Utils;
     using Perspex.Threading;
     using Documents;
-
+    using Extensibility.Dialogs;
     public enum Perspective
     {
         Editor,
@@ -46,6 +46,7 @@
 
             DebugManager = new DebugManager();
 
+            tools = new ObservableCollection<object>();
             leftTools = new ObservableCollection<object>();
             rightTools = new ObservableCollection<object>();
             bottomTools = new ObservableCollection<object>();
@@ -468,13 +469,6 @@
             {
                 //TODO implement code analysis trigger.
             }
-        }
-
-        private bool hideWhenModalVisibility = true;
-        public bool HideWhenModalVisibility
-        {
-            get { return hideWhenModalVisibility; }
-            set { hideWhenModalVisibility = value; this.RaisePropertyChanged(); }
         }
 
         private ISolution currentSolution;

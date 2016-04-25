@@ -263,9 +263,6 @@
       <DependentUpon>ModalDialog.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Dialogs\PackageManagerDialogViewModel.cs" />
-    <Compile Include="Controls\ModalDialogViewModelBase.cs">
-      <DependentUpon>ModalDialog.paml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\NewProjectDialog.paml.cs">
       <DependentUpon>NewProjectDialog.paml</DependentUpon>
     </Compile>
@@ -274,10 +271,6 @@
       <DependentUpon>PackageManagerDialog.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ParameterSymbolViewModel.cs" />
-    <Compile Include="Controls\ProjectConfigurationDialog.paml.cs">
-      <DependentUpon>ProjectConfigurationDialog.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ProjectConfigurationDialogViewModel.cs" />
     <Compile Include="Controls\Registers.xaml.cs">
       <DependentUpon>Registers.xaml</DependentUpon>
     </Compile>
@@ -347,9 +340,6 @@
     <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
     <None Include="app.config" />
     <EmbeddedResource Include="Controls\ErrorList.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ProjectConfigurationDialog.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\NewProjectDialog.paml" />
