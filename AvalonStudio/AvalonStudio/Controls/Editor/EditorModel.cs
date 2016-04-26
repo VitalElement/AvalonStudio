@@ -13,7 +13,7 @@
     using System.Linq;
     using Extensibility;
     using TextEditor;
-
+    using Shell;
     [Export(typeof(EditorModel))]
     public class EditorModel : IDisposable
     {

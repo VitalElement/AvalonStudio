@@ -6,7 +6,7 @@
     using ReactiveUI;
     using System.Collections.ObjectModel;
     using System;
-
+    using Shell;
     public class SolutionExplorerViewModel : ToolViewModel
     {
         private IShell shell;

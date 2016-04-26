@@ -4,6 +4,7 @@
     using Extensibility;
     using Perspex.Controls;
     using ReactiveUI;
+    using Shell;
     using System.Collections.Generic;
     using Toolchains;
 

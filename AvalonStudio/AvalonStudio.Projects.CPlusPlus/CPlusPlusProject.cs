@@ -9,6 +9,7 @@
     using Newtonsoft.Json.Converters;
     using Perspex.Controls;
     using Platforms;
+    using Shell;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

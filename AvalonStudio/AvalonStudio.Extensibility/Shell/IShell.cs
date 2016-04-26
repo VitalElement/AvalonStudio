@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Extensibility
+﻿namespace AvalonStudio.Shell
 {
     using AvalonStudio.Projects;
     using Documents;
@@ -9,11 +9,11 @@
     using System.Threading.Tasks;
     using ReactiveUI;
     using Perspex.Reactive;
-    using Dialogs;
     using TestFrameworks;
     using Debugging;
     using Toolchains;
     using Languages;
+    using Extensibility.Dialogs;
 
     public interface IShell
     {
