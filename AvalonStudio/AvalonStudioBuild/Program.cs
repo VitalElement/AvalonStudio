@@ -19,6 +19,7 @@
     using System.Diagnostics;
     using System.Threading;
     using TestFrameworks;
+    using Shell;
     class Program
     {
         const string version = "1.0.0.24";
@@ -386,17 +387,6 @@
             }
         }
 
-        static UInt32 PackValues(UInt16 a, UInt16 b)
-        {
-            return (UInt32)(a << 16 | b);
-        }
-
-        static void UnpackValues(UInt32 input, out UInt16 a, out UInt16 b)
-        {
-            a = (UInt16)(input >> 16);
-            b = (UInt16)(input & 0x00FF);
-        }
-
         static int Main(string[] args)
         {
             Platforms.Platform.Initialise();
@@ -404,16 +394,8 @@
             PackageSources.InitialisePackageSources();
 
             var container = CompositionRoot.CreateContainer();
-
-            var packed = PackValues(3, 4);
-
-            UInt16 a = 0;
-            UInt16 b = 0;
-
-            UnpackValues(packed, out a, out b);
-
-            packed = PackValues(a, b);
-
+            
+            MinimalShell.Instance = container.GetExportedValue<IShell>();
 
             Console.WriteLine(string.Format("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platforms.Platform.PlatformIdentifier.ToString()));
 
