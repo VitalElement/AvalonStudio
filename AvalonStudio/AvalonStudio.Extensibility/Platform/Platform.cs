@@ -211,7 +211,7 @@
         }
 
         public static bool IsSamePathAs (this string path, string other)
-        {
+        {            
             return path.CompareFilePath(other) == 0;
         }
 
@@ -220,8 +220,23 @@
             switch (PlatformIdentifier)
             {
                 case PlatformID.Win32NT:
-                    // TODO consider using directory info?                    
-                    return path.ToLower().CompareTo(other.ToLower());
+                    // TODO consider using directory info?           
+                    if (path == null && other == null)
+                    {
+                        return 0;
+                    }
+                    else if (path == null)
+                    {
+                        return 1;
+                    }
+                    else if (other == null)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return path.ToLower().CompareTo(other.ToLower());
+                    }
 
                 default:
                     return path.CompareTo(other);
