@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/perspex" Header="Toolchain">
+﻿<TabItem xmlns="https://github.com/perspex" Header="Toolchain" xmlns:cont="clr-namespace:AvalonStudio.Extensibility.Controls;assembly=AvalonStudio.Extensibility">
   <Grid IsEnabled="{Binding IsEnabled}">
     <Grid.RowDefinitions>
       <RowDefinition Height="30"/>
@@ -59,7 +59,7 @@
     <Grid Grid.Row="2" Grid.ColumnSpan="3">
       <Grid Margin="4">
         <Border BorderThickness="1" BorderBrush="#3d3d3d">
-          <ContentControl Content="{Binding ToolchainSettingsControl}" />
+          <TabControl Items="{Binding ConfigPages}" SelectedItem="{Binding SelectedConfigPage, Mode=TwoWay}"/>
         </Border>
       </Grid>
 
