@@ -5,6 +5,7 @@
     using Extensibility.Git;
     using Models.Tools.Debuggers.Local;
     using Projects.CPlusPlus;
+    using Shell;
     using System;
     using System.IO;
     using System.Linq;

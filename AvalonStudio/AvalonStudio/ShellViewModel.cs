@@ -24,11 +24,11 @@
     using Extensibility.Dialogs;
     using Languages;
     using Toolchains;
-    using TestFrameworks;    
+    using TestFrameworks;
     using Extensibility.Plugin;
     using Splat;
     using Controls.Standard.ErrorList;
-
+    using Shell;
     public enum Perspective
     {
         Editor,

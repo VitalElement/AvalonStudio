@@ -10,7 +10,7 @@
     using System.IO;
     using System.Linq;
     using Utils;
-
+    using Shell;
     public class Solution : SerializedObject<Solution>, ISolution
     {
         public const string Extension = "asln";

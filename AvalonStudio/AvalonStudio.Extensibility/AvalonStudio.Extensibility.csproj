@@ -171,7 +171,7 @@
     <Compile Include="Documents\IEditor.cs" />
     <Compile Include="Git\Git.cs" />
     <Compile Include="IoC.cs" />
-    <Compile Include="IShell.cs" />
+    <Compile Include="Shell\IShell.cs" />
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
     <Compile Include="Languages\CodeCompletionResults.cs" />
@@ -220,7 +220,7 @@
     <Compile Include="Utils\PathSourceFile.cs" />
     <Compile Include="Utils\SerializedObject.cs" />
     <Compile Include="Utils\WeakSubscriber.cs" />
-    <Compile Include="Shell.cs" />
+    <Compile Include="Shell\Shell.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\ControlTheme.paml" />

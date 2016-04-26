@@ -8,6 +8,7 @@
     using Extensibility;
     using Extensibility.Plugin;
     using Extensibility.Utils;
+    using Shell;
 
     public class ErrorListViewModel : ToolViewModel, IPlugin, IErrorList
     {

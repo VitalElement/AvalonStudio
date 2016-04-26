@@ -9,7 +9,7 @@
     using Projects;
     using Extensibility;
     using Projects.CPlusPlus;
-
+    using Shell;
     public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
     {
         public override string DefaultProjectName

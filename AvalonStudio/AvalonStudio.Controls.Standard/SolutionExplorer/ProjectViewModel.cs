@@ -5,6 +5,7 @@
     using Perspex.Media;
     using Projects;
     using ReactiveUI;
+    using Shell;
     using System;
     using System.Collections.ObjectModel;
     using System.Diagnostics;

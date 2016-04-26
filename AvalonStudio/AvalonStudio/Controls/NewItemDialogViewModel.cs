@@ -7,7 +7,7 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using Extensibility.Dialogs;
-
+    using Shell;
     public class NewItemDialogViewModel : ModalDialogViewModelBase
     {
         public NewItemDialogViewModel(IProjectFolder folder) : base("New Item")
