@@ -220,7 +220,6 @@
     <Compile Include="Utils\PathSourceFile.cs" />
     <Compile Include="Utils\SerializedObject.cs" />
     <Compile Include="Utils\WeakSubscriber.cs" />
-    <Compile Include="Shell\Shell.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\ControlTheme.paml" />
