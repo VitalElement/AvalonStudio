@@ -5,6 +5,7 @@
     using Perspex.Controls;
     using Projects;
     using ReactiveUI;
+    using Shell;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

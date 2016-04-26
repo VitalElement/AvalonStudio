@@ -10,6 +10,7 @@
     using MVVM;
     using Extensibility.Plugin;
     using Extensibility;
+    using Shell;
 
     public class ConsoleViewModel : ToolViewModel, IConsole, IPlugin
     {

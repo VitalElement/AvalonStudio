@@ -5,6 +5,7 @@
     using Models.Tools.Debuggers.Local;
     using Projects;
     using Projects.CPlusPlus;
+    using Shell;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
