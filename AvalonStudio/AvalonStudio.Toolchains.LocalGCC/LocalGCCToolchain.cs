@@ -523,6 +523,11 @@
                 result += string.Format("-D{0} ", define.Value);
             }
 
+            if(Platform.PlatformIdentifier == PlatformID.Win32NT)
+            {
+                result += string.Format("-D{0} ", "WIN32NT");
+            }
+
             foreach (var arg in superProject.ToolChainArguments)
             {
                 result += string.Format(" {0}", arg);
