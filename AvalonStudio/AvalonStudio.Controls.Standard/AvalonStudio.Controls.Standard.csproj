@@ -138,26 +138,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Console\Console.paml.cs">
+    <Compile Include="Console\ConsoleView.paml.cs">
       <DependentUpon>ConsoleView.paml</DependentUpon>
     </Compile>
     <Compile Include="Console\ConsoleViewModel.cs">
       <DependentUpon>ConsoleView.paml</DependentUpon>
     </Compile>
-    <Compile Include="ErrorList\ErrorList.paml.cs">
+    <Compile Include="ErrorList\ErrorListView.paml.cs">
       <DependentUpon>ErrorListView.paml</DependentUpon>
     </Compile>
-    <Compile Include="ErrorList\ErrorListViewModel.cs" />
-    <Compile Include="ErrorList\ErrorViewModel.cs" />
+    <Compile Include="ErrorList\ErrorListViewModel.cs">
+      <DependentUpon>ErrorListView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="ErrorList\ErrorViewModel.cs">
+      <DependentUpon>ErrorListView.paml</DependentUpon>
+    </Compile>
     <Compile Include="ErrorList\IErrorList.cs" />
-    <Compile Include="SolutionExplorer\NewProjectDialog.paml.cs">
+    <Compile Include="SolutionExplorer\NewProjectDialogView.paml.cs">
       <DependentUpon>NewProjectDialogView.paml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionExplorer\NewProjectDialogViewModel.cs" />
-    <Compile Include="SolutionExplorer\ProjectConfigurationDialog.paml.cs">
+    <Compile Include="SolutionExplorer\NewProjectDialogViewModel.cs">
+      <DependentUpon>NewProjectDialogView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="SolutionExplorer\ProjectConfigurationDialogView.paml.cs">
       <DependentUpon>ProjectConfigurationDialogView.paml</DependentUpon>
     </Compile>
-    <Compile Include="SolutionExplorer\ProjectConfigurationDialogViewModel.cs" />
+    <Compile Include="SolutionExplorer\ProjectConfigurationDialogViewModel.cs">
+      <DependentUpon>ProjectConfigurationDialogView.paml</DependentUpon>
+    </Compile>
     <Compile Include="SolutionExplorer\ProjectFolderViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
