@@ -28,6 +28,7 @@
         #region Contructors
         static TextEditor()
         {
+            TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>((s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
         }
 
@@ -51,10 +52,13 @@
             }));
 
             disposables.Add(AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel));
+
+            textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
         }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;
             textView = null;
             TextDocument = null;
             Content = null;
@@ -74,6 +78,9 @@
 
             Name = "textEditor";
             highestUserSelectedColumn = 1;
+
+            textChangedDelayTimer = new DispatcherTimer();
+            textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);            
         }
         #endregion
 
@@ -83,6 +90,7 @@
         }
 
         #region Private Data
+        private readonly DispatcherTimer textChangedDelayTimer;
         private TextView textView;
         private int highestUserSelectedColumn;
         #endregion
@@ -196,6 +204,15 @@
         {
             get { return GetValue(TextChangedCommandProperty); }
             set { SetValue(TextChangedCommandProperty, value); }
+        }
+
+        public static readonly PerspexProperty<int> TextChangedDelayProperty =
+                    PerspexProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
+
+        public int TextChangedDelay
+        {
+            get { return GetValue(TextChangedDelayProperty); }
+            set { SetValue(TextChangedDelayProperty, value); textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value); }
         }
 
         public static readonly PerspexProperty<bool> AcceptsReturnProperty =
@@ -378,6 +395,16 @@
                 CaretIndex += input.Length;
                 SelectionStart = SelectionEnd = CaretIndex;
                 TextView.Invalidate();
+            }
+        }
+
+        private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
+        {
+            textChangedDelayTimer.Stop();
+
+            if (TextChangedCommand != null && TextChangedCommand.CanExecute(null))
+            {
+                TextChangedCommand.Execute(null);
             }
         }
 
@@ -675,13 +702,13 @@
 
                         LineHeight = textView.CharSize.Height;
 
-                        if (TextChangedCommand != null && TextChangedCommand.CanExecute(null))
-                        {
-                            TextChangedCommand.Execute(null);
-                        }
+                        textChangedDelayTimer.Stop();
+                        textChangedDelayTimer.Start();
                     };
                 }
-            }));            
+            }));
+
+                     
         }
 
         protected override void OnPointerPressed(PointerPressedEventArgs e)
