@@ -776,7 +776,7 @@ namespace AvalonStudio.Toolchains.STM32
 
         public override UserControl GetSettingsControl(IProject project)
         {
-            return new ToolchainSettingsForm() { DataContext = new ToolchainSettingsViewModel(project) };
+            throw new Exception();
         }
     }
 }
