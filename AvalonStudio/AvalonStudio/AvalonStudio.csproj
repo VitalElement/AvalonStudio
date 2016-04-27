@@ -285,6 +285,14 @@
     <Compile Include="Controls\VariableControl.paml.cs">
       <DependentUpon>VariableControl.paml</DependentUpon>
     </Compile>
+    <Compile Include="Shell\Commands\CloseFileCommandDefinition.cs" />
+    <Compile Include="Shell\Commands\CloseFileCommandHandler.cs" />
+    <Compile Include="Shell\Commands\ExitCommandDefinition.cs" />
+    <Compile Include="Shell\Commands\ExitCommandHandler.cs" />
+    <Compile Include="Shell\Commands\NewFileCommandListDefinition.cs" />
+    <Compile Include="Shell\Commands\SaveFileAsCommandDefinition.cs" />
+    <Compile Include="Shell\Commands\SaveFileCommandDefinition.cs" />
+    <Compile Include="Shell\MenuDefinitions.cs" />
     <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Controls\MetroWindow.cs" />

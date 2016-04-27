@@ -33,7 +33,7 @@
         public CommandMenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
             : base(group, sortOrder)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             //_commandDefinition = IoC.Get<ICommandService>().GetCommandDefinition(typeof(TCommandDefinition));
             //_keyGesture = IoC.Get<ICommandKeyGestureService>().GetPrimaryKeyGesture(_commandDefinition);
         }
