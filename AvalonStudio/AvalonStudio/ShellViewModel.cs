@@ -108,6 +108,14 @@
             }
         }
 
+        public IMenu MainMenu
+        {
+            get
+            {
+                return mainMenu;
+            }
+        }
+
         [ImportingConstructor]
         public ShellViewModel([ImportMany] IEnumerable<ToolViewModel> importedTools,
             [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IPlugin> plugins, [Import]IMenu mainMenu)
@@ -135,7 +143,7 @@
 
             CurrentPerspective = Perspective.Editor;
 
-            MainMenu = new MainMenuViewModel();
+            //MainMenu = new MainMenuViewModel();
             ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabsViewModel();
@@ -435,7 +443,7 @@
 
         public DebugManager DebugManager { get; private set; }
 
-        public MainMenuViewModel MainMenu { get; private set; }
+        //public MainMenuViewModel MainMenu { get; private set; }
 
         public ToolBarViewModel ToolBar { get; private set; }
 

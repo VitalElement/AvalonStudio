@@ -1,0 +1,9 @@
+﻿<UserControl xmlns="https://github.com/perspex">
+  <Menu Items="{Binding Model}">
+    <Menu.DataTemplates>
+      <DataTemplate>
+        <MenuItem Header="{Binding Text}" Items="{Binding Children}" />
+      </DataTemplate>
+    </Menu.DataTemplates>
+  </Menu>
+</UserControl>
