@@ -191,6 +191,8 @@
     <Compile Include="Documents\IEditor.cs" />
     <Compile Include="Git\Git.cs" />
     <Compile Include="IoC.cs" />
+    <Compile Include="MainMenu\MenuDefinitions.cs" />
+    <Compile Include="Menus\MenuDefinitionAttribute.cs" />
     <Compile Include="Shell\IShell.cs" />
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
