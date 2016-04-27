@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/perspex"
              xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio"
              xmlns:extVM="clr-namespace:AvalonStudio.Controls.Standard.ViewModels;assembly=AvalonStudio.Controls.Standard"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:extcont="clr-namespace:AvalonStudio.Controls.Standard;assembly=AvalonStudio.Controls.Standard"
               Background="{StyleResource ThemeBackgroundBrush}">
   <Grid RowDefinitions="70,*,100">
