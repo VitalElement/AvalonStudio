@@ -47,5 +47,9 @@
         //[Export]
         //public static MenuItemDefinition WindowDocumentList = new CommandMenuItemDefinition<SwitchToDocumentCommandListDefinition>(
         //    Extensibility.MainMenu.MenuDefinitions.WindowDocumentListMenuGroup, 0);
+
+        [Export]
+        public static MenuItemDefinition EditCopyMenuItem = new CommandMenuItemDefinition<CopyCommandDefinition>(
+            Extensibility.MainMenu.MenuDefinitions.EditUndoRedoMenuGroup, 0);
     }
 }
