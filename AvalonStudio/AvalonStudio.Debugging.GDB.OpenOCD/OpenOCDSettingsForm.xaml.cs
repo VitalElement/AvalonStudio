@@ -1,8 +1,8 @@
-﻿using Perspex.Controls;
-using Perspex.Markup.Xaml;
-
-namespace AvalonStudio.Debugging.GDB.OpenOCD
+﻿namespace AvalonStudio.Debugging.GDB.OpenOCD
 {
+    using Perspex;
+    using Perspex.Controls;
+
     public class OpenOCDSettingsForm : UserControl
     {
         public OpenOCDSettingsForm()
@@ -12,7 +12,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }

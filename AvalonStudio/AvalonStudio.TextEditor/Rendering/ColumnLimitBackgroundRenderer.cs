@@ -5,7 +5,7 @@
 
     public class ColumnLimitBackgroundRenderer : IBackgroundRenderer
     {
-        private Brush brush = Brush.Parse("#30E4E4E4");
+        private IBrush brush = Brush.Parse("#30E4E4E4");
 
         public event EventHandler<EventArgs> DataChanged;
 

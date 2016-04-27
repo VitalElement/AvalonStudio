@@ -1,18 +1,18 @@
 ﻿using Perspex.Controls;
-using Perspex.Markup.Xaml;
+using Perspex;
 
 namespace AvalonStudio.Controls
 {
-    public class PackageManagerDialog : UserControl
+    public class PackageManagerDialogView : UserControl
     {
-        public PackageManagerDialog()
+        public PackageManagerDialogView()
         {
             this.InitializeComponent();
         }
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }

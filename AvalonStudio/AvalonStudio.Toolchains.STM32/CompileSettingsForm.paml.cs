@@ -1,5 +1,5 @@
 ﻿using Perspex.Controls;
-using Perspex.Markup.Xaml;
+using Perspex;
 
 namespace AvalonStudio.Toolchains.STM32
 {
@@ -12,7 +12,7 @@ namespace AvalonStudio.Toolchains.STM32
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }

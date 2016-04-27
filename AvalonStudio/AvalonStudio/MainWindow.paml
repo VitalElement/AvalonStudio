@@ -1,6 +1,6 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/perspex"
         xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-        Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFC4C4C4" Width="1600" Height="900">
+        Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFE4E4E4" Width="1600" Height="900">
   <Controls:MetroWindow.TitleBarContent>
     <Controls:MainMenu DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
   </Controls:MetroWindow.TitleBarContent>
@@ -16,47 +16,154 @@
     </Style>
     <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
       <Setter Property="Background" Value="#274452"/>
-    </Style>    
+    </Style>
   </Controls:MetroWindow.Styles>
   <Grid RowDefinitions="25,*,350,25" ColumnDefinitions="220, *, *, 300">
-    <Grid Grid.ColumnSpan="3" Margin="20 0 0 0">
-      <Controls:ToolBar />
-    </Grid>
-
-    <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="1 2 2 1">
-      <DockPanel>
-        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Left" >
-          <Controls:Registers DataContext="{Binding DebugManager.Registers}" />
-        </Grid>
-        <Controls:Editor DataContext="{Binding Editor}" DockPanel.Dock="Right"  />
-      </DockPanel>
-    </Grid>
-
-    <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="1 1 2 2">
-      <DockPanel>                                  
-          <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right" >
-            <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400"  />
-          </Grid>
-          <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
-            <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Width="400" />
-          </Grid>
-          <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
-            <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
-          </Grid>        
-        <Grid DockPanel.Dock="Left" >
-          <Controls:Console DataContext="{Binding Console}" />
-        </Grid>        
-      </DockPanel>
-    </Grid>
-
-    <Grid Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Margin="2 2 1 2">
-      <Controls:SolutionExplorer DataContext="{Binding SolutionExplorer}" />
-    </Grid>
-
+    <Controls:ModalDialog Grid.RowSpan="4" Grid.ColumnSpan="4" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
+    <!-- Move the modal dialog and status bar to bottom of this grid tag to upset omnixaml-->
     <Grid Grid.Row="3" Grid.ColumnSpan="4">
       <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
-    <Controls:ModalDialog Grid.RowSpan="5" Grid.ColumnSpan="4" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" />
+    
+
+    <Grid Grid.ColumnSpan="3" Margin="20 0 0 0">
+      <Controls:ToolBar DataContext="{Binding ToolBar}" />
+    </Grid>
+
+    <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="1 2 2 1">
+      <DockPanel>
+        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Left" Width="400" >
+          <DockPanel>
+            <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Bottom">
+              <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Height="300" />
+            </Grid>
+            <Controls:Registers DataContext="{Binding DebugManager.Registers}" />
+          </DockPanel>
+        </Grid>
+
+        <Controls:DocumentTabControl DockPanel.Dock="Right" DataContext="{Binding DocumentTabs}" />        
+      </DockPanel>
+
+    </Grid>
+
+    <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="1 1 2 2">
+      <DockPanel>
+        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right" >
+          <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400"  />
+        </Grid>
+        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
+          <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
+        </Grid>
+
+        <Grid DockPanel.Dock="Left" >
+          <DockPanel>
+            <StackPanel DockPanel.Dock="Bottom" ZIndex="100">
+              <TabStrip Name="bottomToolStrip" Items="{Binding BottomTools}" SelectedItem="{Binding BottomSelectedTool, Mode=TwoWay}" Focusable="false">
+                <TabStrip.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <DockPanel  LastChildFill="false" />
+                  </ItemsPanelTemplate>
+                </TabStrip.ItemsPanel>
+
+                <TabStrip.Styles>
+                  <Style Selector="TabStripItem">
+                    <Setter Property="Height" Value="20" />
+                    <Setter Property="Background" Value="#2D2D30" />
+                    <Setter Property="BorderBrush" Value="#3E3E42" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Margin" Value="0 -1 0 0" />
+                    <Setter Property="Padding" Value="4 0 4 0" />
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
+                  </Style>
+                  <Style Selector="TabStripItem:pointerover">
+                    <Setter Property="Background" Value="#3E3E40" />
+                  </Style>
+                  <Style Selector="TabStripItem:selected">
+                    <Setter Property="Background" Value="#252526" />
+                    <Setter Property="BorderThickness" Value="1" />
+                  </Style>
+                </TabStrip.Styles>
+
+                <TabStrip.DataTemplates>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Gap="2">
+                      <TextBlock Text="{Binding Title}" Foreground="WhiteSmoke" Margin="2"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </TabStrip.DataTemplates>
+              </TabStrip>
+            </StackPanel>
+
+            <Carousel Items="{Binding BottomTools}" SelectedItem="{Binding BottomSelectedTool}" IsVirtualized="false" ZIndex="50">
+              <Carousel.DataTemplates>
+                <DataTemplate>
+                  <Controls:ViewModelViewHost />
+                </DataTemplate>
+              </Carousel.DataTemplates>
+            </Carousel>
+          </DockPanel>
+        </Grid>
+      
+          
+      </DockPanel>
+    </Grid>
+
+    <Grid Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Margin="2 2 1 2">
+      <DockPanel LastChildFill="true">
+        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Bottom">
+          <Controls:WatchList DataContext="{Binding DebugManager.WatchList}" Height="400" />
+        </Grid>
+
+        <DockPanel>
+          <StackPanel DockPanel.Dock="Bottom" ZIndex="100">
+            <TabStrip Name="rightToolStrip" Items="{Binding RightTools}" SelectedItem="{Binding RightSelectedTool, Mode=TwoWay}" Focusable="false">
+              <TabStrip.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <DockPanel LastChildFill="false" />
+                </ItemsPanelTemplate>
+              </TabStrip.ItemsPanel>
+
+              <TabStrip.Styles>
+                <Style Selector="TabStripItem">
+                  <Setter Property="Height" Value="20" />
+                  <Setter Property="Background" Value="#2D2D30" />
+                  <Setter Property="BorderBrush" Value="#3E3E42" />
+                  <Setter Property="BorderThickness" Value="0" />
+                  <Setter Property="Margin" Value="0 -1 0 0" />
+                  <Setter Property="Padding" Value="4 0 4 0" />
+                  <Setter Property="FontSize" Value="12"/>
+                  <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
+                </Style>
+                <Style Selector="TabStripItem:pointerover">
+                  <Setter Property="Background" Value="#3E3E40" />
+                </Style>
+                <Style Selector="TabStripItem:selected">
+                  <Setter Property="Background" Value="#252526" />
+                  <Setter Property="BorderThickness" Value="1" />
+                </Style>
+              </TabStrip.Styles>
+
+              <TabStrip.DataTemplates>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal" Gap="2">
+                    <TextBlock Text="{Binding Title}" Foreground="WhiteSmoke" Margin="2"/>
+                  </StackPanel>
+                </DataTemplate>
+              </TabStrip.DataTemplates>
+            </TabStrip>
+          </StackPanel>
+
+          <Carousel Items="{Binding RightTools}" SelectedItem="{Binding RightSelectedTool}" IsVirtualized="false" ZIndex="50">
+            <Carousel.DataTemplates>
+              <DataTemplate>
+                <Controls:ViewModelViewHost />
+              </DataTemplate>
+            </Carousel.DataTemplates>
+          </Carousel>
+        </DockPanel>
+      </DockPanel>
+    </Grid>    
   </Grid>
 </Controls:MetroWindow>

@@ -5,13 +5,14 @@
     using Extensibility;
     using Perspex.Controls;
     using ReactiveUI;
+    using Shell;
     using System.Collections.Generic;
 
     public class DebuggerSettingsFormViewModel : ViewModel<CPlusPlusProject>
     {
         public DebuggerSettingsFormViewModel(CPlusPlusProject project) : base(project)
         {
-            debuggers = new List<IDebugger>(Workspace.Instance.Debuggers);
+            debuggers = new List<IDebugger>(IoC.Get<IShell>().Debuggers);
             selectedDebugger = project.Debugger;
         }
 

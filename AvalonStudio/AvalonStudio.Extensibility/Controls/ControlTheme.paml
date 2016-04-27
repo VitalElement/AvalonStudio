@@ -1,0 +1,3 @@
+﻿<Styles xmlns="https://github.com/perspex">
+  <StyleInclude Source="resm:AvalonStudio.Extensibility.Controls.ToolControl.paml?assembly=AvalonStudio.Extensibility"/>  
+</Styles>

@@ -9,7 +9,7 @@
     using Projects;
     using Extensibility;
     using Projects.CPlusPlus;
-
+    using Shell;
     public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
     {
         public override string DefaultProjectName
@@ -40,11 +40,11 @@
         {
             var project = await base.Generate(solution, name);
 
-            project.ToolChain = Workspace.Instance.ToolChains.FirstOrDefault(tc => tc is STM32GCCToolchain);
+            project.ToolChain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc is STM32GCCToolchain);
 
             var settings = STM32GCCToolchain.ProvisionSTM32Settings(project);
 
-            project.Items.Add(SourceFile.Create(project, project, project.CurrentDirectory, "main.cpp", "int main (void){}"));
+            project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "main.cpp", "int main (void){}"));
             
             project.Save();            
 

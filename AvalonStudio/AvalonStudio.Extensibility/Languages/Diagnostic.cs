@@ -17,7 +17,7 @@ namespace AvalonStudio.Languages
         public int Offset { get; set; }
         public int Line { get; set; }
         public int Length { get; set; }
-        public string File { get; set; }
+        public string File { get; set; }        
         public string Spelling { get; set; }
         public DiagnosticLevel Level { get; set; }
     }

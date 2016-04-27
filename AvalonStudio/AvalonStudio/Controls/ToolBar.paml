@@ -1,119 +1,138 @@
 ﻿<UserControl xmlns="https://github.com/perspex">
   <UserControl.Styles>
-    <Style Selector="Panel:pointerover">
-      <Setter Property="Background" Value="Red" />
-    </Style>
-
     <Style Selector="Button /template/ ContentPresenter">
       <Setter Property="BorderThickness" Value="0"/>
     </Style>
+
+    <Style Selector="Button">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+      
+    <Style Selector="Button /template/ ContentPresenter">
+      <Setter Property="Background" Value="#00FFFFFF"/>
+    </Style>
+
+    <Style Selector="Button:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#22FFFFFF"/>
+    </Style>
+
+    <Style Selector="Button:pressed /template/ ContentPresenter">
+      <Setter Property="Background" Value="#007ACC"/>
+    </Style>
+
   </UserControl.Styles>
-  <StackPanel Orientation="Horizontal">
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.chevron.left.png" IsHitTestVisible="false" />
+  <StackPanel Orientation="Horizontal" Gap="1">
+    <!--<Button BorderThickness="0" Margin="0"  Height="22" Width="22">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Data="M7,12L12,7V10H16V14H12V17L7,12M22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12M20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12Z" Fill="#7AC1FF" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.chevron.right.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Data="M17,12L12,17V14H8V10H12V7L17,12M2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12M4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12Z" Fill="#7AC1FF" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="WhiteSmoke">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.page.code.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Data="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M15,18V16H6V18H15M18,14V12H6V14H18Z" Fill="WhiteSmoke" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FFD7AC6A">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.folder.open.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22">
+      <Panel Height="15" Width="15">
+         <Path Stretch="Uniform" UseLayoutRounding="False" Data="M20,18H4V8H20M20,6H12L10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6Z" Fill="#FFD7AC6A" />
+      </Panel>
+    </Button>!-->
+
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding SaveCommand}">
+      <Panel Height="15" Width="15">
+         <Path Stretch="Uniform" UseLayoutRounding="False" Data="M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z" Fill="#FF7AC1FF" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.save.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding SaveAllCommand}">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Data="M17,7V3H7V7H17M14,17A3,3 0 0,0 17,14A3,3 0 0,0 14,11A3,3 0 0,0 11,14A3,3 0 0,0 14,17M19,1L23,5V17A2,2 0 0,1 21,19H7C5.89,19 5,18.1 5,17V3A2,2 0 0,1 7,1H19M1,7H3V21H17V23H3A2,2 0 0,1 1,21V7Z" Fill="#FF7AC1FF" />        
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.undo.curve.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding UndoCommand}">
+      <Panel Height="15" Width="15">
+           <Path Stretch="Uniform" UseLayoutRounding="False" Data="M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z" Fill="#FF7AC1FF" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.redo.curve.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding RedoCommand}">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Data="M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z" Fill="#FF7AC1FF" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF8DD28A">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.align.right.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding CommentCommand}">
+      <Panel Height="15" Width="15">
+         <Path Stretch="Uniform" UseLayoutRounding="False" Data="M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z" Fill="#FF8DD28A" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="WhiteSmoke">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.align.right.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding UnCommentCommand}">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Data="M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z" Fill="WhiteSmoke" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FFDAA107">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.box.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding BuildCommand}">
+      <Panel Height="15" Width="15">
+          <Path Stretch="Uniform" UseLayoutRounding="False" Data="M21,16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V7.5C3,7.12 3.21,6.79 3.53,6.62L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.79,6.79 21,7.12 21,7.5V16.5M12,4.15L6.04,7.5L12,10.85L17.96,7.5L12,4.15Z" Fill="#FFDAA107" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF0F8CD3">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.clean.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding CleanCommand}">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Data="M15,16H19V18H15V16M15,8H22V10H15V8M15,12H21V14H15V12M3,18A2,2 0 0,0 5,20H11A2,2 0 0,0 13,18V8H3V18M14,5H11L10,4H6L5,5H2V7H14V5Z" Fill="#FF0F8CD3" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF8DD28A">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.control.play.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding StartDebugCommand}">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Data="M8,5.14V19.14L19,12.14L8,5.14Z" Fill="#FF8DD28A" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.control.pause.png" IsHitTestVisible="false" />
-      </Panel>
-    </Button>    
-
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FFF38B76">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.stop.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding PauseCommand}">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Fill="#FF7AC1FF" Data="M13,16.14H15V8.14H13M12,20.14C7.59,20.14 4,16.55 4,12.14C4,7.73 7.59,4.14 12,4.14C16.41,4.14 20,7.73 20,12.14C20,16.55 16.41,20.14 12,20.14M12,2.14A10,10 0 0,0 2,12.14A10,10 0 0,0 12,22.14A10,10 0 0,0 22,12.14C22,6.61 17.5,2.14 12,2.14M9,16.14H11V8.14H9V16.14Z" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF8DD28A">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.restart.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding StopCommand}">
+      <Panel Height="15" Width="15" Background="#FFF38B76">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Data="M18,18H6V6H18V18Z" Fill="#FFF38B76" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.step.over.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding RestartCommand}">
+      <Panel Height="15" Width="15">
+        <Path Stretch="Uniform" UseLayoutRounding="False" Fill="#FF8DD28A" Data="F1 M 0,4.30496L 5.03999,0L 5.03999,2.625L 18,2.625C 18.665,2.625 19.2312,2.85498 19.6987,3.31497C 20.1662,3.77499 20.4,4.33249 20.4,4.98746L 20.4,11.805C 20.4,12.46 20.1687,13.0138 19.7062,13.4662C 19.2438,13.9187 18.68,14.145 18.015,14.145L 1.67999,14.145L 1.67999,10.785L 17.04,10.785L 17.04,5.98499L 5.03999,5.98499L 5.03999,8.48251L 0,4.30496 Z "/>
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.step.into.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding StepOverCommand}">
+      <Panel Height="15" Width="15">
+          <Path Stretch="Uniform" UseLayoutRounding="False" Data="M12,14A2,2 0 0,1 14,16A2,2 0 0,1 12,18A2,2 0 0,1 10,16A2,2 0 0,1 12,14M23.46,8.86L21.87,15.75L15,14.16L18.8,11.78C17.39,9.5 14.87,8 12,8C8.05,8 4.77,10.86 4.12,14.63L2.15,14.28C2.96,9.58 7.06,6 12,6C15.58,6 18.73,7.89 20.5,10.72L23.46,8.86Z" Fill="#FF7AC1FF" />
       </Panel>
     </Button>
 
-    <Button Background="Transparent" BorderThickness="2" Margin="0"  Height="22" Width="22">
-      <Panel Height="20" Width="20" Background="#FF7AC1FF">
-        <Image Source="Resources/Icons/Templarian/dark/appbar.debug.step.out.png" IsHitTestVisible="false" />
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22" Command="{Binding StepIntoCommand}">
+      <Panel Height="15" Width="15">
+         <Path Stretch="Uniform" UseLayoutRounding="False" Data="M12,22A2,2 0 0,1 10,20A2,2 0 0,1 12,18A2,2 0 0,1 14,20A2,2 0 0,1 12,22M13,2V13L17.5,8.5L18.92,9.92L12,16.84L5.08,9.92L6.5,8.5L11,13V2H13Z" Fill="#FF7AC1FF" />
+      </Panel>
+    </Button>
+
+    <Button BorderThickness="0" Margin="0"  Height="22" Width="22">
+      <Panel Height="15" Width="15">
+         <Path Stretch="Uniform" UseLayoutRounding="False" Data="M12,22A2,2 0 0,1 10,20A2,2 0 0,1 12,18A2,2 0 0,1 14,20A2,2 0 0,1 12,22M13,16H11V6L6.5,10.5L5.08,9.08L12,2.16L18.92,9.08L17.5,10.5L13,6V16Z" Fill="#FF7AC1FF" />
       </Panel>
     </Button>
   </StackPanel>

@@ -1,0 +1,8 @@
+﻿<UserControl xmlns="https://github.com/perspex"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:ucont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:vm="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio">
+  <cont:ToolControl Title="Watch List">
+    <ucont:VariableControl />
+  </cont:ToolControl>
+</UserControl>

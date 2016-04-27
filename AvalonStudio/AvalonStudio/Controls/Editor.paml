@@ -6,26 +6,39 @@
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
              Foreground="WhiteSmoke">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
-    <Grid RowDefinitions="25,*">
-      <TextBlock Text="{Binding Title}" Margin="0,0,0,0" TextAlignment="Center" />
-      <te:TextEditor Name="editor" Grid.Row="1" TextDocument="{Binding TextDocument, Mode=TwoWay}"
-                     FontFamily="{Binding FontFamily}" FontSize="14" Foreground="#D4D4D4" BorderThickness="0"
+    <Grid>      
+      <te:TextEditor Name="editor" TextDocument="{Binding TextDocument}"
+                     FontFamily="{Binding FontFamily}" FontSize="12" Foreground="#D4D4D4" BorderThickness="0"
                      BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
                      TextChangedCommand="{Binding TextChangedCommand}"
-                     TextChangedDelay="225" CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
+                     TextChangedDelay="400"
+                     CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
                      AcceptsReturn="true" AcceptsTab="true" TabCharacter="{Binding TabCharacter}"
                      CaretLocationInTextView="{Binding CaretLocation}" SelectedWord="{Binding WordAtCaret}"
                      LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}" Margins="{Binding Margins}"
                      MouseCursorOffset="{Binding MouseCursorOffset, Mode=TwoWay}">
+        
+        <te:TextEditor.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="Add Watch" Command="{Binding AddWatchCommand}" />
+          </ContextMenu>
+        </te:TextEditor.ContextMenu>
 
-        <i:Interaction.Behaviors>
+
+        <!--<i:Interaction.Behaviors>
           <behaviours:CodeInformationToolTipBehavior>
             <cont:HoverProbe DataContext="{Binding HoverProbe}" />
           </behaviours:CodeInformationToolTipBehavior>
 
-        </i:Interaction.Behaviors>
+           <behaviours:DebugInformationToolTipBehaviour>
+             <cont:VariableControl DataContext="{Binding DebugHoverProbe}" />
+           </behaviours:DebugInformationToolTipBehaviour>
+        </i:Interaction.Behaviors>-->
 
-        <te:TextEditor.Content>
+        <te:TextEditor.Header>
+        </te:TextEditor.Header>
+        
+        <te:TextEditor.Content>          
           <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
         </te:TextEditor.Content>
 

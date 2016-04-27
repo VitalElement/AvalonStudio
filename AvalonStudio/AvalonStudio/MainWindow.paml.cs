@@ -1,9 +1,9 @@
 ﻿namespace AvalonStudio
 {
     using Controls;
+    using Perspex;
     using Perspex.Controls;
     using Perspex.Input;
-    using Perspex.Markup.Xaml;
 
     public class MainWindow : MetroWindow
     {
@@ -11,20 +11,22 @@
         {
             this.InitializeComponent();
 
-            App.AttachDevTools(this);
+            DataContext = ShellViewModel.Instance;
+
+            this.AttachDevTools();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if(DataContext != null && DataContext is WorkspaceViewModel)
+            if(DataContext != null && DataContext is ShellViewModel)
             {
-                (DataContext as WorkspaceViewModel).OnKeyDown(e);
+                (DataContext as ShellViewModel).OnKeyDown(e);
             }
         }
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+           this.LoadFromXaml();
         }        
     }
 }

@@ -56,6 +56,6 @@
         </Grid>
       </Panel>
 
-      <ContentPresenter Grid.Row="2" Grid.ColumnSpan="3" Content="{Binding DebugSettingsControl}" /> 
+      <ContentControl Grid.Row="2" Grid.ColumnSpan="3" Content="{Binding DebugSettingsControl}" /> 
     </Grid>
   </TabItem>

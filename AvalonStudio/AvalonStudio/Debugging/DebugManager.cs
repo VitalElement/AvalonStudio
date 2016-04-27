@@ -1,9 +1,11 @@
 ﻿using AvalonStudio.Controls;
+using AvalonStudio.Controls.ViewModels;
 using AvalonStudio.Debugging.GDB.OpenOCD;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Models.Tools.Debuggers.Local;
 using AvalonStudio.MVVM;
-using AvalonStudio.Platform;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
@@ -29,26 +31,19 @@ namespace AvalonStudio.Debugging
             Registers = new RegistersViewModel();
             Disassembly = new DisassemblyViewModel();
             //MemoryView = new MemoryViewModel();
-            //WatchList = new WatchListViewModel();
+            WatchList = new WatchListViewModel();
             //VariableProbes = new List<VariableProbeViewModel>();
             CallStack = new CallStackViewModel();
-
-            //LocalsView.bool = bool.Hidden;
-            //RegistersView.bool = bool.Hidden;
-            //DissasemblyView.bool = bool.Hidden;
-            //MemoryView.bool = bool.Hidden;
-            //WatchList.bool = bool.Hidden;
-            //CallStack.bool = bool.Hidden;
-
+            
             StartDebuggingCommand = ReactiveCommand.Create();
             StartDebuggingCommand.Subscribe((o) =>
             {
-                switch (WorkspaceViewModel.Instance.CurrentPerspective)
+                switch (ShellViewModel.Instance.CurrentPerspective)
                 {
                     case Perspective.Editor:
                         if (o == null)
                         {
-                            o = WorkspaceViewModel.Instance.SolutionExplorer.Model.StartupProject;
+                            o = ShellViewModel.Instance.CurrentSolution.StartupProject;
                         }
 
                         if (o is IProject)
@@ -61,7 +56,7 @@ namespace AvalonStudio.Debugging
                             {
                                 //WorkspaceViewModel.Instance.ExecutingCompileTask = true;
 
-                                if (await masterProject.ToolChain.Build(WorkspaceViewModel.Instance.Console, masterProject))
+                                if (await masterProject.ToolChain.Build(ShellViewModel.Instance.Console, masterProject))
                                 {
                                     //Debugger = masterProject.SelectedDebugAdaptor;
 
@@ -74,7 +69,7 @@ namespace AvalonStudio.Debugging
                                     }
                                     else
                                     {
-                                        WorkspaceViewModel.Instance.Console.WriteLine((string)"You have not selected a debug adaptor. Please goto Tools->Options to configure your debug adaptor.");
+                                        ShellViewModel.Instance.Console.WriteLine((string)"You have not selected a debug adaptor. Please goto Tools->Options to configure your debug adaptor.");
                                     }
                                 }
 
@@ -171,14 +166,14 @@ namespace AvalonStudio.Debugging
 
         private bool IsExecuting = false;
         private bool IsUpdating = false;
+        private IEditor lastDocument;
 
         private void PrepareToRun()
-        {
-            WorkspaceViewModel.Instance.Editor.DebugLineHighlighter.Line = -1;
-            //if (lastDocument != null)
-            //{
-            //    lastDocument.ClearDebugHighlight();
-            //}
+        {           
+            if (lastDocument != null)
+            {
+                lastDocument.ClearDebugHighlight();
+            }
 
             //foreach (var probe in VariableProbes)
             //{
@@ -186,6 +181,18 @@ namespace AvalonStudio.Debugging
             //}
 
             IsExecuting = true;
+        }
+
+        public VariableObject ProbeExpression (string expression)
+        {
+            VariableObject result = null;
+
+            if(Debugger.State == DebuggerState.Paused)
+            {
+                result = Debugger.CreateWatch(string.Format("probe{0}", Debugger.GetVariableId()), expression);
+            }
+
+            return result;
         }
 
         public void Continue ()
@@ -298,16 +305,10 @@ namespace AvalonStudio.Debugging
         {
             if (Debugger != null)
             {
-                Pause();
-
-                if (!IsExecuting)
+                Task.Factory.StartNew(() =>
                 {
-                    Task.Factory.StartNew(() =>
-                    {
-                        PrepareToRun();
-                        Debugger.Reset(true);
-                    });
-                }
+                    Debugger.Reset(true);
+                });             
             }
         }
 
@@ -322,30 +323,29 @@ namespace AvalonStudio.Debugging
                 Debugger.Stop();
             }//);
 
-            //WorkspaceViewModel.Instance.DispatchUi(() =>
+            //WatchList.Clear();
+            //RegistersView.Clear();
+            //LocalsView.Clear();
+            //CallStack.Clear();
+
+            SetDebuggers(null);
+
+            ignoreEvents = false;
+
+            Project = null;
+
+            if (lastDocument != null)
             {
-                //WatchList.Clear();
-                //RegistersView.Clear();
-                //LocalsView.Clear();
-                //CallStack.Clear();
-
-                SetDebuggers(null);
-
-                ignoreEvents = false;
-
-                Project = null;
-
-                //if (lastDocument != null)
-                //{
-                //    lastDocument.ClearDebugHighlight();
-                //}
-            }//);
+                lastDocument.ClearDebugHighlight();
+                lastDocument = null;
+            }
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Editor;
+                ShellViewModel.Instance.CurrentPerspective = Perspective.Editor;
             });
         }
+
         #region Commands
         public ReactiveCommand<object> StartDebuggingCommand { get; private set; }
         public ReactiveCommand<object> RestartDebuggingCommand { get; private set; }
@@ -363,7 +363,8 @@ namespace AvalonStudio.Debugging
             Registers.SetDebugger(debugger);
             Disassembly.SetDebugger(debugger);
             //MemoryView.SetDebugger(debugger);
-            //WatchList.SetDebugger(debugger as GDBDebugger);
+            WatchList.SetDebugger(debugger);
+            Locals.SetDebugger(debugger);
         }
 
         #region Properties
@@ -404,12 +405,12 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref locals, value); }
         }
 
-        //private WatchListViewModel watchList;
-        //public WatchListViewModel WatchList
-        //{
-        //    get { return watchList; }
-        //    set { watchList = value; OnPropertyChanged(); }
-        //}
+        private WatchListViewModel watchList;
+        public WatchListViewModel WatchList
+        {
+            get { return watchList; }
+            set { this.RaiseAndSetIfChanged(ref watchList, value); }
+        }
 
         private CallStackViewModel callStack;
         public CallStackViewModel CallStack
@@ -464,19 +465,19 @@ namespace AvalonStudio.Debugging
                 {
                     Debugger = project.Debugger;
 
-                    await project.ToolChain.Build(WorkspaceViewModel.Instance.Console, project);
+                    await project.ToolChain.Build(ShellViewModel.Instance.Console, project);
                     //Debugger.DebugMode = true;
 
                     Debugger.Initialise();
 
-                    WorkspaceViewModel.Instance.Console.WriteLine();
-                    WorkspaceViewModel.Instance.Console.WriteLine("Starting Debugger...");
+                    ShellViewModel.Instance.Console.WriteLine();
+                    ShellViewModel.Instance.Console.WriteLine("Starting Debugger...");
 
-                    if (Debugger.Start(project.ToolChain, WorkspaceViewModel.Instance.Console, project))
+                    if (Debugger.Start(project.ToolChain, ShellViewModel.Instance.Console, project))
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Debug;
+                            ShellViewModel.Instance.CurrentPerspective = Perspective.Debug;
                         });
 
                         BreakPointManager.GoLive();
@@ -489,7 +490,7 @@ namespace AvalonStudio.Debugging
             }
             else
             {
-                WorkspaceViewModel.Instance.Console.WriteLine("No debugger selected.");
+                ShellViewModel.Instance.Console.WriteLine("No debugger selected.");
             }
         }
 
@@ -531,7 +532,11 @@ namespace AvalonStudio.Debugging
                     IsExecuting = false;
                     IsUpdating = false;
                     this.StopDebuggingCommand.Execute(null);
-                    WorkspaceViewModel.Instance.CurrentPerspective = Perspective.Editor;
+
+                    Dispatcher.UIThread.InvokeAsync( () =>
+                    {
+                        ShellViewModel.Instance.CurrentPerspective = Perspective.Editor;
+                    });
                     break;
 
                 default:
@@ -541,33 +546,39 @@ namespace AvalonStudio.Debugging
                     {
                         var normalizedPath = e.Frame.File.Replace("\\\\","\\").ToPlatformPath();
 
-                        var file = WorkspaceViewModel.Instance.Editor.Model.ProjectFile;
+                        ISourceFile file = null;
 
-                        if (file == null || file.File != normalizedPath)
+                        var document = ShellViewModel.Instance.GetDocument(normalizedPath);
+                        file = document?.ProjectFile;
+
+                        if (file == null)
                         {
-                            file = WorkspaceViewModel.Instance.SolutionExplorer.Model.FindFile(SourceFile.FromPath(null, null, normalizedPath));
+                            file = ShellViewModel.Instance.CurrentSolution.FindFile(SourceFile.FromPath(null, null, normalizedPath));
                         }
 
                         if (file != null)
                         {
-                            Dispatcher.UIThread.InvokeAsync(() =>
+                            await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                             {
-                                WorkspaceViewModel.Instance.Editor.OpenFile(file, e.Frame.Line, 1, true);
+                                document = await ShellViewModel.Instance.OpenDocument(file, e.Frame.Line, 1, true);
                             });
                         }
                         else
                         {
-                            WorkspaceViewModel.Instance.Console.WriteLine("Unable to find file: " + normalizedPath);
+                            ShellViewModel.Instance.Console.WriteLine("Unable to find file: " + normalizedPath);
                         }
+
+                        lastDocument = document;
                     }
 
 
                     List<Variable> stackVariables = null;
                     List<Frame> stackFrames = null;
+                    List<VariableObjectChange> updates = null;
 
                     stackVariables = Debugger.ListStackVariables();
                     stackFrames = Debugger.ListStackFrames();
-                    //updates = debugger.UpdateVariables();
+                    updates = debugger.UpdateVariables();
 
                     //if (DissasemblyView.bool == bool.Visible)
                     //{
@@ -584,13 +595,15 @@ namespace AvalonStudio.Debugging
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        Locals.Model = stackVariables;
+                        Locals.InvalidateLocals(stackVariables);
+                        Locals.Invalidate(updates);
                         CallStack.Update(stackFrames);
                         Registers.Invalidate();
                         Disassembly.SetAddress(e.Frame.Address);
+                        WatchList.Invalidate(updates);                        
                     });
 
-                    //WatchList.Invalidate(updates);
+                    
                     
 
                     //while (await IsAsynchronousUIListsLoading())
@@ -621,7 +634,7 @@ namespace AvalonStudio.Debugging
         {
             bool result = false;
 
-            if (WorkspaceViewModel.Instance.CurrentPerspective == Perspective.Debug && Debugger != null)
+            if (ShellViewModel.Instance.CurrentPerspective == Perspective.Debug && Debugger != null)
             {
                 if (Debugger.State == DebuggerState.Paused && !IsExecuting)
                 {

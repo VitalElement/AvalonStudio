@@ -12,7 +12,7 @@
     using Perspex.Controls;
     using System.Dynamic;
     using Extensibility.Utils;
-    using Platform;
+    using Platforms;
     using GCC;
 
     public class LocalGCCToolchain : GCCToolchain
@@ -101,7 +101,7 @@
             }
 
             startInfo.EnvironmentVariables["Path"] = BaseDirectory;
-            startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
+            startInfo.WorkingDirectory = file.CurrentDirectory;
 
             if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
             {
@@ -521,6 +521,11 @@
             foreach (var define in project.Defines)
             {
                 result += string.Format("-D{0} ", define.Value);
+            }
+
+            if(Platform.PlatformIdentifier == PlatformID.Win32NT)
+            {
+                result += string.Format("-D{0} ", "WIN32NT");
             }
 
             foreach (var arg in superProject.ToolChainArguments)
