@@ -1,8 +1,8 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus
 {
     using NClang;
+    using Perspex.Input;
     using Perspex.Media;
-    using Perspex.Threading;
     using Projects;
     using Projects.Standard;
     using Rendering;
@@ -11,19 +11,17 @@
     using System.IO;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Threading;
     using System.Xml.Linq;
     using TextEditor;
     using TextEditor.Document;
-    using TextEditor.Rendering;
     using TextEditor.Indentation;
-    using Perspex.Utilities;
-    using Perspex.Input;
+    using TextEditor.Rendering;
     using Utils;
-    using Extensibility;
-    using System.Threading;
+
     public class CPlusPlusLanguageService : ILanguageService
     {
-        private static ClangIndex index = ClangService.CreateIndex();
+        private static ClangIndex index = ClangService.CreateIndex();        
         private static ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations = new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
 
         public CPlusPlusLanguageService()
@@ -62,9 +60,9 @@
             }
         }
 
-        void AddArgument (List<string> list, string argument)
+        void AddArgument(List<string> list, string argument)
         {
-            if(!list.Contains(argument))
+            if (!list.Contains(argument))
             {
                 list.Add(argument);
             }
@@ -177,17 +175,13 @@
                 // TODO do we mark files as class header? CAn clang auto detect this?
                 //if (file.Language == Language.Cpp)
                 {
-                    
+
                     args.Add("-xc++");
                     args.Add("-std=c++14");
                 }
 
-                // this is a dependency on VEStudioSettings.
-                //if (VEStudioSettings.This.ShowAllWarnings)
-                //{
-                //    args.Add("-Weverything");
-                //}
-                                
+                args.Add("-Weverything");
+
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble | TranslationUnitFlags.CacheCompletionResults);
             }
 
@@ -521,7 +515,7 @@
             }
         }
 
-        public void RegisterSourceFile(TextEditor editor, ISourceFile file, TextDocument doc)
+        public void RegisterSourceFile(IIntellisenseControl intellisense, TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CPlusPlusDataAssociation association = null;
 
@@ -535,6 +529,18 @@
                 dataAssociations.Add(file, association);
             }
 
+            association.IntellisenseManager = new CPlusPlusIntellisenseManager(intellisense, editor);
+
+            association.TunneledKeyUpHandler = (sender, e) =>
+            {
+                association.IntellisenseManager.OnKeyUp(e);
+            };
+
+            association.TunneledKeyDownHandler = (sender, e) =>
+            {
+                association.IntellisenseManager.OnKeyDown(e);
+            };            
+            
             association.KeyUpHandler = (sender, e) =>
             {
                 if (editor.TextDocument == doc)
@@ -542,7 +548,7 @@
                     switch (e.Key)
                     {
                         case Key.Return:
-                            {
+                            {                                
                                 if (editor.CaretIndex < editor.TextDocument.TextLength)
                                 {
                                     if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
@@ -578,17 +584,24 @@
                     {
                         case "}":
                         case ";":
-                            editor.CaretIndex = Format(file, editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+                            editor.CaretIndex = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
                             break;
 
-                        case "{":
-                            editor.CaretIndex = Format(file, editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex) - Environment.NewLine.Length;
+                        case "{":                            
+                            var offset = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+
+                            var newLine = editor.TextDocument.GetLineByOffset(offset);
+
+                            editor.CaretIndex = newLine.PreviousLine.EndOffset;
                             break;
                     }
                 }
             };
 
-            editor.KeyUp += association.KeyUpHandler;
+            editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
+            editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
+            editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
+            
             editor.TextInput += association.TextInputHandler;
         }
 
@@ -610,13 +623,16 @@
         {
             var association = GetAssociatedData(file);
 
-            editor.KeyUp -= association.KeyUpHandler;
+            editor.RemoveHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler);
+            editor.RemoveHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler);
+            editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
+            
             editor.TextInput -= association.TextInputHandler;
 
             dataAssociations.Remove(file);
         }
 
-        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
             var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor, ClangFormatSettings.Default);
 
@@ -774,6 +790,60 @@
         {
             throw new NotImplementedException();
         }
+
+        public int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
+        {
+            int result = caret;
+            
+            IEnumerable<IDocumentLine> lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+
+            textDocument.BeginUpdate();
+
+            foreach (var line in lines)
+            {
+                textDocument.Insert(line.Offset, "//");
+            }
+
+            if (format)
+            {
+                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
+            }
+
+            textDocument.EndUpdate();
+
+            return result;
+        }
+        
+
+        public int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
+        {
+            int result = caret;
+
+            IEnumerable<IDocumentLine> lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+
+            textDocument.BeginUpdate();
+
+            foreach (var line in lines)
+            {
+                var index = textDocument.GetText(line).IndexOf("//");
+
+                if (index >= 0)
+                {
+                    textDocument.Replace(line.Offset + index, 2, string.Empty);
+                }
+            }
+
+            if (format)
+            {
+                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
+            }
+
+            textDocument.EndUpdate();
+
+            return result;
+        }
+
+        
     }
 
     class CPlusPlusDataAssociation
@@ -789,7 +859,7 @@
             BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
             BackgroundRenderers.Add(TextMarkerService);
 
-            DocumentLineTransformers.Add(TextColorizer);            
+            DocumentLineTransformers.Add(TextColorizer);
             DocumentLineTransformers.Add(new DefineTextLineTransformer());
             DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
             DocumentLineTransformers.Add(new IncludeTextLineTransformer());
@@ -800,7 +870,11 @@
         public TextMarkerService TextMarkerService { get; private set; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; private set; }
         public List<IDocumentLineTransformer> DocumentLineTransformers { get; private set; }
+        public EventHandler<KeyEventArgs> TunneledKeyUpHandler { get; set; }
+        public EventHandler<KeyEventArgs> TunneledKeyDownHandler { get; set; }
         public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
+        public EventHandler<KeyEventArgs> KeyDownHandler { get; set; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
+        public CPlusPlusIntellisenseManager IntellisenseManager { get; set; }
     }
 }

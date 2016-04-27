@@ -1,51 +1,95 @@
 ﻿namespace AvalonStudio.Controls
 {
+    using Documents;
+    using Languages;
     using MVVM;
+    using Perspex;
+    using Perspex.Controls;
+    using Perspex.Threading;
+    using Platforms;
     using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using TextEditor.Document;
-    using Perspex;
-    using Perspex.Input;
-    using Languages;
-    using TextEditor.Rendering;
+    using System.Reactive.Disposables;
     using TextEditor;
-    using Platform;
-    using Utils;
+    using TextEditor.Document;
+    using TextEditor.Rendering;
+    using ViewModels;
     using Projects;
-    using Perspex.Threading;
-    public class EditorViewModel : ViewModel<EditorModel>
+
+    public class EditorViewModel : ViewModel<EditorModel>, IEditor
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
         private List<IDocumentLineTransformer> languageServiceDocumentLineTransformers = new List<IDocumentLineTransformer>();
+        private CompositeDisposable disposables;
+
 
         #region Constructors
         public EditorViewModel(EditorModel model) : base(model)
         {
+            disposables = new CompositeDisposable();
             this.highlightingData = new ObservableCollection<SyntaxHighlightingData>();
 
             BeforeTextChangedCommand = ReactiveCommand.Create();
-            BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged);
+            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
 
             TextChangedCommand = ReactiveCommand.Create();
-            TextChangedCommand.Subscribe(model.OnTextChanged);
-            
+            disposables.Add(TextChangedCommand.Subscribe(model.OnTextChanged));
+            disposables.Add(TextChangedCommand.Subscribe(_ =>
+            {
+                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
+                {
+                    Dock = Dock.Left;
+
+                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
+                }
+            }));
+
             SaveCommand = ReactiveCommand.Create();
-            SaveCommand.Subscribe((param) => Save());
+            disposables.Add(SaveCommand.Subscribe((param) => Save()));
+
+            CloseCommand = ReactiveCommand.Create();
+            disposables.Add(CloseCommand.Subscribe(_ =>
+            {
+                Save();
+                Model.ShutdownBackgroundWorkers();
+                Model.UnRegisterLanguageService();
+
+                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
+                {
+                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
+                }
+
+                ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);                
+
+                ShellViewModel.Instance.InvalidateErrors();
+
+                Model.Dispose();
+                Intellisense.Dispose();
+                disposables.Dispose();
+
+                Model.TextDocument = null;
+            }));
+
+            AddWatchCommand = ReactiveCommand.Create();
+            disposables.Add(AddWatchCommand.Subscribe(_ =>
+            {
+                ShellViewModel.Instance.DebugManager.WatchList.AddWatch(WordAtCaret);
+            }));
 
             tabCharacter = "    ";
 
             model.DocumentLoaded += (sender, e) =>
             {
-                foreach(var bgRenderer in languageServiceBackgroundRenderers)
+                foreach (var bgRenderer in languageServiceBackgroundRenderers)
                 {
                     BackgroundRenderers.Remove(bgRenderer);
                 }
 
                 languageServiceBackgroundRenderers.Clear();
 
-                foreach(var transformer in languageServiceDocumentLineTransformers)
+                foreach (var transformer in languageServiceDocumentLineTransformers)
                 {
                     DocumentLineTransformers.Remove(transformer);
                 }
@@ -73,14 +117,10 @@
                 {
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
                     HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
+                    ShellViewModel.Instance.InvalidateErrors();
                 };
 
-                model.CodeCompletionRequestCompleted += (s, ee) =>
-                {
-                    Intellisense.SetCompletionResults(model.CodeCompletionResults);
-                };
-
-                this.RaisePropertyChanged(nameof(TextDocument));
+                TextDocument = model.TextDocument;
                 this.RaisePropertyChanged(nameof(Title));
             };
 
@@ -91,7 +131,7 @@
 
             this.intellisense = new IntellisenseViewModel(model, this);
 
-            documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();                        
+            documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
 
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
             backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
@@ -104,7 +144,23 @@
             backgroundRenderers.Add(wordAtCaretHighlighter);
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
-            margins = new ObservableCollection<TextViewMargin>();            
+            margins = new ObservableCollection<TextViewMargin>();
+
+            ShellViewModel.Instance.StatusBar.InstanceCount++;
+
+            dock = Dock.Right;
+        }
+
+
+        ~EditorViewModel()
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ShellViewModel.Instance.StatusBar.InstanceCount--;
+            });
+            Model.ShutdownBackgroundWorkers();
+
+            System.Console.WriteLine(("Editor VM Destructed."));
         }
         #endregion
 
@@ -192,12 +248,21 @@
         }
 
 
+        private TextDocument textDocument;
         public TextDocument TextDocument
         {
-            get
-            {
-                return Model.TextDocument;
-            }
+            get { return textDocument; }
+            set { this.RaiseAndSetIfChanged(ref textDocument, value); }
+        }
+
+        public void GotoPosition(int line, int column)
+        {
+            CaretIndex = TextDocument.GetOffset(line, column);
+        }
+
+        public void GotoOffset(int offset)
+        {
+            CaretIndex = offset;
         }
 
         private int caretIndex;
@@ -207,15 +272,86 @@
             set
             {
                 this.RaiseAndSetIfChanged(ref caretIndex, value);
-                WorkspaceViewModel.Instance.StatusBar.Offset = value;
+                ShellViewModel.Instance.StatusBar.Offset = value;
 
                 if (value >= 0)
                 {
                     var location = TextDocument.GetLocation(value);
-                    WorkspaceViewModel.Instance.StatusBar.LineNumber = location.Line;
-                    WorkspaceViewModel.Instance.StatusBar.Column = location.Column;
+                    ShellViewModel.Instance.StatusBar.LineNumber = location.Line;
+                    ShellViewModel.Instance.StatusBar.Column = location.Column;
                 }
             }
+        }
+
+        private WatchListViewModel debugHoverProbe;
+        public WatchListViewModel DebugHoverProbe
+        {
+            get { return debugHoverProbe; }
+            set { this.RaiseAndSetIfChanged(ref debugHoverProbe, value); }
+        }
+
+        private string GetWordAtOffset(int offset)
+        {
+            string result = string.Empty;
+
+            if (offset >= 0 && TextDocument.TextLength > offset)
+            {
+                int start = offset;
+
+                var currentChar = TextDocument.GetCharAt(offset);
+                char prevChar = '\0';
+
+                if (offset > 0)
+                {
+                    prevChar = TextDocument.GetCharAt(offset - 1);
+                }
+
+                var charClass = TextUtilities.GetCharacterClass(currentChar);
+
+                if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ' && TextUtilities.GetCharacterClass(prevChar) != TextUtilities.CharacterClass.LineTerminator)
+                {
+                    start = TextUtilities.GetNextCaretPosition(TextDocument, offset, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                }
+
+                int end = TextUtilities.GetNextCaretPosition(TextDocument, start, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorder);
+
+                if (start != -1 && end != -1)
+                {
+                    string word = TextDocument.GetText(start, end - start).Trim();
+
+                    if (TextUtilities.IsSymbol(word))
+                    {
+                        result = word;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public bool UpdateDebugHoverProbe(int offset)
+        {
+            bool result = false;
+
+            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
+            {
+                var expression = GetWordAtOffset(offset);
+
+                if (expression != string.Empty)
+                {
+                    var evaluatedExpression = ShellViewModel.Instance.DebugManager.ProbeExpression(expression);
+
+                    if (evaluatedExpression != null)
+                    {
+                        DebugHoverProbe = new WatchListViewModel();
+                        DebugHoverProbe.SetDebugger(ShellViewModel.Instance.DebugManager.Debugger);
+                        DebugHoverProbe.AddExistingWatch(evaluatedExpression);
+                        result = true;
+                    }
+                }
+            }
+
+            return result;
         }
 
 
@@ -230,31 +366,35 @@
         /// </summary>
         /// <param name="offset">the offset inside text document to retreive data for.</param>
         /// <returns>true if data was found.</returns>
-        public bool UpdateHoverProbe (int offset)
+        public bool UpdateHoverProbe(int offset)
         {
-            bool result = false;            
+            bool result = false;
 
-            var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
-
-            if (symbol != null)
+            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
             {
-                switch (symbol.Kind)
-                {
-                    case CursorKind.CompoundStatement:
-                    case CursorKind.NoDeclarationFound:
-                    case CursorKind.NotImplemented:
-                        break;
+                var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
 
-                    default:                        
-                        HoverProbe = new SymbolViewModel(symbol);
-                        result = true;
-                        break;
+                if (symbol != null)
+                {
+                    switch (symbol.Kind)
+                    {
+                        case CursorKind.CompoundStatement:
+                        case CursorKind.NoDeclarationFound:
+                        case CursorKind.NotImplemented:
+                        case CursorKind.FirstDeclaration:
+                            break;
+
+                        default:
+                            HoverProbe = new SymbolViewModel(symbol);
+                            result = true;
+                            break;
+                    }
                 }
             }
 
             return result;
         }
-      
+
         private ObservableCollection<SyntaxHighlightingData> highlightingData;
         public ObservableCollection<SyntaxHighlightingData> HighlightingData
         {
@@ -285,45 +425,97 @@
         }
         #endregion
 
-        public void OnKeyUp(KeyEventArgs e)
+        public TextSegment GetSelection()
         {
-            Intellisense.OnKeyUp(e);
-        }
+            TextSegment result = null;
 
-        public void OnKeyDown(KeyEventArgs e)
-        {            
-            Intellisense.OnKeyDown(e);
-        }
-
-
-        public void OnTextInput(TextInputEventArgs e)
-        {
-            Intellisense.OnTextInput(e);
-        }
-
-        public void OnPointerMoved (PointerEventArgs e)
-        {
-            
-        }
-
-        public void OpenFile(ISourceFile file, int line, int column, bool debugHighlight = false)
-        {
-            Model.OpenFile(file);
-
-            if(debugHighlight)
+            if (Model.Editor != null)
             {
-                DebugLineHighlighter.Line = line;
+                if (Model.Editor.SelectionStart < Model.Editor.SelectionEnd)
+                {
+                    result = new TextSegment() { StartOffset = Model.Editor.SelectionStart, EndOffset = Model.Editor.SelectionEnd };
+                }
+                else
+                {
+                    result = new TextSegment() { StartOffset = Model.Editor.SelectionEnd, EndOffset = Model.Editor.SelectionStart };
+                }
             }
-                        
-            Dispatcher.UIThread.InvokeAsync(() => Model.ScrollToLine(line));
+
+            return result;
+        }
+
+        public void SetSelection(TextSegment segment)
+        {
+            if (Model.Editor != null)
+            {
+                Model.Editor.SelectionStart = segment.StartOffset;
+                Model.Editor.SelectionEnd = segment.EndOffset;
+            }
+        }
+
+        public void Comment()
+        {
+            if (Model?.LanguageService != null && Model.Editor != null)
+            {
+                var selection = GetSelection();
+
+                if (selection != null)
+                {
+                    var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
+                    anchors.Add(selection);
+
+                    CaretIndex = Model.LanguageService.Comment(TextDocument, selection, CaretIndex);
+
+                    SetSelection(selection);
+                }
+
+                Model.Editor.Focus();
+            }
+        }
+
+        public void UnComment()
+        {
+            if (Model?.LanguageService != null && Model.Editor != null)
+            {
+                var selection = GetSelection();
+
+                if (selection != null)
+                {
+                    var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
+                    anchors.Add(selection);
+
+                    CaretIndex = Model.LanguageService.UnComment(TextDocument, selection, CaretIndex);
+
+                    SetSelection(selection);
+                }
+
+                Model.Editor.Focus();
+            }
+        }
+
+        public void Undo()
+        {
+            TextDocument?.UndoStack.Undo();
+        }
+
+        public void Redo()
+        {
+            TextDocument.UndoStack.Redo();
         }
 
         private void FormatAll()
         {
             if (Model?.LanguageService != null)
             {
-                CaretIndex = Model.LanguageService.Format(Model.ProjectFile, TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
+                CaretIndex = Model.LanguageService.Format(TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
             }
+        }
+
+        private Dock dock;
+        public Dock Dock
+        {
+            get { return dock; }
+            set { this.RaiseAndSetIfChanged(ref dock, value); }
         }
 
 
@@ -340,6 +532,18 @@
         public ReactiveCommand<object> BeforeTextChangedCommand { get; private set; }
         public ReactiveCommand<object> TextChangedCommand { get; private set; }
         public ReactiveCommand<object> SaveCommand { get; private set; }
+        public ReactiveCommand<object> CloseCommand { get; }
+
+        // todo this menu item and command should be injected via debugging module.
+        public ReactiveCommand<object> AddWatchCommand { get; }
+
+        public ISourceFile ProjectFile
+        {
+            get
+            {
+                return Model.ProjectFile;
+            }
+        }
         #endregion
 
         #region Public Methods
@@ -348,6 +552,11 @@
             Model.Save();
 
             this.RaisePropertyChanged(nameof(Title));
+        }
+
+        public void ClearDebugHighlight()
+        {
+            DebugLineHighlighter.Line = -1;
         }
         #endregion
     }

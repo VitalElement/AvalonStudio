@@ -8,7 +8,7 @@
     using System.Reflection;
     using Languages;
     using Projects;
-
+    using Shell;
     internal static class CompositionRoot
     {
         private static readonly string PluginsFolder = "Plugins";
@@ -41,7 +41,7 @@
                 return new[]
                 {
                     typeof (Program).GetTypeInfo().Assembly,
-                    typeof (ILanguageService).GetTypeInfo().Assembly,                    
+                    typeof (MinimalShell).GetTypeInfo().Assembly,                    
                 };
             }
         }

@@ -4,14 +4,16 @@
     using Extensibility;
     using Perspex.Controls;
     using ReactiveUI;
+    using Shell;
     using System.Collections.Generic;
+    using System.Linq;
     using Toolchains;
 
     public class ToolchainSettingsFormViewModel : ViewModel<CPlusPlusProject>
     {
         public ToolchainSettingsFormViewModel(CPlusPlusProject project) : base (project)
         {
-            toolchains = new List<IToolChain>(Workspace.Instance.ToolChains);
+            toolchains = new List<IToolChain>(IoC.Get<IShell>().ToolChains);
             selectedToolchain = project.ToolChain;            
         }
 
@@ -22,13 +24,20 @@
             Model.Save();
         }
 
-        private Control toolchainSettingsControl;
-        public Control ToolchainSettingsControl
+
+        private IList<TabItem> configPages;
+        public IList<TabItem> ConfigPages
         {
-            get { return toolchainSettingsControl; }
-            set { this.RaiseAndSetIfChanged(ref toolchainSettingsControl, value); }
+            get { return configPages; }
+            set { this.RaiseAndSetIfChanged(ref configPages, value); }
         }
 
+        private TabItem selectedConfigPage;
+        public TabItem SelectedConfigPage
+        {
+            get { return selectedConfigPage; }
+            set { this.RaiseAndSetIfChanged(ref selectedConfigPage, value); }
+        }
 
         private List<IToolChain> toolchains;
         public List<IToolChain> Toolchains
@@ -49,7 +58,9 @@
 
                 if (value != null)
                 {
-                    ToolchainSettingsControl = value.GetSettingsControl(Model);
+                    ConfigPages = value.GetConfigurationPages(Model);
+                    SelectedConfigPage = null;
+                    SelectedConfigPage = ConfigPages.FirstOrDefault();
                 }
             }
         }

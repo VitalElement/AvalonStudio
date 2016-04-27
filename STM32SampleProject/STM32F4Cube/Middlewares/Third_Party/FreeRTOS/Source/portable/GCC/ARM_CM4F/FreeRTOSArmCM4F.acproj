@@ -1,0 +1,20 @@
+{
+  "Name": "FreeRTOSArmCM4F",
+  "Type": "StaticLibrary",
+  "References": [
+    {
+      "Name": "FreeRTOS"
+    }
+  ],
+  "Includes": [
+    {
+      "Value": "../ARM_CM4F",
+      "Exported": false,
+      "Global": true
+    }
+  ],
+  "StaticLibraries": [],
+  "ExcludedFiles": [],
+  "ToolchainSettings": {},
+  "DebugSettings": {}
+}

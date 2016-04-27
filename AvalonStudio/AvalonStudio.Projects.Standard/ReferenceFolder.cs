@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.Standard
 {
-    public class ReferenceFolder : IProjectItem
+    public class ReferenceFolder : IReferenceFolder
     {
         public ReferenceFolder(IProject project)
         {

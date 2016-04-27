@@ -2,7 +2,7 @@
 {
     using AvalonStudio.Utils;
     using Perspex.Controls;
-    using Platform;
+    using Platforms;
     using Projects;
     using System;
     using System.Collections.Generic;
@@ -120,7 +120,7 @@
             }
         }
 
-        internal string EvaluateExpression(string expression)
+        public string EvaluateExpression(string expression)
         {
             if (CurrentState != DebuggerState.Paused)
             {
@@ -143,7 +143,7 @@
             return result;
         }
 
-        internal List<VariableObject> ListChildren(VariableObject variable)
+        public List<VariableObject> ListChildren(VariableObject variable)
         {
             if (CurrentState != DebuggerState.Paused)
             {
@@ -601,6 +601,12 @@
         }
 
         public DebuggerState State { get { return CurrentState; } }
+
+        private int variableId = 0;
+        public int GetVariableId()
+        {
+            return variableId++;
+        }
 
         public event EventHandler<EventArgs> StateChanged;
 

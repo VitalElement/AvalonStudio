@@ -59,23 +59,23 @@
             }
         }
 
-        public Brush PunctuationBrush { get; set; }
+        public IBrush PunctuationBrush { get; set; }
 
-        public Brush KeywordBrush { get; set; }
+        public IBrush KeywordBrush { get; set; }
 
-        public Brush IdentifierBrush { get; set; }
+        public IBrush IdentifierBrush { get; set; }
 
-        public Brush LiteralBrush { get; set; }
+        public IBrush LiteralBrush { get; set; }
 
-        public Brush UserTypeBrush { get; set; }
+        public IBrush UserTypeBrush { get; set; }
 
-        public Brush CallExpressionBrush { get; set; }
+        public IBrush CallExpressionBrush { get; set; }
 
-        public Brush CommentBrush { get; set; }
+        public IBrush CommentBrush { get; set; }
 
-        public Brush GetBrush(HighlightType type)
+        public IBrush GetBrush(HighlightType type)
         {
-            Brush result;
+            IBrush result;
 
             switch (type)
             {

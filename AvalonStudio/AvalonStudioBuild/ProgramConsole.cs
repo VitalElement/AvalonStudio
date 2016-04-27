@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio
 {
     using AvalonStudio.Utils;
-    using Platform;
+    using Platforms;
     using System;
 
     class ProgramConsole : IConsole
@@ -14,7 +14,7 @@
             {
                 OverWrite(string.Empty);
 
-                if(Platform.Platform.PlatformIdentifier != PlatformID.Win32NT)
+                if(Platforms.Platform.PlatformIdentifier != PlatformID.Win32NT)
                 {
                     canOverwrite = false;
                 }

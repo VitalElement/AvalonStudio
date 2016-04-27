@@ -54,17 +54,17 @@ namespace AvalonStudio.Debugging
         {
             Children.Clear();
 
-            //var newChildren = debugger.ListChildren(this);
+            var newChildren = debugger.ListChildren(this);
 
-            //if (newChildren != null)
-            //{
-            //    Children.AddRange(newChildren);
-            //}
-            
-            //foreach(var child in Children)  //TODO performance can be improved by only accessing when visible.
-            //{
-            //    child.Evaluate (debugger, false);
-            //}
+            if (newChildren != null)
+            {
+                Children.AddRange(newChildren);
+            }
+
+            foreach (var child in Children)  //TODO performance can be improved by only accessing when visible.
+            {
+                child.Evaluate(debugger, false);
+            }
         }
 
 
@@ -72,7 +72,7 @@ namespace AvalonStudio.Debugging
         {
             this.debugger = debugger;
 
-           // Value = debugger.EvaluateExpression(Id);
+            Value = debugger.EvaluateExpression(Id);
 
             if(NumChildren > 0 && evaluateChildren)
             {

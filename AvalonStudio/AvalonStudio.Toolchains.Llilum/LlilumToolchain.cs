@@ -37,7 +37,7 @@
         {
             get
             {
-                return Path.Combine(Platform.Platform.AppDataDirectory, "AvalonStudio.Toolchains.Lillum");
+                return Path.Combine(Platforms.Platform.AppDataDirectory, "AvalonStudio.Toolchains.Lillum");
             }
         }
 

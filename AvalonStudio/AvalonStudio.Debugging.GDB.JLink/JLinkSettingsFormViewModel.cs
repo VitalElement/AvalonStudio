@@ -15,7 +15,9 @@
             settings = JLinkDebugAdaptor.GetSettings(model);
 
             //InterfaceOptions = new List<string>(Enum.GetNames(typeof(JlinkInterfaceType)));
+            interfaceSelectedIndex = (int)settings.Interface;
             interfaceType = settings.Interface;
+
         }
 
         private void Save()
@@ -39,9 +41,9 @@
         {
             get { return interfaceSelectedIndex; }
             set
-            {
+            {                
                 interfaceSelectedIndex = value;
-                Save();                                
+                InterfaceType = (JlinkInterfaceType)interfaceSelectedIndex;                            
             }
         }
 
@@ -51,13 +53,8 @@
             get { return interfaceType; }
             set
             {
-                interfaceType = value;
-                //this.RaiseAndSetIfChanged(ref interfaceType, value);
-
-                if (value != interfaceType)
-                {
-                    Save();
-                }
+                interfaceType = value;                
+                Save();                
             }
         }     
     }

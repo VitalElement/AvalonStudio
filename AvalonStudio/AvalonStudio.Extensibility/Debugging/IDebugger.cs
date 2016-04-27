@@ -36,6 +36,13 @@
 
         bool DebugMode { get; set; }
 
+        /// <summary>
+        /// Gets a unique id that can be used to reference a variable or expression.
+        /// The id is unique to the debug session.
+        /// </summary>
+        /// <returns>the id</returns>
+        int GetVariableId();
+
         event EventHandler<StopRecord> Stopped;
         event EventHandler<EventArgs> StateChanged;
 
@@ -75,7 +82,12 @@
 
         void Continue();
 
+        string EvaluateExpression(string expression);
+
+        List<VariableObject> ListChildren(VariableObject variable);
+
         VariableObject CreateWatch(string id, string expression);
+        void DeleteWatch(string id);
 
         void SetWatchFormat(string id, WatchFormat format);
 

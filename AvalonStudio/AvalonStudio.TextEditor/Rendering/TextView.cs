@@ -16,6 +16,8 @@
     using System.Collections.Specialized;
     using System.Linq;
     using System.Reactive.Linq;
+    using Perspex.Input;
+    using System.Reactive.Disposables;
 
     public class TextView : ContentControl, IScrollable
     {
@@ -61,54 +63,16 @@
         private WeakEventArgsSubscriber documentLineTransformerChangedSubscriber;
         private WeakEventArgsSubscriber backgroundRendererChangedSubscriber;
         private WeakEventArgsSubscriber documentTextChangedSubscriber;
+        private CompositeDisposable disposables;
 
-        public TextView()
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            documentLineTransformersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
-            {
-                if (e.NewItems != null)
-                {
-                    foreach (var item in e.NewItems)
-                    {
-                        WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), documentLineTransformerChangedSubscriber);
-                    }
-                }
-            });
-
-            backgroundRenderersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
-            {
-                if (e.NewItems != null)
-                {
-                    foreach (var item in e.NewItems)
-                    {
-                        WeakSubscriptionManager.Subscribe(item, nameof(IBackgroundRenderer.DataChanged), backgroundRendererChangedSubscriber);
-                    }
-                }
-            });
-
-            documentLineTransformerChangedSubscriber = new WeakEventArgsSubscriber(() =>
-            {
-                InvalidateVisual();
-            });
-
-            backgroundRendererChangedSubscriber = new WeakEventArgsSubscriber(() =>
-            {
-                InvalidateVisual();
-            });
-
-            documentTextChangedSubscriber = new WeakEventArgsSubscriber(() =>
-            {
-                invalidateVisualLines = true;
-            });
-
-            _caretTimer = new DispatcherTimer();
-            _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
             _caretTimer.Tick += CaretTimerTick;
 
-            this.GetObservable(CaretIndexProperty)
-                .Subscribe(CaretIndexChanged);
+            disposables.Add(this.GetObservable(CaretIndexProperty)
+                 .Subscribe(CaretIndexChanged));
 
-            DocumentLineTransformersProperty.Changed.Subscribe((o) =>
+            disposables.Add(DocumentLineTransformersProperty.Changed.Subscribe((o) =>
             {
                 foreach (var item in DocumentLineTransformers)
                 {
@@ -116,20 +80,100 @@
                 }
 
                 WeakSubscriptionManager.Subscribe(DocumentLineTransformers, nameof(DocumentLineTransformers.CollectionChanged), documentLineTransformersChangedSubscriber);
-            });
+            }));
 
-            TextDocumentProperty.Changed.Subscribe((o) =>
+
+            disposables.Add(FontSizeProperty.Changed.Subscribe((o) =>
             {
-                VisualLines.Clear();
-                invalidateVisualLines = true;
+                GenerateTextProperties();
+            }));
 
-                TextDocument.TextChanged += (sender, e) =>
-                {
-                    WeakSubscriptionManager.Subscribe(TextDocument, nameof(TextDocument.Changed), documentTextChangedSubscriber);
-                };
-            });
+            disposables.Add(FontFamilyProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
+            }));
+
+            disposables.Add(FontStyleProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
+            }));
+
+            disposables.Add(FontWeightProperty.Changed.Subscribe((o) =>
+            {
+                GenerateTextProperties();
+            }));
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            Margins.Clear();
+            disposables.Dispose();
+            _caretTimer.Tick -= CaretTimerTick;
+            textSurface = null;
+            marginContainer = null;
+            TextDocument = null;
+            Content = null;
+        }
+
+
+        public TextView()
+        {
+            disposables = new CompositeDisposable();
+
+            //documentLineTransformersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
+            //{
+            //    if (e.NewItems != null)
+            //    {
+            //        foreach (var item in e.NewItems)
+            //        {
+            //            WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), documentLineTransformerChangedSubscriber);
+            //        }
+            //    }
+            //});
+
+            //backgroundRenderersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
+            //{
+            //    if (e.NewItems != null)
+            //    {
+            //        foreach (var item in e.NewItems)
+            //        {
+            //            WeakSubscriptionManager.Subscribe(item, nameof(IBackgroundRenderer.DataChanged), backgroundRendererChangedSubscriber);
+            //        }
+            //    }
+            //});
+
+            //documentLineTransformerChangedSubscriber = new WeakEventArgsSubscriber(() =>
+            //{
+            //    Invalidate();                
+            //});
+
+            //backgroundRendererChangedSubscriber = new WeakEventArgsSubscriber(() =>
+            //{
+            //    Invalidate();
+            //});
+
+            //documentTextChangedSubscriber = new WeakEventArgsSubscriber(() =>
+            //{
+            //    Invalidate();
+            //});
+
+            _caretTimer = new DispatcherTimer();
+            _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
 
             VisualLines = new List<VisualLine>();
+        }
+
+        ~TextView()
+        {
+            System.Console.WriteLine(("TextView  Destructed."));
+
+            foreach (var visualLine in VisualLines)
+            {
+                visualLine.RenderedText?.Dispose();
+            }
+
+            VisualLines.Clear();
+
         }
         #endregion
 
@@ -353,24 +397,24 @@
         }
 
         public static readonly PerspexProperty<int> SelectionStartProperty =
-            TextBox.SelectionStartProperty.AddOwner<TextView>();
+            PerspexProperty.Register<TextView, int>(nameof(SelectionStart));
 
         public static readonly PerspexProperty<int> SelectionEndProperty =
-            TextBox.SelectionEndProperty.AddOwner<TextView>();
+            PerspexProperty.Register<TextView, int>(nameof(SelectionEnd));
 
-        public static readonly PerspexProperty<Brush> ForegoundProperty =
+        public static readonly PerspexProperty<IBrush> ForegoundProperty =
             TextBlock.ForegroundProperty.AddOwner<TextView>();
 
-        public Brush Foreground
+        public IBrush Foreground
         {
             get { return GetValue(ForegoundProperty); }
             set { SetValue(ForegoundProperty, value); }
         }
 
-        public static readonly PerspexProperty<Brush> BackgroundProperty =
+        public static readonly PerspexProperty<IBrush> BackgroundProperty =
             Border.BackgroundProperty.AddOwner<TextView>();
 
-        public Brush Background
+        public IBrush Background
         {
             get { return GetValue(BackgroundProperty); }
             set { SetValue(BackgroundProperty, value); }
@@ -390,7 +434,12 @@
         #endregion
 
         #region Properties
-        public Size CharSize { get; set; }
+        private Size charSize;
+        public Size CharSize
+        {
+            get { return charSize; }
+            set { charSize = value; }
+        }
 
         public Action InvalidateScroll
         {
@@ -413,8 +462,7 @@
 
                 firstVisualLine = (int)(offset.Y);
 
-                invalidateVisualLines = true;
-                InvalidateVisual();
+                Invalidate();
             }
         }
 
@@ -442,18 +490,26 @@
             }
         }
 
+        public void Invalidate()
+        {
+            invalidateVisualLines = true;
+            InvalidateVisual();
+        }
+
         public override void Render(DrawingContext context)
         {
             if (TextDocument != null)
             {
-                GenerateTextProperties();
-                GenerateVisualLines(context);                
+                //if (invalidateVisualLines)
+                {
+                    GenerateVisualLines(context);
+                }
 
                 // Render background layer.
                 RenderBackground(context);
 
                 foreach (var line in VisualLines)
-                {                    
+                {
                     RenderText(context, line);
 
                     // Render text decoration layer.
@@ -462,8 +518,6 @@
 
                 RenderCaret(context);
             }
-
-            base.Render(context);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -523,9 +577,12 @@
             {
                 renderer.Draw(this, context);
 
-                foreach(var line in VisualLines)
+                foreach (var line in VisualLines)
                 {
-                    renderer.TransformLine(this, context, line);
+                    if (!line.DocumentLine.IsDeleted)
+                    {
+                        renderer.TransformLine(this, context, line);
+                    }
                 }
             }
         }
@@ -573,29 +630,26 @@
         private int lastLineCount;
         private void GenerateVisualLines(DrawingContext context)
         {
-            //if (invalidateVisualLines) // This is a significant performance boost, we only need to re-generate when offset changes
+            VisualLines.Clear();
+
+            uint visualLineNumber = 0;
+
+            for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount && i >= 0; i++)
             {
-                VisualLines.Clear();
-
-                uint visualLineNumber = 0;
-
-                for (var i = (int)offset.Y; i < viewport.Height + offset.Y && i < TextDocument.LineCount && i >= 0; i++)
-                {
-                    var line = new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ };
-                    GenerateText(line);
-                    VisualLines.Add(line);
-                }
-
-                if (TextDocument.LineCount != lastLineCount)
-                {
-                    lastLineCount = TextDocument.LineCount;
-
-                    InvalidateMeasure();
-                    InvalidateScroll.Invoke();
-                }
-
-                invalidateVisualLines = false;
+                var line = new VisualLine { DocumentLine = TextDocument.Lines[i], VisualLineNumber = visualLineNumber++ };
+                GenerateText(line);
+                VisualLines.Add(line);
             }
+
+            if (TextDocument.LineCount != lastLineCount)
+            {
+                lastLineCount = TextDocument.LineCount;
+
+                InvalidateMeasure();
+                InvalidateScroll?.Invoke();
+            }
+
+            invalidateVisualLines = false;
         }
 
         private void GenerateText(VisualLine line)
@@ -604,7 +658,7 @@
             {
                 var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length), FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
 
-                line.RenderedText = formattedText;                
+                line.RenderedText = formattedText;
 
                 foreach (var lineTransformer in DocumentLineTransformers)
                 {
@@ -664,7 +718,7 @@
 
                 InvalidateVisual();
 
-                if (caretIndex >= 0)
+                if (caretIndex >= 0 && TextDocument != null)
                 {
                     var position = TextDocument.GetLocation(caretIndex);
                     ScrollToLine(position.Line, 0.1);
@@ -676,10 +730,12 @@
         {
             var offset = (line - (Viewport.Height * borderSizePc));
 
-            if (offset >= 0)
+            if (offset < 0)
             {
-                this.BringIntoView(new Rect(1, offset, 0, 1));
+                offset = 0;
             }
+
+            this.BringIntoView(new Rect(1, offset, 0, 1));
 
             offset = (line + (Viewport.Height * borderSizePc));
 
@@ -711,20 +767,41 @@
             InvalidateVisual();
         }
 
+        public void PageUp()
+        {
+            if (VisualLines.First().DocumentLine != null)
+            {
+                ScrollToLine(VisualLines.First().DocumentLine.LineNumber, 0.75);
+            }
+        }
+
+        public void PageDown()
+        {
+            if (VisualLines.Last().DocumentLine != null)
+            {
+                ScrollToLine(VisualLines.Last().DocumentLine.LineNumber, 0.75);
+            }
+        }
+
         public int GetOffsetFromPoint(Point point)
         {
-            int result = TextDocument.TextLength;
+            int result = -1;
 
             if (TextDocument != null)
             {
                 var column = Math.Ceiling((point.X / CharSize.Width) + 0.5);
                 var line = (int)Math.Ceiling(point.Y / CharSize.Height);
 
-                if (line > 0 && column > 0 && line < TextDocument.LineCount)
+                if (line > 0 && column > 0 && line - 1 < VisualLines.Count)
                 {
-                    if (line < VisualLines.Count)
-                    {                        
+                    if (line-1 < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted && VisualLines[line - 1].DocumentLine.LineNumber - 1 < TextDocument.LineCount)
+                    {
                         result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
+                    }
+                    else
+                    {
+                        // Invalid
+                        result = -1;
                     }
                 }
             }

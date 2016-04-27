@@ -1,78 +1,70 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using Perspex.Controls;
-    using Perspex.Controls.Primitives;
-    using Perspex.Input;
-    using Perspex.Markup.Xaml;
     using AvalonStudio.TextEditor;
+    using Perspex;
+    using Perspex.Controls;
+    using System.Reactive.Disposables;
+    using System;
 
     public class Editor : UserControl
     {
         private TextEditor editor;
+        private EditorViewModel editorViewModel;
+        private CompositeDisposable disposables;
+
+        ~Editor()
+        {
+            System.Console.WriteLine(("Editor UserControl Destructed."));
+        }
+
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {            
+            editor = this.Find<TextEditor>("editor");
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            editor = null;
+            editorViewModel = null;
+
+            disposables.Dispose();
+        }
 
         public Editor()
-        {
-            this.InitializeComponent();
+        {                        
+            InitializeComponent();
 
-            AddHandler(InputElement.KeyDownEvent, OnKeyDown, Perspex.Interactivity.RoutingStrategies.Tunnel);
+            disposables = new CompositeDisposable();
             editor = this.Find<TextEditor>("editor");
 
-            DataContextChanged += (sender, e) =>
+            disposables.Add(DataContextProperty.Changed.Subscribe((o) =>
             {
-                var editorVm = DataContext as WorkspaceViewModel;
-
-                if (editorVm != null)
+                if (o.NewValue is EditorViewModel)  // for some reason intellisense view model gets passed here! bug in perspex?
                 {
-                    editorVm.Editor.Model.Editor = editor;
+                    if (o.OldValue is EditorViewModel && (o.OldValue as EditorViewModel).Model.Editor == editor)
+                    {
+                        (o.OldValue as EditorViewModel).Model.Editor = null;
+                    }
+
+                    if (editorViewModel != DataContext)
+                    {
+                        editorViewModel = DataContext as EditorViewModel;
+
+                        if (editorViewModel != null && editor != null)
+                        {
+                            editorViewModel.Model.Editor = editor;
+                            editor.Focus();
+                        }
+                    }
                 }
-            };            
+            }));
         }
+
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
-            
-        }
-        
+            this.LoadFromXaml();
 
-        protected override void OnKeyUp (KeyEventArgs e)
-        {
-            var editorVm = DataContext as EditorViewModel;
-
-            if(editorVm != null)
-            {
-                editorVm.OnKeyUp(e);
-            }
-        }
-
-        protected void OnKeyDown(object sender, KeyEventArgs e)
-        {
-            var editorVm = DataContext as EditorViewModel;
-
-            if (editorVm != null)
-            {
-                editorVm.OnKeyDown(e);
-            }
-        }        
-
-        protected override void OnTextInput(TextInputEventArgs e)
-        {
-            var editorVm = DataContext as EditorViewModel;
-
-            if (editorVm != null)
-            {
-                editorVm.OnTextInput(e);
-            }
-        }
-
-        protected override void OnPointerMoved(PointerEventArgs e)
-        {
-            var editorVm = DataContext as EditorViewModel;
-
-            if (editorVm != null)
-            {
-                editorVm.OnPointerMoved(e);
-            }
         }
     }
 }

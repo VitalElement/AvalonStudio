@@ -45,7 +45,7 @@
 
                     var file = Path.GetFileName(Model.File);
 
-                    var relativePath = filePath.MakeRelativePath(WorkspaceViewModel.Instance.DebugManager.Project.CurrentDirectory);
+                    var relativePath = filePath.MakeRelativePath(ShellViewModel.Instance.DebugManager.Project.CurrentDirectory);
 
                     return Path.Combine(relativePath, file);
                 }

@@ -19,9 +19,9 @@
         </Grid.ColumnDefinitions>
         
         <Panel Grid.ColumnSpan="2">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock Text="C Language Standard:"/>
+            <StackPanel Gap="10">
+                <StackPanel Orientation="Horizontal" Gap="4">
+                  <TextBlock Text="Language Standard:"/>
                   <DropDown Items="{Binding CLanguageStandards}" SelectedIndex="{Binding CLanguageStandardSelectedIndex, Mode=TwoWay}"/>
 
                   <TextBlock Text="C++ Language Standard:"/>

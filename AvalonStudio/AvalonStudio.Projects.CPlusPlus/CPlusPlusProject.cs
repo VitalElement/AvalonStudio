@@ -8,7 +8,8 @@
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Perspex.Controls;
-    using Platform;
+    using Platforms;
+    using Shell;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -613,7 +614,7 @@
         {
             get
             {
-                IToolChain result = Workspace.Instance.ToolChains.FirstOrDefault((tc) => tc.GetType().ToString() == ToolchainReference);
+                IToolChain result = IoC.Get<IShell>().ToolChains.FirstOrDefault((tc) => tc.GetType().ToString() == ToolchainReference);
 
                 return result;
             }
@@ -628,7 +629,7 @@
         {
             get
             {
-                IDebugger result = Workspace.Instance.Debuggers.FirstOrDefault((tc) => tc.GetType().ToString() == DebuggerReference);
+                IDebugger result = IoC.Get<IShell>().Debuggers.FirstOrDefault((tc) => tc.GetType().ToString() == DebuggerReference);
 
                 return result;
             }
@@ -643,7 +644,7 @@
         {
             get
             {
-                ITestFramework result = Workspace.Instance.TestFrameworks.FirstOrDefault((tf) => tf.GetType().ToString() == TestFrameworkReference);
+                ITestFramework result = IoC.Get<IShell>().TestFrameworks.FirstOrDefault((tf) => tf.GetType().ToString() == TestFrameworkReference);
 
                 return result;
             }
@@ -690,11 +691,9 @@
                 var result = new List<TabItem>();
 
                 result.Add(new TypeSettingsForm() { DataContext = new TypeSettingsFormViewModel(this) });
-                //result.Add(new TargetSettingsForm());
                 result.Add(new IncludePathSettingsForm() { DataContext = new IncludePathSettingsFormViewModel(this) });
                 result.Add(new ReferencesSettingsForm() { DataContext = new ReferenceSettingsFormViewModel(this) });
                 result.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel(this) });
-                //result.Add(new ComponentSettingsForm());
                 result.Add(new DebuggerSettingsForm() { DataContext = new DebuggerSettingsFormViewModel(this) });
 
                 return result;

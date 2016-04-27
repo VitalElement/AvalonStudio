@@ -102,33 +102,36 @@
                     }
                 }
 
-                foreach (Rect r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
+                if (marker.EndOffset < textView.TextDocument.TextLength)
                 {
-                    Point startPoint = r.BottomLeft;
-                    Point endPoint = r.BottomRight;
-
-                    var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
-
-                    const double offset = 2.5;
-
-                    int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
-
-                    var geometry = new StreamGeometry();
-
-                    using (StreamGeometryContext ctx = geometry.Open())
+                    foreach (Rect r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
                     {
-                        ctx.BeginFigure(startPoint, false);
+                        Point startPoint = r.BottomLeft;
+                        Point endPoint = r.BottomRight;
 
-                        foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+                        var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
+
+                        const double offset = 2.5;
+
+                        int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
+
+                        var geometry = new StreamGeometry();
+
+                        using (StreamGeometryContext ctx = geometry.Open())
                         {
-                            ctx.LineTo(point);
+                            ctx.BeginFigure(startPoint, false);
+
+                            foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+                            {
+                                ctx.LineTo(point);
+                            }
+
+                            ctx.EndFigure(false);
                         }
 
-                        ctx.EndFigure(false);
+                        drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
+                        break;
                     }
-
-                    drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
-                    break;
                 }
             }
         }

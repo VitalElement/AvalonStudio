@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Toolchains.Standard
 {
     using AvalonStudio.Toolchains;
-    using Platform;
+    using Platforms;
     using Perspex.Controls;
     using Projects;
     using Projects.Standard;
@@ -535,6 +535,16 @@
         public abstract void ProvisionSettings(IProject project);
 
         public abstract UserControl GetSettingsControl(IProject project);
+
+        public void BeforeActivation()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void Activation()
+        {
+            //throw new NotImplementedException();
+        }
 
         public string Name { get { return GetType().ToString(); } }
 
