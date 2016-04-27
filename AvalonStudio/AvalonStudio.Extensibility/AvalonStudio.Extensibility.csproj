@@ -202,6 +202,7 @@
     <Compile Include="MainMenu\Models\StandardMenuItem.cs" />
     <Compile Include="MainMenu\Models\TextMenuItem.cs" />
     <Compile Include="MainMenu\ViewModels\MainMenuViewModel.cs" />
+    <Compile Include="MainMenu\ViewModels\MainMenuView.paml.cs" />
     <Compile Include="Menus\MenuDefinitionAttribute.cs" />
     <Compile Include="MVVM\BindableCollection.cs" />
     <Compile Include="MVVM\IObservableCollection.cs" />
@@ -269,6 +270,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Controls\ControlTheme.paml" />
     <EmbeddedResource Include="Controls\ToolControl.paml" />
+    <EmbeddedResource Include="MainMenu\ViewModels\MainMenuView.paml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
