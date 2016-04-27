@@ -1,12 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AvalonStudio.Extensibility.Menus
+﻿namespace AvalonStudio.Extensibility.Menus
 {
+    using System.ComponentModel.Composition;
+
+    public class MenuBarAttribute : ExportAttribute
+    {
+        public MenuBarAttribute() : base(typeof(MenuBarDefinition))
+        {
+
+        }
+    }
+
+    public class MenuAttribute : ExportAttribute
+    {
+        public MenuAttribute() : base(typeof(MenuDefinition))
+        { }
+    }
+
+    public class MenuItemAttribute : ExportAttribute
+    {
+        public MenuItemAttribute()
+            : base(typeof(MenuItemDefinition))
+        {
+
+        }
+    }
+
+    public class MenuGroupAttribute : ExportAttribute
+    {
+        public MenuGroupAttribute() : base(typeof(MenuItemGroupDefinition))
+        {
+
+        }
+    }
+
     public class MenuDefinitionAttribute : ExportAttribute
     {
         public MenuDefinitionAttribute()
