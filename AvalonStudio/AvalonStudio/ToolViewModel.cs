@@ -10,9 +10,9 @@
     using AvalonStudio.MVVM;
     using ReactiveUI;
 
-    public abstract class ToolViewModel : PaneViewModel
+    public abstract class OldToolViewModel : PaneViewModel
     {
-        public ToolViewModel (string contentId, string name) : base (contentId)
+        public OldToolViewModel (string contentId, string name) : base (contentId)
         {
             Name = name;
             ToolTitle = name;

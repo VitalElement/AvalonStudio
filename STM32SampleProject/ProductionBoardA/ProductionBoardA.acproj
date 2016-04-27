@@ -1,0 +1,86 @@
+{
+  "Name": "ProductionBoardA",
+  "Type": "Executable",
+  "References": [
+    {
+      "Name": "ArmSystem"
+    },
+    {
+      "Name": "BTPlusPlus"
+    },
+    {
+      "Name": "FreeRTOSArmCM4F"
+    },
+    {
+      "Name": "STM32HalPlatform"
+    }
+  ],
+  "Includes": [
+    {
+      "Value": "HalConfig",
+      "Exported": false,
+      "Global": true
+    }
+  ],
+  "Defines": [
+    {
+      "Value": "STM32F407xx",
+      "Exported": false,
+      "Global": true
+    },
+    {
+      "Value": "__VFP_FP__",
+      "Exported": false,
+      "Global": true
+    }
+  ],
+  "StaticLibraries": [],
+  "Executable": "build/bin/ProductionBoardA.elf",
+  "Toolchain": "AvalonStudio.Toolchains.STM32.STM32GCCToolchain",
+  "Debugger": "AvalonStudio.Debugging.GDB.JLink.JLinkDebugAdaptor",
+  "ExcludedFiles": [],
+  "ToolchainSettings": {
+    "STM32ToolchainSettings": {
+      "CompileSettings": {
+        "Defines": [],
+        "Includes": [],
+        "DebugInformation": true,
+        "Rtti": false,
+        "Exceptions": false,
+        "CustomFlags": "-mcpu=cortex-m4 -mthumb -Wno-unknown-pragmas",
+        "CLanguageStandard": "Default",
+        "CppLanguageStandard": "Cpp14",
+        "Optimization": "None",
+        "OptimizationPreference": "None",
+        "Fpu": "Hard"
+      },
+      "LinkSettings": {
+        "LinkedLibraries": [],
+        "UseMemoryLayout": true,
+        "DiscardUnusedSections": true,
+        "NotUseStandardStartupFiles": true,
+        "Library": "NanoCLib",
+        "SelectedDeviceId": 0,
+        "InRom1Start": 134217728,
+        "InRom1Size": 262144,
+        "InRom2Start": 0,
+        "InRom2Size": 0,
+        "InRam1Start": 536870912,
+        "InRam1Size": 131072,
+        "InRam2Start": 0,
+        "InRam2Size": 0,
+        "DebugInRam": false,
+        "MiscLinkerArguments": "-mcpu=cortex-m4 -mthumb"
+      }
+    }
+  },
+  "DebugSettings": {
+    "JLinkSettings": {
+      "Interface": "SWD"
+    },
+    "OpenOCDSettings": {
+      "InterfaceConfigFile": "scripts/interface/stlink-v2.cfg",
+      "TargetConfigFile": "scripts/target/stm32f4x_stlink.cfg"
+    }
+  }
+}

@@ -1,10 +1,9 @@
-﻿namespace AvalonStudio.Platform
+﻿namespace AvalonStudio.Platforms
 {
     using AvalonStudio.Utils;
     using System;
     using System.IO;
-    using System.Runtime.InteropServices;
-    using Utils;
+    using System.Runtime.InteropServices;    
 
     public static class Platform
     {
@@ -211,13 +210,33 @@
             }
         }
 
+        public static bool IsSamePathAs (this string path, string other)
+        {            
+            return path.CompareFilePath(other) == 0;
+        }
+
         public static int CompareFilePath (this string path, string other)
         {
             switch (PlatformIdentifier)
             {
                 case PlatformID.Win32NT:
-                    // TODO consider using directory info?                    
-                    return path.ToLower().CompareTo(other.ToLower());
+                    // TODO consider using directory info?           
+                    if (path == null && other == null)
+                    {
+                        return 0;
+                    }
+                    else if (path == null)
+                    {
+                        return 1;
+                    }
+                    else if (other == null)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return path.ToLower().CompareTo(other.ToLower());
+                    }
 
                 default:
                     return path.CompareTo(other);

@@ -1,0 +1,16 @@
+{
+  "Name": "Utils",
+  "Type": "StaticLibrary",
+  "References": [],
+  "Includes": [
+    {
+      "Value": "../Utils",
+      "Exported": true,
+      "Global": false
+    }
+  ],
+  "StaticLibraries": [],
+  "ExcludedFiles": [],
+  "ToolchainSettings": {},
+  "DebugSettings": {}
+}

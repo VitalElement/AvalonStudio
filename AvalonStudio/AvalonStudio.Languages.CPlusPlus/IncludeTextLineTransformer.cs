@@ -6,7 +6,7 @@
     using TextEditor.Rendering;
     class IncludeTextLineTransformer : IDocumentLineTransformer
     {
-        private Brush brush = Brush.Parse("#D69D85");
+        private IBrush brush = Brush.Parse("#D69D85");
 
         public event EventHandler<EventArgs> DataChanged;
 

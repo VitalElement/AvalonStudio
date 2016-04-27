@@ -17,56 +17,70 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Reactive.Disposables;
     using System.Reactive.Linq;
 
     [ContentProperty("Content")]
     public class TextEditor : TemplatedControl
     {
+        private CompositeDisposable disposables;
+
         #region Contructors
         static TextEditor()
         {
             TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>((s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));
-
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
         }
 
-        public TextEditor()
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            Styles.Add(new TextEditorTheme());
-
-            Name = "textEditor";
-            textChangedDelayTimer = new DispatcherTimer();
-            textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
-            textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
-            textChangedDelayTimer.Stop();
-            
             var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
                .Select(x => !x);
 
-            //Bind(
-            //    ScrollViewer.CanScrollHorizontallyProperty,
-            //    canScrollHorizontally,
-            //    BindingPriority.Style);
 
             var horizontalScrollBarVisibility = this.GetObservable(AcceptsReturnProperty)
                 .Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
 
-            Bind(
+            disposables.Add(Bind(
                 ScrollViewer.HorizontalScrollBarVisibilityProperty,
                 horizontalScrollBarVisibility,
-                BindingPriority.Style);
+                BindingPriority.Style));
 
-            TextDocumentProperty.Changed.Subscribe((e) =>
+            disposables.Add(TextDocumentProperty.Changed.Subscribe(_ =>
             {
                 CaretIndex = -1;
-            });
+            }));
 
-            AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
+            disposables.Add(AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel));
+
+            textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
         }
 
-        private void MouseHoverDelayTimer_Tick(object sender, EventArgs e)
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            MouseCursorOffset = currentMouseOffset;
+            textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;
+            textView = null;
+            TextDocument = null;
+            Content = null;
+            disposables.Dispose();        
+        }
+
+        ~TextEditor()
+        {
+            System.Console.WriteLine(("Text Editor Control Destructed."));
+        }
+         
+        public TextEditor()
+        {
+            disposables = new CompositeDisposable();
+
+            Styles.Add(new TextEditorTheme());
+
+            Name = "textEditor";
+            highestUserSelectedColumn = 1;
+
+            textChangedDelayTimer = new DispatcherTimer();
+            textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);            
         }
         #endregion
 
@@ -76,9 +90,9 @@
         }
 
         #region Private Data
-        private TextView textView;
         private readonly DispatcherTimer textChangedDelayTimer;
-        private readonly DispatcherTimer mouseHoverDelayTimer;
+        private TextView textView;
+        private int highestUserSelectedColumn;
         #endregion
 
         #region Pespex Properties
@@ -136,12 +150,24 @@
             set { SetValue(BeforeTextChangedCommandProperty, value); }
         }
 
-        public static readonly PerspexProperty<object> ContentProperty = TextView.ContentProperty.AddOwner<TextEditor>();
+        public static readonly StyledProperty<object> ContentProperty = TextView.ContentProperty.AddOwner<TextEditor>();
 
         public object Content
         {
             get { return GetValue(ContentProperty); }
             set { SetValue(ContentProperty, value); }
+        }
+
+        /// <summary>
+        /// Defines the <see cref="Header"/> property.
+        /// </summary>
+        public static readonly StyledProperty<object> HeaderProperty =
+            PerspexProperty.Register<TextEditor, object>(nameof(Header));
+
+        public object Header
+        {
+            get { return GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
         }
 
         public static readonly StyledProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
@@ -262,6 +288,28 @@
             set { SetValue(SelectionEndProperty, value); }
         }
 
+        public TextSegment GetSelectionAsSegment()
+        {
+            TextSegment result = null;
+
+            if (SelectionStart < SelectionEnd)
+            {
+                result = new TextSegment() { StartOffset = SelectionStart, EndOffset = SelectionEnd };
+            }
+            else
+            {
+                result = new TextSegment() { StartOffset = SelectionEnd, EndOffset = SelectionStart };
+            }
+
+            return result;
+        }
+
+        public void SetSelection(TextSegment segment)
+        {
+            SelectionStart = segment.StartOffset;
+            SelectionEnd = segment.EndOffset;
+        }
+
         public static readonly PerspexProperty<IIndentationStrategy> IndentationStrategyProperty = PerspexProperty.Register<TextEditor, IIndentationStrategy>(nameof(IndentationStrategy));
 
         public IIndentationStrategy IndentationStrategy
@@ -280,8 +328,7 @@
         #endregion
 
         #region Properties
-        public TextView TextView { get { return textView; } }
-        public ScrollViewer ScrollViewer { get; set; }
+        public TextView TextView { get { return textView; } }        
         #endregion
 
         #region Private Methods
@@ -347,6 +394,7 @@
                 TextDocument.Insert(caretIndex, input);
                 CaretIndex += input.Length;
                 SelectionStart = SelectionEnd = CaretIndex;
+                TextView.Invalidate();
             }
         }
 
@@ -354,12 +402,11 @@
         {
             textChangedDelayTimer.Stop();
 
-            if (TextChangedCommand != null)
+            if (TextChangedCommand != null && TextChangedCommand.CanExecute(null))
             {
                 TextChangedCommand.Execute(null);
             }
         }
-
 
         private void SelectAll()
         {
@@ -377,6 +424,7 @@
                 var start = Math.Min(selectionStart, selectionEnd);
                 var end = Math.Max(selectionStart, selectionEnd);
                 TextDocument.Remove(start, end - start);
+                TextView.Invalidate();
 
                 SelectionStart = SelectionEnd = CaretIndex = start;
 
@@ -403,6 +451,13 @@
             return TextDocument.GetText(start, end - start);
         }
 
+        private void SetHighestColumn()
+        {
+            if (CaretIndex != -1)
+            {
+                highestUserSelectedColumn = TextDocument.GetLocation(CaretIndex).Column;
+            }
+        }
 
 
         private void MoveHorizontal(int count, InputModifiers modifiers)
@@ -419,12 +474,58 @@
                 {
                     count = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
                 }
+
+                if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
+                {
+                    CaretIndex += count;
+                }
+            }
+            else
+            {
+                if (count > 0)
+                {
+                    for (int i = 0; i < Math.Abs(count); i++)
+                    {
+                        var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                        if (caretIndex == line.EndOffset)
+                        {
+                            if (line.NextLine != null)
+                            {
+                                caretIndex = line.NextLine.Offset;
+                            }
+                            
+                        }
+                        else
+                        {
+                            caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.Normal);
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < Math.Abs(count); i++)
+                    {
+                        var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                        if (caretIndex == line.Offset)
+                        {
+                            if (line.PreviousLine != null)
+                            {
+                                caretIndex = line.PreviousLine.EndOffset;
+                            }
+                        }
+                        else
+                        {
+                            caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
+                        }
+                    }
+                }
+
+                CaretIndex = caretIndex;
             }
 
-            if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
-            {
-                CaretIndex += count;
-            }
+            SetHighestColumn();
         }
 
         private void MoveVertical(int count, InputModifiers modifiers)
@@ -438,9 +539,9 @@
 
                 var col = line.EndOffset;
 
-                if (currentPosition.Column <= line.Length)
+                if (highestUserSelectedColumn <= line.Length)
                 {
-                    col = currentPosition.Column;
+                    col = highestUserSelectedColumn;
                 }
 
                 CaretIndex = TextDocument.GetOffset(currentPosition.Line + count, col);
@@ -464,6 +565,7 @@
             }
 
             CaretIndex = caretIndex;
+            SetHighestColumn();
         }
 
         private void MoveEnd(InputModifiers modifiers)
@@ -483,6 +585,7 @@
             }
 
             CaretIndex = caretIndex;
+            SetHighestColumn();
         }
 
         private async void Cut()
@@ -575,10 +678,11 @@
             //textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
             //textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));
 
-            TextDocumentProperty.Changed.Subscribe((args) =>
+            disposables.Add(TextDocumentProperty.Changed.Subscribe((args) =>
             {
                 if (args.NewValue != null)
                 {
+                    // Todo unsubscribe these events.                 
                     TextDocument.Changing += (sender, ee) =>
                     {
                         TextDocument?.UndoStack.StartUndoGroup();
@@ -592,19 +696,19 @@
 
                     TextDocument.Changed += (sender, ee) =>
                     {
-                        textChangedDelayTimer.Stop();
-                        textChangedDelayTimer.Start();
-
                         TextDocument?.UndoStack.EndUndoGroup();
 
                         InvalidateVisual();
 
                         LineHeight = textView.CharSize.Height;
+
+                        textChangedDelayTimer.Stop();
+                        textChangedDelayTimer.Start();
                     };
                 }
-            });
+            }));
 
-            ScrollViewer = e.NameScope.Find<ScrollViewer>("scrollViewer");
+                     
         }
 
         protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -642,27 +746,43 @@
 
                     InvalidateVisual();
                 }
+                else if (TextDocument.TextLength == 0)
+                {
+                    SelectionStart = SelectionEnd = CaretIndex = 0;
+
+                    e.Device.Capture(textView);
+                    e.Handled = true;
+
+                    InvalidateVisual();
+                }
+
+                SetHighestColumn();
             }
         }
 
-        private int currentMouseOffset = -1;
         protected override void OnPointerMoved(PointerEventArgs e)
         {
-            var point = e.GetPosition(textView.TextSurface);                        
-            
-            currentMouseOffset = textView.GetOffsetFromPoint(point);
-
-            if (e.Device.Captured == textView)
+            if (textView != null)   // Need to check this incase control was virtualized?
             {
-                CaretIndex = currentMouseOffset;
+                var point = e.GetPosition(textView.TextSurface);
 
-                if (CaretIndex >= 0)
+                var currentMouseOffset = textView.GetOffsetFromPoint(point);
+
+                if (currentMouseOffset != -1)
                 {
-                    SelectionEnd = CaretIndex;
-                }
-                else
-                {
-                    SelectionEnd = 0;
+                    if (e.Device.Captured == textView)
+                    {
+                        CaretIndex = currentMouseOffset;
+
+                        if (CaretIndex >= 0)
+                        {
+                            SelectionEnd = CaretIndex;
+                        }
+                        else
+                        {
+                            SelectionEnd = 0;
+                        }
+                    }
                 }
             }
         }
@@ -677,16 +797,12 @@
 
         protected override void OnGotFocus(GotFocusEventArgs e)
         {
-            base.OnGotFocus(e);
             textView.ShowCaret();
         }
 
         protected override void OnLostFocus(RoutedEventArgs e)
         {
-            base.OnLostFocus(e);
-            SelectionStart = 0;
-            SelectionEnd = 0;
-            textView.HideCaret();
+            textView?.HideCaret();
         }
 
         protected override void OnTextInput(TextInputEventArgs e)
@@ -694,10 +810,34 @@
             HandleTextInput(e.Text);
         }
 
+        void TransformSelectedLines(Action<IDocumentLine> transformLine)
+        {
+            var selection = GetSelectionAsSegment();
+            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+
+            if (lines.Count() > 0)
+            {
+                var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
+
+                anchors.Add(selection);
+                // TODO Add an achor to the caret index...
+
+                TextDocument.BeginUpdate();
+
+                foreach (var line in lines)
+                {
+                    transformLine(line);
+                }
+
+                TextDocument.EndUpdate();
+
+                SetSelection(selection);
+            }
+        }
+
+
         protected void OnKeyDown(object sender, KeyEventArgs e)
         {
-            // base.OnKeyDown(e);
-
             if (e.Handled)
             {
                 return;
@@ -785,9 +925,21 @@
                 case Key.Back:
                     if (!DeleteSelection() && CaretIndex > 0)
                     {
-                        // TODO implement deleting newline...
-                        TextDocument.Remove(caretIndex - 1, 1);
-                        --CaretIndex;
+                        var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                        if (CaretIndex == line.Offset && line.PreviousLine != null)
+                        {
+                            TextDocument.Remove(CaretIndex - line.DelimiterLength, line.DelimiterLength);
+
+                            CaretIndex -= line.DelimiterLength;
+                        }
+                        else
+                        {
+                            TextDocument.Remove(caretIndex - 1, 1);
+                            --CaretIndex;
+                        }
+
+                        TextView.Invalidate();
                     }
 
                     break;
@@ -795,7 +947,18 @@
                 case Key.Delete:
                     if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
                     {
-                        TextDocument.Remove(caretIndex, 1);
+                        var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                        if (CaretIndex == line.EndOffset && line.NextLine != null)
+                        {
+                            TextDocument.Remove(CaretIndex, line.DelimiterLength);                            
+                        }
+                        else
+                        {
+                            TextDocument.Remove(caretIndex, 1);                            
+                        }
+                        
+                        TextView.Invalidate();
                     }
 
                     break;
@@ -813,13 +976,68 @@
                     {
                         e.Handled = true;
 
-                        if (e.Modifiers == InputModifiers.Shift)
+                        bool shiftedLines = false;
+
+                        // TODO implement Selection.IsMultiLine
+
+                        if (SelectionStart != SelectionEnd)
                         {
-                            // TODO delete upto 4 whitespace chars.
+                            if (e.Modifiers == InputModifiers.Shift)
+                            {
+                                var selection = GetSelectionAsSegment();
+                                var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+
+                                if (lines.Count() > 1)
+                                {
+                                    TransformSelectedLines((line) =>
+                                    {
+                                        int offset = line.Offset;
+                                        ISegment s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
+
+                                        if (s.Length > 0)
+                                        {
+                                            TextDocument.Remove(s.Offset, s.Length);
+                                        }
+                                    });
+                                }
+
+                            }
+                            else
+                            {
+                                var selection = GetSelectionAsSegment();
+                                var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+
+                                if (lines.Count() > 1)
+                                {
+                                    TransformSelectedLines((line) =>
+                                    {
+                                        TextDocument.Insert(line.Offset, TabCharacter);
+                                    });
+                                                                        
+                                    shiftedLines = true;
+                                }
+                            }
                         }
-                        else
+
+                        if (!shiftedLines)
                         {
-                            HandleTextInput(TabCharacter);
+                            if (e.Modifiers == InputModifiers.Shift)
+                            {
+                                TransformSelectedLines((line) =>
+                                {
+                                    int offset = CaretIndex - TabCharacter.Length;
+                                    ISegment s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
+
+                                    if (s.Length > 0)
+                                    {
+                                        TextDocument.Remove(s.Offset, s.Length);
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                HandleTextInput(TabCharacter);
+                            }
                         }
                     }
                     else
@@ -828,6 +1046,14 @@
                         handled = false;
                     }
 
+                    break;
+
+                case Key.PageUp:
+                    textView.PageUp();
+                    break;
+
+                case Key.PageDown:
+                    textView.PageDown();
                     break;
             }
 
@@ -843,7 +1069,6 @@
             if (handled)
             {
                 InvalidateVisual();
-                //e.Handled = true;
             }
         }
         #endregion       

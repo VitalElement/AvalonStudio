@@ -10,6 +10,13 @@
 
     public class VisualLine : ISegment
     {
+        ~VisualLine()
+        {
+            RenderedText?.Dispose();
+            RenderedText = null;
+            DocumentLine = null;
+        }
+
         public DocumentLine DocumentLine { get; set; }
         public UInt32 VisualLineNumber { get; set; }
         public FormattedText RenderedText { get; set; }

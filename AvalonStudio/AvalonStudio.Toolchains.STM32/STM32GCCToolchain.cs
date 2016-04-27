@@ -16,7 +16,7 @@ namespace AvalonStudio.Toolchains.STM32
     using Perspex.Controls;
     using System.Dynamic;
     using Extensibility.Utils;
-    using Platform;
+    using Platforms;
     using GCC;
 
     public class STM32GCCToolchain : GCCToolchain
@@ -91,7 +91,7 @@ namespace AvalonStudio.Toolchains.STM32
             }
 
 
-            startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
+            startInfo.WorkingDirectory = file.CurrentDirectory;
 
             if (!File.Exists(startInfo.FileName))
             {
@@ -246,7 +246,7 @@ namespace AvalonStudio.Toolchains.STM32
             switch (settings.LinkSettings.Library)
             {
                 case LibraryType.NanoCLib:
-                    linkedLibraries = "-lm -lc_nano -lsupc++_nano -lstdc++_nano ";
+                    linkedLibraries += "-lm -lc_nano -lsupc++_nano -lstdc++_nano ";
                     break;
 
                 case LibraryType.BaseCLib:
@@ -776,7 +776,7 @@ namespace AvalonStudio.Toolchains.STM32
 
         public override UserControl GetSettingsControl(IProject project)
         {
-            return new ToolchainSettingsForm() { DataContext = new ToolchainSettingsViewModel(project) };
+            throw new Exception();
         }
     }
 }

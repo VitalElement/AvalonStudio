@@ -1,18 +1,18 @@
-﻿using Perspex.Controls;
-using Perspex.Markup.Xaml;
-
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
-    public class NewItemDialog : UserControl
+    using Perspex;
+    using Perspex.Controls;
+
+    public class NewItemDialogView : UserControl
     {
-        public NewItemDialog()
+        public NewItemDialogView()
         {
             this.InitializeComponent();
         }
 
         private void InitializeComponent()
         {
-            PerspexXamlLoader.Load(this);
+            this.LoadFromXaml();
         }
     }
 }

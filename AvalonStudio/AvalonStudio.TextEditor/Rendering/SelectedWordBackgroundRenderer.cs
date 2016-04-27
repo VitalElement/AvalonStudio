@@ -13,7 +13,7 @@
             this.highlightBrush = Brush.Parse("#113D6F");
         }
                 
-        private Brush highlightBrush;
+        private IBrush highlightBrush;
 
         public event EventHandler<EventArgs> DataChanged;
 
