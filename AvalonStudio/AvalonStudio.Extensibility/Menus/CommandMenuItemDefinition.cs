@@ -12,7 +12,7 @@
 
         public override string Text
         {
-            get { return _commandDefinition.Text; }
+            get { return "SubItem"; }// _commandDefinition.Text; }
         }
 
         public override Uri IconSource
