@@ -29,6 +29,7 @@
     using Splat;
     using Controls.Standard.ErrorList;
     using Shell;
+    using Extensibility.MainMenu;
     public enum Perspective
     {
         Editor,
@@ -41,6 +42,7 @@
     {
         public static ShellViewModel Instance = null;
 
+        private readonly IMenu mainMenu;
         private readonly IEnumerable<ILanguageService> languageServices;
         private readonly IEnumerable<IProjectTemplate> projectTemplates;
         private readonly IEnumerable<ICodeTemplate> codeTemplates;
@@ -108,8 +110,9 @@
 
         [ImportingConstructor]
         public ShellViewModel([ImportMany] IEnumerable<ToolViewModel> importedTools,
-            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IPlugin> plugins)
-        {            
+            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IPlugin> plugins, [Import]IMenu mainMenu)
+        {
+            this.mainMenu = mainMenu;
             this.languageServices = languageServices;
             this.projectTemplates = projectTemplates;
             this.toolChains = toolChains;
