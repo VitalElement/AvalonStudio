@@ -10,52 +10,52 @@ namespace AvalonStudio.Extensibility.MainMenu
 {
     public static class MenuDefinitions
     {
-        [Export]
+        [MenuBar]
         public static MenuBarDefinition MainMenuBar = new MenuBarDefinition();
 
-        [Export]
+        [Menu]
         public static MenuDefinition FileMenu = new MenuDefinition(MainMenuBar, 0, "_File");
 
-        [Export]
+        [MenuGroup]
         public static MenuItemGroupDefinition FileNewOpenMenuGroup = new MenuItemGroupDefinition(FileMenu, 0);
 
-        [Export]
+        [MenuGroup]
         public static MenuItemGroupDefinition FileCloseMenuGroup = new MenuItemGroupDefinition(FileMenu, 3);
 
-        [Export]
+        [MenuGroup]
         public static MenuItemGroupDefinition FileSaveMenuGroup = new MenuItemGroupDefinition(FileMenu, 6);
 
-        [Export]
+        [MenuGroup]
         public static MenuItemGroupDefinition FileExitOpenMenuGroup = new MenuItemGroupDefinition(FileMenu, 10);
 
-        [Export]
+        [Menu]
         public static MenuDefinition EditMenu = new MenuDefinition(MainMenuBar, 1, "_Edit");
 
-        [Export]
+        [MenuGroup]
         public static MenuItemGroupDefinition EditUndoRedoMenuGroup = new MenuItemGroupDefinition(EditMenu, 0);
 
-        [Export]
+        [Menu]
         public static MenuDefinition ViewMenu = new MenuDefinition(MainMenuBar, 2, "_View");
 
-        [Export]
+        [MenuGroup]
         public static MenuItemGroupDefinition ViewToolsMenuGroup = new MenuItemGroupDefinition(ViewMenu, 0);
 
-        [Export]
+        [MenuGroup]
         public static MenuItemGroupDefinition ViewPropertiesMenuGroup = new MenuItemGroupDefinition(ViewMenu, 100);
 
-        [Export]
+        [Menu]
         public static MenuDefinition ToolsMenu = new MenuDefinition(MainMenuBar, 10, "_Tools");
 
-        [Export]
+        [MenuGroup]
         public static MenuItemGroupDefinition ToolsOptionsMenuGroup = new MenuItemGroupDefinition(ToolsMenu, 100);
 
-        [Export]
+        [Menu]
         public static MenuDefinition WindowMenu = new MenuDefinition(MainMenuBar, 20, "_Window");
 
-        [Export]
+        [MenuGroup]
         public static MenuItemGroupDefinition WindowDocumentListMenuGroup = new MenuItemGroupDefinition(WindowMenu, 10);
 
-        [Export]
+        [Menu]
         public static MenuDefinition HelpMenu = new MenuDefinition(MainMenuBar, 30, "_Help");
     }
 }
