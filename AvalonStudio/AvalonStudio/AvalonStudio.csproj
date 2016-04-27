@@ -285,6 +285,7 @@
     <Compile Include="Controls\VariableControl.paml.cs">
       <DependentUpon>VariableControl.paml</DependentUpon>
     </Compile>
+    <Compile Include="Shell\Commands\CopyCommandDefinition.cs" />
     <Compile Include="Shell\Commands\CloseFileCommandDefinition.cs" />
     <Compile Include="Shell\Commands\CloseFileCommandHandler.cs" />
     <Compile Include="Shell\Commands\ExitCommandDefinition.cs" />
