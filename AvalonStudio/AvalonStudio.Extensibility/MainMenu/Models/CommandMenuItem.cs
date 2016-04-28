@@ -34,9 +34,10 @@
             }
         }
 
+        private ICommand __command;
         public override ICommand Command
         {
-            get { return IoC.Get<ICommandService>().GetTargetableCommand(_command); }
+            get { return __command; }
         }
 
         public override bool IsChecked
@@ -51,9 +52,11 @@
 
         private bool IsListItem { get; set; }
 
-        public CommandMenuItem(Command command, StandardMenuItem parent)
+        public CommandMenuItem(Command command, ICommand cmd, StandardMenuItem parent)
         {
+            __command = cmd;
             _command = command;
+            
             _keyGesture = IoC.Get<ICommandKeyGestureService>().GetPrimaryKeyGesture(_command.CommandDefinition);
             _parent = parent;
 
@@ -67,30 +70,30 @@
 
         void ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
         {
-            if (_command != null && _command.CommandDefinition.IsList && !IsListItem)
-            {
-                foreach (var listItem in _listItems)
-                    _parent.Children.Remove(listItem);
+            //if (_command != null && _command.CommandDefinition.IsList && !IsListItem)
+            //{
+            //    foreach (var listItem in _listItems)
+            //        _parent.Children.Remove(listItem);
 
-                _listItems.Clear();
+            //    _listItems.Clear();
 
-                var listCommands = new List<Command>();
-                commandHandler.Populate(_command, listCommands);
+            //    var listCommands = new List<Command>();
+            //    commandHandler.Populate(_command, listCommands);
 
-                _command.Visible = false;
+            //    _command.Visible = false;
 
-                int startIndex = _parent.Children.IndexOf(this) + 1;
+            //    int startIndex = _parent.Children.IndexOf(this) + 1;
 
-                foreach (var command in listCommands)
-                {
-                    var newMenuItem = new CommandMenuItem(command, _parent)
-                    {
-                        IsListItem = true
-                    };
-                    _parent.Children.Insert(startIndex++, newMenuItem);
-                    _listItems.Add(newMenuItem);
-                }
-            }
+            //    foreach (var command in listCommands)
+            //    {
+            //        var newMenuItem = new CommandMenuItem(command, _parent)
+            //        {
+            //            IsListItem = true
+            //        };
+            //        _parent.Children.Insert(startIndex++, newMenuItem);
+            //        _listItems.Add(newMenuItem);
+            //    }
+            //}
         }
     }
 }

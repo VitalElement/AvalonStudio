@@ -2,7 +2,7 @@
   <Menu Items="{Binding Model}">
     <Menu.DataTemplates>
       <DataTemplate>
-        <MenuItem Header="{Binding Text}" Items="{Binding Children}" />
+        <MenuItem Header="{Binding Text}" Command="{Binding Command}" Items="{Binding Children}" />
       </DataTemplate>
     </Menu.DataTemplates>
   </Menu>

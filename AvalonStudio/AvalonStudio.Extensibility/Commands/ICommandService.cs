@@ -6,6 +6,5 @@ namespace AvalonStudio.Extensibility.Commands
     {
         CommandDefinitionBase GetCommandDefinition(Type commandDefinitionType);
         Command GetCommand(CommandDefinitionBase commandDefinition);
-        TargetableCommand GetTargetableCommand(Command command);
     }
 }

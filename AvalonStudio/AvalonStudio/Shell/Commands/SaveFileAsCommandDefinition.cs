@@ -1,4 +1,5 @@
 using AvalonStudio.Extensibility.Commands;
+using ReactiveUI;
 
 namespace AvalonStudio.Shell.Commands
 {
@@ -20,6 +21,15 @@ namespace AvalonStudio.Shell.Commands
         public override string ToolTip
         {
             get { return "Save As Tool Tip"; }
+        }
+
+        ReactiveCommand<object> command;
+        public override System.Windows.Input.ICommand Command
+        {
+            get
+            {
+                return command;
+            }
         }
     }
 }
