@@ -150,11 +150,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CommandDefinition.cs" />
+    <Compile Include="Commands\CommandDefinitionAttribute.cs" />
+    <Compile Include="Commands\CommandDefinitionBase.cs" />
+    <Compile Include="Commands\CommandHandlerAttribute.cs" />
+    <Compile Include="Commands\CommandHandlerWrapper.cs" />
+    <Compile Include="Commands\CommandKeyboardShortcut.cs" />
+    <Compile Include="Commands\CommandKeyGestureService.cs" />
+    <Compile Include="Commands\CommandListDefinition.cs" />
+    <Compile Include="Commands\CommandService.cs" />
+    <Compile Include="Commands\ExcludeCommandKeyboardShortcut.cs" />
+    <Compile Include="Commands\ICommandHandler.cs" />
+    <Compile Include="Commands\ICommandKeyGestureService.cs" />
+    <Compile Include="Commands\ICommandService.cs" />
+    <Compile Include="Commands\ICommandUiItem.cs" />
     <Compile Include="ConfigPage.cs" />
     <Compile Include="Controls\ControlTheme.paml.cs">
       <DependentUpon>ControlTheme.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ToolControl.cs" />
+    <Compile Include="Controls\ViewModelViewHost.cs" />
     <Compile Include="Debugging\BreakPoint.cs" />
     <Compile Include="Debugging\DisassembledLine.cs" />
     <Compile Include="Debugging\Extensions.cs" />
@@ -171,6 +187,21 @@
     <Compile Include="Documents\IEditor.cs" />
     <Compile Include="Git\Git.cs" />
     <Compile Include="IoC.cs" />
+    <Compile Include="MainMenu\IMenu.cs" />
+    <Compile Include="MainMenu\IMenuBuilder.cs" />
+    <Compile Include="MainMenu\MenuBuilder.cs" />
+    <Compile Include="MainMenu\MenuDefinitions.cs" />
+    <Compile Include="MainMenu\Models\CommandMenuItem.cs" />
+    <Compile Include="MainMenu\Models\MenuItemBase.cs" />
+    <Compile Include="MainMenu\Models\MenuItemSeparator.cs" />
+    <Compile Include="MainMenu\Models\MenuModel.cs" />
+    <Compile Include="MainMenu\Models\StandardMenuItem.cs" />
+    <Compile Include="MainMenu\Models\TextMenuItem.cs" />
+    <Compile Include="MainMenu\ViewModels\MainMenuViewModel.cs" />
+    <Compile Include="MainMenu\ViewModels\MainMenuView.paml.cs" />
+    <Compile Include="Menus\MenuDefinitionAttribute.cs" />
+    <Compile Include="MVVM\BindableCollection.cs" />
+    <Compile Include="MVVM\IObservableCollection.cs" />
     <Compile Include="Shell\IShell.cs" />
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
@@ -185,7 +216,17 @@
     <Compile Include="Languages\Symbol.cs" />
     <Compile Include="Languages\SyntaxHighlightingData.cs" />
     <Compile Include="Languages\UnsavedFile.cs" />
+    <Compile Include="Menus\CommandMenuItemDefinition.cs" />
+    <Compile Include="Menus\ExcludeMenuDefinition.cs" />
+    <Compile Include="Menus\ExcludeMenuItemDefinition.cs" />
+    <Compile Include="Menus\ExcludeMenuItemGroupDefinition.cs" />
     <Compile Include="Menus\IMenuItem.cs" />
+    <Compile Include="Menus\MenuBarDefinition.cs" />
+    <Compile Include="Menus\MenuDefinition.cs" />
+    <Compile Include="Menus\MenuDefinitionBase.cs" />
+    <Compile Include="Menus\MenuItemDefinition.cs" />
+    <Compile Include="Menus\MenuItemGroupDefinition.cs" />
+    <Compile Include="Menus\TextMenuItemDefinition.cs" />
     <Compile Include="MVVM\DataVirtualization\AsyncVirtualizingCollection.cs" />
     <Compile Include="MVVM\DataVirtualization\DataPage.cs" />
     <Compile Include="MVVM\DataVirtualization\DataWrapper.cs" />
@@ -214,6 +255,7 @@
     <Compile Include="Toolchains\IToolchain.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\DynamicExtensions.cs" />
+    <Compile Include="Utils\EnumerableExtensions.cs" />
     <Compile Include="Utils\GeneralExtensions.cs" />
     <Compile Include="Utils\IConsole.cs" />
     <Compile Include="Utils\IProjectExtensions.cs" />
@@ -224,6 +266,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Controls\ControlTheme.paml" />
     <EmbeddedResource Include="Controls\ToolControl.paml" />
+    <EmbeddedResource Include="MainMenu\ViewModels\MainMenuView.paml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
