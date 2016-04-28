@@ -4,10 +4,22 @@
     using Perspex.Input;
     using ReactiveUI;
     using System.ComponentModel.Composition;
+    using System;
+    using Extensibility;
 
     [CommandDefinition]
     public class ExitCommandDefinition : CommandDefinition
     {
+        public ExitCommandDefinition()
+        {
+            command = ReactiveCommand.Create();
+
+            command.Subscribe(_ =>
+            {
+                Environment.Exit(0);
+            });
+        }
+
         public const string CommandName = "File.Exit";
 
         public override string Name

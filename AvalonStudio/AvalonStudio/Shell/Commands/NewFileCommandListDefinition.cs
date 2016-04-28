@@ -9,7 +9,7 @@ namespace AvalonStudio.Shell.Commands
     [CommandDefinition]
     public class NewFileCommandDefinition : CommandDefinition
     {
-        public const string CommandName = "File.NewFile";
+        public const string CommandName = "File.NewProject";
 
         public override string Name
         {

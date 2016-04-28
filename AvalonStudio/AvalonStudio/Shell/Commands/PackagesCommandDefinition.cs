@@ -1,27 +1,28 @@
 ﻿namespace AvalonStudio.Shell.Commands
 {
     using Extensibility.Commands;
-    using System;
-    using System.ComponentModel.Composition;
     using Perspex.Input;
     using ReactiveUI;
+    using System.ComponentModel.Composition;
+    using System;
     using Extensibility;
+    using Controls;
     [CommandDefinition]
-    public class SaveFileCommandDefinition : CommandDefinition
+    public class PackagesCommandDefinition : CommandDefinition
     {
-        public SaveFileCommandDefinition()
+        public PackagesCommandDefinition()
         {
             command = ReactiveCommand.Create();
 
             command.Subscribe(_ =>
             {
-                var shell = IoC.Get<IShell>();
-
-                shell?.Save();
+                IShell shell = IoC.Get<IShell>();
+                shell.ModalDialog = new PackageManagerDialogViewModel();
+                shell.ModalDialog.ShowDialog();
             });
         }
 
-        public const string CommandName = "File.SaveFile";
+        public const string CommandName = "Tools.Packages";
 
         public override string Name
         {
@@ -30,17 +31,12 @@
 
         public override string Text
         {
-            get { return "Save"; }
+            get { return "Packages"; }
         }
 
         public override string ToolTip
         {
-            get { return "Save Tool Tip"; }
-        }
-
-        public override Uri IconSource
-        {
-            get { return new Uri(""); }
+            get { return "Packages Tool Tip"; }
         }
 
         ReactiveCommand<object> command;
@@ -53,6 +49,6 @@
         }
 
         [Export]
-        public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<SaveFileCommandDefinition>(new KeyGesture() { Key = Key.S, Modifiers = InputModifiers.Control } );
+        public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<ExitCommandDefinition>(new KeyGesture() { Key = Key.F4, Modifiers = InputModifiers.Alt });
     }
 }
