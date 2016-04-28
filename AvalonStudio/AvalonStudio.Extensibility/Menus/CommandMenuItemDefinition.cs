@@ -12,7 +12,7 @@
 
         public override string Text
         {
-            get { return "SubItem"; }// _commandDefinition.Text; }
+            get {return _commandDefinition.Text; }
         }
 
         public override Uri IconSource
@@ -33,9 +33,9 @@
         public CommandMenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
             : base(group, sortOrder)
         {
-            //throw new NotImplementedException();
-            //_commandDefinition = IoC.Get<ICommandService>().GetCommandDefinition(typeof(TCommandDefinition));
-            //_keyGesture = IoC.Get<ICommandKeyGestureService>().GetPrimaryKeyGesture(_commandDefinition);
+            var commandService = IoC.Get<ICommandService>();
+            _commandDefinition = commandService.GetCommandDefinition(typeof(TCommandDefinition));
+            _keyGesture = IoC.Get<ICommandKeyGestureService>().GetPrimaryKeyGesture(_commandDefinition);
         }
     }
 }

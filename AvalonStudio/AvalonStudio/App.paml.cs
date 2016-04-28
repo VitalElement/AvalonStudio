@@ -4,6 +4,7 @@
     using AvalonStudio.Repositories;
     using Controls;
     using Controls.ViewModels;
+    using Extensibility.Commands;
     using MVVM;
     using Perspex;
     using Perspex.Controls;
@@ -34,6 +35,12 @@
 
             var container = CompositionRoot.CreateContainer();
             var app = new App();
+
+            var commandService = container.GetExportedValue<ICommandService>();
+            IoC.RegisterConstant(commandService, typeof(ICommandService));
+
+            var keyGestureService = container.GetExportedValue<ICommandKeyGestureService>();
+            IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));
             
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
             

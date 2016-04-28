@@ -79,7 +79,7 @@
             _commandDefinition = commandDefinition;
             Text = commandDefinition.Text;
             ToolTip = commandDefinition.ToolTip;
-            IconSource = commandDefinition.IconSource;
+            //IconSource = commandDefinition.IconSource;
         }
     }
 }

@@ -14,7 +14,7 @@
             FileNewMenuItem, 0);
 
         [MenuItem]
-        public static MenuItemDefinition FileNewMenuItemList = new CommandMenuItemDefinition<NewFileCommandListDefinition>(
+        public static MenuItemDefinition FileNewMenuItemList = new CommandMenuItemDefinition<NewFileCommandDefinition>(
             FileNewCascadeGroup, 0);
 
         //[Export]

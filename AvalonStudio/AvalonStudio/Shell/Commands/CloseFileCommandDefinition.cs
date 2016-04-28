@@ -10,7 +10,7 @@
         public override string Name
         {
             get { return CommandName; }
-        }
+        }        
 
         public override string Text
         {

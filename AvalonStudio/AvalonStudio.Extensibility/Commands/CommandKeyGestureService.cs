@@ -29,12 +29,13 @@ namespace AvalonStudio.Extensibility.Commands
 
         public void BindKeyGestures(Control uiElement)
         {
-            throw new NotImplementedException();
-            //foreach (var keyboardShortcut in _keyboardShortcuts)
-            //    if (keyboardShortcut.KeyGesture != null)
-            //        uiElement.InputBindings.Add(new InputBinding(
-            //            _commandService.GetTargetableCommand(_commandService.GetCommand(keyboardShortcut.CommandDefinition)),
-            //            keyboardShortcut.KeyGesture));
+            foreach (var keyboardShortcut in _keyboardShortcuts)
+            {
+                if (keyboardShortcut.KeyGesture != null)
+                {
+                    (uiElement as Window)?.KeyBindings.Add(new KeyBinding() { Gesture = keyboardShortcut.KeyGesture, Command = _commandService.GetTargetableCommand(_commandService.GetCommand(keyboardShortcut.CommandDefinition)) });
+                }
+            }
         }
 
         public KeyGesture GetPrimaryKeyGesture(CommandDefinitionBase commandDefinition)

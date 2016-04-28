@@ -1,6 +1,8 @@
 ﻿namespace AvalonStudio
 {
     using Controls;
+    using Extensibility;
+    using Extensibility.Commands;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Input;
@@ -13,6 +15,7 @@
 
             DataContext = ShellViewModel.Instance;
 
+            IoC.Get<ICommandKeyGestureService>().BindKeyGestures(this);
             this.AttachDevTools();
         }
 
