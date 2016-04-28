@@ -12,9 +12,8 @@
 
         public TargetableCommand(Command command)
         {
-            _command = command;
-            throw new NotImplementedException();
-            //_commandRouter = IoC.Get<ICommandRouter>();
+            _command = command;            
+            _commandRouter = IoC.Get<ICommandRouter>();
         }
 
         public bool CanExecute(object parameter)

@@ -30,6 +30,7 @@
     using Controls.Standard.ErrorList;
     using Shell;
     using Extensibility.MainMenu;
+    using Extensibility.Commands;
     public enum Perspective
     {
         Editor,
@@ -129,7 +130,7 @@
             this.testFrameworks = testFrameworks;
             this.codeTemplates = codeTemplates;
 
-            IoC.RegisterConstant(this, typeof(IShell));            
+            IoC.RegisterConstant(this, typeof(IShell));
 
             foreach (var plugin in plugins)
             {
