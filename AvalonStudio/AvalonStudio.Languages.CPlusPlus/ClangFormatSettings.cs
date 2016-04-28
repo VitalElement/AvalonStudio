@@ -20,7 +20,7 @@
                 result.BreakBeforeTernaryOperators = true;
                 result.BinPackParameters = true;
                 result.BreakBeforeBraces = BraceStyleOption.Allman;
-                result.ColumnLimit = 80;
+                result.ColumnLimit = 120;
                 result.IndentationWidth = 4;
                 result.Language = LanguageOption.Cpp;
                 result.MaxEmptyLinesToKeep = 2;
