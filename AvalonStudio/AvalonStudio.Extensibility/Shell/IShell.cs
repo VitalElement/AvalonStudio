@@ -35,6 +35,9 @@
         void Build();
         void Clean();
 
+        void Save();
+        void SaveAll();
+
         IProject GetDefaultProject();
 
         IEnumerable<IProject> ProjectTypes { get; }

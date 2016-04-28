@@ -29,6 +29,8 @@
     using Splat;
     using Controls.Standard.ErrorList;
     using Shell;
+    using Extensibility.MainMenu;
+    using Extensibility.Commands;
     public enum Perspective
     {
         Editor,
@@ -41,6 +43,7 @@
     {
         public static ShellViewModel Instance = null;
 
+        private readonly IMenu mainMenu;
         private readonly IEnumerable<ILanguageService> languageServices;
         private readonly IEnumerable<IProjectTemplate> projectTemplates;
         private readonly IEnumerable<ICodeTemplate> codeTemplates;
@@ -106,10 +109,19 @@
             }
         }
 
+        public IMenu MainMenu
+        {
+            get
+            {
+                return mainMenu;
+            }
+        }
+
         [ImportingConstructor]
         public ShellViewModel([ImportMany] IEnumerable<ToolViewModel> importedTools,
-            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IPlugin> plugins)
-        {            
+            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IPlugin> plugins, [Import]IMenu mainMenu)
+        {
+            this.mainMenu = mainMenu;
             this.languageServices = languageServices;
             this.projectTemplates = projectTemplates;
             this.toolChains = toolChains;
@@ -118,7 +130,7 @@
             this.testFrameworks = testFrameworks;
             this.codeTemplates = codeTemplates;
 
-            IoC.RegisterConstant(this, typeof(IShell));            
+            IoC.RegisterConstant(this, typeof(IShell));
 
             foreach (var plugin in plugins)
             {
@@ -132,7 +144,7 @@
 
             CurrentPerspective = Perspective.Editor;
 
-            MainMenu = new MainMenuViewModel();
+            //MainMenu = new MainMenuViewModel();
             ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabsViewModel();
@@ -304,21 +316,6 @@
             }))).Start();
         }
 
-        public async void LoadSolution()
-        {
-            var dlg = new OpenFileDialog();
-            dlg.Title = "Open Solution";
-            dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Solution", Extensions = new List<string> { Solution.Extension } });
-            dlg.InitialFileName = string.Empty;
-            dlg.InitialDirectory = Platforms.Platform.ProjectDirectory;
-            var result = await dlg.ShowAsync();
-
-            if (result != null)
-            {
-                CurrentSolution = Solution.Load(result[0]);
-            }
-        }
-
         public void ShowProjectPropertiesDialog()
         {
             //ModalDialog = new ProjectConfigurationDialogViewModel(CurrentSolution.SelectedProject, () => { });
@@ -432,7 +429,7 @@
 
         public DebugManager DebugManager { get; private set; }
 
-        public MainMenuViewModel MainMenu { get; private set; }
+        //public MainMenuViewModel MainMenu { get; private set; }
 
         public ToolBarViewModel ToolBar { get; private set; }
 

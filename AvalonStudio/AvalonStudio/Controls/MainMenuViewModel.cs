@@ -7,13 +7,6 @@
     {
         public MainMenuViewModel()
         {
-            LoadProjectCommand = ReactiveCommand.Create();
-
-            LoadProjectCommand.Subscribe(_ =>
-            {
-                ShellViewModel.Instance.LoadSolution();
-            });
-
             SaveCommand = ReactiveCommand.Create();
             SaveCommand.Subscribe(_ =>
             {
@@ -102,7 +95,6 @@
         public ReactiveCommand<object> NewProjectCommand { get; }
         public ReactiveCommand<object> SaveCommand { get; }
         public ReactiveCommand<object> SaveAllCommand { get; }
-        public ReactiveCommand<object> LoadProjectCommand { get; }
         public ReactiveCommand<object> ExitCommand { get; }
 
         public ReactiveCommand<object> CleanProjectCommand { get; }
