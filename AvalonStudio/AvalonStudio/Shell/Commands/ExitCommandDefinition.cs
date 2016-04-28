@@ -2,6 +2,7 @@
 {
     using Extensibility.Commands;
     using Perspex.Input;
+    using ReactiveUI;
     using System.ComponentModel.Composition;
 
     [CommandDefinition]
@@ -22,6 +23,15 @@
         public override string ToolTip
         {
             get { return "Exit Tool Tip"; }
+        }
+
+        ReactiveCommand<object> command;
+        public override System.Windows.Input.ICommand Command
+        {
+            get
+            {
+                return command;
+            }
         }
 
         [Export]

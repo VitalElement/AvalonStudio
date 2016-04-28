@@ -3,7 +3,7 @@
     using System;
     using Perspex.Input;
     using AvalonStudio.Extensibility.Commands;
-
+    using System.Windows.Input;
     public abstract class MenuDefinitionBase
     {
         public abstract int SortOrder { get; }

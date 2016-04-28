@@ -2,6 +2,7 @@
 using Perspex.Input;
 using System.ComponentModel.Composition;
 using System;
+using ReactiveUI;
 
 namespace AvalonStudio.Shell.Commands
 {
@@ -28,6 +29,15 @@ namespace AvalonStudio.Shell.Commands
             get
             {
                 return "Creates a new file.";
+            }
+        }
+
+        ReactiveCommand<object> command;
+        public override System.Windows.Input.ICommand Command
+        {
+            get
+            {
+                return command;
             }
         }
 

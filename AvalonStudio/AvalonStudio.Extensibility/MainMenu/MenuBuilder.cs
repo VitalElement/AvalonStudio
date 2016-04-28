@@ -74,7 +74,7 @@
                 foreach (var menuItem in menuItems)
                 {
                     var menuItemModel = (menuItem.CommandDefinition != null)
-                        ? new CommandMenuItem(_commandService.GetCommand(menuItem.CommandDefinition), menuModel)
+                        ? new CommandMenuItem(_commandService.GetCommand(menuItem.CommandDefinition), menuItem.CommandDefinition.Command, menuModel)
                         : (StandardMenuItem)new TextMenuItem(menuItem);
                     AddGroupsRecursive(menuItem, menuItemModel);
                     menuModel.Add(menuItemModel);

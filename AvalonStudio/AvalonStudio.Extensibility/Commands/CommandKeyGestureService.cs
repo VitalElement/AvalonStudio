@@ -33,7 +33,7 @@ namespace AvalonStudio.Extensibility.Commands
             {
                 if (keyboardShortcut.KeyGesture != null)
                 {
-                    (uiElement as Window)?.KeyBindings.Add(new KeyBinding() { Gesture = keyboardShortcut.KeyGesture, Command = _commandService.GetTargetableCommand(_commandService.GetCommand(keyboardShortcut.CommandDefinition)) });
+                    (uiElement as Window)?.KeyBindings.Add(new KeyBinding() { Gesture = keyboardShortcut.KeyGesture, Command = keyboardShortcut.CommandDefinition.Command });
                 }
             }
         }
