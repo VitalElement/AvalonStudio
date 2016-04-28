@@ -27,7 +27,7 @@
 
         public override Uri IconSource
         {
-            get { return new Uri("pack://application:,,,/Gemini;component/Resources/Icons/Save.png"); }
+            get { return new Uri(""); }
         }
 
         [Export]

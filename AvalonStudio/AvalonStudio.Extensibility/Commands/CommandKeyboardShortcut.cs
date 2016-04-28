@@ -36,10 +36,9 @@
     public class CommandKeyboardShortcut<TCommandDefinition> : CommandKeyboardShortcut
         where TCommandDefinition : CommandDefinition
     {
-        public CommandKeyboardShortcut(KeyGesture keyGesture, int sortOrder = 5) : base(keyGesture, sortOrder, null)
-            //:base(keyGesture, sortOrder, () => IoC.Get<ICommandService>().GetCommandDefinition(typeof(TCommandDefinition)))
+        public CommandKeyboardShortcut(KeyGesture keyGesture, int sortOrder = 5)
+            : base(keyGesture, sortOrder, () => IoC.Get<ICommandService>().GetCommandDefinition(typeof(TCommandDefinition)))
         {
-            //throw new NotImplementedException();
         }
     }
 }
