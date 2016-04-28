@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Input;
 
 namespace AvalonStudio.Extensibility.Commands
 {
@@ -9,5 +10,6 @@ namespace AvalonStudio.Extensibility.Commands
         public abstract string ToolTip { get; }
         public abstract Uri IconSource { get; }
         public abstract bool IsList { get; }
+        public abstract ICommand Command { get; }
     }
 }

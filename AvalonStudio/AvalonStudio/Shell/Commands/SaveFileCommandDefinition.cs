@@ -4,10 +4,21 @@
     using System;
     using System.ComponentModel.Composition;
     using Perspex.Input;
+    using ReactiveUI;
 
     [CommandDefinition]
     public class SaveFileCommandDefinition : CommandDefinition
     {
+        public SaveFileCommandDefinition()
+        {
+            command = ReactiveCommand.Create();
+
+            command.Subscribe(_ =>
+            {
+                Console.WriteLine("Command Executed");
+            });
+        }
+
         public const string CommandName = "File.SaveFile";
 
         public override string Name
@@ -28,6 +39,15 @@
         public override Uri IconSource
         {
             get { return new Uri(""); }
+        }
+
+        ReactiveCommand<object> command;
+        public override System.Windows.Input.ICommand Command
+        {
+            get
+            {
+                return command;
+            }
         }
 
         [Export]

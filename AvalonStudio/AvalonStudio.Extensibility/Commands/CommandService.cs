@@ -9,8 +9,7 @@ namespace AvalonStudio.Extensibility.Commands
     public class CommandService : ICommandService
     {
         private readonly Dictionary<Type, CommandDefinitionBase> _commandDefinitionsLookup;
-        private readonly Dictionary<CommandDefinitionBase, Command> _commands;
-        private readonly Dictionary<Command, TargetableCommand> _targetableCommands;
+        private readonly Dictionary<CommandDefinitionBase, Command> _commands;        
 
 #pragma warning disable 649
         [ImportMany]
@@ -21,7 +20,6 @@ namespace AvalonStudio.Extensibility.Commands
         {
             _commandDefinitionsLookup = new Dictionary<Type, CommandDefinitionBase>();
             _commands = new Dictionary<CommandDefinitionBase, Command>();
-            _targetableCommands = new Dictionary<Command, TargetableCommand>();
         }
 
         public CommandDefinitionBase GetCommandDefinition(Type commandDefinitionType)
@@ -39,14 +37,6 @@ namespace AvalonStudio.Extensibility.Commands
             if (!_commands.TryGetValue(commandDefinition, out command))
                 command = _commands[commandDefinition] = new Command(commandDefinition);
             return command;
-        }
-
-        public TargetableCommand GetTargetableCommand(Command command)
-        {
-            TargetableCommand targetableCommand;
-            if (!_targetableCommands.TryGetValue(command, out targetableCommand))
-                targetableCommand = _targetableCommands[command] = new TargetableCommand(command);
-            return targetableCommand;
         }
     }
 }
