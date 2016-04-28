@@ -36,15 +36,6 @@
 
             TextChangedCommand = ReactiveCommand.Create();
             disposables.Add(TextChangedCommand.Subscribe(model.OnTextChanged));
-            disposables.Add(TextChangedCommand.Subscribe(_ =>
-            {
-                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
-                {
-                    Dock = Dock.Left;
-
-                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
-                }
-            }));
 
             SaveCommand = ReactiveCommand.Create();
             disposables.Add(SaveCommand.Subscribe((param) => Save()));
@@ -126,6 +117,13 @@
 
             model.TextChanged += (sender, e) =>
             {
+                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
+                {
+                    Dock = Dock.Left;
+
+                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
+                }
+
                 this.RaisePropertyChanged(nameof(Title));
             };
 
