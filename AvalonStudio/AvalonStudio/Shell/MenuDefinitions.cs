@@ -24,7 +24,7 @@
             ToolsPackagesMenuGroup, 1);
 
         [MenuItem]
-        public static MenuItemDefinition FileSaveAllMenuItem = new CommandMenuItemDefinition<PackagesCommandDefinition>(
+        public static MenuItemDefinition FileSaveAllMenuItem = new CommandMenuItemDefinition<SaveAllFileCommandDefinition>(
            Extensibility.MainMenu.MenuDefinitions.FileSaveMenuGroup, 1);
 
         [MenuItem]
