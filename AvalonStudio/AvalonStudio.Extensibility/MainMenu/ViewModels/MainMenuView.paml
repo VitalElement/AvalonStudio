@@ -1,0 +1,12 @@
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.Models;assembly=AvalonStudio.Extensibility">
+  <Menu Items="{Binding Model}">
+    <Menu.DataTemplates>
+      <DataTemplate DataType="menu:MenuItemSeparator">
+        <Separator />
+      </DataTemplate>
+      <DataTemplate>
+        <MenuItem Header="{Binding Text}" Command="{Binding Command}" Items="{Binding Children}" />
+      </DataTemplate>
+    </Menu.DataTemplates>
+  </Menu>
+</UserControl>
