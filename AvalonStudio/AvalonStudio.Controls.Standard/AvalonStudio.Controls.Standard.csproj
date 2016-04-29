@@ -138,6 +138,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutScreen\Commands\AboutScreenCommandDefinition.cs" />
+    <Compile Include="AboutScreen\MenuDefinitions.cs" />
+    <Compile Include="AboutScreen\AboutDialogView.paml.cs" />
+    <Compile Include="AboutScreen\AboutDialogViewModel.cs" />
     <Compile Include="Console\ConsoleView.paml.cs">
       <DependentUpon>ConsoleView.paml</DependentUpon>
     </Compile>
@@ -227,11 +231,13 @@
     <EmbeddedResource Include="ErrorList\ErrorListView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="AboutScreen\AboutDialogView.paml" />
     <None Include="packages.config" />
     <EmbeddedResource Include="SolutionExplorer\ProjectConfigurationDialogView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\$(TargetFileName)</PostBuildEvent>
