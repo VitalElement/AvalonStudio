@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.MiniShell", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Controls.TeamExplorer", "AvalonStudio.Controls.TeamExplorer\AvalonStudio.Controls.TeamExplorer.csproj", "{690F173C-BF89-4F9E-A177-C17313CDBFE3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Languages.Verilog", "AvalonStudio.Languages.Verilog\AvalonStudio.Languages.Verilog.csproj", "{78B39788-4259-4B13-8294-5B878B145B1A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
