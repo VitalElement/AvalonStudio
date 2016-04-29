@@ -51,7 +51,8 @@
                 CaretIndex = -1;
             }));
 
-            disposables.Add(AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel));
+            disposables.Add(AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
+            disposables.Add(AddHandler(InputElement.KeyUpEvent, OnKeyUp, RoutingStrategies.Tunnel));
 
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
         }
@@ -835,6 +836,13 @@
             }
         }
 
+        protected void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if ((e.Modifiers & InputModifiers.Alt) != 0)
+            {
+                e.Handled = true;
+            }
+        }
 
         protected void OnKeyDown(object sender, KeyEventArgs e)
         {
