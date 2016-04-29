@@ -21,6 +21,7 @@
         ISolution CurrentSolution { get; set; }
 
         Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
+        void CloseSelectedDocument();
         ObservableCollection<object> Tools { get; }
 
         object BottomSelectedTool { get; set; }

@@ -1,10 +1,23 @@
 ﻿namespace AvalonStudio.Shell.Commands
 {
     using AvalonStudio.Extensibility.Commands;
+    using Extensibility;
     using ReactiveUI;
+    using System;
+
     [CommandDefinition]
     public class CloseFileCommandDefinition : CommandDefinition
     {
+        public CloseFileCommandDefinition()
+        {
+            command = ReactiveCommand.Create();
+            command.Subscribe(_ =>
+            {
+                var shell = IoC.Get<IShell>();
+                shell.CloseSelectedDocument();
+            });
+        }
+
         public const string CommandName = "File.CloseFile";
 
         public override string Name

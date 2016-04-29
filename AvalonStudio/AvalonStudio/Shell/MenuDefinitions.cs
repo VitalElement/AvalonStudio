@@ -24,6 +24,10 @@
             ToolsPackagesMenuGroup, 1);
 
         [MenuItem]
+        public static MenuItemDefinition FileCloseMenuItem = new CommandMenuItemDefinition<CloseFileCommandDefinition>(
+            Extensibility.MainMenu.MenuDefinitions.FileCloseMenuGroup, 0);
+
+        [MenuItem]
         public static MenuItemDefinition FileSaveAllMenuItem = new CommandMenuItemDefinition<SaveAllFileCommandDefinition>(
            Extensibility.MainMenu.MenuDefinitions.FileSaveMenuGroup, 1);
 

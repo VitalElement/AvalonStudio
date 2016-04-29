@@ -202,5 +202,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public void CloseSelectedDocument()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

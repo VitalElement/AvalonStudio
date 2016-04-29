@@ -192,6 +192,11 @@
             CurrentPerspective = Perspective.Editor;
         }
 
+        public void CloseSelectedDocument()
+        {
+            DocumentTabs.Documents.Remove(DocumentTabs.SelectedDocument);
+        }
+
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
         {
             var currentTab = DocumentTabs.Documents.FirstOrDefault(t => t.Model.ProjectFile.File == file.File);
