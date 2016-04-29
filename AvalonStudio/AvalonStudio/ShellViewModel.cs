@@ -166,8 +166,7 @@
                 switch (tool.DefaultLocation)
                 {
                     case Location.Bottom:
-                        bottomTools.Add(tool);
-                        BottomSelectedTool = tool;
+                        bottomTools.Add(tool);                        
                         break;
 
                     case Location.Left:
@@ -175,11 +174,15 @@
                         break;
 
                     case Location.Right:
-                        rightTools.Add(tool);
-                        RightSelectedTool = tool;
+                        rightTools.Add(tool);                        
                         break;
                 }
             }
+
+            LeftSelectedTool = LeftTools.FirstOrDefault();
+            RightSelectedTool = RightTools.FirstOrDefault();
+            BottomSelectedTool = BottomTools.FirstOrDefault();
+
 
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
