@@ -850,6 +850,26 @@
 
             switch (e.Key)
             {
+                case Key.OemPlus:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        if (textView.FontSize < 60)
+                        {
+                            textView.FontSize++;
+                        }
+                    }
+                    break;
+
+                case Key.OemMinus:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        if (textView.FontSize > 1)
+                        {
+                            textView.FontSize--;
+                        }
+                    }
+                    break;
+
                 case Key.A:
                     if (modifiers == InputModifiers.Control)
                     {
