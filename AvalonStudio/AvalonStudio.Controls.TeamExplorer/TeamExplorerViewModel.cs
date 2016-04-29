@@ -63,13 +63,16 @@
             {
                 var solution = shell.CurrentSolution;
 
-                var gitPath = LibGit2Sharp.Repository.Discover(solution.CurrentDirectory);
-
-                if (!string.IsNullOrEmpty(gitPath))
+                if (solution != null)
                 {
-                    Repository = new RepositoryViewModel(new Repository(gitPath));
-                    CurrentView = Repository;
-                }                    
+                    var gitPath = LibGit2Sharp.Repository.Discover(solution.CurrentDirectory);
+
+                    if (!string.IsNullOrEmpty(gitPath))
+                    {
+                        Repository = new RepositoryViewModel(new Repository(gitPath));
+                        CurrentView = Repository;
+                    }
+                }   
             };
         }
 
