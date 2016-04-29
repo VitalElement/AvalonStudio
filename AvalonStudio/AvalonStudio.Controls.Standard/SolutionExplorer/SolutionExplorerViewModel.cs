@@ -42,13 +42,17 @@
                     {
                         SelectedProject = this.Model.StartupProject;
                     }
+
+                    var sol = new ObservableCollection<SolutionViewModel>();
+                    sol.Add(new SolutionViewModel(model));
+
+                    Solution = sol;
                 }
-
-                var sol = new ObservableCollection<SolutionViewModel>();
-                sol.Add(new SolutionViewModel(model));
-
-                Solution = sol;
-
+                else
+                {
+                    Solution = null;
+                }
+                
                 this.RaisePropertyChanged();
                 this.RaisePropertyChanged(nameof(Projects));
             }
