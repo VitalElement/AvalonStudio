@@ -15,5 +15,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         [MenuItem]
         public static MenuItemDefinition FileOpenSolutionItem = new CommandMenuItemDefinition<OpenSolutionCommandDefinition>(Extensibility.MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0);
+
+        [MenuItem]
+        public static MenuItemDefinition FileCloseSolutionItem = new CommandMenuItemDefinition<CloseSolutionCommandDefinition>(Extensibility.MainMenu.MenuDefinitions.FileCloseMenuGroup, 1);
     }
 }
