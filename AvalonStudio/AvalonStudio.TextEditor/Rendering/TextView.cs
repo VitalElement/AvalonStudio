@@ -86,6 +86,8 @@
             disposables.Add(FontSizeProperty.Changed.Subscribe((o) =>
             {
                 GenerateTextProperties();
+
+                Invalidate();
             }));
 
             disposables.Add(FontFamilyProperty.Changed.Subscribe((o) =>
@@ -563,7 +565,7 @@
         #endregion
 
         #region Private Methods
-        private void GenerateTextProperties()
+        public void GenerateTextProperties()
         {
             using (var formattedText = new FormattedText("x", FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal))
             {
