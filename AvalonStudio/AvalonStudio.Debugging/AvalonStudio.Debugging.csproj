@@ -141,6 +141,11 @@
     <Compile Include="BreakPointManager.cs" />
     <Compile Include="CallStackView.paml.cs" />
     <Compile Include="CallStackViewModel.cs" />
+    <Compile Include="Commands\PauseDebuggingCommandDefinition.cs" />
+    <Compile Include="Commands\StopDebuggingCommandDefinition.cs" />
+    <Compile Include="Commands\StepInstuctionCommandDefinition.cs" />
+    <Compile Include="Commands\StepIntoCommandDefinition.cs" />
+    <Compile Include="Commands\StepOverCommandDefinition.cs" />
     <Compile Include="Commands\StartDebuggingCommandDefinition.cs" />
     <Compile Include="DebugManager.cs" />
     <Compile Include="DisassemblyView.paml.cs" />
