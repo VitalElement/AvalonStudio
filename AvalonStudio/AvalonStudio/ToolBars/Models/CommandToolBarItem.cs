@@ -3,11 +3,11 @@
     using System;
     using System.ComponentModel;
     using System.Globalization;
-    using Caliburn.Micro;
     using Extensibility.ToolBars;
     using Extensibility.Commands;
     using Perspex.Input;
     using System.Windows.Input;
+    using Extensibility;
     public class CommandToolBarItem : ToolBarItemBase, ICommandUiItem
     {
 	    private readonly ToolBarItemDefinition _toolBarItem;

@@ -295,6 +295,7 @@
     <Compile Include="Shell\Commands\SaveAllFileCommandDefinition.cs" />
     <Compile Include="Shell\Commands\SaveFileCommandDefinition.cs" />
     <Compile Include="Shell\MenuDefinitions.cs" />
+    <Compile Include="Shell\ToolBarDefinitions.cs" />
     <Compile Include="ToolBars\IToolBar.cs" />
     <Compile Include="ToolBars\IToolBarBuilder.cs" />
     <Compile Include="ToolBars\IToolBars.cs" />
@@ -304,6 +305,7 @@
     <Compile Include="ToolBars\Models\ToolBarModel.cs" />
     <Compile Include="ToolBars\ToolBarBuilder.cs" />
     <Compile Include="ToolBars\ToolBarDefinitions.cs" />
+    <Compile Include="ToolBars\ViewModels\ToolBarsViewModel.cs" />
     <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
