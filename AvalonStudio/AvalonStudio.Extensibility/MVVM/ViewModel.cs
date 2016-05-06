@@ -16,24 +16,16 @@
         Bottom
     }
 
+
     [InheritedExport(typeof(ToolViewModel))]
-    public abstract class ToolViewModel : ToolViewModel<object>
+    public abstract class ToolViewModel : ViewModel
     {
-        public ToolViewModel() : base(null)
+        public ToolViewModel()
         {
          
         }
 
         public abstract Location DefaultLocation { get; }
-    }    
-
-
-    public abstract class ToolViewModel<T> :ViewModel<T>
-    {
-        public ToolViewModel(T model) : base (model)
-        {
-
-        }
 
         // TODO This should use ToolControl
         private string title;
@@ -41,6 +33,21 @@
         {
             get { return title; }
             set { this.RaiseAndSetIfChanged(ref title, value); }
+        }
+    }
+    
+    public abstract class ToolViewModel<T> : ToolViewModel
+    {
+        public ToolViewModel(T model)
+        {
+            this.model = model;
+        }
+
+        private T model;
+        new public T Model
+        {
+            get { return model; }
+            set { this.RaiseAndSetIfChanged(ref model, value); }
         }
     }
 

@@ -91,6 +91,7 @@
     {
         public DisassemblyViewModel()
         {
+            Title = "Dissasembly";
             this.dataProvider = new DissasemblyDataProvider();
         }
 
