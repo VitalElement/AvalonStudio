@@ -16,7 +16,7 @@
             var updated = new List<Variable>();
             var removed = new List<Variable>();
 
-            for(int i = 0; i < locals.Count; i++)
+            for (int i = 0; i < locals.Count; i++)
             {
                 var local = locals[i];
 
@@ -24,7 +24,7 @@
 
                 if (currentVar == null)
                 {
-                    removed.Add(local);                    
+                    removed.Add(local);
                 }
                 else
                 {
@@ -32,18 +32,18 @@
                 }
             }
 
-            foreach(var variable in variables)
+            foreach (var variable in variables)
             {
                 var currentVar = updated.FirstOrDefault(v => v.Name == variable.Name);
 
-                if(currentVar == null)
+                if (currentVar == null)
                 {
                     locals.Add(variable);
                     AddWatch(variable.Name);
                 }
             }
 
-            foreach(var removedvar in  removed)
+            foreach (var removedvar in removed)
             {
                 locals.Remove(removedvar);
                 RemoveWatch(Children.FirstOrDefault(w => w.Name == removedvar.Name));
@@ -55,13 +55,24 @@
             locals.Clear();
             base.Clear();
         }
-        
+
 
         public override void Activation()
         {
             _debugManager = IoC.Get<IDebugManager>();
 
-            _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;   
+            _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+
+            _debugManager.DebugSessionStarted += (sender, e) =>
+            {
+                IsVisible = true;
+            };
+
+            _debugManager.DebugSessionEnded += (sender, e) =>
+            {
+                IsVisible = false;
+                Clear();
+            };
         }
 
         private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
@@ -72,13 +83,14 @@
             {
                 this.InvalidateLocals(stackVariables);
                 this.Invalidate(e.VariableChanges);
-            });            
+            });
         }
 
         public LocalsViewModel()
         {
+            IsVisible = false;
             Title = "Locals";
             locals = new List<Variable>();
-        }        
+        }
     }
 }
