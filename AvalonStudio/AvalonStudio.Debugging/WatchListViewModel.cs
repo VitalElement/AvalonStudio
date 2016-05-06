@@ -6,11 +6,13 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System;
 
-    public class WatchListViewModel : ViewModel
+    public class WatchListViewModel : ToolViewModel
     {
         public WatchListViewModel()
         {
+            Title = "Watch List";
             Children = new ObservableCollection<WatchViewModel>();
         }
 
@@ -23,6 +25,14 @@
 
         private IDebugger debugger;
         public IDebugger Debugger { get { return debugger; } }
+
+        public override Location DefaultLocation
+        {
+            get
+            {
+                return Location.Bottom;
+            }
+        }
 
         public void SetDebugger(IDebugger debugger)
         {

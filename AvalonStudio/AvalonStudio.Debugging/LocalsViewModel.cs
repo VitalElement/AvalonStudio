@@ -55,6 +55,7 @@
 
         public LocalsViewModel()
         {
+            Title = "Locals";
             locals = new List<Variable>();
         }        
     }

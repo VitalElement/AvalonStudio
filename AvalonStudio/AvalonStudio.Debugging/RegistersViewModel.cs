@@ -12,10 +12,11 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class RegistersViewModel : ViewModel<ObservableCollection<RegisterViewModel>>
+    public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>
     {
         public RegistersViewModel() : base(new ObservableCollection<RegisterViewModel>())
         {
+            Title = "Registers";
             lastChangedRegisters = new List<RegisterViewModel>();
         }
 
@@ -24,6 +25,14 @@
         {
             get { return columnWidth; }
             set { this.RaiseAndSetIfChanged(ref columnWidth, value); }
+        }
+
+        public override Location DefaultLocation
+        {
+            get
+            {
+                return Location.Right;
+            }
         }
 
         public void SetDebugger(IDebugger debugger)
