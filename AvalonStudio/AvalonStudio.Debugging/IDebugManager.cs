@@ -31,6 +31,8 @@
 
         void StartDebug(IProject project);
 
+        void Restart();
+
         void Continue();
 
         void StepOver();
