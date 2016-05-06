@@ -162,7 +162,7 @@
     </Compile>
     <Compile Include="RegistersViewModel.cs" />
     <Compile Include="RegisterViewModel.cs" />
-    <Compile Include="VariableControlViewModel.paml.cs" />
+    <Compile Include="VariableControlView.paml.cs" />
     <Compile Include="WatchListView.paml.cs" />
     <Compile Include="WatchListViewModel.cs" />
     <Compile Include="WatchViewModel.cs" />
