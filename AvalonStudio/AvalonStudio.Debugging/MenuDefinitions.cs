@@ -13,6 +13,12 @@
         [MenuItem]
         public static MenuItemDefinition StartDebugging = new CommandMenuItemDefinition<StartDebuggingCommandDefinition>(DebugStartGroup, 0);
 
+        [MenuItem]
+        public static MenuItemDefinition Restart = new CommandMenuItemDefinition<RestartDebuggingCommandDefinition>(DebugStartGroup, 2);
+
+        [MenuItem]
+        public static MenuItemDefinition StopDebugging = new CommandMenuItemDefinition<StopDebuggingCommandDefinition>(DebugStartGroup, 3);
+
         [MenuGroup]
         public static MenuItemGroupDefinition DebugControlGroup = new MenuItemGroupDefinition(DebugMenu, 3);
 
@@ -26,10 +32,7 @@
         public static MenuItemDefinition StepIntruction = new CommandMenuItemDefinition<StepInstructionCommandDefinition>(DebugControlGroup, 2);
 
         [MenuItem]
-        public static MenuItemDefinition Pause = new CommandMenuItemDefinition<PauseDebuggingCommandDefinition>(DebugControlGroup, 3);
-
-        [MenuItem]
-        public static MenuItemDefinition Stop = new CommandMenuItemDefinition<StopDebuggingCommandDefinition>(DebugControlGroup, 4);
+        public static MenuItemDefinition Pause = new CommandMenuItemDefinition<PauseDebuggingCommandDefinition>(DebugControlGroup, 3);        
 
     }
 }
