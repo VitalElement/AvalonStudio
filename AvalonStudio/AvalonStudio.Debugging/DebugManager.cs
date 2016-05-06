@@ -8,6 +8,7 @@
     using AvalonStudio.Projects;
     using AvalonStudio.Toolchains;
     using AvalonStudio.Utils;
+    using Extensibility.Plugin;
     using Extensibility.Utils;
     using Perspex.Threading;
     using ReactiveUI;
@@ -17,7 +18,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class DebugManager : ViewModel
+    public class DebugManager : ViewModel, IDebugManager, IExtension
     {
         private IShell _shell;
         private IConsole _console;
@@ -25,7 +26,7 @@
         #region Contructors
         public DebugManager()
         {
-           // this.BreakPointManager = new BreakPointManager();
+           BreakPointManager = new BreakPointManager();
 
             //Locals = new LocalsViewModel();
             //Registers = new RegistersViewModel();
@@ -643,6 +644,17 @@
             }
 
             return result;
+        }
+
+        public void BeforeActivation()
+        {
+            IoC.RegisterConstant(this, typeof(IDebugManager));
+        }
+
+        public void Activation()
+        {
+            _shell = IoC.Get<IShell>();
+            _console = IoC.Get<IConsole>();
         }
         #endregion
     }

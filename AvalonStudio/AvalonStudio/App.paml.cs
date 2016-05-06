@@ -44,11 +44,6 @@
             
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
             
-            foreach(var tool in ShellViewModel.Instance.RightTools)
-            {
-                (tool as ToolViewModel).Activate();
-            }
-
             app.RunWithMainWindow<MainWindow>();
 
             ShellViewModel.Instance.Cleanup();

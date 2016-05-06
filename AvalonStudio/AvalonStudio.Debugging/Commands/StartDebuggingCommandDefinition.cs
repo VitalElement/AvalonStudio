@@ -1,23 +1,32 @@
 ﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 {
     using AvalonStudio.Extensibility.Commands;
+    using Debugging;
     using Extensibility;
+    using Perspex.Controls;
+    using Perspex.Input;
+    using Projects;
     using ReactiveUI;
     using Shell;
     using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.Composition;
     using System.Windows.Input;
-
+    using Utils;
     [CommandDefinition]
-    class NewSolutionCommandDefinition : CommandDefinition
+    class StartDebuggingCommandDefinition : CommandDefinition
     {
-        public NewSolutionCommandDefinition()
+        public StartDebuggingCommandDefinition()
         {
             command = ReactiveCommand.Create();
             command.Subscribe(_ =>
             {
-                IShell shell = IoC.Get<IShell>();
-                shell.ModalDialog = new NewProjectDialogViewModel(shell.CurrentSolution);
-                shell.ModalDialog.ShowDialog();
+                var manager = IoC.Get<IDebugManager>();
+                var shell = IoC.Get<IShell>();
+
+                var project = shell.GetDefaultProject();
+
+                manager.StartDebug(project);
             });
         }
 
@@ -35,7 +44,7 @@
         {
             get
             {
-                return "New Solution";
+                return "Start Debugging";
             }
         }
 
@@ -43,8 +52,11 @@
         {
             get
             {
-                return "Creates a new Solution";
+                return "Starts a debug session.";
             }
         }
+
+        [Export]
+        public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<StartDebuggingCommandDefinition>(new KeyGesture() { Key = Key.F5 });
     }
 }
