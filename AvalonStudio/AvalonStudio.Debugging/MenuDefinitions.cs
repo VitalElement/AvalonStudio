@@ -1,8 +1,7 @@
-﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
+﻿namespace AvalonStudio.Debugging
 {
-    using AvalonStudio.Controls.Standard.SolutionExplorer.Commands;
     using AvalonStudio.Extensibility.Menus;
-
+    using Commands;
     static class MenuDefinitions
     {
         [Menu]        

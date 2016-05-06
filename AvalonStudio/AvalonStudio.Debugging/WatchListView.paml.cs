@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Debugging
 {
     using Perspex.Controls;
     using Perspex;

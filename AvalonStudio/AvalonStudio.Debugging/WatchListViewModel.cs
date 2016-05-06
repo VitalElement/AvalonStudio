@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.ViewModels
+﻿namespace AvalonStudio.Debugging
 {
     using AvalonStudio.MVVM;
     using Debugging;
