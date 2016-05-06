@@ -21,13 +21,6 @@
             });
         }
 
-        public const string CommandName = "File.SaveFile";
-
-        public override string Name
-        {
-            get { return CommandName; }
-        }
-
         public override string Text
         {
             get { return "Save"; }

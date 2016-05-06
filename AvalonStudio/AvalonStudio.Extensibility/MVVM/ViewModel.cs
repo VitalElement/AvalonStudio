@@ -17,14 +17,12 @@
     }
 
     [InheritedExport(typeof(ToolViewModel))]
-    public abstract class ToolViewModel : ToolViewModel<object>, IActivatable
+    public abstract class ToolViewModel : ToolViewModel<object>
     {
         public ToolViewModel() : base(null)
         {
          
         }
-
-        public abstract void Activate();
 
         public abstract Location DefaultLocation { get; }
     }    
