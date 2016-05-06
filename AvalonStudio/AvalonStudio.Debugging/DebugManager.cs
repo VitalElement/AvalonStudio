@@ -26,15 +26,7 @@
         #region Contructors
         public DebugManager()
         {
-           BreakPointManager = new BreakPointManager();
-
-            //Locals = new LocalsViewModel();
-            //Registers = new RegistersViewModel();
-            //Disassembly = new DisassemblyViewModel();
-            //MemoryView = new MemoryViewModel();
-            //WatchList = new WatchListViewModel();
-            //VariableProbes = new List<VariableProbeViewModel>();
-            //CallStack = new CallStackViewModel();
+            BreakPointManager = new BreakPointManager();
             
             StartDebuggingCommand = ReactiveCommand.Create();
             StartDebuggingCommand.Subscribe((o) =>
@@ -170,7 +162,7 @@
         private IEditor lastDocument;
 
         private void PrepareToRun()
-        {           
+        {
             if (lastDocument != null)
             {
                 lastDocument.ClearDebugHighlight();
@@ -184,11 +176,11 @@
             IsExecuting = true;
         }
 
-        public VariableObject ProbeExpression (string expression)
+        public VariableObject ProbeExpression(string expression)
         {
             VariableObject result = null;
 
-            if(CurrentDebugger.State == DebuggerState.Paused)
+            if (CurrentDebugger.State == DebuggerState.Paused)
             {
                 result = CurrentDebugger.CreateWatch(string.Format("probe{0}", CurrentDebugger.GetVariableId()), expression);
             }
@@ -196,7 +188,7 @@
             return result;
         }
 
-        public void Continue ()
+        public void Continue()
         {
             if (CurrentDebugger != null)
             {
@@ -253,7 +245,7 @@
                         CurrentDebugger.StepInto();
                     });
                 }
-            }            
+            }
         }
 
         public void StepOver()
@@ -288,12 +280,12 @@
         public void Stop()
         {
             if (CurrentDebugger != null)
-            {                
+            {
                 Task.Factory.StartNew(() =>
                 {
                     PrepareToRun();
 
-                    ignoreEvents = true;                    
+                    ignoreEvents = true;
 
                     StopDebugSession();
 
@@ -309,7 +301,7 @@
                 Task.Factory.StartNew(() =>
                 {
                     CurrentDebugger.Reset(true);
-                });             
+                });
             }
         }
 
@@ -319,16 +311,9 @@
         {
             ignoreEvents = true;
 
-            //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
-            {
-                CurrentDebugger.Stop();
-            }//);
+            CurrentDebugger.Stop();
 
-            //WatchList.Clear();
-            //RegistersView.Clear();
-            //LocalsView.Clear();
-            //CallStack.Clear();
-
+            CurrentDebugger = null;
             SetDebuggers(null);
 
             ignoreEvents = false;
@@ -342,9 +327,14 @@
             }
 
             Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                _shell.CurrentPerspective = Perspective.Editor;
-            });
+           {
+               if (DebugSessionEnded != null)
+               {
+                   DebugSessionEnded(this, new EventArgs());
+               }
+
+               _shell.CurrentPerspective = Perspective.Editor;
+           });
         }
 
         #region Commands
@@ -361,8 +351,8 @@
         private void SetDebuggers(IDebugger debugger)
         {
             BreakPointManager.SetDebugger(debugger);
-
-            if(DebuggerChanged != null)
+            
+            if (DebuggerChanged != null)
             {
                 DebuggerChanged(this, new EventArgs());
             }
@@ -478,6 +468,11 @@
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
+                            if (DebugSessionStarted != null)
+                            {
+                                DebugSessionStarted(this, new EventArgs());
+                            }
+
                             _shell.CurrentPerspective = Perspective.Debug;
                         });
 
@@ -499,6 +494,8 @@
 
         public event EventHandler<FrameChangedEventArgs> DebugFrameChanged;
         public event EventHandler DebuggerChanged;
+        public event EventHandler DebugSessionStarted;
+        public event EventHandler DebugSessionEnded;
 
         public IProject Project
         {
@@ -536,12 +533,7 @@
                 case StopReason.ExitedSignalled:
                     IsExecuting = false;
                     IsUpdating = false;
-                    this.StopDebuggingCommand.Execute(null);
-
-                    Dispatcher.UIThread.InvokeAsync( () =>
-                    {
-                        _shell.CurrentPerspective = Perspective.Editor;
-                    });
+                    StopDebugSession();
                     break;
 
                 default:
@@ -549,7 +541,7 @@
 
                     if (e.Frame != null && e.Frame.File != null)
                     {
-                        var normalizedPath = e.Frame.File.Replace("\\\\","\\").ToPlatformPath();
+                        var normalizedPath = e.Frame.File.Replace("\\\\", "\\").ToPlatformPath();
 
                         ISourceFile file = null;
 
@@ -575,13 +567,13 @@
 
                         lastDocument = document;
                     }
-                    
-                    if(DebugFrameChanged != null)
+
+                    if (DebugFrameChanged != null)
                     {
                         FrameChangedEventArgs args = new FrameChangedEventArgs();
                         args.Address = e.Frame.Address;
                         args.VariableChanges = currentDebugger.UpdateVariables();
-                        
+
 
                         DebugFrameChanged(this, args);
                     }
