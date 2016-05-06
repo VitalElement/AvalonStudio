@@ -15,5 +15,17 @@
         IProject Project { get; }
 
         void StartDebug(IProject project);
+
+        void StepOver();
+
+        void StepInstruction();
+
+        void StepInto();
+
+        void StepOut();
+
+        void Stop();
+
+        void Pause();
     }
 }
