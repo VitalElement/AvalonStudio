@@ -7,7 +7,9 @@
     using System.Collections.ObjectModel;
     using System;
     using Shell;
-    public class SolutionExplorerViewModel : ToolViewModel
+    using Extensibility.Plugin;
+
+    public class SolutionExplorerViewModel : ToolViewModel, IExtension
     {
         private IShell shell;
 
@@ -15,16 +17,6 @@
         {            
             Title = "Solution Explorer";
             solution = new ObservableCollection<SolutionViewModel>();            
-        }
-
-        public override void Activate()
-        {
-            shell = IoC.Get<IShell>();
-
-            shell.SolutionChanged += (sender, e) =>
-            {
-                Model = shell.CurrentSolution;
-            };
         }
         
         new private ISolution model = null;
@@ -104,5 +96,20 @@
         }
 
         public const string ToolId = "CIDSEVM00";
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            shell = IoC.Get<IShell>();
+
+            shell.SolutionChanged += (sender, e) =>
+            {
+                Model = shell.CurrentSolution;
+            };
+        }
     }
 }

@@ -72,7 +72,7 @@
                 int lineClicked = -1;
                 lineClicked = textView.TextDocument.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
 
-                var currentBreakPoint = ShellViewModel.Instance.DebugManager.BreakPointManager.FirstOrDefault((bp) => bp.File == textView.TextDocument.FileName && bp.Line == lineClicked);
+                var currentBreakPoint = manager.FirstOrDefault((bp) => bp.File == textView.TextDocument.FileName && bp.Line == lineClicked);
 
                 if (currentBreakPoint != null)
                 {

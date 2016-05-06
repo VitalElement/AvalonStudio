@@ -10,7 +10,7 @@
     using Extensibility.Utils;
     using Shell;
 
-    public class ErrorListViewModel : ToolViewModel, IPlugin, IErrorList
+    public class ErrorListViewModel : ToolViewModel, IExtension, IErrorList
     {
         private IShell shell;
 
@@ -55,35 +55,6 @@
             {
                 return Location.Bottom;
             }
-        }
-
-        public string Name
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public Version Version
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public string Description
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public override void Activate()
-        {
-            
         }
 
         public void BeforeActivation()
