@@ -7,12 +7,23 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    public class FrameChangedEventArgs : EventArgs
+    {
+        public List<VariableObjectChange> VariableChanges;
+        public ulong Address;
+    }
+
     public interface IDebugManager
     {
         /// <summary>
         /// The project currently being debugged.
         /// </summary>
         IProject Project { get; }
+
+        IDebugger CurrentDebugger { get; }
+
+        event EventHandler<FrameChangedEventArgs> DebugFrameChanged;
+        event EventHandler DebuggerChanged;
 
         void StartDebug(IProject project);
 

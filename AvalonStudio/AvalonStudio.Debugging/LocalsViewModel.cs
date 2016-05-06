@@ -1,10 +1,13 @@
 ﻿namespace AvalonStudio.Debugging
 {
     using AvalonStudio.Debugging;
+    using Extensibility.Plugin;
     using System.Collections.Generic;
     using System.Linq;
-    
-    public class LocalsViewModel : WatchListViewModel
+    using System;
+    using Extensibility;
+    using Perspex.Threading;
+    public class LocalsViewModel : WatchListViewModel, IExtension
     {
         private List<Variable> locals;
 
@@ -51,6 +54,25 @@
         {
             locals.Clear();
             base.Clear();
+        }
+        
+
+        public override void Activation()
+        {
+            _debugManager = IoC.Get<IDebugManager>();
+
+            _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;   
+        }
+
+        private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+        {
+            var stackVariables = _debugManager.CurrentDebugger.ListStackVariables();
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                this.InvalidateLocals(stackVariables);
+                this.Invalidate(e.VariableChanges);
+            });            
         }
 
         public LocalsViewModel()

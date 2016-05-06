@@ -10,8 +10,9 @@
     {
         private IDebugManager _debugManager;
 
-        public FrameViewModel(Frame model) : base(model)
+        public FrameViewModel(IDebugManager debugManager, Frame model) : base(model)
         {
+            _debugManager = debugManager;
         }
 
         public string Function
