@@ -33,14 +33,6 @@
             }
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "File.CloseSolution";
-            }
-        }
-
         public override string Text
         {
             get

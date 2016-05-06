@@ -37,7 +37,7 @@
             DebugCommand = ReactiveCommand.Create();
             DebugCommand.Subscribe(_ =>
             {
-                shell.Debug(model);                
+                //shell.Debug(model);                
             });
 
             BuildCommand = ReactiveCommand.Create();
