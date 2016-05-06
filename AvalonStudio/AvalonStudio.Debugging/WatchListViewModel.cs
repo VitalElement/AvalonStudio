@@ -16,6 +16,7 @@
 
         public WatchListViewModel()
         {
+            IsVisible = false;
             Title = "Watch List";
             Children = new ObservableCollection<WatchViewModel>();
         }
@@ -26,7 +27,7 @@
             get { return children; }
             set { this.RaiseAndSetIfChanged(ref children, value); }
         }
-        
+
         public override Location DefaultLocation
         {
             get
@@ -34,7 +35,7 @@
                 return Location.Bottom;
             }
         }
-        
+
         public void AddExistingWatch(VariableObject variable)
         {
             this.Add(variable);
@@ -100,13 +101,24 @@
 
         public virtual void BeforeActivation()
         {
-            
+
         }
 
         public virtual void Activation()
         {
             _debugManager = IoC.Get<IDebugManager>();
             _debugManager.DebugFrameChanged += WatchListViewModel_DebugFrameChanged;
+
+            _debugManager.DebugSessionStarted += (sender, e) =>
+            {
+                IsVisible = true;
+            };
+
+            _debugManager.DebugSessionEnded += (sender, e) =>
+            {
+                IsVisible = false;
+                Clear();
+            };
         }
 
         private void WatchListViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)

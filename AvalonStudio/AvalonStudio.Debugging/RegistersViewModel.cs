@@ -15,6 +15,7 @@
 
         public RegistersViewModel() : base(new ObservableCollection<RegisterViewModel>())
         {
+            IsVisible = false;
             Title = "Registers";
             lastChangedRegisters = new List<RegisterViewModel>();
         }
@@ -111,7 +112,7 @@
 
         public void BeforeActivation()
         {
-            
+
         }
 
         public void Activation()
@@ -121,6 +122,17 @@
             _debugManager.DebuggerChanged += (sender, e) =>
             {
                 firstStopInSession = true;
+            };
+
+            _debugManager.DebugSessionStarted += (sender, e) =>
+            {
+                IsVisible = true;
+            };
+
+            _debugManager.DebugSessionEnded += (sender, e) =>
+            {
+                IsVisible = false;
+                Clear();
             };
         }
 

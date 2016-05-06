@@ -202,7 +202,7 @@
 
                 var newEditor = new EditorViewModel(new EditorModel());
                 Console.WriteLine("Add Breakpointer Margin somehow");
-                //newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
+                newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
                 newEditor.Margins.Add(new LineNumberMargin());
 
                 DocumentTabs.Documents.Add(newEditor);
@@ -267,29 +267,7 @@
                 Build(project);
             }
         }
-
-        public void Debug()
-        {
-            var project = GetDefaultProject();
-
-            if (project != null)
-            {
-                Debug(project);
-            }
-        }
-
-        public void Debug(IProject project)
-        {
-            if (CurrentPerspective == Perspective.Editor)
-            {
-                Console.Clear();
-                //DebugManager.StartDebug(project);
-            }
-            else
-            {
-               // DebugManager.Continue();
-            }
-        }
+        
 
         public void Clean(IProject project)
         {
@@ -346,12 +324,12 @@
                 //    DebugManager.StepInto();
                 //    break;
 
-                case Key.F5:
-                    if (CurrentSolution?.StartupProject != null)
-                    {
-                        Debug(CurrentSolution.StartupProject);
-                    }
-                    break;
+                //case Key.F5:
+                //    if (CurrentSolution?.StartupProject != null)
+                //    {
+                //        Debug(CurrentSolution.StartupProject);
+                //    }
+                //    break;
 
                 case Key.F6:
                     Build();

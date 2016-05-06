@@ -1,8 +1,8 @@
-﻿<Controls:MetroWindow xmlns="https://github.com/perspex"        
-                      xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"   
+﻿<Controls:MetroWindow xmlns="https://github.com/perspex"
+                      xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
         Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFE4E4E4" Width="1600" Height="900">
-  <Controls:MetroWindow.TitleBarContent>    
+  <Controls:MetroWindow.TitleBarContent>
     <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
   </Controls:MetroWindow.TitleBarContent>
   <Controls:MetroWindow.Styles>
@@ -26,15 +26,15 @@
       <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
-    
+
 
     <Grid Grid.ColumnSpan="3" Margin="20 0 0 0">
       <Controls:ToolBar DataContext="{Binding ToolBar}" />
     </Grid>
 
     <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="1 2 2 1">
-      <DockPanel>        
-        <Controls:DocumentTabControl DockPanel.Dock="Right" DataContext="{Binding DocumentTabs}" />        
+      <DockPanel>
+        <Controls:DocumentTabControl DockPanel.Dock="Right" DataContext="{Binding DocumentTabs}" />
       </DockPanel>
 
     </Grid>
@@ -61,6 +61,7 @@
                     <Setter Property="Padding" Value="4 0 4 0" />
                     <Setter Property="FontSize" Value="12"/>
                     <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
+                    <Setter Property="IsVisible" Value="{Binding IsVisible}" />
                   </Style>
                   <Style Selector="TabStripItem:pointerover">
                     <Setter Property="Background" Value="#3E3E40" />
@@ -83,15 +84,13 @@
 
             <Carousel Items="{Binding BottomTools}" SelectedItem="{Binding BottomSelectedTool}" IsVirtualized="false" ZIndex="50">
               <Carousel.DataTemplates>
-                <DataTemplate>
-                  <Controls:ViewModelViewHost />
+                <DataTemplate>                  
+                    <Controls:ViewModelViewHost />                  
                 </DataTemplate>
               </Carousel.DataTemplates>
             </Carousel>
           </DockPanel>
         </Grid>
-      
-          
       </DockPanel>
     </Grid>
 
@@ -116,6 +115,7 @@
                   <Setter Property="Padding" Value="4 0 4 0" />
                   <Setter Property="FontSize" Value="12"/>
                   <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
+                  <Setter Property="IsVisible" Value="{Binding IsVisible}" />
                 </Style>
                 <Style Selector="TabStripItem:pointerover">
                   <Setter Property="Background" Value="#3E3E40" />
@@ -138,13 +138,13 @@
 
           <Carousel Items="{Binding RightTools}" SelectedItem="{Binding RightSelectedTool}" IsVirtualized="false" ZIndex="50">
             <Carousel.DataTemplates>
-              <DataTemplate>
-                <Controls:ViewModelViewHost />
+              <DataTemplate>                
+                  <Controls:ViewModelViewHost />                
               </DataTemplate>
             </Carousel.DataTemplates>
           </Carousel>
         </DockPanel>
       </DockPanel>
-    </Grid>    
+    </Grid>
   </Grid>
 </Controls:MetroWindow>

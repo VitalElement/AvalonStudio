@@ -2,6 +2,7 @@
 {
     using Extensibility;
     using ReactiveUI;
+    using Shell;
     using System.ComponentModel.Composition;
 
     public interface IActivatable
@@ -22,9 +23,19 @@
     {
         public ToolViewModel()
         {
-         
+            isVisible = true;
         }
 
+        private bool isVisible;
+        public bool IsVisible
+        {
+            get { return isVisible; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref isVisible, value);
+            }
+        }
+        
         public abstract Location DefaultLocation { get; }
 
         // TODO This should use ToolControl

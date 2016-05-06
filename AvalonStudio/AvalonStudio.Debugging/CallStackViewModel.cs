@@ -12,6 +12,7 @@
     using Extensibility.Plugin;
     using Extensibility;
     using Perspex.Threading;
+
     public class CallStackViewModel : ToolViewModel, IExtension
     {
         private IDebugManager _debugManager;
@@ -19,6 +20,7 @@
         public CallStackViewModel ()
         {
             Title = "CallStack";
+            IsVisible = false;
             frames = new ObservableCollection<FrameViewModel>();
         }
 
@@ -50,6 +52,17 @@
             _debugManager = IoC.Get<IDebugManager>();
 
             _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+
+            _debugManager.DebugSessionStarted += (sender, e) =>
+            {
+                IsVisible = true;
+            };
+
+            _debugManager.DebugSessionEnded += (sender, e) =>
+            {
+                IsVisible = false;
+                Clear();
+            };
         }
 
         private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)

@@ -10,6 +10,7 @@
     using Extensibility.Plugin;
     using Extensibility;
     using Perspex.Threading;
+
     public abstract class LineViewModel : ViewModel<DisassembledLine>
     {
         public LineViewModel(DisassembledLine model) : base(model)
@@ -97,6 +98,7 @@
 
         public DisassemblyViewModel()
         {
+            IsVisible = false;
             Title = "Dissasembly";
             this.dataProvider = new DissasemblyDataProvider();
         }
@@ -110,6 +112,18 @@
             };
 
             _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+
+            _debugManager.DebugSessionStarted += (sender, e) =>
+            {
+                IsVisible = true;
+            };
+
+            _debugManager.DebugSessionEnded += (sender, e) =>
+            {
+                IsVisible = false;
+                
+                // TODO implement clear here.
+            };
         }
 
         private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)

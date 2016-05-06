@@ -8,7 +8,7 @@
     {
         public ToolControl()
         {            
-            Styles.Add(new ControlTheme());
+            Styles.Add(new ControlTheme());            
         }
 
         public static readonly PerspexProperty<string> TitleProprty =
@@ -19,5 +19,7 @@
             get { return GetValue(TitleProprty); }
             set { SetValue(TitleProprty, value); }
         }
+
+        
     }
 }

@@ -24,8 +24,14 @@
 
         event EventHandler<FrameChangedEventArgs> DebugFrameChanged;
         event EventHandler DebuggerChanged;
+        event EventHandler DebugSessionStarted;
+        event EventHandler DebugSessionEnded;
+
+        BreakPointManager BreakPointManager { get; }
 
         void StartDebug(IProject project);
+
+        void Continue();
 
         void StepOver();
 

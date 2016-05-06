@@ -18,6 +18,7 @@
     using ViewModels;
     using Projects;
     using Shell;
+
     public class EditorViewModel : ViewModel<EditorModel>, IEditor
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();

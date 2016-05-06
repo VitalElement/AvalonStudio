@@ -13,6 +13,7 @@
     using System.ComponentModel.Composition;
     using System.Windows.Input;
     using Utils;
+
     [CommandDefinition]
     class StartDebuggingCommandDefinition : CommandDefinition
     {
@@ -22,11 +23,22 @@
             command.Subscribe(_ =>
             {
                 var manager = IoC.Get<IDebugManager>();
-                var shell = IoC.Get<IShell>();
+                
+                if(manager.CurrentDebugger == null)
+                {
+                    var shell = IoC.Get<IShell>();
+                    
+                    var project = shell.GetDefaultProject();
 
-                var project = shell.GetDefaultProject();
-
-                manager.StartDebug(project);
+                    if (project != null)
+                    {
+                        manager.StartDebug(project);
+                    }
+                }   
+                else
+                {
+                    manager.Continue();
+                }             
             });
         }
 
