@@ -44,14 +44,6 @@
             }
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "File.OpenSolution";
-            }
-        }
-
         public override string Text
         {
             get

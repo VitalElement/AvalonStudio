@@ -13,5 +13,7 @@
         /// The project currently being debugged.
         /// </summary>
         IProject Project { get; }
+
+        void StartDebug(IProject project);
     }
 }

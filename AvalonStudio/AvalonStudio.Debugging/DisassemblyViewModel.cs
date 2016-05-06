@@ -170,11 +170,6 @@
             }            
         }
 
-        public override void Activate()
-        {
-            
-        }
-
         private ulong selectedIndex;
         public ulong SelectedIndex
         {
