@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Debugging
 {
     using AvalonStudio.MVVM;
     using Debugging;
@@ -9,10 +9,11 @@
     using System.Threading.Tasks;
     using ReactiveUI;
     using System.Collections.ObjectModel;
-    public class CallStackViewModel : ViewModel
+    public class CallStackViewModel : ToolViewModel
     {
         public CallStackViewModel ()
         {
+            Title = "CallStack";
             frames = new ObservableCollection<FrameViewModel>();
         }
 
@@ -57,6 +58,14 @@
         {
             get { return frames; }
             set { frames = value; }
+        }
+
+        public override Location DefaultLocation
+        {
+            get
+            {
+                return Location.Bottom;
+            }
         }
     }
 }

@@ -1,10 +1,9 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Debugging
 {
     using AvalonStudio.Debugging;
     using System.Collections.Generic;
     using System.Linq;
-    using ViewModels;
-
+    
     public class LocalsViewModel : WatchListViewModel
     {
         private List<Variable> locals;
