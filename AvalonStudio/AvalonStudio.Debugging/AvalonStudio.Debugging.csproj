@@ -142,6 +142,7 @@
     <Compile Include="CallStackView.paml.cs" />
     <Compile Include="CallStackViewModel.cs" />
     <Compile Include="Commands\PauseDebuggingCommandDefinition.cs" />
+    <Compile Include="Commands\RestartDebuggingCommandDefinition.cs" />
     <Compile Include="Commands\StopDebuggingCommandDefinition.cs" />
     <Compile Include="Commands\StepInstuctionCommandDefinition.cs" />
     <Compile Include="Commands\StepIntoCommandDefinition.cs" />
