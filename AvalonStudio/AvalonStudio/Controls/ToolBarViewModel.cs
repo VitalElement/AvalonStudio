@@ -11,37 +11,37 @@
             StartDebugCommand = ReactiveCommand.Create();
             StartDebugCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.Debug();
+                //ShellViewModel.Instance.Debug();
             });
 
             StepIntoCommand = ReactiveCommand.Create();
             StepIntoCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.DebugManager.StepInto();
+                //ShellViewModel.Instance.DebugManager.StepInto();
             });
 
             StepOverCommand = ReactiveCommand.Create();
             StepOverCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.DebugManager.StepOver();
+                //ShellViewModel.Instance.DebugManager.StepOver();
             });
 
             PauseCommand = ReactiveCommand.Create();
             PauseCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.DebugManager.Pause();
+                //ShellViewModel.Instance.DebugManager.Pause();
             });
 
             StopCommand = ReactiveCommand.Create();
             StopCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.DebugManager.Stop();
+                //ShellViewModel.Instance.DebugManager.Stop();
             });
 
             RestartCommand = ReactiveCommand.Create();
             RestartCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.DebugManager.Restart();
+                //ShellViewModel.Instance.DebugManager.Restart();
             });
 
             BuildCommand = ReactiveCommand.Create();

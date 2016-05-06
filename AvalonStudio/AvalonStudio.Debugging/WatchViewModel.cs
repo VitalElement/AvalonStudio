@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.ViewModels
+﻿namespace AvalonStudio.Debugging
 {
     using Debugging;
     using MVVM;
@@ -16,7 +16,7 @@
             DeleteCommand = ReactiveCommand.Create();
             DeleteCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.DebugManager.WatchList.RemoveWatch(this);
+                //ShellViewModel.Instance.DebugManager.WatchList.RemoveWatch(this);
             });
 
 
@@ -154,7 +154,7 @@
                         }
                         else
                         {
-                            ShellViewModel.Instance.Console.WriteLine("Investigate this case.");
+                            Console.WriteLine("Investigate this case.");
                         }
                     }
                 }
