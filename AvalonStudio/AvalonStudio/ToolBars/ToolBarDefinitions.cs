@@ -6,6 +6,6 @@
     internal static class ToolBarDefinitions
     {
         [Export]
-        public static ToolBarDefinition StandardToolBar = new ToolBarDefinition(0, "Standard");
+        public static ToolBarDefinition MainToolBar = new ToolBarDefinition(0, "Main");
     }
 }

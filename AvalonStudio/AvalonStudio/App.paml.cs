@@ -14,7 +14,7 @@
     using Serilog;
     using Splat;
     using System;
-
+    using ToolBars;
     class App : Application
     {
         public App()
@@ -41,6 +41,9 @@
 
             var keyGestureService = container.GetExportedValue<ICommandKeyGestureService>();
             IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));
+
+            var toolBarBuilder = container.GetExportedValue<IToolBarBuilder>();
+            IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
             
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
             

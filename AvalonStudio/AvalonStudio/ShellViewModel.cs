@@ -31,6 +31,9 @@
     using Shell;
     using Extensibility.MainMenu;
     using Extensibility.Commands;
+    using ToolBars;
+    using Extensibility.ToolBars;
+    using ToolBars.Models;
     public enum Perspective
     {
         Editor,
@@ -145,7 +148,7 @@
             CurrentPerspective = Perspective.Editor;
 
             //MainMenu = new MainMenuViewModel();
-            ToolBar = new ToolBarViewModel();
+            //ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabsViewModel();
 
@@ -193,6 +196,9 @@
             ModalDialog = new ModalDialogViewModelBase("Dialog");
 
             CurrentPerspective = Perspective.Editor;
+
+            ToolBarDefinition = AvalonStudio.ToolBars.ToolBarDefinitions.MainToolBar;
+            var toolBar = this.ToolBar;
         }
 
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
@@ -434,7 +440,34 @@
 
         //public MainMenuViewModel MainMenu { get; private set; }
 
-        public ToolBarViewModel ToolBar { get; private set; }
+        private ToolBarDefinition _toolBarDefinition;
+        public ToolBarDefinition ToolBarDefinition
+        {
+            get { return _toolBarDefinition; }
+            protected set
+            {
+                this.RaiseAndSetIfChanged(ref _toolBarDefinition, value);
+                // Might need to do a global raise property change (NPC(string.Empty))
+            }
+        }
+
+        private IToolBar _toolBar;
+        public IToolBar ToolBar
+        {
+            get
+            {
+                if (_toolBar != null)
+                    return _toolBar;
+
+                if (ToolBarDefinition == null)
+                    return null;
+
+                var toolBarBuilder = IoC.Get<IToolBarBuilder>();
+                _toolBar = new ToolBarModel();
+                toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
+                return _toolBar;
+            }
+        }
 
         public DocumentTabsViewModel DocumentTabs { get; private set; }
 

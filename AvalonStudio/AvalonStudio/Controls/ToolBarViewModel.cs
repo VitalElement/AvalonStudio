@@ -3,11 +3,18 @@
     using MVVM;
     using System;
     using ReactiveUI;
+    using System.ComponentModel.Composition;
+    using ToolBars;
 
-    public class ToolBarViewModel : ViewModel
+    public class ToolBarViewModel : ViewModel, IPartImportsSatisfiedNotification
     {
-        public ToolBarViewModel()
+        private IToolBarBuilder toolBarBuilder;
+
+        [ImportingConstructor]
+        public ToolBarViewModel(IToolBarBuilder toolBarBuilder)
         {
+            this.toolBarBuilder = toolBarBuilder;
+
             StartDebugCommand = ReactiveCommand.Create();
             StartDebugCommand.Subscribe(_ =>
             {
@@ -108,5 +115,12 @@
         public ReactiveCommand<object> RedoCommand { get; }
         public ReactiveCommand<object> SaveCommand { get; }
         public ReactiveCommand<object> SaveAllCommand { get; }
+
+        
+
+        public void OnImportsSatisfied()
+        {
+         //   toolBarBuilder.BuildToolBar(ToolBarDefinitions.MainToolBar, 
+        }
     }
 }
