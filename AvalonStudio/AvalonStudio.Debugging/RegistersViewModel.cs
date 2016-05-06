@@ -1,19 +1,18 @@
 ﻿namespace AvalonStudio.Debugging
 {
-    using Debugging;
+    using Extensibility;
+    using Extensibility.Plugin;
     using MVVM;
-    using Perspex.Media;
     using Perspex.Threading;
     using ReactiveUI;
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
-    public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>
+    public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IExtension
     {
+        private IDebugManager _debugManager;
+
         public RegistersViewModel() : base(new ObservableCollection<RegisterViewModel>())
         {
             Title = "Registers";
@@ -33,12 +32,6 @@
             {
                 return Location.Right;
             }
-        }
-
-        public void SetDebugger(IDebugger debugger)
-        {
-            firstStopInSession = true;
-            this.debugger = debugger;
         }
 
         private void SetRegisters(List<Register> registers)
@@ -66,7 +59,7 @@
 
                 List<Register> registers = null;
 
-                registers = debugger.GetRegisters().Values.ToList();
+                registers = _debugManager.CurrentDebugger.GetRegisters().Values.ToList();
 
                 SetRegisters(registers);
             }
@@ -74,9 +67,12 @@
             {
                 Dictionary<int, string> changedRegisters = null;
 
-                changedRegisters = debugger.GetChangedRegisters();
+                changedRegisters = _debugManager.CurrentDebugger.GetChangedRegisters();
 
-                this.UpdateRegisters(changedRegisters);
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    UpdateRegisters(changedRegisters);
+                });
             }
         }
 
@@ -113,6 +109,24 @@
             ColumnWidth = double.NaN;
         }
 
-        private IDebugger debugger;
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            _debugManager = IoC.Get<IDebugManager>();
+            _debugManager.DebugFrameChanged += RegistersViewModel_DebugFrameChanged;
+            _debugManager.DebuggerChanged += (sender, e) =>
+            {
+                firstStopInSession = true;
+            };
+        }
+
+        private void RegistersViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+        {
+            Invalidate();
+        }
     }
 }

@@ -7,6 +7,9 @@
     using MVVM.DataVirtualization;
     using System.Collections.Generic;
     using System.Linq;
+    using Extensibility.Plugin;
+    using Extensibility;
+    using Perspex.Threading;
     public abstract class LineViewModel : ViewModel<DisassembledLine>
     {
         public LineViewModel(DisassembledLine model) : base(model)
@@ -87,25 +90,51 @@
     }
 
 
-    public class DisassemblyViewModel : ToolViewModel
+    public class DisassemblyViewModel : ToolViewModel, IExtension
     {
+        private IDebugManager _debugManager;
+        private IDebugger _debugger;
+
         public DisassemblyViewModel()
         {
             Title = "Dissasembly";
             this.dataProvider = new DissasemblyDataProvider();
         }
 
-        private IDebugger debugger;
+        public void Activation()
+        {
+            _debugManager = IoC.Get<IDebugManager>();
+            _debugManager.DebuggerChanged += (sender, e) =>
+            {
+                SetDebugger(_debugManager.CurrentDebugger);
+            };
+
+            _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+        }
+
+        private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                SetAddress(e.Address);
+            });
+        }
+
+        public void BeforeActivation()
+        {
+
+        }
+        
         private DissasemblyDataProvider dataProvider;
 
         public void SetDebugger(IDebugger debugger)
         {
-            if (this.debugger != null)
+            if (this._debugger != null)
             {
-                this.debugger.StateChanged -= Debugger_StateChanged;
+                this._debugger.StateChanged -= Debugger_StateChanged;
             }
 
-            this.debugger = debugger;
+            this._debugger = debugger;
 
             if (debugger != null)
             {
@@ -117,7 +146,7 @@
 
         private void Debugger_StateChanged(object sender, EventArgs e)
         {
-            if (debugger.State == DebuggerState.Paused)
+            if (_debugger.State == DebuggerState.Paused)
             {
                 Enabled = true;
             }
@@ -145,7 +174,7 @@
 
             ulong startIndex = currentAddress - 20;
 
-            var instructions = debugger.Disassemble(startIndex, 50);
+            var instructions = _debugger.Disassemble(startIndex, 50);
 
             if (instructions != null)
             {
