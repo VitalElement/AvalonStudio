@@ -19,12 +19,16 @@
         [MenuItem]
         public static MenuItemDefinition StepOver = new CommandMenuItemDefinition<StepOverCommandDefinition>(DebugControlGroup, 0);
 
+        [MenuItem]
         public static MenuItemDefinition StepInto = new CommandMenuItemDefinition<StepIntoCommandDefinition>(DebugControlGroup, 1);
 
+        [MenuItem]
         public static MenuItemDefinition StepIntruction = new CommandMenuItemDefinition<StepInstructionCommandDefinition>(DebugControlGroup, 2);
 
+        [MenuItem]
         public static MenuItemDefinition Pause = new CommandMenuItemDefinition<PauseDebuggingCommandDefinition>(DebugControlGroup, 3);
 
+        [MenuItem]
         public static MenuItemDefinition Stop = new CommandMenuItemDefinition<StopDebuggingCommandDefinition>(DebugControlGroup, 4);
 
     }

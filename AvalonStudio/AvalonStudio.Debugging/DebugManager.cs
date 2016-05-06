@@ -61,7 +61,7 @@
                                 {
                                     //Debugger = masterProject.SelectedDebugAdaptor;
 
-                                    if (Debugger != null)
+                                    if (CurrentDebugger != null)
                                     {
                                         //await WorkspaceViewModel.Instance.DispatchDebug((Action)(() =>
                                         {
@@ -84,7 +84,7 @@
                         //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
                         {
                             PrepareToRun();
-                            Debugger.Continue();
+                            CurrentDebugger.Continue();
                         }//);
                         break;
                 }
@@ -113,7 +113,7 @@
             RestartDebuggingCommand = ReactiveCommand.Create(); //(o) => WorkspaceViewModel.Instance.CurrentPerspective == Perspective.Debug && Debugger != null && !IsUpdating);
             RestartDebuggingCommand.Subscribe(_ =>
             {
-                SetDebuggers(debugger);
+                SetDebuggers(currentDebugger);
 
                 // Begin dispatch other wise ui thread is awaiting the debug thread. Inversion of control.
                 //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
@@ -135,7 +135,7 @@
                 // Begin dispatch otherwise we would be on the ui thread awaiting the debugger.
                 //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
                 {
-                    Debugger.Pause();
+                    CurrentDebugger.Pause();
                 }//);
             });
 
@@ -188,9 +188,9 @@
         {
             VariableObject result = null;
 
-            if(Debugger.State == DebuggerState.Paused)
+            if(CurrentDebugger.State == DebuggerState.Paused)
             {
-                result = Debugger.CreateWatch(string.Format("probe{0}", Debugger.GetVariableId()), expression);
+                result = CurrentDebugger.CreateWatch(string.Format("probe{0}", CurrentDebugger.GetVariableId()), expression);
             }
 
             return result;
@@ -198,14 +198,14 @@
 
         public void Continue ()
         {
-            if (Debugger != null)
+            if (CurrentDebugger != null)
             {
                 if (!IsExecuting)
                 {
                     Task.Factory.StartNew(() =>
                     {
                         PrepareToRun();
-                        Debugger.Continue();
+                        CurrentDebugger.Continue();
                     });
                 }
             }
@@ -213,14 +213,14 @@
 
         public void StepInstruction()
         {
-            if (Debugger != null)
+            if (CurrentDebugger != null)
             {
                 if (!IsExecuting)
                 {
                     Task.Factory.StartNew(() =>
                     {
                         PrepareToRun();
-                        Debugger.StepInstruction();
+                        CurrentDebugger.StepInstruction();
                     });
                 }
             }
@@ -228,14 +228,14 @@
 
         public void StepOut()
         {
-            if (Debugger != null)
+            if (CurrentDebugger != null)
             {
                 if (!IsExecuting)
                 {
                     Task.Factory.StartNew(() =>
                     {
                         PrepareToRun();
-                        Debugger.StepOut();
+                        CurrentDebugger.StepOut();
                     });
                 }
             }
@@ -243,14 +243,14 @@
 
         public void StepInto()
         {
-            if (Debugger != null)
+            if (CurrentDebugger != null)
             {
                 if (!IsExecuting)
                 {
                     Task.Factory.StartNew(() =>
                     {
                         PrepareToRun();
-                        Debugger.StepInto();
+                        CurrentDebugger.StepInto();
                     });
                 }
             }            
@@ -258,14 +258,14 @@
 
         public void StepOver()
         {
-            if (Debugger != null)
+            if (CurrentDebugger != null)
             {
                 if (!IsExecuting)
                 {
                     Task.Factory.StartNew(() =>
                     {
                         PrepareToRun();
-                        Debugger.StepOver();
+                        CurrentDebugger.StepOver();
                     });
                 }
             }
@@ -273,13 +273,13 @@
 
         public void Pause()
         {
-            if (Debugger != null)
+            if (CurrentDebugger != null)
             {
                 if (IsExecuting)
                 {
                     Task.Factory.StartNew(() =>
                     {
-                        Debugger.Pause();
+                        CurrentDebugger.Pause();
                     });
                 }
             }
@@ -287,7 +287,7 @@
 
         public void Stop()
         {
-            if (Debugger != null)
+            if (CurrentDebugger != null)
             {                
                 Task.Factory.StartNew(() =>
                 {
@@ -304,11 +304,11 @@
 
         public void Restart()
         {
-            if (Debugger != null)
+            if (CurrentDebugger != null)
             {
                 Task.Factory.StartNew(() =>
                 {
-                    Debugger.Reset(true);
+                    CurrentDebugger.Reset(true);
                 });             
             }
         }
@@ -321,7 +321,7 @@
 
             //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
             {
-                Debugger.Stop();
+                CurrentDebugger.Stop();
             }//);
 
             //WatchList.Clear();
@@ -361,28 +361,28 @@
         private void SetDebuggers(IDebugger debugger)
         {
             BreakPointManager.SetDebugger(debugger);
-            //Registers.SetDebugger(debugger);
-            //Disassembly.SetDebugger(debugger);
-            //MemoryView.SetDebugger(debugger);
-            //WatchList.SetDebugger(debugger);
-            //Locals.SetDebugger(debugger);
+
+            if(DebuggerChanged != null)
+            {
+                DebuggerChanged(this, new EventArgs());
+            }
         }
 
         #region Properties
-        private IDebugger debugger;
-        public IDebugger Debugger
+        private IDebugger currentDebugger;
+        public IDebugger CurrentDebugger
         {
-            get { return debugger; }
+            get { return currentDebugger; }
             set
             {
-                if (debugger != null)
+                if (currentDebugger != null)
                 {
-                    debugger.Stopped -= debugger_Stopped;
-                    debugger.StateChanged -= debugger_StateChanged;
-                    debugger.Close();
+                    currentDebugger.Stopped -= debugger_Stopped;
+                    currentDebugger.StateChanged -= debugger_StateChanged;
+                    currentDebugger.Close();
                 }
 
-                debugger = value;
+                currentDebugger = value;
 
                 if (value != null)
                 {
@@ -392,7 +392,7 @@
                     SetDebuggers(value);
                 }
 
-                this.RaisePropertyChanged(nameof(Debugger));
+                this.RaisePropertyChanged(nameof(CurrentDebugger));
             }
         }
 
@@ -464,17 +464,17 @@
 
                 Task.Factory.StartNew(async () =>
                 {
-                    Debugger = project.Debugger;
+                    CurrentDebugger = project.Debugger;
 
                     await project.ToolChain.Build(_console, project);
                     //Debugger.DebugMode = true;
 
-                    Debugger.Initialise();
+                    CurrentDebugger.Initialise();
 
                     _console.WriteLine();
                     _console.WriteLine("Starting Debugger...");
 
-                    if (Debugger.Start(project.ToolChain, _console, project))
+                    if (CurrentDebugger.Start(project.ToolChain, _console, project))
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
@@ -483,9 +483,9 @@
 
                         BreakPointManager.GoLive();
 
-                        await BreakPointManager.Add(Debugger.BreakMain());
+                        await BreakPointManager.Add(CurrentDebugger.BreakMain());
 
-                        Debugger.Run();
+                        CurrentDebugger.Run();
                     }
                 });
             }
@@ -496,6 +496,10 @@
         }
 
         private IProject project;
+
+        public event EventHandler<FrameChangedEventArgs> DebugFrameChanged;
+        public event EventHandler DebuggerChanged;
+
         public IProject Project
         {
             get { return project; }
@@ -571,51 +575,16 @@
 
                         lastDocument = document;
                     }
-
-
-                    List<Variable> stackVariables = null;
-                    List<Frame> stackFrames = null;
-                    List<VariableObjectChange> updates = null;
-
-                    stackVariables = Debugger.ListStackVariables();
-                    stackFrames = Debugger.ListStackFrames();
-                    updates = debugger.UpdateVariables();
-
-                    //if (DissasemblyView.bool == bool.Visible)
-                    //{
-                    //   WorkspaceViewModel.Instance.DispatchUi(() =>
-                    //    {                    
-                    //  });
-                    // }
-
-                    //if (MemoryView.bool == bool.Visible)
-                    //{
-                    //    MemoryView.Invalidate();
-                    //}
                     
-
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    if(DebugFrameChanged != null)
                     {
-                        //Locals.InvalidateLocals(stackVariables);
-                        //Locals.Invalidate(updates);
-                        //CallStack.Update(stackFrames);
-                        //Registers.Invalidate();
-                        //Disassembly.SetAddress(e.Frame.Address);
-                        //WatchList.Invalidate(updates);                        
-                    });
+                        FrameChangedEventArgs args = new FrameChangedEventArgs();
+                        args.Address = e.Frame.Address;
+                        args.VariableChanges = currentDebugger.UpdateVariables();
+                        
 
-                    
-                    
-
-                    //while (await IsAsynchronousUIListsLoading())
-                    //{
-                    //    Thread.Sleep(1);
-                    //}
-
-                    //WorkspaceViewModel.Instance.BeginDispatchUi(() =>
-                    {
-                        //CommandManager.InvalidateRequerySuggested();
-                    }//);
+                        DebugFrameChanged(this, args);
+                    }
 
                     IsUpdating = false;
                     IsExecuting = false;
@@ -635,9 +604,9 @@
         {
             bool result = false;
 
-            if (_shell.CurrentPerspective == Perspective.Debug && Debugger != null)
+            if (_shell.CurrentPerspective == Perspective.Debug && CurrentDebugger != null)
             {
-                if (Debugger.State == DebuggerState.Paused && !IsExecuting)
+                if (CurrentDebugger.State == DebuggerState.Paused && !IsExecuting)
                 {
                     result = true;
                 }

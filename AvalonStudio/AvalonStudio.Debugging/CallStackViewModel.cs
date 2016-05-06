@@ -9,8 +9,13 @@
     using System.Threading.Tasks;
     using ReactiveUI;
     using System.Collections.ObjectModel;
-    public class CallStackViewModel : ToolViewModel
+    using Extensibility.Plugin;
+    using Extensibility;
+    using Perspex.Threading;
+    public class CallStackViewModel : ToolViewModel, IExtension
     {
+        private IDebugManager _debugManager;
+
         public CallStackViewModel ()
         {
             Title = "CallStack";
@@ -30,9 +35,31 @@
 
                 foreach (var frame in frames)
                 {
-                    this.Frames.Add(new FrameViewModel(frame));
+                    this.Frames.Add(new FrameViewModel(_debugManager, frame));
                 }
             }
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            _debugManager = IoC.Get<IDebugManager>();
+
+            _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+        }
+
+        private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+        {
+            var updates = _debugManager.CurrentDebugger.ListStackFrames();
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Update(updates);
+            });
         }
 
         private FrameViewModel selectedFrame;
