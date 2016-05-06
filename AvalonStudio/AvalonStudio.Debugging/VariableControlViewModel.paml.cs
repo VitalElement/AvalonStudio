@@ -3,9 +3,9 @@
     using Perspex;
     using Perspex.Controls;
 
-    public class VariableControl : UserControl
+    public class VariableControlView : UserControl
     {
-        public VariableControl()
+        public VariableControlView()
         {
             this.InitializeComponent();
         }

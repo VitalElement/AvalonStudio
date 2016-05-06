@@ -17,7 +17,7 @@
     using TextEditor.Rendering;
     using ViewModels;
     using Projects;
-
+    using Shell;
     public class EditorViewModel : ViewModel<EditorModel>, IEditor
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -66,7 +66,8 @@
             AddWatchCommand = ReactiveCommand.Create();
             disposables.Add(AddWatchCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.DebugManager.WatchList.AddWatch(WordAtCaret);
+                ShellViewModel.Instance.Console.WriteLine("Need to inject command.");
+                //ShellViewModel.Instance.DebugManager.WatchList.AddWatch(WordAtCaret);
             }));
 
             tabCharacter = "    ";
@@ -281,12 +282,12 @@
             }
         }
 
-        private WatchListViewModel debugHoverProbe;
-        public WatchListViewModel DebugHoverProbe
-        {
-            get { return debugHoverProbe; }
-            set { this.RaiseAndSetIfChanged(ref debugHoverProbe, value); }
-        }
+        //private WatchListViewModel debugHoverProbe;
+        //public WatchListViewModel DebugHoverProbe
+        //{
+        //    get { return debugHoverProbe; }
+        //    set { this.RaiseAndSetIfChanged(ref debugHoverProbe, value); }
+        //}
 
         private string GetWordAtOffset(int offset)
         {
@@ -331,23 +332,25 @@
         {
             bool result = false;
 
-            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
-            {
-                var expression = GetWordAtOffset(offset);
+            ShellViewModel.Instance.Console.WriteLine("Injection of DebugProb behaviour required");
 
-                if (expression != string.Empty)
-                {
-                    var evaluatedExpression = ShellViewModel.Instance.DebugManager.ProbeExpression(expression);
+            //if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
+            //{
+            //    var expression = GetWordAtOffset(offset);
 
-                    if (evaluatedExpression != null)
-                    {
-                        DebugHoverProbe = new WatchListViewModel();
-                        DebugHoverProbe.SetDebugger(ShellViewModel.Instance.DebugManager.Debugger);
-                        DebugHoverProbe.AddExistingWatch(evaluatedExpression);
-                        result = true;
-                    }
-                }
-            }
+            //    if (expression != string.Empty)
+            //    {
+            //        var evaluatedExpression = ShellViewModel.Instance.DebugManager.ProbeExpression(expression);
+
+            //        if (evaluatedExpression != null)
+            //        {
+            //            DebugHoverProbe = new WatchListViewModel();
+            //            DebugHoverProbe.SetDebugger(ShellViewModel.Instance.DebugManager.Debugger);
+            //            DebugHoverProbe.AddExistingWatch(evaluatedExpression);
+            //            result = true;
+            //        }
+            //    }
+            //}
 
             return result;
         }

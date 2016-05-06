@@ -137,10 +137,46 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BreakPointManager.cs" />
+    <Compile Include="CallStackView.paml.cs" />
+    <Compile Include="CallStackViewModel.cs" />
+    <Compile Include="DebugManager.cs" />
+    <Compile Include="DisassemblyView.paml.cs" />
+    <Compile Include="DisassemblyDataProvider.cs" />
+    <Compile Include="DisassemblyViewModel.cs" />
+    <Compile Include="FrameViewModel.cs" />
+    <Compile Include="IDebugManager.cs" />
+    <Compile Include="LocalsView.paml.cs" />
+    <Compile Include="LocalsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistersView.xaml.cs">
+      <DependentUpon>RegistersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RegistersViewModel.cs" />
+    <Compile Include="RegisterViewModel.cs" />
+    <Compile Include="VariableControlViewModel.paml.cs" />
+    <Compile Include="WatchListView.paml.cs" />
+    <Compile Include="WatchListViewModel.cs" />
+    <Compile Include="WatchViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CallStackView.paml" />
+    <EmbeddedResource Include="DisassemblyView.paml" />
+    <EmbeddedResource Include="LocalsView.paml" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="VariableControlView.paml" />
+    <EmbeddedResource Include="WatchListView.paml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
+      <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
+      <Name>AvalonStudio.Extensibility</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RegistersView.xaml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -33,16 +33,7 @@
     </Grid>
 
     <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="1 2 2 1">
-      <DockPanel>
-        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Left" Width="400" >
-          <DockPanel>
-            <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Bottom">
-              <Controls:Disassembly DataContext="{Binding DebugManager.Disassembly}" Height="300" />
-            </Grid>
-            <Controls:Registers DataContext="{Binding DebugManager.Registers}" />
-          </DockPanel>
-        </Grid>
-
+      <DockPanel>        
         <Controls:DocumentTabControl DockPanel.Dock="Right" DataContext="{Binding DocumentTabs}" />        
       </DockPanel>
 
@@ -50,13 +41,6 @@
 
     <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="1 1 2 2">
       <DockPanel>
-        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right" >
-          <Controls:CallStack DataContext="{Binding DebugManager.CallStack}" Width="400"  />
-        </Grid>
-        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Right">
-          <Controls:Locals DataContext="{Binding DebugManager.Locals}" Width="400" />
-        </Grid>
-
         <Grid DockPanel.Dock="Left" >
           <DockPanel>
             <StackPanel DockPanel.Dock="Bottom" ZIndex="100">
@@ -113,10 +97,6 @@
 
     <Grid Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Margin="2 2 1 2">
       <DockPanel LastChildFill="true">
-        <Grid IsVisible="{Binding DebugVisible}" DockPanel.Dock="Bottom">
-          <Controls:WatchList DataContext="{Binding DebugManager.WatchList}" Height="400" />
-        </Grid>
-
         <DockPanel>
           <StackPanel DockPanel.Dock="Bottom" ZIndex="100">
             <TabStrip Name="rightToolStrip" Items="{Binding RightTools}" SelectedItem="{Binding RightSelectedTool, Mode=TwoWay}" Focusable="false">

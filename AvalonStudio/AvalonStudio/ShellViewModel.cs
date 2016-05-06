@@ -31,11 +31,7 @@
     using Shell;
     using Extensibility.MainMenu;
     using Extensibility.Commands;
-    public enum Perspective
-    {
-        Editor,
-        Debug
-    }
+    
 
     [Export(typeof(IShell))]
     [Export(typeof(ShellViewModel))]
@@ -151,9 +147,7 @@
 
             Console = IoC.Get<IConsole>();
             ErrorList = IoC.Get<IErrorList>();
-
-            DebugManager = new DebugManager();
-
+            
             tools = new ObservableCollection<object>();
             leftTools = new ObservableCollection<object>();
             rightTools = new ObservableCollection<object>();
@@ -208,7 +202,8 @@
                 }
 
                 var newEditor = new EditorViewModel(new EditorModel());
-                newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
+                Console.WriteLine("Add Breakpointer Margin somehow");
+                //newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
                 newEditor.Margins.Add(new LineNumberMargin());
 
                 DocumentTabs.Documents.Add(newEditor);
@@ -289,11 +284,11 @@
             if (CurrentPerspective == Perspective.Editor)
             {
                 Console.Clear();
-                DebugManager.StartDebug(project);
+                //DebugManager.StartDebug(project);
             }
             else
             {
-                DebugManager.Continue();
+               // DebugManager.Continue();
             }
         }
 
@@ -340,17 +335,17 @@
         {
             switch (e.Key)
             {
-                case Key.F9:
-                    DebugManager.StepInstruction();
-                    break;
+                //case Key.F9:
+                //    DebugManager.StepInstruction();
+                //    break;
 
-                case Key.F10:
-                    DebugManager.StepOver();
-                    break;
+                //case Key.F10:
+                //    DebugManager.StepOver();
+                //    break;
 
-                case Key.F11:
-                    DebugManager.StepInto();
-                    break;
+                //case Key.F11:
+                //    DebugManager.StepInto();
+                //    break;
 
                 case Key.F5:
                     if (CurrentSolution?.StartupProject != null)
@@ -428,12 +423,7 @@
             get { return debugControlsVisible; }
             set { this.RaiseAndSetIfChanged(ref debugControlsVisible, value); }
         }
-
-
-        public DebugManager DebugManager { get; private set; }
-
-        //public MainMenuViewModel MainMenu { get; private set; }
-
+        
         public ToolBarViewModel ToolBar { get; private set; }
 
         public DocumentTabsViewModel DocumentTabs { get; private set; }

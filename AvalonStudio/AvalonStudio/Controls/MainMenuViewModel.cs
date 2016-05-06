@@ -54,42 +54,6 @@
             {
                 ShellViewModel.Instance.ExitApplication();
             });
-
-            StartDebugCommand = ReactiveCommand.Create();
-            StartDebugCommand.Subscribe(_ =>
-            {
-                ShellViewModel.Instance.Debug();
-            });
-
-            StepIntoCommand = ReactiveCommand.Create();
-            StepIntoCommand.Subscribe(_ =>
-            {
-                ShellViewModel.Instance.DebugManager.StepInto();
-            });
-
-            StepOverCommand = ReactiveCommand.Create();
-            StepOverCommand.Subscribe(_ =>
-            {
-                ShellViewModel.Instance.DebugManager.StepOver();
-            });
-
-            PauseCommand = ReactiveCommand.Create();
-            PauseCommand.Subscribe(_ =>
-            {
-                ShellViewModel.Instance.DebugManager.Pause();
-            });
-
-            StopCommand = ReactiveCommand.Create();
-            StopCommand.Subscribe(_ =>
-            {
-                ShellViewModel.Instance.DebugManager.Stop();
-            });
-
-            RestartCommand = ReactiveCommand.Create();
-            RestartCommand.Subscribe(_ =>
-            {
-                ShellViewModel.Instance.DebugManager.Restart();
-            });
         }
 
         public ReactiveCommand<object> NewProjectCommand { get; }
@@ -101,12 +65,5 @@
         public ReactiveCommand<object> BuildProjectCommand { get; }
         public ReactiveCommand<object> PackagesCommand { get; }
         public ReactiveCommand<object> ProjectPropertiesCommand { get; }
-
-        public ReactiveCommand<object> StartDebugCommand { get; }
-        public ReactiveCommand<object> StepOverCommand { get; }
-        public ReactiveCommand<object> StepIntoCommand { get; }
-        public ReactiveCommand<object> PauseCommand { get; }
-        public ReactiveCommand<object> StopCommand { get; }
-        public ReactiveCommand<object> RestartCommand { get; }
     }
 }
