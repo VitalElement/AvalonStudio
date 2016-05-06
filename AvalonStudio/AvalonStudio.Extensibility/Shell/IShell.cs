@@ -15,11 +15,21 @@
     using Languages;
     using Extensibility.Dialogs;
 
+    public enum Perspective
+    {
+        Editor,
+        Debug
+    }
+
+
     public interface IShell
     {
+        Perspective CurrentPerspective { get; set; }
+
         event EventHandler SolutionChanged;
         ISolution CurrentSolution { get; set; }
 
+        IEditor GetDocument(string path);
         Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
         ObservableCollection<object> Tools { get; }
 

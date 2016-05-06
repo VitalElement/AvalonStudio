@@ -216,32 +216,17 @@
       <DependentUpon>NewItemDialogView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ViewModelViewHost.cs" />
-    <Compile Include="Controls\WatchViewModel.cs" />
     <Compile Include="Debugging\BreakPointMargin.cs" />
-    <Compile Include="Controls\CallStack.paml.cs">
-      <DependentUpon>CallStack.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\CallStackViewModel.cs" />
-    <Compile Include="Controls\Disassembly.paml.cs">
-      <DependentUpon>Disassembly.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DisassemblyDataProvider.cs" />
-    <Compile Include="Controls\DisassemblyViewModel.cs" />
     <Compile Include="Controls\Editor\SymbolViewModel.cs" />
     <Compile Include="Controls\Editor.paml.cs">
       <DependentUpon>Editor.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Editor\EditorModel.cs" />
     <Compile Include="Controls\Editor\EditorViewModel.cs" />
-    <Compile Include="Controls\FrameViewModel.cs" />
     <Compile Include="Controls\Intellisense.paml.cs">
       <DependentUpon>Intellisense.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\IntellisenseViewModel.cs" />
-    <Compile Include="Controls\Locals.paml.cs">
-      <DependentUpon>Locals.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\LocalsViewModel.cs" />
     <Compile Include="Controls\MainMenu.paml.cs">
       <DependentUpon>MainMenu.paml</DependentUpon>
     </Compile>
@@ -256,11 +241,6 @@
       <DependentUpon>PackageManagerDialogView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ParameterSymbolViewModel.cs" />
-    <Compile Include="Controls\Registers.xaml.cs">
-      <DependentUpon>Registers.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\RegistersViewModel.cs" />
-    <Compile Include="Controls\RegisterViewModel.cs" />
     <Compile Include="Controls\StatusBar.paml.cs">
       <DependentUpon>StatusBar.paml</DependentUpon>
     </Compile>
@@ -279,12 +259,7 @@
     <Compile Include="Controls\HoverProbe.xaml.cs">
       <DependentUpon>HoverProbe.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Debugging\BreakPointManager.cs" />
-    <Compile Include="Debugging\DebugManager.cs" />
     <Compile Include="Controls\NewItemDialogViewModel.cs" />
-    <Compile Include="Controls\VariableControl.paml.cs">
-      <DependentUpon>VariableControl.paml</DependentUpon>
-    </Compile>
     <Compile Include="Shell\Commands\CopyCommandDefinition.cs" />
     <Compile Include="Shell\Commands\CloseFileCommandDefinition.cs" />
     <Compile Include="Shell\Commands\CloseFileCommandHandler.cs" />
@@ -300,10 +275,6 @@
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="ToolViewModel.cs" />
     <Compile Include="ShellViewModel.cs" />
-    <Compile Include="Controls\WatchList.paml.cs">
-      <DependentUpon>WatchList.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\WatchListViewModel.cs" />
     <EmbeddedResource Include="MainWindow.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -334,9 +305,6 @@
     <EmbeddedResource Include="App.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\CallStack.paml" />
-    <EmbeddedResource Include="Controls\Locals.paml" />
-    <EmbeddedResource Include="Controls\Disassembly.paml" />
     <EmbeddedResource Include="Controls\NewItemDialogView.paml" />
     <EmbeddedResource Include="Controls\DebugHoverProbe.paml" />
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
@@ -344,8 +312,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <EmbeddedResource Include="Controls\WatchList.paml" />
-    <EmbeddedResource Include="Controls\VariableControl.paml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj">
@@ -371,6 +337,10 @@
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB\AvalonStudio.Debugging.GDB.csproj">
       <Project>{a9b2958a-0b02-4598-b7b1-42eec7e2fae4}</Project>
       <Name>AvalonStudio.Debugging.GDB</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj">
+      <Project>{ae63ae6c-06ab-4bf0-b68f-96d77fc48730}</Project>
+      <Name>AvalonStudio.Debugging</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
       <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
@@ -5466,9 +5436,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Controls\Registers.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -3,9 +3,9 @@
     using Perspex.Controls;
     using Perspex;
 
-    public class WatchList : UserControl
+    public class LocalsView : UserControl
     {
-        public WatchList()
+        public LocalsView()
         {
             this.InitializeComponent();
         }
