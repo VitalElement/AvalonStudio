@@ -143,6 +143,7 @@
     <Compile Include="CallStackViewModel.cs" />
     <Compile Include="Commands\PauseDebuggingCommandDefinition.cs" />
     <Compile Include="Commands\RestartDebuggingCommandDefinition.cs" />
+    <Compile Include="Commands\StepOutCommandDefinition.cs" />
     <Compile Include="Commands\StopDebuggingCommandDefinition.cs" />
     <Compile Include="Commands\StepInstuctionCommandDefinition.cs" />
     <Compile Include="Commands\StepIntoCommandDefinition.cs" />
@@ -163,6 +164,7 @@
     </Compile>
     <Compile Include="RegistersViewModel.cs" />
     <Compile Include="RegisterViewModel.cs" />
+    <Compile Include="ToolBarDefinitions.cs" />
     <Compile Include="VariableControlView.paml.cs" />
     <Compile Include="WatchListView.paml.cs" />
     <Compile Include="WatchListViewModel.cs" />
