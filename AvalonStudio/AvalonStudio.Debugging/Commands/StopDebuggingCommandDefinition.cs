@@ -4,7 +4,9 @@
     using Debugging;
     using Extensibility;
     using Perspex.Controls;
+    using Perspex.Controls.Shapes;
     using Perspex.Input;
+    using Perspex.Media;
     using Projects;
     using ReactiveUI;
     using Shell;
@@ -26,6 +28,14 @@
 
                 manager.Stop();
             });
+        }
+
+        public override Path IconPath
+        {
+            get
+            {
+                return new Path() { Fill = Brush.Parse("#FFF38B76"), UseLayoutRounding = false, Stretch = Stretch.Uniform, Data = StreamGeometry.Parse("M18,18H6V6H18V18Z") };
+            }
         }
 
         private ReactiveCommand<object> command;
