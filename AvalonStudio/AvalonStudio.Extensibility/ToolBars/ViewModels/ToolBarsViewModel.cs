@@ -1,8 +1,7 @@
-﻿namespace Gemini.Modules.ToolBars.ViewModels
+﻿namespace AvalonStudio.Extensibility.ToolBars.ViewModels
 {
     using AvalonStudio.Extensibility.MVVM;
     using AvalonStudio.MVVM;
-    using AvalonStudio.ToolBars;
     using ReactiveUI;
     using System.ComponentModel.Composition;
     using System;

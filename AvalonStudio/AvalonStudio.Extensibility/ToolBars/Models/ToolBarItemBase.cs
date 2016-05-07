@@ -1,8 +1,8 @@
-﻿using Caliburn.Micro;
-
-namespace AvalonStudio.ToolBars.Models
+﻿namespace AvalonStudio.Extensibility.ToolBars.Models
 {
-	public class ToolBarItemBase : PropertyChangedBase
+    using ReactiveUI;
+
+    public class ToolBarItemBase : ReactiveObject
 	{
 		public static ToolBarItemBase Separator
 		{

@@ -1,15 +1,22 @@
 ﻿namespace AvalonStudio
 {
-    using Platforms;
     using Controls;
-    using Controls.ViewModels;
+    using Controls.Standard.ErrorList;
     using Debugging;
+    using Documents;
     using Extensibility;
+    using Extensibility.Dialogs;
+    using Extensibility.MainMenu;
+    using Extensibility.Plugin;
+    using Extensibility.ToolBars;
+    using Extensibility.ToolBars.Models;
+    using Languages;
     using MVVM;
-    using Perspex.Controls;
     using Perspex.Input;
+    using Perspex.Threading;
     using Projects;
     using ReactiveUI;
+    using Shell;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -17,23 +24,11 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using TextEditor;
-    using Utils;
-    using Perspex.Threading;
-    using Documents;
-    using Extensibility.Dialogs;
-    using Languages;
-    using Toolchains;
     using TestFrameworks;
-    using Extensibility.Plugin;
-    using Splat;
-    using Controls.Standard.ErrorList;
-    using Shell;
-    using Extensibility.MainMenu;
-    using Extensibility.Commands;
-    using ToolBars;
-    using Extensibility.ToolBars;
-    using ToolBars.Models;
+    using TextEditor;
+    using Toolchains;
+    using Utils;
+
     public enum Perspective
     {
         Editor,
@@ -197,7 +192,7 @@
 
             CurrentPerspective = Perspective.Editor;
 
-            ToolBarDefinition = AvalonStudio.ToolBars.ToolBarDefinitions.MainToolBar;
+            ToolBarDefinition = ToolBarDefinitions.MainToolBar;
             var toolBar = this.ToolBar;
         }
 
@@ -464,6 +459,7 @@
 
                 var toolBarBuilder = IoC.Get<IToolBarBuilder>();
                 _toolBar = new ToolBarModel();
+                
                 toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
                 return _toolBar;
             }

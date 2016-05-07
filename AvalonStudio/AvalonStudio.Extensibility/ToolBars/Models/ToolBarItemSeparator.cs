@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.ToolBars.Models
+﻿namespace AvalonStudio.Extensibility.ToolBars.Models
 {
 	public class ToolBarItemSeparator : ToolBarItemBase
 	{
