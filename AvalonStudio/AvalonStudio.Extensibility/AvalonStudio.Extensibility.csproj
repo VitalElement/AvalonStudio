@@ -199,6 +199,7 @@
     <Compile Include="MainMenu\Models\TextMenuItem.cs" />
     <Compile Include="MainMenu\ViewModels\MainMenuViewModel.cs" />
     <Compile Include="MainMenu\ViewModels\MainMenuView.paml.cs" />
+    <Compile Include="MainToolBar\ToolBarDefinitions.cs" />
     <Compile Include="Menus\MenuDefinitionAttribute.cs" />
     <Compile Include="MVVM\BindableCollection.cs" />
     <Compile Include="MVVM\IObservableCollection.cs" />
