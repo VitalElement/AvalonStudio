@@ -1,15 +1,22 @@
 ﻿namespace AvalonStudio
 {
-    using Platforms;
     using Controls;
-    using Controls.ViewModels;
+    using Controls.Standard.ErrorList;
     using Debugging;
+    using Documents;
     using Extensibility;
+    using Extensibility.Dialogs;
+    using Extensibility.MainMenu;
+    using Extensibility.Plugin;
+    using Extensibility.ToolBars;
+    using Extensibility.ToolBars.Models;
+    using Languages;
     using MVVM;
-    using Perspex.Controls;
     using Perspex.Input;
+    using Perspex.Threading;
     using Projects;
     using ReactiveUI;
+    using Shell;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -17,21 +24,10 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using TextEditor;
-    using Utils;
-    using Perspex.Threading;
-    using Documents;
-    using Extensibility.Dialogs;
-    using Languages;
-    using Toolchains;
     using TestFrameworks;
-    using Extensibility.Plugin;
-    using Splat;
-    using Controls.Standard.ErrorList;
-    using Shell;
-    using Extensibility.MainMenu;
-    using Extensibility.Commands;
-    
+    using TextEditor;
+    using Toolchains;
+    using Utils;    
 
     [Export(typeof(IShell))]
     [Export(typeof(ShellViewModel))]
@@ -140,7 +136,7 @@
             CurrentPerspective = Perspective.Editor;
 
             //MainMenu = new MainMenuViewModel();
-            ToolBar = new ToolBarViewModel();
+            //ToolBar = new ToolBarViewModel();
             StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabsViewModel();
 
@@ -186,6 +182,9 @@
             ModalDialog = new ModalDialogViewModelBase("Dialog");
 
             CurrentPerspective = Perspective.Editor;
+
+            ToolBarDefinition = ToolBarDefinitions.MainToolBar;
+            var toolBar = this.ToolBar;
         }
 
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
@@ -400,8 +399,39 @@
             get { return debugControlsVisible; }
             set { this.RaiseAndSetIfChanged(ref debugControlsVisible, value); }
         }
-        
-        public ToolBarViewModel ToolBar { get; private set; }
+        public DebugManager DebugManager { get; private set; }
+
+        //public MainMenuViewModel MainMenu { get; private set; }
+
+        private ToolBarDefinition _toolBarDefinition;
+        public ToolBarDefinition ToolBarDefinition
+        {
+            get { return _toolBarDefinition; }
+            protected set
+            {
+                this.RaiseAndSetIfChanged(ref _toolBarDefinition, value);
+                // Might need to do a global raise property change (NPC(string.Empty))
+            }
+        }
+
+        private IToolBar _toolBar;
+        public IToolBar ToolBar
+        {
+            get
+            {
+                if (_toolBar != null)
+                    return _toolBar;
+
+                if (ToolBarDefinition == null)
+                    return null;
+
+                var toolBarBuilder = IoC.Get<IToolBarBuilder>();
+                _toolBar = new ToolBarModel();
+                
+                toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
+                return _toolBar;
+            }
+        }
 
         public DocumentTabsViewModel DocumentTabs { get; private set; }
 
