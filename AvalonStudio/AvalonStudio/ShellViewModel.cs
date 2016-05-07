@@ -183,8 +183,7 @@
 
             CurrentPerspective = Perspective.Editor;
 
-            ToolBarDefinition = ToolBarDefinitions.MainToolBar;
-            var toolBar = this.ToolBar;
+            ToolBarDefinition = AvalonStudio.Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar;            
         }
 
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
