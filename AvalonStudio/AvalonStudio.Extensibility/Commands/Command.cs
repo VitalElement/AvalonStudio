@@ -2,7 +2,7 @@
 {
     using System;
     using ReactiveUI;
-
+    using Perspex.Controls.Shapes;
     public class Command : ReactiveObject
     {
         private readonly CommandDefinitionBase _commandDefinition;
@@ -70,6 +70,13 @@
             {
                 this.RaiseAndSetIfChanged(ref _iconSource, value);
             }
+        }
+
+        private Path iconPath;
+        public Path IconPath
+        {
+            get { return iconPath; }
+            set { this.RaiseAndSetIfChanged(ref iconPath, value); }
         }
 
         public object Tag { get; set; }

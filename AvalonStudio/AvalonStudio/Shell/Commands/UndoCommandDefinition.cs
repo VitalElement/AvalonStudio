@@ -10,9 +10,9 @@
     using Perspex.Media;
 
     [CommandDefinition]
-    public class SaveFileCommandDefinition : CommandDefinition
+    public class UndoCommandDefinition : CommandDefinition
     {
-        public SaveFileCommandDefinition()
+        public UndoCommandDefinition()
         {
             command = ReactiveCommand.Create();
 
@@ -20,25 +20,25 @@
             {
                 var shell = IoC.Get<IShell>();
 
-                shell?.Save();
+                
             });
         }
 
         public override string Text
         {
-            get { return "Save"; }
+            get { return "Undo"; }
         }
 
         public override string ToolTip
         {
-            get { return "Save Tool Tip"; }
+            get { return "Undo Tool Tip"; }
         }
 
         public override Path IconPath
         {
             get
             {
-                return new Path() { Fill = Brush.Parse("#FF7AC1FF"), UseLayoutRounding = false, Stretch = Stretch.Uniform, Data = StreamGeometry.Parse("M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z") };
+                return new Path() { Fill = Brush.Parse("#FF7AC1FF"), UseLayoutRounding = false, Stretch = Stretch.Uniform, Data = StreamGeometry.Parse("M12.5,8C9.85,8 7.45,9 5.6,10.6L2,7V16H11L7.38,12.38C8.77,11.22 10.54,10.5 12.5,10.5C16.04,10.5 19.05,12.81 20.1,16L22.47,15.22C21.08,11.03 17.15,8 12.5,8Z") };
             }
         }
 
