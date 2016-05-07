@@ -18,7 +18,8 @@
     using ViewModels;
     using Projects;
     using Shell;
-
+    using System.Threading.Tasks;
+    using System.Threading;
     public class EditorViewModel : ViewModel<EditorModel>, IEditor
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -53,8 +54,6 @@
                     ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
                 }
 
-                ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);                
-
                 ShellViewModel.Instance.InvalidateErrors();
 
                 Model.Dispose();
@@ -62,6 +61,7 @@
                 disposables.Dispose();
 
                 Model.TextDocument = null;
+                ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);
             }));
 
             AddWatchCommand = ReactiveCommand.Create();
