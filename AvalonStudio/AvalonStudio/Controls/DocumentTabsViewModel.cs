@@ -4,13 +4,26 @@
     using Perspex.Media;
     using Perspex.Threading;
     using ReactiveUI;
+    using System;
     using System.Collections.ObjectModel;
-
+    using System.Threading.Tasks;
     public class DocumentTabsViewModel : ViewModel
     {
         public DocumentTabsViewModel()
         {
             Documents = new ObservableCollection<EditorViewModel>();
+            Documents.CollectionChanged += (sender, e) =>
+            {
+                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+                {
+                    Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await Task.Delay(25);
+                        GC.Collect();
+                    });
+                }
+            };
+
             tabBrush = Brush.Parse("#007ACC");
             tabHighlightBrush = Brush.Parse("#1c97ea");
 
