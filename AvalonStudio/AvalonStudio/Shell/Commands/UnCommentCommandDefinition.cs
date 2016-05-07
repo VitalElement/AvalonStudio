@@ -20,7 +20,7 @@
             {
                 var shell = IoC.Get<IShell>();
 
-                
+                shell.SelectedDocument?.UnComment();    
             });
         }
         

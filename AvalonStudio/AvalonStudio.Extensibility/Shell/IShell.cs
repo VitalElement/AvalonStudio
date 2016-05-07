@@ -30,6 +30,8 @@
         ISolution CurrentSolution { get; set; }
 
         IEditor GetDocument(string path);
+        IEditor SelectedDocument { get; }
+
         Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
         ObservableCollection<object> Tools { get; }
 
