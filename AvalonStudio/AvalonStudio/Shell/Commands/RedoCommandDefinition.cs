@@ -31,7 +31,7 @@
 
         public override string ToolTip
         {
-            get { return "Redo Tool Tip"; }
+            get { return "Redo the last undo command."; }
         }
 
         public override Path IconPath
