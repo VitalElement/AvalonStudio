@@ -20,13 +20,6 @@
             });
         }
 
-        public const string CommandName = "File.Exit";
-
-        public override string Name
-        {
-            get { return CommandName; }
-        }
-
         public override string Text
         {
             get { return "Exit"; }

@@ -1,11 +1,11 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Debugging
 {
-    using Perspex;
     using Perspex.Controls;
+    using Perspex;
 
-    public class VariableControl : UserControl
+    public class DisassemblyView : UserControl
     {
-        public VariableControl()
+        public DisassemblyView()
         {
             this.InitializeComponent();
         }

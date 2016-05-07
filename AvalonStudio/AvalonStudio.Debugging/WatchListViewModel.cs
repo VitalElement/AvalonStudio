@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.ViewModels
+﻿namespace AvalonStudio.Debugging
 {
     using AvalonStudio.MVVM;
     using Debugging;
@@ -6,11 +6,18 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System;
+    using Extensibility.Plugin;
+    using Extensibility;
 
-    public class WatchListViewModel : ViewModel
+    public class WatchListViewModel : ToolViewModel, IExtension
     {
+        protected IDebugManager _debugManager;
+
         public WatchListViewModel()
         {
+            IsVisible = false;
+            Title = "Watch List";
             Children = new ObservableCollection<WatchViewModel>();
         }
 
@@ -21,12 +28,12 @@
             set { this.RaiseAndSetIfChanged(ref children, value); }
         }
 
-        private IDebugger debugger;
-        public IDebugger Debugger { get { return debugger; } }
-
-        public void SetDebugger(IDebugger debugger)
+        public override Location DefaultLocation
         {
-            this.debugger = debugger;
+            get
+            {
+                return Location.Bottom;
+            }
         }
 
         public void AddExistingWatch(VariableObject variable)
@@ -36,7 +43,7 @@
 
         public void AddWatch(string expression)
         {
-            var newWatch = debugger.CreateWatch(string.Format("var{0}", debugger.GetVariableId()), expression);
+            var newWatch = _debugManager.CurrentDebugger.CreateWatch(string.Format("var{0}", _debugManager.CurrentDebugger.GetVariableId()), expression);
 
             if (newWatch != null)
             {
@@ -50,15 +57,15 @@
             {
                 this.Children.Remove(watch);
 
-                debugger.DeleteWatch(watch.Model.Id);
+                _debugManager.CurrentDebugger.DeleteWatch(watch.Model.Id);
             }
         }
 
         public void Add(VariableObject model)
         {
-            var newWatch = new WatchViewModel(debugger, model);
+            var newWatch = new WatchViewModel(_debugManager.CurrentDebugger, model);
 
-            newWatch.Evaluate(debugger);
+            newWatch.Evaluate(_debugManager.CurrentDebugger);
 
             this.Children.Add(newWatch);
 
@@ -90,6 +97,33 @@
                     ApplyChange(update);
                 }
             }
+        }
+
+        public virtual void BeforeActivation()
+        {
+
+        }
+
+        public virtual void Activation()
+        {
+            _debugManager = IoC.Get<IDebugManager>();
+            _debugManager.DebugFrameChanged += WatchListViewModel_DebugFrameChanged;
+
+            _debugManager.DebugSessionStarted += (sender, e) =>
+            {
+                IsVisible = true;
+            };
+
+            _debugManager.DebugSessionEnded += (sender, e) =>
+            {
+                IsVisible = false;
+                Clear();
+            };
+        }
+
+        private void WatchListViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+        {
+            Invalidate(e.VariableChanges);
         }
     }
 }

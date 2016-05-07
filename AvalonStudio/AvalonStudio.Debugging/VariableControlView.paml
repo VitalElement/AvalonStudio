@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/perspex"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-             xmlns:vm="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio">
+             xmlns:vm="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">
   <Grid>
     <TreeView Items="{Binding Children}" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
       <TreeView.Styles>

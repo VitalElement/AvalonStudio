@@ -31,14 +31,6 @@
             }
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "Help.About";
-            }
-        }
-
         public override string Text
         {
             get
