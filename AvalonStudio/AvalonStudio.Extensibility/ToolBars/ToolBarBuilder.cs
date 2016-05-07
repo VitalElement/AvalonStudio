@@ -51,7 +51,7 @@
         {
             var groups = _toolBarItemGroups
                 .Where(x => x.ToolBar == toolBarDefinition)
-                .OrderBy(x => x.SortOrder)
+                .OrderByDescending(x => x.SortOrder)
                 .ToList();
 
             for (int i = 0; i < groups.Count; i++)

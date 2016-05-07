@@ -10,9 +10,9 @@
     using Perspex.Media;
 
     [CommandDefinition]
-    public class SaveFileCommandDefinition : CommandDefinition
+    public class RedoCommandDefinition : CommandDefinition
     {
-        public SaveFileCommandDefinition()
+        public RedoCommandDefinition()
         {
             command = ReactiveCommand.Create();
 
@@ -20,7 +20,7 @@
             {
                 var shell = IoC.Get<IShell>();
 
-                shell?.Save();
+                
             });
         }
 
@@ -33,19 +33,19 @@
 
         public override string Text
         {
-            get { return "Save"; }
+            get { return "Redo"; }
         }
 
         public override string ToolTip
         {
-            get { return "Save Tool Tip"; }
+            get { return "Redo Tool Tip"; }
         }
 
         public override Path IconPath
         {
             get
             {
-                return new Path() { Fill = Brush.Parse("#FF7AC1FF"), UseLayoutRounding = false, Stretch = Stretch.Uniform, Data = StreamGeometry.Parse("M15,9H5V5H15M12,19A3,3 0 0,1 9,16A3,3 0 0,1 12,13A3,3 0 0,1 15,16A3,3 0 0,1 12,19M17,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V7L17,3Z") };
+                return new Path() { Fill = Brush.Parse("#FF7AC1FF"), UseLayoutRounding = false, Stretch = Stretch.Uniform, Data = StreamGeometry.Parse("M18.4,10.6C16.55,9 14.15,8 11.5,8C6.85,8 2.92,11.03 1.54,15.22L3.9,16C4.95,12.81 7.95,10.5 11.5,10.5C13.45,10.5 15.23,11.22 16.62,12.38L13,16H22V7L18.4,10.6Z") };
             }
         }
 
