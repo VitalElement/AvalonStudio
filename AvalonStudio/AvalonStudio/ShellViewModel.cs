@@ -134,9 +134,7 @@
             }
 
             CurrentPerspective = Perspective.Editor;
-
-            //MainMenu = new MainMenuViewModel();
-            //ToolBar = new ToolBarViewModel();
+            
             StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabsViewModel();
 

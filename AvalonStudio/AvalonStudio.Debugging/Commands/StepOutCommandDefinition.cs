@@ -52,7 +52,7 @@
         {
             get
             {
-                return "Step Over";
+                return "Step Out";
             }
         }
 
@@ -60,7 +60,7 @@
         {
             get
             {
-                return "Steps over the current line.";
+                return "Steps out of the current function or method.";
             }
         }
 
