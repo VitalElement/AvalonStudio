@@ -13,7 +13,8 @@
     using System.ComponentModel.Composition;
     using System.Windows.Input;
     using Utils;
-
+    using Perspex.Controls.Shapes;
+    using Perspex.Media;
     [CommandDefinition]
     class StartDebuggingCommandDefinition : CommandDefinition
     {
@@ -65,6 +66,14 @@
             get
             {
                 return "Starts a debug session.";
+            }
+        }
+
+        public override Path IconPath
+        {
+            get
+            {
+                return new Path() { Fill = Brush.Parse("#FF8DD28A"), UseLayoutRounding = false, Stretch = Stretch.Uniform, Data = StreamGeometry.Parse("M8,5.14V19.14L19,12.14L8,5.14Z") };
             }
         }
 
