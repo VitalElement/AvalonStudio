@@ -1,22 +1,13 @@
-﻿namespace AvalonStudio.Shell
+﻿namespace AvalonStudio.Shell.Commands
 {
     using AvalonStudio.Extensibility.ToolBars;
-    using Commands;
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel.Composition;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
-    static class ToolBarDefinitions
+    public static class ToolBarDefinitions
     {
         [Export]
-        public static ToolBarDefinition MainToolBar = new ToolBarDefinition(0, "Main");
-
-        [Export]
         public static ToolBarItemGroupDefinition StandardOpenSaveToolBarGroup = new ToolBarItemGroupDefinition(
-            MainToolBar, 1);
+            AvalonStudio.Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 1);
 
         [Export]
         public static ToolBarItemDefinition SaveFileToolBarItem = new CommandToolBarItemDefinition<SaveFileCommandDefinition>(
@@ -28,7 +19,7 @@
 
         [Export]
         public static ToolBarItemGroupDefinition StandardEditGroup = new ToolBarItemGroupDefinition(
-            MainToolBar, 2);
+            AvalonStudio.Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 2);
 
         [Export]
         public static ToolBarItemDefinition UndoToolBarItem = new CommandToolBarItemDefinition<UndoCommandDefinition>(
@@ -48,7 +39,7 @@
 
         [Export]
         public static ToolBarItemGroupDefinition StandardBuildGroup = new ToolBarItemGroupDefinition(
-            MainToolBar, 3);
+            AvalonStudio.Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 3);
 
         [Export]
         public static ToolBarItemDefinition BuildToolBarItem = new CommandToolBarItemDefinition<BuildCommandDefinition>(
