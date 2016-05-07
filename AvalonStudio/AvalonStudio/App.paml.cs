@@ -2,19 +2,16 @@
 {
     using AvalonStudio.Extensibility;
     using AvalonStudio.Repositories;
-    using Controls;
-    using Controls.ViewModels;
     using Extensibility.Commands;
+    using Extensibility.ToolBars;
     using MVVM;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Diagnostics;
     using Perspex.Logging.Serilog;
-    using ReactiveUI;
     using Serilog;
-    using Splat;
     using System;
-    using ToolBars;
+
     class App : Application
     {
         public App()

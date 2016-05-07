@@ -1,4 +1,4 @@
-namespace AvalonStudio.ToolBars
+namespace AvalonStudio.Extensibility.ToolBars
 {
     using AvalonStudio.Extensibility.ToolBars;
 

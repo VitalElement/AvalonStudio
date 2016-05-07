@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.ToolBars
+﻿namespace AvalonStudio.Extensibility.ToolBars
 {
-    using Caliburn.Micro;
     using Models;
+    using MVVM;
 
     public interface IToolBar : IObservableCollection<ToolBarItemBase>
     {

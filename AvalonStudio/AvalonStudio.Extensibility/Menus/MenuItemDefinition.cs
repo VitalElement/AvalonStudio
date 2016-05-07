@@ -16,7 +16,7 @@
         }
 
         protected MenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
-        {
+        {            
             _group = group;
             _sortOrder = sortOrder;
         }

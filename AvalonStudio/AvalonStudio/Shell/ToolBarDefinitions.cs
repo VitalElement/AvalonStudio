@@ -12,15 +12,18 @@
     static class ToolBarDefinitions
     {
         [Export]
-        public static ToolBarItemGroupDefinition StandardOpenSaveToolBarGroup = new ToolBarItemGroupDefinition(
-            ToolBars.ToolBarDefinitions.MainToolBar, 8);
+        public static ToolBarDefinition MainToolBar = new ToolBarDefinition(0, "Main");
 
         [Export]
-        public static ToolBarItemDefinition OpenFileToolBarItem = new CommandToolBarItemDefinition<CloseFileCommandDefinition>(
-            StandardOpenSaveToolBarGroup, 0);
+        public static ToolBarItemGroupDefinition StandardOpenSaveToolBarGroup = new ToolBarItemGroupDefinition(
+            MainToolBar, 1);
 
         [Export]
         public static ToolBarItemDefinition SaveFileToolBarItem = new CommandToolBarItemDefinition<SaveFileCommandDefinition>(
             StandardOpenSaveToolBarGroup, 2);
+
+        [Export]
+        public static ToolBarItemDefinition SaveAllToolBarItem = new CommandToolBarItemDefinition<SaveAllFileCommandDefinition>(
+            StandardOpenSaveToolBarGroup, 3);
     }
 }
