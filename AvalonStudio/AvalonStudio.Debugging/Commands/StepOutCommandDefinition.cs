@@ -65,6 +65,6 @@
         }
 
         [Export]
-        public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<StepOverCommandDefinition>(new KeyGesture() { Key = Key.F10 });
+        public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<StepOverCommandDefinition>(new KeyGesture() { Key = Key.F11, Modifiers = InputModifiers.Shift });
     }
 }
