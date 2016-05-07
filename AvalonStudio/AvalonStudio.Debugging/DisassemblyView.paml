@@ -1,0 +1,16 @@
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+  <cont:ToolControl Title="Disassembly">
+    <ListBox BorderThickness="0" Items="{Binding DisassemblyData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
+      <ListBox.DataTemplates>
+        <DataTemplate DataType="debugging:InstructionLine">
+          <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Background}">
+            <TextBlock Text="{Binding FormattedAddress}" Width="90" Foreground="#FF007ACC" />
+            <TextBlock Text="{Binding Instruction}" Foreground="#4EC9B0" />
+            <TextBlock Text="{Binding Symbol}" Foreground="#D0B848FF" />
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.DataTemplates>
+    </ListBox>
+  </cont:ToolControl>  
+</UserControl>

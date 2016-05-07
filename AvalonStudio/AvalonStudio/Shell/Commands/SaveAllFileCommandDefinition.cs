@@ -21,13 +21,6 @@ namespace AvalonStudio.Shell.Commands
             });
         }
 
-        public const string CommandName = "File.SaveAll";
-
-        public override string Name
-        {
-            get { return CommandName; }
-        }
-
         public override string Text
         {
             get { return "Save All"; }

@@ -1,11 +1,11 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Debugging
 {
-    using Perspex.Controls;
     using Perspex;
+    using Perspex.Controls;
 
-    public class WatchList : UserControl
+    public class VariableControlView : UserControl
     {
-        public WatchList()
+        public VariableControlView()
         {
             this.InitializeComponent();
         }

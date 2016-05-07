@@ -145,9 +145,5 @@
         {
             WriteLine(data);
         }
-
-        public override void Activate()
-        {
-        }        
     }
 }
