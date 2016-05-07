@@ -199,7 +199,7 @@
                 }
 
                 var newEditor = new EditorViewModel(new EditorModel());
-                Console.WriteLine("Add Breakpointer Margin somehow");
+                
                 newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
                 newEditor.Margins.Add(new LineNumberMargin());
 
@@ -547,6 +547,13 @@
             }
         }
 
+        public IEditor SelectedDocument
+        {
+            get
+            {
+                return DocumentTabs?.SelectedDocument;
+            }
+        }
 
         public void Cleanup()
         {
