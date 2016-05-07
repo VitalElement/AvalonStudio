@@ -9,7 +9,7 @@
     using System.Collections.ObjectModel;
     using LibGit2Sharp;
 
-    public class TeamExplorerViewModel : ToolViewModel, AvalonStudio.Extensibility.Plugin.IPlugin
+    public class TeamExplorerViewModel : ToolViewModel, IExtension
     {
         private IShell shell;
 
@@ -49,12 +49,7 @@
                 return Location.Right;
             }
         }
-
-        public override void Activate()
-        {
-            
-        }
-
+        
         public void Activation()
         {
             shell = IoC.Get<IShell>();
@@ -79,30 +74,6 @@
         public void BeforeActivation()
         {
             
-        }
-
-        public string Description
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public System.Version Version
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
         }
     }
 }
