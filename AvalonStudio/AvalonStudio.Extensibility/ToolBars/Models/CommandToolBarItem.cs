@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.ToolBars.Models
+﻿namespace AvalonStudio.Extensibility.ToolBars.Models
 {
     using System;
     using System.ComponentModel;
@@ -8,6 +8,9 @@
     using Perspex.Input;
     using System.Windows.Input;
     using Extensibility;
+    using ReactiveUI;
+    using Perspex.Controls.Shapes;
+
     public class CommandToolBarItem : ToolBarItemBase, ICommandUiItem
     {
 	    private readonly ToolBarItemDefinition _toolBarItem;
@@ -29,6 +32,14 @@
 	    {
 	        get { return _command.IconSource; }
 	    }
+
+        public Path IconPath
+        {
+            get
+            {
+                return _command.CommandDefinition.IconPath;
+            }
+        }
 
 	    public string ToolTip
 	    {
@@ -56,10 +67,11 @@
             get { return _command.Checked; }
         }
 
-		public CommandToolBarItem(ToolBarItemDefinition toolBarItem, Command command, IToolBar parent)
+		public CommandToolBarItem(ToolBarItemDefinition toolBarItem, Command command, ICommand actualCommand, IToolBar parent)
 		{
 		    _toolBarItem = toolBarItem;
-		    _command = command;
+            _command = command;
+            __command = actualCommand;
             _keyGesture = IoC.Get<ICommandKeyGestureService>().GetPrimaryKeyGesture(_command.CommandDefinition);
             _parent = parent;
 
@@ -68,11 +80,11 @@
 
         private void OnCommandPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            NotifyOfPropertyChange(() => Text);
-            NotifyOfPropertyChange(() => IconSource);
-            NotifyOfPropertyChange(() => ToolTip);
-            NotifyOfPropertyChange(() => HasToolTip);
-            NotifyOfPropertyChange(() => IsChecked);
+            this.RaisePropertyChanged(nameof(Text));
+            this.RaisePropertyChanged(nameof(IconSource));
+            this.RaisePropertyChanged(nameof(ToolTip));
+            this.RaisePropertyChanged(nameof(HasToolTip));
+            this.RaisePropertyChanged(nameof(IsChecked));
         }
 
 	    CommandDefinitionBase ICommandUiItem.CommandDefinition

@@ -1,11 +1,9 @@
-﻿namespace AvalonStudio.ToolBars
+﻿namespace AvalonStudio.Extensibility.ToolBars
 {
     using System.ComponentModel.Composition;
     using System.Linq;
     using AvalonStudio.Extensibility.Commands;
-    using AvalonStudio.Extensibility.ToolBars;
-    using AvalonStudio.ToolBars.Models;
-
+    using Models;
     [Export(typeof(IToolBarBuilder))]
     public class ToolBarBuilder : IToolBarBuilder
     {
@@ -61,10 +59,10 @@
                 var group = groups[i];
                 var toolBarItems = _toolBarItems
                     .Where(x => x.Group == group)
-                    .OrderBy(x => x.SortOrder);
+                    .OrderByDescending(x => x.SortOrder);
 
                 foreach (var toolBarItem in toolBarItems)
-                    result.Add(new CommandToolBarItem(toolBarItem, _commandService.GetCommand(toolBarItem.CommandDefinition), result));
+                    result.Add(new CommandToolBarItem(toolBarItem, _commandService.GetCommand(toolBarItem.CommandDefinition), toolBarItem.CommandDefinition.Command, result));
 
                 if (i < groups.Count - 1 && toolBarItems.Any())
                     result.Add(new ToolBarItemSeparator());
