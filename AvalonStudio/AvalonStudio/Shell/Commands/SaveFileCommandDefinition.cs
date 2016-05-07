@@ -31,7 +31,7 @@
 
         public override string ToolTip
         {
-            get { return "Save Tool Tip"; }
+            get { return "Saves the current changes."; }
         }
 
         public override Path IconPath

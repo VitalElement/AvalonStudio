@@ -28,7 +28,7 @@ namespace AvalonStudio.Shell.Commands
 
         public override string ToolTip
         {
-            get { return "Save All Tool Tip"; }
+            get { return "Saves all modified documents."; }
         }
 
         public override Path IconPath

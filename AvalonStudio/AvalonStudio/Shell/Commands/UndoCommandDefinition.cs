@@ -31,7 +31,7 @@
 
         public override string ToolTip
         {
-            get { return "Undo Tool Tip"; }
+            get { return "Undo the last change."; }
         }
 
         public override Path IconPath
