@@ -2,17 +2,14 @@
 {
     using AvalonStudio.Extensibility;
     using AvalonStudio.Repositories;
-    using Controls;
-    using Controls.ViewModels;
     using Extensibility.Commands;
+    using Extensibility.ToolBars;
     using MVVM;
     using Perspex;
     using Perspex.Controls;
     using Perspex.Diagnostics;
     using Perspex.Logging.Serilog;
-    using ReactiveUI;
     using Serilog;
-    using Splat;
     using System;
 
     class App : Application
@@ -41,14 +38,12 @@
 
             var keyGestureService = container.GetExportedValue<ICommandKeyGestureService>();
             IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));
+
+            var toolBarBuilder = container.GetExportedValue<IToolBarBuilder>();
+            IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
             
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
             
-            foreach(var tool in ShellViewModel.Instance.RightTools)
-            {
-                (tool as ToolViewModel).Activate();
-            }
-
             app.RunWithMainWindow<MainWindow>();
 
             ShellViewModel.Instance.Cleanup();

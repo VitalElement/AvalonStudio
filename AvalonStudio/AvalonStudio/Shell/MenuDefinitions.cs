@@ -14,7 +14,7 @@
         //    FileNewMenuItem, 0);
 
         [Menu]
-        public static MenuDefinition ToolsMenu = new MenuDefinition(Extensibility.MainMenu.MenuDefinitions.MainMenuBar, 4, "Tools");
+        public static MenuDefinition ToolsMenu = new MenuDefinition(Extensibility.MainMenu.MenuDefinitions.MainMenuBar, 8, "Tools");
 
         [MenuGroup]
         public static MenuItemGroupDefinition ToolsPackagesMenuGroup = new MenuItemGroupDefinition(ToolsMenu, 6);

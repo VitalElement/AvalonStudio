@@ -28,7 +28,7 @@
 
         public override void OutOfBandDataReceived(string data)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

@@ -1,0 +1,23 @@
+﻿<UserControl xmlns="https://github.com/perspex"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:vm="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">
+  <Grid>
+    <TreeView Items="{Binding Children}" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
+      <TreeView.Styles>
+        <Style Selector="TreeViewItem">
+          <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+        </Style>
+      </TreeView.Styles>
+
+      <TreeView.DataTemplates>
+        <TreeDataTemplate DataType="vm:WatchViewModel" ItemsSource="{Binding Children}">
+          <Grid ColumnDefinitions="*,*,*">
+            <TextBlock Text="{Binding Name}"/>
+            <TextBlock Margin="10 0 0 0" Grid.Column="1" Text="{Binding Value}"/>
+            <TextBlock Margin="10 0 0 0" Grid.Column="2" Text="{Binding Type}"/>
+          </Grid>
+        </TreeDataTemplate>
+      </TreeView.DataTemplates>
+    </TreeView>
+  </Grid>
+</UserControl>

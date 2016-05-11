@@ -1,0 +1,7 @@
+﻿<UserControl xmlns="https://github.com/perspex"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:ucont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">
+  <cont:ToolControl Title="Locals">
+    <ucont:VariableControlView Grid.Row="1" />
+  </cont:ToolControl>
+</UserControl>
