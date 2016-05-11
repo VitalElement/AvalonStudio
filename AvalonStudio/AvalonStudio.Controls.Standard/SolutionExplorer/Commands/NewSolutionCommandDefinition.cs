@@ -31,14 +31,6 @@
             }
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "File.NewSolution";
-            }
-        }
-
         public override string Text
         {
             get

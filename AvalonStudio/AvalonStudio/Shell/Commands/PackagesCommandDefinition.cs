@@ -22,13 +22,6 @@
             });
         }
 
-        public const string CommandName = "Tools.Packages";
-
-        public override string Name
-        {
-            get { return CommandName; }
-        }
-
         public override string Text
         {
             get { return "Packages"; }

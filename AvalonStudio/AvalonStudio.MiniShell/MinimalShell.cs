@@ -148,6 +148,27 @@
             }
         }
 
+        public Perspective CurrentPerspective
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IEditor SelectedDocument
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
         {
             throw new NotImplementedException();
@@ -199,6 +220,11 @@
         }
 
         public void SaveAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEditor GetDocument(string path)
         {
             throw new NotImplementedException();
         }
