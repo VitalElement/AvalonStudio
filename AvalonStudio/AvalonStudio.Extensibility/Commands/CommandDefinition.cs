@@ -1,4 +1,5 @@
 ﻿using System;
+using Perspex.Controls.Shapes;
 
 namespace AvalonStudio.Extensibility.Commands
 {
@@ -7,6 +8,14 @@ namespace AvalonStudio.Extensibility.Commands
         public override Uri IconSource
         {
             get { return null; }
+        }
+
+        public override Path IconPath
+        {
+            get
+            {
+                return null;
+            }
         }
 
         public sealed override bool IsList

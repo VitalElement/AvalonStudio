@@ -15,10 +15,22 @@
     using Languages;
     using Extensibility.Dialogs;
 
+    public enum Perspective
+    {
+        Editor,
+        Debug
+    }
+
+
     public interface IShell
     {
+        Perspective CurrentPerspective { get; set; }
+
         event EventHandler SolutionChanged;
         ISolution CurrentSolution { get; set; }
+
+        IEditor GetDocument(string path);
+        IEditor SelectedDocument { get; }
 
         Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
         ObservableCollection<object> Tools { get; }
@@ -27,11 +39,10 @@
         ModalDialogViewModelBase ModalDialog { get; set; }
 
         void InvalidateCodeAnalysis();
-        void Debug(IProject project);
+        
         void Build(IProject project);
         void Clean(IProject project);
-
-        void Debug();
+        
         void Build();
         void Clean();
 

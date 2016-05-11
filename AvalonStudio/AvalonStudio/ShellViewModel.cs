@@ -1,15 +1,22 @@
 ﻿namespace AvalonStudio
 {
-    using Platforms;
     using Controls;
-    using Controls.ViewModels;
+    using Controls.Standard.ErrorList;
     using Debugging;
+    using Documents;
     using Extensibility;
+    using Extensibility.Dialogs;
+    using Extensibility.MainMenu;
+    using Extensibility.Plugin;
+    using Extensibility.ToolBars;
+    using Extensibility.ToolBars.Models;
+    using Languages;
     using MVVM;
-    using Perspex.Controls;
     using Perspex.Input;
+    using Perspex.Threading;
     using Projects;
     using ReactiveUI;
+    using Shell;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -17,25 +24,10 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using TextEditor;
-    using Utils;
-    using Perspex.Threading;
-    using Documents;
-    using Extensibility.Dialogs;
-    using Languages;
-    using Toolchains;
     using TestFrameworks;
-    using Extensibility.Plugin;
-    using Splat;
-    using Controls.Standard.ErrorList;
-    using Shell;
-    using Extensibility.MainMenu;
-    using Extensibility.Commands;
-    public enum Perspective
-    {
-        Editor,
-        Debug
-    }
+    using TextEditor;
+    using Toolchains;
+    using Utils;    
 
     [Export(typeof(IShell))]
     [Export(typeof(ShellViewModel))]
@@ -50,8 +42,7 @@
         private readonly IEnumerable<IToolChain> toolChains;
         private readonly IEnumerable<IDebugger> debuggers;
         private readonly IEnumerable<IProject> projectTypes;
-        private readonly IEnumerable<ITestFramework> testFrameworks;        
-        private readonly IEnumerable<IPlugin> plugins;
+        private readonly IEnumerable<ITestFramework> testFrameworks;                
 
         public IEnumerable<IProject> ProjectTypes
         {
@@ -119,7 +110,7 @@
 
         [ImportingConstructor]
         public ShellViewModel([ImportMany] IEnumerable<ToolViewModel> importedTools,
-            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IPlugin> plugins, [Import]IMenu mainMenu)
+            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IExtension> extensions, [Import]IMenu mainMenu)
         {
             this.mainMenu = mainMenu;
             this.languageServices = languageServices;
@@ -132,28 +123,24 @@
 
             IoC.RegisterConstant(this, typeof(IShell));
 
-            foreach (var plugin in plugins)
+            foreach (var extension in extensions)
             {
-                plugin.BeforeActivation();
+                extension.BeforeActivation();
             }
 
-            foreach (var plugin in plugins)
+            foreach (var extension in extensions)
             {
-                plugin.Activation();
+                extension.Activation();
             }
 
             CurrentPerspective = Perspective.Editor;
-
-            //MainMenu = new MainMenuViewModel();
-            ToolBar = new ToolBarViewModel();
+            
             StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabsViewModel();
 
             Console = IoC.Get<IConsole>();
             ErrorList = IoC.Get<IErrorList>();
-
-            DebugManager = new DebugManager();
-
+            
             tools = new ObservableCollection<object>();
             leftTools = new ObservableCollection<object>();
             rightTools = new ObservableCollection<object>();
@@ -193,6 +180,8 @@
             ModalDialog = new ModalDialogViewModelBase("Dialog");
 
             CurrentPerspective = Perspective.Editor;
+
+            ToolBarDefinition = AvalonStudio.Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar;            
         }
 
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false)
@@ -208,7 +197,8 @@
                 }
 
                 var newEditor = new EditorViewModel(new EditorModel());
-                newEditor.Margins.Add(new BreakPointMargin(DebugManager.BreakPointManager));
+                
+                newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
                 newEditor.Margins.Add(new LineNumberMargin());
 
                 DocumentTabs.Documents.Add(newEditor);
@@ -273,29 +263,7 @@
                 Build(project);
             }
         }
-
-        public void Debug()
-        {
-            var project = GetDefaultProject();
-
-            if (project != null)
-            {
-                Debug(project);
-            }
-        }
-
-        public void Debug(IProject project)
-        {
-            if (CurrentPerspective == Perspective.Editor)
-            {
-                Console.Clear();
-                DebugManager.StartDebug(project);
-            }
-            else
-            {
-                DebugManager.Continue();
-            }
-        }
+        
 
         public void Clean(IProject project)
         {
@@ -340,24 +308,24 @@
         {
             switch (e.Key)
             {
-                case Key.F9:
-                    DebugManager.StepInstruction();
-                    break;
+                //case Key.F9:
+                //    DebugManager.StepInstruction();
+                //    break;
 
-                case Key.F10:
-                    DebugManager.StepOver();
-                    break;
+                //case Key.F10:
+                //    DebugManager.StepOver();
+                //    break;
 
-                case Key.F11:
-                    DebugManager.StepInto();
-                    break;
+                //case Key.F11:
+                //    DebugManager.StepInto();
+                //    break;
 
-                case Key.F5:
-                    if (CurrentSolution?.StartupProject != null)
-                    {
-                        Debug(CurrentSolution.StartupProject);
-                    }
-                    break;
+                //case Key.F5:
+                //    if (CurrentSolution?.StartupProject != null)
+                //    {
+                //        Debug(CurrentSolution.StartupProject);
+                //    }
+                //    break;
 
                 case Key.F6:
                     Build();
@@ -428,13 +396,39 @@
             get { return debugControlsVisible; }
             set { this.RaiseAndSetIfChanged(ref debugControlsVisible, value); }
         }
-
-
         public DebugManager DebugManager { get; private set; }
 
         //public MainMenuViewModel MainMenu { get; private set; }
 
-        public ToolBarViewModel ToolBar { get; private set; }
+        private ToolBarDefinition _toolBarDefinition;
+        public ToolBarDefinition ToolBarDefinition
+        {
+            get { return _toolBarDefinition; }
+            protected set
+            {
+                this.RaiseAndSetIfChanged(ref _toolBarDefinition, value);
+                // Might need to do a global raise property change (NPC(string.Empty))
+            }
+        }
+
+        private IToolBar _toolBar;
+        public IToolBar ToolBar
+        {
+            get
+            {
+                if (_toolBar != null)
+                    return _toolBar;
+
+                if (ToolBarDefinition == null)
+                    return null;
+
+                var toolBarBuilder = IoC.Get<IToolBarBuilder>();
+                _toolBar = new ToolBarModel();
+                
+                toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
+                return _toolBar;
+            }
+        }
 
         public DocumentTabsViewModel DocumentTabs { get; private set; }
 
@@ -551,6 +545,13 @@
             }
         }
 
+        public IEditor SelectedDocument
+        {
+            get
+            {
+                return DocumentTabs?.SelectedDocument;
+            }
+        }
 
         public void Cleanup()
         {
