@@ -237,7 +237,7 @@
 
             var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
             completionResults.Sort();
-
+            
             var result = new List<CodeCompletionData>();
 
             foreach (var codeCompletion in completionResults.Results)
@@ -281,7 +281,10 @@
                 }
             }
 
+
+            completionResults.Dispose();
             clangAccessSemaphore.Release();
+
             return result;
         }
 
