@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/perspex" Header="Type">
+﻿<TabItem xmlns="https://github.com/avaloniaui" Header="Type">
   <StackPanel HorizontalAlignment="Left">    
     <DropDown Items="{Binding ProjectTypeOptions}" SelectedItem="{Binding ProjectType, Mode=TwoWay}" Width="150" />
   </StackPanel>

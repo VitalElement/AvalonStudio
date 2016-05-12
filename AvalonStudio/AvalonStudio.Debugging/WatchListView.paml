@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:ucont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">
   <cont:ToolControl Title="Watch List">

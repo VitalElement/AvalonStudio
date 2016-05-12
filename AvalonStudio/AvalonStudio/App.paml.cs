@@ -16,7 +16,6 @@ namespace AvalonStudio
     {
         public App()
         {
-            
             RegisterServices();
             this.UseWin32().UseDirect2D().LoadFromXaml();
         }
