@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Projects;
+using AvalonStudio.Projects;
 
 namespace AvalonStudio.Languages
 {

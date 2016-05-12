@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.Toolchains
+namespace AvalonStudio.Toolchains
 {
     using Extensibility.Plugin;
-    using Perspex.Controls;
+    using Avalonia.Controls;
     using Projects;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;

@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Projects.Standard
+namespace AvalonStudio.Projects.Standard
 {
     public class Include : ExportableProperty<string>
     {

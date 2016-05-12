@@ -1,17 +1,17 @@
-﻿namespace AvalonStudio.TextEditor
+namespace AvalonStudio.TextEditor
 {
     using Document;
     using Indentation;
     using OmniXaml.Attributes;
-    using Perspex;
-    using Perspex.Controls;
-    using Perspex.Controls.Primitives;
-    using Perspex.Data;
-    using Perspex.Input;
-    using Perspex.Input.Platform;
-    using Perspex.Interactivity;
-    using Perspex.Media;
-    using Perspex.Threading;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Controls.Primitives;
+    using Avalonia.Data;
+    using Avalonia.Input;
+    using Avalonia.Input.Platform;
+    using Avalonia.Interactivity;
+    using Avalonia.Media;
+    using Avalonia.Threading;
     using Rendering;
     using System;
     using System.Collections.Generic;
@@ -96,8 +96,8 @@
         #endregion
 
         #region Pespex Properties
-        public static readonly PerspexProperty<string> TabCharacterProperty =
-            PerspexProperty.Register<TextEditor, string>(nameof(TabCharacter), defaultValue: "    ");
+        public static readonly AvaloniaProperty<string> TabCharacterProperty =
+            AvaloniaProperty.Register<TextEditor, string>(nameof(TabCharacter), defaultValue: "    ");
 
         public string TabCharacter
         {
@@ -105,8 +105,8 @@
             set { SetValue(TabCharacterProperty, value); }
         }
 
-        public static readonly PerspexProperty<int> MouseCursorOffsetProperty =
-            PerspexProperty.Register<TextEditor, int>(nameof(MouseCursorOffset));
+        public static readonly AvaloniaProperty<int> MouseCursorOffsetProperty =
+            AvaloniaProperty.Register<TextEditor, int>(nameof(MouseCursorOffset));
 
         public int MouseCursorOffset
         {
@@ -114,8 +114,8 @@
             set { SetValue(MouseCursorOffsetProperty, value); }
         }
 
-        public static readonly PerspexProperty<Point> MouseCursorPositionProperty =
-            PerspexProperty.Register<TextEditor, Point>(nameof(MouseCursorPosition), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<Point> MouseCursorPositionProperty =
+            AvaloniaProperty.Register<TextEditor, Point>(nameof(MouseCursorPosition), defaultBindingMode: BindingMode.TwoWay);
 
         public Point MouseCursorPosition
         {
@@ -123,8 +123,8 @@
             set { SetValue(MouseCursorPositionProperty, value); }
         }
 
-        public static readonly PerspexProperty<string> SelectedWordProperty =
-            PerspexProperty.Register<TextEditor, string>(nameof(SelectedWord), defaultValue: string.Empty, defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<string> SelectedWordProperty =
+            AvaloniaProperty.Register<TextEditor, string>(nameof(SelectedWord), defaultValue: string.Empty, defaultBindingMode: BindingMode.TwoWay);
 
         public string SelectedWord
         {
@@ -132,8 +132,8 @@
             set { SetValue(SelectedWordProperty, value); }
         }
 
-        public static readonly PerspexProperty<double> LineHeightProperty =
-            PerspexProperty.Register<TextEditor, double>(nameof(LineHeight), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<double> LineHeightProperty =
+            AvaloniaProperty.Register<TextEditor, double>(nameof(LineHeight), defaultBindingMode: BindingMode.TwoWay);
 
         public double LineHeight
         {
@@ -162,7 +162,7 @@
         /// Defines the <see cref="Header"/> property.
         /// </summary>
         public static readonly StyledProperty<object> HeaderProperty =
-            PerspexProperty.Register<TextEditor, object>(nameof(Header));
+            AvaloniaProperty.Register<TextEditor, object>(nameof(Header));
 
         public object Header
         {
@@ -179,7 +179,7 @@
             set { SetValue(MarginsProperty, value); }
         }
 
-        public static readonly PerspexProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
+        public static readonly AvaloniaProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
             TextView.BackgroundRenderersProperty.AddOwner<TextEditor>();
 
         public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
@@ -188,7 +188,7 @@
             set { SetValue(BackgroundRenderersProperty, value); }
         }
 
-        public static readonly PerspexProperty<ObservableCollection<IDocumentLineTransformer>> DocumentLineTransformersProperty =
+        public static readonly AvaloniaProperty<ObservableCollection<IDocumentLineTransformer>> DocumentLineTransformersProperty =
             TextView.DocumentLineTransformersProperty.AddOwner<TextEditor>();
 
         public ObservableCollection<IDocumentLineTransformer> DocumentLineTransformers
@@ -197,7 +197,7 @@
             set { SetValue(DocumentLineTransformersProperty, value); }
         }
 
-        public static readonly PerspexProperty<System.Windows.Input.ICommand> TextChangedCommandProperty =
+        public static readonly AvaloniaProperty<System.Windows.Input.ICommand> TextChangedCommandProperty =
             TextView.TextChangedCommandProperty.AddOwner<TextEditor>();
 
         public System.Windows.Input.ICommand TextChangedCommand
@@ -206,8 +206,8 @@
             set { SetValue(TextChangedCommandProperty, value); }
         }
 
-        public static readonly PerspexProperty<int> TextChangedDelayProperty =
-                    PerspexProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
+        public static readonly AvaloniaProperty<int> TextChangedDelayProperty =
+                    AvaloniaProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
 
         public int TextChangedDelay
         {
@@ -215,8 +215,8 @@
             set { SetValue(TextChangedDelayProperty, value); textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value); }
         }
 
-        public static readonly PerspexProperty<bool> AcceptsReturnProperty =
-            PerspexProperty.Register<TextEditor, bool>(nameof(AcceptsReturn));
+        public static readonly AvaloniaProperty<bool> AcceptsReturnProperty =
+            AvaloniaProperty.Register<TextEditor, bool>(nameof(AcceptsReturn));
 
         public bool AcceptsReturn
         {
@@ -224,8 +224,8 @@
             set { SetValue(AcceptsReturnProperty, value); }
         }
 
-        public static readonly PerspexProperty<bool> AcceptsTabProperty =
-            PerspexProperty.Register<TextEditor, bool>(nameof(AcceptsTab));
+        public static readonly AvaloniaProperty<bool> AcceptsTabProperty =
+            AvaloniaProperty.Register<TextEditor, bool>(nameof(AcceptsTab));
 
         public bool AcceptsTab
         {
@@ -233,7 +233,7 @@
             set { SetValue(AcceptsTabProperty, value); }
         }
 
-        public static readonly PerspexProperty<int> CaretIndexProperty =
+        public static readonly AvaloniaProperty<int> CaretIndexProperty =
             TextView.CaretIndexProperty.AddOwner<TextEditor>();
 
         public int CaretIndex
@@ -252,8 +252,8 @@
             }
         }
 
-        public static readonly PerspexProperty<Point> CaretLocationProperty =
-            PerspexProperty.Register<TextEditor, Point>(nameof(CaretLocation), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<Point> CaretLocationProperty =
+            AvaloniaProperty.Register<TextEditor, Point>(nameof(CaretLocation), defaultBindingMode: BindingMode.TwoWay);
 
         public Point CaretLocation
         {
@@ -261,8 +261,8 @@
             set { SetValue(CaretLocationProperty, value); }
         }
 
-        public static readonly PerspexProperty<Point> CaretLocationInTextViewProperty =
-            PerspexProperty.Register<TextEditor, Point>(nameof(CaretLocationInTextView), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<Point> CaretLocationInTextViewProperty =
+            AvaloniaProperty.Register<TextEditor, Point>(nameof(CaretLocationInTextView), defaultBindingMode: BindingMode.TwoWay);
 
         public Point CaretLocationInTextView
         {
@@ -270,8 +270,8 @@
             set { SetValue(CaretLocationInTextViewProperty, value); }
         }
 
-        public static readonly PerspexProperty<int> SelectionStartProperty =
-            PerspexProperty.Register<TextEditor, int>(nameof(SelectionStart));
+        public static readonly AvaloniaProperty<int> SelectionStartProperty =
+            AvaloniaProperty.Register<TextEditor, int>(nameof(SelectionStart));
 
         public int SelectionStart
         {
@@ -279,8 +279,8 @@
             set { SetValue(SelectionStartProperty, value); }
         }
 
-        public static readonly PerspexProperty<int> SelectionEndProperty =
-            PerspexProperty.Register<TextEditor, int>(nameof(SelectionEnd));
+        public static readonly AvaloniaProperty<int> SelectionEndProperty =
+            AvaloniaProperty.Register<TextEditor, int>(nameof(SelectionEnd));
 
         public int SelectionEnd
         {
@@ -310,7 +310,7 @@
             SelectionEnd = segment.EndOffset;
         }
 
-        public static readonly PerspexProperty<IIndentationStrategy> IndentationStrategyProperty = PerspexProperty.Register<TextEditor, IIndentationStrategy>(nameof(IndentationStrategy));
+        public static readonly AvaloniaProperty<IIndentationStrategy> IndentationStrategyProperty = AvaloniaProperty.Register<TextEditor, IIndentationStrategy>(nameof(IndentationStrategy));
 
         public IIndentationStrategy IndentationStrategy
         {
@@ -590,7 +590,7 @@
 
         private async void Cut()
         {
-            await ((IClipboard)PerspexLocator.Current.GetService(typeof(IClipboard)))
+            await ((IClipboard)AvaloniaLocator.Current.GetService(typeof(IClipboard)))
                 .SetTextAsync(GetSelection());
 
             DeleteSelection();
@@ -598,13 +598,13 @@
 
         private async void Copy()
         {
-            await ((IClipboard)PerspexLocator.Current.GetService(typeof(IClipboard)))
+            await ((IClipboard)AvaloniaLocator.Current.GetService(typeof(IClipboard)))
                 .SetTextAsync(GetSelection());
         }
 
         private async void Paste()
         {
-            var text = await ((IClipboard)PerspexLocator.Current.GetService(typeof(IClipboard))).GetTextAsync();
+            var text = await ((IClipboard)AvaloniaLocator.Current.GetService(typeof(IClipboard))).GetTextAsync();
             if (text == null)
             {
                 return;

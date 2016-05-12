@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls
 {
-    using Perspex;
-    using Perspex.Controls;
-    using Perspex.Controls.Presenters;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Controls.Presenters;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;

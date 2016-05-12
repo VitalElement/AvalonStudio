@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Extensibility.ToolBars
+namespace AvalonStudio.Extensibility.ToolBars
 {
     public class ExcludeToolBarItemDefinition
     {

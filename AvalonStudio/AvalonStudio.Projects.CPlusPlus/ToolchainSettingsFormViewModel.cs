@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.Projects.CPlusPlus
+namespace AvalonStudio.Projects.CPlusPlus
 {
     using AvalonStudio.MVVM;
     using Extensibility;
-    using Perspex.Controls;
+    using Avalonia.Controls;
     using ReactiveUI;
     using Shell;
     using System.Collections.Generic;

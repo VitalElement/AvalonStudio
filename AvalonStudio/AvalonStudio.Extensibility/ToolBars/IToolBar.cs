@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Extensibility.ToolBars
+namespace AvalonStudio.Extensibility.ToolBars
 {
     using Models;
     using MVVM;

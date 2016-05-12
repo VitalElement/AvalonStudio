@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.Extensibility.Commands
+namespace AvalonStudio.Extensibility.Commands
 {
     using System;
     using ReactiveUI;
-    using Perspex.Controls.Shapes;
+    using Avalonia.Controls.Shapes;
     public class Command : ReactiveObject
     {
         private readonly CommandDefinitionBase _commandDefinition;

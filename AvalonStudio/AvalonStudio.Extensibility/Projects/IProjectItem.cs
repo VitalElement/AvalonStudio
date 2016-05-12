@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Projects
+namespace AvalonStudio.Projects
 {
     public interface IProjectItem
     {

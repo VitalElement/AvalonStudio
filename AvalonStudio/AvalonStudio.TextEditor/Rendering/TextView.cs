@@ -1,22 +1,22 @@
-﻿namespace AvalonStudio.TextEditor.Rendering
+namespace AvalonStudio.TextEditor.Rendering
 {
     using Document;
-    using Perspex;
-    using Perspex.Controls;
-    using Perspex.Controls.Primitives;
-    using Perspex.Controls.Shapes;
-    using Perspex.Data;
-    using Perspex.Media;
-    using Perspex.Threading;
-    using Perspex.Utilities;
-    using Perspex.VisualTree;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Controls.Primitives;
+    using Avalonia.Controls.Shapes;
+    using Avalonia.Data;
+    using Avalonia.Media;
+    using Avalonia.Threading;
+    using Avalonia.Utilities;
+    using Avalonia.VisualTree;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
     using System.Linq;
     using System.Reactive.Linq;
-    using Perspex.Input;
+    using Avalonia.Input;
     using System.Reactive.Disposables;
 
     public class TextView : ContentControl, IScrollable
@@ -291,8 +291,8 @@
             return result;
         }
 
-        #region Perspex Properties
-        public static readonly PerspexProperty<TextWrapping> TextWrappingProperty =
+        #region Avalonia Properties
+        public static readonly AvaloniaProperty<TextWrapping> TextWrappingProperty =
            TextBlock.TextWrappingProperty.AddOwner<TextView>();
 
         public TextWrapping TextWrapping
@@ -302,7 +302,7 @@
         }
 
         public static readonly StyledProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
-            PerspexProperty.Register<TextView, ObservableCollection<IBackgroundRenderer>>(nameof(BackgroundRenderers), new ObservableCollection<IBackgroundRenderer>());
+            AvaloniaProperty.Register<TextView, ObservableCollection<IBackgroundRenderer>>(nameof(BackgroundRenderers), new ObservableCollection<IBackgroundRenderer>());
 
         public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
         {
@@ -311,7 +311,7 @@
         }
 
         public static readonly StyledProperty<ObservableCollection<IDocumentLineTransformer>> DocumentLineTransformersProperty =
-            PerspexProperty.Register<TextView, ObservableCollection<IDocumentLineTransformer>>(nameof(DocumentLineTransformers), new ObservableCollection<IDocumentLineTransformer>());
+            AvaloniaProperty.Register<TextView, ObservableCollection<IDocumentLineTransformer>>(nameof(DocumentLineTransformers), new ObservableCollection<IDocumentLineTransformer>());
 
         public ObservableCollection<IDocumentLineTransformer> DocumentLineTransformers
         {
@@ -319,7 +319,7 @@
             set { SetValue(DocumentLineTransformersProperty, value); }
         }
 
-        public static readonly PerspexProperty<string> FontFamilyProperty = TextEditor.FontFamilyProperty.AddOwner<TextView>();
+        public static readonly AvaloniaProperty<string> FontFamilyProperty = TextEditor.FontFamilyProperty.AddOwner<TextView>();
 
         public string FontFamily
         {
@@ -327,7 +327,7 @@
             set { SetValue(FontFamilyProperty, value); }
         }
 
-        public static readonly PerspexProperty<double> FontSizeProperty = TextEditor.FontSizeProperty.AddOwner<TextView>();
+        public static readonly AvaloniaProperty<double> FontSizeProperty = TextEditor.FontSizeProperty.AddOwner<TextView>();
 
         public double FontSize
         {
@@ -335,8 +335,8 @@
             set { SetValue(FontSizeProperty, value); }
         }
 
-        public static readonly PerspexProperty<bool> AcceptsReturnProperty =
-            PerspexProperty.Register<TextView, bool>(nameof(AcceptsReturn), defaultValue: true);
+        public static readonly AvaloniaProperty<bool> AcceptsReturnProperty =
+            AvaloniaProperty.Register<TextView, bool>(nameof(AcceptsReturn), defaultValue: true);
 
         public bool AcceptsReturn
         {
@@ -344,8 +344,8 @@
             set { SetValue(AcceptsReturnProperty, value); }
         }
 
-        public static readonly PerspexProperty<bool> AcceptsTabProperty =
-            PerspexProperty.Register<TextView, bool>(nameof(AcceptsTab));
+        public static readonly AvaloniaProperty<bool> AcceptsTabProperty =
+            AvaloniaProperty.Register<TextView, bool>(nameof(AcceptsTab));
 
         public bool AcceptsTab
         {
@@ -354,7 +354,7 @@
         }
 
         public static readonly StyledProperty<TextDocument> TextDocumentProperty =
-            PerspexProperty.Register<TextView, TextDocument>(nameof(TextDocument));
+            AvaloniaProperty.Register<TextView, TextDocument>(nameof(TextDocument));
 
         public TextDocument TextDocument
         {
@@ -363,7 +363,7 @@
         }
 
         public static readonly StyledProperty<System.Windows.Input.ICommand> BeforeTextChangedCommandProperty =
-            PerspexProperty.Register<TextView, System.Windows.Input.ICommand>(nameof(BeforeTextChangedCommand));
+            AvaloniaProperty.Register<TextView, System.Windows.Input.ICommand>(nameof(BeforeTextChangedCommand));
 
         public System.Windows.Input.ICommand BeforeTextChangedCommand
         {
@@ -372,7 +372,7 @@
         }
 
         public static readonly StyledProperty<System.Windows.Input.ICommand> TextChangedCommandProperty =
-            PerspexProperty.Register<TextView, System.Windows.Input.ICommand>(nameof(TextChangedCommand));
+            AvaloniaProperty.Register<TextView, System.Windows.Input.ICommand>(nameof(TextChangedCommand));
 
         public System.Windows.Input.ICommand TextChangedCommand
         {
@@ -381,7 +381,7 @@
         }
 
         public static readonly StyledProperty<int> CaretIndexProperty =
-            PerspexProperty.Register<TextView, int>(nameof(CaretIndex), defaultValue: 0, defaultBindingMode: BindingMode.TwoWay);
+            AvaloniaProperty.Register<TextView, int>(nameof(CaretIndex), defaultValue: 0, defaultBindingMode: BindingMode.TwoWay);
 
         public int CaretIndex
         {
@@ -390,7 +390,7 @@
         }
 
         public static readonly StyledProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
-            PerspexProperty.Register<TextView, ObservableCollection<TextViewMargin>>(nameof(Margins), new ObservableCollection<TextViewMargin>());
+            AvaloniaProperty.Register<TextView, ObservableCollection<TextViewMargin>>(nameof(Margins), new ObservableCollection<TextViewMargin>());
 
         public ObservableCollection<TextViewMargin> Margins
         {
@@ -398,13 +398,13 @@
             set { SetValue(MarginsProperty, value); }
         }
 
-        public static readonly PerspexProperty<int> SelectionStartProperty =
-            PerspexProperty.Register<TextView, int>(nameof(SelectionStart));
+        public static readonly AvaloniaProperty<int> SelectionStartProperty =
+            AvaloniaProperty.Register<TextView, int>(nameof(SelectionStart));
 
-        public static readonly PerspexProperty<int> SelectionEndProperty =
-            PerspexProperty.Register<TextView, int>(nameof(SelectionEnd));
+        public static readonly AvaloniaProperty<int> SelectionEndProperty =
+            AvaloniaProperty.Register<TextView, int>(nameof(SelectionEnd));
 
-        public static readonly PerspexProperty<IBrush> ForegoundProperty =
+        public static readonly AvaloniaProperty<IBrush> ForegoundProperty =
             TextBlock.ForegroundProperty.AddOwner<TextView>();
 
         public IBrush Foreground
@@ -413,7 +413,7 @@
             set { SetValue(ForegoundProperty, value); }
         }
 
-        public static readonly PerspexProperty<IBrush> BackgroundProperty =
+        public static readonly AvaloniaProperty<IBrush> BackgroundProperty =
             Border.BackgroundProperty.AddOwner<TextView>();
 
         public IBrush Background

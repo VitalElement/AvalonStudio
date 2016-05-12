@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Toolchains.GCC
+namespace AvalonStudio.Toolchains.GCC
 {
     using AvalonStudio.Toolchains.Standard;
 

@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio
+namespace AvalonStudio
 {
     using AvalonStudio.Utils;
     using Platforms;

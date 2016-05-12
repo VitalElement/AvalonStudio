@@ -1,12 +1,12 @@
-﻿namespace AvalonStudio.Debugging.Commands
+namespace AvalonStudio.Debugging.Commands
 {
     using AvalonStudio.Extensibility.Commands;
     using Debugging;
     using Extensibility;
-    using Perspex.Controls;
-    using Perspex.Controls.Shapes;
-    using Perspex.Input;
-    using Perspex.Media;
+    using Avalonia.Controls;
+    using Avalonia.Controls.Shapes;
+    using Avalonia.Input;
+    using Avalonia.Media;
     using Projects;
     using ReactiveUI;
     using Shell;
