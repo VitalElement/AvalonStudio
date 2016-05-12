@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/perspex" Header="Toolchain" xmlns:cont="clr-namespace:AvalonStudio.Extensibility.Controls;assembly=AvalonStudio.Extensibility">
+﻿<TabItem xmlns="https://github.com/avaloniaui" Header="Toolchain" xmlns:cont="clr-namespace:AvalonStudio.Extensibility.Controls;assembly=AvalonStudio.Extensibility">
   <Grid IsEnabled="{Binding IsEnabled}">
     <Grid.RowDefinitions>
       <RowDefinition Height="30"/>

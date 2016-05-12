@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Toolchains.Llilum
+namespace AvalonStudio.Toolchains.Llilum
 {
     using AvalonStudio.Toolchains.Standard;
     using AvalonStudio.Projects.Standard;
@@ -8,7 +8,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using Perspex.Controls;
+    using Avalonia.Controls;
 
     public class LlilumToolchain : StandardToolChain
     {

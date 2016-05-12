@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Extensibility.Git
+namespace AvalonStudio.Extensibility.Git
 {
     using System;
     using System.Collections.Generic;

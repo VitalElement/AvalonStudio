@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Projects.CPlusPlus
+namespace AvalonStudio.Projects.CPlusPlus
 {
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Utils;
@@ -7,7 +7,7 @@
     using Extensibility.Menus;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
-    using Perspex.Controls;
+    using Avalonia.Controls;
     using Platforms;
     using Shell;
     using System;

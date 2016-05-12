@@ -1,11 +1,11 @@
-﻿namespace AvalonStudio
+namespace AvalonStudio
 {
     using Controls;
     using Extensibility;
     using Extensibility.Commands;
-    using Perspex;
-    using Perspex.Controls;
-    using Perspex.Input;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Input;
 
     public class MainWindow : MetroWindow
     {

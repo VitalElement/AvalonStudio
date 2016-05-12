@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Languages.CPlusPlus
+namespace AvalonStudio.Languages.CPlusPlus
 {
     public class ClangFormatSettings
     {

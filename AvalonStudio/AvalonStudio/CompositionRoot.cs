@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio
+namespace AvalonStudio
 {
     using System.Collections.Generic;
     using System.ComponentModel.Composition.Hosting;

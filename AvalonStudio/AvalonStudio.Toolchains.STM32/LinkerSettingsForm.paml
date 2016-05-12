@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/perspex" Header="Linker">
+﻿<TabItem xmlns="https://github.com/avaloniaui" Header="Linker">
   <Grid>
     <Grid.Styles>
       <Style Selector="TextBox">

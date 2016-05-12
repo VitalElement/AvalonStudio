@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.TextEditor.Document
+namespace AvalonStudio.TextEditor.Document
 {
     /// <summary>
     /// This Interface describes a the basic Undo/Redo operation

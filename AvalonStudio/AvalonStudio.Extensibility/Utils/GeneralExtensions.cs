@@ -1,6 +1,6 @@
-﻿namespace AvalonStudio.Utils
+namespace AvalonStudio.Utils
 {
-    using Perspex;
+    using Avalonia;
     using System;
     using System.Collections.Generic;
     using System.IO;

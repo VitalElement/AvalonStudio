@@ -1,13 +1,13 @@
-﻿namespace AvalonStudio.Shell.Commands
+namespace AvalonStudio.Shell.Commands
 {
     using Extensibility.Commands;
     using System;
     using System.ComponentModel.Composition;
-    using Perspex.Input;
+    using Avalonia.Input;
     using ReactiveUI;
     using Extensibility;
-    using Perspex.Controls.Shapes;
-    using Perspex.Media;
+    using Avalonia.Controls.Shapes;
+    using Avalonia.Media;
 
     [CommandDefinition]
     public class BuildCommandDefinition : CommandDefinition
