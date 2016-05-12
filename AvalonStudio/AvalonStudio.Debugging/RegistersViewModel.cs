@@ -15,7 +15,11 @@ namespace AvalonStudio.Debugging
 
         public RegistersViewModel() : base(new ObservableCollection<RegisterViewModel>())
         {
-            IsVisible = false;
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                IsVisible = false;
+            });
+
             Title = "Registers";
             lastChangedRegisters = new List<RegisterViewModel>();
         }
@@ -31,7 +35,7 @@ namespace AvalonStudio.Debugging
         {
             get
             {
-                return Location.Right;
+                return Location.Left;
             }
         }
 
@@ -138,7 +142,10 @@ namespace AvalonStudio.Debugging
 
         private void RegistersViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
         {
-            Invalidate();
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Invalidate();
+            });
         }
     }
 }

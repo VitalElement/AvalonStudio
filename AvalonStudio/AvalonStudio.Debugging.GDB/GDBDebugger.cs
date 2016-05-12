@@ -385,10 +385,12 @@ namespace AvalonStudio.Debugging.GDB
             };
 
             this.InternalStopped += onStoppedHandler;
-
-            Platform.SendSignal(process.Id, Platform.Signum.SIGINT);
-
-            waitForStop.WaitOne();
+            
+            do
+            {
+                Platform.SendSignal(process.Id, Platform.Signum.SIGINT);
+            }
+            while (!waitForStop.WaitOne(100));
 
             this.InternalStopped -= onStoppedHandler;
 

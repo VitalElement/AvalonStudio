@@ -9,14 +9,18 @@ namespace AvalonStudio.Debugging
     using System;
     using Extensibility.Plugin;
     using Extensibility;
-
+    using Avalonia.Threading;
     public class WatchListViewModel : ToolViewModel, IExtension
     {
         protected IDebugManager _debugManager;
 
         public WatchListViewModel()
         {
-            IsVisible = false;
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                IsVisible = false;
+            });
+
             Title = "Watch List";
             Children = new ObservableCollection<WatchViewModel>();
         }
@@ -32,7 +36,7 @@ namespace AvalonStudio.Debugging
         {
             get
             {
-                return Location.Bottom;
+                return Location.RightMiddle;
             }
         }
 

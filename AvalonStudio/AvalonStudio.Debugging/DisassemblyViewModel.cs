@@ -98,7 +98,11 @@ namespace AvalonStudio.Debugging
 
         public DisassemblyViewModel()
         {
-            IsVisible = false;
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                IsVisible = false;
+            });
+
             Title = "Dissasembly";
             this.dataProvider = new DissasemblyDataProvider();
         }
@@ -232,7 +236,7 @@ namespace AvalonStudio.Debugging
         {
             get
             {
-                return Location.Right;
+                return Location.RightTop;
             }
         }
     }

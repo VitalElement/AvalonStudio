@@ -14,7 +14,11 @@ namespace AvalonStudio.MVVM
     {
         Left,
         Right,
-        Bottom
+        Bottom,
+        BottomRight,
+        RightBottom,
+        RightMiddle,
+        RightTop,
     }
 
 
