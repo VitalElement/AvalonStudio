@@ -6,7 +6,7 @@ namespace AvalonStudio.Behaviours
     using Avalonia.Controls.Primitives;
     using Avalonia.Input;
     using Avalonia.Threading;
-    using Perspex.Xaml.Interactivity;
+    using Avalonia.Xaml.Interactivity;
     using System;
     using System.Collections.Generic;
     using System.Linq;

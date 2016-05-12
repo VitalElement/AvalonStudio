@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Avalonia.Controls;
 using Avalonia.Input;
-using Perspex.Xaml.Interactivity;
+using Avalonia.Xaml.Interactivity;
 
 namespace AvalonStudio.Behaviors
 {

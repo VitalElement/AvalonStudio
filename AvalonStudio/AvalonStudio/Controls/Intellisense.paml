@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex" xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility" Focusable="false">  
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility" Focusable="false">  
   <Panel IsVisible="{Binding IsVisible}">
     <StackPanel Orientation="Horizontal" Gap="2" Background="Transparent">
       <ListBox Items="{Binding CompletionData}" Background="{StyleResource ThemeControlMidBrush}" BorderBrush="#3e3e42" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="180" FontFamily="Segoi UI" FontSize="14" Width="240">        

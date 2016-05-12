@@ -8,7 +8,7 @@ namespace AvalonStudio.Behaviors
     using Avalonia.Media;
     using Avalonia.Metadata;
     using Avalonia.Threading;
-    using Perspex.Xaml.Interactivity;
+    using Avalonia.Xaml.Interactivity;
     using System;
     using Utils;
 
