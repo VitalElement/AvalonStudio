@@ -175,13 +175,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                 // TODO do we mark files as class header? CAn clang auto detect this?
                 //if (file.Language == Language.Cpp)
                 {
-
                     args.Add("-xc++");
                     args.Add("-std=c++14");
                 }
 
                // args.Add("-Weverything");
-
+               
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble | TranslationUnitFlags.CacheCompletionResults);
             }
 
@@ -632,6 +631,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             
             editor.TextInput -= association.TextInputHandler;
 
+            association.TranslationUnit?.Dispose();
             dataAssociations.Remove(file);
         }
 
