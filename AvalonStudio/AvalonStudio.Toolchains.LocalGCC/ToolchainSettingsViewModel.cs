@@ -1,4 +1,4 @@
-﻿using AvalonStudio.MVVM;
+using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;

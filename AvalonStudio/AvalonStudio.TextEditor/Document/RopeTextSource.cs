@@ -1,4 +1,4 @@
-﻿using AvalonStudio.TextEditor.Utils;
+using AvalonStudio.TextEditor.Utils;
 using System;
 using System.IO;
 

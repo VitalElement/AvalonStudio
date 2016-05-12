@@ -1,4 +1,4 @@
-﻿<Styles xmlns="https://github.com/perspex" xmlns:local="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
   <Style Selector="local|MetroWindow">
     <Setter Property="Background" Value="{StyleResource ThemeBackgroundBrush}"/>
     <Setter Property="FontFamily" Value="Segoe UI"/>

@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Models.Tools.Debuggers.Local
+namespace AvalonStudio.Models.Tools.Debuggers.Local
 {
     using AvalonStudio.Debugging.GDB;
     using AvalonStudio.Utils;

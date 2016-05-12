@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.TextEditor.Indentation.CSharp
+namespace AvalonStudio.TextEditor.Indentation.CSharp
 {
     using Document;
     using System;

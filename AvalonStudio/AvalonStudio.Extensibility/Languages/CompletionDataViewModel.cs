@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Languages.ViewModels
+namespace AvalonStudio.Languages.ViewModels
 {
     using AvalonStudio.MVVM;
     using Languages;

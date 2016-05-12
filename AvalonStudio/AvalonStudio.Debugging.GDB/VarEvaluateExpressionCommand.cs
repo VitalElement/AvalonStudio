@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Debugging.GDB
+namespace AvalonStudio.Debugging.GDB
 {
     public class VarEvaluateExpressionCommand : Command<GDBResponse<string>>
     {

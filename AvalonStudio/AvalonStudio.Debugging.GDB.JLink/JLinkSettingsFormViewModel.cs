@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Debugging.GDB.JLink
+namespace AvalonStudio.Debugging.GDB.JLink
 {
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;

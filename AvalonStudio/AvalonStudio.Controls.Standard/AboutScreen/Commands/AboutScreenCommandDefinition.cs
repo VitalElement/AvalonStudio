@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.Standard.AboutScreen.Commands
+namespace AvalonStudio.Controls.Standard.AboutScreen.Commands
 {
     using AvalonStudio.Extensibility.Commands;
     using Extensibility;

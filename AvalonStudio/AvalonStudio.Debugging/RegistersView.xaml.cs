@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging
 {
-    using Perspex;
-    using Perspex.Controls;
+    using Avalonia;
+    using Avalonia.Controls;
 
     public class RegistersView : UserControl
     {

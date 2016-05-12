@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.Standard.ErrorList
+namespace AvalonStudio.Controls.Standard.ErrorList
 {
     using AvalonStudio.MVVM;
     using Languages;

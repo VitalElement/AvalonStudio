@@ -1,5 +1,5 @@
-﻿using Perspex.Controls;
-using Perspex;
+using Avalonia.Controls;
+using Avalonia;
 using System.Reactive.Disposables;
 
 namespace AvalonStudio.Controls
