@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/avaloniaui" xmlns:proj="clr-namespace:AvalonStudio.Projects.CPlusPlus;assembly=AvalonStudio.Projects.CPlusPlus" Header="References">
+﻿<TabItem xmlns="https://github.com/perspex" xmlns:proj="clr-namespace:AvalonStudio.Projects.CPlusPlus;assembly=AvalonStudio.Projects.CPlusPlus" Header="References">
   <Grid>
     <ListBox Items="{Binding Projects}" Grid.Column="1" Margin="10 0 0 0" >
       <ListBox.DataTemplates>

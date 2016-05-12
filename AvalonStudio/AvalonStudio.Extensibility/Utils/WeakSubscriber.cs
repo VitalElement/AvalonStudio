@@ -1,6 +1,6 @@
-namespace AvalonStudio.Utils
+﻿namespace AvalonStudio.Utils
 {
-    using Avalonia.Utilities;
+    using Perspex.Utilities;
     using System;
 
     public class WeakSubscriber<T> : IWeakSubscriber<T> where T : EventArgs

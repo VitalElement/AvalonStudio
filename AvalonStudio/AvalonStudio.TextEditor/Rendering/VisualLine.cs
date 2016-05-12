@@ -1,7 +1,7 @@
-namespace AvalonStudio.TextEditor.Rendering
+﻿namespace AvalonStudio.TextEditor.Rendering
 {
     using AvalonStudio.TextEditor.Document;
-    using Avalonia.Media;
+    using Perspex.Media;
     using System;
     using System.Collections.Generic;
     using System.Linq;

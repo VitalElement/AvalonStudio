@@ -1,7 +1,7 @@
-namespace AvalonStudio.Extensibility.MainMenu.ViewModels
+﻿namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 {    
-    using Avalonia;
-    using Avalonia.Controls;
+    using Perspex;
+    using Perspex.Controls;
 
     public class MainMenuView : UserControl
     {

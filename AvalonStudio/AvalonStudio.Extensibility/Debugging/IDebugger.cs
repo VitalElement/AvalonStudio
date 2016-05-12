@@ -1,7 +1,7 @@
-namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging
 {
     using Extensibility.Plugin;
-    using Avalonia.Controls;
+    using Perspex.Controls;
     using Projects;
     using System;
     using System.Collections.Generic;

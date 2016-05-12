@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.Models;assembly=AvalonStudio.Extensibility">
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.Models;assembly=AvalonStudio.Extensibility">
   <Menu Items="{Binding Model}">
     <Menu.DataTemplates>
       <DataTemplate DataType="menu:MenuItemSeparator">

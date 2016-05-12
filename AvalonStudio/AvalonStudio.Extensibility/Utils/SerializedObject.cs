@@ -1,4 +1,4 @@
-namespace AvalonStudio.Utils
+﻿namespace AvalonStudio.Utils
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;

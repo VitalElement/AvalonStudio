@@ -1,4 +1,4 @@
-namespace AvalonStudio.Extensibility.ToolBars.ViewModels
+﻿namespace AvalonStudio.Extensibility.ToolBars.ViewModels
 {
     using AvalonStudio.Extensibility.MVVM;
     using AvalonStudio.MVVM;

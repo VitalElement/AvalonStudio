@@ -1,4 +1,4 @@
-namespace AvalonStudio.Projects.CPlusPlus
+﻿namespace AvalonStudio.Projects.CPlusPlus
 {
     using Newtonsoft.Json;
     using System.IO;

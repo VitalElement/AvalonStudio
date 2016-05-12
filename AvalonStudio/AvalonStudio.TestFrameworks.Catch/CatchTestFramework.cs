@@ -1,4 +1,4 @@
-namespace AvalonStudio.TestFrameworks.Catch
+﻿namespace AvalonStudio.TestFrameworks.Catch
 {
     using System;
     using System.Collections.Generic;

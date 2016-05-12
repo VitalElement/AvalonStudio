@@ -1,15 +1,15 @@
-namespace AvalonStudio.Extensibility.ToolBars.Models
+﻿namespace AvalonStudio.Extensibility.ToolBars.Models
 {
     using System;
     using System.ComponentModel;
     using System.Globalization;
     using Extensibility.ToolBars;
     using Extensibility.Commands;
-    using Avalonia.Input;
+    using Perspex.Input;
     using System.Windows.Input;
     using Extensibility;
     using ReactiveUI;
-    using Avalonia.Controls.Shapes;
+    using Perspex.Controls.Shapes;
 
     public class CommandToolBarItem : ToolBarItemBase, ICommandUiItem
     {

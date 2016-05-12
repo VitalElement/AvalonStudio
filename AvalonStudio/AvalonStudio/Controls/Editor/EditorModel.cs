@@ -1,6 +1,6 @@
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
-    using Avalonia.Threading;
+    using Perspex.Threading;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;

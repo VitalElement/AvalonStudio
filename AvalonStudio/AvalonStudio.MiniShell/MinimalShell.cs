@@ -1,4 +1,4 @@
-namespace AvalonStudio.Shell
+﻿namespace AvalonStudio.Shell
 {
     using AvalonStudio.Debugging;
     using AvalonStudio.Extensibility.Plugin;

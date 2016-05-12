@@ -1,4 +1,4 @@
-namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging
 {
     using AvalonStudio.Extensibility.ToolBars;
     using Commands;

@@ -1,10 +1,10 @@
-namespace AvalonStudio.Debugging.GDB.OpenOCD
+﻿namespace AvalonStudio.Debugging.GDB.OpenOCD
 {
     using System;
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
     using ReactiveUI;
-    using Avalonia.Controls;
+    using Perspex.Controls;
     using System.IO;
     using System.Collections.Generic;
     using System.Linq;

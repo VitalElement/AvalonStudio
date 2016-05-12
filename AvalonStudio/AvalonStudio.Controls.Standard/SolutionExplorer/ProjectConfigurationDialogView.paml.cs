@@ -1,7 +1,7 @@
-namespace AvalonStudio.Controls.Standard.SolutionExplorer
+﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    using Avalonia;
-    using Avalonia.Controls;
+    using Perspex;
+    using Perspex.Controls;
 
     public class ProjectConfigurationDialogView : UserControl
     {

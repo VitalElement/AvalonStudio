@@ -1,4 +1,4 @@
-namespace AvalonStudio.Extensibility.MainMenu.Models
+﻿namespace AvalonStudio.Extensibility.MainMenu.Models
 {
     using ReactiveUI;
     using System.Collections;

@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/avaloniaui" Header="Target">
+﻿<TabItem xmlns="https://github.com/perspex" Header="Target">
     <Grid>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="180"/>

@@ -1,7 +1,7 @@
-namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging
 {
-    using Avalonia;
-    using Avalonia.Controls;
+    using Perspex;
+    using Perspex.Controls;
 
     public class CallStackView : UserControl
     {

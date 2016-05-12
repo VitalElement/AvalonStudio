@@ -1,10 +1,10 @@
-namespace AvalonStudio.Debugging.Commands
+﻿namespace AvalonStudio.Debugging.Commands
 {
     using AvalonStudio.Extensibility.Commands;
     using Debugging;
     using Extensibility;
-    using Avalonia.Controls;
-    using Avalonia.Input;
+    using Perspex.Controls;
+    using Perspex.Input;
     using Projects;
     using ReactiveUI;
     using Shell;
@@ -13,8 +13,8 @@ namespace AvalonStudio.Debugging.Commands
     using System.ComponentModel.Composition;
     using System.Windows.Input;
     using Utils;
-    using Avalonia.Controls.Shapes;
-    using Avalonia.Media;
+    using Perspex.Controls.Shapes;
+    using Perspex.Media;
     [CommandDefinition]
     class StartDebuggingCommandDefinition : CommandDefinition
     {

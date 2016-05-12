@@ -1,4 +1,4 @@
-namespace AvalonStudio.Extensibility.MVVM
+﻿namespace AvalonStudio.Extensibility.MVVM
 {
     using System.Collections;
     using System.Collections.Generic;

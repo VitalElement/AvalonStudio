@@ -1,4 +1,4 @@
-namespace AvalonStudio.MVVM
+﻿namespace AvalonStudio.MVVM
 {
     using Extensibility;
     using ReactiveUI;

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition/>

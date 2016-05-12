@@ -1,8 +1,8 @@
-namespace AvalonStudio.Extensibility.Commands
+﻿namespace AvalonStudio.Extensibility.Commands
 {
     using System;
     //using Caliburn.Micro;
-    using Avalonia.Input;
+    using Perspex.Input;
 
     public abstract class CommandKeyboardShortcut
     {

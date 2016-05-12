@@ -1,7 +1,7 @@
-namespace AvalonStudio.TextEditor
+﻿namespace AvalonStudio.TextEditor
 {
-    using Avalonia;
-    using Avalonia.Styling;
+    using Perspex;
+    using Perspex.Styling;
 
     public class TextEditorTheme : Styles
     {

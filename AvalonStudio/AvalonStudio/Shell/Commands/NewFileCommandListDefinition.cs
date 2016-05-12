@@ -1,5 +1,5 @@
-using AvalonStudio.Extensibility.Commands;
-using Avalonia.Input;
+﻿using AvalonStudio.Extensibility.Commands;
+using Perspex.Input;
 using System.ComponentModel.Composition;
 using System;
 using ReactiveUI;

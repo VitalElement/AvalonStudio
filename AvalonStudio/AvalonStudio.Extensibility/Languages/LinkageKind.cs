@@ -1,4 +1,4 @@
-namespace AvalonStudio.Languages
+﻿namespace AvalonStudio.Languages
 {
     /// <summary>
     /// Describe the linkage of the entity referred to by a cursor.

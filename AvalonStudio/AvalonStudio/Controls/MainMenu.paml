@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui">
+﻿<UserControl xmlns="https://github.com/perspex">
   <Menu Grid.ColumnSpan="2">
     <MenuItem Header="File">
       <MenuItem Header="New Project" Command="{Binding NewProjectCommand}"/>

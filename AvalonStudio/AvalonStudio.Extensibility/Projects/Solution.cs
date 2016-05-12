@@ -1,4 +1,4 @@
-namespace AvalonStudio.Projects
+﻿namespace AvalonStudio.Projects
 {
     using Extensibility;
     using Platforms;

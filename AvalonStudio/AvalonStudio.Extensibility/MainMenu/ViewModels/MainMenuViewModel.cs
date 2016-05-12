@@ -1,4 +1,4 @@
-namespace AvalonStudio.Extensibility.MainMenu.ViewModels
+﻿namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 {
     using Models;
     using MVVM;

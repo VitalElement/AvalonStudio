@@ -1,4 +1,4 @@
-namespace AvalonStudio
+﻿namespace AvalonStudio
 {
     using Controls;
     using Controls.Standard.ErrorList;
@@ -12,8 +12,8 @@ namespace AvalonStudio
     using Extensibility.ToolBars.Models;
     using Languages;
     using MVVM;
-    using Avalonia.Input;
-    using Avalonia.Threading;
+    using Perspex.Input;
+    using Perspex.Threading;
     using Projects;
     using ReactiveUI;
     using Shell;

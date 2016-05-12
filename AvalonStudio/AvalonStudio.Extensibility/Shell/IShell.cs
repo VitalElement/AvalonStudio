@@ -1,4 +1,4 @@
-namespace AvalonStudio.Shell
+﻿namespace AvalonStudio.Shell
 {
     using AvalonStudio.Projects;
     using Documents;
@@ -8,7 +8,7 @@ namespace AvalonStudio.Shell
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using ReactiveUI;
-    using Avalonia.Reactive;
+    using Perspex.Reactive;
     using TestFrameworks;
     using Debugging;
     using Toolchains;

@@ -1,4 +1,4 @@
-namespace AvalonStudio.Toolchains.STM32
+﻿namespace AvalonStudio.Toolchains.STM32
 {
     public class STM32ToolchainSettings
     {

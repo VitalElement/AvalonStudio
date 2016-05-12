@@ -1,7 +1,7 @@
-namespace AvalonStudio.Controls.Standard.Console
+﻿namespace AvalonStudio.Controls.Standard.Console
 {
     using System;
-    using Avalonia.Threading;
+    using Perspex.Threading;
     using ReactiveUI;
     using TextEditor.Document;
     using Utils;

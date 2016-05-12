@@ -1,4 +1,4 @@
-namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging
 {
     using AvalonStudio.MVVM;
     using Debugging;
@@ -11,7 +11,7 @@ namespace AvalonStudio.Debugging
     using System.Collections.ObjectModel;
     using Extensibility.Plugin;
     using Extensibility;
-    using Avalonia.Threading;
+    using Perspex.Threading;
 
     public class CallStackViewModel : ToolViewModel, IExtension
     {

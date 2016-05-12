@@ -1,4 +1,4 @@
-namespace AvalonStudio.Projects.CPlusPlus
+﻿namespace AvalonStudio.Projects.CPlusPlus
 {
     using System;
     using System.Collections.Generic;

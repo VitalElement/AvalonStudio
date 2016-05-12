@@ -1,4 +1,4 @@
-namespace AvalonStudio
+﻿namespace AvalonStudio
 {
     using ReactiveUI;
     using System;

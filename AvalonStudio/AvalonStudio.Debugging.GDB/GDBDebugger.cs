@@ -1,7 +1,7 @@
-namespace AvalonStudio.Debugging.GDB
+﻿namespace AvalonStudio.Debugging.GDB
 {
     using AvalonStudio.Utils;
-    using Avalonia.Controls;
+    using Perspex.Controls;
     using Platforms;
     using Projects;
     using System;

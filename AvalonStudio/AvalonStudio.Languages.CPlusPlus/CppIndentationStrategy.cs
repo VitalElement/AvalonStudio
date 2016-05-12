@@ -1,4 +1,4 @@
-using AvalonStudio.TextEditor.Document;
+﻿using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Indentation.CSharp;
 using System;
