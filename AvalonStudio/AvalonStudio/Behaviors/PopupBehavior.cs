@@ -1,14 +1,14 @@
-﻿namespace AvalonStudio.Behaviors
+namespace AvalonStudio.Behaviors
 {
-    using Perspex;
-    using Perspex.Controls;
-    using Perspex.Controls.Presenters;
-    using Perspex.Controls.Primitives;
-    using Perspex.Input;
-    using Perspex.Media;
-    using Perspex.Metadata;
-    using Perspex.Threading;
-    using Perspex.Xaml.Interactivity;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Controls.Presenters;
+    using Avalonia.Controls.Primitives;
+    using Avalonia.Input;
+    using Avalonia.Media;
+    using Avalonia.Metadata;
+    using Avalonia.Threading;
+    using Avalonia.Xaml.Interactivity;
     using System;
     using Utils;
 
@@ -53,7 +53,7 @@
             popup.Close();
         }
 
-        public static readonly PerspexProperty ContentProperty = PerspexProperty.Register<PopupBehavior, Control>(nameof(Content));
+        public static readonly AvaloniaProperty ContentProperty = AvaloniaProperty.Register<PopupBehavior, Control>(nameof(Content));
 
         [Content]
         public Control Content
@@ -83,7 +83,7 @@
             AssociatedObject.PointerWheelChanged -= AssociatedObject_PointerWheelChanged;
         }
 
-        private void AssociatedObject_AttachedToLogicalTree(object sender, Perspex.LogicalTree.LogicalTreeAttachmentEventArgs e)
+        private void AssociatedObject_AttachedToLogicalTree(object sender, Avalonia.LogicalTree.LogicalTreeAttachmentEventArgs e)
         {
             ((ISetLogicalParent)popup).SetParent(AssociatedObject);
         }

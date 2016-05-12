@@ -1,6 +1,6 @@
-﻿namespace AvalonStudio.TextEditor.Rendering
+namespace AvalonStudio.TextEditor.Rendering
 {
-    using Perspex.Media;
+    using Avalonia.Media;
     using System;
 
     public interface IBackgroundRenderer

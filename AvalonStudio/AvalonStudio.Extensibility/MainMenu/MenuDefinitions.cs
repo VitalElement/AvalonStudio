@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Extensibility.Menus;
+using AvalonStudio.Extensibility.Menus;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;

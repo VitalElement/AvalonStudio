@@ -1,4 +1,4 @@
-﻿<Controls:MetroWindow xmlns="https://github.com/perspex"
+﻿<Controls:MetroWindow xmlns="https://github.com/avaloniaui"
                       xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
         Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFE4E4E4" Width="1600" Height="900">

@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.Languages.CPlusPlus.Rendering
+namespace AvalonStudio.Languages.CPlusPlus.Rendering
 {
     using System;
-    using Perspex;
-    using Perspex.Media;
+    using Avalonia;
+    using Avalonia.Media;
     using TextEditor.Rendering;
     class IncludeTextLineTransformer : IDocumentLineTransformer
     {
