@@ -7,9 +7,19 @@ namespace AvalonStudio.Debugging
     using System;
     using Extensibility;
     using Avalonia.Threading;
+    using MVVM;
+
     public class LocalsViewModel : WatchListViewModel, IExtension
     {
         private List<Variable> locals;
+
+        public override Location DefaultLocation
+        {
+            get
+            {
+                return Location.RightBottom;
+            }
+        }
 
         public void InvalidateLocals(List<Variable> variables)
         {
@@ -88,9 +98,13 @@ namespace AvalonStudio.Debugging
 
         public LocalsViewModel()
         {
-            IsVisible = false;
             Title = "Locals";
             locals = new List<Variable>();
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                IsVisible = false;
+            });
         }
     }
 }

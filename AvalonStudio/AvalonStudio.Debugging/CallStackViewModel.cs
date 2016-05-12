@@ -20,7 +20,12 @@ namespace AvalonStudio.Debugging
         public CallStackViewModel ()
         {
             Title = "CallStack";
-            IsVisible = false;
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                IsVisible = false;
+            });
+            
             frames = new ObservableCollection<FrameViewModel>();
         }
 
@@ -104,7 +109,7 @@ namespace AvalonStudio.Debugging
         {
             get
             {
-                return Location.Bottom;
+                return Location.BottomRight;
             }
         }
     }
