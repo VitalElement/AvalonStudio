@@ -1,4 +1,4 @@
-namespace AvalonStudio.TextEditor.Document
+﻿namespace AvalonStudio.TextEditor.Document
 {
     /// <summary>
 	/// Allows for low-level line tracking.

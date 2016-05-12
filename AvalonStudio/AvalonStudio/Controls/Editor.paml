@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:te="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor"
+﻿<UserControl xmlns="https://github.com/perspex" xmlns:te="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:behaviours="clr-namespace:AvalonStudio.Behaviors;assembly=AvalonStudio"
              xmlns:i="clr-namespace:Perspex.Xaml.Interactivity;assembly=Perspex.Xaml.Interactivity"

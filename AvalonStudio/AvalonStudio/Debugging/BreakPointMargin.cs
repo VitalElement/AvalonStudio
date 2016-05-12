@@ -1,9 +1,9 @@
-namespace AvalonStudio.TextEditor
+﻿namespace AvalonStudio.TextEditor
 {
     using Debugging;
-    using Avalonia;
-    using Avalonia.Input;
-    using Avalonia.Media;
+    using Perspex;
+    using Perspex.Input;
+    using Perspex.Media;
     using Platforms;
     using Projects.CPlusPlus;
     using System.Linq;

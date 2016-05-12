@@ -1,4 +1,4 @@
-namespace AvalonStudio.Projects.Standard
+﻿namespace AvalonStudio.Projects.Standard
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;

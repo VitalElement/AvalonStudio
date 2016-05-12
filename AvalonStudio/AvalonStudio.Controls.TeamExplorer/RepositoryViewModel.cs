@@ -1,4 +1,4 @@
-namespace AvalonStudio.Controls.TeamExplorer
+﻿namespace AvalonStudio.Controls.TeamExplorer
 {
     using LibGit2Sharp;
     using MVVM;

@@ -1,4 +1,4 @@
-namespace AvalonStudio.Utils
+﻿namespace AvalonStudio.Utils
 {
     using System;
     using System.Collections.Generic;

@@ -1,7 +1,7 @@
-namespace AvalonStudio.TextEditor.Rendering
+﻿namespace AvalonStudio.TextEditor.Rendering
 {
     using System;
-    using Avalonia.Media;
+    using Perspex.Media;
 
     public class ColumnLimitBackgroundRenderer : IBackgroundRenderer
     {
@@ -13,7 +13,7 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             double xPos = textView.TextSurfaceBounds.X + textView.CharSize.Width * 120.0;
 
-            drawingContext.DrawLine(new Pen(brush, 1), new Avalonia.Point(xPos, 0), new Avalonia.Point(xPos, textView.Bounds.Bottom));
+            drawingContext.DrawLine(new Pen(brush, 1), new Perspex.Point(xPos, 0), new Perspex.Point(xPos, textView.Bounds.Bottom));
         }
 
         public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)

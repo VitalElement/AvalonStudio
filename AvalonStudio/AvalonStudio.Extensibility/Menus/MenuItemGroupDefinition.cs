@@ -1,4 +1,4 @@
-namespace AvalonStudio.Extensibility.Menus
+﻿namespace AvalonStudio.Extensibility.Menus
 {
     public class MenuItemGroupDefinition
     {

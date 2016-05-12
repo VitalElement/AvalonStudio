@@ -1,4 +1,4 @@
-
+﻿
 
 namespace AvalonStudio.TextEditor.Document
 {

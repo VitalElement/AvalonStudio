@@ -1,6 +1,6 @@
-namespace AvalonStudio.Extensibility.MVVM
+﻿namespace AvalonStudio.Extensibility.MVVM
 {
-    using Avalonia.Threading;
+    using Perspex.Threading;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;

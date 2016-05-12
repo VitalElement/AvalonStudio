@@ -1,8 +1,8 @@
-namespace AvalonStudio.Controls.Standard.ErrorList
+﻿namespace AvalonStudio.Controls.Standard.ErrorList
 {
     using AvalonStudio.Languages;
     using AvalonStudio.MVVM;
-    using Avalonia.Media;
+    using Perspex.Media;
     using System.IO;
 
     public class ErrorViewModel : ViewModel<Diagnostic>

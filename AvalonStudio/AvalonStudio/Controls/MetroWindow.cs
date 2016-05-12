@@ -1,11 +1,11 @@
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
-    using Avalonia.Controls;
-    using Avalonia.Styling;
+    using Perspex.Controls;
+    using Perspex.Styling;
     using System;
-    using Avalonia.Input;
-    using Avalonia.Controls.Primitives;
-    using Avalonia;
+    using Perspex.Input;
+    using Perspex.Controls.Primitives;
+    using Perspex;
     using Utils;
 
     public class MetroWindow : Window, IStyleable
@@ -31,8 +31,8 @@ namespace AvalonStudio.Controls
         private Grid bottomRightGrip;
         private Panel icon;
 
-        public static readonly AvaloniaProperty<Control> TitleBarContentProperty =
-            AvaloniaProperty.Register<MetroWindow, Control>(nameof(TitleBarContent));
+        public static readonly PerspexProperty<Control> TitleBarContentProperty =
+            PerspexProperty.Register<MetroWindow, Control>(nameof(TitleBarContent));
 
         public Control TitleBarContent
         {

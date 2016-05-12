@@ -1,5 +1,5 @@
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Perspex.Controls;
+using Perspex.Markup.Xaml;
 
 namespace AvalonStudio.Controls
 {
@@ -12,7 +12,7 @@ namespace AvalonStudio.Controls
 
         private void InitializeComponent()
         {
-            AvaloniaXamlLoader.Load(this);
+            PerspexXamlLoader.Load(this);
         }
     }
 }

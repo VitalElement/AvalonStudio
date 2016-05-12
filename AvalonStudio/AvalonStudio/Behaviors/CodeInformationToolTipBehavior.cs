@@ -1,4 +1,4 @@
-namespace AvalonStudio.Behaviors
+﻿namespace AvalonStudio.Behaviors
 {
     using AvalonStudio.Controls;
     using AvalonStudio.TextEditor;

@@ -1,4 +1,4 @@
-namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging
 {
     using AvalonStudio.Debugging;
     using Extensibility.Plugin;
@@ -6,7 +6,7 @@ namespace AvalonStudio.Debugging
     using System.Linq;
     using System;
     using Extensibility;
-    using Avalonia.Threading;
+    using Perspex.Threading;
     public class LocalsViewModel : WatchListViewModel, IExtension
     {
         private List<Variable> locals;

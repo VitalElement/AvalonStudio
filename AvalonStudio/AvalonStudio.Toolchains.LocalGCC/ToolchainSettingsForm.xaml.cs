@@ -1,7 +1,7 @@
-namespace AvalonStudio.Toolchains.LocalGCC
+﻿namespace AvalonStudio.Toolchains.LocalGCC
 {
-    using Avalonia;
-    using Avalonia.Controls;
+    using Perspex;
+    using Perspex.Controls;
 
     public class ToolchainSettingsForm : UserControl
     {

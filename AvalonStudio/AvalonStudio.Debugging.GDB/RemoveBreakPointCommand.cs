@@ -1,4 +1,4 @@
-namespace AvalonStudio.Debugging.GDB
+﻿namespace AvalonStudio.Debugging.GDB
 {
     public class RemoveBreakPointCommand : Command<GDBResponse<string>>
     {

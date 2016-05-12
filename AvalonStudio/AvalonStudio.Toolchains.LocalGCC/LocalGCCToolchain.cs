@@ -1,4 +1,4 @@
-namespace AvalonStudio.Toolchains.LocalGCC
+﻿namespace AvalonStudio.Toolchains.LocalGCC
 {
     using AvalonStudio.Toolchains.Standard;
     using Projects;
@@ -9,7 +9,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
     using Utils;
     using System;
     using System.Reflection;
-    using Avalonia.Controls;
+    using Perspex.Controls;
     using System.Dynamic;
     using Extensibility.Utils;
     using Platforms;

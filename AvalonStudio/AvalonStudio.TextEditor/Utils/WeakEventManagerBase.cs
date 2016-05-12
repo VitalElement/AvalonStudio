@@ -1,6 +1,6 @@
-namespace AvalonStudio.TextEditor.Utils
+﻿namespace AvalonStudio.TextEditor.Utils
 {
-    using Avalonia.Utilities;
+    using Perspex.Utilities;
     using System;
     using System.Diagnostics;
     using System.Windows;

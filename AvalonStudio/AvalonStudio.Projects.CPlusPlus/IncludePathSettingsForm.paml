@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/avaloniaui" xmlns:proj="clr-namespace:AvalonStudio.Projects.CPlusPlus;assembly=AvalonStudio.Projects.CPlusPlus" Header="Includes / Defines">
+﻿<TabItem xmlns="https://github.com/perspex" xmlns:proj="clr-namespace:AvalonStudio.Projects.CPlusPlus;assembly=AvalonStudio.Projects.CPlusPlus" Header="Includes / Defines">
   <TabItem.Styles>
     <Style Selector="CheckBox /template/ Path#checkMark">
       <Setter Property="Fill" Value="WhiteSmoke" />

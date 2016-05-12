@@ -1,7 +1,7 @@
-namespace AvalonStudio.Controls.TeamExplorer
+﻿namespace AvalonStudio.Controls.TeamExplorer
 {
-    using Avalonia.Controls;
-    using Avalonia;
+    using Perspex.Controls;
+    using Perspex;
     
     public class RepositoryView : UserControl
     {

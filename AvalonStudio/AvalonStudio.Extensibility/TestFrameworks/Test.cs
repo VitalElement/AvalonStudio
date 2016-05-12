@@ -1,4 +1,4 @@
-namespace AvalonStudio.TestFrameworks
+﻿namespace AvalonStudio.TestFrameworks
 {
     using Projects;
     using System;

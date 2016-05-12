@@ -1,11 +1,11 @@
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
     using Documents;
     using Languages;
     using MVVM;
-    using Avalonia;
-    using Avalonia.Controls;
-    using Avalonia.Threading;
+    using Perspex;
+    using Perspex.Controls;
+    using Perspex.Threading;
     using Platforms;
     using ReactiveUI;
     using System;

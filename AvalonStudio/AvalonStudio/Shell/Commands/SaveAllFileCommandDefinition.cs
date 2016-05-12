@@ -4,8 +4,8 @@ namespace AvalonStudio.Shell.Commands
     using Extensibility;
     using ReactiveUI;
     using System;
-    using Avalonia.Controls.Shapes;
-    using Avalonia.Media;
+    using Perspex.Controls.Shapes;
+    using Perspex.Media;
     [CommandDefinition]
     public class SaveAllFileCommandDefinition : CommandDefinition
     {

@@ -1,4 +1,4 @@
-//
+﻿//
 // MapAttribute.cs
 //
 // Author:

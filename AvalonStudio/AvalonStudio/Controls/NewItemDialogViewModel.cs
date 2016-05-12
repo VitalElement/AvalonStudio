@@ -1,4 +1,4 @@
-namespace AvalonStudio.Controls.ViewModels
+﻿namespace AvalonStudio.Controls.ViewModels
 {
     using System;
     using Extensibility;

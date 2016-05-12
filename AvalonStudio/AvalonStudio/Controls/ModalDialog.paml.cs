@@ -1,7 +1,7 @@
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
-    using Avalonia.Controls;
-    using Avalonia;
+    using Perspex.Controls;
+    using Perspex;
 
     public class ModalDialog : UserControl
     {

@@ -1,7 +1,7 @@
-namespace AvalonStudio.Extensibility.MainMenu.Models
+﻿namespace AvalonStudio.Extensibility.MainMenu.Models
 {
     using Commands;
-    using Avalonia.Input;
+    using Perspex.Input;
     using System;
     using System.Collections.Generic;
     using System.Globalization;

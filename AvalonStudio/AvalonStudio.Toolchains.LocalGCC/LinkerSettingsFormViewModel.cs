@@ -1,4 +1,4 @@
-namespace AvalonStudio.Toolchains.LocalGCC
+﻿namespace AvalonStudio.Toolchains.LocalGCC
 {
     using AvalonStudio.MVVM;
     using Extensibility.Utils;

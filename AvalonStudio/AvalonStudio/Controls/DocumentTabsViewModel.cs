@@ -1,8 +1,8 @@
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
     using AvalonStudio.MVVM;
-    using Avalonia.Media;
-    using Avalonia.Threading;
+    using Perspex.Media;
+    using Perspex.Threading;
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
