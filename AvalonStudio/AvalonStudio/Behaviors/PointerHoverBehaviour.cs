@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Avalonia.Controls;
 using Avalonia.Input;
-using Perspex.Xaml.Interactivity;
+using Avalonia.Xaml.Interactivity;
 using AvalonStudio.TextEditor;
 
 namespace AvalonStudio.Behaviors

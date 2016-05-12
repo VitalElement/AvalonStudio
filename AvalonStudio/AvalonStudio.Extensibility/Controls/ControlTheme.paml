@@ -1,3 +1,3 @@
-﻿<Styles xmlns="https://github.com/perspex">
+﻿<Styles xmlns="https://github.com/avaloniaui">
   <StyleInclude Source="resm:AvalonStudio.Extensibility.Controls.ToolControl.paml?assembly=AvalonStudio.Extensibility"/>  
 </Styles>

@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/perspex" Header="Debugger">
+﻿<TabItem xmlns="https://github.com/avaloniaui" Header="Debugger">
     <Grid IsEnabled="{Binding IsEnabled}">
       <Grid.RowDefinitions>
         <RowDefinition Height="30"/>

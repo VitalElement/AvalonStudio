@@ -34,6 +34,30 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Avalonia.Cairo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1510-alpha\lib\net45\Avalonia.Cairo.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Avalonia.Direct2D1, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1510-alpha\lib\net45\Avalonia.Direct2D1.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Avalonia.Gtk, Version=1.0.5976.17601, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1510-alpha\lib\net45\Avalonia.Gtk.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Avalonia.Win32, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1510-alpha\lib\net45\Avalonia.Win32.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Avalonia.Xaml.Interactions, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.176-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Avalonia.Xaml.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.176-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.Core.3.0.0\lib\net45\Caliburn.Micro.dll</HintPath>
       <Private>True</Private>
@@ -108,14 +132,6 @@
     </Reference>
     <Reference Include="Avalonia.Themes.Default, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Avalonia.0.2.0.1510-alpha\lib\portable-windows8+net45\Avalonia.Themes.Default.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Perspex.Xaml.Interactions, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.Xaml.Behaviors.9999.0.164-nightly\lib\portable-windows8+net45\Perspex.Xaml.Interactions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Perspex.Xaml.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Perspex.Xaml.Behaviors.9999.0.164-nightly\lib\portable-windows8+net45\Perspex.Xaml.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Prism, Version=6.1.0.0, Culture=neutral, PublicKeyToken=91a96d2a154366d8, processorArchitecture=MSIL">
