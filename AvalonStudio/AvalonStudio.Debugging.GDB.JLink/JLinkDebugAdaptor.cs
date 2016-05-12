@@ -1,4 +1,4 @@
-namespace AvalonStudio.Debugging.GDB.JLink
+﻿namespace AvalonStudio.Debugging.GDB.JLink
 {
     using JLink;
     using Projects;
@@ -11,7 +11,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
     using Toolchains;
     using Utils;
     using Platforms;
-    using Avalonia.Controls;
+    using Perspex.Controls;
     using System.Threading;
     public enum JlinkInterfaceType
     {

@@ -1,7 +1,7 @@
-namespace AvalonStudio.Controls.Standard.AboutScreen
+﻿namespace AvalonStudio.Controls.Standard.AboutScreen
 {
-    using Avalonia;
-    using Avalonia.Controls;
+    using Perspex;
+    using Perspex.Controls;
 
     public class AboutDialogView : UserControl
     {

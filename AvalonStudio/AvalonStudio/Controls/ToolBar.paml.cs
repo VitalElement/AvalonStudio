@@ -1,7 +1,7 @@
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
-    using Avalonia;
-    using Avalonia.Controls;
+    using Perspex;
+    using Perspex.Controls;
 
     public class ToolBar : UserControl
     {

@@ -1,7 +1,7 @@
-namespace AvalonStudio.Shell.Commands
+﻿namespace AvalonStudio.Shell.Commands
 {
     using Extensibility.Commands;
-    using Avalonia.Input;
+    using Perspex.Input;
     using System;
     using System.ComponentModel.Composition;
 

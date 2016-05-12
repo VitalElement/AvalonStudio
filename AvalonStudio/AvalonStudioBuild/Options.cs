@@ -1,4 +1,4 @@
-namespace AvalonStudio
+﻿namespace AvalonStudio
 {
     using AvalonStudio.Projects.Standard;
     using CommandLine;

@@ -1,4 +1,4 @@
-namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging
 {
     using AvalonStudio.Debugging;
     using AvalonStudio.MVVM;
@@ -9,7 +9,7 @@ namespace AvalonStudio.Debugging
     using System.Linq;
     using Extensibility.Plugin;
     using Extensibility;
-    using Avalonia.Threading;
+    using Perspex.Threading;
 
     public abstract class LineViewModel : ViewModel<DisassembledLine>
     {
@@ -180,7 +180,7 @@ namespace AvalonStudio.Debugging
 
         public void SetAddress(ulong currentAddress)
         {
-            // Commented code triggers data virtualization, but avalonia needs to virtualize the containers (trying to create over a billion containers here.
+            // Commented code triggers data virtualization, but perspex needs to virtualize the containers (trying to create over a billion containers here.
             //if (DissasemblyData == null)
             //{
             //    DissasemblyData = new AsyncVirtualizingCollection<InstructionLine>(dataProvider, 100, 60000);

@@ -1,4 +1,4 @@
-namespace AvalonStudio.TextEditor.Document
+﻿namespace AvalonStudio.TextEditor.Document
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +9,7 @@ namespace AvalonStudio.TextEditor.Document
     using System.Windows;
     using System.Threading.Tasks;
     using Utils;
-    using Avalonia.Utilities;
+    using Perspex.Utilities;
     /// <summary>
     /// Interface to allow TextSegments to access the TextSegmentCollection - we cannot use a direct reference
     /// because TextSegmentCollection is generic.

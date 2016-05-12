@@ -1,4 +1,4 @@
-namespace AvalonStudio.Debugging.GDB
+﻿namespace AvalonStudio.Debugging.GDB
 {
     using AvalonStudio.Debugging;
     using System.Collections.Generic;

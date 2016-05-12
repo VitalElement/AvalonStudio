@@ -1,4 +1,4 @@
-namespace AvalonStudio.Utils
+﻿namespace AvalonStudio.Utils
 {
     public class Constants
     {

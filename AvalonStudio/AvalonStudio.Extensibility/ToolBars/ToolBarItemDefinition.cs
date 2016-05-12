@@ -1,7 +1,7 @@
-namespace AvalonStudio.Extensibility.ToolBars
+﻿namespace AvalonStudio.Extensibility.ToolBars
 {
     using Commands;
-    using Avalonia.Input;
+    using Perspex.Input;
     using System;
 
     public abstract class ToolBarItemDefinition

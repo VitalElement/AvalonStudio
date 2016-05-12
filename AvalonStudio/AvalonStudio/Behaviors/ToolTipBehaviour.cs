@@ -1,12 +1,12 @@
-namespace AvalonStudio.Behaviours
+﻿namespace AvalonStudio.Behaviours
 {
     using OmniXaml.Attributes;
-    using Avalonia;
-    using Avalonia.Controls;
-    using Avalonia.Controls.Primitives;
-    using Avalonia.Input;
-    using Avalonia.Threading;
-    using Avalonia.Xaml.Interactivity;
+    using Perspex;
+    using Perspex.Controls;
+    using Perspex.Controls.Primitives;
+    using Perspex.Input;
+    using Perspex.Threading;
+    using Perspex.Xaml.Interactivity;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -29,7 +29,7 @@ namespace AvalonStudio.Behaviours
         /// <summary>
         /// Content Dependency Property
         /// </summary>
-        public static readonly AvaloniaProperty ContentProperty = AvaloniaProperty.Register<ToolTipBehavior, object>(nameof(Content), string.Empty);
+        public static readonly PerspexProperty ContentProperty = PerspexProperty.Register<ToolTipBehavior, object>(nameof(Content), string.Empty);
 
         public object Content
         {
@@ -45,7 +45,7 @@ namespace AvalonStudio.Behaviours
         /// <summary>
         ///  ContentStringFormat Dependency Property
         /// </summary>
-        public static readonly AvaloniaProperty ContentStringFormatProperty = AvaloniaProperty.Register<ToolTipBehavior, string>(nameof(ContentStringFormat));        
+        public static readonly PerspexProperty ContentStringFormatProperty = PerspexProperty.Register<ToolTipBehavior, string>(nameof(ContentStringFormat));        
         
         public string ContentStringFormat
         {
@@ -60,7 +60,7 @@ namespace AvalonStudio.Behaviours
         /// <summary>
         /// Header Dependency Property
         /// </summary>
-        public static readonly AvaloniaProperty TitleProperty = AvaloniaProperty.Register<ToolTipBehavior, object>(nameof(Header), string.Empty);
+        public static readonly PerspexProperty TitleProperty = PerspexProperty.Register<ToolTipBehavior, object>(nameof(Header), string.Empty);
         
         public object Header
         {
@@ -75,7 +75,7 @@ namespace AvalonStudio.Behaviours
         /// <summary>
         /// HeaderStringFormat Dependency Property
         /// </summary>
-        public static readonly AvaloniaProperty TitleStringFormatProperty = AvaloniaProperty.Register<ToolTipBehavior, string>(nameof(TitleStringFormat));
+        public static readonly PerspexProperty TitleStringFormatProperty = PerspexProperty.Register<ToolTipBehavior, string>(nameof(TitleStringFormat));
 
         public string TitleStringFormat
         {
@@ -91,7 +91,7 @@ namespace AvalonStudio.Behaviours
         /// <summary>
         /// MaxWidth Dependency Property
         /// </summary>
-        public static readonly AvaloniaProperty MaxWidthProperty = AvaloniaProperty.Register<ToolTipBehavior, double>(nameof(MaxWidth));
+        public static readonly PerspexProperty MaxWidthProperty = PerspexProperty.Register<ToolTipBehavior, double>(nameof(MaxWidth));
         
         public double MaxWidth
         {
@@ -104,7 +104,7 @@ namespace AvalonStudio.Behaviours
         #region Delay
 
         /* Keep in mind that changing the delay might mess with the animations */
-        public static readonly AvaloniaProperty DelayProperty = AvaloniaProperty.Register<ToolTipBehavior, int>(nameof(Delay), 500, false, Avalonia.Data.BindingMode.TwoWay, ValidateDelay, OnDelayChanged);        
+        public static readonly PerspexProperty DelayProperty = PerspexProperty.Register<ToolTipBehavior, int>(nameof(Delay), 500, false, Perspex.Data.BindingMode.TwoWay, ValidateDelay, OnDelayChanged);        
 
         private static int ValidateDelay(ToolTipBehavior behavoir, int value)
         {            
@@ -112,7 +112,7 @@ namespace AvalonStudio.Behaviours
             return delay >= 100 ? 0 : 1;
         }
 
-        private static void OnDelayChanged(IAvaloniaObject sender, bool changed)
+        private static void OnDelayChanged(IPerspexObject sender, bool changed)
         {
             var b = (ToolTipBehavior)sender;
             b.timer.Interval = TimeSpan.FromMilliseconds(b.Delay);
@@ -128,7 +128,7 @@ namespace AvalonStudio.Behaviours
 
         #region IsInteractive
 
-        public static readonly AvaloniaProperty IsInteractiveProperty = AvaloniaProperty.Register<ToolTipBehavior, bool>(nameof(IsInteractive), true, false, Avalonia.Data.BindingMode.OneWay, null, OnIsInteractiveChanged);
+        public static readonly PerspexProperty IsInteractiveProperty = PerspexProperty.Register<ToolTipBehavior, bool>(nameof(IsInteractive), true, false, Perspex.Data.BindingMode.OneWay, null, OnIsInteractiveChanged);
         
         public bool IsInteractive
         {
@@ -139,7 +139,7 @@ namespace AvalonStudio.Behaviours
         /// <summary>
         /// Handles changes to the IsInteractive property.
         /// </summary>
-        private static void OnIsInteractiveChanged(IAvaloniaObject d, bool changing)
+        private static void OnIsInteractiveChanged(IPerspexObject d, bool changing)
         {
             var target = (ToolTipBehavior)d;
             if (target.toolTip == null) return;
@@ -154,14 +154,14 @@ namespace AvalonStudio.Behaviours
         /// <summary>
         /// IsEnabled Dependency Property
         /// </summary>
-        public static readonly AvaloniaProperty IsEnabledProperty = AvaloniaProperty.Register<ToolTipBehavior, bool>(nameof(IsEnabled), true, false, Avalonia.Data.BindingMode.OneWay, null, OnIsEnabledChanged);        
+        public static readonly PerspexProperty IsEnabledProperty = PerspexProperty.Register<ToolTipBehavior, bool>(nameof(IsEnabled), true, false, Perspex.Data.BindingMode.OneWay, null, OnIsEnabledChanged);        
         public bool IsEnabled
         {
             get { return (bool)GetValue(IsEnabledProperty); }
             set { SetValue(IsEnabledProperty, value); }
         }
 
-        private static void OnIsEnabledChanged(IAvaloniaObject d, bool changed)
+        private static void OnIsEnabledChanged(IPerspexObject d, bool changed)
         {
             var behavior = (ToolTipBehavior)d;
             if (!behavior.IsEnabled)
@@ -239,7 +239,7 @@ namespace AvalonStudio.Behaviours
             return tt;
         }
 
-        private void CreateBinding(AvaloniaProperty behaviorProperty, AvaloniaProperty targetProperty, IAvaloniaObject target)
+        private void CreateBinding(PerspexProperty behaviorProperty, PerspexProperty targetProperty, IPerspexObject target)
         {
             //wire max width
             target.Bind(targetProperty, behaviorProperty.Bind());            

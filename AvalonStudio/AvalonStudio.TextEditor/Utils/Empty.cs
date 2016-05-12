@@ -1,4 +1,4 @@
-namespace AvalonStudio.TextEditor.Utils
+﻿namespace AvalonStudio.TextEditor.Utils
 {
     /// <summary>
 	/// Provides immutable empty list instances.

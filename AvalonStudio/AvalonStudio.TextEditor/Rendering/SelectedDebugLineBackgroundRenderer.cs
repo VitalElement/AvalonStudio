@@ -1,8 +1,8 @@
-namespace AvalonStudio.TextEditor.Rendering
+﻿namespace AvalonStudio.TextEditor.Rendering
 {
     using System;
-    using Avalonia;
-    using Avalonia.Media;
+    using Perspex;
+    using Perspex.Media;
 
     public class SelectedDebugLineBackgroundRenderer : IBackgroundRenderer
     {

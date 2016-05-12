@@ -1,7 +1,7 @@
-namespace AvalonStudio.Controls.Standard.ErrorList
+﻿namespace AvalonStudio.Controls.Standard.ErrorList
 {
-    using Avalonia;
-    using Avalonia.Controls;
+    using Perspex;
+    using Perspex.Controls;
 
     public class ErrorListView : UserControl
     {

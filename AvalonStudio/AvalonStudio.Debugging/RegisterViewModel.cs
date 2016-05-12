@@ -1,8 +1,8 @@
-namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging
 {
     using AvalonStudio.Debugging;
     using AvalonStudio.MVVM;
-    using Avalonia.Media;
+    using Perspex.Media;
     using ReactiveUI;
     using System;
     using System.Collections.Generic;

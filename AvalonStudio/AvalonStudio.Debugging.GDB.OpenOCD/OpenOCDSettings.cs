@@ -1,4 +1,4 @@
-namespace AvalonStudio.Debugging.GDB.OpenOCD
+﻿namespace AvalonStudio.Debugging.GDB.OpenOCD
 {
     public class OpenOCDSettings
     {

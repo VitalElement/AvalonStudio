@@ -1,4 +1,4 @@
-namespace AvalonStudio
+﻿namespace AvalonStudio
 {
     using System;
     using System.IO;

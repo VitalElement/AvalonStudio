@@ -1,4 +1,4 @@
-namespace AvalonStudio.Projects.CPlusPlus
+﻿namespace AvalonStudio.Projects.CPlusPlus
 {
     using Projects;
     using System;
@@ -6,7 +6,7 @@ namespace AvalonStudio.Projects.CPlusPlus
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using Avalonia.Controls;
+    using Perspex.Controls;
 
     public class ClassCodeTemplate : ICodeTemplate
     {

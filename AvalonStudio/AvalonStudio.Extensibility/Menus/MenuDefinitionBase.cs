@@ -1,7 +1,7 @@
-namespace AvalonStudio.Extensibility.Menus
+﻿namespace AvalonStudio.Extensibility.Menus
 {
     using System;
-    using Avalonia.Input;
+    using Perspex.Input;
     using AvalonStudio.Extensibility.Commands;
     using System.Windows.Input;
     public abstract class MenuDefinitionBase

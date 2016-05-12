@@ -1,8 +1,8 @@
-namespace AvalonStudio.Languages.CPlusPlus
+﻿namespace AvalonStudio.Languages.CPlusPlus
 {
     using NClang;
-    using Avalonia.Input;
-    using Avalonia.Media;
+    using Perspex.Input;
+    using Perspex.Media;
     using Projects;
     using Projects.Standard;
     using Rendering;
@@ -601,9 +601,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             };
 
-            editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-            editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-            editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+            editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
+            editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
+            editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, Perspex.Interactivity.RoutingStrategies.Tunnel);
             
             editor.TextInput += association.TextInputHandler;
         }

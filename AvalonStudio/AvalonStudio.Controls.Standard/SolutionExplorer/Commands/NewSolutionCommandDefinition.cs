@@ -1,4 +1,4 @@
-namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
+﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 {
     using AvalonStudio.Extensibility.Commands;
     using Extensibility;

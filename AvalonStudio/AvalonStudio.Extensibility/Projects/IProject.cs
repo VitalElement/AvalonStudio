@@ -1,10 +1,10 @@
-namespace AvalonStudio.Projects
+﻿namespace AvalonStudio.Projects
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel.Composition;
-    using Avalonia.Controls;
+    using Perspex.Controls;
     using Debugging;
     using Toolchains;
     using TestFrameworks;

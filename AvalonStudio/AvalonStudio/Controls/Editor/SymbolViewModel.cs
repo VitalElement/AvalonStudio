@@ -1,4 +1,4 @@
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
     using AvalonStudio.Languages;
     using AvalonStudio.MVVM;

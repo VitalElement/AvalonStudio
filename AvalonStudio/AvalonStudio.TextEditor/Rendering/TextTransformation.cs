@@ -1,7 +1,7 @@
-
+﻿
 
 using AvalonStudio.TextEditor.Document;
-using Avalonia.Media;
+using Perspex.Media;
 
 namespace AvalonStudio.TextEditor.Rendering
 {

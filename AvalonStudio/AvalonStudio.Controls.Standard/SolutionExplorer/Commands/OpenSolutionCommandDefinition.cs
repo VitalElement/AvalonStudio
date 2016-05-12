@@ -1,8 +1,8 @@
-namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
+﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 {
     using AvalonStudio.Extensibility.Commands;
     using Extensibility;
-    using Avalonia.Controls;
+    using Perspex.Controls;
     using Projects;
     using ReactiveUI;
     using Shell;

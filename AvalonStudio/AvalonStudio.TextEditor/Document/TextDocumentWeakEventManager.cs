@@ -1,8 +1,8 @@
-namespace AvalonStudio.TextEditor.Document
+﻿namespace AvalonStudio.TextEditor.Document
 {
     using Utils;
     using System;
-    using Avalonia.Utilities;
+    using Perspex.Utilities;
 
 
     /// <summary>

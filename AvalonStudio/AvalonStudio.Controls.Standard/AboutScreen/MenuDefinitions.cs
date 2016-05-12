@@ -1,4 +1,4 @@
-using AvalonStudio.Controls.Standard.AboutScreen.Commands;
+﻿using AvalonStudio.Controls.Standard.AboutScreen.Commands;
 using AvalonStudio.Extensibility.Menus;
 
 namespace AvalonStudio.Controls.Standard.AboutScreen
