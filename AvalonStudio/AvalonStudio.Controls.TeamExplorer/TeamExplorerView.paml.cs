@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.Controls.TeamExplorer
+namespace AvalonStudio.Controls.TeamExplorer
 {
-    using Perspex.Controls;
-    using Perspex;
+    using Avalonia.Controls;
+    using Avalonia;
     
     public class TeamExplorerView : UserControl
     {

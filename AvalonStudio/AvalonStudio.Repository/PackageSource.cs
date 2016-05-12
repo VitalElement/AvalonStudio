@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Repositories
+namespace AvalonStudio.Repositories
 {
     using AvalonStudio.Utils;
     using Platforms;

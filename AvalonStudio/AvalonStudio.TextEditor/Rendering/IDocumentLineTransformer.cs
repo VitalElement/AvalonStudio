@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.TextEditor.Rendering
+namespace AvalonStudio.TextEditor.Rendering
 {
-    using Perspex;
-    using Perspex.Media;
+    using Avalonia;
+    using Avalonia.Media;
     using System;
 
     public interface IDocumentLineTransformer

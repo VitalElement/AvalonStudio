@@ -1,4 +1,4 @@
-﻿<Styles xmlns="https://github.com/perspex" xmlns:local="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor" xmlns:tv="clr-namespace:AvalonStudio.TextEditor.Rendering;assembly=AvalonStudio.TextEditor">
+﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor" xmlns:tv="clr-namespace:AvalonStudio.TextEditor.Rendering;assembly=AvalonStudio.TextEditor">
   <Style Selector="local|TextEditor">
     <Setter Property="Background" Value="#1e1e1e"/>
     <Setter Property="BorderBrush" Value="#ff707070"/>

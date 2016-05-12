@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Toolchains.LocalGCC
+namespace AvalonStudio.Toolchains.LocalGCC
 {
     public class LocalGccToolchainSettings
     {

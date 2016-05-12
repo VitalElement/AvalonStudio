@@ -1,9 +1,9 @@
-﻿namespace AvalonStudio.Toolchains.STM32
+namespace AvalonStudio.Toolchains.STM32
 {
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
     using AvalonStudio.Utils;
-    using Perspex.Controls;
+    using Avalonia.Controls;
     using Projects.Standard;
     using ReactiveUI;
     using Standard;

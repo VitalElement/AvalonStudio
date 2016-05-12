@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Extensibility.Dialogs
+namespace AvalonStudio.Extensibility.Dialogs
 {
     using ReactiveUI;
     using System;

@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls
 {
-    using Perspex;
-    using Perspex.Controls;
-    using Perspex.Controls.Presenters;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Controls.Presenters;
     using ReactiveUI;
     using Splat;
     using System;
@@ -27,7 +27,7 @@
             set { SetValue(ViewModelProperty, value); }
         }
 
-        public static readonly PerspexProperty ViewModelProperty = PerspexProperty.Register<ViewModelViewHost, object>(nameof(ViewModel), null, false, Perspex.Data.BindingMode.OneWay, null, somethingChanged);            
+        public static readonly AvaloniaProperty ViewModelProperty = AvaloniaProperty.Register<ViewModelViewHost, object>(nameof(ViewModel), null, false, Avalonia.Data.BindingMode.OneWay, null, somethingChanged);            
 
         readonly Subject<Unit> updateViewModel = new Subject<Unit>();
 
@@ -40,7 +40,7 @@
             set { SetValue(DefaultContentProperty, value); }
         }
 
-        public static readonly PerspexProperty DefaultContentProperty = PerspexProperty.Register<ViewModelViewHost, object>(nameof(DefaultContent), null, false, Perspex.Data.BindingMode.OneWay, null, somethingChanged);
+        public static readonly AvaloniaProperty DefaultContentProperty = AvaloniaProperty.Register<ViewModelViewHost, object>(nameof(DefaultContent), null, false, Avalonia.Data.BindingMode.OneWay, null, somethingChanged);
 
 
         public IObservable<string> ViewContractObservable
@@ -49,7 +49,7 @@
             set { SetValue(ViewContractObservableProperty, value); }
         }
 
-        public static readonly PerspexProperty ViewContractObservableProperty = PerspexProperty.Register<ViewModelViewHost, IObservable<string>>(nameof(ViewContractObservable), Observable.Return(default(string)));
+        public static readonly AvaloniaProperty ViewContractObservableProperty = AvaloniaProperty.Register<ViewModelViewHost, IObservable<string>>(nameof(ViewContractObservable), Observable.Return(default(string)));
 
         private string viewContract;
 
@@ -71,7 +71,7 @@
             Content = AvalonStudio.MVVM.ViewLocator.Build(DataContext);
         }
 
-        static void somethingChanged(IPerspexObject dependencyObject, bool changed)
+        static void somethingChanged(IAvaloniaObject dependencyObject, bool changed)
         {
             if (changed)
             {

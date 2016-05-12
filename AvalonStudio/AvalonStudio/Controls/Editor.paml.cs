@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls
 {
     using AvalonStudio.TextEditor;
-    using Perspex;
-    using Perspex.Controls;
+    using Avalonia;
+    using Avalonia.Controls;
     using System.Reactive.Disposables;
     using System;
 
@@ -39,7 +39,7 @@
 
             disposables.Add(DataContextProperty.Changed.Subscribe((o) =>
             {
-                if (o.NewValue is EditorViewModel)  // for some reason intellisense view model gets passed here! bug in perspex?
+                if (o.NewValue is EditorViewModel)  // for some reason intellisense view model gets passed here! bug in avalonia?
                 {
                     if (o.OldValue is EditorViewModel && (o.OldValue as EditorViewModel).Model.Editor == editor)
                     {

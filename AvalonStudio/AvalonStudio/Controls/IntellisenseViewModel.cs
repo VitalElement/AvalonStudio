@@ -1,9 +1,9 @@
-﻿namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls
 {
     using Languages;
     using Languages.ViewModels;
     using MVVM;
-    using Perspex;
+    using Avalonia;
     using ReactiveUI;
     using System;
     using System.Collections.Generic;

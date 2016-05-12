@@ -1,6 +1,6 @@
-﻿<Style xmlns="https://github.com/perspex"
+<Style xmlns="https://github.com/avaloniaui"
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-       xmlns:mut="https://github.com/perspex/mutable"
+       xmlns:mut="https://github.com/avaloniaui/mutable"
        xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <Style.Resources>
     <SolidColorBrush x:Key="ThemeBackgroundBrush">#FF2D2D30</SolidColorBrush>

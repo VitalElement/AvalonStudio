@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.TextEditor.Rendering
+namespace AvalonStudio.TextEditor.Rendering
 {
     using System;
     using Document;
-    using Perspex.Media;
+    using Avalonia.Media;
 
     public class SelectionBackgroundRenderer : IBackgroundRenderer
     {

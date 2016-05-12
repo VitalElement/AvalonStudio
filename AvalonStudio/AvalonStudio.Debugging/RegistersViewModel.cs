@@ -1,9 +1,9 @@
-﻿namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging
 {
     using Extensibility;
     using Extensibility.Plugin;
     using MVVM;
-    using Perspex.Threading;
+    using Avalonia.Threading;
     using ReactiveUI;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

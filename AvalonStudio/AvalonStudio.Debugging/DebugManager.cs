@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging
 {
     using AvalonStudio.Controls;
     using AvalonStudio.Documents;
@@ -10,7 +10,7 @@
     using AvalonStudio.Utils;
     using Extensibility.Plugin;
     using Extensibility.Utils;
-    using Perspex.Threading;
+    using Avalonia.Threading;
     using ReactiveUI;
     using Shell;
     using System;

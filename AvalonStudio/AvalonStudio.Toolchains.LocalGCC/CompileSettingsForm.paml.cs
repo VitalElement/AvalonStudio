@@ -1,5 +1,5 @@
-﻿using Perspex.Controls;
-using Perspex;
+using Avalonia.Controls;
+using Avalonia;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {

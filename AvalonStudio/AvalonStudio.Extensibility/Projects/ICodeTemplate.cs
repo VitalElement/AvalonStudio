@@ -1,6 +1,6 @@
-﻿namespace AvalonStudio.Projects
+namespace AvalonStudio.Projects
 {
-    using Perspex.Controls;
+    using Avalonia.Controls;
     using System.ComponentModel.Composition;
     using System.Threading.Tasks;
 
