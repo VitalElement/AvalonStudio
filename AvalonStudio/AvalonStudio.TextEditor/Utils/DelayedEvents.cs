@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.TextEditor.Utils
+namespace AvalonStudio.TextEditor.Utils
 {
     using System;
     using System.Collections.Generic;

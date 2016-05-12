@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Extensibility.MainMenu
+namespace AvalonStudio.Extensibility.MainMenu
 {
     using Commands;
     using Menus;

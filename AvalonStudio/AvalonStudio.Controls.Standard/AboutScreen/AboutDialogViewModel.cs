@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.Standard.AboutScreen
+namespace AvalonStudio.Controls.Standard.AboutScreen
 {
     using Extensibility;
     using Extensibility.Dialogs;

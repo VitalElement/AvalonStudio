@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.Extensibility.Menus
+namespace AvalonStudio.Extensibility.Menus
 {
     using AvalonStudio.Extensibility.Commands;
-    using Perspex.Input;
+    using Avalonia.Input;
     using System;
 
     public class CommandMenuItemDefinition<TCommandDefinition> : MenuItemDefinition
