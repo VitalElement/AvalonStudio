@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Projects
+namespace AvalonStudio.Projects
 {
     using System.Collections.ObjectModel;
 

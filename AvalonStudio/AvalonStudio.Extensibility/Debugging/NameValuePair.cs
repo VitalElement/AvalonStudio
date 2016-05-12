@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging
 {
     public class NameValuePair
     {

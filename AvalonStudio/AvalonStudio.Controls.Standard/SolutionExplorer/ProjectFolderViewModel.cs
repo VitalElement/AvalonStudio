@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
+namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using MVVM;
     using Projects;

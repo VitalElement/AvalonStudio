@@ -1,9 +1,9 @@
-﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
+namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using Extensibility;
     using Extensibility.Dialogs;
     using Languages;
-    using Perspex.Controls;
+    using Avalonia.Controls;
     using Platforms;
     using Projects;
     using ReactiveUI;

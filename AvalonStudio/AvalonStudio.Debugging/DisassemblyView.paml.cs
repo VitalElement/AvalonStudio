@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging
 {
-    using Perspex.Controls;
-    using Perspex;
+    using Avalonia.Controls;
+    using Avalonia;
 
     public class DisassemblyView : UserControl
     {

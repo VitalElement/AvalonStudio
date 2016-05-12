@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Extensibility.Commands
+namespace AvalonStudio.Extensibility.Commands
 {
     public interface ICommandUiItem
     {

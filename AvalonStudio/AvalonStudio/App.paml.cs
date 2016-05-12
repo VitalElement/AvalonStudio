@@ -1,14 +1,14 @@
-﻿namespace AvalonStudio
+namespace AvalonStudio
 {
     using AvalonStudio.Extensibility;
     using AvalonStudio.Repositories;
     using Extensibility.Commands;
     using Extensibility.ToolBars;
     using MVVM;
-    using Perspex;
-    using Perspex.Controls;
-    using Perspex.Diagnostics;
-    using Perspex.Logging.Serilog;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Diagnostics;
+    using Avalonia.Logging.Serilog;
     using Serilog;
     using System;
 

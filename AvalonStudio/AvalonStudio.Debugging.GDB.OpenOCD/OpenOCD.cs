@@ -1,9 +1,9 @@
-﻿namespace AvalonStudio.Debugging.GDB.OpenOCD
+namespace AvalonStudio.Debugging.GDB.OpenOCD
 {
     using Debugging.GDB;
     using Platforms;
     using Utils;
-    using Perspex.Controls;
+    using Avalonia.Controls;
     using Projects;
     using System;
     using System.Diagnostics;

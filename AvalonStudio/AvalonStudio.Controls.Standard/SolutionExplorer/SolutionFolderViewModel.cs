@@ -1,4 +1,4 @@
-﻿//using AvalonStudio.MVVM;
+//using AvalonStudio.MVVM;
 //namespace AvalonStudio.Controls.ViewModels
 //{
 //    using Microsoft.Win32;
@@ -6,7 +6,7 @@
 //    using System.Collections.ObjectModel;
 //    using System.Windows.Input;    
 //    using AvalonStudio.MVVM;
-//    using Perspex.Controls;
+//    using Avalonia.Controls;
 //    using ReactiveUI;
 
 //    public class SolutionFolderViewModel : SolutionParentViewModel<SolutionFolder>
@@ -49,7 +49,7 @@
 //            AddExistingProjectCommand = ReactiveCommand.Create();
 //            AddExistingProjectCommand.Subscribe(async (o) =>
 //            {
-//                Perspex.Controls.OpenFileDialog ofd = new Perspex.Controls.OpenFileDialog();
+//                Avalonia.Controls.OpenFileDialog ofd = new Avalonia.Controls.OpenFileDialog();
 //                ofd.InitialDirectory = model.Solution.CurrentDirectory;
 
 //                // ofd.Filter = "VEStudio Project Files (*" + VEStudioService.ProjectExtension + ")|*" + VEStudioService.ProjectExtension;

@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.Projects.CPlusPlus
+namespace AvalonStudio.Projects.CPlusPlus
 {
-    using Perspex;
-    using Perspex.Controls;
+    using Avalonia;
+    using Avalonia.Controls;
 
     public class TargetSettingsForm : TabItem
     {

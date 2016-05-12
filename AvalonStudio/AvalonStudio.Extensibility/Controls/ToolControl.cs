@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls
 {
     using Extensibility.Controls;
-    using Perspex;
-    using Perspex.Controls;
+    using Avalonia;
+    using Avalonia.Controls;
 
     public class ToolControl : ContentControl
     {
@@ -11,8 +11,8 @@
             Styles.Add(new ControlTheme());            
         }
 
-        public static readonly PerspexProperty<string> TitleProprty =
-            PerspexProperty.Register<ToolControl, string>(nameof(Title));
+        public static readonly AvaloniaProperty<string> TitleProprty =
+            AvaloniaProperty.Register<ToolControl, string>(nameof(Title));
 
         public string Title
         {

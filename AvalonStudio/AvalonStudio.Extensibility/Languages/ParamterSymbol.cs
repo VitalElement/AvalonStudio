@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Languages
+namespace AvalonStudio.Languages
 {
     public class ParameterSymbol
     {        

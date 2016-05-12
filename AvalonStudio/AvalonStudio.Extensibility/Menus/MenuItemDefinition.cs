@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Extensibility.Menus
+namespace AvalonStudio.Extensibility.Menus
 {
     public abstract class MenuItemDefinition : MenuDefinitionBase
     {

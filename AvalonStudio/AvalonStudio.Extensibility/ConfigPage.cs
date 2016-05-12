@@ -1,6 +1,6 @@
-﻿namespace AvalonStudio.Extensibility
+namespace AvalonStudio.Extensibility
 {
-    using Perspex.Controls;
+    using Avalonia.Controls;
 
     public class ConfigPage
     {
