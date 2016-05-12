@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.Projects.CPlusPlus
+namespace AvalonStudio.Projects.CPlusPlus
 {
     using Platforms;
     using MVVM;
-    using Perspex.Controls;
+    using Avalonia.Controls;
     using ReactiveUI;
     using Standard;
     using System;

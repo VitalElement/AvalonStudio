@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.MVVM.DataVirtualization
+namespace AvalonStudio.MVVM.DataVirtualization
 {
     using System.ComponentModel;
 

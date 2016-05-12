@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" FontFamily="Verdana" FontSize="12">
+<UserControl xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" FontFamily="Verdana" FontSize="12">
   <Grid Background="#424245">
     <Grid Margin="5">
       <Grid>

@@ -1,4 +1,4 @@
-﻿using AvalonStudio.TextEditor.Document;
+using AvalonStudio.TextEditor.Document;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

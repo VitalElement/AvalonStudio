@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Languages
+namespace AvalonStudio.Languages
 {
     using System.Collections.Generic;
 

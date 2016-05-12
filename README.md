@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/l2k85kekoby4tb4j?svg=true)](https://ci.appveyor.com/project/danwalmsley/avalonstudio)
 
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/VitalElement/AvalonStudio?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge)
-Cross platform IDE on Perspex for Perspex
+Cross platform IDE on Avalonia for Avalonia
 
 We are now rapidly approaching the first BETA, here is a sneak preview.
 https://www.youtube.com/watch?v=zVGwwkJLFmY&feature=youtu.be

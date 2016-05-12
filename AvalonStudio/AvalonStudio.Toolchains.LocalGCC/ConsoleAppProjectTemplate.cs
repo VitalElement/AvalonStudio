@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Toolchains.LocalGCC
+namespace AvalonStudio.Toolchains.LocalGCC
 {
     using AvalonStudio.Languages.CPlusPlus;
     using Extensibility;

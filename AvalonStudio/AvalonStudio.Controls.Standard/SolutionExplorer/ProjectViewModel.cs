@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
+namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using Extensibility;
     using MVVM;
-    using Perspex.Media;
+    using Avalonia.Media;
     using Projects;
     using ReactiveUI;
     using Shell;

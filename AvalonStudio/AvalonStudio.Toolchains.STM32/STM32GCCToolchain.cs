@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using System.Linq;
 using System.Collections;
 
@@ -13,7 +13,7 @@ namespace AvalonStudio.Toolchains.STM32
     using Utils;
     using System;
     using System.Reflection;
-    using Perspex.Controls;
+    using Avalonia.Controls;
     using System.Dynamic;
     using Extensibility.Utils;
     using Platforms;

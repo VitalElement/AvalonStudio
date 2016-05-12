@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.TextEditor
+namespace AvalonStudio.TextEditor
 {
-    using Perspex;
-    using Perspex.Media;
+    using Avalonia;
+    using Avalonia.Media;
     using System.Linq;
 
     public class LineNumberMargin : TextViewMargin

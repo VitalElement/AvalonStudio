@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.Controls.Standard.Console
+namespace AvalonStudio.Controls.Standard.Console
 {
-    using Perspex.Controls;
-    using Perspex;
+    using Avalonia.Controls;
+    using Avalonia;
     
     public class ConsoleView : UserControl
     {

@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.TextEditor.Document
+namespace AvalonStudio.TextEditor.Document
 {
     using System.Diagnostics;
 

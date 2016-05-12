@@ -1,10 +1,10 @@
-﻿namespace AvalonStudio.Languages.CPlusPlus.Rendering
+namespace AvalonStudio.Languages.CPlusPlus.Rendering
 {
     using System;
     using Languages;
-    using Perspex;
-    using Perspex.Media;
-    using Perspex.Threading;
+    using Avalonia;
+    using Avalonia.Media;
+    using Avalonia.Threading;
     using TextEditor.Document;
     using TextEditor.Rendering;
 
