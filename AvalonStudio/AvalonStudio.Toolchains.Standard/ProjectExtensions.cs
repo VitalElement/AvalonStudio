@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Toolchains
+namespace AvalonStudio.Toolchains
 {
     using Projects;
     using Projects.Standard;

@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls
 {
-    using Perspex;
-    using Perspex.Styling;
+    using Avalonia;
+    using Avalonia.Styling;
 
     public class MetroWindowTheme : Styles
     {

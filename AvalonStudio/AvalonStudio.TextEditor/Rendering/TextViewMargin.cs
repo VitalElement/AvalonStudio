@@ -1,8 +1,8 @@
-﻿namespace AvalonStudio.TextEditor
+namespace AvalonStudio.TextEditor
 {
-    using Perspex;
-    using Perspex.Controls;
-    using Perspex.Media;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Media;
     using Rendering;
     using System;
 

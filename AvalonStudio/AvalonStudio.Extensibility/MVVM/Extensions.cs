@@ -1,6 +1,6 @@
-﻿namespace AvalonStudio.MVVM
+namespace AvalonStudio.MVVM
 {
-    using Perspex;
+    using Avalonia;
     using System;
     using System.Collections.Generic;
 

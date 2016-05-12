@@ -1,7 +1,7 @@
-﻿namespace AvalonStudio.Debugging.GDB.OpenOCD
+namespace AvalonStudio.Debugging.GDB.OpenOCD
 {
-    using Perspex;
-    using Perspex.Controls;
+    using Avalonia;
+    using Avalonia.Controls;
 
     public class OpenOCDSettingsForm : UserControl
     {

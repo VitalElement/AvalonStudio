@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/perspex">
+<UserControl xmlns="https://github.com/avaloniaui">
   <TabControl>
     <TabItem Header="Compiler" Foreground="WhiteSmoke" DataContext="{Binding CompileSettings}">
       <Grid>

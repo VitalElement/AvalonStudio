@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls
 {
     using ReactiveUI;
     using AvalonStudio.MVVM;

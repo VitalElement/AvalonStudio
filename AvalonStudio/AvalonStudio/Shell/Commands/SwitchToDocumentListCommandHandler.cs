@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Shell.Commands
+namespace AvalonStudio.Shell.Commands
 {
     using Extensibility.Commands;
     using System.Collections.Generic;
