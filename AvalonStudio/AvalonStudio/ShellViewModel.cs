@@ -142,9 +142,14 @@ namespace AvalonStudio
             ErrorList = IoC.Get<IErrorList>();
             
             tools = new ObservableCollection<object>();
-            leftTools = new ObservableCollection<object>();
-            rightTools = new ObservableCollection<object>();
-            bottomTools = new ObservableCollection<object>();
+
+            LeftTabs = new TabControlViewModel();
+            RightTabs = new TabControlViewModel();
+            BottomTabs = new TabControlViewModel();
+            BottomRightTabs = new TabControlViewModel();
+            RightBottomTabs = new TabControlViewModel();
+            RightMiddleTabs = new TabControlViewModel();
+            RightTopTabs = new TabControlViewModel();
 
             foreach (var tool in importedTools)
             {
@@ -153,23 +158,42 @@ namespace AvalonStudio
                 switch (tool.DefaultLocation)
                 {
                     case Location.Bottom:
-                        bottomTools.Add(tool);                        
+                        BottomTabs.Tools.Add(tool);
+                        break;
+
+                    case Location.BottomRight:
+                        BottomRightTabs.Tools.Add(tool);
+                        break;
+
+                    case Location.RightBottom:
+                        RightBottomTabs.Tools.Add(tool);
+                        break;
+
+                    case Location.RightMiddle:
+                        RightMiddleTabs.Tools.Add(tool);
+                        break;
+
+                    case Location.RightTop:
+                        RightTopTabs.Tools.Add(tool);
                         break;
 
                     case Location.Left:
-                        leftTools.Add(tool);
+                        LeftTabs.Tools.Add(tool);
                         break;
 
                     case Location.Right:
-                        rightTools.Add(tool);                        
+                        RightTabs.Tools.Add(tool);                        
                         break;
                 }
             }
 
-            LeftSelectedTool = LeftTools.FirstOrDefault();
-            RightSelectedTool = RightTools.FirstOrDefault();
-            BottomSelectedTool = BottomTools.FirstOrDefault();
-
+            LeftTabs.SelectedTool = LeftTabs.Tools.FirstOrDefault();
+            RightTabs.SelectedTool = RightTabs.Tools.FirstOrDefault();
+            BottomTabs.SelectedTool = BottomTabs.Tools.FirstOrDefault();
+            BottomRightTabs.SelectedTool = BottomRightTabs.Tools.FirstOrDefault();
+            RightTopTabs.SelectedTool = RightTopTabs.Tools.FirstOrDefault();
+            RightMiddleTabs.SelectedTool = RightMiddleTabs.Tools.FirstOrDefault();
+            RightBottomTabs.SelectedTool = RightBottomTabs.Tools.FirstOrDefault();
 
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
@@ -386,7 +410,7 @@ namespace AvalonStudio
 
             if (hasChanged)
             {
-                BottomSelectedTool = ErrorList;
+                BottomTabs.SelectedTool = ErrorList;
             }
         }
 
@@ -432,53 +456,23 @@ namespace AvalonStudio
 
         public DocumentTabsViewModel DocumentTabs { get; private set; }
 
-        private ObservableCollection<object> rightTools;
-        public ObservableCollection<object> RightTools
-        {
-            get { return rightTools; }
-            set { this.RaiseAndSetIfChanged(ref rightTools, value); }
-        }
+        public TabControlViewModel LeftTabs { get; private set; }
 
-        private ObservableCollection<object> bottomTools;
-        public ObservableCollection<object> BottomTools
-        {
-            get { return bottomTools; }
-            set { this.RaiseAndSetIfChanged(ref bottomTools, value); }
-        }
+        public TabControlViewModel RightTabs { get; private set; }
 
-        private ObservableCollection<object> leftTools;
-        public ObservableCollection<object> LeftTools
-        {
-            get { return leftTools; }
-            set { this.RaiseAndSetIfChanged(ref leftTools, value); }
-        }
+        public TabControlViewModel RightTopTabs { get; private set; }
+        public TabControlViewModel RightMiddleTabs { get; private set; }
+        public TabControlViewModel RightBottomTabs { get; private set; }
+
+        public TabControlViewModel BottomTabs { get; private set; }
+
+        public TabControlViewModel BottomRightTabs { get; private set; }
 
         private ObservableCollection<object> tools;
         public ObservableCollection<object> Tools
         {
             get { return tools; }
             set { this.RaiseAndSetIfChanged(ref tools, value); }
-        }
-
-        private object rightSelectedTool;
-        public object RightSelectedTool
-        {
-            get { return rightSelectedTool; }
-            set { this.RaiseAndSetIfChanged(ref rightSelectedTool, value); }
-        }
-
-        private object bottomSelectedTool;
-        public object BottomSelectedTool
-        {
-            get { return bottomSelectedTool; }
-            set { this.RaiseAndSetIfChanged(ref bottomSelectedTool, value); }
-        }
-
-        private object leftSelectedTool;
-        public object LeftSelectedTool
-        {
-            get { return leftSelectedTool; }
-            set { this.RaiseAndSetIfChanged(ref leftSelectedTool, value); }
         }
         
         public IConsole Console { get; private set; }
@@ -550,6 +544,19 @@ namespace AvalonStudio
             get
             {
                 return DocumentTabs?.SelectedDocument;
+            }
+        }
+
+        public object BottomSelectedTool
+        {
+            get
+            {
+                return BottomTabs.SelectedTool;
+            }
+
+            set
+            {
+                BottomTabs.SelectedTool = value;
             }
         }
 

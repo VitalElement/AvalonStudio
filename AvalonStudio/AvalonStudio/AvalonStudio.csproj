@@ -208,6 +208,7 @@
     <Compile Include="Controls\DebugHoverProbe.paml.cs">
       <DependentUpon>DebugHoverProbe.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TabControlView.paml.cs" />
     <Compile Include="Controls\DocumentTabControl.paml.cs">
       <DependentUpon>DocumentTabControl.paml</DependentUpon>
     </Compile>
@@ -215,6 +216,7 @@
     <Compile Include="Controls\NewItemDialog.paml.cs">
       <DependentUpon>NewItemDialogView.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TabControlViewModel.cs" />
     <Compile Include="Controls\ViewModelViewHost.cs" />
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\Editor\SymbolViewModel.cs" />
@@ -315,6 +317,7 @@
     <EmbeddedResource Include="Controls\NewItemDialogView.paml" />
     <EmbeddedResource Include="Controls\DebugHoverProbe.paml" />
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
+    <EmbeddedResource Include="Controls\TabControlView.paml" />
     <None Include="libgit2-821131f.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
