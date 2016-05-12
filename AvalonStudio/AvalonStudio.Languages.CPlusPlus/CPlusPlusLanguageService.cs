@@ -180,7 +180,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     args.Add("-std=c++14");
                 }
 
-                args.Add("-Weverything");
+               // args.Add("-Weverything");
 
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble | TranslationUnitFlags.CacheCompletionResults);
             }
