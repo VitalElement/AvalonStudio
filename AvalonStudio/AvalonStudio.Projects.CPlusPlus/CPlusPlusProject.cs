@@ -136,7 +136,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             if (!File.Exists(projectFile))
             {
-                var project = new CPlusPlusProject { Name = name };
+                var project = new CPlusPlusProject ();
                 project.SetSolution(solution);
                 project.Location = projectFile;
 
@@ -398,7 +398,14 @@ namespace AvalonStudio.Projects.CPlusPlus
             return result;
         }
 
-        public string Name { get; set; }
+        [JsonIgnore]
+        public string Name
+        {
+            get
+            {
+                return Path.GetFileNameWithoutExtension(Location);
+            }
+        }
 
         public ProjectType Type { get; set; }
 
