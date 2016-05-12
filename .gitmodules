@@ -4,6 +4,3 @@
 [submodule "nclang"]
 	path = nclang
 	url = https://github.com/VitalElement/nclang.git
-[submodule "Perspex"]
-	path = Perspex
-	url = https://github.com/VitalElement/Perspex.git
