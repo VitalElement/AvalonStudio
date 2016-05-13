@@ -74,7 +74,7 @@ namespace AvalonStudio.Debugging.GDB
         {
             string result = string.Empty;
 
-            if (responseReceived.WaitOne(timeout))
+            if (responseReceived.Wait(timeout))
             {
                 if (response == "^running")
                 {
@@ -165,7 +165,7 @@ namespace AvalonStudio.Debugging.GDB
         internal string SendCommand(Command command, Int32 timeout)
         {
             string result = string.Empty;
-            transmitSemaphore.WaitOne();
+            transmitSemaphore.Wait();
             SetCommand(command);
 
             if (DebugMode)
@@ -189,11 +189,11 @@ namespace AvalonStudio.Debugging.GDB
 
         public void Initialise()
         {
-            responseReceived = new Semaphore(0, 1);
+            responseReceived = new SemaphoreSlim(0, 1);
         }
 
         private StreamWriter input;
-        private Semaphore responseReceived;
+        private SemaphoreSlim responseReceived;
         private string response = string.Empty;
         private Process process;
 
@@ -231,7 +231,11 @@ namespace AvalonStudio.Debugging.GDB
                     if (currentCommand != null)
                     {
                         response += data;
-                        responseReceived.Release();
+
+                        if (responseReceived.CurrentCount == 0)
+                        {
+                            responseReceived.Release();
+                        }
                     }
                     else if (DebugMode)
                     {
@@ -350,8 +354,8 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        private Semaphore waitForStop = new Semaphore(0, 1);
-        private Semaphore transmitSemaphore = new Semaphore(1, 1);
+        private SemaphoreSlim waitForStop = new SemaphoreSlim(0, 1);
+        private SemaphoreSlim transmitSemaphore = new SemaphoreSlim(1, 1);
 
         public bool Pause()
         {
@@ -363,7 +367,7 @@ namespace AvalonStudio.Debugging.GDB
                 return result;
             }
 
-            transmitSemaphore.WaitOne();
+            transmitSemaphore.Wait();
 
             EventHandler<StopRecord> onStoppedHandler = (sender, e) =>
             {
@@ -381,20 +385,43 @@ namespace AvalonStudio.Debugging.GDB
                     }
                 }
 
-                waitForStop.Release();
+                if (waitForStop.CurrentCount == 0)
+                {
+                    waitForStop.Release();
+                }
             };
 
             this.InternalStopped += onStoppedHandler;
             
             do
             {
+                while (!Platform.FreeConsole())
+                {
+                    Console.WriteLine(Marshal.GetLastWin32Error());
+                    Thread.Sleep(10);
+                }
+
+                while (!Platform.AttachConsole(process.Id))
+                {
+                    Thread.Sleep(10);
+                }
+
+                while (!Platform.SetConsoleCtrlHandler(null, true))
+                {
+                    Console.WriteLine(Marshal.GetLastWin32Error());
+                    Thread.Sleep(10);
+                }
+
                 Platform.SendSignal(process.Id, Platform.Signum.SIGINT);
             }
-            while (!waitForStop.WaitOne(100));
+            while (!waitForStop.Wait(100));
 
             this.InternalStopped -= onStoppedHandler;
 
-            transmitSemaphore.Release();
+            if (transmitSemaphore.CurrentCount == 0)
+            {
+                transmitSemaphore.Release();
+            }
 
             return result;
         }
@@ -429,7 +456,7 @@ namespace AvalonStudio.Debugging.GDB
 
         public virtual void Stop()
         {
-            transmitSemaphore.WaitOne();
+            transmitSemaphore.Wait();
             input.WriteLine("-gdb-exit");
             transmitSemaphore.Release();
         }
