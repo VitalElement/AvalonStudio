@@ -252,7 +252,7 @@ namespace AvalonStudio
 
         public IEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.FirstOrDefault(d => d.Model.ProjectFile.File == path);
+            return DocumentTabs.Documents.FirstOrDefault(d => d.Model.ProjectFile?.File == path);
         }
 
         public void Save()
