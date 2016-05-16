@@ -50,11 +50,11 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        private void EvaluateChildren()
+        private async void EvaluateChildren()
         {
             Children.Clear();
 
-            var newChildren = debugger.ListChildren(this);
+            var newChildren = await debugger.ListChildrenAsync(this);
 
             if (newChildren != null)
             {
@@ -68,11 +68,11 @@ namespace AvalonStudio.Debugging
         }
 
 
-        public void Evaluate(IDebugger debugger, bool evaluateChildren = true)
+        public async void Evaluate(IDebugger debugger, bool evaluateChildren = true)
         {
             this.debugger = debugger;
 
-            Value = debugger.EvaluateExpression(Id);
+            Value = await debugger.EvaluateExpressionAsync(Id);
 
             if(NumChildren > 0 && evaluateChildren)
             {
@@ -80,11 +80,11 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        public void SetFormat (WatchFormat format)
+        public async void SetFormat (WatchFormat format)
         {
             if(this.format != format)
             {
-                debugger.SetWatchFormat(Id, format);
+                await debugger.SetWatchFormatAsync(Id, format);
                 this.format = format;
             }
         }            

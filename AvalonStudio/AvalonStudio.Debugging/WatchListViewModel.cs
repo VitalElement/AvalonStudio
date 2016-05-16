@@ -45,9 +45,9 @@ namespace AvalonStudio.Debugging
             this.Add(variable);
         }
 
-        public void AddWatch(string expression)
+        public async void AddWatch(string expression)
         {
-            var newWatch = _debugManager.CurrentDebugger.CreateWatch(string.Format("var{0}", _debugManager.CurrentDebugger.GetVariableId()), expression);
+            var newWatch = await _debugManager.CurrentDebugger.CreateWatchAsync(string.Format("var{0}", _debugManager.CurrentDebugger.GetVariableId()), expression);
 
             if (newWatch != null)
             {
@@ -55,13 +55,13 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        public void RemoveWatch(WatchViewModel watch)
+        public async void RemoveWatch(WatchViewModel watch)
         {
             if (watch != null)
             {
                 this.Children.Remove(watch);
 
-                _debugManager.CurrentDebugger.DeleteWatch(watch.Model.Id);
+                await _debugManager.CurrentDebugger.DeleteWatchAsync(watch.Model.Id);
             }
         }
 

@@ -1,5 +1,4 @@
 {
-  "Name": "ProductionBoardA",
   "Type": "Executable",
   "References": [
     {

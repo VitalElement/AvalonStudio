@@ -1,5 +1,6 @@
 namespace AvalonStudio.Debugging
 {
+    using Avalonia.Threading;
     using Extensibility;
     using System;
     using System.Collections.Generic;
@@ -28,13 +29,13 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        public void GoLive()
+        public async void GoLive()
         {
             List<BreakPoint> newList = new List<BreakPoint>();
 
             foreach (var breakPoint in this)
             {
-                var liveBreakPoint = debugger.SetBreakPoint(breakPoint.File, breakPoint.Line);
+                var liveBreakPoint = await debugger.SetBreakPointAsync(breakPoint.File, breakPoint.Line);
 
                 if (liveBreakPoint != null)
                 {
@@ -80,15 +81,15 @@ namespace AvalonStudio.Debugging
 
                 if (liveBreakPoint == null)
                 {
-                    //await Workspace.Instance.DispatchDebug(() =>
-                    {
-                        liveBreakPoint = debugger.SetBreakPoint(item.File, (uint)item.Line);
-                    }//);
+                    liveBreakPoint = await debugger.SetBreakPointAsync(item.File, (uint)item.Line);
                 }
 
                 if (liveBreakPoint != null)
                 {
-                    base.Add(liveBreakPoint);
+                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                    {
+                        base.Add(liveBreakPoint);
+                    });
                 }
             }
             else
@@ -98,19 +99,19 @@ namespace AvalonStudio.Debugging
                     throw new Exception("Cant be null");
                 }
 
-                base.Add(item);
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    base.Add(item);
+                });
             }
         }
 
         new public async Task<bool> Remove(BreakPoint item)
         {
-            //await Workspace.Instance.DispatchDebug(() =>
+            if (debugger != null && item is LiveBreakPoint)
             {
-                if (debugger != null && item is LiveBreakPoint)
-                {
-                    debugger.Remove(item as LiveBreakPoint);
-                }
-            }//);
+                await debugger.RemoveAsync(item as LiveBreakPoint);
+            }
 
             return base.Remove(item);
         }

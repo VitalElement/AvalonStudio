@@ -56,7 +56,7 @@ namespace AvalonStudio.Debugging
         }
 
         private bool firstStopInSession;
-        new public void Invalidate()
+        new public async void Invalidate()
         {
             if (firstStopInSession)
             {
@@ -64,7 +64,7 @@ namespace AvalonStudio.Debugging
 
                 List<Register> registers = null;
 
-                registers = _debugManager.CurrentDebugger.GetRegisters().Values.ToList();
+                registers =(await  _debugManager.CurrentDebugger.GetRegistersAsync()).Values.ToList();
 
                 SetRegisters(registers);
             }
@@ -72,7 +72,7 @@ namespace AvalonStudio.Debugging
             {
                 Dictionary<int, string> changedRegisters = null;
 
-                changedRegisters = _debugManager.CurrentDebugger.GetChangedRegisters();
+                changedRegisters = await _debugManager.CurrentDebugger.GetChangedRegistersAsync();
 
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
