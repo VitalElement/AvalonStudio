@@ -464,68 +464,71 @@ namespace AvalonStudio.TextEditor
         {
             var caretIndex = CaretIndex;
 
-            if ((modifiers & InputModifiers.Control) != 0)
+            if (caretIndex >= 0)
             {
-                if (count > 0)
+                if ((modifiers & InputModifiers.Control) != 0)
                 {
-                    count = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
-                }
-                else
-                {
-                    count = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
-                }
-
-                if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
-                {
-                    CaretIndex += count;
-                }
-            }
-            else
-            {
-                if (count > 0)
-                {
-                    for (int i = 0; i < Math.Abs(count); i++)
+                    if (count > 0)
                     {
-                        var line = TextDocument.GetLineByOffset(CaretIndex);
+                        count = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
+                    }
+                    else
+                    {
+                        count = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
+                    }
 
-                        if (caretIndex == line.EndOffset)
-                        {
-                            if (line.NextLine != null)
-                            {
-                                caretIndex = line.NextLine.Offset;
-                            }
-                            
-                        }
-                        else
-                        {
-                            caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.Normal);
-                        }
+                    if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
+                    {
+                        CaretIndex += count;
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < Math.Abs(count); i++)
+                    if (count > 0)
                     {
-                        var line = TextDocument.GetLineByOffset(CaretIndex);
-
-                        if (caretIndex == line.Offset)
+                        for (int i = 0; i < Math.Abs(count); i++)
                         {
-                            if (line.PreviousLine != null)
+                            var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                            if (caretIndex == line.EndOffset)
                             {
-                                caretIndex = line.PreviousLine.EndOffset;
+                                if (line.NextLine != null)
+                                {
+                                    caretIndex = line.NextLine.Offset;
+                                }
+
+                            }
+                            else
+                            {
+                                caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.Normal);
                             }
                         }
-                        else
+                    }
+                    else
+                    {
+                        for (int i = 0; i < Math.Abs(count); i++)
                         {
-                            caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
+                            var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                            if (caretIndex == line.Offset)
+                            {
+                                if (line.PreviousLine != null)
+                                {
+                                    caretIndex = line.PreviousLine.EndOffset;
+                                }
+                            }
+                            else
+                            {
+                                caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
+                            }
                         }
                     }
+
+                    CaretIndex = caretIndex;
                 }
 
-                CaretIndex = caretIndex;
+                SetHighestColumn();
             }
-
-            SetHighestColumn();
         }
 
         private void MoveVertical(int count, InputModifiers modifiers)
