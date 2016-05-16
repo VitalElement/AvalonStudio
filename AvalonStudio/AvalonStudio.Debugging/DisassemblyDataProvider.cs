@@ -43,7 +43,11 @@ namespace AvalonStudio.Debugging
         {
             List<InstructionLine> result = null;
 
-            var instructions = debugger.Disassemble(baseAddress + (ulong)startIndex, (uint)pageCount);
+            Console.WriteLine("Make asynchrpnouse");
+            
+            var task = debugger.DisassembleAsync(baseAddress + (ulong)startIndex, (uint)pageCount);
+            task.Wait();
+            var instructions = task.Result;
 
             if (instructions != null)
             {

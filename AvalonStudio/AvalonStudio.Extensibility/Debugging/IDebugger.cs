@@ -8,7 +8,7 @@ namespace AvalonStudio.Debugging
     using System.ComponentModel.Composition;
     using Toolchains;
     using Utils;
-
+    using System.Threading.Tasks;
     public enum DebuggerState
     {
         NotRunning,
@@ -48,61 +48,62 @@ namespace AvalonStudio.Debugging
 
         void Initialise();
 
-        List<VariableObjectChange> UpdateVariables();
+        Task<List<VariableObjectChange>> UpdateVariablesAsync();
 
-        void Run();
+        Task RunAsync();
 
-        Dictionary<int, Register> GetRegisters();
+        Task<Dictionary<int, Register>> GetRegistersAsync();
 
-        Dictionary<int, string> GetChangedRegisters();
+        Task<Dictionary<int, string>> GetChangedRegistersAsync();
 
-        List<InstructionLine> Disassemble(string file, int line, int numLines);
+        Task<List<InstructionLine>> DisassembleAsync(string file, int line, int numLines);
 
-        List<InstructionLine> Disassemble(ulong start, uint count);
+        Task<List<InstructionLine>> DisassembleAsync(ulong start, uint count);
 
-        List<MemoryBytes> ReadMemoryBytes(ulong address, ulong offset, uint count);
+        Task<List<MemoryBytes>> ReadMemoryBytesAsync(ulong address, ulong offset, uint count);
 
-        List<Variable> ListStackVariables();
+        Task<List<Variable>> ListStackVariablesAsync();
 
-        List<Frame> ListStackFrames();
+        Task<List<Frame>> ListStackFramesAsync();
 
-        void StepOver();
+        Task StepOverAsync();
 
-        void StepOut();
+        Task StepOutAsync();
 
-        void StepInto();
+        Task StepIntoAsync();
 
-        void StepInstruction();
+        Task StepInstructionAsync();
 
         /// <summary>
         /// Pause the debugger/
         /// </summary>
         /// <returns>true if the pause request generated the pause, false if the debugger stopped before the request could be completed.</returns>
-        bool Pause();
+        Task<bool> PauseAsync();
 
-        void Continue();
+        Task ContinueAsync();
 
-        string EvaluateExpression(string expression);
+        Task<string> EvaluateExpressionAsync(string expression);
 
-        List<VariableObject> ListChildren(VariableObject variable);
+        Task<List<VariableObject>> ListChildrenAsync(VariableObject variable);
 
-        VariableObject CreateWatch(string id, string expression);
-        void DeleteWatch(string id);
+        Task<VariableObject> CreateWatchAsync(string id, string expression);
 
-        void SetWatchFormat(string id, WatchFormat format);
+        Task DeleteWatchAsync(string id);
 
-        void Stop();
+        Task SetWatchFormatAsync(string id, WatchFormat format);
 
-        void Close();
+        Task StopAsync();
 
-        bool Start(IToolChain toolChain, IConsole console, IProject project);
+        Task CloseAsync();
 
-        void Reset(bool runAfter);
+        Task<bool> StartAsync(IToolChain toolChain, IConsole console, IProject project);
 
-        LiveBreakPoint BreakMain();
+        Task ResetAsync(bool runAfter);
 
-        LiveBreakPoint SetBreakPoint(string file, UInt32 line);
+        Task<LiveBreakPoint> BreakMainAsync();
 
-        void Remove(LiveBreakPoint breakPoint);
+        Task<LiveBreakPoint> SetBreakPointAsync(string file, UInt32 line);
+
+        Task RemoveAsync(LiveBreakPoint breakPoint);
     }
 }

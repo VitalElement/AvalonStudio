@@ -53,10 +53,10 @@ namespace AvalonStudio.Debugging.GDB
     {        
         protected abstract T Decode (string response);
 
-        public T Execute (GDBDebugger gdb)
+        public async Task<T> Execute (GDBDebugger gdb)
         {
-            var response = gdb.SendCommand (this, TimeoutMs);            
-
+            var response = await gdb.SendCommand(this, TimeoutMs);
+            
             T result;
 
             result = Decode(response);

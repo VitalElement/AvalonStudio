@@ -87,28 +87,28 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
         public static void SetSettings (IProject project, OpenOCDSettings settings)
         {
             project.DebugSettings.OpenOCDSettings = settings;
-        }        
+        }
 
-        new public void Reset(bool runAfter)
+        public override async Task ResetAsync(bool runAfter)
         {
-            SafelyExecuteCommandWithoutResume(() =>
+            await SafelyExecuteCommandWithoutResume(async () =>
             {
-                new MonitorCommand("reset halt").Execute(this);
+                await new MonitorCommand("reset halt").Execute(this);
 
                 if(runAfter)
                 {
-                    Continue();
+                    await ContinueAsync();
                 }
                 else
                 {
-                    StepInstruction();
+                    await StepInstructionAsync();
                 }
             });
 		}
 
         private Process openOcdProcess;
 
-        public override bool Start(IToolChain toolchain, IConsole console, IProject project)
+        public override async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
         {
             bool result = true;            
             console.WriteLine("[OpenOCD] - Starting GDB Server...");
@@ -150,7 +150,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
                 process.Kill();
             }
 
-            Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(async () =>
            {
                using (var process = Process.Start(startInfo))
                {
@@ -178,7 +178,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 
                    process.WaitForExit();
 
-                   base.Close();
+                   await base.CloseAsync();
 
                    console.WriteLine("[OpenOCD] - GDB Server Closed.");
 				   openOcdProcess = null;
@@ -194,23 +194,23 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 
             if (result)
             {
-                result = base.Start(toolchain, console, project);
+                result = await base.StartAsync(toolchain, console, project);
 
                 if (result)
                 {
                     console.WriteLine("[OpenOCD] - Connecting...");
 
-                    result = new TargetSelectCommand(":3333").Execute(this).Response == ResponseCode.Done;
+                    result = (await new TargetSelectCommand(":3333").Execute(this)).Response == ResponseCode.Done;
 
                     if (result)
                     {
-                        new MonitorCommand("reset halt").Execute(this);
+                        await new MonitorCommand("reset halt").Execute(this);
 
-                        new MonitorCommand("speed 8000").Execute(this);
+                        await new MonitorCommand("speed 8000").Execute(this);
 
-                        new TargetDownloadCommand().Execute(this);
+                        await new TargetDownloadCommand().Execute(this);
 
-                        new MonitorCommand("reset halt").Execute(this);
+                        await new MonitorCommand("reset halt").Execute(this);
 
                         console.WriteLine("[OpenOCD] - Connected.");
                     }
@@ -232,14 +232,14 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
             return result;
         }
 
-        public override void Run()
+        public override async Task RunAsync()
         {
-            Continue();
+            await ContinueAsync();
         }        
 
-        public override void Stop()
+        public override async Task StopAsync()
         {      
-            base.Stop();
+            await base.StopAsync();
 
             if (openOcdProcess != null && !openOcdProcess.HasExited)
             {
