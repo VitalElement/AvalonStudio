@@ -1,3 +1,5 @@
+using Avalonia.Threading;
+
 namespace AvalonStudio.Debugging.GDB
 {
     using AvalonStudio.Utils;
@@ -14,7 +16,9 @@ namespace AvalonStudio.Debugging.GDB
     using System.Xml.Serialization;
     using Toolchains;
     using Toolchains.GCC;
-
+    using System.Threading.Tasks.Dataflow;
+    using Extensibility.Threading;
+    using System.Collections.Concurrent;
     public class GDBDebugger : IDebugger
     {
         public GDBDebugger()
@@ -29,7 +33,7 @@ namespace AvalonStudio.Debugging.GDB
                 process.Kill();
             }
         }
-
+        
         protected IConsole console;
 
         private DebuggerState currentState = DebuggerState.NotRunning;
@@ -92,23 +96,23 @@ namespace AvalonStudio.Debugging.GDB
             return result;
         }
 
-        public List<MemoryBytes> ReadMemoryBytes(ulong address, ulong offset, uint count)
+        public async Task<List<MemoryBytes>> ReadMemoryBytesAsync(ulong address, ulong offset, uint count)
         {
             List<MemoryBytes> result = null;
 
-            SafelyExecuteCommand(() =>
+            await SafelyExecuteCommand(async () =>
             {
-                result = new DataReadMemoryBytesCommand(address, offset, count).Execute(this).Value;
+                result = (await new DataReadMemoryBytesCommand(address, offset, count).Execute(this)).Value;
             });
 
             return result;
         }
 
-        public List<VariableObjectChange> UpdateVariables()
+        public async Task<List<VariableObjectChange>> UpdateVariablesAsync()
         {
             GDBResponse<List<VariableObjectChange>> response = null;
 
-            response = new VarUpdateCommand().Execute(this);
+            response = await new VarUpdateCommand().Execute(this);
 
             if (response.Response == ResponseCode.Done)
             {
@@ -120,7 +124,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        public string EvaluateExpression(string expression)
+        public async Task<string> EvaluateExpressionAsync(string expression)
         {
             if (CurrentState != DebuggerState.Paused)
             {
@@ -129,7 +133,7 @@ namespace AvalonStudio.Debugging.GDB
 
             var result = string.Empty;
 
-            var response = new VarEvaluateExpressionCommand(expression).Execute(this);
+            var response = await new VarEvaluateExpressionCommand(expression).Execute(this);
 
             if (response.Response == ResponseCode.Done)
             {
@@ -143,14 +147,14 @@ namespace AvalonStudio.Debugging.GDB
             return result;
         }
 
-        public List<VariableObject> ListChildren(VariableObject variable)
+        public async Task<List<VariableObject>> ListChildrenAsync(VariableObject variable)
         {
             if (CurrentState != DebuggerState.Paused)
             {
                 throw new Exception("Expressions can only be evaluated in the paused state.");
             }
 
-            var response = new VarListChildrenCommand(variable).Execute(this);
+            var response = await new VarListChildrenCommand(variable).Execute(this);
 
             if (response.Response == ResponseCode.Done)
             {
@@ -162,25 +166,26 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        internal string SendCommand(Command command, Int32 timeout)
+        internal async Task<string> SendCommand(Command command, Int32 timeout)
         {
             string result = string.Empty;
-            transmitSemaphore.Wait();
-            SetCommand(command);
 
-            if (DebugMode)
+            await transmitRunner.InvokeAsync(() =>
             {
-                console.WriteLine("[Sending] " + command.Encode());
-            }
+                SetCommand(command);
 
-            input.WriteLine(command.Encode());
-            input.Flush();
+                if (DebugMode)
+                {
+                    console.WriteLine("[Sending] " + command.Encode());
+                }
 
-            result = WaitForResponse(-1);
+                input.WriteLine(command.Encode());
+                input.Flush();
 
-            ClearCommand();
+                result = WaitForResponse(-1);
 
-            transmitSemaphore.Release();
+                ClearCommand();
+            });
 
             return result;
         }
@@ -300,13 +305,13 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        public List<Variable> ListStackVariables()
+        public async Task<List<Variable>> ListStackVariablesAsync()
         {
             GDBResponse<List<Variable>> result = null;
 
-            SafelyExecuteCommand(() =>
+            await SafelyExecuteCommand(async () =>
             {
-                result = new StackListVariablesCommand().Execute(this);
+                result = await new StackListVariablesCommand().Execute(this);
             });
 
             if (result != null)
@@ -319,13 +324,13 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        public List<Frame> ListStackFrames()
+        public async Task<List<Frame>> ListStackFramesAsync()
         {
             GDBResponse<List<Frame>> result = null;
 
-            SafelyExecuteCommand(() =>
+            await SafelyExecuteCommand(async () =>
             {
-                result = new StackListFramesCommand().Execute(this);
+                result = await new StackListFramesCommand().Execute(this);
             });
 
             if (result.Response == ResponseCode.Done)
@@ -338,26 +343,25 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        public LiveBreakPoint BreakMain()
+        public async Task<LiveBreakPoint> BreakMainAsync()
         {
-            return new SetBreakPointCommand("main").Execute(this).Value;
+            return (await new SetBreakPointCommand("main").Execute(this)).Value;
         }
 
         /// <summary>
         /// This method is not supported by embedded targets. Use continue instead.
         /// </summary>
-        public virtual void Run()
+        public async virtual Task RunAsync()
         {
             if (CurrentState != DebuggerState.Running)
             {
-                new RunCommand().Execute(this);
+                await new RunCommand().Execute(this);
             }
         }
 
         private SemaphoreSlim waitForStop = new SemaphoreSlim(0, 1);
-        private SemaphoreSlim transmitSemaphore = new SemaphoreSlim(1, 1);
 
-        public bool Pause()
+        public async Task<bool> PauseAsync()
         {
             bool result = true;
 
@@ -366,9 +370,7 @@ namespace AvalonStudio.Debugging.GDB
                 result = false;
                 return result;
             }
-
-            transmitSemaphore.Wait();
-
+            
             EventHandler<StopRecord> onStoppedHandler = (sender, e) =>
             {
                 if (e != null)
@@ -392,83 +394,90 @@ namespace AvalonStudio.Debugging.GDB
             };
 
             this.InternalStopped += onStoppedHandler;
-            
-            do
+
+            await transmitRunner.InvokeAsync(() =>
             {
-                while (!Platform.FreeConsole())
+                do
                 {
-                    Console.WriteLine(Marshal.GetLastWin32Error());
-                    Thread.Sleep(10);
-                }
+                    //while (!Platform.FreeConsole())
+                    //{
+                    //    Console.WriteLine(Marshal.GetLastWin32Error());
+                    //    Thread.Sleep(10);
+                    //}
 
-                while (!Platform.AttachConsole(process.Id))
-                {
-                    Thread.Sleep(10);
-                }
+                    //while (!Platform.AttachConsole(process.Id))
+                    //{
+                    //    Thread.Sleep(10);
+                    //}
 
-                while (!Platform.SetConsoleCtrlHandler(null, true))
-                {
-                    Console.WriteLine(Marshal.GetLastWin32Error());
-                    Thread.Sleep(10);
-                }
+                    //while (!Platform.SetConsoleCtrlHandler(null, true))
+                    //{
+                    //    Console.WriteLine(Marshal.GetLastWin32Error());
+                    //    Thread.Sleep(10);
+                    //}
 
-                Platform.SendSignal(process.Id, Platform.Signum.SIGINT);
-            }
-            while (!waitForStop.Wait(100));
+                    Platform.SendSignal(process.Id, Platform.Signum.SIGINT);
+                }
+                while (!waitForStop.Wait(100));
+            });
 
             this.InternalStopped -= onStoppedHandler;
-
-            if (transmitSemaphore.CurrentCount == 0)
-            {
-                transmitSemaphore.Release();
-            }
 
             return result;
         }
 
-        public void Continue()
+        public async Task ContinueAsync()
         {
             if (CurrentState != DebuggerState.Running)
             {
-                new ContinueCommand().Execute(this);
+                await new ContinueCommand().Execute(this);
             }
         }
 
-        public void StepOver()
+        public async Task StepOverAsync()
         {
-            new StepOverCommand().Execute(this);
+            await new StepOverCommand().Execute(this);
         }
 
-        public void StepOut()
+        public async Task StepOutAsync()
         {
-            new FinishCommand().Execute(this);
+            await new FinishCommand().Execute(this);
         }
 
-        public void StepInstruction()
+        public async Task StepInstructionAsync()
         {
-            new ExecNextInstructionCommand().Execute(this);
+            await new ExecNextInstructionCommand().Execute(this);
         }
 
-        public void StepInto()
+        public async Task StepIntoAsync()
         {
-            new StepIntoCommand().Execute(this);
+            await new StepIntoCommand().Execute(this);
         }
 
-        public virtual void Stop()
+        public virtual async Task StopAsync()
         {
-            transmitSemaphore.Wait();
-            input.WriteLine("-gdb-exit");
-            transmitSemaphore.Release();
+            await transmitRunner.InvokeAsync(() =>
+            {
+                input.WriteLine("-gdb-exit");
+                
+                closeTokenSource.Cancel();
+            });
         }
 
-        public void Close()
+        CancellationTokenSource closeTokenSource;
+
+        public async Task CloseAsync()
         {
             try
             {
                 if (process != null && !process.HasExited)
                 {
-                    input.WriteLine("-gdb-exit");
-                    process.WaitForExit();
+                    await transmitRunner.InvokeAsync(() =>
+                    {
+                        input.WriteLine("-gdb-exit");
+                        process.WaitForExit();
+                        closeTokenSource?.Cancel();
+                    });
                 }
             }
             catch (Exception e)
@@ -477,7 +486,9 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        public virtual bool Start(IToolChain toolchain, IConsole console, IProject project)
+        JobRunner transmitRunner;        
+
+        public virtual async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
         {
             this.console = console;
             var startInfo = new ProcessStartInfo();
@@ -534,44 +545,59 @@ namespace AvalonStudio.Debugging.GDB
             }
 
             Task.Factory.StartNew(() =>
-           {
-               console.WriteLine("[GDB] - Started");
+            {
+                closeTokenSource = new CancellationTokenSource();
+                transmitRunner = new JobRunner();
+
+                transmitRunner.RunLoop(closeTokenSource.Token);
+                
+                transmitRunner = null;
+            });
+
+            while(transmitRunner == null)
+            {
+                Thread.Sleep(10);
+            }
+
+            Task.Factory.StartNew(() =>
+            {
+                console.WriteLine("[GDB] - Started");
 
 
-               process.OutputDataReceived += (sender, e) =>
-               {
-                   if (e.Data != null)
-                   {
-                       ProcessOutput(e.Data);
-                   }
-               };
+                process.OutputDataReceived += (sender, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        ProcessOutput(e.Data);
+                    }
+                };
 
-               process.ErrorDataReceived += (sender, e) =>
-               {
-                   if (e.Data != null)
-                   {
-                       console.WriteLine("[GDB] - " + e.Data);
-                   }
-               };
+                process.ErrorDataReceived += (sender, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        console.WriteLine("[GDB] - " + e.Data);
+                    }
+                };
 
-               process.BeginOutputReadLine();
-               process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
 
-               try
-               {
-                   process.WaitForExit();
+                try
+                {
+                    process.WaitForExit();
 
-                   Platform.FreeConsole();
+                    Platform.FreeConsole();
 
-                   Platform.SetConsoleCtrlHandler(null, false);
-               }
-               catch (Exception e)
-               {
-                   Console.WriteLine(e);
-               }
+                    Platform.SetConsoleCtrlHandler(null, false);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
 
-               console.WriteLine("[GDB] - Closed");
-           });
+                console.WriteLine("[GDB] - Closed");
+            });
 
             return true;
         }
@@ -579,19 +605,19 @@ namespace AvalonStudio.Debugging.GDB
         public event EventHandler<StopRecord> Stopped;
         private event EventHandler<StopRecord> InternalStopped;
 
-        public LiveBreakPoint SetBreakPoint(string file, uint line)
+        public async Task<LiveBreakPoint> SetBreakPointAsync(string file, uint line)
         {
             LiveBreakPoint result = null;
 
-            SafelyExecuteCommand(() =>
+            await SafelyExecuteCommand(async () =>
             {
-                result = new SetBreakPointCommand(file, line).Execute(this).Value;
+                result = (await new SetBreakPointCommand(file, line).Execute(this)).Value;
             });
 
             return result;
         }
 
-        protected bool SafelyExecuteCommandWithoutResume(Action commandAction)
+        protected async Task<bool> SafelyExecuteCommandWithoutResume(Func<Task> commandAction)
         {
             bool result = false;
 
@@ -599,34 +625,34 @@ namespace AvalonStudio.Debugging.GDB
             {
                 StoppedEventIsEnabled = false;
 
-                result = Pause();
+                result = await PauseAsync();
 
                 StoppedEventIsEnabled = true;
             }
 
-            commandAction();
+            await commandAction();
 
             return result;
         }
 
-        protected void SafelyExecuteCommand(Action commandAction)
+        protected async Task SafelyExecuteCommand(Func<Task> commandAction)
         {
-            if (SafelyExecuteCommandWithoutResume(commandAction))
+            if (await SafelyExecuteCommandWithoutResume(commandAction))
             {
-                Continue();
+                await ContinueAsync();
             }
         }
 
-        protected void SafelyExecuteCommandAlwaysContinue(Action commandAction)
+        protected async void SafelyExecuteCommandAlwaysContinue(Func<Task> commandAction)
         {
-            SafelyExecuteCommandWithoutResume(commandAction);
+            await SafelyExecuteCommandWithoutResume(commandAction);
 
-            Continue();
+            await ContinueAsync();
         }
 
-        public void Remove(LiveBreakPoint breakPoint)
+        public async Task RemoveAsync(LiveBreakPoint breakPoint)
         {
-            SafelyExecuteCommand(() => new RemoveBreakPointCommand(breakPoint).Execute(this));
+            await SafelyExecuteCommand(async () => await new RemoveBreakPointCommand(breakPoint).Execute(this));
         }
 
         public DebuggerState State { get { return CurrentState; } }
@@ -639,18 +665,18 @@ namespace AvalonStudio.Debugging.GDB
 
         public event EventHandler<EventArgs> StateChanged;
 
-        public Dictionary<int, Register> GetRegisters()
+        public async Task<Dictionary<int, Register>> GetRegistersAsync()
         {
             var result = new Dictionary<int, Register>();
 
             List<string> registerNames = null;
             List<Tuple<int, string>> registerValues = null;
 
-            SafelyExecuteCommand(() =>
+            await SafelyExecuteCommand(async () =>
             {
-                registerNames = new DataListRegisterNamesCommand().Execute(this).Value;
+                registerNames = (await new DataListRegisterNamesCommand().Execute(this)).Value;
 
-                registerValues = new DataListRegisterValuesCommand().Execute(this).Value;
+                registerValues = (await new DataListRegisterValuesCommand().Execute(this)).Value;
             });
 
             if (registerNames != null && registerValues != null)
@@ -682,17 +708,17 @@ namespace AvalonStudio.Debugging.GDB
             return result;
         }
 
-        public Dictionary<int, string> GetChangedRegisters()
+        public async Task<Dictionary<int, string>> GetChangedRegistersAsync()
         {
             var result = new Dictionary<int, string>();
 
-            SafelyExecuteCommand(() =>
+            await SafelyExecuteCommand(async () =>
             {
-                var changedIndexes = new DataListChangedRegistersCommand().Execute(this).Value;
+                var changedIndexes = (await new DataListChangedRegistersCommand().Execute(this)).Value;
 
                 if (changedIndexes != null)
                 {
-                    var registerValues = new DataListRegisterValuesCommand(changedIndexes).Execute(this).Value;
+                    var registerValues = (await new DataListRegisterValuesCommand(changedIndexes).Execute(this)).Value;
 
                     foreach (var regVal in registerValues)
                     {
@@ -704,56 +730,56 @@ namespace AvalonStudio.Debugging.GDB
             return result;
         }
 
-        public List<InstructionLine> Disassemble(string file, int line, int numLines)
+        public async Task<List<InstructionLine>> DisassembleAsync(string file, int line, int numLines)
         {
             List<InstructionLine> result = null;
 
-            SafelyExecuteCommand(() =>
+            await SafelyExecuteCommand(async () =>
             {
-                result = new DataDisassembleCommand(file, line, numLines).Execute(this).Value;
+                result = (await new DataDisassembleCommand(file, line, numLines).Execute(this)).Value;
             });
 
             return result;
         }
 
-        public List<InstructionLine> Disassemble(ulong start, uint count)
+        public async Task<List<InstructionLine>> DisassembleAsync(ulong start, uint count)
         {
             List<InstructionLine> result = null;
 
-            SafelyExecuteCommand(() =>
+            await SafelyExecuteCommand(async () =>
             {
-                result = new DataDisassembleCommand(start, count).Execute(this).Value;
+                result = (await new DataDisassembleCommand(start, count).Execute(this)).Value;
             });
 
             return result;
         }
 
-        public void Reset(bool runAfter)
+        public virtual async Task ResetAsync(bool runAfter)
         {
-            SafelyExecuteCommandWithoutResume(() =>
+            await SafelyExecuteCommandWithoutResume(async () =>
             {
-                new MonitorCommand("reset").Execute(this);
+                await new MonitorCommand("reset").Execute(this);
 
                 if (runAfter)
                 {
-                    Continue();
+                    await ContinueAsync();
                 }
                 else
                 {
-                    StepInstruction();
+                    await StepInstructionAsync();
                 }
             });
         }
 
-        public VariableObject CreateWatch(string id, string expression)
+        public async Task<VariableObject> CreateWatchAsync(string id, string expression)
         {
-            var result = new VarCreateCommand(id, VariableObjectType.Floating, expression).Execute(this);
+            var result = await new VarCreateCommand(id, VariableObjectType.Floating, expression).Execute(this);
 
             if (result.Response == ResponseCode.Done)
             {
                 //result.Value.Evaluate (this); // causes gdb list children and evaluate commands so that values are read.
 
-                new VarSetFormatCommand(id, "natural").Execute(this);
+                await new VarSetFormatCommand(id, "natural").Execute(this);
 
                 return result.Value;
             }
@@ -763,7 +789,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        public void SetWatchFormat(string id, WatchFormat format)
+        public async Task SetWatchFormatAsync(string id, WatchFormat format)
         {
             string formatString = "natural";
 
@@ -786,12 +812,12 @@ namespace AvalonStudio.Debugging.GDB
                     break;
             }
 
-            new VarSetFormatCommand(id, formatString).Execute(this);
+            await new VarSetFormatCommand(id, formatString).Execute(this);
         }
 
-        public void DeleteWatch(string id)
+        public async Task DeleteWatchAsync(string id)
         {
-            new VarDeleteCommand(id).Execute(this);
+            await new VarDeleteCommand(id).Execute(this);
         }
 
         public virtual void ProvisionSettings(IProject project)

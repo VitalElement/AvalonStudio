@@ -26,8 +26,7 @@ int main (void)
 {
     int x = 0;
 
-    
-    
+
     Point p;
     p.X = 1.25;
     p.Y = 2.45;
@@ -36,9 +35,12 @@ int main (void)
     p1.X = 1.25;
     p1.Y = 2.45;
 
-    auto distance = p.DistanceTo (p1);
+    while (true)
+    {
+        auto distance = p.DistanceTo (p1);
 
-    x = sum (1, 2);
+        x = sum (1, 2);
+    }
 
     return x;
 }

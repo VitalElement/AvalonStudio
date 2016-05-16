@@ -61,7 +61,7 @@ namespace AvalonStudio.TextEditor
 
         }
 
-        protected override void OnPointerReleased(PointerEventArgs e)
+        protected async override void OnPointerReleased(PointerEventArgs e)
         {
             previewPointVisible = true;            
 
@@ -76,13 +76,13 @@ namespace AvalonStudio.TextEditor
 
                 if (currentBreakPoint != null)
                 {
-                    manager.Remove(currentBreakPoint).Wait();
+                    await manager.Remove(currentBreakPoint);
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(textView.TextDocument.FileName))
                     {
-                        manager.Add(new BreakPoint() { File = textView.TextDocument.FileName, Line = (uint)lineClicked }).Wait();
+                        await manager.Add(new BreakPoint() { File = textView.TextDocument.FileName, Line = (uint)lineClicked });
                     }
                 }
             }

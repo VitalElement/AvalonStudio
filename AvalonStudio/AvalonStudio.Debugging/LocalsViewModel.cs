@@ -85,9 +85,9 @@ namespace AvalonStudio.Debugging
             };
         }
 
-        private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+        private async void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
         {
-            var stackVariables = _debugManager.CurrentDebugger.ListStackVariables();
+            var stackVariables = await _debugManager.CurrentDebugger.ListStackVariablesAsync ();
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {

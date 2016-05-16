@@ -29,7 +29,7 @@ namespace AvalonStudio.Debugging
             BreakPointManager = new BreakPointManager();
             
             StartDebuggingCommand = ReactiveCommand.Create();
-            StartDebuggingCommand.Subscribe((o) =>
+            StartDebuggingCommand.Subscribe(async (o) =>
             {
                 switch (_shell.CurrentPerspective)
                 {
@@ -76,7 +76,7 @@ namespace AvalonStudio.Debugging
                         //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
                         {
                             PrepareToRun();
-                            CurrentDebugger.Continue();
+                            await CurrentDebugger.ContinueAsync();
                         }//);
                         break;
                 }
@@ -122,13 +122,9 @@ namespace AvalonStudio.Debugging
             });
 
             InterruptDebuggingCommand = ReactiveCommand.Create(); //, (o) => WorkspaceViewModel.Instance.CurrentPerspective == Perspective.Debug && Debugger != null && Debugger.State == DebuggerState.Running && !IsUpdating);
-            InterruptDebuggingCommand.Subscribe(_ =>
+            InterruptDebuggingCommand.Subscribe(async _ =>
             {
-                // Begin dispatch otherwise we would be on the ui thread awaiting the debugger.
-                //WorkspaceViewModel.Instance.BeginDispatchDebug(() =>
-                {
-                    CurrentDebugger.Pause();
-                }//);
+                await CurrentDebugger.PauseAsync();
             });
 
             StepIntoCommand = ReactiveCommand.Create();  //stepcommand can execute.
@@ -176,103 +172,85 @@ namespace AvalonStudio.Debugging
             IsExecuting = true;
         }
 
-        public VariableObject ProbeExpression(string expression)
+        public async Task<VariableObject> ProbeExpressionAsync(string expression)
         {
             VariableObject result = null;
 
             if (CurrentDebugger.State == DebuggerState.Paused)
             {
-                result = CurrentDebugger.CreateWatch(string.Format("probe{0}", CurrentDebugger.GetVariableId()), expression);
+                result = await CurrentDebugger.CreateWatchAsync(string.Format("probe{0}", CurrentDebugger.GetVariableId()), expression);
             }
 
             return result;
         }
 
-        public void Continue()
+        public async void Continue()
         {
             if (CurrentDebugger != null)
             {
                 if (!IsExecuting)
                 {
-                    Task.Factory.StartNew(() =>
-                    {
-                        PrepareToRun();
-                        CurrentDebugger.Continue();
-                    });
+                    PrepareToRun();
+                    await CurrentDebugger.ContinueAsync();
                 }
             }
         }
 
-        public void StepInstruction()
+        public async void StepInstruction()
         {
             if (CurrentDebugger != null)
             {
                 if (!IsExecuting)
                 {
-                    Task.Factory.StartNew(() =>
-                    {
-                        PrepareToRun();
-                        CurrentDebugger.StepInstruction();
-                    });
+                    PrepareToRun();
+                    await CurrentDebugger.StepInstructionAsync();
                 }
             }
         }
 
-        public void StepOut()
+        public async void StepOut()
         {
             if (CurrentDebugger != null)
             {
                 if (!IsExecuting)
                 {
-                    Task.Factory.StartNew(() =>
-                    {
-                        PrepareToRun();
-                        CurrentDebugger.StepOut();
-                    });
+                    PrepareToRun();
+                    await CurrentDebugger.StepOutAsync();
                 }
             }
         }
 
-        public void StepInto()
+        public async void StepInto()
         {
             if (CurrentDebugger != null)
             {
                 if (!IsExecuting)
                 {
-                    Task.Factory.StartNew(() =>
-                    {
                         PrepareToRun();
-                        CurrentDebugger.StepInto();
-                    });
+                    await CurrentDebugger.StepIntoAsync();
                 }
             }
         }
 
-        public void StepOver()
+        public async void StepOver()
         {
             if (CurrentDebugger != null)
             {
                 if (!IsExecuting)
                 {
-                    Task.Factory.StartNew(() =>
-                    {
                         PrepareToRun();
-                        CurrentDebugger.StepOver();
-                    });
+                    await CurrentDebugger.StepOverAsync();
                 }
             }
         }
 
-        public void Pause()
+        public async void Pause()
         {
             if (CurrentDebugger != null)
             {
                 if (IsExecuting)
                 {
-                    Task.Factory.StartNew(() =>
-                    {
-                        CurrentDebugger.Pause();
-                    });
+                        await CurrentDebugger.PauseAsync();                 
                 }
             }
         }
@@ -281,8 +259,6 @@ namespace AvalonStudio.Debugging
         {
             if (CurrentDebugger != null)
             {
-                Task.Factory.StartNew(() =>
-                {
                     PrepareToRun();
 
                     ignoreEvents = true;
@@ -290,28 +266,24 @@ namespace AvalonStudio.Debugging
                     StopDebugSession();
 
                     ignoreEvents = false;
-                });
             }
         }
 
-        public void Restart()
+        public async void Restart()
         {
             if (CurrentDebugger != null)
             {
-                Task.Factory.StartNew(() =>
-                {
-                    CurrentDebugger.Reset(true);
-                });
+                    await CurrentDebugger.ResetAsync(true);
             }
         }
 
         private bool ignoreEvents = false;
 
-        private void StopDebugSession()
+        private async void StopDebugSession()
         {
             ignoreEvents = true;
 
-            CurrentDebugger.Stop();
+            await CurrentDebugger.StopAsync();
 
             CurrentDebugger = null;
             SetDebuggers(null);
@@ -369,7 +341,7 @@ namespace AvalonStudio.Debugging
                 {
                     currentDebugger.Stopped -= debugger_Stopped;
                     currentDebugger.StateChanged -= debugger_StateChanged;
-                    currentDebugger.Close();
+                    currentDebugger.CloseAsync();
                 }
 
                 currentDebugger = value;
@@ -464,7 +436,7 @@ namespace AvalonStudio.Debugging
                     _console.WriteLine();
                     _console.WriteLine("Starting Debugger...");
 
-                    if (CurrentDebugger.Start(project.ToolChain, _console, project))
+                    if (await CurrentDebugger.StartAsync(project.ToolChain, _console, project))
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
@@ -478,9 +450,9 @@ namespace AvalonStudio.Debugging
 
                         BreakPointManager.GoLive();
 
-                        await BreakPointManager.Add(CurrentDebugger.BreakMain());
+                        await BreakPointManager.Add(await CurrentDebugger.BreakMainAsync());
 
-                        CurrentDebugger.Run();
+                        await CurrentDebugger.RunAsync();
                     }
                 });
             }
@@ -572,7 +544,7 @@ namespace AvalonStudio.Debugging
                     {
                         FrameChangedEventArgs args = new FrameChangedEventArgs();
                         args.Address = e.Frame.Address;
-                        args.VariableChanges = currentDebugger.UpdateVariables();
+                        args.VariableChanges = await currentDebugger.UpdateVariablesAsync();
 
 
                         DebugFrameChanged(this, args);

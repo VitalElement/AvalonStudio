@@ -95,7 +95,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
             }
         }
 
-        public override bool Start(IToolChain toolchain, IConsole console, IProject project)
+        public override async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
         {
             bool result = true;
             var settings = GetSettings(project);
@@ -125,7 +125,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 process.Kill();
             }
 
-            Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(async () =>
             {
                 using (var process = Process.Start(startInfo))
                 {
@@ -152,7 +152,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
                     process.WaitForExit();
 
-                    base.Close();
+                    await base.CloseAsync();
 
                     console.WriteLine("[JLink] - GDB Server Closed.");
 
@@ -171,21 +171,21 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
             if (result)
             {
-                result = base.Start(toolchain, console, project);
+                result = await base.StartAsync(toolchain, console, project);
 
                 if (result)
                 {
                     console.WriteLine("[JLink] - Connecting...");
-                    result = new TargetSelectCommand(":2331").Execute(this).Response == ResponseCode.Done;
+                    result = (await new TargetSelectCommand(":2331").Execute(this)).Response == ResponseCode.Done;
 
                     if (result)
                     {
-                        new MonitorCommand("halt").Execute(this);
-                        new MonitorCommand("reset").Execute(this);
+                        await new MonitorCommand("halt").Execute(this);
+                        await new MonitorCommand("reset").Execute(this);
                         //new MonitorCommand("reg r13 = (0x00000000)").Execute(this);
                         //new MonitorCommand("reg pc = (0x00000004)").Execute(this);
 
-                        new TargetDownloadCommand().Execute(this);
+                        await new TargetDownloadCommand().Execute(this);
 
                         console.WriteLine("[JLink] - Connected.");
                     }
@@ -208,14 +208,14 @@ namespace AvalonStudio.Debugging.GDB.JLink
         }
 
 
-        public override void Run()
+        public override async Task RunAsync()
         {
-            base.Continue();
+            await base.ContinueAsync();
         }
 
-        public override void Stop()
+        public override async Task StopAsync()
         {
-            base.Stop();
+            await base.StopAsync();
 
             if(jlinkProcess != null && !jlinkProcess.HasExited)
             {

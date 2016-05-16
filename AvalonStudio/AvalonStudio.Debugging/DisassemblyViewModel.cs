@@ -182,7 +182,7 @@ namespace AvalonStudio.Debugging
         }
 
 
-        public void SetAddress(ulong currentAddress)
+        public async void SetAddress(ulong currentAddress)
         {
             // Commented code triggers data virtualization, but avalonia needs to virtualize the containers (trying to create over a billion containers here.
             //if (DissasemblyData == null)
@@ -192,7 +192,7 @@ namespace AvalonStudio.Debugging
 
             ulong startIndex = currentAddress - 20;
 
-            var instructions = _debugger.Disassemble(startIndex, 50);
+            var instructions = await _debugger.DisassembleAsync(startIndex, 50);
 
             if (instructions != null)
             {

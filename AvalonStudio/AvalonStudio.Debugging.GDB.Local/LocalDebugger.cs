@@ -3,6 +3,7 @@ namespace AvalonStudio.Models.Tools.Debuggers.Local
     using AvalonStudio.Debugging.GDB;
     using AvalonStudio.Utils;
     using Projects;
+    using System.Threading.Tasks;
     using Toolchains;
 
     public class LocalDebugAdaptor : GDBDebugger
@@ -12,13 +13,13 @@ namespace AvalonStudio.Models.Tools.Debuggers.Local
 
         }
 
-        public override bool Start(IToolChain toolchain, IConsole console, IProject project)
+        public override async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
         {
-            bool result = base.Start(toolchain, console, project);
+            bool result = await base.StartAsync(toolchain, console, project);
 
             if (result)
             {
-                new SetCommand("new-console", "on").Execute(this);
+                await new SetCommand("new-console", "on").Execute(this);
             }
 
             return result;

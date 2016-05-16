@@ -551,7 +551,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     {
                         case Key.Return:
                             {                                
-                                if (editor.CaretIndex < editor.TextDocument.TextLength)
+                                if (editor.CaretIndex >= 0 && editor.CaretIndex < editor.TextDocument.TextLength)
                                 {
                                     if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
                                     {
