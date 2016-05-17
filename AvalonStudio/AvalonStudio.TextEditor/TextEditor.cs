@@ -534,20 +534,24 @@ namespace AvalonStudio.TextEditor
         private void MoveVertical(int count, InputModifiers modifiers)
         {
             var caretIndex = CaretIndex;
-            var currentPosition = TextDocument.GetLocation(caretIndex);
 
-            if (currentPosition.Line + count > 0 && currentPosition.Line + count <= TextDocument.LineCount)
+            if (caretIndex >= 0)
             {
-                var line = TextDocument.Lines[currentPosition.Line - 1 + count];
+                var currentPosition = TextDocument.GetLocation(caretIndex);
 
-                var col = line.EndOffset;
-
-                if (highestUserSelectedColumn <= line.Length)
+                if (currentPosition.Line + count > 0 && currentPosition.Line + count <= TextDocument.LineCount)
                 {
-                    col = highestUserSelectedColumn;
-                }
+                    var line = TextDocument.Lines[currentPosition.Line - 1 + count];
 
-                CaretIndex = TextDocument.GetOffset(currentPosition.Line + count, col);
+                    var col = line.EndOffset;
+
+                    if (highestUserSelectedColumn <= line.Length)
+                    {
+                        col = highestUserSelectedColumn;
+                    }
+
+                    CaretIndex = TextDocument.GetOffset(currentPosition.Line + count, col);
+                }
             }
         }
 
@@ -556,19 +560,23 @@ namespace AvalonStudio.TextEditor
             var text = TextDocument ?? null;
             var caretIndex = CaretIndex;
 
-            if ((modifiers & InputModifiers.Control) != 0)
+            if (caretIndex >= 0)
             {
-                caretIndex = 0;
-            }
-            else
-            {
-                var lineOffset = TextDocument.GetLineByOffset(CaretIndex).Offset;
-                var whiteSpace = TextUtilities.GetWhitespaceAfter(TextDocument, lineOffset);
-                caretIndex = lineOffset + whiteSpace.Length;
-            }
+                if ((modifiers & InputModifiers.Control) != 0)
+                {
+                    caretIndex = 0;
+                }
+                else
+                {
+                    var lineOffset = TextDocument.GetLineByOffset(CaretIndex).Offset;
+                    var whiteSpace = TextUtilities.GetWhitespaceAfter(TextDocument, lineOffset);
+                    caretIndex = lineOffset + whiteSpace.Length;
+                }
 
-            CaretIndex = caretIndex;
-            SetHighestColumn();
+
+                CaretIndex = caretIndex;
+                SetHighestColumn();
+            }
         }
 
         private void MoveEnd(InputModifiers modifiers)
@@ -576,19 +584,22 @@ namespace AvalonStudio.TextEditor
             var text = TextDocument ?? null;
             var caretIndex = CaretIndex;
 
-            if ((modifiers & InputModifiers.Control) != 0)
+            if (caretIndex >= 0)
             {
-                caretIndex = TextDocument.TextLength;
-            }
-            else
-            {
-                var lineOffset = TextDocument.GetLineByOffset(CaretIndex).EndOffset;
-                var whiteSpace = TextUtilities.GetWhitespaceBefore(TextDocument, lineOffset);
-                caretIndex = lineOffset - whiteSpace.Length;
-            }
+                if ((modifiers & InputModifiers.Control) != 0)
+                {
+                    caretIndex = TextDocument.TextLength;
+                }
+                else
+                {
+                    var lineOffset = TextDocument.GetLineByOffset(CaretIndex).EndOffset;
+                    var whiteSpace = TextUtilities.GetWhitespaceBefore(TextDocument, lineOffset);
+                    caretIndex = lineOffset - whiteSpace.Length;
+                }
 
-            CaretIndex = caretIndex;
-            SetHighestColumn();
+                CaretIndex = caretIndex;
+                SetHighestColumn();
+            }
         }
 
         private async void Cut()
