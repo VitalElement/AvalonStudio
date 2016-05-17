@@ -1,14 +1,9 @@
 ﻿namespace AvalonStudio.Extensibility.Threading
 {
-    using Avalonia.Platform;
-    using Avalonia.Threading;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    
 
     public class JobRunner
     {
@@ -26,7 +21,9 @@
                 _event.WaitOne();
 
                 if (cancellationToken.IsCancellationRequested)
+                {
                     return;
+                }
 
                 RunJobs();
 
@@ -46,7 +43,10 @@
                 lock (_queue)
                 {
                     if (_queue.Count == 0)
+                    {
                         return;
+                    }
+
                     job = _queue.Dequeue();
                 }
 
@@ -73,12 +73,13 @@
         /// Invokes a method on the main loop.
         /// </summary>
         /// <param name="action">The method.</param>
-        /// <param name="priority">The priority with which to invoke the method.</param>
         /// <returns>A task that can be used to track the method's execution.</returns>
-        public Task InvokeAsync(Action action, DispatcherPriority priority = DispatcherPriority.Normal)
+        public Task InvokeAsync(Action action)
         {
-            var job = new Job(action, priority, false);
+            var job = new Job(action, false);
+
             AddJob(job);
+
             return job.TaskCompletionSource.Task;
         }
 
@@ -86,24 +87,25 @@
         /// Post action that will be invoked on main thread
         /// </summary>
         /// <param name="action">The method.</param>
-        /// 
-        /// <param name="priority">The priority with which to invoke the method.</param>
-        internal void Post(Action action, DispatcherPriority priority)
+        internal void Post(Action action)
         {
-            // TODO: Respect priority.
-            AddJob(new Job(action, priority, true));
+            AddJob(new Job(action, true));
         }
 
         private void AddJob(Job job)
         {
             var needWake = false;
+
             lock (_queue)
             {
                 needWake = _queue.Count == 0;
                 _queue.Enqueue(job);
             }
+
             if (needWake)
+            {
                 _event.Set();
+            }
         }
 
         /// <summary>
@@ -117,10 +119,9 @@
             /// <param name="action">The method to call.</param>
             /// <param name="priority">The job priority.</param>
             /// <param name="throwOnUiThread">Do not wrap excepption in TaskCompletionSource</param>
-            public Job(Action action, DispatcherPriority priority, bool throwOnUiThread)
+            public Job(Action action, bool throwOnUiThread)
             {
                 Action = action;
-                Priority = priority;
                 TaskCompletionSource = throwOnUiThread ? null : new TaskCompletionSource<object>();
             }
 
@@ -129,10 +130,6 @@
             /// </summary>
             public Action Action { get; }
 
-            /// <summary>
-            /// Gets the job priority.
-            /// </summary>
-            public DispatcherPriority Priority { get; }
 
             /// <summary>
             /// Gets the task completion source.
