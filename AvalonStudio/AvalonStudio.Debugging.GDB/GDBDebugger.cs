@@ -544,21 +544,17 @@ namespace AvalonStudio.Debugging.GDB
                 Thread.Sleep(10);
             }
 
+            transmitRunner = new JobRunner();
+
             Task.Factory.StartNew(() =>
             {
-                closeTokenSource = new CancellationTokenSource();
-                transmitRunner = new JobRunner();
+                closeTokenSource = new CancellationTokenSource();                
 
                 transmitRunner.RunLoop(closeTokenSource.Token);
                 
                 transmitRunner = null;
             });
-
-            while(transmitRunner == null)
-            {
-                Thread.Sleep(10);
-            }
-
+            
             Task.Factory.StartNew(() =>
             {
                 console.WriteLine("[GDB] - Started");
