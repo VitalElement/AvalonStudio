@@ -448,7 +448,7 @@ namespace AvalonStudio.Debugging
                             _shell.CurrentPerspective = Perspective.Debug;
                         });
 
-                        BreakPointManager.GoLive();
+                        await BreakPointManager.GoLiveAsync();
 
                         await BreakPointManager.Add(await CurrentDebugger.BreakMainAsync());
 

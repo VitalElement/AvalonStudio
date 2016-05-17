@@ -29,7 +29,7 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        public async void GoLive()
+        public async Task GoLiveAsync()
         {
             List<BreakPoint> newList = new List<BreakPoint>();
 
