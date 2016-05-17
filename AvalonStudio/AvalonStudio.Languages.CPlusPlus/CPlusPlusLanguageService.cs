@@ -18,16 +18,23 @@ namespace AvalonStudio.Languages.CPlusPlus
     using TextEditor.Indentation;
     using TextEditor.Rendering;
     using Utils;
-
+    using Extensibility.Threading;
+    using System.Threading.Tasks;
     public class CPlusPlusLanguageService : ILanguageService
     {
         private static ClangIndex index = ClangService.CreateIndex();        
         private static ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations = new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
+        private JobRunner intellisenseJobRunner;
 
         public CPlusPlusLanguageService()
         {
             indentationStrategy = new CppIndentationStrategy();
+            intellisenseJobRunner = new JobRunner();
 
+            Task.Factory.StartNew(() =>
+            {
+                intellisenseJobRunner.RunLoop(new CancellationToken());
+            });
         }
 
         public string Title
@@ -533,14 +540,19 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             association.IntellisenseManager = new CPlusPlusIntellisenseManager(intellisense, editor);
 
-            association.TunneledKeyUpHandler = (sender, e) =>
+            association.TunneledKeyUpHandler = async (sender, e) =>
             {
-                association.IntellisenseManager.OnKeyUp(e);
+                await intellisenseJobRunner.InvokeAsync(() =>
+                {                    
+                    association.IntellisenseManager.OnKeyUp(e).Wait();                    
+                });
             };
 
             association.TunneledKeyDownHandler = (sender, e) =>
             {
+
                 association.IntellisenseManager.OnKeyDown(e);
+                
             };            
             
             association.KeyUpHandler = (sender, e) =>
