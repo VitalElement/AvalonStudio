@@ -131,6 +131,7 @@ namespace AvalonStudio.Toolchains.Standard
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "")
         {
+            console.Clear();
             console.WriteLine("Starting Build...");
 
             bool result = true;
