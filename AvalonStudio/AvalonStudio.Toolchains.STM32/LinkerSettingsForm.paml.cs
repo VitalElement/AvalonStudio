@@ -12,7 +12,7 @@ namespace AvalonStudio.Toolchains.STM32
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }

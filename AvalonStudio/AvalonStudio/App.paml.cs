@@ -11,17 +11,19 @@ namespace AvalonStudio
     using Avalonia.Logging.Serilog;
     using Serilog;
     using System;
+    using Avalonia.Markup.Xaml;
 
     class App : Application
     {
         public App()
         {
-            RegisterServices();
-            this.UseWin32().UseDirect2D().LoadFromXaml();
+            RegisterServices();            
         }
 
         private static void Main(string[] args)
         {
+            
+
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
@@ -31,6 +33,7 @@ namespace AvalonStudio
 
             var container = CompositionRoot.CreateContainer();
             var app = new App();
+            var builder = AppBuilder.Configure(app).UseWin32().UseDirect2D1();
 
             var commandService = container.GetExportedValue<ICommandService>();
             IoC.RegisterConstant(commandService, typeof(ICommandService));
@@ -40,12 +43,18 @@ namespace AvalonStudio
 
             var toolBarBuilder = container.GetExportedValue<IToolBarBuilder>();
             IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
-            
+
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
+
+            builder.Start<MainWindow>();
             
-            app.RunWithMainWindow<MainWindow>();
 
             ShellViewModel.Instance.Cleanup();
+        }
+
+        public override void Initialize()
+        {
+            AvaloniaXamlLoader.Load(this);
         }
 
         public static void AttachDevTools(Window window)

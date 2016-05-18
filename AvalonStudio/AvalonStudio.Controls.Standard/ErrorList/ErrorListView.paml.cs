@@ -2,7 +2,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 {
     using Avalonia;
     using Avalonia.Controls;
-
+    using Avalonia.Markup.Xaml;
     public class ErrorListView : UserControl
     {
         public ErrorListView()
@@ -12,7 +12,8 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }

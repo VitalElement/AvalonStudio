@@ -2,7 +2,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 {
     using Avalonia;
     using Avalonia.Controls;
-
+    using Avalonia.Markup.Xaml;
     public class ToolchainSettingsForm : UserControl
     {
         public ToolchainSettingsForm()
@@ -12,7 +12,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }

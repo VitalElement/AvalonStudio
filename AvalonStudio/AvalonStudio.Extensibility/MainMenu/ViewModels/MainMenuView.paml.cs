@@ -1,8 +1,8 @@
 namespace AvalonStudio.Extensibility.MainMenu.ViewModels
-{    
+{
     using Avalonia;
     using Avalonia.Controls;
-
+    using Avalonia.Markup.Xaml;
     public class MainMenuView : UserControl
     {
         public MainMenuView()
@@ -12,7 +12,7 @@ namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }

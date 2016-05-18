@@ -2,7 +2,7 @@ namespace AvalonStudio.Controls.Standard.Console
 {
     using Avalonia.Controls;
     using Avalonia;
-    
+    using Avalonia.Markup.Xaml;
     public class ConsoleView : UserControl
     {
         public ConsoleView()
@@ -12,7 +12,7 @@ namespace AvalonStudio.Controls.Standard.Console
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }
