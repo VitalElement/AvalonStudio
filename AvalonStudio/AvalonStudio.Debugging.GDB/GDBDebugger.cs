@@ -182,7 +182,7 @@ namespace AvalonStudio.Debugging.GDB
                 input.WriteLine(command.Encode());
                 input.Flush();
 
-                result = WaitForResponse(-1);
+                result = WaitForResponse(1000);
 
                 ClearCommand();
             });
