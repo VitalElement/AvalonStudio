@@ -7,8 +7,8 @@
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
              Foreground="WhiteSmoke">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
-    <Grid>      
-      <te:TextEditor Name="editor" TextDocument="{Binding TextDocument}"
+    <Grid>
+       <te:TextEditor Name="editor" TextDocument="{Binding TextDocument}"
                      FontFamily="{Binding FontFamily}" FontSize="12" Foreground="#D4D4D4" BorderThickness="0"
                      BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
                      TextChangedCommand="{Binding TextChangedCommand}"
@@ -18,31 +18,37 @@
                      CaretLocationInTextView="{Binding CaretLocation}" SelectedWord="{Binding WordAtCaret}"
                      LineHeight="{Binding LineHeight}" BackgroundRenderers="{Binding BackgroundRenderers}" DocumentLineTransformers="{Binding DocumentLineTransformers}" Margins="{Binding Margins}"
                      MouseCursorOffset="{Binding MouseCursorOffset, Mode=TwoWay}">
-        
-        <te:TextEditor.ContextMenu>
-          <ContextMenu>
-            <MenuItem Header="Add Watch" Command="{Binding AddWatchCommand}" />
-          </ContextMenu>
-        </te:TextEditor.ContextMenu>
 
-        <i:Interaction.Behaviors>
-          <behaviours:CodeInformationToolTipBehavior>
-            <cont:HoverProbe DataContext="{Binding HoverProbe}" />
-          </behaviours:CodeInformationToolTipBehavior>
+          <te:TextEditor.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="Add Watch" Command="{Binding AddWatchCommand}" />
+            </ContextMenu>
+          </te:TextEditor.ContextMenu>
 
-           <behaviours:DebugInformationToolTipBehaviour>
-             <dcont:VariableControlView DataContext="{Binding DebugHoverProbe}" />
-           </behaviours:DebugInformationToolTipBehaviour>
-        </i:Interaction.Behaviors>
+          <i:Interaction.Behaviors>
+            <behaviours:CodeInformationToolTipBehavior>
+              <cont:HoverProbe DataContext="{Binding HoverProbe}" />
+            </behaviours:CodeInformationToolTipBehavior>
 
-        <te:TextEditor.Header>
-        </te:TextEditor.Header>
-        
-        <te:TextEditor.Content>          
-          <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
-        </te:TextEditor.Content>
+            <behaviours:DebugInformationToolTipBehaviour>
+              <dcont:VariableControlView DataContext="{Binding DebugHoverProbe}" />
+            </behaviours:DebugInformationToolTipBehaviour>
+          </i:Interaction.Behaviors>
 
-      </te:TextEditor>
+          <te:TextEditor.Header>
+            <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20">
+              <DropDown.DataTemplates>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Spelling}" />
+                </DataTemplate>
+              </DropDown.DataTemplates>
+            </DropDown>
+          </te:TextEditor.Header>
+
+          <te:TextEditor.Content>
+            <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
+          </te:TextEditor.Content>
+        </te:TextEditor> 
     </Grid>
   </Border>
 </UserControl>

@@ -14,7 +14,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-const uint32_t BootLoaderSignature = 0x10AD10CC; // LOADLOCK
+const uint32_t BootLoaderSignature = 0x10AD10CC; // LOADLOCK 
 
 enum class BootloaderState
 {

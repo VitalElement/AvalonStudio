@@ -20,6 +20,7 @@ namespace AvalonStudio.Languages.CPlusPlus
     using Utils;
     using Extensibility.Threading;
     using System.Threading.Tasks;
+    using Extensibility.Languages;
     public class CPlusPlusLanguageService : ILanguageService
     {
         private static ClangIndex index = ClangService.CreateIndex();        
@@ -332,7 +333,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                             case CursorKind.ClassTemplate:
                             case CursorKind.EnumDeclaration:
                             case CursorKind.UnionDeclaration:
-                                // TODO return code folding data.
+                                result.IndexItems.Add(new IndexEntry(e.Cursor.Spelling, e.Cursor.CursorExtent.Start.FileLocation.Offset, e.Cursor.CursorExtent.End.FileLocation.Offset, (AvalonStudio.Languages.CursorKind)e.Cursor.Kind));
                                 break;
                         }
 
