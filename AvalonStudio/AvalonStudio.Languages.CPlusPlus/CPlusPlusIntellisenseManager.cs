@@ -24,7 +24,6 @@ namespace AvalonStudio.Languages.CPlusPlus
         private IIntellisenseControl intellisenseControl;
         private string currentFilter = string.Empty;
         private int intellisenseStartedAt;
-        private object intellisenseLock = new object();
 
         private bool IsIntellisenseOpenKey(KeyEventArgs e)
         {
@@ -248,12 +247,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             currentFilter = string.Empty;
         }
 
-        private TextLocation CaretTextLocation
+        private TextLocation GetTextLocation(int index)
         {
-            get
-            {
-                return editor.TextDocument.GetLocation(editor.CaretIndex);
-            }
+            return editor.TextDocument.GetLocation(index);
         }
 
 
@@ -290,12 +286,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 if (!intellisenseControl.IsVisible && (IsIntellisenseOpenKey(e) || IsIntellisenseResetKey(e)))
                 {
                     TextLocation caret = new TextLocation();
-
-                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
-                    {
-                         caret = CaretTextLocation;
-                    });
-
+                    
                     char behindCaretChar = '\0';
                     char behindBehindCaretChar = '\0';
 
@@ -339,6 +330,8 @@ namespace AvalonStudio.Languages.CPlusPlus
                     await Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {
                         currentFilter = editor.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);
+
+                        caret = GetTextLocation(intellisenseStartedAt);
                     });
 
                     var codeCompletionResults = await intellisenseControl.DoCompletionRequestAsync(caret.Line, caret.Column, currentFilter);
@@ -392,17 +385,14 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
-                    lock (intellisenseLock)
+                    newSelectedCompletions = filteredResults.Where((s) => s.Title.StartsWith(currentFilter));   // try find exact match case sensitive
+
+                    if (newSelectedCompletions.Count() == 0)
                     {
-                        newSelectedCompletions = filteredResults.Where((s) => s.Title.StartsWith(currentFilter));   // try find exact match case sensitive
-
-                        if (newSelectedCompletions.Count() == 0)
-                        {
-                            newSelectedCompletions = filteredResults.Where((s) => s.Title.ToLower().StartsWith(currentFilter.ToLower()));   // try find non-case sensitve match
-                        }
-
-                        filteredResults = newSelectedCompletions;
+                        newSelectedCompletions = filteredResults.Where((s) => s.Title.ToLower().StartsWith(currentFilter.ToLower()));   // try find non-case sensitve match
                     }
+
+                    filteredResults = newSelectedCompletions;
 
                     if (newSelectedCompletions.Count() == 0)
                     {
@@ -424,7 +414,10 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     if (filteredResults?.Count() == 1 && filteredResults.First().Title == currentFilter)
                     {
-                        Close();
+                        await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                        {
+                            Close();
+                        });
                     }
                     else
                     {
@@ -434,13 +427,9 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         await Dispatcher.UIThread.InvokeTaskAsync(() =>
                         {
-                            intellisenseControl.CompletionData = data;
-
-                            //Model = filteredResults.ToList();                   
+                            intellisenseControl.CompletionData = data;             
 
                             intellisenseControl.SelectedCompletion = suggestion;
-
-                            // Triggers display update.
 
                             intellisenseControl.IsVisible = true;
                         });
