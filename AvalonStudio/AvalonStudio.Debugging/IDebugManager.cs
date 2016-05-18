@@ -29,6 +29,8 @@ namespace AvalonStudio.Debugging
 
         BreakPointManager BreakPointManager { get; }
 
+        Task<VariableObject> ProbeExpressionAsync(string expression);
+
         void StartDebug(IProject project);
 
         void Restart();

@@ -1,21 +1,17 @@
 namespace AvalonStudio.Debugging
 {
-    using AvalonStudio.Controls;
+    using Avalonia.Threading;
     using AvalonStudio.Documents;
     using AvalonStudio.Extensibility;
     using AvalonStudio.MVVM;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
-    using AvalonStudio.Toolchains;
     using AvalonStudio.Utils;
     using Extensibility.Plugin;
     using Extensibility.Utils;
-    using Avalonia.Threading;
     using ReactiveUI;
     using Shell;
     using System;
-    using System.Collections.Generic;
-    using System.Threading;
     using System.Threading.Tasks;
 
     public class DebugManager : ViewModel, IDebugManager, IExtension

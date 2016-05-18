@@ -10,6 +10,7 @@ namespace AvalonStudio.Behaviors
     using Avalonia.Threading;
     using Avalonia.Xaml.Interactivity;
     using System;
+    using System.Threading.Tasks;
     using Utils;
 
     public class PopupBehavior : Behavior<Control>
@@ -37,7 +38,7 @@ namespace AvalonStudio.Behaviors
             {
                 if (AssociatedObject != null && popup.PlacementTarget == null)
                 {
-                    popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor).TextView;
+                    popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor);
                     popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };
                 }
             });
@@ -120,11 +121,11 @@ namespace AvalonStudio.Behaviors
         }
 
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private async void Timer_Tick(object sender, EventArgs e)
         {
             timer.Stop();
 
-            if (OnBeforePopupOpen())
+            if (await OnBeforePopupOpen())
             {
                 if (AssociatedObject.IsPointerOver)
                 {
@@ -137,7 +138,7 @@ namespace AvalonStudio.Behaviors
         /// Method is called before popup opens to retrieve data and cancel popup open if required.
         /// </summary>
         /// <returns>true if the popup will open, false if it wont.</returns>
-        public virtual bool OnBeforePopupOpen()
+        public virtual async Task<bool> OnBeforePopupOpen()
         {
             return true;
         }
