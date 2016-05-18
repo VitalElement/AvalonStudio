@@ -2,7 +2,7 @@ namespace AvalonStudio.Behaviors
 {
     using AvalonStudio.Controls;
     using AvalonStudio.TextEditor;
-
+    using System.Threading.Tasks;
     public class CodeInformationToolTipBehavior : PopupBehavior
     {
         private EditorViewModel editorVm;
@@ -33,7 +33,7 @@ namespace AvalonStudio.Behaviors
             }
         }
 
-        public override bool OnBeforePopupOpen()
+        public override async Task<bool> OnBeforePopupOpen()
         {
             bool result = false;
 
