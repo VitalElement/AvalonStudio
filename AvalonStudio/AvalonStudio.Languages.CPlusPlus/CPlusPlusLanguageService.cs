@@ -550,9 +550,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             association.TunneledKeyDownHandler = (sender, e) =>
             {
-
-                association.IntellisenseManager.OnKeyDown(e);
-                
+                association.IntellisenseManager.OnKeyDown(e);                
             };            
             
             association.KeyUpHandler = (sender, e) =>
