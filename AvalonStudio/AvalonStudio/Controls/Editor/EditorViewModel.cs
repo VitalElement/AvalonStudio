@@ -22,6 +22,8 @@ namespace AvalonStudio.Controls
     using System.Threading;
     using Debugging;
     using Extensibility;
+    using Extensibility.Languages;
+    using System.Linq;
     public class EditorViewModel : ViewModel<EditorModel>, IEditor
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -112,6 +114,11 @@ namespace AvalonStudio.Controls
                 {
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
                     HighlightingData = new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
+
+                    IndexItems = new ObservableCollection<IndexEntry>(model.CodeAnalysisResults.IndexItems);
+                    selectedIndexEntry = IndexItems.FirstOrDefault();
+                    this.RaisePropertyChanged(nameof(SelectedIndexEntry));
+
                     ShellViewModel.Instance.InvalidateErrors();
                 };
 
@@ -267,6 +274,31 @@ namespace AvalonStudio.Controls
             CaretIndex = offset;
         }
 
+        public IndexEntry GetSelectIndexEntryByOffset(int offset)
+        {
+            IndexEntry selectedEntry = null;
+
+            if (IndexItems != null && IndexItems.Count > 0)
+            {
+                int i = IndexItems.Count - 1;
+
+                while (i >= 0)
+                {
+                    var entry = IndexItems[i];
+
+                    if (offset >= entry.Offset)
+                    {
+                        selectedEntry = entry;
+                        break;
+                    }
+
+                    i--;
+                }
+            }
+
+            return selectedEntry;
+        }
+
         private int caretIndex;
         public int CaretIndex
         {
@@ -282,6 +314,9 @@ namespace AvalonStudio.Controls
                     ShellViewModel.Instance.StatusBar.LineNumber = location.Line;
                     ShellViewModel.Instance.StatusBar.Column = location.Column;
                 }
+
+                selectedIndexEntry = GetSelectIndexEntryByOffset(value);
+                this.RaisePropertyChanged(nameof(SelectedIndexEntry));
             }
         }
 
@@ -400,6 +435,29 @@ namespace AvalonStudio.Controls
 
             return result;
         }
+
+        private IndexEntry selectedIndexEntry;
+        public IndexEntry SelectedIndexEntry
+        {
+            get { return selectedIndexEntry; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedIndexEntry, value);
+
+                if (value != null)
+                {
+                    GotoOffset(selectedIndexEntry.Offset);
+                }
+            }
+        }
+        
+        private ObservableCollection<IndexEntry> indexItems;
+        public ObservableCollection<IndexEntry> IndexItems
+        {
+            get { return indexItems; }
+            set { this.RaiseAndSetIfChanged(ref indexItems, value); }
+        }
+
 
         private ObservableCollection<SyntaxHighlightingData> highlightingData;
         public ObservableCollection<SyntaxHighlightingData> HighlightingData

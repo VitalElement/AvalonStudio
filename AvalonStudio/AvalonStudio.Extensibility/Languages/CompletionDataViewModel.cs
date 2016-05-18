@@ -23,7 +23,7 @@ namespace AvalonStudio.Languages.ViewModels
         
         public string Hint { get { return Model?.Hint; } }
         public string Comment { get { return Model?.BriefComment; } }
-
+        
         public static CompletionDataViewModel Create(CodeCompletionData data)
         {
             CompletionDataViewModel result = null;

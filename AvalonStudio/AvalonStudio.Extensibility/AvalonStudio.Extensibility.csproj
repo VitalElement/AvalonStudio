@@ -187,6 +187,7 @@
     <Compile Include="Documents\IEditor.cs" />
     <Compile Include="Git\Git.cs" />
     <Compile Include="IoC.cs" />
+    <Compile Include="Languages\IndexEntry.cs" />
     <Compile Include="MainMenu\IMenu.cs" />
     <Compile Include="MainMenu\IMenuBuilder.cs" />
     <Compile Include="MainMenu\MenuBuilder.cs" />

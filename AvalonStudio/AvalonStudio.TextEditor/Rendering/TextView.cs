@@ -551,9 +551,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
                 result = new Size(0, TextDocument.LineCount * CharSize.Height);
             }
-
-            base.MeasureOverride(availableSize);
-
+            
             return result;
         }
         #endregion
