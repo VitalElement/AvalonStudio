@@ -275,16 +275,10 @@ namespace AvalonStudio.Debugging
 
         private bool ignoreEvents = false;
 
-        private async void StopDebugSession()
+        private void ResetDebugSession()
         {
-            ignoreEvents = true;
-
-            await CurrentDebugger.StopAsync();
-
             CurrentDebugger = null;
             SetDebuggers(null);
-
-            ignoreEvents = false;
 
             Project = null;
 
@@ -295,14 +289,25 @@ namespace AvalonStudio.Debugging
             }
 
             Dispatcher.UIThread.InvokeAsync(() =>
-           {
-               if (DebugSessionEnded != null)
-               {
-                   DebugSessionEnded(this, new EventArgs());
-               }
+            {
+                if (DebugSessionEnded != null)
+                {
+                    DebugSessionEnded(this, new EventArgs());
+                }
 
-               _shell.CurrentPerspective = Perspective.Editor;
-           });
+                _shell.CurrentPerspective = Perspective.Editor;
+            });
+        }
+
+        private async void StopDebugSession()
+        {
+            ignoreEvents = true;
+
+            await CurrentDebugger.StopAsync();
+            
+            ignoreEvents = false;
+
+            ResetDebugSession();
         }
 
         #region Commands
@@ -449,6 +454,11 @@ namespace AvalonStudio.Debugging
                         await BreakPointManager.Add(await CurrentDebugger.BreakMainAsync());
 
                         await CurrentDebugger.RunAsync();
+                    }
+                    else
+                    {
+                        _console.WriteLine("Unable to connect to debugger.");
+                        ResetDebugSession();
                     }
                 });
             }
