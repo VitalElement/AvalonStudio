@@ -2,7 +2,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using Avalonia;
     using Avalonia.Controls;
-
+    using Avalonia.Markup.Xaml;
     public class NewProjectDialogView : UserControl
     {
         public NewProjectDialogView()
@@ -12,7 +12,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }

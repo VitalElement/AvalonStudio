@@ -2,7 +2,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 {
     using Avalonia;
     using Avalonia.Controls;
-
+    using Avalonia.Markup.Xaml;
     public class ToolchainSettingsForm : TabItem
     {
         public ToolchainSettingsForm()
@@ -12,7 +12,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }

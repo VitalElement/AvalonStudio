@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia;
+using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
@@ -12,7 +13,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }

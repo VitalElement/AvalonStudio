@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia;
+using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
@@ -12,7 +13,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }
