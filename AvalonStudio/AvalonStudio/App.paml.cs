@@ -17,13 +17,10 @@ namespace AvalonStudio
     {
         public App()
         {
-            RegisterServices();            
         }
 
         private static void Main(string[] args)
         {
-            
-
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
@@ -32,8 +29,8 @@ namespace AvalonStudio
             PackageSources.InitialisePackageSources();
 
             var container = CompositionRoot.CreateContainer();
-            var app = new App();
-            var builder = AppBuilder.Configure(app).UseWin32().UseDirect2D1();
+            
+            var builder = AppBuilder.Configure<App>().UseWin32().UseDirect2D1().SetupWithoutStarting();
 
             var commandService = container.GetExportedValue<ICommandService>();
             IoC.RegisterConstant(commandService, typeof(ICommandService));
@@ -46,8 +43,7 @@ namespace AvalonStudio
 
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
 
-            builder.Start<MainWindow>();
-            
+            builder.Instance.RunWithMainWindow<MainWindow>();
 
             ShellViewModel.Instance.Cleanup();
         }
