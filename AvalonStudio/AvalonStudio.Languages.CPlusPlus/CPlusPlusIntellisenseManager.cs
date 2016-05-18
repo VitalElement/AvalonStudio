@@ -24,7 +24,6 @@ namespace AvalonStudio.Languages.CPlusPlus
         private IIntellisenseControl intellisenseControl;
         private string currentFilter = string.Empty;
         private int intellisenseStartedAt;
-        private object intellisenseLock = new object();
 
         private bool IsIntellisenseOpenKey(KeyEventArgs e)
         {
@@ -386,17 +385,14 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
-                    lock (intellisenseLock)
+                    newSelectedCompletions = filteredResults.Where((s) => s.Title.StartsWith(currentFilter));   // try find exact match case sensitive
+
+                    if (newSelectedCompletions.Count() == 0)
                     {
-                        newSelectedCompletions = filteredResults.Where((s) => s.Title.StartsWith(currentFilter));   // try find exact match case sensitive
-
-                        if (newSelectedCompletions.Count() == 0)
-                        {
-                            newSelectedCompletions = filteredResults.Where((s) => s.Title.ToLower().StartsWith(currentFilter.ToLower()));   // try find non-case sensitve match
-                        }
-
-                        filteredResults = newSelectedCompletions;
+                        newSelectedCompletions = filteredResults.Where((s) => s.Title.ToLower().StartsWith(currentFilter.ToLower()));   // try find non-case sensitve match
                     }
+
+                    filteredResults = newSelectedCompletions;
 
                     if (newSelectedCompletions.Count() == 0)
                     {
