@@ -221,7 +221,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
            
             if(!result)
             {
-                console.WriteLine("[OpenOCD] - Unable to connect. Ensure there no process named openocd.exe is running.");
+                console.WriteLine("[OpenOCD] - Unable to connect. Ensure target is powered, connected and that debug settings are correct.");
 
                 if (openOcdProcess != null && !openOcdProcess.HasExited)
                 {

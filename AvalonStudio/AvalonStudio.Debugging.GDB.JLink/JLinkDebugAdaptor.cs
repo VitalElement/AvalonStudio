@@ -196,7 +196,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
             
             if(!result)
             {
-                console.WriteLine("[JLink] - Unable to connect. Ensure there no process named jlinkgdbservercl.exe is running.");
+                console.WriteLine("[JLink] - Unable to connect. Ensure target is powered, connected and that debug settings are correct.");
 
                 if (jlinkProcess != null && !jlinkProcess.HasExited)
                 {
