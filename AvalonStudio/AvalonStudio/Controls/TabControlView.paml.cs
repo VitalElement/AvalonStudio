@@ -12,7 +12,7 @@ namespace AvalonStudio.Controls
 
         private void InitializeComponent()
         {
-            AvaloniaXamlLoader.Load(this);
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }

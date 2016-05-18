@@ -1,6 +1,7 @@
 namespace AvalonStudio.Extensibility.Controls
 {
     using Avalonia;
+    using Avalonia.Markup.Xaml;
     using Avalonia.Styling;
     using System;
 
@@ -8,7 +9,7 @@ namespace AvalonStudio.Extensibility.Controls
     {
         public ControlTheme()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }

@@ -2,7 +2,7 @@ namespace AvalonStudio.Controls.Standard.AboutScreen
 {
     using Avalonia;
     using Avalonia.Controls;
-
+    using Avalonia.Markup.Xaml;
     public class AboutDialogView : UserControl
     {
         public AboutDialogView()
@@ -12,7 +12,7 @@ namespace AvalonStudio.Controls.Standard.AboutScreen
 
         private void InitializeComponent()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace AvalonStudio.Controls
     {
         public MetroWindowTheme()
         {
-            this.LoadFromXaml();
+            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }        
     }
 }

@@ -29,7 +29,7 @@ namespace AvalonStudio
 
         private void InitializeComponent()
         {
-           this.LoadFromXaml();
+           Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
         }        
     }
 }
