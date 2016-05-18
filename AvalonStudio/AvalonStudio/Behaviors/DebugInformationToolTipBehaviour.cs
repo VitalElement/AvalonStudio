@@ -2,7 +2,7 @@ namespace AvalonStudio.Behaviors
 {
     using AvalonStudio.Controls;
     using AvalonStudio.TextEditor;
-
+    using System.Threading.Tasks;
     public class DebugInformationToolTipBehaviour : PopupBehavior
     {
         private EditorViewModel editorVm;
@@ -33,13 +33,13 @@ namespace AvalonStudio.Behaviors
             }
         }
 
-        public override bool OnBeforePopupOpen()
+        public override async Task<bool> OnBeforePopupOpen()
         {
             bool result = false;
 
             if (editorVm != null)
             {
-                result = editorVm.UpdateDebugHoverProbe(editor.TextView.GetOffsetFromPoint(lastPoint));
+                result = await editorVm.UpdateDebugHoverProbe(editor.TextView.GetOffsetFromPoint(lastPoint));
             }
 
             return result;

@@ -20,6 +20,8 @@ namespace AvalonStudio.Controls
     using Shell;
     using System.Threading.Tasks;
     using System.Threading;
+    using Debugging;
+    using Extensibility;
     public class EditorViewModel : ViewModel<EditorModel>, IEditor
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -283,12 +285,12 @@ namespace AvalonStudio.Controls
             }
         }
 
-        //private WatchListViewModel debugHoverProbe;
-        //public WatchListViewModel DebugHoverProbe
-        //{
-        //    get { return debugHoverProbe; }
-        //    set { this.RaiseAndSetIfChanged(ref debugHoverProbe, value); }
-        //}
+        private WatchListViewModel debugHoverProbe;
+        public WatchListViewModel DebugHoverProbe
+        {
+            get { return debugHoverProbe; }
+            set { this.RaiseAndSetIfChanged(ref debugHoverProbe, value); }
+        }
 
         private string GetWordAtOffset(int offset)
         {
@@ -329,29 +331,31 @@ namespace AvalonStudio.Controls
             return result;
         }
 
-        public bool UpdateDebugHoverProbe(int offset)
+        public async Task<bool> UpdateDebugHoverProbe(int offset)
         {
             bool result = false;
 
-            ShellViewModel.Instance.Console.WriteLine("Injection of DebugProb behaviour required");
+            //ShellViewModel.Instance.Console.WriteLine("Injection of DebugProb behaviour required");
 
-            //if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
-            //{
-            //    var expression = GetWordAtOffset(offset);
+            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
+            {
+                var expression = GetWordAtOffset(offset);
 
-            //    if (expression != string.Empty)
-            //    {
-            //        var evaluatedExpression = ShellViewModel.Instance.DebugManager.ProbeExpression(expression);
+                if (expression != string.Empty)
+                {
+                    var debugManager = IoC.Get<IDebugManager>();
 
-            //        if (evaluatedExpression != null)
-            //        {
-            //            DebugHoverProbe = new WatchListViewModel();
-            //            DebugHoverProbe.SetDebugger(ShellViewModel.Instance.DebugManager.Debugger);
-            //            DebugHoverProbe.AddExistingWatch(evaluatedExpression);
-            //            result = true;
-            //        }
-            //    }
-            //}
+                    
+                    var evaluatedExpression = await debugManager.ProbeExpressionAsync(expression);
+
+                    if (evaluatedExpression != null)
+                    {
+                        DebugHoverProbe = new WatchListViewModel(debugManager);
+                        DebugHoverProbe.AddExistingWatch(evaluatedExpression);
+                        result = true;
+                    }
+                }
+            }
 
             return result;
         }

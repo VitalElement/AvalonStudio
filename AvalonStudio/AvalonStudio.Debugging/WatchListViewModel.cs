@@ -25,6 +25,23 @@ namespace AvalonStudio.Debugging
             Children = new ObservableCollection<WatchViewModel>();
         }
 
+        public WatchListViewModel(IDebugManager debugManager) : this()
+        {
+            _debugManager = IoC.Get<IDebugManager>();
+            //_debugManager.DebugFrameChanged += WatchListViewModel_DebugFrameChanged;
+
+            //_debugManager.DebugSessionStarted += (sender, e) =>
+            //{
+            //    IsVisible = true;
+            //};
+
+            //_debugManager.DebugSessionEnded += (sender, e) =>
+            //{
+            //    IsVisible = false;
+            //    Clear();
+            //};
+        }
+
         private ObservableCollection<WatchViewModel> children;
         public ObservableCollection<WatchViewModel> Children
         {
