@@ -460,7 +460,7 @@ namespace AvalonStudio.Debugging.GDB
             {
                 input.WriteLine("-gdb-exit");
                 
-                closeTokenSource.Cancel();
+                closeTokenSource?.Cancel();
             });
         }
 
@@ -593,6 +593,8 @@ namespace AvalonStudio.Debugging.GDB
                 }
 
                 console.WriteLine("[GDB] - Closed");
+
+                closeTokenSource?.Cancel();
             });
 
             return true;
