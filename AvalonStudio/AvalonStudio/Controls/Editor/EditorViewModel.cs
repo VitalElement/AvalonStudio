@@ -442,11 +442,12 @@ namespace AvalonStudio.Controls
             get { return selectedIndexEntry; }
             set
             {
-                this.RaiseAndSetIfChanged(ref selectedIndexEntry, value);
-
-                if (value != null)
+                if (value != null && value != selectedIndexEntry)
                 {
+                    selectedIndexEntry = value;
                     GotoOffset(selectedIndexEntry.Offset);
+
+                    this.RaisePropertyChanged(nameof(SelectedIndexEntry));
                 }
             }
         }
