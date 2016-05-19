@@ -82,11 +82,11 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        public void Add(VariableObject model)
+        public async void Add(VariableObject model)
         {
             var newWatch = new WatchViewModel(_debugManager.CurrentDebugger, model);
 
-            newWatch.Evaluate(_debugManager.CurrentDebugger);
+            await newWatch.Evaluate(_debugManager.CurrentDebugger);
 
             this.Children.Add(newWatch);
 

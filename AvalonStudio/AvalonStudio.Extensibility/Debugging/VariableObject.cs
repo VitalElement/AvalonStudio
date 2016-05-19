@@ -35,22 +35,27 @@ namespace AvalonStudio.Debugging
         public List<VariableObject> Children { get; private set; }
        
 
+        public async Task EvaluateChildrenAsync()
+        {
+            if (!areChildrenEvaluated)
+            {
+                await EvaluateChildrenInternalAsync();
+                areChildrenEvaluated = true;
+            }
+        }
+
+        public void ClearEvaluated()
+        {
+            areChildrenEvaluated = false;
+        }
+
         private bool areChildrenEvaluated;
         public bool AreChildrenEvaluated
         {
             get { return areChildrenEvaluated; }
-            set
-            {
-                if (!areChildrenEvaluated && value)
-                {
-                    EvaluateChildren();
-                }
-
-                areChildrenEvaluated = value;
-            }
         }
 
-        private async void EvaluateChildren()
+        private async Task EvaluateChildrenInternalAsync()
         {
             Children.Clear();
 
@@ -63,12 +68,12 @@ namespace AvalonStudio.Debugging
 
             foreach (var child in Children)  //TODO performance can be improved by only accessing when visible.
             {
-                child.Evaluate(debugger, false);
+                await child.EvaluateAsync(debugger, false);
             }
         }
 
 
-        public async void Evaluate(IDebugger debugger, bool evaluateChildren = true)
+        public async Task EvaluateAsync(IDebugger debugger, bool evaluateChildren = true)
         {
             this.debugger = debugger;
 
@@ -76,7 +81,7 @@ namespace AvalonStudio.Debugging
 
             if(NumChildren > 0 && evaluateChildren)
             {
-                EvaluateChildren();
+                await EvaluateChildrenInternalAsync();
             }
         }
 

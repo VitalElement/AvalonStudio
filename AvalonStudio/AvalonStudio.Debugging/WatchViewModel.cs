@@ -5,7 +5,7 @@ namespace AvalonStudio.Debugging
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
-
+    using System.Threading.Tasks;
     public class WatchViewModel : ViewModel<VariableObject>
     {
         public WatchViewModel(IDebugger debugger, VariableObject model)
@@ -65,7 +65,7 @@ namespace AvalonStudio.Debugging
                 {
                     if (!Model.AreChildrenEvaluated)
                     {
-                        Model.AreChildrenEvaluated = true;
+                        Model.EvaluateChildrenAsync().Wait();
 
                         var newChildren = new ObservableCollection<WatchViewModel>();
 
@@ -73,7 +73,7 @@ namespace AvalonStudio.Debugging
                         {
                             var newChild = new WatchViewModel(debugger, child);
 
-                            newChild.Evaluate(debugger);
+                            newChild.Evaluate(debugger).Wait();
 
                             newChildren.Add(newChild);
                         }
@@ -130,7 +130,7 @@ namespace AvalonStudio.Debugging
                     {
                         Value = "{ Out of Scope. }";
                         Model.Children.Clear();
-                        Model.AreChildrenEvaluated = false;
+                        Model.ClearEvaluated();
                         Children.Clear();
                     }
 
@@ -163,9 +163,9 @@ namespace AvalonStudio.Debugging
             return result;
         }
 
-        public void Invalidate(IDebugger debugger)
+        public async Task Invalidate(IDebugger debugger)
         {
-            Model.Evaluate(debugger, false);
+            await Model.EvaluateAsync(debugger, false);
 
             foreach (var child in Children)
             {
@@ -185,9 +185,9 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        public void Evaluate(IDebugger debugger)
+        public async Task Evaluate(IDebugger debugger)
         {
-            Model.Evaluate(debugger);
+            await Model.EvaluateAsync(debugger);
 
             Children = new ObservableCollection<WatchViewModel>();
 
