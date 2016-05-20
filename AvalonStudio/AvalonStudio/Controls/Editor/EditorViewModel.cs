@@ -423,6 +423,8 @@ namespace AvalonStudio.Controls
                         case CursorKind.NoDeclarationFound:
                         case CursorKind.NotImplemented:
                         case CursorKind.FirstDeclaration:
+                        case CursorKind.InitListExpression:
+                        case CursorKind.IntegerLiteral:
                             break;
 
                         default:
