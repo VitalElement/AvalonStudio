@@ -21,6 +21,7 @@ namespace AvalonStudio.Languages.CPlusPlus
     using Extensibility.Threading;
     using System.Threading.Tasks;
     using Extensibility.Languages;
+
     public class CPlusPlusLanguageService : ILanguageService
     {
         private static ClangIndex index = ClangService.CreateIndex();        
@@ -600,12 +601,21 @@ namespace AvalonStudio.Languages.CPlusPlus
                             editor.CaretIndex = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
                             break;
 
-                        case "{":                            
+                        case "{":
+                            var lineCount = editor.TextDocument.LineCount;
                             var offset = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+                            
+                            // suggests clang format didnt do anything, so we can assume not moving to new line.
+                            if (lineCount != editor.TextDocument.LineCount)
+                            {
+                                var newLine = editor.TextDocument.GetLineByOffset(offset);
 
-                            var newLine = editor.TextDocument.GetLineByOffset(offset);
-
-                            editor.CaretIndex = newLine.PreviousLine.EndOffset;
+                                editor.CaretIndex = newLine.PreviousLine.EndOffset;
+                            }
+                            else
+                            {
+                                editor.CaretIndex = offset;
+                            }
                             break;
                     }
                 }
