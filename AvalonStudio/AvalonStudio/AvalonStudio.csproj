@@ -204,7 +204,6 @@
     <Compile Include="Behaviors\PointerHoverBehaviour.cs" />
     <Compile Include="Behaviors\ToolTipBehaviour.cs" />
     <Compile Include="CompositionRoot.cs" />
-    <Compile Include="Controls\CachedContentControl.cs" />
     <Compile Include="Controls\DebugHoverProbe.paml.cs">
       <DependentUpon>DebugHoverProbe.paml</DependentUpon>
     </Compile>
