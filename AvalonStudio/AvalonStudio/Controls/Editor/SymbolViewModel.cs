@@ -42,7 +42,6 @@ namespace AvalonStudio.Controls
                 }
 
                 Spelling = Model.Name;
-                Description = Model.BriefComment;
             }
         }
 
@@ -160,6 +159,8 @@ namespace AvalonStudio.Controls
                     //DebugData = cursor.Kind.ToString().Replace(" &", "&").Replace(" *", "*");
                     break;
             }
+            
+            Description = Model.BriefComment;
         }
 
         private string scopeDescription;
