@@ -12,22 +12,16 @@ namespace AvalonStudio.Controls
     using Projects;
     using System.Linq;
     using Extensibility;
+    using AvalonStudio.Extensibility.Threading;
     using TextEditor;
     using Shell;
+
     [Export(typeof(EditorModel))]
     public class EditorModel : IDisposable
     {
-        private ReaderWriterLockSlim editorLock;
-        private Thread codeAnalysisThread;
-        private Thread codeCompletionThread;
-        private SemaphoreSlim textChangedSemaphore;
-        private SemaphoreSlim startCompletionRequestSemaphore;
-        private SemaphoreSlim endCompletionRequestSemaphore;
-        private ReaderWriterLockSlim completionRequestLock;
+        private JobRunner codeAnalysisRunner;
         private ISourceFile sourceFile;
         private IShell shell;
-
-
         private TextEditor textEditor;
 
         public TextEditor Editor
@@ -46,14 +40,8 @@ namespace AvalonStudio.Controls
         public EditorModel()
         {
             shell = IoC.Get<IShell>();
-            editorLock = new ReaderWriterLockSlim();
-            completionRequestLock = new ReaderWriterLockSlim();
 
-            textChangedSemaphore = new SemaphoreSlim(0, 1);
-            startCompletionRequestSemaphore = new SemaphoreSlim(0, 1);
-            endCompletionRequestSemaphore = new SemaphoreSlim(0, 1);
-
-            codeCompletionResults = new CodeCompletionResults();
+            codeAnalysisRunner = new JobRunner();
             TextDocument = new TextDocument();
         }
 
@@ -62,25 +50,17 @@ namespace AvalonStudio.Controls
             System.Console.WriteLine(("Editor Model Destructed."));
         }
 
-        private bool completionRequested = false;
-        private TextLocation beginCompletionLocation = new TextLocation();
-        private string filter;
-
         public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column, string filter)
         {
-            if (!completionRequested)
+            CodeCompletionResults results = null;
+
+            await codeAnalysisRunner.InvokeAsync(() =>
             {
-                beginCompletionLocation = new TextLocation(line, column);
-                this.filter = filter;
-                completionRequested = true;
+                var completions = LanguageService.CodeCompleteAt(sourceFile, line, column, UnsavedFiles, filter);
+                results = new CodeCompletionResults() { Completions = completions };
+            });
 
-                DoCodeCompletionRequest();
-                await endCompletionRequestSemaphore.WaitAsync();
-
-                return codeCompletionResults;
-            }
-
-            return null;
+            return results;
         }
 
         public void ScrollToLine(int line)
@@ -110,7 +90,7 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public void RegisterLanguageService(IIntellisenseControl intellisenseControl)
+        public async void RegisterLanguageService(IIntellisenseControl intellisenseControl)
         {
             UnRegisterLanguageService();
 
@@ -136,7 +116,7 @@ namespace AvalonStudio.Controls
 
             OnBeforeTextChanged(null);
 
-            TriggerCodeAnalysis();
+            await TriggerCodeAnalysis();
         }
 
         public void OpenFile(ISourceFile file, IIntellisenseControl intellisense)
@@ -228,51 +208,30 @@ namespace AvalonStudio.Controls
                 }
             }
         }
-
-        private CodeCompletionResults codeCompletionResults;
+        
 
         public ILanguageService LanguageService { get; set; }
 
+        private CancellationTokenSource cancellationSource;
         private void StartBackgroundWorkers()
         {
-            if (codeAnalysisThread != null && codeCompletionThread != null)
+            cancellationSource = new CancellationTokenSource();
+
+            Task.Factory.StartNew(() =>
             {
-                if (codeAnalysisThread.IsAlive || codeCompletionThread.IsAlive)
-                {
-                    throw new Exception("Worker threads already active.");
-                }
-            }
-
-            codeAnalysisThread = new Thread(new ThreadStart(CodeAnalysisThread));
-            codeAnalysisThread.Start();
-
-            codeCompletionThread = new Thread(new ThreadStart(CodeCompletionThread));
-            codeCompletionThread.Start();
+                codeAnalysisRunner.RunLoop(cancellationSource.Token);
+                cancellationSource = null;
+            });
         }
 
         public void ShutdownBackgroundWorkers()
         {
-            if (codeAnalysisThread != null && codeAnalysisThread.IsAlive)
-            {
-                codeAnalysisThread.Abort();
-                codeAnalysisThread.Join();
-                codeAnalysisThread = null;
-            }
-
-            if (codeCompletionThread != null && codeCompletionThread.IsAlive)
-            {
-                codeCompletionThread.Abort();
-                codeCompletionThread.Join();
-                codeCompletionResults = null;
-            }
+            cancellationSource?.Cancel();
         }
 
         public void OnBeforeTextChanged(object param)
         {
-            if (!editorLock.IsWriteLockHeld)
-            {
-                editorLock.EnterWriteLock();
-            }
+            
         }
 
         private bool isDirty;
@@ -282,110 +241,33 @@ namespace AvalonStudio.Controls
             set { isDirty = value; }
         }
 
-        private void DoCodeCompletionRequest()
-        {
-            if (LanguageService != null)
-            {
-                completionRequestLock.EnterWriteLock();
-
-                if (startCompletionRequestSemaphore.CurrentCount == 0)
-                {
-                    startCompletionRequestSemaphore.Release();
-                }
-
-                completionRequestLock.ExitWriteLock();
-            }
-        }
-
         /// <summary>
         /// Write lock must be held before calling this.
         /// </summary>
-        private void TriggerCodeAnalysis()
+        private async Task TriggerCodeAnalysis()
         {
-            editorLock.ExitWriteLock();
-
-            if (textChangedSemaphore.CurrentCount == 0)
+            await codeAnalysisRunner.InvokeAsync(() =>
             {
-                textChangedSemaphore.Release();
-            }
+                if (LanguageService != null)
+                {
+                    // TODO allow interruption.
+                    var result = LanguageService.RunCodeAnalysis(sourceFile, UnsavedFiles, () => false);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        CodeAnalysisResults = result;
+                    });
+                }
+            });         
         }
 
-        public void OnTextChanged(object param)
+        public async void OnTextChanged(object param)
         {
             IsDirty = true;
 
-            TriggerCodeAnalysis();
+            await TriggerCodeAnalysis();
         }
 
-        private void CodeCompletionThread()
-        {
-            try
-            {
-                while (true)
-                {
-                    startCompletionRequestSemaphore.Wait();
-
-                    if (LanguageService != null)
-                    {
-                        var results = LanguageService.CodeCompleteAt(sourceFile, beginCompletionLocation.Line, beginCompletionLocation.Column, UnsavedFiles, filter);
-
-                        codeCompletionResults = new CodeCompletionResults() { Completions = results };
-
-                        endCompletionRequestSemaphore.Release();
-                    }
-                    else
-                    {
-                        endCompletionRequestSemaphore.Release();
-                    }
-
-
-                    completionRequested = false;
-                }
-            }
-            catch (ThreadAbortException)
-            {
-
-            }
-        }
-
-        private void CodeAnalysisThread()
-        {
-            try
-            {
-                while (true)
-                {
-                    textChangedSemaphore.Wait();
-
-                    completionRequestLock.EnterWriteLock();
-                    editorLock.EnterReadLock();
-
-                    if (LanguageService != null)
-                    {
-                        var result = LanguageService.RunCodeAnalysis(sourceFile, UnsavedFiles, () => editorLock.WaitingWriteCount > 0);
-
-                        Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            CodeAnalysisResults = result;
-                        });
-                    }
-
-                    editorLock.ExitReadLock();
-                    completionRequestLock.ExitWriteLock();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-                if (completionRequestLock.IsWriteLockHeld)
-                {
-                    completionRequestLock.ExitWriteLock();
-                }
-
-                if (editorLock.IsReadLockHeld)
-                {
-                    editorLock.ExitReadLock();
-                }
-            }
-
-        }        
+                
     }
 }
