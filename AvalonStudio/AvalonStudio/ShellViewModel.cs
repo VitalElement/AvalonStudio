@@ -228,7 +228,7 @@ namespace AvalonStudio
                 DocumentTabs.Documents.Add(newEditor);
                 DocumentTabs.TemporaryDocument = newEditor;
                 DocumentTabs.SelectedDocument = newEditor;
-                newEditor.Model.OpenFile(file, newEditor.Intellisense);
+                newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.CompletionAdvice);
             }
             else
             {

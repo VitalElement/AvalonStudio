@@ -1,0 +1,10 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility" Focusable="false">
+  <Panel Width="200" Background="Red" IsVisible="false">    
+      <Border HorizontalAlignment="Left" Height="30" Margin="1 0 0 0" MaxHeight="20" BorderThickness="0">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Gap="4">
+          <TextBlock VerticalAlignment="Center" Text="{Binding ListPositionText}" IsVisible="{Binding ListPositionVisibility}"/>
+          <TextBlock VerticalAlignment="Center" Text="{Binding SelectedAdvice}" />
+        </StackPanel>
+      </Border>    
+  </Panel>
+</UserControl>

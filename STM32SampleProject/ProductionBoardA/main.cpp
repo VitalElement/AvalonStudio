@@ -17,6 +17,11 @@ float Point::DistanceTo (Point& to)
     return sqrtf ((dx * dx) + (dy * dy));
 }
 
+float sum (float x, float y)
+{
+    return x + y;
+}
+
 int sum (int x, int y)
 {
     return x + y;
@@ -34,6 +39,9 @@ int main (void)
     Point p1;
     p1.X = 1.25;
     p1.Y = 2.45;
+
+    sum
+
 
     while (true)
     {

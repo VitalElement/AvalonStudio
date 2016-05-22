@@ -139,6 +139,7 @@ namespace AvalonStudio.Controls
             };
 
             this.intellisense = new IntellisenseViewModel(model, this);
+            this.completionAdvice = new CompletionAdviceViewModel(this);
 
             documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
 
@@ -230,9 +231,11 @@ namespace AvalonStudio.Controls
                 if (!Intellisense.IsVisible)
                 {
                     Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
+                    CompletionAdvice.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
+                    // TODO implement scroll offset changed? To set intellisense position.
                 }
             }
-        }
+        }        
 
         public string FontFamily
         {
@@ -249,7 +252,15 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public IntellisenseViewModel intellisense;
+        private CompletionAdviceViewModel completionAdvice;
+        public CompletionAdviceViewModel CompletionAdvice
+        {
+            get { return completionAdvice; }
+            set { this.RaiseAndSetIfChanged(ref completionAdvice, value); }
+        }
+
+
+        private IntellisenseViewModel intellisense;
         public IntellisenseViewModel Intellisense
         {
             get { return intellisense; }

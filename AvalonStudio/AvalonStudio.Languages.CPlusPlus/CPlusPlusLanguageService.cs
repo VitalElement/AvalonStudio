@@ -526,7 +526,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisense, TextEditor editor, ISourceFile file, TextDocument doc)
+        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAdviceControl completionAdvice, TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CPlusPlusDataAssociation association = null;
 
@@ -540,7 +540,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 dataAssociations.Add(file, association);
             }
 
-            association.IntellisenseManager = new CPlusPlusIntellisenseManager(intellisense, editor);
+            association.IntellisenseManager = new CPlusPlusIntellisenseManager(this, intellisense, completionAdvice, file, editor);
 
             association.TunneledKeyUpHandler = async (sender, e) =>
             {
@@ -726,24 +726,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             return cursor;
         }
 
-        public Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        private static Symbol SymbolFromClangCursor(ClangCursor cursor)
         {
             Symbol result = new Symbol();
-            var associatedData = GetAssociatedData(file);
-
-            clangAccessSemaphore.WaitOne();
-            var tu = associatedData.TranslationUnit;
-            var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.File), offset));
-
-            switch (cursor.Kind)
-            {
-                case CursorKind.MemberReferenceExpression:
-                case CursorKind.DeclarationReferenceExpression:
-                case CursorKind.CallExpression:
-                case CursorKind.TypeReference:
-                    cursor = cursor.Referenced;
-                    break;
-            }
 
             result.Name = cursor.Spelling;
             result.Kind = (AvalonStudio.Languages.CursorKind)cursor.Kind;
@@ -798,12 +783,35 @@ namespace AvalonStudio.Languages.CPlusPlus
                     break;
             }
 
+            return result;
+        }
+
+        public Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        {
+            var associatedData = GetAssociatedData(file);
+
+            clangAccessSemaphore.WaitOne();
+            var tu = associatedData.TranslationUnit;
+            var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.File), offset));
+
+            switch (cursor.Kind)
+            {
+                case CursorKind.MemberReferenceExpression:
+                case CursorKind.DeclarationReferenceExpression:
+                case CursorKind.CallExpression:
+                case CursorKind.TypeReference:
+                    cursor = cursor.Referenced;
+                    break;
+            }
+
+            var result = SymbolFromClangCursor(cursor);
+            
             clangAccessSemaphore.Release();
 
             return result;
         }
 
-        private bool IsBuiltInType(ClangType cursor)
+        private static bool IsBuiltInType(ClangType cursor)
         {
             bool result = false;
 
@@ -815,9 +823,63 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        private bool CursorIsValidDeclaration(ClangCursor c)
         {
-            throw new NotImplementedException();
+            bool result = false;
+
+            if (((c.Kind == CursorKind.FunctionDeclaration) || (c.Kind == CursorKind.CXXMethod || c.Kind == CursorKind.Constructor || c.Kind == CursorKind.Destructor)) || c.Kind == CursorKind.FunctionDeclaration)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        private List<ClangCursor> FindFunctions(ClangCursor head, string name)
+        {
+            List<ClangCursor> result = new List<ClangCursor>();
+
+            if (name != string.Empty)
+            {
+                foreach (ClangCursor c in head.GetChildren())
+                {
+                    if (c.Spelling == name)
+                    {
+                        if (CursorIsValidDeclaration(c))
+                        {
+                            if (!result.Any((cc) => cc.DisplayName == c.DisplayName))
+                            {
+                                result.Add(c);
+                            }
+                        }
+                    }
+
+                    result.AddRange(FindFunctions(c, name));
+                }
+            }
+
+            return result;
+        }
+
+        public List<Symbol> GetSymbols(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        {
+            List<Symbol> results = new List<Symbol>();
+
+            if (name != string.Empty)
+            {
+                clangAccessSemaphore.WaitOne();
+                var translationUnit = GetAndParseTranslationUnit(file, new List<ClangUnsavedFile>());
+
+                var cursors = FindFunctions(translationUnit.GetCursor(), name);
+                clangAccessSemaphore.Release();
+
+                foreach (var cursor in cursors)
+                {
+                    results.Add(SymbolFromClangCursor(cursor));                    
+                }
+            }
+
+            return results;
         }
 
         public int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)

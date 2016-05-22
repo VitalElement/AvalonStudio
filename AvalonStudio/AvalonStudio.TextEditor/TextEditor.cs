@@ -338,27 +338,29 @@ namespace AvalonStudio.TextEditor
             CaretLocationInTextView = new Point(CaretLocation.X - TextView.TextSurfaceBounds.X - TextView.CharSize.Width, CaretLocation.Y + TextView.CharSize.Height);
         }
 
-        private void InvalidateSelectedWord()
+        public string GetWordAtIndex(int index)
         {
-            if (CaretIndex >= 0 && TextDocument.TextLength > CaretIndex)
+            string result = string.Empty;
+
+            if (index >= 0 && TextDocument.TextLength > index)
             {
                 bool wordFound = false;
 
-                int start = CaretIndex;
+                int start = index;
 
-                var currentChar = TextDocument.GetCharAt(CaretIndex);
+                var currentChar = TextDocument.GetCharAt(index);
                 char prevChar = '\0';
 
-                if (CaretIndex > 0)
+                if (index > 0)
                 {
-                    prevChar = TextDocument.GetCharAt(CaretIndex - 1);
+                    prevChar = TextDocument.GetCharAt(index - 1);
                 }
 
                 var charClass = TextUtilities.GetCharacterClass(currentChar);
 
                 if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ' && TextUtilities.GetCharacterClass(prevChar) != TextUtilities.CharacterClass.LineTerminator)
                 {
-                    start = TextUtilities.GetNextCaretPosition(TextDocument, CaretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                    start = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
                 }
 
                 int end = TextUtilities.GetNextCaretPosition(TextDocument, start, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorder);
@@ -369,16 +371,18 @@ namespace AvalonStudio.TextEditor
 
                     if (TextUtilities.IsSymbol(word))
                     {
-                        SelectedWord = word;
+                        result = word;
                         wordFound = true;
-                    }
-
-                    if (!wordFound)
-                    {
-                        SelectedWord = string.Empty;
                     }
                 }
             }
+
+            return result;
+        }
+
+        private void InvalidateSelectedWord()
+        {
+            SelectedWord = GetWordAtIndex(CaretIndex);
         }
 
         private void HandleTextInput(string input)

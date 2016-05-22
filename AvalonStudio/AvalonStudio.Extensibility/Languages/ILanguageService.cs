@@ -20,7 +20,7 @@ namespace AvalonStudio.Languages
 
         IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-        void RegisterSourceFile(IIntellisenseControl intellisenseControl, TextEditor editor, ISourceFile file, TextDocument textDocument);
+        void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl, TextEditor editor, ISourceFile file, TextDocument textDocument);
 
         void UnregisterSourceFile(TextEditor editor, ISourceFile file);
 
@@ -35,7 +35,7 @@ namespace AvalonStudio.Languages
 
         Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
 
-        Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
+        List<Symbol> GetSymbols(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
 
         /// <summary>
         /// A description of the language supported by the service, i.e. C/C++

@@ -12,18 +12,42 @@ namespace AvalonStudio.Languages.CPlusPlus
     using ViewModels;
     using Extensibility.Threading;
     using Avalonia.Threading;
-    class CPlusPlusIntellisenseManager
+    using Projects;
+
+    public class CompletionAdviceState
     {
-        public CPlusPlusIntellisenseManager(IIntellisenseControl intellisenseControl, TextEditor.TextEditor editor)
+        public CompletionAdviceState()
         {
-            this.intellisenseControl = intellisenseControl;
-            this.editor = editor;
+            
         }
 
+        public int SelectedIndex { get; set; }
+        public int BracketOpenedAt { get; set; }
+        public List<Symbol> Symbols { get; set; }
+    }
+
+    class CPlusPlusIntellisenseManager
+    {
+        public CPlusPlusIntellisenseManager(ILanguageService languageService, IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl, ISourceFile file, TextEditor.TextEditor editor)
+        {
+            this.languageService = languageService;
+            this.intellisenseControl = intellisenseControl;
+            this.completionAdviceControl = completionAdviceControl;            
+            this.file = file;
+            this.editor = editor;
+
+            completionAdviceStack = new Stack<CompletionAdviceState>();
+        }
+
+        private ISourceFile file;
         private TextEditor.TextEditor editor;
         private IIntellisenseControl intellisenseControl;
+        private ICompletionAdviceControl completionAdviceControl;
+        private ILanguageService languageService;
         private string currentFilter = string.Empty;
         private int intellisenseStartedAt;
+        private Stack<CompletionAdviceState> completionAdviceStack;
+        private CompletionAdviceState currentAdvice;
 
         private bool IsIntellisenseOpenKey(KeyEventArgs e)
         {
@@ -196,6 +220,49 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public async Task CompleteOnKeyDown(KeyEventArgs e)
         {
+            char behindCaretChar = '\0';
+
+            if (editor.CaretIndex > 0)
+            {
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    behindCaretChar = editor.TextDocument.GetCharAt(editor.CaretIndex - 1);
+                });
+            }
+
+            if (behindCaretChar == '(')
+            {
+                string word = string.Empty;
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    word = editor.GetWordAtIndex(editor.CaretIndex - 1);
+                });
+
+                var symbols = languageService.GetSymbols(file, new List<UnsavedFile>(), word);
+
+                if (symbols.Count() > 0)
+                {
+                    var adviceState = new CompletionAdviceState();
+                    adviceState.BracketOpenedAt = editor.CaretIndex;
+                    adviceState.Symbols = symbols;
+
+                    if(currentAdvice != null)
+                    {
+                        completionAdviceStack.Push(currentAdvice);
+                    }
+
+                    currentAdvice = adviceState;
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        completionAdviceControl.Count = currentAdvice.Symbols.Count;
+                        completionAdviceControl.SelectedIndex = 0;
+                        completionAdviceControl.Symbol = currentAdvice.Symbols[currentAdvice.SelectedIndex];
+                        completionAdviceControl.IsVisible = true;
+                    });
+                }
+            }
+
             if (intellisenseControl.IsVisible && e.Modifiers == InputModifiers.None)
             {
                 if (IsCompletionKey(e))
