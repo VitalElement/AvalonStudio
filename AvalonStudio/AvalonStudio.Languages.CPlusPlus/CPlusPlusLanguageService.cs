@@ -24,7 +24,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
     public class CPlusPlusLanguageService : ILanguageService
     {
-        private static ClangIndex index = ClangService.CreateIndex();        
+        private static ClangIndex index = ClangService.CreateIndex();
         private static ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations = new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
         private JobRunner intellisenseJobRunner;
 
@@ -189,7 +189,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
 
                 args.Add("-Wunused-variable");
-               
+
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble | TranslationUnitFlags.CacheCompletionResults);
             }
 
@@ -245,7 +245,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
             completionResults.Sort();
-            
+
             var result = new List<CodeCompletionData>();
 
             foreach (var codeCompletion in completionResults.Results)
@@ -545,16 +545,21 @@ namespace AvalonStudio.Languages.CPlusPlus
             association.TunneledKeyUpHandler = async (sender, e) =>
             {
                 await intellisenseJobRunner.InvokeAsync(() =>
-                {                    
-                    association.IntellisenseManager.OnKeyUp(e).Wait();                    
+                {
+                    association.IntellisenseManager.OnKeyUp(e).Wait();
                 });
             };
 
-            association.TunneledKeyDownHandler = (sender, e) =>
+            association.TunneledKeyDownHandler = async (sender, e) =>
             {
-                association.IntellisenseManager.OnKeyDown(e);                
-            };            
-            
+                association.IntellisenseManager.OnKeyDown(e);
+
+                await intellisenseJobRunner.InvokeAsync(async () =>
+                {
+                    await association.IntellisenseManager.CompleteOnKeyDown(e);
+                });
+            };
+
             association.KeyUpHandler = (sender, e) =>
             {
                 if (editor.TextDocument == doc)
@@ -562,7 +567,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     switch (e.Key)
                     {
                         case Key.Return:
-                            {                                
+                            {
                                 if (editor.CaretIndex >= 0 && editor.CaretIndex < editor.TextDocument.TextLength)
                                 {
                                     if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
@@ -604,7 +609,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         case "{":
                             var lineCount = editor.TextDocument.LineCount;
                             var offset = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
-                            
+
                             // suggests clang format didnt do anything, so we can assume not moving to new line.
                             if (lineCount != editor.TextDocument.LineCount)
                             {
@@ -624,7 +629,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, Avalonia.Interactivity.RoutingStrategies.Tunnel);
             editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, Avalonia.Interactivity.RoutingStrategies.Tunnel);
             editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, Avalonia.Interactivity.RoutingStrategies.Tunnel);
-            
+
             editor.TextInput += association.TextInputHandler;
         }
 
@@ -649,7 +654,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             editor.RemoveHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler);
             editor.RemoveHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler);
             editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
-            
+
             editor.TextInput -= association.TextInputHandler;
 
             association.TranslationUnit?.Dispose();
@@ -818,7 +823,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         public int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
         {
             int result = caret;
-            
+
             IEnumerable<IDocumentLine> lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
 
             textDocument.BeginUpdate();
@@ -837,7 +842,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             return result;
         }
-        
+
 
         public int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
         {
@@ -867,7 +872,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        
+
     }
 
     class CPlusPlusDataAssociation
