@@ -554,9 +554,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 association.IntellisenseManager.OnKeyDown(e);
 
-                await intellisenseJobRunner.InvokeAsync(async () =>
+                await intellisenseJobRunner.InvokeAsync(() =>
                 {
-                    await association.IntellisenseManager.CompleteOnKeyDown(e);
+                    association.IntellisenseManager.CompleteOnKeyDown(e).Wait();
                 });
             };
 
