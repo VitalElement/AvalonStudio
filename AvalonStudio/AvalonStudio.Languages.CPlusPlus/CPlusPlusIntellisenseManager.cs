@@ -200,7 +200,14 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 if (IsCompletionKey(e))
                 {
-                    await DoComplete(true);
+                    if (e.Key == Key.Enter)
+                    {
+                        await DoComplete(false);
+                    }
+                    else
+                    {
+                        await DoComplete(true);
+                    }
                 }
             }
         }
