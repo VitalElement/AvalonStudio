@@ -14,7 +14,7 @@ namespace AvalonStudio.Languages.CPlusPlus
     using Avalonia.Threading;
     class CPlusPlusIntellisenseManager
     {
-        public CPlusPlusIntellisenseManager (IIntellisenseControl intellisenseControl, TextEditor.TextEditor editor)
+        public CPlusPlusIntellisenseManager(IIntellisenseControl intellisenseControl, TextEditor.TextEditor editor)
         {
             this.intellisenseControl = intellisenseControl;
             this.editor = editor;
@@ -126,47 +126,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             return result;
         }
-        
+
         public void OnKeyDown(KeyEventArgs e)
-        {
-            CompleteOnKeyDown(e);
-        }
-
-        private CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
-
-        private List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
-
-        private bool DoComplete(bool includeLastChar)
-        {
-            bool result = false;
-
-            if (intellisenseControl.CompletionData.Count > 0 && intellisenseControl.SelectedCompletion != noSelectedCompletion)
-            {
-                int offset = 0;
-
-                if (includeLastChar)
-                {
-                    offset = 1;
-                }
-
-                editor.TextDocument.Replace(intellisenseStartedAt, editor.CaretIndex - intellisenseStartedAt - offset, intellisenseControl.SelectedCompletion.Title);
-                editor.CaretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
-
-                result = true;
-            }
-
-            return result;
-        }
-
-        private void CompleteOnKeyDown(KeyEventArgs e)
         {
             if (intellisenseControl.IsVisible && e.Modifiers == InputModifiers.None)
             {
-                if (IsCompletionKey(e))
-                {
-                    e.Handled = DoComplete(false);
-                }
-                else
+                if (!IsCompletionKey(e))
                 {
                     switch (e.Key)
                     {
@@ -200,7 +165,47 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        private void CompleteOnKeyUp()
+        private CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
+
+        private List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
+
+        private async Task<bool> DoComplete(bool includeLastChar)
+        {
+            bool result = false;
+
+            if (intellisenseControl.CompletionData.Count > 0 && intellisenseControl.SelectedCompletion != noSelectedCompletion)
+            {
+                int offset = 0;
+
+                if (includeLastChar)
+                {
+                    offset = 1;
+                }
+
+                result = true;
+
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    editor.TextDocument.Replace(intellisenseStartedAt, editor.CaretIndex - intellisenseStartedAt - offset, intellisenseControl.SelectedCompletion.Title);
+                    editor.CaretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
+                });
+            }
+
+            return result;
+        }
+
+        public async Task CompleteOnKeyDown(KeyEventArgs e)
+        {
+            if (intellisenseControl.IsVisible && e.Modifiers == InputModifiers.None)
+            {
+                if (IsCompletionKey(e))
+                {
+                    await DoComplete(true);
+                }
+            }
+        }
+
+        private async Task CompleteOnKeyUp()
         {
             if (intellisenseControl.IsVisible)
             {
@@ -233,7 +238,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     case ' ':
                     case ':':
                     case '.':
-                        DoComplete(true);
+                        await DoComplete(true);
                         return;
                 }
             }
@@ -266,7 +271,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     await Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {
                         Close();
-                    });                
+                    });
                     return;
                 }
 
@@ -276,9 +281,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                     //currentFilter = string.Empty;
                 }
 
-                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                 {
-                    CompleteOnKeyUp();
+                    await CompleteOnKeyUp();
                 });
 
                 IEnumerable<CompletionDataViewModel> filteredResults = null;
@@ -286,7 +291,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 if (!intellisenseControl.IsVisible && (IsIntellisenseOpenKey(e) || IsIntellisenseResetKey(e)))
                 {
                     TextLocation caret = new TextLocation();
-                    
+
                     char behindCaretChar = '\0';
                     char behindBehindCaretChar = '\0';
 
@@ -376,7 +381,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         currentFilter = string.Empty;
                     }
 
-                    filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower())).ToList();                       
+                    filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower())).ToList();
                 }
 
                 CompletionDataViewModel suggestion = null;
@@ -427,7 +432,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         await Dispatcher.UIThread.InvokeTaskAsync(() =>
                         {
-                            intellisenseControl.CompletionData = data;             
+                            intellisenseControl.CompletionData = data;
 
                             intellisenseControl.SelectedCompletion = suggestion;
 
