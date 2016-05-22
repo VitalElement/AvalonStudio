@@ -59,16 +59,13 @@ namespace AvalonStudio.Controls
                 var completions = LanguageService.CodeCompleteAt(sourceFile, line, column, UnsavedFiles, filter);
                 results = new CodeCompletionResults() { Completions = completions };
             });
-
+            
             return results;
         }
 
         public void ScrollToLine(int line)
         {
-            if (Editor != null)
-            {
-                Editor.ScrollToLine(line);
-            }
+            Editor?.ScrollToLine(line);
         }
 
         public event EventHandler<EventArgs> DocumentLoaded;
@@ -90,7 +87,7 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public async void RegisterLanguageService(IIntellisenseControl intellisenseControl)
+        public async void RegisterLanguageService(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl)
         {
             UnRegisterLanguageService();
 
@@ -100,7 +97,7 @@ namespace AvalonStudio.Controls
 
                 ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
-                LanguageService.RegisterSourceFile(intellisenseControl, Editor, sourceFile, TextDocument);
+                LanguageService.RegisterSourceFile(intellisenseControl, completionAdviceControl, Editor, sourceFile, TextDocument);
             }
             catch
             {
@@ -119,7 +116,7 @@ namespace AvalonStudio.Controls
             await TriggerCodeAnalysis();
         }
 
-        public void OpenFile(ISourceFile file, IIntellisenseControl intellisense)
+        public void OpenFile(ISourceFile file, IIntellisenseControl intellisense, ICompletionAdviceControl completionAdviceControl)
         {
             if (this.sourceFile != file)
             {
@@ -133,7 +130,7 @@ namespace AvalonStudio.Controls
 
                     sourceFile = file;
 
-                    RegisterLanguageService(intellisense);
+                    RegisterLanguageService(intellisense, completionAdviceControl);
 
                     if (DocumentLoaded != null)
                     {
