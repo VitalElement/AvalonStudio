@@ -204,9 +204,14 @@
     <Compile Include="Behaviors\PointerHoverBehaviour.cs" />
     <Compile Include="Behaviors\ToolTipBehaviour.cs" />
     <Compile Include="CompositionRoot.cs" />
+    <Compile Include="Controls\CompletionAdvice.paml.cs">
+      <DependentUpon>CompletionAdvice.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CompletionAdviceViewModel.cs" />
     <Compile Include="Controls\DebugHoverProbe.paml.cs">
       <DependentUpon>DebugHoverProbe.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\IntellisenseToolTipViewModel.cs" />
     <Compile Include="Controls\TabControlView.paml.cs" />
     <Compile Include="Controls\DocumentTabControl.paml.cs">
       <DependentUpon>DocumentTabControl.paml</DependentUpon>
@@ -317,6 +322,9 @@
     <EmbeddedResource Include="Controls\DebugHoverProbe.paml" />
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
     <EmbeddedResource Include="Controls\TabControlView.paml" />
+    <EmbeddedResource Include="Controls\CompletionAdvice.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="libgit2-821131f.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
