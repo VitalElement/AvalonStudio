@@ -30,9 +30,10 @@
               <cont:HoverProbe DataContext="{Binding HoverProbe}" />
             </behaviours:CodeInformationToolTipBehavior>
 
+            <!--
             <behaviours:DebugInformationToolTipBehaviour>
               <dcont:VariableControlView DataContext="{Binding DebugHoverProbe}" />
-            </behaviours:DebugInformationToolTipBehaviour>
+            </behaviours:DebugInformationToolTipBehaviour>-->
           </i:Interaction.Behaviors>
 
           <te:TextEditor.Header>
