@@ -155,6 +155,7 @@
     <Compile Include="DisassemblyViewModel.cs" />
     <Compile Include="FrameViewModel.cs" />
     <Compile Include="IDebugManager.cs" />
+    <Compile Include="IWatchList.cs" />
     <Compile Include="LocalsView.paml.cs" />
     <Compile Include="LocalsViewModel.cs" />
     <Compile Include="MenuDefinitions.cs" />
