@@ -1,5 +1,6 @@
 namespace AvalonStudio.Debugging
 {
+    using Avalonia.Threading;
     using Debugging;
     using MVVM;
     using ReactiveUI;
@@ -55,35 +56,38 @@ namespace AvalonStudio.Debugging
 
         private IDebugger debugger;
 
+        private async void Expand()
+        {
+            foreach(var child in Children)
+            {
+                if(child.Children == null)
+                {
+                    child.Children = new ObservableCollection<WatchViewModel>();
+                    
+                    if (!child.Model.AreChildrenEvaluated)
+                    {
+                        await child.Model.EvaluateChildrenAsync();
+
+                        for (int i = 0; i < child.Model.NumChildren; i++)
+                        {
+                            var newchild = new WatchViewModel(debugger, child.Model.Children[i]);
+                            await newchild.Evaluate(debugger);
+                            child.Children.Add(newchild);
+                        }
+                    }                    
+                }                    
+            }
+        }
+
         private bool isExpanded;
         public bool IsExpanded
         {
             get { return isExpanded; }
             set
             {
-                if (!isExpanded && value)
+                if (value)
                 {
-                    if (!Model.AreChildrenEvaluated)
-                    {
-                        Model.EvaluateChildrenAsync().Wait();
-
-                        var newChildren = new ObservableCollection<WatchViewModel>();
-
-                        foreach (var child in Model.Children)
-                        {
-                            var newChild = new WatchViewModel(debugger, child);
-
-                            newChild.Evaluate(debugger).Wait();
-
-                            newChildren.Add(newChild);
-                        }
-
-                        Children = newChildren;
-
-                        isExpanded = value;
-
-                        //container.InvalidateColumnWidths();
-                    }
+                    Expand();
                 }
 
                 this.RaiseAndSetIfChanged(ref isExpanded, value);
@@ -191,11 +195,13 @@ namespace AvalonStudio.Debugging
 
             Children = new ObservableCollection<WatchViewModel>();
 
-            for (int i = 0; i < Model.NumChildren; i++)
-            {
-                Children.Add(null);
-            }
+            await Model.EvaluateChildrenAsync();
 
+            for (int i = 0; i < Model.NumChildren; i++)
+            {                
+                Children.Add(new WatchViewModel(debugger, Model.Children[i]));
+            }
+            
             if (Model.Value != null)
             {
                 Value = Model.Value;
