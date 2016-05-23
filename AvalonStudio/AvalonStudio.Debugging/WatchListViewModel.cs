@@ -10,7 +10,7 @@ namespace AvalonStudio.Debugging
     using Extensibility.Plugin;
     using Extensibility;
     using Avalonia.Threading;
-    public class WatchListViewModel : ToolViewModel, IExtension
+    public class WatchListViewModel : ToolViewModel, IExtension, IWatchList
     {
         protected IDebugManager _debugManager;
 
@@ -123,7 +123,7 @@ namespace AvalonStudio.Debugging
 
         public virtual void BeforeActivation()
         {
-
+            IoC.RegisterConstant(this, typeof(IWatchList));
         }
 
         public virtual void Activation()
@@ -145,7 +145,10 @@ namespace AvalonStudio.Debugging
 
         private void WatchListViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
         {
-            Invalidate(e.VariableChanges);
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Invalidate(e.VariableChanges);
+            });
         }
     }
 }

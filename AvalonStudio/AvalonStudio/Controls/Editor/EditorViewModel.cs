@@ -71,8 +71,7 @@ namespace AvalonStudio.Controls
             AddWatchCommand = ReactiveCommand.Create();
             disposables.Add(AddWatchCommand.Subscribe(_ =>
             {
-                ShellViewModel.Instance.Console.WriteLine("Need to inject command.");
-                //ShellViewModel.Instance.DebugManager.WatchList.AddWatch(WordAtCaret);
+                IoC.Get<IWatchList>()?.AddWatch(WordAtCaret);
             }));
 
             tabCharacter = "    ";
