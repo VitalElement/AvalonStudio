@@ -85,7 +85,7 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        public async void SetFormat (WatchFormat format)
+        public async Task SetFormat (WatchFormat format)
         {
             if(this.format != format)
             {
