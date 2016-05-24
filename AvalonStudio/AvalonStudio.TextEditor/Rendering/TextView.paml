@@ -16,7 +16,7 @@
             
             <Rectangle Name="textSurface" Grid.Column="1" IsHitTestVisible="false" />           
                         
-            <ContentPresenter Content="{TemplateBinding Content}" Grid.Column="1" IsHitTestVisible="false"
+            <ContentPresenter Name="contentPresenter" Content="{TemplateBinding Content}" Grid.Column="1" IsHitTestVisible="false"
                            Margin="{TemplateBinding Margin}"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Top"/>
