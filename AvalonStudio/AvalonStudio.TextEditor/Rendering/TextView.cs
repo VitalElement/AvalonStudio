@@ -18,8 +18,9 @@ namespace AvalonStudio.TextEditor.Rendering
     using System.Reactive.Linq;
     using Avalonia.Input;
     using System.Reactive.Disposables;
-
-    public class TextView : ContentControl, IScrollable
+    using Avalonia.Controls.Presenters;
+    using Avalonia.Layout;
+    public class TextView : ContentControl, ILogicalScrollable
     {
         class WeakEventArgsSubscriber : IWeakSubscriber<EventArgs>
         {
@@ -54,7 +55,9 @@ namespace AvalonStudio.TextEditor.Rendering
         #region Constructors
         static TextView()
         {
+            AffectsArrange(OffsetProperty);
             AffectsMeasure(TextDocumentProperty);
+            AffectsRender(OffsetProperty);
             AffectsRender(DocumentLineTransformersProperty);
         }
 
@@ -413,6 +416,15 @@ namespace AvalonStudio.TextEditor.Rendering
             set { SetValue(ForegoundProperty, value); }
         }
 
+        /// <summary>
+        /// Defines the <see cref="Offset"/> property.
+        /// </summary>
+        public static readonly DirectProperty<TextView, Vector> OffsetProperty =
+            AvaloniaProperty.RegisterDirect<TextView, Vector>(
+                nameof(Offset),
+                o => o.Offset,
+                (o, v) => o.Offset = v);
+
         public static readonly AvaloniaProperty<IBrush> BackgroundProperty =
             Border.BackgroundProperty.AddOwner<TextView>();
 
@@ -460,11 +472,9 @@ namespace AvalonStudio.TextEditor.Rendering
             get { return offset; }
             set
             {
-                offset = value;
+                firstVisualLine = (int)(value.Y);
 
-                firstVisualLine = (int)(offset.Y);
-
-                Invalidate();
+                SetAndRaise(OffsetProperty, ref offset, value);
             }
         }
 
@@ -478,10 +488,13 @@ namespace AvalonStudio.TextEditor.Rendering
         #region Control Overrides
         private StackPanel marginContainer;
         private Rectangle textSurface;
+        private ContentPresenter contentPresenter;
+
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             marginContainer = e.NameScope.Find<StackPanel>("marginContainer");
             textSurface = e.NameScope.Find<Rectangle>("textSurface");
+            contentPresenter = e.NameScope.Find<ContentPresenter>("contentPresenter");
         }
 
         public void InstallMargin(Control margin)
@@ -534,6 +547,17 @@ namespace AvalonStudio.TextEditor.Rendering
                 extent = new Size(finalSize.Width, TextDocument.LineCount + 20);
 
                 InvalidateScroll.Invoke();
+            }
+            
+                var child = contentPresenter as ILayoutable;
+
+            if (child != null)
+            {
+                var arrangeOffset = new Vector(Math.Floor(Offset.X) * CharSize.Width, Math.Floor(Offset.Y) * CharSize.Height);
+                var size = new Size(
+                    Math.Max(finalSize.Width, child.DesiredSize.Width),
+                    Math.Max(finalSize.Height, child.DesiredSize.Height));
+                child.Arrange(new Rect((Point)(-arrangeOffset), size));
             }
 
             base.ArrangeOverride(finalSize);
@@ -618,6 +642,14 @@ namespace AvalonStudio.TextEditor.Rendering
             get
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        public bool IsLogicalScrollEnabled
+        {
+            get
+            {
+                return true;
             }
         }
 
@@ -821,6 +853,11 @@ namespace AvalonStudio.TextEditor.Rendering
             }
 
             return result;
+        }
+
+        public bool BringIntoView(IVisual target, Rect targetRect)
+        {
+            return false;
         }
         #endregion
     }
