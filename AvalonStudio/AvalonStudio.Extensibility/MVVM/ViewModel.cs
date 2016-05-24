@@ -85,7 +85,7 @@ namespace AvalonStudio.MVVM
         public T Model
         {
             get { return model; }
-            set { this.RaiseAndSetIfChanged(ref model, value); }
+            set { this.RaiseAndSetIfChanged(ref model, value); Invalidate(); }
         }
 
         public void Invalidate ()
