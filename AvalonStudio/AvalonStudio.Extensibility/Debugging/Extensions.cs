@@ -243,7 +243,7 @@ namespace AvalonStudio.Debugging
                         {
                             case '\'':
                             case '"':
-                            case '`':
+                           // case '`':
                                 currentState = stateStack.Pop();
                                 currentString += c;
                                 break;
@@ -259,7 +259,7 @@ namespace AvalonStudio.Debugging
                         {
                             case '\'':
                             case '"':
-                            case '`':
+                            //case '`':
                                 stateStack.Push(currentState);
                                 currentState = NameValueProcessState.parsingEscapeSequence;
                                 currentString += c;                                
