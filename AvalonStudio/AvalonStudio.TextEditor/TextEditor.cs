@@ -394,11 +394,14 @@ namespace AvalonStudio.TextEditor
             if (!string.IsNullOrEmpty(input))
             {
                 DeleteSelection();
-                caretIndex = CaretIndex;
-                TextDocument.Insert(caretIndex, input);
-                CaretIndex += input.Length;
-                SelectionStart = SelectionEnd = CaretIndex;
-                TextView.Invalidate();
+
+                if (caretIndex >= 0)
+                {
+                    TextDocument.Insert(caretIndex, input);
+                    CaretIndex += input.Length;
+                    SelectionStart = SelectionEnd = CaretIndex;
+                    TextView.Invalidate();
+                }
             }
         }
 
