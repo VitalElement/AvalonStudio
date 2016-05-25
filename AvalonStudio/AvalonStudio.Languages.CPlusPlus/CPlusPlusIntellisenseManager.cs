@@ -413,7 +413,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         caret = GetTextLocation(intellisenseStartedAt);
                     });
 
-                    var codeCompletionResults = await intellisenseControl.DoCompletionRequestAsync(caret.Line, caret.Column, currentFilter);
+                    var codeCompletionResults = await intellisenseControl.DoCompletionRequestAsync(caret.Line, caret.Column);
 
                     unfilteredCompletions.Clear();
 
@@ -439,7 +439,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         }
                     }
 
-                    filteredResults = unfilteredCompletions.ToList();
+                    filteredResults = unfilteredCompletions;
                 }
                 else
                 {
@@ -455,7 +455,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         currentFilter = string.Empty;
                     }
 
-                    filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower())).ToList();
+                    filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower()));
                 }
 
                 CompletionDataViewModel suggestion = null;
@@ -470,8 +470,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                     {
                         newSelectedCompletions = filteredResults.Where((s) => s.Title.ToLower().StartsWith(currentFilter.ToLower()));   // try find non-case sensitve match
                     }
-
-                    filteredResults = newSelectedCompletions;
 
                     if (newSelectedCompletions.Count() == 0)
                     {
@@ -500,13 +498,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                     }
                     else
                     {
-                        var list = filteredResults.ToList();
-
-                        var data = list.Skip(list.IndexOf(suggestion) - 25).Take(50).ToList();
-
+                        var list = filteredResults.ToList();                        
+                        
                         await Dispatcher.UIThread.InvokeTaskAsync(() =>
                         {
-                            intellisenseControl.CompletionData = data;
+                            
+                            intellisenseControl.CompletionData = list;
 
                             intellisenseControl.SelectedCompletion = suggestion;
 
