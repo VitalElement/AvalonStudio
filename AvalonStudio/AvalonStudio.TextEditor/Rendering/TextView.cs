@@ -535,6 +535,21 @@ namespace AvalonStudio.TextEditor.Rendering
             }
         }
 
+        private int LogicalExtentSize
+        {
+            get
+            {
+                if (TextDocument != null)
+                {
+                    return TextDocument.LineCount + 20;
+                }                
+                else
+                {
+                    return 20;
+                }                
+            }
+        }
+
         protected override Size ArrangeOverride(Size finalSize)
         {
             var result = finalSize;
@@ -544,23 +559,22 @@ namespace AvalonStudio.TextEditor.Rendering
                 GenerateTextProperties();
 
                 viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
-                extent = new Size(finalSize.Width, TextDocument.LineCount + 20);
+                extent = new Size(finalSize.Width, LogicalExtentSize);
 
                 InvalidateScroll.Invoke();
             }
-            
-                var child = contentPresenter as ILayoutable;
+
+            var child = contentPresenter as ILayoutable;
 
             if (child != null)
             {
                 var arrangeOffset = new Vector(Math.Floor(Offset.X) * CharSize.Width, Math.Floor(Offset.Y) * CharSize.Height);
-                var size = new Size(
-                    Math.Max(finalSize.Width, child.DesiredSize.Width),
-                    Math.Max(finalSize.Height, child.DesiredSize.Height));
-                child.Arrange(new Rect((Point)(-arrangeOffset), size));
+                result = new Size(finalSize.Width, LogicalExtentSize * CharSize.Height);
+
+                child.Arrange(new Rect((Point)(-arrangeOffset), result));
             }
 
-            base.ArrangeOverride(finalSize);
+            base.ArrangeOverride(result);
 
             return result;
         }
@@ -575,7 +589,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
                 result = new Size(0, TextDocument.LineCount * CharSize.Height);
             }
-            
+
             return result;
         }
         #endregion
@@ -728,7 +742,7 @@ namespace AvalonStudio.TextEditor.Rendering
                     CaretIndex = TextDocument.TextLength;
                 }
 
-                var charPos = VisualLineGeometryBuilder.GetTextViewPosition(this, CaretIndex);
+                var charPos = VisualLineGeometryBuilder.GetViewPortPosition(this, CaretIndex);
                 var x = Math.Floor(charPos.X) + 0.5;
                 var y = Math.Floor(charPos.Y) + 0.5;
                 var b = Math.Ceiling(charPos.Bottom) - 0.5;
@@ -826,7 +840,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
                 if (line > 0 && column > 0 && line - 1 < VisualLines.Count)
                 {
-                    if (line-1 < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted && VisualLines[line - 1].DocumentLine.LineNumber - 1 < TextDocument.LineCount)
+                    if (line - 1 < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted && VisualLines[line - 1].DocumentLine.LineNumber - 1 < TextDocument.LineCount)
                     {
                         result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
                     }
