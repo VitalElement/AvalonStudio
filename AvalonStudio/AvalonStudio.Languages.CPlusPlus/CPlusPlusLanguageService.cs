@@ -231,7 +231,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private Semaphore clangAccessSemaphore = new Semaphore(1, 1);
 
-        public List<CodeCompletionData> CodeCompleteAt(ISourceFile file, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
+        public List<CodeCompletionData> CodeCompleteAt(ISourceFile file, int line, int column, List<UnsavedFile> unsavedFiles)
         {
             List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
 

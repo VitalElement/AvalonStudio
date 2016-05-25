@@ -12,7 +12,7 @@ namespace AvalonStudio.Languages
     [InheritedExport(typeof(ILanguageService))]
     public interface ILanguageService
     {
-        List<CodeCompletionData> CodeCompleteAt(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter);
+        List<CodeCompletionData> CodeCompleteAt(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles);
 
         CodeAnalysisResults RunCodeAnalysis(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
