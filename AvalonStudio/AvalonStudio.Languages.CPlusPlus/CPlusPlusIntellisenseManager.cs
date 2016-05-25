@@ -213,7 +213,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 await Dispatcher.UIThread.InvokeTaskAsync(() =>
                 {
                     editor.TextDocument.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset, intellisenseControl.SelectedCompletion.Title);
-                    caretIndex= intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
+                    editor.CaretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
                 });
             }
 
