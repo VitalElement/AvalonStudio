@@ -21,6 +21,16 @@ namespace AvalonStudio
 
         private static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                string message = (e.ExceptionObject as Exception)?.Message;
+
+                if (message != null)
+                {
+                    Console.WriteLine(message);
+                }
+            };
+
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
