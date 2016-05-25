@@ -550,8 +550,11 @@ namespace AvalonStudio.Debugging
                     {
                         FrameChangedEventArgs args = new FrameChangedEventArgs();
                         args.Address = e.Frame.Address;
-                        args.VariableChanges = await currentDebugger.UpdateVariablesAsync();
 
+                        if (args.VariableChanges != null)
+                        {
+                            args.VariableChanges = await currentDebugger.UpdateVariablesAsync();
+                        }
 
                         DebugFrameChanged(this, args);
                     }
