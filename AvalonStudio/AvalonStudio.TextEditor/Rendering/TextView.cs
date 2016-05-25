@@ -535,18 +535,18 @@ namespace AvalonStudio.TextEditor.Rendering
             }
         }
 
-        private int LogicalExtentSize
+        private int LogicalScrollSize
         {
             get
             {
                 if (TextDocument != null)
                 {
                     return TextDocument.LineCount + 20;
-                }                
+                }
                 else
                 {
                     return 20;
-                }                
+                }
             }
         }
 
@@ -559,7 +559,7 @@ namespace AvalonStudio.TextEditor.Rendering
                 GenerateTextProperties();
 
                 viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
-                extent = new Size(finalSize.Width, LogicalExtentSize);
+                extent = new Size(finalSize.Width, LogicalScrollSize);
 
                 InvalidateScroll.Invoke();
             }
@@ -569,7 +569,7 @@ namespace AvalonStudio.TextEditor.Rendering
             if (child != null)
             {
                 var arrangeOffset = new Vector(Math.Floor(Offset.X) * CharSize.Width, Math.Floor(Offset.Y) * CharSize.Height);
-                result = new Size(finalSize.Width, LogicalExtentSize * CharSize.Height);
+                result = new Size(finalSize.Width, LogicalScrollSize * CharSize.Height);
 
                 child.Arrange(new Rect((Point)(-arrangeOffset), result));
             }
@@ -871,7 +871,21 @@ namespace AvalonStudio.TextEditor.Rendering
 
         public bool BringIntoView(IVisual target, Rect targetRect)
         {
-            return false;
+            bool result = false;
+
+            if (firstVisualLine > targetRect.Y)
+            {
+                Offset = Offset.WithY(targetRect.Y);
+                result = true;
+            }
+
+            if (firstVisualLine + viewport.Height < targetRect.Y)
+            {
+                Offset = Offset.WithY(targetRect.Y - viewport.Height);
+                result = true;
+            }
+
+            return result;
         }
         #endregion
     }
