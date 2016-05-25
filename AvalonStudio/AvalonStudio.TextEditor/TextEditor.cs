@@ -334,8 +334,9 @@ namespace AvalonStudio.TextEditor
         #region Private Methods
         private void InvalidateCaretPosition()
         {
-            CaretLocation = VisualLineGeometryBuilder.GetTextViewPosition(TextView, CaretIndex).TopLeft;
-            CaretLocationInTextView = new Point(CaretLocation.X - TextView.TextSurfaceBounds.X - TextView.CharSize.Width, CaretLocation.Y + TextView.CharSize.Height);
+            CaretLocation = VisualLineGeometryBuilder.GetViewPortPosition(TextView, CaretIndex).TopLeft;
+            var textViewCaretLocation = VisualLineGeometryBuilder.GetTextViewPosition(TextView, CaretIndex).TopLeft;
+            CaretLocationInTextView = new Point(textViewCaretLocation.X, textViewCaretLocation.Y + TextView.CharSize.Height);
         }
 
         public string GetWordAtIndex(int index)
