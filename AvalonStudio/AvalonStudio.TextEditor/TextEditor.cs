@@ -389,12 +389,14 @@ namespace AvalonStudio.TextEditor
         private void HandleTextInput(string input)
         {
             InvalidateSelectedWord();
-            //string text = TextDocument ?? string.Empty;
-            int caretIndex = CaretIndex;
-
+            
             if (!string.IsNullOrEmpty(input))
             {
+                TextDocument.BeginUpdate();
+
                 DeleteSelection();
+
+                int caretIndex = CaretIndex;
 
                 if (caretIndex >= 0)
                 {
@@ -403,6 +405,8 @@ namespace AvalonStudio.TextEditor
                     SelectionStart = SelectionEnd = CaretIndex;
                     TextView.Invalidate();
                 }
+
+                TextDocument.EndUpdate();
             }
         }
 
