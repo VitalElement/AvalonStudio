@@ -50,13 +50,13 @@ namespace AvalonStudio.Controls
             System.Console.WriteLine(("Editor Model Destructed."));
         }
 
-        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column, string filter)
+        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
         {
             CodeCompletionResults results = null;
 
             await codeAnalysisRunner.InvokeAsync(() =>
             {
-                var completions = LanguageService.CodeCompleteAt(sourceFile, line, column, UnsavedFiles, filter);
+                var completions = LanguageService.CodeCompleteAt(sourceFile, line, column, UnsavedFiles);
                 results = new CodeCompletionResults() { Completions = completions };
             });
             
