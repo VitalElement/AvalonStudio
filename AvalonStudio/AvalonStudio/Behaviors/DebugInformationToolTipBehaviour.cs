@@ -10,14 +10,14 @@ namespace AvalonStudio.Behaviors
 
         protected override void OnAttached()
         {
-            base.OnAttached();
-
             editor = AssociatedObject as TextEditor;
 
             if (editor != null)
             {
                 editor.DataContextChanged += Editor_DataContextChanged;
             }
+
+            base.OnAttached();
         }
 
         private void Editor_DataContextChanged(object sender, System.EventArgs e)
@@ -27,10 +27,14 @@ namespace AvalonStudio.Behaviors
 
         protected override void OnDetaching()
         {
+            editorVm = null;
+
             if (editor != null)
             {
                 editor.DataContextChanged -= Editor_DataContextChanged;
             }
+
+            base.OnDetaching();
         }
 
         public override async Task<bool> OnBeforePopupOpen()
