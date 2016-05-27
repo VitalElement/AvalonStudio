@@ -435,9 +435,11 @@ namespace AvalonStudio.Controls
                         case CursorKind.FirstDeclaration:
                         case CursorKind.InitListExpression:
                         case CursorKind.IntegerLiteral:
+                        case CursorKind.ReturnStatement:
                             break;
 
                         default:
+
                             HoverProbe = new SymbolViewModel(symbol);
                             result = true;
                             break;
