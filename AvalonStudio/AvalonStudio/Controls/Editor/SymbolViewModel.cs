@@ -157,6 +157,7 @@ namespace AvalonStudio.Controls
                 default:
                     // dontShow = true;
                     //DebugData = cursor.Kind.ToString().Replace(" &", "&").Replace(" *", "*");
+                    Spelling = model.Name;
                     break;
             }
             
