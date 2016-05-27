@@ -24,6 +24,7 @@ namespace AvalonStudio.Controls
     using Extensibility;
     using Extensibility.Languages;
     using System.Linq;
+
     public class EditorViewModel : ViewModel<EditorModel>, IEditor
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -138,7 +139,7 @@ namespace AvalonStudio.Controls
             };
 
             this.intellisense = new IntellisenseViewModel(model, this);
-            this.completionAdvice = new CompletionAdviceViewModel(this);
+            this.completionAdvice = new CompletionAdviceViewModel();
 
             documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
 

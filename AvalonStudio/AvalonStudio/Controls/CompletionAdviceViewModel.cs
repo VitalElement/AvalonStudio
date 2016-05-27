@@ -11,16 +11,14 @@
     using Languages;
     using Avalonia.Input;
     using Avalonia.Threading;
-    
+
     public class CompletionAdviceViewModel : ViewModel, ICompletionAdviceControl
     {
-        public CompletionAdviceViewModel(EditorViewModel editorViewModel)
+        public CompletionAdviceViewModel()
         {
-            this.editorViewModel = editorViewModel;                        
+
         }
-        
-        private EditorViewModel editorViewModel;        
-        
+
         private Thickness position;
         public Thickness Position
         {
