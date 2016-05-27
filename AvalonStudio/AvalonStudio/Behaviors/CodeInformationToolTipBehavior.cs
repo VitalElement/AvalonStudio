@@ -1,8 +1,10 @@
 namespace AvalonStudio.Behaviors
 {
+    using Avalonia.Input;
     using AvalonStudio.Controls;
     using AvalonStudio.TextEditor;
     using System.Threading.Tasks;
+
     public class CodeInformationToolTipBehavior : PopupBehavior
     {
         private EditorViewModel editorVm;
@@ -45,7 +47,7 @@ namespace AvalonStudio.Behaviors
 
             if (editorVm != null)
             {
-                result = editorVm.UpdateHoverProbe(editor.TextView.GetOffsetFromPoint(lastPoint));
+                result = editorVm.UpdateHoverProbe(editor.TextView.GetOffsetFromPoint(MouseDevice.Instance.GetPosition(editor.TextView.TextSurface)));
             }
 
             return result;
