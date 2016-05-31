@@ -2,6 +2,7 @@ namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
     using Debugging;
+    using Extensibility;
     using MVVM;
     using ReactiveUI;
     using System;
@@ -17,39 +18,39 @@ namespace AvalonStudio.Debugging
             DeleteCommand = ReactiveCommand.Create();
             DeleteCommand.Subscribe(_ =>
             {
-                //ShellViewModel.Instance.DebugManager.WatchList.RemoveWatch(this);
+                IoC.Get<IWatchList>().RemoveWatch(this);
             });
 
 
             DisplayFormatCommand = ReactiveCommand.Create();
-            DisplayFormatCommand.Subscribe((s) =>
+            DisplayFormatCommand.Subscribe(async (s) =>
             {
                 var format = s as string;
 
                 switch (format)
                 {
                     case "hex":
-                        Model.SetFormat(WatchFormat.Hexadecimal);
+                        await Model.SetFormat(WatchFormat.Hexadecimal);
                         break;
 
                     case "dec":
-                        Model.SetFormat(WatchFormat.Decimal);
+                        await Model.SetFormat(WatchFormat.Decimal);
                         break;
 
                     case "bin":
-                        Model.SetFormat(WatchFormat.Binary);
+                        await Model.SetFormat(WatchFormat.Binary);
                         break;
 
                     case "nat":
-                        Model.SetFormat(WatchFormat.Natural);
+                        await Model.SetFormat(WatchFormat.Natural);
                         break;
 
                     case "oct":
-                        Model.SetFormat(WatchFormat.Octal);
+                        await Model.SetFormat(WatchFormat.Octal);
                         break;
                 }
 
-                this.Invalidate(debugger);
+                await this.Invalidate(debugger);
 
             });
         }
@@ -128,14 +129,20 @@ namespace AvalonStudio.Debugging
 
                     if (change.InScope)
                     {
-                        Value = change.Value;
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            Value = change.Value;
+                        });
                     }
                     else
                     {
-                        Value = "{ Out of Scope. }";
-                        Model.Children.Clear();
-                        Model.ClearEvaluated();
-                        Children.Clear();
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            Value = "{ Out of Scope. }";
+                            Model.Children.Clear();
+                            Model.ClearEvaluated();
+                            Children.Clear();
+                        });
                     }
 
                     if (change.TypeChanged)

@@ -89,11 +89,8 @@ namespace AvalonStudio.Debugging
         {
             var stackVariables = await _debugManager.CurrentDebugger.ListStackVariablesAsync ();
 
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                this.InvalidateLocals(stackVariables);
-                this.Invalidate(e.VariableChanges);
-            });
+            this.InvalidateLocals(stackVariables);
+            this.Invalidate(e.VariableChanges);
         }
 
         public LocalsViewModel()
