@@ -66,7 +66,7 @@ namespace AvalonStudio.Debugging
                 Children.AddRange(newChildren);
             }
 
-            foreach (var child in Children)  //TODO performance can be improved by only accessing when visible.
+            foreach (var child in Children)
             {
                 await child.EvaluateAsync(debugger, false);
             }
