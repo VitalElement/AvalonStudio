@@ -427,17 +427,15 @@ namespace AvalonStudio.Debugging
 
                 Task.Factory.StartNew(async () =>
                 {
-                    CurrentDebugger = project.Debugger;
-
                     await project.ToolChain.Build(_console, project);
                     //Debugger.DebugMode = true;
 
-                    CurrentDebugger.Initialise();
+                    project.Debugger.Initialise();
 
                     _console.WriteLine();
                     _console.WriteLine("Starting Debugger...");
 
-                    if (await CurrentDebugger.StartAsync(project.ToolChain, _console, project))
+                    if (await project.Debugger.StartAsync(project.ToolChain, _console, project))
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
@@ -448,6 +446,8 @@ namespace AvalonStudio.Debugging
 
                             _shell.CurrentPerspective = Perspective.Debug;
                         });
+
+                        CurrentDebugger = project.Debugger;
 
                         await BreakPointManager.GoLiveAsync();
 
@@ -550,11 +550,7 @@ namespace AvalonStudio.Debugging
                     {
                         FrameChangedEventArgs args = new FrameChangedEventArgs();
                         args.Address = e.Frame.Address;
-
-                        if (args.VariableChanges != null)
-                        {
-                            args.VariableChanges = await currentDebugger.UpdateVariablesAsync();
-                        }
+                        args.VariableChanges = await currentDebugger.UpdateVariablesAsync();
 
                         DebugFrameChanged(this, args);
                     }
