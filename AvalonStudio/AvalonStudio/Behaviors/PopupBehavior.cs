@@ -18,7 +18,7 @@ namespace AvalonStudio.Behaviors
     {
         private DispatcherTimer timer;
         private Popup popup;
-        protected Point lastPoint;
+        private Point lastPoint;
         private CompositeDisposable disposables;
 
         public PopupBehavior()
@@ -30,6 +30,8 @@ namespace AvalonStudio.Behaviors
 
             popup = new Popup
             {
+                HorizontalOffset = 10,
+                VerticalOffset = 10,
                 PlacementMode = PlacementMode.Pointer,
                 StaysOpen = false
             };
@@ -126,7 +128,7 @@ namespace AvalonStudio.Behaviors
             }
             else
             {
-                var newPoint = e.GetPosition((AssociatedObject as TextEditor.TextEditor).TextView.TextSurface);
+                var newPoint = e.GetPosition(AssociatedObject);
 
                 if (newPoint != lastPoint)
                 {
@@ -147,6 +149,7 @@ namespace AvalonStudio.Behaviors
             {
                 if (AssociatedObject.IsPointerOver)
                 {
+                    lastPoint = MouseDevice.Instance.GetPosition(AssociatedObject);
                     popup.Open();
                 }
             }
