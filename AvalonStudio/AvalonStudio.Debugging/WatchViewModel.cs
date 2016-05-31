@@ -1,5 +1,6 @@
 namespace AvalonStudio.Debugging
 {
+    using Avalonia.Media;
     using Avalonia.Threading;
     using Debugging;
     using Extensibility;
@@ -8,13 +9,17 @@ namespace AvalonStudio.Debugging
     using System;
     using System.Collections.ObjectModel;
     using System.Threading.Tasks;
+
     public class WatchViewModel : ViewModel<VariableObject>
     {
-        public WatchViewModel(IDebugger debugger, VariableObject model)
+        private WatchListViewModel watchList;
+
+        public WatchViewModel(WatchListViewModel watchList, IDebugger debugger, VariableObject model)
             : base(model)
         {
+            this.watchList = watchList;
             this.debugger = debugger;
-
+            
             DeleteCommand = ReactiveCommand.Create();
             DeleteCommand.Subscribe(_ =>
             {
@@ -71,7 +76,7 @@ namespace AvalonStudio.Debugging
 
                         for (int i = 0; i < child.Model.NumChildren; i++)
                         {
-                            var newchild = new WatchViewModel(debugger, child.Model.Children[i]);
+                            var newchild = new WatchViewModel(watchList, debugger, child.Model.Children[i]);
                             await newchild.Evaluate(debugger);
                             child.Children.Add(newchild);
                         }
@@ -113,6 +118,32 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref val, value); }
         }
 
+        private IBrush background;
+        public IBrush Background
+        {
+            get { return background; }
+            set { this.RaiseAndSetIfChanged(ref background, value); }
+        }
+
+        private bool hasChanged;
+        public bool HasChanged
+        {
+            get { return hasChanged; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref hasChanged, value);
+
+                if (value)
+                {
+                    Background = Brush.Parse("#33008299");
+                }
+                else
+                {
+                    Background = null;
+                }
+            }
+        }
+        
         public string Name { get { return Model.Expression; } }
 
         public string Type { get { return Model.Type; } }
@@ -149,6 +180,13 @@ namespace AvalonStudio.Debugging
                     {
                         //throw new NotImplementedException ("This needs implementing cope with type change.");
                     }
+
+                    watchList.LastChangedRegisters.Add(this);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        HasChanged = true;
+                    });
                 }
                 else
                 {
@@ -206,7 +244,7 @@ namespace AvalonStudio.Debugging
 
             for (int i = 0; i < Model.NumChildren; i++)
             {                
-                Children.Add(new WatchViewModel(debugger, Model.Children[i]));
+                Children.Add(new WatchViewModel(watchList, debugger, Model.Children[i]));
             }
             
             if (Model.Value != null)

@@ -10,9 +10,11 @@ namespace AvalonStudio.Debugging
     using Extensibility.Plugin;
     using Extensibility;
     using Avalonia.Threading;
+
     public class WatchListViewModel : ToolViewModel, IExtension, IWatchList
     {
         protected IDebugManager _debugManager;
+        public  List<WatchViewModel> LastChangedRegisters;
 
         public WatchListViewModel()
         {
@@ -23,6 +25,7 @@ namespace AvalonStudio.Debugging
 
             Title = "Watch List";
             Children = new ObservableCollection<WatchViewModel>();
+            LastChangedRegisters = new List<WatchViewModel>();
         }
 
         public WatchListViewModel(IDebugManager debugManager) : this()
@@ -88,7 +91,7 @@ namespace AvalonStudio.Debugging
 
         public async void Add(VariableObject model)
         {
-            var newWatch = new WatchViewModel(_debugManager.CurrentDebugger, model);
+            var newWatch = new WatchViewModel(this, _debugManager.CurrentDebugger, model);
 
             await newWatch.Evaluate(_debugManager.CurrentDebugger);
 
@@ -118,6 +121,16 @@ namespace AvalonStudio.Debugging
 
         public void Invalidate(List<VariableObjectChange> updates)
         {
+            foreach (var watch in LastChangedRegisters)
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    watch.HasChanged = false;
+                });
+            }
+            
+            LastChangedRegisters.Clear();
+
             if (updates != null)
             {
                 foreach (var update in updates)
