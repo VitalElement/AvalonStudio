@@ -19,6 +19,8 @@ namespace AvalonStudio.Debugging
         {
             this.watchList = watchList;
             this.debugger = debugger;
+
+            Value = model.Value;
             
             DeleteCommand = ReactiveCommand.Create();
             DeleteCommand.Subscribe(_ =>
@@ -180,13 +182,6 @@ namespace AvalonStudio.Debugging
                     {
                         //throw new NotImplementedException ("This needs implementing cope with type change.");
                     }
-
-                    watchList.LastChangedRegisters.Add(this);
-
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        HasChanged = true;
-                    });
                 }
                 else
                 {
@@ -206,6 +201,16 @@ namespace AvalonStudio.Debugging
                             Console.WriteLine("Investigate this case.");
                         }
                     }
+                }
+
+                if (!HasChanged)
+                {
+                    watchList.LastChangedRegisters.Add(this);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        HasChanged = true;
+                    });
                 }
             }
 
@@ -243,10 +248,10 @@ namespace AvalonStudio.Debugging
             await Model.EvaluateChildrenAsync();
 
             for (int i = 0; i < Model.NumChildren; i++)
-            {                
+            {
                 Children.Add(new WatchViewModel(watchList, debugger, Model.Children[i]));
             }
-            
+
             if (Model.Value != null)
             {
                 Value = Model.Value;

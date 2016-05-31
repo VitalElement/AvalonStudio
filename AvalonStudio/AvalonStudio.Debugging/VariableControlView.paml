@@ -10,7 +10,7 @@
       </TreeView.Styles>
 
       <TreeView.DataTemplates>
-        <TreeDataTemplate DataType="vm:WatchViewModel" ItemsSource="{Binding Children}">
+        <TreeDataTemplate DataType="vm:WatchViewModel" ItemsSource="{Binding Children, Mode=TwoWay}">
           <Grid ColumnDefinitions="*,*,*" Background="{Binding Background}">
             <Grid.ContextMenu>
               <ContextMenu>
