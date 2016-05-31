@@ -12,6 +12,9 @@
     <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
       <Setter Property="Background" Value="#274452"/>
     </Style>
+    <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
+      <Setter Property="Background" Value="#274452" />
+    </Style>
     <Style Selector="DropDownItem:selected /template/ ContentPresenter">
       <Setter Property="Background" Value="#274452"/>
     </Style>
