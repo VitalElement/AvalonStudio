@@ -77,7 +77,10 @@ namespace AvalonStudio.Debugging
         {
             if (watch != null)
             {
-                this.Children.Remove(watch);
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    this.Children.Remove(watch);
+                });
 
                 await _debugManager.CurrentDebugger.DeleteWatchAsync(watch.Model.Id);
             }
@@ -89,8 +92,11 @@ namespace AvalonStudio.Debugging
 
             await newWatch.Evaluate(_debugManager.CurrentDebugger);
 
-            this.Children.Add(newWatch);
-
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                this.Children.Add(newWatch);
+            });
+            
             //InvalidateColumnWidths();
         }
 
