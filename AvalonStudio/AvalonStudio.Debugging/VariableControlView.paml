@@ -11,7 +11,7 @@
 
       <TreeView.DataTemplates>
         <TreeDataTemplate DataType="vm:WatchViewModel" ItemsSource="{Binding Children}">
-          <Grid ColumnDefinitions="*,*,*">
+          <Grid ColumnDefinitions="*,*,*" Background="{Binding Background}">
             <Grid.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
