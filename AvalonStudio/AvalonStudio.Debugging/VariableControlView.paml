@@ -12,6 +12,18 @@
       <TreeView.DataTemplates>
         <TreeDataTemplate DataType="vm:WatchViewModel" ItemsSource="{Binding Children}">
           <Grid ColumnDefinitions="*,*,*">
+            <Grid.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                <MenuItem Header="Display as">
+                  <MenuItem Header="Hexadecimal" Command="{Binding DisplayFormatCommand}" CommandParameter="hex" />
+                  <MenuItem Header="Decimal" Command="{Binding DisplayFormatCommand}" CommandParameter="dec" />
+                  <MenuItem Header="Octal" Command="{Binding DisplayFormatCommand}" CommandParameter="oct" />
+                  <MenuItem Header="Binary" Command="{Binding DisplayFormatCommand}" CommandParameter="bin" />
+                  <MenuItem Header="Natural" Command="{Binding DisplayFormatCommand}" CommandParameter="nat" />
+                </MenuItem>
+              </ContextMenu>
+            </Grid.ContextMenu>
             <TextBlock Text="{Binding Name}"/>
             <TextBlock Margin="10 0 0 0" Grid.Column="1" Text="{Binding Value}"/>
             <TextBlock Margin="10 0 0 0" Grid.Column="2" Text="{Binding Type}"/>
