@@ -10,7 +10,7 @@ namespace AvalonStudio.Debugging
     using Extensibility.Plugin;
     using Extensibility;
     using Avalonia.Threading;
-
+    using System.Threading.Tasks;
     public class WatchListViewModel : ToolViewModel, IExtension, IWatchList
     {
         protected IDebugManager _debugManager;
@@ -119,11 +119,11 @@ namespace AvalonStudio.Debugging
             Children.Clear();
         }
 
-        public void Invalidate(List<VariableObjectChange> updates)
+        public async Task Invalidate(List<VariableObjectChange> updates)
         {
             foreach (var watch in LastChangedRegisters)
             {
-                Dispatcher.UIThread.InvokeAsync(() =>
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
                 {
                     watch.HasChanged = false;
                 });
@@ -162,12 +162,9 @@ namespace AvalonStudio.Debugging
             };
         }
 
-        private void WatchListViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+        private async void WatchListViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Invalidate(e.VariableChanges);
-            });
+            await Invalidate(e.VariableChanges);
         }
     }
 }
