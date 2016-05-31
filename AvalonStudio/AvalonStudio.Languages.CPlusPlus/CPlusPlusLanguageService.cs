@@ -730,7 +730,17 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             Symbol result = new Symbol();
 
-            result.Name = cursor.Spelling;
+            switch(cursor.Kind)
+            {
+                case CursorKind.CXXAccessSpecifier:
+                    result.Name = "(Access Specifier) " + cursor.CxxAccessSpecifier.ToString();
+                    break;
+
+                default:
+                    result.Name = cursor.Spelling;
+                    break;
+            }
+
             result.Kind = (AvalonStudio.Languages.CursorKind)cursor.Kind;
             result.BriefComment = cursor.BriefCommentText;
             result.TypeDescription = cursor.CursorType?.Spelling;
@@ -741,6 +751,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             result.SymbolType = cursor.CursorType?.Spelling.Replace(" &", "&").Replace(" *", "*") + " ";
             result.ResultType = cursor.ResultType?.Spelling;
             result.Arguments = new List<ParameterSymbol>();
+            result.Access = (AvalonStudio.Languages.AccessType)cursor.CxxAccessSpecifier;
 
             switch (result.Kind)
             {
