@@ -12,7 +12,7 @@ namespace AvalonStudio
     using Serilog;
     using System;
     using Avalonia.Markup.Xaml;
-
+    using Platforms;
     class App : Application
     {
         public App()
@@ -35,6 +35,8 @@ namespace AvalonStudio
             {
                 throw new ArgumentNullException(nameof(args));
             }
+
+            Platform.Initialise();
 
             PackageSources.InitialisePackageSources();
 
