@@ -15,6 +15,7 @@ namespace AvalonStudio
     using Platforms;
     using SharpDX.Diagnostics;
     using Avalonia.Threading;
+    using System.Diagnostics;
     class App : Application
     {
         public App()
@@ -23,9 +24,7 @@ namespace AvalonStudio
 
         private static void Main(string[] args)
         {
-            SharpDX.Configuration.EnableObjectTracking = true;
             SharpDX.Configuration.EnableReleaseOnFinalizer = true;
-            SharpDX.Configuration.EnableTrackingReleaseOnFinalizer = true;
             
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
             {
