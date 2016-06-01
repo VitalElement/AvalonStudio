@@ -13,6 +13,8 @@ namespace AvalonStudio
     using System;
     using Avalonia.Markup.Xaml;
     using Platforms;
+    using SharpDX.Diagnostics;
+    using Avalonia.Threading;
     class App : Application
     {
         public App()
@@ -21,6 +23,10 @@ namespace AvalonStudio
 
         private static void Main(string[] args)
         {
+            SharpDX.Configuration.EnableObjectTracking = true;
+            SharpDX.Configuration.EnableReleaseOnFinalizer = true;
+            SharpDX.Configuration.EnableTrackingReleaseOnFinalizer = true;
+            
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
             {
                 string message = (e.ExceptionObject as Exception)?.Message;
@@ -54,6 +60,7 @@ namespace AvalonStudio
             IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
 
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
+            
 
             builder.Instance.RunWithMainWindow<MainWindow>();
 
