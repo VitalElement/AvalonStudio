@@ -19,6 +19,7 @@ namespace AvalonStudio.Debugging.GDB
     using System.Threading.Tasks.Dataflow;
     using Extensibility.Threading;
     using System.Collections.Concurrent;
+
     public class GDBDebugger : IDebugger
     {
         public GDBDebugger()
@@ -527,15 +528,20 @@ namespace AvalonStudio.Debugging.GDB
 
             input = process.StandardInput;
 
-            while (!Platform.FreeConsole())
+            int attempts = 0;
+            while (!Platform.FreeConsole() && attempts < 10)
             {
                 Console.WriteLine(Marshal.GetLastWin32Error());
                 Thread.Sleep(10);
+                attempts++;
             }
 
-            while (!Platform.AttachConsole(process.Id))
+            attempts = 0;
+
+            while (!Platform.AttachConsole(process.Id) && attempts < 10)
             {
                 Thread.Sleep(10);
+                attempts++;
             }
 
             while (!Platform.SetConsoleCtrlHandler(null, true))
