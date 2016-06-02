@@ -21,46 +21,77 @@
     <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
       <Setter Property="Background" Value="#274452"/>
     </Style>
+  
+  <!-- GridSplitter.vertical -->
+    <Style Selector="GridSplitter:vertical">
+        <Setter Property="Width" Value="6"/>
+        <Setter Property="Background" Value="#00FFFFFF"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"/>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <!-- GridSplitter.horizontal -->
+    <Style Selector="GridSplitter:horizontal">
+        <Setter Property="Height" Value="6"/>
+        <Setter Property="Background" Value="#00FFFFFF"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}" BorderThickness="1"/>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
   </Controls:MetroWindow.Styles>
-  <Grid RowDefinitions="25,*,350,25" ColumnDefinitions="220, *, *, *">
-    <Controls:ModalDialog Grid.RowSpan="4" Grid.ColumnSpan="4" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
-    <!-- Move the modal dialog and status bar to bottom of this grid tag to upset omnixaml-->
-    <Grid Grid.Row="3" Grid.ColumnSpan="4">
-      <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
-    </Grid>
 
-
-
-    <Grid Grid.ColumnSpan="3" Margin="20 0 0 0">
+  <Grid RowDefinitions="25,*,25">
+    <Grid Grid.ColumnSpan="5" Margin="20 0 0 0">
       <Controls:ToolBar DataContext="{Binding ToolBar}" />
     </Grid>
 
-    <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="1 2 2 1">
-      <DockPanel>
-        <Controls:TabControlView DataContext="{Binding LeftTabs}" DockPanel.Dock="Left" />
-        <Controls:DocumentTabControl DockPanel.Dock="Right" DataContext="{Binding DocumentTabs}" />
-      </DockPanel>
+    <Grid ColumnDefinitions="Auto,5,100*,5,35*" Grid.Row="1">
 
-    </Grid>
+      <Grid RowDefinitions="Auto,5,Auto">
+        <Controls:TabControlView DataContext="{Binding LeftTabs}" />
+        <GridSplitter Grid.Row="1" Orientation="Horizontal" Width="0" />
+      </Grid>
 
-    <Grid Grid.Row="2" Grid.ColumnSpan="3" Margin="1 1 2 2">
-      <DockPanel>
-        <Controls:TabControlView DataContext="{Binding BottomRightTabs}" DockPanel.Dock="Right" />
-        <Controls:TabControlView DataContext="{Binding BottomTabs}" />
-      </DockPanel>
-    </Grid>
+      <GridSplitter Grid.Column="1" />
 
-    <Grid Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Margin="2 2 1 2">
-      <DockPanel LastChildFill="true">
-        <Grid>
-          <DockPanel>
-            <Controls:TabControlView DataContext="{Binding RightTopTabs}" DockPanel.Dock="Top" />
-            <Controls:TabControlView DataContext="{Binding RightBottomTabs}" DockPanel.Dock="Bottom" />
-            <Controls:TabControlView DataContext="{Binding RightMiddleTabs}" />
-          </DockPanel>
+      <Grid RowDefinitions="100*,5,35*" Grid.Column="2">
+        <Controls:DocumentTabControl DataContext="{Binding DocumentTabs}" />
+        <GridSplitter Grid.Row="1" Orientation="Horizontal" />
+        <Grid ColumnDefinitions="*,5,Auto" Grid.Row="2">
+          <Controls:TabControlView DataContext="{Binding BottomTabs}" />
+          <GridSplitter Grid.Column="1" />
+          <Controls:TabControlView Grid.Column="2" DataContext="{Binding BottomRightTabs}" />
         </Grid>
-        <Controls:TabControlView DataContext="{Binding RightTabs}" DockPanel.Dock="Right" />
-      </DockPanel>
+      </Grid>
+
+      <GridSplitter Grid.Column="3" />
+
+      <Grid ColumnDefinitions="Auto,5,*" Grid.Column="4">
+        <Grid>
+          <Grid RowDefinitions="*,5,*,5,*">
+            <Controls:TabControlView DataContext="{Binding RightTopTabs}" />
+            <GridSplitter Grid.Row="1" Orientation="Horizontal" Width="0" />
+            <Controls:TabControlView Grid.Row="2" DataContext="{Binding RightMiddleTabs}" />
+            <GridSplitter Grid.Row="3" Orientation="Horizontal" Width="0" />
+            <Controls:TabControlView Grid.Row="4" DataContext="{Binding RightBottomTabs}" />
+          </Grid>
+        </Grid>
+
+        <GridSplitter Grid.Column="1" />
+        <Controls:TabControlView Grid.Column="2" DataContext="{Binding RightTabs}" />
+      </Grid>
+
     </Grid>
+
+    <Grid Grid.Row="2" Grid.ColumnSpan="5">
+      <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
+    </Grid>
+
+    <Controls:ModalDialog Grid.RowSpan="3" Grid.ColumnSpan="5" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
   </Grid>
 </Controls:MetroWindow>
