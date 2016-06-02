@@ -517,6 +517,18 @@ namespace AvalonStudio.Debugging
                 default:
                     IsUpdating = true;
 
+                    if (DebugFrameChanged != null)
+                    {
+                        FrameChangedEventArgs args = new FrameChangedEventArgs();
+                        args.Address = e.Frame.Address;
+                        args.VariableChanges = await currentDebugger.UpdateVariablesAsync();
+
+                        DebugFrameChanged(this, args);
+                    }
+
+                    IsUpdating = false;
+                    IsExecuting = false;
+
                     if (e.Frame != null && e.Frame.File != null)
                     {
                         var normalizedPath = e.Frame.File.Replace("\\\\", "\\").ToPlatformPath();
@@ -545,18 +557,6 @@ namespace AvalonStudio.Debugging
 
                         lastDocument = document;
                     }
-
-                    if (DebugFrameChanged != null)
-                    {
-                        FrameChangedEventArgs args = new FrameChangedEventArgs();
-                        args.Address = e.Frame.Address;
-                        args.VariableChanges = await currentDebugger.UpdateVariablesAsync();
-
-                        DebugFrameChanged(this, args);
-                    }
-
-                    IsUpdating = false;
-                    IsExecuting = false;
                     break;
             }
         }
