@@ -54,12 +54,9 @@ namespace AvalonStudio.Controls
         {
             CodeCompletionResults results = null;
 
-            await codeAnalysisRunner.InvokeAsync(() =>
-            {
-                var completions = LanguageService.CodeCompleteAt(sourceFile, line, column, UnsavedFiles, filter);
-                results = new CodeCompletionResults() { Completions = completions };
-            });
-            
+            var completions = await LanguageService.CodeCompleteAtAsync(sourceFile, line, column, UnsavedFiles, filter);
+            results = new CodeCompletionResults() { Completions = completions };
+
             return results;
         }
 
@@ -243,12 +240,12 @@ namespace AvalonStudio.Controls
         /// </summary>
         private async Task TriggerCodeAnalysis()
         {
-            await codeAnalysisRunner.InvokeAsync(() =>
+            await codeAnalysisRunner.InvokeAsync(async () =>
             {
                 if (LanguageService != null)
                 {
                     // TODO allow interruption.
-                    var result = LanguageService.RunCodeAnalysis(sourceFile, UnsavedFiles, () => false);
+                    var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, UnsavedFiles, () => false);
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
