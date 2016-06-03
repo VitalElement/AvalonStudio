@@ -1,6 +1,10 @@
 #include <cmath>
 
-class Point
+class PointBase
+{
+};
+
+class Point: public PointBase
 {
   public:
     float X;

@@ -24,6 +24,7 @@ namespace AvalonStudio.Controls
     using Extensibility;
     using Extensibility.Languages;
     using System.Linq;
+
     public class EditorViewModel : ViewModel<EditorModel>, IEditor
     {
         private List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -138,7 +139,7 @@ namespace AvalonStudio.Controls
             };
 
             this.intellisense = new IntellisenseViewModel(model, this);
-            this.completionAdvice = new CompletionAdviceViewModel(this);
+            this.completionAdvice = new CompletionAdviceViewModel();
 
             documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
 
@@ -417,13 +418,13 @@ namespace AvalonStudio.Controls
         /// </summary>
         /// <param name="offset">the offset inside text document to retreive data for.</param>
         /// <returns>true if data was found.</returns>
-        public bool UpdateHoverProbe(int offset)
+        public async Task<bool> UpdateHoverProbeAsync(int offset)
         {
             bool result = false;
 
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
             {
-                var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
+                var symbol = await Model.LanguageService?.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
 
                 if (symbol != null)
                 {
@@ -435,9 +436,11 @@ namespace AvalonStudio.Controls
                         case CursorKind.FirstDeclaration:
                         case CursorKind.InitListExpression:
                         case CursorKind.IntegerLiteral:
+                        case CursorKind.ReturnStatement:
                             break;
 
                         default:
+
                             HoverProbe = new SymbolViewModel(symbol);
                             result = true;
                             break;

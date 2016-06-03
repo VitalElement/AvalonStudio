@@ -22,9 +22,9 @@ namespace AvalonStudio.Controls
             isVisible = false;
         }
 
-        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
+        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column, string filter)
         {
-            return await editor.DoCompletionRequestAsync(line, column);
+            return await editor.DoCompletionRequestAsync(line, column, filter);
         }
 
         public void Dispose()
