@@ -61,6 +61,7 @@ namespace AvalonStudio.TextEditor
             textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;
             textView = null;
             TextDocument = null;
+            Header = null;
             Content = null;
             disposables.Dispose();        
         }

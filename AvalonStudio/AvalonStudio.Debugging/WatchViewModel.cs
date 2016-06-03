@@ -1,55 +1,63 @@
 namespace AvalonStudio.Debugging
 {
+    using Avalonia.Media;
     using Avalonia.Threading;
     using Debugging;
+    using Extensibility;
     using MVVM;
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
     using System.Threading.Tasks;
+
     public class WatchViewModel : ViewModel<VariableObject>
     {
-        public WatchViewModel(IDebugger debugger, VariableObject model)
+        private WatchListViewModel watchList;
+
+        public WatchViewModel(WatchListViewModel watchList, IDebugger debugger, VariableObject model)
             : base(model)
         {
+            this.watchList = watchList;
             this.debugger = debugger;
 
+            Value = model.Value;
+            
             DeleteCommand = ReactiveCommand.Create();
             DeleteCommand.Subscribe(_ =>
             {
-                //ShellViewModel.Instance.DebugManager.WatchList.RemoveWatch(this);
+                IoC.Get<IWatchList>().RemoveWatch(this);
             });
 
 
             DisplayFormatCommand = ReactiveCommand.Create();
-            DisplayFormatCommand.Subscribe((s) =>
+            DisplayFormatCommand.Subscribe(async (s) =>
             {
                 var format = s as string;
 
                 switch (format)
                 {
                     case "hex":
-                        Model.SetFormat(WatchFormat.Hexadecimal);
+                        await Model.SetFormat(WatchFormat.Hexadecimal);
                         break;
 
                     case "dec":
-                        Model.SetFormat(WatchFormat.Decimal);
+                        await Model.SetFormat(WatchFormat.Decimal);
                         break;
 
                     case "bin":
-                        Model.SetFormat(WatchFormat.Binary);
+                        await Model.SetFormat(WatchFormat.Binary);
                         break;
 
                     case "nat":
-                        Model.SetFormat(WatchFormat.Natural);
+                        await Model.SetFormat(WatchFormat.Natural);
                         break;
 
                     case "oct":
-                        Model.SetFormat(WatchFormat.Octal);
+                        await Model.SetFormat(WatchFormat.Octal);
                         break;
                 }
 
-                this.Invalidate(debugger);
+                await this.Invalidate(debugger);
 
             });
         }
@@ -70,7 +78,7 @@ namespace AvalonStudio.Debugging
 
                         for (int i = 0; i < child.Model.NumChildren; i++)
                         {
-                            var newchild = new WatchViewModel(debugger, child.Model.Children[i]);
+                            var newchild = new WatchViewModel(watchList, debugger, child.Model.Children[i]);
                             await newchild.Evaluate(debugger);
                             child.Children.Add(newchild);
                         }
@@ -112,6 +120,32 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref val, value); }
         }
 
+        private IBrush background;
+        public IBrush Background
+        {
+            get { return background; }
+            set { this.RaiseAndSetIfChanged(ref background, value); }
+        }
+
+        private bool hasChanged;
+        public bool HasChanged
+        {
+            get { return hasChanged; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref hasChanged, value);
+
+                if (value)
+                {
+                    Background = Brush.Parse("#33008299");
+                }
+                else
+                {
+                    Background = null;
+                }
+            }
+        }
+        
         public string Name { get { return Model.Expression; } }
 
         public string Type { get { return Model.Type; } }
@@ -128,14 +162,20 @@ namespace AvalonStudio.Debugging
 
                     if (change.InScope)
                     {
-                        Value = change.Value;
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            Value = change.Value;
+                        });
                     }
                     else
                     {
-                        Value = "{ Out of Scope. }";
-                        Model.Children.Clear();
-                        Model.ClearEvaluated();
-                        Children.Clear();
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            Value = "{ Out of Scope. }";
+                            Model.Children.Clear();
+                            Model.ClearEvaluated();
+                            Children.Clear();
+                        });
                     }
 
                     if (change.TypeChanged)
@@ -161,6 +201,16 @@ namespace AvalonStudio.Debugging
                             Console.WriteLine("Investigate this case.");
                         }
                     }
+                }
+
+                if (!HasChanged)
+                {
+                    watchList.LastChangedRegisters.Add(this);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        HasChanged = true;
+                    });
                 }
             }
 
@@ -198,10 +248,10 @@ namespace AvalonStudio.Debugging
             await Model.EvaluateChildrenAsync();
 
             for (int i = 0; i < Model.NumChildren; i++)
-            {                
-                Children.Add(new WatchViewModel(debugger, Model.Children[i]));
+            {
+                Children.Add(new WatchViewModel(watchList, debugger, Model.Children[i]));
             }
-            
+
             if (Model.Value != null)
             {
                 Value = Model.Value;

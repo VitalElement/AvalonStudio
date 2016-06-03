@@ -8,7 +8,7 @@ namespace AvalonStudio.Shell.Commands
     using Extensibility;
     using Avalonia.Controls.Shapes;
     using Avalonia.Media;
-
+    using SharpDX.Diagnostics;
     [CommandDefinition]
     public class SaveFileCommandDefinition : CommandDefinition
     {
@@ -19,8 +19,8 @@ namespace AvalonStudio.Shell.Commands
             command.Subscribe(_ =>
             {
                 var shell = IoC.Get<IShell>();
-
-                shell?.Save();
+                Console.WriteLine(ObjectTracker.ReportActiveObjects());
+                //shell?.Save();
             });
         }
 

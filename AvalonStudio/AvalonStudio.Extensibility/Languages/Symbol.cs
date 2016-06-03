@@ -9,6 +9,7 @@ namespace AvalonStudio.Languages
         public string Name { get; set; }
         public CursorKind Kind { get; set; }
         public LinkageKind Linkage { get; set; }
+        public AccessType Access { get; set; }
         public string BriefComment { get; set; }
         public string TypeDescription { get; set; }
         public string EnumDescription { get; set; }

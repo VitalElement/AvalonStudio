@@ -12,7 +12,10 @@ namespace AvalonStudio
     using Serilog;
     using System;
     using Avalonia.Markup.Xaml;
-
+    using Platforms;
+    using SharpDX.Diagnostics;
+    using Avalonia.Threading;
+    using System.Diagnostics;
     class App : Application
     {
         public App()
@@ -21,6 +24,8 @@ namespace AvalonStudio
 
         private static void Main(string[] args)
         {
+            SharpDX.Configuration.EnableReleaseOnFinalizer = true;
+            
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
             {
                 string message = (e.ExceptionObject as Exception)?.Message;
@@ -35,6 +40,8 @@ namespace AvalonStudio
             {
                 throw new ArgumentNullException(nameof(args));
             }
+
+            Platform.Initialise();
 
             PackageSources.InitialisePackageSources();
 
@@ -52,6 +59,7 @@ namespace AvalonStudio
             IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
 
             ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
+            
 
             builder.Instance.RunWithMainWindow<MainWindow>();
 
