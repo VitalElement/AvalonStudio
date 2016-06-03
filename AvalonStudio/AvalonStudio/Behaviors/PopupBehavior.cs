@@ -10,6 +10,7 @@ namespace AvalonStudio.Behaviors
     using Avalonia.Threading;
     using Avalonia.Xaml.Interactivity;
     using System;
+    using System.Reactive.Disposables;
     using System.Threading.Tasks;
     using Utils;
 
@@ -17,31 +18,23 @@ namespace AvalonStudio.Behaviors
     {
         private DispatcherTimer timer;
         private Popup popup;
-        protected Point lastPoint;
+        private Point lastPoint;
+        private CompositeDisposable disposables;
 
         public PopupBehavior()
         {
+            disposables = new CompositeDisposable();
             timer = new DispatcherTimer();
             timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
             timer.Tick += Timer_Tick;
 
             popup = new Popup
             {
+                HorizontalOffset = 10,
+                VerticalOffset = 10,
                 PlacementMode = PlacementMode.Pointer,
                 StaysOpen = false
             };
-
-            popup.PointerWheelChanged += Popup_PointerWheelChanged;
-            popup.PointerPressed += Popup_PointerPressed;
-
-            ContentProperty.Changed.Subscribe((o) =>
-            {
-                if (AssociatedObject != null && popup.PlacementTarget == null)
-                {
-                    popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor);
-                    popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };
-                }
-            });
         }
 
         private void Popup_PointerPressed(object sender, PointerPressedEventArgs e)
@@ -65,10 +58,33 @@ namespace AvalonStudio.Behaviors
 
         protected override void OnAttached()
         {
+            popup.PointerWheelChanged += Popup_PointerWheelChanged;
+            popup.PointerPressed += Popup_PointerPressed;
+
+            disposables.Add(ContentProperty.Changed.Subscribe((o) =>
+            {
+                if (AssociatedObject != null && popup.PlacementTarget == null)
+                {
+                    popup.PlacementTarget = (AssociatedObject as TextEditor.TextEditor);
+                    popup.Child = new Grid() { Children = new Controls() { o.NewValue as Control }, Background = Brushes.Transparent };
+                }
+            }));
+
             AssociatedObject.KeyDown += AssociatedObject_KeyDown;
             AssociatedObject.PointerMoved += AssociatedObject_PointerMoved;
             AssociatedObject.AttachedToLogicalTree += AssociatedObject_AttachedToLogicalTree;
             AssociatedObject.PointerWheelChanged += AssociatedObject_PointerWheelChanged;
+            AssociatedObject.DetachedFromLogicalTree += AssociatedObject_DetachedFromLogicalTree;
+
+        }
+
+        private void AssociatedObject_DetachedFromLogicalTree(object sender, Avalonia.LogicalTree.LogicalTreeAttachmentEventArgs e)
+        {
+            OnDetaching();
+            popup.Child = null;
+            popup.PlacementTarget = null;
+            ((ISetLogicalParent)popup).SetParent(null);
+            popup = null;
         }
 
         private void AssociatedObject_PointerWheelChanged(object sender, PointerWheelEventArgs e)
@@ -78,10 +94,14 @@ namespace AvalonStudio.Behaviors
 
         protected override void OnDetaching()
         {
+            popup.PointerWheelChanged -= Popup_PointerWheelChanged;
+            popup.PointerPressed -= Popup_PointerPressed;
             AssociatedObject.KeyDown -= AssociatedObject_KeyDown;
             AssociatedObject.PointerMoved -= AssociatedObject_PointerMoved;
             AssociatedObject.AttachedToLogicalTree -= AssociatedObject_AttachedToLogicalTree;
             AssociatedObject.PointerWheelChanged -= AssociatedObject_PointerWheelChanged;
+            AssociatedObject.DetachedFromLogicalTree -= AssociatedObject_DetachedFromLogicalTree;
+            disposables.Dispose();
         }
 
         private void AssociatedObject_AttachedToLogicalTree(object sender, Avalonia.LogicalTree.LogicalTreeAttachmentEventArgs e)
@@ -108,7 +128,7 @@ namespace AvalonStudio.Behaviors
             }
             else
             {
-                var newPoint = e.GetPosition((AssociatedObject as TextEditor.TextEditor).TextView.TextSurface);
+                var newPoint = e.GetPosition(AssociatedObject);
 
                 if (newPoint != lastPoint)
                 {
@@ -129,6 +149,7 @@ namespace AvalonStudio.Behaviors
             {
                 if (AssociatedObject.IsPointerOver)
                 {
+                    lastPoint = MouseDevice.Instance.GetPosition(AssociatedObject);
                     popup.Open();
                 }
             }

@@ -245,7 +245,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     word = editor.GetWordAtIndex(caretIndex - 1);
                 });
 
-                var symbols = languageService.GetSymbols(file, new List<UnsavedFile>(), word);
+                var symbols = await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), word);
 
                 if (symbols.Count() > 0)
                 {

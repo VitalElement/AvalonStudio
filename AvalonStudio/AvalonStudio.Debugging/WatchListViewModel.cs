@@ -10,9 +10,11 @@ namespace AvalonStudio.Debugging
     using Extensibility.Plugin;
     using Extensibility;
     using Avalonia.Threading;
+    using System.Threading.Tasks;
     public class WatchListViewModel : ToolViewModel, IExtension, IWatchList
     {
         protected IDebugManager _debugManager;
+        public  List<WatchViewModel> LastChangedRegisters;
 
         public WatchListViewModel()
         {
@@ -23,6 +25,7 @@ namespace AvalonStudio.Debugging
 
             Title = "Watch List";
             Children = new ObservableCollection<WatchViewModel>();
+            LastChangedRegisters = new List<WatchViewModel>();
         }
 
         public WatchListViewModel(IDebugManager debugManager) : this()
@@ -77,7 +80,10 @@ namespace AvalonStudio.Debugging
         {
             if (watch != null)
             {
-                this.Children.Remove(watch);
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    this.Children.Remove(watch);
+                });
 
                 await _debugManager.CurrentDebugger.DeleteWatchAsync(watch.Model.Id);
             }
@@ -85,12 +91,15 @@ namespace AvalonStudio.Debugging
 
         public async void Add(VariableObject model)
         {
-            var newWatch = new WatchViewModel(_debugManager.CurrentDebugger, model);
+            var newWatch = new WatchViewModel(this, _debugManager.CurrentDebugger, model);
 
             await newWatch.Evaluate(_debugManager.CurrentDebugger);
 
-            this.Children.Add(newWatch);
-
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                this.Children.Add(newWatch);
+            });
+            
             //InvalidateColumnWidths();
         }
 
@@ -110,8 +119,18 @@ namespace AvalonStudio.Debugging
             Children.Clear();
         }
 
-        public void Invalidate(List<VariableObjectChange> updates)
+        public async Task Invalidate(List<VariableObjectChange> updates)
         {
+            foreach (var watch in LastChangedRegisters)
+            {
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    watch.HasChanged = false;
+                });
+            }
+            
+            LastChangedRegisters.Clear();
+
             if (updates != null)
             {
                 foreach (var update in updates)
@@ -143,12 +162,9 @@ namespace AvalonStudio.Debugging
             };
         }
 
-        private void WatchListViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+        private async void WatchListViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Invalidate(e.VariableChanges);
-            });
+            await Invalidate(e.VariableChanges);
         }
     }
 }

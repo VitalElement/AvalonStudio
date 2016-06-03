@@ -37,13 +37,13 @@
           </i:Interaction.Behaviors>
 
           <te:TextEditor.Header>
-            <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry, Mode=OneWayToSource}" FontFamily ="Arial" BorderThickness="0" Height="20">
+           <!-- <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry, Mode=OneWayToSource}" FontFamily ="Arial" BorderThickness="0" Height="20">
               <DropDown.DataTemplates>
                 <DataTemplate>
                   <TextBlock Text="{Binding Spelling}" />
                 </DataTemplate>
               </DropDown.DataTemplates>
-            </DropDown>
+            </DropDown>-->
           </te:TextEditor.Header>
 
           <te:TextEditor.Content>
