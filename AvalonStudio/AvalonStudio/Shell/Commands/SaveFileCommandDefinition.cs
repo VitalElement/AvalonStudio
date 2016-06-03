@@ -19,8 +19,7 @@ namespace AvalonStudio.Shell.Commands
             command.Subscribe(_ =>
             {
                 var shell = IoC.Get<IShell>();
-                Console.WriteLine(ObjectTracker.ReportActiveObjects());
-                //shell?.Save();
+                shell?.Save();
             });
         }
 
