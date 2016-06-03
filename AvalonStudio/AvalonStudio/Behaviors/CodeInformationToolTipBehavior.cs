@@ -47,7 +47,7 @@ namespace AvalonStudio.Behaviors
 
             if (editorVm != null)
             {
-                result = editorVm.UpdateHoverProbe(editor.TextView.GetOffsetFromPoint(MouseDevice.Instance.GetPosition(editor.TextView.TextSurface)));
+                result = await editorVm.UpdateHoverProbeAsync(editor.TextView.GetOffsetFromPoint(MouseDevice.Instance.GetPosition(editor.TextView.TextSurface)));
             }
 
             return result;

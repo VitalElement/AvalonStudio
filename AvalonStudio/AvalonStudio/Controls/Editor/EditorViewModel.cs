@@ -418,13 +418,13 @@ namespace AvalonStudio.Controls
         /// </summary>
         /// <param name="offset">the offset inside text document to retreive data for.</param>
         /// <returns>true if data was found.</returns>
-        public bool UpdateHoverProbe(int offset)
+        public async Task<bool> UpdateHoverProbeAsync(int offset)
         {
             bool result = false;
 
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
             {
-                var symbol = Model.LanguageService?.GetSymbol(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
+                var symbol = await Model.LanguageService?.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
 
                 if (symbol != null)
                 {

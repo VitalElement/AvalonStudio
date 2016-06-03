@@ -8,13 +8,14 @@ namespace AvalonStudio.Languages
     using TextEditor.Indentation;
     using TextEditor.Rendering;
     using TextEditor;
+    using System.Threading.Tasks;
 
     [InheritedExport(typeof(ILanguageService))]
     public interface ILanguageService
     {
-        List<CodeCompletionData> CodeCompleteAt(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter);
+        Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter);
 
-        CodeAnalysisResults RunCodeAnalysis(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
+        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
         IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file);
 
@@ -33,9 +34,9 @@ namespace AvalonStudio.Languages
 
         IIndentationStrategy IndentationStrategy { get; }
 
-        Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
+        Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
 
-        List<Symbol> GetSymbols(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
+        Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
 
         /// <summary>
         /// A description of the language supported by the service, i.e. C/C++
@@ -46,5 +47,5 @@ namespace AvalonStudio.Languages
         /// The base type that all Project templates for this language must inherit. This base class must implement IProjectTemplate.
         /// </summary>
         Type BaseTemplateType { get; }
-    } 
+    }
 }
