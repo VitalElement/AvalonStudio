@@ -27,15 +27,22 @@ namespace AvalonStudio.Languages.CPlusPlus
         private static ClangIndex index = ClangService.CreateIndex();
         private static ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations = new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
         private JobRunner intellisenseJobRunner;
+        private JobRunner clangAccessJobRunner;
 
         public CPlusPlusLanguageService()
         {
             indentationStrategy = new CppIndentationStrategy();
             intellisenseJobRunner = new JobRunner();
+            clangAccessJobRunner = new JobRunner();
 
             Task.Factory.StartNew(() =>
             {
                 intellisenseJobRunner.RunLoop(new CancellationToken());
+            });
+
+            Task.Factory.StartNew(() =>
+            {
+                clangAccessJobRunner.RunLoop(new CancellationToken());
             });
         }
 
@@ -229,9 +236,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return dataAssociation.TranslationUnit;
         }
 
-        private Semaphore clangAccessSemaphore = new Semaphore(1, 1);
-
-        public List<CodeCompletionData> CodeCompleteAt(ISourceFile file, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
+        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile file, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
         {
             List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
 
@@ -240,63 +245,64 @@ namespace AvalonStudio.Languages.CPlusPlus
                 clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
             }
 
-            clangAccessSemaphore.WaitOne();
-            var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
-
-            var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
-            completionResults.Sort();
-
             var result = new List<CodeCompletionData>();
 
-            foreach (var codeCompletion in completionResults.Results)
+            await clangAccessJobRunner.InvokeAsync(() =>
             {
-                if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available)
+                var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+
+                var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(), CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
+                completionResults.Sort();
+
+                foreach (var codeCompletion in completionResults.Results)
                 {
-                    string typedText = string.Empty;
-
-                    string hint = string.Empty;
-
-                    foreach (var chunk in codeCompletion.CompletionString.Chunks)
+                    if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available)
                     {
-                        if (chunk.Kind == CompletionChunkKind.TypedText)
+                        string typedText = string.Empty;
+
+                        string hint = string.Empty;
+
+                        foreach (var chunk in codeCompletion.CompletionString.Chunks)
                         {
-                            typedText = chunk.Text;
+                            if (chunk.Kind == CompletionChunkKind.TypedText)
+                            {
+                                typedText = chunk.Text;
+                            }
+
+                            hint += chunk.Text;
+
+                            switch (chunk.Kind)
+                            {
+                                case CompletionChunkKind.LeftParen:
+                                case CompletionChunkKind.LeftAngle:
+                                case CompletionChunkKind.LeftBrace:
+                                case CompletionChunkKind.LeftBracket:
+                                case CompletionChunkKind.RightAngle:
+                                case CompletionChunkKind.RightBrace:
+                                case CompletionChunkKind.RightBracket:
+                                case CompletionChunkKind.RightParen:
+                                case CompletionChunkKind.Placeholder:
+                                case CompletionChunkKind.Comma:
+                                    break;
+
+                                default:
+                                    hint += " ";
+                                    break;
+                            }
                         }
 
-                        hint += chunk.Text;
-
-                        switch (chunk.Kind)
-                        {
-                            case CompletionChunkKind.LeftParen:
-                            case CompletionChunkKind.LeftAngle:
-                            case CompletionChunkKind.LeftBrace:
-                            case CompletionChunkKind.LeftBracket:
-                            case CompletionChunkKind.RightAngle:
-                            case CompletionChunkKind.RightBrace:
-                            case CompletionChunkKind.RightBracket:
-                            case CompletionChunkKind.RightParen:
-                            case CompletionChunkKind.Placeholder:
-                            case CompletionChunkKind.Comma:
-                                break;
-
-                            default:
-                                hint += " ";
-                                break;
-                        }
+                        result.Add(new CodeCompletionData { Suggestion = typedText, Priority = codeCompletion.CompletionString.Priority, Kind = (AvalonStudio.Languages.CursorKind)codeCompletion.CursorKind, Hint = hint, BriefComment = codeCompletion.CompletionString.BriefComment });
                     }
-
-                    result.Add(new CodeCompletionData { Suggestion = typedText, Priority = codeCompletion.CompletionString.Priority, Kind = (AvalonStudio.Languages.CursorKind)codeCompletion.CursorKind, Hint = hint, BriefComment = codeCompletion.CompletionString.BriefComment });
                 }
-            }
 
 
-            completionResults.Dispose();
-            clangAccessSemaphore.Release();
+                completionResults.Dispose();
+            });
 
             return result;
         }
 
-        public CodeAnalysisResults RunCodeAnalysis(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 
@@ -309,169 +315,171 @@ namespace AvalonStudio.Languages.CPlusPlus
                 clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
             }
 
-            clangAccessSemaphore.WaitOne();
-            var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
-
-            if (file != null)
+            await clangAccessJobRunner.InvokeAsync(() =>
             {
-                var callbacks = new NClang.ClangIndexerCallbacks();
+                var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
-                callbacks.IndexDeclaration += (handle, e) =>
+                if (file != null)
                 {
-                    if (e.Cursor.Spelling != null && e.Location.SourceLocation.IsFromMainFile)
+                    var callbacks = new NClang.ClangIndexerCallbacks();
+
+                    callbacks.IndexDeclaration += (handle, e) =>
                     {
-                        switch (e.Cursor.Kind)
+                        if (e.Cursor.Spelling != null && e.Location.SourceLocation.IsFromMainFile)
                         {
-                            case CursorKind.FunctionDeclaration:
-                            case CursorKind.CXXMethod:
-                            case CursorKind.Constructor:
-                            case CursorKind.Destructor:
-                            case CursorKind.VarDeclaration:
-                            case CursorKind.ParmDeclaration:
-                            case CursorKind.StructDeclaration:
-                            case CursorKind.ClassDeclaration:
-                            case CursorKind.TypedefDeclaration:
-                            case CursorKind.ClassTemplate:
-                            case CursorKind.EnumDeclaration:
-                            case CursorKind.UnionDeclaration:
-                                result.IndexItems.Add(new IndexEntry(e.Cursor.Spelling, e.Cursor.CursorExtent.Start.FileLocation.Offset, e.Cursor.CursorExtent.End.FileLocation.Offset, (AvalonStudio.Languages.CursorKind)e.Cursor.Kind));
-                                break;
+                            switch (e.Cursor.Kind)
+                            {
+                                case CursorKind.FunctionDeclaration:
+                                case CursorKind.CXXMethod:
+                                case CursorKind.Constructor:
+                                case CursorKind.Destructor:
+                                case CursorKind.VarDeclaration:
+                                case CursorKind.ParmDeclaration:
+                                case CursorKind.StructDeclaration:
+                                case CursorKind.ClassDeclaration:
+                                case CursorKind.TypedefDeclaration:
+                                case CursorKind.ClassTemplate:
+                                case CursorKind.EnumDeclaration:
+                                case CursorKind.UnionDeclaration:
+                                    result.IndexItems.Add(new IndexEntry(e.Cursor.Spelling, e.Cursor.CursorExtent.Start.FileLocation.Offset, e.Cursor.CursorExtent.End.FileLocation.Offset, (AvalonStudio.Languages.CursorKind)e.Cursor.Kind));
+                                    break;
+                            }
+
+
+                            switch (e.Cursor.Kind)
+                            {
+                                case CursorKind.StructDeclaration:
+                                case CursorKind.ClassDeclaration:
+                                case CursorKind.TypedefDeclaration:
+                                case CursorKind.ClassTemplate:
+                                case CursorKind.EnumDeclaration:
+                                case CursorKind.UnionDeclaration:
+                                case CursorKind.CXXBaseSpecifier:
+                                    result.SyntaxHighlightingData.Add(new SyntaxHighlightingData() { Start = e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type = HighlightType.UserType });
+                                    break;
+
+                            }
                         }
-
-
-                        switch (e.Cursor.Kind)
-                        {
-                            case CursorKind.StructDeclaration:
-                            case CursorKind.ClassDeclaration:
-                            case CursorKind.TypedefDeclaration:
-                            case CursorKind.ClassTemplate:
-                            case CursorKind.EnumDeclaration:
-                            case CursorKind.UnionDeclaration:
-                            case CursorKind.CXXBaseSpecifier:
-                                result.SyntaxHighlightingData.Add(new SyntaxHighlightingData() { Start = e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type = HighlightType.UserType });
-                                break;
-
-                        }
-                    }
-                };
-
-                callbacks.IndexEntityReference += (handle, e) =>
-                {
-                    if (e.Cursor.Spelling != null && e.Location.SourceLocation.IsFromMainFile)
-                    {
-                        switch (e.Cursor.Kind)
-                        {
-                            case CursorKind.TypeReference:
-                            case CursorKind.CXXBaseSpecifier:
-                            case CursorKind.TemplateReference:
-                                result.SyntaxHighlightingData.Add(new SyntaxHighlightingData() { Start = e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type = HighlightType.UserType });
-                                break;
-                        }
-                    }
-                };
-
-                if (translationUnit != null)
-                {
-                    var tokens = translationUnit.Tokenize(translationUnit.GetCursor().CursorExtent);
-                    //var annotatedTokens = tokens.Annotate();           //TODO see if this can provide us with additional data.
-
-                    foreach (var token in tokens.Tokens)
-                    {
-                        var highlightData = new SyntaxHighlightingData();
-                        highlightData.Start = token.Extent.Start.FileLocation.Offset;
-                        highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start;
-
-
-                        switch (token.Kind)
-                        {
-                            case TokenKind.Comment:
-                                highlightData.Type = HighlightType.Comment;
-                                break;
-
-                            case TokenKind.Identifier:
-                                highlightData.Type = HighlightType.Identifier;
-                                break;
-
-                            case TokenKind.Punctuation:
-                                highlightData.Type = HighlightType.Punctuation;
-                                break;
-
-                            case TokenKind.Keyword:
-                                highlightData.Type = HighlightType.Keyword;
-                                break;
-
-                            case TokenKind.Literal:
-                                highlightData.Type = HighlightType.Literal;
-                                break;
-                        }
-
-                        result.SyntaxHighlightingData.Add(highlightData);
-                    }
-
-                    var indexAction = index.CreateIndexAction();
-                    indexAction.IndexTranslationUnit(IntPtr.Zero, new NClang.ClangIndexerCallbacks[] { callbacks }, NClang.IndexOptionFlags.SkipParsedBodiesInSession, translationUnit);
-                    indexAction.Dispose();
-                }
-            }
-
-            dataAssociation.TextMarkerService.Clear();
-
-            var diags = translationUnit.DiagnosticSet.Items;
-
-            foreach (var diagnostic in diags)
-            {
-                if (diagnostic.Location.IsFromMainFile)
-                {
-                    var diag = new Diagnostic()
-                    {
-                        Project = file.Project,
-                        Offset = diagnostic.Location.FileLocation.Offset,
-                        Line = diagnostic.Location.FileLocation.Line,
-                        Spelling = diagnostic.Spelling,
-                        File = diagnostic.Location.FileLocation.File.FileName,
-                        Level = (DiagnosticLevel)diagnostic.Severity
                     };
 
-
-                    result.Diagnostics.Add(diag);
-
-                    var data = dataAssociation.TranslationUnit.GetLocationForOffset(dataAssociation.TranslationUnit.GetFile(file.Location), diag.Offset);
-                    var length = 0;
-
-                    if (diagnostic.RangeCount > 0)
+                    callbacks.IndexEntityReference += (handle, e) =>
                     {
-                        length = Math.Abs(diagnostic.GetDiagnosticRange(0).End.FileLocation.Offset - diag.Offset);
-                    }
+                        if (e.Cursor.Spelling != null && e.Location.SourceLocation.IsFromMainFile)
+                        {
+                            switch (e.Cursor.Kind)
+                            {
+                                case CursorKind.TypeReference:
+                                case CursorKind.CXXBaseSpecifier:
+                                case CursorKind.TemplateReference:
+                                    result.SyntaxHighlightingData.Add(new SyntaxHighlightingData() { Start = e.Cursor.CursorExtent.Start.FileLocation.Offset, Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset, Type = HighlightType.UserType });
+                                    break;
+                            }
+                        }
+                    };
 
-                    if (diagnostic.FixItCount > 0)
+                    if (translationUnit != null)
                     {
-                        // TODO implement fixits.
+                        var tokens = translationUnit.Tokenize(translationUnit.GetCursor().CursorExtent);
+                        //var annotatedTokens = tokens.Annotate();           //TODO see if this can provide us with additional data.
+
+                        foreach (var token in tokens.Tokens)
+                        {
+                            var highlightData = new SyntaxHighlightingData();
+                            highlightData.Start = token.Extent.Start.FileLocation.Offset;
+                            highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start;
+
+
+                            switch (token.Kind)
+                            {
+                                case TokenKind.Comment:
+                                    highlightData.Type = HighlightType.Comment;
+                                    break;
+
+                                case TokenKind.Identifier:
+                                    highlightData.Type = HighlightType.Identifier;
+                                    break;
+
+                                case TokenKind.Punctuation:
+                                    highlightData.Type = HighlightType.Punctuation;
+                                    break;
+
+                                case TokenKind.Keyword:
+                                    highlightData.Type = HighlightType.Keyword;
+                                    break;
+
+                                case TokenKind.Literal:
+                                    highlightData.Type = HighlightType.Literal;
+                                    break;
+                            }
+
+                            result.SyntaxHighlightingData.Add(highlightData);
+                        }
+
+                        var indexAction = index.CreateIndexAction();
+                        indexAction.IndexTranslationUnit(IntPtr.Zero, new NClang.ClangIndexerCallbacks[] { callbacks }, NClang.IndexOptionFlags.SkipParsedBodiesInSession, translationUnit);
+                        indexAction.Dispose();
                     }
-
-                    Color markerColor;
-
-                    switch (diag.Level)
-                    {
-                        case DiagnosticLevel.Error:
-                        case DiagnosticLevel.Fatal:
-                            markerColor = Color.FromRgb(253, 45, 45);
-                            break;
-
-                        case DiagnosticLevel.Warning:
-                            markerColor = Color.FromRgb(255, 207, 40);
-                            break;
-
-                        default:
-                            markerColor = Color.FromRgb(0, 42, 74);
-                            break;
-
-                    }
-
-                    dataAssociation.TextMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
                 }
-            }
 
-            clangAccessSemaphore.Release();
+                dataAssociation.TextMarkerService.Clear();
+
+                var diags = translationUnit.DiagnosticSet.Items;
+
+                foreach (var diagnostic in diags)
+                {
+                    if (diagnostic.Location.IsFromMainFile)
+                    {
+                        var diag = new Diagnostic()
+                        {
+                            Project = file.Project,
+                            Offset = diagnostic.Location.FileLocation.Offset,
+                            Line = diagnostic.Location.FileLocation.Line,
+                            Spelling = diagnostic.Spelling,
+                            File = diagnostic.Location.FileLocation.File.FileName,
+                            Level = (DiagnosticLevel)diagnostic.Severity
+                        };
+
+
+                        result.Diagnostics.Add(diag);
+
+                        var data = dataAssociation.TranslationUnit.GetLocationForOffset(dataAssociation.TranslationUnit.GetFile(file.Location), diag.Offset);
+                        var length = 0;
+
+                        if (diagnostic.RangeCount > 0)
+                        {
+                            length = Math.Abs(diagnostic.GetDiagnosticRange(0).End.FileLocation.Offset - diag.Offset);
+                        }
+
+                        if (diagnostic.FixItCount > 0)
+                        {
+                            // TODO implement fixits.
+                        }
+
+                        Color markerColor;
+
+                        switch (diag.Level)
+                        {
+                            case DiagnosticLevel.Error:
+                            case DiagnosticLevel.Fatal:
+                                markerColor = Color.FromRgb(253, 45, 45);
+                                break;
+
+                            case DiagnosticLevel.Warning:
+                                markerColor = Color.FromRgb(255, 207, 40);
+                                break;
+
+                            default:
+                                markerColor = Color.FromRgb(0, 42, 74);
+                                break;
+
+                        }
+
+                        dataAssociation.TextMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
+                    }
+                }
+
+            });
+
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
@@ -797,27 +805,28 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public Symbol GetSymbol(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
         {
+            Symbol result = null;
             var associatedData = GetAssociatedData(file);
 
-            clangAccessSemaphore.WaitOne();
-            var tu = associatedData.TranslationUnit;
-            var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.File), offset));
-
-            switch (cursor.Kind)
+            await clangAccessJobRunner.InvokeAsync(() =>
             {
-                case CursorKind.MemberReferenceExpression:
-                case CursorKind.DeclarationReferenceExpression:
-                case CursorKind.CallExpression:
-                case CursorKind.TypeReference:
-                    cursor = cursor.Referenced;
-                    break;
-            }
+                var tu = associatedData.TranslationUnit;
+                var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.File), offset));
 
-            var result = SymbolFromClangCursor(cursor);
-            
-            clangAccessSemaphore.Release();
+                switch (cursor.Kind)
+                {
+                    case CursorKind.MemberReferenceExpression:
+                    case CursorKind.DeclarationReferenceExpression:
+                    case CursorKind.CallExpression:
+                    case CursorKind.TypeReference:
+                        cursor = cursor.Referenced;
+                        break;
+                }
+
+                result = SymbolFromClangCursor(cursor);
+            });
 
             return result;
         }
@@ -872,22 +881,24 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public List<Symbol> GetSymbols(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        public async Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
         {
             List<Symbol> results = new List<Symbol>();
 
             if (name != string.Empty)
             {
-                clangAccessSemaphore.WaitOne();
-                var translationUnit = GetAndParseTranslationUnit(file, new List<ClangUnsavedFile>());
-
-                var cursors = FindFunctions(translationUnit.GetCursor(), name);
-                clangAccessSemaphore.Release();
-
-                foreach (var cursor in cursors)
+                await clangAccessJobRunner.InvokeAsync(() =>
                 {
-                    results.Add(SymbolFromClangCursor(cursor));                    
-                }
+                    var translationUnit = GetAndParseTranslationUnit(file, new List<ClangUnsavedFile>());
+
+                    var cursors = FindFunctions(translationUnit.GetCursor(), name);
+
+
+                    foreach (var cursor in cursors)
+                    {
+                        results.Add(SymbolFromClangCursor(cursor));
+                    }
+                });
             }
 
             return results;
