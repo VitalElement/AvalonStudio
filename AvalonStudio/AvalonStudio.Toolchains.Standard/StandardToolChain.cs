@@ -529,7 +529,7 @@ namespace AvalonStudio.Toolchains.Standard
             }
         }
 
-        public abstract IList<TabItem> GetConfigurationPages(IProject project);
+        public abstract IList<object> GetConfigurationPages(IProject project);
 
         public abstract bool CanHandle(IProject project);
 

@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/avaloniaui" Header="Target">
+﻿<UserControl xmlns="https://github.com/avaloniaui">
     <Grid>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="180"/>
@@ -78,4 +78,4 @@
         </Grid>
       </Panel>
     </Grid>
-  </TabItem>
+  </UserControl>

@@ -17,7 +17,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ProjectConfigurationDialogViewModel(IProject project, Action onClose)
             : base("Project Configuration", true, false)
         {
-            this.configPages = new List<TabItem>();
+            this.configPages = new List<object>();
             configPages.AddRange(project.ConfigurationPages);
 
             OKCommand = ReactiveCommand.Create();
@@ -41,8 +41,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             set { compileContent = value; }
         }
 
-        private List<TabItem> configPages;
-        public List<TabItem> ConfigPages
+        private List<object> configPages;
+        public List<object> ConfigPages
         {
             get { return configPages; }
             set { configPages = value; }

@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    public class IncludePathSettingsForm : TabItem
+    public class IncludePathSettingsFormView : UserControl
     {
-        public IncludePathSettingsForm()
+        public IncludePathSettingsFormView()
         {
             this.InitializeComponent();
         }

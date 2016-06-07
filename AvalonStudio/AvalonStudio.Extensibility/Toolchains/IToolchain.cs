@@ -19,7 +19,7 @@ namespace AvalonStudio.Toolchains
 
         UserControl GetSettingsControl(IProject project);
 
-        IList<TabItem> GetConfigurationPages(IProject project);
+        IList<object> GetConfigurationPages(IProject project);
 
         void ProvisionSettings(IProject project);
 

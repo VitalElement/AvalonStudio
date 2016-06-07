@@ -624,7 +624,7 @@ namespace AvalonStudio.Toolchains.Llilum
             return result;
         }
 
-        public override IList<TabItem> GetConfigurationPages(IProject project)
+        public override IList<object> GetConfigurationPages(IProject project)
         {
             throw new NotImplementedException();
         }

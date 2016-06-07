@@ -3,9 +3,9 @@ using Avalonia;
 
 namespace AvalonStudio.Toolchains.STM32
 {
-    public class LinkerSettingsForm : TabItem
+    public class LinkerSettingsFormView : UserControl
     {
-        public LinkerSettingsForm()
+        public LinkerSettingsFormView()
         {
             this.InitializeComponent();
         }

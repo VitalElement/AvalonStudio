@@ -6,12 +6,14 @@ namespace AvalonStudio.Projects.CPlusPlus
     using System;
     using System.Collections.Generic;
 
-    public class TypeSettingsFormViewModel : ViewModel<CPlusPlusProject>
+    public class TypeSettingsFormViewModel : HeaderedViewModel<CPlusPlusProject>
     {
-        public TypeSettingsFormViewModel(CPlusPlusProject project) : base (project)
+        public TypeSettingsFormViewModel(CPlusPlusProject project) : base ("Type", project)
         {
             projectType = project.Type.ToString();
         }
+
+        
 
         public void Save ()
         {
