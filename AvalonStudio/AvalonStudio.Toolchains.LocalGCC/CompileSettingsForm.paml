@@ -1,4 +1,4 @@
-﻿<TabItem xmlns="https://github.com/avaloniaui" Header="Compiler" Foreground="WhiteSmoke">
+﻿<UserControl xmlns="https://github.com/avaloniaui" Foreground="WhiteSmoke">
     <Grid>
       <Grid.Styles>
         <Style Selector="TextBox">
@@ -90,4 +90,4 @@
             <TextBox Text="{Binding CompilerArguments}" IsReadOnly="true" />
         </Panel>
     </Grid>    
-</TabItem>
+</UserControl>
