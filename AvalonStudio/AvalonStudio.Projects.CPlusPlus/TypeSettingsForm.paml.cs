@@ -3,9 +3,10 @@ namespace AvalonStudio.Projects.CPlusPlus
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Markup.Xaml;
-    public class TypeSettingsForm : TabItem
+
+    public class TypeSettingsFormView : UserControl
     {
-        public TypeSettingsForm()
+        public TypeSettingsFormView()
         {
             this.InitializeComponent();
         }

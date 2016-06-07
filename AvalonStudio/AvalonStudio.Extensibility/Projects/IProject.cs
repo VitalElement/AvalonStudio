@@ -8,7 +8,7 @@ namespace AvalonStudio.Projects
     using Debugging;
     using Toolchains;
     using TestFrameworks;
-
+    using MVVM;
     [InheritedExport(typeof(IProject))]
     public interface IProject : IProjectFolder, IComparable<IProject>
     {
@@ -47,7 +47,7 @@ namespace AvalonStudio.Projects
         /// </summary>
         void ResolveReferences();
 
-        IList<TabItem> ConfigurationPages { get; }
+        IList<object> ConfigurationPages { get; }
 
         // TODO should these 2 methods be in seperate class?
         IProject Load(ISolution solution, string filePath);

@@ -1,0 +1,97 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:proj="clr-namespace:AvalonStudio.Projects.CPlusPlus;assembly=AvalonStudio.Projects.CPlusPlus">
+  <UserControl.Styles>
+    <Style Selector="CheckBox /template/ Path#checkMark">
+      <Setter Property="Fill" Value="WhiteSmoke" />
+    </Style>
+
+    <Style Selector="CheckBox /template/ Border#border">
+      <Setter Property="BorderBrush" Value="WhiteSmoke" />
+    </Style>
+  </UserControl.Styles>
+
+  
+  <Grid RowDefinitions="20,*" ColumnDefinitions="*,*">
+    <TextBlock Text="Include Paths" Margin="10 0 0 0" />
+    <Border Grid.Row="1" Margin="5 0" BorderThickness="1" BorderBrush="#1e1e1e">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition Width="80" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel>                    
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="20">
+            <TextBlock Text="Export" />
+            <TextBlock Text="Global" />
+          </StackPanel>
+
+          <ListBox Items="{Binding IncludePaths}" SelectedItem="{Binding SelectedInclude}" BorderThickness="0">
+            <ListBox.DataTemplates>
+              <DataTemplate DataType="proj:IncludeViewModel">
+                <Grid Margin="5 2">
+                  <StackPanel Orientation="Horizontal" Gap="10">
+                    <TextBlock Text="{Binding Value}" />
+                  </StackPanel>
+
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="25">
+                    <CheckBox IsChecked="{Binding Exported}" Foreground="WhiteSmoke" />
+                    <CheckBox IsChecked="{Binding Global}" />
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ListBox.DataTemplates>
+          </ListBox>
+        </StackPanel>
+
+
+        <StackPanel Grid.Column="1">
+          <Button Content="Add" Command="{Binding AddIncludePathCommand}" Margin="5 0 0 0" />
+          <Button Content="Remove" Command="{Binding RemoveIncludePathCommand}" Margin="5 5 0 0" />
+        </StackPanel>
+
+      </Grid>
+    </Border>
+
+    <TextBlock Grid.Column="1" Text="Definitions" Margin="10 0 0 0" />
+    <Border Grid.Row="1" Grid.Column="1" Margin="5 0" BorderThickness="1" BorderBrush="#1e1e1e">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition Width="80"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel>          
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="20">
+            <TextBlock Text="Export" />
+            <TextBlock Text="Global" />
+          </StackPanel>
+
+          <TextBox Text="{Binding DefineText}" />
+
+          <ListBox Items="{Binding Defines}" SelectedItem="{Binding SelectedDefine}" BorderThickness="0">
+            <ListBox.DataTemplates>
+              <DataTemplate DataType="proj:DefinitionViewModel">
+                <Grid Margin="5 2">
+                  <StackPanel Orientation="Horizontal" Gap="10">
+                    <TextBlock Text="{Binding Value}" />
+                  </StackPanel>
+
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="25">
+                    <CheckBox IsChecked="{Binding Exported}" Foreground="WhiteSmoke" />
+                    <CheckBox IsChecked="{Binding Global}" />
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ListBox.DataTemplates>
+          </ListBox>
+        </StackPanel>
+
+
+        <StackPanel Grid.Column="1">
+          <Button Content="Add" Command="{Binding AddDefineCommand}" Margin="5 0 0 0" />
+          <Button Content="Remove" Command="{Binding RemoveDefineCommand}" Margin="5 5 0 0" />
+        </StackPanel>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

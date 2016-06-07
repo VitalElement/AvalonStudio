@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    public class DebuggerSettingsForm : TabItem
+    public class DebuggerSettingsFormView : UserControl
     {
-        public DebuggerSettingsForm()
+        public DebuggerSettingsFormView()
         {
             this.InitializeComponent();
         }
