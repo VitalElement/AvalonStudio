@@ -2,7 +2,7 @@
   <Grid IsEnabled="{Binding IsEnabled}">
     <Grid.RowDefinitions>
       <RowDefinition Height="30"/>
-      <RowDefinition Height="100" />
+      <RowDefinition Height="110" />
       <RowDefinition />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
@@ -50,8 +50,6 @@
         <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description}" Margin="10 5 0 0"/>
 
         <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{Binding ButtonText}" Command="{Binding InstallCommand}"/>
-
-
         <TextBlock Grid.Row="3" Grid.ColumnSpan="3" Text="{Binding StatusMessage}"/>
       </Grid>
     </Panel>
