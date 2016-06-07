@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
-    public class LinkerSettingsForm : TabItem
+    public class LinkerSettingsFormView : UserControl
     {
-        public LinkerSettingsForm()
+        public LinkerSettingsFormView()
         {
             this.InitializeComponent();
         }

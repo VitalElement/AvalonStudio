@@ -14,10 +14,10 @@ namespace AvalonStudio.Toolchains.LocalGCC
     using System.Linq;
     using System.Windows.Input;
 
-    public class CompileSettingsViewModel : ViewModel<IProject>
+    public class CompileSettingsFormViewModel : HeaderedViewModel<IProject>
     {
         private CompileSettings settings = new CompileSettings();
-        public CompileSettingsViewModel(IProject project) : base(project)
+        public CompileSettingsFormViewModel(IProject project) : base("Compiler", project)
         {
             try
             {
