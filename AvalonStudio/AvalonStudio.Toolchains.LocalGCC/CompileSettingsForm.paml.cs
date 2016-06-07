@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
-    public class CompileSettingsFormView : TabItem
+    public class CompileSettingsFormView : UserControl
     {
         public CompileSettingsFormView()
         {
