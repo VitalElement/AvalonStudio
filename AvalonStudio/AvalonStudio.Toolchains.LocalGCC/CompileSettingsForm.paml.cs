@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
-    public class CompileSettingsForm : TabItem
+    public class CompileSettingsFormView : TabItem
     {
-        public CompileSettingsForm()
+        public CompileSettingsFormView()
         {
             this.InitializeComponent();
         }

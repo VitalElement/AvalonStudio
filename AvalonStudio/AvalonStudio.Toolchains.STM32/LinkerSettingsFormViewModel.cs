@@ -14,11 +14,11 @@ namespace AvalonStudio.Toolchains.STM32
     using System.Windows.Input;
     using Toolchains;
 
-    public class LinkSettingsFormViewModel : ViewModel<IProject>
+    public class LinkerSettingsFormViewModel : ViewModel<IProject>
     {
         LinkSettings settings = new LinkSettings();
 
-        public LinkSettingsFormViewModel(IProject project) : base (project)
+        public LinkerSettingsFormViewModel(IProject project) : base (project)
         {
             try
             {

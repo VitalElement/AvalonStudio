@@ -146,14 +146,14 @@
     <Compile Include="ArmGCCLinkTemplateCode.cs" />
     <Compile Include="CompileSettings.cs" />
     <Compile Include="CompileSettingsForm.paml.cs">
-      <DependentUpon>CompileSettingsForm.paml</DependentUpon>
+      <DependentUpon>CompileSettingsFormView.paml</DependentUpon>
     </Compile>
     <Compile Include="CompileSettingsFormViewModel.cs" />
     <Compile Include="LinkSettings.cs" />
     <Compile Include="STM32CPlusPlusProjectTemplate.cs" />
     <Compile Include="STM32GCCToolchain.cs" />
     <Compile Include="LinkerSettingsForm.paml.cs">
-      <DependentUpon>LinkerSettingsForm.paml</DependentUpon>
+      <DependentUpon>LinkerSettingsFormView.paml</DependentUpon>
     </Compile>
     <Compile Include="LinkerSettingsFormViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -187,12 +187,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CompileSettingsForm.paml">
+    <EmbeddedResource Include="CompileSettingsFormView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LinkerSettingsForm.paml">
+    <EmbeddedResource Include="LinkerSettingsFormView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />

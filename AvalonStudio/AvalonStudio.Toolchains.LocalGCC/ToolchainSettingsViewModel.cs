@@ -14,7 +14,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
         public ToolchainSettingsViewModel(IProject model) : base(model)
         {
             CompileSettings = new CompileSettingsViewModel(model);
-            LinkerSettings = new LinkSettingsFormViewModel(model);
+            LinkerSettings = new LinkerSettingsFormViewModel(model);
         }
 
         private CompileSettingsViewModel compileSettings;
@@ -24,8 +24,8 @@ namespace AvalonStudio.Toolchains.LocalGCC
             set { this.RaiseAndSetIfChanged(ref compileSettings, value); }
         }
 
-        private LinkSettingsFormViewModel linkerSettings;
-        public LinkSettingsFormViewModel LinkerSettings
+        private LinkerSettingsFormViewModel linkerSettings;
+        public LinkerSettingsFormViewModel LinkerSettings
         {
             get { return linkerSettings; }
             set { this.RaiseAndSetIfChanged(ref linkerSettings, value); }

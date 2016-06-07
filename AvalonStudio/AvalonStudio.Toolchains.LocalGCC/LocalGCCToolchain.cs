@@ -651,12 +651,12 @@ namespace AvalonStudio.Toolchains.LocalGCC
             }
         }
 
-        public override IList<TabItem> GetConfigurationPages(IProject project)
+        public override IList<object> GetConfigurationPages(IProject project)
         {
-            var result = new List<TabItem>();
+            var result = new List<object>();
 
-            result.Add(new CompileSettingsForm() { DataContext = new CompileSettingsViewModel(project) });
-            result.Add(new LinkerSettingsForm() { DataContext = new LinkSettingsFormViewModel(project) });
+            result.Add(new CompileSettingsViewModel(project));
+            result.Add(new LinkerSettingsFormViewModel(project));
 
             return result;
         }

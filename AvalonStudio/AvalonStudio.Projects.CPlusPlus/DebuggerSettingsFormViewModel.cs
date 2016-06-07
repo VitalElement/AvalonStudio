@@ -8,9 +8,9 @@ namespace AvalonStudio.Projects.CPlusPlus
     using Shell;
     using System.Collections.Generic;
 
-    public class DebuggerSettingsFormViewModel : ViewModel<CPlusPlusProject>
+    public class DebuggerSettingsFormViewModel : HeaderedViewModel<CPlusPlusProject>
     {
-        public DebuggerSettingsFormViewModel(CPlusPlusProject project) : base(project)
+        public DebuggerSettingsFormViewModel(CPlusPlusProject project) : base("Debugger", project)
         {
             debuggers = new List<IDebugger>(IoC.Get<IShell>().Debuggers);
             selectedDebugger = project.Debugger;
