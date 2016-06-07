@@ -13,12 +13,12 @@ namespace AvalonStudio.Toolchains.LocalGCC
     {
         public ToolchainSettingsViewModel(IProject model) : base(model)
         {
-            CompileSettings = new CompileSettingsViewModel(model);
+            CompileSettings = new CompileSettingsFormViewModel(model);
             LinkerSettings = new LinkerSettingsFormViewModel(model);
         }
 
-        private CompileSettingsViewModel compileSettings;
-        public CompileSettingsViewModel CompileSettings
+        private CompileSettingsFormViewModel compileSettings;
+        public CompileSettingsFormViewModel CompileSettings
         {
             get { return compileSettings; }
             set { this.RaiseAndSetIfChanged(ref compileSettings, value); }
