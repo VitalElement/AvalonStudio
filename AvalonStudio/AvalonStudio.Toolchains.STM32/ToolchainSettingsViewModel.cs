@@ -13,19 +13,19 @@ namespace AvalonStudio.Toolchains.STM32
     {
         public ToolchainSettingsViewModel(IProject model) : base(model)
         {
-            CompileSettings = new CompileSettingsViewModel(model);
-            LinkerSettings = new LinkSettingsFormViewModel(model);
+            CompileSettings = new CompileSettingsFormViewModel(model);
+            LinkerSettings = new LinkerSettingsFormViewModel(model);
         }
 
-        private CompileSettingsViewModel compileSettings;
-        public CompileSettingsViewModel CompileSettings
+        private CompileSettingsFormViewModel compileSettings;
+        public CompileSettingsFormViewModel CompileSettings
         {
             get { return compileSettings; }
             set { this.RaiseAndSetIfChanged(ref compileSettings, value); }
         }
 
-        private LinkSettingsFormViewModel linkerSettings;
-        public LinkSettingsFormViewModel LinkerSettings
+        private LinkerSettingsFormViewModel linkerSettings;
+        public LinkerSettingsFormViewModel LinkerSettings
         {
             get { return linkerSettings; }
             set { this.RaiseAndSetIfChanged(ref linkerSettings, value); }

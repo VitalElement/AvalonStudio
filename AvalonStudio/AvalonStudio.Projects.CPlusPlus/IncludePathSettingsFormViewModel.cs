@@ -13,9 +13,9 @@ namespace AvalonStudio.Projects.CPlusPlus
     using System.Threading.Tasks;
     using Utils;
 
-    public class IncludePathSettingsFormViewModel : ViewModel<CPlusPlusProject>
+    public class IncludePathSettingsFormViewModel : HeaderedViewModel<CPlusPlusProject>
     {
-        public IncludePathSettingsFormViewModel(CPlusPlusProject model) : base(model)
+        public IncludePathSettingsFormViewModel(CPlusPlusProject model) : base("Includes / Definitions", model)
         {
             defines = new ObservableCollection<DefinitionViewModel>();
             includePaths = new ObservableCollection<IncludeViewModel>();  

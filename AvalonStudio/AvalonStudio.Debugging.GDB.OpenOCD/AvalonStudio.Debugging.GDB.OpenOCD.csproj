@@ -139,8 +139,8 @@
   <ItemGroup>
     <Compile Include="OpenOCD.cs" />
     <Compile Include="OpenOCDSettings.cs" />
-    <Compile Include="OpenOCDSettingsForm.xaml.cs">
-      <DependentUpon>OpenOCDSettingsForm.xaml</DependentUpon>
+    <Compile Include="OpenOCDSettingsFormView.xaml.cs">
+      <DependentUpon>OpenOCDSettingsFormView.xaml</DependentUpon>
     </Compile>
     <Compile Include="OpenOCDSettingsFormViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -167,8 +167,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="OpenOCDSettingsForm.xaml">
+    <EmbeddedResource Include="OpenOCDSettingsFormView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

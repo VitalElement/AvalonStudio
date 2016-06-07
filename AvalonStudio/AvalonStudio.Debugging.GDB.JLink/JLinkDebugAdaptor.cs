@@ -78,9 +78,9 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         private Process jlinkProcess;
 
-        public override UserControl GetSettingsControl(IProject project)
+        public override object GetSettingsControl(IProject project)
         {
-            return new JLinkSettingsForm() { DataContext = new JLinkSettingsFormViewModel(project) };
+            return new JLinkSettingsFormViewModel(project);
         }
 
         public override void ProvisionSettings(IProject project)

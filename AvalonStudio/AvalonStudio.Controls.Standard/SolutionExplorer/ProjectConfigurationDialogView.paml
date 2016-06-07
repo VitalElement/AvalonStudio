@@ -1,5 +1,37 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <Grid>
-    <TabControl Items="{Binding ConfigPages}"/>    
+    <DockPanel>
+      <StackPanel DockPanel.Dock="Top" ZIndex="100">
+        <TabStrip Name="toolStrip" Items="{Binding ConfigPages}" Focusable="false">
+          <TabStrip.ItemsPanel>
+            <ItemsPanelTemplate>
+              <DockPanel LastChildFill="false" />
+            </ItemsPanelTemplate>
+          </TabStrip.ItemsPanel>
+
+          <TabStrip.Styles>
+            <Style Selector="TabStripItem">
+              <Setter Property="Foreground" Value="#585656" />
+            </Style>
+            <Style Selector="TabStripItem:pointerover">
+              <Setter Property="Foreground" Value="WhiteSmoke" />
+            </Style>
+            <Style Selector="TabStripItem:selected">
+              <Setter Property="Foreground" Value="WhiteSmoke" />              
+            </Style>
+          </TabStrip.Styles>
+
+          <TabStrip.DataTemplates>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal" Gap="2">
+                <TextBlock Text="{Binding Title}" Margin="2"/>
+              </StackPanel>
+            </DataTemplate>
+          </TabStrip.DataTemplates>
+        </TabStrip>
+      </StackPanel>
+
+      <Controls:ViewModelViewHost DataContext="{Binding #toolStrip.SelectedItem}" ZIndex="50" />      
+    </DockPanel>
   </Grid>
 </UserControl>

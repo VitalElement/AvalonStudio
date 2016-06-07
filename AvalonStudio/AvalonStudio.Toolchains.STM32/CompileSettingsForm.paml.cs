@@ -3,9 +3,9 @@ using Avalonia;
 
 namespace AvalonStudio.Toolchains.STM32
 {
-    public class CompileSettingsForm : TabItem
+    public class CompileSettingsFormView : UserControl
     {
-        public CompileSettingsForm()
+        public CompileSettingsFormView()
         {
             this.InitializeComponent();
         }

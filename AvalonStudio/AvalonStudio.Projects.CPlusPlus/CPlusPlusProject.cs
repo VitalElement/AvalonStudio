@@ -18,7 +18,7 @@ namespace AvalonStudio.Projects.CPlusPlus
     using System.Linq;
     using TestFrameworks;
     using Toolchains;
-
+    using MVVM;
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {
         public const string ProjectExtension = "acproj";
@@ -691,17 +691,17 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
         [JsonIgnore]
-        public IList<TabItem> ConfigurationPages
+        public IList<object> ConfigurationPages
         {
             get
             {
-                var result = new List<TabItem>();
+                var result = new List<object>();
 
-                result.Add(new TypeSettingsForm() { DataContext = new TypeSettingsFormViewModel(this) });
-                result.Add(new IncludePathSettingsForm() { DataContext = new IncludePathSettingsFormViewModel(this) });
-                result.Add(new ReferencesSettingsForm() { DataContext = new ReferenceSettingsFormViewModel(this) });
-                result.Add(new ToolchainSettingsForm() { DataContext = new ToolchainSettingsFormViewModel(this) });
-                result.Add(new DebuggerSettingsForm() { DataContext = new DebuggerSettingsFormViewModel(this) });
+                result.Add(new TypeSettingsFormViewModel(this));
+                result.Add(new IncludePathSettingsFormViewModel(this));
+                result.Add(new ReferenceSettingsFormViewModel(this));
+                result.Add(new ToolchainSettingsFormViewModel(this));
+                result.Add(new DebuggerSettingsFormViewModel(this));
 
                 return result;
             }
