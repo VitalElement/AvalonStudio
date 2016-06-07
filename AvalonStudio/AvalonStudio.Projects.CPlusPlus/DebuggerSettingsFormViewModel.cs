@@ -26,8 +26,8 @@ namespace AvalonStudio.Projects.CPlusPlus
             }
         }
 
-        private UserControl debugSettingsControl;
-        public UserControl DebugSettingsControl
+        private object debugSettingsControl;
+        public object DebugSettingsControl
         {
             get { return debugSettingsControl; }
             set { this.RaiseAndSetIfChanged(ref debugSettingsControl, value); }

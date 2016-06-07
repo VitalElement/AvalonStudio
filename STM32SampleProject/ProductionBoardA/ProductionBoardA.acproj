@@ -49,8 +49,8 @@
         "CustomFlags": "-mcpu=cortex-m4 -mthumb -Wno-unknown-pragmas",
         "CLanguageStandard": "Default",
         "CppLanguageStandard": "Cpp14",
-        "Optimization": "None",
-        "OptimizationPreference": "None",
+        "Optimization": "Level3",
+        "OptimizationPreference": "Speed",
         "Fpu": "Hard"
       },
       "LinkSettings": {
@@ -70,6 +70,35 @@
         "InRam2Size": 0,
         "DebugInRam": false,
         "MiscLinkerArguments": "-mcpu=cortex-m4 -mthumb"
+      }
+    },
+    "LocalGCC": {
+      "CompileSettings": {
+        "Defines": [],
+        "Includes": [],
+        "DebugInformation": true,
+        "Rtti": false,
+        "Exceptions": false,
+        "Optimization": "None",
+        "OptimizationPreference": "None",
+        "Fpu": "None"
+      },
+      "LinkSettings": {
+        "LinkedLibraries": [],
+        "UseMemoryLayout": false,
+        "DiscardUnusedSections": false,
+        "NotUseStandardStartupFiles": false,
+        "Library": "None",
+        "SelectedDeviceId": 0,
+        "InRom1Start": 0,
+        "InRom1Size": 0,
+        "InRom2Start": 0,
+        "InRom2Size": 0,
+        "InRam1Start": 0,
+        "InRam1Size": 0,
+        "InRam2Start": 0,
+        "InRam2Size": 0,
+        "DebugInRam": false
       }
     }
   },

@@ -37,9 +37,9 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
             }
         }
 
-        public override UserControl GetSettingsControl(IProject project)
+        public override object GetSettingsControl(IProject project)
         {
-            return new OpenOCDSettingsForm() { DataContext = new OpenOCDSettingsFormViewModel(project) };
+            return new OpenOCDSettingsFormViewModel(project);
         }
 
         public override void ProvisionSettings(IProject project)

@@ -655,7 +655,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
         {
             var result = new List<object>();
 
-            result.Add(new CompileSettingsViewModel(project));
+            result.Add(new CompileSettingsFormViewModel(project));
             result.Add(new LinkerSettingsFormViewModel(project));
 
             return result;
