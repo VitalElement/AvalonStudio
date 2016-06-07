@@ -14,11 +14,11 @@ namespace AvalonStudio.Toolchains.LocalGCC
     using System.Windows.Input;
     using Toolchains;
 
-    public class LinkerSettingsFormViewModel : ViewModel<IProject>
+    public class LinkerSettingsFormViewModel : HeaderedViewModel<IProject>
     {
         LinkSettings settings = new LinkSettings();
 
-        public LinkerSettingsFormViewModel(IProject project) : base (project)
+        public LinkerSettingsFormViewModel(IProject project) : base ("Linker", project)
         {
             try
             {

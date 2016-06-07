@@ -756,7 +756,7 @@ namespace AvalonStudio.Toolchains.STM32
         {
             var result = new List<object>();
 
-            result.Add(new CompileSettingsViewModel(project));
+            result.Add(new CompileSettingsFormViewModel(project));
             result.Add(new LinkerSettingsFormViewModel(project));
 
             return result;
