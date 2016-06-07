@@ -162,7 +162,7 @@
     <Compile Include="Reference.cs" />
     <Compile Include="ReferenceSettingsFormViewModel.cs" />
     <Compile Include="ReferencesSettingsForm.paml.cs">
-      <DependentUpon>ReferencesSettingsFormView.paml</DependentUpon>
+      <DependentUpon>ReferenceSettingsFormView.paml</DependentUpon>
     </Compile>
     <Compile Include="SourceFile.cs" />
     <Compile Include="StaticLibraryTemplate.cs" />
@@ -208,7 +208,7 @@
     <EmbeddedResource Include="TypeSettingsFormView.paml" />
     <EmbeddedResource Include="TargetSettingsForm.paml" />
     <EmbeddedResource Include="ToolchainSettingsFormView.paml" />
-    <EmbeddedResource Include="ReferencesSettingsFormView.paml" />
+    <EmbeddedResource Include="ReferenceSettingsFormView.paml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

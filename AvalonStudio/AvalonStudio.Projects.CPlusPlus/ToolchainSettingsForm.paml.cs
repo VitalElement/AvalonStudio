@@ -3,7 +3,7 @@ namespace AvalonStudio.Projects.CPlusPlus
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Markup.Xaml;
-    public class ToolchainSettingsFormView : TabItem
+    public class ToolchainSettingsFormView : UserControl
     {
         public ToolchainSettingsFormView()
         {
