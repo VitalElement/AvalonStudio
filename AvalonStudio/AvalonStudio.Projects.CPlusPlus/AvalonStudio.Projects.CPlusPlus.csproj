@@ -149,12 +149,12 @@
       <DependentUpon>ComponentSettingsForm.paml</DependentUpon>
     </Compile>
     <Compile Include="DebuggerSettingsForm.paml.cs">
-      <DependentUpon>DebuggerSettingsForm.paml</DependentUpon>
+      <DependentUpon>DebuggerSettingsFormView.paml</DependentUpon>
     </Compile>
     <Compile Include="DebuggerSettingsFormViewModel.cs" />
     <Compile Include="DefineViewModel.cs" />
     <Compile Include="IncludePathSettingsForm.paml.cs">
-      <DependentUpon>IncludePathSettingsForm.paml</DependentUpon>
+      <DependentUpon>IncludePathSettingsFormView.paml</DependentUpon>
     </Compile>
     <Compile Include="IncludePathSettingsFormViewModel.cs" />
     <Compile Include="IncludeViewModel.cs" />
@@ -162,7 +162,7 @@
     <Compile Include="Reference.cs" />
     <Compile Include="ReferenceSettingsFormViewModel.cs" />
     <Compile Include="ReferencesSettingsForm.paml.cs">
-      <DependentUpon>ReferencesSettingsForm.paml</DependentUpon>
+      <DependentUpon>ReferenceSettingsFormView.paml</DependentUpon>
     </Compile>
     <Compile Include="SourceFile.cs" />
     <Compile Include="StaticLibraryTemplate.cs" />
@@ -171,11 +171,11 @@
     </Compile>
     <Compile Include="TargetSettingsFormViewModel.cs" />
     <Compile Include="ToolchainSettingsForm.paml.cs">
-      <DependentUpon>ToolchainSettingsForm.paml</DependentUpon>
+      <DependentUpon>ToolchainSettingsFormView.paml</DependentUpon>
     </Compile>
     <Compile Include="ToolchainSettingsFormViewModel.cs" />
     <Compile Include="TypeSettingsForm.paml.cs">
-      <DependentUpon>TypeSettingsForm.paml</DependentUpon>
+      <DependentUpon>TypeSettingsFormView.paml</DependentUpon>
     </Compile>
     <Compile Include="TypeSettingsFormViewModel.cs" />
     <Compile Include="CPlusPlusProject.cs" />
@@ -199,16 +199,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DebuggerSettingsForm.paml">
+    <EmbeddedResource Include="DebuggerSettingsFormView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ComponentSettingsForm.paml" />
-    <EmbeddedResource Include="IncludePathSettingsForm.paml" />
+    <EmbeddedResource Include="IncludePathSettingsFormView.paml" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="TypeSettingsForm.paml" />
+    <EmbeddedResource Include="TypeSettingsFormView.paml" />
     <EmbeddedResource Include="TargetSettingsForm.paml" />
-    <EmbeddedResource Include="ToolchainSettingsForm.paml" />
-    <EmbeddedResource Include="ReferencesSettingsForm.paml" />
+    <EmbeddedResource Include="ToolchainSettingsFormView.paml" />
+    <EmbeddedResource Include="ReferenceSettingsFormView.paml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -74,6 +74,26 @@ namespace AvalonStudio.MVVM
         }        
     }
 
+    public abstract class HeaderedViewModel : HeaderedViewModel<object>
+    {
+        public HeaderedViewModel(string header) : base(header, null)
+        {
+        }
+    }
+
+    public abstract class HeaderedViewModel<T> : ViewModel<T>
+    {
+        public HeaderedViewModel(string header, T model) : base(model)
+        {
+            Title = header;
+        }
+
+        public string Title
+        {
+            get; private set;
+        }
+    }
+
     public abstract class ViewModel<T> : ReactiveObject
     {
         public ViewModel(T model)

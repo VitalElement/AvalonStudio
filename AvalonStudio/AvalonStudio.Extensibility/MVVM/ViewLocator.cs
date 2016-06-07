@@ -35,7 +35,7 @@ namespace AvalonStudio.MVVM
             }
             else
             {
-                return new TextBlock { Text = name };
+                return new TextBlock { Text = data.GetType().FullName };
             }
         }
     }
