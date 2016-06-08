@@ -9,9 +9,9 @@ namespace AvalonStudio.Projects.CPlusPlus
     using System.Linq;
     using Toolchains;
 
-    public class ToolchainSettingsFormViewModel : ViewModel<CPlusPlusProject>
+    public class ToolchainSettingsFormViewModel : HeaderedViewModel<CPlusPlusProject>
     {
-        public ToolchainSettingsFormViewModel(CPlusPlusProject project) : base (project)
+        public ToolchainSettingsFormViewModel(CPlusPlusProject project) : base ("Toolchain", project)
         {
             toolchains = new List<IToolChain>(IoC.Get<IShell>().ToolChains);
             selectedToolchain = project.ToolChain;            
@@ -25,15 +25,15 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
 
-        private IList<TabItem> configPages;
-        public IList<TabItem> ConfigPages
+        private IList<object> configPages;
+        public IList<object> ConfigPages
         {
             get { return configPages; }
             set { this.RaiseAndSetIfChanged(ref configPages, value); }
         }
 
-        private TabItem selectedConfigPage;
-        public TabItem SelectedConfigPage
+        private object selectedConfigPage;
+        public object SelectedConfigPage
         {
             get { return selectedConfigPage; }
             set { this.RaiseAndSetIfChanged(ref selectedConfigPage, value); }

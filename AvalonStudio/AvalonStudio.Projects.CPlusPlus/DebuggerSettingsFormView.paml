@@ -1,0 +1,61 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+    <Grid IsEnabled="{Binding IsEnabled}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="30"/>
+        <RowDefinition />
+        <RowDefinition />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="282*"/>
+        <ColumnDefinition Width="115*"/>
+        <ColumnDefinition Width="397*"/>
+      </Grid.ColumnDefinitions>
+
+      <TextBlock Grid.Row="0" Text="Debugger" Grid.ColumnSpan="2"/>
+      <DropDown Grid.Row="0" Grid.Column="2" Items="{Binding Debuggers}" SelectedItem="{Binding SelectedDebugger, Mode=TwoWay}">
+        <DropDown.Styles>
+          <Style Selector="DropDownItem">
+            <Setter Property="Background" Value="#1e1e1e" />
+          </Style>
+
+          <Style Selector="DropDownItem:selected">
+            <Setter Property="Background" Value="#3f3f46" />
+          </Style>
+
+          <Style Selector="DropDownItem:pointerover">
+            <Setter Property="Background" Value="Red" />
+          </Style>
+        </DropDown.Styles>
+      </DropDown>
+
+      <Panel Grid.Row="1" Grid.ColumnSpan="3" DataContext="{Binding SelectedDebugger}"  >
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition/>
+            <RowDefinition Height="30"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+          </Grid.ColumnDefinitions>
+
+          <TextBlock Text="Name: " HorizontalAlignment="Right"/>
+          <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="10 5 0 0"/>
+          <TextBlock Grid.Row="1" Text="Version:" HorizontalAlignment="Right"/>
+          <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Version}" Margin="10 5 0 0"/>
+          <TextBlock Grid.Row="2" Text="Description:" HorizontalAlignment="Right" />
+          <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description}" Margin="10 5 0 0"/>
+
+          <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{Binding ButtonText}" Command="{Binding InstallCommand}"/>
+
+
+          <TextBlock Grid.Row="3" Grid.ColumnSpan="3" Text="{Binding StatusMessage}"/>
+        </Grid>
+      </Panel>
+
+      <Controls:ViewModelViewHost Grid.Row="2" Grid.ColumnSpan="3" DataContext="{Binding DebugSettingsControl}" />
+    </Grid>
+  </UserControl>

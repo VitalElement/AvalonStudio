@@ -3,9 +3,10 @@ namespace AvalonStudio.Projects.CPlusPlus
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Markup.Xaml;
-    public class ReferencesSettingsForm : TabItem
+
+    public class ReferenceSettingsFormView : UserControl
     {
-        public ReferencesSettingsForm()
+        public ReferenceSettingsFormView()
         {
             this.InitializeComponent();
         }
