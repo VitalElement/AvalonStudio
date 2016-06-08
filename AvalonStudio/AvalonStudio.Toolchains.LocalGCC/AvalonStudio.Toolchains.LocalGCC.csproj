@@ -139,7 +139,7 @@
   <ItemGroup>
     <Compile Include="CompileSettings.cs" />
     <Compile Include="CompileSettingsForm.paml.cs">
-      <DependentUpon>CompileSettingsForm.paml</DependentUpon>
+      <DependentUpon>CompileSettingsFormView.paml</DependentUpon>
     </Compile>
     <Compile Include="CompileSettingsFormViewModel.cs" />
     <Compile Include="GCCLinkSettings.cs" />
@@ -187,7 +187,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CompileSettingsForm.paml">
+    <EmbeddedResource Include="CompileSettingsFormView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LinkerSettingsForm.paml">

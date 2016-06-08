@@ -829,9 +829,9 @@ namespace AvalonStudio.Debugging.GDB
 
         }
 
-        public virtual UserControl GetSettingsControl(IProject project)
+        public virtual object GetSettingsControl(IProject project)
         {
-            return new UserControl();
+            return new object();
         }
     }
 }

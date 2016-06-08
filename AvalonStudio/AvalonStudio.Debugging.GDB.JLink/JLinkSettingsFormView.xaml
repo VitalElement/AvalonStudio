@@ -1,0 +1,8 @@
+<UserControl xmlns="https://github.com/avaloniaui">
+  <StackPanel Gap="10">
+        <StackPanel Orientation="Horizontal" Gap="5">
+            <TextBlock Text="Interface" />
+            <DropDown Items="{Binding InterfaceOptions}" SelectedIndex="{Binding InterfaceSelectedIndex, Mode=TwoWay}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

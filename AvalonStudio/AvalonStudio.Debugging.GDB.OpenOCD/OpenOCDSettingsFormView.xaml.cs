@@ -1,11 +1,11 @@
-using Avalonia.Controls;
-using Avalonia;
-
-namespace AvalonStudio.Toolchains.STM32
+namespace AvalonStudio.Debugging.GDB.OpenOCD
 {
-    public class LinkerSettingsFormView : UserControl
+    using Avalonia;
+    using Avalonia.Controls;
+
+    public class OpenOCDSettingsFormView : UserControl
     {
-        public LinkerSettingsFormView()
+        public OpenOCDSettingsFormView()
         {
             this.InitializeComponent();
         }

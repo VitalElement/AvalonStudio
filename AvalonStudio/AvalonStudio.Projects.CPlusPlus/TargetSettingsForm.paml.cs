@@ -3,7 +3,7 @@ namespace AvalonStudio.Projects.CPlusPlus
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Markup.Xaml;
-    public class TargetSettingsForm : TabItem
+    public class TargetSettingsForm : UserControl
     {
         public TargetSettingsForm()
         {
