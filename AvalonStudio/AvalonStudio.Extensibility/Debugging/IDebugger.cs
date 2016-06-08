@@ -28,7 +28,7 @@ namespace AvalonStudio.Debugging
     [InheritedExport(typeof(IDebugger))]
     public interface IDebugger
     {
-        UserControl GetSettingsControl(IProject project);
+        object GetSettingsControl(IProject project);
 
         void ProvisionSettings(IProject project);
 

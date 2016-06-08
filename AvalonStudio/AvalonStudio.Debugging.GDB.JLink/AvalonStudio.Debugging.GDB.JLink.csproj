@@ -139,8 +139,8 @@
   <ItemGroup>
     <Compile Include="JLinkDebugAdaptor.cs" />
     <Compile Include="JLinkSettings.cs" />
-    <Compile Include="JLinkSettingsForm.xaml.cs">
-      <DependentUpon>JLinkSettingsForm.xaml</DependentUpon>
+    <Compile Include="JLinkSettingsFormView.xaml.cs">
+      <DependentUpon>JLinkSettingsFormView.xaml</DependentUpon>
     </Compile>
     <Compile Include="JLinkSettingsFormViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -149,7 +149,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JLinkSettingsForm.xaml">
+    <EmbeddedResource Include="JLinkSettingsFormView.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

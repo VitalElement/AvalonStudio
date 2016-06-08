@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    public class ComponentSettingsForm : TabItem
+    public class ComponentSettingsForm : UserControl
     {
         public ComponentSettingsForm()
         {

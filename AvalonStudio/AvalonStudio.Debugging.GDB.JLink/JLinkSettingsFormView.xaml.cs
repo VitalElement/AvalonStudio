@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 using Avalonia;
-using Avalonia.Markup.Xaml;
 
-namespace AvalonStudio.Projects.CPlusPlus
+namespace AvalonStudio.Debugging.GDB.JLink
 {
-    public class DebuggerSettingsFormView : UserControl
+    public class JLinkSettingsFormView : UserControl
     {
-        public DebuggerSettingsFormView()
+        public JLinkSettingsFormView()
         {
             this.InitializeComponent();
         }

@@ -52,9 +52,9 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
     }
 
-    public class ReferenceSettingsFormViewModel : ViewModel<CPlusPlusProject>
+    public class ReferenceSettingsFormViewModel :HeaderedViewModel<CPlusPlusProject>
     {
-        public ReferenceSettingsFormViewModel(CPlusPlusProject model) : base(model)
+        public ReferenceSettingsFormViewModel(CPlusPlusProject model) : base("References", model)
         {
             projects = new ObservableCollection<ReferenceViewModel>();
 
