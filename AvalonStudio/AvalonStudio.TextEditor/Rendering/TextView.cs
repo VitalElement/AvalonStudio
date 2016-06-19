@@ -20,6 +20,7 @@ namespace AvalonStudio.TextEditor.Rendering
     using System.Reactive.Disposables;
     using Avalonia.Controls.Presenters;
     using Avalonia.Layout;
+
     public class TextView : ContentControl, ILogicalScrollable
     {
         class WeakEventArgsSubscriber : IWeakSubscriber<EventArgs>
@@ -869,7 +870,7 @@ namespace AvalonStudio.TextEditor.Rendering
             return result;
         }
 
-        public bool BringIntoView(IVisual target, Rect targetRect)
+        public bool BringIntoView(IControl target, Rect targetRect)
         {
             bool result = false;
 
@@ -886,6 +887,11 @@ namespace AvalonStudio.TextEditor.Rendering
             }
 
             return result;
+        }
+
+        public IControl GetControlInDirection(NavigationDirection direction, IControl from)
+        {
+            return null;
         }
         #endregion
     }
