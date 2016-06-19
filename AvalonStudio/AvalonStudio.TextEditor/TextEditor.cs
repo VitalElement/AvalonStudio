@@ -319,7 +319,7 @@ namespace AvalonStudio.TextEditor
             set { SetValue(IndentationStrategyProperty, value); }
         }
 
-        public static readonly StyledProperty<TextDocument> TextDocumentProperty = TextView.TextDocumentProperty.AddOwner<TextEditor>();
+        public static readonly AvaloniaProperty<TextDocument> TextDocumentProperty = TextView.TextDocumentProperty.AddOwner<TextEditor>();
 
         public TextDocument TextDocument
         {
@@ -773,7 +773,7 @@ namespace AvalonStudio.TextEditor
 
                     InvalidateVisual();
                 }
-                else if (TextDocument.TextLength == 0)
+                else if (TextDocument?.TextLength == 0)
                 {
                     SelectionStart = SelectionEnd = CaretIndex = 0;
 
