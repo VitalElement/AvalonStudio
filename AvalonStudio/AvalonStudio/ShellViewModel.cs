@@ -221,15 +221,16 @@ namespace AvalonStudio
                 }
 
                 var newEditor = new EditorViewModel(new EditorModel());
-                             
+
+                newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.CompletionAdvice);
                 DocumentTabs.Documents.Add(newEditor);
                 DocumentTabs.TemporaryDocument = newEditor;
                 DocumentTabs.SelectedDocument = newEditor;
 
-                newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.CompletionAdvice);
+                
 
-                //newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
-                //newEditor.Margins.Add(new LineNumberMargin());
+                newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
+                newEditor.Margins.Add(new LineNumberMargin());
             }
             else
             {
