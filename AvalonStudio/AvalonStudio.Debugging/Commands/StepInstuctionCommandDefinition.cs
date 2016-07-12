@@ -13,7 +13,6 @@ namespace AvalonStudio.Debugging.Commands
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
-    using System.Windows.Input;
     using Utils;
 
     [CommandDefinition]
@@ -40,7 +39,7 @@ namespace AvalonStudio.Debugging.Commands
 
         private ReactiveCommand<object> command;
 
-        public override ICommand Command
+        public override System.Windows.Input.ICommand Command
         {
             get
             {
