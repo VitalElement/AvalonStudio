@@ -96,9 +96,10 @@ namespace AvalonStudio.Controls
 
                 LanguageService.RegisterSourceFile(intellisenseControl, completionAdviceControl, Editor, sourceFile, TextDocument);
             }
-            catch
+            catch (Exception e)
             {
                 LanguageService = null;
+                ShellViewModel.Instance.StatusBar.Language = "Text";
             }
 
             IsDirty = false;
