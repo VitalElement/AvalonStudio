@@ -489,13 +489,13 @@ namespace AvalonStudio.TextEditor.Rendering
         #region Control Overrides
         private StackPanel marginContainer;
         private Rectangle textSurface;
-        private ContentPresenter contentPresenter;
+        private ContentControl contentPresenter;
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             marginContainer = e.NameScope.Find<StackPanel>("marginContainer");
             textSurface = e.NameScope.Find<Rectangle>("textSurface");
-            contentPresenter = e.NameScope.Find<ContentPresenter>("contentPresenter");
+            contentPresenter = e.NameScope.Find<ContentControl>("contentPresenter");
         }
 
         public void InstallMargin(Control margin)
@@ -553,28 +553,26 @@ namespace AvalonStudio.TextEditor.Rendering
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var result = finalSize;
-
-            base.ArrangeOverride(result);
-
             if (TextDocument != null)
             {
                 GenerateTextProperties();
 
                 viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
-                extent = new Size(finalSize.Width, LogicalScrollSize * CharSize.Height);
+                extent = new Size(finalSize.Width, LogicalScrollSize);
 
                 InvalidateScroll.Invoke();
             }
+
+            var result = finalSize;
+            var arrangeOffset = new Vector(Math.Floor(Offset.X) * CharSize.Width, Math.Floor(Offset.Y) * CharSize.Height);
+
+            result = base.ArrangeOverride(new Size(result.Width, result.Height + arrangeOffset.Y));
 
             var child = contentPresenter as ILayoutable;
 
             if (child != null)
             {
-                var arrangeOffset = new Vector(Math.Floor(Offset.X) * CharSize.Width, Math.Floor(Offset.Y) * CharSize.Height);
-                result = new Size(finalSize.Width, LogicalScrollSize * CharSize.Height);
-
-                child.Arrange(new Rect((Point)(-arrangeOffset), result));
+                child.Arrange(new Rect((Point)(-arrangeOffset), child.DesiredSize));
             }
 
             return result;
@@ -588,7 +586,9 @@ namespace AvalonStudio.TextEditor.Rendering
             {
                 GenerateTextProperties();
 
-                result = new Size(0, TextDocument.LineCount * CharSize.Height);
+                result = new Size(availableSize.Width, TextDocument.LineCount * CharSize.Height);
+
+                base.MeasureOverride(result);
             }
 
             return result;
