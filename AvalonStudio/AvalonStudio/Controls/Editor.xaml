@@ -36,9 +36,10 @@
           </te:TextEditor.Header>
 
           <te:TextEditor.Content>
-            <Panel Background="#aa0000ff">
-              <cont:Intellisense DataContext="{Binding Intellisense}" VerticalAlignment="Top" Margin="{Binding Position}" />
-            </Panel>
+            <Grid>
+              <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
+              <cont:CompletionAdvice DataContext="{Binding CompletionAdvice}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}"/>  
+            </Grid>
           </te:TextEditor.Content>
         </te:TextEditor> 
     </Grid>

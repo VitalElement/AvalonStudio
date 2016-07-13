@@ -13,15 +13,9 @@
                 </ItemsPanelTemplate>
               </ItemsControl.ItemsPanel>
             </ItemsControl>
-            
-            
-            
-            <Rectangle Name="textSurface" Grid.Column="1" IsHitTestVisible="false" />
 
-            <DockPanel Grid.Column="1" IsHitTestVisible="false" LastChildFill="true" Background="#aaff0000">
-              <ContentPresenter Name="contentPresenter" Content="{TemplateBinding Content}" IsHitTestVisible="false"
-                             Margin="0"/>
-            </DockPanel>
+            <Rectangle Grid.Column="1" Name="textSurface" IsHitTestVisible="false" />
+            <ContentPresenter Grid.Column="1" Name="contentPresenter" Content="{TemplateBinding Content}" IsHitTestVisible="false" />
             
           </Grid>
         </Border>
