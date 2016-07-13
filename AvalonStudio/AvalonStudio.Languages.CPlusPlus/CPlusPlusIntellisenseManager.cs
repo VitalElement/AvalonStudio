@@ -195,6 +195,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private async Task<bool> DoComplete(bool includeLastChar)
         {
+            int caretIndex = editor.CaretIndex;
+
             bool result = false;
 
             if (intellisenseControl.CompletionData.Count > 0 && intellisenseControl.SelectedCompletion != noSelectedCompletion)
@@ -210,7 +212,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 await Dispatcher.UIThread.InvokeTaskAsync(() =>
                 {
-                    editor.TextDocument.Replace(intellisenseStartedAt, editor.CaretIndex - intellisenseStartedAt - offset, intellisenseControl.SelectedCompletion.Title);
+                    editor.TextDocument.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset, intellisenseControl.SelectedCompletion.Title);
                     editor.CaretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
                 });
             }
@@ -220,13 +222,18 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public async Task CompleteOnKeyDown(KeyEventArgs e)
         {
+            int caretIndex = editor.CaretIndex;
+
             char behindCaretChar = '\0';
 
-            if (editor.CaretIndex > 0)
+            if (caretIndex > 0)
             {
                 await Dispatcher.UIThread.InvokeTaskAsync(() =>
                 {
-                    behindCaretChar = editor.TextDocument.GetCharAt(editor.CaretIndex - 1);
+                    if (caretIndex < editor.TextDocument.TextLength)
+                    {
+                        behindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 1);
+                    }
                 });
             }
 
@@ -235,7 +242,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 string word = string.Empty;
                 await Dispatcher.UIThread.InvokeTaskAsync(() =>
                 {
-                    word = editor.GetWordAtIndex(editor.CaretIndex - 1);
+                    word = editor.GetWordAtIndex(caretIndex - 1);
                 });
 
                 var symbols = await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), word);
@@ -243,7 +250,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 if (symbols.Count() > 0)
                 {
                     var adviceState = new CompletionAdviceState();
-                    adviceState.BracketOpenedAt = editor.CaretIndex;
+                    adviceState.BracketOpenedAt = caretIndex;
                     adviceState.Symbols = symbols;
 
                     if(currentAdvice != null)
@@ -281,19 +288,21 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private async Task CompleteOnKeyUp()
         {
+            int caretIndex = editor.CaretIndex;
+
             if (intellisenseControl.IsVisible)
             {
                 char behindCaretChar = '\0';
                 char behindBehindCaretChar = '\0';
 
-                if (editor.CaretIndex > 0)
+                if (caretIndex > 0)
                 {
-                    behindCaretChar = editor.TextDocument.GetCharAt(editor.CaretIndex - 1);
+                    behindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 1);
                 }
 
-                if (editor.CaretIndex > 1)
+                if (caretIndex > 1)
                 {
-                    behindBehindCaretChar = editor.TextDocument.GetCharAt(editor.CaretIndex - 2);
+                    behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2);
                 }
 
                 switch (behindCaretChar)
@@ -369,19 +378,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                     char behindCaretChar = '\0';
                     char behindBehindCaretChar = '\0';
 
-                    if (editor.CaretIndex > 0)
+                    if (caretIndex > 0)
                     {
                         await Dispatcher.UIThread.InvokeTaskAsync(() =>
                         {
-                            behindCaretChar = editor.TextDocument.GetCharAt(editor.CaretIndex - 1);
+                            behindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 1);
                         });
                     }
 
-                    if (editor.CaretIndex > 1)
+                    if (caretIndex > 1)
                     {
                         await Dispatcher.UIThread.InvokeTaskAsync(() =>
                         {
-                            behindBehindCaretChar = editor.TextDocument.GetCharAt(editor.CaretIndex - 2);
+                            behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2);
                         });
                     }
 
@@ -413,7 +422,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         caret = GetTextLocation(intellisenseStartedAt);
                     });
 
-                    var codeCompletionResults = await intellisenseControl.DoCompletionRequestAsync(caret.Line, caret.Column, currentFilter);
+                    var codeCompletionResults = await intellisenseControl.DoCompletionRequestAsync(caret.Line, caret.Column);
 
                     unfilteredCompletions.Clear();
 
@@ -439,7 +448,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         }
                     }
 
-                    filteredResults = unfilteredCompletions.ToList();
+                    filteredResults = unfilteredCompletions;
                 }
                 else
                 {
@@ -455,7 +464,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         currentFilter = string.Empty;
                     }
 
-                    filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower())).ToList();
+                    filteredResults = unfilteredCompletions.Where((c) => c.Title.ToLower().Contains(currentFilter.ToLower()));
                 }
 
                 CompletionDataViewModel suggestion = null;
@@ -470,8 +479,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                     {
                         newSelectedCompletions = filteredResults.Where((s) => s.Title.ToLower().StartsWith(currentFilter.ToLower()));   // try find non-case sensitve match
                     }
-
-                    filteredResults = newSelectedCompletions;
 
                     if (newSelectedCompletions.Count() == 0)
                     {
@@ -500,13 +507,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                     }
                     else
                     {
-                        var list = filteredResults.ToList();
-
-                        var data = list.Skip(list.IndexOf(suggestion) - 25).Take(50).ToList();
-
+                        var list = filteredResults.ToList();                        
+                        
                         await Dispatcher.UIThread.InvokeTaskAsync(() =>
                         {
-                            intellisenseControl.CompletionData = data;
+                            
+                            intellisenseControl.CompletionData = list;
 
                             intellisenseControl.SelectedCompletion = suggestion;
 

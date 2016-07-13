@@ -50,11 +50,11 @@ namespace AvalonStudio.Controls
             System.Console.WriteLine(("Editor Model Destructed."));
         }
 
-        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column, string filter)
+        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
         {
             CodeCompletionResults results = null;
 
-            var completions = await LanguageService.CodeCompleteAtAsync(sourceFile, line, column, UnsavedFiles, filter);
+            var completions = await LanguageService.CodeCompleteAtAsync(sourceFile, line, column, UnsavedFiles);
             results = new CodeCompletionResults() { Completions = completions };
 
             return results;
@@ -96,9 +96,10 @@ namespace AvalonStudio.Controls
 
                 LanguageService.RegisterSourceFile(intellisenseControl, completionAdviceControl, Editor, sourceFile, TextDocument);
             }
-            catch
+            catch (Exception e)
             {
                 LanguageService = null;
+                ShellViewModel.Instance.StatusBar.Language = "Text";
             }
 
             IsDirty = false;

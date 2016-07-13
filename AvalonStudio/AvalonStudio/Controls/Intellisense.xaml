@@ -1,0 +1,56 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility" Focusable="false">  
+  <Grid IsVisible="{Binding IsVisible}">
+    <StackPanel Orientation="Horizontal" Gap="2" Background="Transparent">
+      <ListBox Items="{Binding CompletionData}" Background="{StyleResource ThemeControlMidBrush}" BorderBrush="#3e3e42" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="180" FontFamily="Segoi UI" FontSize="14" Width="240">        
+        <ListBox.DataTemplates>
+          <DataTemplate DataType="vm:MethodCompletionDataViewModel">
+            <Grid>
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="12" Width="12" Fill="#FFAD79D5" Margin="4"/>
+                <TextBlock Text="{Binding Title}" />
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+
+          <DataTemplate DataType="vm:MacroCompletionDataViewModel">
+            <Grid>
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="12" Width="12" Fill="#FF686868" Margin="4"/>
+                <TextBlock Text="{Binding Title}" />
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+
+          <DataTemplate DataType="vm:VariableCompletionDataViewModel">
+            <Grid>
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="12" Width="12" Fill="#FF6EBBFF" Margin="4"/>
+                <TextBlock Text="{Binding Title}" />
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+
+          <DataTemplate DataType="vm:ClassCompletionDataViewModel"  >
+            <Grid>
+              <StackPanel Orientation="Horizontal">
+                <Rectangle Height="12" Width="12" Fill="#FFF0CA95" Margin="4"/>
+                <TextBlock Text="{Binding Title}" />
+              </StackPanel>
+            </Grid>
+          </DataTemplate>
+        </ListBox.DataTemplates>
+      </ListBox>
+
+      <Grid IsVisible="True">
+        <Grid Background="#424245" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+          <Border BorderBrush="#4D4D50" BorderThickness="1">
+            <StackPanel>
+              <TextBlock Text="{Binding SelectedCompletion.Hint}" />
+              <TextBlock Text="{Binding SelectedCompletion.Comment}" />
+            </StackPanel>
+          </Border>
+        </Grid>
+      </Grid>
+    </StackPanel>
+  </Grid>
+</UserControl>

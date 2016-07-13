@@ -236,7 +236,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return dataAssociation.TranslationUnit;
         }
 
-        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile file, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
+        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile file, int line, int column, List<UnsavedFile> unsavedFiles)
         {
             List<ClangUnsavedFile> clangUnsavedFiles = new List<ClangUnsavedFile>();
 

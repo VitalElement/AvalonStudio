@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AvalonStudio.Controls.TeamExplorer</RootNamespace>
     <AssemblyName>AvalonStudio.Controls.TeamExplorer</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -35,67 +35,67 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Avalonia.Animation, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Animation.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Animation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Base, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Base.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Base.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Controls, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Controls.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.DesignerSupport, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.DesignerSupport.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.DesignerSupport.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Diagnostics, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Diagnostics.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Diagnostics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.HtmlRenderer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.HtmlRenderer.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.HtmlRenderer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Input, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Input.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Input.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Layout, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Layout.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Layout.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Logging.Serilog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Logging.Serilog.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Logging.Serilog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Markup, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Markup.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Markup.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Markup.Xaml, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Markup.Xaml.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Markup.Xaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.ReactiveUI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.ReactiveUI.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.ReactiveUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.SceneGraph, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.SceneGraph.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.SceneGraph.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Styling, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Styling.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Styling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Themes.Default, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1605-alpha\lib\portable-windows8+net45\Avalonia.Themes.Default.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1700-alpha\lib\portable-windows8+net45\Avalonia.Themes.Default.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="LibGit2Sharp, Version=0.22.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
@@ -120,20 +120,24 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
+    <Reference Include="System.Reactive.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Core.3.0.0\lib\net45\System.Reactive.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Reactive.Interfaces, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Interfaces.2.2.5\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+    <Reference Include="System.Reactive.Interfaces, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Interfaces.3.0.0\lib\net45\System.Reactive.Interfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Reactive.Linq, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-Linq.2.2.5\lib\net45\System.Reactive.Linq.dll</HintPath>
+    <Reference Include="System.Reactive.Linq, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Linq.3.0.0\lib\net45\System.Reactive.Linq.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Reactive.PlatformServices, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
+    <Reference Include="System.Reactive.PlatformServices, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.PlatformServices.3.0.0\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reactive.Windows.Threading, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reactive.Windows.Threading.3.0.0\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
@@ -142,6 +146,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RepositoryViewModel.cs" />
