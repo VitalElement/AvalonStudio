@@ -7,21 +7,28 @@ namespace AvalonStudio.TextEditor.Rendering
 
     public class VisualLineGeometryBuilder
     {
-        public static Rect GetTextViewPosition(TextView textView, int offset)
+        public static Rect GetViewPortPosition(TextView textView, int offset)
         {
             var position = new TextViewPosition(textView.GetLocation(offset));
 
-            return GetTextPosition(textView, position);
+            return GetTextPositionInViewPort(textView, position);
+        }
+
+        public static Rect GetTextViewPosition (TextView textView, int offset)
+        {
+            var position = new TextViewPosition(textView.TextDocument.GetLocation(offset));
+
+            return GetTextPositionInViewPort(textView, position);
         }
 
         public static Rect GetDocumentTextPosition(TextView textView, int offset)
         {
             var position = new TextViewPosition(textView.TextDocument.GetLocation(offset));
 
-            return GetTextPosition(textView, position);
+            return GetTextPositionInViewPort(textView, position);
         }
-
-        public static Rect GetTextPosition(TextView textView, TextViewPosition position)
+        
+        public static Rect GetTextPositionInViewPort(TextView textView, TextViewPosition position)
         {
             return new Rect(textView.TextSurfaceBounds.X + textView.CharSize.Width * (position.Column - 1), textView.CharSize.Height * (position.Line - 1), textView.CharSize.Width, textView.CharSize.Height);
         }
@@ -152,7 +159,7 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             foreach (var tuple in GetOffsetForLinesInSegmentOnScreen(textView, segment, extendToFullWidthAtLineEnd))
             {
-                yield return new Rect(GetTextViewPosition(textView, tuple.Item1).TopLeft, GetTextViewPosition(textView, tuple.Item2).BottomLeft);
+                yield return new Rect(GetViewPortPosition(textView, tuple.Item1).TopLeft, GetViewPortPosition(textView, tuple.Item2).BottomLeft);
             }
         }
     }

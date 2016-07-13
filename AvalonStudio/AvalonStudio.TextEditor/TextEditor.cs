@@ -51,7 +51,7 @@ namespace AvalonStudio.TextEditor
                 CaretIndex = -1;
             }));
 
-            disposables.Add(AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel));
+            disposables.Add(AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
 
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
         }
@@ -319,7 +319,7 @@ namespace AvalonStudio.TextEditor
             set { SetValue(IndentationStrategyProperty, value); }
         }
 
-        public static readonly StyledProperty<TextDocument> TextDocumentProperty = TextView.TextDocumentProperty.AddOwner<TextEditor>();
+        public static readonly AvaloniaProperty<TextDocument> TextDocumentProperty = TextView.TextDocumentProperty.AddOwner<TextEditor>();
 
         public TextDocument TextDocument
         {
@@ -335,8 +335,9 @@ namespace AvalonStudio.TextEditor
         #region Private Methods
         private void InvalidateCaretPosition()
         {
-            CaretLocation = VisualLineGeometryBuilder.GetTextViewPosition(TextView, CaretIndex).TopLeft;
-            CaretLocationInTextView = new Point(CaretLocation.X - TextView.TextSurfaceBounds.X - TextView.CharSize.Width, CaretLocation.Y + TextView.CharSize.Height);
+            CaretLocation = VisualLineGeometryBuilder.GetViewPortPosition(TextView, CaretIndex).TopLeft;
+            var textViewCaretLocation = VisualLineGeometryBuilder.GetTextViewPosition(TextView, CaretIndex).TopLeft;
+            CaretLocationInTextView = new Point(textViewCaretLocation.X, textViewCaretLocation.Y + TextView.CharSize.Height);
         }
 
         public string GetWordAtIndex(int index)
@@ -772,7 +773,7 @@ namespace AvalonStudio.TextEditor
 
                     InvalidateVisual();
                 }
-                else if (TextDocument.TextLength == 0)
+                else if (TextDocument?.TextLength == 0)
                 {
                     SelectionStart = SelectionEnd = CaretIndex = 0;
 

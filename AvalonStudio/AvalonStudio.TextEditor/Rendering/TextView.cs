@@ -18,8 +18,10 @@ namespace AvalonStudio.TextEditor.Rendering
     using System.Reactive.Linq;
     using Avalonia.Input;
     using System.Reactive.Disposables;
+    using Avalonia.Controls.Presenters;
+    using Avalonia.Layout;
 
-    public class TextView : ContentControl, IScrollable
+    public class TextView : ContentControl, ILogicalScrollable
     {
         class WeakEventArgsSubscriber : IWeakSubscriber<EventArgs>
         {
@@ -54,7 +56,9 @@ namespace AvalonStudio.TextEditor.Rendering
         #region Constructors
         static TextView()
         {
+            AffectsArrange(OffsetProperty);
             AffectsMeasure(TextDocumentProperty);
+            AffectsRender(OffsetProperty);
             AffectsRender(DocumentLineTransformersProperty);
         }
 
@@ -413,6 +417,15 @@ namespace AvalonStudio.TextEditor.Rendering
             set { SetValue(ForegoundProperty, value); }
         }
 
+        /// <summary>
+        /// Defines the <see cref="Offset"/> property.
+        /// </summary>
+        public static readonly DirectProperty<TextView, Vector> OffsetProperty =
+            AvaloniaProperty.RegisterDirect<TextView, Vector>(
+                nameof(Offset),
+                o => o.Offset,
+                (o, v) => o.Offset = v);
+
         public static readonly AvaloniaProperty<IBrush> BackgroundProperty =
             Border.BackgroundProperty.AddOwner<TextView>();
 
@@ -460,11 +473,9 @@ namespace AvalonStudio.TextEditor.Rendering
             get { return offset; }
             set
             {
-                offset = value;
+                firstVisualLine = (int)(value.Y);
 
-                firstVisualLine = (int)(offset.Y);
-
-                Invalidate();
+                SetAndRaise(OffsetProperty, ref offset, value);
             }
         }
 
@@ -478,10 +489,13 @@ namespace AvalonStudio.TextEditor.Rendering
         #region Control Overrides
         private StackPanel marginContainer;
         private Rectangle textSurface;
+        private ContentControl contentPresenter;
+
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             marginContainer = e.NameScope.Find<StackPanel>("marginContainer");
             textSurface = e.NameScope.Find<Rectangle>("textSurface");
+            contentPresenter = e.NameScope.Find<ContentControl>("contentPresenter");
         }
 
         public void InstallMargin(Control margin)
@@ -522,21 +536,44 @@ namespace AvalonStudio.TextEditor.Rendering
             }
         }
 
+        private int LogicalScrollSize
+        {
+            get
+            {
+                if (TextDocument != null)
+                {
+                    return TextDocument.LineCount + 20;
+                }
+                else
+                {
+                    return 20;
+                }
+            }
+        }
+
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var result = finalSize;
-
             if (TextDocument != null)
             {
                 GenerateTextProperties();
 
                 viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
-                extent = new Size(finalSize.Width, TextDocument.LineCount + 20);
+                extent = new Size(finalSize.Width, LogicalScrollSize);
 
                 InvalidateScroll.Invoke();
             }
 
-            base.ArrangeOverride(finalSize);
+            var result = finalSize;
+            var arrangeOffset = new Vector(Math.Floor(Offset.X) * CharSize.Width, Math.Floor(Offset.Y) * CharSize.Height);
+
+            result = base.ArrangeOverride(new Size(result.Width, result.Height + arrangeOffset.Y));
+
+            var child = contentPresenter as ILayoutable;
+
+            if (child != null)
+            {
+                child.Arrange(new Rect((Point)(-arrangeOffset), child.DesiredSize));
+            }
 
             return result;
         }
@@ -549,9 +586,11 @@ namespace AvalonStudio.TextEditor.Rendering
             {
                 GenerateTextProperties();
 
-                result = new Size(0, TextDocument.LineCount * CharSize.Height);
+                result = new Size(availableSize.Width, LogicalScrollSize * CharSize.Height);
+
+                base.MeasureOverride(result);
             }
-            
+
             return result;
         }
         #endregion
@@ -618,6 +657,14 @@ namespace AvalonStudio.TextEditor.Rendering
             get
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        public bool IsLogicalScrollEnabled
+        {
+            get
+            {
+                return true;
             }
         }
 
@@ -696,7 +743,7 @@ namespace AvalonStudio.TextEditor.Rendering
                     CaretIndex = TextDocument.TextLength;
                 }
 
-                var charPos = VisualLineGeometryBuilder.GetTextViewPosition(this, CaretIndex);
+                var charPos = VisualLineGeometryBuilder.GetViewPortPosition(this, CaretIndex);
                 var x = Math.Floor(charPos.X) + 0.5;
                 var y = Math.Floor(charPos.Y) + 0.5;
                 var b = Math.Ceiling(charPos.Bottom) - 0.5;
@@ -794,7 +841,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
                 if (line > 0 && column > 0 && line - 1 < VisualLines.Count)
                 {
-                    if (line-1 < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted && VisualLines[line - 1].DocumentLine.LineNumber - 1 < TextDocument.LineCount)
+                    if (line - 1 < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted && VisualLines[line - 1].DocumentLine.LineNumber - 1 < TextDocument.LineCount)
                     {
                         result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
                     }
@@ -821,6 +868,30 @@ namespace AvalonStudio.TextEditor.Rendering
             }
 
             return result;
+        }
+
+        public bool BringIntoView(IControl target, Rect targetRect)
+        {
+            bool result = false;
+
+            if (firstVisualLine > targetRect.Y)
+            {
+                Offset = Offset.WithY(targetRect.Y);
+                result = true;
+            }
+
+            if (firstVisualLine + viewport.Height < targetRect.Y)
+            {
+                Offset = Offset.WithY(targetRect.Y - viewport.Height);
+                result = true;
+            }
+
+            return result;
+        }
+
+        public IControl GetControlInDirection(NavigationDirection direction, IControl from)
+        {
+            return null;
         }
         #endregion
     }
