@@ -14,12 +14,15 @@
               </ItemsControl.ItemsPanel>
             </ItemsControl>
             
-            <Rectangle Name="textSurface" Grid.Column="1" IsHitTestVisible="false" />           
-                        
-            <ContentPresenter Name="contentPresenter" Content="{TemplateBinding Content}" Grid.Column="1" IsHitTestVisible="false"
-                           Margin="{TemplateBinding Margin}"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Top"/>
+            
+            
+            <Rectangle Name="textSurface" Grid.Column="1" IsHitTestVisible="false" />
+
+            <DockPanel Grid.Column="1" IsHitTestVisible="false" LastChildFill="true" Background="#aaff0000">
+              <ContentPresenter Name="contentPresenter" Content="{TemplateBinding Content}" IsHitTestVisible="false"
+                             Margin="0"/>
+            </DockPanel>
+            
           </Grid>
         </Border>
       </ControlTemplate>
