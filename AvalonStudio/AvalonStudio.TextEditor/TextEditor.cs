@@ -51,7 +51,7 @@ namespace AvalonStudio.TextEditor
                 CaretIndex = -1;
             }));
 
-            disposables.Add(AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel));
+            disposables.Add(AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
 
             textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
         }

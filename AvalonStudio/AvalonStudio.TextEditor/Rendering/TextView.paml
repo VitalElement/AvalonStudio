@@ -14,8 +14,10 @@
               </ItemsControl.ItemsPanel>
             </ItemsControl>
 
+            
+            <ContentControl Grid.Column="1" Name="contentPresenter" Content="{TemplateBinding Content}" IsHitTestVisible="false" />
             <Rectangle Grid.Column="1" Name="textSurface" IsHitTestVisible="false" />
-            <ContentPresenter Grid.Column="1" Name="contentPresenter" Content="{TemplateBinding Content}" IsHitTestVisible="false" />
+            
             
           </Grid>
         </Border>
