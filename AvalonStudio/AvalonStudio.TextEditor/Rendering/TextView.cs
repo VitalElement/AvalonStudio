@@ -555,12 +555,14 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             var result = finalSize;
 
+            base.ArrangeOverride(result);
+
             if (TextDocument != null)
             {
                 GenerateTextProperties();
 
                 viewport = new Size(finalSize.Width, finalSize.Height / CharSize.Height);
-                extent = new Size(finalSize.Width, LogicalScrollSize);
+                extent = new Size(finalSize.Width, LogicalScrollSize * CharSize.Height);
 
                 InvalidateScroll.Invoke();
             }
@@ -574,8 +576,6 @@ namespace AvalonStudio.TextEditor.Rendering
 
                 child.Arrange(new Rect((Point)(-arrangeOffset), result));
             }
-
-            base.ArrangeOverride(result);
 
             return result;
         }
