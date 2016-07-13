@@ -586,7 +586,7 @@ namespace AvalonStudio.TextEditor.Rendering
             {
                 GenerateTextProperties();
 
-                result = new Size(availableSize.Width, TextDocument.LineCount * CharSize.Height);
+                result = new Size(availableSize.Width, LogicalScrollSize * CharSize.Height);
 
                 base.MeasureOverride(result);
             }
