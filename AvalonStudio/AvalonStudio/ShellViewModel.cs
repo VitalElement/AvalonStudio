@@ -27,8 +27,8 @@ namespace AvalonStudio
     using TestFrameworks;
     using TextEditor;
     using Toolchains;
-    using Utils;    
-
+    using Utils;
+    using System.ComponentModel;
     [Export(typeof(IShell))]
     [Export(typeof(ShellViewModel))]
     public class ShellViewModel : ViewModel, IShell
@@ -220,15 +220,23 @@ namespace AvalonStudio
                     DocumentTabs.TemporaryDocument = null;
                 }
 
-                var newEditor = new EditorViewModel(new EditorModel());
-                
-                newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
-                newEditor.Margins.Add(new LineNumberMargin());
+                EditorViewModel newEditor = null;
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    newEditor = new EditorViewModel(new EditorModel());
 
-                DocumentTabs.Documents.Add(newEditor);
-                DocumentTabs.TemporaryDocument = newEditor;
-                DocumentTabs.SelectedDocument = newEditor;
-                newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.CompletionAdvice);
+                    newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
+                    newEditor.Margins.Add(new LineNumberMargin());
+
+                    DocumentTabs.Documents.Add(newEditor);
+                    DocumentTabs.TemporaryDocument = newEditor;
+                    DocumentTabs.SelectedDocument = newEditor;
+                });
+
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.CompletionAdvice);
+                });
             }
             else
             {

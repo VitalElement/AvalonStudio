@@ -8,7 +8,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     using System;
     using Shell;
     using Extensibility.Plugin;
-
+    using System.Threading.Tasks;
     public class SolutionExplorerViewModel : ToolViewModel, IExtension
     {
         private IShell shell;
@@ -80,7 +80,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 if (value is SourceFileViewModel)
                 {
                     // might need wait here?
-                    shell.OpenDocument(((ISourceFile)(value as SourceFileViewModel).Model), 1);
+                    Task.Factory.StartNew(async () =>
+                    {
+                        await shell.OpenDocument(((ISourceFile)(value as SourceFileViewModel).Model), 1);
+                    });
                 }
             }
         }

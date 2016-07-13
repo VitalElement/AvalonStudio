@@ -319,7 +319,7 @@ namespace AvalonStudio.Controls
                 this.RaiseAndSetIfChanged(ref caretIndex, value);
                 ShellViewModel.Instance.StatusBar.Offset = value;
 
-                if (value >= 0)
+                if (value >= 0 && TextDocument != null)
                 {
                     var location = TextDocument.GetLocation(value);
                     ShellViewModel.Instance.StatusBar.LineNumber = location.Line;
