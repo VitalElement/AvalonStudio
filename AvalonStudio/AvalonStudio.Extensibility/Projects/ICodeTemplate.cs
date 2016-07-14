@@ -11,10 +11,10 @@ namespace AvalonStudio.Projects
 
         string Description { get; }
         
-        Task<ISourceFile> Generate(IProjectFolder folder, string name);
+        Task Generate(IProjectFolder folder);
 
         bool IsCompatible(IProject project);
 
-        Control TemplateForm { get; }
+        object TemplateForm { get; }
     }
 }
