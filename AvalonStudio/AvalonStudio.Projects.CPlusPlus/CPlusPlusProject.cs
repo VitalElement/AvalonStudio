@@ -31,6 +31,8 @@ namespace AvalonStudio.Projects.CPlusPlus
         [JsonIgnore]
         public bool IsBuilding { get; set; }
 
+        public string LocationDirectory => CurrentDirectory;
+
         private static bool IsExcluded(List<string> exclusionFilters, string path)
         {
             bool result = false;

@@ -83,8 +83,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             NewItemCommand = ReactiveCommand.Create();
             NewItemCommand.Subscribe(_ =>
             {
-                //ShellViewModel.Instance.ModalDialog = new NewItemDialogViewModel(model);
-                //ShellViewModel.Instance.ModalDialog.ShowDialog();
+                shell.ModalDialog = new NewItemDialogViewModel(model);
+                shell.ModalDialog.ShowDialog();
             });
 
             RemoveCommand = ReactiveCommand.Create();
