@@ -17,5 +17,7 @@ namespace AvalonStudio.Projects
         void RemoveFolder(IProjectFolder folder);
 
         string Location { get; }
+
+        string LocationDirectory { get; }
     }
 }

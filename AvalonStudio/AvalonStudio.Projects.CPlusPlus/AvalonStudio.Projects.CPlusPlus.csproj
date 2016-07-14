@@ -150,9 +150,27 @@
   <ItemGroup>
     <Compile Include="BlankCPlusPlusLangaguageTemplate.cs" />
     <Compile Include="ClassCodeTemplate.cs" />
+    <Compile Include="ClassTemplateSettingsView.paml.cs">
+      <DependentUpon>ClassTemplateSettingsView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="ClassTemplateSettingsViewModel.cs">
+      <DependentUpon>ClassTemplateSettingsView.paml</DependentUpon>
+    </Compile>
     <Compile Include="ComponentSettingsForm.paml.cs">
       <DependentUpon>ComponentSettingsForm.paml</DependentUpon>
     </Compile>
+    <Compile Include="CPlusPlusClassTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CPlusPlusClassTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CPlusPlusClassTemplateCode.cs" />
+    <Compile Include="CPlusPlusClassHeaderTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CPlusPlusClassHeaderTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CPlusPlusHeaderTemplateCode.cs" />
     <Compile Include="DebuggerSettingsForm.paml.cs">
       <DependentUpon>DebuggerSettingsFormView.paml</DependentUpon>
     </Compile>
@@ -209,11 +227,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ComponentSettingsForm.paml" />
     <EmbeddedResource Include="IncludePathSettingsFormView.paml" />
+    <EmbeddedResource Include="ClassTemplateSettingsView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <EmbeddedResource Include="TypeSettingsFormView.paml" />
     <EmbeddedResource Include="TargetSettingsForm.paml" />
     <EmbeddedResource Include="ToolchainSettingsFormView.paml" />
     <EmbeddedResource Include="ReferenceSettingsFormView.paml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CPlusPlusClassTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>CPlusPlusClassTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="CPlusPlusClassHeaderTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>CPlusPlusClassHeaderTemplate.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
