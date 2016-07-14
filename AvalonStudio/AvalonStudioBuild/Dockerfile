@@ -21,7 +21,7 @@ RUN git clone  https://github.com/VitalElement/AvalonBuild.git   /opt/AvalonBuil
 
 # Install avalon command
 RUN echo "#!/bin/sh" > /usr/bin/avalon
-RUN echo "/usr/bin/mono /opt/AvalonBuild/avalon.exe \$*" >> /usr/bin/avalon
+RUN echo "LD_LIBRARY_PATH=/opt/AvalonBuild/NativeBinaries/linux/amd64 /usr/bin/mono /opt/AvalonBuild/avalon.exe \$*" >> /usr/bin/avalon
 RUN chmod +x /usr/bin/avalon
 
 # Test avalon command
