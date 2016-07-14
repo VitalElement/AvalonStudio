@@ -183,7 +183,7 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>if not exists " ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins" mkdir ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins
+    <PostBuildEvent>if not exist "..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins" mkdir ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins
 copy $(TargetPath) ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\$(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
