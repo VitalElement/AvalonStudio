@@ -409,6 +409,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\grip_pattern.png" />
+    <Content Include="Plugins\dummy_file.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="readme.txt" />
     <EmbeddedResource Include="Resources\Icons\Templarian\dark\appbar.3d.3ds.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5453,7 +5456,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Actions\" />
-    <Folder Include="Plugins\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\HoverProbe.xaml" />
