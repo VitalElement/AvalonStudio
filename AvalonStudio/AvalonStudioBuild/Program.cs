@@ -22,7 +22,7 @@ namespace AvalonStudio
     using Shell;
     class Program
     {
-        const string version = "1.0.0.24";
+        const string version = "1.0.0.25";
         const string releaseName = "Gravity";
 
         const string baseDir = @"c:\development\vebuild\test";
