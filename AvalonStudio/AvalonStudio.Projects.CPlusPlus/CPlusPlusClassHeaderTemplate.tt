@@ -1,0 +1,36 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+/******************************************************************************
+*       Description: 
+*
+*       Author: 
+*         Date: <#=DateTime.Now.Date.ToLongDateString()#>
+*
+*******************************************************************************/
+#pragma mark Compiler Pragmas
+#ifndef _<#=className.ToUpper()#>_H_
+#define _<#=className.ToUpper()#>_H_
+
+#pragma mark Includes
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+class <#= className #>
+{
+#pragma mark Public Members
+public:
+
+    <#= className #> ();
+    ~<#= className #> ();
+
+
+#pragma mark Private Members
+private:
+
+};
+
+#endif
