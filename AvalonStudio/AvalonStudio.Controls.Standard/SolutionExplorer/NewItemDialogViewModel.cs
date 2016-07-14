@@ -31,12 +31,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             OKCommand.Subscribe(_ =>
             {
-                if (SelectedTemplate != null)
-                {
-                    Random rnd = new Random();
-
-                    SelectedTemplate.Generate(folder);
-                }
+                SelectedTemplate?.Generate(folder);
 
                 Close();
             });
