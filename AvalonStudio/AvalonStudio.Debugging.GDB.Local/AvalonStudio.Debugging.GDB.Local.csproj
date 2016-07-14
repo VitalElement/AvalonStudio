@@ -64,7 +64,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exists "$(TargetPath) ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins" mkdir $(TargetPath) ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins
+    <PostBuildEvent>if not exists " ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins" mkdir ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins
 copy $(TargetPath) ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\$(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
