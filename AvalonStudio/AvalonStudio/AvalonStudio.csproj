@@ -115,11 +115,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Xaml.Interactions, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.176-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.214-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Xaml.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.176-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.214-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
