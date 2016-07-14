@@ -199,7 +199,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\$(TargetFileName)
+    <PostBuildEvent>if not exist "..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins" mkdir ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins
+copy $(TargetPath) ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\$(TargetFileName)
 copy $(TargetDir)\libclang.dll ..\..\..\AvalonStudio\bin\$(ConfigurationName)\libclang.dll
 copy $(TargetDir)\libclang.so ..\..\..\AvalonStudio\bin\$(ConfigurationName)\libclang.so
 copy $(TargetDir)\clang-format.exe ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\clang-format.exe
