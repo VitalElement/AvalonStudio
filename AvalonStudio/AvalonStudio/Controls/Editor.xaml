@@ -24,7 +24,18 @@
               <MenuItem Header="Add Watch" Command="{Binding AddWatchCommand}" />
             </ContextMenu>
           </te:TextEditor.ContextMenu>
+         
+         <i:Interaction.Behaviors>
+           <behaviours:CodeInformationToolTipBehavior>
+             <cont:HoverProbe DataContext="{Binding HoverProbe}" />
+           </behaviours:CodeInformationToolTipBehavior>
 
+           <!--
+            <behaviours:DebugInformationToolTipBehaviour>
+              <dcont:VariableControlView DataContext="{Binding DebugHoverProbe}" />
+            </behaviours:DebugInformationToolTipBehaviour>-->
+         </i:Interaction.Behaviors>
+         
           <te:TextEditor.Header>
            <!-- <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry, Mode=OneWayToSource}" FontFamily ="Arial" BorderThickness="0" Height="20">
               <DropDown.DataTemplates>
