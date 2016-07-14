@@ -7,53 +7,47 @@ namespace AvalonStudio.Projects.CPlusPlus
     using System.Text;
     using System.Threading.Tasks;
     using Avalonia.Controls;
+    using Avalonia.Threading;
 
     public class ClassCodeTemplate : ICodeTemplate
     {
-        public string Description
+        private readonly ClassTemplateSettingsViewModel _settings;
+
+        public ClassCodeTemplate()
         {
-            get
-            {
-                return string.Empty;
-            }
+            _settings = new ClassTemplateSettingsViewModel();
         }
 
-        public Control TemplateForm
-        {
-            get
-            {
-                return null;
-            }
-        }
+        public string Description => string.Empty;
 
-        public string Title
-        {
-            get
-            {
-                return "C/C++ Class";
-            }
-        }
+        public object TemplateForm => _settings;
 
-        public Task<ISourceFile> Generate(IProjectFolder folder, string name)
-        {
-            return Task<ISourceFile>.Factory.StartNew(() =>
-            {
-                var result = SourceFile.Create(folder.Project, folder, folder.Location, name, "test text");
+        public string Title => "C/C++ Class";
 
-                return result;
+        public Task Generate(IProjectFolder folder)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                var name = _settings.ClassName;
+
+                var sourceTemplate = new CPlusPlusClassTemplate(name, _settings.GenerateHeader);
+                var headerTemplate = new CPlusPlusClassHeaderTemplate(name);
+
+                if (_settings.GenerateHeader)
+                {
+                    Dispatcher.UIThread.InvokeAsync(() => folder.AddFile(SourceFile.Create(folder.Project, folder, folder.LocationDirectory, $"{(name.Contains('.') ? name : name + ".h")}", headerTemplate.TransformText())));
+                }
+
+                if (_settings.GenerateClass)
+                {
+                    Dispatcher.UIThread.InvokeAsync(() => folder.AddFile(SourceFile.Create(folder.Project, folder, folder.LocationDirectory, $"{name}.cpp", sourceTemplate.TransformText())));
+                }
             });
         }
 
         public bool IsCompatible(IProject project)
         {
-            bool result = false;
-
-            if(project is CPlusPlusProject)
-            {
-                result = true;
-            }
-
-            return result;
+            return project is CPlusPlusProject;
         }
     }
 }

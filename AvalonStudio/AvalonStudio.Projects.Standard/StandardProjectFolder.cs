@@ -22,6 +22,7 @@ namespace AvalonStudio.Projects.Standard
         public IProjectFolder Parent { get; set; }
 
         public string Location { get; private set; }
+        public string LocationDirectory { get; private set; }
 
         public IProject Project { get; set; }
 

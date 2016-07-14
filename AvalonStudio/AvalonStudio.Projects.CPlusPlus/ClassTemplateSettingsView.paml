@@ -1,0 +1,14 @@
+<UserControl xmlns="https://github.com/avaloniaui">
+  <Grid>
+    <Panel HorizontalAlignment="Stretch">
+      <StackPanel Orientation="Horizontal" Margin="5 5 5 35">
+        <TextBlock Margin="0 5 0 0" Text="File Name"/>
+        <TextBox Text="{Binding ClassName}" Margin="8 0 5 0" Width="300"/>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="5 35 5 5">
+        <CheckBox IsChecked="{Binding GenerateHeader}" Content="Generate Header"/>
+        <CheckBox IsChecked="{Binding GenerateClass}" Margin="8 0 0 0" Content="Generate Class" />
+      </StackPanel>
+    </Panel>   
+  </Grid>
+</UserControl>
