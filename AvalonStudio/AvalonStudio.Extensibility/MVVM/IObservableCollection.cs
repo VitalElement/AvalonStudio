@@ -5,7 +5,7 @@ namespace AvalonStudio.Extensibility.MVVM
     using System.Collections.Specialized;
     using System.ComponentModel;
 
-    public interface IObservableCollection<T> : IList<T>, ICollection<T>, IEnumerable<T>, IEnumerable, INotifyPropertyChanged, INotifyCollectionChanged
+    public interface IObservableCollection<T> : IList<T>, INotifyPropertyChanged, INotifyCollectionChanged
     {
 
     }
