@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -93,6 +95,10 @@
     </Reference>
     <Reference Include="Avalonia.Themes.Default, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Themes.Default.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ClangSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ClangSharp.3.8.0\lib\net40\ClangSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -193,6 +199,10 @@
     <Content Include="libclang.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="x64\libclang.dll" />
+    <Content Include="x86\libclang.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -206,6 +216,13 @@ copy $(TargetDir)\libclang.so ..\..\..\AvalonStudio\bin\$(ConfigurationName)\lib
 copy $(TargetDir)\clang-format.exe ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\clang-format.exe
 copy $(TargetDir)\clang-format ..\..\..\AvalonStudio\bin\$(ConfigurationName)\Plugins\clang-format</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\ClangSharp.3.8.0\build\ClangSharp.targets" Condition="Exists('..\packages\ClangSharp.3.8.0\build\ClangSharp.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\ClangSharp.3.8.0\build\ClangSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ClangSharp.3.8.0\build\ClangSharp.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
