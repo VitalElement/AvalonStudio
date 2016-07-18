@@ -197,13 +197,9 @@ namespace AvalonStudio.Extensibility.MVVM
             {
                 var previousNotificationSetting = IsNotifying;
                 IsNotifying = false;
-                foreach (var item in items)
+                foreach (var index in items.Select(IndexOf).Where(index => index >= 0))
                 {
-                    var index = IndexOf(item);
-                    if (index >= 0)
-                    {
-                        RemoveItemBase(index);
-                    }
+                    RemoveItemBase(index);
                 }
                 IsNotifying = previousNotificationSetting;
 
