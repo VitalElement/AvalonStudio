@@ -30,35 +30,25 @@
 using System;
 
 [AttributeUsage(
-        AttributeTargets.Class |
-        AttributeTargets.Delegate |
-        AttributeTargets.Enum |
-        AttributeTargets.Field |
-        AttributeTargets.Struct)]
+		AttributeTargets.Class |
+		AttributeTargets.Delegate |
+		AttributeTargets.Enum |
+		AttributeTargets.Field |
+		AttributeTargets.Struct)]
 internal class MapAttribute : Attribute
 {
-    private string nativeType;
-    private string suppressFlags;
+	public MapAttribute()
+	{
+	}
 
-    public MapAttribute()
-    {
-    }
+	public MapAttribute(string nativeType)
+	{
+		this.NativeType = nativeType;
+	}
 
-    public MapAttribute(string nativeType)
-    {
-        this.nativeType = nativeType;
-    }
+	public string NativeType { get; }
 
-    public string NativeType
-    {
-        get { return nativeType; }
-    }
-
-    public string SuppressFlags
-    {
-        get { return suppressFlags; }
-        set { suppressFlags = value; }
-    }
+	public string SuppressFlags { get; set; }
 }
 
 

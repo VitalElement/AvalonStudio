@@ -1,66 +1,63 @@
 namespace AvalonStudio.Shell
 {
-    using AvalonStudio.Projects;
-    using Documents;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Reactive.Linq;
-    using System.Threading.Tasks;
-    using ReactiveUI;
-    using Avalonia.Reactive;
-    using TestFrameworks;
-    using Debugging;
-    using Toolchains;
-    using Languages;
-    using Extensibility.Dialogs;
+	using System;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using System.Threading.Tasks;
+	using Debugging;
+	using Documents;
+	using Extensibility.Dialogs;
+	using Languages;
+	using Projects;
+	using TestFrameworks;
+	using Toolchains;
 
-    public enum Perspective
-    {
-        Editor,
-        Debug
-    }
+	public enum Perspective
+	{
+		Editor,
+		Debug
+	}
 
 
-    public interface IShell
-    {
-        Perspective CurrentPerspective { get; set; }
+	public interface IShell
+	{
+		Perspective CurrentPerspective { get; set; }
 
-        event EventHandler SolutionChanged;
-        ISolution CurrentSolution { get; set; }
+		event EventHandler SolutionChanged;
+		ISolution CurrentSolution { get; set; }
 
-        IEditor GetDocument(string path);
-        IEditor SelectedDocument { get; }
+		IEditor GetDocument(string path);
+		IEditor SelectedDocument { get; }
 
-        Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
-        ObservableCollection<object> Tools { get; }
-        ModalDialogViewModelBase ModalDialog { get; set; }
-        object BottomSelectedTool { get; set; }
-        void InvalidateCodeAnalysis();
-        
-        void Build(IProject project);
-        void Clean(IProject project);
-        
-        void Build();
-        void Clean();
+		Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
+		ObservableCollection<object> Tools { get; }
+		ModalDialogViewModelBase ModalDialog { get; set; }
+		object BottomSelectedTool { get; set; }
+		void InvalidateCodeAnalysis();
 
-        void Save();
-        void SaveAll();
+		void Build(IProject project);
+		void Clean(IProject project);
 
-        IProject GetDefaultProject();
+		void Build();
+		void Clean();
 
-        IEnumerable<IProject> ProjectTypes { get; }
+		void Save();
+		void SaveAll();
 
-        IEnumerable<IProjectTemplate> ProjectTemplates { get; }
+		IProject GetDefaultProject();
 
-        IEnumerable<ICodeTemplate> CodeTemplates { get; }
+		IEnumerable<IProject> ProjectTypes { get; }
 
-        IEnumerable<ILanguageService> LanguageServices { get; }
+		IEnumerable<IProjectTemplate> ProjectTemplates { get; }
 
-        IEnumerable<IToolChain> ToolChains { get; }
+		IEnumerable<ICodeTemplate> CodeTemplates { get; }
 
-        IEnumerable<IDebugger> Debuggers { get; }
+		IEnumerable<ILanguageService> LanguageServices { get; }
 
-        IEnumerable<ITestFramework> TestFrameworks { get; }
-    }
+		IEnumerable<IToolChain> ToolChains { get; }
+
+		IEnumerable<IDebugger> Debuggers { get; }
+
+		IEnumerable<ITestFramework> TestFrameworks { get; }
+	}
 }
