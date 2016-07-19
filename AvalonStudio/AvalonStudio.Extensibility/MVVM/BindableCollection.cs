@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace AvalonStudio.Extensibility.MVVM
 {
     using Avalonia.Threading;
@@ -56,7 +58,7 @@ namespace AvalonStudio.Extensibility.MVVM
         /// </summary>
         /// <param name = "index">The index to insert at.</param>
         /// <param name = "item">The item to be inserted.</param>
-        protected override sealed void InsertItem(int index, T item)
+        protected sealed override void InsertItem(int index, T item)
         {
             Dispatcher.UIThread.InvokeAsync(() => InsertItemBase(index, item));
         }
@@ -79,7 +81,7 @@ namespace AvalonStudio.Extensibility.MVVM
         /// </summary>
         /// <param name = "index">The index to set the item at.</param>
         /// <param name = "item">The item to set.</param>
-        protected override sealed void SetItem(int index, T item)
+        protected sealed override void SetItem(int index, T item)
         {
             Dispatcher.UIThread.InvokeAsync(() => SetItemBase(index, item));
         }
@@ -101,7 +103,7 @@ namespace AvalonStudio.Extensibility.MVVM
         /// Removes the item at the specified position.
         /// </summary>
         /// <param name = "index">The position used to identify the item to remove.</param>
-        protected override sealed void RemoveItem(int index)
+        protected sealed override void RemoveItem(int index)
         {
             Dispatcher.UIThread.InvokeAsync(() => RemoveItemBase(index));
         }
@@ -121,7 +123,7 @@ namespace AvalonStudio.Extensibility.MVVM
         /// <summary>
         /// Clears the items contained by the collection.
         /// </summary>
-        protected override sealed void ClearItems()
+        protected sealed override void ClearItems()
         {
             Dispatcher.UIThread.InvokeAsync(ClearItemsBase);
         }
@@ -195,13 +197,9 @@ namespace AvalonStudio.Extensibility.MVVM
             {
                 var previousNotificationSetting = IsNotifying;
                 IsNotifying = false;
-                foreach (var item in items)
+                foreach (var index in items.Select(IndexOf).Where(index => index >= 0))
                 {
-                    var index = IndexOf(item);
-                    if (index >= 0)
-                    {
-                        RemoveItemBase(index);
-                    }
+                    RemoveItemBase(index);
                 }
                 IsNotifying = previousNotificationSetting;
 
