@@ -322,6 +322,11 @@ namespace AvalonStudio.Controls
             get { return caretIndex; }
             set
             {
+                if (TextDocument != null && value > TextDocument.TextLength)
+                {
+                    value = TextDocument.TextLength - 1;
+                }
+
                 this.RaiseAndSetIfChanged(ref caretIndex, value);
                 ShellViewModel.Instance.StatusBar.Offset = value;
 
