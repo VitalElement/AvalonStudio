@@ -53,7 +53,7 @@ namespace AvalonStudio.MVVM
 	{
 		protected ToolViewModel(T model)
 		{
-			this._model = model;
+			_model = model;
 		}
 
 		private T _model;
@@ -96,7 +96,7 @@ namespace AvalonStudio.MVVM
 	{
 		protected ViewModel(T model)
 		{
-			this._model = model;
+			_model = model;
 		}
 
 		private T _model;

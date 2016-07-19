@@ -1,24 +1,23 @@
 namespace AvalonStudio.Projects
 {
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
+	using System.Collections.ObjectModel;
 
-    public interface ISolution
-    {   
-        string Name { get; }     
+	public interface ISolution
+	{
+		string Name { get; }
 
-        IProject StartupProject { get; set; }
+		IProject StartupProject { get; set; }
 
-        IProject AddProject(IProject project);
+		IProject AddProject(IProject project);
 
-        ISourceFile FindFile(ISourceFile path);
+		ISourceFile FindFile(ISourceFile path);
 
-        void RemoveProject(IProject project);
+		void RemoveProject(IProject project);
 
-        ObservableCollection<IProject> Projects { get; }
+		ObservableCollection<IProject> Projects { get; }
 
-        string CurrentDirectory { get; }
+		string CurrentDirectory { get; }
 
-        void Save();
-    }
+		void Save();
+	}
 }
