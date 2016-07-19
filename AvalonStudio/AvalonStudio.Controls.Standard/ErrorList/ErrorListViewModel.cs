@@ -9,7 +9,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
     using Extensibility.Plugin;
     using Extensibility.Utils;
     using Shell;
-
+    using System.Threading.Tasks;
     public class ErrorListViewModel : ToolViewModel, IExtension, IErrorList
     {
         private IShell shell;
@@ -37,14 +37,15 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
                 if (value != null)
                 {
-                    var document = shell.OpenDocument(shell.CurrentSolution.FindFile(PathSourceFile.FromPath(null, null, value.Model.File)), value.Line);
-
-                    document.Wait();
-
-                    if (document != null)
+                    Task.Run(async () =>
                     {
-                        document.Result.GotoOffset(value.Model.Offset);
-                    }
+                        var document = await shell.OpenDocument(shell.CurrentSolution.FindFile(PathSourceFile.FromPath(null, null, value.Model.File)), value.Line);
+
+                        if (document != null)
+                        {
+                            document.GotoOffset(value.Model.Offset);
+                        }
+                    });
                 }
             }
         }
