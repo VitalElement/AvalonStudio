@@ -1,8 +1,8 @@
 namespace AvalonStudio.Extensibility.ToolBars.Models
 {
-    using ReactiveUI;
+	using ReactiveUI;
 
-    public class ToolBarItemBase : ReactiveObject
+	public class ToolBarItemBase : ReactiveObject
 	{
 		public static ToolBarItemBase Separator
 		{
