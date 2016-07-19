@@ -1,62 +1,41 @@
 namespace AvalonStudio.Shell.Commands
 {
-    using Extensibility.Commands;
-    using System;
-    using System.ComponentModel.Composition;
-    using Avalonia.Input;
-    using ReactiveUI;
-    using Extensibility;
-    using Avalonia.Controls.Shapes;
-    using Avalonia.Media;
+	using System;
+	using System.ComponentModel.Composition;
+	using Avalonia.Controls.Shapes;
+	using Avalonia.Input;
+	using Avalonia.Media;
+	using Extensibility;
+	using Extensibility.Commands;
+	using ReactiveUI;
 
-    [CommandDefinition]
-    public class UnCommentCommandDefinition : CommandDefinition
-    {
-        public UnCommentCommandDefinition()
-        {
-            command = ReactiveCommand.Create();
+	[CommandDefinition]
+	public class UnCommentCommandDefinition : CommandDefinition
+	{
+		public UnCommentCommandDefinition()
+		{
+			_command = ReactiveCommand.Create();
 
-            command.Subscribe(_ =>
-            {
-                var shell = IoC.Get<IShell>();
+			_command.Subscribe(_ =>
+			{
+				var shell = IoC.Get<IShell>();
 
-                shell.SelectedDocument?.UnComment();    
-            });
-        }
-        
-        public override string Text
-        {
-            get { return "Un-Comment"; }
-        }
+				shell.SelectedDocument?.UnComment();
+			});
+		}
 
-        public override string ToolTip
-        {
-            get { return "UnComments the selcted code."; }
-        }
+		public override string Text => "Un-Comment";
 
-        public override Path IconPath
-        {
-            get
-            {
-                return new Path() { Fill = Brush.Parse("WhiteSmoke"), UseLayoutRounding = false, Stretch = Stretch.Uniform, Data = StreamGeometry.Parse("M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z") };
-            }
-        }
+		public override string ToolTip => "UnComments the selcted code.";
 
-        public override Uri IconSource
-        {
-            get { return new Uri(""); }
-        }
+		public override Path IconPath => new Path() { Fill = Brush.Parse("WhiteSmoke"), UseLayoutRounding = false, Stretch = Stretch.Uniform, Data = StreamGeometry.Parse("M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z") };
 
-        ReactiveCommand<object> command;
-        public override System.Windows.Input.ICommand Command
-        {
-            get
-            {
-                return command;
-            }
-        }
+		public override Uri IconSource => new Uri("");
 
-        [Export]
-        public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<SaveFileCommandDefinition>(new KeyGesture() { Key = Key.S, Modifiers = InputModifiers.Control });
-    }
+		readonly ReactiveCommand<object> _command;
+		public override System.Windows.Input.ICommand Command => _command;
+
+		[Export]
+		public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<SaveFileCommandDefinition>(new KeyGesture() { Key = Key.S, Modifiers = InputModifiers.Control });
+	}
 }
