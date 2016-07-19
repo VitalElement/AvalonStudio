@@ -218,8 +218,9 @@ namespace AvalonStudio
                 {
                     await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                     {
-                        await DocumentTabs.TemporaryDocument.CloseCommand.ExecuteAsyncTask(null);
+                        var documentToClose = DocumentTabs.TemporaryDocument;
                         DocumentTabs.TemporaryDocument = null;
+                        await documentToClose.CloseCommand.ExecuteAsyncTask(null);
                     });
                 }
 
