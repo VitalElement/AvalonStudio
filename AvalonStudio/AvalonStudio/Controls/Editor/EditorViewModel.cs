@@ -277,12 +277,18 @@ namespace AvalonStudio.Controls
 
         public void GotoPosition(int line, int column)
         {
-            CaretIndex = TextDocument.GetOffset(line, column);
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                CaretIndex = TextDocument.GetOffset(line, column);
+            });
         }
 
         public void GotoOffset(int offset)
         {
-            CaretIndex = offset;
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                CaretIndex = offset;
+            });
         }
 
         public IndexEntry GetSelectIndexEntryByOffset(int offset)
@@ -316,6 +322,11 @@ namespace AvalonStudio.Controls
             get { return caretIndex; }
             set
             {
+                if (TextDocument != null && value > TextDocument.TextLength)
+                {
+                    value = TextDocument.TextLength - 1;
+                }
+
                 this.RaiseAndSetIfChanged(ref caretIndex, value);
                 ShellViewModel.Instance.StatusBar.Offset = value;
 
