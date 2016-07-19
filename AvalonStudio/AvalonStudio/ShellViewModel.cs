@@ -216,8 +216,12 @@ namespace AvalonStudio
             {
                 if (DocumentTabs.TemporaryDocument != null)
                 {
-                    await DocumentTabs.TemporaryDocument.CloseCommand.ExecuteAsyncTask(null);
-                    DocumentTabs.TemporaryDocument = null;
+                    await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                    {
+                        var documentToClose = DocumentTabs.TemporaryDocument;
+                        DocumentTabs.TemporaryDocument = null;
+                        await documentToClose.CloseCommand.ExecuteAsyncTask(null);
+                    });
                 }
 
                 EditorViewModel newEditor = null;
@@ -240,7 +244,10 @@ namespace AvalonStudio
             }
             else
             {
-                DocumentTabs.SelectedDocument = currentTab;
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    DocumentTabs.SelectedDocument = currentTab;
+                });
             }
 
             if (debugHighlight)
