@@ -1,8 +1,8 @@
 namespace AvalonStudio.Extensibility.MainMenu.Models
 {
-    using System.Collections.ObjectModel;
+	using System.Collections.ObjectModel;
 
-    public class MenuModel : ObservableCollection<MenuItemBase>, IMenu
+	public class MenuModel : ObservableCollection<MenuItemBase>, IMenu
 	{
 		
 	}
