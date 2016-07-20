@@ -30,7 +30,7 @@
 //        {
 //            Children = new ObservableCollection<ViewModel>();
 //            Children.BindCollections(Model.Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.Model == m);
-            
+
 
 //            AddNewFolderCommand = ReactiveCommand.Create();
 //            AddNewFolderCommand.Subscribe((args) =>
@@ -135,3 +135,4 @@
 //        }
 //    }
 //}
+

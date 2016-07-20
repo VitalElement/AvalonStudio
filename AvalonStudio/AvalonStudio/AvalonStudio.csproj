@@ -209,10 +209,10 @@
     <Compile Include="Behaviors\PointerHoverBehaviour.cs" />
     <Compile Include="Behaviors\ToolTipBehaviour.cs" />
     <Compile Include="CompositionRoot.cs" />
-    <Compile Include="Controls\CompletionAdvice.paml.cs">
-      <DependentUpon>CompletionAdvice.paml</DependentUpon>
+    <Compile Include="Controls\CompletionHint.paml.cs">
+      <DependentUpon>CompletionHint.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\CompletionAdviceViewModel.cs" />
+    <Compile Include="Controls\CompletionHintViewModel.cs" />
     <Compile Include="Controls\DebugHoverProbe.paml.cs">
       <DependentUpon>DebugHoverProbe.paml</DependentUpon>
     </Compile>
@@ -327,7 +327,7 @@
     <EmbeddedResource Include="Controls\DebugHoverProbe.paml" />
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
     <EmbeddedResource Include="Controls\TabControlView.paml" />
-    <EmbeddedResource Include="Controls\CompletionAdvice.paml">
+    <EmbeddedResource Include="Controls\CompletionHint.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="libgit2-821131f.so">

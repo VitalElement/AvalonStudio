@@ -1,18 +1,18 @@
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    using Avalonia;
-    using Avalonia.Controls;
-    using Avalonia.Markup.Xaml;
-    public class NewProjectDialogView : UserControl
-    {
-        public NewProjectDialogView()
-        {
-            this.InitializeComponent();
-        }
+	public class NewProjectDialogView : UserControl
+	{
+		public NewProjectDialogView()
+		{
+			InitializeComponent();
+		}
 
-        private void InitializeComponent()
-        {
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

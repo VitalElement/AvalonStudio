@@ -1,165 +1,165 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using Avalonia.Controls;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Languages;
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Shell;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    using Extensibility;
-    using Extensibility.Dialogs;
-    using Languages;
-    using Avalonia.Controls;
-    using Platforms;
-    using Projects;
-    using ReactiveUI;
-    using Shell;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Linq;
+	public class NewProjectDialogViewModel : ModalDialogViewModelBase
+	{
+		private string location;
 
-    public class NewProjectDialogViewModel : ModalDialogViewModelBase
-    {
-        private ISolution solution = null;
-        private IShell shell;
+		private string name;
 
-        public NewProjectDialogViewModel(ISolution solution) : this()
-        {            
-            this.solution = solution;
-        }
+		private ObservableCollection<IProjectTemplate> projectTemplates;
 
-        public NewProjectDialogViewModel() : base("New Project", true, true)
-        {
-            shell = IoC.Get<IShell>();
-            projectTemplates = new ObservableCollection<IProjectTemplate>();
-            Languages = new List<ILanguageService>(shell.LanguageServices);
+		private ILanguageService selectedLanguage;
 
-            location = Platform.ProjectDirectory;
-            SelectedLanguage = Languages.FirstOrDefault();
-            SelectedTemplate = ProjectTemplates.FirstOrDefault();
+		private IProjectTemplate selectedTemplate;
+		private readonly IShell shell;
+		private ISolution solution;
 
-            BrowseLocationCommand = ReactiveCommand.Create();
-            BrowseLocationCommand.Subscribe(async (o) =>
-            {
-                OpenFolderDialog ofd = new OpenFolderDialog();
-                ofd.InitialDirectory = location;
+		private string solutionName;
 
-                string result = await ofd.ShowAsync();
+		public NewProjectDialogViewModel(ISolution solution) : this()
+		{
+			this.solution = solution;
+		}
 
-                if(result != string.Empty)
-                {
-                    Location = result;
-                }
-            });
+		public NewProjectDialogViewModel() : base("New Project", true, true)
+		{
+			shell = IoC.Get<IShell>();
+			projectTemplates = new ObservableCollection<IProjectTemplate>();
+			Languages = new List<ILanguageService>(shell.LanguageServices);
 
-            OKCommand = ReactiveCommand.Create();
-            OKCommand.Subscribe((o) =>
-            {               
-                if (solution == null)
-                {
-                    var destination = Path.Combine(location, solutionName);
+			location = Platform.ProjectDirectory;
+			SelectedLanguage = Languages.FirstOrDefault();
+			SelectedTemplate = ProjectTemplates.FirstOrDefault();
 
-                    if (!Directory.Exists(destination))
-                    {
-                        Directory.CreateDirectory(destination);
-                    }
+			BrowseLocationCommand = ReactiveCommand.Create();
+			BrowseLocationCommand.Subscribe(async o =>
+			{
+				var ofd = new OpenFolderDialog();
+				ofd.InitialDirectory = location;
 
-                    solution = Solution.Create(destination, solutionName);
-                }
+				var result = await ofd.ShowAsync();
 
-                selectedTemplate.Generate(solution, name);
+				if (result != string.Empty)
+				{
+					Location = result;
+				}
+			});
 
-                shell.CurrentSolution = solution;
-                solution = null;        
+			OKCommand = ReactiveCommand.Create();
+			OKCommand.Subscribe(o =>
+			{
+				if (solution == null)
+				{
+					var destination = Path.Combine(location, solutionName);
 
-                Close();
-            });                
-        }
+					if (!Directory.Exists(destination))
+					{
+						Directory.CreateDirectory(destination);
+					}
 
-        private string name;
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                if (solutionName == name)
-                {
-                    SolutionName = value;
-                }
+					solution = Solution.Create(destination, solutionName);
+				}
 
-                this.RaiseAndSetIfChanged(ref name, value);                
-            }
-        }
+				selectedTemplate.Generate(solution, name);
 
-        
-        public bool SolutionControlsVisible
-        {
-            get
-            {
-                return solution == null;
-            }
-        }
+				shell.CurrentSolution = solution;
+				solution = null;
+
+				Close();
+			});
+		}
+
+		public string Name
+		{
+			get { return name; }
+			set
+			{
+				if (solutionName == name)
+				{
+					SolutionName = value;
+				}
+
+				this.RaiseAndSetIfChanged(ref name, value);
+			}
+		}
 
 
-        private string location;
-        public string Location
-        {
-            get { return location; }
-            set { this.RaiseAndSetIfChanged(ref location, value); }
-        }
+		public bool SolutionControlsVisible
+		{
+			get { return solution == null; }
+		}
 
-        private string solutionName;
-        public string SolutionName
-        {
-            get { return solutionName; }
-            set { this.RaiseAndSetIfChanged(ref solutionName, value); }
-        }
+		public string Location
+		{
+			get { return location; }
+			set { this.RaiseAndSetIfChanged(ref location, value); }
+		}
 
-        private IProjectTemplate selectedTemplate;
-        public IProjectTemplate SelectedTemplate
-        {
-            get { return selectedTemplate; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref selectedTemplate, value);
+		public string SolutionName
+		{
+			get { return solutionName; }
+			set { this.RaiseAndSetIfChanged(ref solutionName, value); }
+		}
 
-                if (value != null)
-                {
-                    Name = value.DefaultProjectName + "1";
-                }
+		public IProjectTemplate SelectedTemplate
+		{
+			get { return selectedTemplate; }
+			set
+			{
+				this.RaiseAndSetIfChanged(ref selectedTemplate, value);
 
-                SolutionName = name;
-            }
-        }
+				if (value != null)
+				{
+					Name = value.DefaultProjectName + "1";
+				}
 
-        private void GetTemplates (ILanguageService languageService)
-        {
-            var templates = shell.ProjectTemplates.Where(t => languageService.BaseTemplateType.IsAssignableFrom(t.GetType()));
+				SolutionName = name;
+			}
+		}
 
-            ProjectTemplates = new ObservableCollection<IProjectTemplate>(templates);
-        }
+		public ObservableCollection<IProjectTemplate> ProjectTemplates
+		{
+			get { return projectTemplates; }
+			set { this.RaiseAndSetIfChanged(ref projectTemplates, value); }
+		}
 
-        private ObservableCollection<IProjectTemplate> projectTemplates;
-        public ObservableCollection<IProjectTemplate> ProjectTemplates
-        {
-            get { return projectTemplates; }
-            set { this.RaiseAndSetIfChanged(ref projectTemplates, value); }
-        }
+		public List<ILanguageService> Languages { get; set; }
 
-        public List<ILanguageService> Languages { get; set; }
+		public ILanguageService SelectedLanguage
+		{
+			get { return selectedLanguage; }
+			set
+			{
+				this.RaiseAndSetIfChanged(ref selectedLanguage, value);
+				if (value != null)
+				{
+					GetTemplates(value);
+				}
+			}
+		}
 
-        private ILanguageService selectedLanguage;
-        public ILanguageService SelectedLanguage
-        {
-            get { return selectedLanguage; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref selectedLanguage, value);
-                if (value != null)
-                {
-                    GetTemplates(value);
-                }
-            }
-        }
+		public ReactiveCommand<object> BrowseLocationCommand { get; }
+		public override ReactiveCommand<object> OKCommand { get; protected set; }
 
-        public ReactiveCommand<object> BrowseLocationCommand { get; }
-        public override ReactiveCommand<object> OKCommand { get; protected set; }
+		private void GetTemplates(ILanguageService languageService)
+		{
+			var templates = shell.ProjectTemplates.Where(t => languageService.BaseTemplateType.IsAssignableFrom(t.GetType()));
 
-    }
+			ProjectTemplates = new ObservableCollection<IProjectTemplate>(templates);
+		}
+	}
 }

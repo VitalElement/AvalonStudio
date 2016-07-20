@@ -1,61 +1,60 @@
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace AvalonStudio.Projects.Standard
 {
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
-    using System.Collections.Generic;
-    using Toolchains;
+	[JsonConverter(typeof (StringEnumConverter))]
+	public enum ProjectType
+	{
+		Executable,
+		SharedLibrary,
+		StaticLibrary,
+		SuperProject
+	}
 
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum ProjectType
-    {
-        Executable,
-        SharedLibrary,
-        StaticLibrary,
-        SuperProject
-    }
+	public interface IStandardProject : IProject
+	{
+		ProjectType Type { get; }
 
-    public interface IStandardProject : IProject
-    {
-        ProjectType Type { get; }
+		bool IsBuilding { get; set; }
 
-        bool IsBuilding { get; set; }
+		string BuildDirectory { get; }
+		string LinkerScript { get; }
 
-        string GetObjectDirectory(IStandardProject superProject);
+		IList<string> BuiltinLibraries { get; }
 
-        string GetBuildDirectory(IStandardProject superProject);
+		IList<string> StaticLibraries { get; }
 
-        string GetOutputDirectory(IStandardProject superProject);
+		IList<string> ToolChainArguments { get; }
 
-        string BuildDirectory { get; }
-        string LinkerScript { get;  }
+		IList<string> LinkerArguments { get; }
 
-        IList<string> BuiltinLibraries { get; }
+		IList<string> CompilerArguments { get; }
 
-        IList<string> StaticLibraries { get; }
+		IList<string> CCompilerArguments { get; }
 
-        IList<string> ToolChainArguments { get; }
+		IList<string> CppCompilerArguments { get; }
 
-        IList<string> LinkerArguments { get; }
+		IList<Definition> Defines { get; }
 
-        IList<string> CompilerArguments { get; }
+		IList<string> PublicIncludes { get; }
 
-        IList<string> CCompilerArguments { get; }
+		IList<string> GlobalIncludes { get; }
 
-        IList<string> CppCompilerArguments { get; }
+		IList<Include> Includes { get; }
 
-        IList<Definition> Defines { get; }
+		IList<ISourceFile> SourceFiles { get; }
 
-        IList<string> PublicIncludes { get; }
+		string GetObjectDirectory(IStandardProject superProject);
 
-        IList<string> GlobalIncludes { get; }
+		string GetBuildDirectory(IStandardProject superProject);
 
-        IList<Include> Includes { get; }
-        IList<string> GetReferencedIncludes();
-        IList<string> GetGlobalIncludes();
+		string GetOutputDirectory(IStandardProject superProject);
+		IList<string> GetReferencedIncludes();
+		IList<string> GetGlobalIncludes();
 
-        IList<string> GetReferencedDefines();
-        IList<string> GetGlobalDefines();        
-        
-        IList<ISourceFile> SourceFiles { get; }
-    }
+		IList<string> GetReferencedDefines();
+		IList<string> GetGlobalDefines();
+	}
 }

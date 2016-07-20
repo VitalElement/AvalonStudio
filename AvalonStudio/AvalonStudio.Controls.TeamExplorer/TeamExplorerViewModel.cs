@@ -1,79 +1,75 @@
+using System.Collections.ObjectModel;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.MVVM;
+using AvalonStudio.Shell;
+using LibGit2Sharp;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls.TeamExplorer
 {
-    using System;
-    using AvalonStudio.Extensibility.Plugin;
-    using AvalonStudio.MVVM;
-    using Shell;
-    using Extensibility;
-    using ReactiveUI;
-    using System.Collections.ObjectModel;
-    using LibGit2Sharp;
+	public class TeamExplorerViewModel : ToolViewModel, IExtension
+	{
+		private ObservableCollection<string> branches;
 
-    public class TeamExplorerViewModel : ToolViewModel, IExtension
-    {
-        private IShell shell;
+		private object currentView;
 
-        public TeamExplorerViewModel()
-        {
-            Title = "Team Explorer";
-            branches = new ObservableCollection<string>();
-                      
-        }
+		private RepositoryViewModel repository;
+		private IShell shell;
 
-        private ObservableCollection<string> branches;
-        public ObservableCollection<string> Branches
-        {
-            get { return branches; }
-            set { this.RaiseAndSetIfChanged(ref branches, value); }
-        }
+		public TeamExplorerViewModel()
+		{
+			Title = "Team Explorer";
+			branches = new ObservableCollection<string>();
+		}
 
-        private RepositoryViewModel repository;
-        public RepositoryViewModel Repository
-        {
-            get { return repository; }
-            set { this.RaiseAndSetIfChanged(ref repository, value); }
-        }
+		public ObservableCollection<string> Branches
+		{
+			get { return branches; }
+			set { this.RaiseAndSetIfChanged(ref branches, value); }
+		}
 
-        private object currentView;
-        public object CurrentView
-        {
-            get { return currentView; }
-            set { this.RaiseAndSetIfChanged(ref currentView, value); }
-        }
+		public RepositoryViewModel Repository
+		{
+			get { return repository; }
+			set { this.RaiseAndSetIfChanged(ref repository, value); }
+		}
+
+		public object CurrentView
+		{
+			get { return currentView; }
+			set { this.RaiseAndSetIfChanged(ref currentView, value); }
+		}
 
 
-        public override Location DefaultLocation
-        {
-            get
-            {
-                return Location.Right;
-            }
-        }
-        
-        public void Activation()
-        {
-            shell = IoC.Get<IShell>();
+		public override Location DefaultLocation
+		{
+			get { return Location.Right; }
+		}
 
-            shell.SolutionChanged += (sender, e) =>
-            {
-                var solution = shell.CurrentSolution;
+		public void Activation()
+		{
+			shell = IoC.Get<IShell>();
 
-                if (solution != null)
-                {
-                    var gitPath = LibGit2Sharp.Repository.Discover(solution.CurrentDirectory);
+			shell.SolutionChanged += (sender, e) =>
+			{
+				var solution = shell.CurrentSolution;
 
-                    if (!string.IsNullOrEmpty(gitPath))
-                    {
-                        Repository = new RepositoryViewModel(new Repository(gitPath));
-                        CurrentView = Repository;
-                    }
-                }   
-            };
-        }
+				if (solution != null)
+				{
+					var gitPath = LibGit2Sharp.Repository.Discover(solution.CurrentDirectory);
 
-        public void BeforeActivation()
-        {
-            
-        }
-    }
+					if (!string.IsNullOrEmpty(gitPath))
+					{
+						Repository = new RepositoryViewModel(new Repository(gitPath));
+						CurrentView = Repository;
+					}
+				}
+			};
+		}
+
+		public void BeforeActivation()
+		{
+		}
+	}
 }

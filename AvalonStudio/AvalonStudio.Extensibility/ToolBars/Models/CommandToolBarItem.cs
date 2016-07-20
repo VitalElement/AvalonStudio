@@ -1,21 +1,30 @@
+using System;
+using System.ComponentModel;
+using System.Windows.Input;
+using Avalonia.Controls.Shapes;
+using Avalonia.Input;
+using AvalonStudio.Extensibility.Commands;
+using ReactiveUI;
+
 namespace AvalonStudio.Extensibility.ToolBars.Models
 {
-	using System;
-	using System.ComponentModel;
-	using System.Windows.Input;
-	using Avalonia.Controls.Shapes;
-	using Avalonia.Input;
-	using Commands;
-	using Extensibility;
-	using ReactiveUI;
-	using ToolBars;
-
 	public class CommandToolBarItem : ToolBarItemBase, ICommandUiItem
 	{
-		private readonly ToolBarItemDefinition _toolBarItem;
 		private readonly Command _command;
 		private readonly KeyGesture _keyGesture;
 		private readonly IToolBar _parent;
+		private readonly ToolBarItemDefinition _toolBarItem;
+
+		public CommandToolBarItem(ToolBarItemDefinition toolBarItem, Command command, ICommand actualCommand, IToolBar parent)
+		{
+			_toolBarItem = toolBarItem;
+			_command = command;
+			Command = actualCommand;
+			_keyGesture = IoC.Get<ICommandKeyGestureService>().GetPrimaryKeyGesture(_command.CommandDefinition);
+			_parent = parent;
+
+			command.PropertyChanged += OnCommandPropertyChanged;
+		}
 
 		public string Text => _command.Text;
 
@@ -33,15 +42,11 @@ namespace AvalonStudio.Extensibility.ToolBars.Models
 
 		public bool IsChecked => _command.Checked;
 
-		public CommandToolBarItem(ToolBarItemDefinition toolBarItem, Command command, ICommand actualCommand, IToolBar parent)
-		{
-			_toolBarItem = toolBarItem;
-			_command = command;
-			Command = actualCommand;
-			_keyGesture = IoC.Get<ICommandKeyGestureService>().GetPrimaryKeyGesture(_command.CommandDefinition);
-			_parent = parent;
+		CommandDefinitionBase ICommandUiItem.CommandDefinition => _command.CommandDefinition;
 
-			command.PropertyChanged += OnCommandPropertyChanged;
+		void ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
+		{
+			// TODO
 		}
 
 		private void OnCommandPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -51,13 +56,6 @@ namespace AvalonStudio.Extensibility.ToolBars.Models
 			this.RaisePropertyChanged(nameof(ToolTip));
 			this.RaisePropertyChanged(nameof(HasToolTip));
 			this.RaisePropertyChanged(nameof(IsChecked));
-		}
-
-		CommandDefinitionBase ICommandUiItem.CommandDefinition => _command.CommandDefinition;
-
-		void ICommandUiItem.Update(CommandHandlerWrapper commandHandler)
-		{
-			// TODO
 		}
 	}
 }

@@ -1,19 +1,19 @@
+using System.ComponentModel.Composition;
+using System.Threading.Tasks;
+
 namespace AvalonStudio.Projects
 {
-	using System.ComponentModel.Composition;
-	using System.Threading.Tasks;
-
-	[InheritedExport(typeof(ICodeTemplate))]
+	[InheritedExport(typeof (ICodeTemplate))]
 	public interface ICodeTemplate
 	{
 		string Title { get; }
 
 		string Description { get; }
 
+		object TemplateForm { get; }
+
 		Task Generate(IProjectFolder folder);
 
 		bool IsCompatible(IProject project);
-
-		object TemplateForm { get; }
 	}
 }

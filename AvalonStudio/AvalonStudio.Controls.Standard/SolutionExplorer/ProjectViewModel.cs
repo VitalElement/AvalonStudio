@@ -1,161 +1,142 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using Avalonia.Media;
+using AvalonStudio.Extensibility;
+using AvalonStudio.MVVM;
+using AvalonStudio.Projects;
+using AvalonStudio.Shell;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    using Extensibility;
-    using MVVM;
-    using Avalonia.Media;
-    using Projects;
-    using ReactiveUI;
-    using Shell;
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Threading.Tasks;
+	public abstract class ProjectViewModel : ViewModel<IProject>
+	{
+		private readonly IShell shell;
+		private SolutionViewModel solutionViewModel;
 
-    public abstract class ProjectViewModel : ViewModel<IProject>
-    {
-        private IShell shell;
-        private SolutionViewModel solutionViewModel;
+		private bool visibility;
 
-        public ProjectViewModel(SolutionViewModel solutionViewModel, IProject model)
-            : base(model)
-        {
-            shell = IoC.Get<IShell>();
+		public ProjectViewModel(SolutionViewModel solutionViewModel, IProject model)
+			: base(model)
+		{
+			shell = IoC.Get<IShell>();
 
-            Items = new ObservableCollection<ProjectItemViewModel>();
+			Items = new ObservableCollection<ProjectItemViewModel>();
 
-            Items.BindCollections(model.Items, (p) => { return ProjectItemViewModel.Create(p); }, (pivm, p) => pivm.Model == p);
+			Items.BindCollections(model.Items, p => { return ProjectItemViewModel.Create(p); }, (pivm, p) => pivm.Model == p);
 
-            ConfigureCommand = ReactiveCommand.Create();
+			ConfigureCommand = ReactiveCommand.Create();
 
-            ConfigureCommand.Subscribe((o) =>
-            {                
-                shell.ModalDialog = new ProjectConfigurationDialogViewModel(model, () => { });
-                shell.ModalDialog.ShowDialog();
-            });
+			ConfigureCommand.Subscribe(o =>
+			{
+				shell.ModalDialog = new ProjectConfigurationDialogViewModel(model, () => { });
+				shell.ModalDialog.ShowDialog();
+			});
 
-            DebugCommand = ReactiveCommand.Create();
-            DebugCommand.Subscribe(_ =>
-            {
-                //shell.Debug(model);                
-            });
+			DebugCommand = ReactiveCommand.Create();
+			DebugCommand.Subscribe(_ =>
+			{
+				//shell.Debug(model);                
+			});
 
-            BuildCommand = ReactiveCommand.Create();
-            BuildCommand.Subscribe((o) =>
-            {
-                shell.Build(model);
-            });
+			BuildCommand = ReactiveCommand.Create();
+			BuildCommand.Subscribe(o => { shell.Build(model); });
 
-            CleanCommand = ReactiveCommand.Create();
+			CleanCommand = ReactiveCommand.Create();
 
-            CleanCommand.Subscribe((o) =>
-            {
-                shell.Clean(model);
-            });
+			CleanCommand.Subscribe(o => { shell.Clean(model); });
 
-            ManageReferencesCommand = ReactiveCommand.Create();
+			ManageReferencesCommand = ReactiveCommand.Create();
 
-            ManageReferencesCommand.Subscribe((o) =>
-            {
-            });
+			ManageReferencesCommand.Subscribe(o => { });
 
-            SetProjectCommand = ReactiveCommand.Create();
+			SetProjectCommand = ReactiveCommand.Create();
 
-            SetProjectCommand.Subscribe((o) =>
-            {
-                model.Solution.StartupProject = model;
-                model.Solution.Save();
+			SetProjectCommand.Subscribe(o =>
+			{
+				model.Solution.StartupProject = model;
+				model.Solution.Save();
 
-                shell.InvalidateCodeAnalysis();                
+				shell.InvalidateCodeAnalysis();
 
-                foreach(var project in solutionViewModel.Projects)
-                {
-                    project.Invalidate();
-                }
-            });
+				foreach (var project in solutionViewModel.Projects)
+				{
+					project.Invalidate();
+				}
+			});
 
-            OpenInExplorerCommand = ReactiveCommand.Create();
-            OpenInExplorerCommand.Subscribe((o) =>
-            {
-                Process.Start(Model.CurrentDirectory);
-            });
+			OpenInExplorerCommand = ReactiveCommand.Create();
+			OpenInExplorerCommand.Subscribe(o => { Process.Start(Model.CurrentDirectory); });
 
-            NewItemCommand = ReactiveCommand.Create();
-            NewItemCommand.Subscribe(_ =>
-            {
-                shell.ModalDialog = new NewItemDialogViewModel(model);
-                shell.ModalDialog.ShowDialog();
-            });
+			NewItemCommand = ReactiveCommand.Create();
+			NewItemCommand.Subscribe(_ =>
+			{
+				shell.ModalDialog = new NewItemDialogViewModel(model);
+				shell.ModalDialog.ShowDialog();
+			});
 
-            RemoveCommand = ReactiveCommand.Create();
-            RemoveCommand.Subscribe((o) =>
-            {
-                Model.Solution.RemoveProject(Model);
-                Model.Solution.Save();
-            });
-        }
+			RemoveCommand = ReactiveCommand.Create();
+			RemoveCommand.Subscribe(o =>
+			{
+				Model.Solution.RemoveProject(Model);
+				Model.Solution.Save();
+			});
+		}
 
-        public bool IsExpanded { get; set; }
+		public bool IsExpanded { get; set; }
 
-        public string Title
-        {
-            get
-            {
-                return Model.Name;
-            }
-        }
+		public string Title
+		{
+			get { return Model.Name; }
+		}
 
-        public bool IsVisible
-        {
-            get
-            {
-                return !Model.Hidden;
-            }
-        }
+		public bool IsVisible
+		{
+			get { return !Model.Hidden; }
+		}
 
-        public ObservableCollection<ProjectItemViewModel> Items { get; private set; }        
+		public ObservableCollection<ProjectItemViewModel> Items { get; }
 
-        public ReactiveCommand<object> BuildCommand { get; protected set; }
-        public ReactiveCommand<object> CleanCommand { get; protected set; }
-        public ReactiveCommand<object> DebugCommand { get; protected set; }
-        public ReactiveCommand<object> ManageReferencesCommand { get; protected set; }
-        public ReactiveCommand<object> RemoveCommand { get; protected set; }
-        public ReactiveCommand<object> ConfigureCommand { get; private set; }
-        public ReactiveCommand<object> SetProjectCommand { get; private set; }
-        public ReactiveCommand<object> OpenInExplorerCommand { get; }
-        public ReactiveCommand<object> NewItemCommand { get; }
+		public ReactiveCommand<object> BuildCommand { get; protected set; }
+		public ReactiveCommand<object> CleanCommand { get; protected set; }
+		public ReactiveCommand<object> DebugCommand { get; protected set; }
+		public ReactiveCommand<object> ManageReferencesCommand { get; protected set; }
+		public ReactiveCommand<object> RemoveCommand { get; protected set; }
+		public ReactiveCommand<object> ConfigureCommand { get; }
+		public ReactiveCommand<object> SetProjectCommand { get; }
+		public ReactiveCommand<object> OpenInExplorerCommand { get; }
+		public ReactiveCommand<object> NewItemCommand { get; }
 
-        public static ProjectViewModel Create(SolutionViewModel solutionViewModel, IProject model)
-        {
-            ProjectViewModel result = new StandardProjectViewModel(solutionViewModel, model);
+		public bool Visibility
+		{
+			get { return visibility; }
+			set
+			{
+				visibility = value;
+				this.RaisePropertyChanged();
+			}
+		}
 
-            return result;
-        }
+		public FontWeight FontWeight
+		{
+			get
+			{
+				if (Model == Model.Solution.StartupProject)
+				{
+					return FontWeight.Bold;
+				}
+				return FontWeight.Normal;
+			}
+		}
 
-        private bool visibility;
-        public bool Visibility
-        {
-            get { return visibility; }
-            set { visibility = value; this.RaisePropertyChanged(); }
-        }
+		public ObservableCollection<string> IncludePaths { get; private set; }
 
-        public FontWeight FontWeight
-        {
-            get
-            {
-                if (Model == Model.Solution.StartupProject)
-                {
-                    return FontWeight.Bold;
-                }
-                else
-                {
-                    return FontWeight.Normal;
-                }
-            }
-        }
+		public static ProjectViewModel Create(SolutionViewModel solutionViewModel, IProject model)
+		{
+			ProjectViewModel result = new StandardProjectViewModel(solutionViewModel, model);
 
-        public ObservableCollection<string> IncludePaths { get; private set; }
-
-
-    }
+			return result;
+		}
+	}
 }

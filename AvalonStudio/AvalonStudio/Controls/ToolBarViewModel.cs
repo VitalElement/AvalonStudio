@@ -1,23 +1,22 @@
+using System.ComponentModel.Composition;
+using AvalonStudio.Extensibility.ToolBars;
+using AvalonStudio.MVVM;
+
 namespace AvalonStudio.Controls
 {
-    using Extensibility.ToolBars;
-    using MVVM;
-    using System.ComponentModel.Composition;
-    public class ToolBarViewModel : ViewModel, IPartImportsSatisfiedNotification
-    {
-        private IToolBarBuilder toolBarBuilder;
+	public class ToolBarViewModel : ViewModel, IPartImportsSatisfiedNotification
+	{
+		private IToolBarBuilder _toolBarBuilder;
 
-        [ImportingConstructor]
-        public ToolBarViewModel(IToolBarBuilder toolBarBuilder)
-        {
-            this.toolBarBuilder = toolBarBuilder;
+		[ImportingConstructor]
+		public ToolBarViewModel(IToolBarBuilder toolBarBuilder)
+		{
+			_toolBarBuilder = toolBarBuilder;
+		}
 
-            
-        }        
-
-        public void OnImportsSatisfied()
-        {
-         //   toolBarBuilder.BuildToolBar(ToolBarDefinitions.MainToolBar, 
-        }
-    }
+		public void OnImportsSatisfied()
+		{
+			//   toolBarBuilder.BuildToolBar(ToolBarDefinitions.MainToolBar, 
+		}
+	}
 }

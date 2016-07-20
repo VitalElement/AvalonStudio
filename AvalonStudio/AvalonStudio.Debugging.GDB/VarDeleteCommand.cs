@@ -1,34 +1,31 @@
 namespace AvalonStudio.Debugging.GDB
 {
-    public class VarDeleteCommand : Command<ResponseCode>
-    {
-        public override int TimeoutMs
-        {
-            get
-            {
-                return DefaultCommandTimeout;
-            }
-        }
+	public class VarDeleteCommand : Command<ResponseCode>
+	{
+		private readonly string commandText;
 
-        public VarDeleteCommand(string id)
-        {
-            this.commandText = string.Format("-var-delete {0}", id);
-        }
+		public VarDeleteCommand(string id)
+		{
+			commandText = string.Format("-var-delete {0}", id);
+		}
 
-        private string commandText;
+		public override int TimeoutMs
+		{
+			get { return DefaultCommandTimeout; }
+		}
 
-        public override string Encode()
-        {
-            return commandText;
-        }
+		public override string Encode()
+		{
+			return commandText;
+		}
 
-        protected override ResponseCode Decode(string response)
-        {
-            return DecodeResponseCode(response);
-        }
+		protected override ResponseCode Decode(string response)
+		{
+			return DecodeResponseCode(response);
+		}
 
-        public override void OutOfBandDataReceived(string data)
-        {
-        }
-    }
+		public override void OutOfBandDataReceived(string data)
+		{
+		}
+	}
 }
