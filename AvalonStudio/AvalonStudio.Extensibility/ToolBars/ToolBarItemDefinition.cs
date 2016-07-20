@@ -1,46 +1,33 @@
 namespace AvalonStudio.Extensibility.ToolBars
 {
-    using Commands;
-    using Avalonia.Input;
-    using System;
+	using System;
+	using Avalonia.Input;
+	using Commands;
 
-    public abstract class ToolBarItemDefinition
-    {
-        private readonly ToolBarItemGroupDefinition _group;
-        private readonly int _sortOrder;
-        private readonly ToolBarItemDisplay _display;
+	public abstract class ToolBarItemDefinition
+	{
+		public ToolBarItemGroupDefinition Group { get; }
 
-        public ToolBarItemGroupDefinition Group
-        {
-            get { return _group; }
-        }
+		public int SortOrder { get; }
 
-        public int SortOrder
-        {
-            get { return _sortOrder; }
-        }
+		public ToolBarItemDisplay Display { get; }
 
-        public ToolBarItemDisplay Display
-        {
-            get { return _display; }
-        }
+		public abstract string Text { get; }
+		public abstract Uri IconSource { get; }
+		public abstract KeyGesture KeyGesture { get; }
+		public abstract CommandDefinitionBase CommandDefinition { get; }
 
-        public abstract string Text { get; }
-        public abstract Uri IconSource { get; }
-        public abstract KeyGesture KeyGesture { get; }
-        public abstract CommandDefinitionBase CommandDefinition { get; }
+		protected ToolBarItemDefinition(ToolBarItemGroupDefinition group, int sortOrder, ToolBarItemDisplay display)
+		{
+			Group = group;
+			SortOrder = sortOrder;
+			Display = display;
+		}
+	}
 
-        protected ToolBarItemDefinition(ToolBarItemGroupDefinition group, int sortOrder, ToolBarItemDisplay display)
-        {
-            _group = group;
-            _sortOrder = sortOrder;
-            _display = display;
-        }
-    }
-
-    public enum ToolBarItemDisplay
-    {
-        IconOnly,
-        IconAndText
-    }
+	public enum ToolBarItemDisplay
+	{
+		IconOnly,
+		IconAndText
+	}
 }

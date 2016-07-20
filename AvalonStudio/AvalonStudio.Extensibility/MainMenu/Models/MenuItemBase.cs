@@ -1,11 +1,11 @@
 namespace AvalonStudio.Extensibility.MainMenu.Models
 {
-    using ReactiveUI;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using Utils;
-    public class MenuItemBase : ReactiveObject, IEnumerable<MenuItemBase>
+	using ReactiveUI;
+	using System.Collections;
+	using System.Collections.Generic;
+	using System.Collections.ObjectModel;
+	using Utils;
+	public class MenuItemBase : ReactiveObject, IEnumerable<MenuItemBase>
 	{
 		#region Static stuff
 
@@ -20,7 +20,7 @@ namespace AvalonStudio.Extensibility.MainMenu.Models
 
 		public ObservableCollection<MenuItemBase> Children { get; private set; }
 
-	    #endregion
+		#endregion
 
 		#region Constructors
 
