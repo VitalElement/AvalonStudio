@@ -1,160 +1,163 @@
+using System;
+using System.Collections.ObjectModel;
+using Avalonia.Controls;
+using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects.Standard;
+using AvalonStudio.Utils;
+using ReactiveUI;
+
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    using Platforms;
-    using MVVM;
-    using Avalonia.Controls;
-    using ReactiveUI;
-    using Standard;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Utils;
+	public class IncludePathSettingsFormViewModel : HeaderedViewModel<CPlusPlusProject>
+	{
+		private ObservableCollection<DefinitionViewModel> defines;
 
-    public class IncludePathSettingsFormViewModel : HeaderedViewModel<CPlusPlusProject>
-    {
-        public IncludePathSettingsFormViewModel(CPlusPlusProject model) : base("Includes / Definitions", model)
-        {
-            defines = new ObservableCollection<DefinitionViewModel>();
-            includePaths = new ObservableCollection<IncludeViewModel>();  
-            
-            foreach(var define in model.Defines)
-            {
-                defines.Add(new DefinitionViewModel(model, define));
-            }          
+		private string defineText;
 
-            foreach(var include in model.Includes)
-            {
-                includePaths.Add(new IncludeViewModel(model, include));
-            }
+		private ObservableCollection<IncludeViewModel> includePaths;
 
-            AddDefineCommand = ReactiveCommand.Create();// new RoutingCommand(AddDefine, (o) => DefineText != string.Empty && DefineText != null && !Defines.Contains(DefineText));
-            AddDefineCommand.Subscribe(AddDefine);
+		private DefinitionViewModel selectedDefine;
 
-            RemoveDefineCommand = ReactiveCommand.Create();// new RoutingCommand(RemoveDefine, (o) => SelectedDefine != string.Empty && SelectedDefine != null);
-            RemoveDefineCommand.Subscribe(RemoveDefine);
+		private IncludeViewModel selectedInclude;
 
-            AddIncludePathCommand = ReactiveCommand.Create();
-            AddIncludePathCommand.Subscribe(AddIncludePath);
+		public IncludePathSettingsFormViewModel(CPlusPlusProject model) : base("Includes / Definitions", model)
+		{
+			defines = new ObservableCollection<DefinitionViewModel>();
+			includePaths = new ObservableCollection<IncludeViewModel>();
 
-            RemoveIncludePathCommand = ReactiveCommand.Create();
-            RemoveIncludePathCommand.Subscribe(RemoveIncludePath);
-        }
+			foreach (var define in model.Defines)
+			{
+				defines.Add(new DefinitionViewModel(model, define));
+			}
 
-        private void Save()
-        {
-            Model.Defines.Clear();
-            
-            foreach(var define in Defines)
-            {
-                Model.Defines.Add(define.Model);
-            }
+			foreach (var include in model.Includes)
+			{
+				includePaths.Add(new IncludeViewModel(model, include));
+			}
 
-            Model.Includes.Clear();
+			AddDefineCommand = ReactiveCommand.Create();
+				// new RoutingCommand(AddDefine, (o) => DefineText != string.Empty && DefineText != null && !Defines.Contains(DefineText));
+			AddDefineCommand.Subscribe(AddDefine);
 
-            foreach(var include in IncludePaths)
-            {
-                Model.Includes.Add(include.Model);
-            }
+			RemoveDefineCommand = ReactiveCommand.Create();
+				// new RoutingCommand(RemoveDefine, (o) => SelectedDefine != string.Empty && SelectedDefine != null);
+			RemoveDefineCommand.Subscribe(RemoveDefine);
 
-            Model.Save();
-        }
+			AddIncludePathCommand = ReactiveCommand.Create();
+			AddIncludePathCommand.Subscribe(AddIncludePath);
 
-        private void AddDefine(object param)
-        {
-            Defines.Add(new DefinitionViewModel(Model, new Definition() { Value = DefineText }));
-            DefineText = string.Empty;
-            Save();
-        }
+			RemoveIncludePathCommand = ReactiveCommand.Create();
+			RemoveIncludePathCommand.Subscribe(RemoveIncludePath);
+		}
 
-        private void RemoveDefine(object param)
-        {
-            Defines.Remove(SelectedDefine);
-            Save();
-        }
+		public ReactiveCommand<object> AddIncludePathCommand { get; }
+		public ReactiveCommand<object> RemoveIncludePathCommand { get; }
+		public ReactiveCommand<object> AddDefineCommand { get; }
+		public ReactiveCommand<object> RemoveDefineCommand { get; }
 
-        private async void AddIncludePath(object param)
-        {
-            OpenFolderDialog fbd = new OpenFolderDialog();
+		public string DefineText
+		{
+			get { return defineText; }
+			set { this.RaiseAndSetIfChanged(ref defineText, value); }
+		}
 
-            fbd.InitialDirectory = Model.CurrentDirectory;
+		public DefinitionViewModel SelectedDefine
+		{
+			get { return selectedDefine; }
+			set
+			{
+				this.RaiseAndSetIfChanged(ref selectedDefine, value);
 
-            var result = await fbd.ShowAsync();
+				if (value != null)
+				{
+					DefineText = value.Model.Value;
+				}
+			}
+		}
 
-            if (result != string.Empty)
-            {
-                string newInclude = Model.CurrentDirectory.MakeRelativePath(result).ToAvalonPath();
+		public ObservableCollection<DefinitionViewModel> Defines
+		{
+			get { return defines; }
+			set { this.RaiseAndSetIfChanged(ref defines, value); }
+		}
 
-                if (newInclude == string.Empty)
-                {
-                    newInclude = "\\";
-                }
+		public IncludeViewModel SelectedInclude
+		{
+			get { return selectedInclude; }
+			set { this.RaiseAndSetIfChanged(ref selectedInclude, value); }
+		}
 
-                IncludePaths.Add(new IncludeViewModel(Model, new Include() { Value = newInclude }));
+		public ObservableCollection<IncludeViewModel> IncludePaths
+		{
+			get { return includePaths; }
+			set { this.RaiseAndSetIfChanged(ref includePaths, value); }
+		}
 
-                Save();
-            }
-        }
+		private void Save()
+		{
+			Model.Defines.Clear();
 
-        public ReactiveCommand<object> AddIncludePathCommand { get; private set; }
-        public ReactiveCommand<object> RemoveIncludePathCommand { get; private set; }
-        public ReactiveCommand<object> AddDefineCommand { get; private set; }
-        public ReactiveCommand<object> RemoveDefineCommand { get; private set; }
+			foreach (var define in Defines)
+			{
+				Model.Defines.Add(define.Model);
+			}
 
-        private bool AddIncludePathCanExecute(object param)
-        {
-            return true;
-        }
+			Model.Includes.Clear();
 
-        private void RemoveIncludePath(object param)
-        {
-            includePaths.Remove(SelectedInclude);
-            Save();
-        }
+			foreach (var include in IncludePaths)
+			{
+				Model.Includes.Add(include.Model);
+			}
 
-        private string defineText;
-        public string DefineText
-        {
-            get { return defineText; }
-            set { this.RaiseAndSetIfChanged(ref defineText, value); }
-        }
+			Model.Save();
+		}
 
-        private DefinitionViewModel selectedDefine;
-        public DefinitionViewModel SelectedDefine
-        {
-            get { return selectedDefine; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref selectedDefine, value);
+		private void AddDefine(object param)
+		{
+			Defines.Add(new DefinitionViewModel(Model, new Definition {Value = DefineText}));
+			DefineText = string.Empty;
+			Save();
+		}
 
-                if (value != null)
-                {
-                    DefineText = value.Model.Value;
-                }
-            }
-        }
+		private void RemoveDefine(object param)
+		{
+			Defines.Remove(SelectedDefine);
+			Save();
+		}
 
-        private ObservableCollection<DefinitionViewModel> defines;
-        public ObservableCollection<DefinitionViewModel> Defines
-        {
-            get { return defines; }
-            set { this.RaiseAndSetIfChanged(ref defines, value); }
-        }
+		private async void AddIncludePath(object param)
+		{
+			var fbd = new OpenFolderDialog();
 
-        private IncludeViewModel selectedInclude;
-        public IncludeViewModel SelectedInclude
-        {
-            get { return selectedInclude; }
-            set { this.RaiseAndSetIfChanged(ref selectedInclude, value); }
-        }
+			fbd.InitialDirectory = Model.CurrentDirectory;
 
-        private ObservableCollection<IncludeViewModel> includePaths;
-        public ObservableCollection<IncludeViewModel> IncludePaths
-        {
-            get { return includePaths; }
-            set { this.RaiseAndSetIfChanged(ref includePaths, value); }
-        }
-    }
+			var result = await fbd.ShowAsync();
+
+			if (result != string.Empty)
+			{
+				var newInclude = Model.CurrentDirectory.MakeRelativePath(result).ToAvalonPath();
+
+				if (newInclude == string.Empty)
+				{
+					newInclude = "\\";
+				}
+
+				IncludePaths.Add(new IncludeViewModel(Model, new Include {Value = newInclude}));
+
+				Save();
+			}
+		}
+
+		private bool AddIncludePathCanExecute(object param)
+		{
+			return true;
+		}
+
+		private void RemoveIncludePath(object param)
+		{
+			includePaths.Remove(SelectedInclude);
+			Save();
+		}
+	}
 }

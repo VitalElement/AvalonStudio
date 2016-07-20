@@ -1,27 +1,18 @@
+using System.ComponentModel.Composition;
+using AvalonStudio.Extensibility.MVVM;
+using AvalonStudio.MVVM;
+using ReactiveUI;
+
 namespace AvalonStudio.Extensibility.ToolBars.ViewModels
 {
-	using System.ComponentModel.Composition;
-	using AvalonStudio.MVVM;
-	using MVVM;
-	using ReactiveUI;
-
-	[Export(typeof(IToolBar))]
+	[Export(typeof (IToolBar))]
 	public class ToolBarsViewModel : ViewModel, IToolBars, IPartImportsSatisfiedNotification
 	{
 		private readonly BindableCollection<IToolBar> _items;
-		public IObservableCollection<IToolBar> Items => _items;
 
 		private readonly IToolBarBuilder _toolBarBuilder;
 
 		private bool _visible;
-		public bool Visible
-		{
-			get { return _visible; }
-			set
-			{
-				this.RaiseAndSetIfChanged(ref _visible, value);
-			}
-		}
 
 		[ImportingConstructor]
 		public ToolBarsViewModel(IToolBarBuilder toolBarBuilder)
@@ -44,6 +35,14 @@ namespace AvalonStudio.Extensibility.ToolBars.ViewModels
 			//    {
 			//        ItemsSource = toolBar
 			//    });            
+		}
+
+		public IObservableCollection<IToolBar> Items => _items;
+
+		public bool Visible
+		{
+			get { return _visible; }
+			set { this.RaiseAndSetIfChanged(ref _visible, value); }
 		}
 	}
 }

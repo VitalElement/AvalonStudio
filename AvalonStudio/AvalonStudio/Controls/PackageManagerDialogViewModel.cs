@@ -1,204 +1,208 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Avalonia.Threading;
+using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.MVVM;
+using AvalonStudio.Repositories;
+using AvalonStudio.Utils;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls
 {
-    using System;
-    using MVVM;
-    using Avalonia.Threading;
-    using ReactiveUI;
-    using Repositories;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Utils;
-    using Extensibility.Dialogs;
+	public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole
+	{
+		private ObservableCollection<PackageReference> availablePackage;
 
-    public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole
-    {
-        public PackageManagerDialogViewModel()
-            : base("Packages")
-        {
-            this.AvailablePackages = new ObservableCollection<PackageReference>();
+		private bool enableInterface = true;
 
-            DownloadCatalog();
+		private PackageReference selectedPackage;
 
-            InstallCommand = ReactiveCommand.Create();
-            InstallCommand.Subscribe(async (o) =>
-            {
-                EnableInterface = false;
+		private PackageIndex selectedPackageIndex;
 
-                try
-                {
-                    await SelectedPackageIndex.Synchronize(SelectedTag, this);
+		private string selectedTag;
 
-                    //if (fullPackage.Install())
-                    //{
-                    //    Status = "Package Installed Successfully.";
-                    //}
-                    //else
-                    //{
-                    //    Status = "An error occurred trying to install package.";
-                    //}
-                }
-                catch (Exception e)
-                {
-                    Status = "An error occurred trying to install package. " + e.Message;
-                }
+		private string status;
 
-                EnableInterface = true;
+		public PackageManagerDialogViewModel()
+			: base("Packages")
+		{
+			AvailablePackages = new ObservableCollection<PackageReference>();
 
-            });
+			DownloadCatalog();
 
-            OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.EnableInterface));
+			InstallCommand = ReactiveCommand.Create();
+			InstallCommand.Subscribe(async o =>
+			{
+				EnableInterface = false;
 
-            OKCommand.Subscribe(_ =>
-            {
-                ShellViewModel.Instance.InvalidateCodeAnalysis();
-                this.Close();
-            });
+				try
+				{
+					await SelectedPackageIndex.Synchronize(SelectedTag, this);
 
-            EnableInterface = true;
-        }
+					//if (fullPackage.Install())
+					//{
+					//    Status = "Package Installed Successfully.";
+					//}
+					//else
+					//{
+					//    Status = "An error occurred trying to install package.";
+					//}
+				}
+				catch (Exception e)
+				{
+					Status = "An error occurred trying to install package. " + e.Message;
+				}
 
-        private void AddPackages(Repository repo)
-        {
-            foreach (var package in repo.Packages)
-            {
-                AvailablePackages.Add(package);
-            }
-        }
+				EnableInterface = true;
+			});
 
-        private async void DownloadCatalog()
-        {
-            foreach (var packageSource in PackageSources.Instance.Sources)
-            {
-                Repository repo = null;
+			OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.EnableInterface));
 
-                await Task.Factory.StartNew(() => repo = packageSource.DownloadCatalog());
+			OKCommand.Subscribe(_ =>
+			{
+				ShellViewModel.Instance.InvalidateCodeAnalysis();
+				Close();
+			});
 
-                if(repo != null)
-                {
-                    AddPackages(repo);
-                }
-            }
-        }
+			EnableInterface = true;
+		}
 
-        public string ButtonText
-        {
-            get
-            {
-                if (selectedPackage != null)
-                {
-                    //if (selectedPackage.IsInstalled)
-                    //{
-                    //    return "Update";
-                    //}
-                }
+		public string ButtonText
+		{
+			get
+			{
+				if (selectedPackage != null)
+				{
+					//if (selectedPackage.IsInstalled)
+					//{
+					//    return "Update";
+					//}
+				}
 
-                return "Install";
-            }
-        }
+				return "Install";
+			}
+		}
 
-        private bool enableInterface = true;
-        public bool EnableInterface
-        {
-            get { return enableInterface; }
-            set
-            {
-                OKButtonVisible = value;
-                CancelButtonVisible = value;
+		public bool EnableInterface
+		{
+			get { return enableInterface; }
+			set
+			{
+				OKButtonVisible = value;
+				CancelButtonVisible = value;
 
-                this.RaiseAndSetIfChanged(ref enableInterface, value);
-            }
-        }        
+				this.RaiseAndSetIfChanged(ref enableInterface, value);
+			}
+		}
 
-        public void WriteLine(string data)
-        {
-            throw new NotImplementedException();
-        }
+		public string Status
+		{
+			get { return status; }
+			set { this.RaiseAndSetIfChanged(ref status, value); }
+		}
 
-        public void WriteLine()
-        {
-            throw new NotImplementedException();
-        }
+		public PackageReference SelectedPackage
+		{
+			get { return selectedPackage; }
+			set
+			{
+				GetPackageInfo(value);
 
-        public void OverWrite(string data)
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Status = data;
-            });
-        }
+				this.RaiseAndSetIfChanged(ref selectedPackage, value);
+				this.RaisePropertyChanged(() => ButtonText);
+			}
+		}
 
-        public void Write(string data)
-        {
-            throw new NotImplementedException();
-        }
+		public PackageIndex SelectedPackageIndex
+		{
+			get { return selectedPackageIndex; }
+			set
+			{
+				this.RaiseAndSetIfChanged(ref selectedPackageIndex, value);
+				SelectedTag = value.Tags.FirstOrDefault();
+			}
+		}
 
-        public void Write(char data)
-        {
-            throw new NotImplementedException();
-        }
+		public string SelectedTag
+		{
+			get { return selectedTag; }
+			set { this.RaiseAndSetIfChanged(ref selectedTag, value); }
+		}
 
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
+		public ObservableCollection<PackageReference> AvailablePackages
+		{
+			get { return availablePackage; }
+			set { this.RaiseAndSetIfChanged(ref availablePackage, value); }
+		}
 
-        private string status;
-        public string Status
-        {
-            get { return status; }
-            set { this.RaiseAndSetIfChanged(ref status, value); }
-        }
+		public ReactiveCommand<object> InstallCommand { get; }
+		public override ReactiveCommand<object> OKCommand { get; protected set; }
+
+		public void WriteLine(string data)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void WriteLine()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OverWrite(string data)
+		{
+			Dispatcher.UIThread.InvokeAsync(() => { Status = data; });
+		}
+
+		public void Write(string data)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Write(char data)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Clear()
+		{
+			throw new NotImplementedException();
+		}
+
+		private void AddPackages(Repository repo)
+		{
+			foreach (var package in repo.Packages)
+			{
+				AvailablePackages.Add(package);
+			}
+		}
+
+		private async void DownloadCatalog()
+		{
+			foreach (var packageSource in PackageSources.Instance.Sources)
+			{
+				Repository repo = null;
+
+				await Task.Factory.StartNew(() => repo = packageSource.DownloadCatalog());
+
+				if (repo != null)
+				{
+					AddPackages(repo);
+				}
+			}
+		}
 
 
-        private  async void GetPackageInfo (PackageReference reference)
-        {
-            try
-            {
-                SelectedPackageIndex = await reference.DownloadInfoAsync();
-            }
-            catch (Exception e)
-            {
-                
-            }
-        }
-
-        private PackageReference selectedPackage;
-        public PackageReference SelectedPackage
-        {
-            get { return selectedPackage; }
-            set
-            {
-                GetPackageInfo(value);
-
-                this.RaiseAndSetIfChanged(ref selectedPackage, value);
-                this.RaisePropertyChanged(() => ButtonText);
-            }
-        }
-
-        private PackageIndex selectedPackageIndex;
-        public PackageIndex SelectedPackageIndex
-        {
-            get { return selectedPackageIndex; }
-            set { this.RaiseAndSetIfChanged(ref selectedPackageIndex, value); SelectedTag = value.Tags.FirstOrDefault(); }
-        }
-
-        private string selectedTag;
-        public string SelectedTag
-        {
-            get { return selectedTag; }
-            set { this.RaiseAndSetIfChanged(ref selectedTag, value); }
-        }
-        
-
-        private ObservableCollection<PackageReference> availablePackage;
-        public ObservableCollection<PackageReference> AvailablePackages
-        {
-            get { return availablePackage; }
-            set { this.RaiseAndSetIfChanged(ref availablePackage, value); }
-        }
-
-        public ReactiveCommand<object> InstallCommand { get; private set; }
-        public override ReactiveCommand<object> OKCommand { get; protected set; }
-    }
+		private async void GetPackageInfo(PackageReference reference)
+		{
+			try
+			{
+				SelectedPackageIndex = await reference.DownloadInfoAsync();
+			}
+			catch (Exception e)
+			{
+			}
+		}
+	}
 }

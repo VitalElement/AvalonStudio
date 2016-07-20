@@ -1,24 +1,15 @@
 namespace AvalonStudio.Extensibility.Menus
 {
-    public abstract class MenuItemDefinition : MenuDefinitionBase
-    {
-        private readonly MenuItemGroupDefinition _group;
-        private readonly int _sortOrder;
+	public abstract class MenuItemDefinition : MenuDefinitionBase
+	{
+		protected MenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
+		{
+			Group = group;
+			SortOrder = sortOrder;
+		}
 
-        public MenuItemGroupDefinition Group
-        {
-            get { return _group; }
-        }
+		public MenuItemGroupDefinition Group { get; }
 
-        public override int SortOrder
-        {
-            get { return _sortOrder; }
-        }
-
-        protected MenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
-        {            
-            _group = group;
-            _sortOrder = sortOrder;
-        }
-    }
+		public override int SortOrder { get; }
+	}
 }

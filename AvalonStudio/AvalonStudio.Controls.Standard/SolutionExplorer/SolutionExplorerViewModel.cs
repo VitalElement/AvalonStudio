@@ -1,118 +1,113 @@
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.MVVM;
+using AvalonStudio.Projects;
+using AvalonStudio.Shell;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    using AvalonStudio.MVVM;
-    using Extensibility;
-    using Projects;
-    using ReactiveUI;
-    using System.Collections.ObjectModel;
-    using System;
-    using Shell;
-    using Extensibility.Plugin;
-    using System.Threading.Tasks;
-    public class SolutionExplorerViewModel : ToolViewModel, IExtension
-    {
-        private IShell shell;
+	public class SolutionExplorerViewModel : ToolViewModel, IExtension
+	{
+		public const string ToolId = "CIDSEVM00";
 
-        public SolutionExplorerViewModel()
-        {            
-            Title = "Solution Explorer";
-            solution = new ObservableCollection<SolutionViewModel>();            
-        }
-        
-        new private ISolution model = null;
-        public ISolution Model
-        {
-            get { return model; }
-            set
-            {
-                Projects = new ObservableCollection<ProjectItemViewModel>();
-                model = value;
+		private ISolution model;
 
-                if (this.Model != null)
-                {
-                    if (Model.Projects.Count > 0)
-                    {
-                        SelectedProject = this.Model.StartupProject;
-                    }
-
-                    var sol = new ObservableCollection<SolutionViewModel>();
-                    sol.Add(new SolutionViewModel(model));
-
-                    Solution = sol;
-                }
-                else
-                {
-                    Solution = null;
-                }
-                
-                this.RaisePropertyChanged();
-                this.RaisePropertyChanged(nameof(Projects));
-            }
-        }
-
-        private ObservableCollection<SolutionViewModel> solution;
-        public ObservableCollection<SolutionViewModel> Solution
-        {
-            get { return solution; }
-            set { this.RaiseAndSetIfChanged(ref solution, value); }
-        }
+		private ProjectItemViewModel selectedItem;
 
 
-        private IProject selectedProject;
-        public IProject SelectedProject
-        {
-            get
-            {
-                return selectedProject;
-            }
+		private IProject selectedProject;
+		private IShell shell;
 
-            set { selectedProject = value; this.RaisePropertyChanged(); }
-        }
+		private ObservableCollection<SolutionViewModel> solution;
 
-        private ProjectItemViewModel selectedItem;
-        public ProjectItemViewModel SelectedItem
-        {
-            get { return selectedItem; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref selectedItem, value);
+		public SolutionExplorerViewModel()
+		{
+			Title = "Solution Explorer";
+			solution = new ObservableCollection<SolutionViewModel>();
+		}
 
-                if (value is SourceFileViewModel)
-                {
-                    // might need wait here?
-                    Task.Factory.StartNew(async () =>
-                    {
-                        await shell.OpenDocument(((ISourceFile)(value as SourceFileViewModel).Model), 1);
-                    });
-                }
-            }
-        }
+		public ISolution Model
+		{
+			get { return model; }
+			set
+			{
+				Projects = new ObservableCollection<ProjectItemViewModel>();
+				model = value;
 
-        public ObservableCollection<ProjectItemViewModel> Projects { get; set; }
+				if (Model != null)
+				{
+					if (Model.Projects.Count > 0)
+					{
+						SelectedProject = Model.StartupProject;
+					}
 
-        public override Location DefaultLocation
-        {
-            get
-            {
-                return Location.Right;
-            }
-        }
+					var sol = new ObservableCollection<SolutionViewModel>();
+					sol.Add(new SolutionViewModel(model));
 
-        public const string ToolId = "CIDSEVM00";
+					Solution = sol;
+				}
+				else
+				{
+					Solution = null;
+				}
 
-        public void BeforeActivation()
-        {
-            
-        }
+				this.RaisePropertyChanged();
+				this.RaisePropertyChanged(nameof(Projects));
+			}
+		}
 
-        public void Activation()
-        {
-            shell = IoC.Get<IShell>();
+		public ObservableCollection<SolutionViewModel> Solution
+		{
+			get { return solution; }
+			set { this.RaiseAndSetIfChanged(ref solution, value); }
+		}
 
-            shell.SolutionChanged += (sender, e) =>
-            {
-                Model = shell.CurrentSolution;
-            };
-        }
-    }
+		public IProject SelectedProject
+		{
+			get { return selectedProject; }
+
+			set
+			{
+				selectedProject = value;
+				this.RaisePropertyChanged();
+			}
+		}
+
+		public ProjectItemViewModel SelectedItem
+		{
+			get { return selectedItem; }
+			set
+			{
+				this.RaiseAndSetIfChanged(ref selectedItem, value);
+
+				if (value is SourceFileViewModel)
+				{
+					// might need wait here?
+					Task.Factory.StartNew(
+						async () => { await shell.OpenDocument((ISourceFile) (value as SourceFileViewModel).Model, 1); });
+				}
+			}
+		}
+
+		public ObservableCollection<ProjectItemViewModel> Projects { get; set; }
+
+		public override Location DefaultLocation
+		{
+			get { return Location.Right; }
+		}
+
+		public void BeforeActivation()
+		{
+		}
+
+		public void Activation()
+		{
+			shell = IoC.Get<IShell>();
+
+			shell.SolutionChanged += (sender, e) => { Model = shell.CurrentSolution; };
+		}
+	}
 }

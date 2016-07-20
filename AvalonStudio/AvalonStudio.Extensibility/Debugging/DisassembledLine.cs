@@ -1,170 +1,162 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace AvalonStudio.Debugging
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+	public class InstructionLine : DisassembledLine
+	{
+		public InstructionLine()
+		{
+			Visible = true;
+		}
 
-    public class InstructionLine : DisassembledLine
-    {
-        public InstructionLine()
-        {
-            Visible = true;
-        }
+		public ulong Address { get; set; }
 
-        public static InstructionLine FromDataString (string data)
-        {
-            var result = new InstructionLine ();
+		public string FormattedAddress
+		{
+			get { return string.Format("0x{0:X8}", Address); }
+		}
 
-            var pairs = data.ToNameValuePairs ();
+		public string FunctionName { get; set; }
+		public int Offset { get; set; }
+		public string OpCodes { get; set; }
+		public string Instruction { get; set; }
+		public bool Visible { get; set; }
 
-            foreach(var pair in pairs)
-            {
-                switch(pair.Name)
-                {
-                    case "address":
-                        result.Address = Convert.ToUInt64 (pair.Value.Substring(2), 16);
-                        break;
+		public string Symbol
+		{
+			get { return string.Format("<{0} + {1}>", FunctionName, Offset); }
+		}
 
-                    case "func-name":
-                        result.FunctionName = pair.Value;
-                        break;
+		public static InstructionLine FromDataString(string data)
+		{
+			var result = new InstructionLine();
 
-                    case "offset":
-                        result.Offset = Convert.ToInt32 (pair.Value);
-                        break;
+			var pairs = data.ToNameValuePairs();
 
-                    case "opcodes":
-                        result.OpCodes = pair.Value;
-                        break;
+			foreach (var pair in pairs)
+			{
+				switch (pair.Name)
+				{
+					case "address":
+						result.Address = Convert.ToUInt64(pair.Value.Substring(2), 16);
+						break;
 
-                    case "inst":
-                        result.Instruction = pair.Value.Replace("\\t","\t");
-                        break;
+					case "func-name":
+						result.FunctionName = pair.Value;
+						break;
 
-                    default:
-                        break;//throw new NotImplementedException ();
-                }
-            }
+					case "offset":
+						result.Offset = Convert.ToInt32(pair.Value);
+						break;
 
-            return result;
-        }
+					case "opcodes":
+						result.OpCodes = pair.Value;
+						break;
 
-        public UInt64 Address { get; set; }
+					case "inst":
+						result.Instruction = pair.Value.Replace("\\t", "\t");
+						break;
 
-        public string FormattedAddress
-        {
-            get
-            {
-                return string.Format("0x{0:X8}", Address);
-            }
-        }
+					default:
+						break; //throw new NotImplementedException ();
+				}
+			}
 
-        public string FunctionName { get; set; }
-        public int Offset { get; set; }
-        public string OpCodes { get; set; }
-        public string Instruction { get; set; }
-        public bool Visible { get; set; }
+			return result;
+		}
+	}
 
-        public string Symbol
-        {
-            get
-            {
-                return string.Format("<{0} + {1}>", FunctionName, Offset);
-            }
-        }
+	public abstract class DisassembledLine
+	{
+	}
 
-    }
+	public class SourceLine : DisassembledLine
+	{
+		private string lineText;
 
-    public abstract class DisassembledLine
-    {
+		public string LineText
+		{
+			get
+			{
+				if (lineText == null)
+				{
+					lineText = System.IO.File.ReadLines(File).Skip(Line - 1).Take(1).First();
+				}
 
-    }
+				return lineText;
+			}
+		}
 
-    public class SourceLine : DisassembledLine
-    {
-        public static List<InstructionLine> FromDataString (string data)
-        {
-            var result = new List<InstructionLine> ();
 
-            NameValuePair[] pairs = data.ToNameValuePairs ();
+		public int Line { get; set; }
+		public string File { get; set; }
+		public string FullFileName { get; set; }
 
-            if (data [0] == '{')
-            {
-                result = new List<InstructionLine> ();
+		public static List<InstructionLine> FromDataString(string data)
+		{
+			var result = new List<InstructionLine>();
 
-                result.Add (InstructionLine.FromDataString (data.RemoveBraces ()));
-            }
-            //else
-            //{
-            //    foreach (var pair in pairs)
-            //    {
-            //        switch (pair.Name)
-            //        {
-            //            case "src_and_asm_line":
-            //                var mixedPairs = pair.Value.RemoveBraces ().ToNameValues ();
-            //                var sourceLine = new SourceLine ();
-            //                var instructionLines = new List<InstructionLine> ();
-            //                foreach (var internalPair in mixedPairs)
-            //                {
-            //                    switch (internalPair.Name)
-            //                    {
-            //                        case "line":
-            //                            sourceLine.Line = Convert.ToInt32 (internalPair.Value);
-            //                            break;
+			var pairs = data.ToNameValuePairs();
 
-            //                        case "file":
-            //                            sourceLine.File = internalPair.Value;
-            //                            break;
+			if (data[0] == '{')
+			{
+				result = new List<InstructionLine>();
 
-            //                        case "fullname":
-            //                            sourceLine.FullFileName = internalPair.Value;
-            //                            break;
+				result.Add(InstructionLine.FromDataString(data.RemoveBraces()));
+			}
+			//else
+			//{
+			//    foreach (var pair in pairs)
+			//    {
+			//        switch (pair.Name)
+			//        {
+			//            case "src_and_asm_line":
+			//                var mixedPairs = pair.Value.RemoveBraces ().ToNameValues ();
+			//                var sourceLine = new SourceLine ();
+			//                var instructionLines = new List<InstructionLine> ();
+			//                foreach (var internalPair in mixedPairs)
+			//                {
+			//                    switch (internalPair.Name)
+			//                    {
+			//                        case "line":
+			//                            sourceLine.Line = Convert.ToInt32 (internalPair.Value);
+			//                            break;
 
-            //                        case "line_asm_insn":
-            //                            var instructions = internalPair.Value.ToArray ();
+			//                        case "file":
+			//                            sourceLine.File = internalPair.Value;
+			//                            break;
 
-            //                            foreach (var instruction in instructions)
-            //                            {
-            //                                instructionLines.Add (InstructionLine.FromDataString (instruction.RemoveBraces ()));
-            //                            }
-            //                            break;
+			//                        case "fullname":
+			//                            sourceLine.FullFileName = internalPair.Value;
+			//                            break;
 
-            //                        default:
-            //                            throw new NotImplementedException ();
-            //                    }
-            //                }
+			//                        case "line_asm_insn":
+			//                            var instructions = internalPair.Value.ToArray ();
 
-            //                result.Add (sourceLine);
-            //                result.AddRange (instructionLines);
-            //                break;
+			//                            foreach (var instruction in instructions)
+			//                            {
+			//                                instructionLines.Add (InstructionLine.FromDataString (instruction.RemoveBraces ()));
+			//                            }
+			//                            break;
 
-            //            default:
-            //                throw new NotImplementedException ();
-            //        }
-                //}
-            //}
+			//                        default:
+			//                            throw new NotImplementedException ();
+			//                    }
+			//                }
 
-            return result;
-        }
+			//                result.Add (sourceLine);
+			//                result.AddRange (instructionLines);
+			//                break;
 
-        private string lineText = null;
+			//            default:
+			//                throw new NotImplementedException ();
+			//        }
+			//}
+			//}
 
-        public string LineText
-        {
-            get
-            {
-                if (lineText == null)
-                {
-                    lineText = System.IO.File.ReadLines (File).Skip (Line - 1).Take (1).First ();
-                }
-
-                return lineText;
-            }
-        }
-        
-
-        public int Line { get; set; }
-        public string File { get; set; }
-        public string FullFileName { get; set; }
-    }
+			return result;
+		}
+	}
 }

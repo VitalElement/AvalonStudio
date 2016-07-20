@@ -27,14 +27,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 
 [AttributeUsage(
-		AttributeTargets.Class |
-		AttributeTargets.Delegate |
-		AttributeTargets.Enum |
-		AttributeTargets.Field |
-		AttributeTargets.Struct)]
+	AttributeTargets.Class |
+	AttributeTargets.Delegate |
+	AttributeTargets.Enum |
+	AttributeTargets.Field |
+	AttributeTargets.Struct)]
 internal class MapAttribute : Attribute
 {
 	public MapAttribute()
@@ -43,12 +44,10 @@ internal class MapAttribute : Attribute
 
 	public MapAttribute(string nativeType)
 	{
-		this.NativeType = nativeType;
+		NativeType = nativeType;
 	}
 
 	public string NativeType { get; }
 
 	public string SuppressFlags { get; set; }
 }
-
-

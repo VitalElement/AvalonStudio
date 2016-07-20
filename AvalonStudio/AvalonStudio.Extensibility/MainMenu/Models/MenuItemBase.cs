@@ -1,12 +1,22 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using AvalonStudio.Extensibility.Utils;
+using ReactiveUI;
+
 namespace AvalonStudio.Extensibility.MainMenu.Models
 {
-	using ReactiveUI;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using Utils;
 	public class MenuItemBase : ReactiveObject, IEnumerable<MenuItemBase>
 	{
+		#region Constructors
+
+		protected MenuItemBase()
+		{
+			Children = new ObservableCollection<MenuItemBase>();
+		}
+
+		#endregion
+
 		#region Static stuff
 
 		public static MenuItemBase Separator
@@ -18,23 +28,9 @@ namespace AvalonStudio.Extensibility.MainMenu.Models
 
 		#region Properties
 
-		public ObservableCollection<MenuItemBase> Children { get; private set; }
+		public ObservableCollection<MenuItemBase> Children { get; }
 
 		#endregion
-
-		#region Constructors
-
-		protected MenuItemBase()
-		{
-			Children = new ObservableCollection<MenuItemBase>();
-		}
-
-		#endregion
-
-		public void Add(params MenuItemBase[] menuItems)
-		{
-			menuItems.Apply(Children.Add);
-		}
 
 		public IEnumerator<MenuItemBase> GetEnumerator()
 		{
@@ -44,6 +40,11 @@ namespace AvalonStudio.Extensibility.MainMenu.Models
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
+		}
+
+		public void Add(params MenuItemBase[] menuItems)
+		{
+			menuItems.Apply(Children.Add);
 		}
 	}
 }

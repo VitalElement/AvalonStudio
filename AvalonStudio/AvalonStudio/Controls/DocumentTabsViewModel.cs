@@ -1,95 +1,95 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Threading.Tasks;
+using Avalonia.Media;
+using Avalonia.Threading;
+using AvalonStudio.MVVM;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls
 {
-    using AvalonStudio.MVVM;
-    using Avalonia.Media;
-    using Avalonia.Threading;
-    using ReactiveUI;
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Threading.Tasks;
-    public class DocumentTabsViewModel : ViewModel
-    {
-        public DocumentTabsViewModel()
-        {
-            Documents = new ObservableCollection<EditorViewModel>();
-            Documents.CollectionChanged += (sender, e) =>
-            {
-                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
-                {
-                    Dispatcher.UIThread.InvokeAsync(async () =>
-                    {
-                        await Task.Delay(25);
-                        GC.Collect();
-                    });
-                }
-            };
+	public class DocumentTabsViewModel : ViewModel
+	{
+		private IBrush backgroundBrush;
 
-            tabBrush = Brush.Parse("#007ACC");
-            tabHighlightBrush = Brush.Parse("#1c97ea");
+		private ObservableCollection<EditorViewModel> documents;
 
-            temporaryTabBrush = Brush.Parse("#68217A");
-            temporaryTabHighlighBrush = Brush.Parse("#B064AB");            
-        } 
+		private IBrush hoverTabBackgroundBrush;
 
-        private IBrush temporaryTabHighlighBrush;
-        private IBrush temporaryTabBrush;
-        private IBrush tabHighlightBrush;
-        private IBrush tabBrush;
-        private IBrush backgroundBrush;
+		private EditorViewModel selectedDocument;
 
-        private ObservableCollection<EditorViewModel> documents;
-        public ObservableCollection<EditorViewModel> Documents
-        {
-            get { return documents; }
-            set { this.RaiseAndSetIfChanged(ref documents, value); }
-        }
+		private IBrush tabBackgroundBrush;
+		private IBrush tabBrush;
+		private readonly IBrush tabHighlightBrush;
 
-        private EditorViewModel selectedDocument;
-        public EditorViewModel SelectedDocument
-        {
-            get { return selectedDocument; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref selectedDocument, value);
+		private readonly IBrush temporaryTabBrush;
 
-                // Dispatcher invoke is hack to make sure the Editor propery has been generated.
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    value?.Model.Editor?.Focus();
-                });
-                
-                if(value == TemporaryDocument)
-                {
-                    TabBackgroundBrush = temporaryTabBrush;
-                    HoverTabBackgroundBrush = temporaryTabHighlighBrush;
-                }
-                else
-                {
-                    TabBackgroundBrush = tabBackgroundBrush;
-                    HoverTabBackgroundBrush = tabHighlightBrush;
-                }
-            }
-        }
+		private readonly IBrush temporaryTabHighlighBrush;
 
-        private EditorViewModel temporaryDocument;
-        public EditorViewModel TemporaryDocument
-        {
-            get { return temporaryDocument; }
-            set { temporaryDocument = value; }
-        }
+		public DocumentTabsViewModel()
+		{
+			Documents = new ObservableCollection<EditorViewModel>();
+			Documents.CollectionChanged += (sender, e) =>
+			{
+				if (e.Action == NotifyCollectionChangedAction.Remove)
+				{
+					Dispatcher.UIThread.InvokeAsync(async () =>
+					{
+						await Task.Delay(25);
+						GC.Collect();
+					});
+				}
+			};
 
-        private IBrush tabBackgroundBrush;
-        public IBrush TabBackgroundBrush
-        {
-            get { return tabBackgroundBrush; }
-            set { this.RaiseAndSetIfChanged(ref tabBackgroundBrush, value); }
-        }
+			tabBrush = Brush.Parse("#007ACC");
+			tabHighlightBrush = Brush.Parse("#1c97ea");
 
-        private IBrush hoverTabBackgroundBrush;
-        public IBrush HoverTabBackgroundBrush
-        {
-            get { return hoverTabBackgroundBrush; }
-            set { this.RaiseAndSetIfChanged(ref hoverTabBackgroundBrush, value); }
-        }
-    }
+			temporaryTabBrush = Brush.Parse("#68217A");
+			temporaryTabHighlighBrush = Brush.Parse("#B064AB");
+		}
+
+		public ObservableCollection<EditorViewModel> Documents
+		{
+			get { return documents; }
+			set { this.RaiseAndSetIfChanged(ref documents, value); }
+		}
+
+		public EditorViewModel SelectedDocument
+		{
+			get { return selectedDocument; }
+			set
+			{
+				this.RaiseAndSetIfChanged(ref selectedDocument, value);
+
+				// Dispatcher invoke is hack to make sure the Editor propery has been generated.
+				Dispatcher.UIThread.InvokeAsync(() => { value?.Model.Editor?.Focus(); });
+
+				if (value == TemporaryDocument)
+				{
+					TabBackgroundBrush = temporaryTabBrush;
+					HoverTabBackgroundBrush = temporaryTabHighlighBrush;
+				}
+				else
+				{
+					TabBackgroundBrush = tabBackgroundBrush;
+					HoverTabBackgroundBrush = tabHighlightBrush;
+				}
+			}
+		}
+
+		public EditorViewModel TemporaryDocument { get; set; }
+
+		public IBrush TabBackgroundBrush
+		{
+			get { return tabBackgroundBrush; }
+			set { this.RaiseAndSetIfChanged(ref tabBackgroundBrush, value); }
+		}
+
+		public IBrush HoverTabBackgroundBrush
+		{
+			get { return hoverTabBackgroundBrush; }
+			set { this.RaiseAndSetIfChanged(ref hoverTabBackgroundBrush, value); }
+		}
+	}
 }

@@ -1,61 +1,56 @@
+using System;
+using AvalonStudio.MVVM;
+using AvalonStudio.Projects;
+
 namespace AvalonStudio.Debugging.GDB.JLink
 {
-    using AvalonStudio.MVVM;
-    using AvalonStudio.Projects;
-    using ReactiveUI;
-    using System;
-    using System.Collections.Generic;
+	public class JLinkSettingsFormViewModel : ViewModel<IProject>
+	{
+		private int interfaceSelectedIndex;
 
-    public class JLinkSettingsFormViewModel : ViewModel<IProject>
-    {
-        private JLinkSettings settings;
+		private JlinkInterfaceType interfaceType;
+		private readonly JLinkSettings settings;
 
-        public JLinkSettingsFormViewModel(IProject model) : base(model)
-        {
-            settings = JLinkDebugAdaptor.GetSettings(model);
+		public JLinkSettingsFormViewModel(IProject model) : base(model)
+		{
+			settings = JLinkDebugAdaptor.GetSettings(model);
 
-            //InterfaceOptions = new List<string>(Enum.GetNames(typeof(JlinkInterfaceType)));
-            interfaceSelectedIndex = (int)settings.Interface;
-            interfaceType = settings.Interface;
+			//InterfaceOptions = new List<string>(Enum.GetNames(typeof(JlinkInterfaceType)));
+			interfaceSelectedIndex = (int) settings.Interface;
+			interfaceType = settings.Interface;
+		}
 
-        }
+		public string[] InterfaceOptions
+		{
+			get { return Enum.GetNames(typeof (JlinkInterfaceType)); }
+		}
 
-        private void Save()
-        {
-            settings.Interface = (JlinkInterfaceType)interfaceSelectedIndex;            
+		public int InterfaceSelectedIndex
+		{
+			get { return interfaceSelectedIndex; }
+			set
+			{
+				interfaceSelectedIndex = value;
+				InterfaceType = (JlinkInterfaceType) interfaceSelectedIndex;
+			}
+		}
 
-            JLinkDebugAdaptor.SetSettings(Model, settings);
-            Model.Save();
-        }
+		public JlinkInterfaceType InterfaceType
+		{
+			get { return interfaceType; }
+			set
+			{
+				interfaceType = value;
+				Save();
+			}
+		}
 
-        public string[] InterfaceOptions
-        {
-            get
-            {
-                return Enum.GetNames(typeof(JlinkInterfaceType));
-            }
-        }
+		private void Save()
+		{
+			settings.Interface = (JlinkInterfaceType) interfaceSelectedIndex;
 
-        private int interfaceSelectedIndex;
-        public int InterfaceSelectedIndex
-        {
-            get { return interfaceSelectedIndex; }
-            set
-            {                
-                interfaceSelectedIndex = value;
-                InterfaceType = (JlinkInterfaceType)interfaceSelectedIndex;                            
-            }
-        }
-
-        private JlinkInterfaceType interfaceType;
-        public JlinkInterfaceType InterfaceType
-        {
-            get { return interfaceType; }
-            set
-            {
-                interfaceType = value;                
-                Save();                
-            }
-        }     
-    }
+			JLinkDebugAdaptor.SetSettings(Model, settings);
+			Model.Save();
+		}
+	}
 }

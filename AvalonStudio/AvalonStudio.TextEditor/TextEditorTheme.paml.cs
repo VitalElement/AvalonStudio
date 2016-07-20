@@ -1,14 +1,13 @@
+using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
+
 namespace AvalonStudio.TextEditor
 {
-    using Avalonia;
-    using Avalonia.Markup.Xaml;
-    using Avalonia.Styling;
-
-    public class TextEditorTheme : Styles
-    {
-        public TextEditorTheme()
-        {
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+	public class TextEditorTheme : Styles
+	{
+		public TextEditorTheme()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

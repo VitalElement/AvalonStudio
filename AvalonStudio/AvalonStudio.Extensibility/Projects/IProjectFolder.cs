@@ -1,22 +1,22 @@
+using System.Collections.ObjectModel;
+
 namespace AvalonStudio.Projects
 {
-	using System.Collections.ObjectModel;
-
 	public interface IProjectFolder : IProjectItem
 	{
 		/// <summary>
-		/// List of items within the project folder
+		///     List of items within the project folder
 		/// </summary>
 		ObservableCollection<IProjectItem> Items { get; }
+
+		string Location { get; }
+
+		string LocationDirectory { get; }
 
 		void AddFile(ISourceFile file);
 		void AddFolder(IProjectFolder folder);
 
 		void RemoveFile(ISourceFile file);
 		void RemoveFolder(IProjectFolder folder);
-
-		string Location { get; }
-
-		string LocationDirectory { get; }
 	}
 }

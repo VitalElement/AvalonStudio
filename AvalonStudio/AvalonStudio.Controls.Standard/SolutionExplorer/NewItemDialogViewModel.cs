@@ -9,55 +9,58 @@ using ReactiveUI;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    public class NewItemDialogViewModel : ModalDialogViewModelBase
-    {
-        public NewItemDialogViewModel(IProjectFolder folder) : base("New Item")
-        {
-            var shell = IoC.Get<IShell>();
-            templates = new ObservableCollection<ICodeTemplate>();
+	public class NewItemDialogViewModel : ModalDialogViewModelBase
+	{
+		private IProjectFolder folder;
 
-            var compatibleTemplates = shell.CodeTemplates.Where(t => t.IsCompatible(folder.Project));
+		private ICodeTemplate selectedTemplate;
 
-            foreach (var template in compatibleTemplates)
-            {
-                templates.Add(template);
-            }
+		private ObservableCollection<ICodeTemplate> templates;
 
-            SelectedTemplate = this.templates.FirstOrDefault();
+		public NewItemDialogViewModel(IProjectFolder folder) : base("New Item")
+		{
+			var shell = IoC.Get<IShell>();
+			templates = new ObservableCollection<ICodeTemplate>();
 
-            this.folder = folder;
+			var compatibleTemplates = shell.CodeTemplates.Where(t => t.IsCompatible(folder.Project));
 
-            OKCommand = ReactiveCommand.Create();
+			foreach (var template in compatibleTemplates)
+			{
+				templates.Add(template);
+			}
 
-            OKCommand.Subscribe(_ =>
-            {
-                SelectedTemplate?.Generate(folder);
+			SelectedTemplate = templates.FirstOrDefault();
 
-                Close();
-            });
-        }
+			this.folder = folder;
 
-        private ICodeTemplate selectedTemplate;
-        public ICodeTemplate SelectedTemplate
-        {
-            get { return selectedTemplate; }
-            set { this.RaiseAndSetIfChanged(ref selectedTemplate, value); }
-        }
+			OKCommand = ReactiveCommand.Create();
 
-        private ObservableCollection<ICodeTemplate> templates;
-        public ObservableCollection<ICodeTemplate> Templates
-        {
-            get { return templates; }
-            set { this.RaiseAndSetIfChanged(ref templates, value); }
-        }
+			OKCommand.Subscribe(_ =>
+			{
+				SelectedTemplate?.Generate(folder);
 
-        private IProjectFolder folder;
-        public IProjectFolder Folder
-        {
-            get { return folder; }
-            set { this.RaiseAndSetIfChanged(ref folder, value); }
-        }
+				Close();
+			});
+		}
 
-        public override ReactiveCommand<object> OKCommand { get; protected set; }
-    }
+		public ICodeTemplate SelectedTemplate
+		{
+			get { return selectedTemplate; }
+			set { this.RaiseAndSetIfChanged(ref selectedTemplate, value); }
+		}
+
+		public ObservableCollection<ICodeTemplate> Templates
+		{
+			get { return templates; }
+			set { this.RaiseAndSetIfChanged(ref templates, value); }
+		}
+
+		public IProjectFolder Folder
+		{
+			get { return folder; }
+			set { this.RaiseAndSetIfChanged(ref folder, value); }
+		}
+
+		public override ReactiveCommand<object> OKCommand { get; protected set; }
+	}
 }

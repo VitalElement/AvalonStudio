@@ -1,42 +1,38 @@
 namespace AvalonStudio.Debugging.GDB
 {
-    public class VarEvaluateExpressionCommand : Command<GDBResponse<string>>
-    {
-        public override int TimeoutMs
-        {
-            get
-            {
-                return DefaultCommandTimeout;
-            }
-        }
+	public class VarEvaluateExpressionCommand : Command<GDBResponse<string>>
+	{
+		private readonly string commandText;
 
-        public VarEvaluateExpressionCommand (string expression)
-        {
-            commandText = string.Format ("-var-evaluate-expression {0}", expression);
-        }
+		public VarEvaluateExpressionCommand(string expression)
+		{
+			commandText = string.Format("-var-evaluate-expression {0}", expression);
+		}
 
-        private string commandText;
+		public override int TimeoutMs
+		{
+			get { return DefaultCommandTimeout; }
+		}
 
-        public override string Encode ()
-        {
-            return commandText;
-        }
+		public override string Encode()
+		{
+			return commandText;
+		}
 
-        protected override GDBResponse<string> Decode (string response)
-        {
-            var result = new GDBResponse<string> (DecodeResponseCode (response));
+		protected override GDBResponse<string> Decode(string response)
+		{
+			var result = new GDBResponse<string>(DecodeResponseCode(response));
 
-            if(result.Response == ResponseCode.Done)
-            {
-                result.Value = response.Substring (6).ToNameValuePair().Value;
-            }
+			if (result.Response == ResponseCode.Done)
+			{
+				result.Value = response.Substring(6).ToNameValuePair().Value;
+			}
 
-            return result;
-        }
+			return result;
+		}
 
-        public override void OutOfBandDataReceived (string data)
-        {
-            
-        }
-    }
+		public override void OutOfBandDataReceived(string data)
+		{
+		}
+	}
 }

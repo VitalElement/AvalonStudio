@@ -1,18 +1,18 @@
 using Avalonia.Controls;
-using Avalonia;
+using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Debugging.GDB.JLink
 {
-    public class JLinkSettingsFormView : UserControl
-    {
-        public JLinkSettingsFormView()
-        {
-            this.InitializeComponent();
-        }
+	public class JLinkSettingsFormView : UserControl
+	{
+		public JLinkSettingsFormView()
+		{
+			InitializeComponent();
+		}
 
-        private void InitializeComponent()
-        {
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

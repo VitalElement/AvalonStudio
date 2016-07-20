@@ -1,18 +1,18 @@
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+
 namespace AvalonStudio.Debugging
 {
-    using Avalonia.Controls;
-    using Avalonia;
+	public class DisassemblyView : UserControl
+	{
+		public DisassemblyView()
+		{
+			InitializeComponent();
+		}
 
-    public class DisassemblyView : UserControl
-    {
-        public DisassemblyView()
-        {
-            this.InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }
