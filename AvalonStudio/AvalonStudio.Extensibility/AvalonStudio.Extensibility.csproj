@@ -205,8 +205,10 @@
     <Compile Include="MainMenu\Models\MenuModel.cs" />
     <Compile Include="MainMenu\Models\StandardMenuItem.cs" />
     <Compile Include="MainMenu\Models\TextMenuItem.cs" />
+    <Compile Include="MainMenu\ViewModels\MainMenuView.paml.cs">
+      <DependentUpon>MainMenuView.paml</DependentUpon>
+    </Compile>
     <Compile Include="MainMenu\ViewModels\MainMenuViewModel.cs" />
-    <Compile Include="MainMenu\ViewModels\MainMenuView.paml.cs" />
     <Compile Include="MainToolBar\ToolBarDefinitions.cs" />
     <Compile Include="Menus\MenuDefinitionAttribute.cs" />
     <Compile Include="MVVM\BindableCollection.cs" />
