@@ -1,135 +1,138 @@
+using System;
+using Avalonia.Media;
+using Avalonia.Threading;
+using AvalonStudio.TextEditor.Document;
+using AvalonStudio.TextEditor.Rendering;
+
 namespace AvalonStudio.Languages.CPlusPlus.Rendering
 {
-    using System;
-    using Languages;
-    using Avalonia;
-    using Avalonia.Media;
-    using Avalonia.Threading;
-    using TextEditor.Document;
-    using TextEditor.Rendering;
+	public class TextColoringTransformer : IDocumentLineTransformer
+	{
+		private readonly TextDocument document;
 
-    public class TextColoringTransformer : IDocumentLineTransformer
-    {
-        public TextColoringTransformer(TextDocument document)
-        {
-            this.document = document;
+		public TextColoringTransformer(TextDocument document)
+		{
+			this.document = document;
 
-            TextTransformations = new TextSegmentCollection<TextTransformation>(document);
+			TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
-            CommentBrush = Brush.Parse("#559A3F");
-            CallExpressionBrush = Brush.Parse("Yellow");
-            IdentifierBrush = Brush.Parse("#D4D4D4");
-            KeywordBrush = Brush.Parse("#569CD6");
-            LiteralBrush = Brush.Parse("#D69D85");
-            PunctuationBrush = Brush.Parse("#D4D4D4");
-            UserTypeBrush = Brush.Parse("#4BB289");
-        }
+			CommentBrush = Brush.Parse("#559A3F");
+			CallExpressionBrush = Brush.Parse("Yellow");
+			IdentifierBrush = Brush.Parse("#D4D4D4");
+			KeywordBrush = Brush.Parse("#569CD6");
+			LiteralBrush = Brush.Parse("#D69D85");
+			PunctuationBrush = Brush.Parse("#D4D4D4");
+			UserTypeBrush = Brush.Parse("#4BB289");
+		}
 
-        private TextDocument document;
+		public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
 
-        public event EventHandler<EventArgs> DataChanged;
+		public IBrush PunctuationBrush { get; set; }
 
-        public void SetTransformations(SyntaxHighlightDataList highlightData)
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                var transformations = new TextSegmentCollection<TextTransformation>(document);
+		public IBrush KeywordBrush { get; set; }
 
-                foreach (var transform in highlightData)
-                {
-                    transformations.Add(new TextTransformation { Foreground = GetBrush(transform.Type), StartOffset = transform.Start, EndOffset = transform.Start + transform.Length });
-                }
+		public IBrush IdentifierBrush { get; set; }
 
-                TextTransformations = transformations;
+		public IBrush LiteralBrush { get; set; }
 
-                if(this.DataChanged != null)
-                {
-                    this.DataChanged(this, new EventArgs());
-                }
-            });
-        }
+		public IBrush UserTypeBrush { get; set; }
 
-        public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
+		public IBrush CallExpressionBrush { get; set; }
 
-        public void UpdateOffsets(DocumentChangeEventArgs e)
-        {
-            if (TextTransformations != null)
-            {
-                TextTransformations.UpdateOffsets(e);
-            }
-        }
+		public IBrush CommentBrush { get; set; }
 
-        public IBrush PunctuationBrush { get; set; }
+		public event EventHandler<EventArgs> DataChanged;
 
-        public IBrush KeywordBrush { get; set; }
+		public void TransformLine(TextView textView, VisualLine line)
+		{
+			var transformsInLine = TextTransformations.FindOverlappingSegments(line);
 
-        public IBrush IdentifierBrush { get; set; }
+			foreach (var transform in transformsInLine)
+			{
+				var formattedOffset = 0;
 
-        public IBrush LiteralBrush { get; set; }
+				if (transform.StartOffset > line.Offset)
+				{
+					formattedOffset = transform.StartOffset - line.Offset;
+				}
 
-        public IBrush UserTypeBrush { get; set; }
+				line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset);
+			}
+		}
 
-        public IBrush CallExpressionBrush { get; set; }
+		public void SetTransformations(SyntaxHighlightDataList highlightData)
+		{
+			Dispatcher.UIThread.InvokeAsync(() =>
+			{
+				var transformations = new TextSegmentCollection<TextTransformation>(document);
 
-        public IBrush CommentBrush { get; set; }
+				foreach (var transform in highlightData)
+				{
+					transformations.Add(new TextTransformation
+					{
+						Foreground = GetBrush(transform.Type),
+						StartOffset = transform.Start,
+						EndOffset = transform.Start + transform.Length
+					});
+				}
 
-        public IBrush GetBrush(HighlightType type)
-        {
-            IBrush result;
+				TextTransformations = transformations;
 
-            switch (type)
-            {
-                case HighlightType.Comment:
-                    result = CommentBrush;
-                    break;
+				if (DataChanged != null)
+				{
+					DataChanged(this, new EventArgs());
+				}
+			});
+		}
 
-                case HighlightType.Identifier:
-                    result = IdentifierBrush;
-                    break;
+		public void UpdateOffsets(DocumentChangeEventArgs e)
+		{
+			if (TextTransformations != null)
+			{
+				TextTransformations.UpdateOffsets(e);
+			}
+		}
 
-                case HighlightType.Keyword:
-                    result = KeywordBrush;
-                    break;
+		public IBrush GetBrush(HighlightType type)
+		{
+			IBrush result;
 
-                case HighlightType.Literal:
-                    result = LiteralBrush;
-                    break;
+			switch (type)
+			{
+				case HighlightType.Comment:
+					result = CommentBrush;
+					break;
 
-                case HighlightType.Punctuation:
-                    result = PunctuationBrush;
-                    break;
+				case HighlightType.Identifier:
+					result = IdentifierBrush;
+					break;
 
-                case HighlightType.UserType:
-                    result = UserTypeBrush;
-                    break;
+				case HighlightType.Keyword:
+					result = KeywordBrush;
+					break;
 
-                case HighlightType.CallExpression:
-                    result = CallExpressionBrush;
-                    break;
+				case HighlightType.Literal:
+					result = LiteralBrush;
+					break;
 
-                default:
-                    result = Brushes.Red;
-                    break;
-            }
+				case HighlightType.Punctuation:
+					result = PunctuationBrush;
+					break;
 
-            return result;
-        }
+				case HighlightType.UserType:
+					result = UserTypeBrush;
+					break;
 
-        public void TransformLine(TextView textView, VisualLine line)
-        {
-            var transformsInLine = TextTransformations.FindOverlappingSegments(line);
+				case HighlightType.CallExpression:
+					result = CallExpressionBrush;
+					break;
 
-            foreach (var transform in transformsInLine)
-            {
-                var formattedOffset = 0;
+				default:
+					result = Brushes.Red;
+					break;
+			}
 
-                if (transform.StartOffset > line.Offset)
-                {
-                    formattedOffset = transform.StartOffset - line.Offset;
-                }
-
-                line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset);
-            }
-        }
-    }
+			return result;
+		}
+	}
 }

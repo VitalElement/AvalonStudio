@@ -1,18 +1,18 @@
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    using Avalonia;
-    using Avalonia.Controls;
-    using Avalonia.Markup.Xaml;
-    public class ToolchainSettingsFormView : UserControl
-    {
-        public ToolchainSettingsFormView()
-        {
-            this.InitializeComponent();
-        }
+	public class ToolchainSettingsFormView : UserControl
+	{
+		public ToolchainSettingsFormView()
+		{
+			InitializeComponent();
+		}
 
-        private void InitializeComponent()
-        {
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

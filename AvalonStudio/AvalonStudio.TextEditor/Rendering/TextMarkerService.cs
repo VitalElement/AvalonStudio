@@ -1,139 +1,138 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Avalonia;
+using Avalonia.Media;
+using AvalonStudio.TextEditor.Document;
+
 namespace AvalonStudio.TextEditor.Rendering
 {
-    using AvalonStudio.TextEditor.Document;
-    using Avalonia;
-    using Avalonia.Media;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+	public class TextMarkerService : IBackgroundRenderer
+	{
+		private readonly TextSegmentCollection<TextMarker> markers;
 
-    public class TextMarkerService : IBackgroundRenderer
-    {
-        private TextSegmentCollection<TextMarker> markers;
+		public TextMarkerService(TextDocument document)
+		{
+			markers = new TextSegmentCollection<TextMarker>(document);
+		}
 
-        public event EventHandler<EventArgs> DataChanged;
+		public event EventHandler<EventArgs> DataChanged;
 
-        public sealed class TextMarker : TextSegment
-        {
-            public TextMarker(int startOffset, int length)
-            {
-                StartOffset = startOffset;
-                Length = length;
-            }
+		public void Draw(TextView textView, DrawingContext drawingContext)
+		{
+		}
 
-            public Color? BackgroundColor { get; set; }
-            public Color MarkerColor { get; set; }
-            public string ToolTip { get; set; }
-        }
+		public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
+		{
+			if (markers == null)
+			{
+				return;
+			}
 
-        public TextMarkerService(TextDocument document)
-        {
-            markers = new TextSegmentCollection<TextMarker>(document);
+			var markersInLine = markers.FindOverlappingSegments(line);
 
-        }
+			foreach (var marker in markersInLine)
+			{
+				if (marker.Length == 0)
+				{
+					var endoffset = TextUtilities.GetNextCaretPosition(textView.TextDocument, marker.StartOffset,
+						TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
 
-        private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                yield return new Point(start.X + (i * offset), start.Y - ((i + 1) % 2 == 0 ? offset : 0));
-            }
-        }
+					if (endoffset == -1)
+					{
+						marker.Length = line.Length;
+					}
+					else
+					{
+						marker.EndOffset = endoffset;
+					}
+				}
 
-        public void Clear()
-        {
-            var toRemove = new List<TextMarker>();
+				if (marker.EndOffset < textView.TextDocument.TextLength)
+				{
+					foreach (var r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
+					{
+						var startPoint = r.BottomLeft;
+						var endPoint = r.BottomRight;
 
-            foreach (TextMarker marker in markers.ToList())
-            {
-                toRemove.Add(marker);
-                markers.Remove(marker);
-            }
-        }
+						var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
 
-        public void Create(int offset, int length, string message, Color markerColor)
-        {
-            var m = new TextMarker(offset, length);
-            markers.Add(m);
-            m.MarkerColor = markerColor;
-            m.ToolTip = message;            
-        }
+						const double offset = 2.5;
 
-        public void Update()
-        {
-            if(this.DataChanged != null)
-            {
-                DataChanged(this, new EventArgs());
-            }
-        }
+						var count = Math.Max((int) ((endPoint.X - startPoint.X)/offset) + 1, 4);
 
-        public IEnumerable<TextMarker> GetMarkersAtOffset(int offset)
-        {
-            return markers == null ? Enumerable.Empty<TextMarker>() : markers.FindSegmentsContaining(offset);
-        }
+						var geometry = new StreamGeometry();
 
-        public void Draw(TextView textView, DrawingContext drawingContext)
-        {
-            
-        }
+						using (var ctx = geometry.Open())
+						{
+							ctx.BeginFigure(startPoint, false);
 
-        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
-        {
-            if (markers == null)
-            {
-                return;
-            }
+							foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+							{
+								ctx.LineTo(point);
+							}
 
-            var markersInLine = markers.FindOverlappingSegments(line);
+							ctx.EndFigure(false);
+						}
 
-            foreach (TextMarker marker in markersInLine)
-            {
-                if (marker.Length == 0)
-                {
-                    var endoffset = TextUtilities.GetNextCaretPosition(textView.TextDocument, marker.StartOffset, TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
+						drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
+						break;
+					}
+				}
+			}
+		}
 
-                    if (endoffset == -1)
-                    {
-                        marker.Length = line.Length;
-                    }
-                    else
-                    {
-                        marker.EndOffset = endoffset;
-                    }
-                }
+		private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
+		{
+			for (var i = 0; i < count; i++)
+			{
+				yield return new Point(start.X + i*offset, start.Y - ((i + 1)%2 == 0 ? offset : 0));
+			}
+		}
 
-                if (marker.EndOffset < textView.TextDocument.TextLength)
-                {
-                    foreach (Rect r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
-                    {
-                        Point startPoint = r.BottomLeft;
-                        Point endPoint = r.BottomRight;
+		public void Clear()
+		{
+			var toRemove = new List<TextMarker>();
 
-                        var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
+			foreach (var marker in markers.ToList())
+			{
+				toRemove.Add(marker);
+				markers.Remove(marker);
+			}
+		}
 
-                        const double offset = 2.5;
+		public void Create(int offset, int length, string message, Color markerColor)
+		{
+			var m = new TextMarker(offset, length);
+			markers.Add(m);
+			m.MarkerColor = markerColor;
+			m.ToolTip = message;
+		}
 
-                        int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
+		public void Update()
+		{
+			if (DataChanged != null)
+			{
+				DataChanged(this, new EventArgs());
+			}
+		}
 
-                        var geometry = new StreamGeometry();
+		public IEnumerable<TextMarker> GetMarkersAtOffset(int offset)
+		{
+			return markers == null ? Enumerable.Empty<TextMarker>() : markers.FindSegmentsContaining(offset);
+		}
 
-                        using (StreamGeometryContext ctx = geometry.Open())
-                        {
-                            ctx.BeginFigure(startPoint, false);
+		public sealed class TextMarker : TextSegment
+		{
+			public TextMarker(int startOffset, int length)
+			{
+				StartOffset = startOffset;
+				Length = length;
+			}
 
-                            foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
-                            {
-                                ctx.LineTo(point);
-                            }
-
-                            ctx.EndFigure(false);
-                        }
-
-                        drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
-                        break;
-                    }
-                }
-            }
-        }
-    }
+			public Color? BackgroundColor { get; set; }
+			public Color MarkerColor { get; set; }
+			public string ToolTip { get; set; }
+		}
+	}
 }

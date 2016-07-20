@@ -1,116 +1,94 @@
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Avalonia.Threading;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.MVVM;
+using ReactiveUI;
+
 namespace AvalonStudio.Debugging
 {
-    using AvalonStudio.MVVM;
-    using Debugging;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using ReactiveUI;
-    using System.Collections.ObjectModel;
-    using Extensibility.Plugin;
-    using Extensibility;
-    using Avalonia.Threading;
+	public class CallStackViewModel : ToolViewModel, IExtension
+	{
+		private IDebugManager _debugManager;
 
-    public class CallStackViewModel : ToolViewModel, IExtension
-    {
-        private IDebugManager _debugManager;
+		private FrameViewModel selectedFrame;
 
-        public CallStackViewModel ()
-        {
-            Title = "CallStack";
+		public CallStackViewModel()
+		{
+			Title = "CallStack";
 
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                IsVisible = false;
-            });
-            
-            frames = new ObservableCollection<FrameViewModel>();
-        }
+			Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
 
-        public void Clear()
-        {
-            Frames.Clear();         
-        }
+			Frames = new ObservableCollection<FrameViewModel>();
+		}
 
-        public void Update(List<Frame> frames)
-        {
-            if (frames != null)
-            {
-                Frames.Clear();
+		public FrameViewModel SelectedFrame
+		{
+			get { return selectedFrame; }
+			set
+			{
+				selectedFrame = value;
 
-                foreach (var frame in frames)
-                {
-                    this.Frames.Add(new FrameViewModel(_debugManager, frame));
-                }
-            }
-        }
+				if (selectedFrame != null)
+				{
+					// TODO implement click interaction
+					//WorkspaceViewModel.Instance.OpenDocument(Workspace.This.SolutionExplorer.Model.FindFile(selectedFrame.Model.FullFileName.NormalizePath()), selectedFrame.Model.Line, 1, true, false, false, true);
+				}
 
-        public void BeforeActivation()
-        {
-            
-        }
+				this.RaisePropertyChanged(nameof(SelectedFrame));
+			}
+		}
 
-        public void Activation()
-        {
-            _debugManager = IoC.Get<IDebugManager>();
+		public ObservableCollection<FrameViewModel> Frames { get; set; }
 
-            _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+		public override Location DefaultLocation
+		{
+			get { return Location.BottomRight; }
+		}
 
-            _debugManager.DebugSessionStarted += (sender, e) =>
-            {
-                IsVisible = true;
-            };
+		public void BeforeActivation()
+		{
+		}
 
-            _debugManager.DebugSessionEnded += (sender, e) =>
-            {
-                IsVisible = false;
-                Clear();
-            };
-        }
+		public void Activation()
+		{
+			_debugManager = IoC.Get<IDebugManager>();
 
-        private async void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
-        {
-            var updates = await _debugManager.CurrentDebugger.ListStackFramesAsync();
+			_debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
 
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Update(updates);
-            });
-        }
+			_debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
-        private FrameViewModel selectedFrame;
-        public FrameViewModel SelectedFrame
-        {
-            get { return selectedFrame; }
-            set
-            {
-                selectedFrame = value;
+			_debugManager.DebugSessionEnded += (sender, e) =>
+			{
+				IsVisible = false;
+				Clear();
+			};
+		}
 
-                if (selectedFrame != null)
-                {
-                    // TODO implement click interaction
-                    //WorkspaceViewModel.Instance.OpenDocument(Workspace.This.SolutionExplorer.Model.FindFile(selectedFrame.Model.FullFileName.NormalizePath()), selectedFrame.Model.Line, 1, true, false, false, true);
-                }
+		public void Clear()
+		{
+			Frames.Clear();
+		}
 
-                this.RaisePropertyChanged(nameof(SelectedFrame));
-            }
-        }
+		public void Update(List<Frame> frames)
+		{
+			if (frames != null)
+			{
+				Frames.Clear();
 
-        private ObservableCollection<FrameViewModel> frames;
-        public ObservableCollection<FrameViewModel> Frames
-        {
-            get { return frames; }
-            set { frames = value; }
-        }
+				foreach (var frame in frames)
+				{
+					Frames.Add(new FrameViewModel(_debugManager, frame));
+				}
+			}
+		}
 
-        public override Location DefaultLocation
-        {
-            get
-            {
-                return Location.BottomRight;
-            }
-        }
-    }
+		private async void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+		{
+			var updates = await _debugManager.CurrentDebugger.ListStackFramesAsync();
+
+			Dispatcher.UIThread.InvokeAsync(() => { Update(updates); });
+		}
+	}
 }

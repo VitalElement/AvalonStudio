@@ -1,78 +1,74 @@
+using System.Collections.ObjectModel;
+using AvalonStudio.MVVM;
+using ReactiveUI;
+
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    using AvalonStudio.MVVM;
-    using ReactiveUI;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+	public class ReferenceViewModel : ViewModel<IProject>
+	{
+		private bool isReferenced;
 
-    public class ReferenceViewModel : ViewModel<IProject>
-    {
-        private IProject referencer;
+		private string name;
+		private readonly IProject referencer;
 
-        public ReferenceViewModel(IProject referencer, IProject referencee) : base(referencee)
-        {
-            this.referencer = referencer;
-            name = referencee.Name;
-            isReferenced = referencer.References.Contains(referencee);
-        }
+		public ReferenceViewModel(IProject referencer, IProject referencee) : base(referencee)
+		{
+			this.referencer = referencer;
+			name = referencee.Name;
+			isReferenced = referencer.References.Contains(referencee);
+		}
 
-        private string name;
-        public string Name
-        {
-            get { return name; }
-            set { this.RaiseAndSetIfChanged(ref name, value); }
-        }
+		public string Name
+		{
+			get { return name; }
+			set { this.RaiseAndSetIfChanged(ref name, value); }
+		}
 
-        private bool isReferenced;
-        public bool IsReferenced
-        {
-            get { return isReferenced; }
-            set
-            {
-                if (isReferenced != value)
-                {
-                    isReferenced = value;
+		public bool IsReferenced
+		{
+			get { return isReferenced; }
+			set
+			{
+				if (isReferenced != value)
+				{
+					isReferenced = value;
 
-                    if (value)
-                    {
-                        referencer.AddReference(Model);
-                    }
-                    else
-                    {
-                        referencer.RemoveReference(Model);
-                    }
+					if (value)
+					{
+						referencer.AddReference(Model);
+					}
+					else
+					{
+						referencer.RemoveReference(Model);
+					}
 
-                    referencer.Save();
-                }
-            }
-        }
-    }
+					referencer.Save();
+				}
+			}
+		}
+	}
 
-    public class ReferenceSettingsFormViewModel :HeaderedViewModel<CPlusPlusProject>
-    {
-        public ReferenceSettingsFormViewModel(CPlusPlusProject model) : base("References", model)
-        {
-            projects = new ObservableCollection<ReferenceViewModel>();
+	public class ReferenceSettingsFormViewModel : HeaderedViewModel<CPlusPlusProject>
+	{
+		private ObservableCollection<ReferenceViewModel> projects;
 
-            foreach(var project in model.Solution.Projects)
-            {
-                if(project != model)
-                {
-                    projects.Add(new ReferenceViewModel(model, project));
-                }
-            }
-        }
+		public ReferenceSettingsFormViewModel(CPlusPlusProject model) : base("References", model)
+		{
+			projects = new ObservableCollection<ReferenceViewModel>();
 
-        private ObservableCollection<ReferenceViewModel> projects;
-        public ObservableCollection<ReferenceViewModel> Projects
-        {
-            get { return projects; }
-            set { this.RaiseAndSetIfChanged(ref projects, value); }
-        }
+			foreach (var project in model.Solution.Projects)
+			{
+				if (project != model)
+				{
+					projects.Add(new ReferenceViewModel(model, project));
+				}
+			}
+		}
 
-    }
+		public ObservableCollection<ReferenceViewModel> Projects
+		{
+			get { return projects; }
+			set { this.RaiseAndSetIfChanged(ref projects, value); }
+		}
+	}
 }

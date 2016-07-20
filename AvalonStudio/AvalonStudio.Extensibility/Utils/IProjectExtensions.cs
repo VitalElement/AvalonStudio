@@ -1,29 +1,26 @@
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using System.Reflection;
+
 namespace AvalonStudio.Utils
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Dynamic;
-	using System.Linq;
-	using System.Text;
-	using System.Threading.Tasks;
-	using System.Web.Script.Serialization;
-	using System.Reflection;
-
 	public static class Mapper
 	{
 		public static void Map(ExpandoObject source, Type resultType, object destination)
-		{			
-			Dictionary<string, PropertyInfo> _propertyMap = 
+		{
+			var _propertyMap =
 				resultType
 					.GetProperties()
 					.ToDictionary(
-						p => p.Name.ToLower(), 
+						p => p.Name.ToLower(),
 						p => p
 					);
 
 			// Might as well take care of null references early.
 			if (source == null)
-				throw new ArgumentNullException("source");			
+				throw new ArgumentNullException("source");
 
 			// By iterating the KeyValuePair<string, object> of
 			// source we can avoid manually searching the keys of
@@ -34,32 +31,43 @@ namespace AvalonStudio.Utils
 				if (_propertyMap.TryGetValue(kv.Key.ToLower(), out p))
 				{
 					var propType = p.PropertyType;
-					if (kv.Value == null) {
-						if (!propType.IsByRef && propType.Name != "Nullable`1") {
+					if (kv.Value == null)
+					{
+						if (!propType.IsByRef && propType.Name != "Nullable`1")
+						{
 							// Throw if type is a value type 
 							// but not Nullable<>
-							throw new ArgumentException ("not nullable");
-						}
-					} else if (kv.Value.GetType () == typeof(ExpandoObject)) {
-						var obj = Activator.CreateInstance(propType);
-						Mapper.Map (kv.Value as ExpandoObject, propType, obj);
-						p.SetValue (destination, obj);
-					}else if (kv.Value.GetType () == typeof(List<object>)) {
-						if (p.PropertyType == typeof(List<string>)) {
-							p.SetValue(destination, (kv.Value as List<object>).Cast<string> ().ToList (), null);
-						}
-					} else {
-						if (p.PropertyType.IsEnum) {
-							p.SetValue (destination, Enum.Parse (p.PropertyType, kv.Value as string));
-						} else if (kv.Value is IConvertible) {
-							p.SetValue(destination, Convert.ChangeType (kv.Value, p.PropertyType), null);
-						}
-						else {
-
-							p.SetValue (destination, kv.Value, null);
+							throw new ArgumentException("not nullable");
 						}
 					}
-
+					else if (kv.Value.GetType() == typeof (ExpandoObject))
+					{
+						var obj = Activator.CreateInstance(propType);
+						Map(kv.Value as ExpandoObject, propType, obj);
+						p.SetValue(destination, obj);
+					}
+					else if (kv.Value.GetType() == typeof (List<object>))
+					{
+						if (p.PropertyType == typeof (List<string>))
+						{
+							p.SetValue(destination, (kv.Value as List<object>).Cast<string>().ToList(), null);
+						}
+					}
+					else
+					{
+						if (p.PropertyType.IsEnum)
+						{
+							p.SetValue(destination, Enum.Parse(p.PropertyType, kv.Value as string));
+						}
+						else if (kv.Value is IConvertible)
+						{
+							p.SetValue(destination, Convert.ChangeType(kv.Value, p.PropertyType), null);
+						}
+						else
+						{
+							p.SetValue(destination, kv.Value, null);
+						}
+					}
 				}
 			}
 		}
@@ -73,9 +81,9 @@ namespace AvalonStudio.Utils
 			//var jsSerializer = new JavaScriptSerializer();
 			//return jsSerializer.ConvertToType<T>(obj);
 
-			T result = (T)Activator.CreateInstance(typeof(T));
+			var result = (T) Activator.CreateInstance(typeof (T));
 
-			Mapper.Map (obj, typeof(T), result); 
+			Mapper.Map(obj, typeof (T), result);
 
 			return result;
 		}

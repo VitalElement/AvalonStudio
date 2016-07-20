@@ -1,51 +1,54 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Threading.Tasks;
+using AvalonStudio.Projects;
+using AvalonStudio.TextEditor.Document;
+using AvalonStudio.TextEditor.Indentation;
+using AvalonStudio.TextEditor.Rendering;
+
 namespace AvalonStudio.Languages
 {
-    using Projects;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.Composition;
-    using TextEditor.Document;
-    using TextEditor.Indentation;
-    using TextEditor.Rendering;
-    using TextEditor;
-    using System.Threading.Tasks;
+	[InheritedExport(typeof (ILanguageService))]
+	public interface ILanguageService
+	{
+		IIndentationStrategy IndentationStrategy { get; }
 
-    [InheritedExport(typeof(ILanguageService))]
-    public interface ILanguageService
-    {
-        Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles);
+		/// <summary>
+		///     A description of the language supported by the service, i.e. C/C++
+		/// </summary>
+		string Title { get; }
 
-        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
+		/// <summary>
+		///     The base type that all Project templates for this language must inherit. This base class must implement
+		///     IProjectTemplate.
+		/// </summary>
+		Type BaseTemplateType { get; }
 
-        IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file);
+		Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column,
+			List<UnsavedFile> unsavedFiles);
 
-        IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
+		Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
+			Func<bool> interruptRequested);
 
-        void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl, TextEditor editor, ISourceFile file, TextDocument textDocument);
+		IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file);
 
-        void UnregisterSourceFile(TextEditor editor, ISourceFile file);
+		IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-        bool CanHandle(ISourceFile file);
+		void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl,
+			TextEditor.TextEditor editor, ISourceFile file, TextDocument textDocument);
 
-        int Format(TextDocument textDocument, uint offset, uint length, int cursor);
+		void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file);
 
-        int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
-        int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
+		bool CanHandle(ISourceFile file);
 
-        IIndentationStrategy IndentationStrategy { get; }
+		int Format(TextDocument textDocument, uint offset, uint length, int cursor);
 
-        Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
+		int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
+		int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
 
-        Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
+		Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
 
-        /// <summary>
-        /// A description of the language supported by the service, i.e. C/C++
-        /// </summary>
-        string Title { get; }
-
-        /// <summary>
-        /// The base type that all Project templates for this language must inherit. This base class must implement IProjectTemplate.
-        /// </summary>
-        Type BaseTemplateType { get; }
-    }
+		Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
+	}
 }

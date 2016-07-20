@@ -1,83 +1,77 @@
+using System;
+using System.ComponentModel.Composition;
+using System.Windows.Input;
+using Avalonia.Controls.Shapes;
+using Avalonia.Input;
+using Avalonia.Media;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Commands;
+using AvalonStudio.Shell;
+using ReactiveUI;
+using Key = Avalonia.Input.Key;
+
 namespace AvalonStudio.Debugging.Commands
 {
-    using AvalonStudio.Extensibility.Commands;
-    using Debugging;
-    using Extensibility;
-    using Avalonia.Controls;
-    using Avalonia.Input;
-    using Projects;
-    using ReactiveUI;
-    using Shell;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.Composition;
-    using Utils;
-    using Avalonia.Controls.Shapes;
-    using Avalonia.Media;
+	[CommandDefinition]
+	internal class StartDebuggingCommandDefinition : CommandDefinition
+	{
+		[Export] public static CommandKeyboardShortcut KeyGesture =
+			new CommandKeyboardShortcut<StartDebuggingCommandDefinition>(new KeyGesture {Key = Key.F5});
 
-    [CommandDefinition]
-    class StartDebuggingCommandDefinition : CommandDefinition
-    {
-        public StartDebuggingCommandDefinition()
-        {
-            command = ReactiveCommand.Create();
-            command.Subscribe(_ =>
-            {
-                var manager = IoC.Get<IDebugManager>();
-                
-                if(manager.CurrentDebugger == null)
-                {
-                    var shell = IoC.Get<IShell>();
-                    
-                    var project = shell.GetDefaultProject();
+		private readonly ReactiveCommand<object> command;
 
-                    if (project != null)
-                    {
-                        manager.StartDebug(project);
-                    }
-                }   
-                else
-                {
-                    manager.Continue();
-                }             
-            });
-        }
+		public StartDebuggingCommandDefinition()
+		{
+			command = ReactiveCommand.Create();
+			command.Subscribe(_ =>
+			{
+				var manager = IoC.Get<IDebugManager>();
 
-        private ReactiveCommand<object> command;
+				if (manager.CurrentDebugger == null)
+				{
+					var shell = IoC.Get<IShell>();
 
-        public override System.Windows.Input.ICommand Command
-        {
-            get
-            {
-                return command;
-            }
-        }
+					var project = shell.GetDefaultProject();
 
-        public override string Text
-        {
-            get
-            {
-                return "Start Debugging";
-            }
-        }
+					if (project != null)
+					{
+						manager.StartDebug(project);
+					}
+				}
+				else
+				{
+					manager.Continue();
+				}
+			});
+		}
 
-        public override string ToolTip
-        {
-            get
-            {
-                return "Starts a debug session.";
-            }
-        }
+		public override ICommand Command
+		{
+			get { return command; }
+		}
 
-        public override Path IconPath
-        {
-            get
-            {
-                return new Path() { Fill = Brush.Parse("#FF8DD28A"), UseLayoutRounding = false, Stretch = Stretch.Uniform, Data = StreamGeometry.Parse("M8,5.14V19.14L19,12.14L8,5.14Z") };
-            }
-        }
+		public override string Text
+		{
+			get { return "Start Debugging"; }
+		}
 
-        [Export]
-        public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<StartDebuggingCommandDefinition>(new KeyGesture() { Key = Key.F5 });
-    }
+		public override string ToolTip
+		{
+			get { return "Starts a debug session."; }
+		}
+
+		public override Path IconPath
+		{
+			get
+			{
+				return new Path
+				{
+					Fill = Brush.Parse("#FF8DD28A"),
+					UseLayoutRounding = false,
+					Stretch = Stretch.Uniform,
+					Data = StreamGeometry.Parse("M8,5.14V19.14L19,12.14L8,5.14Z")
+				};
+			}
+		}
+	}
 }

@@ -1,60 +1,55 @@
 namespace AvalonStudio.Debugging.GDB
 {
-    using System;
+	public class SetBreakPointCommand : Command<GDBResponse<LiveBreakPoint>>
+	{
+		private readonly string commandText;
 
-    public class SetBreakPointCommand : Command<GDBResponse<LiveBreakPoint>>
-    {
-        public override int TimeoutMs
-        {
-            get
-            {
-                return DefaultCommandTimeout;
-            }
-        }
+		public SetBreakPointCommand(string filename, uint linenumber)
+		{
+			commandText = string.Format("-break-insert {0}:{1}", filename, linenumber);
+		}
 
-        public SetBreakPointCommand(string filename, UInt32 linenumber)
-        {
-            commandText = string.Format("-break-insert {0}:{1}", filename, linenumber);
-        }
+		public SetBreakPointCommand(string filename, string function)
+		{
+			commandText = string.Format("-break-insert {0}:{1}", filename, function);
+		}
 
-        public SetBreakPointCommand(string filename, string function)
-        {
-            commandText = string.Format("-break-insert {0}:{1}", filename, function);
-        }
+		public SetBreakPointCommand(string function)
+		{
+			commandText = string.Format("-break-insert {0}", function);
+		}
 
-        public SetBreakPointCommand(string function)
-        {
-            commandText = string.Format("-break-insert {0}", function);
-        }
+		public override int TimeoutMs
+		{
+			get { return DefaultCommandTimeout; }
+		}
 
-        private string commandText;
+		public override string Encode()
+		{
+			return commandText;
+		}
 
-        public override string Encode()
-        {
-            return commandText;
-        }
+		protected override GDBResponse<LiveBreakPoint> Decode(string response)
+		{
+			var result = new GDBResponse<LiveBreakPoint>(DecodeResponseCode(response));
 
-        protected override GDBResponse<LiveBreakPoint> Decode(string response)
-        {
-            GDBResponse<LiveBreakPoint> result = new GDBResponse<LiveBreakPoint>(DecodeResponseCode(response));
+			if (result.Response == ResponseCode.Done)
+			{
+				var split = response.Split(new[] {','}, 2);
 
-            if (result.Response == ResponseCode.Done)
-            {
-                var split = response.Split(new char[] { ',' }, 2);
+				if (split[1].Substring(0, 4) == "bkpt")
+				{
+					// TODO if breakpoint may come back with multiple addresses.                    
+					result.Value = LiveBreakPoint.FromArgumentList(split[1].Substring(6, split[1].Length - 6 - 1).ToNameValuePairs());
+				}
+			}
 
-                if (split[1].Substring(0, 4) == "bkpt")
-                {
-                    // TODO if breakpoint may come back with multiple addresses.                    
-                    result.Value = LiveBreakPoint.FromArgumentList(split[1].Substring(6, split[1].Length - 6 - 1).ToNameValuePairs());
-                }
-            }
+			return result;
+		}
 
-            return result;
-        }
-
-        public override void OutOfBandDataReceived(string data)
-        {
-            // throw new NotImplementedException ();
-        }
-    }
+		public override void OutOfBandDataReceived(string data)
+		{
+			// throw new NotImplementedException ();
+		}
+	}
 }

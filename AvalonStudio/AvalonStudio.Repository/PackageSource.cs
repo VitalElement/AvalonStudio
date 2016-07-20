@@ -1,97 +1,89 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using AvalonStudio.Platforms;
+using AvalonStudio.Utils;
+using LibGit2Sharp;
+
 namespace AvalonStudio.Repositories
 {
-    using AvalonStudio.Utils;
-    using Platforms;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
+	public class PackageSource
+	{
+		public string Name { get; set; }
+		public string Url { get; set; }
 
-    public class PackageSource
-    {
-        private void Clone()
-        {
-            LibGit2Sharp.Repository.Clone(Url, CatalogDirectory);
-        }        
+		public string CatalogGitDirectory => Path.Combine(CatalogDirectory, ".git");
 
-        public Repository DownloadCatalog ()
-        {
-            if(Directory.Exists(CatalogDirectory))
-            {
-                if(LibGit2Sharp.Repository.IsValid(CatalogGitDirectory))
-                {
-                    var repo = new LibGit2Sharp.Repository(CatalogGitDirectory);
+		public string CatalogDirectory => Path.Combine(Platform.RepoCatalogDirectory, Name);
 
-                    repo.Network.Pull(new LibGit2Sharp.Signature("AvalonStudio", "catalog@avalonstudio", new DateTimeOffset(DateTime.Now)), new LibGit2Sharp.PullOptions());
-                }
-                else
-                {
-                    Directory.Delete(CatalogDirectory, true);
-                    Clone();
-                }                
-            }
-            else
-            {
-                Clone();
-            }
-            
-            var result = Repository.Deserialize(Path.Combine(CatalogDirectory, Repository.PackagesFileName));
-            result.Source = this;
-            
-            foreach(var package in result.Packages)
-            {
-                package.Repository = result;
-            }
+		private void Clone()
+		{
+			LibGit2Sharp.Repository.Clone(Url, CatalogDirectory);
+		}
 
-            return result;
-        }
+		public Repository DownloadCatalog()
+		{
+			if (Directory.Exists(CatalogDirectory))
+			{
+				if (LibGit2Sharp.Repository.IsValid(CatalogGitDirectory))
+				{
+					var repo = new LibGit2Sharp.Repository(CatalogGitDirectory);
 
-        public string Name { get; set; }
-        public string Url { get; set; }
+					repo.Network.Pull(new Signature("AvalonStudio", "catalog@avalonstudio", new DateTimeOffset(DateTime.Now)),
+						new PullOptions());
+				}
+				else
+				{
+					Directory.Delete(CatalogDirectory, true);
+					Clone();
+				}
+			}
+			else
+			{
+				Clone();
+			}
 
-        public string CatalogGitDirectory
-        {
-            get
-            {
-                return Path.Combine(CatalogDirectory, ".git");
-            }
-        }
+			var result = Repository.Deserialize(Path.Combine(CatalogDirectory, Repository.PackagesFileName));
+			result.Source = this;
 
-        public string CatalogDirectory
-        {
-            get
-            {
-                return Path.Combine(Platform.RepoCatalogDirectory, Name);
-            }
-        }
+			foreach (var package in result.Packages)
+			{
+				package.Repository = result;
+			}
 
+			return result;
+		}
+	}
 
-    }
+	public class PackageSources : SerializedObject<PackageSources>
+	{
+		private PackageSources()
+		{
+			Sources = new List<PackageSource>();
+		}
 
-    public class PackageSources : SerializedObject<PackageSources>
-    {
-        private PackageSources()
-        {
-            Sources = new List<PackageSource>();
-        }
+		public static PackageSources Instance { get; private set; }
 
-        public static PackageSources Instance { get; private set; }
+		public IList<PackageSource> Sources { get; set; }
 
-        public static void InitialisePackageSources()
-        {
-            if (!File.Exists(Platform.PackageSourcesFile))
-            {
-                var sources = new PackageSources();
-                
-                sources.Sources.Add(new PackageSource() { Name= "VitalElement", Url = "https://github.com/VitalElement/AvalonStudio.Repository" });
+		public static void InitialisePackageSources()
+		{
+			if (!File.Exists(Platform.PackageSourcesFile))
+			{
+				var sources = new PackageSources();
 
-                sources.Serialize(Platform.PackageSourcesFile);
-            }
+				sources.Sources.Add(new PackageSource
+				{
+					Name = "VitalElement",
+					Url = "https://github.com/VitalElement/AvalonStudio.Repository"
+				});
 
-            var result = PackageSources.Deserialize(Platform.PackageSourcesFile);
+				sources.Serialize(Platform.PackageSourcesFile);
+			}
 
-            Instance = result;
-        }
-        
-        public IList<PackageSource> Sources { get; set; }
-    }
+			var result = Deserialize(Platform.PackageSourcesFile);
+
+			Instance = result;
+		}
+	}
 }

@@ -1,52 +1,50 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AvalonStudio.Projects;
+
 namespace AvalonStudio.Debugging
 {
-    using Projects;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+	public class FrameChangedEventArgs : EventArgs
+	{
+		public ulong Address;
+		public List<VariableObjectChange> VariableChanges;
+	}
 
-    public class FrameChangedEventArgs : EventArgs
-    {
-        public List<VariableObjectChange> VariableChanges;
-        public ulong Address;
-    }
+	public interface IDebugManager
+	{
+		/// <summary>
+		///     The project currently being debugged.
+		/// </summary>
+		IProject Project { get; }
 
-    public interface IDebugManager
-    {
-        /// <summary>
-        /// The project currently being debugged.
-        /// </summary>
-        IProject Project { get; }
+		IDebugger CurrentDebugger { get; }
 
-        IDebugger CurrentDebugger { get; }
+		BreakPointManager BreakPointManager { get; }
 
-        event EventHandler<FrameChangedEventArgs> DebugFrameChanged;
-        event EventHandler DebuggerChanged;
-        event EventHandler DebugSessionStarted;
-        event EventHandler DebugSessionEnded;
+		event EventHandler<FrameChangedEventArgs> DebugFrameChanged;
+		event EventHandler DebuggerChanged;
+		event EventHandler DebugSessionStarted;
+		event EventHandler DebugSessionEnded;
 
-        BreakPointManager BreakPointManager { get; }
+		Task<VariableObject> ProbeExpressionAsync(string expression);
 
-        Task<VariableObject> ProbeExpressionAsync(string expression);
+		void StartDebug(IProject project);
 
-        void StartDebug(IProject project);
+		void Restart();
 
-        void Restart();
+		void Continue();
 
-        void Continue();
+		void StepOver();
 
-        void StepOver();
+		void StepInstruction();
 
-        void StepInstruction();
+		void StepInto();
 
-        void StepInto();
+		void StepOut();
 
-        void StepOut();
+		void Stop();
 
-        void Stop();
-
-        void Pause();
-    }
+		void Pause();
+	}
 }
