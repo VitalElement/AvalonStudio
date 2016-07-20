@@ -1,17 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using AvalonStudio.Debugging;
+using AvalonStudio.Documents;
+using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Languages;
+using AvalonStudio.Projects;
+using AvalonStudio.TestFrameworks;
+using AvalonStudio.Toolchains;
+
 namespace AvalonStudio.Shell
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.Threading.Tasks;
-	using Debugging;
-	using Documents;
-	using Extensibility.Dialogs;
-	using Languages;
-	using Projects;
-	using TestFrameworks;
-	using Toolchains;
-
 	public enum Perspective
 	{
 		Editor,
@@ -22,29 +22,11 @@ namespace AvalonStudio.Shell
 	public interface IShell
 	{
 		Perspective CurrentPerspective { get; set; }
-
-		event EventHandler SolutionChanged;
 		ISolution CurrentSolution { get; set; }
-
-		IEditor GetDocument(string path);
 		IEditor SelectedDocument { get; }
-
-		Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
 		ObservableCollection<object> Tools { get; }
 		ModalDialogViewModelBase ModalDialog { get; set; }
 		object BottomSelectedTool { get; set; }
-		void InvalidateCodeAnalysis();
-
-		void Build(IProject project);
-		void Clean(IProject project);
-
-		void Build();
-		void Clean();
-
-		void Save();
-		void SaveAll();
-
-		IProject GetDefaultProject();
 
 		IEnumerable<IProject> ProjectTypes { get; }
 
@@ -59,5 +41,25 @@ namespace AvalonStudio.Shell
 		IEnumerable<IDebugger> Debuggers { get; }
 
 		IEnumerable<ITestFramework> TestFrameworks { get; }
+
+		event EventHandler SolutionChanged;
+
+		IEditor GetDocument(string path);
+
+		Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
+			bool selectLine = false);
+
+		void InvalidateCodeAnalysis();
+
+		void Build(IProject project);
+		void Clean(IProject project);
+
+		void Build();
+		void Clean();
+
+		void Save();
+		void SaveAll();
+
+		IProject GetDefaultProject();
 	}
 }

@@ -1,18 +1,18 @@
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+
 namespace AvalonStudio.Debugging
 {
-    using Avalonia;
-    using Avalonia.Controls;
+	public class CallStackView : UserControl
+	{
+		public CallStackView()
+		{
+			InitializeComponent();
+		}
 
-    public class CallStackView : UserControl
-    {
-        public CallStackView()
-        {
-            this.InitializeComponent();
-        }
-
-        private void InitializeComponent()
-        {
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

@@ -1,55 +1,53 @@
+using System;
+using Avalonia;
+using Avalonia.Media;
+
 namespace AvalonStudio.TextEditor.Rendering
 {
-    using System;
-    using Avalonia;
-    using Avalonia.Media;
+	public class SelectedDebugLineBackgroundRenderer : IBackgroundRenderer
+	{
+		private int line;
+		private readonly IBrush selectedLineBg;
 
-    public class SelectedDebugLineBackgroundRenderer : IBackgroundRenderer
-    {
-        private IBrush selectedLineBg;
+		public SelectedDebugLineBackgroundRenderer()
+		{
+			selectedLineBg = Brush.Parse("#44008299");
+		}
 
-        public SelectedDebugLineBackgroundRenderer()
-        {            
-            selectedLineBg = Brush.Parse("#44008299");
-        }
+		public int Line
+		{
+			get { return line; }
+			set
+			{
+				line = value;
 
-        private int line;
+				if (DataChanged != null)
+				{
+					DataChanged(this, new EventArgs());
+				}
+			}
+		}
 
-        public event EventHandler<EventArgs> DataChanged;
+		public event EventHandler<EventArgs> DataChanged;
 
-        public int Line
-        {
-            get { return line; }
-            set
-            {
-                line = value;
+		public void Draw(TextView textView, DrawingContext drawingContext)
+		{
+			if (line > 0 && line < textView.TextDocument.LineCount)
+			{
+				var currentLine = textView.TextDocument.GetLineByNumber(line);
 
-                if(DataChanged != null)
-                {
-                    DataChanged(this, new EventArgs());
-                }
-            }
-        }
+				var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, currentLine);
 
-        public void Draw(TextView textView, DrawingContext drawingContext)
-        {
-            if (line > 0 && line < textView.TextDocument.LineCount)
-            {
-                var currentLine = textView.TextDocument.GetLineByNumber(line);
+				foreach (var rect in rects)
+				{
+					var drawRect = new Rect(rect.TopLeft.X, rect.TopLeft.Y, textView.Bounds.Width, rect.Height);
+					drawingContext.FillRectangle(selectedLineBg, drawRect);
+				}
+			}
+		}
 
-                var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, currentLine);
-
-                foreach (var rect in rects)
-                {
-                    var drawRect = new Rect(rect.TopLeft.X, rect.TopLeft.Y, textView.Bounds.Width, rect.Height);
-                    drawingContext.FillRectangle(selectedLineBg, drawRect);
-                }
-            }            
-        }
-
-        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
-        {
-            
-        }
-    }
+		public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
+		{
+		}
+	}
 }

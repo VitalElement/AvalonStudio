@@ -1,173 +1,154 @@
+using System;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Styling;
+using AvalonStudio.Utils;
+
 namespace AvalonStudio.Controls
 {
-    using Avalonia.Controls;
-    using Avalonia.Styling;
-    using System;
-    using Avalonia.Input;
-    using Avalonia.Controls.Primitives;
-    using Avalonia;
-    using Utils;
+	public class MetroWindow : Window, IStyleable
+	{
+		public static readonly AvaloniaProperty<Control> TitleBarContentProperty =
+			AvaloniaProperty.Register<MetroWindow, Control>(nameof(TitleBarContent));
 
-    public class MetroWindow : Window, IStyleable
-    {
-        public MetroWindow()
-        {
-            
-        }
+		private Grid bottomHorizontalGrip;
+		private Grid bottomLeftGrip;
+		private Grid bottomRightGrip;
+		private Button closeButton;
+		private Panel icon;
+		private Grid leftVerticalGrip;
+		private Button minimiseButton;
 
-        Type IStyleable.StyleKey => typeof(MetroWindow);
+		private bool mouseDown;
+		private Point mouseDownPosition;
+		private Button restoreButton;
+		private Grid rightVerticalGrip;
 
-        private Grid titleBar;
-        private Button minimiseButton;
-        private Button restoreButton;
-        private Button closeButton;
-        private Grid topHorizontalGrip;
-        private Grid bottomHorizontalGrip;
-        private Grid leftVerticalGrip;
-        private Grid rightVerticalGrip;
-        private Grid topLeftGrip;
-        private Grid bottomLeftGrip;
-        private Grid topRightGrip;
-        private Grid bottomRightGrip;
-        private Panel icon;
+		private Grid titleBar;
+		private Grid topHorizontalGrip;
+		private Grid topLeftGrip;
+		private Grid topRightGrip;
 
-        public static readonly AvaloniaProperty<Control> TitleBarContentProperty =
-            AvaloniaProperty.Register<MetroWindow, Control>(nameof(TitleBarContent));
+		public Control TitleBarContent
+		{
+			get { return GetValue(TitleBarContentProperty); }
+			set { SetValue(TitleBarContentProperty, value); }
+		}
 
-        public Control TitleBarContent
-        {
-            get { return GetValue(TitleBarContentProperty); }
-            set { SetValue(TitleBarContentProperty, value); }
-        }
+		Type IStyleable.StyleKey => typeof (MetroWindow);
 
-        protected override void OnPointerPressed(PointerPressedEventArgs e)
-        {
-            if (topHorizontalGrip.IsPointerOver)
-            {
-                BeginResizeDrag(WindowEdge.North);
-            }
-            else if (bottomHorizontalGrip.IsPointerOver)
-            {
-                BeginResizeDrag(WindowEdge.South);
-            }
-            else if (leftVerticalGrip.IsPointerOver)
-            {
-                BeginResizeDrag(WindowEdge.West);
-            }
-            else if (rightVerticalGrip.IsPointerOver)
-            {
-                BeginResizeDrag(WindowEdge.East);
-            }
-            else if(topLeftGrip.IsPointerOver)
-            {
-                BeginResizeDrag(WindowEdge.NorthWest);
-            }
-            else if(bottomLeftGrip.IsPointerOver)
-            {
-                BeginResizeDrag(WindowEdge.SouthWest);
-            }
-            else if (topRightGrip.IsPointerOver)
-            {
-                BeginResizeDrag(WindowEdge.NorthEast);
-            }
-            else if(bottomRightGrip.IsPointerOver)
-            {
-                BeginResizeDrag(WindowEdge.SouthEast);
-            }
-            else if (titleBar.IsPointerOver)
-            {                
-                mouseDown = true;
-                mouseDownPosition = e.GetPosition(this);
-            }
-            else
-            {                
-                mouseDown = false;
-            }
-            
+		protected override void OnPointerPressed(PointerPressedEventArgs e)
+		{
+			if (topHorizontalGrip.IsPointerOver)
+			{
+				BeginResizeDrag(WindowEdge.North);
+			}
+			else if (bottomHorizontalGrip.IsPointerOver)
+			{
+				BeginResizeDrag(WindowEdge.South);
+			}
+			else if (leftVerticalGrip.IsPointerOver)
+			{
+				BeginResizeDrag(WindowEdge.West);
+			}
+			else if (rightVerticalGrip.IsPointerOver)
+			{
+				BeginResizeDrag(WindowEdge.East);
+			}
+			else if (topLeftGrip.IsPointerOver)
+			{
+				BeginResizeDrag(WindowEdge.NorthWest);
+			}
+			else if (bottomLeftGrip.IsPointerOver)
+			{
+				BeginResizeDrag(WindowEdge.SouthWest);
+			}
+			else if (topRightGrip.IsPointerOver)
+			{
+				BeginResizeDrag(WindowEdge.NorthEast);
+			}
+			else if (bottomRightGrip.IsPointerOver)
+			{
+				BeginResizeDrag(WindowEdge.SouthEast);
+			}
+			else if (titleBar.IsPointerOver)
+			{
+				mouseDown = true;
+				mouseDownPosition = e.GetPosition(this);
+			}
+			else
+			{
+				mouseDown = false;
+			}
 
-            base.OnPointerPressed(e);
-        }        
 
-        private bool mouseDown = false;
-        private Point mouseDownPosition;
-        
-        protected override void OnPointerReleased(PointerEventArgs e)
-        {            
-            mouseDown = false;
-            base.OnPointerReleased(e);
-        }        
+			base.OnPointerPressed(e);
+		}
 
-        protected override void OnPointerMoved(PointerEventArgs e)
-        {
-            if(titleBar.IsPointerOver && mouseDown)
-            {
-                if (mouseDownPosition.DistanceTo(e.GetPosition(this)) > 12)
-                {
-                    WindowState = WindowState.Normal;
-                    BeginMoveDrag();
-                    mouseDown = false;
-                }
-            }
+		protected override void OnPointerReleased(PointerEventArgs e)
+		{
+			mouseDown = false;
+			base.OnPointerReleased(e);
+		}
 
-            base.OnPointerMoved(e);
-        }        
+		protected override void OnPointerMoved(PointerEventArgs e)
+		{
+			if (titleBar.IsPointerOver && mouseDown)
+			{
+				if (mouseDownPosition.DistanceTo(e.GetPosition(this)) > 12)
+				{
+					WindowState = WindowState.Normal;
+					BeginMoveDrag();
+					mouseDown = false;
+				}
+			}
 
-        private void ToggleWindowState ()
-        {
-            switch (WindowState)
-            {
-                case WindowState.Maximized:
-                    WindowState = WindowState.Normal;
-                    break;
+			base.OnPointerMoved(e);
+		}
 
-                case WindowState.Normal:
-                    WindowState = WindowState.Maximized;
-                    break;
-            }
-        }
+		private void ToggleWindowState()
+		{
+			switch (WindowState)
+			{
+				case WindowState.Maximized:
+					WindowState = WindowState.Normal;
+					break;
 
-        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
-        {            
-            titleBar = e.NameScope.Find<Grid>("titlebar");
-            minimiseButton = e.NameScope.Find<Button>("minimiseButton");
-            restoreButton = e.NameScope.Find<Button>("restoreButton");
-            closeButton = e.NameScope.Find<Button>("closeButton");
-            icon = e.NameScope.Find<Panel>("icon");
+				case WindowState.Normal:
+					WindowState = WindowState.Maximized;
+					break;
+			}
+		}
 
-            topHorizontalGrip = e.NameScope.Find<Grid>("topHorizontalGrip");
-            bottomHorizontalGrip = e.NameScope.Find<Grid>("bottomHorizontalGrip");
-            leftVerticalGrip = e.NameScope.Find<Grid>("leftVerticalGrip");
-            rightVerticalGrip = e.NameScope.Find<Grid>("rightVerticalGrip");
+		protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+		{
+			titleBar = e.NameScope.Find<Grid>("titlebar");
+			minimiseButton = e.NameScope.Find<Button>("minimiseButton");
+			restoreButton = e.NameScope.Find<Button>("restoreButton");
+			closeButton = e.NameScope.Find<Button>("closeButton");
+			icon = e.NameScope.Find<Panel>("icon");
 
-            topLeftGrip = e.NameScope.Find<Grid>("topLeftGrip");
-            bottomLeftGrip = e.NameScope.Find<Grid>("bottomLeftGrip");
-            topRightGrip = e.NameScope.Find<Grid>("topRightGrip");
-            bottomRightGrip = e.NameScope.Find<Grid>("bottomRightGrip");
+			topHorizontalGrip = e.NameScope.Find<Grid>("topHorizontalGrip");
+			bottomHorizontalGrip = e.NameScope.Find<Grid>("bottomHorizontalGrip");
+			leftVerticalGrip = e.NameScope.Find<Grid>("leftVerticalGrip");
+			rightVerticalGrip = e.NameScope.Find<Grid>("rightVerticalGrip");
 
-            minimiseButton.Click += (sender, ee) =>
-            {
-                WindowState = WindowState.Minimized;
-            };
+			topLeftGrip = e.NameScope.Find<Grid>("topLeftGrip");
+			bottomLeftGrip = e.NameScope.Find<Grid>("bottomLeftGrip");
+			topRightGrip = e.NameScope.Find<Grid>("topRightGrip");
+			bottomRightGrip = e.NameScope.Find<Grid>("bottomRightGrip");
 
-            restoreButton.Click += (sender, ee) =>
-            {
-                ToggleWindowState();   
-            };
+			minimiseButton.Click += (sender, ee) => { WindowState = WindowState.Minimized; };
 
-            titleBar.DoubleTapped += (sender, ee) =>
-            {
-                ToggleWindowState();
-            };
+			restoreButton.Click += (sender, ee) => { ToggleWindowState(); };
 
-            closeButton.Click += (sender, ee) =>
-            {
-                Close();
-            };
+			titleBar.DoubleTapped += (sender, ee) => { ToggleWindowState(); };
 
-            icon.DoubleTapped += (sender, ee) =>
-            {
-                Close();
-            };
-        }
-    }
+			closeButton.Click += (sender, ee) => { Close(); };
+
+			icon.DoubleTapped += (sender, ee) => { Close(); };
+		}
+	}
 }

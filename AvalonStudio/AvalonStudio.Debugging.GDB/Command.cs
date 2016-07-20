@@ -1,67 +1,60 @@
+using System.Threading.Tasks;
+
 namespace AvalonStudio.Debugging.GDB
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading;
-    using System.Threading.Tasks;
+	public abstract class Command
+	{
+		protected const int DefaultCommandTimeout = 5000;
 
-    public abstract class Command
-    {
-        protected const Int32 DefaultCommandTimeout = 5000;
+		public abstract int TimeoutMs { get; }
 
-        public abstract string Encode();
+		public abstract string Encode();
 
-        protected static ResponseCode DecodeResponseCode (string response)
-        {
-            ResponseCode result = ResponseCode.Error;
+		protected static ResponseCode DecodeResponseCode(string response)
+		{
+			var result = ResponseCode.Error;
 
-            if (response == string.Empty)
-            {
-                result = ResponseCode.Timeout;
-            }
-            else
-            {
-                var split = response.Split(new char[] { ',' }, 2);
+			if (response == string.Empty)
+			{
+				result = ResponseCode.Timeout;
+			}
+			else
+			{
+				var split = response.Split(new[] {','}, 2);
 
-                switch (split[0])
-                {
-                    case "^done":
-                    case "^running":
-                    case "^connected":
-                        result = ResponseCode.Done;
-                        break;
+				switch (split[0])
+				{
+					case "^done":
+					case "^running":
+					case "^connected":
+						result = ResponseCode.Done;
+						break;
 
-                    case "^exit":
-                        result = ResponseCode.Exit;
-                        break;
-                }
-            }
+					case "^exit":
+						result = ResponseCode.Exit;
+						break;
+				}
+			}
 
-            return result;
-        }
+			return result;
+		}
 
-        public abstract void OutOfBandDataReceived (string data);
+		public abstract void OutOfBandDataReceived(string data);
+	}
 
-        public abstract Int32 TimeoutMs { get; }
-    }
+	public abstract class Command<T> : Command
+	{
+		protected abstract T Decode(string response);
 
-    public abstract class Command<T> : Command
-    {        
-        protected abstract T Decode (string response);
+		public async Task<T> Execute(GDBDebugger gdb)
+		{
+			var response = await gdb.SendCommand(this, TimeoutMs);
 
-        public async Task<T> Execute (GDBDebugger gdb)
-        {
-            var response = await gdb.SendCommand(this, TimeoutMs);
-            
-            T result;
+			T result;
 
-            result = Decode(response);
+			result = Decode(response);
 
-            return result;
-        }
-    }
+			return result;
+		}
+	}
 }

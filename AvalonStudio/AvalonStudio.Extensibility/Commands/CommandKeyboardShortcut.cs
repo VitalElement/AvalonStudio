@@ -1,44 +1,37 @@
+using System;
+using Avalonia.Input;
+
 namespace AvalonStudio.Extensibility.Commands
 {
-    using System;
-    //using Caliburn.Micro;
-    using Avalonia.Input;
+	//using Caliburn.Micro;
 
-    public abstract class CommandKeyboardShortcut
-    {
-        private readonly Func<CommandDefinitionBase> _commandDefinition;
-        private readonly KeyGesture _keyGesture;
-        private readonly int _sortOrder;
+	public abstract class CommandKeyboardShortcut
+	{
+		private readonly Func<CommandDefinitionBase> _commandDefinition;
 
-        public CommandDefinitionBase CommandDefinition
-        {
-            get { return _commandDefinition(); }
-        }
+		protected CommandKeyboardShortcut(KeyGesture keyGesture, int sortOrder, Func<CommandDefinitionBase> commandDefinition)
+		{
+			_commandDefinition = commandDefinition;
+			KeyGesture = keyGesture;
+			SortOrder = sortOrder;
+		}
 
-        public KeyGesture KeyGesture
-        {
-            get { return _keyGesture; }
-        }
+		public CommandDefinitionBase CommandDefinition
+		{
+			get { return _commandDefinition(); }
+		}
 
-        public int SortOrder
-        {
-            get { return _sortOrder; }
-        }
+		public KeyGesture KeyGesture { get; }
 
-        protected CommandKeyboardShortcut(KeyGesture keyGesture, int sortOrder, Func<CommandDefinitionBase> commandDefinition)
-        {
-            _commandDefinition = commandDefinition;
-            _keyGesture = keyGesture;
-            _sortOrder = sortOrder;
-        }
-    }
+		public int SortOrder { get; }
+	}
 
-    public class CommandKeyboardShortcut<TCommandDefinition> : CommandKeyboardShortcut
-        where TCommandDefinition : CommandDefinition
-    {
-        public CommandKeyboardShortcut(KeyGesture keyGesture, int sortOrder = 5)
-            : base(keyGesture, sortOrder, () => IoC.Get<ICommandService>().GetCommandDefinition(typeof(TCommandDefinition)))
-        {
-        }
-    }
+	public class CommandKeyboardShortcut<TCommandDefinition> : CommandKeyboardShortcut
+		where TCommandDefinition : CommandDefinition
+	{
+		public CommandKeyboardShortcut(KeyGesture keyGesture, int sortOrder = 5)
+			: base(keyGesture, sortOrder, () => IoC.Get<ICommandService>().GetCommandDefinition(typeof (TCommandDefinition)))
+		{
+		}
+	}
 }

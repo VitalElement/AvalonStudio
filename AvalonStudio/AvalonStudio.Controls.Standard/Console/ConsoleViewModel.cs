@@ -1,149 +1,138 @@
+using System;
+using System.Collections.ObjectModel;
+using Avalonia.Threading;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.MVVM;
+using AvalonStudio.Shell;
+using AvalonStudio.TextEditor.Document;
+using AvalonStudio.TextEditor.Rendering;
+using AvalonStudio.Utils;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls.Standard.Console
 {
-    using System;
-    using Avalonia.Threading;
-    using ReactiveUI;
-    using TextEditor.Document;
-    using Utils;
-    using TextEditor.Rendering;
-    using System.Collections.ObjectModel;
-    using MVVM;
-    using Extensibility.Plugin;
-    using Extensibility;
-    using Shell;
+	public class ConsoleViewModel : ToolViewModel, IConsole, IPlugin
+	{
+		private ObservableCollection<IBackgroundRenderer> backgroundRenderers;
 
-    public class ConsoleViewModel : ToolViewModel, IConsole, IPlugin
-    {
-        private IShell shell;
+		private int caretIndex;
+		private IShell shell;
 
-        public ConsoleViewModel()
-        {
-            Title = "Console";
-            Document = new TextDocument();
-            backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
-            backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
-            backgroundRenderers.Add(new SelectionBackgroundRenderer());
-        }
+		public ConsoleViewModel()
+		{
+			Title = "Console";
+			Document = new TextDocument();
+			backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
+			backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
+			backgroundRenderers.Add(new SelectionBackgroundRenderer());
+		}
 
-        public void BeforeActivation()
-        {
-            IoC.RegisterConstant(this, typeof(IConsole)); 
-        }
+		public TextDocument Document { get; }
 
-        public void Activation ()
-        {
-            shell = IoC.Get<IShell>();
-        }
+		public int CaretIndex
+		{
+			get { return caretIndex; }
+			set { this.RaiseAndSetIfChanged(ref caretIndex, value); }
+		}
 
-        public TextDocument Document { get; private set; }
+		public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
+		{
+			get { return backgroundRenderers; }
+			set { this.RaiseAndSetIfChanged(ref backgroundRenderers, value); }
+		}
 
-        private int caretIndex;
-        public int CaretIndex
-        {
-            get { return caretIndex; }
-            set { this.RaiseAndSetIfChanged(ref caretIndex, value); }
-        }
+		public override Location DefaultLocation
+		{
+			get { return Location.Bottom; }
+		}
 
-        private ObservableCollection<IBackgroundRenderer> backgroundRenderers;
-        public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
-        {
-            get { return backgroundRenderers; }
-            set { this.RaiseAndSetIfChanged(ref backgroundRenderers, value); }
-        }
+		public void Clear()
+		{
+			Dispatcher.UIThread.InvokeAsync(() =>
+			{
+				// safe way other than document.text = string.empty
+				Document.Replace(0, Document.TextLength, string.Empty);
 
-        public override Location DefaultLocation
-        {
-            get
-            {
-                return Location.Bottom;
-            }
-        }
+				shell.BottomSelectedTool = this;
+			});
+		}
 
-        public string Name
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+		public void Write(char data)
+		{
+			Dispatcher.UIThread.InvokeAsync(() =>
+			{
+				Document.Insert(Document.TextLength, data.ToString());
+				ScrollToEnd();
+			});
+		}
 
-        public Version Version
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+		public void Write(string data)
+		{
+			if (data != null)
+			{
+				Dispatcher.UIThread.InvokeAsync(() =>
+				{
+					Document.Insert(Document.TextLength, data);
+					ScrollToEnd();
+				});
+			}
+		}
 
-        public string Description
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+		public void WriteLine()
+		{
+			Dispatcher.UIThread.InvokeAsync(() =>
+			{
+				Document.Insert(Document.TextLength, Environment.NewLine);
+				ScrollToEnd();
+			});
+		}
 
-        private void ScrollToEnd()
-        {
-            CaretIndex = Document.TextLength;
-        }
+		public void WriteLine(string data)
+		{
+			if (data != null)
+			{
+				Dispatcher.UIThread.InvokeAsync(() =>
+				{
+					Document.Insert(Document.TextLength, data + Environment.NewLine);
+					ScrollToEnd();
+				});
+			}
+		}
 
-        public void Clear()
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                // safe way other than document.text = string.empty
-                Document.Replace(0, Document.TextLength, string.Empty);
-                
-                shell.BottomSelectedTool = this;
-            });
-        }
+		public void OverWrite(string data)
+		{
+			WriteLine(data);
+		}
 
-        public void Write(char data)
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Document.Insert(Document.TextLength, data.ToString());
-                ScrollToEnd();
-            });
-        }
+		public void BeforeActivation()
+		{
+			IoC.RegisterConstant(this, typeof (IConsole));
+		}
 
-        public void Write(string data)
-        {
-            if (data != null)
-            {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    Document.Insert(Document.TextLength, data);
-                    ScrollToEnd();
-                });
-            }
-        }
+		public void Activation()
+		{
+			shell = IoC.Get<IShell>();
+		}
 
-        public void WriteLine()
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Document.Insert(Document.TextLength, Environment.NewLine);
-                ScrollToEnd();
-            });
-        }
+		public string Name
+		{
+			get { throw new NotImplementedException(); }
+		}
 
-        public void WriteLine(string data)
-        {
-            if (data != null)
-            {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    Document.Insert(Document.TextLength, data + Environment.NewLine);
-                    ScrollToEnd();
-                });
-            }
-        }
+		public Version Version
+		{
+			get { throw new NotImplementedException(); }
+		}
 
-        public void OverWrite(string data)
-        {
-            WriteLine(data);
-        }
-    }
+		public string Description
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		private void ScrollToEnd()
+		{
+			CaretIndex = Document.TextLength;
+		}
+	}
 }

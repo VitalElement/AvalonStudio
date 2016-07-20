@@ -1,52 +1,40 @@
+using System;
+using System.Windows.Input;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Commands;
+using AvalonStudio.Shell;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 {
-    using AvalonStudio.Extensibility.Commands;
-    using Extensibility;
-    using Avalonia.Controls;
-    using Projects;
-    using ReactiveUI;
-    using Shell;
-    using System;
-    using System.Collections.Generic;
-    using System.Windows.Input;
+	[CommandDefinition]
+	internal class CloseSolutionCommandDefinition : CommandDefinition
+	{
+		private readonly ReactiveCommand<object> command;
 
-    [CommandDefinition]
-    class CloseSolutionCommandDefinition : CommandDefinition
-    {
-        public CloseSolutionCommandDefinition()
-        {
-            command = ReactiveCommand.Create();
-            command.Subscribe( _ =>
-            {
-                IShell shell = IoC.Get<IShell>();
-                shell.CurrentSolution = null;
-            });
-        }
+		public CloseSolutionCommandDefinition()
+		{
+			command = ReactiveCommand.Create();
+			command.Subscribe(_ =>
+			{
+				var shell = IoC.Get<IShell>();
+				shell.CurrentSolution = null;
+			});
+		}
 
-        private ReactiveCommand<object> command;
+		public override ICommand Command
+		{
+			get { return command; }
+		}
 
-        public override ICommand Command
-        {
-            get
-            {
-                return command;
-            }
-        }
+		public override string Text
+		{
+			get { return "Close Solution"; }
+		}
 
-        public override string Text
-        {
-            get
-            {
-                return "Close Solution";
-            }
-        }
-
-        public override string ToolTip
-        {
-            get
-            {
-                return "Closes the current Solution";
-            }
-        }
-    }
+		public override string ToolTip
+		{
+			get { return "Closes the current Solution"; }
+		}
+	}
 }

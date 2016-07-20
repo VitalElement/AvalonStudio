@@ -1,50 +1,41 @@
+using System;
+using System.Windows.Input;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Commands;
+using AvalonStudio.Shell;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 {
-    using AvalonStudio.Extensibility.Commands;
-    using Extensibility;
-    using ReactiveUI;
-    using Shell;
-    using System;
-    using System.Windows.Input;
+	[CommandDefinition]
+	internal class NewSolutionCommandDefinition : CommandDefinition
+	{
+		private readonly ReactiveCommand<object> command;
 
-    [CommandDefinition]
-    class NewSolutionCommandDefinition : CommandDefinition
-    {
-        public NewSolutionCommandDefinition()
-        {
-            command = ReactiveCommand.Create();
-            command.Subscribe(_ =>
-            {
-                IShell shell = IoC.Get<IShell>();
-                shell.ModalDialog = new NewProjectDialogViewModel(shell.CurrentSolution);
-                shell.ModalDialog.ShowDialog();
-            });
-        }
+		public NewSolutionCommandDefinition()
+		{
+			command = ReactiveCommand.Create();
+			command.Subscribe(_ =>
+			{
+				var shell = IoC.Get<IShell>();
+				shell.ModalDialog = new NewProjectDialogViewModel(shell.CurrentSolution);
+				shell.ModalDialog.ShowDialog();
+			});
+		}
 
-        private ReactiveCommand<object> command;
+		public override ICommand Command
+		{
+			get { return command; }
+		}
 
-        public override ICommand Command
-        {
-            get
-            {
-                return command;
-            }
-        }
+		public override string Text
+		{
+			get { return "New Solution"; }
+		}
 
-        public override string Text
-        {
-            get
-            {
-                return "New Solution";
-            }
-        }
-
-        public override string ToolTip
-        {
-            get
-            {
-                return "Creates a new Solution";
-            }
-        }
-    }
+		public override string ToolTip
+		{
+			get { return "Creates a new Solution"; }
+		}
+	}
 }

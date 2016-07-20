@@ -1,81 +1,74 @@
+using System;
+using System.Collections.Generic;
+
 namespace AvalonStudio.Debugging.GDB
 {
-    using AvalonStudio.Debugging;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+	internal class DataListRegisterValuesCommand : Command<GDBResponse<List<Tuple<int, string>>>>
+	{
+		private readonly string registerList = string.Empty;
 
-    class DataListRegisterValuesCommand : Command<GDBResponse<List<Tuple<int, string>>>>
-    {
-        public override int TimeoutMs
-        {
-            get
-            {
-                return DefaultCommandTimeout;
-            }
-        }
+		public DataListRegisterValuesCommand()
+		{
+		}
 
-        public DataListRegisterValuesCommand()
-        {
+		public DataListRegisterValuesCommand(List<int> valueIndexes)
+		{
+			foreach (var index in valueIndexes)
+			{
+				registerList += index + " ";
+			}
+		}
 
-        }
+		public override int TimeoutMs
+		{
+			get { return DefaultCommandTimeout; }
+		}
 
-        public DataListRegisterValuesCommand(List<int> valueIndexes)
-        {
-            foreach (int index in valueIndexes)
-            {
-                registerList += index.ToString() + " ";
-            }
-        }
+		public override string Encode()
+		{
+			return string.Format("-data-list-register-values x {0}", registerList);
+		}
 
-        private string registerList = string.Empty;
+		protected override GDBResponse<List<Tuple<int, string>>> Decode(string response)
+		{
+			var result = new GDBResponse<List<Tuple<int, string>>>(DecodeResponseCode(response));
 
-        public override string Encode()
-        {
-            return string.Format("-data-list-register-values x {0}", registerList);
-        }
+			if (result.Response == ResponseCode.Done)
+			{
+				result.Value = new List<Tuple<int, string>>();
 
-        protected override GDBResponse<List<Tuple<int, string>>> Decode(string response)
-        {
-            var result = new GDBResponse<List<Tuple<int, string>>>(DecodeResponseCode(response));
+				var registerValues = response.Substring(22).ToArray();
 
-            if (result.Response == ResponseCode.Done)
-            {
-                result.Value = new List<Tuple<int, string>>();
+				foreach (var registerValue in registerValues)
+				{
+					var pairs = registerValue.RemoveBraces().ToNameValuePairs();
 
-                var registerValues = response.Substring(22).ToArray();
+					var num = -1;
+					var val = string.Empty;
 
-                foreach (string registerValue in registerValues)
-                {
-                    var pairs = registerValue.RemoveBraces().ToNameValuePairs();
+					foreach (var pair in pairs)
+					{
+						switch (pair.Name)
+						{
+							case "number":
+								num = Convert.ToInt32(pair.Value);
+								break;
 
-                    int num = -1;
-                    string val = string.Empty;
+							case "value":
+								val = pair.Value;
+								break;
+						}
+					}
 
-                    foreach (var pair in pairs)
-                    {
-                        switch (pair.Name)
-                        {
-                            case "number":
-                                num = Convert.ToInt32(pair.Value);
-                                break;
+					result.Value.Add(new Tuple<int, string>(num, val));
+				}
+			}
 
-                            case "value":
-                                val = pair.Value;
-                                break;
-                        }
-                    }
+			return result;
+		}
 
-                    result.Value.Add(new Tuple<int, string>(num, val));
-                }
-            }
-
-            return result;
-        }
-
-        public override void OutOfBandDataReceived(string data)
-        {
-
-        }
-    }
+		public override void OutOfBandDataReceived(string data)
+		{
+		}
+	}
 }

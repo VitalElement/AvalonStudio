@@ -1,16 +1,12 @@
 namespace AvalonStudio.Extensibility.Menus
 {
-    public class ExcludeMenuItemDefinition
-    {
-        private readonly MenuItemDefinition _menuItemDefinitionToExclude;
-        public MenuItemDefinition MenuItemDefinitionToExclude 
-        { 
-            get { return _menuItemDefinitionToExclude; } 
-        }
+	public class ExcludeMenuItemDefinition
+	{
+		public ExcludeMenuItemDefinition(MenuItemDefinition menuItemDefinition)
+		{
+			MenuItemDefinitionToExclude = menuItemDefinition;
+		}
 
-        public ExcludeMenuItemDefinition(MenuItemDefinition menuItemDefinition)
-        {
-            _menuItemDefinitionToExclude = menuItemDefinition;
-        }
-    }
+		public MenuItemDefinition MenuItemDefinitionToExclude { get; }
+	}
 }

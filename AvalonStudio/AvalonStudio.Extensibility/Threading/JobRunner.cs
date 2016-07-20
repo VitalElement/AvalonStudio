@@ -1,18 +1,14 @@
-﻿namespace AvalonStudio.Extensibility.Threading
-{
-	using System;
-	using System.Collections.Generic;
-	using System.Threading;
-	using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
+namespace AvalonStudio.Extensibility.Threading
+{
 	public class JobRunner
 	{
-		private readonly Queue<Job> _queue = new Queue<Job>();
 		private readonly AutoResetEvent _event = new AutoResetEvent(false);
-
-		public JobRunner()
-		{
-		}
+		private readonly Queue<Job> _queue = new Queue<Job>();
 
 		public void RunLoop(CancellationToken cancellationToken)
 		{
@@ -32,7 +28,7 @@
 		}
 
 		/// <summary>
-		/// Runs continuations pushed on the loop.
+		///     Runs continuations pushed on the loop.
 		/// </summary>
 		public void RunJobs()
 		{
@@ -70,7 +66,7 @@
 		}
 
 		/// <summary>
-		/// Invokes a method on the main loop.
+		///     Invokes a method on the main loop.
 		/// </summary>
 		/// <param name="action">The method.</param>
 		/// <returns>A task that can be used to track the method's execution.</returns>
@@ -84,7 +80,7 @@
 		}
 
 		/// <summary>
-		/// Post action that will be invoked on main thread
+		///     Post action that will be invoked on main thread
 		/// </summary>
 		/// <param name="action">The method.</param>
 		internal void Post(Action action)
@@ -109,12 +105,12 @@
 		}
 
 		/// <summary>
-		/// A job to run.
+		///     A job to run.
 		/// </summary>
 		private class Job
 		{
 			/// <summary>
-			/// Initializes a new instance of the <see cref="Job"/> class.
+			///     Initializes a new instance of the <see cref="Job" /> class.
 			/// </summary>
 			/// <param name="action">The method to call.</param>
 			/// <param name="throwOnUiThread">Do not wrap excepption in TaskCompletionSource</param>
@@ -125,16 +121,15 @@
 			}
 
 			/// <summary>
-			/// Gets the method to call.
+			///     Gets the method to call.
 			/// </summary>
 			public Action Action { get; }
 
 
 			/// <summary>
-			/// Gets the task completion source.
+			///     Gets the task completion source.
 			/// </summary>
 			public TaskCompletionSource<object> TaskCompletionSource { get; }
 		}
-
 	}
 }

@@ -1,14 +1,14 @@
 namespace AvalonStudio.Languages
 {
-    public class UnsavedFile
-    {
-        public UnsavedFile (string filename, string contents)
-        {
-            this.FileName = filename;
-            this.Contents = contents;
-        }
+	public class UnsavedFile
+	{
+		public readonly string FileName;
+		public string Contents;
 
-        public readonly string FileName;
-        public string Contents;
-    }
+		public UnsavedFile(string filename, string contents)
+		{
+			FileName = filename;
+			Contents = contents;
+		}
+	}
 }

@@ -1,88 +1,77 @@
-﻿namespace AvalonStudio.Controls
+﻿using System.Collections.ObjectModel;
+using AvalonStudio.MVVM;
+using ReactiveUI;
+
+namespace AvalonStudio.Controls
 {
-    using AvalonStudio.MVVM;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using ReactiveUI;
+	public class IntellisenseToolTipViewModel : ViewModel
+	{
+		private ObservableCollection<string> completionAdvices;
 
-    public class IntellisenseToolTipViewModel : ViewModel
-    {
-        public IntellisenseToolTipViewModel()
-        {
-            CompletionAdvices = new ObservableCollection<string>();
-        }
+		private int selectedIndex;
 
-        private int selectedIndex;
-        public int SelectedIndex
-        {
-            get { return selectedIndex; }
-            set
-            {
-                if (value >= 0 && value < CompletionAdvices.Count)
-                {
-                    selectedIndex = value;
+		private bool visible;
 
-                    this.RaisePropertyChanged(nameof(SelectedAdvice));
-                    this.RaisePropertyChanged(nameof(ListPositionVisibility));
-                    this.RaisePropertyChanged(nameof(ListPositionText));
-                }
-            }
-        }
+		public IntellisenseToolTipViewModel()
+		{
+			CompletionAdvices = new ObservableCollection<string>();
+		}
 
-        public string SelectedAdvice
-        {
-            get
-            {
-                if (CompletionAdvices.Count > 0)
-                {
-                    return CompletionAdvices[SelectedIndex];
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-        }
+		public int SelectedIndex
+		{
+			get { return selectedIndex; }
+			set
+			{
+				if (value >= 0 && value < CompletionAdvices.Count)
+				{
+					selectedIndex = value;
 
-        private ObservableCollection<string> completionAdvices;
-        public ObservableCollection<string> CompletionAdvices
-        {
-            get { return completionAdvices; }
-            set { this.RaiseAndSetIfChanged(ref completionAdvices, value); }
-        }
+					this.RaisePropertyChanged(nameof(SelectedAdvice));
+					this.RaisePropertyChanged(nameof(ListPositionVisibility));
+					this.RaisePropertyChanged(nameof(ListPositionText));
+				}
+			}
+		}
 
-        public string ListPositionText
-        {
-            get
-            {
-                return string.Format("{0} of {1}", SelectedIndex + 1, CompletionAdvices.Count);
-            }
-        }
+		public string SelectedAdvice
+		{
+			get
+			{
+				if (CompletionAdvices.Count > 0)
+				{
+					return CompletionAdvices[SelectedIndex];
+				}
+				return string.Empty;
+			}
+		}
 
-        public bool ListPositionVisibility
-        {
-            get
-            {
-                if (CompletionAdvices.Count > 1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+		public ObservableCollection<string> CompletionAdvices
+		{
+			get { return completionAdvices; }
+			set { this.RaiseAndSetIfChanged(ref completionAdvices, value); }
+		}
 
-        private bool visible;
-        public bool Visible
-        {
-            get { return visible; }
-            set { this.RaiseAndSetIfChanged(ref visible, value); }
-        }
-    }
+		public string ListPositionText
+		{
+			get { return string.Format("{0} of {1}", SelectedIndex + 1, CompletionAdvices.Count); }
+		}
+
+		public bool ListPositionVisibility
+		{
+			get
+			{
+				if (CompletionAdvices.Count > 1)
+				{
+					return true;
+				}
+				return false;
+			}
+		}
+
+		public bool Visible
+		{
+			get { return visible; }
+			set { this.RaiseAndSetIfChanged(ref visible, value); }
+		}
+	}
 }

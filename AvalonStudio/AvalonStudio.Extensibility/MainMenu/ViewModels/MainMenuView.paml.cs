@@ -1,18 +1,18 @@
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+
 namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 {
-    using Avalonia;
-    using Avalonia.Controls;
-    using Avalonia.Markup.Xaml;
-    public class MainMenuView : UserControl
-    {
-        public MainMenuView()
-        {
-            this.InitializeComponent();
-        }
+	public class MainMenuView : UserControl
+	{
+		public MainMenuView()
+		{
+			InitializeComponent();
+		}
 
-        private void InitializeComponent()
-        {
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

@@ -1,151 +1,134 @@
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Avalonia.Threading;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.MVVM;
+using ReactiveUI;
+
 namespace AvalonStudio.Debugging
 {
-    using Extensibility;
-    using Extensibility.Plugin;
-    using MVVM;
-    using Avalonia.Threading;
-    using ReactiveUI;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
+	public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IExtension
+	{
+		private IDebugManager _debugManager;
 
-    public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IExtension
-    {
-        private IDebugManager _debugManager;
+		private double columnWidth;
 
-        public RegistersViewModel() : base(new ObservableCollection<RegisterViewModel>())
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                IsVisible = false;
-            });
+		private bool firstStopInSession;
 
-            Title = "Registers";
-            lastChangedRegisters = new List<RegisterViewModel>();
-        }
+		private readonly List<RegisterViewModel> lastChangedRegisters;
 
-        private double columnWidth;
-        public double ColumnWidth
-        {
-            get { return columnWidth; }
-            set { this.RaiseAndSetIfChanged(ref columnWidth, value); }
-        }
+		public RegistersViewModel() : base(new ObservableCollection<RegisterViewModel>())
+		{
+			Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
 
-        public override Location DefaultLocation
-        {
-            get
-            {
-                return Location.Left;
-            }
-        }
+			Title = "Registers";
+			lastChangedRegisters = new List<RegisterViewModel>();
+		}
 
-        private void SetRegisters(List<Register> registers)
-        {
-            if (registers != null)
-            {
-                this.Model = new ObservableCollection<RegisterViewModel>();
+		public double ColumnWidth
+		{
+			get { return columnWidth; }
+			set { this.RaiseAndSetIfChanged(ref columnWidth, value); }
+		}
 
-                foreach (var register in registers)
-                {
-                    this.Model.Add(new RegisterViewModel(register));
-                }
+		public override Location DefaultLocation
+		{
+			get { return Location.Left; }
+		}
 
-                ColumnWidth = 0;
-                ColumnWidth = double.NaN;
-            }
-        }
+		public void BeforeActivation()
+		{
+		}
 
-        private bool firstStopInSession;
-        new public async void Invalidate()
-        {
-            if (firstStopInSession)
-            {
-                firstStopInSession = false;
+		public void Activation()
+		{
+			_debugManager = IoC.Get<IDebugManager>();
+			_debugManager.DebugFrameChanged += RegistersViewModel_DebugFrameChanged;
+			_debugManager.DebuggerChanged += (sender, e) => { firstStopInSession = true; };
 
-                List<Register> registers = null;
+			_debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
-                registers =(await  _debugManager.CurrentDebugger.GetRegistersAsync()).Values.ToList();
+			_debugManager.DebugSessionEnded += (sender, e) =>
+			{
+				IsVisible = false;
+				Clear();
+			};
+		}
 
-                SetRegisters(registers);
-            }
-            else
-            {
-                Dictionary<int, string> changedRegisters = null;
+		private void SetRegisters(List<Register> registers)
+		{
+			if (registers != null)
+			{
+				Model = new ObservableCollection<RegisterViewModel>();
 
-                changedRegisters = await _debugManager.CurrentDebugger.GetChangedRegistersAsync();
+				foreach (var register in registers)
+				{
+					Model.Add(new RegisterViewModel(register));
+				}
 
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    UpdateRegisters(changedRegisters);
-                });
-            }
-        }
+				ColumnWidth = 0;
+				ColumnWidth = double.NaN;
+			}
+		}
 
-        public void Clear()
-        {
-            this.Model = new ObservableCollection<RegisterViewModel>();
-        }
+		public new async void Invalidate()
+		{
+			if (firstStopInSession)
+			{
+				firstStopInSession = false;
 
-        private List<RegisterViewModel> lastChangedRegisters;
+				List<Register> registers = null;
 
-        private void UpdateRegisters(Dictionary<int, string> updatedValues)
-        {
-            foreach (var register in lastChangedRegisters)
-            {
-                register.HasChanged = false;
-            }
+				registers = (await _debugManager.CurrentDebugger.GetRegistersAsync()).Values.ToList();
 
-            lastChangedRegisters.Clear();
+				SetRegisters(registers);
+			}
+			else
+			{
+				Dictionary<int, string> changedRegisters = null;
 
-            foreach (var value in updatedValues)
-            {
-                var register = Model.FirstOrDefault((r) => r.Index == value.Key);
+				changedRegisters = await _debugManager.CurrentDebugger.GetChangedRegistersAsync();
 
-                if (register != null)
-                {
-                    register.Value = value.Value;
-                    register.HasChanged = true;
+				Dispatcher.UIThread.InvokeAsync(() => { UpdateRegisters(changedRegisters); });
+			}
+		}
 
-                    lastChangedRegisters.Add(register);
-                }
-            }
+		public void Clear()
+		{
+			Model = new ObservableCollection<RegisterViewModel>();
+		}
 
-            ColumnWidth = 0;
-            ColumnWidth = double.NaN;
-        }
+		private void UpdateRegisters(Dictionary<int, string> updatedValues)
+		{
+			foreach (var register in lastChangedRegisters)
+			{
+				register.HasChanged = false;
+			}
 
-        public void BeforeActivation()
-        {
+			lastChangedRegisters.Clear();
 
-        }
+			foreach (var value in updatedValues)
+			{
+				var register = Model.FirstOrDefault(r => r.Index == value.Key);
 
-        public void Activation()
-        {
-            _debugManager = IoC.Get<IDebugManager>();
-            _debugManager.DebugFrameChanged += RegistersViewModel_DebugFrameChanged;
-            _debugManager.DebuggerChanged += (sender, e) =>
-            {
-                firstStopInSession = true;
-            };
+				if (register != null)
+				{
+					register.Value = value.Value;
+					register.HasChanged = true;
 
-            _debugManager.DebugSessionStarted += (sender, e) =>
-            {
-                IsVisible = true;
-            };
+					lastChangedRegisters.Add(register);
+				}
+			}
 
-            _debugManager.DebugSessionEnded += (sender, e) =>
-            {
-                IsVisible = false;
-                Clear();
-            };
-        }
+			ColumnWidth = 0;
+			ColumnWidth = double.NaN;
+		}
 
-        private void RegistersViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Invalidate();
-            });
-        }
-    }
+		private void RegistersViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+		{
+			Dispatcher.UIThread.InvokeAsync(() => { Invalidate(); });
+		}
+	}
 }

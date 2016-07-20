@@ -1,17 +1,18 @@
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    public class NewItemDialogView : UserControl
-    {
-        public NewItemDialogView()
-        {
-            this.InitializeComponent();
-        }
+	public class NewItemDialogView : UserControl
+	{
+		public NewItemDialogView()
+		{
+			InitializeComponent();
+		}
 
-        private void InitializeComponent()
-        {
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

@@ -1,43 +1,38 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    public class ClassTemplateSettingsViewModel : ViewModel
-    {
-        public ClassTemplateSettingsViewModel()
-        {
-            GenerateClass = true;
-            GenerateHeader = true;
-        }
+	public class ClassTemplateSettingsViewModel : ViewModel
+	{
+		private string _className;
 
-        private bool _generateHeader;
+		private bool _generateClass;
 
-        public bool GenerateHeader
-        {
-            get { return _generateHeader; }
-            set { this.RaiseAndSetIfChanged(ref _generateHeader, value); }
-        }
+		private bool _generateHeader;
 
-        private bool _generateClass;
+		public ClassTemplateSettingsViewModel()
+		{
+			GenerateClass = true;
+			GenerateHeader = true;
+		}
 
-        public bool GenerateClass
-        {
-            get { return _generateClass; }
-            set { this.RaiseAndSetIfChanged(ref _generateClass, value); }
-        }
+		public bool GenerateHeader
+		{
+			get { return _generateHeader; }
+			set { this.RaiseAndSetIfChanged(ref _generateHeader, value); }
+		}
 
-        private string _className;
+		public bool GenerateClass
+		{
+			get { return _generateClass; }
+			set { this.RaiseAndSetIfChanged(ref _generateClass, value); }
+		}
 
-        public string ClassName
-        {
-            get { return _className; }
-            set { this.RaiseAndSetIfChanged(ref _className, value); }
-        }
-    }
+		public string ClassName
+		{
+			get { return _className; }
+			set { this.RaiseAndSetIfChanged(ref _className, value); }
+		}
+	}
 }

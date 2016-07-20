@@ -1,71 +1,75 @@
+using System;
+using ReactiveUI;
+
 namespace AvalonStudio.Extensibility.Dialogs
 {
-    using ReactiveUI;
-    using System;
+	public class ModalDialogViewModelBase : ReactiveObject
+	{
+		private bool cancelButtonVisible;
 
-    public class ModalDialogViewModelBase : ReactiveObject
-    {
-        public ModalDialogViewModelBase(string title, bool okButton = true, bool cancelButton = true)
-        {
-            OKButtonVisible = okButton;
-            CancelButtonVisible = cancelButton;
+		private bool isVisible;
 
-            isVisible = false;
-            this.title = title;
+		private bool okButtonVisible;
 
-            CancelCommand = ReactiveCommand.Create();
-            CancelCommand.Subscribe(_ => { Close(); });
-        }
+		private string title;
 
-        private bool cancelButtonVisible = false;
-        public bool CancelButtonVisible
-        {
-            get { return cancelButtonVisible; }
-            set { this.RaiseAndSetIfChanged(ref cancelButtonVisible, value); }
-        }
+		public ModalDialogViewModelBase(string title, bool okButton = true, bool cancelButton = true)
+		{
+			OKButtonVisible = okButton;
+			CancelButtonVisible = cancelButton;
 
-        private bool okButtonVisible = false;
-        public bool OKButtonVisible
-        {
-            get { return okButtonVisible; }
-            set { this.RaiseAndSetIfChanged(ref okButtonVisible, value); }
-        }
+			isVisible = false;
+			this.title = title;
 
-        public virtual ReactiveCommand<object> OKCommand { get; protected set; }
-        public ReactiveCommand<object> CancelCommand { get; private set; }
+			CancelCommand = ReactiveCommand.Create();
+			CancelCommand.Subscribe(_ => { Close(); });
+		}
 
-        private string title;
-        public string Title
-        {
-            get { return title; }
-            private set { this.RaiseAndSetIfChanged(ref title, value); }
-        }
+		public bool CancelButtonVisible
+		{
+			get { return cancelButtonVisible; }
+			set { this.RaiseAndSetIfChanged(ref cancelButtonVisible, value); }
+		}
 
-        private bool isVisible;
-        public bool IsVisible
-        {
-            get { return isVisible; }
-            set { this.RaiseAndSetIfChanged(ref isVisible, value); }
-        }
+		public bool OKButtonVisible
+		{
+			get { return okButtonVisible; }
+			set { this.RaiseAndSetIfChanged(ref okButtonVisible, value); }
+		}
 
-        public void ShowDialog()
-        {
-            this.IsVisible = true;
-        }
+		public virtual ReactiveCommand<object> OKCommand { get; protected set; }
+		public ReactiveCommand<object> CancelCommand { get; }
 
-        public void Close()
-        {
-            this.IsVisible = false;
-        }
-    }
+		public string Title
+		{
+			get { return title; }
+			private set { this.RaiseAndSetIfChanged(ref title, value); }
+		}
 
-    public abstract class ModalDialogReactiveObject<T> : ModalDialogViewModelBase
-    {
-        public ModalDialogReactiveObject(T model, string title) : base(title)
-        {
-            this.Model = model;
-        }
+		public bool IsVisible
+		{
+			get { return isVisible; }
+			set { this.RaiseAndSetIfChanged(ref isVisible, value); }
+		}
 
-        public T Model { get; private set; }
-    }
+		public void ShowDialog()
+		{
+			IsVisible = true;
+		}
+
+		public void Close()
+		{
+			IsVisible = false;
+		}
+	}
+
+	public abstract class ModalDialogReactiveObject<T> : ModalDialogViewModelBase
+	{
+		public ModalDialogReactiveObject(T model, string title) : base(title)
+		{
+			Model = model;
+		}
+
+		public T Model { get; private set; }
+	}
 }

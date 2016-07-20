@@ -1,268 +1,250 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia.Threading;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Threading;
+using AvalonStudio.Languages;
+using AvalonStudio.Projects;
+using AvalonStudio.Shell;
+using AvalonStudio.TextEditor.Document;
+
 namespace AvalonStudio.Controls
 {
-    using Avalonia.Threading;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.Composition;
-    using System.IO;
-    using System.Threading;
-    using TextEditor.Document;
-    using System.Threading.Tasks;
-    using Languages;
-    using Projects;
-    using System.Linq;
-    using Extensibility;
-    using AvalonStudio.Extensibility.Threading;
-    using TextEditor;
-    using Shell;
+	[Export(typeof (EditorModel))]
+	public class EditorModel : IDisposable
+	{
+		public static List<UnsavedFile> UnsavedFiles = new List<UnsavedFile>();
 
-    [Export(typeof(EditorModel))]
-    public class EditorModel : IDisposable
-    {
-        private JobRunner codeAnalysisRunner;
-        private ISourceFile sourceFile;
-        private IShell shell;
-        private TextEditor textEditor;
+		private CancellationTokenSource cancellationSource;
 
-        public TextEditor Editor
-        {
-            get { return textEditor; }
-            set { textEditor = value; }
-        }
+		private CodeAnalysisResults codeAnalysisResults;
+		private readonly JobRunner codeAnalysisRunner;
 
+		private readonly IShell shell;
 
-        public void Dispose()
-        {
-            Editor = null;
-            TextDocument.TextChanged -= TextDocument_TextChanged;
-        }
+		private UnsavedFile unsavedFile;
 
-        public EditorModel()
-        {
-            shell = IoC.Get<IShell>();
+		public EditorModel()
+		{
+			shell = IoC.Get<IShell>();
 
-            codeAnalysisRunner = new JobRunner();
-            TextDocument = new TextDocument();
-        }
+			codeAnalysisRunner = new JobRunner();
+			TextDocument = new TextDocument();
+		}
 
-        ~EditorModel()
-        {
-            System.Console.WriteLine(("Editor Model Destructed."));
-        }
+		public TextEditor.TextEditor Editor { get; set; }
 
-        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
-        {
-            CodeCompletionResults results = null;
+		public ISourceFile ProjectFile { get; private set; }
 
-            var completions = await LanguageService.CodeCompleteAtAsync(sourceFile, line, column, UnsavedFiles);
-            results = new CodeCompletionResults() { Completions = completions };
+		public TextDocument TextDocument { get; set; }
+		public string Title { get; set; }
 
-            return results;
-        }
+		public CodeAnalysisResults CodeAnalysisResults
+		{
+			get { return codeAnalysisResults; }
+			set
+			{
+				codeAnalysisResults = value;
 
-        public void ScrollToLine(int line)
-        {
-            Editor?.ScrollToLine(line);
-        }
-
-        public event EventHandler<EventArgs> DocumentLoaded;
-        public event EventHandler<EventArgs> TextChanged;
-
-        public void UnRegisterLanguageService()
-        {
-            ShutdownBackgroundWorkers();
-
-            if (unsavedFile != null)
-            {
-                UnsavedFiles.Remove(unsavedFile);
-                unsavedFile = null;
-            }
-
-            if (LanguageService != null && sourceFile != null)
-            {
-                LanguageService.UnregisterSourceFile(Editor, sourceFile);
-            }
-        }
-
-        public async void RegisterLanguageService(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl)
-        {
-            UnRegisterLanguageService();
-
-            try
-            {
-                LanguageService = shell.LanguageServices.Single((o) => o.CanHandle(sourceFile));
-
-                ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
-
-                LanguageService.RegisterSourceFile(intellisenseControl, completionAdviceControl, Editor, sourceFile, TextDocument);
-            }
-            catch (Exception e)
-            {
-                LanguageService = null;
-                ShellViewModel.Instance.StatusBar.Language = "Text";
-            }
-
-            IsDirty = false;
+				if (CodeAnalysisCompleted != null)
+				{
+					CodeAnalysisCompleted(this, new EventArgs());
+				}
+			}
+		}
 
 
-            StartBackgroundWorkers();
-            
-            TextDocument.TextChanged += TextDocument_TextChanged;
+		public ILanguageService LanguageService { get; set; }
 
-            OnBeforeTextChanged(null);
+		public bool IsDirty { get; set; }
 
-            await TriggerCodeAnalysis();
-        }
 
-        public void OpenFile(ISourceFile file, IIntellisenseControl intellisense, ICompletionAdviceControl completionAdviceControl)
-        {
-            if (this.sourceFile != file)
-            {
-                if (File.Exists(file.Location))
-                {
-                    using (var fs = File.OpenText(file.Location))
-                    {
-                        TextDocument = new TextDocument(fs.ReadToEnd());
-                        TextDocument.FileName = file.Location;
-                    }
+		public void Dispose()
+		{
+			Editor = null;
+			TextDocument.TextChanged -= TextDocument_TextChanged;
+		}
 
-                    sourceFile = file;
+		~EditorModel()
+		{
+			Console.WriteLine("Editor Model Destructed.");
+		}
 
-                    RegisterLanguageService(intellisense, completionAdviceControl);
+		public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
+		{
+			CodeCompletionResults results = null;
 
-                    if (DocumentLoaded != null)
-                    {
-                        DocumentLoaded(this, new EventArgs());
-                    }
-                }
-            }
-        }
+			var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, line, column, UnsavedFiles);
+			results = new CodeCompletionResults {Completions = completions};
 
-        public void Save()
-        {
-            if (sourceFile != null && TextDocument != null && IsDirty)
-            {
-                File.WriteAllText(sourceFile.Location, TextDocument.Text);
-                IsDirty = false;
+			return results;
+		}
 
-                if (unsavedFile != null)
-                {
-                    UnsavedFiles.Remove(unsavedFile);
-                    unsavedFile = null;
-                }
-            }
-        }
+		public void ScrollToLine(int line)
+		{
+			Editor?.ScrollToLine(line);
+		}
 
-        private UnsavedFile unsavedFile = null;
-        private void TextDocument_TextChanged(object sender, EventArgs e)
-        {
-            if (unsavedFile == null)
-            {
-                unsavedFile = new UnsavedFile(sourceFile.Location, TextDocument.Text);
+		public event EventHandler<EventArgs> DocumentLoaded;
+		public event EventHandler<EventArgs> TextChanged;
 
-                UnsavedFiles.Add(unsavedFile);
-            }
-            else
-            {
-                unsavedFile.Contents = TextDocument.Text;
-            }
+		public void UnRegisterLanguageService()
+		{
+			ShutdownBackgroundWorkers();
 
-            IsDirty = true;
+			if (unsavedFile != null)
+			{
+				UnsavedFiles.Remove(unsavedFile);
+				unsavedFile = null;
+			}
 
-            if (TextChanged != null)
-            {
-                TextChanged(this, new EventArgs());
-            }
-        }
+			if (LanguageService != null && ProjectFile != null)
+			{
+				LanguageService.UnregisterSourceFile(Editor, ProjectFile);
+			}
+		}
 
-        public ISourceFile ProjectFile
-        {
-            get
-            {
-                return sourceFile;
-            }
-        }
+		public async void RegisterLanguageService(IIntellisenseControl intellisenseControl,
+			ICompletionAdviceControl completionAdviceControl)
+		{
+			UnRegisterLanguageService();
 
-        public static List<UnsavedFile> UnsavedFiles = new List<UnsavedFile>();
-        public TextDocument TextDocument { get; set; }
-        public string Title { get; set; }
+			try
+			{
+				LanguageService = shell.LanguageServices.Single(o => o.CanHandle(ProjectFile));
 
-        public event EventHandler<EventArgs> CodeAnalysisCompleted;
+				ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
-        private CodeAnalysisResults codeAnalysisResults;
-        public CodeAnalysisResults CodeAnalysisResults
-        {
-            get { return codeAnalysisResults; }
-            set
-            {
-                codeAnalysisResults = value;
+				LanguageService.RegisterSourceFile(intellisenseControl, completionAdviceControl, Editor, ProjectFile, TextDocument);
+			}
+			catch (Exception e)
+			{
+				LanguageService = null;
+				ShellViewModel.Instance.StatusBar.Language = "Text";
+			}
 
-                if (CodeAnalysisCompleted != null)
-                {
-                    CodeAnalysisCompleted(this, new EventArgs());
-                }
-            }
-        }
-        
+			IsDirty = false;
 
-        public ILanguageService LanguageService { get; set; }
 
-        private CancellationTokenSource cancellationSource;
-        private void StartBackgroundWorkers()
-        {
-            cancellationSource = new CancellationTokenSource();
+			StartBackgroundWorkers();
 
-            Task.Factory.StartNew(() =>
-            {
-                codeAnalysisRunner.RunLoop(cancellationSource.Token);
-                cancellationSource = null;
-            });
-        }
+			TextDocument.TextChanged += TextDocument_TextChanged;
 
-        public void ShutdownBackgroundWorkers()
-        {
-            cancellationSource?.Cancel();
-        }
+			OnBeforeTextChanged(null);
 
-        public void OnBeforeTextChanged(object param)
-        {
-            
-        }
+			await TriggerCodeAnalysis();
+		}
 
-        private bool isDirty;
-        public bool IsDirty
-        {
-            get { return isDirty; }
-            set { isDirty = value; }
-        }
+		public void OpenFile(ISourceFile file, IIntellisenseControl intellisense,
+			ICompletionAdviceControl completionAdviceControl)
+		{
+			if (ProjectFile != file)
+			{
+				if (File.Exists(file.Location))
+				{
+					using (var fs = File.OpenText(file.Location))
+					{
+						TextDocument = new TextDocument(fs.ReadToEnd());
+						TextDocument.FileName = file.Location;
+					}
 
-        /// <summary>
-        /// Write lock must be held before calling this.
-        /// </summary>
-        private async Task TriggerCodeAnalysis()
-        {
-            await codeAnalysisRunner.InvokeAsync(async () =>
-            {
-                if (LanguageService != null)
-                {
-                    // TODO allow interruption.
-                    var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, UnsavedFiles, () => false);
+					ProjectFile = file;
 
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        CodeAnalysisResults = result;
-                    });
-                }
-            });         
-        }
+					RegisterLanguageService(intellisense, completionAdviceControl);
 
-        public async void OnTextChanged(object param)
-        {
-            IsDirty = true;
+					if (DocumentLoaded != null)
+					{
+						DocumentLoaded(this, new EventArgs());
+					}
+				}
+			}
+		}
 
-            await TriggerCodeAnalysis();
-        }
+		public void Save()
+		{
+			if (ProjectFile != null && TextDocument != null && IsDirty)
+			{
+				File.WriteAllText(ProjectFile.Location, TextDocument.Text);
+				IsDirty = false;
 
-                
-    }
+				if (unsavedFile != null)
+				{
+					UnsavedFiles.Remove(unsavedFile);
+					unsavedFile = null;
+				}
+			}
+		}
+
+		private void TextDocument_TextChanged(object sender, EventArgs e)
+		{
+			if (unsavedFile == null)
+			{
+				unsavedFile = new UnsavedFile(ProjectFile.Location, TextDocument.Text);
+
+				UnsavedFiles.Add(unsavedFile);
+			}
+			else
+			{
+				unsavedFile.Contents = TextDocument.Text;
+			}
+
+			IsDirty = true;
+
+			if (TextChanged != null)
+			{
+				TextChanged(this, new EventArgs());
+			}
+		}
+
+		public event EventHandler<EventArgs> CodeAnalysisCompleted;
+
+		private void StartBackgroundWorkers()
+		{
+			cancellationSource = new CancellationTokenSource();
+
+			Task.Factory.StartNew(() =>
+			{
+				codeAnalysisRunner.RunLoop(cancellationSource.Token);
+				cancellationSource = null;
+			});
+		}
+
+		public void ShutdownBackgroundWorkers()
+		{
+			cancellationSource?.Cancel();
+		}
+
+		public void OnBeforeTextChanged(object param)
+		{
+		}
+
+		/// <summary>
+		///     Write lock must be held before calling this.
+		/// </summary>
+		private async Task TriggerCodeAnalysis()
+		{
+			await codeAnalysisRunner.InvokeAsync(async () =>
+			{
+				if (LanguageService != null)
+				{
+					// TODO allow interruption.
+					var result = await LanguageService.RunCodeAnalysisAsync(ProjectFile, UnsavedFiles, () => false);
+
+					Dispatcher.UIThread.InvokeAsync(() => { CodeAnalysisResults = result; });
+				}
+			});
+		}
+
+		public async void OnTextChanged(object param)
+		{
+			IsDirty = true;
+
+			await TriggerCodeAnalysis();
+		}
+	}
 }

@@ -1,30 +1,26 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel.Composition;
+using AvalonStudio.Extensibility.MainMenu.Models;
+using AvalonStudio.MVVM;
+using ReactiveUI;
+
 namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 {
-	using Models;
-	using MVVM;
-	using ReactiveUI;
-	using System.ComponentModel.Composition;
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using AvalonStudio.MVVM;
-	using System.Collections.Specialized;
-
-	[Export(typeof(IMenu))]
+	[Export(typeof (IMenu))]
 	public class MainMenuViewModel : ViewModel<MenuModel>, IPartImportsSatisfiedNotification, IMenu
 	{
 		private readonly IMenuBuilder _menuBuilder;
 
 		private bool _autoHide;
 
-		public event NotifyCollectionChangedEventHandler CollectionChanged;
-
 		//private readonly SettingsPropertyChangedEventManager<Properties.Settings> _settingsEventManager =
 		//    new SettingsPropertyChangedEventManager<Properties.Settings>(Properties.Settings.Default);
 
 		[ImportingConstructor]
 		public MainMenuViewModel(IMenuBuilder menuBuilder) : base(new MenuModel())
-		{            
+		{
 			_menuBuilder = menuBuilder;
 			//_autoHide = Properties.Settings.Default.AutoHideMainMenu;
 			//_settingsEventManager.AddListener(s => s.AutoHideMainMenu, value => { AutoHide = value; });
@@ -44,38 +40,23 @@ namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 			}
 		}
 
+		public event NotifyCollectionChangedEventHandler CollectionChanged;
+
 		public int Count
 		{
-			get
-			{
-				return Model.Count;
-			}
+			get { return Model.Count; }
 		}
 
 		public bool IsReadOnly
 		{
-			get
-			{
-				return false;
-			}
+			get { return false; }
 		}
 
 		public MenuItemBase this[int index]
 		{
-			get
-			{
-				return Model[index];
-			}
+			get { return Model[index]; }
 
-			set
-			{
-				Model[index] = value;
-			}
-		}
-
-		void IPartImportsSatisfiedNotification.OnImportsSatisfied()
-		{
-			_menuBuilder.BuildMenuBar(MenuDefinitions.MainMenuBar, Model);
+			set { Model[index] = value; }
 		}
 
 		public int IndexOf(MenuItemBase item)
@@ -126,6 +107,11 @@ namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return Model.GetEnumerator();
+		}
+
+		void IPartImportsSatisfiedNotification.OnImportsSatisfied()
+		{
+			_menuBuilder.BuildMenuBar(MenuDefinitions.MainMenuBar, Model);
 		}
 	}
 }

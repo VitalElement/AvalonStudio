@@ -3,9 +3,9 @@ using Avalonia.Input;
 
 namespace AvalonStudio.Extensibility.Commands
 {
-    public interface ICommandKeyGestureService
-    {
-        void BindKeyGestures(Control uiElement);
-        KeyGesture GetPrimaryKeyGesture(CommandDefinitionBase commandDefinition);
-    }
+	public interface ICommandKeyGestureService
+	{
+		void BindKeyGestures(Control uiElement);
+		KeyGesture GetPrimaryKeyGesture(CommandDefinitionBase commandDefinition);
+	}
 }

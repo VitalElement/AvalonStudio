@@ -1,54 +1,51 @@
+using System.Collections.ObjectModel;
+using System.IO;
+using AvalonStudio.MVVM;
+using LibGit2Sharp;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls.TeamExplorer
 {
-    using LibGit2Sharp;
-    using MVVM;
-    using ReactiveUI;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+	public class RepositoryViewModel : ViewModel<Repository>
+	{
+		private ObservableCollection<string> branches;
 
-    public class RepositoryViewModel : ViewModel<Repository>
-    {
-        public RepositoryViewModel(Repository model) : base(model)
-        {
-            name = Path.GetFileName(model.Info.Path.Replace("\\.git\\",string.Empty));
+		private string name;
 
-            branches = new ObservableCollection<string>();
-            foreach(var branch in model.Branches)
-            {
-                branches.Add(branch.FriendlyName);
+		private string selectedBranch;
 
-                if(branch.IsCurrentRepositoryHead)
-                {
-                    selectedBranch = branch.FriendlyName;
-                }
-            }
-        }
+		public RepositoryViewModel(Repository model) : base(model)
+		{
+			name = Path.GetFileName(model.Info.Path.Replace("\\.git\\", string.Empty));
 
-        private string name;
+			branches = new ObservableCollection<string>();
+			foreach (var branch in model.Branches)
+			{
+				branches.Add(branch.FriendlyName);
 
-        public string Name
-        {
-            get { return name; }
-            set { this.RaiseAndSetIfChanged(ref name, value); }
-        }
+				if (branch.IsCurrentRepositoryHead)
+				{
+					selectedBranch = branch.FriendlyName;
+				}
+			}
+		}
 
-        private ObservableCollection<string> branches;
-        public ObservableCollection<string> Branches
-        {
-            get { return branches; }
-            set { this.RaiseAndSetIfChanged(ref branches, value); }
-        }
+		public string Name
+		{
+			get { return name; }
+			set { this.RaiseAndSetIfChanged(ref name, value); }
+		}
 
-        private string selectedBranch;
-        public string SelectedBranch
-        {
-            get { return selectedBranch; }
-            set { this.RaiseAndSetIfChanged(ref selectedBranch, value); }
-        }
-    }
+		public ObservableCollection<string> Branches
+		{
+			get { return branches; }
+			set { this.RaiseAndSetIfChanged(ref branches, value); }
+		}
+
+		public string SelectedBranch
+		{
+			get { return selectedBranch; }
+			set { this.RaiseAndSetIfChanged(ref selectedBranch, value); }
+		}
+	}
 }
