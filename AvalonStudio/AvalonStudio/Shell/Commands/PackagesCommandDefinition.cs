@@ -1,47 +1,35 @@
 namespace AvalonStudio.Shell.Commands
 {
-    using Extensibility.Commands;
-    using Avalonia.Input;
-    using ReactiveUI;
-    using System.ComponentModel.Composition;
-    using System;
-    using Extensibility;
-    using Controls;
-    [CommandDefinition]
-    public class PackagesCommandDefinition : CommandDefinition
-    {
-        public PackagesCommandDefinition()
-        {
-            command = ReactiveCommand.Create();
+	using System;
+	using System.ComponentModel.Composition;
+	using Avalonia.Input;
+	using Controls;
+	using Extensibility;
+	using Extensibility.Commands;
+	using ReactiveUI;
+	[CommandDefinition]
+	public class PackagesCommandDefinition : CommandDefinition
+	{
+		public PackagesCommandDefinition()
+		{
+			_command = ReactiveCommand.Create();
 
-            command.Subscribe(_ =>
-            {
-                IShell shell = IoC.Get<IShell>();
-                shell.ModalDialog = new PackageManagerDialogViewModel();
-                shell.ModalDialog.ShowDialog();
-            });
-        }
+			_command.Subscribe(_ =>
+			{
+				IShell shell = IoC.Get<IShell>();
+				shell.ModalDialog = new PackageManagerDialogViewModel();
+				shell.ModalDialog.ShowDialog();
+			});
+		}
 
-        public override string Text
-        {
-            get { return "Packages"; }
-        }
+		public override string Text => "Packages";
 
-        public override string ToolTip
-        {
-            get { return "Packages Tool Tip"; }
-        }
+		public override string ToolTip => "Packages Tool Tip";
 
-        ReactiveCommand<object> command;
-        public override System.Windows.Input.ICommand Command
-        {
-            get
-            {
-                return command;
-            }
-        }
+		readonly ReactiveCommand<object> _command;
+		public override System.Windows.Input.ICommand Command => _command;
 
-        [Export]
-        public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<ExitCommandDefinition>(new KeyGesture() { Key = Key.F4, Modifiers = InputModifiers.Alt });
-    }
+		[Export]
+		public static CommandKeyboardShortcut KeyGesture = new CommandKeyboardShortcut<ExitCommandDefinition>(new KeyGesture() { Key = Key.F4, Modifiers = InputModifiers.Alt });
+	}
 }

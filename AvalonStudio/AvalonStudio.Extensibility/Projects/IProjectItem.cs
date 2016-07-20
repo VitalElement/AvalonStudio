@@ -1,10 +1,10 @@
 namespace AvalonStudio.Projects
 {
-    public interface IProjectItem
-    {
-        string Name { get; }
+	public interface IProjectItem
+	{
+		string Name { get; }
 
-        IProject Project { get; set; }
-        IProjectFolder Parent { get; set; }
-    }
+		IProject Project { get; set; }
+		IProjectFolder Parent { get; set; }
+	}
 }

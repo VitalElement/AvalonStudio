@@ -1,15 +1,15 @@
 namespace AvalonStudio.Utils
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Dynamic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Web.Script.Serialization;
-    using System.Reflection;
+	using System;
+	using System.Collections.Generic;
+	using System.Dynamic;
+	using System.Linq;
+	using System.Text;
+	using System.Threading.Tasks;
+	using System.Web.Script.Serialization;
+	using System.Reflection;
 
-    public static class Mapper
+	public static class Mapper
 	{
 		public static void Map(ExpandoObject source, Type resultType, object destination)
 		{			
@@ -65,19 +65,19 @@ namespace AvalonStudio.Utils
 		}
 	}
 
-    public static class IProjectExtensions
-    {
-        public static T GetConcreteType<T>(this ExpandoObject obj)
-        {
-			// Note: this doesnt work on linux, if object has properties that themselves are expandoobjects, event though it works on windows.
-           // var jsSerializer = new JavaScriptSerializer();
-            //return jsSerializer.ConvertToType<T>(obj);
+	public static class IProjectExtensions
+	{
+		public static T GetConcreteType<T>(this ExpandoObject obj)
+		{
+			//Note: this doesnt work on linux, if object has properties that themselves are expandoobjects, event though it works on windows.
+			//var jsSerializer = new JavaScriptSerializer();
+			//return jsSerializer.ConvertToType<T>(obj);
 
 			T result = (T)Activator.CreateInstance(typeof(T));
 
 			Mapper.Map (obj, typeof(T), result); 
 
 			return result;
-        }
-    }
+		}
+	}
 }
