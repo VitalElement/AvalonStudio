@@ -1,18 +1,18 @@
 using Avalonia.Controls;
-using Avalonia;
+using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Toolchains.STM32
 {
-    public class CompileSettingsFormView : UserControl
-    {
-        public CompileSettingsFormView()
-        {
-            this.InitializeComponent();
-        }
+	public class CompileSettingsFormView : UserControl
+	{
+		public CompileSettingsFormView()
+		{
+			InitializeComponent();
+		}
 
-        private void InitializeComponent()
-        {
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

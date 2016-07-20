@@ -1,56 +1,59 @@
+using System;
+using System.Threading.Tasks;
+using Avalonia.Input;
+using AvalonStudio.Controls;
+
 namespace AvalonStudio.Behaviors
 {
-    using Avalonia.Input;
-    using AvalonStudio.Controls;
-    using AvalonStudio.TextEditor;
-    using System.Threading.Tasks;
+	public class CodeInformationToolTipBehavior : PopupBehavior
+	{
+		private TextEditor.TextEditor editor;
+		private EditorViewModel editorVm;
 
-    public class CodeInformationToolTipBehavior : PopupBehavior
-    {
-        private EditorViewModel editorVm;
-        private TextEditor editor;
+		protected override void OnAttached()
+		{
+			editor = AssociatedObject as TextEditor.TextEditor;
 
-        protected override void OnAttached()
-        {
-            editor = AssociatedObject as TextEditor;
+			if (editor != null)
+			{
+				editor.DataContextChanged += Editor_DataContextChanged;
+			}
 
-            if (editor != null)
-            {
-                editor.DataContextChanged += Editor_DataContextChanged;                
-            }
+			base.OnAttached();
+		}
 
-            base.OnAttached();
-        }
+		private void Editor_DataContextChanged(object sender, EventArgs e)
+		{
+			editorVm = editor.DataContext as EditorViewModel;
+		}
 
-        private void Editor_DataContextChanged(object sender, System.EventArgs e)
-        {
-            editorVm = editor.DataContext as EditorViewModel;
-        }
+		protected override void OnDetaching()
+		{
+			editorVm = null;
 
-        protected override void OnDetaching()
-        {
-            editorVm = null;
+			if (editor != null)
+			{
+				editor.DataContextChanged -= Editor_DataContextChanged;
 
-            if(editor != null)
-            {
-                editor.DataContextChanged -= Editor_DataContextChanged;
+				editor = null;
+			}
 
-                editor = null;
-            }
+			base.OnDetaching();
+		}
 
-            base.OnDetaching();
-        }
+		public override async Task<bool> OnBeforePopupOpen()
+		{
+			var result = false;
 
-        public override async Task<bool> OnBeforePopupOpen()
-        {
-            bool result = false;
+			if (editorVm != null)
+			{
+				result =
+					await
+						editorVm.UpdateHoverProbeAsync(
+							editor.TextView.GetOffsetFromPoint(MouseDevice.Instance.GetPosition(editor.TextView.TextSurface)));
+			}
 
-            if (editorVm != null)
-            {
-                result = await editorVm.UpdateHoverProbeAsync(editor.TextView.GetOffsetFromPoint(MouseDevice.Instance.GetPosition(editor.TextView.TextSurface)));
-            }
-
-            return result;
-        }
-    }
+			return result;
+		}
+	}
 }

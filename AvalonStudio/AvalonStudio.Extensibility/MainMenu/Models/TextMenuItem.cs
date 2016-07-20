@@ -1,13 +1,17 @@
+using System;
+using System.Windows.Input;
+using AvalonStudio.Extensibility.Menus;
+
 namespace AvalonStudio.Extensibility.MainMenu.Models
 {
-	using AvalonStudio.Extensibility.Menus;
-	using System;
-	using System.Globalization;
-	using System.Windows.Input;
-
 	public class TextMenuItem : StandardMenuItem
 	{
 		private readonly MenuDefinitionBase _menuDefinition;
+
+		public TextMenuItem(MenuDefinitionBase menuDefinition)
+		{
+			_menuDefinition = menuDefinition;
+		}
 
 		public override string Text
 		{
@@ -25,7 +29,7 @@ namespace AvalonStudio.Extensibility.MainMenu.Models
 			{
 				return _menuDefinition.KeyGesture == null
 					? string.Empty
-					: "geststring";// _menuDefinition.KeyGesture.GetDisplayStringForCulture(CultureInfo.CurrentUICulture);
+					: "geststring"; // _menuDefinition.KeyGesture.GetDisplayStringForCulture(CultureInfo.CurrentUICulture);
 			}
 		}
 
@@ -42,11 +46,6 @@ namespace AvalonStudio.Extensibility.MainMenu.Models
 		public override bool IsVisible
 		{
 			get { return true; }
-		}
-
-		public TextMenuItem(MenuDefinitionBase menuDefinition)
-		{
-			_menuDefinition = menuDefinition;
 		}
 	}
 }

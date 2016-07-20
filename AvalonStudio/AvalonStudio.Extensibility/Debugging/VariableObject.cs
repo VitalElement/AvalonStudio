@@ -1,146 +1,139 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging
 {
-    public enum VariableObjectType
-    {
-        Fixed,
-        Floating
-    }
+	public enum VariableObjectType
+	{
+		Fixed,
+		Floating
+	}
 
-    public class VariableObject
-    {
-        public VariableObject()
-        {
-            Children = new List<VariableObject>();
-            format = WatchFormat.Natural;
-        }
+	public class VariableObject
+	{
+		private IDebugger debugger;
+		private WatchFormat format;
 
-       
-        private IDebugger debugger;
-        private WatchFormat format;
+		public VariableObject()
+		{
+			Children = new List<VariableObject>();
+			format = WatchFormat.Natural;
+		}
 
-        public VariableObject Parent { get; set; }
+		public VariableObject Parent { get; set; }
 
-        public int NumChildren { get; set; }
+		public int NumChildren { get; set; }
 
-        public string Id { get; private set; }
-        public string Value { get; private set; }
-        public string Expression { get; private set; }
-        public string Type { get; private set; }
-        public List<VariableObject> Children { get; private set; }
-       
+		public string Id { get; private set; }
+		public string Value { get; private set; }
+		public string Expression { get; private set; }
+		public string Type { get; private set; }
+		public List<VariableObject> Children { get; }
 
-        public async Task EvaluateChildrenAsync()
-        {
-            if (!areChildrenEvaluated)
-            {
-                await EvaluateChildrenInternalAsync();
-                areChildrenEvaluated = true;
-            }
-        }
-
-        public void ClearEvaluated()
-        {
-            areChildrenEvaluated = false;
-        }
-
-        private bool areChildrenEvaluated;
-        public bool AreChildrenEvaluated
-        {
-            get { return areChildrenEvaluated; }
-        }
-
-        private async Task EvaluateChildrenInternalAsync()
-        {
-            Children.Clear();
-
-            var newChildren = await debugger.ListChildrenAsync(this);
-
-            if (newChildren != null)
-            {
-                Children.AddRange(newChildren);
-            }
-
-            foreach (var child in Children)
-            {
-                await child.EvaluateAsync(debugger, false);
-            }
-        }
+		public bool AreChildrenEvaluated { get; private set; }
 
 
-        public async Task EvaluateAsync(IDebugger debugger, bool evaluateChildren = true)
-        {
-            this.debugger = debugger;
+		public async Task EvaluateChildrenAsync()
+		{
+			if (!AreChildrenEvaluated)
+			{
+				await EvaluateChildrenInternalAsync();
+				AreChildrenEvaluated = true;
+			}
+		}
 
-            Value = await debugger.EvaluateExpressionAsync(Id);
+		public void ClearEvaluated()
+		{
+			AreChildrenEvaluated = false;
+		}
 
-            if(NumChildren > 0 && evaluateChildren)
-            {
-                await EvaluateChildrenInternalAsync();
-            }
-        }
+		private async Task EvaluateChildrenInternalAsync()
+		{
+			Children.Clear();
 
-        public async Task SetFormat (WatchFormat format)
-        {
-            if(this.format != format)
-            {
-                await debugger.SetWatchFormatAsync(Id, format);
-                this.format = format;
-            }
-        }            
+			var newChildren = await debugger.ListChildrenAsync(this);
 
-        public static VariableObject FromDataString(VariableObject parent, string data, string expression = "")
-        {
-            VariableObject result = new VariableObject();
+			if (newChildren != null)
+			{
+				Children.AddRange(newChildren);
+			}
 
-            result.Expression = expression;
+			foreach (var child in Children)
+			{
+				await child.EvaluateAsync(debugger, false);
+			}
+		}
 
-            var pairs = data.ToNameValuePairs();
 
-            foreach (var pair in pairs)
-            {
-                switch (pair.Name)
-                {
-                    case "name":
-                        result.Id = pair.Value;
-                        break;
+		public async Task EvaluateAsync(IDebugger debugger, bool evaluateChildren = true)
+		{
+			this.debugger = debugger;
 
-                    case "numchild":
-                        result.NumChildren = Convert.ToInt32(pair.Value);
-                        break;
+			Value = await debugger.EvaluateExpressionAsync(Id);
 
-                    case "value":
-                        result.Value = pair.Value;
-                        break;
+			if (NumChildren > 0 && evaluateChildren)
+			{
+				await EvaluateChildrenInternalAsync();
+			}
+		}
 
-                    case "type":
-                        result.Type = pair.Value;
-                        break;
+		public async Task SetFormat(WatchFormat format)
+		{
+			if (this.format != format)
+			{
+				await debugger.SetWatchFormatAsync(Id, format);
+				this.format = format;
+			}
+		}
 
-                    case "thread-id":
-                        break;
+		public static VariableObject FromDataString(VariableObject parent, string data, string expression = "")
+		{
+			var result = new VariableObject();
 
-                    case "has_more":
-                        break;
+			result.Expression = expression;
 
-                    case "exp":
-                        result.Expression = pair.Value;
-                        break;
+			var pairs = data.ToNameValuePairs();
 
-                    default:
-                        Console.WriteLine("Unimplemented variable object field.");
-                        break;
-                }
-            }
+			foreach (var pair in pairs)
+			{
+				switch (pair.Name)
+				{
+					case "name":
+						result.Id = pair.Value;
+						break;
 
-            result.Parent = parent;
+					case "numchild":
+						result.NumChildren = Convert.ToInt32(pair.Value);
+						break;
 
-            return result;
-        }
-    }
+					case "value":
+						result.Value = pair.Value;
+						break;
+
+					case "type":
+						result.Type = pair.Value;
+						break;
+
+					case "thread-id":
+						break;
+
+					case "has_more":
+						break;
+
+					case "exp":
+						result.Expression = pair.Value;
+						break;
+
+					default:
+						Console.WriteLine("Unimplemented variable object field.");
+						break;
+				}
+			}
+
+			result.Parent = parent;
+
+			return result;
+		}
+	}
 }

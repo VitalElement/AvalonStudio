@@ -1,55 +1,55 @@
+using System;
+using System.Collections.Generic;
+
 namespace AvalonStudio.Languages
 {
-    using System;
-    using System.Collections.Generic;
+	public enum HighlightType
+	{
+		CallExpression,
+		Punctuation,
+		Keyword,
+		Identifier,
+		Literal,
+		Comment,
+		UserType
+	}
 
-    public enum HighlightType
-    {
-        CallExpression,
-        Punctuation,
-        Keyword,
-        Identifier,
-        Literal,
-        Comment,
-        UserType
-    }
+	public class SyntaxHighlightDataList : List<SyntaxHighlightingData>
+	{
+		public new void Add(SyntaxHighlightingData item)
+		{
+			var index = BinarySearch(item);
 
-    public class SyntaxHighlightDataList : List<SyntaxHighlightingData>
-    {
-        public new void Add (SyntaxHighlightingData item)
-        {
-            var index = this.BinarySearch(item);
+			if (index < 0)
+			{
+				Insert(~index, item);
+			}
+			else
+			{
+				Insert(index + 1, item);
+			}
+		}
+	}
 
-            if (index < 0)
-            {
-                this.Insert(~index, item);
-            }
-            else
-            {
-                this.Insert(index + 1, item);
-            }
-        }
-    }
+	public class SyntaxHighlightingData : IComparable<SyntaxHighlightingData>
+	{
+		public HighlightType Type { get; set; }
+		public int Start { get; set; }
+		public int Length { get; set; }
 
-    public class SyntaxHighlightingData : IComparable<SyntaxHighlightingData>
-    {  
-        public HighlightType Type { get; set; }
-        public int Start { get; set; }
-        public int Length { get; set; }
+		public int CompareTo(SyntaxHighlightingData other)
+		{
+			if (Start > other.Start)
+			{
+				return 1;
+			}
 
-        public int CompareTo(SyntaxHighlightingData other)
-        {            
-            if(this.Start > other.Start)
-            {
-                return 1;
-            }
+			if (Start == other.Start)
+			{
+				return 0;
+			}
 
-            if (this.Start == other.Start)
-            {
-                return 0;
-            }
-
-            return -1;
-        }
-    }
+			return -1;
+		}
+	}
 }

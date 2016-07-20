@@ -1,58 +1,55 @@
+using System.ComponentModel;
+using System.Diagnostics;
+
 namespace AvalonStudio.MVVM.DataVirtualization
 {
-    using System.ComponentModel;
+	public class DataWrapper<T> : INotifyPropertyChanged where T : class
+	{
+		private T data;
 
-    public class DataWrapper<T> : INotifyPropertyChanged where T : class
-    {
-        private int index;
-        private T data;
+		public DataWrapper(int index)
+		{
+			Index = index;
+		}
 
-        public event PropertyChangedEventHandler PropertyChanged;
+		public int Index { get; }
 
-        public DataWrapper(int index)
-        {
-            this.index = index;
-        }
+		public int ItemNumber
+		{
+			get { return Index + 1; }
+		}
 
-        public int Index
-        {
-            get { return this.index; }
-        }
+		public bool IsLoading
+		{
+			get { return Data == null; }
+		}
 
-        public int ItemNumber
-        {
-            get { return this.index + 1; }
-        }
+		public T Data
+		{
+			get { return data; }
+			internal set
+			{
+				data = value;
+				OnPropertyChanged("Data");
+				OnPropertyChanged("IsLoading");
+			}
+		}
 
-        public bool IsLoading
-        {
-            get { return this.Data == null; }
-        }
+		public bool IsInUse
+		{
+			get { return PropertyChanged != null; }
+		}
 
-        public T Data
-        {
-            get { return this.data; }
-            internal set
-            {
-                this.data = value;
-                this.OnPropertyChanged("Data");
-                this.OnPropertyChanged("IsLoading");
-            }
-        }
+		public event PropertyChangedEventHandler PropertyChanged;
 
-        public bool IsInUse
-        {
-            get { return this.PropertyChanged != null; }
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            System.Diagnostics.Debug.Assert(this.GetType().GetProperty(propertyName) != null);
-            var handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
+		private void OnPropertyChanged(string propertyName)
+		{
+			Debug.Assert(GetType().GetProperty(propertyName) != null);
+			var handler = PropertyChanged;
+			if (handler != null)
+			{
+				handler(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
 }

@@ -1,10 +1,9 @@
+using AvalonStudio.Extensibility.MVVM;
+using AvalonStudio.Extensibility.ToolBars.Models;
+
 namespace AvalonStudio.Extensibility.ToolBars
 {
-    using Models;
-    using MVVM;
-
-    public interface IToolBar : IObservableCollection<ToolBarItemBase>
-    {
-        
-    }
+	public interface IToolBar : IObservableCollection<ToolBarItemBase>
+	{
+	}
 }

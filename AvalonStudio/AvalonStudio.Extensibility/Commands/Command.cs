@@ -1,92 +1,72 @@
+using System;
+using Avalonia.Controls.Shapes;
+using ReactiveUI;
+
 namespace AvalonStudio.Extensibility.Commands
 {
-    using System;
-    using ReactiveUI;
-    using Avalonia.Controls.Shapes;
-    public class Command : ReactiveObject
-    {
-        private readonly CommandDefinitionBase _commandDefinition;
-        private bool _visible = true;
-        private bool _enabled = true;
-        private bool _checked;
-        private string _text;
-        private string _toolTip;
-        private Uri _iconSource;
+	public class Command : ReactiveObject
+	{
+		private bool _checked;
+		private bool _enabled = true;
+		private Uri _iconSource;
+		private string _text;
+		private string _toolTip;
+		private bool _visible = true;
 
-        public CommandDefinitionBase CommandDefinition
-        {
-            get { return _commandDefinition; }
-        }
+		private Path iconPath;
 
-        public bool Visible
-        {
-            get { return _visible; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _visible, value);
-            }
-        }
+		public Command(CommandDefinitionBase commandDefinition)
+		{
+			CommandDefinition = commandDefinition;
+			Text = commandDefinition.Text;
+			ToolTip = commandDefinition.ToolTip;
+			//IconSource = commandDefinition.IconSource;
+		}
 
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _enabled, value);
-            }
-        }
+		public CommandDefinitionBase CommandDefinition { get; }
 
-        public bool Checked
-        {
-            get { return _checked; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _checked, value);
-            }
-        }
+		public bool Visible
+		{
+			get { return _visible; }
+			set { this.RaiseAndSetIfChanged(ref _visible, value); }
+		}
 
-        public string Text
-        {
-            get { return _text; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _text, value);
-            }
-        }
+		public bool Enabled
+		{
+			get { return _enabled; }
+			set { this.RaiseAndSetIfChanged(ref _enabled, value); }
+		}
 
-        public string ToolTip
-        {
-            get { return _toolTip; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _toolTip, value);
-            }
-        }
+		public bool Checked
+		{
+			get { return _checked; }
+			set { this.RaiseAndSetIfChanged(ref _checked, value); }
+		}
 
-        public Uri IconSource
-        {
-            get { return _iconSource; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _iconSource, value);
-            }
-        }
+		public string Text
+		{
+			get { return _text; }
+			set { this.RaiseAndSetIfChanged(ref _text, value); }
+		}
 
-        private Path iconPath;
-        public Path IconPath
-        {
-            get { return iconPath; }
-            set { this.RaiseAndSetIfChanged(ref iconPath, value); }
-        }
+		public string ToolTip
+		{
+			get { return _toolTip; }
+			set { this.RaiseAndSetIfChanged(ref _toolTip, value); }
+		}
 
-        public object Tag { get; set; }
+		public Uri IconSource
+		{
+			get { return _iconSource; }
+			set { this.RaiseAndSetIfChanged(ref _iconSource, value); }
+		}
 
-        public Command(CommandDefinitionBase commandDefinition)
-        {
-            _commandDefinition = commandDefinition;
-            Text = commandDefinition.Text;
-            ToolTip = commandDefinition.ToolTip;
-            //IconSource = commandDefinition.IconSource;
-        }
-    }
+		public Path IconPath
+		{
+			get { return iconPath; }
+			set { this.RaiseAndSetIfChanged(ref iconPath, value); }
+		}
+
+		public object Tag { get; set; }
+	}
 }

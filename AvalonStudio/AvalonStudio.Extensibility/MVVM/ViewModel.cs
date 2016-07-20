@@ -1,8 +1,8 @@
+using System.ComponentModel.Composition;
+using ReactiveUI;
+
 namespace AvalonStudio.MVVM
 {
-	using System.ComponentModel.Composition;
-	using ReactiveUI;
-
 	public interface IActivatable
 	{
 		void Activate();
@@ -16,32 +16,31 @@ namespace AvalonStudio.MVVM
 		BottomRight,
 		RightBottom,
 		RightMiddle,
-		RightTop,
+		RightTop
 	}
 
 
-	[InheritedExport(typeof(ToolViewModel))]
+	[InheritedExport(typeof (ToolViewModel))]
 	public abstract class ToolViewModel : ViewModel
 	{
+		private bool _isVisible;
+
+		// TODO This should use ToolControl
+		private string _title;
+
 		protected ToolViewModel()
 		{
 			_isVisible = true;
 		}
 
-		private bool _isVisible;
 		public bool IsVisible
 		{
 			get { return _isVisible; }
-			set
-			{
-				this.RaiseAndSetIfChanged(ref _isVisible, value);
-			}
+			set { this.RaiseAndSetIfChanged(ref _isVisible, value); }
 		}
 
 		public abstract Location DefaultLocation { get; }
 
-		// TODO This should use ToolControl
-		private string _title;
 		public string Title
 		{
 			get { return _title; }
@@ -51,12 +50,13 @@ namespace AvalonStudio.MVVM
 
 	public abstract class ToolViewModel<T> : ToolViewModel
 	{
+		private T _model;
+
 		protected ToolViewModel(T model)
 		{
 			_model = model;
 		}
 
-		private T _model;
 		public new T Model
 		{
 			get { return _model; }
@@ -68,7 +68,6 @@ namespace AvalonStudio.MVVM
 	{
 		protected ViewModel() : base(null)
 		{
-
 		}
 	}
 
@@ -86,24 +85,26 @@ namespace AvalonStudio.MVVM
 			Title = header;
 		}
 
-		public string Title
-		{
-			get; private set;
-		}
+		public string Title { get; private set; }
 	}
 
 	public abstract class ViewModel<T> : ReactiveObject
 	{
+		private T _model;
+
 		protected ViewModel(T model)
 		{
 			_model = model;
 		}
 
-		private T _model;
 		public T Model
 		{
 			get { return _model; }
-			set { this.RaiseAndSetIfChanged(ref _model, value); Invalidate(); }
+			set
+			{
+				this.RaiseAndSetIfChanged(ref _model, value);
+				Invalidate();
+			}
 		}
 
 		public void Invalidate()

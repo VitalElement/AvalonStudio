@@ -1,19 +1,18 @@
 using Avalonia.Controls;
-using Avalonia;
 using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    public class IncludePathSettingsFormView : UserControl
-    {
-        public IncludePathSettingsFormView()
-        {
-            this.InitializeComponent();
-        }
+	public class IncludePathSettingsFormView : UserControl
+	{
+		public IncludePathSettingsFormView()
+		{
+			InitializeComponent();
+		}
 
-        private void InitializeComponent()
-        {
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

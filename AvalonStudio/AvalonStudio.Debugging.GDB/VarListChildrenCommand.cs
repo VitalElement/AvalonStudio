@@ -1,68 +1,63 @@
+using System.Collections.Generic;
+
 namespace AvalonStudio.Debugging.GDB
 {
-    using AvalonStudio.Debugging;
-    using System.Collections.Generic;
-    using System.Linq;
+	public class VarListChildrenCommand : Command<GDBResponse<List<VariableObject>>>
+	{
+		private readonly string commandText;
 
-    public class VarListChildrenCommand : Command<GDBResponse<List<VariableObject>>>
-    {
-        public override int TimeoutMs
-        {
-            get
-            {
-                return DefaultCommandTimeout;
-            }
-        }
+		private readonly VariableObject variable;
 
-        public VarListChildrenCommand(VariableObject variable)
-        {
-            this.variable = variable;
-            commandText = string.Format ("-var-list-children {0}", variable.Id);
-        }
+		public VarListChildrenCommand(VariableObject variable)
+		{
+			this.variable = variable;
+			commandText = string.Format("-var-list-children {0}", variable.Id);
+		}
 
-        private VariableObject variable;
-        private string commandText;
+		public override int TimeoutMs
+		{
+			get { return DefaultCommandTimeout; }
+		}
 
-        public override string Encode ()
-        {
-            return commandText;
-        }
+		public override string Encode()
+		{
+			return commandText;
+		}
 
-        protected override GDBResponse<List<VariableObject>> Decode (string response)
-        {
-            var result = new GDBResponse<List<VariableObject>> (DecodeResponseCode (response));
+		protected override GDBResponse<List<VariableObject>> Decode(string response)
+		{
+			var result = new GDBResponse<List<VariableObject>>(DecodeResponseCode(response));
 
-            if(result.Response == ResponseCode.Done)
-            {
-                result.Value = new List<VariableObject> ();
+			if (result.Response == ResponseCode.Done)
+			{
+				result.Value = new List<VariableObject>();
 
-                var pairs = response.Substring (6).ToNameValuePairs ();
+				var pairs = response.Substring(6).ToNameValuePairs();
 
-                foreach(var pair in pairs)
-                {
-                    switch(pair.Name)
-                    {
-                        case "children":
-                            var children = pair.Value.ToArray ();
+				foreach (var pair in pairs)
+				{
+					switch (pair.Name)
+					{
+						case "children":
+							var children = pair.Value.ToArray();
 
-                            foreach(var child in children)
-                            {
-                                var childPair = child.ToNameValuePair ();
+							foreach (var child in children)
+							{
+								var childPair = child.ToNameValuePair();
 
-                                result.Value.Add (VariableObject.FromDataString (this.variable, childPair.Value.RemoveBraces()));
-                            }
+								result.Value.Add(VariableObject.FromDataString(variable, childPair.Value.RemoveBraces()));
+							}
 
-                            break;
-                    }
-                }
-            }
+							break;
+					}
+				}
+			}
 
-            return result;
-        }
+			return result;
+		}
 
-        public override void OutOfBandDataReceived (string data)
-        {
-            
-        }
-    }
+		public override void OutOfBandDataReceived(string data)
+		{
+		}
+	}
 }

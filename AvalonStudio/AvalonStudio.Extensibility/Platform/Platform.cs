@@ -1,37 +1,26 @@
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using AvalonStudio.Utils;
+
 namespace AvalonStudio.Platforms
 {
-	using System;
-	using System.IO;
-	using System.Runtime.InteropServices;
-	using AvalonStudio.Utils;
-
 	public static class Platform
 	{
-		public static void Initialise()
+		public delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
+
+		public enum CtrlTypes : uint
 		{
-			if (!Directory.Exists(BaseDirectory))
-			{
-				Directory.CreateDirectory(BaseDirectory);
-			}
-
-			if (!Directory.Exists(AppDataDirectory))
-			{
-				Directory.CreateDirectory(AppDataDirectory);
-			}
-
-			if (!Directory.Exists(ReposDirectory))
-			{
-				Directory.CreateDirectory(ReposDirectory);
-			}
-
-			if (!Directory.Exists(RepoCatalogDirectory))
-			{
-				Directory.CreateDirectory(RepoCatalogDirectory);
-			}
+			CTRL_C_EVENT = 0,
+			CTRL_BREAK_EVENT,
+			CTRL_CLOSE_EVENT,
+			CTRL_LOGOFF_EVENT = 5,
+			CTRL_SHUTDOWN_EVENT
 		}
 
 		[Map]
-		public enum Signum : int
+		public enum Signum
 		{
 			SIGHUP = 1, // Hangup (POSIX).
 			SIGINT = 2, // Interrupt (ANSI).
@@ -73,177 +62,7 @@ namespace AvalonStudio.Platforms
 		internal const string LIBC = "libc";
 		private const string LIB = "MonoPosixHelper";
 
-		[DllImport(LIB, EntryPoint = "Mono_Posix_FromSignum")]
-		private static extern int FromSignum(Signum value, out Int32 rval);
-
-
-		private static bool TryFromSignum(Signum value, out Int32 rval)
-		{
-			return FromSignum(value, out rval) == 0;
-		}
-
-
-		private static Int32 FromSignum(Signum value)
-		{
-			Int32 rval;
-			if (FromSignum(value, out rval) == -1)
-				throw new ArgumentException();
-			return rval;
-		}
-
-
-		[DllImport(LIBC, SetLastError = true, EntryPoint = "kill")]
-		private static extern int sys_kill(int pid, int sig);
-
-		private static int kill(int pid, Signum sig)
-		{
-			int _sig = FromSignum(sig);
-			return sys_kill(pid, _sig);
-		}
-
-		public static int SendSignal(int pid, Signum sig)
-		{
-			switch (PlatformIdentifier)
-			{
-				case PlatformID.Unix:
-					return kill(pid, sig);
-
-				case PlatformID.Win32NT:
-					switch (sig)
-					{
-						case Signum.SIGINT:
-							return SendCtrlC();
-
-						default:
-							throw new NotImplementedException();
-					}
-
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		public static bool AttachConsole(int pid)
-		{
-			switch (PlatformIdentifier)
-			{
-
-				case PlatformID.Win32NT:
-					return Win32AttachConsole(pid);
-
-				default:
-					return true;
-			}
-		}
-
-		public static bool FreeConsole()
-		{
-			switch (PlatformIdentifier)
-			{
-
-				case PlatformID.Win32NT:
-					return Win32FreeConsole();
-
-				default:
-					return true;
-			}
-		}
-
-		public static bool SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add)
-		{
-			switch (PlatformIdentifier)
-			{
-
-				case PlatformID.Win32NT:
-					return Win32SetConsoleCtrlHandler(handlerRoutine, add);
-
-				default:
-					return true;
-			}
-		}
-
-		[DllImport("kernel32.dll", SetLastError = true, EntryPoint = "AttachConsole")]
-		static extern bool Win32AttachConsole(int dwProcessId);
-
-		[DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true, EntryPoint = "FreeConsole")]
-		static extern bool Win32FreeConsole();
-
-
-		[DllImport("kernel32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool GenerateConsoleCtrlEvent(CtrlTypes dwCtrlEvent, uint dwProcessGroupId);
-
-		public delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
-
-		[DllImport("kernel32.dll", EntryPoint = "SetConsoleCtrlHandler")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool Win32SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add);
-
-		public enum CtrlTypes : uint
-		{
-			CTRL_C_EVENT = 0,
-			CTRL_BREAK_EVENT,
-			CTRL_CLOSE_EVENT,
-			CTRL_LOGOFF_EVENT = 5,
-			CTRL_SHUTDOWN_EVENT
-		}
-
-		private static int SendCtrlC()
-		{
-			return GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0) ? 1 : 0;
-		}
-
-		public static string ToAvalonPath(this string path)
-		{
-			return path.Replace('\\', '/');
-		}
-
-		public static string ToPlatformPath(this string path)
-		{
-			switch (PlatformIdentifier)
-			{
-				case PlatformID.Win32NT:
-					return path.Replace('/', '\\');
-
-				default:
-					return path.ToAvalonPath();
-			}
-		}
-
-		public static bool IsSamePathAs(this string path, string other)
-		{
-			return path.CompareFilePath(other) == 0;
-		}
-
-		public static int CompareFilePath(this string path, string other)
-		{
-			switch (PlatformIdentifier)
-			{
-				case PlatformID.Win32NT:
-					// TODO consider using directory info?           
-					if (path == null && other == null)
-					{
-						return 0;
-					}
-					else if (path == null)
-					{
-						return 1;
-					}
-					else if (other == null)
-					{
-						return -1;
-					}
-					else
-					{
-						return path.ToLower().CompareTo(other.ToLower());
-					}
-
-				default:
-					return path.CompareTo(other);
-			}
-		}
-
-		public static string ExecutionPath => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+		public static string ExecutionPath => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
 		public static string PluginsDirectory => Path.Combine(ExecutionPath, "Plugins");
 
@@ -254,14 +73,14 @@ namespace AvalonStudio.Platforms
 				switch (PlatformIdentifier)
 				{
 					case PlatformID.Unix:
-						{
-							return string.Empty;
-						}
+					{
+						return string.Empty;
+					}
 
 					case PlatformID.Win32NT:
-						{
-							return ".exe";
-						}
+					{
+						return ".exe";
+					}
 
 					default:
 						throw new NotImplementedException("Not implemented for your platform.");
@@ -276,14 +95,14 @@ namespace AvalonStudio.Platforms
 				switch (PlatformIdentifier)
 				{
 					case PlatformID.Unix:
-						{
-							return '/';
-						}
+					{
+						return '/';
+					}
 
 					case PlatformID.Win32NT:
-						{
-							return '\\';
-						}
+					{
+						return '\\';
+					}
 
 					default:
 						throw new NotImplementedException("Not implemented for your platform.");
@@ -327,7 +146,7 @@ namespace AvalonStudio.Platforms
 		{
 			get
 			{
-				string result = string.Empty;
+				var result = string.Empty;
 
 				switch (PlatformIdentifier)
 				{
@@ -349,6 +168,182 @@ namespace AvalonStudio.Platforms
 				}
 
 				return result;
+			}
+		}
+
+		public static void Initialise()
+		{
+			if (!Directory.Exists(BaseDirectory))
+			{
+				Directory.CreateDirectory(BaseDirectory);
+			}
+
+			if (!Directory.Exists(AppDataDirectory))
+			{
+				Directory.CreateDirectory(AppDataDirectory);
+			}
+
+			if (!Directory.Exists(ReposDirectory))
+			{
+				Directory.CreateDirectory(ReposDirectory);
+			}
+
+			if (!Directory.Exists(RepoCatalogDirectory))
+			{
+				Directory.CreateDirectory(RepoCatalogDirectory);
+			}
+		}
+
+		[DllImport(LIB, EntryPoint = "Mono_Posix_FromSignum")]
+		private static extern int FromSignum(Signum value, out int rval);
+
+
+		private static bool TryFromSignum(Signum value, out int rval)
+		{
+			return FromSignum(value, out rval) == 0;
+		}
+
+
+		private static int FromSignum(Signum value)
+		{
+			int rval;
+			if (FromSignum(value, out rval) == -1)
+				throw new ArgumentException();
+			return rval;
+		}
+
+
+		[DllImport(LIBC, SetLastError = true, EntryPoint = "kill")]
+		private static extern int sys_kill(int pid, int sig);
+
+		private static int kill(int pid, Signum sig)
+		{
+			var _sig = FromSignum(sig);
+			return sys_kill(pid, _sig);
+		}
+
+		public static int SendSignal(int pid, Signum sig)
+		{
+			switch (PlatformIdentifier)
+			{
+				case PlatformID.Unix:
+					return kill(pid, sig);
+
+				case PlatformID.Win32NT:
+					switch (sig)
+					{
+						case Signum.SIGINT:
+							return SendCtrlC();
+
+						default:
+							throw new NotImplementedException();
+					}
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		public static bool AttachConsole(int pid)
+		{
+			switch (PlatformIdentifier)
+			{
+				case PlatformID.Win32NT:
+					return Win32AttachConsole(pid);
+
+				default:
+					return true;
+			}
+		}
+
+		public static bool FreeConsole()
+		{
+			switch (PlatformIdentifier)
+			{
+				case PlatformID.Win32NT:
+					return Win32FreeConsole();
+
+				default:
+					return true;
+			}
+		}
+
+		public static bool SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add)
+		{
+			switch (PlatformIdentifier)
+			{
+				case PlatformID.Win32NT:
+					return Win32SetConsoleCtrlHandler(handlerRoutine, add);
+
+				default:
+					return true;
+			}
+		}
+
+		[DllImport("kernel32.dll", SetLastError = true, EntryPoint = "AttachConsole")]
+		private static extern bool Win32AttachConsole(int dwProcessId);
+
+		[DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true, EntryPoint = "FreeConsole")]
+		private static extern bool Win32FreeConsole();
+
+
+		[DllImport("kernel32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool GenerateConsoleCtrlEvent(CtrlTypes dwCtrlEvent, uint dwProcessGroupId);
+
+		[DllImport("kernel32.dll", EntryPoint = "SetConsoleCtrlHandler")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool Win32SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add);
+
+		private static int SendCtrlC()
+		{
+			return GenerateConsoleCtrlEvent(CtrlTypes.CTRL_C_EVENT, 0) ? 1 : 0;
+		}
+
+		public static string ToAvalonPath(this string path)
+		{
+			return path.Replace('\\', '/');
+		}
+
+		public static string ToPlatformPath(this string path)
+		{
+			switch (PlatformIdentifier)
+			{
+				case PlatformID.Win32NT:
+					return path.Replace('/', '\\');
+
+				default:
+					return path.ToAvalonPath();
+			}
+		}
+
+		public static bool IsSamePathAs(this string path, string other)
+		{
+			return path.CompareFilePath(other) == 0;
+		}
+
+		public static int CompareFilePath(this string path, string other)
+		{
+			switch (PlatformIdentifier)
+			{
+				case PlatformID.Win32NT:
+					// TODO consider using directory info?           
+					if (path == null && other == null)
+					{
+						return 0;
+					}
+					if (path == null)
+					{
+						return 1;
+					}
+					if (other == null)
+					{
+						return -1;
+					}
+					return path.ToLower().CompareTo(other.ToLower());
+
+				default:
+					return path.CompareTo(other);
 			}
 		}
 	}

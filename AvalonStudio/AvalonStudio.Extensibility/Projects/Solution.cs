@@ -1,22 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Platforms;
+using AvalonStudio.Shell;
+using AvalonStudio.Utils;
+using Newtonsoft.Json;
+
 namespace AvalonStudio.Projects
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.IO;
-	using System.Linq;
-	using Extensibility;
-	using Newtonsoft.Json;
-	using Platforms;
-	using Shell;
-	using Utils;
 	public class Solution : SerializedObject<Solution>, ISolution
 	{
 		public const string Extension = "asln";
 
+		public Solution()
+		{
+			ProjectReferences = new List<string>();
+			Projects = new ObservableCollection<IProject>();
+		}
+
+		public string StartupItem { get; set; }
+
+		[JsonProperty("Projects")]
+		public IList<string> ProjectReferences { get; set; }
+
+		public IProject AddProject(IProject project)
+		{
+			var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);
+
+			if (currentProject != null) return currentProject;
+			ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
+			Projects.InsertSorted(project);
+			currentProject = project;
+
+			return currentProject;
+		}
+
+		public void RemoveProject(IProject project)
+		{
+			Projects.Remove(project);
+			ProjectReferences.Remove(CurrentDirectory.MakeRelativePath(project.Location).ToAvalonPath());
+		}
+
+		public void Save()
+		{
+			StartupItem = StartupProject?.Name;
+
+			for (var i = 0; i < ProjectReferences.Count; i++)
+			{
+				ProjectReferences[i] = ProjectReferences[i].ToAvalonPath();
+			}
+
+			Serialize(Path.Combine(CurrentDirectory, Name + "." + Extension));
+		}
+
+		public ISourceFile FindFile(ISourceFile file)
+		{
+			ISourceFile result = null;
+
+			foreach (var project in Projects)
+			{
+				result = project.FindFile(file);
+
+				if (result != null)
+				{
+					break;
+				}
+			}
+
+			return result;
+		}
+
+		[JsonIgnore]
+		public string CurrentDirectory { get; private set; }
+
+		[JsonIgnore]
+		public ObservableCollection<IProject> Projects { get; set; }
+
+		[JsonIgnore]
+		public IProject StartupProject { get; set; }
+
+		public string Name { get; set; }
+
 		public static IProject LoadProjectFile(ISolution solution, string fileName)
 		{
-			IShell shell = IoC.Get<IShell>();
+			var shell = IoC.Get<IShell>();
 			IProject result = null;
 
 			var extension = Path.GetExtension(fileName).Remove(0, 1);
@@ -27,10 +97,6 @@ namespace AvalonStudio.Projects
 			{
 				result = projectType.Load(solution, fileName);
 			}
-			else
-			{
-				// create an unloaded project type.
-			}
 
 			result.ToolChain?.ProvisionSettings(result);
 
@@ -39,7 +105,7 @@ namespace AvalonStudio.Projects
 
 		private static IProject LoadProject(ISolution solution, string reference)
 		{
-			IShell shell = IoC.Get<IShell>();
+			var shell = IoC.Get<IShell>();
 			IProject result = null;
 
 			var extension = Path.GetExtension(reference).Remove(0, 1);
@@ -89,14 +155,14 @@ namespace AvalonStudio.Projects
 
 			solution.Name = Path.GetFileNameWithoutExtension(fileName);
 
-			solution.StartupProject = solution.Projects.SingleOrDefault((p) => p.Name == solution.StartupItem);
+			solution.StartupProject = solution.Projects.SingleOrDefault(p => p.Name == solution.StartupItem);
 
 			return solution;
 		}
 
 		public IProject FindProject(string name)
 		{
-			IProject result = Projects.FirstOrDefault(project => project.Name == name);
+			var result = Projects.FirstOrDefault(project => project.Name == name);
 
 			if (result == null)
 			{
@@ -104,36 +170,6 @@ namespace AvalonStudio.Projects
 			}
 
 			return result;
-		}
-
-		public IProject AddProject(IProject project)
-		{
-			var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);
-
-			if (currentProject != null) return currentProject;
-			ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
-			Projects.InsertSorted(project);
-			currentProject = project;
-
-			return currentProject;
-		}
-
-		public void RemoveProject(IProject project)
-		{
-			Projects.Remove(project);
-			ProjectReferences.Remove(CurrentDirectory.MakeRelativePath(project.Location).ToAvalonPath());
-		}
-
-		public void Save()
-		{
-			StartupItem = StartupProject?.Name;
-
-			for (int i = 0; i < ProjectReferences.Count; i++)
-			{
-				ProjectReferences[i] = ProjectReferences[i].ToAvalonPath();
-			}
-
-			Serialize(Path.Combine(CurrentDirectory, Name + "." + Extension));
 		}
 
 		public static Solution Create(string location, string name)
@@ -146,44 +182,5 @@ namespace AvalonStudio.Projects
 
 			return result;
 		}
-
-		public ISourceFile FindFile(ISourceFile file)
-		{
-			ISourceFile result = null;
-
-			foreach (var project in Projects)
-			{
-				result = project.FindFile(file);
-
-				if (result != null)
-				{
-					break;
-				}
-			}
-
-			return result;
-		}
-
-		public Solution()
-		{
-			ProjectReferences = new List<string>();
-			Projects = new ObservableCollection<IProject>();
-		}
-
-		[JsonIgnore]
-		public string CurrentDirectory { get; private set; }
-
-		[JsonIgnore]
-		public ObservableCollection<IProject> Projects { get; set; }
-
-		[JsonIgnore]
-		public IProject StartupProject { get; set; }
-
-		public string Name { get; set; }
-
-		public string StartupItem { get; set; }
-
-		[JsonProperty("Projects")]
-		public IList<string> ProjectReferences { get; set; }
 	}
 }
