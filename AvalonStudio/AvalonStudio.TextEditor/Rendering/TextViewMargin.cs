@@ -1,59 +1,54 @@
+using System;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
+using AvalonStudio.TextEditor.Rendering;
+
 namespace AvalonStudio.TextEditor
 {
-    using Avalonia;
-    using Avalonia.Controls;
-    using Avalonia.Media;
-    using Rendering;
-    using System;
+	public class TextInfo
+	{
+		public double LineHeight { get; set; }
+		public double CharWidth { get; set; }
+		public int NumLines { get; set; }
+	}
 
-    public class TextInfo
-    {
-        public double LineHeight { get; set; }
-        public double CharWidth { get; set; }
-        public int NumLines { get; set; }
-    }
+	public abstract class TextViewMargin : Control
+	{
+		protected TextView textView;
 
-    public abstract class TextViewMargin : Control
-    {
-        public TextViewMargin()
-        {
+		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+		{
+			textView = Parent.Parent.Parent.Parent as TextView;
 
-        }
+			if (textView == null)
+			{
+				throw new Exception("Margin must be contained inside a TextEditor control.");
+			}
+		}
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            textView = Parent.Parent.Parent.Parent as TextView;
+		protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+		{
+			textView = null;
+		}
 
-            if (textView == null)
-            {
-                throw new Exception("Margin must be contained inside a TextEditor control.");
-            }
-        }
+		public override void Render(DrawingContext context)
+		{
+			if (textView.TextDocument != null)
+			{
+				var info = new TextInfo();
 
-        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            textView = null;
-        }
+				var charRect = textView.CharSize;
 
-        public override void Render(DrawingContext context)
-        {
-            if (textView.TextDocument != null)
-            {
-                TextInfo info = new TextInfo();
+				info.LineHeight = charRect.Height;
+				info.CharWidth = charRect.Width;
 
-                var charRect = textView.CharSize;
+				info.NumLines = textView.TextDocument.LineCount;
 
-                info.LineHeight = charRect.Height;
-                info.CharWidth = charRect.Width;
+				Render(context, info);
+			}
+		}
 
-                info.NumLines = textView.TextDocument.LineCount;
-
-                Render(context, info);
-            }
-        }
-
-        public abstract void Render(DrawingContext context, TextInfo textInfo);
-
-        protected TextView textView;
-    }
+		public abstract void Render(DrawingContext context, TextInfo textInfo);
+	}
 }

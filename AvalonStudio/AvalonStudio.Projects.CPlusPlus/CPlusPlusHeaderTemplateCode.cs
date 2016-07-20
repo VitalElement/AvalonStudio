@@ -1,18 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    partial class CPlusPlusClassHeaderTemplate
-    {
-        public CPlusPlusClassHeaderTemplate(string className)
-        {
-            this.className = className;
-        }
+	partial class CPlusPlusClassHeaderTemplate
+	{
+		private readonly string className;
 
-        private string className;
-    }
+		public CPlusPlusClassHeaderTemplate(string className)
+		{
+			this.className = className;
+		}
+	}
 }

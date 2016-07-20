@@ -1,54 +1,40 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
+using AvalonStudio.Debugging;
+using AvalonStudio.TestFrameworks;
+using AvalonStudio.Toolchains;
+
 namespace AvalonStudio.Projects
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Collections.ObjectModel;
-	using System.ComponentModel.Composition;
-	using Debugging;
-	using TestFrameworks;
-	using Toolchains;
-	[InheritedExport(typeof(IProject))]
+	[InheritedExport(typeof (IProject))]
 	public interface IProject : IProjectFolder, IComparable<IProject>
 	{
 		ISolution Solution { get; }
 
 		/// <summary>
-		/// List of references with the project.
+		///     List of references with the project.
 		/// </summary>
 		ObservableCollection<IProject> References { get; }
-
-		void AddReference(IProject project);
-
-		void RemoveReference(IProject project);
 
 		IToolChain ToolChain { get; set; }
 		IDebugger Debugger { get; set; }
 		ITestFramework TestFramework { get; set; }
 
-		ISourceFile FindFile(ISourceFile file);
-
 		bool Hidden { get; set; }
 
 		/// <summary>
-		/// The directory the project file resides in.
+		///     The directory the project file resides in.
 		/// </summary>
 		string CurrentDirectory { get; }
 
 		/// <summary>
-		/// The location of the project file
+		///     The location of the project file
 		/// </summary>
 		string Location { get; }
 
-
-		/// <summary>
-		/// Resolves all references in the project.
-		/// </summary>
-		void ResolveReferences();
-
 		IList<object> ConfigurationPages { get; }
-
-		// TODO should these 2 methods be in seperate class?
-		IProject Load(ISolution solution, string filePath);
 		string Extension { get; }
 
 		//IDictionary<string, string> Settings { get; }        
@@ -59,6 +45,21 @@ namespace AvalonStudio.Projects
 		dynamic ToolchainSettings { get; }
 
 		dynamic DebugSettings { get; }
+
+		void AddReference(IProject project);
+
+		void RemoveReference(IProject project);
+
+		ISourceFile FindFile(ISourceFile file);
+
+
+		/// <summary>
+		///     Resolves all references in the project.
+		/// </summary>
+		void ResolveReferences();
+
+		// TODO should these 2 methods be in seperate class?
+		IProject Load(ISolution solution, string filePath);
 
 		void Save();
 	}

@@ -1,78 +1,77 @@
+using System;
+using System.Collections.Generic;
+
 namespace AvalonStudio.Debugging
 {
-    using System;
-    using System.Collections.Generic;
+	public class MemoryBytes
+	{
+		public ulong Address { get; set; }
 
-    public class MemoryBytes
-    {
-        public static byte[] StringToByteArray(string hex)
-        {
-            int NumberChars = hex.Length;
-            byte[] bytes = new byte[NumberChars / 2];
+		public ulong Offset { get; private set; }
 
-            for (int i = 0; i < NumberChars; i += 2)
-            {
-                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-            }
+		public ulong End { get; private set; }
 
-            return bytes;
-        }
+		public byte[] Data { get; set; }
 
-        public static List<MemoryBytes> FromDataString (string data)
-        {
-            var result = new List<MemoryBytes>();
+		public string Values { get; set; }
 
-            var responsePair = data.Substring(6).ToNameValuePair();
+		public static byte[] StringToByteArray(string hex)
+		{
+			var NumberChars = hex.Length;
+			var bytes = new byte[NumberChars/2];
 
-            if(responsePair.Name == "memory")
-            {
-                var memoryBlocks = responsePair.Value.ToArray();
+			for (var i = 0; i < NumberChars; i += 2)
+			{
+				bytes[i/2] = Convert.ToByte(hex.Substring(i, 2), 16);
+			}
 
-                foreach(var memoryBlock in memoryBlocks)
-                {
-                    var block = new MemoryBytes();
+			return bytes;
+		}
 
-                    var pairs = memoryBlocks[0].RemoveBraces().ToNameValuePairs();
+		public static List<MemoryBytes> FromDataString(string data)
+		{
+			var result = new List<MemoryBytes>();
 
-                    foreach (var pair in pairs)
-                    {
-                        switch (pair.Name)
-                        {
-                            case "begin":
-                                block.Address = Convert.ToUInt64(pair.Value, 16);
-                                break;
+			var responsePair = data.Substring(6).ToNameValuePair();
 
-                            case "offset":
-                                block.Offset = Convert.ToUInt64(pair.Value, 16);
-                                break;
+			if (responsePair.Name == "memory")
+			{
+				var memoryBlocks = responsePair.Value.ToArray();
 
-                            case "end":
-                                block.End = Convert.ToUInt64(pair.Value, 16);
-                                break;
+				foreach (var memoryBlock in memoryBlocks)
+				{
+					var block = new MemoryBytes();
 
-                            case "contents":
-                                block.Data = StringToByteArray(pair.Value);
-                                block.Values = pair.Value;
-                                break;
-                        }
-                    }
+					var pairs = memoryBlocks[0].RemoveBraces().ToNameValuePairs();
 
-                    result.Add(block);
-                }                
-            }
-            
-            return result;
-        }
+					foreach (var pair in pairs)
+					{
+						switch (pair.Name)
+						{
+							case "begin":
+								block.Address = Convert.ToUInt64(pair.Value, 16);
+								break;
 
+							case "offset":
+								block.Offset = Convert.ToUInt64(pair.Value, 16);
+								break;
 
-        public ulong Address { get; set; }
+							case "end":
+								block.End = Convert.ToUInt64(pair.Value, 16);
+								break;
 
-        public ulong Offset { get; private set; }
-        
-        public ulong End { get; private set; }
-        
-        public byte[] Data { get; set; } 
+							case "contents":
+								block.Data = StringToByteArray(pair.Value);
+								block.Values = pair.Value;
+								break;
+						}
+					}
 
-        public string Values { get; set; }
-    }
+					result.Add(block);
+				}
+			}
+
+			return result;
+		}
+	}
 }

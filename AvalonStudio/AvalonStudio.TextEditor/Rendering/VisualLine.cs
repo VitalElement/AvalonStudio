@@ -1,48 +1,34 @@
+using Avalonia.Media;
+using AvalonStudio.TextEditor.Document;
+
 namespace AvalonStudio.TextEditor.Rendering
 {
-    using AvalonStudio.TextEditor.Document;
-    using Avalonia.Media;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+	public class VisualLine : ISegment
+	{
+		public DocumentLine DocumentLine { get; set; }
+		public uint VisualLineNumber { get; set; }
+		public FormattedText RenderedText { get; set; }
 
-    public class VisualLine : ISegment
-    {
-        ~VisualLine()
-        {
-            RenderedText?.Dispose();
-            RenderedText = null;
-            DocumentLine = null;
-        }
+		public int Offset
+		{
+			get { return DocumentLine.Offset; }
+		}
 
-        public DocumentLine DocumentLine { get; set; }
-        public UInt32 VisualLineNumber { get; set; }
-        public FormattedText RenderedText { get; set; }
+		public int Length
+		{
+			get { return DocumentLine.Length; }
+		}
 
-        public int Offset
-        {
-            get
-            {
-                return DocumentLine.Offset;
-            }
-        }
+		public int EndOffset
+		{
+			get { return DocumentLine.EndOffset; }
+		}
 
-        public int Length
-        {
-            get
-            {
-                return DocumentLine.Length;
-            }
-        }
-
-        public int EndOffset
-        {
-            get
-            {
-                return DocumentLine.EndOffset;
-            }
-        }
-    }
+		~VisualLine()
+		{
+			RenderedText?.Dispose();
+			RenderedText = null;
+			DocumentLine = null;
+		}
+	}
 }

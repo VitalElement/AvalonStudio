@@ -1,135 +1,129 @@
+using System;
+using System.IO;
+using AvalonStudio.MVVM;
+using AvalonStudio.Projects;
+using ReactiveUI;
+
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    using AvalonStudio.MVVM;
-    using Avalonia.Controls;
-    using Projects;
-    using ReactiveUI;
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Windows.Input;
+	public abstract class ProjectItemViewModel : ViewModel
+	{
+		public static ProjectItemViewModel Create(IProjectItem item)
+		{
+			ProjectItemViewModel result = null;
 
-    public abstract class ProjectItemViewModel : ViewModel
-    {
-        public static ProjectItemViewModel Create(IProjectItem item)
-        {
-            ProjectItemViewModel result = null;
+			if (item is IProjectFolder)
+			{
+				result = new ProjectFolderViewModel(item as IProjectFolder);
+			}
 
-            if (item is IProjectFolder)
-            {
-                result = new ProjectFolderViewModel(item as IProjectFolder) as ProjectItemViewModel<IProjectFolder>;
-            }
+			if (item is ISourceFile)
+			{
+				result = new SourceFileViewModel(item as ISourceFile);
+			}
 
-            if(item is ISourceFile)
-            {
-                result = new SourceFileViewModel(item as ISourceFile);
-            }
+			if (item is IReferenceFolder)
+			{
+				result = new ReferenceFolderViewModel(item as IReferenceFolder);
+			}
 
-            if(item is IReferenceFolder)
-            {
-                result = new ReferenceFolderViewModel(item as IReferenceFolder);
-            }
+			return result;
+		}
+	}
 
-            return result;
-        }        
-    }
+	public abstract class ProjectItemViewModel<T> : ProjectItemViewModel where T : IProjectItem
+	{
+		private bool isEditingTitle;
 
-    public abstract class ProjectItemViewModel<T> : ProjectItemViewModel  where T : IProjectItem
-    {
-        public ProjectItemViewModel(T model)
-        {
-            Model = model;
+		private bool labelVisibility;
 
-            ToggleEditingModeCommand = ReactiveCommand.Create();
+		private bool textBoxVisibility;
 
-            ToggleEditingModeCommand.Subscribe(args =>
-            {
-                //if (((object)ShellViewModel.Instance.SolutionExplorer.SelectedItem) == (object)this && NumberOfSelections > 1)
-                //{
-                //    IsEditingTitle = (bool)args;
-                //}
-            });
+		public ProjectItemViewModel(T model)
+		{
+			Model = model;
 
-            RemoveItemCommand = ReactiveCommand.Create();
-            RemoveItemCommand.Subscribe((o) =>
-            {
-                //if (model is EditorViewModel)
-                //{
-                //    //(this.model as EditorViewModel).CloseCommand.Execute (null);
-                //}
+			ToggleEditingModeCommand = ReactiveCommand.Create();
 
-                //if (model is ProjectItem)
-                //{
-                //    (model as ProjectItem).Container.RemoveItem(model as ProjectItem);
-                //}
-            });
+			ToggleEditingModeCommand.Subscribe(args =>
+			{
+				//if (((object)ShellViewModel.Instance.SolutionExplorer.SelectedItem) == (object)this && NumberOfSelections > 1)
+				//{
+				//    IsEditingTitle = (bool)args;
+				//}
+			});
 
-            OpenInExplorerCommand = ReactiveCommand.Create();
-            OpenInExplorerCommand.Subscribe((o) =>
-            {
-                //if (model is ProjectItem)
-                //{
-                //    Process.Start((model as ProjectItem).CurrentDirectory);
-                //}
-            });
+			RemoveItemCommand = ReactiveCommand.Create();
+			RemoveItemCommand.Subscribe(o =>
+			{
+				//if (model is EditorViewModel)
+				//{
+				//    //(this.model as EditorViewModel).CloseCommand.Execute (null);
+				//}
 
-            textBoxVisibility = false;
-            labelVisibility = true;
-        }
+				//if (model is ProjectItem)
+				//{
+				//    (model as ProjectItem).Container.RemoveItem(model as ProjectItem);
+				//}
+			});
 
-        new T Model
-        {
-            get { return (T)base.Model; }
-            set { base.Model = value; }
-        }
+			OpenInExplorerCommand = ReactiveCommand.Create();
+			OpenInExplorerCommand.Subscribe(o =>
+			{
+				//if (model is ProjectItem)
+				//{
+				//    Process.Start((model as ProjectItem).CurrentDirectory);
+				//}
+			});
 
-        public string Title
-        {
-            get { return this.Model.Name; }
-           // set { this.Model.Name = value; this.RaisePropertyChanged(); IsEditingTitle = false; }
-        }
+			textBoxVisibility = false;
+			labelVisibility = true;
+		}
 
-        public int NumberOfSelections { get; set; }
+		private new T Model
+		{
+			get { return (T) base.Model; }
+			set { base.Model = value; }
+		}
 
-        public string TitleWithoutExtension
-        {
-            get
-            {
-                return Path.GetFileNameWithoutExtension(Title);
-            }
-        }
+		public string Title
+		{
+			get { return Model.Name; }
+			// set { this.Model.Name = value; this.RaisePropertyChanged(); IsEditingTitle = false; }
+		}
 
-        private bool isEditingTitle;
-        public bool IsEditingTitle
-        {
-            get { return isEditingTitle; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref isEditingTitle, value);
-                LabelVisibility = !value;
-                TextBoxVisibility = value;
-            }
-        }
+		public int NumberOfSelections { get; set; }
 
-        public ReactiveCommand<object> RemoveItemCommand { get; private set; }
-        public ReactiveCommand<object> ToggleEditingModeCommand { get; private set; }
-        public ReactiveCommand<object> OpenInExplorerCommand { get; protected set; }
+		public string TitleWithoutExtension
+		{
+			get { return Path.GetFileNameWithoutExtension(Title); }
+		}
 
-        private bool textBoxVisibility;
-        public bool TextBoxVisibility
-        {
-            get { return textBoxVisibility; }
-            set { this.RaiseAndSetIfChanged(ref textBoxVisibility, value); }
-        }
+		public bool IsEditingTitle
+		{
+			get { return isEditingTitle; }
+			set
+			{
+				this.RaiseAndSetIfChanged(ref isEditingTitle, value);
+				LabelVisibility = !value;
+				TextBoxVisibility = value;
+			}
+		}
 
-        private bool labelVisibility;
-        public bool LabelVisibility
-        {
-            get { return labelVisibility; }
-            set { this.RaiseAndSetIfChanged(ref labelVisibility, value); }
-        }
+		public ReactiveCommand<object> RemoveItemCommand { get; }
+		public ReactiveCommand<object> ToggleEditingModeCommand { get; }
+		public ReactiveCommand<object> OpenInExplorerCommand { get; protected set; }
 
+		public bool TextBoxVisibility
+		{
+			get { return textBoxVisibility; }
+			set { this.RaiseAndSetIfChanged(ref textBoxVisibility, value); }
+		}
 
-    }    
+		public bool LabelVisibility
+		{
+			get { return labelVisibility; }
+			set { this.RaiseAndSetIfChanged(ref labelVisibility, value); }
+		}
+	}
 }

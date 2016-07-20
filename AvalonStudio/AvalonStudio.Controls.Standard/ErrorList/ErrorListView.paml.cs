@@ -1,19 +1,18 @@
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
-    using Avalonia;
-    using Avalonia.Controls;
-    using Avalonia.Markup.Xaml;
-    public class ErrorListView : UserControl
-    {
-        public ErrorListView()
-        {
-            this.InitializeComponent();
-        }
+	public class ErrorListView : UserControl
+	{
+		public ErrorListView()
+		{
+			InitializeComponent();
+		}
 
-        private void InitializeComponent()
-        {
-
-            Avalonia.Markup.Xaml.AvaloniaXamlLoader.Load(this);
-        }
-    }
+		private void InitializeComponent()
+		{
+			AvaloniaXamlLoader.Load(this);
+		}
+	}
 }

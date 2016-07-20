@@ -1,96 +1,86 @@
+using System.IO;
+using AvalonStudio.Platforms;
+using Newtonsoft.Json;
+
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    using Newtonsoft.Json;
-    using System.IO;
-    using System;
-    using Utils;
-    using Platforms;
+	public class SourceFile : ISourceFile
+	{
+		private SourceFile()
+		{
+		}
 
-    public class SourceFile : ISourceFile
-    {
-        private SourceFile()
-        {
+		public string Flags { get; set; }
 
-        }        
+		public string File { get; set; }
 
-        public string File { get; set; }
-        public string Flags { get; set; }
+		public int CompareTo(ISourceFile other)
+		{
+			return File.CompareFilePath(other.File);
+		}
 
-        public void SetProject(IProject project)
-        {
-            this.Project = project;
-        }
+		[JsonIgnore]
+		public string Location
+		{
+			get { return Path.Combine(Project.CurrentDirectory, File); }
+		}
 
-        public static SourceFile FromPath (IProject project, IProjectFolder parent, string filePath)
-        {
-            return new SourceFile() { Project = project, Parent = parent, File = filePath.ToPlatformPath() };
-        }
+		[JsonIgnore]
+		public IProject Project { get; set; }
 
-        public static SourceFile Create(IProject project, IProjectFolder parent, string location, string name, string text = "")
-        {
-            var filePath = Path.Combine(location, name);
-            var file = System.IO.File.CreateText(filePath);
-            file.Write(text);
-            file.Close();
+		[JsonIgnore]
+		public Language Language
+		{
+			get
+			{
+				var result = Language.C;
 
-            return new SourceFile() { File = filePath.ToPlatformPath(), Project = project };
-        }
+				switch (Path.GetExtension(File))
+				{
+					case ".c":
+						result = Language.C;
+						break;
 
-        public int CompareTo(ISourceFile other)
-        {
-            return File.CompareFilePath(other.File);
-        }
+					case ".cpp":
+						result = Language.Cpp;
+						break;
+				}
 
-        [JsonIgnore]
-        public string Location
-        {
-            get
-            {
-                return Path.Combine(Project.CurrentDirectory, File);
-            }
-        }
+				return result;
+			}
+		}
 
-        [JsonIgnore]
-        public IProject Project { get; set; }
+		public string Name
+		{
+			get { return Path.GetFileName(Location); }
+		}
 
-        [JsonIgnore]
-        public Language Language
-        {
-            get
-            {
-                var result = Language.C;
+		public IProjectFolder Parent { get; set; }
 
-                switch (Path.GetExtension(File))
-                {
-                    case ".c":
-                        result = Language.C;
-                        break;
+		public string CurrentDirectory
+		{
+			get { return Path.GetDirectoryName(Location); }
+		}
 
-                    case ".cpp":
-                        result = Language.Cpp;
-                        break;
-                }
+		public void SetProject(IProject project)
+		{
+			Project = project;
+		}
 
-                return result;
-            }
-        }
+		public static SourceFile FromPath(IProject project, IProjectFolder parent, string filePath)
+		{
+			return new SourceFile {Project = project, Parent = parent, File = filePath.ToPlatformPath()};
+		}
 
-        public string Name
-        {
-            get
-            {
-                return Path.GetFileName(Location);
-            }
-        }
+		public static SourceFile Create(IProject project, IProjectFolder parent, string location, string name,
+			string text = "")
+		{
+			var filePath = Path.Combine(location, name);
+			var file = System.IO.File.CreateText(filePath);
+			file.Write(text);
+			file.Close();
 
-        public IProjectFolder Parent { get; set; }
-
-        public string CurrentDirectory
-        {
-            get
-            {
-                return Path.GetDirectoryName(Location);
-            }
-        }
-    }
+			return new SourceFile {File = filePath.ToPlatformPath(), Project = project};
+		}
+	}
 }

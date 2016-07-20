@@ -1,54 +1,53 @@
+using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using AvalonStudio.Shell;
+
 namespace AvalonStudio
 {
-    using System.Collections.Generic;
-    using System.ComponentModel.Composition.Hosting;
-    using System.ComponentModel.Composition.Primitives;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using Languages;
-    using Projects;
-    using Shell;
-    internal static class CompositionRoot
-    {
-        private static readonly string PluginsFolder = "Plugins";
+	internal static class CompositionRoot
+	{
+		private static readonly string PluginsFolder = "Plugins";
 
-        public static CompositionContainer CreateContainer()
-        {
-            EnsurePluginsFolder();
-            
-            var catalogs = GetCatalogsToImport();
+		private static IEnumerable<Assembly> ScannedAssemblies
+		{
+			get
+			{
+				return new[]
+				{
+					typeof (Program).GetTypeInfo().Assembly,
+					typeof (MinimalShell).GetTypeInfo().Assembly
+				};
+			}
+		}
 
-            return new CompositionContainer(new AggregateCatalog(catalogs));
-        }
+		public static CompositionContainer CreateContainer()
+		{
+			EnsurePluginsFolder();
 
-        private static List<ComposablePartCatalog> GetCatalogsToImport()
-        {
-            var pluginsCatalog = new DirectoryCatalog(PluginsFolder);
-            var assemblyCatalogs = ScannedAssemblies.Select(assembly => new AssemblyCatalog(assembly));
+			var catalogs = GetCatalogsToImport();
 
-            var catalogs = new List<ComposablePartCatalog>();
-            catalogs.Add(pluginsCatalog);
-            catalogs.AddRange(assemblyCatalogs);
+			return new CompositionContainer(new AggregateCatalog(catalogs));
+		}
 
-            return catalogs;
-        }
+		private static List<ComposablePartCatalog> GetCatalogsToImport()
+		{
+			var pluginsCatalog = new DirectoryCatalog(PluginsFolder);
+			var assemblyCatalogs = ScannedAssemblies.Select(assembly => new AssemblyCatalog(assembly));
 
-        private static IEnumerable<Assembly> ScannedAssemblies
-        {
-            get
-            {
-                return new[]
-                {
-                    typeof (Program).GetTypeInfo().Assembly,
-                    typeof (MinimalShell).GetTypeInfo().Assembly,                    
-                };
-            }
-        }
+			var catalogs = new List<ComposablePartCatalog>();
+			catalogs.Add(pluginsCatalog);
+			catalogs.AddRange(assemblyCatalogs);
 
-        private static void EnsurePluginsFolder()
-        {
-            Directory.CreateDirectory(PluginsFolder);
-        }
-    }
+			return catalogs;
+		}
+
+		private static void EnsurePluginsFolder()
+		{
+			Directory.CreateDirectory(PluginsFolder);
+		}
+	}
 }
