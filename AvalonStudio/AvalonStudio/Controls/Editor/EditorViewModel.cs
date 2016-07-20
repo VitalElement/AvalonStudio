@@ -546,9 +546,9 @@ namespace AvalonStudio.Controls
 		{
 			var result = false;
 
-			if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
+			if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor && Model.LanguageService != null)
 			{
-				var symbol = await Model.LanguageService?.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
+				var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
 
 				if (symbol != null)
 				{

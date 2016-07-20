@@ -17,10 +17,10 @@ namespace AvalonStudio.TextEditor.Rendering
 
 		public void Draw(TextView textView, DrawingContext drawingContext)
 		{
-			if (textView.SelectionStart != textView.SelectionEnd)
+			if (textView.SelectionStart != textView.SelectionEnd && textView.SelectionEnd >= 0 && textView.SelectionStart >= 0)
 			{
 				TextSegment selection;
-
+                
 				if (textView.SelectionEnd > textView.SelectionStart)
 				{
 					selection = new TextSegment {StartOffset = textView.SelectionStart, EndOffset = textView.SelectionEnd};
