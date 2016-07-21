@@ -11,8 +11,8 @@
 *
 *******************************************************************************/
 #pragma mark Compiler Pragmas
-#ifndef _<#=className.ToUpper()#>_H_
-#define _<#=className.ToUpper()#>_H_
+#ifndef <#=className.ToUpper()#>_H_
+#define <#=className.ToUpper()#>_H_
 
 #pragma mark Includes
 #include <stddef.h>
@@ -26,7 +26,6 @@ public:
 
     <#= className #> ();
     ~<#= className #> ();
-
 
 #pragma mark Private Members
 private:
