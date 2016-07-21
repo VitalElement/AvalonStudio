@@ -409,11 +409,15 @@ namespace AvalonStudio.Controls
 				{
 					var entry = IndexItems[i];
 
-					if (offset >= entry.Offset)
+					if (offset >= entry.Offset && offset < entry.EndOffset)
 					{
 						selectedEntry = entry;
 						break;
 					}
+                    else
+                    {
+                        selectedEntry = null;
+                    }
 
 					i--;
 				}
