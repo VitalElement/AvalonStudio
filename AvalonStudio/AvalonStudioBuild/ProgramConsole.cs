@@ -27,7 +27,7 @@ namespace AvalonStudio
 
 		public void Clear()
 		{
-			Console.Clear();
+			//Console.Clear();
 		}
 
 		public void OverWrite(string data)
