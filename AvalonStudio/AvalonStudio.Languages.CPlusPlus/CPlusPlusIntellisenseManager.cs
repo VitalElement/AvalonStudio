@@ -204,12 +204,15 @@ namespace AvalonStudio.Languages.CPlusPlus
 
 				result = true;
 
-				await Dispatcher.UIThread.InvokeTaskAsync(() =>
-				{
-					editor.TextDocument.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
-						intellisenseControl.SelectedCompletion.Title);
-					editor.CaretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
-				});
+                if (intellisenseStartedAt < caretIndex)
+                {
+                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                    {
+                        editor.TextDocument.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
+                            intellisenseControl.SelectedCompletion.Title);
+                        editor.CaretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
+                    });
+                }
 			}
 
 			return result;
