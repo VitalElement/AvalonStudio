@@ -251,6 +251,7 @@ namespace AvalonStudio.Debugging
 		{
 			if (CurrentDebugger != null)
 			{
+                PrepareToRun();
 				await CurrentDebugger.ResetAsync(true);
 			}
 		}
@@ -517,37 +518,40 @@ namespace AvalonStudio.Debugging
 						DebugFrameChanged(this, args);
 					}
 
-					IsUpdating = false;
-					IsExecuting = false;
+                    if (e.Frame != null && e.Frame.File != null)
+                    {
+                        var normalizedPath = e.Frame.File.Replace("\\\\", "\\").ToPlatformPath();
 
-					if (e.Frame != null && e.Frame.File != null)
-					{
-						var normalizedPath = e.Frame.File.Replace("\\\\", "\\").ToPlatformPath();
+                        ISourceFile file = null;
 
-						ISourceFile file = null;
+                        var document = _shell.GetDocument(normalizedPath);
 
-						var document = _shell.GetDocument(normalizedPath);
-						file = document?.ProjectFile;
+                        if (document != null)
+                        {
+                            lastDocument = document;
+                            file = document?.ProjectFile;
+                        }
+                        
+                        if (file == null)
+                        {
+                            file = _shell.CurrentSolution.FindFile(PathSourceFile.FromPath(null, null, normalizedPath));
+                        }
 
-						if (file == null)
-						{
-							file = _shell.CurrentSolution.FindFile(PathSourceFile.FromPath(null, null, normalizedPath));
-						}
+                        if (file != null)
+                        {
+                            await
+                                Dispatcher.UIThread.InvokeTaskAsync(
+                                    async () => { lastDocument = document = await _shell.OpenDocument(file, e.Frame.Line, 1, true); });
+                        }
+                        else
+                        {
+                            _console.WriteLine("Unable to find file: " + normalizedPath);
+                        }
+                    }
 
-						if (file != null)
-						{
-							await
-								Dispatcher.UIThread.InvokeTaskAsync(
-									async () => { document = await _shell.OpenDocument(file, e.Frame.Line, 1, true); });
-						}
-						else
-						{
-							_console.WriteLine("Unable to find file: " + normalizedPath);
-						}
-
-						lastDocument = document;
-					}
-					break;
+                    IsUpdating = false;
+                    IsExecuting = false;
+                    break;
 			}
 		}
 
