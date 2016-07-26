@@ -26,7 +26,8 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.DataTemplates>
                       <DataTemplate>
-                        <TextBlock Text="{Binding FormattedValue}">
+                        <TextBlock Text="{Binding FormattedValue}" Foreground="{Binding ValueForeground, Mode=TwoWay}">
+                          
                           <!--
                           <TextBlock.Style>
                             <Style TargetType="TextBlock">
