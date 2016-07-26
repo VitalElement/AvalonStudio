@@ -112,19 +112,19 @@
             set
             {
                 ulong parsedValue = 0;
-
+                string newAddress = string.Empty;
                 try
                 {
                     parsedValue = Convert.ToUInt64(value, 16);
-                    address = string.Format("0x{0:X8}", parsedValue);
+                    newAddress = string.Format("0x{0:X8}", parsedValue);
                     SetAddress(parsedValue);
                 }
                 catch (Exception)
                 {
-                    address = "Unable to evaluate expression.";
+                    newAddress = "Unable to evaluate expression.";
                 }
 
-                this.RaisePropertyChanged();
+                this.RaiseAndSetIfChanged(ref address, newAddress);
             }
         }
 
