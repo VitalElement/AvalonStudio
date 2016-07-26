@@ -6,6 +6,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using AvalonStudio.MVVM.DataVirtualization;
 
 namespace AvalonStudio.Debugging
 {
@@ -76,9 +77,9 @@ namespace AvalonStudio.Debugging
 		private IDebugger _debugger;
 		private IDebugManager _debugManager;
 
-		private readonly DissasemblyDataProvider dataProvider;
+		private readonly DisassemblyDataProvider dataProvider;
 
-		private List<InstructionLine> disassemblyData;
+		private AsyncVirtualizingCollection<InstructionLine> disassemblyData;
 
 		private bool enabled;
 
@@ -88,8 +89,8 @@ namespace AvalonStudio.Debugging
 		{
 			Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
 
-			Title = "Dissasembly";
-			dataProvider = new DissasemblyDataProvider();
+			Title = "Disassembly";
+			dataProvider = new DisassemblyDataProvider();
 		}
 
 		public bool Enabled
@@ -104,7 +105,7 @@ namespace AvalonStudio.Debugging
 			set { this.RaiseAndSetIfChanged(ref selectedIndex, value); }
 		}
 
-		public List<InstructionLine> DisassemblyData
+		public AsyncVirtualizingCollection<InstructionLine> DisassemblyData
 		{
 			get { return disassemblyData; }
 			set { this.RaiseAndSetIfChanged(ref disassemblyData, value); }
@@ -173,38 +174,13 @@ namespace AvalonStudio.Debugging
 
 		public async void SetAddress(ulong currentAddress)
 		{
-			// Commented code triggers data virtualization, but avalonia needs to virtualize the containers (trying to create over a billion containers here.
-			//if (DissasemblyData == null)
-			//{
-			//    DissasemblyData = new AsyncVirtualizingCollection<InstructionLine>(dataProvider, 100, 60000);
-			//}
+            // Commented code triggers data virtualization, but avalonia needs to virtualize the containers (trying to create over a billion containers here.
+            if (DisassemblyData == null)
+            {
+                DisassemblyData = new AsyncVirtualizingCollection<InstructionLine>(dataProvider, 100, 60000);
+            }
 
-			var startIndex = currentAddress - 20;
-
-			var instructions = await _debugger.DisassembleAsync(startIndex, 50);
-
-			if (instructions != null)
-			{
-				var result = new List<InstructionLine>();
-
-				var address = (uint) startIndex;
-				var instruction = instructions.Where(inst => inst.Address == currentAddress);
-
-				foreach (var line in instructions)
-				{
-					if (instruction.Count() == 0)
-					{
-						result.Add(new InstructionLine {Visible = false});
-					}
-					else
-					{
-						result.Add(line);
-					}
-				}
-
-				DisassemblyData = result;
-				SelectedIndex = (ulong) DisassemblyData.IndexOf(DisassemblyData.FirstOrDefault(i => i.Address == currentAddress));
-			}
+            SelectedIndex = currentAddress;
 		}
 	}
 }
