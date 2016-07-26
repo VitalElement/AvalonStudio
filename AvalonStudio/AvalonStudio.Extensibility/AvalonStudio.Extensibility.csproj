@@ -213,6 +213,7 @@
     <Compile Include="Menus\MenuDefinitionAttribute.cs" />
     <Compile Include="MVVM\BindableCollection.cs" />
     <Compile Include="MVVM\IObservableCollection.cs" />
+    <Compile Include="MVVM\MutuallyExclusiveEnumeration.cs" />
     <Compile Include="Shell\IShell.cs" />
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
