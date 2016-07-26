@@ -99,6 +99,7 @@ namespace AvalonStudio
 			RightBottomTabs = new TabControlViewModel();
 			RightMiddleTabs = new TabControlViewModel();
 			RightTopTabs = new TabControlViewModel();
+            MiddleTopTabs = new TabControlViewModel();
 
 			foreach (var tool in importedTools)
 			{
@@ -126,6 +127,10 @@ namespace AvalonStudio
 						RightTopTabs.Tools.Add(tool);
 						break;
 
+                    case Location.MiddleTop:
+                        MiddleTopTabs.Tools.Add(tool);
+                        break;
+
 					case Location.Left:
 						LeftTabs.Tools.Add(tool);
 						break;
@@ -143,6 +148,7 @@ namespace AvalonStudio
 			RightTopTabs.SelectedTool = RightTopTabs.Tools.FirstOrDefault();
 			RightMiddleTabs.SelectedTool = RightMiddleTabs.Tools.FirstOrDefault();
 			RightBottomTabs.SelectedTool = RightBottomTabs.Tools.FirstOrDefault();
+            MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.FirstOrDefault();
 
 			StatusBar.LineNumber = 1;
 			StatusBar.Column = 1;
@@ -204,10 +210,9 @@ namespace AvalonStudio
 		public TabControlViewModel RightTopTabs { get; }
 		public TabControlViewModel RightMiddleTabs { get; }
 		public TabControlViewModel RightBottomTabs { get; }
-
 		public TabControlViewModel BottomTabs { get; }
-
 		public TabControlViewModel BottomRightTabs { get; }
+        public TabControlViewModel MiddleTopTabs { get; }
 
 		public IConsole Console { get; }
 
