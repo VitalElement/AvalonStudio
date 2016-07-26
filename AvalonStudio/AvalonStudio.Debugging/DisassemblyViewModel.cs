@@ -7,6 +7,7 @@ using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using AvalonStudio.MVVM.DataVirtualization;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging
 {
@@ -129,7 +130,8 @@ namespace AvalonStudio.Debugging
 			{
 				IsVisible = false;
 
-				// TODO implement clear here.
+                // TODO clear out data ready for GC, this requires a fix in Avalonia.
+                //DisassemblyData = null;
 			};
 		}
 
@@ -172,15 +174,26 @@ namespace AvalonStudio.Debugging
 		}
 
 
-		public async void SetAddress(ulong currentAddress)
+		public void SetAddress(ulong currentAddress)
 		{
-            // Commented code triggers data virtualization, but avalonia needs to virtualize the containers (trying to create over a billion containers here.
             if (DisassemblyData == null)
             {
-                DisassemblyData = new AsyncVirtualizingCollection<InstructionLine>(dataProvider, 100, 60000);
-            }
+                DisassemblyData = new AsyncVirtualizingCollection<InstructionLine>(dataProvider, 100, 6000);
 
-            SelectedIndex = currentAddress;
+                Task.Factory.StartNew(async () =>
+                {
+                    await Task.Delay(50);
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        SelectedIndex = currentAddress;
+                    });
+                });
+            }
+            else
+            {
+                SelectedIndex = currentAddress;
+            }
 		}
 	}
 }
