@@ -126,6 +126,10 @@ namespace AvalonStudio
 						RightTopTabs.Tools.Add(tool);
 						break;
 
+                    case Location.MiddleTop:
+                        LeftTabs.Tools.Add(tool);
+                        break;
+
 					case Location.Left:
 						LeftTabs.Tools.Add(tool);
 						break;

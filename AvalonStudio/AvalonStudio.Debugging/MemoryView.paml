@@ -1,19 +1,53 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
-    <cont:ToolControl Title="Disassembly">
-        <ListBox Name="disassemblyList" BorderThickness="0" Items="{Binding DisassemblyData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
-            <ListBox.DataTemplates>
-                <DataTemplate>
-                    <Grid IsVisible="{Binding Data.Visible}">
-                        <TextBlock Text="Loading..." IsVisible="{Binding IsLoading}"/>
-                        <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Data.Background}">
-                            <TextBlock Text="{Binding Data.FormattedAddress}" Width="90" Foreground="#FF007ACC" />
-                            <TextBlock Text="{Binding Data.Instruction}" Foreground="#4EC9B0" MaxWidth="100" />
-                            <TextBlock Text="{Binding Data.Symbol}" Foreground="#D0B848FF" MaxWidth="100" />
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.DataTemplates>
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility" MinHeight="250">
+    <cont:ToolControl Title="Memory Viewer">
+      <Grid RowDefinitions="22,*">
+
+        <Grid ColumnDefinitions="55,*,60,60">
+          <TextBlock Text="Address:" Margin="5 0"/>
+          <TextBox Grid.Column="1" Padding="0" Margin="0 1" BorderThickness="1" FontSize="10" Text="{Binding Address}"/>
+
+          <TextBlock Grid.Column="2" Margin="5 0" Text="Columns:" />
+          <DropDown Grid.Column="3" Padding="0" Margin="0 1" Items="{Binding ColumnOptions}"/>
+        </Grid>
+
+        <ListBox Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0" Items="{Binding MemoryData}" SelectedIndex="{Binding SelectedIndex}">
+          <ListBox.DataTemplates>
+            <DataTemplate>
+              <Grid IsVisible="{Binding Data.Visible}">
+                <TextBlock Text="Loading..." IsVisible="{Binding IsLoading}"/>
+                <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Data.Background}">
+                  <TextBlock Text="{Binding Data.Address}" Foreground="#FF007ACC" />
+                  <ItemsControl Items="{Binding Data.Values}">
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Gap="1" />
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.DataTemplates>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding FormattedValue}">
+                          <!--
+                          <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                              <Setter Property="Foreground" Value="#4EC9B0" />
+                              <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasChanged}" Value="True">
+                                  <Setter Property="Foreground" Value="#FFF38B76"/>
+                                </DataTrigger>
+                              </Style.Triggers>
+                            </Style>
+                          </TextBlock.Style>-->
+                        </TextBlock>
+                      </DataTemplate>
+                    </ItemsControl.DataTemplates>
+                  </ItemsControl>
+                  <TextBlock Text="{Binding Data.Text}" Foreground="#FF007ACC"/>
+                </StackPanel>
+              </Grid>
+            </DataTemplate>
+          </ListBox.DataTemplates>
         </ListBox>
+      </Grid>
     </cont:ToolControl>
 </UserControl>
