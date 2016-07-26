@@ -35,7 +35,7 @@
 
         public MemoryViewDataProvider(int columns)
         {
-            this.count = 1000;//(int)(UInt32.MaxValue / columns) + 1;
+            this.count = (int)(UInt32.MaxValue / columns) + 1;
             this.columns = columns;
         }
 

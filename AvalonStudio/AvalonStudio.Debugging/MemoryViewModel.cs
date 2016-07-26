@@ -145,7 +145,7 @@
             }
             else
             {
-                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     MemoryData.CleanPagesAround((ulong)selectedIndex);
                 });
