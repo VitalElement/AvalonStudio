@@ -18,10 +18,11 @@
             
             this.converter = converter;
 
-            this.text = GetText(model.Data);          
+            this.text = GetText(model.Data);
 
-            this.address = model.Address;
-            ulong currentAddress = address;
+            this.actualAddress = model.Address;
+            this.address = string.Format("0x{0:X8}", model.Address);
+            ulong currentAddress = model.Address;
 
             ulong typeSize = (ulong)System.Runtime.InteropServices.Marshal.SizeOf(typeof(T));
 
@@ -59,8 +60,9 @@
         private uint count;
         private Func<byte[], IList<T>> converter;
 
-        private ulong address;
-        public ulong Address
+        private ulong actualAddress;
+        private string address;
+        public string Address
         {
             get { return address; }
             set { this.RaiseAndSetIfChanged(ref address, value); }
@@ -79,7 +81,7 @@
 
             List<MemoryBytes> newData = null;
 
-            newData = await debugger.ReadMemoryBytesAsync(address, 0, count);
+            newData = await debugger.ReadMemoryBytesAsync(actualAddress, 0, count);
 
             if (newData != null)
             {
