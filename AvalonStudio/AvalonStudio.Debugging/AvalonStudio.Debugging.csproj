@@ -163,6 +163,11 @@
     <Compile Include="IWatchList.cs" />
     <Compile Include="LocalsView.paml.cs" />
     <Compile Include="LocalsViewModel.cs" />
+    <Compile Include="MemoryBytesViewModel.cs" />
+    <Compile Include="MemoryByteViewModel.cs" />
+    <Compile Include="MemoryView.paml.cs" />
+    <Compile Include="MemoryViewDataProvider.cs" />
+    <Compile Include="MemoryViewModel.cs" />
     <Compile Include="MenuDefinitions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistersView.xaml.cs">
@@ -194,6 +199,11 @@
     <EmbeddedResource Include="RegistersView.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MemoryView.paml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
