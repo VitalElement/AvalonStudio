@@ -185,23 +185,26 @@ namespace AvalonStudio.MVVM.DataVirtualization
 				// request primary page
 				RequestPage(pageIndex);
 
-				// if accessing upper 50% then request next page
-				//if (pageOffset > PageSize / 2 && pageIndex < Count / PageSize)
-				//{
-				//    RequestPage(pageIndex + 1);                    
-				//}
+                //if accessing upper 50 % then request next page
 
-				// if accessing lower 50% then request prev page
-				//if (pageOffset < PageSize / 2 && pageIndex > 0)
-				//{
-				//    RequestPage(pageIndex - 1);                    
-				//}
+                if (pageOffset > PageSize / 2 && pageIndex < Count / PageSize)
+                {
+                    RequestPage(pageIndex + 1);
+                }
 
-				// remove stale pages
-				//CleanUpPages();
+                //if accessing lower 50 % then request prev page
 
-				// return requested item
-				return Pages[pageIndex].Items[pageOffset];
+                if (pageOffset < PageSize / 2 && pageIndex > 0)
+                {
+                    RequestPage(pageIndex - 1);
+                }
+
+                //remove stale pages
+
+                CleanUpPages();
+
+                // return requested item
+                return Pages[pageIndex].Items[pageOffset];
 			}
 			set { throw new NotSupportedException(); }
 		}
