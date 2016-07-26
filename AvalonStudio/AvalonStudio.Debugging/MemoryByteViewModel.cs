@@ -11,6 +11,7 @@
             this.address = address;
             this.dataValue = value;
             this.formatString = formatString;
+            this.valueForeground = Brush.Parse("#108930");
         }
 
         private string formatString = string.Empty;
@@ -38,17 +39,17 @@
 
                 if(hasChanged)
                 {
-                    ValueForeground = Color.Parse("#FFF38B76");
+                    ValueForeground = Brush.Parse("#FFF38B76");
                 }
                 else
                 {
-                    ValueForeground = Color.Parse("#4EC9B0");
+                    ValueForeground = Brush.Parse("#4EC9B0");
                 }
             }
         }
 
-        private Color valueForeground;
-        public Color ValueForeground
+        private IBrush valueForeground;
+        public IBrush ValueForeground
         {
             get { return valueForeground; }
             set { this.RaiseAndSetIfChanged(ref valueForeground, value); }
