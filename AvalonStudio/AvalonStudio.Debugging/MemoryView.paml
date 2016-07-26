@@ -14,9 +14,9 @@
         <ListBox Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0" Items="{Binding MemoryData}" SelectedIndex="{Binding SelectedIndex}">
           <ListBox.DataTemplates>
             <DataTemplate>
-              <Grid IsVisible="{Binding Data.Visible}">
+              <Grid TextBlock.FontFamily="Consolas" >
                 <TextBlock Text="Loading..." IsVisible="{Binding IsLoading}"/>
-                <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Data.Background}">
+                <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Data.Background}" IsVisible="{Binding Data.Visible}">
                   <TextBlock Text="{Binding Data.Address}" Foreground="#FF007ACC" />
                   <ItemsControl Items="{Binding Data.Values}">
                     <ItemsControl.ItemsPanel>
