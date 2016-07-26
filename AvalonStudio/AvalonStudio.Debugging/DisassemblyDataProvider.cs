@@ -7,13 +7,13 @@ using ReactiveUI;
 
 namespace AvalonStudio.Debugging
 {
-	public class DissasemblyDataProvider : ViewModel, IItemsProvider<InstructionLine>
+	public class DisassemblyDataProvider : ViewModel, IItemsProvider<InstructionLine>
 	{
 		private int count;
 
 		private IDebugger debugger;
 
-		public DissasemblyDataProvider()
+		public DisassemblyDataProvider()
 		{
 			count = int.MaxValue;
 		}
@@ -78,10 +78,9 @@ namespace AvalonStudio.Debugging
 		{
 			List<InstructionLine> result = null;
 
-			Console.WriteLine("Make asynchrpnouse");
-
 			var task = debugger.DisassembleAsync(BaseAddress + (ulong) startIndex, (uint) pageCount);
 			task.Wait();
+
 			var instructions = task.Result;
 
 			if (instructions != null)
