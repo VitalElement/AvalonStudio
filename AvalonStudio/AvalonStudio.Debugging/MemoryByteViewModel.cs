@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Debugging
 {
+    using Avalonia.Media;
     using AvalonStudio.MVVM;
     using ReactiveUI;
 
@@ -32,8 +33,28 @@
         public bool HasChanged
         {
             get { return hasChanged; }
-            set { this.RaiseAndSetIfChanged(ref hasChanged, value); }
+            set {
+                this.RaiseAndSetIfChanged(ref hasChanged, value);
+
+                if(hasChanged)
+                {
+                    ValueForeground = Color.Parse("#FFF38B76");
+                }
+                else
+                {
+                    ValueForeground = Color.Parse("#4EC9B0");
+                }
+            }
         }
+
+        private Color valueForeground;
+        public Color ValueForeground
+        {
+            get { return valueForeground; }
+            set { this.RaiseAndSetIfChanged(ref valueForeground, value); }
+        }
+
+
 
 
         public string FormattedValue
