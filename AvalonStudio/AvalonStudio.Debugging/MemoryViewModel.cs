@@ -10,8 +10,12 @@
     using System.Threading.Tasks;
     using ReactiveUI;
     using Avalonia.Threading;
-    public class MemoryViewModel : ToolViewModel
+    using Extensibility.Plugin;
+    using Extensibility;
+    public class MemoryViewModel : ToolViewModel, IExtension
     {
+        private IDebugger _debugger;
+        private IDebugManager _debugManager;
         public const string ToolId = "CIDMEM001";
         const int Columns = 32;
 
@@ -31,6 +35,7 @@
             });
 
             Address = "0";
+            IsVisible = false;
         }
 
         private MutuallyExclusiveEnumerationCollection<MemoryViewDataProvider.IntegerSize> integerSizeOptions;
@@ -71,7 +76,10 @@
                 this.debugger.StateChanged -= Debugger_StateChanged;
             }
 
-            debugger.StateChanged += Debugger_StateChanged;
+            if (debugger != null)
+            {
+                debugger.StateChanged += Debugger_StateChanged;
+            }
 
             this.debugger = debugger;
 
@@ -155,6 +163,34 @@
                     }
                 }
             }
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            _debugManager = IoC.Get<IDebugManager>();
+            _debugManager.DebuggerChanged += (sender, e) => { SetDebugger(_debugManager.CurrentDebugger); };
+
+            _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+
+            _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+
+            _debugManager.DebugSessionEnded += (sender, e) =>
+            {
+                IsVisible = false;
+
+                // TODO clear out data ready for GC, this requires a fix in Avalonia.
+                //DisassemblyData = null;
+            };
+        }
+
+        private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
+        {
+            Dispatcher.UIThread.InvokeAsync(() => { Invalidate(); });
         }
 
         private ulong currentAddress;
