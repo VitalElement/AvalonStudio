@@ -11,7 +11,7 @@
           <DropDown Grid.Column="3" Padding="0" Margin="0 1" Items="{Binding ColumnOptions}"/>
         </Grid>
 
-        <ListBox Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0" Items="{Binding MemoryData}" SelectedIndex="{Binding SelectedIndex}">
+        <ListBox Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0" Items="{Binding MemoryData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
           <ListBox.DataTemplates>
             <DataTemplate>
               <Grid TextBlock.FontFamily="Consolas" >
