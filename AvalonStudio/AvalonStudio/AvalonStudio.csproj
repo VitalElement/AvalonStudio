@@ -33,6 +33,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Avalonia.Animation, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Animation.dll</HintPath>
@@ -115,11 +118,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Xaml.Interactions, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.220-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.227-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Xaml.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.220-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.227-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
@@ -409,6 +412,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\grip_pattern.png" />
+    <Content Include="icon.ico" />
     <Content Include="readme.txt" />
     <EmbeddedResource Include="Resources\Icons\Templarian\dark\appbar.3d.3ds.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
