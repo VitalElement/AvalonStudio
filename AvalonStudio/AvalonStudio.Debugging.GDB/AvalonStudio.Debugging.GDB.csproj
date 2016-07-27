@@ -153,11 +153,13 @@
     <Compile Include="DataListRegisterNamesCommand.cs" />
     <Compile Include="DataListRegisterValuesCommand.cs" />
     <Compile Include="DataReadMemoryBytesCommand.cs" />
+    <Compile Include="ExecInterruptCommand.cs" />
     <Compile Include="ExecNextInstructionCommand.cs" />
     <Compile Include="FinishCommand.cs" />
     <Compile Include="GDBDebugAdaptor.cs" />
     <Compile Include="GDBDebugger.cs" />
     <Compile Include="GDBResponse.cs" />
+    <Compile Include="GDBSetCommand.cs" />
     <Compile Include="InterruptCommand.cs" />
     <Compile Include="MonitorCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
