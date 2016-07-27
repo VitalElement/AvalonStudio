@@ -128,7 +128,7 @@ namespace AvalonStudio.Debugging
 
 			StopDebuggingCommand = ReactiveCommand.Create();
 				//(o) => WorkspaceViewModel.Instance.CurrentPerspective == Perspective.Debug && Debugger != null && !IsUpdating);
-			StopDebuggingCommand.Subscribe(_ => { StopDebugSession(); });
+			StopDebuggingCommand.Subscribe(_ => { Stop(); });
 
 			InterruptDebuggingCommand = ReactiveCommand.Create();
 				//, (o) => WorkspaceViewModel.Instance.CurrentPerspective == Perspective.Debug && Debugger != null && Debugger.State == DebuggerState.Running && !IsUpdating);
@@ -237,13 +237,16 @@ namespace AvalonStudio.Debugging
 		{
 			if (CurrentDebugger != null)
 			{
-				PrepareToRun();
+                if (!IsExecuting)
+                {
+                    PrepareToRun();
 
-				ignoreEvents = true;
+                    ignoreEvents = true;
 
-				StopDebugSession();
+                    StopDebugSession();
 
-				ignoreEvents = false;
+                    ignoreEvents = false;
+                }
 			}
 		}
 
