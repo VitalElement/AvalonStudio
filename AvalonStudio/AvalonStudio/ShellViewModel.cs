@@ -333,8 +333,15 @@ namespace AvalonStudio
 		{
 			Console.Clear();
 
-			new Thread(async () => { await project.ToolChain.Clean(Console, project); }).Start();
-		}
+            if (project.ToolChain != null)
+            {
+                new Thread(async () => { await project.ToolChain.Clean(Console, project); }).Start();
+            }
+            else
+            {
+                Console.WriteLine($"No toolchain selected for {project.Name}");
+            }
+        }
 
 		public void Build(IProject project)
 		{
@@ -342,7 +349,14 @@ namespace AvalonStudio
 
 			Console.Clear();
 
-			new Thread(async () => { await Task.Factory.StartNew(() => project.ToolChain.Build(Console, project)); }).Start();
+            if (project.ToolChain != null)
+            {
+                new Thread(async () => { await Task.Factory.StartNew(() => project.ToolChain.Build(Console, project)); }).Start();
+            }
+            else
+            {
+                Console.WriteLine($"No toolchain selected for {project.Name}");
+            }
 		}
 
 		public ObservableCollection<object> Tools
