@@ -243,15 +243,15 @@ namespace AvalonStudio
 
 			if (currentTab == null)
 			{
-				if (DocumentTabs.TemporaryDocument != null)
-				{
-					await Dispatcher.UIThread.InvokeTaskAsync(async () =>
-					{
-						var documentToClose = DocumentTabs.TemporaryDocument;
-						DocumentTabs.TemporaryDocument = null;
-						await documentToClose.CloseCommand.ExecuteAsyncTask(null);
-					});
-				}
+                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                {
+                    if (DocumentTabs.TemporaryDocument != null)
+                    {
+                        var documentToClose = DocumentTabs.TemporaryDocument;
+                        DocumentTabs.TemporaryDocument = null;
+                        await documentToClose.CloseCommand.ExecuteAsyncTask(null);
+                    }
+                });
 
 				EditorViewModel newEditor = null;
 				await Dispatcher.UIThread.InvokeTaskAsync(() =>
