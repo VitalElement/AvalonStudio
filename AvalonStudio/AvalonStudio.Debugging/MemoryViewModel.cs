@@ -12,16 +12,40 @@
     using Avalonia.Threading;
     using Extensibility.Plugin;
     using Extensibility;
+
     public class MemoryViewModel : ToolViewModel, IExtension
     {
         private IDebugger _debugger;
         private IDebugManager _debugManager;
-        public const string ToolId = "CIDMEM001";
-        const int Columns = 32;
+        public const string ToolId = "CIDMEM001";        
+
+        private int[] ColumnSettings = { 1, 2, 4, 8, 16, 32, 64 };
+
+        public List<string> ColumnOptions => ColumnSettings.ToList().ConvertAll(delegate (int i) { return i.ToString(); });
+
+        private int selectedColumnIndex = 5;
+        public int SelectedColumnIndex
+        {
+            get { return selectedColumnIndex; }
+            set
+            {
+                if(selectedColumnIndex != value)
+                {
+                    this.RaiseAndSetIfChanged(ref selectedColumnIndex, value);
+                    ResetData();
+                }
+            }
+        }
+
+        void ResetData ()
+        {
+            dataProvider = new MemoryViewDataProvider(ColumnSettings[selectedColumnIndex]);
+            this.RaisePropertyChanged(nameof(MemoryData));
+        }
 
         public MemoryViewModel()
         {
-            dataProvider = new MemoryViewDataProvider(Columns);
+            dataProvider = new MemoryViewDataProvider(ColumnSettings[selectedColumnIndex]);
 
             integerSizeOptions = new MutuallyExclusiveEnumerationCollection<MemoryViewDataProvider.IntegerSize>(MemoryViewDataProvider.IntegerSize.U8, (v) =>
             {
@@ -56,9 +80,9 @@
 
                 double fontSpace = 6.5;
                 // number of bytes * 2 * font space...
-                var byteSpace = (Columns * 2) * fontSpace;
+                var byteSpace = (ColumnSettings[selectedColumnIndex] * 2) * fontSpace;
 
-                var spaces = Columns / ((int)dataProvider.IntegerDisplaySize);
+                var spaces = ColumnSettings[selectedColumnIndex] / ((int)dataProvider.IntegerDisplaySize);
 
                 return byteSpace + (spaces * fontSpace) + 5;
                 //return (fontSpace * 2) + 5;
@@ -131,7 +155,7 @@
         private void SetAddress(ulong address)
         {
             this.currentAddress = address;
-            SelectedIndex = (long)(address / Columns);
+            SelectedIndex = (long)(address / (ulong)ColumnSettings[selectedColumnIndex]);
         }
 
         new public async void Invalidate()
