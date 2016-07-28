@@ -237,7 +237,7 @@ namespace AvalonStudio.Debugging
 		{
 			if (CurrentDebugger != null)
 			{
-                if (!IsExecuting)
+                if (!IsUpdating)
                 {
                     PrepareToRun();
 
