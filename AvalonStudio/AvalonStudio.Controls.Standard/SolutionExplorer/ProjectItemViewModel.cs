@@ -29,7 +29,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
 			return result;
 		}
-	}
+
+        public bool IsExpanded { get; set; }
+    }
 
 	public abstract class ProjectItemViewModel<T> : ProjectItemViewModel where T : IProjectItem
 	{
@@ -90,7 +92,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 		{
 			get { return Model.Name; }
 			// set { this.Model.Name = value; this.RaisePropertyChanged(); IsEditingTitle = false; }
-		}
+		}        
 
 		public int NumberOfSelections { get; set; }
 

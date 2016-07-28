@@ -11,12 +11,12 @@
           <DropDown Grid.Column="3" Padding="0" Margin="0 1" Items="{Binding ColumnOptions}"/>
         </Grid>
 
-        <ListBox Name="memLb" Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0" Items="{Binding MemoryData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
+        <ListBox Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0" Items="{Binding MemoryData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
           <ListBox.DataTemplates>
             <DataTemplate>
               <Grid TextBlock.FontFamily="Consolas" >
                 <TextBlock Text="Loading..." IsVisible="{Binding IsLoading}"/>
-                <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Data.Background}" IsVisible="{Binding Data.Visible}">
+                <StackPanel Orientation="Horizontal" Gap="5">
                   <TextBlock Text="{Binding Data.Address}" Foreground="#FF007ACC" />
                   <ItemsControl Items="{Binding Data.Values}">
                     <ItemsControl.ItemsPanel>
@@ -37,7 +37,7 @@
           </ListBox.DataTemplates>
 
           <ListBox.ContextMenu>
-            <ContextMenu Items="{Binding Path=IntegerSizeOptions}" Margin="0" Padding="0">
+            <ContextMenu Name="memLb" Items="{Binding Path=IntegerSizeOptions}" Margin="0" Padding="0">
               <ContextMenu.ItemTemplate>
                 <DataTemplate>
                   <MenuItem Header="{Binding Title}" Command="{Binding #memLb.DataContext.IntegerSizeOptions.Command}" CommandParameter="{Binding Enumeration}"/>                  

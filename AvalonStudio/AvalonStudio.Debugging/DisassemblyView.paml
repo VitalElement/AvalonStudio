@@ -6,7 +6,7 @@
         <DataTemplate>
           <Grid IsVisible="{Binding Data.Visible}">
             <TextBlock Text="Loading..." IsVisible="{Binding IsLoading}"/>
-            <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Data.Background}">
+            <StackPanel Orientation="Horizontal" Gap="5">
               <TextBlock Text="{Binding Data.FormattedAddress}" Width="90" Foreground="#FF007ACC" />
               <TextBlock Text="{Binding Data.Instruction}" Foreground="#4EC9B0" MaxWidth="100" />
               <TextBlock Text="{Binding Data.Symbol}" Foreground="#D0B848FF" MaxWidth="100" />
