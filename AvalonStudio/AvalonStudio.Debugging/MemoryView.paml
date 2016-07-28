@@ -11,7 +11,7 @@
           <DropDown Grid.Column="3" Padding="0" Margin="0 1" Items="{Binding ColumnOptions}"/>
         </Grid>
 
-        <ListBox Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0" Items="{Binding MemoryData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
+        <ListBox Name="memLb" Grid.Row="1" Grid.ColumnSpan="2" BorderThickness="0" Items="{Binding MemoryData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
           <ListBox.DataTemplates>
             <DataTemplate>
               <Grid TextBlock.FontFamily="Consolas" >
@@ -26,20 +26,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.DataTemplates>
                       <DataTemplate>
-                        <TextBlock Text="{Binding FormattedValue}" Foreground="{Binding ValueForeground, Mode=TwoWay}">
-                          
-                          <!--
-                          <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                              <Setter Property="Foreground" Value="#4EC9B0" />
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding HasChanged}" Value="True">
-                                  <Setter Property="Foreground" Value="#FFF38B76"/>
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </TextBlock.Style>-->
-                        </TextBlock>
+                        <TextBlock Text="{Binding FormattedValue}" Foreground="{Binding ValueForeground, Mode=TwoWay}"/>
                       </DataTemplate>
                     </ItemsControl.DataTemplates>
                   </ItemsControl>
@@ -48,6 +35,16 @@
               </Grid>
             </DataTemplate>
           </ListBox.DataTemplates>
+
+          <ListBox.ContextMenu>
+            <ContextMenu Items="{Binding Path=IntegerSizeOptions}" Margin="0" Padding="0">
+              <ContextMenu.ItemTemplate>
+                <DataTemplate>
+                  <MenuItem Header="{Binding Title}" Command="{Binding #memLb.DataContext.IntegerSizeOptions.Command}" CommandParameter="{Binding Enumeration}"/>                  
+                </DataTemplate>
+              </ContextMenu.ItemTemplate>
+            </ContextMenu>
+          </ListBox.ContextMenu>
         </ListBox>
       </Grid>
     </cont:ToolControl>
