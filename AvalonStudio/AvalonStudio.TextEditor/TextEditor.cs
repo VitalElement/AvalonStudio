@@ -69,7 +69,7 @@ namespace AvalonStudio.TextEditor
 				horizontalScrollBarVisibility,
 				BindingPriority.Style));
 
-			disposables.Add(TextDocumentProperty.Changed.Subscribe(_ => { CaretIndex = -1; }));
+			disposables.Add(TextDocumentProperty.Changed.Subscribe(_ => { SelectionStart = SelectionEnd = CaretIndex = -1;}));
 
 			disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
 
