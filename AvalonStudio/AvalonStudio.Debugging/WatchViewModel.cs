@@ -144,7 +144,7 @@ namespace AvalonStudio.Debugging
 					{
 						await child.Model.EvaluateChildrenAsync();
 
-						for (var i = 0; i < child.Model.NumChildren; i++)
+						for (var i = 0; i < child.Model.Children.Count; i++)
 						{
 							var newchild = new WatchViewModel(watchList, debugger, child.Model.Children[i]);
 							await newchild.Evaluate(debugger);
