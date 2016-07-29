@@ -43,6 +43,16 @@ namespace AvalonStudio.TextEditor
 			TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>(
 				(s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int) v.NewValue));
 			FocusableProperty.OverrideDefaultValue(typeof (TextEditor), true);
+
+            CaretIndexProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
+            {
+                if (s.TextDocument != null && s.CaretIndex != -1 && s.TextView != null)
+                {
+                    s.InvalidateCaretPosition();
+
+                    s.InvalidateSelectedWord();                   
+                }
+            });
 		}
 
 		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -257,13 +267,6 @@ namespace AvalonStudio.TextEditor
 			set
 			{
 				SetValue(CaretIndexProperty, value);
-
-				if (TextDocument != null && CaretIndex != -1)
-				{
-					InvalidateCaretPosition();
-
-					InvalidateSelectedWord();
-				}
 			}
 		}
 
