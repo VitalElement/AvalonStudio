@@ -502,7 +502,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
 		public override void Render(DrawingContext context)
 		{
-			if (TextDocument != null)
+			if (TextDocument != null && !TextDocument.IsInUpdate)
 			{
 				//if (invalidateVisualLines)
 				{
