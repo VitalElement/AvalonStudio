@@ -23,7 +23,6 @@ class <#= className #>
 {
 #pragma mark Public Members
 public:
-
     <#= className #> ();
     ~<#= className #> ();
 
