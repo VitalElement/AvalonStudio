@@ -329,7 +329,6 @@ namespace AvalonStudio.Controls
 		}
 
 		private Point caretLocation;
-
 		public Point CaretLocation
 		{
 			get { return caretLocation; }
@@ -340,8 +339,7 @@ namespace AvalonStudio.Controls
 				if (!Intellisense.IsVisible)
 				{
 					Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
-					CompletionHint.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
-					// TODO implement scroll offset changed? To set intellisense position.
+					CompletionHint.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);					
 				}
 			}
 		}
