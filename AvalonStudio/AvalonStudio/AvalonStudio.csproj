@@ -214,8 +214,9 @@
     </Compile>
     <Compile Include="Controls\CompletionHintViewModel.cs" />
     <Compile Include="Controls\DebugHoverProbe.paml.cs">
-      <DependentUpon>DebugHoverProbe.paml</DependentUpon>
+      <DependentUpon>DebugHoverProbeView.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DebugHoverProbeViewModel.cs" />
     <Compile Include="Controls\ErrorProbe.paml.cs">
       <DependentUpon>ErrorProbeView.paml</DependentUpon>
     </Compile>
@@ -328,7 +329,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\NewItemDialogView.paml" />
-    <EmbeddedResource Include="Controls\DebugHoverProbe.paml" />
+    <EmbeddedResource Include="Controls\DebugHoverProbeView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
     <EmbeddedResource Include="Controls\TabControlView.paml" />
     <EmbeddedResource Include="Controls\CompletionHint.paml">

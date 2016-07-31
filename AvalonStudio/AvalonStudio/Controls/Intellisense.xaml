@@ -53,7 +53,7 @@
             </ListBox>
 
             <Grid IsVisible="True">
-                <Grid Background="#424245" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                <Grid Background="{StyleResource ThemeControlDarkBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                     <Border BorderBrush="#4D4D50" BorderThickness="1">
                         <StackPanel>
                             <TextBlock Text="{Binding SelectedCompletion.Hint}" />
