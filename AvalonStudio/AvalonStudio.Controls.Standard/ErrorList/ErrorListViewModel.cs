@@ -40,7 +40,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
 						if (document != null)
 						{
-							document.GotoOffset(value.Model.Offset);
+							document.GotoOffset(value.Model.StartOffset);
 						}
 					});
 				}

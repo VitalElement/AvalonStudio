@@ -9,7 +9,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 	{
 		public ErrorViewModel(Diagnostic model) : base(model)
 		{
-			offset = model.Offset;
+			offset = model.StartOffset;
 		}
 
 		public string File
