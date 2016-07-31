@@ -231,7 +231,6 @@
       <DependentUpon>NewItemDialogView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TabControlViewModel.cs" />
-    <Compile Include="Controls\ViewModelViewHost.cs" />
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\Editor\SymbolViewModel.cs" />
     <Compile Include="Controls\Editor.paml.cs">
@@ -333,7 +332,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
-    <EmbeddedResource Include="Controls\TabControlView.paml" />
+    <EmbeddedResource Include="Controls\TabControlView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\CompletionHint.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
