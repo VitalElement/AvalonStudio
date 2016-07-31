@@ -176,13 +176,16 @@
 
                 var pages = memoryData.Pages.ToList();
 
-                foreach (var page in pages)
+                if (debugger != null)
                 {
-                    foreach (var item in page.Value.Items)
+                    foreach (var page in pages)
                     {
-                        if (item.Data != null)
+                        foreach (var item in page.Value.Items)
                         {
-                            await item.Data.InvalidateAsync(debugger);
+                            if (item.Data != null)
+                            {
+                                await item.Data.InvalidateAsync(debugger);
+                            }
                         }
                     }
                 }

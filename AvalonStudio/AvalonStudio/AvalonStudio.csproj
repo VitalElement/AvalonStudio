@@ -38,91 +38,91 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Avalonia.Animation, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Animation.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Animation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Base, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Base.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Base.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Cairo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1722-alpha\lib\net45\Avalonia.Cairo.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1755-alpha\lib\net45\Avalonia.Cairo.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Controls, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Controls.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.DesignerSupport, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.DesignerSupport.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.DesignerSupport.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Diagnostics, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Diagnostics.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Diagnostics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Direct2D1, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1722-alpha\lib\net45\Avalonia.Direct2D1.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1755-alpha\lib\net45\Avalonia.Direct2D1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Gtk, Version=1.0.6051.20366, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1722-alpha\lib\net45\Avalonia.Gtk.dll</HintPath>
+    <Reference Include="Avalonia.Gtk, Version=1.0.6055.23953, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1755-alpha\lib\net45\Avalonia.Gtk.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.HtmlRenderer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.HtmlRenderer.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.HtmlRenderer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Input, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Input.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Input.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Layout, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Layout.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Layout.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Logging.Serilog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Logging.Serilog.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Logging.Serilog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Markup, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Markup.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Markup.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Markup.Xaml, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Markup.Xaml.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Markup.Xaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.ReactiveUI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.ReactiveUI.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.ReactiveUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.SceneGraph, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.SceneGraph.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.SceneGraph.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Styling, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Styling.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Styling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Themes.Default, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1722-alpha\lib\portable-windows8+net45\Avalonia.Themes.Default.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.2.0.1755-alpha\lib\portable-windows8+net45\Avalonia.Themes.Default.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Win32, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1722-alpha\lib\net45\Avalonia.Win32.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1755-alpha\lib\net45\Avalonia.Win32.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Xaml.Interactions, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.227-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.235-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Xaml.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.227-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.235-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
@@ -205,20 +205,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Behaviors\CodeInformationToolTipBehavior.cs" />
-    <Compile Include="Behaviors\DebugInformationToolTipBehaviour.cs" />
-    <Compile Include="Behaviors\PopupBehavior.cs" />
+    <Compile Include="Behaviors\EditorToolTipBehavior.cs" />
+    <Compile Include="Behaviors\TooltipBehavior.cs" />
     <Compile Include="App.paml.cs" />
-    <Compile Include="Behaviors\PointerHoverBehaviour.cs" />
-    <Compile Include="Behaviors\ToolTipBehaviour.cs" />
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="Controls\CompletionHint.paml.cs">
       <DependentUpon>CompletionHint.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CompletionHintViewModel.cs" />
     <Compile Include="Controls\DebugHoverProbe.paml.cs">
-      <DependentUpon>DebugHoverProbe.paml</DependentUpon>
+      <DependentUpon>DebugHoverProbeView.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DebugHoverProbeViewModel.cs" />
+    <Compile Include="Controls\ErrorProbe.paml.cs">
+      <DependentUpon>ErrorProbeView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ErrorProbeViewModel.cs" />
     <Compile Include="Controls\IntellisenseToolTipViewModel.cs" />
     <Compile Include="Controls\TabControlView.paml.cs" />
     <Compile Include="Controls\DocumentTabControl.paml.cs">
@@ -229,7 +231,6 @@
       <DependentUpon>NewItemDialogView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TabControlViewModel.cs" />
-    <Compile Include="Controls\ViewModelViewHost.cs" />
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\Editor\SymbolViewModel.cs" />
     <Compile Include="Controls\Editor.paml.cs">
@@ -270,8 +271,8 @@
     <Compile Include="Controls\MetroWindowTheme.paml.cs">
       <DependentUpon>MetroWindowTheme.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\HoverProbe.xaml.cs">
-      <DependentUpon>HoverProbe.xaml</DependentUpon>
+    <Compile Include="Controls\SymbolView.xaml.cs">
+      <DependentUpon>SymbolView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\NewItemDialogViewModel.cs" />
     <Compile Include="Shell\Commands\CleanCommandDefinition.cs" />
@@ -311,7 +312,9 @@
     <EmbeddedResource Include="Controls\MainMenu.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ModalDialog.paml" />
+    <EmbeddedResource Include="Controls\ModalDialog.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
@@ -327,10 +330,17 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\NewItemDialogView.paml" />
-    <EmbeddedResource Include="Controls\DebugHoverProbe.paml" />
+    <EmbeddedResource Include="Controls\DebugHoverProbeView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
-    <EmbeddedResource Include="Controls\TabControlView.paml" />
+    <EmbeddedResource Include="Controls\TabControlView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\CompletionHint.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ErrorProbeView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="libgit2-821131f.so">
@@ -396,6 +406,10 @@
     <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
       <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
       <Name>AvalonStudio.TextEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj">
+      <Project>{1fc43c7d-5758-42d7-9977-986074e9cbc0}</Project>
+      <Name>AvalonStudio.Toolchains.Clang</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj">
       <Project>{7a82c777-039e-47aa-a77b-3a9544e147c5}</Project>
@@ -5460,7 +5474,7 @@
     <Folder Include="Plugins\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\HoverProbe.xaml" />
+    <EmbeddedResource Include="Controls\SymbolView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Themes\BaseDark.xaml" />

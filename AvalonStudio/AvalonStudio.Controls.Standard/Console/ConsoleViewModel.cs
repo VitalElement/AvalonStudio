@@ -22,15 +22,21 @@ namespace AvalonStudio.Controls.Standard.Console
 		public ConsoleViewModel()
 		{
 			Title = "Console";
-			Document = new TextDocument();
+			document = new TextDocument();
 			backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
 			backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
 			backgroundRenderers.Add(new SelectionBackgroundRenderer());
 		}
 
-		public TextDocument Document { get; }
+        private TextDocument document;
+        public TextDocument Document
+        {
+            get { return document; }
+            set { this.RaiseAndSetIfChanged(ref document, value); }
+        }
 
-		public int CaretIndex
+
+        public int CaretIndex
 		{
 			get { return caretIndex; }
 			set { this.RaiseAndSetIfChanged(ref caretIndex, value); }
@@ -51,8 +57,7 @@ namespace AvalonStudio.Controls.Standard.Console
 		{
 			Dispatcher.UIThread.InvokeAsync(() =>
 			{
-				// safe way other than document.text = string.empty
-				Document.Replace(0, Document.TextLength, string.Empty);
+                Document = new TextDocument();
 
 				shell.BottomSelectedTool = this;
 			});

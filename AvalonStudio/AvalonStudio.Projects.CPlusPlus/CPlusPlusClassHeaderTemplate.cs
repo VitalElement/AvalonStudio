@@ -59,16 +59,16 @@ namespace AvalonStudio.Projects.CPlusPlus
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n#pragma mark Public Members\r\npublic:\r\n\r\n    ");
+            this.Write("\r\n{\r\n#pragma mark Public Members\r\npublic:\r\n    ");
             
-            #line 27 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
+            #line 26 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(className));
             
             #line default
             #line hidden
             this.Write(" ();\r\n    ~");
             
-            #line 28 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
+            #line 27 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(className));
             
             #line default
