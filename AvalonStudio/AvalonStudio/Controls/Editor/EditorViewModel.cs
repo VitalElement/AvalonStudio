@@ -472,20 +472,6 @@ namespace AvalonStudio.Controls
 			}
 		}
 
-		private WatchListViewModel debugHoverProbe;
-		public WatchListViewModel DebugHoverProbe
-		{
-			get { return debugHoverProbe; }
-			set { this.RaiseAndSetIfChanged(ref debugHoverProbe, value); }
-		}
-
-        private ErrorProbeViewModel errorProbe;
-        public ErrorProbeViewModel ErrorProbe
-        {
-            get { return errorProbe; }
-            set { this.RaiseAndSetIfChanged(ref errorProbe, value); }
-        }
-
 
         private string GetWordAtOffset(int offset)
 		{
@@ -529,100 +515,76 @@ namespace AvalonStudio.Controls
 			return result;
 		}
 
-        public async Task<bool> UpdateErrorProbeAsync (int offset)
-        {
-            var result = false; 
+		private object toolTip;
+		public object ToolTip
+		{
+			get { return toolTip; }
+			set { this.RaiseAndSetIfChanged(ref toolTip, value); }
+		}
 
+        public async Task<bool> UpdateToolTipAsync (int offset)
+        {
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
             {
                 var matching = Model.CodeAnalysisResults.Diagnostics.FindSegmentsContaining(offset).FirstOrDefault();
 
-                if(matching != null)
+                if (matching != null)
                 {
-                    ErrorProbe = new ErrorProbeViewModel(matching);
+                    ToolTip = new ErrorProbeViewModel(matching);
 
-                    result = true;
+                    return true;
                 }
             }
 
-            return result;
+            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor && Model.LanguageService != null)
+            {
+                var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
+
+                if (symbol != null)
+                {
+                    switch (symbol.Kind)
+                    {
+                        case CursorKind.CompoundStatement:
+                        case CursorKind.NoDeclarationFound:
+                        case CursorKind.NotImplemented:
+                        case CursorKind.FirstDeclaration:
+                        case CursorKind.InitListExpression:
+                        case CursorKind.IntegerLiteral:
+                        case CursorKind.ReturnStatement:
+                            break;
+
+                        default:
+
+                            ToolTip = new SymbolViewModel(symbol);
+                            return true;
+                    }
+                }
+            }
+
+            // TODO Debug probe needs testing, so return false for now until investigated.
+            return false;
+
+            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
+            {
+                var expression = GetWordAtOffset(offset);
+
+                if (expression != string.Empty)
+                {
+                    var debugManager = IoC.Get<IDebugManager>();
+                    
+                    var evaluatedExpression = await debugManager.ProbeExpressionAsync(expression);
+
+                    if (evaluatedExpression != null)
+                    {
+                        //DebugHoverProbe = new WatchListViewModel(debugManager);
+                        //DebugHoverProbe.AddExistingWatch(evaluatedExpression);
+                        return false;
+                    }
+                }
+            }
+
+            return false;
         }
-
-		public async Task<bool> UpdateDebugHoverProbe(int offset)
-		{
-			var result = false;
-
-			//ShellViewModel.Instance.Console.WriteLine("Injection of DebugProb behaviour required");
-
-			if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
-			{
-				var expression = GetWordAtOffset(offset);
-
-				if (expression != string.Empty)
-				{
-					var debugManager = IoC.Get<IDebugManager>();
-
-
-					var evaluatedExpression = await debugManager.ProbeExpressionAsync(expression);
-
-					if (evaluatedExpression != null)
-					{
-						DebugHoverProbe = new WatchListViewModel(debugManager);
-						DebugHoverProbe.AddExistingWatch(evaluatedExpression);
-						result = true;
-					}
-				}
-			}
-
-			return result;
-		}
-
-
-		private SymbolViewModel hoverProbe;
-
-		public SymbolViewModel HoverProbe
-		{
-			get { return hoverProbe; }
-			set { this.RaiseAndSetIfChanged(ref hoverProbe, value); }
-		}
-
-		/// <summary>
-		///     Updates the contents of the HoverProbe (Code tooltip) to display content for specified offset.
-		/// </summary>
-		/// <param name="offset">the offset inside text document to retreive data for.</param>
-		/// <returns>true if data was found.</returns>
-		public async Task<bool> UpdateHoverProbeAsync(int offset)
-		{
-			var result = false;
-
-			if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor && Model.LanguageService != null)
-			{
-				var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
-
-				if (symbol != null)
-				{
-					switch (symbol.Kind)
-					{
-						case CursorKind.CompoundStatement:
-						case CursorKind.NoDeclarationFound:
-						case CursorKind.NotImplemented:
-						case CursorKind.FirstDeclaration:
-						case CursorKind.InitListExpression:
-						case CursorKind.IntegerLiteral:
-						case CursorKind.ReturnStatement:
-							break;
-
-						default:
-
-							HoverProbe = new SymbolViewModel(symbol);
-							result = true;
-							break;
-					}
-				}
-			}
-
-			return result;
-		}
 
 		private IndexEntry selectedIndexEntry;
 

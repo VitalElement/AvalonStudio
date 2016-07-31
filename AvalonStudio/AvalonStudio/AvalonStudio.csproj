@@ -205,13 +205,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Behaviors\ErrorInformationToolTipBehavior.cs" />
-    <Compile Include="Behaviors\CodeInformationToolTipBehavior.cs" />
-    <Compile Include="Behaviors\DebugInformationToolTipBehaviour.cs" />
-    <Compile Include="Behaviors\PopupBehavior.cs" />
+    <Compile Include="Behaviors\EditorToolTipBehavior.cs" />
+    <Compile Include="Behaviors\TooltipBehavior.cs" />
     <Compile Include="App.paml.cs" />
-    <Compile Include="Behaviors\PointerHoverBehaviour.cs" />
-    <Compile Include="Behaviors\ToolTipBehaviour.cs" />
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="Controls\CompletionHint.paml.cs">
       <DependentUpon>CompletionHint.paml</DependentUpon>
@@ -275,8 +271,8 @@
     <Compile Include="Controls\MetroWindowTheme.paml.cs">
       <DependentUpon>MetroWindowTheme.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\HoverProbe.xaml.cs">
-      <DependentUpon>HoverProbe.xaml</DependentUpon>
+    <Compile Include="Controls\SymbolView.xaml.cs">
+      <DependentUpon>SymbolView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\NewItemDialogViewModel.cs" />
     <Compile Include="Shell\Commands\CleanCommandDefinition.cs" />
@@ -5472,7 +5468,7 @@
     <Folder Include="Plugins\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\HoverProbe.xaml" />
+    <EmbeddedResource Include="Controls\SymbolView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
