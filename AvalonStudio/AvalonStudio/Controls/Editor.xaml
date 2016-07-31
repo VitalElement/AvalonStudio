@@ -32,6 +32,10 @@
             <cont:HoverProbe DataContext="{Binding HoverProbe}" />
           </behaviours:CodeInformationToolTipBehavior>
 
+          <behaviours:ErrorInformationToolTipBehavior>
+            <cont:ErrorProbeView DataContext="{Binding ErrorProbe}" />
+          </behaviours:ErrorInformationToolTipBehavior>
+
           <!--
             <behaviours:DebugInformationToolTipBehaviour>
               <dcont:VariableControlView DataContext="{Binding DebugHoverProbe}" />

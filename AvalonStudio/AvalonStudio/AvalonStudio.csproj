@@ -205,6 +205,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\ErrorInformationToolTipBehavior.cs" />
     <Compile Include="Behaviors\CodeInformationToolTipBehavior.cs" />
     <Compile Include="Behaviors\DebugInformationToolTipBehaviour.cs" />
     <Compile Include="Behaviors\PopupBehavior.cs" />
@@ -219,6 +220,10 @@
     <Compile Include="Controls\DebugHoverProbe.paml.cs">
       <DependentUpon>DebugHoverProbe.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ErrorProbe.paml.cs">
+      <DependentUpon>ErrorProbeView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ErrorProbeViewModel.cs" />
     <Compile Include="Controls\IntellisenseToolTipViewModel.cs" />
     <Compile Include="Controls\TabControlView.paml.cs" />
     <Compile Include="Controls\DocumentTabControl.paml.cs">
@@ -331,6 +336,9 @@
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
     <EmbeddedResource Include="Controls\TabControlView.paml" />
     <EmbeddedResource Include="Controls\CompletionHint.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ErrorProbeView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="libgit2-821131f.so">

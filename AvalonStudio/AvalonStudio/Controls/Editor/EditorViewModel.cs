@@ -20,6 +20,7 @@ using AvalonStudio.TextEditor;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
 using ReactiveUI;
+using AvalonStudio.Utils;
 
 namespace AvalonStudio.Controls
 {
@@ -213,7 +214,27 @@ namespace AvalonStudio.Controls
 
 				model.CodeAnalysisCompleted += (s, ee) =>
 				{
-					Diagnostics = model.CodeAnalysisResults.Diagnostics;
+                    Diagnostics = model.CodeAnalysisResults.Diagnostics;
+
+                    foreach(var marker in Diagnostics)
+                    {
+                        if (marker.Length == 0)
+                        {
+                            var line = TextDocument.GetLineByOffset(marker.StartOffset);
+                            var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, marker.StartOffset,
+                                TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
+
+                            if (endoffset == -1)
+                            {
+                                marker.Length = line.Length;
+                            }
+                            else
+                            {
+                                marker.EndOffset = endoffset;
+                            }
+                        }
+                    }
+
 					HighlightingData =
 						new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
 
@@ -452,14 +473,21 @@ namespace AvalonStudio.Controls
 		}
 
 		private WatchListViewModel debugHoverProbe;
-
 		public WatchListViewModel DebugHoverProbe
 		{
 			get { return debugHoverProbe; }
 			set { this.RaiseAndSetIfChanged(ref debugHoverProbe, value); }
 		}
 
-		private string GetWordAtOffset(int offset)
+        private ErrorProbeViewModel errorProbe;
+        public ErrorProbeViewModel ErrorProbe
+        {
+            get { return errorProbe; }
+            set { this.RaiseAndSetIfChanged(ref errorProbe, value); }
+        }
+
+
+        private string GetWordAtOffset(int offset)
 		{
 			var result = string.Empty;
 
@@ -500,6 +528,25 @@ namespace AvalonStudio.Controls
 
 			return result;
 		}
+
+        public async Task<bool> UpdateErrorProbeAsync (int offset)
+        {
+            var result = false; 
+
+            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
+            {
+                var matching = Model.CodeAnalysisResults.Diagnostics.FindSegmentsContaining(offset).FirstOrDefault();
+
+                if(matching != null)
+                {
+                    ErrorProbe = new ErrorProbeViewModel(matching);
+
+                    result = true;
+                }
+            }
+
+            return result;
+        }
 
 		public async Task<bool> UpdateDebugHoverProbe(int offset)
 		{
@@ -604,16 +651,14 @@ namespace AvalonStudio.Controls
 
 
 		private ObservableCollection<SyntaxHighlightingData> highlightingData;
-
 		public ObservableCollection<SyntaxHighlightingData> HighlightingData
 		{
 			get { return highlightingData; }
 			set { this.RaiseAndSetIfChanged(ref highlightingData, value); }
 		}
 
-		private List<Diagnostic> diagnostics;
-
-		public List<Diagnostic> Diagnostics
+		private TextSegmentCollection<Diagnostic> diagnostics;
+		public TextSegmentCollection<Diagnostic> Diagnostics
 		{
 			get { return diagnostics; }
 			set { this.RaiseAndSetIfChanged(ref diagnostics, value); }
