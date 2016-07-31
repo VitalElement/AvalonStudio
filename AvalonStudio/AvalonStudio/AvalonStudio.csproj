@@ -312,7 +312,9 @@
     <EmbeddedResource Include="Controls\MainMenu.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ModalDialog.paml" />
+    <EmbeddedResource Include="Controls\ModalDialog.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
