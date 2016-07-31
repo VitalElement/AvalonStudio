@@ -28,14 +28,9 @@
         </te:TextEditor.ContextMenu>
 
         <i:Interaction.Behaviors>
-          <behaviours:CodeInformationToolTipBehavior>
-            <cont:HoverProbe DataContext="{Binding HoverProbe}" />
-          </behaviours:CodeInformationToolTipBehavior>
-
-          <!--
-            <behaviours:DebugInformationToolTipBehaviour>
-              <dcont:VariableControlView DataContext="{Binding DebugHoverProbe}" />
-            </behaviours:DebugInformationToolTipBehaviour>-->
+          <behaviours:EditorToolTipBehavior>
+            <cont:ViewModelViewHost DataContext="{Binding ToolTip}" />
+          </behaviours:EditorToolTipBehavior>
         </i:Interaction.Behaviors>
 
         <te:TextEditor.Header>

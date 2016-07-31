@@ -278,7 +278,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 						var diag = new Diagnostic
 						{
 							Project = file.Project,
-							Offset = diagnostic.Location.FileLocation.Offset,
+							StartOffset = diagnostic.Location.FileLocation.Offset, 
 							Line = diagnostic.Location.FileLocation.Line,
 							Spelling = diagnostic.Spelling,
 							File = diagnostic.Location.FileLocation.File.FileName,
@@ -290,12 +290,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
 						var data =
 							dataAssociation.TranslationUnit.GetLocationForOffset(dataAssociation.TranslationUnit.GetFile(file.Location),
-								diag.Offset);
+								diag.StartOffset);
 						var length = 0;
 
 						if (diagnostic.RangeCount > 0)
 						{
-							length = Math.Abs(diagnostic.GetDiagnosticRange(0).End.FileLocation.Offset - diag.Offset);
+							length = Math.Abs(diagnostic.GetDiagnosticRange(0).End.FileLocation.Offset - diag.StartOffset);
 						}
 
 						if (diagnostic.FixItCount > 0)
@@ -321,7 +321,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 								break;
 						}
 
-						dataAssociation.TextMarkerService.Create(diag.Offset, length, diag.Spelling, markerColor);
+						dataAssociation.TextMarkerService.Create(diag.StartOffset, length, diag.Spelling, markerColor);
 					}
 				}
 			});
