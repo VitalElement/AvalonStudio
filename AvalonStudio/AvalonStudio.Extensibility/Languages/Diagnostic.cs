@@ -1,4 +1,6 @@
+using System;
 using AvalonStudio.Projects;
+using AvalonStudio.TextEditor.Document;
 
 namespace AvalonStudio.Languages
 {
@@ -11,14 +13,12 @@ namespace AvalonStudio.Languages
 		Fatal = 4
 	}
 
-	public class Diagnostic
+	public class Diagnostic : TextSegment
 	{
 		public IProject Project { get; set; }
-		public int Offset { get; set; }
-		public int Line { get; set; }
-		public int Length { get; set; }
+		public int Line { get; set; }		
 		public string File { get; set; }
 		public string Spelling { get; set; }
-		public DiagnosticLevel Level { get; set; }
-	}
+		public DiagnosticLevel Level { get; set; }        
+    }
 }
