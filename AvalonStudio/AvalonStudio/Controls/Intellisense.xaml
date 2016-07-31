@@ -5,6 +5,14 @@
             <ListBox Items="{Binding CompletionData}" Background="{StyleResource ThemeControlMidBrush}"
                      BorderBrush="#3e3e42" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="180"
                      FontFamily="Segoi UI" FontSize="14" Width="240">
+              <ListBox.Styles>
+                <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                  <Setter Property="Background" Value="#274452"/>
+                </Style>
+                <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
+                  <Setter Property="Background" Value="#274452"/>
+                </Style>
+              </ListBox.Styles>
                 <ListBox.DataTemplates>
                     <DataTemplate DataType="vm:MethodCompletionDataViewModel">
                         <Grid>
