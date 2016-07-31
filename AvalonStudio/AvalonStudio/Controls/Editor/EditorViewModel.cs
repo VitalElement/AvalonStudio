@@ -561,9 +561,6 @@ namespace AvalonStudio.Controls
                 }
             }
 
-            // TODO Debug probe needs testing, so return false for now until investigated.
-            return false;
-
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
             {
                 var expression = GetWordAtOffset(offset);
@@ -576,9 +573,11 @@ namespace AvalonStudio.Controls
 
                     if (evaluatedExpression != null)
                     {
-                        //DebugHoverProbe = new WatchListViewModel(debugManager);
-                        //DebugHoverProbe.AddExistingWatch(evaluatedExpression);
-                        return false;
+                        var newToolTip = new DebugHoverProbeViewModel(debugManager);
+                        newToolTip.AddExistingWatch(evaluatedExpression);
+
+                        ToolTip = newToolTip;
+                        return true;
                     }
                 }
             }

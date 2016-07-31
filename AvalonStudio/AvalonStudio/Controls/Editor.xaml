@@ -29,7 +29,9 @@
 
         <i:Interaction.Behaviors>
           <behaviours:EditorToolTipBehavior>
-            <cont:ViewModelViewHost DataContext="{Binding ToolTip}" />
+            <Border BorderBrush="#3E3E42" BorderThickness="1">
+              <cont:ViewModelViewHost DataContext="{Binding ToolTip}" />
+            </Border>            
           </behaviours:EditorToolTipBehavior>
         </i:Interaction.Behaviors>
 
