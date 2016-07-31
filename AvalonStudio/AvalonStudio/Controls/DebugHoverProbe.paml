@@ -1,5 +1,0 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:vm="clr-namespace:AvalonStudio.Controls.ViewModels;assembly=AvalonStudio"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
-  <cont:VariableControl />
-</UserControl>

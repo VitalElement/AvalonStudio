@@ -79,7 +79,10 @@ namespace AvalonStudio.Controls
 
 		protected override void OnDataContextChanged()
 		{
-			Content = ViewLocator.Build(DataContext);
+            if (DataContext != null)
+            {
+                Content = ViewLocator.Build(DataContext);
+            }
 		}
 
 		private static void somethingChanged(IAvaloniaObject dependencyObject, bool changed)
