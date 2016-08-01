@@ -523,7 +523,7 @@ namespace AvalonStudio.Debugging
 
                     if (e.Frame != null && e.Frame.File != null)
                     {
-                        var normalizedPath = e.Frame.File.Replace("\\\\", "\\").ToPlatformPath();
+                        var normalizedPath = e.Frame.File.Replace("\\\\", "\\").NormalizePath();
 
                         ISourceFile file = null;
 
