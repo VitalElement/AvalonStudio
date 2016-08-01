@@ -4,7 +4,7 @@ class PointBase
 {
 };
 
-class Point: public PointBase
+class Point : public PointBase
 {
   public:
     float X;
@@ -44,7 +44,7 @@ int main (void)
     p1.X = 1.25;
     p1.Y = 2.45;
 
-    sum
+    
 
 
     while (true)
