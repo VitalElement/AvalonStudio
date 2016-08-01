@@ -8,6 +8,14 @@ namespace AvalonStudio.Debugging.GDB.JLink
 		public JLinkSettingsFormView()
 		{
 			InitializeComponent();
+
+            var lb = this.FindControl<ListBox>("deviceListBox");
+
+            //if(lb != null)
+            //{
+            //    lb.it
+            //}
+
 		}
 
 		private void InitializeComponent()
