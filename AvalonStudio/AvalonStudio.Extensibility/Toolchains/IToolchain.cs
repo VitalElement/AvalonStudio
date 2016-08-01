@@ -8,7 +8,12 @@ using AvalonStudio.Utils;
 
 namespace AvalonStudio.Toolchains
 {
-	[InheritedExport(typeof (IToolChain))]
+    public interface IGDBToolchain
+    {
+        string GDBExecutable { get; }
+    }
+
+    [InheritedExport(typeof (IToolChain))]
 	public interface IToolChain : IPlugin
 	{
 		IList<string> Includes { get; }

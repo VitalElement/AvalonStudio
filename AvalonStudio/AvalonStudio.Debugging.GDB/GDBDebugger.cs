@@ -289,16 +289,16 @@ namespace AvalonStudio.Debugging.GDB
 		public virtual async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
 		{
 			this.console = console;
-			var startInfo = new ProcessStartInfo();
+			var startInfo = new ProcessStartInfo();            
 
 			console.WriteLine("[GDB] - Starting...");
 
 			// This information should be part of this extension... or configurable internally?
 			// This maybe indicates that debuggers are part of toolchain?
 
-			if (toolchain is GCCToolchain)
+			if (toolchain is IGDBToolchain)
 			{
-				startInfo.FileName = (toolchain as GCCToolchain).GDBExecutable;
+				startInfo.FileName = (toolchain as IGDBToolchain).GDBExecutable;
 			}
 			else
 			{

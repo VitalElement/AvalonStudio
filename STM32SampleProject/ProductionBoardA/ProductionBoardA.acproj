@@ -7,11 +7,17 @@
       "Name": "STM32HalPlatform"
     }
   ],
+<<<<<<< Updated upstream
   "Toolchain": "AvalonStudio.Toolchains.STM32.STM32GCCToolchain",
   "Debugger": "AvalonStudio.Debugging.GDB.JLink.JLinkDebugAdaptor",
   "ExcludedFiles": [
     "HalConfig/heap_4.c"
   ],
+=======
+  "Toolchain": "AvalonStudio.Toolchains.BitThunder.BitThunderToolchain",
+  "Debugger": "AvalonStudio.Debugging.GDB.JLink.JLinkDebugAdaptor",
+  "ExcludedFiles": [],
+>>>>>>> Stashed changes
   "Type": "Executable",
   "Includes": [
     {

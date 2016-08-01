@@ -407,6 +407,10 @@
       <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
       <Name>AvalonStudio.TextEditor</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.BitThunder\AvalonStudio.Toolchains.BitThunder.csproj">
+      <Project>{68979755-6c68-4e27-9156-45ee55aba229}</Project>
+      <Name>AvalonStudio.Toolchains.BitThunder</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj">
       <Project>{1fc43c7d-5758-42d7-9977-986074e9cbc0}</Project>
       <Name>AvalonStudio.Toolchains.Clang</Name>
