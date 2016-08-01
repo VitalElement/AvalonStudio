@@ -101,7 +101,8 @@
   "DebugSettings": {
     "JLinkSettings": {
       "Interface": "SWD",
-      "TargetDevice": "STM32F103RB"
+      "TargetDevice": "STM32F103RB",
+      "DeviceKey": "STM32F103RB"
     },
     "OpenOCDSettings": {
       "InterfaceConfigFile": "scripts/interface/stlink-v2.cfg",
