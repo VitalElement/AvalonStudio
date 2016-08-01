@@ -4,7 +4,7 @@
         <Grid Margin="5">
             <Grid>
                 <StackPanel Margin="4">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                         <TextBlock Text="{Binding ScopeDescription}" />
                         <TextBlock Text="{Binding BuiltInTypeDescription}" Foreground="#FF569CD6" />
                         <TextBlock Text="{Binding EnumTypeDescription}" Foreground="#FFCEE4AE" />
@@ -34,7 +34,7 @@
                         <TextBlock Margin="-4 0 0 0" Text=")" IsVisible="{Binding ArgumentsVisibility}" />
                     </StackPanel>
                     <TextBlock Text="{Binding Description}" IsVisible="{Binding DescriptionVisibility}" MaxWidth="500"
-                               TextWrapping="Wrap" />
+                               TextWrapping="Wrap" TextAlignment="Left" HorizontalAlignment="Left" />
                 </StackPanel>
             </Grid>
         </Grid>
