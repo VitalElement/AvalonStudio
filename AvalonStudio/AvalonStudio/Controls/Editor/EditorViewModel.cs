@@ -526,7 +526,7 @@ namespace AvalonStudio.Controls
         {
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
             {
-                var matching = Model.CodeAnalysisResults.Diagnostics.FindSegmentsContaining(offset).FirstOrDefault();
+                var matching = Model.CodeAnalysisResults?.Diagnostics.FindSegmentsContaining(offset).FirstOrDefault();
 
                 if (matching != null)
                 {
