@@ -71,7 +71,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
             await FilterListAsync();
 
-            var selectedDevice = list.FirstOrDefault((d) => d.Device == settings.TargetDevice);
+            var selectedDevice = list.FirstOrDefault((d) => d.Device == settings.DeviceKey);
 
             await Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
@@ -111,7 +111,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
             if (hasLoaded)
             {
                 settings.Interface = (JlinkInterfaceType)interfaceSelectedIndex;
-                settings.TargetDevice = selectedDevice?.Device;
+                settings.DeviceKey = selectedDevice?.Device;
+                settings.TargetDevice = selectedDevice?.Device.Split(' ')[0].Trim();
 
                 JLinkDebugAdaptor.SetSettings(Model, settings);
                 Model.Save();
