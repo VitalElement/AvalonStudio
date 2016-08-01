@@ -15,9 +15,9 @@
 #define <#=className.ToUpper()#>_H_
 
 #pragma mark Includes
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdbool>
+#include <cstdint>
 
 class <#= className #>
 {
@@ -25,6 +25,9 @@ class <#= className #>
 public:
     <#= className #> ();
     ~<#= className #> ();
+
+#pragma mark Protected Members
+protected:
 
 #pragma mark Private Members
 private:
