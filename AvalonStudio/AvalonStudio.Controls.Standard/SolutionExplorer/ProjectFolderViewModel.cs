@@ -3,23 +3,29 @@ using System.Collections.ObjectModel;
 using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using ReactiveUI;
+using AvalonStudio.Shell;
+using AvalonStudio.Extensibility;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
 	internal class ProjectFolderViewModel : ProjectItemViewModel<IProjectFolder>
 	{
-		public ProjectFolderViewModel(IProjectFolder model)
+        private readonly IShell shell;
+
+        public ProjectFolderViewModel(IProjectFolder model)
 			: base(model)
 		{
-			Items = new ObservableCollection<ProjectItemViewModel>();
+            shell = IoC.Get<IShell>();
+
+            Items = new ObservableCollection<ProjectItemViewModel>();
 			Items.BindCollections(model.Items, p => { return Create(p); }, (pivm, p) => pivm.Model == p);
 
 			NewItemCommand = ReactiveCommand.Create();
 			NewItemCommand.Subscribe(_ =>
 			{
-				// ShellViewModel.Instance.ModalDialog = new NewItemDialogViewModel(model);
-				//ShellViewModel.Instance.ModalDialog.ShowDialog();
-			});
+                shell.ModalDialog = new NewItemDialogViewModel(model);
+                shell.ModalDialog.ShowDialog();
+            });
 
 			RemoveCommand = ReactiveCommand.Create();
 			RemoveCommand.Subscribe(_ => { model.Project.RemoveFolder(model); });
