@@ -240,15 +240,15 @@ namespace AvalonStudio.Languages.CPlusPlus
 									highlightData.Type = HighlightType.Comment;
 									break;
 
-								case TokenKind.Identifier:
-									highlightData.Type = HighlightType.Identifier;
-									break;
+                                case TokenKind.Identifier:
+                                    highlightData.Type = HighlightType.Identifier;
+                                    break;
 
-								case TokenKind.Punctuation:
-									highlightData.Type = HighlightType.Punctuation;
-									break;
+                                case TokenKind.Punctuation:
+                                    highlightData.Type = HighlightType.Punctuation;
+                                    break;
 
-								case TokenKind.Keyword:
+                                case TokenKind.Keyword:
 									highlightData.Type = HighlightType.Keyword;
 									break;
 
@@ -620,7 +620,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 				{
 					foreach (var include in toolchainIncludes)
 					{
-						AddArgument(args, string.Format("-I{0}", include));
+						AddArgument(args, string.Format("-isystem{0}", include));
 					}
 				}
 
@@ -749,11 +749,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 			{
 				dataAssociation.TranslationUnit = GenerateTranslationUnit(sourceFile, unsavedFiles);
 			}
-			else
-			{
-				dataAssociation.TranslationUnit.Reparse(unsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
-			}
 
+            // Always do a reparse, as a workaround for some issues in libclang 3.7.1
+            dataAssociation.TranslationUnit.Reparse(unsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
+			
 			return dataAssociation.TranslationUnit;
 		}
 
@@ -975,11 +974,11 @@ namespace AvalonStudio.Languages.CPlusPlus
 			BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
 			BackgroundRenderers.Add(TextMarkerService);
 
-			DocumentLineTransformers.Add(TextColorizer);
-			DocumentLineTransformers.Add(new DefineTextLineTransformer());
+            DocumentLineTransformers.Add(TextColorizer);
+            DocumentLineTransformers.Add(new DefineTextLineTransformer());
 			DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
 			DocumentLineTransformers.Add(new IncludeTextLineTransformer());
-		}
+        }
 
 		public ClangTranslationUnit TranslationUnit { get; set; }
 		public TextColoringTransformer TextColorizer { get; }
