@@ -13,19 +13,22 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 
 		public void TransformLine(TextView textView, VisualLine line)
 		{
-			if (line.RenderedText.Text.Contains("#pragma mark"))
-			{
-				var startIndex = line.RenderedText.Text.IndexOf("#pragma mark");
+            if (!line.RenderedText.Text.Trim().StartsWith("//"))
+            {
+                if (line.RenderedText.Text.Contains("#pragma mark"))
+                {
+                    var startIndex = line.RenderedText.Text.IndexOf("#pragma mark");
 
-				line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 12);
-				line.RenderedText.SetForegroundBrush(brush, startIndex + 12, line.RenderedText.Text.Length - 12);
-			}
-			else if (line.RenderedText.Text.Contains("#pragma"))
-			{
-				var startIndex = line.RenderedText.Text.IndexOf("#pragma");
+                    line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 12);
+                    line.RenderedText.SetForegroundBrush(brush, startIndex + 12, line.RenderedText.Text.Length - 12);
+                }
+                else if (line.RenderedText.Text.Contains("#pragma"))
+                {
+                    var startIndex = line.RenderedText.Text.IndexOf("#pragma");
 
-				line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 7);
-			}
+                    line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 7);
+                }
+            }
 		}
 	}
 }
