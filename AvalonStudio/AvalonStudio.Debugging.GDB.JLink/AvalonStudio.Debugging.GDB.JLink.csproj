@@ -148,6 +148,7 @@
       <DependentUpon>JLinkSettingsFormView.xaml</DependentUpon>
     </Compile>
     <Compile Include="JLinkSettingsFormViewModel.cs" />
+    <Compile Include="JLinkTargetDeviceViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
