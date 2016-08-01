@@ -5,6 +5,7 @@ namespace AvalonStudio.Languages
 {
 	public enum HighlightType
 	{
+        None,
 		CallExpression,
 		Punctuation,
 		Keyword,
