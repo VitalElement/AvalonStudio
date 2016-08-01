@@ -97,8 +97,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 			console.WriteLine("[JLink] - Starting GDB Server...");
 			// TODO allow people to select the device.
 			var startInfo = new ProcessStartInfo();
-			startInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed 12000 -noir", "STM32F407VG",
-				Enum.GetName(typeof (JlinkInterfaceType), settings.Interface));
+			startInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed 12000 -noir", settings.TargetDevice, Enum.GetName(typeof (JlinkInterfaceType), settings.Interface));
 			startInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServerCL" + Platform.ExecutableExtension);
 			if (!File.Exists(startInfo.FileName))
 			{

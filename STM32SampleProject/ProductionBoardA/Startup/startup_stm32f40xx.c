@@ -29,7 +29,7 @@
 
 /*----------Stack Configuration-----------------------------------------------*/
 #define STACK_SIZE \
-    0x00000800 /*!< The Stack size suggest using even number    */
+    0x00000200 /*!< The Stack size suggest using even number    */
 __attribute__ ((section (".stack"))) static unsigned long stack[STACK_SIZE];
 
 
