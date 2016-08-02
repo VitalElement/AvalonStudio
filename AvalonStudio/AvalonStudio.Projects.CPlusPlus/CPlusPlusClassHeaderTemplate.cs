@@ -51,8 +51,8 @@ namespace AvalonStudio.Projects.CPlusPlus
             
             #line default
             #line hidden
-            this.Write("_H_\r\n\r\n#pragma mark Includes\r\n#include <cstddef>\r\n#include <cstdbool>\r\n#include <" +
-                    "cstdint>\r\n\r\nclass ");
+            this.Write("_H_\r\n\r\n#pragma mark Includes\r\n#include <stddef.h>\r\n#include <stdbool.h>\r\n#include" +
+                    " <stdint.h>\r\n\r\nclass ");
             
             #line 22 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(className));
