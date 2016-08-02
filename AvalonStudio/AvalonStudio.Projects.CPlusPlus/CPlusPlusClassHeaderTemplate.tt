@@ -15,9 +15,9 @@
 #define <#=className.ToUpper()#>_H_
 
 #pragma mark Includes
-#include <cstddef>
-#include <cstdbool>
-#include <cstdint>
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 class <#= className #>
 {
