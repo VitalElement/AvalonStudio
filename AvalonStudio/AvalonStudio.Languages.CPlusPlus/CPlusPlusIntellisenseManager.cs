@@ -540,6 +540,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 						{
 							intellisenseControl.CompletionData = list;
 
+                            intellisenseControl.SelectedCompletion = null;
 							intellisenseControl.SelectedCompletion = suggestion;
 
 							intellisenseControl.IsVisible = true;

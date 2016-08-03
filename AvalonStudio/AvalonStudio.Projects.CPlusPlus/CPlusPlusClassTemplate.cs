@@ -73,7 +73,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             
             #line default
             #line hidden
-            this.Write(" ()\r\n{\r\n}");
+            this.Write(" ()\r\n{\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

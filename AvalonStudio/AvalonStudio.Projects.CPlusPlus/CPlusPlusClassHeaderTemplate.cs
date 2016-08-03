@@ -51,30 +51,45 @@ namespace AvalonStudio.Projects.CPlusPlus
             
             #line default
             #line hidden
-            this.Write("_H_\r\n\r\n#pragma mark Includes\r\n#include <cstddef>\r\n#include <cstdbool>\r\n#include <" +
-                    "cstdint>\r\n\r\nclass ");
+            this.Write("_H_\r\n\r\n#pragma mark Includes\r\n#include <stddef.h>\r\n#include <stdbool.h>\r\n#include" +
+                    " <stdint.h>\r\n\r\n/**\r\n *  ");
             
-            #line 22 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
+            #line 23 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(className));
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n#pragma mark Public Members\r\npublic:\r\n    ");
+            this.Write("\r\n */\r\nclass ");
             
-            #line 26 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
+            #line 25 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(className));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n{\r\n#pragma mark Public Members\r\npublic:\r\n    /**\r\n     * Instantiates a new ins" +
+                    "tance of ");
+            
+            #line 30 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(className));
+            
+            #line default
+            #line hidden
+            this.Write(".\r\n     */\r\n    ");
+            
+            #line 32 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(className));
             
             #line default
             #line hidden
             this.Write(" ();\r\n    ~");
             
-            #line 27 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
+            #line 33 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(className));
             
             #line default
             #line hidden
             this.Write(" ();\r\n\r\n#pragma mark Protected Members\r\nprotected:\r\n\r\n#pragma mark Private Member" +
-                    "s\r\nprivate:\r\n\r\n};\r\n\r\n#endif");
+                    "s\r\nprivate:\r\n\r\n};\r\n\r\n#endif\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
