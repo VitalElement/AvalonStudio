@@ -83,7 +83,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
 				foreach (var codeCompletion in completionResults.Results)
 				{
-					if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available)
+                    // This prevents base class members being added in 3.7.1 hopefully future updates will fix this.
+					//if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available)
 					{
 						var typedText = string.Empty;
 
