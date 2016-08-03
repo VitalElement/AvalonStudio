@@ -66,15 +66,15 @@ namespace AvalonStudio.Projects.CPlusPlus
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n#pragma mark Public Members\r\npublic:\r\n\t/**\r\n\t * Instantiates a new instance " +
-                    "of ");
+            this.Write("\r\n{\r\n#pragma mark Public Members\r\npublic:\r\n    /**\r\n     * Instantiates a new ins" +
+                    "tance of ");
             
             #line 30 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(className));
             
             #line default
             #line hidden
-            this.Write(".\r\n\t */\r\n    ");
+            this.Write(".\r\n     */\r\n    ");
             
             #line 32 "G:\development\repos\AvalonStudio\AvalonStudio\AvalonStudio.Projects.CPlusPlus\CPlusPlusClassHeaderTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(className));
@@ -89,7 +89,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             #line default
             #line hidden
             this.Write(" ();\r\n\r\n#pragma mark Protected Members\r\nprotected:\r\n\r\n#pragma mark Private Member" +
-                    "s\r\nprivate:\r\n\r\n};\r\n\r\n#endif");
+                    "s\r\nprivate:\r\n\r\n};\r\n\r\n#endif\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
