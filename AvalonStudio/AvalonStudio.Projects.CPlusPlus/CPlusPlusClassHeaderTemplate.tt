@@ -26,9 +26,9 @@ class <#= className #>
 {
 #pragma mark Public Members
 public:
-	/**
-	 * Instantiates a new instance of <#= className #>.
-	 */
+    /**
+     * Instantiates a new instance of <#= className #>.
+     */
     <#= className #> ();
     ~<#= className #> ();
 
