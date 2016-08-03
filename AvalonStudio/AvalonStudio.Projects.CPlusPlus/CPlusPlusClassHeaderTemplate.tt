@@ -19,10 +19,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+/**
+ *  <#= className #>
+ */
 class <#= className #>
 {
 #pragma mark Public Members
 public:
+	/**
+	 * Instantiates a new instance of <#= className #>.
+	 */
     <#= className #> ();
     ~<#= className #> ();
 
