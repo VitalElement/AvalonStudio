@@ -37,7 +37,7 @@
         </i:Interaction.Behaviors>
 
         <te:TextEditor.Header>
-          <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20">
+          <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350">
             <DropDown.DataTemplates>
               <DataTemplate>
                 <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
