@@ -220,7 +220,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                             caretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
 
-                            
+                            editor.CaretIndex = caretIndex;
+                            // Allow user to press Ctrl + Z to undo overwrite.
+                            editor.TextDocument.EndUpdate();
+                            editor.TextDocument.BeginUpdate();
+
+
                             editor.TextDocument.Replace(caretIndex, intellisenseEndsAt - intellisenseOpenedAt, string.Empty);                            
                         }
                         else
