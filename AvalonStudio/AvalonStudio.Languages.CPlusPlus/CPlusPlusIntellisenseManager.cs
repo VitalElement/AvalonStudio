@@ -94,7 +94,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 		{
 			var result = false;
 
-			if (e.Modifiers == InputModifiers.None || e.Modifiers == InputModifiers.Shift)
+			if (e.Modifiers == InputModifiers.None || (e.Modifiers == InputModifiers.Shift && e.Key == Key.End))
 			{
 				switch (e.Key)
 				{
