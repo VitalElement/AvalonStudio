@@ -94,7 +94,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 		{
 			var result = false;
 
-			if (e.Modifiers == InputModifiers.None)
+			if (e.Modifiers == InputModifiers.None || e.Modifiers == InputModifiers.Shift)
 			{
 				switch (e.Key)
 				{
@@ -290,7 +290,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 				}
 			}
 
-			if (intellisenseControl.IsVisible && e.Modifiers == InputModifiers.None)
+			if (intellisenseControl.IsVisible)
 			{
 				if (IsCompletionKey(e))
 				{
@@ -389,6 +389,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 				{
 					var caret = new TextLocation();
 
+                    var behindStartChar = '\0';
                     var caretChar = '\0';
 					var behindCaretChar = '\0';
 					var behindBehindCaretChar = '\0';
@@ -411,11 +412,15 @@ namespace AvalonStudio.Languages.CPlusPlus
 					if (behindCaretChar == ':' && behindBehindCaretChar == ':')
 					{
 						intellisenseStartedAt = caretIndex;
-					}
+                        intellisenseEndsAt = intellisenseStartedAt;
+                        intellisenseOpenedAt = intellisenseStartedAt;
+                    }
 					else if (behindCaretChar == '>' || behindBehindCaretChar == ':' || behindBehindCaretChar == '>')
 					{
 						intellisenseStartedAt = caretIndex - 1;
-					}
+                        intellisenseEndsAt = intellisenseStartedAt;
+                        intellisenseOpenedAt = intellisenseStartedAt;
+                    }
 					else
 					{
                         await
@@ -427,7 +432,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                                     intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editor.TextDocument, caretIndex,
                                         TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
 
-                                    if (behindBehindCaretChar.IsWhiteSpace() && (caretChar.IsWhiteSpace() || caretChar == '\0'))
+                                    behindStartChar = editor.TextDocument.GetCharAt(intellisenseStartedAt - 1);
+
+                                    if ((behindStartChar.IsWhiteSpace() || !behindStartChar.IsSymbolChar()) && (caretChar.IsWhiteSpace() || !caretChar.IsSymbolChar()))
                                     {
                                         intellisenseEndsAt = intellisenseStartedAt;
                                     }
@@ -478,20 +485,19 @@ namespace AvalonStudio.Languages.CPlusPlus
 				}
 				else
 				{
-					if (intellisenseStartedAt != -1)
-					{
-						await
-							Dispatcher.UIThread.InvokeTaskAsync(
-								() =>
-								{
-									currentFilter = editor.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);
-								});
-					}
-					else
-					{
-						currentFilter = string.Empty;
-					}
-
+                    await Dispatcher.UIThread.InvokeTaskAsync(
+                    () =>
+                    {
+                        if (intellisenseStartedAt != -1 && caretIndex > intellisenseStartedAt)
+                        {
+                            currentFilter = editor.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt);
+                        }
+                        else
+                        {
+                            currentFilter = string.Empty;
+                        }
+                    });
+					
 					filteredResults = unfilteredCompletions.Where(c => c.Title.ToLower().Contains(currentFilter.ToLower()));
 				}
 

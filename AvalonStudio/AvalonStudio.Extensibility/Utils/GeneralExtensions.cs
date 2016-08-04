@@ -197,7 +197,19 @@ namespace AvalonStudio.Utils
 			return result;
 		}
 
-		public static char GetCloseBracketChar(this char c)
+        public static bool IsSymbolChar(this char letter)
+        {
+            bool result = false;
+
+            if (char.IsLetter(letter) || letter == '_')
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        public static char GetCloseBracketChar(this char c)
 		{
 			if (!c.IsOpenBracketChar())
 			{
