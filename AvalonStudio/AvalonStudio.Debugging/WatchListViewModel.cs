@@ -59,15 +59,19 @@ namespace AvalonStudio.Debugging
 		public virtual void Activation()
 		{
 			_debugManager = IoC.Get<IDebugManager>();
-			_debugManager.DebugFrameChanged += WatchListViewModel_DebugFrameChanged;
 
-			_debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+            if (_debugManager != null)
+            {
+                _debugManager.DebugFrameChanged += WatchListViewModel_DebugFrameChanged;
 
-			_debugManager.DebugSessionEnded += (sender, e) =>
-			{
-				IsVisible = false;
-				Clear();
-			};
+                _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+
+                _debugManager.DebugSessionEnded += (sender, e) =>
+                {
+                    IsVisible = false;
+                    Clear();
+                };
+            }
 		}
 
 		public async void AddWatch(string expression)
