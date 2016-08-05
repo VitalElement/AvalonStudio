@@ -11,4 +11,8 @@
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <DisabledProjects>
+    <String>AvalonStudio.MiniShell/AvalonStudio.MiniShell.csproj</String>
+    <String>AvalonStudioBuild/AvalonStudioBuild.csproj</String>
+  </DisabledProjects>
 </Properties>
