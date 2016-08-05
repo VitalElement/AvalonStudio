@@ -109,6 +109,10 @@
       <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
       <Name>AvalonStudio.Extensibility</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.MiniShell\AvalonStudio.MiniShell.csproj">
+      <Project>{853618d5-76cc-4302-8aff-4b95f51d01f7}</Project>
+      <Name>AvalonStudio.MiniShell</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
       <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
       <Name>AvalonStudio.Projects.CPlusPlus</Name>
