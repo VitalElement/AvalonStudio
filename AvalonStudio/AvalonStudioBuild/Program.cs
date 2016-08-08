@@ -17,7 +17,7 @@ namespace AvalonStudio
 {
 	internal class Program
 	{
-		private const string version = "1.0.0.25";
+		private const string version = "1.0.0.26";
 		private const string releaseName = "Gravity";
 
 		private const string baseDir = @"c:\development\vebuild\test";
