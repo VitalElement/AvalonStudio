@@ -26,9 +26,3 @@ RUN chmod +x /usr/bin/avalon
 
 # Test avalon command
 RUN avalon version
-
-# Install STM32 Toolchain
-RUN avalon install-package AvalonStudio.Toolchains.STM32 Linux-Slow-v0.03-5.2.1
-
-RUN avalon version
-
