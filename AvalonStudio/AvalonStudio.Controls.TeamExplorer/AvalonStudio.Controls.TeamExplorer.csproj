@@ -210,6 +210,10 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
+call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
