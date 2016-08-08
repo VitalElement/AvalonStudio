@@ -41,7 +41,27 @@ namespace AvalonStudio
 
 			var container = CompositionRoot.CreateContainer();
 
-			var builder = AppBuilder.Configure<App>().UsePlatformDetect().SetupWithoutStarting();
+            var builder = AppBuilder.Configure<App>();
+
+            if (args.Length >= 1 && args[0] == "--skia")
+            {
+                builder.UseSkia();
+
+                if(Platform.PlatformIdentifier == PlatformID.Win32NT)
+                {
+                    builder.UseWin32();
+                }
+                else
+                {
+                    builder.UseGtk();
+                }
+            }
+            else
+            {
+                builder.UsePlatformDetect();
+            }
+
+            builder.SetupWithoutStarting();
 
 			var commandService = container.GetExportedValue<ICommandService>();
 			IoC.RegisterConstant(commandService, typeof(ICommandService));
