@@ -11,22 +11,29 @@
 *
 *******************************************************************************/
 #pragma mark Compiler Pragmas
-#ifndef _<#=className.ToUpper()#>_H_
-#define _<#=className.ToUpper()#>_H_
+#ifndef <#=className.ToUpper()#>_H_
+#define <#=className.ToUpper()#>_H_
 
 #pragma mark Includes
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
 
+/**
+ *  <#= className #>
+ */
 class <#= className #>
 {
 #pragma mark Public Members
 public:
-
+    /**
+     * Instantiates a new instance of <#= className #>.
+     */
     <#= className #> ();
     ~<#= className #> ();
 
+#pragma mark Protected Members
+protected:
 
 #pragma mark Private Members
 private:

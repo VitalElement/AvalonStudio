@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -33,164 +33,145 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Avalonia.Animation, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Animation.dll</HintPath>
+    <Reference Include="Avalonia.Animation, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Animation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Base, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Base.dll</HintPath>
+    <Reference Include="Avalonia.Base, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Base.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Cairo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1705-alpha\lib\net45\Avalonia.Cairo.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Desktop.0.4.1-build1860-alpha\lib\net45\Avalonia.Cairo.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Controls, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Controls.dll</HintPath>
+    <Reference Include="Avalonia.Controls, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.DesignerSupport, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.DesignerSupport.dll</HintPath>
+    <Reference Include="Avalonia.DesignerSupport, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.DesignerSupport.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Diagnostics, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Diagnostics.dll</HintPath>
+    <Reference Include="Avalonia.Diagnostics, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Diagnostics.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Direct2D1, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1705-alpha\lib\net45\Avalonia.Direct2D1.dll</HintPath>
+    <Reference Include="Avalonia.Direct2D1, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Desktop.0.4.1-build1860-alpha\lib\net45\Avalonia.Direct2D1.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Gtk, Version=1.0.6039.36629, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1705-alpha\lib\net45\Avalonia.Gtk.dll</HintPath>
+    <Reference Include="Avalonia.Gtk, Version=1.0.6062.38635, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Desktop.0.4.1-build1860-alpha\lib\net45\Avalonia.Gtk.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.HtmlRenderer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.HtmlRenderer.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.HtmlRenderer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Input, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Input.dll</HintPath>
+    <Reference Include="Avalonia.Input, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Input.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Interactivity.dll</HintPath>
+    <Reference Include="Avalonia.Interactivity, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Layout, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Layout.dll</HintPath>
+    <Reference Include="Avalonia.Layout, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Layout.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.Logging.Serilog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Logging.Serilog.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Logging.Serilog.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Markup, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Markup.dll</HintPath>
+    <Reference Include="Avalonia.Markup, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Markup.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Markup.Xaml, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Markup.Xaml.dll</HintPath>
+    <Reference Include="Avalonia.Markup.Xaml, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Markup.Xaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Avalonia.ReactiveUI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.ReactiveUI.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.ReactiveUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.SceneGraph, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.SceneGraph.dll</HintPath>
+    <Reference Include="Avalonia.SceneGraph, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.SceneGraph.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Styling, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Styling.dll</HintPath>
+    <Reference Include="Avalonia.Skia.Desktop, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\Avalonia.Skia.Desktop.0.4.1-build1860-alpha\lib\net45\Avalonia.Skia.Desktop.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Themes.Default, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.2.0.1705-alpha\lib\portable-windows8+net45\Avalonia.Themes.Default.dll</HintPath>
+    <Reference Include="Avalonia.Styling, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Styling.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Win32, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Desktop.0.2.0.1705-alpha\lib\net45\Avalonia.Win32.dll</HintPath>
+    <Reference Include="Avalonia.Themes.Default, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.0.4.1-build1860-alpha\lib\portable-windows8+net45\Avalonia.Themes.Default.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Xaml.Interactions, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.220-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Avalonia.Xaml.Interactivity, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.220-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Caliburn.Micro.Core.3.0.0\lib\net45\Caliburn.Micro.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Caliburn.Micro.Platform, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Caliburn.Micro.Platform.Core, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\Caliburn.Micro.Platform.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Prism, Version=6.1.0.0, Culture=neutral, PublicKeyToken=91a96d2a154366d8, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Core.6.1.0\lib\net45\Prism.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.1.5.14\lib\net45\Serilog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Serilog.FullNetFx, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.1.5.14\lib\net45\Serilog.FullNetFx.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SharpDX, Version=3.0.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.3.0.2\lib\net45\SharpDX.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SharpDX.Direct2D1, Version=3.0.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Direct2D1.3.0.2\lib\net45\SharpDX.Direct2D1.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SharpDX.DXGI, Version=3.0.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.DXGI.3.0.2\lib\net45\SharpDX.DXGI.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Sprache, Version=2.0.0.50, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sprache.2.0.0.50\lib\portable-net4+netcore45+win8+wp8+sl5+MonoAndroid+Xamarin.iOS10+MonoTouch\Sprache.dll</HintPath>
+    <Reference Include="Avalonia.Win32, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Desktop.0.4.1-build1860-alpha\lib\net45\Avalonia.Win32.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Reactive.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.Core.3.0.0\lib\net45\System.Reactive.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.Interfaces, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.Interfaces.3.0.0\lib\net45\System.Reactive.Interfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.Linq, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.Linq.3.0.0\lib\net45\System.Reactive.Linq.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.PlatformServices, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.PlatformServices.3.0.0\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reactive.Windows.Threading, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reactive.Windows.Threading.3.0.0\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -200,22 +181,81 @@
     <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Splat.1.6.2\lib\Net45\Splat.dll</HintPath>
     </Reference>
+    <Reference Include="Avalonia.Xaml.Interactions, Version=0.0.0.1, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.239-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
+    </Reference>
+    <Reference Include="Avalonia.Xaml.Interactivity, Version=0.0.0.1, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.239-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f">
+      <HintPath>..\packages\Caliburn.Micro.Core.3.0.0\lib\net45\Caliburn.Micro.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f">
+      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Micro.Platform.Core, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f">
+      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\Caliburn.Micro.Platform.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Prism, Version=6.1.0.0, Culture=neutral, PublicKeyToken=91a96d2a154366d8">
+      <HintPath>..\packages\Prism.Core.6.1.0\lib\net45\Prism.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
+      <HintPath>..\packages\Serilog.1.5.14\lib\net45\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.FullNetFx, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
+      <HintPath>..\packages\Serilog.1.5.14\lib\net45\Serilog.FullNetFx.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=3.0.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
+      <HintPath>..\packages\SharpDX.3.0.2\lib\net45\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1, Version=3.0.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
+      <HintPath>..\packages\SharpDX.Direct2D1.3.0.2\lib\net45\SharpDX.Direct2D1.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI, Version=3.0.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
+      <HintPath>..\packages\SharpDX.DXGI.3.0.2\lib\net45\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp, Version=1.53.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\SkiaSharp.1.53.0\lib\net45\SkiaSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Sprache, Version=2.0.0.50, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Sprache.2.0.0.50\lib\portable-net4+netcore45+win8+wp8+sl5+MonoAndroid+Xamarin.iOS10+MonoTouch\Sprache.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
+      <HintPath>..\packages\System.Reactive.Core.3.0.0\lib\net45\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
+      <HintPath>..\packages\System.Reactive.Interfaces.3.0.0\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
+      <HintPath>..\packages\System.Reactive.Linq.3.0.0\lib\net45\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
+      <HintPath>..\packages\System.Reactive.PlatformServices.3.0.0\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Windows.Threading, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
+      <HintPath>..\packages\System.Reactive.Windows.Threading.3.0.0\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <HintPath>..\packages\Caliburn.Micro.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Behaviors\CodeInformationToolTipBehavior.cs" />
-    <Compile Include="Behaviors\DebugInformationToolTipBehaviour.cs" />
-    <Compile Include="Behaviors\PopupBehavior.cs" />
+    <Compile Include="Behaviors\EditorToolTipBehavior.cs" />
+    <Compile Include="Behaviors\TooltipBehavior.cs" />
     <Compile Include="App.paml.cs" />
-    <Compile Include="Behaviors\PointerHoverBehaviour.cs" />
-    <Compile Include="Behaviors\ToolTipBehaviour.cs" />
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="Controls\CompletionHint.paml.cs">
       <DependentUpon>CompletionHint.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CompletionHintViewModel.cs" />
     <Compile Include="Controls\DebugHoverProbe.paml.cs">
-      <DependentUpon>DebugHoverProbe.paml</DependentUpon>
+      <DependentUpon>DebugHoverProbeView.paml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DebugHoverProbeViewModel.cs" />
+    <Compile Include="Controls\ErrorProbe.paml.cs">
+      <DependentUpon>ErrorProbeView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ErrorProbeViewModel.cs" />
     <Compile Include="Controls\IntellisenseToolTipViewModel.cs" />
     <Compile Include="Controls\TabControlView.paml.cs" />
     <Compile Include="Controls\DocumentTabControl.paml.cs">
@@ -226,7 +266,6 @@
       <DependentUpon>NewItemDialogView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TabControlViewModel.cs" />
-    <Compile Include="Controls\ViewModelViewHost.cs" />
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\Editor\SymbolViewModel.cs" />
     <Compile Include="Controls\Editor.paml.cs">
@@ -267,8 +306,8 @@
     <Compile Include="Controls\MetroWindowTheme.paml.cs">
       <DependentUpon>MetroWindowTheme.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\HoverProbe.xaml.cs">
-      <DependentUpon>HoverProbe.xaml</DependentUpon>
+    <Compile Include="Controls\SymbolView.xaml.cs">
+      <DependentUpon>SymbolView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\NewItemDialogViewModel.cs" />
     <Compile Include="Shell\Commands\CleanCommandDefinition.cs" />
@@ -308,7 +347,9 @@
     <EmbeddedResource Include="Controls\MainMenu.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\ModalDialog.paml" />
+    <EmbeddedResource Include="Controls\ModalDialog.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
@@ -324,10 +365,17 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\NewItemDialogView.paml" />
-    <EmbeddedResource Include="Controls\DebugHoverProbe.paml" />
+    <EmbeddedResource Include="Controls\DebugHoverProbeView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
-    <EmbeddedResource Include="Controls\TabControlView.paml" />
+    <EmbeddedResource Include="Controls\TabControlView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\CompletionHint.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ErrorProbeView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="libgit2-821131f.so">
@@ -339,76 +387,81 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj">
-      <Project>{0b7c8f41-0122-40e8-9701-efcb89c32cc9}</Project>
+      <Project>{0B7C8F41-0122-40E8-9701-EFCB89C32CC9}</Project>
       <Name>AvalonStudio.Controls.Standard</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Controls.TeamExplorer\AvalonStudio.Controls.TeamExplorer.csproj">
-      <Project>{690f173c-bf89-4f9e-a177-c17313cdbfe3}</Project>
+      <Project>{690F173C-BF89-4F9E-A177-C17313CDBFE3}</Project>
       <Name>AvalonStudio.Controls.TeamExplorer</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">
-      <Project>{eb735b57-518a-4dc5-8dff-ca6d5db604d2}</Project>
+      <Project>{EB735B57-518A-4DC5-8DFF-CA6D5DB604D2}</Project>
       <Name>AvalonStudio.Debugging.GDB.JLink</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.Local\AvalonStudio.Debugging.GDB.Local.csproj">
-      <Project>{0ead4429-5b5a-4ebb-87b6-ea91ce86b09e}</Project>
+      <Project>{0EAD4429-5B5A-4EBB-87B6-EA91CE86B09E}</Project>
       <Name>AvalonStudio.Debugging.GDB.Local</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.OpenOCD\AvalonStudio.Debugging.GDB.OpenOCD.csproj">
-      <Project>{07d61ab2-d255-4f78-852f-455015d862ce}</Project>
+      <Project>{07D61AB2-D255-4F78-852F-455015D862CE}</Project>
       <Name>AvalonStudio.Debugging.GDB.OpenOCD</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB\AvalonStudio.Debugging.GDB.csproj">
-      <Project>{a9b2958a-0b02-4598-b7b1-42eec7e2fae4}</Project>
+      <Project>{A9B2958A-0B02-4598-B7B1-42EEC7E2FAE4}</Project>
       <Name>AvalonStudio.Debugging.GDB</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj">
-      <Project>{ae63ae6c-06ab-4bf0-b68f-96d77fc48730}</Project>
+      <Project>{AE63AE6C-06AB-4BF0-B68F-96D77FC48730}</Project>
       <Name>AvalonStudio.Debugging</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
+      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
       <Name>AvalonStudio.Extensibility</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj">
-      <Project>{5d5fe113-ffef-4e49-a011-00a167efa36e}</Project>
+      <Project>{5D5FE113-FFEF-4E49-A011-00A167EFA36E}</Project>
       <Name>AvalonStudio.Languages.CPlusPlus</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
-      <Project>{47e266ea-bbc4-4794-96da-b1f3ecb5bb9b}</Project>
+      <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
       <Name>AvalonStudio.Projects.CPlusPlus</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
-      <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
+      <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
       <Name>AvalonStudio.Projects.Standard</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repositories.csproj">
-      <Project>{29c948e9-4d96-4490-b039-a5bbf6eec2e5}</Project>
+      <Project>{29C948E9-4D96-4490-B039-A5BBF6EEC2E5}</Project>
       <Name>AvalonStudio.Repositories</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.TestFrameworks.Catch\AvalonStudio.TestFrameworks.Catch.csproj">
-      <Project>{3464977f-b29d-43e6-8ea8-d9cec603d989}</Project>
+      <Project>{3464977F-B29D-43E6-8EA8-D9CEC603D989}</Project>
       <Name>AvalonStudio.TestFrameworks.Catch</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
-      <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
+      <Project>{2303A1A3-D7AA-41CC-972D-A710D7D3D1D3}</Project>
       <Name>AvalonStudio.TextEditor</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj">
+      <Project>{1FC43C7D-5758-42D7-9977-986074E9CBC0}</Project>
+      <Name>AvalonStudio.Toolchains.Clang</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj">
-      <Project>{7a82c777-039e-47aa-a77b-3a9544e147c5}</Project>
+      <Project>{7A82C777-039E-47AA-A77B-3A9544E147C5}</Project>
       <Name>AvalonStudio.Toolchains.LocalGCC</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
-      <Project>{72c71854-5897-4e14-a1ae-b3b48f139af7}</Project>
+      <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
       <Name>AvalonStudio.Toolchains.Standard</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj">
-      <Project>{b761d8e3-611e-434f-887a-8225416f51b8}</Project>
+      <Project>{B761D8E3-611E-434F-887A-8225416F51B8}</Project>
       <Name>AvalonStudio.Toolchains.STM32</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\grip_pattern.png" />
+    <Content Include="icon.ico" />
     <Content Include="readme.txt" />
     <EmbeddedResource Include="Resources\Icons\Templarian\dark\appbar.3d.3ds.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -5456,7 +5509,7 @@
     <Folder Include="Plugins\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\HoverProbe.xaml" />
+    <EmbeddedResource Include="Controls\SymbolView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
@@ -5470,6 +5523,13 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\SkiaSharp.1.53.0\build\net45\SkiaSharp.targets" Condition="Exists('..\packages\SkiaSharp.1.53.0\build\net45\SkiaSharp.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\SkiaSharp.1.53.0\build\net45\SkiaSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SkiaSharp.1.53.0\build\net45\SkiaSharp.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

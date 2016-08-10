@@ -1,5 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <DockPanel>
     <StackPanel DockPanel.Dock="Bottom" ZIndex="100">
       <TabStrip Name="toolStrip" Items="{Binding Tools}" SelectedItem="{Binding SelectedTool, Mode=TwoWay}" Focusable="false">
@@ -43,7 +45,7 @@
     <Carousel Items="{Binding Tools}" SelectedItem="{Binding SelectedTool}" IsVirtualized="false" ZIndex="50">
       <Carousel.DataTemplates>
         <DataTemplate>
-          <Controls:ViewModelViewHost IsVisible ="{Binding IsVisible}" />
+          <cont:ViewModelViewHost IsVisible ="{Binding IsVisible}" />
         </DataTemplate>
       </Carousel.DataTemplates>
     </Carousel>

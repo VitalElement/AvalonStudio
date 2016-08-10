@@ -99,6 +99,7 @@ namespace AvalonStudio
 			RightBottomTabs = new TabControlViewModel();
 			RightMiddleTabs = new TabControlViewModel();
 			RightTopTabs = new TabControlViewModel();
+            MiddleTopTabs = new TabControlViewModel();
 
 			foreach (var tool in importedTools)
 			{
@@ -126,6 +127,10 @@ namespace AvalonStudio
 						RightTopTabs.Tools.Add(tool);
 						break;
 
+                    case Location.MiddleTop:
+                        MiddleTopTabs.Tools.Add(tool);
+                        break;
+
 					case Location.Left:
 						LeftTabs.Tools.Add(tool);
 						break;
@@ -143,6 +148,7 @@ namespace AvalonStudio
 			RightTopTabs.SelectedTool = RightTopTabs.Tools.FirstOrDefault();
 			RightMiddleTabs.SelectedTool = RightMiddleTabs.Tools.FirstOrDefault();
 			RightBottomTabs.SelectedTool = RightBottomTabs.Tools.FirstOrDefault();
+            MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.FirstOrDefault();
 
 			StatusBar.LineNumber = 1;
 			StatusBar.Column = 1;
@@ -204,10 +210,9 @@ namespace AvalonStudio
 		public TabControlViewModel RightTopTabs { get; }
 		public TabControlViewModel RightMiddleTabs { get; }
 		public TabControlViewModel RightBottomTabs { get; }
-
 		public TabControlViewModel BottomTabs { get; }
-
 		public TabControlViewModel BottomRightTabs { get; }
+        public TabControlViewModel MiddleTopTabs { get; }
 
 		public IConsole Console { get; }
 
@@ -238,15 +243,15 @@ namespace AvalonStudio
 
 			if (currentTab == null)
 			{
-				if (DocumentTabs.TemporaryDocument != null)
-				{
-					await Dispatcher.UIThread.InvokeTaskAsync(async () =>
-					{
-						var documentToClose = DocumentTabs.TemporaryDocument;
-						DocumentTabs.TemporaryDocument = null;
-						await documentToClose.CloseCommand.ExecuteAsyncTask(null);
-					});
-				}
+                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                {
+                    if (DocumentTabs.TemporaryDocument != null)
+                    {
+                        var documentToClose = DocumentTabs.TemporaryDocument;
+                        DocumentTabs.TemporaryDocument = null;
+                        await documentToClose.CloseCommand.ExecuteAsyncTask(null);
+                    }
+                });
 
 				EditorViewModel newEditor = null;
 				await Dispatcher.UIThread.InvokeTaskAsync(() =>
@@ -328,8 +333,15 @@ namespace AvalonStudio
 		{
 			Console.Clear();
 
-			new Thread(async () => { await project.ToolChain.Clean(Console, project); }).Start();
-		}
+            if (project.ToolChain != null)
+            {
+                new Thread(async () => { await project.ToolChain.Clean(Console, project); }).Start();
+            }
+            else
+            {
+                Console.WriteLine($"No toolchain selected for {project.Name}");
+            }
+        }
 
 		public void Build(IProject project)
 		{
@@ -337,7 +349,14 @@ namespace AvalonStudio
 
 			Console.Clear();
 
-			new Thread(async () => { await Task.Factory.StartNew(() => project.ToolChain.Build(Console, project)); }).Start();
+            if (project.ToolChain != null)
+            {
+                new Thread(async () => { await Task.Factory.StartNew(() => project.ToolChain.Build(Console, project)); }).Start();
+            }
+            else
+            {
+                Console.WriteLine($"No toolchain selected for {project.Name}");
+            }
 		}
 
 		public ObservableCollection<object> Tools

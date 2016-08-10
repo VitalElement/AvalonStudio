@@ -305,6 +305,17 @@ namespace AvalonStudio.Platforms
 			return path.Replace('\\', '/');
 		}
 
+        public static string NormalizePath (this string path)
+        {
+            string result = path.ToPlatformPath();
+
+            DirectoryInfo info = new DirectoryInfo(result);
+
+            result = info.FullName;
+
+            return result;
+        }
+
 		public static string ToPlatformPath(this string path)
 		{
 			switch (PlatformIdentifier)

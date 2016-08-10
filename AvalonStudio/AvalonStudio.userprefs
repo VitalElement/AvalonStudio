@@ -1,15 +1,8 @@
 ﻿<Properties StartupItem="AvalonStudio/AvalonStudio.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="AvalonStudio/Controls/Editor.paml">
+  <MonoDevelop.Ide.Workbench ActiveDocument="AvalonStudio.Toolchains.GCC/GCCToolchain.cs">
     <Files>
-      <File FileName="nclang/NClang/NClang.Native/NativeTopLevel.cs" Line="1" Column="1" />
-      <File FileName="nclang/NClang/NClang.Native/CSharpSpecific.cs" Line="1" Column="1" />
-      <File FileName="AvalonStudio.Models/AvalonStudioSettings.cs" Line="1" Column="1" />
-      <File FileName="AvalonStudio/App.cs" Line="1" Column="1" />
-      <File FileName="AvalonStudio/Workspace.cs" Line="1" Column="1" />
-      <File FileName="AvalonStudio.Models/Tools/Debuggers/GDB.cs" Line="594" Column="12" />
-      <File FileName="AvalonStudio.Models/Solutions/Project.cs" Line="377" Column="47" />
-      <File FileName="AvalonStudio/Controls/Editor.paml" Line="23" Column="12" />
+      <File FileName="AvalonStudio.Toolchains.GCC/GCCToolchain.cs" Line="8" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
@@ -18,4 +11,8 @@
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <DisabledProjects>
+    <String>AvalonStudio.MiniShell/AvalonStudio.MiniShell.csproj</String>
+    <String>AvalonStudioBuild/AvalonStudioBuild.csproj</String>
+  </DisabledProjects>
 </Properties>
