@@ -1,11 +1,18 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility"
-             Focusable="false">
-    <Grid IsVisible="{Binding IsVisible}">
+             xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility">
+    <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="false">
         <StackPanel Orientation="Horizontal" Gap="2" Background="Transparent">
             <ListBox Items="{Binding CompletionData}" Background="{StyleResource ThemeControlMidBrush}"
                      BorderBrush="#3e3e42" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="180"
                      FontFamily="Segoi UI" FontSize="14" Width="240">
+              <ListBox.Styles>
+                <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                  <Setter Property="Background" Value="#274452"/>
+                </Style>
+                <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
+                  <Setter Property="Background" Value="#274452"/>
+                </Style>
+              </ListBox.Styles>
                 <ListBox.DataTemplates>
                     <DataTemplate DataType="vm:MethodCompletionDataViewModel">
                         <Grid>
@@ -46,7 +53,7 @@
             </ListBox>
 
             <Grid IsVisible="True">
-                <Grid Background="#424245" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                <Grid Background="{StyleResource ThemeControlDarkBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                     <Border BorderBrush="#4D4D50" BorderThickness="1">
                         <StackPanel>
                             <TextBlock Text="{Binding SelectedCompletion.Hint}" />
@@ -56,5 +63,5 @@
                 </Grid>
             </Grid>
         </StackPanel>
-    </Grid>
+    </Popup>
 </UserControl>

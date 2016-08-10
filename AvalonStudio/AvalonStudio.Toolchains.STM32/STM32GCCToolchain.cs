@@ -702,10 +702,10 @@ namespace AvalonStudio.Toolchains.STM32
 			return new List<string>
 			{
 				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "arm-none-eabi", "include"),
-				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "arm-none-eabi", "include", "c++", "5.2.1"),
-				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "arm-none-eabi", "include", "c++", "5.2.1",
+				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "arm-none-eabi", "include", "c++", "5.4.1"),
+				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "arm-none-eabi", "include", "c++", "5.4.1",
 					"arm-none-eabi", "thumb"),
-				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "lib", "gcc", "arm-none-eabi", "5.2.1",
+				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "lib", "gcc", "arm-none-eabi", "5.4.1",
 					"include")
 			};
 		}

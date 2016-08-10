@@ -1,4 +1,4 @@
-FROM ubuntu:wily
+FROM ubuntu:xenial
 
 # Install mono
 RUN apt-get update \
@@ -23,12 +23,7 @@ RUN git clone  https://github.com/VitalElement/AvalonBuild.git   /opt/AvalonBuil
 RUN echo "#!/bin/sh" > /usr/bin/avalon
 RUN echo "LD_LIBRARY_PATH=/opt/AvalonBuild/NativeBinaries/linux/amd64 /usr/bin/mono /opt/AvalonBuild/avalon.exe \$*" >> /usr/bin/avalon
 RUN chmod +x /usr/bin/avalon
+RUN mv /opt/AvalonBuild/NativeBinaries /opt/AvalonBuild/libNativeBinaries
 
 # Test avalon command
 RUN avalon version
-
-# Install STM32 Toolchain
-RUN avalon install-package AvalonStudio.Toolchains.STM32 Linux-Slow-v0.03-5.2.1
-
-RUN avalon version
-

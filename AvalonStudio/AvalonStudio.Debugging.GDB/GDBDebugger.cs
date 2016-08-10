@@ -20,6 +20,7 @@ namespace AvalonStudio.Debugging.GDB
 		private CancellationTokenSource closeTokenSource;
 
 		protected IConsole console;
+        protected bool asyncModeEnabled;
 
 		private Command currentCommand;
 
@@ -39,6 +40,7 @@ namespace AvalonStudio.Debugging.GDB
 		public GDBDebugger()
 		{
 			StoppedEventIsEnabled = true;
+            asyncModeEnabled = false;
 		}
 
 		protected DebuggerState CurrentState
@@ -204,30 +206,22 @@ namespace AvalonStudio.Debugging.GDB
 
 			InternalStopped += onStoppedHandler;
 
-			await transmitRunner.InvokeAsync(() =>
-			{
-				do
-				{
-					//while (!Platform.FreeConsole())
-					//{
-					//    Console.WriteLine(Marshal.GetLastWin32Error());
-					//    Thread.Sleep(10);
-					//}
+            if (asyncModeEnabled)
+            {
+                await new ExecInterruptCommand().Execute(this);
 
-					//while (!Platform.AttachConsole(process.Id))
-					//{
-					//    Thread.Sleep(10);
-					//}
-
-					//while (!Platform.SetConsoleCtrlHandler(null, true))
-					//{
-					//    Console.WriteLine(Marshal.GetLastWin32Error());
-					//    Thread.Sleep(10);
-					//}
-
-					Platform.SendSignal(process.Id, Platform.Signum.SIGINT);
-				} while (!waitForStop.Wait(100));
-			});
+                await waitForStop.WaitAsync();
+            }
+            else
+            {
+                await transmitRunner.InvokeAsync(() =>
+                {
+                    do
+                    {
+                        Platform.SendSignal(process.Id, Platform.Signum.SIGINT);
+                    } while (!waitForStop.Wait(100));
+                });
+            }
 
 			InternalStopped -= onStoppedHandler;
 

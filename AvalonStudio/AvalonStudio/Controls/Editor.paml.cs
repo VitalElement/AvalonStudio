@@ -6,64 +6,80 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Controls
 {
-	public class Editor : UserControl
-	{
-		private readonly CompositeDisposable disposables;
-		private TextEditor.TextEditor editor;
-		private EditorViewModel editorViewModel;
+    public class Editor : UserControl
+    {
+        private readonly CompositeDisposable disposables;
+        private TextEditor.TextEditor editor;
+        private EditorViewModel editorViewModel;
 
-		public Editor()
-		{
-			InitializeComponent();
+        public Editor()
+        {
+            InitializeComponent();
 
-			disposables = new CompositeDisposable();
-			editor = this.Find<TextEditor.TextEditor>("editor");
+            disposables = new CompositeDisposable();
+            editor = this.Find<TextEditor.TextEditor>("editor");
 
-			disposables.Add(DataContextProperty.Changed.Subscribe(o =>
-			{
-				if (o.NewValue is EditorViewModel) // for some reason intellisense view model gets passed here! bug in avalonia?
-				{
-					if (o.OldValue is EditorViewModel && (o.OldValue as EditorViewModel).Model.Editor == editor)
-					{
-						(o.OldValue as EditorViewModel).Model.Editor = null;
-					}
+            disposables.Add(DataContextProperty.Changed.Subscribe(o =>
+            {
+                if (o.NewValue is EditorViewModel) // for some reason intellisense view model gets passed here! bug in avalonia?
+                {
+                    if (o.OldValue is EditorViewModel && (o.OldValue as EditorViewModel).Model.Editor == editor)
+                    {
+                        (o.OldValue as EditorViewModel).Model.Editor = null;
+                    }
 
-					if (editorViewModel != DataContext)
-					{
-						editorViewModel = DataContext as EditorViewModel;
+                    if (editorViewModel != DataContext)
+                    {
+                        editorViewModel = DataContext as EditorViewModel;
 
-						if (editorViewModel != null && editor != null)
-						{
-							editorViewModel.Model.Editor = editor;
-							editor.Focus();
-						}
-					}
-				}
-			}));
-		}
+                        if (editorViewModel != null && editor != null)
+                        {
+                            editorViewModel.Model.Editor = editor;
+                            editor.Focus();
+                        }
+                    }
+                }
+            }));
+        }
 
-		~Editor()
-		{
-			Console.WriteLine("Editor UserControl Destructed.");
-		}
+        ~Editor()
+        {
+            Console.WriteLine("Editor UserControl Destructed.");
+        }
 
-		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-		{
-			editor = this.Find<TextEditor.TextEditor>("editor");
-		}
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            editor = this.Find<TextEditor.TextEditor>("editor");
 
-		protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-		{
-			editor = null;
-			editorViewModel = null;
+            editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
+            editor.EditorScrolled += Editor_EditorScrolled;
+        }
 
-			disposables.Dispose();
-		}
+        private void Editor_EditorScrolled(object sender, EventArgs e)
+        {
+            editorViewModel.Intellisense.IsVisible = false;
+        }
+
+        private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
+        {
+            editorViewModel.Intellisense.IsVisible = false;
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            editor.EditorScrolled -= Editor_EditorScrolled;
+            editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
+
+            editor = null;
+            editorViewModel = null;
+
+            disposables.Dispose();
+        }
 
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
-	}
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
+    }
 }

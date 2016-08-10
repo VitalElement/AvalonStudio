@@ -43,6 +43,16 @@ namespace AvalonStudio.TextEditor
 			TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>(
 				(s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int) v.NewValue));
 			FocusableProperty.OverrideDefaultValue(typeof (TextEditor), true);
+
+            CaretIndexProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
+            {
+                if (s.TextDocument != null && s.CaretIndex != -1 && s.TextView != null)
+                {
+                    s.InvalidateCaretPosition();
+
+                    s.InvalidateSelectedWord();                   
+                }
+            });
 		}
 
 		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -59,12 +69,22 @@ namespace AvalonStudio.TextEditor
 				horizontalScrollBarVisibility,
 				BindingPriority.Style));
 
-			disposables.Add(TextDocumentProperty.Changed.Subscribe(_ => { CaretIndex = -1; }));
+			disposables.Add(TextDocumentProperty.Changed.Subscribe(_ => { SelectionStart = SelectionEnd = CaretIndex = -1;}));
+
+            disposables.Add(OffsetProperty.Changed.Subscribe(_ =>
+            {
+                if(EditorScrolled != null)
+                {
+                    EditorScrolled(this, new EventArgs());
+                }
+            }));
 
 			disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
 
 			textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
 		}
+
+        public event EventHandler<EventArgs> EditorScrolled;
 
 		protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
 		{
@@ -257,13 +277,6 @@ namespace AvalonStudio.TextEditor
 			set
 			{
 				SetValue(CaretIndexProperty, value);
-
-				if (TextDocument != null && CaretIndex != -1)
-				{
-					InvalidateCaretPosition();
-
-					InvalidateSelectedWord();
-				}
 			}
 		}
 
@@ -343,11 +356,25 @@ namespace AvalonStudio.TextEditor
 			set { SetValue(TextDocumentProperty, value); }
 		}
 
-		#endregion
+        public static readonly AvaloniaProperty<Vector> OffsetProperty =
+            TextView.OffsetProperty.AddOwner<TextEditor>(o => o.Offset,
+                (o, v) => o.Offset = v);
 
-		#region Private Methods
+        private Vector offset;
+        public Vector Offset
+        {
+            get { return offset; }
+            set
+            {
+                SetAndRaise(OffsetProperty, ref offset, value);
+            }
+        }
 
-		private void InvalidateCaretPosition()
+        #endregion
+
+        #region Private Methods
+
+        private void InvalidateCaretPosition()
 		{
 			CaretLocation = VisualLineGeometryBuilder.GetViewPortPosition(TextView, CaretIndex).TopLeft;
 			var textViewCaretLocation = VisualLineGeometryBuilder.GetTextViewPosition(TextView, CaretIndex).TopLeft;
@@ -757,6 +784,8 @@ namespace AvalonStudio.TextEditor
 			}));
 		}
 
+        public event EventHandler<EventArgs> CaretChangedByPointerClick;
+
 		protected override void OnPointerPressed(PointerPressedEventArgs e)
 		{
 			if (e.Source.InteractiveParent.InteractiveParent == TextView)
@@ -793,6 +822,11 @@ namespace AvalonStudio.TextEditor
 					e.Handled = true;
 
 					InvalidateVisual();
+
+                    if(CaretChangedByPointerClick != null)
+                    {
+                        CaretChangedByPointerClick(this, e);
+                    }
 				}
 				else if (TextDocument?.TextLength == 0)
 				{
