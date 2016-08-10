@@ -3,9 +3,9 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Controls
 {
-	public class DebugHoverProbe : UserControl
+	public class DebugHoverProbeView : UserControl
 	{
-		public DebugHoverProbe()
+		public DebugHoverProbeView()
 		{
 			InitializeComponent();
 		}

@@ -13,7 +13,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 
 		public void TransformLine(TextView textView, VisualLine line)
 		{
-			if (line.RenderedText.Text.Contains("#define"))
+			if (line.RenderedText.Text.Contains("#define") && !line.RenderedText.Text.Trim().StartsWith("//"))
 			{
 				var startIndex = line.RenderedText.Text.IndexOf("#define");
 

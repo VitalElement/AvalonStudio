@@ -19,7 +19,8 @@ namespace AvalonStudio.Models.Tools.Debuggers.Local
 
 			if (result)
 			{
-				await new SetCommand("new-console", "on").Execute(this);
+                asyncModeEnabled = (await new GDBSetCommand("mi-async", "on").Execute(this)).Response == ResponseCode.Done;
+                await new SetCommand("new-console", "on").Execute(this);
 			}
 
 			return result;

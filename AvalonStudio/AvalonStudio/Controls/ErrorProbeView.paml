@@ -1,0 +1,5 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" FontFamily="Verdana" FontSize="12">
+  <Grid Background="{StyleResource ThemeControlDarkBrush}">
+    <TextBlock Text="{Binding Tooltip}" Margin="5"/>
+  </Grid>  
+</UserControl>

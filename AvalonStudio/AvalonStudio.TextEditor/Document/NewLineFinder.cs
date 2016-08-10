@@ -154,7 +154,7 @@ namespace AvalonStudio.TextEditor.Document
 		{
 			var result = false;
 
-			if (!string.IsNullOrEmpty(text) && char.IsLetter(text[0]))
+			if (!string.IsNullOrEmpty(text) && (char.IsLetter(text[0]) || text[0] == '_'))
 			{
 				result = true;
 			}

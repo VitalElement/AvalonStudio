@@ -50,6 +50,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 			BuiltinLibraries = new List<string>();
 			ToolchainSettings = new ExpandoObject();
 			DebugSettings = new ExpandoObject();
+            Project = this;
 		}
 
 		[JsonIgnore]

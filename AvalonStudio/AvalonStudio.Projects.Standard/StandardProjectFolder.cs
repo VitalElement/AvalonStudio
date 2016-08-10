@@ -21,13 +21,13 @@ namespace AvalonStudio.Projects.Standard
 		public IProjectFolder Parent { get; set; }
 
 		public string Location { get; }
-		public string LocationDirectory { get; private set; }
+        public string LocationDirectory => Location;
 
 		public IProject Project { get; set; }
 
 		public void AddFile(ISourceFile file)
 		{
-			throw new NotImplementedException();
+            this.Items.Add(file);
 		}
 
 		public void AddFolder(IProjectFolder folder)

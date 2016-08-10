@@ -26,8 +26,14 @@ namespace AvalonStudio.MVVM
 
 			if (type != null)
 			{
-				return (Control) Activator.CreateInstance(type);
+                var constructor = type.GetConstructor(Type.EmptyTypes);
+
+                if (constructor != null)
+                {
+                    return (Control)Activator.CreateInstance(type);
+                }
 			}
+
 			return new TextBlock {Text = data.GetType().FullName};
 		}
 	}
