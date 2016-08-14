@@ -37,7 +37,7 @@ namespace AvalonStudio.Controls
 			set { SetValue(TitleBarContentProperty, value); }
 		}
 
-		Type IStyleable.StyleKey => typeof (MetroWindow);
+		Type IStyleable.StyleKey => typeof(MetroWindow);
 
 		protected override void OnPointerPressed(PointerPressedEventArgs e)
 		{
@@ -146,7 +146,7 @@ namespace AvalonStudio.Controls
 
 			titleBar.DoubleTapped += (sender, ee) => { ToggleWindowState(); };
 
-			closeButton.Click += (sender, ee) => { Close(); };
+			closeButton.Click += (sender, ee) => { Application.Current.Exit(); };
 
 			icon.DoubleTapped += (sender, ee) => { Close(); };
 		}

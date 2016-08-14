@@ -243,6 +243,9 @@
     <Compile Include="Behaviors\EditorToolTipBehavior.cs" />
     <Compile Include="Behaviors\TooltipBehavior.cs" />
     <Compile Include="App.paml.cs" />
+    <Compile Include="BootScreen.paml.cs">
+      <DependentUpon>BootScreen.paml</DependentUpon>
+    </Compile>
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="Controls\CompletionHint.paml.cs">
       <DependentUpon>CompletionHint.paml</DependentUpon>
@@ -327,6 +330,9 @@
     <Compile Include="Shell\Commands\UndoCommandDefinition.cs" />
     <Compile Include="Shell\Commands\SaveFileCommandDefinition.cs" />
     <Compile Include="Shell\MenuDefinitions.cs" />
+    <Compile Include="Controls\SplashScreen.paml.cs">
+      <DependentUpon>SplashScreen.paml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModelBaseExtensions.cs" />
     <Compile Include="PaneViewModel.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
@@ -359,7 +365,9 @@
     <EmbeddedResource Include="Controls\MetroWindow.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
+    <EmbeddedResource Include="Controls\MetroWindowTheme.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="app.config" />
     <EmbeddedResource Include="App.paml">
       <SubType>Designer</SubType>
@@ -378,12 +386,18 @@
     <EmbeddedResource Include="Controls\ErrorProbeView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="BootScreen.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="libgit2-821131f.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <EmbeddedResource Include="Controls\SplashScreen.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj">
