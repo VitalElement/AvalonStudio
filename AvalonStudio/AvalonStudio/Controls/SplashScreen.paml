@@ -1,0 +1,25 @@
+﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+  <Style Selector="local|SplashScreen">
+    <Setter Property="Background" Value="{StyleResource ThemeBackgroundBrush}"/>
+    <Setter Property="FontFamily" Value="Segoe UI"/>
+    <Setter Property="FontSize" Value="{StyleResource FontSizeNormal}"/>
+    <Setter Property="HasSystemDecorations" Value="false"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+          <AdornerDecorator>
+            <Grid Margin="{TemplateBinding !BorderThickness}" ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto,Auto,*,Auto,Auto" Background="Transparent">
+              <Grid Grid.Row="0" Grid.RowSpan="5" Margin="-4 0" Grid.Column="1" RowDefinitions="Auto * Auto" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+                <Grid Grid.Row="1" Margin="-4" Grid.Column="0" Grid.ColumnSpan="5" Background="{TemplateBinding Background}">
+                  <Grid Margin="4 0" RowDefinitions="Auto, *">
+                    <ContentPresenter Grid.Row="1"  Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </AdornerDecorator>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>
