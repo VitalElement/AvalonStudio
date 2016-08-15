@@ -4,6 +4,34 @@
 [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/VitalElement/AvalonStudio?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge)
 Cross platform IDE on Avalonia for Avalonia
 
+##Getting Started
+###Ubuntu
+
+Clone the repo.
+```
+git clone https://github.com/VitalElement/AvalonStudio
+
+cd AvalonStudio
+```
+
+Then install dependencies. (mono-complete and some build compatibility scripts)
+
+```
+sudo ./dependencies.sh
+```
+
+Then kick of the build by
+
+```
+sudo ./buildmono.sh
+```
+
+once build has completed.
+```
+cd AvalonStudio/bin/Release
+mono AvalonStudio.exe
+```
+
 We are now rapidly approaching the first BETA, here is a sneak preview.
 https://www.youtube.com/watch?v=zVGwwkJLFmY&feature=youtu.be
 ![](https://files.gitter.im/VitalElement/AvalonStudio/yVkV/image.png)
