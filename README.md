@@ -31,15 +31,3 @@ once build has completed.
 cd AvalonStudio/bin/Release
 mono AvalonStudio.exe
 ```
-
-We are now rapidly approaching the first BETA, here is a sneak preview.
-https://www.youtube.com/watch?v=zVGwwkJLFmY&feature=youtu.be
-![](https://files.gitter.im/VitalElement/AvalonStudio/yVkV/image.png)
-
-
-Older versions on Ubuntu
-![](https://files.gitter.im/VitalElement/AvalonStudio/B9Vb/blob)
-
-
-Below shows Vital Element Studio that AvalonStudio spawned from. This will give you an idea of where the project is going.
-![](http://vitalelement.co.uk/AvalonStudio/images/vestudio_demo.gif)
