@@ -29,7 +29,10 @@ namespace AvalonStudio
 
 		private void TimeOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
 		{
-			Startup();
+			Dispatcher.UIThread.InvokeAsync (() => 
+			{				
+				Startup ();
+			});
 		}
 
 		private void InitializeComponent()
@@ -44,40 +47,35 @@ namespace AvalonStudio
 			if (progressBar == null) throw new ApplicationException("Unable to locate progressbar");
 
 			Platform.Initialise();
-			Dispatcher.UIThread.InvokeAsync(() => progressBar.Value += 5);
+			progressBar.Value += 5;
 
 			PackageSources.InitialisePackageSources();
-			Dispatcher.UIThread.InvokeAsync(() => progressBar.Value += 5);
+			progressBar.Value += 5;
 
 			var container = CompositionRoot.CreateContainer();
-			Dispatcher.UIThread.InvokeAsync(() => progressBar.Value += 50);
+			progressBar.Value += 50;
 
-			Dispatcher.UIThread.InvokeAsync(() =>
-			{
-				var commandService = container.GetExportedValue<ICommandService>();
-				IoC.RegisterConstant(commandService, typeof(ICommandService));
-				progressBar.Value += 10;
+			var commandService = container.GetExportedValue<ICommandService>();
+			IoC.RegisterConstant(commandService, typeof(ICommandService));
+			progressBar.Value += 10;
 
-				var keyGestureService = container.GetExportedValue<ICommandKeyGestureService>();
-				IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));
-				progressBar.Value += 10;
+			var keyGestureService = container.GetExportedValue<ICommandKeyGestureService>();
+			IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));
+			progressBar.Value += 10;
 
-				var toolBarBuilder = container.GetExportedValue<IToolBarBuilder>();
-				IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
-				progressBar.Value += 10;
-			});
+			var toolBarBuilder = container.GetExportedValue<IToolBarBuilder>();
+			IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
+			progressBar.Value += 10;
 
 			ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
-			Dispatcher.UIThread.InvokeAsync(() =>
-			{
-				var main = new MainWindow();
 
-				this.Hide();
+			var main = new MainWindow();
 
-				main.Show();
+			this.Hide();
 
-				ShellViewModel.Instance.Cleanup();
-			});
+			main.Show();
+
+			ShellViewModel.Instance.Cleanup();
 		}
 	}
 }
