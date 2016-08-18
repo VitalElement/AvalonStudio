@@ -372,10 +372,10 @@ namespace AvalonStudio.Controls
 				switch (Platform.PlatformIdentifier)
 				{
 					case PlatformID.Unix:
-						return "Monospace";
+						return "Inconsolata";
 
 					default:
-						return "Consolas";
+						return "Inconsolata";
 				}
 			}
 		}
