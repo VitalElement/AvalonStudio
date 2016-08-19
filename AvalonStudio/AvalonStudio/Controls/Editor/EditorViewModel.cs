@@ -215,7 +215,7 @@ namespace AvalonStudio.Controls
 				model.CodeAnalysisCompleted += (s, ee) =>
 				{
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
-
+                    
                     foreach(var marker in Diagnostics)
                     {
                         if (marker.Length == 0)
