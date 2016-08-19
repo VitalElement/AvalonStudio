@@ -11,7 +11,7 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid>
       <te:TextEditor Name="editor" TextDocument="{Binding TextDocument, Mode=TwoWay}"
-                     FontFamily="{Binding FontFamily}" FontSize="15" Foreground="#D4D4D4" BorderThickness="0"
+                     FontFamily="{Binding FontFamily}" FontSize="14" Foreground="#A4A4A4" BorderThickness="0"
                      BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
                      TextChangedCommand="{Binding TextChangedCommand}"
                      TextChangedDelay="400"
@@ -37,7 +37,7 @@
         </i:Interaction.Behaviors>
 
         <te:TextEditor.Header>
-          <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350">
+          <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10">
             <DropDown.DataTemplates>
               <DataTemplate>
                 <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
