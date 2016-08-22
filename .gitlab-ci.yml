@@ -1,4 +1,4 @@
-image: vitalelement/avalon
+image: ubuntu:latest
 before_script:
   
 AvalonStudio:
@@ -7,5 +7,5 @@ AvalonStudio:
   - git submodule update --init
   
   - cd AvalonStudio
-  - sudo ./dependencies.sh
-  - sudo ./buildmono.sh
+  - ./dependencies.sh
+  - ./buildmono.sh
