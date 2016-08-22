@@ -1,4 +1,4 @@
-image: ubuntu:latest
+image: vitalelement/avalon
 before_script:
   
 AvalonStudio:
