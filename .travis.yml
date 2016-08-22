@@ -5,7 +5,8 @@ mono:
   - latest
 solution: AvalonStudio.sln
 before_install:
-  - ./AvalonStudio/dependencies.sh
+  - cd AvalonStudio 
+  - ./dependencies.sh
 install:  
 script:
   - ./AvalonStudio/buildmono.sh
