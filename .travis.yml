@@ -1,4 +1,5 @@
 language: csharp
+sudo: required
 os:
   - linux
 mono:
@@ -6,10 +7,10 @@ mono:
 solution: AvalonStudio.sln
 before_install:
   - cd AvalonStudio 
-  - ./dependencies.sh
+  - sudo ./dependencies.sh
 install:  
 script:
-  - ./AvalonStudio/buildmono.sh
+  - sudo ./AvalonStudio/buildmono.sh
 notifications:
   email: false
   webhooks:
