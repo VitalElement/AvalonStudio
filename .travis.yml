@@ -5,10 +5,10 @@ mono:
   - latest
 solution: AvalonStudio.sln
 before_install:
-  - ./VitalElement/AvalonStudio/dependencies.sh
+  - VitalElement/AvalonStudio/dependencies.sh
 install:  
 script:
-  - ./VitalElement/AvalonStudio/buildmono.sh
+  - VitalElement/AvalonStudio/buildmono.sh
 notifications:
   email: false
   webhooks:
