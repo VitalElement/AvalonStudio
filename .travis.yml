@@ -10,7 +10,7 @@ before_install:
   - sudo ./dependencies.sh
 install:  
 script:
-  - sudo ./AvalonStudio/buildmono.sh
+  - sudo ./buildmono.sh
 notifications:
   email: false
   webhooks:
