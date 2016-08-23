@@ -211,9 +211,15 @@ namespace AvalonStudio.Controls
             {
                 this.RaiseAndSetIfChanged(ref argumentIndex, value);
 
+                foreach(var argument in Arguments)
+                {
+                    argument.ResetFontWeight();
+                }
+
                 if (argumentIndex < Arguments.Count)
                 {
                     Description = Arguments[argumentIndex].Comment;
+                    Arguments[argumentIndex].FontWeight = Avalonia.Media.FontWeight.SemiBold;
                 }
             }
         }
