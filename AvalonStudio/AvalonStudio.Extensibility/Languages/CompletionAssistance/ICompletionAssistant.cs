@@ -10,6 +10,10 @@
 
         void SetArgumentIndex(int index);
 
+        void IncrementOverloadIndex();
+        void DecrementOverloadIndex();
+        void Close();
+
         bool IsVisible { get; set; }
     }
 }
