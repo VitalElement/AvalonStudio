@@ -30,7 +30,15 @@
             {
                 return Overloads.Count;
             }
-        }        
+        }      
+        
+        public int SelectedOverloadNumber
+        {
+            get
+            {
+                return SelectedIndex + 1;
+            }
+        }  
 
         private int selectedIndex;
         public int SelectedIndex
@@ -49,6 +57,7 @@
                 }
 
                 this.RaiseAndSetIfChanged(ref selectedIndex, value);
+                this.RaisePropertyChanged(nameof(SelectedOverloadNumber));
             }
         }
 

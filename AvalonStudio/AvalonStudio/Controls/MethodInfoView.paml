@@ -4,7 +4,7 @@
       <cont:SymbolView DataContext="{Binding SelectedOverload}" />
       <StackPanel Orientation="Horizontal">
         <TextBlock Text="(" />
-        <TextBlock Text="{Binding SelectedIndex}" />
+        <TextBlock Text="{Binding SelectedOverloadNumber}" />
         <TextBlock Text="/" />
         <TextBlock Text="{Binding OverloadCount}" />
         <TextBlock Text=")" />
