@@ -51,7 +51,7 @@
             <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left"
                                VerticalAlignment="Top" Margin="{Binding Position}" />
             <cont:CompletionHint DataContext="{Binding CompletionAdvice}" HorizontalAlignment="Left"
-                                 VerticalAlignment="Top" Margin="{Binding Position}" />
+                                 VerticalAlignment="Top" Margin="{Binding Position}" />            
           </Grid>
         </te:TextEditor.Content>
       </te:TextEditor>

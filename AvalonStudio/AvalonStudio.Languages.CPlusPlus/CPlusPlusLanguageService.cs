@@ -19,6 +19,7 @@ using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using NClang;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -357,7 +358,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAdviceControl completionAdvice,
+        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAdviceControl completionAdvice, ICompletionAssistant completionAssistant,
             TextEditor.TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CPlusPlusDataAssociation association = null;
@@ -369,7 +370,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             association = new CPlusPlusDataAssociation(doc);
             dataAssociations.Add(file, association);
 
-            association.IntellisenseManager = new CPlusPlusIntellisenseManager(this, intellisense, completionAdvice, file, editor);
+            association.IntellisenseManager = new CPlusPlusIntellisenseManager(this, intellisense, completionAdvice, completionAssistant, file, editor);
 
             association.TunneledKeyUpHandler = async (sender, e) =>
             {
