@@ -165,12 +165,12 @@ namespace AvalonStudio.Debugging
 		{
 			if (_debugger.State == DebuggerState.Paused)
 			{
-				Enabled = true;
+                Dispatcher.UIThread.InvokeTaskAsync(()=>  Enabled = true);
 			}
 			else
 			{
-				Enabled = false;
-			}
+                Dispatcher.UIThread.InvokeTaskAsync(() => Enabled = false);
+            }
 		}
 
 
