@@ -434,9 +434,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                             // suggests clang format didnt do anything, so we can assume not moving to new line.
                             if (lineCount != editor.TextDocument.LineCount)
                             {
-                                var newLine = editor.TextDocument.GetLineByOffset(offset);
-
-                                editor.CaretIndex = newLine.PreviousLine.EndOffset;
+                                if (offset <= editor.TextDocument.TextLength)
+                                {
+                                    var newLine = editor.TextDocument.GetLineByOffset(offset);
+                                    editor.CaretIndex = newLine.PreviousLine.EndOffset;
+                                }                                           
                             }
                             else
                             {
@@ -754,9 +756,14 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private void OpenBracket(TextEditor.TextEditor editor, TextDocument document, string text)
         {
-            if (text[0].IsOpenBracketChar() && editor.CaretIndex < document.TextLength && editor.CaretIndex > 0)
+            if (text[0].IsOpenBracketChar() && editor.CaretIndex <= document.TextLength && editor.CaretIndex > 0)
             {
-                var nextChar = document.GetCharAt(editor.CaretIndex);
+                var nextChar = ' ';
+
+                if (editor.CaretIndex != document.TextLength)
+                {
+                    document.GetCharAt(editor.CaretIndex);
+                }
 
                 if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
                 {
