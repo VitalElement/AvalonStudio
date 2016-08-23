@@ -203,7 +203,23 @@ namespace AvalonStudio.Controls
 			}
 		}
 
-		public bool IsVisible
+        private int argumentIndex;
+        public int ArgumentIndex
+        {
+            get { return argumentIndex; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref argumentIndex, value);
+
+                if (argumentIndex < Arguments.Count)
+                {
+                    Description = Arguments[argumentIndex].Comment;
+                }
+            }
+        }
+
+
+        public bool IsVisible
 		{
 			get { return isVisible; }
 			set { this.RaiseAndSetIfChanged(ref isVisible, value); }
