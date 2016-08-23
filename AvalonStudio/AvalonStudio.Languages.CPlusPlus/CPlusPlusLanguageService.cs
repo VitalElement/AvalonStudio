@@ -884,20 +884,41 @@ namespace AvalonStudio.Languages.CPlusPlus
                             arg.Name += ", ";
                         }
 
-                        arg.Comment = argument.BriefCommentText;
                         arg.TypeDescription = argument.CursorType.Spelling;
                         result.Arguments.Add(arg);
                     }
 
-                    //if (cursor.ParsedComment.FullCommentAsXml != null)
-                    //{
-                    //    var documentation = XDocument.Parse(cursor.ParsedComment.FullCommentAsXml);
+                    if (cursor.ParsedComment.FullCommentAsXml != null)
+                    {
+                        var documentation = XDocument.Parse(cursor.ParsedComment.FullCommentAsXml);
 
-                    //    var function = documentation.Element("Function");
+                        var function = documentation.Element("Function");
 
-                    //    var parameters = documentation.Element("Parameters");
-                    //    //documentation.Elements().Where((e) => e.Name == );
-                    //}
+                        var parameters = function.Element("Parameters");
+
+                        var arguments = parameters.Elements("Parameter");
+
+                        foreach(var argument in arguments)
+                        {                            
+                            var isVarArgs = argument.Element("IsVarArg");
+
+                            if (isVarArgs != null)
+                            {
+
+                            }
+                            else
+                            {
+                                var inx = argument.Element("Index");
+                                var index = int.Parse(inx.Value);
+
+                                var discussion = argument.Element("Discussion");
+
+                                var paragraph = discussion.Element("Para");
+
+                                result.Arguments[index].Comment = paragraph.Value;
+                            }
+                        }
+                    }
 
                     if (result.Arguments.Count == 0)
                     {
