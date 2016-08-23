@@ -4,6 +4,7 @@
     using AvalonStudio.MVVM;
     using ReactiveUI;
     using System.Collections.Generic;
+    using System;
 
     public class CompletionAssistantViewModel : ViewModel, ICompletionAssistant
     {
@@ -36,8 +37,22 @@
             }
             else
             {
+                CurrentMethod = null;
                 IsVisible = false;
             }
+        }
+
+        public MethodInfo CurrentMethodInfo
+        {
+            get
+            {
+                return CurrentMethod?.Model;
+            }
+        }
+
+        public void SetArgumentIndex(int index)
+        {
+            CurrentMethod.SelectedOverload.ArgumentIndex = index;
         }
 
         private bool isVisible;

@@ -896,26 +896,29 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         var parameters = function.Element("Parameters");
 
-                        var arguments = parameters.Elements("Parameter");
+                        if (parameters != null)
+                        {
+                            var arguments = parameters.Elements("Parameter");
 
-                        foreach(var argument in arguments)
-                        {                            
-                            var isVarArgs = argument.Element("IsVarArg");
-
-                            if (isVarArgs != null)
+                            foreach (var argument in arguments)
                             {
+                                var isVarArgs = argument.Element("IsVarArg");
 
-                            }
-                            else
-                            {
-                                var inx = argument.Element("Index");
-                                var index = int.Parse(inx.Value);
+                                if (isVarArgs != null)
+                                {
 
-                                var discussion = argument.Element("Discussion");
+                                }
+                                else
+                                {
+                                    var inx = argument.Element("Index");
+                                    var index = int.Parse(inx.Value);
 
-                                var paragraph = discussion.Element("Para");
+                                    var discussion = argument.Element("Discussion");
 
-                                result.Arguments[index].Comment = paragraph.Value;
+                                    var paragraph = discussion.Element("Para");
+
+                                    result.Arguments[index].Comment = paragraph.Value;
+                                }
                             }
                         }
                     }

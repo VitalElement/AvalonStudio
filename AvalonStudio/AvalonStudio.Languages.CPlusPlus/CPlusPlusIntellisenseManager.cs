@@ -368,19 +368,59 @@ namespace AvalonStudio.Languages.CPlusPlus
 			return editor.TextDocument.GetLocation(index);
 		}
 
-        public async Task CompletionAssistantOnKeyUp (char behindCaretChar)
+        public async Task CompletionAssistantOnKeyUp (char behindCaretChar, char behindBehindCaretChar)
         {
-            if (behindCaretChar == '(')
+            if (completionAssistant.IsVisible)
+            {
+                var caret = editor.CaretIndex;
+
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    if (caret < completionAssistant.CurrentMethodInfo.Offset)
+                    {
+                        completionAssistant.PopMethod();
+                    }
+
+                    if (completionAssistant.CurrentMethodInfo != null)
+                    {
+                        int index = 0;
+
+                        int offset = completionAssistant.CurrentMethodInfo.Offset;
+
+                        while (offset < caret)
+                        {
+                            if (editor.TextDocument.GetCharAt(offset++) == ',')
+                            {
+                                index++;
+                            }
+                        }
+
+                        completionAssistant.SetArgumentIndex(index);
+                    }
+                });
+            }
+
+            if (behindCaretChar == '(' && (completionAssistant.CurrentMethodInfo == null ||completionAssistant.CurrentMethodInfo.Offset != editor.CaretIndex))
             {
                 string currentWord = string.Empty;
 
                 await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                 {
-                    currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
+                    if (behindBehindCaretChar.IsWhiteSpace() && behindBehindCaretChar != '\0')
+                    {
+                        currentWord = editor.GetPreviousWordAtIndex(editor.CaretIndex - 1);
+                    }
+                    else
+                    {
+                        currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
+                    }
 
                     var symbols = await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), currentWord);
 
-                    completionAssistant.PushMethod(new MethodInfo(symbols));
+                    if (symbols.Count > 0)
+                    {
+                        completionAssistant.PushMethod(new MethodInfo(symbols, editor.CaretIndex));
+                    }
                 });
             }
             else if (behindCaretChar == ')')
@@ -400,6 +440,13 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var caretChar = '\0';
             var behindCaretChar = '\0';
+            var behindBehindCaretChar = '\0';
+            if (caretIndex > 1)
+            {
+                await
+                    Dispatcher.UIThread.InvokeTaskAsync(
+                        () => { behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2); });
+            }
 
             await Dispatcher.UIThread.InvokeTaskAsync(() => { caretChar = editor.TextDocument.GetCharAt(caretIndex); });
 
@@ -409,7 +456,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     Dispatcher.UIThread.InvokeTaskAsync(() => { behindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 1); });
             }
 
-            await CompletionAssistantOnKeyUp(behindCaretChar);
+            await CompletionAssistantOnKeyUp(behindCaretChar, behindBehindCaretChar);
 
             if (IsIntellisenseKey(e))
             { 				
@@ -433,18 +480,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 				{
 					var caret = new TextLocation();
 
-                    var behindStartChar = '\0';
-                    
-					var behindBehindCaretChar = '\0';
-
-                    
-
-					if (caretIndex > 1)
-					{
-						await
-							Dispatcher.UIThread.InvokeTaskAsync(
-								() => { behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2); });
-					}
+                    var behindStartChar = '\0';                   					
 
 					if (behindCaretChar == ':' && behindBehindCaretChar == ':')
 					{
