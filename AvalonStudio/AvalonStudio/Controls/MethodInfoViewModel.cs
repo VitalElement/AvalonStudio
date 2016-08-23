@@ -22,10 +22,10 @@
 
             selectedOverload = overloads.FirstOrDefault();
             selectedOverload.ArgumentIndex = 0;
-            SelectedIndex = 0;
+            SelectedIndex = 1;
         }
 
-        public int OverLoadCount
+        public int OverloadCount
         {
             get
             {
