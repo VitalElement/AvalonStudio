@@ -12,6 +12,7 @@ using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TextEditor.Document;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 
 namespace AvalonStudio.Controls
 {
@@ -110,7 +111,7 @@ namespace AvalonStudio.Controls
 		}
 
 		public async void RegisterLanguageService(IIntellisenseControl intellisenseControl,
-			ICompletionAdviceControl completionAdviceControl)
+			ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant)
 		{
 			UnRegisterLanguageService();
 
@@ -120,7 +121,7 @@ namespace AvalonStudio.Controls
 
 				ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
-				LanguageService.RegisterSourceFile(intellisenseControl, completionAdviceControl, Editor, ProjectFile, TextDocument);
+				LanguageService.RegisterSourceFile(intellisenseControl, completionAdviceControl, completionAssistant, Editor, ProjectFile, TextDocument);
 			}
 			catch (Exception e)
 			{
@@ -141,7 +142,7 @@ namespace AvalonStudio.Controls
 		}
 
 		public void OpenFile(ISourceFile file, IIntellisenseControl intellisense,
-			ICompletionAdviceControl completionAdviceControl)
+			ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant)
 		{
 			if (ProjectFile != file)
 			{
@@ -155,7 +156,7 @@ namespace AvalonStudio.Controls
 
 					ProjectFile = file;
 
-					RegisterLanguageService(intellisense, completionAdviceControl);
+					RegisterLanguageService(intellisense, completionAdviceControl, completionAssistant);
 
 					if (DocumentLoaded != null)
 					{

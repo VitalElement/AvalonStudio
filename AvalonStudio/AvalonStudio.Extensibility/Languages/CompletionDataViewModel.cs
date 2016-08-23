@@ -1,4 +1,5 @@
 using AvalonStudio.MVVM;
+using System;
 
 namespace AvalonStudio.Languages.ViewModels
 {
@@ -6,7 +7,29 @@ namespace AvalonStudio.Languages.ViewModels
 	{
 		public CompletionDataViewModel(CodeCompletionData model) : base(model)
 		{
+            Overloads = 0;
 		}
+
+        public int Overloads { get; set; }
+
+        public string OverloadText
+        {
+            get
+            {
+                if(Overloads == 0)
+                {
+                    return string.Empty;
+                }
+                else if(Overloads == 1)
+                {                    
+                    return $"(+ {Overloads} overload)";
+                }
+                else
+                {
+                    return $"(+ {Overloads} overloads)";
+                }
+            }
+        }
 
 		public string Title
 		{

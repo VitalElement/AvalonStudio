@@ -380,8 +380,8 @@ namespace AvalonStudio.Controls
 			}
 		}
 
-		private CompletionHintViewModel _completionHint;
 
+        private CompletionHintViewModel _completionHint;
 		public CompletionHintViewModel CompletionHint
 		{
 			get { return _completionHint; }
@@ -390,7 +390,6 @@ namespace AvalonStudio.Controls
 
 
 		private IntellisenseViewModel intellisense;
-
 		public IntellisenseViewModel Intellisense
 		{
 			get { return intellisense; }

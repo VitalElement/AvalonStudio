@@ -203,7 +203,47 @@ namespace AvalonStudio.Controls
 			}
 		}
 
-		public bool IsVisible
+        private int argumentIndex;
+        public int ArgumentIndex
+        {
+            get { return argumentIndex; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref argumentIndex, value);
+
+                foreach(var argument in Arguments)
+                {
+                    argument.ResetFontWeight();
+                }
+
+                if(argumentIndex >= Arguments.Count && Model.IsVariadic)
+                {
+                    argumentIndex = Arguments.Count - 1;
+                }
+
+                if (argumentIndex < Arguments.Count)
+                {
+                    string comment = Arguments[argumentIndex].Comment;
+
+                    if (comment != null)
+                    {
+                        comment = comment.Trim();
+
+                        if (comment.StartsWith("-"))
+                        {
+                            comment = comment.Substring(1).Trim();
+                        }
+                    }
+
+                    Description = comment;
+
+                    Arguments[argumentIndex].FontWeight = Avalonia.Media.FontWeight.SemiBold;
+                }
+            }
+        }
+
+
+        public bool IsVisible
 		{
 			get { return isVisible; }
 			set { this.RaiseAndSetIfChanged(ref isVisible, value); }
