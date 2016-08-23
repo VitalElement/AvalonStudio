@@ -67,7 +67,10 @@
 
         public void Close()
         {
-            throw new NotImplementedException();
+            IsVisible = false;
+
+            CurrentMethod = null;
+            methodStack.Clear();
         }
 
         private bool isVisible;
