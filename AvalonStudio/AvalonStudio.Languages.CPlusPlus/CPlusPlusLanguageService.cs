@@ -84,53 +84,48 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 foreach (var codeCompletion in completionResults.Results)
                 {
-                    // This prevents base class members being added in 3.7.1 hopefully future updates will fix this.
-                    //if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available)
+                    var typedText = string.Empty;
+
+                    var hint = string.Empty;
+
+                    foreach (var chunk in codeCompletion.CompletionString.Chunks)
                     {
-                        var typedText = string.Empty;
-
-                        var hint = string.Empty;
-
-                        foreach (var chunk in codeCompletion.CompletionString.Chunks)
+                        if (chunk.Kind == CompletionChunkKind.TypedText)
                         {
-                            if (chunk.Kind == CompletionChunkKind.TypedText)
-                            {
-                                typedText = chunk.Text;
-                            }
-
-                            hint += chunk.Text;
-
-                            switch (chunk.Kind)
-                            {
-                                case CompletionChunkKind.LeftParen:
-                                case CompletionChunkKind.LeftAngle:
-                                case CompletionChunkKind.LeftBrace:
-                                case CompletionChunkKind.LeftBracket:
-                                case CompletionChunkKind.RightAngle:
-                                case CompletionChunkKind.RightBrace:
-                                case CompletionChunkKind.RightBracket:
-                                case CompletionChunkKind.RightParen:
-                                case CompletionChunkKind.Placeholder:
-                                case CompletionChunkKind.Comma:
-                                    break;
-
-                                default:
-                                    hint += " ";
-                                    break;
-                            }
+                            typedText = chunk.Text;
                         }
 
-                        result.Add(new CodeCompletionData
-                        {
-                            Suggestion = typedText,
-                            Priority = codeCompletion.CompletionString.Priority,
-                            Kind = (CursorKind)codeCompletion.CursorKind,
-                            Hint = hint,
-                            BriefComment = codeCompletion.CompletionString.BriefComment
-                        });
-                    }
-                }
+                        hint += chunk.Text;
 
+                        switch (chunk.Kind)
+                        {
+                            case CompletionChunkKind.LeftParen:
+                            case CompletionChunkKind.LeftAngle:
+                            case CompletionChunkKind.LeftBrace:
+                            case CompletionChunkKind.LeftBracket:
+                            case CompletionChunkKind.RightAngle:
+                            case CompletionChunkKind.RightBrace:
+                            case CompletionChunkKind.RightBracket:
+                            case CompletionChunkKind.RightParen:
+                            case CompletionChunkKind.Placeholder:
+                            case CompletionChunkKind.Comma:
+                                break;
+
+                            default:
+                                hint += " ";
+                                break;
+                        }
+                    }
+
+                    result.Add(new CodeCompletionData
+                    {
+                        Suggestion = typedText,
+                        Priority = codeCompletion.CompletionString.Priority,
+                        Kind = (CursorKind)codeCompletion.CursorKind,
+                        Hint = hint,
+                        BriefComment = codeCompletion.CompletionString.BriefComment
+                    });
+                }                
 
                 completionResults.Dispose();
             });

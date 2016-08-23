@@ -58,8 +58,11 @@
           <Grid Background="{StyleResource ThemeControlDarkBrush}" VerticalAlignment="Top" HorizontalAlignment="Stretch">
             <Border BorderBrush="#4D4D50" BorderThickness="1">
               <StackPanel>
-                <TextBlock Text="{Binding SelectedCompletion.Hint}" />
-                <TextBlock Text="{Binding SelectedCompletion.Comment}" />
+                <StackPanel Gap="2" Orientation="Horizontal">
+                  <TextBlock Text="{Binding SelectedCompletion.Hint}" />
+                  <TextBlock Text="{Binding SelectedCompletion.OverloadText}" />
+                </StackPanel>
+                <TextBlock Text="{Binding SelectedCompletion.Comment}" />                
               </StackPanel>
             </Border>
           </Grid>
