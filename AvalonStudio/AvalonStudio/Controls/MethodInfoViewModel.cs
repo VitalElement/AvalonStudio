@@ -19,10 +19,9 @@
             {
                 overloads.Add(new SymbolViewModel(overload));
             }
-
-            selectedOverload = overloads.FirstOrDefault();
+                        
+            SelectedIndex = 0;
             selectedOverload.ArgumentIndex = 0;
-            SelectedIndex = 1;
         }
 
         public int OverloadCount
@@ -31,13 +30,26 @@
             {
                 return Overloads.Count;
             }
-        }
+        }        
 
         private int selectedIndex;
         public int SelectedIndex
         {
             get { return selectedIndex; }
-            set { this.RaiseAndSetIfChanged(ref selectedIndex, value); }
+            set
+            {
+                if(value < 0 || value >= Overloads.Count)
+                {
+                    value = selectedIndex;
+                }
+
+                if(value < Overloads.Count)
+                {
+                    SelectedOverload = Overloads[value];
+                }
+
+                this.RaiseAndSetIfChanged(ref selectedIndex, value);
+            }
         }
 
         private List<SymbolViewModel> overloads;

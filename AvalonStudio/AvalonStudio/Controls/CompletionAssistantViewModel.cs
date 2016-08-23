@@ -55,6 +55,21 @@
             CurrentMethod.SelectedOverload.ArgumentIndex = index;
         }
 
+        public void IncrementOverloadIndex()
+        {
+            CurrentMethod.SelectedIndex++;
+        }
+
+        public void DecrementOverloadIndex()
+        {
+            CurrentMethod.SelectedIndex--;
+        }
+
+        public void Close()
+        {
+            throw new NotImplementedException();
+        }
+
         private bool isVisible;
         public bool IsVisible
         {

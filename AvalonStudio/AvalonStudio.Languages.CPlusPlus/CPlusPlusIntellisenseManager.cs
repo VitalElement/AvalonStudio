@@ -157,40 +157,63 @@ namespace AvalonStudio.Languages.CPlusPlus
 
 		public void OnKeyDown(KeyEventArgs e)
 		{
-			if (intellisenseControl.IsVisible && e.Modifiers == InputModifiers.None)
-			{
-				if (!IsCompletionKey(e))
-				{
-					switch (e.Key)
-					{
-						case Key.Down:
-						{
-							var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
+            if(e.Modifiers == InputModifiers.None)
+            {                
+                if (intellisenseControl.IsVisible)
+                {
+                    if (!IsCompletionKey(e))
+                    {
+                        switch (e.Key)
+                        {
+                            case Key.Down:
+                                {
+                                    var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
 
-							if (index < intellisenseControl.CompletionData.Count - 1)
-							{
-								intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index + 1];
-							}
+                                    if (index < intellisenseControl.CompletionData.Count - 1)
+                                    {
+                                        intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index + 1];
+                                    }
 
-							e.Handled = true;
-						}
-							break;
+                                    e.Handled = true;
+                                }
+                                break;
 
-						case Key.Up:
-						{
-							var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
+                            case Key.Up:
+                                {
+                                    var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
 
-							if (index > 0)
-							{
-								intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index - 1];
-							}
+                                    if (index > 0)
+                                    {
+                                        intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index - 1];
+                                    }
 
-							e.Handled = true;
-						}
-							break;
-					}
-				}
-			}
+                                    e.Handled = true;
+                                }
+                                break;
+                        }
+                    }
+                }
+
+                if (completionAssistant.IsVisible && !e.Handled)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.Down:
+                            {
+                                completionAssistant.IncrementOverloadIndex();
+                                e.Handled = true;
+                            }
+                            break;
+
+                        case Key.Up:
+                            {
+                                completionAssistant.DecrementOverloadIndex();
+                                e.Handled = true;
+                            }
+                            break;
+                    }
+                }
+            }
 		}
 
 		private async Task<bool> DoComplete(bool includeLastChar)
