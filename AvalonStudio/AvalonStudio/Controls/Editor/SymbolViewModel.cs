@@ -216,9 +216,27 @@ namespace AvalonStudio.Controls
                     argument.ResetFontWeight();
                 }
 
+                if(argumentIndex >= Arguments.Count && Model.IsVariadic)
+                {
+                    argumentIndex = Arguments.Count - 1;
+                }
+
                 if (argumentIndex < Arguments.Count)
                 {
-                    Description = Arguments[argumentIndex].Comment;
+                    string comment = Arguments[argumentIndex].Comment;
+
+                    if (comment != null)
+                    {
+                        comment = comment.Trim();
+
+                        if (comment.StartsWith("-"))
+                        {
+                            comment = comment.Substring(1).Trim();
+                        }
+                    }
+
+                    Description = comment;
+
                     Arguments[argumentIndex].FontWeight = Avalonia.Media.FontWeight.SemiBold;
                 }
             }
