@@ -21,6 +21,7 @@
             }
 
             selectedOverload = overloads.FirstOrDefault();
+            selectedOverload.ArgumentIndex = 0;
             SelectedIndex = 0;
         }
 
