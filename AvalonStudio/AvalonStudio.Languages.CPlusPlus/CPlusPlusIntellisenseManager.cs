@@ -470,17 +470,13 @@ namespace AvalonStudio.Languages.CPlusPlus
             var behindBehindCaretChar = '\0';
             if (caretIndex > 1)
             {
-                await
-                    Dispatcher.UIThread.InvokeTaskAsync(
-                        () => { behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2); });
-            }
-
-            await Dispatcher.UIThread.InvokeTaskAsync(() => { caretChar = editor.TextDocument.GetCharAt(caretIndex); });
+                await Dispatcher.UIThread.InvokeTaskAsync(() => { behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2); });
+            }            
 
             if (caretIndex > 0)
             {
-                await
-                    Dispatcher.UIThread.InvokeTaskAsync(() => { behindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 1); });
+                await Dispatcher.UIThread.InvokeTaskAsync(() => { caretChar = editor.TextDocument.GetCharAt(caretIndex); });
+                await Dispatcher.UIThread.InvokeTaskAsync(() => { behindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 1); });
             }
 
             await CompletionAssistantOnKeyUp(behindCaretChar, behindBehindCaretChar);

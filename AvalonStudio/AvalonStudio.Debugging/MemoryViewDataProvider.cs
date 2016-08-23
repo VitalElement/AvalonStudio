@@ -34,9 +34,9 @@
         }
 
         public MemoryViewDataProvider(int columns)
-        {
-            this.count = (int)(UInt32.MaxValue / columns) + 1;
+        {           
             this.columns = columns;
+            Enable();
         }
 
         public void SetDebugger(IDebugger debugger)
@@ -57,7 +57,17 @@
         {
             get { return count; }
             set { this.RaiseAndSetIfChanged(ref count, value); }
-        }       
+        }      
+
+        public void Enable ()
+        {
+            Count = (int)(UInt32.MaxValue / columns) + 1;
+        }
+        
+        public void Clear()
+        {
+            Count = 0;
+        } 
 
         private MemoryBytesViewModel GenerateViewModels(MemoryBytes data)
         {
