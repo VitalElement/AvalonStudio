@@ -18,8 +18,11 @@ namespace AvalonStudio.Debugging
             {
                 var list = disassemblyList.Items as IList;
 
-                disassemblyList.ScrollIntoView(list[disassemblyList.SelectedIndex + 8]);
-                disassemblyList.ScrollIntoView(list[disassemblyList.SelectedIndex - 8]);
+                if (list.Count > 0)
+                {
+                    disassemblyList.ScrollIntoView(list[disassemblyList.SelectedIndex + 8]);
+                    disassemblyList.ScrollIntoView(list[disassemblyList.SelectedIndex - 8]);
+                }
             };
 		}
 
