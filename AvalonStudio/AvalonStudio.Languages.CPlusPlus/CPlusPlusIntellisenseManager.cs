@@ -592,6 +592,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 								{
 									unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
 								}
+                                else
+                                {
+                                    currentCompletion.Overloads++;
+                                }
 							}
 						}
 					}
