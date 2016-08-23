@@ -130,6 +130,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 					case Key.Up:
 					case Key.Down:
 					case Key.None:
+                    case Key.Escape:
 						result = true;
 						break;
 				}
@@ -194,25 +195,28 @@ namespace AvalonStudio.Languages.CPlusPlus
                     }
                 }
 
-                if (completionAssistant.IsVisible && !e.Handled)
+                if (completionAssistant.IsVisible)
                 {
-                    switch (e.Key)
+                    if (!e.Handled)
                     {
-                        case Key.Down:
-                            {
-                                completionAssistant.IncrementOverloadIndex();
-                                e.Handled = true;
-                            }
-                            break;
+                        switch (e.Key)
+                        {
+                            case Key.Down:
+                                {
+                                    completionAssistant.IncrementOverloadIndex();
+                                    e.Handled = true;
+                                }
+                                break;
 
-                        case Key.Up:
-                            {
-                                completionAssistant.DecrementOverloadIndex();
-                                e.Handled = true;
-                            }
-                            break;
+                            case Key.Up:
+                                {
+                                    completionAssistant.DecrementOverloadIndex();
+                                    e.Handled = true;
+                                }
+                                break;
+                        }
                     }
-                }
+                }                
             }
 		}
 
@@ -458,7 +462,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
 		public async Task OnKeyUp(KeyEventArgs e)
 		{
-			var isVisible = intellisenseControl.IsVisible;
+            var isVisible = intellisenseControl.IsVisible;
             var caretIndex = editor.CaretIndex;
 
             var caretChar = '\0';
@@ -480,6 +484,21 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
 
             await CompletionAssistantOnKeyUp(behindCaretChar, behindBehindCaretChar);
+
+            if (e.Key == Key.Escape && e.Modifiers == InputModifiers.None)
+            {
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    if (completionAssistant.IsVisible)
+                    {
+                        completionAssistant.Close();
+                    }
+                    else if (intellisenseControl.IsVisible)
+                    {
+                        Close();
+                    }
+                });
+            }
 
             if (IsIntellisenseKey(e))
             { 				
