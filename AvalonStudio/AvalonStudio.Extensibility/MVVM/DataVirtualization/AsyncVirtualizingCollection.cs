@@ -130,7 +130,6 @@ namespace AvalonStudio.MVVM.DataVirtualization
 		/// <param name="args">None required.</param>
 		private void LoadCountWork(object args)
 		{
-			Console.WriteLine("Check this doesnt run ui thread.");
 			var count = FetchCount();
 			SynchronizationContext.Send(LoadCountCompleted, count);
 		}
