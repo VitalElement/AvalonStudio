@@ -381,7 +381,22 @@ namespace AvalonStudio.TextEditor
 			CaretLocationInTextView = new Point(textViewCaretLocation.X, textViewCaretLocation.Y + TextView.CharSize.Height);
 		}
 
-		public string GetWordAtIndex(int index)
+        public string GetPreviousWordAtIndex (int index)
+        {
+            var lastWordIndex = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordBorder);
+
+            if(lastWordIndex >= 0 && TextDocument.GetLocation(lastWordIndex).Line == TextDocument.GetLocation(index).Line)
+            {
+                return GetWordAtIndex(lastWordIndex);
+            }
+            else
+            {
+                return GetWordAtIndex(index);
+            }
+        }
+
+
+        public string GetWordAtIndex(int index)
 		{
 			var result = string.Empty;
 
