@@ -864,6 +864,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             result.ResultType = cursor.ResultType?.Spelling;
             result.Arguments = new List<ParameterSymbol>();
             result.Access = (AccessType)cursor.CxxAccessSpecifier;
+            result.IsVariadic = cursor.IsVariadic;
 
             switch (result.Kind)
             {
@@ -888,6 +889,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                         result.Arguments.Add(arg);
                     }
 
+                    if(cursor.IsVariadic)
+                    {
+                        result.Arguments.Last().Name += ", ";
+                        result.Arguments.Add(new ParameterSymbol { Name = "... variadic" });
+                    }
+
                     if (cursor.ParsedComment.FullCommentAsXml != null)
                     {
                         var documentation = XDocument.Parse(cursor.ParsedComment.FullCommentAsXml);
@@ -904,19 +911,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                             {
                                 var isVarArgs = argument.Element("IsVarArg");
 
-                                if (isVarArgs != null)
-                                {
+                                var discussion = argument.Element("Discussion");
 
+                                var paragraph = discussion.Element("Para");
+
+                                if (isVarArgs != null)
+                                {                                    
+                                    result.Arguments.Last().Comment = paragraph.Value;
                                 }
                                 else
                                 {
                                     var inx = argument.Element("Index");
                                     var index = int.Parse(inx.Value);
-
-                                    var discussion = argument.Element("Discussion");
-
-                                    var paragraph = discussion.Element("Para");
-
+                                    
                                     result.Arguments[index].Comment = paragraph.Value;
                                 }
                             }
