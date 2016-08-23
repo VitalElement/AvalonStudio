@@ -8,6 +8,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.Utils;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -28,6 +29,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
 		private readonly ISourceFile file;
 		private readonly IIntellisenseControl intellisenseControl;
+        private readonly ICompletionAssistant completionAssistant;
 		private int intellisenseStartedAt;
         private int intellisenseOpenedAt;
         private int intellisenseEndsAt;
@@ -38,11 +40,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 		private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
 
 		public CPlusPlusIntellisenseManager(ILanguageService languageService, IIntellisenseControl intellisenseControl,
-			ICompletionAdviceControl completionAdviceControl, ISourceFile file, TextEditor.TextEditor editor)
+			ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant, ISourceFile file, TextEditor.TextEditor editor)
 		{
 			this.languageService = languageService;
 			this.intellisenseControl = intellisenseControl;
 			this.completionAdviceControl = completionAdviceControl;
+            this.completionAssistant = completionAssistant;
 			this.file = file;
 			this.editor = editor;
 
@@ -365,15 +368,51 @@ namespace AvalonStudio.Languages.CPlusPlus
 			return editor.TextDocument.GetLocation(index);
 		}
 
+        public async Task CompletionAssistantOnKeyUp (char behindCaretChar)
+        {
+            if (behindCaretChar == '(')
+            {
+                string currentWord = string.Empty;
+
+                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                {
+                    currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
+
+                    var symbols = await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), currentWord);
+
+                    completionAssistant.PushMethod(new MethodInfo(symbols));
+                });
+            }
+            else if (behindCaretChar == ')')
+            {
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    completionAssistant.PopMethod();
+                });
+            }
+        }
+
 
 		public async Task OnKeyUp(KeyEventArgs e)
 		{
 			var isVisible = intellisenseControl.IsVisible;
+            var caretIndex = editor.CaretIndex;
 
-			if (IsIntellisenseKey(e))
-			{
-				var caretIndex = editor.CaretIndex;
+            var caretChar = '\0';
+            var behindCaretChar = '\0';
 
+            await Dispatcher.UIThread.InvokeTaskAsync(() => { caretChar = editor.TextDocument.GetCharAt(caretIndex); });
+
+            if (caretIndex > 0)
+            {
+                await
+                    Dispatcher.UIThread.InvokeTaskAsync(() => { behindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 1); });
+            }
+
+            await CompletionAssistantOnKeyUp(behindCaretChar);
+
+            if (IsIntellisenseKey(e))
+            { 				
 				if (caretIndex <= intellisenseStartedAt)
 				{
 					await Dispatcher.UIThread.InvokeTaskAsync(() => { Close(); });
@@ -395,17 +434,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 					var caret = new TextLocation();
 
                     var behindStartChar = '\0';
-                    var caretChar = '\0';
-					var behindCaretChar = '\0';
+                    
 					var behindBehindCaretChar = '\0';
 
-                    await Dispatcher.UIThread.InvokeTaskAsync(() => { caretChar = editor.TextDocument.GetCharAt(caretIndex); });
-
-                    if (caretIndex > 0)
-					{
-						await
-							Dispatcher.UIThread.InvokeTaskAsync(() => { behindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 1); });
-					}
+                    
 
 					if (caretIndex > 1)
 					{

@@ -6,6 +6,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 
 namespace AvalonStudio.Languages
 {
@@ -35,7 +36,7 @@ namespace AvalonStudio.Languages
 
 		IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-		void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl,
+		void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant,
 			TextEditor.TextEditor editor, ISourceFile file, TextDocument textDocument);
 
 		void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file);

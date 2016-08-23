@@ -247,6 +247,10 @@
       <DependentUpon>BootScreen.paml</DependentUpon>
     </Compile>
     <Compile Include="CompositionRoot.cs" />
+    <Compile Include="Controls\CompletionAssistantView.paml.cs">
+      <DependentUpon>CompletionAssistantView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CompletionAssistantViewModel.cs" />
     <Compile Include="Controls\CompletionHint.paml.cs">
       <DependentUpon>CompletionHint.paml</DependentUpon>
     </Compile>
@@ -260,6 +264,10 @@
     </Compile>
     <Compile Include="Controls\ErrorProbeViewModel.cs" />
     <Compile Include="Controls\IntellisenseToolTipViewModel.cs" />
+    <Compile Include="Controls\MethodInfoView.paml.cs">
+      <DependentUpon>MethodInfoView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MethodInfoViewModel.cs" />
     <Compile Include="Controls\TabControlView.paml.cs" />
     <Compile Include="Controls\DocumentTabControl.paml.cs">
       <DependentUpon>DocumentTabControl.paml</DependentUpon>
@@ -387,6 +395,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="BootScreen.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CompletionAssistantView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MethodInfoView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="libgit2-821131f.so">

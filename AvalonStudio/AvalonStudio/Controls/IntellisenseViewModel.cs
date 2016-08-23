@@ -24,12 +24,20 @@ namespace AvalonStudio.Controls
 		public IntellisenseViewModel(EditorModel editor, EditorViewModel viewModel)
 		{
 			completionData = new List<CompletionDataViewModel>();
+            completionAssistant = new CompletionAssistantViewModel(this);
 			editorViewModel = viewModel;
 			this.editor = editor;
 			isVisible = false;
 		}
 
-		public Thickness Position
+        private CompletionAssistantViewModel completionAssistant;
+        public CompletionAssistantViewModel CompletionAssistant
+        {
+            get { return completionAssistant; }
+            set { this.RaiseAndSetIfChanged(ref completionAssistant, value); }
+        }
+
+        public Thickness Position
 		{
 			get { return position; }
 			set { this.RaiseAndSetIfChanged(ref position, value); }
@@ -52,10 +60,30 @@ namespace AvalonStudio.Controls
 			set { this.RaiseAndSetIfChanged(ref selectedCompletion, value); }
 		}
 
-		public bool IsVisible
+        public void InvalidateIsOpen ()
+        {
+            if(IsVisible || CompletionAssistant.IsVisible)
+            {
+                IsOpen = true;
+            }
+            else
+            {
+                IsOpen = false;
+            }
+        }
+
+        private bool isOpen;
+        public bool IsOpen
+        {
+            get { return isOpen; }
+            set { this.RaiseAndSetIfChanged(ref isOpen, value); }
+        }
+
+
+        public bool IsVisible
 		{
 			get { return isVisible; }
-			set { this.RaiseAndSetIfChanged(ref isVisible, value); }
+			set { this.RaiseAndSetIfChanged(ref isVisible, value); InvalidateIsOpen(); }
 		}
 
 		public IList<CompletionDataViewModel> CompletionData
