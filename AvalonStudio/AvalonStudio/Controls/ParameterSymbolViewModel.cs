@@ -1,9 +1,12 @@
-using AvalonStudio.Languages;
-using AvalonStudio.MVVM;
-
 namespace AvalonStudio.Controls
 {
-	public class ParameterSymbolViewModel : ViewModel<ParameterSymbol>
+    using Avalonia.Media;
+    using AvalonStudio.Languages;
+    using AvalonStudio.MVVM;
+    using System;
+    using ReactiveUI;
+
+    public class ParameterSymbolViewModel : ViewModel<ParameterSymbol>
 	{
 		public ParameterSymbolViewModel(ParameterSymbol model) : base(model)
 		{
@@ -16,6 +19,11 @@ namespace AvalonStudio.Controls
 				TypeDescription = model.TypeDescription + " ";
 			}
 		}
+
+        public void ResetFontWeight()
+        {
+            FontWeight = FontWeight.Light;
+        }
 
 		public string Name
 		{
@@ -30,5 +38,14 @@ namespace AvalonStudio.Controls
 		{
 			get { return Model.Comment; }
 		}
-	}
+
+        private FontWeight fontWeight;
+        public FontWeight FontWeight
+        {
+            get { return fontWeight; }
+            set { this.RaiseAndSetIfChanged(ref fontWeight, value); }
+        }
+
+
+    }
 }
