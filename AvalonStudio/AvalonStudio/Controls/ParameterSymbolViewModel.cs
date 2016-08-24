@@ -18,6 +18,8 @@ namespace AvalonStudio.Controls
 			{
 				TypeDescription = model.TypeDescription + " ";
 			}
+
+            ResetFontWeight();
 		}
 
         public void ResetFontWeight()
