@@ -411,14 +411,29 @@ namespace AvalonStudio.Languages.CPlusPlus
                     if (completionAssistant.CurrentMethodInfo != null)
                     {
                         int index = 0;
-
+                        int level = 0;
                         int offset = completionAssistant.CurrentMethodInfo.Offset;
 
                         while (offset < caret)
                         {
-                            if (editor.TextDocument.GetCharAt(offset++) == ',')
+                            var currentChar = editor.TextDocument.GetCharAt(offset++);
+
+                            switch(currentChar)
                             {
-                                index++;
+                                case ',':
+                                    if (level == 0)
+                                    {
+                                        index++;
+                                    }
+                                break;
+
+                                case '(':
+                                    level++;
+                                    break;
+
+                                case ')':
+                                    level--;
+                                    break;
                             }
                         }
 
