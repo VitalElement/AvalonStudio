@@ -151,10 +151,6 @@
       <HintPath>..\packages\Avalonia.0.4.1-build1936-alpha\lib\portable-windows8+net45\Avalonia.SceneGraph.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Avalonia.Skia.Desktop, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\Avalonia.Skia.Desktop.0.4.1-build1936-alpha\lib\net45\Avalonia.Skia.Desktop.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Avalonia.Styling, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Avalonia.0.4.1-build1936-alpha\lib\portable-windows8+net45\Avalonia.Styling.dll</HintPath>
       <Private>True</Private>
@@ -165,6 +161,18 @@
     </Reference>
     <Reference Include="Avalonia.Win32, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Avalonia.Desktop.0.4.1-build1936-alpha\lib\net45\Avalonia.Win32.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Avalonia.Xaml.Interactions, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.4.1-build301-alpha\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Avalonia.Xaml.Interactivity, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.4.1-build301-alpha\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SkiaSharp, Version=1.53.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkiaSharp.1.53.0\lib\net45\SkiaSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -180,12 +188,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Splat.1.6.2\lib\Net45\Splat.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Xaml.Interactions, Version=0.0.0.1, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.239-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Xaml.Interactivity, Version=0.0.0.1, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.239-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f">
       <HintPath>..\packages\Caliburn.Micro.Core.3.0.0\lib\net45\Caliburn.Micro.dll</HintPath>
@@ -213,9 +215,6 @@
     </Reference>
     <Reference Include="SharpDX.DXGI, Version=3.0.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
       <HintPath>..\packages\SharpDX.DXGI.3.0.2\lib\net45\SharpDX.DXGI.dll</HintPath>
-    </Reference>
-    <Reference Include="SkiaSharp, Version=1.53.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\SkiaSharp.1.53.0\lib\net45\SkiaSharp.dll</HintPath>
     </Reference>
     <Reference Include="Sprache, Version=2.0.0.50, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Sprache.2.0.0.50\lib\portable-net4+netcore45+win8+wp8+sl5+MonoAndroid+Xamarin.iOS10+MonoTouch\Sprache.dll</HintPath>
