@@ -19,6 +19,7 @@ using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using NClang;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -83,53 +84,48 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 foreach (var codeCompletion in completionResults.Results)
                 {
-                    // This prevents base class members being added in 3.7.1 hopefully future updates will fix this.
-                    //if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available)
+                    var typedText = string.Empty;
+
+                    var hint = string.Empty;
+
+                    foreach (var chunk in codeCompletion.CompletionString.Chunks)
                     {
-                        var typedText = string.Empty;
-
-                        var hint = string.Empty;
-
-                        foreach (var chunk in codeCompletion.CompletionString.Chunks)
+                        if (chunk.Kind == CompletionChunkKind.TypedText)
                         {
-                            if (chunk.Kind == CompletionChunkKind.TypedText)
-                            {
-                                typedText = chunk.Text;
-                            }
-
-                            hint += chunk.Text;
-
-                            switch (chunk.Kind)
-                            {
-                                case CompletionChunkKind.LeftParen:
-                                case CompletionChunkKind.LeftAngle:
-                                case CompletionChunkKind.LeftBrace:
-                                case CompletionChunkKind.LeftBracket:
-                                case CompletionChunkKind.RightAngle:
-                                case CompletionChunkKind.RightBrace:
-                                case CompletionChunkKind.RightBracket:
-                                case CompletionChunkKind.RightParen:
-                                case CompletionChunkKind.Placeholder:
-                                case CompletionChunkKind.Comma:
-                                    break;
-
-                                default:
-                                    hint += " ";
-                                    break;
-                            }
+                            typedText = chunk.Text;
                         }
 
-                        result.Add(new CodeCompletionData
-                        {
-                            Suggestion = typedText,
-                            Priority = codeCompletion.CompletionString.Priority,
-                            Kind = (CursorKind)codeCompletion.CursorKind,
-                            Hint = hint,
-                            BriefComment = codeCompletion.CompletionString.BriefComment
-                        });
-                    }
-                }
+                        hint += chunk.Text;
 
+                        switch (chunk.Kind)
+                        {
+                            case CompletionChunkKind.LeftParen:
+                            case CompletionChunkKind.LeftAngle:
+                            case CompletionChunkKind.LeftBrace:
+                            case CompletionChunkKind.LeftBracket:
+                            case CompletionChunkKind.RightAngle:
+                            case CompletionChunkKind.RightBrace:
+                            case CompletionChunkKind.RightBracket:
+                            case CompletionChunkKind.RightParen:
+                            case CompletionChunkKind.Placeholder:
+                            case CompletionChunkKind.Comma:
+                                break;
+
+                            default:
+                                hint += " ";
+                                break;
+                        }
+                    }
+
+                    result.Add(new CodeCompletionData
+                    {
+                        Suggestion = typedText,
+                        Priority = codeCompletion.CompletionString.Priority,
+                        Kind = (CursorKind)codeCompletion.CursorKind,
+                        Hint = hint,
+                        BriefComment = codeCompletion.CompletionString.BriefComment
+                    });
+                }                
 
                 completionResults.Dispose();
             });
@@ -357,7 +353,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAdviceControl completionAdvice,
+        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAdviceControl completionAdvice, ICompletionAssistant completionAssistant,
             TextEditor.TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CPlusPlusDataAssociation association = null;
@@ -369,7 +365,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             association = new CPlusPlusDataAssociation(doc);
             dataAssociations.Add(file, association);
 
-            association.IntellisenseManager = new CPlusPlusIntellisenseManager(this, intellisense, completionAdvice, file, editor);
+            association.IntellisenseManager = new CPlusPlusIntellisenseManager(this, intellisense, completionAdvice, completionAssistant, file, editor);
 
             association.TunneledKeyUpHandler = async (sender, e) =>
             {
@@ -438,9 +434,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                             // suggests clang format didnt do anything, so we can assume not moving to new line.
                             if (lineCount != editor.TextDocument.LineCount)
                             {
-                                var newLine = editor.TextDocument.GetLineByOffset(offset);
-
-                                editor.CaretIndex = newLine.PreviousLine.EndOffset;
+                                if (offset <= editor.TextDocument.TextLength)
+                                {
+                                    var newLine = editor.TextDocument.GetLineByOffset(offset);
+                                    editor.CaretIndex = newLine.PreviousLine.EndOffset;
+                                }                                           
                             }
                             else
                             {
@@ -758,9 +756,14 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private void OpenBracket(TextEditor.TextEditor editor, TextDocument document, string text)
         {
-            if (text[0].IsOpenBracketChar() && editor.CaretIndex < document.TextLength && editor.CaretIndex > 0)
+            if (text[0].IsOpenBracketChar() && editor.CaretIndex <= document.TextLength && editor.CaretIndex > 0)
             {
-                var nextChar = document.GetCharAt(editor.CaretIndex);
+                var nextChar = ' ';
+
+                if (editor.CaretIndex != document.TextLength)
+                {
+                    document.GetCharAt(editor.CaretIndex);
+                }
 
                 if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
                 {
@@ -863,6 +866,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             result.ResultType = cursor.ResultType?.Spelling;
             result.Arguments = new List<ParameterSymbol>();
             result.Access = (AccessType)cursor.CxxAccessSpecifier;
+            result.IsVariadic = cursor.IsVariadic;
 
             switch (result.Kind)
             {
@@ -883,20 +887,50 @@ namespace AvalonStudio.Languages.CPlusPlus
                             arg.Name += ", ";
                         }
 
-                        arg.Comment = argument.BriefCommentText;
                         arg.TypeDescription = argument.CursorType.Spelling;
                         result.Arguments.Add(arg);
                     }
 
-                    //if (cursor.ParsedComment.FullCommentAsXml != null)
-                    //{
-                    //    var documentation = XDocument.Parse(cursor.ParsedComment.FullCommentAsXml);
+                    if(cursor.IsVariadic)
+                    {
+                        result.Arguments.Last().Name += ", ";
+                        result.Arguments.Add(new ParameterSymbol { Name = "... variadic" });
+                    }
 
-                    //    var function = documentation.Element("Function");
+                    if (cursor.ParsedComment.FullCommentAsXml != null)
+                    {
+                        var documentation = XDocument.Parse(cursor.ParsedComment.FullCommentAsXml);
 
-                    //    var parameters = documentation.Element("Parameters");
-                    //    //documentation.Elements().Where((e) => e.Name == );
-                    //}
+                        var function = documentation.Element("Function");
+
+                        var parameters = function.Element("Parameters");
+
+                        if (parameters != null)
+                        {
+                            var arguments = parameters.Elements("Parameter");
+
+                            foreach (var argument in arguments)
+                            {
+                                var isVarArgs = argument.Element("IsVarArg");
+
+                                var discussion = argument.Element("Discussion");
+
+                                var paragraph = discussion.Element("Para");
+
+                                if (isVarArgs != null)
+                                {                                    
+                                    result.Arguments.Last().Comment = paragraph.Value;
+                                }
+                                else
+                                {
+                                    var inx = argument.Element("Index");
+                                    var index = int.Parse(inx.Value);
+                                    
+                                    result.Arguments[index].Comment = paragraph.Value;
+                                }
+                            }
+                        }
+                    }
 
                     if (result.Arguments.Count == 0)
                     {

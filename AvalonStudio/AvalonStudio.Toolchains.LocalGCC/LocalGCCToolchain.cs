@@ -17,7 +17,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 	{
 		private string BaseDirectory
 		{
-			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC", "bin"); }
+			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC"); }
 		}
 
 		#region Settings
@@ -51,7 +51,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
 		public override string GDBExecutable
 		{
-			get { return Path.Combine(BaseDirectory, "gdb" + Platform.ExecutableExtension); }
+			get { return Path.Combine(BaseDirectory, "bin", "gdb" + Platform.ExecutableExtension); }
 		}
 
 		public override Version Version
@@ -130,7 +130,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 				}
 				else
 				{
-					startInfo.FileName = Path.Combine(BaseDirectory, "g++" + Platform.ExecutableExtension);
+					startInfo.FileName = Path.Combine(BaseDirectory, "bin", "g++" + Platform.ExecutableExtension);
 				}
 			}
 			else
@@ -141,12 +141,12 @@ namespace AvalonStudio.Toolchains.LocalGCC
 				}
 				else
 				{
-					startInfo.FileName = Path.Combine(BaseDirectory, "gcc" + Platform.ExecutableExtension);
+					startInfo.FileName = Path.Combine(BaseDirectory, "bin", "gcc" + Platform.ExecutableExtension);
 				}
 			}
 
-			startInfo.EnvironmentVariables["Path"] = BaseDirectory;
-			startInfo.WorkingDirectory = file.CurrentDirectory;
+			startInfo.EnvironmentVariables["Path"] = BaseDirectory + "bin";
+            startInfo.WorkingDirectory = file.CurrentDirectory;
 
 			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
 			{
@@ -218,7 +218,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			}
 			else
 			{
-				startInfo.FileName = Path.Combine(BaseDirectory, "g++" + Platform.ExecutableExtension);
+				startInfo.FileName = Path.Combine(BaseDirectory, "bin", "g++" + Platform.ExecutableExtension);
 			}
 
 			if (project.Type == ProjectType.StaticLibrary)
@@ -229,7 +229,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 				}
 				else
 				{
-					startInfo.FileName = Path.Combine(BaseDirectory, "ar" + Platform.ExecutableExtension);
+					startInfo.FileName = Path.Combine(BaseDirectory, "bin", "ar" + Platform.ExecutableExtension);
 				}
 			}
 
@@ -350,7 +350,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			}
 			else
 			{
-				startInfo.FileName = Path.Combine(BaseDirectory, "size" + Platform.ExecutableExtension);
+				startInfo.FileName = Path.Combine(BaseDirectory, "bin", "size" + Platform.ExecutableExtension);
 			}
 
 			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
@@ -606,9 +606,8 @@ namespace AvalonStudio.Toolchains.LocalGCC
 		{
 			return new List<string>
 			{
-				Path.Combine(BaseDirectory, "include"),
-				Path.Combine(BaseDirectory, "include", "c++", "5.3.0"),
-				Path.Combine(BaseDirectory, "lib", "gcc", "i686-w64-mingw32", "5.3.0", "include")
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++"),
 			};
 		}
 
