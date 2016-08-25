@@ -8,6 +8,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.Utils;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -28,6 +29,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
 		private readonly ISourceFile file;
 		private readonly IIntellisenseControl intellisenseControl;
+        private readonly ICompletionAssistant completionAssistant;
 		private int intellisenseStartedAt;
         private int intellisenseOpenedAt;
         private int intellisenseEndsAt;
@@ -38,11 +40,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 		private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
 
 		public CPlusPlusIntellisenseManager(ILanguageService languageService, IIntellisenseControl intellisenseControl,
-			ICompletionAdviceControl completionAdviceControl, ISourceFile file, TextEditor.TextEditor editor)
+			ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant, ISourceFile file, TextEditor.TextEditor editor)
 		{
 			this.languageService = languageService;
 			this.intellisenseControl = intellisenseControl;
 			this.completionAdviceControl = completionAdviceControl;
+            this.completionAssistant = completionAssistant;
 			this.file = file;
 			this.editor = editor;
 
@@ -127,6 +130,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 					case Key.Up:
 					case Key.Down:
 					case Key.None:
+                    case Key.Escape:
 						result = true;
 						break;
 				}
@@ -154,40 +158,66 @@ namespace AvalonStudio.Languages.CPlusPlus
 
 		public void OnKeyDown(KeyEventArgs e)
 		{
-			if (intellisenseControl.IsVisible && e.Modifiers == InputModifiers.None)
-			{
-				if (!IsCompletionKey(e))
-				{
-					switch (e.Key)
-					{
-						case Key.Down:
-						{
-							var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
+            if(e.Modifiers == InputModifiers.None)
+            {                
+                if (intellisenseControl.IsVisible)
+                {
+                    if (!IsCompletionKey(e))
+                    {
+                        switch (e.Key)
+                        {
+                            case Key.Down:
+                                {
+                                    var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
 
-							if (index < intellisenseControl.CompletionData.Count - 1)
-							{
-								intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index + 1];
-							}
+                                    if (index < intellisenseControl.CompletionData.Count - 1)
+                                    {
+                                        intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index + 1];
+                                    }
 
-							e.Handled = true;
-						}
-							break;
+                                    e.Handled = true;
+                                }
+                                break;
 
-						case Key.Up:
-						{
-							var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
+                            case Key.Up:
+                                {
+                                    var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
 
-							if (index > 0)
-							{
-								intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index - 1];
-							}
+                                    if (index > 0)
+                                    {
+                                        intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index - 1];
+                                    }
 
-							e.Handled = true;
-						}
-							break;
-					}
-				}
-			}
+                                    e.Handled = true;
+                                }
+                                break;
+                        }
+                    }
+                }
+
+                if (completionAssistant.IsVisible)
+                {
+                    if (!e.Handled)
+                    {
+                        switch (e.Key)
+                        {
+                            case Key.Down:
+                                {
+                                    completionAssistant.IncrementOverloadIndex();
+                                    e.Handled = true;
+                                }
+                                break;
+
+                            case Key.Up:
+                                {
+                                    completionAssistant.DecrementOverloadIndex();
+                                    e.Handled = true;
+                                }
+                                break;
+                        }
+                    }
+                }                
+            }
 		}
 
 		private async Task<bool> DoComplete(bool includeLastChar)
@@ -365,15 +395,132 @@ namespace AvalonStudio.Languages.CPlusPlus
 			return editor.TextDocument.GetLocation(index);
 		}
 
+        public async Task CompletionAssistantOnKeyUp (char behindCaretChar, char behindBehindCaretChar)
+        {
+            if (completionAssistant.IsVisible)
+            {
+                var caret = editor.CaretIndex;
+
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    if (caret < completionAssistant.CurrentMethodInfo.Offset)
+                    {
+                        completionAssistant.PopMethod();
+                    }
+
+                    if (completionAssistant.CurrentMethodInfo != null)
+                    {
+                        int index = 0;
+                        int level = 0;
+                        int offset = completionAssistant.CurrentMethodInfo.Offset;
+
+                        while (offset < caret)
+                        {
+                            var currentChar = editor.TextDocument.GetCharAt(offset++);
+
+                            switch(currentChar)
+                            {
+                                case ',':
+                                    if (level == 0)
+                                    {
+                                        index++;
+                                    }
+                                break;
+
+                                case '(':
+                                    level++;
+                                    break;
+
+                                case ')':
+                                    level--;
+                                    break;
+                            }
+                        }
+
+                        completionAssistant.SetArgumentIndex(index);
+                    }
+                });
+            }
+
+            if (behindCaretChar == '(' && (completionAssistant.CurrentMethodInfo == null ||completionAssistant.CurrentMethodInfo.Offset != editor.CaretIndex))
+            {
+                string currentWord = string.Empty;
+
+                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                {
+                    if (behindBehindCaretChar.IsWhiteSpace() && behindBehindCaretChar != '\0')
+                    {
+                        currentWord = editor.GetPreviousWordAtIndex(editor.CaretIndex - 1);
+                    }
+                    else
+                    {
+                        currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
+                    }
+
+                    var symbols = await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), currentWord);
+
+                    if (symbols.Count > 0)
+                    {
+                        completionAssistant.PushMethod(new MethodInfo(symbols, editor.CaretIndex));
+                    }
+                });
+            }
+            else if (behindCaretChar == ')')
+            {
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    completionAssistant.PopMethod();
+                });
+            }
+        }
+
 
 		public async Task OnKeyUp(KeyEventArgs e)
 		{
-			var isVisible = intellisenseControl.IsVisible;
+            var isVisible = intellisenseControl.IsVisible;
+            var caretIndex = editor.CaretIndex;
 
-			if (IsIntellisenseKey(e))
-			{
-				var caretIndex = editor.CaretIndex;
+            var caretChar = '\0';
+            var behindCaretChar = '\0';
+            var behindBehindCaretChar = '\0';
 
+            await Dispatcher.UIThread.InvokeTaskAsync(() =>
+            {
+                if (caretIndex > 1 && caretIndex < editor.TextDocument.TextLength)
+                {
+                    behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2);
+                }
+
+                if (caretIndex > 0 && caretIndex < editor.TextDocument.TextLength)
+                {
+                    caretChar = editor.TextDocument.GetCharAt(caretIndex);
+                }
+
+                if (caretIndex > 0 && caretIndex <= editor.TextDocument.TextLength)
+                {
+                    behindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 1);
+                }
+            });
+
+            await CompletionAssistantOnKeyUp(behindCaretChar, behindBehindCaretChar);
+
+            if (e.Key == Key.Escape && e.Modifiers == InputModifiers.None)
+            {
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    if (completionAssistant.IsVisible)
+                    {
+                        completionAssistant.Close();
+                    }
+                    else if (intellisenseControl.IsVisible)
+                    {
+                        Close();
+                    }
+                });
+            }
+
+            if (IsIntellisenseKey(e))
+            { 				
 				if (caretIndex <= intellisenseStartedAt)
 				{
 					await Dispatcher.UIThread.InvokeTaskAsync(() => { Close(); });
@@ -394,25 +541,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 				{
 					var caret = new TextLocation();
 
-                    var behindStartChar = '\0';
-                    var caretChar = '\0';
-					var behindCaretChar = '\0';
-					var behindBehindCaretChar = '\0';
-
-                    await Dispatcher.UIThread.InvokeTaskAsync(() => { caretChar = editor.TextDocument.GetCharAt(caretIndex); });
-
-                    if (caretIndex > 0)
-					{
-						await
-							Dispatcher.UIThread.InvokeTaskAsync(() => { behindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 1); });
-					}
-
-					if (caretIndex > 1)
-					{
-						await
-							Dispatcher.UIThread.InvokeTaskAsync(
-								() => { behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2); });
-					}
+                    var behindStartChar = '\0';                   					
 
 					if (behindCaretChar == ':' && behindBehindCaretChar == ':')
 					{
@@ -482,6 +611,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 								{
 									unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
 								}
+                                else
+                                {
+                                    currentCompletion.Overloads++;
+                                }
 							}
 						}
 					}

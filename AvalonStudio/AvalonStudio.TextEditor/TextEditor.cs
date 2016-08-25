@@ -20,29 +20,29 @@ using Key = Avalonia.Input.Key;
 
 namespace AvalonStudio.TextEditor
 {
-	[ContentProperty("Content")]
-	public class TextEditor : TemplatedControl
-	{
-		private readonly CompositeDisposable disposables;
+    [ContentProperty("Content")]
+    public class TextEditor : TemplatedControl
+    {
+        private readonly CompositeDisposable disposables;
 
-		#region Properties
+        #region Properties
 
-		public TextView TextView { get; private set; }
+        public TextView TextView { get; private set; }
 
-		#endregion
+        #endregion
 
-		public void ScrollToLine(int line)
-		{
-			TextView.ScrollToLine(line);
-		}
+        public void ScrollToLine(int line)
+        {
+            TextView.ScrollToLine(line);
+        }
 
-		#region Contructors
+        #region Contructors
 
-		static TextEditor()
-		{
-			TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>(
-				(s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int) v.NewValue));
-			FocusableProperty.OverrideDefaultValue(typeof (TextEditor), true);
+        static TextEditor()
+        {
+            TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>(
+                (s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));
+            FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
 
             CaretIndexProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
             {
@@ -50,311 +50,311 @@ namespace AvalonStudio.TextEditor
                 {
                     s.InvalidateCaretPosition();
 
-                    s.InvalidateSelectedWord();                   
+                    s.InvalidateSelectedWord();
                 }
             });
-		}
+        }
 
-		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-		{
-			var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
-				.Select(x => !x);
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
+                .Select(x => !x);
 
 
-			var horizontalScrollBarVisibility = this.GetObservable(AcceptsReturnProperty)
-				.Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
+            var horizontalScrollBarVisibility = this.GetObservable(AcceptsReturnProperty)
+                .Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
 
-			disposables.Add(Bind(
-				ScrollViewer.HorizontalScrollBarVisibilityProperty,
-				horizontalScrollBarVisibility,
-				BindingPriority.Style));
+            disposables.Add(Bind(
+                ScrollViewer.HorizontalScrollBarVisibilityProperty,
+                horizontalScrollBarVisibility,
+                BindingPriority.Style));
 
-			disposables.Add(TextDocumentProperty.Changed.Subscribe(_ => { SelectionStart = SelectionEnd = CaretIndex = -1;}));
+            disposables.Add(TextDocumentProperty.Changed.Subscribe(_ => { SelectionStart = SelectionEnd = CaretIndex = -1; }));
 
             disposables.Add(OffsetProperty.Changed.Subscribe(_ =>
             {
-                if(EditorScrolled != null)
+                if (EditorScrolled != null)
                 {
                     EditorScrolled(this, new EventArgs());
                 }
             }));
 
-			disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
+            disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
 
-			textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
-		}
+            textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
+        }
 
         public event EventHandler<EventArgs> EditorScrolled;
 
-		protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-		{
-			textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;
-			TextView = null;
-			TextDocument = null;
-			Header = null;
-			Content = null;
-			disposables.Dispose();
-		}
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;
+            TextView = null;
+            TextDocument = null;
+            Header = null;
+            Content = null;
+            disposables.Dispose();
+        }
 
-		~TextEditor()
-		{
-			Console.WriteLine("Text Editor Control Destructed.");
-		}
+        ~TextEditor()
+        {
+            Console.WriteLine("Text Editor Control Destructed.");
+        }
 
-		public TextEditor()
-		{
-			disposables = new CompositeDisposable();
+        public TextEditor()
+        {
+            disposables = new CompositeDisposable();
 
-			Styles.Add(new TextEditorTheme());
+            Styles.Add(new TextEditorTheme());
 
-			Name = "textEditor";
-			highestUserSelectedColumn = 1;
+            Name = "textEditor";
+            highestUserSelectedColumn = 1;
 
-			textChangedDelayTimer = new DispatcherTimer();
-			textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
-		}
+            textChangedDelayTimer = new DispatcherTimer();
+            textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
+        }
 
-		#endregion
+        #endregion
 
-		#region Private Data
+        #region Private Data
 
-		private readonly DispatcherTimer textChangedDelayTimer;
-		private int highestUserSelectedColumn;
+        private readonly DispatcherTimer textChangedDelayTimer;
+        private int highestUserSelectedColumn;
 
-		#endregion
+        #endregion
 
-		#region Pespex Properties
+        #region Pespex Properties
 
-		public static readonly AvaloniaProperty<string> TabCharacterProperty =
-			AvaloniaProperty.Register<TextEditor, string>(nameof(TabCharacter), "    ");
+        public static readonly AvaloniaProperty<string> TabCharacterProperty =
+            AvaloniaProperty.Register<TextEditor, string>(nameof(TabCharacter), "    ");
 
-		public string TabCharacter
-		{
-			get { return GetValue(TabCharacterProperty); }
-			set { SetValue(TabCharacterProperty, value); }
-		}
+        public string TabCharacter
+        {
+            get { return GetValue(TabCharacterProperty); }
+            set { SetValue(TabCharacterProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<int> MouseCursorOffsetProperty =
-			AvaloniaProperty.Register<TextEditor, int>(nameof(MouseCursorOffset));
+        public static readonly AvaloniaProperty<int> MouseCursorOffsetProperty =
+            AvaloniaProperty.Register<TextEditor, int>(nameof(MouseCursorOffset));
 
-		public int MouseCursorOffset
-		{
-			get { return GetValue(MouseCursorOffsetProperty); }
-			set { SetValue(MouseCursorOffsetProperty, value); }
-		}
+        public int MouseCursorOffset
+        {
+            get { return GetValue(MouseCursorOffsetProperty); }
+            set { SetValue(MouseCursorOffsetProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<Point> MouseCursorPositionProperty =
-			AvaloniaProperty.Register<TextEditor, Point>(nameof(MouseCursorPosition), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<Point> MouseCursorPositionProperty =
+            AvaloniaProperty.Register<TextEditor, Point>(nameof(MouseCursorPosition), defaultBindingMode: BindingMode.TwoWay);
 
-		public Point MouseCursorPosition
-		{
-			get { return GetValue(MouseCursorPositionProperty); }
-			set { SetValue(MouseCursorPositionProperty, value); }
-		}
+        public Point MouseCursorPosition
+        {
+            get { return GetValue(MouseCursorPositionProperty); }
+            set { SetValue(MouseCursorPositionProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<string> SelectedWordProperty =
-			AvaloniaProperty.Register<TextEditor, string>(nameof(SelectedWord), string.Empty,
-				defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<string> SelectedWordProperty =
+            AvaloniaProperty.Register<TextEditor, string>(nameof(SelectedWord), string.Empty,
+                defaultBindingMode: BindingMode.TwoWay);
 
-		public string SelectedWord
-		{
-			get { return GetValue(SelectedWordProperty); }
-			set { SetValue(SelectedWordProperty, value); }
-		}
+        public string SelectedWord
+        {
+            get { return GetValue(SelectedWordProperty); }
+            set { SetValue(SelectedWordProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<double> LineHeightProperty =
-			AvaloniaProperty.Register<TextEditor, double>(nameof(LineHeight), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<double> LineHeightProperty =
+            AvaloniaProperty.Register<TextEditor, double>(nameof(LineHeight), defaultBindingMode: BindingMode.TwoWay);
 
-		public double LineHeight
-		{
-			get { return GetValue(LineHeightProperty); }
-			set { SetValue(LineHeightProperty, value); }
-		}
+        public double LineHeight
+        {
+            get { return GetValue(LineHeightProperty); }
+            set { SetValue(LineHeightProperty, value); }
+        }
 
-		public static readonly StyledProperty<ICommand> BeforeTextChangedCommandProperty =
-			TextView.BeforeTextChangedCommandProperty.AddOwner<TextEditor>();
+        public static readonly StyledProperty<ICommand> BeforeTextChangedCommandProperty =
+            TextView.BeforeTextChangedCommandProperty.AddOwner<TextEditor>();
 
-		public ICommand BeforeTextChangedCommand
-		{
-			get { return GetValue(BeforeTextChangedCommandProperty); }
-			set { SetValue(BeforeTextChangedCommandProperty, value); }
-		}
+        public ICommand BeforeTextChangedCommand
+        {
+            get { return GetValue(BeforeTextChangedCommandProperty); }
+            set { SetValue(BeforeTextChangedCommandProperty, value); }
+        }
 
-		public static readonly StyledProperty<object> ContentProperty = ContentControl.ContentProperty.AddOwner<TextEditor>();
+        public static readonly StyledProperty<object> ContentProperty = ContentControl.ContentProperty.AddOwner<TextEditor>();
 
-		public object Content
-		{
-			get { return GetValue(ContentProperty); }
-			set { SetValue(ContentProperty, value); }
-		}
+        public object Content
+        {
+            get { return GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
+        }
 
-		/// <summary>
-		///     Defines the <see cref="Header" /> property.
-		/// </summary>
-		public static readonly StyledProperty<object> HeaderProperty =
-			AvaloniaProperty.Register<TextEditor, object>(nameof(Header));
+        /// <summary>
+        ///     Defines the <see cref="Header" /> property.
+        /// </summary>
+        public static readonly StyledProperty<object> HeaderProperty =
+            AvaloniaProperty.Register<TextEditor, object>(nameof(Header));
 
-		public object Header
-		{
-			get { return GetValue(HeaderProperty); }
-			set { SetValue(HeaderProperty, value); }
-		}
+        public object Header
+        {
+            get { return GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
+        }
 
-		public static readonly StyledProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
-			TextView.MarginsProperty.AddOwner<TextEditor>();
+        public static readonly StyledProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
+            TextView.MarginsProperty.AddOwner<TextEditor>();
 
-		public ObservableCollection<TextViewMargin> Margins
-		{
-			get { return GetValue(MarginsProperty); }
-			set { SetValue(MarginsProperty, value); }
-		}
+        public ObservableCollection<TextViewMargin> Margins
+        {
+            get { return GetValue(MarginsProperty); }
+            set { SetValue(MarginsProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
-			TextView.BackgroundRenderersProperty.AddOwner<TextEditor>();
+        public static readonly AvaloniaProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
+            TextView.BackgroundRenderersProperty.AddOwner<TextEditor>();
 
-		public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
-		{
-			get { return GetValue(BackgroundRenderersProperty); }
-			set { SetValue(BackgroundRenderersProperty, value); }
-		}
+        public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
+        {
+            get { return GetValue(BackgroundRenderersProperty); }
+            set { SetValue(BackgroundRenderersProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<ObservableCollection<IDocumentLineTransformer>>
-			DocumentLineTransformersProperty =
-				TextView.DocumentLineTransformersProperty.AddOwner<TextEditor>();
+        public static readonly AvaloniaProperty<ObservableCollection<IDocumentLineTransformer>>
+            DocumentLineTransformersProperty =
+                TextView.DocumentLineTransformersProperty.AddOwner<TextEditor>();
 
-		public ObservableCollection<IDocumentLineTransformer> DocumentLineTransformers
-		{
-			get { return GetValue(DocumentLineTransformersProperty); }
-			set { SetValue(DocumentLineTransformersProperty, value); }
-		}
+        public ObservableCollection<IDocumentLineTransformer> DocumentLineTransformers
+        {
+            get { return GetValue(DocumentLineTransformersProperty); }
+            set { SetValue(DocumentLineTransformersProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<ICommand> TextChangedCommandProperty =
-			TextView.TextChangedCommandProperty.AddOwner<TextEditor>();
+        public static readonly AvaloniaProperty<ICommand> TextChangedCommandProperty =
+            TextView.TextChangedCommandProperty.AddOwner<TextEditor>();
 
-		public ICommand TextChangedCommand
-		{
-			get { return GetValue(TextChangedCommandProperty); }
-			set { SetValue(TextChangedCommandProperty, value); }
-		}
+        public ICommand TextChangedCommand
+        {
+            get { return GetValue(TextChangedCommandProperty); }
+            set { SetValue(TextChangedCommandProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<int> TextChangedDelayProperty =
-			AvaloniaProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
+        public static readonly AvaloniaProperty<int> TextChangedDelayProperty =
+            AvaloniaProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
 
-		public int TextChangedDelay
-		{
-			get { return GetValue(TextChangedDelayProperty); }
-			set
-			{
-				SetValue(TextChangedDelayProperty, value);
-				textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value);
-			}
-		}
+        public int TextChangedDelay
+        {
+            get { return GetValue(TextChangedDelayProperty); }
+            set
+            {
+                SetValue(TextChangedDelayProperty, value);
+                textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value);
+            }
+        }
 
-		public static readonly AvaloniaProperty<bool> AcceptsReturnProperty =
-			AvaloniaProperty.Register<TextEditor, bool>(nameof(AcceptsReturn));
+        public static readonly AvaloniaProperty<bool> AcceptsReturnProperty =
+            AvaloniaProperty.Register<TextEditor, bool>(nameof(AcceptsReturn));
 
-		public bool AcceptsReturn
-		{
-			get { return GetValue(AcceptsReturnProperty); }
-			set { SetValue(AcceptsReturnProperty, value); }
-		}
+        public bool AcceptsReturn
+        {
+            get { return GetValue(AcceptsReturnProperty); }
+            set { SetValue(AcceptsReturnProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<bool> AcceptsTabProperty =
-			AvaloniaProperty.Register<TextEditor, bool>(nameof(AcceptsTab));
+        public static readonly AvaloniaProperty<bool> AcceptsTabProperty =
+            AvaloniaProperty.Register<TextEditor, bool>(nameof(AcceptsTab));
 
-		public bool AcceptsTab
-		{
-			get { return GetValue(AcceptsTabProperty); }
-			set { SetValue(AcceptsTabProperty, value); }
-		}
+        public bool AcceptsTab
+        {
+            get { return GetValue(AcceptsTabProperty); }
+            set { SetValue(AcceptsTabProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<int> CaretIndexProperty =
-			TextView.CaretIndexProperty.AddOwner<TextEditor>();
+        public static readonly AvaloniaProperty<int> CaretIndexProperty =
+            TextView.CaretIndexProperty.AddOwner<TextEditor>();
 
-		public int CaretIndex
-		{
-			get { return GetValue(CaretIndexProperty); }
-			set
-			{
-				SetValue(CaretIndexProperty, value);
-			}
-		}
+        public int CaretIndex
+        {
+            get { return GetValue(CaretIndexProperty); }
+            set
+            {
+                SetValue(CaretIndexProperty, value);
+            }
+        }
 
-		public static readonly AvaloniaProperty<Point> CaretLocationProperty =
-			AvaloniaProperty.Register<TextEditor, Point>(nameof(CaretLocation), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<Point> CaretLocationProperty =
+            AvaloniaProperty.Register<TextEditor, Point>(nameof(CaretLocation), defaultBindingMode: BindingMode.TwoWay);
 
-		public Point CaretLocation
-		{
-			get { return GetValue(CaretLocationProperty); }
-			set { SetValue(CaretLocationProperty, value); }
-		}
+        public Point CaretLocation
+        {
+            get { return GetValue(CaretLocationProperty); }
+            set { SetValue(CaretLocationProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<Point> CaretLocationInTextViewProperty =
-			AvaloniaProperty.Register<TextEditor, Point>(nameof(CaretLocationInTextView), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<Point> CaretLocationInTextViewProperty =
+            AvaloniaProperty.Register<TextEditor, Point>(nameof(CaretLocationInTextView), defaultBindingMode: BindingMode.TwoWay);
 
-		public Point CaretLocationInTextView
-		{
-			get { return GetValue(CaretLocationInTextViewProperty); }
-			set { SetValue(CaretLocationInTextViewProperty, value); }
-		}
+        public Point CaretLocationInTextView
+        {
+            get { return GetValue(CaretLocationInTextViewProperty); }
+            set { SetValue(CaretLocationInTextViewProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<int> SelectionStartProperty =
-			AvaloniaProperty.Register<TextEditor, int>(nameof(SelectionStart));
+        public static readonly AvaloniaProperty<int> SelectionStartProperty =
+            AvaloniaProperty.Register<TextEditor, int>(nameof(SelectionStart));
 
-		public int SelectionStart
-		{
-			get { return GetValue(SelectionStartProperty); }
-			set { SetValue(SelectionStartProperty, value); }
-		}
+        public int SelectionStart
+        {
+            get { return GetValue(SelectionStartProperty); }
+            set { SetValue(SelectionStartProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<int> SelectionEndProperty =
-			AvaloniaProperty.Register<TextEditor, int>(nameof(SelectionEnd));
+        public static readonly AvaloniaProperty<int> SelectionEndProperty =
+            AvaloniaProperty.Register<TextEditor, int>(nameof(SelectionEnd));
 
-		public int SelectionEnd
-		{
-			get { return GetValue(SelectionEndProperty); }
-			set { SetValue(SelectionEndProperty, value); }
-		}
+        public int SelectionEnd
+        {
+            get { return GetValue(SelectionEndProperty); }
+            set { SetValue(SelectionEndProperty, value); }
+        }
 
-		public TextSegment GetSelectionAsSegment()
-		{
-			TextSegment result = null;
+        public TextSegment GetSelectionAsSegment()
+        {
+            TextSegment result = null;
 
-			if (SelectionStart < SelectionEnd)
-			{
-				result = new TextSegment {StartOffset = SelectionStart, EndOffset = SelectionEnd};
-			}
-			else
-			{
-				result = new TextSegment {StartOffset = SelectionEnd, EndOffset = SelectionStart};
-			}
+            if (SelectionStart < SelectionEnd)
+            {
+                result = new TextSegment { StartOffset = SelectionStart, EndOffset = SelectionEnd };
+            }
+            else
+            {
+                result = new TextSegment { StartOffset = SelectionEnd, EndOffset = SelectionStart };
+            }
 
-			return result;
-		}
+            return result;
+        }
 
-		public void SetSelection(TextSegment segment)
-		{
-			SelectionStart = segment.StartOffset;
-			SelectionEnd = segment.EndOffset;
-		}
+        public void SetSelection(TextSegment segment)
+        {
+            SelectionStart = segment.StartOffset;
+            SelectionEnd = segment.EndOffset;
+        }
 
-		public static readonly AvaloniaProperty<IIndentationStrategy> IndentationStrategyProperty =
-			AvaloniaProperty.Register<TextEditor, IIndentationStrategy>(nameof(IndentationStrategy));
+        public static readonly AvaloniaProperty<IIndentationStrategy> IndentationStrategyProperty =
+            AvaloniaProperty.Register<TextEditor, IIndentationStrategy>(nameof(IndentationStrategy));
 
-		public IIndentationStrategy IndentationStrategy
-		{
-			get { return GetValue(IndentationStrategyProperty); }
-			set { SetValue(IndentationStrategyProperty, value); }
-		}
+        public IIndentationStrategy IndentationStrategy
+        {
+            get { return GetValue(IndentationStrategyProperty); }
+            set { SetValue(IndentationStrategyProperty, value); }
+        }
 
-		public static readonly AvaloniaProperty<TextDocument> TextDocumentProperty =
-			TextView.TextDocumentProperty.AddOwner<TextEditor>();
+        public static readonly AvaloniaProperty<TextDocument> TextDocumentProperty =
+            TextView.TextDocumentProperty.AddOwner<TextEditor>();
 
-		public TextDocument TextDocument
-		{
-			get { return GetValue(TextDocumentProperty); }
-			set { SetValue(TextDocumentProperty, value); }
-		}
+        public TextDocument TextDocument
+        {
+            get { return GetValue(TextDocumentProperty); }
+            set { SetValue(TextDocumentProperty, value); }
+        }
 
         public static readonly AvaloniaProperty<Vector> OffsetProperty =
             TextView.OffsetProperty.AddOwner<TextEditor>(o => o.Offset,
@@ -375,801 +375,821 @@ namespace AvalonStudio.TextEditor
         #region Private Methods
 
         private void InvalidateCaretPosition()
-		{
-			CaretLocation = VisualLineGeometryBuilder.GetViewPortPosition(TextView, CaretIndex).TopLeft;
-			var textViewCaretLocation = VisualLineGeometryBuilder.GetTextViewPosition(TextView, CaretIndex).TopLeft;
-			CaretLocationInTextView = new Point(textViewCaretLocation.X, textViewCaretLocation.Y + TextView.CharSize.Height);
-		}
-
-		public string GetWordAtIndex(int index)
-		{
-			var result = string.Empty;
-
-			if (index >= 0 && TextDocument.TextLength > index)
-			{
-				var wordFound = false;
-
-				var start = index;
-
-				var currentChar = TextDocument.GetCharAt(index);
-				var prevChar = '\0';
-
-				if (index > 0)
-				{
-					prevChar = TextDocument.GetCharAt(index - 1);
-				}
-
-				var charClass = TextUtilities.GetCharacterClass(currentChar);
-
-				if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ' &&
-				    TextUtilities.GetCharacterClass(prevChar) != TextUtilities.CharacterClass.LineTerminator)
-				{
-					start = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward,
-						TextUtilities.CaretPositioningMode.WordStart);
-				}
-
-				var end = TextUtilities.GetNextCaretPosition(TextDocument, start, TextUtilities.LogicalDirection.Forward,
-					TextUtilities.CaretPositioningMode.WordBorder);
-
-				if (start != -1 && end != -1)
-				{
-					var word = TextDocument.GetText(start, end - start).Trim();
-
-					if (TextUtilities.IsSymbol(word))
-					{
-						result = word;
-						wordFound = true;
-					}
-				}
-			}
-
-			return result;
-		}
-
-		private void InvalidateSelectedWord()
-		{
-			SelectedWord = GetWordAtIndex(CaretIndex);
-		}
-
-		private void HandleTextInput(string input)
-		{
-			InvalidateSelectedWord();
-
-			if (!string.IsNullOrEmpty(input))
-			{
-				TextDocument.BeginUpdate();
-
-				DeleteSelection();
-
-				var caretIndex = CaretIndex;
-
-				if (caretIndex >= 0)
-				{
-					TextDocument.Insert(caretIndex, input);
-					CaretIndex += input.Length;
-					SelectionStart = SelectionEnd = CaretIndex;
-					TextView.Invalidate();
-				}
-
-				TextDocument.EndUpdate();
-			}
-		}
-
-		private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
-		{
-			textChangedDelayTimer.Stop();
-
-			if (TextChangedCommand != null && TextChangedCommand.CanExecute(null))
-			{
-				TextChangedCommand.Execute(null);
-			}
-		}
-
-		private void SelectAll()
-		{
-			SelectionStart = 0;
-			SelectionEnd = TextDocument.TextLength;
-		}
-
-		private bool DeleteSelection()
-		{
-			var selectionStart = SelectionStart;
-			var selectionEnd = SelectionEnd;
-
-			if (selectionStart != selectionEnd)
-			{
-				var start = Math.Min(selectionStart, selectionEnd);
-				var end = Math.Max(selectionStart, selectionEnd);
-				TextDocument.Remove(start, end - start);
-				TextView.Invalidate();
-
-				SelectionStart = SelectionEnd = CaretIndex = start;
-
-				return true;
-			}
-			return false;
-		}
-
-		private string GetSelection()
-		{
-			var selectionStart = SelectionStart;
-			var selectionEnd = SelectionEnd;
-			var start = Math.Min(selectionStart, selectionEnd);
-			var end = Math.Max(selectionStart, selectionEnd);
-
-			if (start == end || (TextDocument?.TextLength ?? 0) < end)
-			{
-				return "";
-			}
-
-			return TextDocument.GetText(start, end - start);
-		}
-
-		private void SetHighestColumn()
-		{
-			if (CaretIndex != -1)
-			{
-				highestUserSelectedColumn = TextDocument.GetLocation(CaretIndex).Column;
-			}
-		}
-
-
-		private void MoveHorizontal(int count, InputModifiers modifiers)
-		{
-			var caretIndex = CaretIndex;
-
-			if (caretIndex >= 0)
-			{
-				if ((modifiers & InputModifiers.Control) != 0)
-				{
-					if (count > 0)
-					{
-						count =
-							TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
-								TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
-					}
-					else
-					{
-						count =
-							TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward,
-								TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
-					}
-
-					if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
-					{
-						CaretIndex += count;
-					}
-				}
-				else
-				{
-					if (count > 0)
-					{
-						for (var i = 0; i < Math.Abs(count); i++)
-						{
-							var line = TextDocument.GetLineByOffset(CaretIndex);
-
-							if (caretIndex == line.EndOffset)
-							{
-								if (line.NextLine != null)
-								{
-									caretIndex = line.NextLine.Offset;
-								}
-							}
-							else
-							{
-								caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
-									TextUtilities.CaretPositioningMode.Normal);
-							}
-						}
-					}
-					else
-					{
-						for (var i = 0; i < Math.Abs(count); i++)
-						{
-							var line = TextDocument.GetLineByOffset(CaretIndex);
-
-							if (caretIndex == line.Offset)
-							{
-								if (line.PreviousLine != null)
-								{
-									caretIndex = line.PreviousLine.EndOffset;
-								}
-							}
-							else
-							{
-								caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex,
-									TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
-							}
-						}
-					}
-
-					CaretIndex = caretIndex;
-				}
-
-				SetHighestColumn();
-			}
-		}
-
-		private void MoveVertical(int count, InputModifiers modifiers)
-		{
-			var caretIndex = CaretIndex;
-
-			if (caretIndex >= 0)
-			{
-				var currentPosition = TextDocument.GetLocation(caretIndex);
-
-				if (currentPosition.Line + count > 0 && currentPosition.Line + count <= TextDocument.LineCount)
-				{
-					var line = TextDocument.Lines[currentPosition.Line - 1 + count];
-
-					var col = line.EndOffset;
-
-					if (highestUserSelectedColumn <= line.Length)
-					{
-						col = highestUserSelectedColumn;
-					}
-
-					CaretIndex = TextDocument.GetOffset(currentPosition.Line + count, col);
-				}
-			}
-		}
-
-		private void MoveHome(InputModifiers modifiers)
-		{
-			var text = TextDocument ?? null;
-			var caretIndex = CaretIndex;
-
-			if (caretIndex >= 0)
-			{
-				if ((modifiers & InputModifiers.Control) != 0)
-				{
-					caretIndex = 0;
-				}
-				else
-				{
-					var lineOffset = TextDocument.GetLineByOffset(CaretIndex).Offset;
-					var whiteSpace = TextUtilities.GetWhitespaceAfter(TextDocument, lineOffset);
-					caretIndex = lineOffset + whiteSpace.Length;
-				}
-
-
-				CaretIndex = caretIndex;
-				SetHighestColumn();
-			}
-		}
-
-		private void MoveEnd(InputModifiers modifiers)
-		{
-			var text = TextDocument ?? null;
-			var caretIndex = CaretIndex;
-
-			if (caretIndex >= 0)
-			{
-				if ((modifiers & InputModifiers.Control) != 0)
-				{
-					caretIndex = TextDocument.TextLength;
-				}
-				else
-				{
-					var lineOffset = TextDocument.GetLineByOffset(CaretIndex).EndOffset;
-					var whiteSpace = TextUtilities.GetWhitespaceBefore(TextDocument, lineOffset);
-					caretIndex = lineOffset - whiteSpace.Length;
-				}
-
-				CaretIndex = caretIndex;
-				SetHighestColumn();
-			}
-		}
-
-		private async void Cut()
-		{
-			await ((IClipboard) AvaloniaLocator.Current.GetService(typeof (IClipboard)))
-				.SetTextAsync(GetSelection());
-
-			DeleteSelection();
-		}
-
-		private async void Copy()
-		{
-			await ((IClipboard) AvaloniaLocator.Current.GetService(typeof (IClipboard)))
-				.SetTextAsync(GetSelection());
-		}
-
-		private async void Paste()
-		{
-			var text = await ((IClipboard) AvaloniaLocator.Current.GetService(typeof (IClipboard))).GetTextAsync();
-			if (text == null)
-			{
-				return;
-			}
-
-			HandleTextInput(text);
-		}
-
-		private void Undo()
-		{
-			TextDocument?.UndoStack.Undo();
-		}
-
-		private void Redo()
-		{
-			TextDocument?.UndoStack.Redo();
-		}
-
-		private sealed class RestoreCaretAndSelectionUndoAction : IUndoableOperation
-		{
-			private readonly int caretPosition;
-			private readonly int selectionEnd;
-			private readonly int selectionStart;
-			// keep textarea in weak reference because the IUndoableOperation is stored with the document
-			private readonly WeakReference textAreaReference;
-
-			public RestoreCaretAndSelectionUndoAction(TextEditor editor)
-			{
-				textAreaReference = new WeakReference(editor);
-				// Just save the old caret position, no need to validate here.
-				// If we restore it, we'll validate it anyways.
-				caretPosition = editor.CaretIndex;
-				selectionStart = editor.SelectionStart;
-				selectionEnd = editor.SelectionEnd;
-			}
-
-			public void Undo()
-			{
-				var textEditor = (TextEditor) textAreaReference.Target;
-				if (textEditor != null)
-				{
-					textEditor.CaretIndex = caretPosition;
-					textEditor.SelectionStart = selectionStart;
-					textEditor.SelectionEnd = selectionEnd;
-				}
-			}
-
-			public void Redo()
-			{
-				// redo=undo: we just restore the caret/selection state
-				Undo();
-			}
-		}
-
-		#endregion
-
-		#region Public Methods        
-
-		#endregion
-
-		#region Overrides
-
-		protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
-		{
-			TextView = e.NameScope.Find<TextView>("textView");
-			TextView.Cursor = new Cursor(StandardCursorType.Ibeam);
-
-			//textView.BackgroundRenderers.Clear();
-			//textView.DocumentLineTransformers.Clear();
-
-			//textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
-			//textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
-			//textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
-			//textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));
-
-			disposables.Add(TextDocumentProperty.Changed.Subscribe(args =>
-			{
-				if (args.NewValue != null)
-				{
-					// Todo unsubscribe these events.                 
-					TextDocument.Changing += (sender, ee) =>
-					{
-						TextDocument?.UndoStack.StartUndoGroup();
-						TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
-
-						if (BeforeTextChangedCommand != null)
-						{
-							BeforeTextChangedCommand.Execute(null);
-						}
-					};
-
-					TextDocument.Changed += (sender, ee) =>
-					{
-						TextDocument?.UndoStack.EndUndoGroup();
-
-						InvalidateVisual();
-
-						LineHeight = TextView.CharSize.Height;
-
-						textChangedDelayTimer.Stop();
-						textChangedDelayTimer.Start();
-					};
-				}
-			}));
-		}
+        {
+            CaretLocation = VisualLineGeometryBuilder.GetViewPortPosition(TextView, CaretIndex).TopLeft;
+            var textViewCaretLocation = VisualLineGeometryBuilder.GetTextViewPosition(TextView, CaretIndex).TopLeft;
+            CaretLocationInTextView = new Point(textViewCaretLocation.X, textViewCaretLocation.Y + TextView.CharSize.Height);
+        }
+
+        public string GetPreviousWordAtIndex(int index)
+        {
+            var lastWordIndex = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordBorder);
+
+            if (lastWordIndex >= 0 && TextDocument.GetLocation(lastWordIndex).Line == TextDocument.GetLocation(index).Line)
+            {
+                return GetWordAtIndex(lastWordIndex);
+            }
+            else
+            {
+                return GetWordAtIndex(index);
+            }
+        }
+
+
+        public string GetWordAtIndex(int index)
+        {
+            var result = string.Empty;
+
+            if (index >= 0 && TextDocument.TextLength > index)
+            {
+                var wordFound = false;
+
+                var start = index;
+
+                var currentChar = TextDocument.GetCharAt(index);
+                var prevChar = '\0';
+
+                if (index > 0)
+                {
+                    prevChar = TextDocument.GetCharAt(index - 1);
+                }
+
+                var charClass = TextUtilities.GetCharacterClass(currentChar);
+
+                if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ' &&
+                    TextUtilities.GetCharacterClass(prevChar) != TextUtilities.CharacterClass.LineTerminator)
+                {
+                    start = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward,
+                        TextUtilities.CaretPositioningMode.WordStart);
+                }
+
+                var end = TextUtilities.GetNextCaretPosition(TextDocument, start, TextUtilities.LogicalDirection.Forward,
+                    TextUtilities.CaretPositioningMode.WordBorder);
+
+                if (start != -1 && end != -1)
+                {
+                    var word = TextDocument.GetText(start, end - start).Trim();
+
+                    if (TextUtilities.IsSymbol(word))
+                    {
+                        result = word;
+                        wordFound = true;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private void InvalidateSelectedWord()
+        {
+            SelectedWord = GetWordAtIndex(CaretIndex);
+        }
+
+        private void HandleTextInput(string input)
+        {
+            InvalidateSelectedWord();
+
+            if (!string.IsNullOrEmpty(input))
+            {
+                TextDocument.BeginUpdate();
+
+                DeleteSelection();
+
+                var caretIndex = CaretIndex;
+
+                if (caretIndex >= 0)
+                {
+                    TextDocument.Insert(caretIndex, input);
+                    CaretIndex += input.Length;
+                    SelectionStart = SelectionEnd = CaretIndex;
+                    TextView.Invalidate();
+                }
+
+                TextDocument.EndUpdate();
+            }
+        }
+
+        private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
+        {
+            textChangedDelayTimer.Stop();
+
+            if (TextChangedCommand != null && TextChangedCommand.CanExecute(null))
+            {
+                TextChangedCommand.Execute(null);
+            }
+        }
+
+        private void SelectAll()
+        {
+            SelectionStart = 0;
+            SelectionEnd = TextDocument.TextLength;
+        }
+
+        private bool DeleteSelection()
+        {
+            var selectionStart = SelectionStart;
+            var selectionEnd = SelectionEnd;
+
+            if (selectionStart != selectionEnd)
+            {
+                var start = Math.Min(selectionStart, selectionEnd);
+                var end = Math.Max(selectionStart, selectionEnd);
+                TextDocument.Remove(start, end - start);
+                TextView.Invalidate();
+
+                SelectionStart = SelectionEnd = CaretIndex = start;
+
+                return true;
+            }
+            return false;
+        }
+
+        private string GetSelection()
+        {
+            var selectionStart = SelectionStart;
+            var selectionEnd = SelectionEnd;
+            var start = Math.Min(selectionStart, selectionEnd);
+            var end = Math.Max(selectionStart, selectionEnd);
+
+            if (start == end || (TextDocument?.TextLength ?? 0) < end)
+            {
+                return "";
+            }
+
+            return TextDocument.GetText(start, end - start);
+        }
+
+        private void SetHighestColumn()
+        {
+            if (CaretIndex != -1)
+            {
+                highestUserSelectedColumn = TextDocument.GetLocation(CaretIndex).Column;
+            }
+        }
+
+
+        private void MoveHorizontal(int count, InputModifiers modifiers)
+        {
+            var caretIndex = CaretIndex;
+
+            if(caretIndex > TextDocument.TextLength)
+            {
+                caretIndex = TextDocument.TextLength;
+            }
+
+            if (caretIndex >= 0)
+            {
+                if ((modifiers & InputModifiers.Control) != 0)
+                {
+                    if (count > 0)
+                    {
+                        count =
+                            TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
+                                TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
+                    }
+                    else
+                    {
+                        count =
+                            TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward,
+                                TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
+                    }
+
+                    if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
+                    {
+                        CaretIndex += count;
+                    }
+                }
+                else
+                {
+                    if (count > 0)
+                    {
+                        for (var i = 0; i < Math.Abs(count); i++)
+                        {
+                            var line = TextDocument.GetLineByOffset(caretIndex);
+
+                            if (caretIndex == line.EndOffset)
+                            {
+                                if (line.NextLine != null)
+                                {
+                                    caretIndex = line.NextLine.Offset;
+                                }
+                            }
+                            else
+                            {
+                                caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
+                                    TextUtilities.CaretPositioningMode.Normal);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (var i = 0; i < Math.Abs(count); i++)
+                        {
+                            var line = TextDocument.GetLineByOffset(caretIndex);
+
+                            if (caretIndex == line.Offset)
+                            {
+                                if (line.PreviousLine != null)
+                                {
+                                    caretIndex = line.PreviousLine.EndOffset;
+                                }
+                            }
+                            else
+                            {
+                                caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex,
+                                    TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
+                            }
+                        }
+                    }
+
+                    CaretIndex = caretIndex;
+                }
+
+                SetHighestColumn();
+            }
+        }
+
+        private void MoveVertical(int count, InputModifiers modifiers)
+        {
+            var caretIndex = CaretIndex;
+
+            if (caretIndex >= 0)
+            {
+                var currentPosition = TextDocument.GetLocation(caretIndex);
+
+                if (currentPosition.Line + count > 0 && currentPosition.Line + count <= TextDocument.LineCount)
+                {
+                    var line = TextDocument.Lines[currentPosition.Line - 1 + count];
+
+                    var col = line.EndOffset;
+
+                    if (highestUserSelectedColumn <= line.Length)
+                    {
+                        col = highestUserSelectedColumn;
+                    }
+
+                    CaretIndex = TextDocument.GetOffset(currentPosition.Line + count, col);
+                }
+            }
+        }
+
+        private void MoveHome(InputModifiers modifiers)
+        {
+            var text = TextDocument ?? null;
+            var caretIndex = CaretIndex;
+
+            if (caretIndex >= 0)
+            {
+                if ((modifiers & InputModifiers.Control) != 0)
+                {
+                    caretIndex = 0;
+                }
+                else
+                {
+                    var lineOffset = TextDocument.GetLineByOffset(CaretIndex).Offset;
+                    var whiteSpace = TextUtilities.GetWhitespaceAfter(TextDocument, lineOffset);
+                    caretIndex = lineOffset + whiteSpace.Length;
+                }
+
+
+                CaretIndex = caretIndex;
+                SetHighestColumn();
+            }
+        }
+
+        private void MoveEnd(InputModifiers modifiers)
+        {
+            var text = TextDocument ?? null;
+            var caretIndex = CaretIndex;
+
+            if (caretIndex >= 0)
+            {
+                if ((modifiers & InputModifiers.Control) != 0)
+                {
+                    caretIndex = TextDocument.TextLength;
+                }
+                else
+                {
+                    var lineOffset = TextDocument.GetLineByOffset(CaretIndex).EndOffset;
+                    var whiteSpace = TextUtilities.GetWhitespaceBefore(TextDocument, lineOffset);
+                    caretIndex = lineOffset - whiteSpace.Length;
+                }
+
+                CaretIndex = caretIndex;
+                SetHighestColumn();
+            }
+        }
+
+        private async void Cut()
+        {
+            await ((IClipboard)AvaloniaLocator.Current.GetService(typeof(IClipboard)))
+                .SetTextAsync(GetSelection());
+
+            DeleteSelection();
+        }
+
+        private async void Copy()
+        {
+            await ((IClipboard)AvaloniaLocator.Current.GetService(typeof(IClipboard)))
+                .SetTextAsync(GetSelection());
+        }
+
+        private async void Paste()
+        {
+            var text = await ((IClipboard)AvaloniaLocator.Current.GetService(typeof(IClipboard))).GetTextAsync();
+            if (text == null)
+            {
+                return;
+            }
+
+            HandleTextInput(text);
+        }
+
+        private void Undo()
+        {
+            TextDocument?.UndoStack.Undo();
+        }
+
+        private void Redo()
+        {
+            TextDocument?.UndoStack.Redo();
+        }
+
+        private sealed class RestoreCaretAndSelectionUndoAction : IUndoableOperation
+        {
+            private readonly int caretPosition;
+            private readonly int selectionEnd;
+            private readonly int selectionStart;
+            // keep textarea in weak reference because the IUndoableOperation is stored with the document
+            private readonly WeakReference textAreaReference;
+
+            public RestoreCaretAndSelectionUndoAction(TextEditor editor)
+            {
+                textAreaReference = new WeakReference(editor);
+                // Just save the old caret position, no need to validate here.
+                // If we restore it, we'll validate it anyways.
+                caretPosition = editor.CaretIndex;
+                selectionStart = editor.SelectionStart;
+                selectionEnd = editor.SelectionEnd;
+            }
+
+            public void Undo()
+            {
+                var textEditor = (TextEditor)textAreaReference.Target;
+                if (textEditor != null)
+                {
+                    textEditor.CaretIndex = caretPosition;
+                    textEditor.SelectionStart = selectionStart;
+                    textEditor.SelectionEnd = selectionEnd;
+                }
+            }
+
+            public void Redo()
+            {
+                // redo=undo: we just restore the caret/selection state
+                Undo();
+            }
+        }
+
+        #endregion
+
+        #region Public Methods        
+
+        #endregion
+
+        #region Overrides
+
+        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        {
+            TextView = e.NameScope.Find<TextView>("textView");
+            TextView.Cursor = new Cursor(StandardCursorType.Ibeam);
+
+            //textView.BackgroundRenderers.Clear();
+            //textView.DocumentLineTransformers.Clear();
+
+            //textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
+            //textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
+            //textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
+            //textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));
+
+            disposables.Add(TextDocumentProperty.Changed.Subscribe(args =>
+            {
+                if (args.NewValue != null)
+                {
+                    // Todo unsubscribe these events.                 
+                    TextDocument.Changing += (sender, ee) =>
+                    {
+                        TextDocument?.UndoStack.StartUndoGroup();
+                        TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
+
+                        if (BeforeTextChangedCommand != null)
+                        {
+                            BeforeTextChangedCommand.Execute(null);
+                        }
+                    };
+
+                    TextDocument.Changed += (sender, ee) =>
+                    {
+                        TextDocument?.UndoStack.EndUndoGroup();
+
+                        InvalidateVisual();
+
+                        LineHeight = TextView.CharSize.Height;
+
+                        textChangedDelayTimer.Stop();
+                        textChangedDelayTimer.Start();
+                    };
+                }
+            }));
+        }
 
         public event EventHandler<EventArgs> CaretChangedByPointerClick;
 
-		protected override void OnPointerPressed(PointerPressedEventArgs e)
-		{
-			if (e.Source.InteractiveParent.InteractiveParent == TextView)
-			{
-				var point = e.GetPosition(TextView.TextSurface);
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
+        {
+            if (e.Source.InteractiveParent.InteractiveParent == TextView)
+            {
+                var point = e.GetPosition(TextView.TextSurface);
 
-				var index = TextView.GetOffsetFromPoint(point);
+                var index = TextView.GetOffsetFromPoint(point);
 
-				if (index != -1)
-				{
-					CaretIndex = index;
+                if (index != -1)
+                {
+                    CaretIndex = index;
 
-					var text = TextDocument;
+                    var text = TextDocument;
 
-					switch (e.ClickCount)
-					{
-						case 1:
-							SelectionStart = SelectionEnd = index;
-							break;
-						case 2:
-							SelectionStart = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward,
-								TextUtilities.CaretPositioningMode.WordStart);
+                    switch (e.ClickCount)
+                    {
+                        case 1:
+                            SelectionStart = SelectionEnd = index;
+                            break;
+                        case 2:
+                            SelectionStart = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward,
+                                TextUtilities.CaretPositioningMode.WordStart);
 
-							SelectionEnd = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Forward,
-								TextUtilities.CaretPositioningMode.WordBorder);
-							break;
-						case 3:
-							SelectionStart = 0;
-							SelectionEnd = text.TextLength;
-							break;
-					}
+                            SelectionEnd = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Forward,
+                                TextUtilities.CaretPositioningMode.WordBorder);
+                            break;
+                        case 3:
+                            SelectionStart = 0;
+                            SelectionEnd = text.TextLength;
+                            break;
+                    }
 
-					e.Device.Capture(TextView);
-					e.Handled = true;
+                    e.Device.Capture(TextView);
+                    e.Handled = true;
 
-					InvalidateVisual();
+                    InvalidateVisual();
 
-                    if(CaretChangedByPointerClick != null)
+                    if (CaretChangedByPointerClick != null)
                     {
                         CaretChangedByPointerClick(this, e);
                     }
-				}
-				else if (TextDocument?.TextLength == 0)
-				{
-					SelectionStart = SelectionEnd = CaretIndex = 0;
+                }
+                else if (TextDocument?.TextLength == 0)
+                {
+                    SelectionStart = SelectionEnd = CaretIndex = 0;
 
-					e.Device.Capture(TextView);
-					e.Handled = true;
+                    e.Device.Capture(TextView);
+                    e.Handled = true;
 
-					InvalidateVisual();
-				}
+                    InvalidateVisual();
+                }
 
-				SetHighestColumn();
-			}
-		}
+                SetHighestColumn();
+            }
+        }
 
-		protected override void OnPointerMoved(PointerEventArgs e)
-		{
-			if (TextView != null) // Need to check this incase control was virtualized?
-			{
-				var point = e.GetPosition(TextView.TextSurface);
+        protected override void OnPointerMoved(PointerEventArgs e)
+        {
+            if (TextView != null) // Need to check this incase control was virtualized?
+            {
+                var point = e.GetPosition(TextView.TextSurface);
 
-				var currentMouseOffset = TextView.GetOffsetFromPoint(point);
+                var currentMouseOffset = TextView.GetOffsetFromPoint(point);
 
-				if (currentMouseOffset != -1)
-				{
-					if (e.Device.Captured == TextView)
-					{
-						CaretIndex = currentMouseOffset;
+                if (currentMouseOffset != -1)
+                {
+                    if (e.Device.Captured == TextView)
+                    {
+                        CaretIndex = currentMouseOffset;
 
-						if (CaretIndex >= 0)
-						{
-							SelectionEnd = CaretIndex;
-						}
-						else
-						{
-							SelectionEnd = 0;
-						}
-					}
-				}
-			}
-		}
+                        if (CaretIndex >= 0)
+                        {
+                            SelectionEnd = CaretIndex;
+                        }
+                        else
+                        {
+                            SelectionEnd = 0;
+                        }
+                    }
+                }
+            }
+        }
 
-		protected override void OnPointerReleased(PointerEventArgs e)
-		{
-			if (e.Device.Captured == TextView)
-			{
-				e.Device.Capture(null);
-			}
-		}
+        protected override void OnPointerReleased(PointerEventArgs e)
+        {
+            if (e.Device.Captured == TextView)
+            {
+                e.Device.Capture(null);
+            }
+        }
 
-		protected override void OnGotFocus(GotFocusEventArgs e)
-		{
-			TextView.ShowCaret();
-		}
+        protected override void OnGotFocus(GotFocusEventArgs e)
+        {
+            TextView.ShowCaret();
+        }
 
-		protected override void OnLostFocus(RoutedEventArgs e)
-		{
-			TextView?.HideCaret();
-		}
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+            TextView?.HideCaret();
+        }
 
-		protected override void OnTextInput(TextInputEventArgs e)
-		{
-			HandleTextInput(e.Text);
-		}
+        protected override void OnTextInput(TextInputEventArgs e)
+        {
+            HandleTextInput(e.Text);
+        }
 
-		private void TransformSelectedLines(Action<IDocumentLine> transformLine)
-		{
-			var selection = GetSelectionAsSegment();
-			var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+        private void TransformSelectedLines(Action<IDocumentLine> transformLine)
+        {
+            var selection = GetSelectionAsSegment();
+            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
 
-			if (lines.Count() > 0)
-			{
-				var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
+            if (lines.Count() > 0)
+            {
+                var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
 
-				anchors.Add(selection);
-				// TODO Add an achor to the caret index...
+                anchors.Add(selection);
+                // TODO Add an achor to the caret index...
 
-				TextDocument.BeginUpdate();
+                TextDocument.BeginUpdate();
 
-				foreach (var line in lines)
-				{
-					transformLine(line);
-				}
+                foreach (var line in lines)
+                {
+                    transformLine(line);
+                }
 
-				TextDocument.EndUpdate();
+                TextDocument.EndUpdate();
 
-				SetSelection(selection);
-			}
-		}
+                SetSelection(selection);
+            }
+        }
 
 
-		protected void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.Handled)
-			{
-				return;
-			}
+        protected void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Handled)
+            {
+                return;
+            }
 
-			var caretIndex = CaretIndex;
-			var movement = false;
-			var handled = true;
-			var modifiers = e.Modifiers;
+            var caretIndex = CaretIndex;
+            var movement = false;
+            var handled = true;
+            var modifiers = e.Modifiers;
 
-			switch (e.Key)
-			{
-				case Key.OemPlus:
-					if (modifiers == InputModifiers.Control)
-					{
-						if (TextView.FontSize < 60)
-						{
-							TextView.FontSize++;
-						}
-					}
-					break;
+            switch (e.Key)
+            {
+                case Key.OemPlus:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        if (TextView.FontSize < 60)
+                        {
+                            TextView.FontSize++;
+                        }
+                    }
+                    break;
 
-				case Key.OemMinus:
-					if (modifiers == InputModifiers.Control)
-					{
-						if (TextView.FontSize > 1)
-						{
-							TextView.FontSize--;
-						}
-					}
-					break;
+                case Key.OemMinus:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        if (TextView.FontSize > 1)
+                        {
+                            TextView.FontSize--;
+                        }
+                    }
+                    break;
 
-				case Key.A:
-					if (modifiers == InputModifiers.Control)
-					{
-						SelectAll();
-					}
-					break;
+                case Key.A:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        SelectAll();
+                    }
+                    break;
 
-				case Key.C:
-					if (modifiers == InputModifiers.Control)
-					{
-						Copy();
-					}
-					break;
+                case Key.C:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        Copy();
+                    }
+                    break;
 
-				case Key.V:
-					if (modifiers == InputModifiers.Control)
-					{
-						Paste();
-					}
-					break;
+                case Key.V:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        Paste();
+                    }
+                    break;
 
-				case Key.X:
-					if (modifiers == InputModifiers.Control)
-					{
-						Cut();
-					}
-					break;
+                case Key.X:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        Cut();
+                    }
+                    break;
 
-				case Key.Y:
-					if (modifiers == InputModifiers.Control)
-					{
-						Redo();
-					}
-					break;
+                case Key.Y:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        Redo();
+                    }
+                    break;
 
-				case Key.Z:
-					if (modifiers == InputModifiers.Control)
-					{
-						Undo();
-					}
-					break;
+                case Key.Z:
+                    if (modifiers == InputModifiers.Control)
+                    {
+                        Undo();
+                    }
+                    break;
 
-				case Key.Left:
-					MoveHorizontal(-1, modifiers);
-					movement = true;
-					break;
+                case Key.Left:
+                    MoveHorizontal(-1, modifiers);
+                    movement = true;
+                    break;
 
-				case Key.Right:
-					MoveHorizontal(1, modifiers);
-					movement = true;
-					break;
+                case Key.Right:
+                    MoveHorizontal(1, modifiers);
+                    movement = true;
+                    break;
 
-				case Key.Up:
-					MoveVertical(-1, modifiers);
-					movement = true;
-					break;
+                case Key.Up:
+                    MoveVertical(-1, modifiers);
+                    movement = true;
+                    break;
 
-				case Key.Down:
-					MoveVertical(1, modifiers);
-					movement = true;
-					break;
+                case Key.Down:
+                    MoveVertical(1, modifiers);
+                    movement = true;
+                    break;
 
-				case Key.Home:
-					MoveHome(modifiers);
-					movement = true;
-					break;
+                case Key.Home:
+                    MoveHome(modifiers);
+                    movement = true;
+                    break;
 
-				case Key.End:
-					MoveEnd(modifiers);
-					movement = true;
-					break;
+                case Key.End:
+                    MoveEnd(modifiers);
+                    movement = true;
+                    break;
 
-				case Key.Back:
-					if (!DeleteSelection() && CaretIndex > 0)
-					{
-						var line = TextDocument.GetLineByOffset(CaretIndex);
+                case Key.Back:
+                    if (!DeleteSelection() && CaretIndex > 0)
+                    {
+                        var line = TextDocument.GetLineByOffset(CaretIndex);
 
-						if (CaretIndex == line.Offset && line.PreviousLine != null)
-						{
-							TextDocument.Remove(CaretIndex - line.DelimiterLength, line.DelimiterLength);
+                        if (CaretIndex == line.Offset && line.PreviousLine != null)
+                        {
+                            var delimiterLength = line.PreviousLine.DelimiterLength;
+                            TextDocument.Remove(CaretIndex - delimiterLength, delimiterLength);
+                            CaretIndex -= delimiterLength;
+                        }
+                        else
+                        {
+                            TextDocument.Remove(caretIndex - 1, 1);
+                            --CaretIndex;
+                        }
 
-							CaretIndex -= line.DelimiterLength;
-						}
-						else
-						{
-							TextDocument.Remove(caretIndex - 1, 1);
-							--CaretIndex;
-						}
+                        TextView.Invalidate();
+                    }
 
-						TextView.Invalidate();
-					}
+                    break;
 
-					break;
+                case Key.Delete:
+                    if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
+                    {
+                        var line = TextDocument.GetLineByOffset(CaretIndex);
 
-				case Key.Delete:
-					if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
-					{
-						var line = TextDocument.GetLineByOffset(CaretIndex);
+                        if (CaretIndex == line.EndOffset && line.NextLine != null)
+                        {
+                            TextDocument.Remove(CaretIndex, line.DelimiterLength);
+                        }
+                        else
+                        {
+                            TextDocument.Remove(caretIndex, 1);
+                        }
 
-						if (CaretIndex == line.EndOffset && line.NextLine != null)
-						{
-							TextDocument.Remove(CaretIndex, line.DelimiterLength);
-						}
-						else
-						{
-							TextDocument.Remove(caretIndex, 1);
-						}
+                        TextView.Invalidate();
+                    }
 
-						TextView.Invalidate();
-					}
+                    break;
 
-					break;
+                case Key.Enter:
+                    if (AcceptsReturn)
+                    {
+                        HandleTextInput("\r\n");
+                    }
 
-				case Key.Enter:
-					if (AcceptsReturn)
-					{
-						HandleTextInput("\r\n");
-					}
+                    break;
 
-					break;
+                case Key.Tab:
+                    if (AcceptsTab)
+                    {
+                        e.Handled = true;
 
-				case Key.Tab:
-					if (AcceptsTab)
-					{
-						e.Handled = true;
+                        var shiftedLines = false;
 
-						var shiftedLines = false;
+                        // TODO implement Selection.IsMultiLine
 
-						// TODO implement Selection.IsMultiLine
+                        if (SelectionStart != SelectionEnd)
+                        {
+                            if (e.Modifiers == InputModifiers.Shift)
+                            {
+                                var selection = GetSelectionAsSegment();
+                                var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
 
-						if (SelectionStart != SelectionEnd)
-						{
-							if (e.Modifiers == InputModifiers.Shift)
-							{
-								var selection = GetSelectionAsSegment();
-								var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+                                if (lines.Count() > 1)
+                                {
+                                    TransformSelectedLines(line =>
+                                    {
+                                        var offset = line.Offset;
+                                        var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
 
-								if (lines.Count() > 1)
-								{
-									TransformSelectedLines(line =>
-									{
-										var offset = line.Offset;
-										var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
+                                        if (s.Length > 0)
+                                        {
+                                            TextDocument.Remove(s.Offset, s.Length);
+                                        }
+                                    });
+                                }
+                            }
+                            else
+                            {
+                                var selection = GetSelectionAsSegment();
+                                var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
 
-										if (s.Length > 0)
-										{
-											TextDocument.Remove(s.Offset, s.Length);
-										}
-									});
-								}
-							}
-							else
-							{
-								var selection = GetSelectionAsSegment();
-								var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+                                if (lines.Count() > 1)
+                                {
+                                    TransformSelectedLines(line => { TextDocument.Insert(line.Offset, TabCharacter); });
 
-								if (lines.Count() > 1)
-								{
-									TransformSelectedLines(line => { TextDocument.Insert(line.Offset, TabCharacter); });
+                                    shiftedLines = true;
+                                }
+                            }
+                        }
 
-									shiftedLines = true;
-								}
-							}
-						}
+                        if (!shiftedLines)
+                        {
+                            if (e.Modifiers == InputModifiers.Shift)
+                            {
+                                TransformSelectedLines(line =>
+                                {
+                                    var offset = CaretIndex - TabCharacter.Length;
+                                    var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
 
-						if (!shiftedLines)
-						{
-							if (e.Modifiers == InputModifiers.Shift)
-							{
-								TransformSelectedLines(line =>
-								{
-									var offset = CaretIndex - TabCharacter.Length;
-									var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
+                                    if (s.Length > 0)
+                                    {
+                                        TextDocument.Remove(s.Offset, s.Length);
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                HandleTextInput(TabCharacter);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        base.OnKeyDown(e);
+                        handled = false;
+                    }
 
-									if (s.Length > 0)
-									{
-										TextDocument.Remove(s.Offset, s.Length);
-									}
-								});
-							}
-							else
-							{
-								HandleTextInput(TabCharacter);
-							}
-						}
-					}
-					else
-					{
-						base.OnKeyDown(e);
-						handled = false;
-					}
+                    break;
 
-					break;
+                case Key.PageUp:
+                    TextView.PageUp();
+                    break;
 
-				case Key.PageUp:
-					TextView.PageUp();
-					break;
+                case Key.PageDown:
+                    TextView.PageDown();
+                    break;
+            }
 
-				case Key.PageDown:
-					TextView.PageDown();
-					break;
-			}
+            if (movement && ((modifiers & InputModifiers.Shift) != 0))
+            {
+                SelectionEnd = CaretIndex;
+            }
+            else if (movement)
+            {
+                SelectionStart = SelectionEnd = CaretIndex;
+            }
 
-			if (movement && ((modifiers & InputModifiers.Shift) != 0))
-			{
-				SelectionEnd = CaretIndex;
-			}
-			else if (movement)
-			{
-				SelectionStart = SelectionEnd = CaretIndex;
-			}
+            if (handled)
+            {
+                InvalidateVisual();
+            }
+        }
 
-			if (handled)
-			{
-				InvalidateVisual();
-			}
-		}
-
-		#endregion
-	}
+        #endregion
+    }
 }

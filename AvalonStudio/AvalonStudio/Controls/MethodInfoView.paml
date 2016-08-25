@@ -1,0 +1,14 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+  <Grid TextBlock.Foreground="WhiteSmoke">
+    <StackPanel Orientation="Horizontal" Gap="4">
+      <cont:SymbolView DataContext="{Binding SelectedOverload}" />
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="(" />
+        <TextBlock Text="{Binding SelectedOverloadNumber}" />
+        <TextBlock Text="/" />
+        <TextBlock Text="{Binding OverloadCount}" />
+        <TextBlock Text=")" />
+      </StackPanel>
+    </StackPanel>
+  </Grid>
+</UserControl>

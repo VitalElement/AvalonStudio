@@ -314,7 +314,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 		{
 			file.Parent.Items.Remove(file);
 
-			ExcludedFiles.Add(file.Project.CurrentDirectory.MakeRelativePath(file.Location));
+			ExcludedFiles.Add(file.Project.CurrentDirectory.MakeRelativePath(file.Location).ToAvalonPath());
 			SourceFiles.Remove(file);
 			Save();
 		}
@@ -323,7 +323,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 		{
 			folder.Parent.Items.Remove(folder);
 
-			ExcludedFiles.Add(folder.Project.CurrentDirectory.MakeRelativePath(folder.Location));
+			ExcludedFiles.Add(folder.Project.CurrentDirectory.MakeRelativePath(folder.Location).ToAvalonPath());
 
 			RemoveFiles(this, folder);
 

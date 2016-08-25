@@ -18,6 +18,7 @@ namespace AvalonStudio.Languages
 
 		public bool IsBuiltInType { get; set; }
 		public IList<ParameterSymbol> Arguments { get; set; }
+        public bool IsVariadic { get; set; }
 
 		public int CompareTo(Symbol other)
 		{

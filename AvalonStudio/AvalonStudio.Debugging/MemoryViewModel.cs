@@ -90,11 +90,15 @@
         {
             if (debugger.State == DebuggerState.Paused)
             {
-                Enabled = true;
+                dataProvider.Enable();
+
+                Dispatcher.UIThread.InvokeTaskAsync(() => Enabled = true);
             }
             else
             {
-                Enabled = false;
+                dataProvider?.Clear();
+
+                Dispatcher.UIThread.InvokeTaskAsync(() => Enabled = false);
             }
         }
 
@@ -188,7 +192,7 @@
 
                 // TODO clear out data ready for GC, this requires a fix in Avalonia.
                 //DisassemblyData = null;
-            };
+            };            
         }
 
         private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)

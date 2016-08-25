@@ -26,7 +26,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 					caretChar = textView.TextDocument.GetCharAt(textView.CaretIndex);
 				}
 
-				if (textView.CaretIndex - 1 > 0)
+				if (textView.CaretIndex - 1 > 0 && textView.CaretIndex < textView.TextDocument.TextLength)
 				{
 					behindCaretChar = textView.TextDocument.GetCharAt(textView.CaretIndex - 1);
 				}

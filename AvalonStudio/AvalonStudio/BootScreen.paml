@@ -2,7 +2,7 @@
   <Grid>
     <StackPanel Margin="20 10" VerticalAlignment="Top" HorizontalAlignment="Left">
       <TextBlock FontSize="60" FontFamily="Segoe UI" FontWeight="Light">AvalonStudio</TextBlock>
-        <TextBlock FontSize="18" FontFamily="Segoe UI" FontWeight="Light">Embedded Tools for Proffesionals</TextBlock>
+        <TextBlock FontSize="18" FontFamily="Segoe UI" FontWeight="Light">Embedded Tools for Professionals</TextBlock>
     </StackPanel>
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
       <Image></Image>
