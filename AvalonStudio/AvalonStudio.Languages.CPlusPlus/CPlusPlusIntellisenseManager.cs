@@ -196,7 +196,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
 			var result = false;
 
-			if (intellisenseControl.CompletionData.Count > 0 && intellisenseControl.SelectedCompletion != noSelectedCompletion)
+			if (intellisenseControl.CompletionData.Count > 0 && intellisenseControl.SelectedCompletion != noSelectedCompletion && intellisenseControl.SelectedCompletion != null)
 			{
 				var offset = 0;
 
