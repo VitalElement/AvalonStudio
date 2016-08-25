@@ -1,0 +1,20 @@
+language: csharp
+sudo: required
+os:
+  - linux
+mono:
+  - latest
+solution: AvalonStudio.sln
+before_install:
+  - cd AvalonStudio 
+  - sudo ./dependencies.sh
+install:  
+script:
+  - sudo ./buildmono.sh
+notifications:
+  email: false
+  webhooks:
+    urls:      
+    on_success: change
+    on_failure: always
+    on_start: never

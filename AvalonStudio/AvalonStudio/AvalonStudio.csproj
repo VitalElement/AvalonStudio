@@ -167,6 +167,18 @@
       <HintPath>..\packages\Avalonia.Desktop.0.4.1-build1936-alpha\lib\net45\Avalonia.Win32.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Avalonia.Xaml.Interactions, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.4.1-build301-alpha\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Avalonia.Xaml.Interactivity, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.4.1-build301-alpha\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SkiaSharp, Version=1.53.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkiaSharp.1.53.0\lib\net45\SkiaSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -180,12 +192,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Splat.1.6.2\lib\Net45\Splat.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Xaml.Interactions, Version=0.0.0.1, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.239-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Xaml.Interactivity, Version=0.0.0.1, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.2.0.239-nightly\lib\portable-windows8+net45\Avalonia.Xaml.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="Caliburn.Micro, Version=2.0.2.0, Culture=neutral, PublicKeyToken=8e5891231f2ed21f">
       <HintPath>..\packages\Caliburn.Micro.Core.3.0.0\lib\net45\Caliburn.Micro.dll</HintPath>
@@ -213,9 +219,6 @@
     </Reference>
     <Reference Include="SharpDX.DXGI, Version=3.0.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1">
       <HintPath>..\packages\SharpDX.DXGI.3.0.2\lib\net45\SharpDX.DXGI.dll</HintPath>
-    </Reference>
-    <Reference Include="SkiaSharp, Version=1.53.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\SkiaSharp.1.53.0\lib\net45\SkiaSharp.dll</HintPath>
     </Reference>
     <Reference Include="Sprache, Version=2.0.0.50, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Sprache.2.0.0.50\lib\portable-net4+netcore45+win8+wp8+sl5+MonoAndroid+Xamarin.iOS10+MonoTouch\Sprache.dll</HintPath>
@@ -247,6 +250,10 @@
       <DependentUpon>BootScreen.paml</DependentUpon>
     </Compile>
     <Compile Include="CompositionRoot.cs" />
+    <Compile Include="Controls\CompletionAssistantView.paml.cs">
+      <DependentUpon>CompletionAssistantView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CompletionAssistantViewModel.cs" />
     <Compile Include="Controls\CompletionHint.paml.cs">
       <DependentUpon>CompletionHint.paml</DependentUpon>
     </Compile>
@@ -260,6 +267,10 @@
     </Compile>
     <Compile Include="Controls\ErrorProbeViewModel.cs" />
     <Compile Include="Controls\IntellisenseToolTipViewModel.cs" />
+    <Compile Include="Controls\MethodInfoView.paml.cs">
+      <DependentUpon>MethodInfoView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MethodInfoViewModel.cs" />
     <Compile Include="Controls\TabControlView.paml.cs" />
     <Compile Include="Controls\DocumentTabControl.paml.cs">
       <DependentUpon>DocumentTabControl.paml</DependentUpon>
@@ -387,6 +398,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="BootScreen.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CompletionAssistantView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MethodInfoView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="libgit2-821131f.so">
