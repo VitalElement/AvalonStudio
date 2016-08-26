@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -68,5 +69,10 @@ namespace AvalonStudio.Extensibility.Utils
 		{
 			return new PathSourceFile {Project = project, Parent = parent, File = filePath.ToPlatformPath()};
 		}
-	}
+
+        public int CompareTo(IProjectItem other)
+        {
+            return Name.CompareTo(other.Name);
+        }
+    }
 }

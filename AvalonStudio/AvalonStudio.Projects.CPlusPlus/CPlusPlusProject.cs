@@ -20,6 +20,9 @@ namespace AvalonStudio.Projects.CPlusPlus
 {
 	public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
 	{
+        private FileSystemWatcher fileSystemWatcher;
+        private FileSystemWatcher folderSystemWatcher;
+
 		public const string ProjectExtension = "acproj";
 
 		private static Dictionary<string, Tuple<string, string>> passwordCache =
@@ -34,6 +37,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 		{
 			ExcludedFiles = new List<string>();
 			Items = new ObservableCollection<IProjectItem>();
+            Folders = new ObservableCollection<IProjectFolder>();
 			UnloadedReferences = new List<Reference>();
 			StaticLibraries = new List<string>();
 			References = new ObservableCollection<IProject>();
@@ -50,7 +54,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 			BuiltinLibraries = new List<string>();
 			ToolchainSettings = new ExpandoObject();
 			DebugSettings = new ExpandoObject();
-            Project = this;
+            Project = this;            
 		}
 
 		[JsonIgnore]
@@ -238,6 +242,9 @@ namespace AvalonStudio.Projects.CPlusPlus
 		[JsonIgnore]
 		public IList<ISourceFile> SourceFiles { get; }
 
+        [JsonIgnore]
+        public IList<IProjectFolder> Folders { get; }
+
 		public IList<string> CompilerArguments { get; }
 
 		public IList<string> CCompilerArguments { get; }
@@ -301,23 +308,90 @@ namespace AvalonStudio.Projects.CPlusPlus
 		public IProject Load(ISolution solution, string filePath)
 		{
 			var result = Load(filePath, solution);
-
-			return result;
+            
+            return result;
 		}
 
-		public int CompareTo(IProject other)
+        public void RemoveFile (string fullPath)
+        {
+            var file = SourceFiles.FirstOrDefault(s => s.Location == fullPath);
+
+            if (file != null)
+            {
+                RemoveFile(file);
+            }
+        }
+
+        public void AddFile (string fullPath)
+        {
+            var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
+
+            var sourceFile = SourceFile.FromPath(this, folder, fullPath.ToPlatformPath());
+            this.SourceFiles.InsertSorted(sourceFile);
+
+            if (folder.Location == Project.CurrentDirectory)
+            {
+                Project.Items.InsertSorted(sourceFile);
+                sourceFile.Parent = Project;
+            }
+            else
+            {
+                folder.Items.InsertSorted(sourceFile);
+                sourceFile.Parent = folder;
+            }
+        }
+
+        private void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
+        {
+            RemoveFile(e.FullPath);
+
+            Console.WriteLine($"Deleted - Type: {e.ChangeType}, Name: {e.Name}, Path: {e.FullPath}");
+        }
+
+        private void FileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
+        {
+            RemoveFile(e.OldFullPath);
+
+            AddFile(e.FullPath);
+
+            Console.WriteLine($"Renamed - Type: {e.ChangeType}, Name: {e.Name}, Path: {e.FullPath}");
+        }
+
+        private void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+            AddFile(e.FullPath);
+
+            Console.WriteLine($"Created - Type: {e.ChangeType}, Name: {e.Name}, Path: {e.FullPath}");
+        }
+
+        private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            Console.WriteLine($"Changed - Type: {e.ChangeType}, Name: {e.Name}, Path: {e.FullPath}");
+        }
+
+        public int CompareTo(IProject other)
 		{
 			return Name.CompareTo(other.Name);
 		}
 
+        public void ExcludeFile (ISourceFile file)
+        {
+            file.Parent.Items.Remove(file);
+
+            ExcludedFiles.Add(file.Project.CurrentDirectory.MakeRelativePath(file.Location).ToAvalonPath());
+            SourceFiles.Remove(file);
+            Save();
+        }
+
+        public void ExcludeFolder (IProjectFolder folder)
+        { 
+}
+
 		public void RemoveFile(ISourceFile file)
 		{
-			file.Parent.Items.Remove(file);
-
-			ExcludedFiles.Add(file.Project.CurrentDirectory.MakeRelativePath(file.Location).ToAvalonPath());
-			SourceFiles.Remove(file);
-			Save();
-		}
+            file.Parent.Items.Remove(file);
+            SourceFiles.Remove(file);
+        }
 
 		public void RemoveFolder(IProjectFolder folder)
 		{
@@ -335,11 +409,16 @@ namespace AvalonStudio.Projects.CPlusPlus
 			return SourceFiles.BinarySearch(f => f, path);
 		}
 
+        public IProjectFolder FindFolder(string path)
+        {
+            return Folders.BinarySearch(path);
+        }
+
 		public void AddFile(ISourceFile file)
 		{
 			// TODO how will this work with subdirs.
 			SourceFiles.InsertSorted(file);
-			Items.Add(file);
+			Items.InsertSorted(file);
 		}
 
 		public void AddFolder(IProjectFolder folder)
@@ -456,13 +535,13 @@ namespace AvalonStudio.Projects.CPlusPlus
 			{
 				var sourceFile = SourceFile.FromPath(project, folder, file.ToPlatformPath());
 				project.SourceFiles.InsertSorted(sourceFile);
-				folder.Items.Add(sourceFile);
+				folder.Items.InsertSorted(sourceFile);
 			}
 		}
 
 		public static StandardProjectFolder GetSubFolders(CPlusPlusProject project, IProjectFolder parent, string path)
 		{
-			var result = new StandardProjectFolder(path);
+            var result = new StandardProjectFolder(path);
 
 			var folders = Directory.GetDirectories(path);
 
@@ -473,12 +552,13 @@ namespace AvalonStudio.Projects.CPlusPlus
 						folders.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()))
 					)
 				{
-					result.Items.Add(GetSubFolders(project, result, folder));
+					result.Items.InsertSorted(GetSubFolders(project, result, folder));
 				}
 			}
 
 			PopulateFiles(project, result);
 
+            project.Folders.InsertSorted(result);
 			result.Parent = parent;
 			result.Project = project;
 
@@ -487,7 +567,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 		private void LoadFiles()
 		{
-			Items.Add(new ReferenceFolder(this));
+			Items.InsertSorted(new ReferenceFolder(this));
 			var folders = GetSubFolders(this, this, CurrentDirectory);
 
 			//Items = new ObservableCollection<IProjectItem>();
@@ -495,15 +575,26 @@ namespace AvalonStudio.Projects.CPlusPlus
 			foreach (var item in folders.Items)
 			{
 				item.Parent = this;
-				Items.Add(item);
+				Items.InsertSorted(item);
 			}
 
 			foreach (var file in SourceFiles)
 			{
 				file.Project = this;
-				file.Parent = this;
 			}
-		}
+
+            fileSystemWatcher = new FileSystemWatcher(CurrentDirectory);
+            fileSystemWatcher.Changed += FileSystemWatcher_Changed;
+            fileSystemWatcher.Created += FileSystemWatcher_Created;
+            fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
+            fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
+            fileSystemWatcher.NotifyFilter = NotifyFilters.FileName;
+            fileSystemWatcher.IncludeSubdirectories = true;
+            fileSystemWatcher.EnableRaisingEvents = true;
+
+            folderSystemWatcher = new FileSystemWatcher(CurrentDirectory);
+
+        }
 
 		public static CPlusPlusProject Load(string filename, ISolution solution)
 		{
@@ -530,7 +621,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 			project.LoadFiles();
 
-			return project;
+            return project;
 		}
 
 
@@ -708,5 +799,20 @@ namespace AvalonStudio.Projects.CPlusPlus
 		{
 			return Hidden;
 		}
-	}
+
+        public int CompareTo(IProjectFolder other)
+        {
+            return Location.CompareFilePath(other.Location);
+        }
+
+        public int CompareTo(string other)
+        {
+            return Location.CompareFilePath(other);
+        }
+
+        public int CompareTo(IProjectItem other)
+        {
+            return Name.CompareTo(other.Name);
+        }
+    }
 }
