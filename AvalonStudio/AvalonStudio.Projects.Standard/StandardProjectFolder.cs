@@ -35,8 +35,9 @@ namespace AvalonStudio.Projects.Standard
 
 		public void AddFolder(IProjectFolder folder)
 		{
-			throw new NotImplementedException();
-		}
+            folder.Parent = this;
+            Items.InsertSorted(folder);
+        }
 
 		public void RemoveFile(ISourceFile file)
 		{

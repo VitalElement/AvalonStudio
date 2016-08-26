@@ -18,302 +18,321 @@ using Newtonsoft.Json.Converters;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
-	public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
-	{
+    public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
+    {
         private FileSystemWatcher fileSystemWatcher;
         private FileSystemWatcher folderSystemWatcher;
 
-		public const string ProjectExtension = "acproj";
+        public const string ProjectExtension = "acproj";
 
-		private static Dictionary<string, Tuple<string, string>> passwordCache =
-			new Dictionary<string, Tuple<string, string>>();
+        private static Dictionary<string, Tuple<string, string>> passwordCache =
+            new Dictionary<string, Tuple<string, string>>();
 
-		[JsonConstructor]
-		public CPlusPlusProject(List<SourceFile> sourceFiles) : this()
-		{
-		}
+        [JsonConstructor]
+        public CPlusPlusProject(List<SourceFile> sourceFiles) : this()
+        {
+        }
 
-		public CPlusPlusProject()
-		{
-			ExcludedFiles = new List<string>();
-			Items = new ObservableCollection<IProjectItem>();
+        public CPlusPlusProject()
+        {
+            ExcludedFiles = new List<string>();
+            Items = new ObservableCollection<IProjectItem>();
             Folders = new ObservableCollection<IProjectFolder>();
-			UnloadedReferences = new List<Reference>();
-			StaticLibraries = new List<string>();
-			References = new ObservableCollection<IProject>();
-			PublicIncludes = new List<string>();
-			GlobalIncludes = new List<string>();
-			Includes = new List<Include>();
-			Defines = new List<Definition>();
-			SourceFiles = new List<ISourceFile>();
-			CompilerArguments = new List<string>();
-			ToolChainArguments = new List<string>();
-			LinkerArguments = new List<string>();
-			CCompilerArguments = new List<string>();
-			CppCompilerArguments = new List<string>();
-			BuiltinLibraries = new List<string>();
-			ToolchainSettings = new ExpandoObject();
-			DebugSettings = new ExpandoObject();
-            Project = this;            
-		}
+            UnloadedReferences = new List<Reference>();
+            StaticLibraries = new List<string>();
+            References = new ObservableCollection<IProject>();
+            PublicIncludes = new List<string>();
+            GlobalIncludes = new List<string>();
+            Includes = new List<Include>();
+            Defines = new List<Definition>();
+            SourceFiles = new List<ISourceFile>();
+            CompilerArguments = new List<string>();
+            ToolChainArguments = new List<string>();
+            LinkerArguments = new List<string>();
+            CCompilerArguments = new List<string>();
+            CppCompilerArguments = new List<string>();
+            BuiltinLibraries = new List<string>();
+            ToolchainSettings = new ExpandoObject();
+            DebugSettings = new ExpandoObject();
+            Project = this;
+        }
 
-		[JsonIgnore]
-		private string SolutionDirectory
-		{
-			get { return Directory.GetParent(CurrentDirectory).FullName; }
-		}
+        [JsonIgnore]
+        private string SolutionDirectory
+        {
+            get { return Directory.GetParent(CurrentDirectory).FullName; }
+        }
 
-		[JsonProperty(PropertyName = "References")]
-		public List<Reference> UnloadedReferences { get; set; }
+        [JsonProperty(PropertyName = "References")]
+        public List<Reference> UnloadedReferences { get; set; }
 
-		[JsonProperty(PropertyName = "Toolchain")]
-		public string ToolchainReference { get; set; }
+        [JsonProperty(PropertyName = "Toolchain")]
+        public string ToolchainReference { get; set; }
 
-		[JsonProperty(PropertyName = "Debugger")]
-		public string DebuggerReference { get; set; }
+        [JsonProperty(PropertyName = "Debugger")]
+        public string DebuggerReference { get; set; }
 
-		[JsonProperty(PropertyName = "TestFramework")]
-		public string TestFrameworkReference { get; set; }
+        [JsonProperty(PropertyName = "TestFramework")]
+        public string TestFrameworkReference { get; set; }
 
-		public List<string> ExcludedFiles { get; set; }
+        public List<string> ExcludedFiles { get; set; }
 
-		[JsonIgnore]
-		public IList<IMenuItem> ProjectMenuItems
-		{
-			get { throw new NotImplementedException(); }
-		}
+        [JsonIgnore]
+        public IList<IMenuItem> ProjectMenuItems
+        {
+            get { throw new NotImplementedException(); }
+        }
 
-		[JsonIgnore]
-		public bool IsBuilding { get; set; }
+        [JsonIgnore]
+        public bool IsBuilding { get; set; }
 
-		[JsonIgnore]
-		public string LocationDirectory => CurrentDirectory;
+        [JsonIgnore]
+        public string LocationDirectory => CurrentDirectory;
 
-		public void Save()
-		{
-			UnloadedReferences.Clear();
+        public void Save()
+        {
+            UnloadedReferences.Clear();
 
-			foreach (var reference in References)
-			{
-				UnloadedReferences.Add(new Reference {Name = reference.Name});
-			}
+            foreach (var reference in References)
+            {
+                UnloadedReferences.Add(new Reference { Name = reference.Name });
+            }
 
-			Serialize(Location);
-		}
+            Serialize(Location);
+        }
 
-		public void AddReference(IProject project)
-		{
-			References.InsertSorted(project);
-		}
+        public void AddReference(IProject project)
+        {
+            References.InsertSorted(project);
+        }
 
-		public void RemoveReference(IProject project)
-		{
-			References.Remove(project);
-		}
+        public void RemoveReference(IProject project)
+        {
+            References.Remove(project);
+        }
 
-		/// <summary>
-		///     Resolves each reference, cloning and updating Git referenced projects where possible.
-		/// </summary>
-		public void ResolveReferences()
-		{
-			foreach (var reference in UnloadedReferences)
-			{
-				var loadedReference = Solution.Projects.FirstOrDefault(p => p.Name == reference.Name);
+        /// <summary>
+        ///     Resolves each reference, cloning and updating Git referenced projects where possible.
+        /// </summary>
+        public void ResolveReferences()
+        {
+            foreach (var reference in UnloadedReferences)
+            {
+                var loadedReference = Solution.Projects.FirstOrDefault(p => p.Name == reference.Name);
 
-				if (loadedReference != null)
-				{
-					var currentReference = References.FirstOrDefault(r => r == loadedReference);
+                if (loadedReference != null)
+                {
+                    var currentReference = References.FirstOrDefault(r => r == loadedReference);
 
-					if (currentReference == null)
-					{
-						AddReference(loadedReference);
-					}
-					else
-					{
-						throw new Exception("The same Reference can not be added more than once.");
-					}
-				}
-				else
-				{
-					Console.WriteLine("Implement placeholder reference here.");
-				}
-			}
-		}
+                    if (currentReference == null)
+                    {
+                        AddReference(loadedReference);
+                    }
+                    else
+                    {
+                        throw new Exception("The same Reference can not be added more than once.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Implement placeholder reference here.");
+                }
+            }
+        }
 
-		public IList<string> GetReferencedIncludes()
-		{
-			var result = new List<string>();
+        public IList<string> GetReferencedIncludes()
+        {
+            var result = new List<string>();
 
-			foreach (var reference in References)
-			{
-				var standardReference = reference as CPlusPlusProject;
+            foreach (var reference in References)
+            {
+                var standardReference = reference as CPlusPlusProject;
 
-				result.AddRange(standardReference.GenerateReferencedIncludes());
-			}
+                result.AddRange(standardReference.GenerateReferencedIncludes());
+            }
 
-			return result;
-		}
+            return result;
+        }
 
-		public IList<string> GetReferencedDefines()
-		{
-			var result = new List<string>();
+        public IList<string> GetReferencedDefines()
+        {
+            var result = new List<string>();
 
-			foreach (var reference in References)
-			{
-				var standardReference = reference as CPlusPlusProject;
+            foreach (var reference in References)
+            {
+                var standardReference = reference as CPlusPlusProject;
 
-				result.AddRange(standardReference.GenerateReferencedDefines());
-			}
+                result.AddRange(standardReference.GenerateReferencedDefines());
+            }
 
-			return result;
-		}
-
-
-		public IList<string> GetGlobalIncludes()
-		{
-			var result = new List<string>();
-
-			foreach (var reference in References)
-			{
-				var standardReference = reference as CPlusPlusProject;
-
-				result.AddRange(standardReference.GetGlobalIncludes());
-			}
-
-			foreach (var include in Includes.Where(i => i.Global))
-			{
-				result.Add(Path.Combine(CurrentDirectory, include.Value).ToPlatformPath());
-			}
-
-			return result;
-		}
-
-		public IList<string> GetGlobalDefines()
-		{
-			var result = new List<string>();
-
-			foreach (var reference in References)
-			{
-				var standardReference = reference as CPlusPlusProject;
-
-				result.AddRange(standardReference.GetGlobalDefines());
-			}
-
-			foreach (var define in Defines.Where(i => i.Global))
-			{
-				result.Add(define.Value);
-			}
-
-			return result;
-		}
-
-		[JsonIgnore]
-		public ISolution Solution { get; set; }
-
-		[JsonIgnore]
-		public string CurrentDirectory
-		{
-			get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
-		}
-
-		[JsonIgnore]
-		public string Location { get; internal set; }
-
-		[JsonIgnore]
-		public string Name
-		{
-			get { return Path.GetFileNameWithoutExtension(Location); }
-		}
-
-		public ProjectType Type { get; set; }
-
-		[JsonIgnore]
-		public ObservableCollection<IProject> References { get; }
-
-		public IList<string> PublicIncludes { get; }
-
-		public IList<string> GlobalIncludes { get; }
-
-		public IList<Include> Includes { get; }
-
-		public IList<Definition> Defines { get; }
+            return result;
+        }
 
 
-		[JsonIgnore]
-		public IList<ISourceFile> SourceFiles { get; }
+        public IList<string> GetGlobalIncludes()
+        {
+            var result = new List<string>();
+
+            foreach (var reference in References)
+            {
+                var standardReference = reference as CPlusPlusProject;
+
+                result.AddRange(standardReference.GetGlobalIncludes());
+            }
+
+            foreach (var include in Includes.Where(i => i.Global))
+            {
+                result.Add(Path.Combine(CurrentDirectory, include.Value).ToPlatformPath());
+            }
+
+            return result;
+        }
+
+        public IList<string> GetGlobalDefines()
+        {
+            var result = new List<string>();
+
+            foreach (var reference in References)
+            {
+                var standardReference = reference as CPlusPlusProject;
+
+                result.AddRange(standardReference.GetGlobalDefines());
+            }
+
+            foreach (var define in Defines.Where(i => i.Global))
+            {
+                result.Add(define.Value);
+            }
+
+            return result;
+        }
+
+        [JsonIgnore]
+        public ISolution Solution { get; set; }
+
+        [JsonIgnore]
+        public string CurrentDirectory
+        {
+            get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
+        }
+
+        [JsonIgnore]
+        public string Location { get; internal set; }
+
+        [JsonIgnore]
+        public string Name
+        {
+            get { return Path.GetFileNameWithoutExtension(Location); }
+        }
+
+        public ProjectType Type { get; set; }
+
+        [JsonIgnore]
+        public ObservableCollection<IProject> References { get; }
+
+        public IList<string> PublicIncludes { get; }
+
+        public IList<string> GlobalIncludes { get; }
+
+        public IList<Include> Includes { get; }
+
+        public IList<Definition> Defines { get; }
+
+
+        [JsonIgnore]
+        public IList<ISourceFile> SourceFiles { get; }
 
         [JsonIgnore]
         public IList<IProjectFolder> Folders { get; }
 
-		public IList<string> CompilerArguments { get; }
+        public IList<string> CompilerArguments { get; }
 
-		public IList<string> CCompilerArguments { get; }
+        public IList<string> CCompilerArguments { get; }
 
-		public IList<string> CppCompilerArguments { get; }
+        public IList<string> CppCompilerArguments { get; }
 
-		public IList<string> ToolChainArguments { get; }
+        public IList<string> ToolChainArguments { get; }
 
-		public IList<string> LinkerArguments { get; }
+        public IList<string> LinkerArguments { get; }
 
-		public string GetObjectDirectory(IStandardProject superProject)
-		{
-			return Path.Combine(GetOutputDirectory(superProject), "obj");
-		}
-
-		public string GetBuildDirectory(IStandardProject superProject)
-		{
-			return Path.Combine(GetOutputDirectory(superProject), "bin");
-		}
-
-		public string GetOutputDirectory(IStandardProject superProject)
-		{
-			var outputDirectory = string.Empty;
-
-			if (string.IsNullOrEmpty(superProject.BuildDirectory))
-			{
-				outputDirectory = Path.Combine(superProject.CurrentDirectory, "build");
-			}
-
-			if (!string.IsNullOrEmpty(superProject.BuildDirectory))
-			{
-				outputDirectory = Path.Combine(superProject.CurrentDirectory, superProject.BuildDirectory);
-			}
-
-			if (this != superProject)
-			{
-				outputDirectory = Path.Combine(outputDirectory, Name);
-			}
-
-			return outputDirectory;
-		}
-
-		public IList<string> BuiltinLibraries { get; set; }
-		public IList<string> StaticLibraries { get; set; }
-
-		public string BuildDirectory { get; set; }
-		public string LinkerScript { get; set; }
-		public string Executable { get; set; }
-
-		//static LlilumToolchain GetLLilumToolchain()
-		//{
-		//    var gccSettings = new ToolchainSettings();
-		//    gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
-		//    gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3");
-		//    gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
-		//    gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
-
-		//    return new LlilumToolchain(gccSettings);
-		//}
-
-		public IProject Load(ISolution solution, string filePath)
-		{
-			var result = Load(filePath, solution);
-            
-            return result;
-		}
-
-        public void RemoveFile (string fullPath)
+        public string GetObjectDirectory(IStandardProject superProject)
         {
+            return Path.Combine(GetOutputDirectory(superProject), "obj");
+        }
+
+        public string GetBuildDirectory(IStandardProject superProject)
+        {
+            return Path.Combine(GetOutputDirectory(superProject), "bin");
+        }
+
+        public string GetOutputDirectory(IStandardProject superProject)
+        {
+            var outputDirectory = string.Empty;
+
+            if (string.IsNullOrEmpty(superProject.BuildDirectory))
+            {
+                outputDirectory = Path.Combine(superProject.CurrentDirectory, "build");
+            }
+
+            if (!string.IsNullOrEmpty(superProject.BuildDirectory))
+            {
+                outputDirectory = Path.Combine(superProject.CurrentDirectory, superProject.BuildDirectory);
+            }
+
+            if (this != superProject)
+            {
+                outputDirectory = Path.Combine(outputDirectory, Name);
+            }
+
+            return outputDirectory;
+        }
+
+        public IList<string> BuiltinLibraries { get; set; }
+        public IList<string> StaticLibraries { get; set; }
+
+        public string BuildDirectory { get; set; }
+        public string LinkerScript { get; set; }
+        public string Executable { get; set; }
+
+        //static LlilumToolchain GetLLilumToolchain()
+        //{
+        //    var gccSettings = new ToolchainSettings();
+        //    gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
+        //    gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3");
+        //    gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
+        //    gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
+
+        //    return new LlilumToolchain(gccSettings);
+        //}
+
+        public IProject Load(ISolution solution, string filePath)
+        {
+            var result = Load(filePath, solution);
+
+            return result;
+        }
+
+        public void RemoveFolder(string folder)
+        {
+            var existingFolder = Folders.BinarySearch(folder);
+
+            if (existingFolder != null)
+            {
+                RemoveFolder(existingFolder);
+            }
+        }
+
+        public void AddFolder(string fullPath)
+        {
+            var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
+
+            var newFolder = GetSubFolders(this, folder, fullPath);
+            folder.AddFolder(newFolder);
+        }
+
+        public void RemoveFile(string fullPath)
+        {
+            Console.WriteLine("implement binary search.");
             var file = SourceFiles.FirstOrDefault(s => s.Location == fullPath);
 
             if (file != null)
@@ -322,7 +341,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             }
         }
 
-        public void AddFile (string fullPath)
+        public void AddFile(string fullPath)
         {
             var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
@@ -369,12 +388,32 @@ namespace AvalonStudio.Projects.CPlusPlus
             Console.WriteLine($"Changed - Type: {e.ChangeType}, Name: {e.Name}, Path: {e.FullPath}");
         }
 
-        public int CompareTo(IProject other)
-		{
-			return Name.CompareTo(other.Name);
-		}
+        private void FolderSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
+        {
+            RemoveFolder(e.FullPath);
+        }
 
-        public void ExcludeFile (ISourceFile file)
+        private void FolderSystemWatcher_Renamed(object sender, RenamedEventArgs e)
+        {
+            
+        }
+
+        private void FolderSystemWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+            AddFolder(e.FullPath);
+        }
+
+        private void FolderSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            
+        }
+
+        public int CompareTo(IProject other)
+        {
+            return Name.CompareTo(other.Name);
+        }
+
+        public void ExcludeFile(ISourceFile file)
         {
             file.Parent.Items.Remove(file);
 
@@ -383,10 +422,17 @@ namespace AvalonStudio.Projects.CPlusPlus
             Save();
         }
 
-        public void ExcludeFolder (IProjectFolder folder)
-        { 
-}
+        public void ExcludeFolder(IProjectFolder folder)
+        {
+            folder.Parent.Items.Remove(folder);
 
+            ExcludedFiles.Add(folder.Project.CurrentDirectory.MakeRelativePath(folder.Location).ToAvalonPath());
+
+            RemoveFiles(this, folder);
+
+            Save();
+        }
+  
 		public void RemoveFile(ISourceFile file)
 		{
             file.Parent.Items.Remove(file);
@@ -396,12 +442,9 @@ namespace AvalonStudio.Projects.CPlusPlus
 		public void RemoveFolder(IProjectFolder folder)
 		{
 			folder.Parent.Items.Remove(folder);
-
-			ExcludedFiles.Add(folder.Project.CurrentDirectory.MakeRelativePath(folder.Location).ToAvalonPath());
-
 			RemoveFiles(this, folder);
 
-			Save();
+            Folders.Remove(folder);
 		}
 
 		public ISourceFile FindFile(ISourceFile path)
@@ -593,10 +636,16 @@ namespace AvalonStudio.Projects.CPlusPlus
             fileSystemWatcher.EnableRaisingEvents = true;
 
             folderSystemWatcher = new FileSystemWatcher(CurrentDirectory);
+            folderSystemWatcher.Changed += FolderSystemWatcher_Changed;
+            folderSystemWatcher.Created += FolderSystemWatcher_Created;
+            folderSystemWatcher.Renamed += FolderSystemWatcher_Renamed;
+            folderSystemWatcher.Deleted += FolderSystemWatcher_Deleted;
+            folderSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+            folderSystemWatcher.IncludeSubdirectories = true;
+            folderSystemWatcher.EnableRaisingEvents = true;
+        }        
 
-        }
-
-		public static CPlusPlusProject Load(string filename, ISolution solution)
+        public static CPlusPlusProject Load(string filename, ISolution solution)
 		{
 			if (!File.Exists(filename))
 			{
