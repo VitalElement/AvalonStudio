@@ -34,6 +34,11 @@ namespace AvalonStudio.TextEditor.Rendering
 
 		public TextLocation GetLocation(int offset)
 		{
+            if(offset > TextDocument.TextLength)
+            {
+                offset = TextDocument.TextLength;
+            }
+
 			var documentLocation = TextDocument.GetLocation(offset);
 
 			var result = new TextLocation(documentLocation.Line - firstVisualLine, documentLocation.Column);
