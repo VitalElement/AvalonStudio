@@ -1,6 +1,9 @@
+using AvalonStudio.Platforms;
+using AvalonStudio.Utils;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using AvalonStudio.Projects;
 
 namespace AvalonStudio.Projects.Standard
 {
@@ -27,7 +30,7 @@ namespace AvalonStudio.Projects.Standard
 
 		public void AddFile(ISourceFile file)
 		{
-            this.Items.Add(file);
+            this.Items.InsertSorted(file);
 		}
 
 		public void AddFolder(IProjectFolder folder)
@@ -44,5 +47,30 @@ namespace AvalonStudio.Projects.Standard
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        public void ExcludeFile(ISourceFile file)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ExcludeFolder(IProjectFolder folder)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CompareTo(IProjectFolder other)
+        {
+            return Location.CompareFilePath(other.Location);
+        }
+
+        public int CompareTo(string other)
+        {
+            return Location.CompareFilePath(other);
+        }
+
+        public int CompareTo(IProjectItem other)
+        {
+            return this.CompareProjectItems(other);
+        }
+    }
 }

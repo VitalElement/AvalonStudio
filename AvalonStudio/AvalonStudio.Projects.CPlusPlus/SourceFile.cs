@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using AvalonStudio.Platforms;
 using Newtonsoft.Json;
@@ -82,5 +83,10 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 			return new SourceFile {File = filePath.ToPlatformPath(), Project = project};
 		}
-	}
+
+        public int CompareTo(IProjectItem other)
+        {
+            return this.CompareProjectItems(other);
+        }
+    }
 }
