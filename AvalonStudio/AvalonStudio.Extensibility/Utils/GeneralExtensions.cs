@@ -49,15 +49,49 @@ namespace AvalonStudio.Utils
 			return default(T);
 		}
 
-		/// <summary>
-		///     Inserts an element into the collection, keeping it sorted. The collection must be sorted
-		///     already, i.e. populated only with this method. The template type for the collection must
-		///     implement IComparable.
-		/// </summary>
-		/// <typeparam name="T">is the type of items in the collection.</typeparam>
-		/// <param name="myself">is "this" reference.</param>
-		/// <param name="item">is the item to insert.</param>
-		public static void InsertSorted<T>(this IList<T> myself, T item) where T : IComparable<T>
+        public static T BinarySearch<T, TKey>(this IList<T> list, TKey key)
+            where T : IComparable<TKey>
+        {
+            var min = 0;
+            var max = list.Count;
+            while (min < max)
+            {
+                var mid = min + (max - min) / 2;
+                var midItem = list[mid];
+                
+                var comp = midItem.CompareTo(key);
+                if (comp < 0)
+                {
+                    min = mid + 1;
+                }
+                else if (comp > 0)
+                {
+                    max = mid - 1;
+                }
+                else
+                {
+                    return midItem;
+                }
+            }
+
+            if (min == max && min < list.Count &&
+                (list[min]).CompareTo(key) == 0)
+            {
+                return list[min];
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
+        ///     Inserts an element into the collection, keeping it sorted. The collection must be sorted
+        ///     already, i.e. populated only with this method. The template type for the collection must
+        ///     implement IComparable.
+        /// </summary>
+        /// <typeparam name="T">is the type of items in the collection.</typeparam>
+        /// <param name="myself">is "this" reference.</param>
+        /// <param name="item">is the item to insert.</param>
+        public static void InsertSorted<T>(this IList<T> myself, T item) where T : IComparable<T>
 		{
 			if (myself.Count == 0)
 			{

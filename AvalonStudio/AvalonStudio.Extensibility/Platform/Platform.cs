@@ -334,8 +334,17 @@ namespace AvalonStudio.Platforms
 		}
 
 		public static int CompareFilePath(this string path, string other)
-		{
-			switch (PlatformIdentifier)
+        { 
+            if(other.EndsWith(Path.DirectorySeparatorChar.ToString()) && !path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                path += Path.DirectorySeparatorChar;
+            }
+            else if (path.EndsWith(Path.DirectorySeparatorChar.ToString()) && !other.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                other += Path.DirectorySeparatorChar;
+            }
+
+            switch (PlatformIdentifier)
 			{
 				case PlatformID.Win32NT:
 					// TODO consider using directory info?           

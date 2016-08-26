@@ -14,7 +14,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 			OpenInExplorerCommand.Subscribe(o => { Process.Start(Path.GetDirectoryName(model.Location)); });
 
 			RemoveCommand = ReactiveCommand.Create();
-			RemoveCommand.Subscribe(o => { model.Project.RemoveFile(model); });
+			RemoveCommand.Subscribe(o => { model.Project.ExcludeFile(model); });
 		}
 
 		public new ReactiveCommand<object> OpenInExplorerCommand { get; }
