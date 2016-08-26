@@ -20,8 +20,15 @@ namespace AvalonStudio.Debugging
 
                 if (list.Count > 0)
                 {
-                    disassemblyList.ScrollIntoView(list[disassemblyList.SelectedIndex + 8]);
-                    disassemblyList.ScrollIntoView(list[disassemblyList.SelectedIndex - 8]);
+                    if (list.Count >= disassemblyList.SelectedIndex + 8)
+                    {
+                        disassemblyList.ScrollIntoView(list[disassemblyList.SelectedIndex + 8]);
+                    }
+
+                    if (disassemblyList.SelectedIndex >= 8)
+                    {
+                        disassemblyList.ScrollIntoView(list[disassemblyList.SelectedIndex - 8]);
+                    }
                 }
             };
 		}
