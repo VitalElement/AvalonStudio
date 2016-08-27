@@ -88,5 +88,10 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             return this.CompareProjectItems(other);
         }
+
+        public int CompareTo(string other)
+        {
+            return Location.CompareFilePath(other);
+        }
     }
 }
