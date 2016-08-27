@@ -14,5 +14,8 @@ namespace AvalonStudio.Projects
 		string CurrentDirectory { get; }
 		string Location { get; }
 		Language Language { get; }
+
+        void RaiseFileModifiedEvent();
+        event EventHandler FileModifiedExternally;
 	}
 }

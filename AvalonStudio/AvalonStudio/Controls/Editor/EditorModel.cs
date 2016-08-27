@@ -154,7 +154,7 @@ namespace AvalonStudio.Controls
 						TextDocument.FileName = file.Location;
 					}
 
-					ProjectFile = file;
+					ProjectFile = file;                    
 
 					RegisterLanguageService(intellisense, completionAdviceControl, completionAssistant);
 
@@ -164,9 +164,9 @@ namespace AvalonStudio.Controls
 					}
 				}
 			}
-		}
+		}        
 
-		public void Save()
+        public void Save()
 		{
 			if (ProjectFile != null && TextDocument != null && IsDirty)
 			{

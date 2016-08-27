@@ -414,6 +414,16 @@ namespace AvalonStudio.Projects.CPlusPlus
             }
         }
 
+        public void FileChanged (string fullPath)
+        {
+            var file = FindFile(fullPath);
+
+            if(file != null)
+            {
+                file.RaiseFileModifiedEvent();
+            }
+        }
+
         private void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
         {
             Invoke(() =>
@@ -442,7 +452,11 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-
+            Invoke(() =>
+            {
+                Console.WriteLine(e.ChangeType);
+                FileChanged(e.FullPath);
+            });
         }
 
         private void FolderSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
@@ -718,7 +732,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             fileSystemWatcher.Created += FileSystemWatcher_Created;
             fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
             fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
-            fileSystemWatcher.NotifyFilter = NotifyFilters.FileName;
+            fileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
             fileSystemWatcher.IncludeSubdirectories = true;
             fileSystemWatcher.EnableRaisingEvents = true;            
         }
