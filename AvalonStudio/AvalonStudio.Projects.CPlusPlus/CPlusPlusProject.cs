@@ -15,13 +15,20 @@ using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using AvalonStudio.Extensibility.Threading;
+using System.Threading.Tasks;
+using Avalonia.Threading;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("AvalonStudio.Projects.CPlusPlus.UnitTests")]
 
 namespace AvalonStudio.Projects.CPlusPlus
-{
+{    
     public class CPlusPlusProject : SerializedObject<CPlusPlusProject>, IStandardProject
     {
         private FileSystemWatcher fileSystemWatcher;
         private FileSystemWatcher folderSystemWatcher;
+        private Dispatcher uiDispatcher;
 
         public const string ProjectExtension = "acproj";
 
@@ -33,7 +40,12 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
         }
 
-        public CPlusPlusProject()
+        public CPlusPlusProject() : this(true)
+        {
+
+        }
+
+        public CPlusPlusProject(bool useDispatcher)
         {
             ExcludedFiles = new List<string>();
             Items = new ObservableCollection<IProjectItem>();
@@ -55,6 +67,11 @@ namespace AvalonStudio.Projects.CPlusPlus
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
             Project = this;
+
+            if (useDispatcher)
+            {
+                uiDispatcher = Dispatcher.UIThread;
+            }
         }
 
         [JsonIgnore]
@@ -99,6 +116,21 @@ namespace AvalonStudio.Projects.CPlusPlus
             }
 
             Serialize(Location);
+        }
+
+        void Invoke(Action action)
+        {
+            if (uiDispatcher != null)
+            {
+                uiDispatcher.InvokeTaskAsync(() =>
+                {
+                    action();
+                });
+            }
+            else
+            {
+                action();
+            }
         }
 
         public void AddReference(IProject project)
@@ -314,11 +346,15 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         public void RemoveFolder(string folder)
         {
-            var existingFolder = Folders.BinarySearch(folder);
+            var existingFolder = FindFolder(folder);
 
             if (existingFolder != null)
             {
                 RemoveFolder(existingFolder);
+            }
+            else
+            {
+                Console.WriteLine("Didnt find.");
             }
         }
 
@@ -326,13 +362,30 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
-            var newFolder = GetSubFolders(this, folder, fullPath);
-            folder.AddFolder(newFolder);
+            var existing = FindFolder(fullPath);
+
+            Console.WriteLine($"AddFolder: {fullPath}");
+
+            if (existing != null)
+            {
+                Console.WriteLine("existing folder");
+            }
+
+            var newFolder = new StandardProjectFolder(fullPath);
+            newFolder.Project = this;            
+
+            if (folder.Location == Project.CurrentDirectory)
+            {
+                Project.AddFolder(newFolder);
+            }
+            else
+            {
+                folder.AddFolder(newFolder);
+            }
         }
 
         public void RemoveFile(string fullPath)
         {
-            Console.WriteLine("implement binary search.");
             var file = SourceFiles.FirstOrDefault(s => s.Location == fullPath);
 
             if (file != null)
@@ -362,35 +415,41 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
         {
-            RemoveFile(e.FullPath);
-
-            Console.WriteLine($"Deleted - Type: {e.ChangeType}, Name: {e.Name}, Path: {e.FullPath}");
+            Invoke(() =>
+            {
+                RemoveFile(e.FullPath);
+            });
         }
 
         private void FileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
         {
-            RemoveFile(e.OldFullPath);
+            Invoke(() =>
+            {
+                RemoveFile(e.OldFullPath);
 
-            AddFile(e.FullPath);
-
-            Console.WriteLine($"Renamed - Type: {e.ChangeType}, Name: {e.Name}, Path: {e.FullPath}");
+                AddFile(e.FullPath);
+            });
         }
 
         private void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
         {
-            AddFile(e.FullPath);
-
-            Console.WriteLine($"Created - Type: {e.ChangeType}, Name: {e.Name}, Path: {e.FullPath}");
+            Invoke(() =>
+            {
+                AddFile(e.FullPath);
+            });            
         }
 
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            Console.WriteLine($"Changed - Type: {e.ChangeType}, Name: {e.Name}, Path: {e.FullPath}");
+
         }
 
         private void FolderSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
         {
-            RemoveFolder(e.FullPath);
+            Invoke(() =>
+            {                
+                RemoveFolder(e.FullPath);
+            });
         }
 
         private void FolderSystemWatcher_Renamed(object sender, RenamedEventArgs e)
@@ -400,12 +459,15 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private void FolderSystemWatcher_Created(object sender, FileSystemEventArgs e)
         {
-            AddFolder(e.FullPath);
+            Invoke(() =>
+            {
+                AddFolder(e.FullPath);
+            });
         }
 
         private void FolderSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            
+
         }
 
         public int CompareTo(IProject other)
@@ -432,208 +494,204 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             Save();
         }
-  
-		public void RemoveFile(ISourceFile file)
-		{
+
+        public void RemoveFile(ISourceFile file)
+        {
             file.Parent.Items.Remove(file);
             SourceFiles.Remove(file);
         }
 
-		public void RemoveFolder(IProjectFolder folder)
-		{
-			folder.Parent.Items.Remove(folder);
-			RemoveFiles(this, folder);
+        public void RemoveFolder(IProjectFolder folder)
+        {
+            folder.Parent.Items.Remove(folder);
+            RemoveFiles(this, folder);
 
-            Folders.Remove(folder);
-		}
+            if(!Folders.Remove(folder))
+            {
+                Console.WriteLine("Remove Folder failed...");
+            }
+        }
 
-		public ISourceFile FindFile(ISourceFile path)
-		{
-			return SourceFiles.BinarySearch(f => f, path);
-		}
+        public ISourceFile FindFile(ISourceFile path)
+        {
+            return SourceFiles.BinarySearch(f => f, path);
+        }
 
         public IProjectFolder FindFolder(string path)
         {
             return Folders.BinarySearch(path);
         }
 
-		public void AddFile(ISourceFile file)
-		{
-			// TODO how will this work with subdirs.
-			SourceFiles.InsertSorted(file);
-			Items.InsertSorted(file);
-		}
+        public void AddFile(ISourceFile file)
+        {
+            // TODO how will this work with subdirs.
+            SourceFiles.InsertSorted(file);
+            Items.InsertSorted(file);
+        }
 
-		public void AddFolder(IProjectFolder folder)
-		{
-			throw new NotImplementedException();
-		}
-
-
-		[JsonIgnore]
-		public IToolChain ToolChain
-		{
-			get
-			{
-				var result = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == ToolchainReference);
-
-				return result;
-			}
-			set { ToolchainReference = value.GetType().ToString(); }
-		}
-
-		[JsonIgnore]
-		public IDebugger Debugger
-		{
-			get
-			{
-				var result = IoC.Get<IShell>().Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == DebuggerReference);
-
-				return result;
-			}
-			set { DebuggerReference = value.GetType().ToString(); }
-		}
-
-		[JsonIgnore]
-		public ITestFramework TestFramework
-		{
-			get
-			{
-				var result = IoC.Get<IShell>()
-					.TestFrameworks.FirstOrDefault(tf => tf.GetType().ToString() == TestFrameworkReference);
-
-				return result;
-			}
-			set { TestFrameworkReference = value.GetType().ToString(); }
-		}
-
-		[JsonIgnore]
-		public ObservableCollection<IProjectItem> Items { get; }
-
-		[JsonIgnore]
-		public IList<object> ConfigurationPages
-		{
-			get
-			{
-				var result = new List<object>();
-
-				result.Add(new TypeSettingsFormViewModel(this));
-				result.Add(new IncludePathSettingsFormViewModel(this));
-				result.Add(new ReferenceSettingsFormViewModel(this));
-				result.Add(new ToolchainSettingsFormViewModel(this));
-				result.Add(new DebuggerSettingsFormViewModel(this));
-
-				return result;
-			}
-		}
-
-		[JsonConverter(typeof (ExpandoObjectConverter))]
-		public dynamic ToolchainSettings { get; set; }
-
-		[JsonConverter(typeof (ExpandoObjectConverter))]
-		public dynamic DebugSettings { get; set; }
-
-		[JsonIgnore]
-		public string Extension
-		{
-			get { return ProjectExtension; }
-		}
-
-		[JsonIgnore]
-		public IProject Project { get; set; }
-
-		[JsonIgnore]
-		public IProjectFolder Parent { get; set; }
-
-		public bool Hidden { get; set; }
-
-		public static string GenerateProjectFileName(string name)
-		{
-			return string.Format("{0}.{1}", name, ProjectExtension);
-		}
-
-		private static bool IsExcluded(List<string> exclusionFilters, string path)
-		{
-			var result = false;
+        public void AddFolder(IProjectFolder folder)
+        {
+            folder.Parent = this;
+            Folders.InsertSorted(folder);
+            Items.InsertSorted(folder);
+        }
 
 
-			var filter = exclusionFilters.FirstOrDefault(f => path.Contains(f));
+        [JsonIgnore]
+        public IToolChain ToolChain
+        {
+            get
+            {
+                var result = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == ToolchainReference);
 
-			result = !string.IsNullOrEmpty(filter);
+                return result;
+            }
+            set { ToolchainReference = value.GetType().ToString(); }
+        }
 
-			return result;
-		}
+        [JsonIgnore]
+        public IDebugger Debugger
+        {
+            get
+            {
+                var result = IoC.Get<IShell>().Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == DebuggerReference);
 
-		public static void PopulateFiles(CPlusPlusProject project, StandardProjectFolder folder)
-		{
-			var files = Directory.EnumerateFiles(folder.Location);
+                return result;
+            }
+            set { DebuggerReference = value.GetType().ToString(); }
+        }
 
-			files =
-				files.Where(
-					f =>
-						!IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()) &&
-						Path.GetExtension(f) != '.' + ProjectExtension);
+        [JsonIgnore]
+        public ITestFramework TestFramework
+        {
+            get
+            {
+                var result = IoC.Get<IShell>()
+                    .TestFrameworks.FirstOrDefault(tf => tf.GetType().ToString() == TestFrameworkReference);
 
-			foreach (var file in files)
-			{
-				var sourceFile = SourceFile.FromPath(project, folder, file.ToPlatformPath());
-				project.SourceFiles.InsertSorted(sourceFile);
-				folder.Items.InsertSorted(sourceFile);
-			}
-		}
+                return result;
+            }
+            set { TestFrameworkReference = value.GetType().ToString(); }
+        }
 
-		public static StandardProjectFolder GetSubFolders(CPlusPlusProject project, IProjectFolder parent, string path)
-		{
+        [JsonIgnore]
+        public ObservableCollection<IProjectItem> Items { get; }
+
+        [JsonIgnore]
+        public IList<object> ConfigurationPages
+        {
+            get
+            {
+                var result = new List<object>();
+
+                result.Add(new TypeSettingsFormViewModel(this));
+                result.Add(new IncludePathSettingsFormViewModel(this));
+                result.Add(new ReferenceSettingsFormViewModel(this));
+                result.Add(new ToolchainSettingsFormViewModel(this));
+                result.Add(new DebuggerSettingsFormViewModel(this));
+
+                return result;
+            }
+        }
+
+        [JsonConverter(typeof(ExpandoObjectConverter))]
+        public dynamic ToolchainSettings { get; set; }
+
+        [JsonConverter(typeof(ExpandoObjectConverter))]
+        public dynamic DebugSettings { get; set; }
+
+        [JsonIgnore]
+        public string Extension
+        {
+            get { return ProjectExtension; }
+        }
+
+        [JsonIgnore]
+        public IProject Project { get; set; }
+
+        [JsonIgnore]
+        public IProjectFolder Parent { get; set; }
+
+        public bool Hidden { get; set; }
+
+        public static string GenerateProjectFileName(string name)
+        {
+            return string.Format("{0}.{1}", name, ProjectExtension);
+        }
+
+        private static bool IsExcluded(List<string> exclusionFilters, string path)
+        {
+            var result = false;
+
+
+            var filter = exclusionFilters.FirstOrDefault(f => path.Contains(f));
+
+            result = !string.IsNullOrEmpty(filter);
+
+            return result;
+        }
+
+        public static void PopulateFiles(CPlusPlusProject project, StandardProjectFolder folder)
+        {
+            var files = Directory.EnumerateFiles(folder.Location);
+
+            files =
+                files.Where(
+                    f =>
+                        !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()) &&
+                        Path.GetExtension(f) != '.' + ProjectExtension);
+
+            foreach (var file in files)
+            {
+                var sourceFile = SourceFile.FromPath(project, folder, file.ToPlatformPath());
+                project.SourceFiles.InsertSorted(sourceFile);
+                folder.Items.InsertSorted(sourceFile);
+            }
+        }
+
+        public static StandardProjectFolder GetSubFolders(CPlusPlusProject project, IProjectFolder parent, string path)
+        {
             var result = new StandardProjectFolder(path);
 
-			var folders = Directory.GetDirectories(path);
+            var folders = Directory.GetDirectories(path);
 
-			if (folders.Count() > 0)
-			{
-				foreach (
-					var folder in
-						folders.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()))
-					)
-				{
-					result.Items.InsertSorted(GetSubFolders(project, result, folder));
-				}
-			}
+            if (folders.Count() > 0)
+            {
+                foreach (
+                    var folder in
+                        folders.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()))
+                    )
+                {
+                    result.Items.InsertSorted(GetSubFolders(project, result, folder));
+                }
+            }
 
-			PopulateFiles(project, result);
+            PopulateFiles(project, result);
 
             project.Folders.InsertSorted(result);
-			result.Parent = parent;
-			result.Project = project;
+            result.Parent = parent;
+            result.Project = project;
 
-			return result;
-		}
+            return result;
+        }
 
-		private void LoadFiles()
-		{
-			Items.InsertSorted(new ReferenceFolder(this));
-			var folders = GetSubFolders(this, this, CurrentDirectory);
+        internal void LoadFiles()
+        {
+            Items.InsertSorted(new ReferenceFolder(this));
+            var folders = GetSubFolders(this, this, CurrentDirectory);
 
-			//Items = new ObservableCollection<IProjectItem>();
+            //Items = new ObservableCollection<IProjectItem>();
 
-			foreach (var item in folders.Items)
-			{
-				item.Parent = this;
-				Items.InsertSorted(item);
-			}
+            foreach (var item in folders.Items)
+            {
+                item.Parent = this;
+                Items.InsertSorted(item);
+            }
 
-			foreach (var file in SourceFiles)
-			{
-				file.Project = this;
-			}
-
-            fileSystemWatcher = new FileSystemWatcher(CurrentDirectory);
-            fileSystemWatcher.Changed += FileSystemWatcher_Changed;
-            fileSystemWatcher.Created += FileSystemWatcher_Created;
-            fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
-            fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
-            fileSystemWatcher.NotifyFilter = NotifyFilters.FileName;
-            fileSystemWatcher.IncludeSubdirectories = true;
-            fileSystemWatcher.EnableRaisingEvents = true;
+            foreach (var file in SourceFiles)
+            {
+                file.Project = this;
+            }
 
             folderSystemWatcher = new FileSystemWatcher(CurrentDirectory);
             folderSystemWatcher.Changed += FolderSystemWatcher_Changed;
@@ -643,211 +701,221 @@ namespace AvalonStudio.Projects.CPlusPlus
             folderSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
             folderSystemWatcher.IncludeSubdirectories = true;
             folderSystemWatcher.EnableRaisingEvents = true;
-        }        
+
+            fileSystemWatcher = new FileSystemWatcher(CurrentDirectory);
+            fileSystemWatcher.Changed += FileSystemWatcher_Changed;
+            fileSystemWatcher.Created += FileSystemWatcher_Created;
+            fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
+            fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
+            fileSystemWatcher.NotifyFilter = NotifyFilters.FileName;
+            fileSystemWatcher.IncludeSubdirectories = true;
+            fileSystemWatcher.EnableRaisingEvents = true;            
+        }
 
         public static CPlusPlusProject Load(string filename, ISolution solution)
-		{
-			if (!File.Exists(filename))
-			{
-				Console.WriteLine("Unable for find project file: " + filename);
-			}
+        {
+            if (!File.Exists(filename))
+            {
+                Console.WriteLine("Unable for find project file: " + filename);
+            }
 
-			var project = Deserialize(filename);
+            var project = Deserialize(filename);
 
-			for (var i = 0; i < project.Includes.Count; i++)
-			{
-				project.Includes[i].Value = project.Includes[i].Value.ToAvalonPath();
-			}
+            for (var i = 0; i < project.Includes.Count; i++)
+            {
+                project.Includes[i].Value = project.Includes[i].Value.ToAvalonPath();
+            }
 
-			for (var i = 0; i < project.ExcludedFiles.Count; i++)
-			{
-				project.ExcludedFiles[i] = project.ExcludedFiles[i].ToAvalonPath();
-			}
+            for (var i = 0; i < project.ExcludedFiles.Count; i++)
+            {
+                project.ExcludedFiles[i] = project.ExcludedFiles[i].ToAvalonPath();
+            }
 
-			project.Project = project;
-			project.Location = filename;
-			project.SetSolution(solution);
+            project.Project = project;
+            project.Location = filename;
+            project.SetSolution(solution);
 
-			project.LoadFiles();
+            project.LoadFiles();
 
             return project;
-		}
+        }
 
 
-		public static CPlusPlusProject Create(ISolution solution, string directory, string name)
-		{
-			CPlusPlusProject result = null;
+        public static CPlusPlusProject Create(ISolution solution, string directory, string name)
+        {
+            CPlusPlusProject result = null;
 
-			var projectFile = Path.Combine(directory, GenerateProjectFileName(name));
+            var projectFile = Path.Combine(directory, GenerateProjectFileName(name));
 
-			if (!File.Exists(projectFile))
-			{
-				var project = new CPlusPlusProject();
-				project.SetSolution(solution);
-				project.Location = projectFile;
+            if (!File.Exists(projectFile))
+            {
+                var project = new CPlusPlusProject();
+                project.SetSolution(solution);
+                project.Location = projectFile;
+                
+                project.Save();
+                project.LoadFiles();
 
-				project.LoadFiles();
-				project.Save();
+                result = project;
+            }
 
-				result = project;
-			}
+            return result;
+        }
 
-			return result;
-		}
+        public void SetSolution(ISolution solution)
+        {
+            Solution = solution;
+        }
 
-		public void SetSolution(ISolution solution)
-		{
-			Solution = solution;
-		}
+        protected IList<string> GenerateReferencedIncludes()
+        {
+            var result = new List<string>();
 
-		protected IList<string> GenerateReferencedIncludes()
-		{
-			var result = new List<string>();
+            foreach (var reference in References)
+            {
+                var loadedReference = reference as CPlusPlusProject;
 
-			foreach (var reference in References)
-			{
-				var loadedReference = reference as CPlusPlusProject;
+                if (loadedReference == null)
+                {
+                    // What to do in this situation?
+                    throw new NotImplementedException();
+                }
 
-				if (loadedReference == null)
-				{
-					// What to do in this situation?
-					throw new NotImplementedException();
-				}
+                result.AddRange(loadedReference.GenerateReferencedIncludes());
+            }
 
-				result.AddRange(loadedReference.GenerateReferencedIncludes());
-			}
+            foreach (var includePath in Includes.Where(i => i.Exported && !i.Global))
+            {
+                result.Add(Path.Combine(CurrentDirectory, includePath.Value).ToPlatformPath());
+            }
 
-			foreach (var includePath in Includes.Where(i => i.Exported && !i.Global))
-			{
-				result.Add(Path.Combine(CurrentDirectory, includePath.Value).ToPlatformPath());
-			}
+            return result;
+        }
 
-			return result;
-		}
+        protected IList<string> GenerateReferencedDefines()
+        {
+            var result = new List<string>();
 
-		protected IList<string> GenerateReferencedDefines()
-		{
-			var result = new List<string>();
+            foreach (var reference in References)
+            {
+                var loadedReference = reference as CPlusPlusProject;
 
-			foreach (var reference in References)
-			{
-				var loadedReference = reference as CPlusPlusProject;
+                if (loadedReference == null)
+                {
+                    // What to do in this situation?
+                    throw new NotImplementedException();
+                }
 
-				if (loadedReference == null)
-				{
-					// What to do in this situation?
-					throw new NotImplementedException();
-				}
+                result.AddRange(loadedReference.GenerateReferencedDefines());
+            }
 
-				result.AddRange(loadedReference.GenerateReferencedDefines());
-			}
+            foreach (var define in Defines.Where(i => i.Exported && !i.Global))
+            {
+                result.Add(define.Value);
+            }
 
-			foreach (var define in Defines.Where(i => i.Exported && !i.Global))
-			{
-				result.Add(define.Value);
-			}
+            return result;
+        }
 
-			return result;
-		}
+        public CPlusPlusProject GetReference(Reference reference)
+        {
+            CPlusPlusProject result = null;
 
-		public CPlusPlusProject GetReference(Reference reference)
-		{
-			CPlusPlusProject result = null;
+            foreach (var project in Solution.Projects)
+            {
+                if (project.Name == reference.Name)
+                {
+                    result = project as CPlusPlusProject;
+                    break;
+                }
+            }
 
-			foreach (var project in Solution.Projects)
-			{
-				if (project.Name == reference.Name)
-				{
-					result = project as CPlusPlusProject;
-					break;
-				}
-			}
+            if (result == null)
+            {
+                throw new Exception(string.Format("Unable to find reference {0}, in directory {1}", reference.Name,
+                    Solution.CurrentDirectory));
+            }
 
-			if (result == null)
-			{
-				throw new Exception(string.Format("Unable to find reference {0}, in directory {1}", reference.Name,
-					Solution.CurrentDirectory));
-			}
+            return result;
+        }
 
-			return result;
-		}
+        public bool ShouldSerializeReferences()
+        {
+            return UnloadedReferences.Count > 0;
+        }
 
-		public bool ShouldSerializeReferences()
-		{
-			return UnloadedReferences.Count > 0;
-		}
-
-		public bool ShouldSerializePublicIncludes()
-		{
-			return PublicIncludes.Count > 0;
-		}
+        public bool ShouldSerializePublicIncludes()
+        {
+            return PublicIncludes.Count > 0;
+        }
 
 
-		public bool ShouldSerializeGlobalIncludes()
-		{
-			return GlobalIncludes.Count > 0;
-		}
+        public bool ShouldSerializeGlobalIncludes()
+        {
+            return GlobalIncludes.Count > 0;
+        }
 
-		public bool ShouldSerializeIncludes()
-		{
-			return Includes.Count > 0;
-		}
+        public bool ShouldSerializeIncludes()
+        {
+            return Includes.Count > 0;
+        }
 
-		public bool ShouldSerializeDefines()
-		{
-			return Defines.Count > 0;
-		}
+        public bool ShouldSerializeDefines()
+        {
+            return Defines.Count > 0;
+        }
 
-		public bool ShouldSerializeCompilerArguments()
-		{
-			return CompilerArguments.Count > 0;
-		}
+        public bool ShouldSerializeCompilerArguments()
+        {
+            return CompilerArguments.Count > 0;
+        }
 
-		public bool ShouldSerializeCCompilerArguments()
-		{
-			return CCompilerArguments.Count > 0;
-		}
+        public bool ShouldSerializeCCompilerArguments()
+        {
+            return CCompilerArguments.Count > 0;
+        }
 
-		public bool ShouldSerializeCppCompilerArguments()
-		{
-			return CppCompilerArguments.Count > 0;
-		}
+        public bool ShouldSerializeCppCompilerArguments()
+        {
+            return CppCompilerArguments.Count > 0;
+        }
 
-		public bool ShouldSerializeToolChainArguments()
-		{
-			return ToolChainArguments.Count > 0;
-		}
+        public bool ShouldSerializeToolChainArguments()
+        {
+            return ToolChainArguments.Count > 0;
+        }
 
-		public bool ShouldSerializeLinkerArguments()
-		{
-			return LinkerArguments.Count > 0;
-		}
+        public bool ShouldSerializeLinkerArguments()
+        {
+            return LinkerArguments.Count > 0;
+        }
 
-		public bool ShouldSerializeBuiltinLibraries()
-		{
-			return BuiltinLibraries.Count > 0;
-		}
+        public bool ShouldSerializeBuiltinLibraries()
+        {
+            return BuiltinLibraries.Count > 0;
+        }
 
-		private void RemoveFiles(CPlusPlusProject project, IProjectFolder folder)
-		{
-			foreach (var item in folder.Items)
-			{
-				if (item is IProjectFolder)
-				{
-					RemoveFiles(project, item as IProjectFolder);
-				}
+        private void RemoveFiles(CPlusPlusProject project, IProjectFolder folder)
+        {
+            foreach (var item in folder.Items)
+            {
+                if (item is IProjectFolder)
+                {
+                    RemoveFiles(project, item as IProjectFolder);
+                    project.Folders.Remove(item as IProjectFolder);
+                }
 
-				if (item is ISourceFile)
-				{
-					project.SourceFiles.Remove(item as ISourceFile);
-				}
-			}
-		}
+                if (item is ISourceFile)
+                {
+                    project.SourceFiles.Remove(item as ISourceFile);
+                }
+            }
+        }
 
-		public bool ShouldSerializeHidden()
-		{
-			return Hidden;
-		}
+        public bool ShouldSerializeHidden()
+        {
+            return Hidden;
+        }
 
         public int CompareTo(IProjectFolder other)
         {
@@ -862,6 +930,26 @@ namespace AvalonStudio.Projects.CPlusPlus
         public int CompareTo(IProjectItem other)
         {
             return Name.CompareTo(other.Name);
+        }
+
+        public void RegisterFile(ISourceFile file)
+        {
+            SourceFiles.InsertSorted(file);
+        }
+
+        public void RegisterFolder(IProjectFolder folder)
+        {
+            Folders.InsertSorted(folder);
+        }
+
+        public void UnregisterFile(ISourceFile file)
+        {
+            SourceFiles.Remove(file);
+        }
+
+        public void UnregisterFolder(IProjectFolder folder)
+        {
+            Folders.Remove(folder);
         }
     }
 }
