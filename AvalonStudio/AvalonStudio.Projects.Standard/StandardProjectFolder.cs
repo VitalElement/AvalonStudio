@@ -31,12 +31,14 @@ namespace AvalonStudio.Projects.Standard
 		public void AddFile(ISourceFile file)
 		{
             this.Items.InsertSorted(file);
+            Project.RegisterFile(file);
 		}
 
 		public void AddFolder(IProjectFolder folder)
 		{
             folder.Parent = this;
             Items.InsertSorted(folder);
+            Project.RegisterFolder(folder);            
         }
 
 		public void RemoveFile(ISourceFile file)
