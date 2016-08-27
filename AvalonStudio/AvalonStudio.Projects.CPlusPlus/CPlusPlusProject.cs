@@ -370,17 +370,18 @@ namespace AvalonStudio.Projects.CPlusPlus
             {
                 Console.WriteLine("existing folder");
             }
-
-            var newFolder = new StandardProjectFolder(fullPath);
-            newFolder.Project = this;            
-
-            if (folder.Location == Project.CurrentDirectory)
-            {
-                Project.AddFolder(newFolder);
-            }
             else
             {
-                folder.AddFolder(newFolder);
+                var newFolder = GetSubFolders(this, folder, fullPath);
+
+                if (folder.Location == Project.CurrentDirectory)
+                {
+                    Project.AddFolder(newFolder);
+                }
+                else
+                {
+                    folder.AddFolder(newFolder);
+                }
             }
         }
 
@@ -454,7 +455,12 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private void FolderSystemWatcher_Renamed(object sender, RenamedEventArgs e)
         {
-            
+            Invoke(() =>
+            {
+                RemoveFolder(e.FullPath);
+
+                AddFolder(e.FullPath);
+            });
         }
 
         private void FolderSystemWatcher_Created(object sender, FileSystemEventArgs e)
