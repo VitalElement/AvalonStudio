@@ -387,7 +387,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         public void RemoveFile(string fullPath)
         {
-            var file = SourceFiles.FirstOrDefault(s => s.Location == fullPath);
+            var file = FindFile(fullPath);
 
             if (file != null)
             {
@@ -457,7 +457,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             Invoke(() =>
             {
-                RemoveFolder(e.FullPath);
+                RemoveFolder(e.OldFullPath);
 
                 AddFolder(e.FullPath);
             });
@@ -521,6 +521,11 @@ namespace AvalonStudio.Projects.CPlusPlus
         public ISourceFile FindFile(ISourceFile path)
         {
             return SourceFiles.BinarySearch(f => f, path);
+        }
+
+        public ISourceFile FindFile (string path)
+        {
+            return SourceFiles.BinarySearch(path);
         }
 
         public IProjectFolder FindFolder(string path)

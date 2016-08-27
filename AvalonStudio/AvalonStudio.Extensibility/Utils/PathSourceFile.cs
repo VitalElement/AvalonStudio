@@ -74,5 +74,10 @@ namespace AvalonStudio.Extensibility.Utils
         {
             return Name.CompareTo(other.Name);
         }
+
+        public int CompareTo(string other)
+        {
+            return Location.CompareFilePath(other);
+        }
     }
 }
