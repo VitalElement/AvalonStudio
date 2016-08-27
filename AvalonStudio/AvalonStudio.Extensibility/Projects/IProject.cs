@@ -52,6 +52,11 @@ namespace AvalonStudio.Projects
 
 		ISourceFile FindFile(ISourceFile file);
 
+        void RegisterFile(ISourceFile file);
+        void RegisterFolder(IProjectFolder folder);
+        void UnregisterFile(ISourceFile file);
+        void UnregisterFolder(IProjectFolder folder);
+
 
 		/// <summary>
 		///     Resolves all references in the project.
