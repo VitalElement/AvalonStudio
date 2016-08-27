@@ -25,44 +25,41 @@ namespace AvalonStudio.MVVM
 		public static void BindCollections<T, O>(this ObservableCollection<T> myself, ObservableCollection<O> other,
 			Func<O, T> creator, Func<T, O, bool> comparer = null)
 		{
-			other.CollectionChanged += (sender, e) =>
-			{
-                Dispatcher.UIThread.InvokeAsync(() =>
+            other.CollectionChanged += (sender, e) =>
+            {
+                switch (e.Action)
                 {
-                    switch (e.Action)
-                    {
-                        case NotifyCollectionChangedAction.Add:
-                            foreach (O item in e.NewItems)
-                            {
-                                myself.Insert(other.IndexOf(item), creator(item));
-                            }
-                            break;
+                    case NotifyCollectionChangedAction.Add:
+                        foreach (O item in e.NewItems)
+                        {
+                            myself.Insert(other.IndexOf(item), creator(item));
+                        }
+                        break;
 
-                        case NotifyCollectionChangedAction.Move:
-                            throw new NotImplementedException();
+                    case NotifyCollectionChangedAction.Move:
+                        throw new NotImplementedException();
 
-                        case NotifyCollectionChangedAction.Remove:
-                            // This is O(n^2) but given very small size of collections it is supposed
-                            // to be used on, we can live with it.
-                            foreach (O item in e.OldItems)
-                            {
-                                myself.RemoveMatching(t => comparer(t, item));
-                            }
+                    case NotifyCollectionChangedAction.Remove:
+                        // This is O(n^2) but given very small size of collections it is supposed
+                        // to be used on, we can live with it.
+                        foreach (O item in e.OldItems)
+                        {
+                            myself.RemoveMatching(t => comparer(t, item));
+                        }
 
-                            break;
+                        break;
 
-                        case NotifyCollectionChangedAction.Replace:
-                            throw new NotImplementedException();
+                    case NotifyCollectionChangedAction.Replace:
+                        throw new NotImplementedException();
 
-                        case NotifyCollectionChangedAction.Reset:
-                            myself.Clear();
-                            break;
+                    case NotifyCollectionChangedAction.Reset:
+                        myself.Clear();
+                        break;
 
-                        default:
-                            throw new Exception("Unknown action: " + e.Action.ToString());
-                    }
-                });
-			};
+                    default:
+                        throw new Exception("Unknown action: " + e.Action.ToString());
+                }
+            };
 
 			if (other.Count > 0)
 			{
