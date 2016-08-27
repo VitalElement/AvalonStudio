@@ -15,7 +15,9 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 		public string File { get; set; }
 
-		public int CompareTo(ISourceFile other)
+        public event EventHandler FileModifiedExternally;
+
+        public int CompareTo(ISourceFile other)
 		{
 			return File.CompareFilePath(other.File);
 		}
@@ -92,6 +94,11 @@ namespace AvalonStudio.Projects.CPlusPlus
         public int CompareTo(string other)
         {
             return Location.CompareFilePath(other);
+        }
+
+        public void RaiseFileModifiedEvent()
+        {
+            FileModifiedExternally?.Invoke(this, new EventArgs());
         }
     }
 }
