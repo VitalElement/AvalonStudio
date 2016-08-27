@@ -91,8 +91,16 @@ namespace AvalonStudio.Utils
         /// <typeparam name="T">is the type of items in the collection.</typeparam>
         /// <param name="myself">is "this" reference.</param>
         /// <param name="item">is the item to insert.</param>
-        public static void InsertSorted<T>(this IList<T> myself, T item) where T : IComparable<T>
+        public static void InsertSorted<T>(this IList<T> myself, T item, bool exclusive = true) where T : IComparable<T>
 		{
+            if (exclusive)
+            {
+                if (myself.BinarySearch(item) != null)
+                {
+                    return;
+                }
+            }
+
 			if (myself.Count == 0)
 			{
 				myself.Add(item);
