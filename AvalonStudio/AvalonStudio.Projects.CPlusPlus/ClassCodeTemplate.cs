@@ -19,9 +19,9 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 		public string Title => "C/C++ Class";
 
-		public Task Generate(IProjectFolder folder)
+		public async Task Generate(IProjectFolder folder)
 		{
-			return Task.Factory.StartNew(() =>
+			await Task.Factory.StartNew(async () =>
 			{
 				var name = _settings.ClassName;
 
@@ -30,18 +30,12 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 				if (_settings.GenerateHeader)
 				{
-					Dispatcher.UIThread.InvokeAsync(
-						() =>
-							folder.AddFile(SourceFile.Create(folder.Project, folder, folder.LocationDirectory,
-								$"{(name.Contains('.') ? name : name + ".h")}", headerTemplate.TransformText())));
+					await SourceFile.Create(folder, $"{(name.Contains('.') ? name : name + ".h")}", headerTemplate.TransformText());
 				}
 
 				if (_settings.GenerateClass)
 				{
-					Dispatcher.UIThread.InvokeAsync(
-						() =>
-							folder.AddFile(SourceFile.Create(folder.Project, folder, folder.LocationDirectory, $"{name}.cpp",
-								sourceTemplate.TransformText())));
+                    await SourceFile.Create(folder, $"{name}.cpp", sourceTemplate.TransformText());
 				}
 			});
 		}

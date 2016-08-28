@@ -28,7 +28,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             });
 
 			RemoveCommand = ReactiveCommand.Create();
-			RemoveCommand.Subscribe(_ => { model.Project.RemoveFolder(model); });
+			//RemoveCommand.Subscribe(_ => { model.Project.RemoveFolder(model); });
 		}
 
 		public ObservableCollection<ProjectItemViewModel> Items { get; }

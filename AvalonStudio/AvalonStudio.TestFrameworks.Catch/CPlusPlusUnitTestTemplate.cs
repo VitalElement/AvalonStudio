@@ -83,8 +83,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 			// Reference catch.
 			project.AddReference(catchProject);
 
-			project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "UnitTest1.cpp",
-				new UnitTestTemplate().TransformText()));
+			await SourceFile.Create(project, "UnitTest1.cpp", new UnitTestTemplate().TransformText());
+
 			project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
 			project.Debugger = shell.Debuggers.FirstOrDefault(d => d is LocalDebugAdaptor);
 			project.TestFramework = shell.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);

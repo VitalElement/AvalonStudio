@@ -7,7 +7,7 @@
     <Setter Property="Template">
       <ControlTemplate>
         <DockPanel>
-          <ContentPresenter DockPanel.Dock="Top"  Content="{TemplateBinding Header}"
+          <ContentControl DockPanel.Dock="Top"  Content="{TemplateBinding Header}"
                          Margin="{TemplateBinding Margin}"
                          VerticalAlignment="Top"/>
 

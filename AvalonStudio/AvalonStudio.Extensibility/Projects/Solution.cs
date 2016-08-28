@@ -56,7 +56,7 @@ namespace AvalonStudio.Projects
 			Serialize(Path.Combine(CurrentDirectory, Name + "." + Extension));
 		}
 
-		public ISourceFile FindFile(ISourceFile file)
+		public ISourceFile FindFile(string file)
 		{
 			ISourceFile result = null;
 
