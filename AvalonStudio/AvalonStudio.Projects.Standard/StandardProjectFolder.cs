@@ -1,55 +1,30 @@
-using AvalonStudio.Platforms;
-using AvalonStudio.Utils;
-using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using AvalonStudio.Projects;
-
 namespace AvalonStudio.Projects.Standard
 {
-	public class StandardProjectFolder : IProjectFolder
-	{
-		public StandardProjectFolder(string path)
-		{
-			Name = Path.GetFileName(path);
-			Location = path;
+    using AvalonStudio.Platforms;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.IO;
 
-			Items = new ObservableCollection<IProjectItem>();
-		}
+    public class StandardProjectFolder : IProjectFolder
+    {
+        public StandardProjectFolder(string path)
+        {
+            Name = Path.GetFileName(path);
+            Location = path;
 
-		public ObservableCollection<IProjectItem> Items { get; }
-
-		public string Name { get; }
-
-		public IProjectFolder Parent { get; set; }
-
-		public string Location { get; }
-        public string LocationDirectory => Location;
-
-		public IProject Project { get; set; }
-
-		public void AddFile(ISourceFile file)
-		{
-            this.Items.InsertSorted(file);
-            Project.RegisterFile(file);
-		}
-
-		public void AddFolder(IProjectFolder folder)
-		{
-            folder.Parent = this;
-            Items.InsertSorted(folder);
-            Project.RegisterFolder(folder);            
+            Items = new ObservableCollection<IProjectItem>();
         }
 
-		public void RemoveFile(ISourceFile file)
-		{
-			throw new NotImplementedException();
-		}
+        public ObservableCollection<IProjectItem> Items { get; }
 
-		public void RemoveFolder(IProjectFolder folder)
-		{
-			throw new NotImplementedException();
-		}
+        public string Name { get; }
+
+        public IProjectFolder Parent { get; set; }
+
+        public string Location { get; }
+        public string LocationDirectory => Location;
+
+        public IProject Project { get; set; }
 
         public void ExcludeFile(ISourceFile file)
         {
