@@ -35,6 +35,8 @@ namespace AvalonStudio.Projects.CPlusPlus
         private static Dictionary<string, Tuple<string, string>> passwordCache =
             new Dictionary<string, Tuple<string, string>>();
 
+        public event EventHandler FileAdded;
+
         [JsonConstructor]
         public CPlusPlusProject(List<SourceFile> sourceFiles) : this()
         {
@@ -400,7 +402,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
             var sourceFile = SourceFile.FromPath(this, folder, fullPath.ToPlatformPath());
-            this.SourceFiles.InsertSorted(sourceFile);
+            SourceFiles.InsertSorted(sourceFile);
 
             if (folder.Location == Project.CurrentDirectory)
             {
@@ -412,6 +414,8 @@ namespace AvalonStudio.Projects.CPlusPlus
                 folder.Items.InsertSorted(sourceFile);
                 sourceFile.Parent = folder;
             }
+
+            FileAdded?.Invoke(this, new EventArgs());
         }
 
         public void FileChanged (string fullPath)

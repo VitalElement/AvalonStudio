@@ -292,7 +292,7 @@ namespace AvalonStudio.Controls
 
         private void ProjectFile_FileModifiedExternally(object sender, EventArgs e)
         {
-            if (!ignoreFileModifiedEvents)
+            if (!ignoreFileModifiedEvents && TextDocument != null)
             {
                 if (!(new FileInfo(Model.ProjectFile.Location).IsFileLocked()))
                 {
