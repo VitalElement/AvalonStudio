@@ -49,7 +49,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			code.AppendLine("}");
 			code.AppendLine();
 
-			project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "main.cpp", code.ToString()));
+			await SourceFile.Create(project, "main.cpp", code.ToString());
 
 			project.Save();
 
