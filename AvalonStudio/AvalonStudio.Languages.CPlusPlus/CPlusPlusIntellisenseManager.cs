@@ -561,10 +561,18 @@ namespace AvalonStudio.Languages.CPlusPlus
                             Dispatcher.UIThread.InvokeTaskAsync(
                                 () =>
                                 {
-                                    intellisenseOpenedAt = caretIndex - 1;
+                                    if (caretIndex > 1)
+                                    {
+                                        intellisenseOpenedAt = caretIndex - 1;
 
-                                    intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editor.TextDocument, caretIndex,
-                                        TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                                        intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editor.TextDocument, caretIndex,
+                                            TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                                    }
+                                    else
+                                    {
+                                        intellisenseOpenedAt = 1;
+                                        intellisenseStartedAt = 1;
+                                    }
 
                                     behindStartChar = editor.TextDocument.GetCharAt(intellisenseStartedAt - 1);
 
