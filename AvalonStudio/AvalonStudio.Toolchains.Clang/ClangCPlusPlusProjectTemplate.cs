@@ -33,7 +33,7 @@ namespace AvalonStudio.Toolchains.Clang
 
 			var settings = ClangToolchain.ProvisionClangSettings(project);
 
-			project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "main.cpp", "int main (void){}"));
+			await SourceFile.Create(project, "main.cpp", "int main (void){}");
 
 			project.Save();
 

@@ -33,7 +33,7 @@ namespace AvalonStudio.Toolchains.STM32
 
 			var settings = STM32GCCToolchain.ProvisionSTM32Settings(project);
 
-			project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "main.cpp", "int main (void){}"));
+			await SourceFile.Create(project, "main.cpp", "int main (void){}");
 
 			project.Save();
 
