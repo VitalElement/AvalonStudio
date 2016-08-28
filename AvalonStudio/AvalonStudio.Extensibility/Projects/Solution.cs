@@ -74,7 +74,7 @@ namespace AvalonStudio.Projects
 		}
 
 		[JsonIgnore]
-		public string CurrentDirectory { get; private set; }
+		public string CurrentDirectory { get; set; }
 
 		[JsonIgnore]
 		public ObservableCollection<IProject> Projects { get; set; }
