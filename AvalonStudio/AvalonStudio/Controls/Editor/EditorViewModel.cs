@@ -155,6 +155,7 @@ namespace AvalonStudio.Controls
             CloseCommand = ReactiveCommand.Create();
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
+                Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
                 Save();
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
