@@ -13,9 +13,7 @@ namespace AvalonStudio.Projects
 		string Location { get; }
 
 		string LocationDirectory { get; }
-
-		void AddFile(ISourceFile file);
-		void AddFolder(IProjectFolder folder);
+        
         void ExcludeFile(ISourceFile file);
         void ExcludeFolder(IProjectFolder folder);
 	}

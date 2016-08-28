@@ -328,17 +328,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         public string LinkerScript { get; set; }
         public string Executable { get; set; }
 
-        //static LlilumToolchain GetLLilumToolchain()
-        //{
-        //    var gccSettings = new ToolchainSettings();
-        //    gccSettings.ToolChainLocation = @"C:\VEStudio\AppData\Repos\AvalonStudio.Toolchains.Llilum";
-        //    gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3");
-        //    gccSettings.IncludePaths.Add("GCC\\arm-none-eabi\\include\\c++\\4.9.3\\arm-none-eabi\\thumb");
-        //    gccSettings.IncludePaths.Add("GCC\\lib\\gcc\\arm-none-eabi\\4.9.3\\include");
-
-        //    return new LlilumToolchain(gccSettings);
-        //}
-
         public IProject Load(ISolution solution, string filePath)
         {
             var result = Load(filePath, solution);
@@ -354,10 +343,6 @@ namespace AvalonStudio.Projects.CPlusPlus
             {
                 RemoveFolder(existingFolder);
             }
-            else
-            {
-                Console.WriteLine("Didnt find.");
-            }
         }
 
         public void AddFolder(string fullPath)
@@ -366,23 +351,19 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             var existing = FindFolder(fullPath);
 
-            Console.WriteLine($"AddFolder: {fullPath}");
-
-            if (existing != null)
-            {
-                Console.WriteLine("existing folder");
-            }
-            else
+            if (existing == null)
             {
                 var newFolder = GetSubFolders(this, folder, fullPath);
 
                 if (folder.Location == Project.CurrentDirectory)
                 {
-                    Project.AddFolder(newFolder);
+                    newFolder.Parent = Project;
+                    Project.Items.InsertSorted(newFolder);
                 }
                 else
                 {
-                    folder.AddFolder(newFolder);
+                    newFolder.Parent = folder;
+                    folder.Items.InsertSorted(newFolder);
                 }
             }
         }
@@ -458,7 +439,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             Invoke(() =>
             {
-                Console.WriteLine(e.ChangeType);
                 FileChanged(e.FullPath);
             });
         }
@@ -530,10 +510,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             folder.Parent.Items.Remove(folder);
             RemoveFiles(this, folder);
 
-            if(!Folders.Remove(folder))
-            {
-                Console.WriteLine("Remove Folder failed...");
-            }
+            Folders.Remove(folder);
         }
 
         public ISourceFile FindFile (string path)
@@ -545,21 +522,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             return Folders.BinarySearch(path);
         }
-
-        public void AddFile(ISourceFile file)
-        {
-            // TODO how will this work with subdirs.
-            SourceFiles.InsertSorted(file);
-            Items.InsertSorted(file);
-        }
-
-        public void AddFolder(IProjectFolder folder)
-        {
-            folder.Parent = this;
-            Folders.InsertSorted(folder);
-            Items.InsertSorted(folder);
-        }
-
 
         [JsonIgnore]
         public IToolChain ToolChain
@@ -954,26 +916,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         public int CompareTo(IProjectItem other)
         {
             return Name.CompareTo(other.Name);
-        }
-
-        public void RegisterFile(ISourceFile file)
-        {
-            SourceFiles.InsertSorted(file);
-        }
-
-        public void RegisterFolder(IProjectFolder folder)
-        {
-            Folders.InsertSorted(folder);
-        }
-
-        public void UnregisterFile(ISourceFile file)
-        {
-            SourceFiles.Remove(file);
-        }
-
-        public void UnregisterFolder(IProjectFolder folder)
-        {
-            Folders.Remove(folder);
         }
     }
 }
