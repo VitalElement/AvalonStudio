@@ -719,7 +719,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             project.Project = project;
             project.Location = filename;
-            project.SetSolution(solution);
+            project.Solution = solution;
 
             project.LoadFiles();
 
@@ -736,7 +736,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             if (!File.Exists(projectFile))
             {
                 var project = new CPlusPlusProject();
-                project.SetSolution(solution);
+                project.Solution = solution;
                 project.Location = projectFile;
                 
                 project.Save();
@@ -746,11 +746,6 @@ namespace AvalonStudio.Projects.CPlusPlus
             }
 
             return result;
-        }
-
-        public void SetSolution(ISolution solution)
-        {
-            Solution = solution;
         }
 
         protected IList<string> GenerateReferencedIncludes()

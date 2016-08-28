@@ -54,6 +54,10 @@ namespace AvalonStudio.Projects.CPlusPlus
 				return result;
 			}
 		}
+		public string Extension
+        {
+            get { return Path.GetExtension(File); }
+        }
 
 		public string Name
 		{
