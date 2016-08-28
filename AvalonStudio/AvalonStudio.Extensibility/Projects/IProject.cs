@@ -51,11 +51,14 @@ namespace AvalonStudio.Projects
 		void RemoveReference(IProject project);
 
 		ISourceFile FindFile(ISourceFile file);
+        ISourceFile FindFile(string path);
 
         void RegisterFile(ISourceFile file);
         void RegisterFolder(IProjectFolder folder);
         void UnregisterFile(ISourceFile file);
         void UnregisterFolder(IProjectFolder folder);
+
+        event EventHandler FileAdded;
 
 
 		/// <summary>
