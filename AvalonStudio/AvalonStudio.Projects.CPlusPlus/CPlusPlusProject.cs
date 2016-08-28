@@ -536,11 +536,6 @@ namespace AvalonStudio.Projects.CPlusPlus
             }
         }
 
-        public ISourceFile FindFile(ISourceFile path)
-        {
-            return SourceFiles.BinarySearch(f => f, path);
-        }
-
         public ISourceFile FindFile (string path)
         {
             return SourceFiles.BinarySearch(path);

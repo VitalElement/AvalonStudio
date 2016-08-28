@@ -33,10 +33,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 				{
 					Task.Run(async () =>
 					{
-						var document =
-							await
-								shell.OpenDocument(shell.CurrentSolution.FindFile(PathSourceFile.FromPath(null, null, value.Model.File)),
-									value.Line);
+						var document = await shell.OpenDocument(shell.CurrentSolution.FindFile(value.Model.File), value.Line);
 
 						if (document != null)
 						{
