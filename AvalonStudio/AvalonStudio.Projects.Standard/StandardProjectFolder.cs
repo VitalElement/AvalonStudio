@@ -1,48 +1,54 @@
-using System;
-using System.Collections.ObjectModel;
-using System.IO;
-
 namespace AvalonStudio.Projects.Standard
 {
-	public class StandardProjectFolder : IProjectFolder
-	{
-		public StandardProjectFolder(string path)
-		{
-			Name = Path.GetFileName(path);
-			Location = path;
+    using AvalonStudio.Platforms;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.IO;
 
-			Items = new ObservableCollection<IProjectItem>();
-		}
+    public class StandardProjectFolder : IProjectFolder
+    {
+        public StandardProjectFolder(string path)
+        {
+            Name = Path.GetFileName(path);
+            Location = path;
 
-		public ObservableCollection<IProjectItem> Items { get; }
+            Items = new ObservableCollection<IProjectItem>();
+        }
 
-		public string Name { get; }
+        public ObservableCollection<IProjectItem> Items { get; }
 
-		public IProjectFolder Parent { get; set; }
+        public string Name { get; }
 
-		public string Location { get; }
+        public IProjectFolder Parent { get; set; }
+
+        public string Location { get; }
         public string LocationDirectory => Location;
 
-		public IProject Project { get; set; }
+        public IProject Project { get; set; }
 
-		public void AddFile(ISourceFile file)
-		{
-            this.Items.Add(file);
-		}
+        public void ExcludeFile(ISourceFile file)
+        {
+            throw new NotImplementedException();
+        }
 
-		public void AddFolder(IProjectFolder folder)
-		{
-			throw new NotImplementedException();
-		}
+        public void ExcludeFolder(IProjectFolder folder)
+        {
+            throw new NotImplementedException();
+        }
 
-		public void RemoveFile(ISourceFile file)
-		{
-			throw new NotImplementedException();
-		}
+        public int CompareTo(IProjectFolder other)
+        {
+            return Location.CompareFilePath(other.Location);
+        }
 
-		public void RemoveFolder(IProjectFolder folder)
-		{
-			throw new NotImplementedException();
-		}
-	}
+        public int CompareTo(string other)
+        {
+            return Location.CompareFilePath(other);
+        }
+
+        public int CompareTo(IProjectItem other)
+        {
+            return this.CompareProjectItems(other);
+        }
+    }
 }

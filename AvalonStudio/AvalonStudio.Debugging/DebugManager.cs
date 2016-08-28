@@ -537,7 +537,7 @@ namespace AvalonStudio.Debugging
                         
                         if (file == null)
                         {
-                            file = _shell.CurrentSolution.FindFile(PathSourceFile.FromPath(null, null, normalizedPath));
+                            file = _shell.CurrentSolution.FindFile(normalizedPath);
                         }
 
                         if (file != null)
