@@ -14,7 +14,7 @@
                      FontFamily="{Binding FontFamily}" FontSize="15" Foreground="#A4A4A4" BorderThickness="0"
                      BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
                      TextChangedCommand="{Binding TextChangedCommand}"
-                     TextChangedDelay="400"
+                     TextChangedDelay="200"
                      CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
                      AcceptsReturn="true" AcceptsTab="true" TabCharacter="{Binding TabCharacter}"
                      CaretLocationInTextView="{Binding CaretLocation}" SelectedWord="{Binding WordAtCaret}"
