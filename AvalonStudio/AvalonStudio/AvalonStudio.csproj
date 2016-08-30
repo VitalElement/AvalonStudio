@@ -453,6 +453,10 @@
       <Project>{5D5FE113-FFEF-4E49-A011-00A167EFA36E}</Project>
       <Name>AvalonStudio.Languages.CPlusPlus</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Languages.CSharp\AvalonStudio.Languages.CSharp.csproj">
+      <Project>{48a302ff-ece3-4231-8112-688d0e48921e}</Project>
+      <Name>AvalonStudio.Languages.CSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
       <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
       <Name>AvalonStudio.Projects.CPlusPlus</Name>

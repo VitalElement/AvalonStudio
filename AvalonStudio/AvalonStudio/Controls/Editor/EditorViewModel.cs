@@ -141,7 +141,7 @@ namespace AvalonStudio.Controls
         public EditorViewModel(EditorModel model) : base(model)
         {
             disposables = new CompositeDisposable();
-            highlightingData = new ObservableCollection<SyntaxHighlightingData>();
+            highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
 
             BeforeTextChangedCommand = ReactiveCommand.Create();
             disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
@@ -240,7 +240,7 @@ namespace AvalonStudio.Controls
                     }
 
                     HighlightingData =
-                        new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
+                        new ObservableCollection<OffsetSyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
 
                     IndexItems = new ObservableCollection<IndexEntry>(model.CodeAnalysisResults.IndexItems);
                     selectedIndexEntry = IndexItems.FirstOrDefault();
@@ -629,8 +629,8 @@ namespace AvalonStudio.Controls
         }
 
 
-        private ObservableCollection<SyntaxHighlightingData> highlightingData;
-        public ObservableCollection<SyntaxHighlightingData> HighlightingData
+        private ObservableCollection<OffsetSyntaxHighlightingData> highlightingData;
+        public ObservableCollection<OffsetSyntaxHighlightingData> HighlightingData
         {
             get { return highlightingData; }
             set { this.RaiseAndSetIfChanged(ref highlightingData, value); }
