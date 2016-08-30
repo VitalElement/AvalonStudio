@@ -188,7 +188,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 case NClang.CursorKind.EnumDeclaration:
                                 case NClang.CursorKind.UnionDeclaration:
                                 case NClang.CursorKind.CXXBaseSpecifier:
-                                    result.SyntaxHighlightingData.Add(new SyntaxHighlightingData
+                                    result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
                                     {
                                         Start = e.Cursor.CursorExtent.Start.FileLocation.Offset,
                                         Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset,
@@ -208,7 +208,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 case NClang.CursorKind.TypeReference:
                                 case NClang.CursorKind.CXXBaseSpecifier:
                                 case NClang.CursorKind.TemplateReference:
-                                    result.SyntaxHighlightingData.Add(new SyntaxHighlightingData
+                                    result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
                                     {
                                         Start = e.Cursor.CursorExtent.Start.FileLocation.Offset,
                                         Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset,
@@ -226,7 +226,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         foreach (var token in tokens.Tokens)
                         {
-                            var highlightData = new SyntaxHighlightingData();
+                            var highlightData = new OffsetSyntaxHighlightingData();
                             highlightData.Start = token.Extent.Start.FileLocation.Offset;
                             highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start;
 
@@ -362,6 +362,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 throw new Exception("Source file already registered with language service.");
             }
+
             association = new CPlusPlusDataAssociation(doc);
             dataAssociations.Add(file, association);
 
