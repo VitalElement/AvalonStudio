@@ -61,7 +61,7 @@ namespace AvalonStudio.Projects.Raw
         {
             RawProject project = new RawProject();
             project.Solution = solution;
-            project.Location = path;
+            project.Location = Path.Combine(path, "raw.aproj");
 
             project.LoadFiles();
 
