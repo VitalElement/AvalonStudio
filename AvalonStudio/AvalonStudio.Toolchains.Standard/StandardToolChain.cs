@@ -411,10 +411,11 @@ namespace AvalonStudio.Toolchains.Standard
 						results.Add(compileResults);
 
 						var tasks = new List<Task>();
-						//var parallelResult = Parallel.ForEach(project.SourceFiles, (file) =>
-						var numLocalTasks = 0;
 
-						foreach (var file in project.SourceFiles)
+						var numLocalTasks = 0;
+                        var sourceFiles = project.SourceFiles.ToList();
+
+						foreach (var file in sourceFiles)
 						{
 							if (terminateBuild)
 							{
@@ -429,24 +430,21 @@ namespace AvalonStudio.Toolchains.Standard
 
 								var dependencyChanged = false;
 
-								if (File.Exists(dependencyFile))
-								{
-									var dependencies = new List<string>();
+                                if (File.Exists(dependencyFile))
+                                {
+                                    var dependencies = new List<string>();
 
-									//lock(resultLock)
-									{
-										dependencies.AddRange(ProjectExtensions.GetDependencies(dependencyFile));
+                                    dependencies.AddRange(ProjectExtensions.GetDependencies(dependencyFile));
 
-										foreach (var dependency in dependencies)
-										{
-											if (!File.Exists(dependency) || File.GetLastWriteTime(dependency) > File.GetLastWriteTime(objectFile))
-											{
-												dependencyChanged = true;
-												break;
-											}
-										}
-									}
-								}
+                                    foreach (var dependency in dependencies)
+                                    {
+                                        if (!File.Exists(dependency) || File.GetLastWriteTime(dependency) > File.GetLastWriteTime(objectFile))
+                                        {
+                                            dependencyChanged = true;
+                                            break;
+                                        }
+                                    }
+                                }
 
 								if (dependencyChanged || !File.Exists(objectFile))
 								{
