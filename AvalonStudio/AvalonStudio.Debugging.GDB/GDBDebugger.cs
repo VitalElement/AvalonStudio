@@ -349,16 +349,24 @@ namespace AvalonStudio.Debugging.GDB
 				Thread.Sleep(10);
 			}
 
-			transmitRunner = new JobRunner();
+            TaskCompletionSource<JobRunner> transmitRunnerSet = new TaskCompletionSource<JobRunner>();
 
-			Task.Factory.StartNew(() =>
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            Task.Factory.StartNew(() =>
 			{
-				closeTokenSource = new CancellationTokenSource();
+                transmitRunner = new JobRunner();
+
+                transmitRunnerSet.SetResult(transmitRunner);
+
+                closeTokenSource = new CancellationTokenSource();
 
 				transmitRunner.RunLoop(closeTokenSource.Token);
 
 				transmitRunner = null;
 			});
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+            await transmitRunnerSet.Task;
 
 			Task.Factory.StartNew(() =>
 			{

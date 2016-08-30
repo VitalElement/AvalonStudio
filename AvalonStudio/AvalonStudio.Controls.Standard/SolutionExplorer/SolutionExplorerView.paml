@@ -99,7 +99,7 @@
                 <MenuItem Header="Rename" />
                 <Separator />
                 <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
-                <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+                <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
               </ContextMenu>
             </StackPanel.ContextMenu>
             <Panel Width="15" Height="15" Background="#A07cbb78" Margin="0 0 5 0">
@@ -117,7 +117,7 @@
                 <MenuItem Header="Rename" />
                 <Separator />
                 <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
-                <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+                <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
                 <Separator />
                 <MenuItem Header="Add">
                   <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
