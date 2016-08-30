@@ -33,7 +33,7 @@ namespace AvalonStudio.Projects.Standard
 
         public void ExcludeFolder(IProjectFolder folder)
         {
-            throw new NotImplementedException();
+            Project.ExcludeFolder(folder);
         }
 
         public int CompareTo(IProjectFolder other)
