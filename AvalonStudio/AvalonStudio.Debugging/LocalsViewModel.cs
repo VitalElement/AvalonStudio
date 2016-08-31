@@ -89,7 +89,11 @@ namespace AvalonStudio.Debugging
 		{
 			var stackVariables = await _debugManager.CurrentDebugger.ListStackVariablesAsync();
 
-			InvalidateLocals(stackVariables);
+            if (stackVariables != null)
+            {
+                InvalidateLocals(stackVariables);
+            }
+
 			await Invalidate(e.VariableChanges);
 		}
 	}
