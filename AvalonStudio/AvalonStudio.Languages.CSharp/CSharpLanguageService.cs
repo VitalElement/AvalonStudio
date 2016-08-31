@@ -72,15 +72,27 @@
             return result;
         }
 
-        CursorKind FromOmniSharpKind(object kind)
+        CursorKind FromOmniSharpKind(string kind)
         {
             if (kind != null)
             {
-                //switch (kind)
-                //{
-                //    case "method":
-                //        return CursorKind.CXXMethod;
-                //}
+                switch (kind)
+                {
+                    case "Method":
+                        return CursorKind.CXXMethod;
+
+                    case "Class":
+                        return CursorKind.ClassDeclaration;
+
+                    case "Struct":
+                        return CursorKind.StructDeclaration;
+
+                    case "Enum":
+                        return CursorKind.EnumConstantDeclaration;
+
+                    case "Delegate:":
+                        return CursorKind.CXXMethod;
+                }
             }
 
             Console.WriteLine($"dont understand omnisharp: {kind}");
@@ -111,8 +123,8 @@
                         Suggestion = completion.CompletionText,
                         Priority = 1,
                         Hint = completion.DisplayText,
-                        BriefComment = completion.Description,
-                        //Kind = FromOmniSharpKind(completion.Kind)
+                        BriefComment = completion.Description?.Split(new []{ '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(),
+                        Kind = FromOmniSharpKind(completion.Kind)
                     };
 
                     result.Add(newCompletion);
