@@ -196,6 +196,7 @@
     <Compile Include="OmniSharp\HighlightOmniSharpRequest.cs" />
     <Compile Include="OmniSharp\OmniSharpRequest.cs" />
     <Compile Include="OmniSharp\OmniSharpServer.cs" />
+    <Compile Include="OmniSharp\SignatureHelpOmniSharpRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextColoringTransformer.cs" />
   </ItemGroup>
