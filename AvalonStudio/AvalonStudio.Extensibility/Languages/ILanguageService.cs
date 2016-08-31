@@ -48,6 +48,8 @@ namespace AvalonStudio.Languages
 		int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
 		int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
 
+        Task<Symbol> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsaveFiles, int offset);
+
 		Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
 
 		Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
