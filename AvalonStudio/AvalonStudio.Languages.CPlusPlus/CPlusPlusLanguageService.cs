@@ -994,6 +994,11 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             return result;
         }
+
+        public Task<Symbol> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsaveFiles, int offset)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal class CPlusPlusDataAssociation
