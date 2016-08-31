@@ -188,7 +188,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BracketMatchingBackgroundRenderer.cs" />
+    <Compile Include="CPlusPlusIntellisenseManager.cs" />
+    <Compile Include="CppIndentationStrategy.cs" />
     <Compile Include="CSharpLanguageService.cs" />
+    <Compile Include="IndentationReformatter.cs" />
+    <Compile Include="OmniSharp\AutoCompleteOmniSharpRequest.cs" />
     <Compile Include="OmniSharp\HighlightOmniSharpRequest.cs" />
     <Compile Include="OmniSharp\OmniSharpRequest.cs" />
     <Compile Include="OmniSharp\OmniSharpServer.cs" />
