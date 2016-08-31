@@ -324,6 +324,11 @@
         {
             //throw new NotImplementedException();
         }
+
+        public Task<Symbol> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsaveFiles, int offset)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     internal class CSharpDataAssociation
