@@ -18,11 +18,24 @@
     using Avalonia.Input;
     using System.Runtime.CompilerServices;
     using System.IO;
+    using Avalonia.Interactivity;
+    using Extensibility.Threading;
+    using System.Threading;
 
     public class CSharpLanguageService : ILanguageService
     {
         private static readonly ConditionalWeakTable<ISourceFile, CSharpDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, CSharpDataAssociation>();
+
+        private readonly JobRunner intellisenseJobRunner;
+
+        public CSharpLanguageService()
+        {
+            IndentationStrategy = new CppIndentationStrategy();
+            intellisenseJobRunner = new JobRunner();
+
+            Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(new CancellationToken()); });
+        }
 
         public Type BaseTemplateType
         {
@@ -34,10 +47,7 @@
 
         public IIndentationStrategy IndentationStrategy
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get;
         }
 
         public string Title
@@ -62,9 +72,55 @@
             return result;
         }
 
-        public Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles)
+        CursorKind FromOmniSharpKind(object kind)
         {
-            throw new NotImplementedException();
+            if (kind != null)
+            {
+                //switch (kind)
+                //{
+                //    case "method":
+                //        return CursorKind.CXXMethod;
+                //}
+            }
+
+            Console.WriteLine($"dont understand omnisharp: {kind}");
+            return CursorKind.FirstInvalid;
+        }
+
+        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles)
+        {
+            var result = new List<CodeCompletionData>();
+            AutoCompleteOmniSharpRequest request = new AutoCompleteOmniSharpRequest();
+
+            request.FileName = sourceFile.File;
+
+            request.Buffer = unsavedFiles.FirstOrDefault()?.Contents;
+            request.Line = line;
+            request.Column = column;
+
+            var dataAssociation = GetAssociatedData(sourceFile);
+
+            var response = await dataAssociation.OmniSharpServer.SendRequest(request);
+
+            if (response != null)
+            {
+                foreach(var completion in response)
+                {
+                    var newCompletion = new CodeCompletionData()
+                    {
+                        Suggestion = completion.CompletionText,
+                        Priority = 1,
+                        Hint = completion.DisplayText,
+                        BriefComment = completion.Description,
+                        //Kind = FromOmniSharpKind(completion.Kind)
+                    };
+
+                    result.Add(newCompletion);
+                }
+                    
+            }
+
+            return result;
         }
 
         public int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
@@ -117,6 +173,64 @@
             association.OmniSharpServer.StartAsync(file.Project.Solution.CurrentDirectory).Wait();
 
             dataAssociations.Add(file, association);
+
+            association.IntellisenseManager = new CSharpIntellisenseManager(this, intellisenseControl, completionAdviceControl, completionAssistant, file, editor);
+
+            association.TunneledKeyUpHandler = async (sender, e) =>
+            {
+                await intellisenseJobRunner.InvokeAsync(() => { association.IntellisenseManager.OnKeyUp(e).Wait(); });
+            };
+
+            association.TunneledKeyDownHandler = async (sender, e) =>
+            {
+                association.IntellisenseManager.OnKeyDown(e);
+
+                await intellisenseJobRunner.InvokeAsync(() => { association.IntellisenseManager.CompleteOnKeyDown(e).Wait(); });
+            };
+
+            association.KeyUpHandler = (sender, e) =>
+            {
+                if (editor.TextDocument == textDocument)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.Return:
+                            {
+                                if (editor.CaretIndex >= 0 && editor.CaretIndex < editor.TextDocument.TextLength)
+                                {
+                                    if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
+                                    {
+                                        editor.TextDocument.Insert(editor.CaretIndex, Environment.NewLine);
+                                        editor.CaretIndex--;
+
+                                        var currentLine = editor.TextDocument.GetLineByOffset(editor.CaretIndex);
+
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine, editor.CaretIndex);
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine.NextLine,
+                                            editor.CaretIndex);
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);
+                                    }
+
+                                    var newCaret = IndentationStrategy.IndentLine(editor.TextDocument,
+                                        editor.TextDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
+
+                                    editor.CaretIndex = newCaret;
+                                }
+                            }
+                            break;
+                    }
+                }
+            };
+
+            association.TextInputHandler = (sender, e) =>
+            {
+            };
+
+            editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, RoutingStrategies.Tunnel);
+            editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, RoutingStrategies.Tunnel);
+            editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, RoutingStrategies.Tunnel);
+
+            editor.TextInput += association.TextInputHandler;
         }
 
         private CSharpDataAssociation GetAssociatedData(ISourceFile sourceFile)
@@ -226,5 +340,6 @@
         public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
         public EventHandler<KeyEventArgs> KeyDownHandler { get; set; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
+        public CSharpIntellisenseManager IntellisenseManager { get; set; }
     }
 }
