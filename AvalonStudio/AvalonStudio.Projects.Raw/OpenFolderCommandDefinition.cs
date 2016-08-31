@@ -28,7 +28,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 
                 var result = await ofd.ShowAsync();
 
-                if (result != null)
+                if (result != string.Empty)
                 {
                     shell.CurrentSolution = RawProject.CreateRawSolution(result);
                 }
