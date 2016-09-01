@@ -101,7 +101,7 @@
             return CursorKind.FirstInvalid;
         }
 
-        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles)
+        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
         {
             var result = new List<CodeCompletionData>();
             AutoCompleteOmniSharpRequest request = new AutoCompleteOmniSharpRequest();
@@ -129,7 +129,10 @@
                         Kind = FromOmniSharpKind(completion.Kind)
                     };
 
-                    result.Add(newCompletion);
+                    if (filter == string.Empty || completion.CompletionText.StartsWith(filter))
+                    {
+                        result.Add(newCompletion);
+                    }
                 }
                     
             }
@@ -327,7 +330,7 @@
             //throw new NotImplementedException();
         }
 
-        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset)
+        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
             SignatureHelp result = null;
             var request = new SignatureHelpOmniSharpRequest();

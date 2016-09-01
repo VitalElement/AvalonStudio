@@ -63,7 +63,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         public IIndentationStrategy IndentationStrategy { get; }
 
         public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile file, int line, int column,
-            List<UnsavedFile> unsavedFiles)
+            List<UnsavedFile> unsavedFiles, string filter)
         {
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
@@ -117,15 +117,23 @@ namespace AvalonStudio.Languages.CPlusPlus
                         }
                     }
 
-                    result.Add(new CodeCompletionData
+                    if (typedText.Contains("Distance"))
                     {
-                        Suggestion = typedText,
-                        Priority = codeCompletion.CompletionString.Priority,
-                        Kind = (CursorKind)codeCompletion.CursorKind,
-                        Hint = hint,
-                        BriefComment = codeCompletion.CompletionString.BriefComment
-                    });
-                }                
+                        Console.WriteLine();
+                    }
+
+                    if (filter == string.Empty || typedText.StartsWith(filter))
+                    {
+                        result.Add(new CodeCompletionData
+                        {
+                            Suggestion = typedText,
+                            Priority = codeCompletion.CompletionString.Priority,
+                            Kind = (CursorKind)codeCompletion.CursorKind,
+                            Hint = hint,
+                            BriefComment = codeCompletion.CompletionString.BriefComment
+                        });
+                    }
+                }
 
                 completionResults.Dispose();
             });
@@ -439,7 +447,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 {
                                     var newLine = editor.TextDocument.GetLineByOffset(offset);
                                     editor.CaretIndex = newLine.PreviousLine.EndOffset;
-                                }                                           
+                                }
                             }
                             else
                             {
@@ -530,7 +538,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                     var translationUnit = GetAndParseTranslationUnit(file, new List<ClangUnsavedFile>());
 
                     var cursors = FindFunctions(translationUnit.GetCursor(), name);
-
 
                     foreach (var cursor in cursors)
                     {
@@ -883,16 +890,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                         arg.IsBuiltInType = IsBuiltInType(argument.CursorType);
                         arg.Name = argument.Spelling;
 
-                        if (i < cursor.ArgumentCount - 1)
-                        {
-                            arg.Name += ", ";
-                        }
-
                         arg.TypeDescription = argument.CursorType.Spelling;
                         result.Arguments.Add(arg);
                     }
 
-                    if(cursor.IsVariadic)
+                    if (cursor.IsVariadic)
                     {
                         result.Arguments.Last().Name += ", ";
                         result.Arguments.Add(new ParameterSymbol { Name = "... variadic" });
@@ -919,14 +921,14 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 var paragraph = discussion.Element("Para");
 
                                 if (isVarArgs != null)
-                                {                                    
+                                {
                                     result.Arguments.Last().Comment = paragraph.Value;
                                 }
                                 else
                                 {
                                     var inx = argument.Element("Index");
                                     var index = int.Parse(inx.Value);
-                                    
+
                                     result.Arguments[index].Comment = paragraph.Value;
                                 }
                             }
@@ -938,6 +940,44 @@ namespace AvalonStudio.Languages.CPlusPlus
                         result.Arguments.Add(new ParameterSymbol { Name = "void" });
                     }
                     break;
+            }
+
+            return result;
+        }
+
+        private static Signature SignatureFromSymbol (Symbol symbol)
+        {
+            var result = new Signature();
+
+            result.Name = symbol.Name;
+            result.Description = symbol.BriefComment;
+            
+            if(symbol.IsBuiltInType)
+            {
+                result.BuiltInReturnType = symbol.ResultType;
+            }
+            else
+            {
+                result.ReturnType = symbol.ResultType;
+            }
+
+            foreach(var param in symbol.Arguments)
+            {
+                var newParam = new Parameter();
+
+                if(param.IsBuiltInType)
+                {
+                    newParam.BuiltInType = param.TypeDescription;
+                }
+                else
+                {
+                    newParam.Type = param.TypeDescription;
+                }
+
+                newParam.Name = param.Name;
+                newParam.Documentation = param.Comment;
+
+                result.Parameters.Add(newParam);
             }
 
             return result;
@@ -995,9 +1035,32 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsaveFiles, int line, int column, int offset)
+        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
-            return null;
+            SignatureHelp result = null;
+            var clangUnsavedFiles = new List<ClangUnsavedFile>();
+
+            unsavedFiles.Add(buffer);
+
+            foreach (var unsavedFile in unsavedFiles)
+            {
+                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+            }
+
+            var symbols = await GetSymbolsAsync(file, unsavedFiles, methodName);
+
+            if(symbols.Count > 0)
+            {
+                result = new SignatureHelp();
+                result.Offset = offset;
+
+                foreach (var symbol in symbols)
+                {
+                    result.Signatures.Add(SignatureFromSymbol(symbol));
+                }
+            }
+
+            return result;
         }
     }
 
