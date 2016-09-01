@@ -74,7 +74,7 @@ namespace AvalonStudio.Projects
 		}
 
 		[JsonIgnore]
-		public string CurrentDirectory { get; private set; }
+		public string CurrentDirectory { get; set; }
 
 		[JsonIgnore]
 		public ObservableCollection<IProject> Projects { get; set; }
@@ -172,13 +172,17 @@ namespace AvalonStudio.Projects
 			return result;
 		}
 
-		public static Solution Create(string location, string name)
+		public static Solution Create(string location, string name, bool save = true)
 		{
 			var result = new Solution();
 
 			result.Name = name;
 			result.CurrentDirectory = location + Platform.DirectorySeperator;
-			result.Save();
+
+            if (save)
+            {
+                result.Save();
+            }
 
 			return result;
 		}
