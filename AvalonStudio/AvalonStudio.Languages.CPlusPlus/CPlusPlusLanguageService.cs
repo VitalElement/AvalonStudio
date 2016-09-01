@@ -995,7 +995,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public Task<Symbol> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsaveFiles, int offset)
+        public Task<Symbol> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsaveFiles, int line, int column)
         {
             throw new NotImplementedException();
         }
