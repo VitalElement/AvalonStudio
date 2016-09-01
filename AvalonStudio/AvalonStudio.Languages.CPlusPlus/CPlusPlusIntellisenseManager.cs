@@ -12,18 +12,8 @@ using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
-	public class CompletionAdviceState
-	{
-		public int SelectedIndex { get; set; }
-		public int BracketOpenedAt { get; set; }
-		public List<Symbol> Symbols { get; set; }
-	}
-
 	internal class CPlusPlusIntellisenseManager
 	{
-		private readonly ICompletionAdviceControl completionAdviceControl;
-		private readonly Stack<CompletionAdviceState> completionAdviceStack;
-		private CompletionAdviceState currentAdvice;
 		private string currentFilter = string.Empty;
 		private readonly TextEditor.TextEditor editor;
 
@@ -40,16 +30,13 @@ namespace AvalonStudio.Languages.CPlusPlus
 		private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
 
 		public CPlusPlusIntellisenseManager(ILanguageService languageService, IIntellisenseControl intellisenseControl,
-			ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant, ISourceFile file, TextEditor.TextEditor editor)
+			ICompletionAssistant completionAssistant, ISourceFile file, TextEditor.TextEditor editor)
 		{
 			this.languageService = languageService;
 			this.intellisenseControl = intellisenseControl;
-			this.completionAdviceControl = completionAdviceControl;
             this.completionAssistant = completionAssistant;
 			this.file = file;
 			this.editor = editor;
-
-			completionAdviceStack = new Stack<CompletionAdviceState>();
 		}
 
 		private bool IsIntellisenseOpenKey(KeyEventArgs e)
@@ -203,14 +190,14 @@ namespace AvalonStudio.Languages.CPlusPlus
                         {
                             case Key.Down:
                                 {
-                                    completionAssistant.IncrementOverloadIndex();
+                                    completionAssistant.IncrementSignatureIndex();
                                     e.Handled = true;
                                 }
                                 break;
 
                             case Key.Up:
                                 {
-                                    completionAssistant.DecrementOverloadIndex();
+                                    completionAssistant.DecrementSignatureIndex();
                                     e.Handled = true;
                                 }
                                 break;
@@ -295,36 +282,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 				});
 			}
 
-			if (behindCaretChar == '(')
-			{
-				var word = string.Empty;
-				await Dispatcher.UIThread.InvokeTaskAsync(() => { word = editor.GetWordAtIndex(caretIndex - 1); });
-
-				var symbols = await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), word);
-
-				if (symbols.Count() > 0)
-				{
-					var adviceState = new CompletionAdviceState();
-					adviceState.BracketOpenedAt = caretIndex;
-					adviceState.Symbols = symbols;
-
-					if (currentAdvice != null)
-					{
-						completionAdviceStack.Push(currentAdvice);
-					}
-
-					currentAdvice = adviceState;
-
-					await Dispatcher.UIThread.InvokeTaskAsync(() =>
-					{
-						completionAdviceControl.Count = currentAdvice.Symbols.Count;
-						completionAdviceControl.SelectedIndex = 0;
-						completionAdviceControl.Symbol = currentAdvice.Symbols[currentAdvice.SelectedIndex];
-						completionAdviceControl.IsVisible = true;
-					});
-				}
-			}
-
 			if (intellisenseControl.IsVisible)
 			{
 				if (IsCompletionKey(e))
@@ -403,16 +360,16 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 await Dispatcher.UIThread.InvokeTaskAsync(() =>
                 {
-                    if (caret < completionAssistant.CurrentMethodInfo.Offset)
+                    if (caret < completionAssistant.CurrentSignatureHelp.Offset)
                     {
                         completionAssistant.PopMethod();
                     }
 
-                    if (completionAssistant.CurrentMethodInfo != null)
+                    if (completionAssistant.CurrentSignatureHelp != null)
                     {
                         int index = 0;
                         int level = 0;
-                        int offset = completionAssistant.CurrentMethodInfo.Offset;
+                        int offset = completionAssistant.CurrentSignatureHelp.Offset;
 
                         while (offset < caret)
                         {
@@ -437,12 +394,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                             }
                         }
 
-                        completionAssistant.SetArgumentIndex(index);
+                        completionAssistant.SetParameterIndex(index);
                     }
                 });
             }
 
-            if (behindCaretChar == '(' && (completionAssistant.CurrentMethodInfo == null ||completionAssistant.CurrentMethodInfo.Offset != editor.CaretIndex))
+            if (behindCaretChar == '(' && (completionAssistant.CurrentSignatureHelp == null ||completionAssistant.CurrentSignatureHelp.Offset != editor.CaretIndex))
             {
                 string currentWord = string.Empty;
 
@@ -457,11 +414,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                         currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
                     }
 
-                    var symbols = await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), currentWord);
+                    var signatureHelp = await languageService.SignatureHelp(file, null, new List<UnsavedFile>(), 0, 0, 0);
+                    //await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), currentWord);
 
-                    if (symbols.Count > 0)
+                    if (signatureHelp != null)
                     {
-                        completionAssistant.PushMethod(new MethodInfo(symbols, editor.CaretIndex));
+                        completionAssistant.PushMethod(signatureHelp);
                     }
                 });
             }

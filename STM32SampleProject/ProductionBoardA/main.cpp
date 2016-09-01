@@ -10,8 +10,13 @@ class Point : public PointBase
     float X;
     float Y;
 
+    /**
+     * Calculates the distance from 1 pointer to another.
+     * @param p the other point to calculate distance to.     
+     */
     float DistanceTo (Point& p);
 };
+
 
 float Point::DistanceTo (Point& to)
 {
@@ -44,11 +49,11 @@ int main (void)
     p1.X = 1.25;
     p1.Y = 2.45;
 
-    
 
-
+    p.DistanceTo()
     while (true)
     {
+
         auto distance = p.DistanceTo (p1);
 
         x = sum (1, 2);
