@@ -268,7 +268,7 @@ namespace AvalonStudio
 
 				await
 					Dispatcher.UIThread.InvokeTaskAsync(
-						() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.CompletionHint, newEditor.Intellisense.CompletionAssistant); });
+						() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
 			}
 			else
 			{

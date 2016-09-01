@@ -353,7 +353,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAdviceControl completionAdvice, ICompletionAssistant completionAssistant,
+        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAssistant completionAssistant,
             TextEditor.TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CPlusPlusDataAssociation association = null;
@@ -366,7 +366,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             association = new CPlusPlusDataAssociation(doc);
             dataAssociations.Add(file, association);
 
-            association.IntellisenseManager = new CPlusPlusIntellisenseManager(this, intellisense, completionAdvice, completionAssistant, file, editor);
+            association.IntellisenseManager = new CPlusPlusIntellisenseManager(this, intellisense, completionAssistant, file, editor);
 
             association.TunneledKeyUpHandler = async (sender, e) =>
             {
@@ -995,9 +995,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public Task<Symbol> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsaveFiles, int line, int column)
+        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsaveFiles, int line, int column, int offset)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 
