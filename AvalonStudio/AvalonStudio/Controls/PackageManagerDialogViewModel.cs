@@ -108,7 +108,10 @@ namespace AvalonStudio.Controls
 			get { return selectedPackage; }
 			set
 			{
-				GetPackageInfo(value);
+                if (value != null)
+                {
+                    GetPackageInfo(value);
+                }
 
 				this.RaiseAndSetIfChanged(ref selectedPackage, value);
 				this.RaisePropertyChanged(() => ButtonText);
