@@ -143,11 +143,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                         }
                     }
 
-                    if (typedText.Contains("Distance"))
-                    {
-                        Console.WriteLine();
-                    }
-
                     if (filter == string.Empty || typedText.StartsWith(filter))
                     {
                         result.Add(new CodeCompletionData
