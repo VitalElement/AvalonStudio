@@ -62,6 +62,32 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IIndentationStrategy IndentationStrategy { get; }
 
+        CodeCompletionKind FromClangKind(NClang.CursorKind kind)
+        {
+            if (kind != null)
+            {
+                switch (kind)
+                {
+                    case NClang.CursorKind.FunctionDeclaration:
+                    case NClang.CursorKind.CXXMethod:
+                    case NClang.CursorKind.Constructor:
+                    case NClang.CursorKind.Destructor:
+                        return CodeCompletionKind.Method;
+
+                    case NClang.CursorKind.ClassDeclaration:
+                        return CodeCompletionKind.Class;
+
+                    case NClang.CursorKind.StructDeclaration:
+                        return CodeCompletionKind.Struct;
+
+                    case NClang.CursorKind.MacroDefinition:
+                        return CodeCompletionKind.Macro;
+                }
+            }
+
+            return CodeCompletionKind.None;
+        }
+
         public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile file, int line, int column,
             List<UnsavedFile> unsavedFiles, string filter)
         {
@@ -128,7 +154,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         {
                             Suggestion = typedText,
                             Priority = codeCompletion.CompletionString.Priority,
-                            Kind = (CursorKind)codeCompletion.CursorKind,
+                            Kind = FromClangKind(codeCompletion.CursorKind),
                             Hint = hint,
                             BriefComment = codeCompletion.CompletionString.BriefComment
                         });
@@ -945,14 +971,14 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        private static Signature SignatureFromSymbol (Symbol symbol)
+        private static Signature SignatureFromSymbol(Symbol symbol)
         {
             var result = new Signature();
 
             result.Name = symbol.Name;
             result.Description = symbol.BriefComment;
-            
-            if(symbol.IsBuiltInType)
+
+            if (symbol.IsBuiltInType)
             {
                 result.BuiltInReturnType = symbol.ResultType;
             }
@@ -961,11 +987,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                 result.ReturnType = symbol.ResultType;
             }
 
-            foreach(var param in symbol.Arguments)
+            foreach (var param in symbol.Arguments)
             {
                 var newParam = new Parameter();
 
-                if(param.IsBuiltInType)
+                if (param.IsBuiltInType)
                 {
                     newParam.BuiltInType = param.TypeDescription;
                 }
@@ -1049,7 +1075,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var symbols = await GetSymbolsAsync(file, unsavedFiles, methodName);
 
-            if(symbols.Count > 0)
+            if (symbols.Count > 0)
             {
                 result = new SignatureHelp();
                 result.Offset = offset;

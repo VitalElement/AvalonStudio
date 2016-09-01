@@ -62,19 +62,16 @@ namespace AvalonStudio.Languages.ViewModels
 
 			switch (data.Kind)
 			{
-				case CursorKind.FunctionDeclaration:
-				case CursorKind.CXXMethod:
-				case CursorKind.Constructor:
-				case CursorKind.Destructor:
+                case CodeCompletionKind.Method:
 					result = new MethodCompletionDataViewModel(data);
 					break;
 
-				case CursorKind.MacroDefinition:
+                case CodeCompletionKind.Macro:
 					result = new MacroCompletionDataViewModel(data);
 					break;
 
-				case CursorKind.StructDeclaration:
-				case CursorKind.ClassDeclaration:
+                case CodeCompletionKind.Struct:
+                case CodeCompletionKind.Class:
 					result = new ClassCompletionDataViewModel(data);
 					break;
 
