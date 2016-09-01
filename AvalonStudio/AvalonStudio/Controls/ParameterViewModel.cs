@@ -69,5 +69,13 @@ namespace AvalonStudio.Controls
             }
         }
 
+        public bool HasDocumentation
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(Documentation);
+            }
+        }
+
     }
 }
