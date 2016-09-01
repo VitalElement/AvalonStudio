@@ -12,11 +12,20 @@ class Point : public PointBase
 
     /**
      * Calculates the distance from 1 pointer to another.
-     * @param p the other point to calculate distance to.     
+     * @param p the other point to calculate distance to.
      */
     float DistanceTo (Point& p);
 };
 
+/**
+ * Static Distance to
+ * @param p2 second point  
+ * @param p1 first point
+ */
+static void DistanceTo (Point& p1, Point& p2)
+{
+    
+}
 
 float Point::DistanceTo (Point& to)
 {
@@ -49,8 +58,8 @@ int main (void)
     p1.X = 1.25;
     p1.Y = 2.45;
 
-
-    p.DistanceTo()
+//    Dis
+    p.DistanceTo ();
     while (true)
     {
 
