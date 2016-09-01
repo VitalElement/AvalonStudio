@@ -23,6 +23,7 @@
     using System.Threading;
     using Extensibility;
     using Utils;
+
     public class CSharpLanguageService : ILanguageService
     {
         private static readonly ConditionalWeakTable<ISourceFile, CSharpDataAssociation> dataAssociations =
@@ -172,7 +173,7 @@
             //throw new NotImplementedException();
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant, TextEditor editor, ISourceFile file, TextDocument textDocument)
+        public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor editor, ISourceFile file, TextDocument textDocument)
         {
             CSharpDataAssociation association = null;
 
@@ -187,7 +188,7 @@
 
             dataAssociations.Add(file, association);
 
-            association.IntellisenseManager = new CSharpIntellisenseManager(this, intellisenseControl, completionAdviceControl, completionAssistant, file, editor);
+            association.IntellisenseManager = new CSharpIntellisenseManager(this, intellisenseControl, completionAssistant, file, editor);
 
             association.TunneledKeyUpHandler = async (sender, e) =>
             {
@@ -326,9 +327,9 @@
             //throw new NotImplementedException();
         }
 
-        public async Task<Symbol> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column)
+        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset)
         {
-            Symbol result = null;
+            SignatureHelp result = null;
             var request = new SignatureHelpOmniSharpRequest();
 
             request.FileName = file.File;
@@ -339,16 +340,13 @@
 
             var dataAssociation = GetAssociatedData(file);
 
-            var response = await dataAssociation.OmniSharpServer.SendRequest(request);
+            result = await dataAssociation.OmniSharpServer.SendRequest(request);
 
-            if (response != null)
+            if (result != null)
             {
-                var console = IoC.Get<IConsole>();
-
-                foreach (var signature in response.Signatures)
-                {
-                    console.WriteLine($"name = {signature.Name}, label = {signature.Label}");
-                }
+                result.NormalizeSignatureData();
+                
+                result.Offset = offset;
             }
 
             return result;

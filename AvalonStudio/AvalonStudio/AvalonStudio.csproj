@@ -254,10 +254,6 @@
       <DependentUpon>CompletionAssistantView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CompletionAssistantViewModel.cs" />
-    <Compile Include="Controls\CompletionHint.paml.cs">
-      <DependentUpon>CompletionHint.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\CompletionHintViewModel.cs" />
     <Compile Include="Controls\DebugHoverProbe.paml.cs">
       <DependentUpon>DebugHoverProbeView.paml</DependentUpon>
     </Compile>
@@ -267,10 +263,13 @@
     </Compile>
     <Compile Include="Controls\ErrorProbeViewModel.cs" />
     <Compile Include="Controls\IntellisenseToolTipViewModel.cs" />
-    <Compile Include="Controls\MethodInfoView.paml.cs">
-      <DependentUpon>MethodInfoView.paml</DependentUpon>
+    <Compile Include="Controls\ParameterViewModel.cs" />
+    <Compile Include="Controls\SignatureHelpView.paml.cs" />
+    <Compile Include="Controls\SignatureHelpViewModel.cs" />
+    <Compile Include="Controls\SignatureView.xaml.cs">
+      <DependentUpon>SignatureView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MethodInfoViewModel.cs" />
+    <Compile Include="Controls\SignatureViewModel.cs" />
     <Compile Include="Controls\TabControlView.paml.cs" />
     <Compile Include="Controls\DocumentTabControl.paml.cs">
       <DependentUpon>DocumentTabControl.paml</DependentUpon>
@@ -391,9 +390,6 @@
     <EmbeddedResource Include="Controls\TabControlView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\CompletionHint.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ErrorProbeView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -403,7 +399,7 @@
     <EmbeddedResource Include="Controls\CompletionAssistantView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MethodInfoView.paml">
+    <EmbeddedResource Include="Controls\SignatureHelpView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="libgit2-821131f.so">
@@ -5552,6 +5548,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\SignatureView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

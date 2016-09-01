@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
 {
     public class Parameter
     {
         public string Name { get; set; }
+        public string BuiltInType { get; set; }
+        public string Type { get; set; }
         public string Label { get; set; }
         public string Documentation { get; set; }
     }
@@ -16,15 +19,33 @@ namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
     public class Signature
     {
         public string Name { get; set; }
+        public string BuiltInReturnType { get; set; }
+        public string ReturnType { get; set; }
         public string Label { get; set; }
         public string Documentation { get; set; }
-        public List<object> Parameters { get; set; }
+        public string Description { get; set; }
+        public List<Parameter> Parameters { get; set; }
     }
 
-    public class SignatureHelpResponseData
+    public class SignatureHelp
     {
+        public SignatureHelp()
+        {
+
+        }
+
+        public SignatureHelp(List<Signature> signatures, int offset)
+        {
+            Signatures = signatures;
+            Offset = offset;
+        }
+
+        
+        
+
         public List<Signature> Signatures { get; set; }
         public int ActiveSignature { get; set; }
         public int ActiveParameter { get; set; }
+        public int Offset { get; set; }
     }
 }

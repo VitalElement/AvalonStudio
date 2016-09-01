@@ -268,7 +268,6 @@ namespace AvalonStudio.Controls
             };
 
             intellisense = new IntellisenseViewModel(model, this);
-            _completionHint = new CompletionHintViewModel();
 
             documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
 
@@ -379,7 +378,6 @@ namespace AvalonStudio.Controls
                 if (!Intellisense.IsVisible)
                 {
                     Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
-                    CompletionHint.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
                 }
             }
         }
@@ -398,15 +396,6 @@ namespace AvalonStudio.Controls
                 }
             }
         }
-
-
-        private CompletionHintViewModel _completionHint;
-        public CompletionHintViewModel CompletionHint
-        {
-            get { return _completionHint; }
-            set { this.RaiseAndSetIfChanged(ref _completionHint, value); }
-        }
-
 
         private IntellisenseViewModel intellisense;
         public IntellisenseViewModel Intellisense

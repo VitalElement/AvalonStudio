@@ -36,7 +36,7 @@ namespace AvalonStudio.Languages
 
 		IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-		void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant,
+		void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant,
 			TextEditor.TextEditor editor, ISourceFile file, TextDocument textDocument);
 
 		void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file);
@@ -48,7 +48,7 @@ namespace AvalonStudio.Languages
 		int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
 		int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
 
-        Task<Symbol> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column);
+        Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset);
 
 		Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
 

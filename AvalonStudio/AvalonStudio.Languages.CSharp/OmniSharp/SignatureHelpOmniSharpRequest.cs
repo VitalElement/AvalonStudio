@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.CSharp.OmniSharp
 {
-    class SignatureHelpOmniSharpRequest : OmniSharpRequest<SignatureHelpResponseData>
+    class SignatureHelpOmniSharpRequest : OmniSharpRequest<SignatureHelp>
     {
         public override string EndPoint
         {
