@@ -300,7 +300,21 @@ namespace AvalonStudio.Languages.CSharp
 				var word = string.Empty;
 				await Dispatcher.UIThread.InvokeTaskAsync(() => { word = editor.GetWordAtIndex(caretIndex - 1); });
 
-				var symbols = await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), word);
+                List<Symbol> symbols = null;// = await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), word);
+
+                int line = -1;
+                int column = -1;
+                string text = string.Empty;
+
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    text = editor.TextDocument.Text;
+                    var location = editor.TextDocument.GetLocation(caretIndex);
+                    line = location.Line;
+                    column = location.Column;
+                });
+
+                var symbol = await languageService.SignatureHelp(file, new UnsavedFile(file.File, text), new List<UnsavedFile>(), line, column);
 
 				if (symbols.Count() > 0)
 				{
@@ -457,7 +471,13 @@ namespace AvalonStudio.Languages.CSharp
                         currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
                     }
 
-                    var symbols = await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), currentWord);
+                    var text = editor.TextDocument.Text;
+                    var location = editor.TextDocument.GetLocation(editor.CaretIndex);
+                    int line = location.Line;
+                    int column = location.Column;
+
+                    var symbol = await languageService.SignatureHelp(file, new UnsavedFile(file.File, text), new List<UnsavedFile>(), line, column);
+                    List<Symbol> symbols = new List<Symbol>();// await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), currentWord);
 
                     if (symbols.Count > 0)
                     {
