@@ -9,11 +9,13 @@ namespace AvalonStudio.Languages
         Property,
         Event,
         Enum,
+        EnumConstant,
         Struct,
         Class,
         Method,
         None,
         Macro,
+        Variable,
 
     }
 

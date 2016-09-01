@@ -72,6 +72,8 @@ namespace AvalonStudio.Languages.CPlusPlus
                     case NClang.CursorKind.CXXMethod:
                     case NClang.CursorKind.Constructor:
                     case NClang.CursorKind.Destructor:
+                    case NClang.CursorKind.FunctionTemplate:
+                    case NClang.CursorKind.ClassTemplate:
                         return CodeCompletionKind.Method;
 
                     case NClang.CursorKind.ClassDeclaration:
@@ -82,15 +84,33 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     case NClang.CursorKind.MacroDefinition:
                         return CodeCompletionKind.Macro;
+
+                    case NClang.CursorKind.NotImplemented:
+                    case NClang.CursorKind.TypedefDeclaration:
+                        return CodeCompletionKind.Keyword;
+
+                    case NClang.CursorKind.EnumDeclaration:
+                        return CodeCompletionKind.Enum;
+
+                    case NClang.CursorKind.EnumConstantDeclaration:
+                        return CodeCompletionKind.EnumConstant;
+
+                    case NClang.CursorKind.VarDeclaration:
+                        return CodeCompletionKind.Variable;
+
+                    case NClang.CursorKind.Namespace:
+                        return CodeCompletionKind.Namespace;
+                        
                 }
             }
-
+            
+            Console.WriteLine($"dont understand{kind.ToString()}");
             return CodeCompletionKind.None;
         }
 
         public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile file, int line, int column,
             List<UnsavedFile> unsavedFiles, string filter)
-        {
+        {            
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
             foreach (var unsavedFile in unsavedFiles)
@@ -154,8 +174,8 @@ namespace AvalonStudio.Languages.CPlusPlus
                             BriefComment = codeCompletion.CompletionString.BriefComment
                         });
                     }
-                }
-
+                }                
+                
                 completionResults.Dispose();
             });
 
