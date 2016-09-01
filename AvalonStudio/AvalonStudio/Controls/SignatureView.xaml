@@ -32,7 +32,7 @@
                      TextWrapping="Wrap" TextAlignment="Left" HorizontalAlignment="Left" />
           <StackPanel Orientation="Horizontal" IsVisible="{Binding HasParameters}" TextBlock.FontStyle="Italic" >
             <TextBlock Text="{Binding SelectedParameter.Name}" FontWeight="Bold" />
-            <TextBlock Text=":" FontWeight="Bold" />
+            <TextBlock Text=":" FontWeight="Bold" IsVisible="{Binding SelectedParameter.HasDocumentation}" />
             <TextBlock Text="{Binding SelectedParameter.Documentation}" />
           </StackPanel>
         </StackPanel>
