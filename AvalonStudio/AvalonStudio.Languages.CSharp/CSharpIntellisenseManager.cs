@@ -419,7 +419,7 @@ namespace AvalonStudio.Languages.CSharp
                     int line = location.Line;
                     int column = location.Column;
 
-                    var signatureHelp = await languageService.SignatureHelp(file, new UnsavedFile(file.File, text), new List<UnsavedFile>(), line, column, editor.CaretIndex);
+                    var signatureHelp = await languageService.SignatureHelp(file, new UnsavedFile(file.File, text), new List<UnsavedFile>(), line, column, editor.CaretIndex, currentWord);
 
                     if (signatureHelp != null)
                     {

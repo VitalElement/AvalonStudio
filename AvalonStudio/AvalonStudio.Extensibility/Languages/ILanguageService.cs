@@ -27,7 +27,7 @@ namespace AvalonStudio.Languages
 		Type BaseTemplateType { get; }
 
 		Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column,
-			List<UnsavedFile> unsavedFiles);
+			List<UnsavedFile> unsavedFiles, string filter = "");
 
 		Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
 			Func<bool> interruptRequested);
@@ -48,7 +48,7 @@ namespace AvalonStudio.Languages
 		int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
 		int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
 
-        Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset);
+        Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
 
 		Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
 
