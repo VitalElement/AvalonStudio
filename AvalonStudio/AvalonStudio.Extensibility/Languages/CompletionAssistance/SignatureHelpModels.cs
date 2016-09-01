@@ -18,6 +18,11 @@ namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
 
     public class Signature
     {
+        public Signature()
+        {
+            Parameters = new List<Parameter>();
+        }
+
         public string Name { get; set; }
         public string BuiltInReturnType { get; set; }
         public string ReturnType { get; set; }
@@ -31,7 +36,7 @@ namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
     {
         public SignatureHelp()
         {
-
+            Signatures = new List<Signature>();
         }
 
         public SignatureHelp(List<Signature> signatures, int offset)
@@ -39,9 +44,6 @@ namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
             Signatures = signatures;
             Offset = offset;
         }
-
-        
-        
 
         public List<Signature> Signatures { get; set; }
         public int ActiveSignature { get; set; }

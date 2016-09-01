@@ -414,8 +414,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                         currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
                     }
 
-                    var signatureHelp = await languageService.SignatureHelp(file, null, new List<UnsavedFile>(), 0, 0, 0);
-                    //await languageService.GetSymbolsAsync(file, new List<UnsavedFile>(), currentWord);
+                    var text = editor.TextDocument.Text;
+                    var location = editor.TextDocument.GetLocation(editor.CaretIndex);
+                    int line = location.Line;
+                    int column = location.Column;
+
+                    var signatureHelp = await languageService.SignatureHelp(file, new UnsavedFile(file.File, text), new List<UnsavedFile>(), line, column, editor.CaretIndex, currentWord);
 
                     if (signatureHelp != null)
                     {
