@@ -21,7 +21,8 @@
     using Avalonia.Interactivity;
     using Extensibility.Threading;
     using System.Threading;
-
+    using Extensibility;
+    using Utils;
     public class CSharpLanguageService : ILanguageService
     {
         private static readonly ConditionalWeakTable<ISourceFile, CSharpDataAssociation> dataAssociations =
@@ -325,9 +326,32 @@
             //throw new NotImplementedException();
         }
 
-        public Task<Symbol> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsaveFiles, int offset)
+        public async Task<Symbol> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column)
         {
-            throw new NotImplementedException();
+            Symbol result = null;
+            var request = new SignatureHelpOmniSharpRequest();
+
+            request.FileName = file.File;
+
+            request.Buffer = unsavedFiles.FirstOrDefault()?.Contents;
+            request.Line = line;
+            request.Column = column;
+
+            var dataAssociation = GetAssociatedData(file);
+
+            var response = await dataAssociation.OmniSharpServer.SendRequest(request);
+
+            if (response != null)
+            {
+                var console = IoC.Get<IConsole>();
+
+                foreach (var signature in response.Signatures)
+                {
+                    console.WriteLine($"name = {signature.Name}, label = {signature.Label}");
+                }
+            }
+
+            return result;
         }
     }
 

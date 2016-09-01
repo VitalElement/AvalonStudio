@@ -227,6 +227,7 @@
     <Compile Include="Languages\AccessType.cs" />
     <Compile Include="Languages\CompletionAssistance\ICompletionAssistant.cs" />
     <Compile Include="Languages\CompletionAssistance\MethodInfo.cs" />
+    <Compile Include="Languages\CompletionAssistance\SignatureHelpModels.cs" />
     <Compile Include="Languages\ICompletionAdviceControl.cs" />
     <Compile Include="Languages\IndexEntry.cs" />
     <Compile Include="MainMenu\IMenu.cs" />
