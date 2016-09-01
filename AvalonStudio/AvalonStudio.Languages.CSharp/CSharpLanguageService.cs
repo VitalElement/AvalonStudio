@@ -74,31 +74,46 @@
             return result;
         }
 
-        CursorKind FromOmniSharpKind(string kind)
+        CodeCompletionKind FromOmniSharpKind(string kind)
         {
             if (kind != null)
             {
                 switch (kind)
                 {
                     case "Method":
-                        return CursorKind.CXXMethod;
+                        return CodeCompletionKind.Method;
 
                     case "Class":
-                        return CursorKind.ClassDeclaration;
+                        return CodeCompletionKind.Class;
 
                     case "Struct":
-                        return CursorKind.StructDeclaration;
+                        return CodeCompletionKind.Struct;
 
                     case "Enum":
-                        return CursorKind.EnumConstantDeclaration;
+                        return CodeCompletionKind.Enum;
 
-                    case "Delegate:":
-                        return CursorKind.CXXMethod;
+                    case "Delegate":
+                        return CodeCompletionKind.Delegate;
+
+                    case "Property":
+                        return CodeCompletionKind.Property;
+
+                    case "Event":
+                        return CodeCompletionKind.Event;
+
+                    case "Interface":
+                        return CodeCompletionKind.Interface;
+
+                    case "Keyword":
+                        return CodeCompletionKind.Keyword;
+
+                    case "Namespace":
+                        return CodeCompletionKind.Namespace;       
                 }
             }
 
             Console.WriteLine($"dont understand omnisharp: {kind}");
-            return CursorKind.FirstInvalid;
+            return CodeCompletionKind.None;
         }
 
         public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
