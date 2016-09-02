@@ -84,7 +84,7 @@ namespace AvalonStudio.Projects
 
 		public string Name { get; set; }
 
-		public static IProject LoadProjectFile(ISolution solution, string fileName)
+        public static IProject LoadProjectFile(ISolution solution, string fileName)
 		{
 			var shell = IoC.Get<IShell>();
 			IProject result = null;

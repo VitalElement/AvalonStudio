@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace AvalonStudio.Languages.CSharp.OmniSharp
+namespace AvalonStudio.Languages.CSharp
 {
     static class SignatureHelpExtensionMethods
     {
-        static void ConvertXmlDocumentation (this Signature signature)
+        public static void ConvertXmlDocumentation (this Signature signature)
         {
             if (!string.IsNullOrEmpty(signature.Documentation))
             {

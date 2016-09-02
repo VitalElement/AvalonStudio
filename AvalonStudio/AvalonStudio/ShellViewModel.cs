@@ -55,7 +55,7 @@ namespace AvalonStudio
 
 		[ImportingConstructor]
 		public ShellViewModel([ImportMany] IEnumerable<ToolViewModel> importedTools,
-			[ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes,
+			[ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes, [ImportMany] IEnumerable<IProject> projectTypes,
 			[ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains,
 			[ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks,
 			[ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IExtension> extensions,
@@ -66,6 +66,7 @@ namespace AvalonStudio
 			ProjectTemplates = projectTemplates;
 			ToolChains = toolChains;
 			Debuggers = debuggers;
+            SolutionTypes = solutionTypes;
 			ProjectTypes = projectTypes;
 			TestFrameworks = testFrameworks;
 			CodeTemplates = codeTemplates;
@@ -221,6 +222,8 @@ namespace AvalonStudio
 		public StatusBarViewModel StatusBar { get; }
 
 		public CancellationTokenSource ProcessCancellationToken { get; private set; }
+
+        public IEnumerable<ISolutionType> SolutionTypes { get; }
 
 		public IEnumerable<IProject> ProjectTypes { get; }
 
