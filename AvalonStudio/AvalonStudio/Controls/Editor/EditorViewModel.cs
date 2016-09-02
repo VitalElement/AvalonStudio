@@ -153,6 +153,7 @@ namespace AvalonStudio.Controls
             disposables.Add(SaveCommand.Subscribe(param => Save()));
 
             CloseCommand = ReactiveCommand.Create();
+
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
@@ -246,11 +247,10 @@ namespace AvalonStudio.Controls
                     selectedIndexEntry = IndexItems.FirstOrDefault();
                     this.RaisePropertyChanged(nameof(SelectedIndexEntry));
 
-                    ShellViewModel.Instance.InvalidateErrors();
-
-                    model.ProjectFile.FileModifiedExternally += ProjectFile_FileModifiedExternally;
+                    ShellViewModel.Instance.InvalidateErrors();                    
                 };
 
+                model.ProjectFile.FileModifiedExternally += ProjectFile_FileModifiedExternally;
                 TextDocument = model.TextDocument;
                 this.RaisePropertyChanged(nameof(Title));
             };
