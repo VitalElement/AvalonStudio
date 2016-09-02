@@ -23,7 +23,7 @@ namespace AvalonStudio.Shell
 		private readonly IEnumerable<IPlugin> plugins;
 
 		[ImportingConstructor]
-		public MinimalShell([ImportMany] IEnumerable<ILanguageService> languageServices,
+		public MinimalShell([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes,
 			[ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates,
 			[ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers,
 			[ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates)
@@ -32,6 +32,7 @@ namespace AvalonStudio.Shell
 			ProjectTemplates = projectTemplates;
 			ToolChains = toolChains;
 			Debuggers = debuggers;
+            SolutionTypes = solutionTypes;
 			ProjectTypes = projectTypes;
 			TestFrameworks = testFrameworks;
 			CodeTemplates = codeTemplates;
@@ -43,7 +44,9 @@ namespace AvalonStudio.Shell
 
 		public IEnumerable<IProject> ProjectTypes { get; }
 
-		public IEnumerable<IProjectTemplate> ProjectTemplates { get; }
+        public IEnumerable<ISolutionType> SolutionTypes { get; }
+
+        public IEnumerable<IProjectTemplate> ProjectTemplates { get; }
 
 		public IEnumerable<ICodeTemplate> CodeTemplates { get; }
 
@@ -91,9 +94,9 @@ namespace AvalonStudio.Shell
 		public IEditor SelectedDocument
 		{
 			get { throw new NotImplementedException(); }
-		}
+		}        
 
-		public Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
+        public Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
 			bool selectLine = false)
 		{
 			throw new NotImplementedException();
