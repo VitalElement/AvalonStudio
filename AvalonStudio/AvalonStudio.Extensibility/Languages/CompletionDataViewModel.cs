@@ -99,6 +99,14 @@ namespace AvalonStudio.Languages.ViewModels
                     result = new KeywordCompletionDataViewModel(data);
                     break;
 
+                case CodeCompletionKind.Parameter:
+                    result = new ParameterCompletionDataViewModel(data);
+                    break;
+
+                case CodeCompletionKind.Field:
+                    result = new FieldCompletionDataViewModel(data);
+                    break;
+
                 default:
                     result = new DefaultCompletionDataViewModel(data);
                     break;
@@ -167,6 +175,20 @@ namespace AvalonStudio.Languages.ViewModels
     public class EnumConstantCompletionDataViewModel : CompletionDataViewModel
     {
         public EnumConstantCompletionDataViewModel(CodeCompletionData model) : base(model)
+        {
+        }
+    }
+
+    public class FieldCompletionDataViewModel : CompletionDataViewModel
+    {
+        public FieldCompletionDataViewModel(CodeCompletionData model) : base(model)
+        {
+        }
+    }
+
+    public class ParameterCompletionDataViewModel : CompletionDataViewModel
+    {
+        public ParameterCompletionDataViewModel(CodeCompletionData model) : base(model)
         {
         }
     }
