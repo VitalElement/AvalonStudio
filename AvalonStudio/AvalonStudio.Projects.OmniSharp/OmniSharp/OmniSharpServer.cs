@@ -71,11 +71,11 @@
             startInfo.Arguments = $"-p {port} -s {projectDir}";
 
             //// Hide console window
-            //startInfo.UseShellExecute = false;
-            //startInfo.RedirectStandardOutput = true;
-            //startInfo.RedirectStandardError = true;
-            //startInfo.RedirectStandardInput = true;
-            // startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
+            startInfo.RedirectStandardInput = true;
+            startInfo.CreateNoWindow = true;
 
             TaskCompletionSource<Process> processStartedCompletionSource = new TaskCompletionSource<Process>();
 
