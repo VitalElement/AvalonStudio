@@ -1,6 +1,7 @@
 ﻿using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Languages.CSharp.OmniSharp;
 using AvalonStudio.Platforms;
+using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,7 +28,7 @@ namespace AvalonStudio.Projects.OmniSharp
         private OmniSharpSolution()
         {
             server = new OmniSharpServer(TcpUtils.FreeTcpPort());
-           
+            Projects = new ObservableCollection<IProject>();
         }
 
         private async Task LoadSolution (string path)
@@ -38,8 +39,23 @@ namespace AvalonStudio.Projects.OmniSharp
 
             foreach(var project in workspace.MsBuild.Projects)
             {
-                
+                AddProject(OmniSharpProject.Create(this, project.Path, project));
             }
+
+            CurrentDirectory = Path.GetDirectoryName(path);
+        }
+
+        public IProject AddProject(IProject project)
+        {
+            var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);
+
+            if (currentProject != null) return currentProject;
+
+            //ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
+            Projects.InsertSorted(project);
+            currentProject = project;
+
+            return currentProject;
         }
 
 
@@ -52,11 +68,6 @@ namespace AvalonStudio.Projects.OmniSharp
         public ObservableCollection<IProject> Projects { get; set; }
 
         public IProject StartupProject { get; set; }
-
-        public IProject AddProject(IProject project)
-        {
-            throw new NotImplementedException();
-        }
 
         public ISourceFile FindFile(string path)
         {
