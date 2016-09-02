@@ -14,7 +14,6 @@
     using TextEditor.Rendering;
     using CPlusPlus.Rendering;
     using CPlusPlus;
-    using OmniSharp;
     using Avalonia.Input;
     using System.Runtime.CompilerServices;
     using System.IO;
@@ -23,6 +22,7 @@
     using System.Threading;
     using Extensibility;
     using Utils;
+    using Projects.OmniSharp;
 
     public class CSharpLanguageService : ILanguageService
     {
@@ -69,7 +69,12 @@
                 case ".cs":
                     result = true;
                     break;
-            }            
+            }
+
+            if (!(file.Project.Solution is OmniSharpSolution))
+            {
+                result = false;
+            }
 
             return result;
         }
@@ -108,7 +113,7 @@
                         return CodeCompletionKind.Keyword;
 
                     case "Namespace":
-                        return CodeCompletionKind.Namespace;       
+                        return CodeCompletionKind.Namespace;
                 }
             }
 
@@ -119,28 +124,21 @@
         public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
         {
             var result = new List<CodeCompletionData>();
-            AutoCompleteOmniSharpRequest request = new AutoCompleteOmniSharpRequest();
-
-            request.FileName = sourceFile.File;
-
-            request.Buffer = unsavedFiles.FirstOrDefault()?.Contents;
-            request.Line = line;
-            request.Column = column;
 
             var dataAssociation = GetAssociatedData(sourceFile);
 
-            var response = await dataAssociation.OmniSharpServer.SendRequest(request);
+            var response = await dataAssociation.Solution.Server.AutoComplete(sourceFile.File, unsavedFiles.FirstOrDefault()?.Contents, line, column);
 
             if (response != null)
             {
-                foreach(var completion in response)
+                foreach (var completion in response)
                 {
                     var newCompletion = new CodeCompletionData()
                     {
                         Suggestion = completion.CompletionText,
                         Priority = 1,
                         Hint = completion.DisplayText,
-                        BriefComment = completion.Description?.Split(new []{ '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(),
+                        BriefComment = completion.Description?.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(),
                         Kind = FromOmniSharpKind(completion.Kind)
                     };
 
@@ -149,7 +147,7 @@
                         result.Add(newCompletion);
                     }
                 }
-                    
+
             }
 
             return result;
@@ -201,8 +199,7 @@
             }
 
             association = new CSharpDataAssociation(textDocument);
-            association.OmniSharpServer = new OmniSharpServer();
-            association.OmniSharpServer.StartAsync(file.Project.Solution.CurrentDirectory).Wait();
+            association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.            
 
             dataAssociations.Add(file, association);
 
@@ -300,20 +297,15 @@
                     Console.WriteLine($"Dont understand omnisharp {omniSharpHighlightType}");
                     return HighlightType.None;
             }
-        }            
+        }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 
-            HighlightOmniSharpRequest request = new HighlightOmniSharpRequest();
-            request.FileName = file.File;
-
-            request.Buffer = unsavedFiles.FirstOrDefault()?.Contents;
-
             var dataAssociation = GetAssociatedData(file);
 
-            var response = await dataAssociation.OmniSharpServer.SendRequest(request);             
+            var response = await dataAssociation.Solution.Server.Highlight(file.File, unsavedFiles.FirstOrDefault()?.Contents);
 
             if (response != null)
             {
@@ -348,22 +340,15 @@
         public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
             SignatureHelp result = null;
-            var request = new SignatureHelpOmniSharpRequest();
-
-            request.FileName = file.File;
-
-            request.Buffer = unsavedFiles.FirstOrDefault()?.Contents;
-            request.Line = line;
-            request.Column = column;
 
             var dataAssociation = GetAssociatedData(file);
 
-            result = await dataAssociation.OmniSharpServer.SendRequest(request);
+            result = await dataAssociation.Solution.Server.SignatureHelp(file.File, unsavedFiles.FirstOrDefault()?.Contents, line, column);
 
             if (result != null)
             {
                 result.NormalizeSignatureData();
-                
+
                 result.Offset = offset;
             }
 
@@ -384,10 +369,10 @@
             BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
             BackgroundRenderers.Add(TextMarkerService);
 
-            DocumentLineTransformers.Add(TextColorizer);            
+            DocumentLineTransformers.Add(TextColorizer);
         }
 
-        public OmniSharpServer OmniSharpServer { get; set; }
+        public OmniSharpSolution Solution { get; set; }
         public TextColoringTransformer TextColorizer { get; }
         public TextMarkerService TextMarkerService { get; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; }

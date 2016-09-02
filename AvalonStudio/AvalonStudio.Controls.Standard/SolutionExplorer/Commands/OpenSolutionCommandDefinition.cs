@@ -8,6 +8,8 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
+using System.Linq;
+using System.IO;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 {
@@ -25,18 +27,29 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 
 				var dlg = new OpenFileDialog();
 				dlg.Title = "Open Solution";
-				dlg.Filters.Add(new FileDialogFilter
-				{
-					Name = "AvalonStudio Solution",
-					Extensions = new List<string> {Solution.Extension}
-				});
+
+                foreach (var solutionType in shell.SolutionTypes)
+                {
+                    dlg.Filters.Add(new FileDialogFilter
+                    {
+                        Name = solutionType.Description,
+                        Extensions = solutionType.Extensions
+                    });
+                }
+				
 				dlg.InitialFileName = string.Empty;
 				dlg.InitialDirectory = Platform.ProjectDirectory;
 				var result = await dlg.ShowAsync();
 
 				if (result != null)
 				{
-					shell.CurrentSolution = Solution.Load(result[0]);
+                    var extension = Path.GetExtension(result[0]).Substring(1);
+                    var solutionType = shell.SolutionTypes.FirstOrDefault(st => st.Extensions.Contains(extension));
+
+                    if (solutionType != null)
+                    {
+                        shell.CurrentSolution = await solutionType.LoadAsync(result[0]);
+                    }
 				}
 			});
 		}
