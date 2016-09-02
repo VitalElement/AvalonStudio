@@ -100,7 +100,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     case NClang.CursorKind.Namespace:
                         return CodeCompletionKind.Namespace;
-                        
+
+                    case NClang.CursorKind.ParmDeclaration:
+                        return CodeCompletionKind.Field;
+
+                    case NClang.CursorKind.FieldDeclaration:
+                        return CodeCompletionKind.Parameter;                        
                 }
             }
             

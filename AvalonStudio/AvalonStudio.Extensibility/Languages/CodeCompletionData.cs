@@ -13,6 +13,8 @@ namespace AvalonStudio.Languages
         Struct,
         Class,
         Method,
+        Field,
+        Parameter,
         None,
         Macro,
         Variable,
