@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.CSharp.OmniSharp
 {
-    abstract class OmniSharpRequest<T>
+    public abstract class OmniSharpRequest<T>
     {
         public OmniSharpRequest()
         {

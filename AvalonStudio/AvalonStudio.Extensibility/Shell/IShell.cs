@@ -28,7 +28,9 @@ namespace AvalonStudio.Shell
 		ModalDialogViewModelBase ModalDialog { get; set; }
 		object BottomSelectedTool { get; set; }
 
-		IEnumerable<IProject> ProjectTypes { get; }
+        IEnumerable<ISolutionType> SolutionTypes { get; }
+
+        IEnumerable<IProject> ProjectTypes { get; }
 
 		IEnumerable<IProjectTemplate> ProjectTemplates { get; }
 
@@ -36,7 +38,7 @@ namespace AvalonStudio.Shell
 
 		IEnumerable<ILanguageService> LanguageServices { get; }
 
-		IEnumerable<IToolChain> ToolChains { get; }
+		IEnumerable<IToolChain> ToolChains { get; }        
 
 		IEnumerable<IDebugger> Debuggers { get; }
 
