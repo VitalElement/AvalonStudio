@@ -765,7 +765,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(),
                     TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble |
-                    TranslationUnitFlags.CacheCompletionResults);
+                    TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.Incomplete);
             }
 
             if (result == null)
