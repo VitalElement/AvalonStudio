@@ -18,12 +18,6 @@ namespace AvalonStudio.Controls
 
 		private string platformString;
 
-		public int InstanceCount
-		{
-			get { return instanceCount; }
-			set { this.RaiseAndSetIfChanged(ref instanceCount, value); }
-		}
-
 		public bool DebugMode
 		{
 			get { return debugMode; }

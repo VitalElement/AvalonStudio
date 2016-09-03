@@ -283,9 +283,7 @@ namespace AvalonStudio.Controls
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
             margins = new ObservableCollection<TextViewMargin>();
-
-            ShellViewModel.Instance.StatusBar.InstanceCount++;
-
+            
             dock = Dock.Right;
         }
 
@@ -305,10 +303,7 @@ namespace AvalonStudio.Controls
 
         ~EditorViewModel()
         {
-            Dispatcher.UIThread.InvokeAsync(() => { ShellViewModel.Instance.StatusBar.InstanceCount--; });
             Model.ShutdownBackgroundWorkers();
-
-            Console.WriteLine("Editor VM Destructed.");
         }
 
         #endregion
