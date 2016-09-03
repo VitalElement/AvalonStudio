@@ -73,7 +73,6 @@ namespace AvalonStudio.Controls
 
 		~EditorModel()
 		{
-			Console.WriteLine("Editor Model Destructed.");
 		}
 
 		public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
