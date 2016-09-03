@@ -196,6 +196,10 @@
     </Compile>
     <Compile Include="LinkerSettingsFormViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="STM32ProjectSetupModalDialog.cs" />
+    <Compile Include="STM32ProjectSetupModalDialogView.xaml.cs">
+      <DependentUpon>STM32ProjectSetupModalDialogView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="STM32ToolchainSettings.cs" />
     <Compile Include="ToolchainSettingsViewModel.cs" />
   </ItemGroup>
@@ -244,6 +248,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="STM32ProjectSetupModalDialogView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
