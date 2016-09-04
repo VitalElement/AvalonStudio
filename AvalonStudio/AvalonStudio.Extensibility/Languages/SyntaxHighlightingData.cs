@@ -12,7 +12,11 @@ namespace AvalonStudio.Languages
 		Identifier,
 		Literal,
 		Comment,
-		UserType
+		ClassName,
+        StructName,
+        PreProcessor,
+        PreProcessorText,
+
 	}
 
 	public class SyntaxHighlightDataList : List<OffsetSyntaxHighlightingData>
