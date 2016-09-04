@@ -136,7 +136,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 					result = PunctuationBrush;
 					break;
 
-				case HighlightType.UserType:
+				case HighlightType.ClassName:
 					result = UserTypeBrush;
 					break;
 

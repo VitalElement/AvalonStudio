@@ -64,50 +64,47 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
-            if (kind != null)
+            switch (kind)
             {
-                switch (kind)
-                {
-                    case NClang.CursorKind.FunctionDeclaration:
-                    case NClang.CursorKind.CXXMethod:
-                    case NClang.CursorKind.Constructor:
-                    case NClang.CursorKind.Destructor:
-                    case NClang.CursorKind.FunctionTemplate:
-                    case NClang.CursorKind.ClassTemplate:
-                        return CodeCompletionKind.Method;
+                case NClang.CursorKind.FunctionDeclaration:
+                case NClang.CursorKind.CXXMethod:
+                case NClang.CursorKind.Constructor:
+                case NClang.CursorKind.Destructor:
+                case NClang.CursorKind.FunctionTemplate:
+                case NClang.CursorKind.ClassTemplate:
+                    return CodeCompletionKind.Method;
 
-                    case NClang.CursorKind.ClassDeclaration:
-                        return CodeCompletionKind.Class;
+                case NClang.CursorKind.ClassDeclaration:
+                    return CodeCompletionKind.Class;
 
-                    case NClang.CursorKind.StructDeclaration:
-                        return CodeCompletionKind.Struct;
+                case NClang.CursorKind.StructDeclaration:
+                    return CodeCompletionKind.Struct;
 
-                    case NClang.CursorKind.MacroDefinition:
-                        return CodeCompletionKind.Macro;
+                case NClang.CursorKind.MacroDefinition:
+                    return CodeCompletionKind.Macro;
 
-                    case NClang.CursorKind.NotImplemented:
-                    case NClang.CursorKind.TypedefDeclaration:
-                        return CodeCompletionKind.Keyword;
+                case NClang.CursorKind.NotImplemented:
+                case NClang.CursorKind.TypedefDeclaration:
+                    return CodeCompletionKind.Keyword;
 
-                    case NClang.CursorKind.EnumDeclaration:
-                        return CodeCompletionKind.Enum;
+                case NClang.CursorKind.EnumDeclaration:
+                    return CodeCompletionKind.Enum;
 
-                    case NClang.CursorKind.EnumConstantDeclaration:
-                        return CodeCompletionKind.EnumConstant;
+                case NClang.CursorKind.EnumConstantDeclaration:
+                    return CodeCompletionKind.EnumConstant;
 
-                    case NClang.CursorKind.VarDeclaration:
-                        return CodeCompletionKind.Variable;
+                case NClang.CursorKind.VarDeclaration:
+                    return CodeCompletionKind.Variable;
 
-                    case NClang.CursorKind.Namespace:
-                        return CodeCompletionKind.Namespace;
+                case NClang.CursorKind.Namespace:
+                    return CodeCompletionKind.Namespace;
 
-                    case NClang.CursorKind.ParmDeclaration:
-                        return CodeCompletionKind.Field;
+                case NClang.CursorKind.ParmDeclaration:
+                    return CodeCompletionKind.Field;
 
-                    case NClang.CursorKind.FieldDeclaration:
-                        return CodeCompletionKind.Parameter;                        
-                }
-            }
+                case NClang.CursorKind.FieldDeclaration:
+                    return CodeCompletionKind.Parameter;
+            }            
             
             Console.WriteLine($"dont understand{kind.ToString()}");
             return CodeCompletionKind.None;
@@ -246,7 +243,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                     {
                                         Start = e.Cursor.CursorExtent.Start.FileLocation.Offset,
                                         Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset,
-                                        Type = HighlightType.UserType
+                                        Type = HighlightType.ClassName
                                     });
                                     break;
                             }
@@ -266,7 +263,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                     {
                                         Start = e.Cursor.CursorExtent.Start.FileLocation.Offset,
                                         Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset,
-                                        Type = HighlightType.UserType
+                                        Type = HighlightType.ClassName
                                     });
                                     break;
                             }

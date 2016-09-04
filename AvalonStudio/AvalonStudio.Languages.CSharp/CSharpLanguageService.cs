@@ -114,6 +114,15 @@
 
                     case "Namespace":
                         return CodeCompletionKind.Namespace;
+
+                    case "Field":
+                        return CodeCompletionKind.Field;
+
+                    case "Parameter":
+                        return CodeCompletionKind.Parameter;
+
+                    case "Local":
+                        return CodeCompletionKind.Variable;
                 }
             }
 
@@ -278,6 +287,7 @@
         {
             switch (omniSharpHighlightType)
             {
+                case "operator":
                 case "punctuation":
                     return HighlightType.Punctuation;
 
@@ -288,11 +298,31 @@
                     return HighlightType.Keyword;
 
                 case "class name":
-                    return HighlightType.UserType;
+                    return HighlightType.ClassName;
 
-                case "operator":
+                case "struct name":
+                    return HighlightType.StructName;
+
+                case "comment":
                     return HighlightType.Comment;
 
+                case "delegate name":
+                case "interface name":
+                case "enum name":
+                    return HighlightType.Identifier;
+
+                case "string":
+                case "number":
+                    return HighlightType.Literal;
+
+                case "preprocessor keyword":
+                    return HighlightType.PreProcessor;
+
+                case "preprocessor text":
+                    return HighlightType.PreProcessorText;
+
+                
+                    
                 default:
                     Console.WriteLine($"Dont understand omnisharp {omniSharpHighlightType}");
                     return HighlightType.None;
@@ -334,7 +364,16 @@
 
         public void UnregisterSourceFile(TextEditor editor, ISourceFile file)
         {
-            //throw new NotImplementedException();
+            var association = GetAssociatedData(file);
+
+            editor.RemoveHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler);
+            editor.RemoveHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler);
+            editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
+
+            editor.TextInput -= association.TextInputHandler;
+
+            association.Solution = null;
+            dataAssociations.Remove(file);
         }
 
         public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
