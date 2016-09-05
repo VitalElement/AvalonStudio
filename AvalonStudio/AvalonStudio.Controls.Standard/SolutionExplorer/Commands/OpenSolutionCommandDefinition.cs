@@ -28,6 +28,20 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 				var dlg = new OpenFileDialog();
 				dlg.Title = "Open Solution";
 
+
+                List<string> allExtensions = new List<string>();
+
+                foreach (var solutionType in shell.SolutionTypes)
+                {
+                    allExtensions.AddRange(solutionType.Extensions);
+                }
+
+                dlg.Filters.Add(new FileDialogFilter
+                {
+                    Name = "All Supported Solution Types",
+                    Extensions = allExtensions
+                });
+
                 foreach (var solutionType in shell.SolutionTypes)
                 {
                     dlg.Filters.Add(new FileDialogFilter
