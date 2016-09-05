@@ -28,7 +28,7 @@ namespace AvalonStudio
 
 			var solutionFile = Path.Combine(currentDir, options.Solution);
 
-			if (File.Exists(solutionFile))
+			if (System.IO.File.Exists(solutionFile))
 			{
 				return Solution.Load(solutionFile);
 			}
@@ -226,7 +226,7 @@ namespace AvalonStudio
 		{
 			var file = Path.Combine(Directory.GetCurrentDirectory(), options.File);
 
-			if (File.Exists(file))
+			if (System.IO.File.Exists(file))
 			{
 				var solution = LoadSolution(options);
 				var project = FindProject(solution, options.Project);
@@ -235,21 +235,21 @@ namespace AvalonStudio
 				{
 					// todo normalize paths.
 					var currentFile =
-						project.Items.OfType<ISourceFile>().Where(s => s.File.Normalize() == options.File.Normalize()).FirstOrDefault();
+						project.Items.OfType<ISourceFile>().Where(s => s.FilePath.Normalize() == options.File.Normalize()).FirstOrDefault();
 
 					if (currentFile != null)
 					{
 						project.Items.RemoveAt(project.Items.IndexOf(currentFile));
 						project.Save();
 
-						Console.WriteLine("File removed.");
+                        Console.WriteLine("File removed.");
 
 						return 1;
 					}
-					Console.WriteLine("File not found in project.");
+                    Console.WriteLine("File not found in project.");
 					return -1;
 				}
-				Console.WriteLine("Project not found.");
+                Console.WriteLine("Project not found.");
 				return -1;
 			}
 			Console.WriteLine("File not found.");
@@ -260,7 +260,7 @@ namespace AvalonStudio
 		{
 			var file = Path.Combine(Directory.GetCurrentDirectory(), options.File);
 
-			if (File.Exists(file))
+			if (System.IO.File.Exists(file))
 			{
 				var solution = LoadSolution(options);
 				var project = FindProject(solution, options.Project) as CPlusPlusProject;
@@ -271,10 +271,10 @@ namespace AvalonStudio
 					project.Items.Add(sourceFile);
 					project.SourceFiles.InsertSorted(sourceFile);
 					project.Save();
-					Console.WriteLine("File added.");
+                    Console.WriteLine("File added.");
 					return 1;
 				}
-				Console.WriteLine("Project not found.");
+                Console.WriteLine("Project not found.");
 				return -1;
 			}
 			Console.WriteLine("File not found.");

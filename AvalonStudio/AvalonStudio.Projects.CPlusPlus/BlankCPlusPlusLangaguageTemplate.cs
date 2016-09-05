@@ -40,8 +40,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 				solution.StartupProject = project;
 			}
 
-			solution.Save();
-
 			return project;
 		}
 	}

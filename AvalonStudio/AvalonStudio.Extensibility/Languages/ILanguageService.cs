@@ -27,7 +27,7 @@ namespace AvalonStudio.Languages
 		Type BaseTemplateType { get; }
 
 		Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column,
-			List<UnsavedFile> unsavedFiles);
+			List<UnsavedFile> unsavedFiles, string filter = "");
 
 		Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
 			Func<bool> interruptRequested);
@@ -36,7 +36,7 @@ namespace AvalonStudio.Languages
 
 		IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-		void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant,
+		void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant,
 			TextEditor.TextEditor editor, ISourceFile file, TextDocument textDocument);
 
 		void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file);
@@ -47,6 +47,8 @@ namespace AvalonStudio.Languages
 
 		int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
 		int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
+
+        Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
 
 		Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
 
