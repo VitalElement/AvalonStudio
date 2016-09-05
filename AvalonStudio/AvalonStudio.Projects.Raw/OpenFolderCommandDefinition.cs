@@ -30,7 +30,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 
                 if (result != string.Empty)
                 {
-                    shell.CurrentSolution = RawProject.CreateRawSolution(result);
+                    //shell.CurrentSolution = RawProject.CreateRawSolution(result);
                 }
             });
         }

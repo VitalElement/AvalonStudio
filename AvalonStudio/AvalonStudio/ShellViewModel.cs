@@ -242,7 +242,7 @@ namespace AvalonStudio
 		public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
 			bool selectLine = false)
 		{
-			var currentTab = DocumentTabs.Documents.FirstOrDefault(t => t.Model.ProjectFile.File == file.File);
+			var currentTab = DocumentTabs.Documents.FirstOrDefault(t => t.Model.ProjectFile.FilePath == file.FilePath);
 
 			if (currentTab == null)
 			{
@@ -295,7 +295,7 @@ namespace AvalonStudio
 
 		public IEditor GetDocument(string path)
 		{
-			return DocumentTabs.Documents.FirstOrDefault(d => d.Model.ProjectFile?.File == path);
+			return DocumentTabs.Documents.FirstOrDefault(d => d.Model.ProjectFile?.FilePath == path);
 		}
 
 		public void Save()

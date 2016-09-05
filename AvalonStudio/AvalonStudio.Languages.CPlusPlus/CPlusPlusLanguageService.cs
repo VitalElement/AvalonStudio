@@ -552,7 +552,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             await clangAccessJobRunner.InvokeAsync(() =>
             {
                 var tu = associatedData.TranslationUnit;
-                var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.File), offset));
+                var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.FilePath), offset));
 
                 switch (cursor.Kind)
                 {
@@ -656,7 +656,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             ClangTranslationUnit result = null;
 
-            if (File.Exists(file.Location))
+            if (System.IO.File.Exists(file.Location))
             {
                 var args = new List<string>();
 

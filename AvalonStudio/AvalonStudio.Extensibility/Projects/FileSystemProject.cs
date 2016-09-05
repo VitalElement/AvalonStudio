@@ -11,29 +11,20 @@ using System.IO;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using Avalonia.Threading;
-using AvalonStudio.Projects.Standard;
 using System.Dynamic;
 
-namespace AvalonStudio.Projects.Raw
+namespace AvalonStudio.Projects
 {
-    public class RawProject : IProject
+    public abstract class FileSystemProject : IProject
     {
         private FileSystemWatcher fileSystemWatcher;
         private FileSystemWatcher folderSystemWatcher;
         private Dispatcher uiDispatcher;
 
-        public const string ProjectExtension = "aproj";
-
-        public RawProject() : this(true)
-        {
-
-        }
-
-        public RawProject(bool useDispatcher)
-        {            
-            Items = new ObservableCollection<IProjectItem>();
+        public FileSystemProject(bool useDispatcher)
+        {   
             Folders = new ObservableCollection<IProjectFolder>();            
-            References = new ObservableCollection<IProject>();            
+            
             SourceFiles = new List<ISourceFile>();            
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
@@ -45,42 +36,19 @@ namespace AvalonStudio.Projects.Raw
             }
         }
 
-        public static Solution CreateRawSolution(string path)
-        {
-            var result = new Solution();
-
-            result.Name = Path.GetFileName(path);
-            result.CurrentDirectory = path + Platform.DirectorySeperator;
-
-            result.AddProject(RawProject.Create(result, path));
-
-            return result;
-        }
-
-        public static RawProject Create(ISolution solution, string path)
-        {
-            RawProject project = new RawProject();
-            project.Solution = solution;
-            project.Location = Path.Combine(path, "raw.aproj");
-
-            project.LoadFiles();
-
-            return project;
-        }
-
-        public static void PopulateFiles(RawProject project, StandardProjectFolder folder)
+        public static void PopulateFiles(FileSystemProject project, IProjectFolder folder)
         {
             var files = Directory.EnumerateFiles(folder.Location);            
 
             foreach (var file in files)
             {
-                var sourceFile = RawFile.FromPath(project, folder, file.ToPlatformPath());
+                var sourceFile = File.FromPath(project, folder, file.ToPlatformPath());
                 project.SourceFiles.InsertSorted(sourceFile);
                 folder.Items.InsertSorted(sourceFile);
             }
         }
 
-        public static StandardProjectFolder GetSubFolders(RawProject project, IProjectFolder parent, string path)
+        public static IProjectFolder GetSubFolders(FileSystemProject project, IProjectFolder parent, string path)
         {
             var result = new StandardProjectFolder(path);
 
@@ -103,7 +71,7 @@ namespace AvalonStudio.Projects.Raw
             return result;
         }
 
-        internal void LoadFiles()
+        protected void LoadFiles()
         {
             var folders = GetSubFolders(this, this, CurrentDirectory);
 
@@ -212,7 +180,7 @@ namespace AvalonStudio.Projects.Raw
         {
             var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
-            var sourceFile = RawFile.FromPath(this, folder, fullPath.ToPlatformPath());
+            var sourceFile = File.FromPath(this, folder, fullPath.ToPlatformPath());
             SourceFiles.InsertSorted(sourceFile);
 
             if (folder.Location == Project.CurrentDirectory)
@@ -296,7 +264,7 @@ namespace AvalonStudio.Projects.Raw
             Folders.Remove(folder);
         }
 
-        private void RemoveFiles(RawProject project, IProjectFolder folder)
+        private void RemoveFiles(FileSystemProject project, IProjectFolder folder)
         {
             foreach (var item in folder.Items)
             {
@@ -328,131 +296,76 @@ namespace AvalonStudio.Projects.Raw
             }
         }
 
-        public IList<ISourceFile> SourceFiles { get; }
+        public IList<ISourceFile> SourceFiles { get; private set; }
 
-        public IList<IProjectFolder> Folders { get; }
+        public IList<IProjectFolder> Folders { get; private set; }
 
         #region IProject Implementation
-        public IList<object> ConfigurationPages
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public abstract IList<object> ConfigurationPages { get; }
 
-        public string CurrentDirectory
-        {
-            get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
-        }
+        public abstract string CurrentDirectory { get; }
 
-        public IDebugger Debugger
-        {
-            get; set;
-        }
+        public abstract IDebugger Debugger { get; set; }
 
-        public dynamic DebugSettings { get; set; }
+        public abstract dynamic DebugSettings { get; set; }
 
-        public string Executable { get; set; }
+        public abstract string Executable { get; set; }
 
-        public string Extension
-        {
-            get { return ProjectExtension; }
-        }
+        public abstract string Extension { get; }
 
-        public bool Hidden { get; set; }
+        public abstract bool Hidden { get; set; }
 
-        public ObservableCollection<IProjectItem> Items { get; }
+        public abstract ObservableCollection<IProjectItem> Items { get; }
 
-        public string Location { get; internal set; }
+        public abstract string Location { get; set; }
 
-        public string LocationDirectory => CurrentDirectory;
+        public abstract string LocationDirectory { get; }
 
-        public string Name
-        {
-            get { return Path.GetFileNameWithoutExtension(Location); }
-        }
+        public abstract string Name { get; }
 
-        public IProjectFolder Parent { get; set; }
+        public abstract IProjectFolder Parent { get; set; }
 
-        public IProject Project { get; set; }
+        public abstract IProject Project { get; set; }
 
-        public ObservableCollection<IProject> References { get; }
+        public abstract ObservableCollection<IProject> References { get; }
 
-        public ISolution Solution { get; set; }
+        public abstract ISolution Solution { get; set; }
 
-        public ITestFramework TestFramework
+        public abstract ITestFramework TestFramework
         {
             get; set;
         }
 
-        public IToolChain ToolChain
+        public abstract IToolChain ToolChain
         {
             get; set;
         }
 
-        public dynamic ToolchainSettings { get; set; }
+        public abstract dynamic ToolchainSettings { get; set; }
 
         public event EventHandler FileAdded;
 
-        public void AddReference(IProject project)
-        {
-            References.InsertSorted(project);
-        }
+        public abstract void AddReference(IProject project);
 
-        public int CompareTo(IProjectFolder other)
-        {
-            return Location.CompareFilePath(other.Location);
-        }
+        public abstract int CompareTo(IProjectFolder other);
 
-        public int CompareTo(string other)
-        {
-            return Location.CompareFilePath(other);
-        }
+        public abstract int CompareTo(string other);
 
-        public int CompareTo(IProject other)
-        {
-            return Name.CompareTo(other.Name);
-        }
+        public abstract int CompareTo(IProject other);
 
-        public int CompareTo(IProjectItem other)
-        {
-            return Name.CompareTo(other.Name);
-        }
+        public abstract int CompareTo(IProjectItem other);
 
-        public void ExcludeFile(ISourceFile file)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void ExcludeFile(ISourceFile file);
 
-        public void ExcludeFolder(IProjectFolder folder)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void ExcludeFolder(IProjectFolder folder);
 
-        public IProject Load(ISolution solution, string filePath)
-        {
-            //var result = Load(filePath, solution);
+        public abstract void RemoveReference(IProject project);
 
-            //return result;
+        public abstract void ResolveReferences();
 
-            return null;
-        }
+        public abstract void Save();
 
-        public void RemoveReference(IProject project)
-        {
-            References.Remove(project);
-        }
-
-        public void ResolveReferences()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IProject Load(ISolution solution, string filePath);
         #endregion
     }
 }

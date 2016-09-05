@@ -251,6 +251,9 @@
     <Compile Include="Projects\AvalonStudioSolutionType.cs" />
     <Compile Include="Projects\IProjectType.cs" />
     <Compile Include="Projects\ISolutionType.cs" />
+    <Compile Include="Projects\File.cs" />
+    <Compile Include="Projects\FileSystemProject.cs" />
+    <Compile Include="Projects\Folder.cs" />
     <Compile Include="Shell\IShell.cs" />
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />

@@ -25,7 +25,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
             foreach(var file in project.SourceFiles)
             {
-                var sourceFile = RawFile.FromPath(result, result, file.ToPlatformPath());
+                var sourceFile = File.FromPath(result, result, file.ToPlatformPath());
                 result.SourceFiles.InsertSorted(sourceFile);
                 result.Items.Add(sourceFile);
             }
