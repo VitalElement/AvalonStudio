@@ -83,7 +83,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         [JsonProperty(PropertyName = "TestFramework")]
         public string TestFrameworkReference { get; set; }
 
-        public List<string> ExcludedFiles { get; set; }
+        public override List<string> ExcludedFiles { get; set; }
 
         [JsonIgnore]
         public IList<IMenuItem> ProjectMenuItems
@@ -408,18 +408,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         public static string GenerateProjectFileName(string name)
         {
             return string.Format("{0}.{1}", name, ProjectExtension);
-        }
-
-        private static bool IsExcluded(List<string> exclusionFilters, string path)
-        {
-            var result = false;
-
-
-            var filter = exclusionFilters.FirstOrDefault(f => path.Contains(f));
-
-            result = !string.IsNullOrEmpty(filter);
-
-            return result;
         }
 
         public static CPlusPlusProject Load(string filename, ISolution solution)

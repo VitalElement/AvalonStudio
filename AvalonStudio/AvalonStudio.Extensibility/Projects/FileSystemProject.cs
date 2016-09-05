@@ -12,6 +12,7 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using Avalonia.Threading;
 using System.Dynamic;
+using Newtonsoft.Json;
 
 namespace AvalonStudio.Projects
 {
@@ -38,7 +39,9 @@ namespace AvalonStudio.Projects
 
         public static void PopulateFiles(FileSystemProject project, IProjectFolder folder)
         {
-            var files = Directory.EnumerateFiles(folder.Location);            
+            var files = Directory.EnumerateFiles(folder.Location);
+
+            files = files.Where(f =>!IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()) && f != project.Location);
 
             foreach (var file in files)
             {
@@ -48,6 +51,17 @@ namespace AvalonStudio.Projects
             }
         }
 
+        private static bool IsExcluded(List<string> exclusionFilters, string path)
+        {
+            var result = false;
+
+            var filter = exclusionFilters.FirstOrDefault(f => path.Contains(f));
+
+            result = !string.IsNullOrEmpty(filter);
+
+            return result;
+        }
+
         public static IProjectFolder GetSubFolders(FileSystemProject project, IProjectFolder parent, string path)
         {
             var result = new StandardProjectFolder(path);
@@ -55,8 +69,8 @@ namespace AvalonStudio.Projects
             var folders = Directory.GetDirectories(path);
 
             if (folders.Count() > 0)
-            {
-                foreach (var folder in folders)
+            {                
+                foreach (var folder in folders.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath())))
                 {
                     result.Items.InsertSorted(GetSubFolders(project, result, folder));
                 }
@@ -74,8 +88,6 @@ namespace AvalonStudio.Projects
         protected void LoadFiles()
         {
             var folders = GetSubFolders(this, this, CurrentDirectory);
-
-            //Items = new ObservableCollection<IProjectItem>();
 
             foreach (var item in folders.Items)
             {
@@ -296,8 +308,10 @@ namespace AvalonStudio.Projects
             }
         }
 
+        [JsonIgnore]
         public IList<ISourceFile> SourceFiles { get; private set; }
 
+        [JsonIgnore]
         public IList<IProjectFolder> Folders { get; private set; }
 
         #region IProject Implementation
@@ -316,6 +330,8 @@ namespace AvalonStudio.Projects
         public abstract bool Hidden { get; set; }
 
         public abstract ObservableCollection<IProjectItem> Items { get; }
+        
+        public abstract List<string> ExcludedFiles { get; set; }
 
         public abstract string Location { get; set; }
 
