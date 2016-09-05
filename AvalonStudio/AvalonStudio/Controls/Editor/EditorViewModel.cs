@@ -141,7 +141,7 @@ namespace AvalonStudio.Controls
         public EditorViewModel(EditorModel model) : base(model)
         {
             disposables = new CompositeDisposable();
-            highlightingData = new ObservableCollection<SyntaxHighlightingData>();
+            highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
 
             BeforeTextChangedCommand = ReactiveCommand.Create();
             disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
@@ -241,7 +241,7 @@ namespace AvalonStudio.Controls
                     }
 
                     HighlightingData =
-                        new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
+                        new ObservableCollection<OffsetSyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
 
                     IndexItems = new ObservableCollection<IndexEntry>(model.CodeAnalysisResults.IndexItems);
                     selectedIndexEntry = IndexItems.FirstOrDefault();
@@ -268,7 +268,6 @@ namespace AvalonStudio.Controls
             };
 
             intellisense = new IntellisenseViewModel(model, this);
-            _completionHint = new CompletionHintViewModel();
 
             documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
 
@@ -294,7 +293,7 @@ namespace AvalonStudio.Controls
             {
                 if (!(new FileInfo(Model.ProjectFile.Location).IsFileLocked()))
                 {
-                    using (var fs = File.OpenText(Model.ProjectFile.Location))
+                    using (var fs = System.IO.File.OpenText(Model.ProjectFile.Location))
                     {
                         TextDocument.Text = fs.ReadToEnd();
                     }
@@ -374,7 +373,6 @@ namespace AvalonStudio.Controls
                 if (!Intellisense.IsVisible)
                 {
                     Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
-                    CompletionHint.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
                 }
             }
         }
@@ -393,15 +391,6 @@ namespace AvalonStudio.Controls
                 }
             }
         }
-
-
-        private CompletionHintViewModel _completionHint;
-        public CompletionHintViewModel CompletionHint
-        {
-            get { return _completionHint; }
-            set { this.RaiseAndSetIfChanged(ref _completionHint, value); }
-        }
-
 
         private IntellisenseViewModel intellisense;
         public IntellisenseViewModel Intellisense
@@ -624,8 +613,8 @@ namespace AvalonStudio.Controls
         }
 
 
-        private ObservableCollection<SyntaxHighlightingData> highlightingData;
-        public ObservableCollection<SyntaxHighlightingData> HighlightingData
+        private ObservableCollection<OffsetSyntaxHighlightingData> highlightingData;
+        public ObservableCollection<OffsetSyntaxHighlightingData> HighlightingData
         {
             get { return highlightingData; }
             set { this.RaiseAndSetIfChanged(ref highlightingData, value); }
