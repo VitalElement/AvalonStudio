@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Utils;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
@@ -12,7 +13,7 @@ namespace AvalonStudio.Extensibility.Git
 			TransferProgressHandler transferHandler = e =>
 			{
 				console.OverWrite(
-					$"Bytes: {e.ReceivedBytes}, Objects: {e.ReceivedObjects}/{e.TotalObjects}, Indexed: {e.IndexedObjects}");
+					$"Bytes: {ByteSizeHelper.ToString(e.ReceivedBytes)}, Objects: {e.ReceivedObjects}/{e.TotalObjects}, Indexed: {e.IndexedObjects}");
 				return true;
 			};
 
