@@ -293,7 +293,7 @@ namespace AvalonStudio.Controls
             {
                 if (!(new FileInfo(Model.ProjectFile.Location).IsFileLocked()))
                 {
-                    using (var fs = File.OpenText(Model.ProjectFile.Location))
+                    using (var fs = System.IO.File.OpenText(Model.ProjectFile.Location))
                     {
                         TextDocument.Text = fs.ReadToEnd();
                     }

@@ -136,7 +136,7 @@ namespace AvalonStudio.Toolchains.Clang
 
 			startInfo.WorkingDirectory = file.CurrentDirectory;
 
-			if (!File.Exists(startInfo.FileName))
+			if (!System.IO.File.Exists(startInfo.FileName))
 			{
 				result.ExitCode = -1;
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
@@ -151,7 +151,7 @@ namespace AvalonStudio.Toolchains.Clang
 				}
 
 				startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -fshort-enums -MMD -MP", fileArguments,
-					GetCompilerArguments(superProject, project, file), file.Location, outputFile);
+                    GetCompilerArguments(superProject, project, file), file.Location, outputFile);
 
 				// Hide console window
 				startInfo.UseShellExecute = false;
@@ -199,12 +199,12 @@ namespace AvalonStudio.Toolchains.Clang
 
 			var linkerScript = GetLinkerScriptLocation(project);
 
-			if (File.Exists(linkerScript))
+			if (System.IO.File.Exists(linkerScript))
 			{
-				File.Delete(linkerScript);
+                System.IO.File.Delete(linkerScript);
 			}
 
-			var sw = File.CreateText(linkerScript);
+			var sw = System.IO.File.CreateText(linkerScript);
 
 			sw.Write(template.TransformText());
 
@@ -228,7 +228,7 @@ namespace AvalonStudio.Toolchains.Clang
 
 			startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-			if (!File.Exists(startInfo.FileName))
+			if (!System.IO.File.Exists(startInfo.FileName))
 			{
 				result.ExitCode = -1;
 				console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
@@ -363,7 +363,7 @@ namespace AvalonStudio.Toolchains.Clang
 			var startInfo = new ProcessStartInfo();
 			startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-size" + Platform.ExecutableExtension);
 
-			if (!File.Exists(startInfo.FileName))
+			if (!System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
 				result.ExitCode = -1;

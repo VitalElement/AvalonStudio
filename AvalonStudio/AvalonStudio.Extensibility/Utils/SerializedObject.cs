@@ -4,12 +4,12 @@ using Newtonsoft.Json.Converters;
 
 namespace AvalonStudio.Utils
 {
-	public class SerializedObject<T>
+    public class SerializedObject
 	{
-		public void Serialize(string filename)
+		public static void Serialize(string filename, object item)
 		{
 			var writer = new StreamWriter(filename);
-			writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented,
+			writer.Write(JsonConvert.SerializeObject(item, Formatting.Indented,
 				new JsonSerializerSettings
 				{
 					NullValueHandling = NullValueHandling.Ignore,
@@ -18,12 +18,12 @@ namespace AvalonStudio.Utils
 			writer.Close();
 		}
 
-		public static T FromString(string data)
+		public static T FromString<T>(string data)
 		{
 			return JsonConvert.DeserializeObject<T>(data);
 		}
 
-		public static T Deserialize(string filename)
+		public static T Deserialize<T>(string filename)
 		{
 			var reader = new StreamReader(filename);
 

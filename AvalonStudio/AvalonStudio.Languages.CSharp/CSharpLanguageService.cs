@@ -136,7 +136,7 @@
 
             var dataAssociation = GetAssociatedData(sourceFile);
 
-            var response = await dataAssociation.Solution.Server.AutoComplete(sourceFile.File, unsavedFiles.FirstOrDefault()?.Contents, line, column);
+            var response = await dataAssociation.Solution.Server.AutoComplete(sourceFile.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
 
             if (response != null)
             {
@@ -335,7 +335,7 @@
 
             var dataAssociation = GetAssociatedData(file);
 
-            var response = await dataAssociation.Solution.Server.Highlight(file.File, unsavedFiles.FirstOrDefault()?.Contents);
+            var response = await dataAssociation.Solution.Server.Highlight(file.FilePath, unsavedFiles.FirstOrDefault()?.Contents);
 
             if (response != null)
             {
@@ -382,7 +382,7 @@
 
             var dataAssociation = GetAssociatedData(file);
 
-            result = await dataAssociation.Solution.Server.SignatureHelp(file.File, unsavedFiles.FirstOrDefault()?.Contents, line, column);
+            result = await dataAssociation.Solution.Server.SignatureHelp(file.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
 
             if (result != null)
             {

@@ -31,7 +31,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
             deviceList = new ObservableCollection<JLinkTargetDeviceViewModel>();
 
-            if (File.Exists(devPath))
+            if (System.IO.File.Exists(devPath))
             {
                 LoadDeviceList(devPath);
             }
@@ -43,7 +43,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
         {
             var list = new ObservableCollection<JLinkTargetDeviceViewModel>();
 
-            using (TextReader tr = File.OpenText(deviceFile))
+            using (TextReader tr = System.IO.File.OpenText(deviceFile))
             {
                 tr.ReadLine();
 

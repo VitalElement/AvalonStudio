@@ -15,19 +15,19 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 		public string Flags { get; set; }
 
-		public string File { get; set; }
+		public string FilePath { get; set; }
 
         public event EventHandler FileModifiedExternally;
 
         public int CompareTo(ISourceFile other)
 		{
-			return File.CompareFilePath(other.File);
+			return FilePath.CompareFilePath(other.FilePath);
 		}
 
 		[JsonIgnore]
 		public string Location
 		{
-			get { return Path.Combine(Project.CurrentDirectory, File); }
+			get { return Path.Combine(Project.CurrentDirectory, FilePath); }
 		}
 
 		[JsonIgnore]
@@ -40,7 +40,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 			{
 				var result = Language.C;
 
-				switch (Path.GetExtension(File))
+				switch (Path.GetExtension(FilePath))
 				{
 					case ".c":
 						result = Language.C;
@@ -56,7 +56,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 		}
 		public string Extension
         {
-            get { return Path.GetExtension(File); }
+            get { return Path.GetExtension(FilePath); }
         }
 
 		public string Name
@@ -78,7 +78,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 		public static SourceFile FromPath(IProject project, IProjectFolder parent, string filePath)
 		{
-			return new SourceFile {Project = project, Parent = parent, File = filePath.ToPlatformPath()};
+			return new SourceFile {Project = project, Parent = parent, FilePath = filePath.ToPlatformPath()};
 		}
 
 		public static Task<ISourceFile> Create(IProjectFolder parent, string name, string text = "")
