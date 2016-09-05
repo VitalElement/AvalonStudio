@@ -735,9 +735,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                 //    args.Add(string.Format("{0}", arg));
                 //}
 
-                switch (file.Language)
+                switch (file.Extension)
                 {
-                    case Language.C:
+                    case ".c":
                         {
                             foreach (var arg in superProject.CCompilerArguments)
                             {
@@ -746,7 +746,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         }
                         break;
 
-                    case Language.Cpp:
+                    case ".cpp":
                         {
                             foreach (var arg in superProject.CppCompilerArguments)
                             {

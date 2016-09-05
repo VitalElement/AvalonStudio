@@ -237,9 +237,9 @@ namespace AvalonStudio.Toolchains.Llilum
 				result += string.Format(" {0}", arg);
 			}
 
-			switch (file.Language)
+			switch (file.Extension)
 			{
-				case Language.C:
+				case ".c":
 				{
 					foreach (var arg in superProject.CCompilerArguments)
 					{
@@ -248,7 +248,7 @@ namespace AvalonStudio.Toolchains.Llilum
 				}
 					break;
 
-				case Language.Cpp:
+				case ".cpp":
 				{
 					foreach (var arg in superProject.CppCompilerArguments)
 					{
@@ -278,7 +278,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			{
 				var startInfo = new ProcessStartInfo();
 
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-g++.exe");
 				}
@@ -299,7 +299,7 @@ namespace AvalonStudio.Toolchains.Llilum
 				{
 					var fileArguments = string.Empty;
 
-					if (file.Language == Language.Cpp)
+					if (file.Extension == ".cpp")
 					{
 						fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
 					}

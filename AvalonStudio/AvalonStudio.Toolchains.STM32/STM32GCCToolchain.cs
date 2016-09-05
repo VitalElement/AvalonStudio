@@ -124,7 +124,7 @@ namespace AvalonStudio.Toolchains.STM32
 
 			var startInfo = new ProcessStartInfo();
 
-			if (file.Language == Language.Cpp)
+			if (file.Extension == ".cpp")
 			{
 				startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-g++" + Platform.ExecutableExtension);
 			}
@@ -145,7 +145,7 @@ namespace AvalonStudio.Toolchains.STM32
 			{
 				var fileArguments = string.Empty;
 
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					fileArguments = "-x c++ -fno-use-cxa-atexit";
 				}
@@ -465,7 +465,7 @@ namespace AvalonStudio.Toolchains.STM32
 				result += "-g ";
 			}
 
-			if (file == null || file.Language == Language.Cpp)
+			if (file == null || file.Extension == ".cpp")
 			{
 				switch (settings.CompileSettings.CppLanguageStandard)
 				{
@@ -494,7 +494,7 @@ namespace AvalonStudio.Toolchains.STM32
 				}
 			}
 
-			if (file == null || file.Language == Language.C)
+			if (file == null || file.Extension == ".c")
 			{
 				switch (settings.CompileSettings.CLanguageStandard)
 				{
@@ -528,7 +528,7 @@ namespace AvalonStudio.Toolchains.STM32
 			// TODO remove dependency on file?
 			if (file != null)
 			{
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					if (!settings.CompileSettings.Rtti)
 					{
@@ -672,9 +672,9 @@ namespace AvalonStudio.Toolchains.STM32
 			// TODO factor out this code from here!
 			if (file != null)
 			{
-				switch (file.Language)
+				switch (file.Extension)
 				{
-					case Language.C:
+                    case ".c":
 					{
 						foreach (var arg in superProject.CCompilerArguments)
 						{
@@ -683,7 +683,7 @@ namespace AvalonStudio.Toolchains.STM32
 					}
 						break;
 
-					case Language.Cpp:
+					case ".cpp":
 					{
 						foreach (var arg in superProject.CppCompilerArguments)
 						{
