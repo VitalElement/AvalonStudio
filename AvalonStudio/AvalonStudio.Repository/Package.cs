@@ -9,7 +9,7 @@ using LibGit2Sharp.Handlers;
 
 namespace AvalonStudio.Repositories
 {
-	public class Package : SerializedObject<Package>
+	public class Package
 	{
 		//public Repository Repository { get; internal set; }
 		public const string PackageFile = "package.json";
@@ -17,7 +17,7 @@ namespace AvalonStudio.Repositories
 		public string Plugin { get; set; }
 	}
 
-	public class PackageIndex : SerializedObject<PackageIndex>
+	public class PackageIndex
 	{
 		public PackageIndex()
 		{

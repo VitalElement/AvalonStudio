@@ -255,10 +255,6 @@
       <DependentUpon>CompletionAssistantView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CompletionAssistantViewModel.cs" />
-    <Compile Include="Controls\CompletionHint.paml.cs">
-      <DependentUpon>CompletionHint.paml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\CompletionHintViewModel.cs" />
     <Compile Include="Controls\DebugHoverProbe.paml.cs">
       <DependentUpon>DebugHoverProbeView.paml</DependentUpon>
     </Compile>
@@ -268,10 +264,13 @@
     </Compile>
     <Compile Include="Controls\ErrorProbeViewModel.cs" />
     <Compile Include="Controls\IntellisenseToolTipViewModel.cs" />
-    <Compile Include="Controls\MethodInfoView.paml.cs">
-      <DependentUpon>MethodInfoView.paml</DependentUpon>
+    <Compile Include="Controls\ParameterViewModel.cs" />
+    <Compile Include="Controls\SignatureHelpView.paml.cs" />
+    <Compile Include="Controls\SignatureHelpViewModel.cs" />
+    <Compile Include="Controls\SignatureView.xaml.cs">
+      <DependentUpon>SignatureView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\MethodInfoViewModel.cs" />
+    <Compile Include="Controls\SignatureViewModel.cs" />
     <Compile Include="Controls\TabControlView.paml.cs" />
     <Compile Include="Controls\DocumentTabControl.paml.cs">
       <DependentUpon>DocumentTabControl.paml</DependentUpon>
@@ -392,9 +391,6 @@
     <EmbeddedResource Include="Controls\TabControlView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\CompletionHint.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ErrorProbeView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -404,7 +400,7 @@
     <EmbeddedResource Include="Controls\CompletionAssistantView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MethodInfoView.paml">
+    <EmbeddedResource Include="Controls\SignatureHelpView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="libgit2-821131f.so">
@@ -454,9 +450,21 @@
       <Project>{5D5FE113-FFEF-4E49-A011-00A167EFA36E}</Project>
       <Name>AvalonStudio.Languages.CPlusPlus</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Languages.CSharp\AvalonStudio.Languages.CSharp.csproj">
+      <Project>{48a302ff-ece3-4231-8112-688d0e48921e}</Project>
+      <Name>AvalonStudio.Languages.CSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
       <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
       <Name>AvalonStudio.Projects.CPlusPlus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects.OmniSharp\AvalonStudio.Projects.OmniSharp.csproj">
+      <Project>{a1686d65-2f40-48ea-b04b-a775730fdd55}</Project>
+      <Name>AvalonStudio.Projects.OmniSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects.Raw\AvalonStudio.Projects.Raw.csproj">
+      <Project>{41c0c2c7-9554-470d-b8c0-634db3b509dc}</Project>
+      <Name>AvalonStudio.Projects.Raw</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
@@ -5545,6 +5553,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\SignatureView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

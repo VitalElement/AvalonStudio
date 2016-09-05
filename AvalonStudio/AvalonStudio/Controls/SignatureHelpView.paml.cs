@@ -1,13 +1,14 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using System;
 
 namespace AvalonStudio.Controls
 {
-    public class MethodInfoView : UserControl
+    public class SignatureHelpView : UserControl
     {
-        public MethodInfoView()
+        public SignatureHelpView()
         {
-            this.InitializeComponent();
+            this.InitializeComponent();            
         }
 
         private void InitializeComponent()

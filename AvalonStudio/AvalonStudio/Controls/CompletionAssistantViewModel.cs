@@ -8,23 +8,23 @@
 
     public class CompletionAssistantViewModel : ViewModel, ICompletionAssistant
     {
-        private Stack<MethodInfoViewModel> methodStack;
+        private Stack<SignatureHelpViewModel> methodStack;
         private IntellisenseViewModel intellisense;
 
         public CompletionAssistantViewModel(IntellisenseViewModel intellisense)
         {
-            methodStack = new Stack<MethodInfoViewModel>();
+            methodStack = new Stack<SignatureHelpViewModel>();
             this.intellisense = intellisense;
         }
 
-        public void PushMethod(MethodInfo methodInfo)
+        public void PushMethod(SignatureHelp methodInfo)
         {
             if (CurrentMethod != null)
             {
                 methodStack.Push(CurrentMethod);
             }
 
-            CurrentMethod = new MethodInfoViewModel(methodInfo);
+            CurrentMethod = new SignatureHelpViewModel(methodInfo);
 
             IsVisible = true;
         }
@@ -42,7 +42,7 @@
             }
         }
 
-        public MethodInfo CurrentMethodInfo
+        public SignatureHelp CurrentSignatureHelp
         {
             get
             {
@@ -50,17 +50,17 @@
             }
         }
 
-        public void SetArgumentIndex(int index)
+        public void SetParameterIndex(int index)
         {
-            CurrentMethod.SelectedOverload.ArgumentIndex = index;
+            CurrentMethod.SelectedSignature.ParameterIndex = index;
         }
 
-        public void IncrementOverloadIndex()
+        public void IncrementSignatureIndex()
         {
             CurrentMethod.SelectedIndex++;
         }
 
-        public void DecrementOverloadIndex()
+        public void DecrementSignatureIndex()
         {
             CurrentMethod.SelectedIndex--;
         }
@@ -80,8 +80,8 @@
             set { this.RaiseAndSetIfChanged(ref isVisible, value); intellisense.InvalidateIsOpen(); }
         }
 
-        private MethodInfoViewModel currentMethod;
-        public MethodInfoViewModel CurrentMethod
+        private SignatureHelpViewModel currentMethod;
+        public SignatureHelpViewModel CurrentMethod
         {
             get { return currentMethod; }
             set { this.RaiseAndSetIfChanged(ref currentMethod, value); }
