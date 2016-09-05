@@ -148,7 +148,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			startInfo.EnvironmentVariables["Path"] = BaseDirectory + "bin";
             startInfo.WorkingDirectory = file.CurrentDirectory;
 
-			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
+			if (!System.IO.File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
 			{
 				result.ExitCode = -1;
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
@@ -163,7 +163,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 				}
 
 				startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments,
-					GetCompilerArguments(superProject, project, file), file.Location, outputFile);
+                    GetCompilerArguments(superProject, project, file), file.Location, outputFile);
 
 				// Hide console window
 				startInfo.UseShellExecute = false;
@@ -235,7 +235,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
 			startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
+			if (!System.IO.File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
 			{
 				result.ExitCode = -1;
 				console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
@@ -353,7 +353,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 				startInfo.FileName = Path.Combine(BaseDirectory, "bin", "size" + Platform.ExecutableExtension);
 			}
 
-			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
+			if (!System.IO.File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
 			{
 				console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
 				result.ExitCode = -1;

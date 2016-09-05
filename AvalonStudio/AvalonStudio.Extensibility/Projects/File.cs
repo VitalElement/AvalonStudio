@@ -1,14 +1,14 @@
-﻿namespace AvalonStudio.Projects.Raw
+﻿namespace AvalonStudio.Projects
 {
     using System;
     using System.IO;
     using AvalonStudio.Platforms;
 
-    public class RawFile : ISourceFile
+    public class File : ISourceFile
     {
-        public static RawFile FromPath(IProject project, IProjectFolder parent, string filePath)
+        public static File FromPath(IProject project, IProjectFolder parent, string filePath)
         {
-            return new RawFile { Project = project, Parent = parent, File = filePath.ToPlatformPath() };
+            return new File { Project = project, Parent = parent, FilePath = filePath.ToPlatformPath() };
         }
 
         public string CurrentDirectory
@@ -16,16 +16,16 @@
             get { return Path.GetDirectoryName(Location); }
         }
 
-        public string File { get; set; }
+        public string FilePath { get; set; }
 
         public string Extension
         {
-            get { return Path.GetExtension(File); }
+            get { return Path.GetExtension(FilePath); }
         }
 
         public string Location
         {
-            get { return Path.Combine(Project.CurrentDirectory,  File); }
+            get { return Path.Combine(Project.CurrentDirectory,  FilePath); }
         }
 
         public string Name
@@ -54,7 +54,7 @@
 
         public int CompareTo(ISourceFile other)
         {
-            return File.CompareFilePath(other.File);
+            return FilePath.CompareFilePath(other.FilePath);
         }
 
         public int CompareTo(IProjectItem other)
