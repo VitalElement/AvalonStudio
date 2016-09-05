@@ -322,6 +322,7 @@
     <Compile Include="ToolBars\ToolBarItemGroupDefinition.cs" />
     <Compile Include="ToolBars\ViewModels\ToolBarsViewModel.cs" />
     <Compile Include="Toolchains\IToolchain.cs" />
+    <Compile Include="Utils\ByteSizeHelper.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\DynamicExtensions.cs" />
     <Compile Include="Utils\EnumerableExtensions.cs" />
