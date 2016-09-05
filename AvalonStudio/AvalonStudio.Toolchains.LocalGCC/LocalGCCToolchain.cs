@@ -122,7 +122,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
 			var startInfo = new ProcessStartInfo();
 
-			if (file.Language == Language.Cpp)
+			if (file.Extension == ".cpp")
 			{
 				if (Platform.PlatformIdentifier == PlatformID.Unix)
 				{
@@ -157,7 +157,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			{
 				var fileArguments = string.Empty;
 
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
 				}
@@ -443,7 +443,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			// TODO remove dependency on file?
 			if (file != null)
 			{
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					if (!settings.CompileSettings.Rtti)
 					{
@@ -577,9 +577,9 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			// TODO factor out this code from here!
 			if (file != null)
 			{
-				switch (file.Language)
+				switch (file.Extension)
 				{
-					case Language.C:
+					case ".c":
 					{
 						foreach (var arg in superProject.CCompilerArguments)
 						{
@@ -588,7 +588,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 					}
 						break;
 
-					case Language.Cpp:
+					case ".cpp":
 					{
 						foreach (var arg in superProject.CppCompilerArguments)
 						{
