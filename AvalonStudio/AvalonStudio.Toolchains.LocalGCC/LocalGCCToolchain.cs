@@ -606,9 +606,13 @@ namespace AvalonStudio.Toolchains.LocalGCC
 		{
 			return new List<string>
 			{
+                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include"),
+                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include-fixed"),
                 Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include"),
                 Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++"),
-			};
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32", "backward")
+            };
 		}
 
 		public override bool SupportsFile(ISourceFile file)
