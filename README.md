@@ -11,7 +11,7 @@ Cross platform IDE on Avalonia for Avalonia
 
 Clone the repo.
 ```
-git clone https://github.com/VitalElement/AvalonStudio
+git clone https://github.com/VitalElement/AvalonStudio --recursive
 
 cd AvalonStudio
 ```

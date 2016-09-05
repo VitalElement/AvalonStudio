@@ -2,16 +2,16 @@
 {
     public interface ICompletionAssistant
     {
-        void PushMethod(MethodInfo methodInfo);
+        void PushMethod(SignatureHelp methodInfo);
 
         void PopMethod();
 
-        MethodInfo CurrentMethodInfo { get; }
+        SignatureHelp CurrentSignatureHelp { get; }
 
-        void SetArgumentIndex(int index);
+        void SetParameterIndex(int index);
 
-        void IncrementOverloadIndex();
-        void DecrementOverloadIndex();
+        void IncrementSignatureIndex();
+        void DecrementSignatureIndex();
         void Close();
 
         bool IsVisible { get; set; }

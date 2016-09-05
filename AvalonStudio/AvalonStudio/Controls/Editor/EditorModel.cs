@@ -73,7 +73,6 @@ namespace AvalonStudio.Controls
 
 		~EditorModel()
 		{
-			Console.WriteLine("Editor Model Destructed.");
 		}
 
 		public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
@@ -111,7 +110,7 @@ namespace AvalonStudio.Controls
 		}
 
 		public async void RegisterLanguageService(IIntellisenseControl intellisenseControl,
-			ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant)
+			ICompletionAssistant completionAssistant)
 		{
 			UnRegisterLanguageService();
 
@@ -121,7 +120,7 @@ namespace AvalonStudio.Controls
 
 				ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
-				LanguageService.RegisterSourceFile(intellisenseControl, completionAdviceControl, completionAssistant, Editor, ProjectFile, TextDocument);
+				LanguageService.RegisterSourceFile(intellisenseControl, completionAssistant, Editor, ProjectFile, TextDocument);
 			}
 			catch (Exception e)
 			{
@@ -142,21 +141,21 @@ namespace AvalonStudio.Controls
 		}
 
 		public void OpenFile(ISourceFile file, IIntellisenseControl intellisense,
-			ICompletionAdviceControl completionAdviceControl, ICompletionAssistant completionAssistant)
+			ICompletionAssistant completionAssistant)
 		{
 			if (ProjectFile != file)
 			{
-				if (File.Exists(file.Location))
+				if (System.IO.File.Exists(file.Location))
 				{
-					using (var fs = File.OpenText(file.Location))
+					using (var fs = System.IO.File.OpenText(file.Location))
 					{
-						TextDocument = new TextDocument(fs.ReadToEnd());
-						TextDocument.FileName = file.Location;
+                        TextDocument = new TextDocument(fs.ReadToEnd());
+                        TextDocument.FileName = file.Location;
 					}
 
-					ProjectFile = file;                    
+                    ProjectFile = file;
 
-					RegisterLanguageService(intellisense, completionAdviceControl, completionAssistant);
+                    RegisterLanguageService(intellisense, completionAssistant);
 
 					if (DocumentLoaded != null)
 					{
@@ -170,7 +169,7 @@ namespace AvalonStudio.Controls
 		{
 			if (ProjectFile != null && TextDocument != null && IsDirty)
 			{
-				File.WriteAllText(ProjectFile.Location, TextDocument.Text);
+                System.IO.File.WriteAllText(ProjectFile.Location, TextDocument.Text);
 				IsDirty = false;
 
 				if (unsavedFile != null)

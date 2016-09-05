@@ -141,7 +141,7 @@ namespace AvalonStudio.Controls
         public EditorViewModel(EditorModel model) : base(model)
         {
             disposables = new CompositeDisposable();
-            highlightingData = new ObservableCollection<SyntaxHighlightingData>();
+            highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
 
             BeforeTextChangedCommand = ReactiveCommand.Create();
             disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
@@ -153,6 +153,7 @@ namespace AvalonStudio.Controls
             disposables.Add(SaveCommand.Subscribe(param => Save()));
 
             CloseCommand = ReactiveCommand.Create();
+
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
@@ -240,17 +241,16 @@ namespace AvalonStudio.Controls
                     }
 
                     HighlightingData =
-                        new ObservableCollection<SyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
+                        new ObservableCollection<OffsetSyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
 
                     IndexItems = new ObservableCollection<IndexEntry>(model.CodeAnalysisResults.IndexItems);
                     selectedIndexEntry = IndexItems.FirstOrDefault();
                     this.RaisePropertyChanged(nameof(SelectedIndexEntry));
 
-                    ShellViewModel.Instance.InvalidateErrors();
-
-                    model.ProjectFile.FileModifiedExternally += ProjectFile_FileModifiedExternally;
+                    ShellViewModel.Instance.InvalidateErrors();                    
                 };
 
+                model.ProjectFile.FileModifiedExternally += ProjectFile_FileModifiedExternally;
                 TextDocument = model.TextDocument;
                 this.RaisePropertyChanged(nameof(Title));
             };
@@ -268,7 +268,6 @@ namespace AvalonStudio.Controls
             };
 
             intellisense = new IntellisenseViewModel(model, this);
-            _completionHint = new CompletionHintViewModel();
 
             documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
 
@@ -284,9 +283,7 @@ namespace AvalonStudio.Controls
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
             margins = new ObservableCollection<TextViewMargin>();
-
-            ShellViewModel.Instance.StatusBar.InstanceCount++;
-
+            
             dock = Dock.Right;
         }
 
@@ -296,7 +293,7 @@ namespace AvalonStudio.Controls
             {
                 if (!(new FileInfo(Model.ProjectFile.Location).IsFileLocked()))
                 {
-                    using (var fs = File.OpenText(Model.ProjectFile.Location))
+                    using (var fs = System.IO.File.OpenText(Model.ProjectFile.Location))
                     {
                         TextDocument.Text = fs.ReadToEnd();
                     }
@@ -306,10 +303,7 @@ namespace AvalonStudio.Controls
 
         ~EditorViewModel()
         {
-            Dispatcher.UIThread.InvokeAsync(() => { ShellViewModel.Instance.StatusBar.InstanceCount--; });
             Model.ShutdownBackgroundWorkers();
-
-            Console.WriteLine("Editor VM Destructed.");
         }
 
         #endregion
@@ -379,7 +373,6 @@ namespace AvalonStudio.Controls
                 if (!Intellisense.IsVisible)
                 {
                     Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
-                    CompletionHint.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
                 }
             }
         }
@@ -398,15 +391,6 @@ namespace AvalonStudio.Controls
                 }
             }
         }
-
-
-        private CompletionHintViewModel _completionHint;
-        public CompletionHintViewModel CompletionHint
-        {
-            get { return _completionHint; }
-            set { this.RaiseAndSetIfChanged(ref _completionHint, value); }
-        }
-
 
         private IntellisenseViewModel intellisense;
         public IntellisenseViewModel Intellisense
@@ -629,8 +613,8 @@ namespace AvalonStudio.Controls
         }
 
 
-        private ObservableCollection<SyntaxHighlightingData> highlightingData;
-        public ObservableCollection<SyntaxHighlightingData> HighlightingData
+        private ObservableCollection<OffsetSyntaxHighlightingData> highlightingData;
+        public ObservableCollection<OffsetSyntaxHighlightingData> HighlightingData
         {
             get { return highlightingData; }
             set { this.RaiseAndSetIfChanged(ref highlightingData, value); }

@@ -55,7 +55,7 @@ namespace AvalonStudio
 
 		[ImportingConstructor]
 		public ShellViewModel([ImportMany] IEnumerable<ToolViewModel> importedTools,
-			[ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<IProject> projectTypes,
+			[ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes, [ImportMany] IEnumerable<IProject> projectTypes,
 			[ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains,
 			[ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks,
 			[ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IExtension> extensions,
@@ -66,6 +66,7 @@ namespace AvalonStudio
 			ProjectTemplates = projectTemplates;
 			ToolChains = toolChains;
 			Debuggers = debuggers;
+            SolutionTypes = solutionTypes;
 			ProjectTypes = projectTypes;
 			TestFrameworks = testFrameworks;
 			CodeTemplates = codeTemplates;
@@ -222,6 +223,8 @@ namespace AvalonStudio
 
 		public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
+        public IEnumerable<ISolutionType> SolutionTypes { get; }
+
 		public IEnumerable<IProject> ProjectTypes { get; }
 
 		public IEnumerable<IProjectTemplate> ProjectTemplates { get; }
@@ -239,7 +242,7 @@ namespace AvalonStudio
 		public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
 			bool selectLine = false)
 		{
-			var currentTab = DocumentTabs.Documents.FirstOrDefault(t => t.Model.ProjectFile.File == file.File);
+			var currentTab = DocumentTabs.Documents.FirstOrDefault(t => t.Model.ProjectFile.FilePath == file.FilePath);
 
 			if (currentTab == null)
 			{
@@ -268,7 +271,7 @@ namespace AvalonStudio
 
 				await
 					Dispatcher.UIThread.InvokeTaskAsync(
-						() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.CompletionHint, newEditor.Intellisense.CompletionAssistant); });
+						() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
 			}
 			else
 			{
@@ -292,7 +295,7 @@ namespace AvalonStudio
 
 		public IEditor GetDocument(string path)
 		{
-			return DocumentTabs.Documents.FirstOrDefault(d => d.Model.ProjectFile?.File == path);
+			return DocumentTabs.Documents.FirstOrDefault(d => d.Model.ProjectFile?.FilePath == path);
 		}
 
 		public void Save()
