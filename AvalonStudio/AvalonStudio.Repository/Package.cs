@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using LibGit2Sharp;
@@ -33,13 +34,13 @@ namespace AvalonStudio.Repositories
 		{
 			TransferProgressHandler transferHandler = e =>
 			{
-				console.OverWrite(string.Format("Bytes: {1}, Objects: {2}/{3}, Indexed: {0}", e.IndexedObjects, e.ReceivedBytes,
+				console.OverWrite(string.Format("Bytes: {1}, Objects: {2}/{3}, Indexed: {0}", e.IndexedObjects, ByteSizeHelper.ToString(e.ReceivedBytes),
 					e.ReceivedObjects, e.TotalObjects));
 				return true;
 			};
 
 			CheckoutProgressHandler checkoutHandler =
-				(path, steps, totalSteps) => { console.OverWrite(string.Format("Checkout: {0}/{1}", steps, totalSteps)); };
+				(path, steps, totalSteps) => { console.OverWrite($"Checkout: {steps}/{totalSteps}"); };
 
 			await Task.Factory.StartNew(() =>
 			{
