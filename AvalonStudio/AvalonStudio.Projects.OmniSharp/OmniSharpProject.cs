@@ -15,7 +15,7 @@ using System.Dynamic;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
-    public class OmniSharpProject : IProject
+    public class OmniSharpProject : FileSystemProject
     {
         public static OmniSharpProject Create(ISolution solution, string path, AvalonStudio.Languages.CSharp.OmniSharp.Project project)
         {
@@ -23,30 +23,29 @@ namespace AvalonStudio.Projects.OmniSharp
             result.Solution = solution;
             result.Location = path;
 
-            foreach(var file in project.SourceFiles)
-            {
-                var sourceFile = File.FromPath(result, result, file.ToPlatformPath());
-                result.SourceFiles.InsertSorted(sourceFile);
-                result.Items.Add(sourceFile);
-            }
+            result.LoadFiles();
+
+            //foreach(var file in project.SourceFiles)
+            //{
+            //    var sourceFile = File.FromPath(result, result, file.ToPlatformPath());
+            //    result.SourceFiles.InsertSorted(sourceFile);
+            //    result.Items.Add(sourceFile);
+            //}
 
             return result;
         }
 
-        public OmniSharpProject()
+        public OmniSharpProject() : base(true)
         {
-            Items = new ObservableCollection<IProjectItem>();
-            //Folders = new ObservableCollection<IProjectFolder>();
-            References = new ObservableCollection<IProject>();
-            SourceFiles = new List<ISourceFile>();
+            ExcludedFiles = new List<string>();
+            Items = new ObservableCollection<IProjectItem>();            
+            References = new ObservableCollection<IProject>();            
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
             Project = this;
-        }
+        }        
 
-        public IList<ISourceFile> SourceFiles { get; }
-
-        public IList<object> ConfigurationPages
+        public override IList<object> ConfigurationPages
         {
             get
             {
@@ -54,21 +53,21 @@ namespace AvalonStudio.Projects.OmniSharp
             }
         }
 
-        public string CurrentDirectory
+        public override string CurrentDirectory
         {
             get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
         }
 
-        public IDebugger Debugger
+        public override IDebugger Debugger
         {
             get; set;
         }
 
-        public dynamic DebugSettings { get; set; }
+        public override dynamic DebugSettings { get; set; }
 
-        public string Executable { get; set; }
+        public override string Executable { get; set; }
 
-        public string Extension
+        public override string Extension
         {
             get
             {
@@ -76,108 +75,103 @@ namespace AvalonStudio.Projects.OmniSharp
             }
         }
 
-        public bool Hidden
+        public override bool Hidden
         {
             get; set;
         }
 
-        public ObservableCollection<IProjectItem> Items { get; }
+        public override ObservableCollection<IProjectItem> Items { get; }
 
-        public string Location
+        public override string Location
         {
-            get; private set;
+            get; set;
         }
 
-        public string LocationDirectory => CurrentDirectory;
+        public override string LocationDirectory => CurrentDirectory;
 
-        public string Name
+        public override string Name
         {
             get { return Path.GetFileNameWithoutExtension(Location); }
         }
 
-        public IProjectFolder Parent { get; set; }
+        public override IProjectFolder Parent { get; set; }
 
-        public IProject Project { get; set; }
+        public override IProject Project { get; set; }
 
-        public ObservableCollection<IProject> References { get; }
+        public override ObservableCollection<IProject> References { get; }
 
-        public ISolution Solution
-        {
-            get; private set;
-        }
-
-        public ITestFramework TestFramework
+        public override ISolution Solution
         {
             get; set;
         }
 
-        public IToolChain ToolChain
+        public override ITestFramework TestFramework
         {
             get; set;
         }
 
-        public dynamic ToolchainSettings { get; set; }
+        public override IToolChain ToolChain
+        {
+            get; set;
+        }
 
-        public event EventHandler FileAdded;
+        public override dynamic ToolchainSettings { get; set; }
 
-        public void AddReference(IProject project)
+        public override void AddReference(IProject project)
         {
             throw new NotImplementedException();
         }
 
-        public int CompareTo(IProjectFolder other)
+        public override int CompareTo(IProjectFolder other)
         {
             return Location.CompareFilePath(other.Location);
         }
 
-        public int CompareTo(string other)
+        public override int CompareTo(string other)
         {
             return Location.CompareFilePath(other);
         }
 
-        public int CompareTo(IProject other)
+        public override int CompareTo(IProject other)
         {
             return Name.CompareTo(other.Name);
         }
 
-        public int CompareTo(IProjectItem other)
+        public override int CompareTo(IProjectItem other)
         {
             return Name.CompareTo(other.Name);
         }
 
-        public void ExcludeFile(ISourceFile file)
+        public override void ExcludeFile(ISourceFile file)
         {
             throw new NotImplementedException();
         }
 
-        public void ExcludeFolder(IProjectFolder folder)
+        public override void ExcludeFolder(IProjectFolder folder)
         {
             throw new NotImplementedException();
         }
 
-        public ISourceFile FindFile(string path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IProject Load(ISolution solution, string filePath)
+        public override IProject Load(ISolution solution, string filePath)
         {
             return null;
         }
 
-        public void RemoveReference(IProject project)
+        public override void RemoveReference(IProject project)
         {
             throw new NotImplementedException();
         }
 
-        public void ResolveReferences()
+        public override void ResolveReferences()
         {
             throw new NotImplementedException();
         }
 
-        public void Save()
+        public override void Save()
         {
             throw new NotImplementedException();
         }
+
+        public override List<string> ExcludedFiles { get; set; }
     }
 }
