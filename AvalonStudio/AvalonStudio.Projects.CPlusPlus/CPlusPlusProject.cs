@@ -433,6 +433,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             project.Location = filename;
             project.Solution = solution;
 
+            project.Items.InsertSorted(new ReferenceFolder(project));
             project.LoadFiles();
 
             return project;
