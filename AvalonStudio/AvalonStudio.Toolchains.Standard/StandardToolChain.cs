@@ -304,7 +304,7 @@ namespace AvalonStudio.Toolchains.Standard
 			var link = false;
 			foreach (var objectFile in compileResult.ObjectLocations)
 			{
-				if (File.GetLastWriteTime(objectFile) > File.GetLastWriteTime(executable))
+				if (System.IO.File.GetLastWriteTime(objectFile) > System.IO.File.GetLastWriteTime(executable))
 				{
 					link = true;
 					break;
@@ -315,7 +315,7 @@ namespace AvalonStudio.Toolchains.Standard
 			{
 				foreach (var library in compileResult.LibraryLocations)
 				{
-					if (File.GetLastWriteTime(library) > File.GetLastWriteTime(executable))
+					if (System.IO.File.GetLastWriteTime(library) > System.IO.File.GetLastWriteTime(executable))
 					{
 						link = true;
 						break;
@@ -430,7 +430,7 @@ namespace AvalonStudio.Toolchains.Standard
 
 								var dependencyChanged = false;
 
-                                if (File.Exists(dependencyFile))
+                                if (System.IO.File.Exists(dependencyFile))
                                 {
                                     var dependencies = new List<string>();
 
@@ -438,7 +438,7 @@ namespace AvalonStudio.Toolchains.Standard
 
                                     foreach (var dependency in dependencies)
                                     {
-                                        if (!File.Exists(dependency) || File.GetLastWriteTime(dependency) > File.GetLastWriteTime(objectFile))
+                                        if (!System.IO.File.Exists(dependency) || System.IO.File.GetLastWriteTime(dependency) > System.IO.File.GetLastWriteTime(objectFile))
                                         {
                                             dependencyChanged = true;
                                             break;
@@ -446,19 +446,19 @@ namespace AvalonStudio.Toolchains.Standard
                                     }
                                 }
 
-								if (dependencyChanged || !File.Exists(objectFile))
+								if (dependencyChanged || !System.IO.File.Exists(objectFile))
 								{
 									while (numTasks >= Jobs)
 									{
-										Thread.Yield();
+                                        Thread.Yield();
 									}
 
 									lock (resultLock)
 									{
 										numLocalTasks++;
-										numTasks++;
+                                        numTasks++;
 										console.OverWrite(string.Format("[CC {0}/{1}]    [{2}]    {3}", ++buildCount, fileCount, project.Name,
-											Path.GetFileName(file.Location)));
+                                            Path.GetFileName(file.Location)));
 									}
 
 									new Thread(() =>
@@ -469,7 +469,7 @@ namespace AvalonStudio.Toolchains.Standard
 										{
 											if (compileResults.ExitCode == 0 && compileResult.ExitCode != 0)
 											{
-												terminateBuild = true;
+                                                terminateBuild = true;
 												compileResults.ExitCode = compileResult.ExitCode;
 											}
 											else
@@ -478,14 +478,14 @@ namespace AvalonStudio.Toolchains.Standard
 												compileResults.NumberOfObjectsCompiled++;
 											}
 
-											numTasks--;
+                                            numTasks--;
 											numLocalTasks--;
 										}
 									}).Start();
 								}
 								else
 								{
-									buildCount++;
+                                    buildCount++;
 									compileResults.ObjectLocations.Add(objectFile);
 								}
 							}

@@ -1,3 +1,4 @@
+#! /bin/bash
 apt-get update
 apt-get install mono-complete -y
 apt-get install referenceassemblies-pcl -y

@@ -45,7 +45,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.FileName = Path.Combine(BaseDirectory, "Roslyn", "csc.exe");
 
-			if (!File.Exists(startInfo.FileName))
+			if (!System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -94,7 +94,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			startInfo.FileName = Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug",
 				"Microsoft.Zelig.Compiler.exe");
 
-			if (!File.Exists(startInfo.FileName))
+			if (!System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -103,7 +103,7 @@ namespace AvalonStudio.Toolchains.Llilum
 				//startInfo.WorkingDirectory = Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug");
 
 				startInfo.Arguments = string.Format("{0} -OutputName {1} {2}",
-					GetZeligCompilerArguments(superProject, project, file), outputFile, outputFile);
+                    GetZeligCompilerArguments(superProject, project, file), outputFile, outputFile);
 
 				// Hide console window
 				startInfo.UseShellExecute = false;
@@ -142,7 +142,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.FileName = Path.Combine(BaseDirectory, "LLVM", "llc.exe");
 
-			if (!File.Exists(startInfo.FileName))
+			if (!System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -237,9 +237,9 @@ namespace AvalonStudio.Toolchains.Llilum
 				result += string.Format(" {0}", arg);
 			}
 
-			switch (file.Language)
+			switch (file.Extension)
 			{
-				case Language.C:
+				case ".c":
 				{
 					foreach (var arg in superProject.CCompilerArguments)
 					{
@@ -248,7 +248,7 @@ namespace AvalonStudio.Toolchains.Llilum
 				}
 					break;
 
-				case Language.Cpp:
+				case ".cpp":
 				{
 					foreach (var arg in superProject.CppCompilerArguments)
 					{
@@ -266,7 +266,7 @@ namespace AvalonStudio.Toolchains.Llilum
 		{
 			var result = new CompileResult();
 
-			if (Path.GetExtension(file.File) == ".cs")
+			if (Path.GetExtension(file.FilePath) == ".cs")
 			{
 				CompileCS(console, superProject, project, file, outputFile);
 
@@ -274,11 +274,11 @@ namespace AvalonStudio.Toolchains.Llilum
 
 				CompileLLVMIR(console, superProject, project, file, outputFile + ".bc", outputFile);
 			}
-			else if (Path.GetExtension(file.File) == ".cpp" || Path.GetExtension(file.File) == ".c")
+			else if (Path.GetExtension(file.FilePath) == ".cpp" || Path.GetExtension(file.FilePath) == ".c")
 			{
 				var startInfo = new ProcessStartInfo();
 
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-g++.exe");
 				}
@@ -290,7 +290,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 				startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-				if (!File.Exists(startInfo.FileName))
+				if (!System.IO.File.Exists(startInfo.FileName))
 				{
 					result.ExitCode = -1;
 					console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
@@ -299,7 +299,7 @@ namespace AvalonStudio.Toolchains.Llilum
 				{
 					var fileArguments = string.Empty;
 
-					if (file.Language == Language.Cpp)
+					if (file.Extension == ".cpp")
 					{
 						fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
 					}
@@ -407,7 +407,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-			if (!File.Exists(startInfo.FileName))
+			if (!System.IO.File.Exists(startInfo.FileName))
 			{
 				result.ExitCode = -1;
 				console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
@@ -516,7 +516,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			var startInfo = new ProcessStartInfo();
 			startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-size.exe");
 
-			if (!File.Exists(startInfo.FileName))
+			if (!System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
 				result.ExitCode = -1;

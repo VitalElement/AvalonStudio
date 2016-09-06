@@ -227,8 +227,7 @@
     <Compile Include="IoC.cs" />
     <Compile Include="Languages\AccessType.cs" />
     <Compile Include="Languages\CompletionAssistance\ICompletionAssistant.cs" />
-    <Compile Include="Languages\CompletionAssistance\MethodInfo.cs" />
-    <Compile Include="Languages\ICompletionAdviceControl.cs" />
+    <Compile Include="Languages\CompletionAssistance\SignatureHelpModels.cs" />
     <Compile Include="Languages\IndexEntry.cs" />
     <Compile Include="MainMenu\IMenu.cs" />
     <Compile Include="MainMenu\IMenuBuilder.cs" />
@@ -249,6 +248,12 @@
     <Compile Include="MVVM\BindableCollection.cs" />
     <Compile Include="MVVM\IObservableCollection.cs" />
     <Compile Include="MVVM\MutuallyExclusiveEnumeration.cs" />
+    <Compile Include="Projects\AvalonStudioSolutionType.cs" />
+    <Compile Include="Projects\IProjectType.cs" />
+    <Compile Include="Projects\ISolutionType.cs" />
+    <Compile Include="Projects\File.cs" />
+    <Compile Include="Projects\FileSystemProject.cs" />
+    <Compile Include="Projects\Folder.cs" />
     <Compile Include="Shell\IShell.cs" />
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
@@ -317,6 +322,7 @@
     <Compile Include="ToolBars\ToolBarItemGroupDefinition.cs" />
     <Compile Include="ToolBars\ViewModels\ToolBarsViewModel.cs" />
     <Compile Include="Toolchains\IToolchain.cs" />
+    <Compile Include="Utils\ByteSizeHelper.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\DynamicExtensions.cs" />
     <Compile Include="Utils\EnumerableExtensions.cs" />
@@ -324,6 +330,7 @@
     <Compile Include="Utils\IConsole.cs" />
     <Compile Include="Utils\IProjectExtensions.cs" />
     <Compile Include="Utils\SerializedObject.cs" />
+    <Compile Include="Utils\TcpUtils.cs" />
     <Compile Include="Utils\WeakSubscriber.cs" />
   </ItemGroup>
   <ItemGroup>
