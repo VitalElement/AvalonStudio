@@ -652,12 +652,15 @@ namespace AvalonStudio.Languages.CSharp
 
                         await Dispatcher.UIThread.InvokeTaskAsync(() =>
                         {
+                            intellisenseControl.IsVisible = true;
+                        });
+
+                        await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                        {
                             intellisenseControl.CompletionData = list;
 
                             intellisenseControl.SelectedCompletion = null;
                             intellisenseControl.SelectedCompletion = suggestion;
-
-                            intellisenseControl.IsVisible = true;
                         });
                     }
                 }
