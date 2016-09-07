@@ -1,0 +1,10 @@
+{
+  "Sources": [
+    {
+      "Name": "VitalElement",
+      "Url": "https://github.com/VitalElement/AvalonStudio.Repository",
+      "CatalogGitDirectory": "/Users/davis/AvalonStudio/AppData/RepoCatalog/VitalElement/.git",
+      "CatalogDirectory": "/Users/davis/AvalonStudio/AppData/RepoCatalog/VitalElement"
+    }
+  ]
+}

@@ -233,6 +233,9 @@
     <Content Include="libclang.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="libclang.dylib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -246,6 +249,7 @@
 		call "$(SolutionDir)\plugin" "$(TargetDir)clang-format.exe" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format.exe" false
 		call "$(SolutionDir)\plugin" "$(TargetDir)clang-format" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format" false
 		call "$(SolutionDir)\plugin" "$(TargetDir)libclang.so" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.so" false
+		call "$(SolutionDir)\plugin" "$(TargetDir)libclang.dylib" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.dylib" false
 	</PostBuildEvent>
 	<PostBuildEvent Condition="'$(OS)' == 'Unix'">
 		bash "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
@@ -254,6 +258,7 @@
 		bash "$(SolutionDir)\plugin" "$(TargetDir)clang-format.exe" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format.exe" false
 		bash "$(SolutionDir)\plugin" "$(TargetDir)clang-format" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format" false
 		bash "$(SolutionDir)\plugin" "$(TargetDir)libclang.so" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.so" false
+		bash "$(SolutionDir)\plugin" "$(TargetDir)libclang.dylib" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.dylib" false
 	</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
