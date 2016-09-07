@@ -211,8 +211,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
+    <PostBuildEvent Condition="'$(OS)' != 'Unix'">call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
 call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)" false</PostBuildEvent>
+	<PostBuildEvent Condition="'$(OS)' == 'Unix'">"bash $(SolutionDir)postbuild" c "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
+bash "$(SolutionDir)plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)" false</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -222,3 +224,4 @@ call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" 
   </Target>
   -->
 </Project>
+

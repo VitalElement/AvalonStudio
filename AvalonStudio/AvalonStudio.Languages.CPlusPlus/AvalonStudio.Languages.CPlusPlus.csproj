@@ -239,15 +239,22 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
-call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)" false
-call "$(SolutionDir)\plugin" "$(TargetDir)libclang.dll" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.dll" false
-call "$(SolutionDir)\plugin" "$(TargetDir)clang-format.exe" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format.exe" false
-call "$(SolutionDir)\plugin" "$(TargetDir)clang-format" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format" false
-
-call "$(SolutionDir)\plugin" "$(TargetDir)libclang.so" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.so" false
-
-</PostBuildEvent>
+    <PostBuildEvent Condition="'$(OS)' != 'Unix'">
+		call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
+		call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)"
+		call "$(SolutionDir)\plugin" "$(TargetDir)libclang.dll" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.dll" false
+		call "$(SolutionDir)\plugin" "$(TargetDir)clang-format.exe" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format.exe" false
+		call "$(SolutionDir)\plugin" "$(TargetDir)clang-format" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format" false
+		call "$(SolutionDir)\plugin" "$(TargetDir)libclang.so" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.so" false
+	</PostBuildEvent>
+	<PostBuildEvent Condition="'$(OS)' == 'Unix'">
+		bash "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
+		bash "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)"
+		bash "$(SolutionDir)\plugin" "$(TargetDir)libclang.dll" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.dll" false
+		bash "$(SolutionDir)\plugin" "$(TargetDir)clang-format.exe" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format.exe" false
+		bash "$(SolutionDir)\plugin" "$(TargetDir)clang-format" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format" false
+		bash "$(SolutionDir)\plugin" "$(TargetDir)libclang.so" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.so" false
+	</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
