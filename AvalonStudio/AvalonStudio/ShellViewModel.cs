@@ -84,7 +84,7 @@ namespace AvalonStudio
 			CurrentPerspective = Perspective.Editor;
 
 			StatusBar = new StatusBarViewModel();
-			DocumentTabs = new DocumentTabsViewModel();
+			DocumentTabs = new DocumentTabControlViewModel();
 
 			Console = IoC.Get<IConsole>();
 			ErrorList = IoC.Get<IErrorList>();
@@ -200,7 +200,7 @@ namespace AvalonStudio
 			}
 		}
 
-		public DocumentTabsViewModel DocumentTabs { get; }
+		public DocumentTabControlViewModel DocumentTabs { get; }
 
 		public TabControlViewModel LeftTabs { get; }
 
