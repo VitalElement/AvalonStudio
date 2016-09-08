@@ -144,6 +144,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -251,6 +253,10 @@
     <Compile Include="SolutionExplorer\StandardProjectViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
+    <Compile Include="WelcomeScreen\WelcomeScreen.paml.cs">
+      <DependentUpon>WelcomeScreenView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="WelcomeScreen\WelcomeScreenViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SolutionExplorer\SolutionExplorerView.paml">
@@ -281,6 +287,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SolutionExplorer\NewItemDialogView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WelcomeScreen\WelcomeScreenView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
