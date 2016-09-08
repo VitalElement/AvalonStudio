@@ -275,15 +275,15 @@
     <Compile Include="Controls\DocumentTabControl.paml.cs">
       <DependentUpon>DocumentTabControl.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DocumentTabsViewModel.cs" />
+    <Compile Include="Controls\DocumentTabControlViewModel.cs" />
     <Compile Include="Controls\NewItemDialog.paml.cs">
       <DependentUpon>NewItemDialogView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TabControlViewModel.cs" />
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\Editor\SymbolViewModel.cs" />
-    <Compile Include="Controls\Editor.paml.cs">
-      <DependentUpon>Editor.xaml</DependentUpon>
+    <Compile Include="Controls\EditorView.xaml.cs">
+      <DependentUpon>EditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Editor\EditorModel.cs" />
     <Compile Include="Controls\Editor\EditorViewModel.cs" />
@@ -358,7 +358,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\Editor.xaml">
+    <EmbeddedResource Include="Controls\EditorView.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MainMenu.paml">
@@ -387,7 +387,9 @@
     <EmbeddedResource Include="Controls\DebugHoverProbeView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
+    <EmbeddedResource Include="Controls\DocumentTabControl.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\TabControlView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
