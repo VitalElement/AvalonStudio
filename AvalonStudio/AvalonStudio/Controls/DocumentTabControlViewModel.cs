@@ -10,10 +10,8 @@ using AvalonStudio.Controls;
 
 namespace AvalonStudio.Controls
 {
-	public class DocumentTabsViewModel : ViewModel
+	public class DocumentTabControlViewModel : ViewModel
 	{
-		private IBrush backgroundBrush;
-
 		private ObservableCollection<IDocumentTabViewModel> documents;
 
 		private IBrush hoverTabBackgroundBrush;
@@ -28,7 +26,7 @@ namespace AvalonStudio.Controls
 
 		private readonly IBrush temporaryTabHighlighBrush;
 
-		public DocumentTabsViewModel()
+		public DocumentTabControlViewModel()
 		{
 			Documents = new ObservableCollection<IDocumentTabViewModel>();
 			Documents.CollectionChanged += (sender, e) =>

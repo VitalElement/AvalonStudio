@@ -276,7 +276,7 @@
     <Compile Include="Controls\DocumentTabControl.paml.cs">
       <DependentUpon>DocumentTabControl.paml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DocumentTabsViewModel.cs" />
+    <Compile Include="Controls\DocumentTabControlViewModel.cs" />
     <Compile Include="Controls\NewItemDialog.paml.cs">
       <DependentUpon>NewItemDialogView.paml</DependentUpon>
     </Compile>
