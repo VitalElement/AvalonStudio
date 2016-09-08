@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
+using AvalonStudio.Controls;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
@@ -156,5 +157,15 @@ namespace AvalonStudio.Shell
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        public void AddDocument(IDocumentTabViewModel document)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveDocument(IDocumentTabViewModel document)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
