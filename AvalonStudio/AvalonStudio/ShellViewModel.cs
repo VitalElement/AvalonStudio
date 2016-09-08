@@ -38,9 +38,7 @@ namespace AvalonStudio
 		public static ShellViewModel Instance = null;
 
 		private IToolBar _toolBar;
-
-		//public MainMenuViewModel MainMenu { get; private set; }
-
+        
 		private ToolBarDefinition _toolBarDefinition;
 
 		private Perspective currentPerspective;
@@ -242,7 +240,7 @@ namespace AvalonStudio
 		public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
 			bool selectLine = false)
 		{
-			var currentTab = DocumentTabs.Documents.FirstOrDefault(t => t.Model.ProjectFile.FilePath == file.FilePath);
+			var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.Model.ProjectFile.FilePath == file.FilePath);
 
 			if (currentTab == null)
 			{
@@ -278,34 +276,41 @@ namespace AvalonStudio
 				await Dispatcher.UIThread.InvokeTaskAsync(() => { DocumentTabs.SelectedDocument = currentTab; });
 			}
 
-			if (debugHighlight)
+			if (debugHighlight && DocumentTabs.SelectedDocument is EditorViewModel)
 			{
-				DocumentTabs.SelectedDocument.DebugLineHighlighter.Line = line;
+				(DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.Line = line;
 			}
 
-			Dispatcher.UIThread.InvokeAsync(() => DocumentTabs.SelectedDocument.Model.ScrollToLine(line));
+            if (DocumentTabs.SelectedDocument is EditorViewModel)
+            {
+                Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).Model.ScrollToLine(line));
 
-			if (selectLine)
-			{
-				DocumentTabs.SelectedDocument.GotoPosition(line, column);
-			}
+                if (selectLine)
+                {
+                    (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, column);
+                }
+            }
+			
 
-			return DocumentTabs.SelectedDocument;
+			return DocumentTabs.SelectedDocument as EditorViewModel;
 		}
 
 		public IEditor GetDocument(string path)
 		{
-			return DocumentTabs.Documents.FirstOrDefault(d => d.Model.ProjectFile?.FilePath == path);
+			return DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(d => d.Model.ProjectFile?.FilePath == path);
 		}
 
 		public void Save()
 		{
-			DocumentTabs.SelectedDocument?.Save();
+            if (SelectedDocument is EditorViewModel)
+            {
+                (SelectedDocument as EditorViewModel).Save();
+            }
 		}
 
 		public void SaveAll()
 		{
-			foreach (var document in DocumentTabs.Documents)
+			foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
 			{
 				document.Save();
 			}
@@ -424,7 +429,7 @@ namespace AvalonStudio
 			}
 		}
 
-		public IEditor SelectedDocument => DocumentTabs?.SelectedDocument;
+		public IEditor SelectedDocument => DocumentTabs?.SelectedDocument as EditorViewModel;
 
 		public object BottomSelectedTool
 		{
@@ -508,7 +513,7 @@ namespace AvalonStudio
 			var toRemove = new List<ErrorViewModel>();
 			var hasChanged = false;
 
-			foreach (var document in DocumentTabs.Documents)
+			foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
 			{
 				if (document.Model.CodeAnalysisResults != null)
 				{
@@ -560,7 +565,7 @@ namespace AvalonStudio
 
 		public void Cleanup()
 		{
-			foreach (var document in DocumentTabs.Documents)
+			foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
 			{
 				document.Model.ShutdownBackgroundWorkers();
 			}

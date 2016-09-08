@@ -259,6 +259,7 @@
       <DependentUpon>DebugHoverProbeView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DebugHoverProbeViewModel.cs" />
+    <Compile Include="Controls\DocumentTabViewModel.cs" />
     <Compile Include="Controls\ErrorProbe.paml.cs">
       <DependentUpon>ErrorProbeView.paml</DependentUpon>
     </Compile>
@@ -387,7 +388,9 @@
     <EmbeddedResource Include="Controls\DebugHoverProbeView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
+    <EmbeddedResource Include="Controls\DocumentTabControl.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\TabControlView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
