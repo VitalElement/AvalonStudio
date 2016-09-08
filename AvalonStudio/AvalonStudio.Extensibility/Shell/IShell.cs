@@ -9,6 +9,7 @@ using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using AvalonStudio.Controls;
 
 namespace AvalonStudio.Shell
 {
@@ -50,6 +51,9 @@ namespace AvalonStudio.Shell
 
 		Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
 			bool selectLine = false);
+
+        void AddDocument(IDocumentTabViewModel document);
+        void RemoveDocument(IDocumentTabViewModel document);
 
 		void InvalidateCodeAnalysis();
 
