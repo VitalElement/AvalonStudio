@@ -6,14 +6,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ReactiveUI;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Shell;
 
 namespace AvalonStudio.Controls
 {
+    public class DocumentTabViewModel : DocumentTabViewModel<object>
+    {
+        public DocumentTabViewModel() : base(null)
+        {
+
+        }
+    }
+
     public class DocumentTabViewModel<T> : ViewModel<T>, IDocumentTabViewModel where T : class
     {
         public DocumentTabViewModel(T model) : base(model)
         {
-            
+            CloseCommand = ReactiveCommand.Create();
+
+            CloseCommand.Subscribe((o) =>
+            {
+                IoC.Get<IShell>().RemoveDocument(this);
+            });
         }
 
         private Dock dock;

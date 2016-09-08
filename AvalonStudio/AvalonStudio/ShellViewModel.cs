@@ -76,11 +76,6 @@ namespace AvalonStudio
 				extension.BeforeActivation();
 			}
 
-			foreach (var extension in extensions)
-			{
-				extension.Activation();
-			}
-
 			CurrentPerspective = Perspective.Editor;
 
 			StatusBar = new StatusBarViewModel();
@@ -100,7 +95,14 @@ namespace AvalonStudio
 			RightTopTabs = new TabControlViewModel();
             MiddleTopTabs = new TabControlViewModel();
 
-			foreach (var tool in importedTools)
+            ModalDialog = new ModalDialogViewModelBase("Dialog");
+
+            foreach (var extension in extensions)
+            {
+                extension.Activation();
+            }
+
+            foreach (var tool in importedTools)
 			{
 				tools.Add(tool);
 
@@ -154,8 +156,6 @@ namespace AvalonStudio
 			StatusBar.PlatformString = Platform.PlatformString;
 
 			ProcessCancellationToken = new CancellationTokenSource();
-
-			ModalDialog = new ModalDialogViewModelBase("Dialog");
 
 			CurrentPerspective = Perspective.Editor;
 
@@ -237,7 +237,37 @@ namespace AvalonStudio
 
 		public IEnumerable<ITestFramework> TestFrameworks { get; }
 
-		public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
+        public void AddDocument(IDocumentTabViewModel document)
+        {
+            DocumentTabs.Documents.Add(document);
+            DocumentTabs.SelectedDocument = document;
+        }
+
+        public void RemoveDocument(IDocumentTabViewModel document)
+        {
+            if (DocumentTabs.SelectedDocument == this)
+            {
+                var index = DocumentTabs.Documents.IndexOf(document);
+
+                if (index > 0)
+                {
+                    DocumentTabs.SelectedDocument = DocumentTabs.Documents[index];
+                }
+                else
+                {
+                    DocumentTabs.SelectedDocument = DocumentTabs.Documents.FirstOrDefault();
+                }
+            }
+
+            DocumentTabs.Documents.Remove(document);
+
+            if (DocumentTabs.TemporaryDocument == document)
+            {
+                DocumentTabs.TemporaryDocument = null;
+            }
+        }
+
+        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
 			bool selectLine = false)
 		{
 			var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.Model.ProjectFile.FilePath == file.FilePath);
@@ -569,6 +599,6 @@ namespace AvalonStudio
 			{
 				document.Model.ShutdownBackgroundWorkers();
 			}
-		}
-	}
+		}        
+    }
 }

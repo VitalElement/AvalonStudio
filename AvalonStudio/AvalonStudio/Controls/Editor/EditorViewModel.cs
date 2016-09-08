@@ -144,9 +144,7 @@ namespace AvalonStudio.Controls
 
             SaveCommand = ReactiveCommand.Create();
             disposables.Add(SaveCommand.Subscribe(param => Save()));
-
-            CloseCommand = ReactiveCommand.Create();
-
+            
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
@@ -154,10 +152,7 @@ namespace AvalonStudio.Controls
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
 
-                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
-                {
-                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
-                }
+                Diagnostics.Clear();
 
                 ShellViewModel.Instance.InvalidateErrors();
 
@@ -165,8 +160,7 @@ namespace AvalonStudio.Controls
                 Intellisense.Dispose();
                 disposables.Dispose();
 
-                Model.TextDocument = null;
-                ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);
+                Model.TextDocument = null;                
             }));
 
             AddWatchCommand = ReactiveCommand.Create();
