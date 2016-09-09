@@ -5,14 +5,14 @@
       <ColumnDefinition/>
     </Grid.ColumnDefinitions>
     
-    <ListBox Items="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}">
+    <ListBox Items="{Binding RecentProjects}" SelectedItem="{Binding SelectedTemplate}">
       <ListBox.DataTemplates>
         <DataTemplate >
-          <TextBlock Text="{Binding Templates}"/>
+          <Button Content="{Binding Name}" Command="{Binding ClickCommand}"/>
         </DataTemplate>
       </ListBox.DataTemplates>
     </ListBox>
     
-    <Controls:ViewModelViewHost Grid.Column="1" Margin="20" DataContext="{Binding SelectedTemplate.TemplateForm}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+    <!--<Controls:ViewModelViewHost Grid.Column="1" Margin="20" DataContext="{Binding SelectedTemplate.TemplateForm}" VerticalAlignment="Top" HorizontalAlignment="Center"/>-->
   </Grid>
 </UserControl>
