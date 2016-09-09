@@ -1,3 +1,14 @@
-﻿<Properties StartupItem="AvalonStudio/AvalonStudio.csproj" GitUserInfo="UsingGIT">
+﻿<Properties StartupConfiguration="{8E501956-B9A6-430E-86AC-350ED94B44E4}|Default" GitUserInfo="UsingGIT">
+  <MonoDevelop.Ide.Workbench ActiveDocument="AvalonStudio.Languages.CPlusPlus/AvalonStudio.Languages.CPlusPlus.csproj">
+    <Files>
+      <File FileName="AvalonStudio/MainWindow.paml" Line="8" Column="32" />
+      <File FileName="AvalonStudio.Languages.CPlusPlus/AvalonStudio.Languages.CPlusPlus.csproj" Line="103" Column="41" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.AvalonStudio PreferredExecutionTarget="MonoDevelop.Default" />
 </Properties>
