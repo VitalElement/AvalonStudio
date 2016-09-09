@@ -25,25 +25,18 @@ using System.IO;
 
 namespace AvalonStudio.Controls
 {
-    public class EditorViewModel : ViewModel<EditorModel>, IEditor
+    public class EditorViewModel : DocumentTabViewModel<EditorModel>, IEditor
     {
         public SelectedDebugLineBackgroundRenderer DebugLineHighlighter;
         private readonly CompositeDisposable disposables;
 
-        private Dock dock;
+        
         private readonly List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
 
         private readonly List<IDocumentLineTransformer> languageServiceDocumentLineTransformers =
             new List<IDocumentLineTransformer>();
 
-        private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;
-
-        public Dock Dock
-        {
-            get { return dock; }
-            set { this.RaiseAndSetIfChanged(ref dock, value); }
-        }
-
+        private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;      
 
         public TextLocation CaretTextLocation
         {
@@ -151,9 +144,7 @@ namespace AvalonStudio.Controls
 
             SaveCommand = ReactiveCommand.Create();
             disposables.Add(SaveCommand.Subscribe(param => Save()));
-
-            CloseCommand = ReactiveCommand.Create();
-
+            
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
@@ -161,10 +152,7 @@ namespace AvalonStudio.Controls
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
 
-                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
-                {
-                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
-                }
+                Diagnostics.Clear();
 
                 ShellViewModel.Instance.InvalidateErrors();
 
@@ -172,8 +160,7 @@ namespace AvalonStudio.Controls
                 Intellisense.Dispose();
                 disposables.Dispose();
 
-                Model.TextDocument = null;
-                ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);
+                Model.TextDocument = null;                
             }));
 
             AddWatchCommand = ReactiveCommand.Create();
@@ -251,8 +238,10 @@ namespace AvalonStudio.Controls
                 };
 
                 model.ProjectFile.FileModifiedExternally += ProjectFile_FileModifiedExternally;
+
                 TextDocument = model.TextDocument;
-                this.RaisePropertyChanged(nameof(Title));
+
+                Title = Model.ProjectFile.Name;           
             };
 
             model.TextChanged += (sender, e) =>
@@ -264,7 +253,7 @@ namespace AvalonStudio.Controls
                     ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
                 }
 
-                this.RaisePropertyChanged(nameof(Title));
+                IsDirty = model.IsDirty;
             };
 
             intellisense = new IntellisenseViewModel(model, this);
@@ -284,7 +273,7 @@ namespace AvalonStudio.Controls
 
             margins = new ObservableCollection<TextViewMargin>();
             
-            dock = Dock.Right;
+            Dock = Dock.Right;
         }
 
         private void ProjectFile_FileModifiedExternally(object sender, EventArgs e)
@@ -626,30 +615,13 @@ namespace AvalonStudio.Controls
             get { return diagnostics; }
             set { this.RaiseAndSetIfChanged(ref diagnostics, value); }
         }
-
-        public string Title
-        {
-            get
-            {
-                var result = Model.ProjectFile?.Name;
-
-                if (Model.IsDirty)
-                {
-                    result += '*';
-                }
-
-                return result;
-            }
-        }
-
         #endregion
 
         #region Commands
 
         public ReactiveCommand<object> BeforeTextChangedCommand { get; }
         public ReactiveCommand<object> TextChangedCommand { get; }
-        public ReactiveCommand<object> SaveCommand { get; }
-        public ReactiveCommand<object> CloseCommand { get; }
+        public ReactiveCommand<object> SaveCommand { get; }        
 
         // todo this menu item and command should be injected via debugging module.
         public ReactiveCommand<object> AddWatchCommand { get; }
@@ -674,7 +646,7 @@ namespace AvalonStudio.Controls
                 ignoreFileModifiedEvents = false;
             });
 
-            this.RaisePropertyChanged(nameof(Title));
+            IsDirty = Model.IsDirty;
         }
 
         public void ClearDebugHighlight()
