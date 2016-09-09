@@ -6,27 +6,30 @@ using ReactiveUI;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-	public class ProjectConfigurationDialogViewModel : ModalDialogViewModelBase
+	public class ProjectConfigurationDialogViewModel : DocumentTabViewModel
 	{
 		private bool executableOptionsVisibility;
 
-		public ProjectConfigurationDialogViewModel() : base("Project Properties", true, false)
+		public ProjectConfigurationDialogViewModel()
 		{
 		}
 
 		public ProjectConfigurationDialogViewModel(IProject project, Action onClose)
-			: base("Project Configuration", true, false)
 		{
+            Title = project.Name;
+
 			ConfigPages = new List<object>();
 			ConfigPages.AddRange(project.ConfigurationPages);
 
-			OKCommand = ReactiveCommand.Create();
+
+
+			/*OKCommand = ReactiveCommand.Create();
 
 			OKCommand.Subscribe(o =>
 			{
 				onClose();
 				Close();
-			});
+			});*/
 		}
 
 		public object CompileContent { get; set; }
