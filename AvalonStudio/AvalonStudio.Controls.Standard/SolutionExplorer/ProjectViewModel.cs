@@ -30,8 +30,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
 			ConfigureCommand.Subscribe(o =>
 			{
-				shell.ModalDialog = new ProjectConfigurationDialogViewModel(model, () => { });
-				shell.ModalDialog.ShowDialog();
+				shell.AddDocument(new ProjectConfigurationDialogViewModel(model, () => { }));
+				//shell.ModalDialog.ShowDialog();
 			});
 
 			DebugCommand = ReactiveCommand.Create();
