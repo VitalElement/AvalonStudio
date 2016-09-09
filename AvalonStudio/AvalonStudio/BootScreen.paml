@@ -1,6 +1,6 @@
-﻿<Controls:SplashScreen xmlns="https://github.com/avaloniaui" Width="450" Foreground="#FFE4E4E4" Height="600" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" >
+﻿<Controls:SplashScreen xmlns="https://github.com/avaloniaui" Width="450" Foreground="#FFE4E4E4" Height="600" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" BorderBrush="#3E3E42" BorderThickness="1">
   <Grid>
-    <StackPanel Margin="20 10" VerticalAlignment="Top" HorizontalAlignment="Left">
+    <StackPanel Margin="20 5" VerticalAlignment="Top" HorizontalAlignment="Left">
       <TextBlock FontSize="60" FontFamily="Segoe UI" FontWeight="Light">AvalonStudio</TextBlock>
         <TextBlock FontSize="18" FontFamily="Segoe UI" FontWeight="Light">Embedded Tools for Professionals</TextBlock>
     </StackPanel>
