@@ -304,6 +304,7 @@
     <Compile Include="Projects\ISourceFile.cs" />
     <Compile Include="Projects\Solution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shell\SolutionChangedEventArgs.cs" />
     <Compile Include="TestFrameworks\ITestFramework.cs" />
     <Compile Include="TestFrameworks\Test.cs" />
     <Compile Include="Threading\JobRunner.cs" />
