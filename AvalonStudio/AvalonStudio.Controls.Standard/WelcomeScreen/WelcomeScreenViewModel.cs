@@ -16,10 +16,22 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             var recentProjects = RecentProjectsCollection.RecentProjects;
 
             for (int i = 0; i < 5; i++) {
-                if (recentProjects.Count >= 5) {
+                if (i < recentProjects.Count) {
                     _recentProjects.Add(new RecentProjectViewModel(recentProjects[i].Name, recentProjects[i].Path));
                 }
             }
+        }
+
+        private void ShellOnSolutionChanged(object sender, SolutionChangedEventArgs solutionChangedEventArgs) {
+            var newProject = new RecentProject {
+                Name = solutionChangedEventArgs.NewValue.Name,
+                Path = solutionChangedEventArgs.NewValue.CurrentDirectory
+            };
+
+
+            RecentProjectsCollection.RecentProjects.Add(newProject);
+
+            RecentProjectsCollection.Save();
         }
 
         public ObservableCollection<RecentProjectViewModel> RecentProjects
@@ -29,7 +41,9 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
         }
 
         public void Activation() {
-            IoC.Get<IShell>().AddDocument(this);
+            var shell = IoC.Get<IShell>();
+            shell.AddDocument(this);
+            shell.SolutionChanged += ShellOnSolutionChanged;
         }
 
         public void BeforeActivation() {
