@@ -251,6 +251,10 @@
     <Compile Include="SolutionExplorer\StandardProjectViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
+    <Compile Include="WelcomeScreen\WelcomeScreen.paml.cs">
+      <DependentUpon>WelcomeScreenView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="WelcomeScreen\WelcomeScreenViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SolutionExplorer\SolutionExplorerView.paml">
@@ -281,6 +285,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SolutionExplorer\NewItemDialogView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WelcomeScreen\WelcomeScreenView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
