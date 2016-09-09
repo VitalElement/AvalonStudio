@@ -57,13 +57,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 
 				if (result != null)
 				{
-                    var extension = Path.GetExtension(result[0]).Substring(1);
-                    var solutionType = shell.SolutionTypes.FirstOrDefault(st => st.Extensions.Contains(extension));
-
-                    if (solutionType != null)
-                    {
-                        shell.CurrentSolution = await solutionType.LoadAsync(result[0]);
-                    }
+                    await shell.OpenSolution(result[0]);                    
 				}
 			});
 		}
