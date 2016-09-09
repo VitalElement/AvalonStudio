@@ -970,9 +970,13 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 else
                                 {
                                     var inx = argument.Element("Index");
-                                    var index = int.Parse(inx.Value);
 
-                                    result.Arguments[index].Comment = paragraph.Value;
+                                    if (inx != null)    // This happens when documentation for an argument was left in, but the argument no longer exists.
+                                    {
+                                        var index = int.Parse(inx.Value);
+
+                                        result.Arguments[index].Comment = paragraph.Value;
+                                    }
                                 }
                             }
                         }
