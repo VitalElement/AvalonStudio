@@ -304,6 +304,7 @@
     <Compile Include="Projects\ISourceFile.cs" />
     <Compile Include="Projects\Solution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shell\SolutionChangedEventArgs.cs" />
     <Compile Include="TestFrameworks\ITestFramework.cs" />
     <Compile Include="TestFrameworks\Test.cs" />
     <Compile Include="Threading\JobRunner.cs" />
@@ -337,15 +338,22 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\ControlTheme.paml" />
-    <EmbeddedResource Include="Controls\ToolControl.paml" />
+    <EmbeddedResource Include="Controls\ToolControl.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainMenu\ViewModels\MainMenuView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\ViewModelViewHost.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
-      <Project>{2303A1A3-D7AA-41CC-972D-A710D7D3D1D3}</Project>
+      <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
       <Name>AvalonStudio.TextEditor</Name>
     </ProjectReference>
   </ItemGroup>
