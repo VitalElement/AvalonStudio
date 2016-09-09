@@ -21,15 +21,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 			ConfigPages = new List<object>();
 			ConfigPages.AddRange(project.ConfigurationPages);
 
-
-
-			/*OKCommand = ReactiveCommand.Create();
-
-			OKCommand.Subscribe(o =>
-			{
-				onClose();
-				Close();
-			});*/
+            CloseCommand.Subscribe(_ =>
+            {
+                onClose();
+            });
 		}
 
 		public object CompileContent { get; set; }

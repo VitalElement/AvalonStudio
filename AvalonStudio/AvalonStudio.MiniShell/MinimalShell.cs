@@ -92,9 +92,10 @@ namespace AvalonStudio.Shell
 			set { throw new NotImplementedException(); }
 		}
 
-		public IEditor SelectedDocument
+		public IDocumentTabViewModel SelectedDocument
 		{
 			get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
 		}        
 
         public Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
