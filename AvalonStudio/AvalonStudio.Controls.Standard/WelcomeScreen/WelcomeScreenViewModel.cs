@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Shell;
@@ -11,24 +6,22 @@ using ReactiveUI;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen {
     public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension {
-
-        private ObservableCollection<string> templates;
+        private ObservableCollection<RecentProjectViewModel> _recentProjects;
 
         public WelcomeScreenViewModel() {
             Title = "Welcome Screen";
 
-            templates = new ObservableCollection<string>();
+            _recentProjects = new ObservableCollection<RecentProjectViewModel>();
 
             for (int i = 0; i < 10; i++) {
-                templates.Add("i = " + i);
+                _recentProjects.Add(new RecentProjectViewModel("name" + i, "null"));
             }
-
         }
 
-        public ObservableCollection<string> Templates
+        public ObservableCollection<RecentProjectViewModel> RecentProjects
         {
-            get { return templates; }
-            set { this.RaiseAndSetIfChanged(ref templates, value); }
+            get { return _recentProjects; }
+            set { this.RaiseAndSetIfChanged(ref _recentProjects, value); }
         }
 
         public void Activation() {
