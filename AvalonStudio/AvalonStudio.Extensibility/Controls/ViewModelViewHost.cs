@@ -85,6 +85,8 @@ namespace AvalonStudio.Controls
 			if (DataContext != null)
 			{
 				Content = ViewLocator.Build(DataContext);
+
+                Console.WriteLine(Presenter?.LogicalParent);
 			}
 		}
 
