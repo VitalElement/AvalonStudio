@@ -22,6 +22,8 @@ namespace AvalonStudio.Shell
 
 	public interface IShell
 	{
+        event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+
 		Perspective CurrentPerspective { get; set; }
 		ISolution CurrentSolution { get; set; }
         IDocumentTabViewModel SelectedDocument { get; set; }
@@ -44,13 +46,12 @@ namespace AvalonStudio.Shell
 		IEnumerable<IDebugger> Debuggers { get; }
 
 		IEnumerable<ITestFramework> TestFrameworks { get; }
-
-		event EventHandler SolutionChanged;
-
+        
 		IEditor GetDocument(string path);
 
-		Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
-			bool selectLine = false);
+		Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
+
+        Task OpenSolution(string path);
 
         void AddDocument(IDocumentTabViewModel document);
         void RemoveDocument(IDocumentTabViewModel document);
