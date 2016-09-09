@@ -617,6 +617,21 @@ namespace AvalonStudio
 			{
 				document.Model.ShutdownBackgroundWorkers();
 			}
-		}        
+		}
+
+        public async Task OpenSolution(string path)
+        {
+            // TODO implement closing down current solution cleanly.
+
+            if(System.IO.File.Exists(path))
+            {
+                var solutionType = SolutionTypes.FirstOrDefault(st => st.Extensions.Contains(System.IO.Path.GetExtension(path).Substring(1)));
+
+                if(solutionType != null)
+                {
+                    CurrentSolution = await solutionType.LoadAsync(path);
+                }
+            }
+        }
     }
 }
