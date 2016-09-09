@@ -14,7 +14,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             ClickCommand.Subscribe(_ => {
                 var shell = IoC.Get<IShell>();
 
-                // add shell code to load solution...
+                shell.OpenSolution(location);
             });
         }
 

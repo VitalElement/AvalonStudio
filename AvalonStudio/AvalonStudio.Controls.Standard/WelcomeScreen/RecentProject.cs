@@ -13,10 +13,11 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
 
     public static class RecentProjectsCollection {
         private static List<RecentProject> _recentProjects;
+
         public static List<RecentProject> RecentProjects {
             get {
                 if (_recentProjects == null) {
-                    _recentProjects = SerializedObject.Deserialize<List<RecentProject>>("./RecentProject.json");
+                    Deserialize();
                 }
 
                 return _recentProjects;
@@ -25,7 +26,17 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
         }
 
         public static void Save() {
-            SerializedObject.Serialize("./RecentProject.json", RecentProjects);
+            SerializedObject.Serialize(@"c:\RecentProject.json", RecentProjects);
         }
+
+        public static void Deserialize() {
+            try {
+                _recentProjects = SerializedObject.Deserialize<List<RecentProject>>(@"c:\RecentProject.json");
+            }
+            catch (Exception) {
+                _recentProjects = new List<RecentProject>();
+            }
+        }
+
     }
 }
