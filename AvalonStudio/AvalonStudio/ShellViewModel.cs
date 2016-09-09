@@ -245,19 +245,21 @@ namespace AvalonStudio
 
         public void RemoveDocument(IDocumentTabViewModel document)
         {
+            IDocumentTabViewModel newSelectedTab = DocumentTabs.SelectedDocument;
+
             if (DocumentTabs.SelectedDocument == document)
             {
-                var index = DocumentTabs.Documents.IndexOf(document);
-
-                if (index > 0)
+                if (DocumentTabs.SelectedDocument != DocumentTabs.Documents.Last())
                 {
-                    DocumentTabs.SelectedDocument = DocumentTabs.Documents[index];
+                    newSelectedTab = DocumentTabs.Documents.SkipWhile(d => d == document).FirstOrDefault();
                 }
                 else
                 {
-                    DocumentTabs.SelectedDocument = DocumentTabs.Documents.Where(d=>d!= document).FirstOrDefault();
+                    newSelectedTab = DocumentTabs.Documents.Reverse().Skip(1).FirstOrDefault();
                 }
             }
+
+            DocumentTabs.SelectedDocument = newSelectedTab;
 
             DocumentTabs.Documents.Remove(document);
 
