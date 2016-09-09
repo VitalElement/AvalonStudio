@@ -162,7 +162,9 @@ namespace AvalonStudio
 			ToolBarDefinition = ToolBarDefinitions.MainToolBar;
 		}
 
-		public IMenu MainMenu { get; }
+        public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+
+        public IMenu MainMenu { get; }
 
 		public bool DebugVisible
 		{
@@ -448,20 +450,13 @@ namespace AvalonStudio
 			}
 		}
 
-		public event EventHandler SolutionChanged;
-
 		public ISolution CurrentSolution
 		{
 			get { return currentSolution; }
 			set
 			{
-				this.RaiseAndSetIfChanged(ref currentSolution, value);
-
-				if (SolutionChanged != null)
-				{
-					SolutionChanged(this, new EventArgs());
-				}
-			}
+				this.RaiseAndSetIfChanged(ref currentSolution, value);                
+            }
 		}
 
 		public IDocumentTabViewModel SelectedDocument
@@ -629,7 +624,11 @@ namespace AvalonStudio
 
                 if(solutionType != null)
                 {
+                    var oldValue = CurrentSolution;
+
                     CurrentSolution = await solutionType.LoadAsync(path);
+
+                    SolutionChanged?.Invoke(this, new SolutionChangedEventArgs() { OldValue = oldValue, NewValue = currentSolution });
                 }
             }
         }
