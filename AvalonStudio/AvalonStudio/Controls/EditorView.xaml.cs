@@ -17,34 +17,6 @@ namespace AvalonStudio.Controls
             InitializeComponent();
 
             disposables = new CompositeDisposable();
-            editor = this.Find<TextEditor.TextEditor>("editor");
-
-            disposables.Add(DataContextProperty.Changed.Subscribe(o =>
-            {
-                if (o.NewValue is EditorViewModel) // for some reason intellisense view model gets passed here! bug in avalonia?
-                {
-                    if (o.OldValue is EditorViewModel && (o.OldValue as EditorViewModel).Model.Editor == editor)
-                    {
-                        (o.OldValue as EditorViewModel).Model.Editor = null;
-                    }
-
-                    if (editorViewModel != DataContext)
-                    {
-                        editorViewModel = DataContext as EditorViewModel;
-
-                        if (editorViewModel != null && editor != null)
-                        {
-                            editorViewModel.Model.Editor = editor;
-                            editor.Focus();
-                        }
-                    }
-                }
-            }));
-        }
-
-        ~EditorView()
-        {
-            Console.WriteLine("Editor UserControl Destructed.");
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -53,6 +25,14 @@ namespace AvalonStudio.Controls
 
             editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
             editor.EditorScrolled += Editor_EditorScrolled;
+
+            editorViewModel = DataContext as EditorViewModel;
+
+            if (editorViewModel != null && editor != null)
+            {
+                editorViewModel.Model.Editor = editor;
+                editor.Focus();
+            }
         }
 
         private void Editor_EditorScrolled(object sender, EventArgs e)

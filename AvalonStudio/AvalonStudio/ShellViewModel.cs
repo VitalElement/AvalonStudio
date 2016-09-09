@@ -245,19 +245,21 @@ namespace AvalonStudio
 
         public void RemoveDocument(IDocumentTabViewModel document)
         {
-            if (DocumentTabs.SelectedDocument == this)
-            {
-                var index = DocumentTabs.Documents.IndexOf(document);
+            IDocumentTabViewModel newSelectedTab = DocumentTabs.SelectedDocument;
 
-                if (index > 0)
+            if (DocumentTabs.SelectedDocument == document)
+            {
+                if (DocumentTabs.SelectedDocument != DocumentTabs.Documents.Last())
                 {
-                    DocumentTabs.SelectedDocument = DocumentTabs.Documents[index];
+                    newSelectedTab = DocumentTabs.Documents.SkipWhile(d => d == document).FirstOrDefault();
                 }
                 else
                 {
-                    DocumentTabs.SelectedDocument = DocumentTabs.Documents.FirstOrDefault();
+                    newSelectedTab = DocumentTabs.Documents.Reverse().Skip(1).FirstOrDefault();
                 }
             }
+
+            DocumentTabs.SelectedDocument = newSelectedTab;
 
             DocumentTabs.Documents.Remove(document);
 
@@ -281,25 +283,28 @@ namespace AvalonStudio
                         var documentToClose = DocumentTabs.TemporaryDocument;
                         DocumentTabs.TemporaryDocument = null;
                         await documentToClose.CloseCommand.ExecuteAsyncTask(null);
+                        SelectedDocument = null;
                     }
                 });
 
 				EditorViewModel newEditor = null;
-				await Dispatcher.UIThread.InvokeTaskAsync(() =>
-				{
-					newEditor = new EditorViewModel(new EditorModel());
+                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                {
+                    newEditor = new EditorViewModel(new EditorModel());
 
-					newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
-					newEditor.Margins.Add(new LineNumberMargin());
+                    newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
+                    newEditor.Margins.Add(new LineNumberMargin());
 
-					DocumentTabs.Documents.Add(newEditor);
-					DocumentTabs.TemporaryDocument = newEditor;
-					DocumentTabs.SelectedDocument = newEditor;
-				});
-
-				await
-					Dispatcher.UIThread.InvokeTaskAsync(
-						() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
+                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                    {
+                        DocumentTabs.Documents.Add(newEditor);
+                        DocumentTabs.TemporaryDocument = newEditor;
+                    });
+                    
+                    DocumentTabs.SelectedDocument = newEditor;
+                    
+                    await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
+                });
 			}
 			else
 			{
@@ -459,7 +464,20 @@ namespace AvalonStudio
 			}
 		}
 
-		public IEditor SelectedDocument => DocumentTabs?.SelectedDocument as EditorViewModel;
+		public IDocumentTabViewModel SelectedDocument
+        {
+            get
+            {
+                return DocumentTabs?.SelectedDocument;
+            }
+            set
+            {
+                if (DocumentTabs != null)
+                {
+                    DocumentTabs.SelectedDocument = value;
+                }
+            }
+        }
 
 		public object BottomSelectedTool
 		{
