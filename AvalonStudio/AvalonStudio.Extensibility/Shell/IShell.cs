@@ -24,7 +24,7 @@ namespace AvalonStudio.Shell
 	{
 		Perspective CurrentPerspective { get; set; }
 		ISolution CurrentSolution { get; set; }
-		IEditor SelectedDocument { get; }
+        IDocumentTabViewModel SelectedDocument { get; set; }
 		ObservableCollection<object> Tools { get; }
 		ModalDialogViewModelBase ModalDialog { get; set; }
 		object BottomSelectedTool { get; set; }
