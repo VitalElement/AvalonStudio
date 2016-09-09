@@ -13,8 +13,12 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
 
             _recentProjects = new ObservableCollection<RecentProjectViewModel>();
 
-            for (int i = 0; i < 10; i++) {
-                _recentProjects.Add(new RecentProjectViewModel("name" + i, "null"));
+            var recentProjects = RecentProjectsCollection.RecentProjects;
+
+            for (int i = 0; i < 5; i++) {
+                if (recentProjects.Count >= 5) {
+                    _recentProjects.Add(new RecentProjectViewModel(recentProjects[i].Name, recentProjects[i].Path));
+                }
             }
         }
 
