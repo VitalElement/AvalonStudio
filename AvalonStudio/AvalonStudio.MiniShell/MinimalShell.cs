@@ -168,5 +168,10 @@ namespace AvalonStudio.Shell
         {
             throw new NotImplementedException();
         }
+
+        public Task OpenSolution(string path)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
