@@ -459,7 +459,20 @@ namespace AvalonStudio
 			}
 		}
 
-		public IEditor SelectedDocument => DocumentTabs?.SelectedDocument as EditorViewModel;
+		public IDocumentTabViewModel SelectedDocument
+        {
+            get
+            {
+                return DocumentTabs?.SelectedDocument;
+            }
+            set
+            {
+                if (DocumentTabs != null)
+                {
+                    DocumentTabs.SelectedDocument = value;
+                }
+            }
+        }
 
 		public object BottomSelectedTool
 		{
