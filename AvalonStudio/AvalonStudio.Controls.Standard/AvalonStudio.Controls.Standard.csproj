@@ -251,6 +251,7 @@
     <Compile Include="SolutionExplorer\StandardProjectViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
+    <Compile Include="WelcomeScreen\RecentProjectViewModel.cs" />
     <Compile Include="WelcomeScreen\WelcomeScreen.paml.cs">
       <DependentUpon>WelcomeScreenView.paml</DependentUpon>
     </Compile>
