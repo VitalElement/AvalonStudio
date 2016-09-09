@@ -114,19 +114,19 @@ namespace AvalonStudio.Controls
 		{
 			UnRegisterLanguageService();
 
-			try
-			{
-				LanguageService = shell.LanguageServices.Single(o => o.CanHandle(ProjectFile));
+            LanguageService = shell.LanguageServices.FirstOrDefault(o => o.CanHandle(ProjectFile));
 
-				ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
+            if (LanguageService != null)
+            {
+                ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
-				LanguageService.RegisterSourceFile(intellisenseControl, completionAssistant, Editor, ProjectFile, TextDocument);
-			}
-			catch (Exception e)
-			{
-				LanguageService = null;
-				ShellViewModel.Instance.StatusBar.Language = "Text";
-			}
+                LanguageService.RegisterSourceFile(intellisenseControl, completionAssistant, Editor, ProjectFile, TextDocument);
+            }
+            else
+            {
+                LanguageService = null;
+                ShellViewModel.Instance.StatusBar.Language = "Text";
+            }
 
 			IsDirty = false;
 
