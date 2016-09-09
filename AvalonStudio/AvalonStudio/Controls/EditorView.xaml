@@ -7,7 +7,7 @@
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
-             Foreground="WhiteSmoke">
+             Foreground="WhiteSmoke" Name="Editor">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid>
       <te:TextEditor Name="editor" TextDocument="{Binding TextDocument, Mode=TwoWay}"
@@ -37,7 +37,7 @@
         </i:Interaction.Behaviors>
 
         <te:TextEditor.Header>
-          <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10">
+          <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">
             <DropDown.DataTemplates>
               <DataTemplate>
                 <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />

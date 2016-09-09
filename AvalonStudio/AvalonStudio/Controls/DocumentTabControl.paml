@@ -3,7 +3,7 @@
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <DockPanel>
     <StackPanel DockPanel.Dock="Top">
-      <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}" Focusable="false">
+      <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument}" Focusable="false">
         <TabStrip.ItemsPanel>
           <ItemsPanelTemplate>
             <DockPanel  LastChildFill="false" />

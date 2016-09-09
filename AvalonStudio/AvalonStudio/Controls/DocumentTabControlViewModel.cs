@@ -59,7 +59,9 @@ namespace AvalonStudio.Controls
 			get { return selectedDocument; }
 			set
 			{
-				this.RaiseAndSetIfChanged(ref selectedDocument, value);
+                selectedDocument = value;
+
+                this.RaisePropertyChanged(nameof(SelectedDocument));
 
                 if (value is EditorViewModel)
                 {

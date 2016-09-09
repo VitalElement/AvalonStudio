@@ -245,7 +245,7 @@ namespace AvalonStudio
 
         public void RemoveDocument(IDocumentTabViewModel document)
         {
-            if (DocumentTabs.SelectedDocument == this)
+            if (DocumentTabs.SelectedDocument == document)
             {
                 var index = DocumentTabs.Documents.IndexOf(document);
 
@@ -255,7 +255,7 @@ namespace AvalonStudio
                 }
                 else
                 {
-                    DocumentTabs.SelectedDocument = DocumentTabs.Documents.FirstOrDefault();
+                    DocumentTabs.SelectedDocument = DocumentTabs.Documents.Where(d=>d!= document).FirstOrDefault();
                 }
             }
 
@@ -281,25 +281,28 @@ namespace AvalonStudio
                         var documentToClose = DocumentTabs.TemporaryDocument;
                         DocumentTabs.TemporaryDocument = null;
                         await documentToClose.CloseCommand.ExecuteAsyncTask(null);
+                        SelectedDocument = null;
                     }
                 });
 
 				EditorViewModel newEditor = null;
-				await Dispatcher.UIThread.InvokeTaskAsync(() =>
-				{
-					newEditor = new EditorViewModel(new EditorModel());
+                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                {
+                    newEditor = new EditorViewModel(new EditorModel());
 
-					newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
-					newEditor.Margins.Add(new LineNumberMargin());
+                    newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
+                    newEditor.Margins.Add(new LineNumberMargin());
 
-					DocumentTabs.Documents.Add(newEditor);
-					DocumentTabs.TemporaryDocument = newEditor;
-					DocumentTabs.SelectedDocument = newEditor;
-				});
-
-				await
-					Dispatcher.UIThread.InvokeTaskAsync(
-						() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
+                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                    {
+                        DocumentTabs.Documents.Add(newEditor);
+                        DocumentTabs.TemporaryDocument = newEditor;
+                    });
+                    
+                    DocumentTabs.SelectedDocument = newEditor;
+                    
+                    await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
+                });
 			}
 			else
 			{
