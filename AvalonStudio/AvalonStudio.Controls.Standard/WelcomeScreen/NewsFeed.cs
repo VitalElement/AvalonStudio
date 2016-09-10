@@ -14,23 +14,21 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
         private string _title;
         private string _author;
         private string _category;
+        private string _url;
         private string _content;
 
-        public NewsFeedViewModel(string content, string category, string author, string title) {
+        public NewsFeedViewModel(string url, string content, string category, string author, string title) {
+            _url = url;
             _content = content;
             _category = category;
             _author = author;
             _title = title;
 
-            //ClickCommand = ReactiveCommand.Create();
+            ClickCommand = ReactiveCommand.Create();
 
-            //ClickCommand.Subscribe(_ => {
-            //    //var shell = IoC.Get<IShell>();
-
-            //    //var path = Path.Combine(location, name + ".asln");
-
-            //    //shell.OpenSolution(path);
-            //});
+            ClickCommand.Subscribe(_ => {
+                System.Diagnostics.Process.Start(url);
+            });
         }
 
         public string Title
@@ -57,6 +55,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             set { this.RaiseAndSetIfChanged(ref _content, value); }
         }
 
-        //public ReactiveCommand<object> ClickCommand { get; }
+        public ReactiveCommand<object> ClickCommand { get; }
     }
 }

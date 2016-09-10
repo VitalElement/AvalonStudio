@@ -29,10 +29,9 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                 }
             }
 
-
             // RSS Releated
-            var RSSURL = @"http://sxp.microsoft.com/feeds/2.0/devblogs";
-            var reader = XmlReader.Create(RSSURL);
+            var rssurl = @"http://sxp.microsoft.com/feeds/2.0/devblogs";
+            var reader = XmlReader.Create(rssurl);
             var feed = SyndicationFeed.Load(reader);
             reader.Close();
 
@@ -40,7 +39,17 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                 return;
 
             foreach (var syndicationItem in feed.Items) {
-                _newsFeed.Add(new NewsFeedViewModel(syndicationItem.Summary.Text, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
+                var content = syndicationItem.Summary.Text;
+
+                int maxCharCount = 150;
+
+                if (content.Length >= maxCharCount) {
+                    content = content.Remove(maxCharCount, syndicationItem.Summary.Text.Length - maxCharCount);
+                    content = content + "...";
+                }
+
+
+                _newsFeed.Add(new NewsFeedViewModel(syndicationItem.Id, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
             }
         }
 
