@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.ServiceModel.Syndication;
 using System.Xml;
 using AvalonStudio.Extensibility;
@@ -10,17 +11,19 @@ using ReactiveUI;
 namespace AvalonStudio.Controls.Standard.WelcomeScreen {
     public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension {
         private ObservableCollection<RecentProjectViewModel> _recentProjects;
-        private ObservableCollection<NewsFeedViewModel> _newsFeed;
+        private ObservableCollection<RSSFeedViewModel> _newsFeed;
+        private ObservableCollection<RSSFeedViewModel> _videoFeed;
 
         public WelcomeScreenViewModel() {
             Title = "Welcome Screen";
 
             _recentProjects = new ObservableCollection<RecentProjectViewModel>();
-            _newsFeed = new ObservableCollection<NewsFeedViewModel>();
+            _newsFeed = new ObservableCollection<RSSFeedViewModel>();
+            _videoFeed = new ObservableCollection<RSSFeedViewModel>();
 
             var recentProjects = RecentProjectsCollection.RecentProjects;
 
-            if(recentProjects == null)
+            if (recentProjects == null)
                 recentProjects = new List<RecentProject>();
 
             for (int i = 0; i < 5; i++) {
@@ -49,8 +52,25 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                 }
 
 
-                _newsFeed.Add(new NewsFeedViewModel(syndicationItem.Id, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
+                _newsFeed.Add(new RSSFeedViewModel(syndicationItem.Id, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
             }
+
+            rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UC9PgszLOAWhQC6orYejcJlw";
+            reader = XmlReader.Create(rssurl);
+            feed = SyndicationFeed.Load(reader);
+            reader.Close();
+
+            if (feed == null)
+                return;
+
+            foreach (var syndicationItem in feed.Items) {
+                var youtubeID = syndicationItem.Id.Replace("yt:video:", "");
+                var url = "https://www.youtube.com/watch?v=" + youtubeID;
+                var thumbnail = "https://i4.ytimg.com/vi/" + youtubeID + "/hqdefault.jpg";
+
+                _videoFeed.Add(new RSSFeedViewModel(url, syndicationItem.Title.Text, syndicationItem.Title.Text, syndicationItem.Title.Text, syndicationItem.Title.Text));
+            }
+
         }
 
         private void ShellOnSolutionChanged(object sender, SolutionChangedEventArgs solutionChangedEventArgs) {
@@ -59,7 +79,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                 Path = solutionChangedEventArgs.NewValue.CurrentDirectory
             };
 
-            if(RecentProjectsCollection.RecentProjects == null)
+            if (RecentProjectsCollection.RecentProjects == null)
                 RecentProjectsCollection.RecentProjects = new List<RecentProject>();
 
 
@@ -89,10 +109,17 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             set { this.RaiseAndSetIfChanged(ref _recentProjects, value); }
         }
 
-        public ObservableCollection<NewsFeedViewModel> NewsFeed
+        public ObservableCollection<RSSFeedViewModel> NewsFeed
         {
             get { return _newsFeed; }
             set { this.RaiseAndSetIfChanged(ref _newsFeed, value); }
+        }
+
+
+        public ObservableCollection<RSSFeedViewModel> VideoFeed
+        {
+            get { return _videoFeed; }
+            set { this.RaiseAndSetIfChanged(ref _videoFeed, value); }
         }
     }
 }

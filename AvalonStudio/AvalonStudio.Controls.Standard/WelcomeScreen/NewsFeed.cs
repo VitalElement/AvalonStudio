@@ -10,14 +10,14 @@ using AvalonStudio.Shell;
 using ReactiveUI;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen {
-    public class NewsFeedViewModel : ViewModel {
+    public class RSSFeedViewModel : ViewModel {
         private string _title;
         private string _author;
         private string _category;
         private string _url;
         private string _content;
 
-        public NewsFeedViewModel(string url, string content, string category, string author, string title) {
+        public RSSFeedViewModel(string url, string content, string category, string author, string title) {
             _url = url;
             _content = content;
             _category = category;
