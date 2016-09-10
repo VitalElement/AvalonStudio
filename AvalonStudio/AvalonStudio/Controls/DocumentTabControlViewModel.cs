@@ -6,18 +6,17 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using AvalonStudio.Controls;
 
 namespace AvalonStudio.Controls
 {
-	public class DocumentTabsViewModel : ViewModel
+	public class DocumentTabControlViewModel : ViewModel
 	{
-		private IBrush backgroundBrush;
-
-		private ObservableCollection<EditorViewModel> documents;
+		private ObservableCollection<IDocumentTabViewModel> documents;
 
 		private IBrush hoverTabBackgroundBrush;
 
-		private EditorViewModel selectedDocument;
+		private IDocumentTabViewModel selectedDocument;
 
 		private IBrush tabBackgroundBrush;
 		private IBrush tabBrush;
@@ -27,9 +26,9 @@ namespace AvalonStudio.Controls
 
 		private readonly IBrush temporaryTabHighlighBrush;
 
-		public DocumentTabsViewModel()
+		public DocumentTabControlViewModel()
 		{
-			Documents = new ObservableCollection<EditorViewModel>();
+			Documents = new ObservableCollection<IDocumentTabViewModel>();
 			Documents.CollectionChanged += (sender, e) =>
 			{
 				if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -49,21 +48,26 @@ namespace AvalonStudio.Controls
 			temporaryTabHighlighBrush = Brush.Parse("#B064AB");
 		}
 
-		public ObservableCollection<EditorViewModel> Documents
+		public ObservableCollection<IDocumentTabViewModel> Documents
 		{
 			get { return documents; }
 			set { this.RaiseAndSetIfChanged(ref documents, value); }
 		}
 
-		public EditorViewModel SelectedDocument
+		public IDocumentTabViewModel SelectedDocument
 		{
 			get { return selectedDocument; }
 			set
 			{
-				this.RaiseAndSetIfChanged(ref selectedDocument, value);
+                selectedDocument = value;
 
-				// Dispatcher invoke is hack to make sure the Editor propery has been generated.
-				Dispatcher.UIThread.InvokeAsync(() => { value?.Model.Editor?.Focus(); });
+                this.RaisePropertyChanged(nameof(SelectedDocument));
+
+                if (value is EditorViewModel)
+                {
+                    // Dispatcher invoke is hack to make sure the Editor propery has been generated.
+                    Dispatcher.UIThread.InvokeAsync(() => { (value as EditorViewModel).Model.Editor?.Focus(); });
+                }
 
 				if (value == TemporaryDocument)
 				{
