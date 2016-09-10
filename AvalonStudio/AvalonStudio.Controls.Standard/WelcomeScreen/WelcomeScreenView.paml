@@ -1,62 +1,57 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
-  <Grid>
-    <StackPanel Margin="10 2" VerticalAlignment="Top" HorizontalAlignment="Left">
-      <TextBlock FontSize="35" FontFamily="Segoe UI" FontWeight="Light">AvalonStudio</TextBlock>
-    </StackPanel>
-    <StackPanel Margin="10 50" VerticalAlignment="Top" HorizontalAlignment="Left">
-      <TextBlock FontSize="13" FontFamily="Segoe UI" FontWeight="Light">Recent Solutions</TextBlock>
-    </StackPanel>
+  <UserControl.Styles>
+    <Style Selector="Button.hyperlink">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <TextBlock Text="{TemplateBinding Content}" Foreground="SkyBlue" />
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </UserControl.Styles>
+  
+  <Grid RowDefinitions="100, *" ColumnDefinitions="400,500">
+    <TextBlock FontSize="35" FontFamily="Segoe UI" FontWeight="Light" Margin="10 0">AvalonStudio</TextBlock>
 
-    <StackPanel Margin="20 70" VerticalAlignment="Top" HorizontalAlignment="Left">
-      <ListBox Items="{Binding RecentProjects}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
-        <ListBox.Styles>
-          <Style Selector="Button">
-            <Setter Property="Template">
-              <Setter.Value>
-                <ControlTemplate>
-                  <TextBlock Text="{TemplateBinding Content}" Foreground="SkyBlue" />
-                </ControlTemplate>
-              </Setter.Value>
-            </Setter>
-          </Style>
-        </ListBox.Styles>
+    <StackPanel Gap="0" Grid.Row="2">
+      <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+        <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light">Recent Solutions</TextBlock>
+      </StackPanel>
 
-        <ListBox.ItemTemplate>
-          <DataTemplate >
-            <Button Content="{Binding Name}" Command="{Binding ClickCommand}"/>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
+      <StackPanel Margin="20 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+        <ListBox Items="{Binding RecentProjects}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
+          <ListBox.ItemTemplate>
+            <DataTemplate >
+              <Button Content="{Binding Name}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </StackPanel>
     </StackPanel>
 
     <!--RSS FEED-->
-    <StackPanel Margin="-230 50" VerticalAlignment="Top" HorizontalAlignment="Center">
-      <TextBlock FontSize="13" FontFamily="Segoe UI" FontWeight="Light">News </TextBlock>
+    <StackPanel Gap="0" Grid.Column="2" Grid.Row="2">
+      <StackPanel Margin="0 0" VerticalAlignment="Top">
+        <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light" Grid.Column="2">News </TextBlock>
+      </StackPanel>
+
+      <StackPanel Margin="20 0" VerticalAlignment="Top" HorizontalAlignment="Center">
+        <ListBox Items="{Binding NewsFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <StackPanel HorizontalAlignment="Center">
+                <Button Content="{Binding Title}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
+                <TextBlock Margin="20 0" Text="{Binding Content}"  TextWrapping="Wrap" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </StackPanel>
     </StackPanel>
 
-    <StackPanel Margin="20 70" VerticalAlignment="Top" HorizontalAlignment="Center">
-      <ListBox Items="{Binding NewsFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
-        <ListBox.Styles>
-          <Style Selector="Button">
-            <Setter Property="Template">
-              <Setter.Value>
-                <ControlTemplate>
-                  <TextBlock Text="{TemplateBinding Content}" Foreground="SkyBlue" />
-                </ControlTemplate>
-              </Setter.Value>
-            </Setter>
-          </Style>
-        </ListBox.Styles>
 
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <StackPanel HorizontalAlignment="Center">
-              <Button Content="{Binding Title}" Command="{Binding ClickCommand}"/>
-              <TextBlock Margin="20 0" Text="{Binding Content}"/>
-            </StackPanel>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
-    </StackPanel>
+
+
   </Grid>
 </UserControl>
