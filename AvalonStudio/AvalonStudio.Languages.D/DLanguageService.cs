@@ -16,12 +16,17 @@ using AvalonStudio.TextEditor.Rendering;
 using D_Parser.Dom;
 using D_Parser.Dom.Expressions;
 using D_Parser.Parser;
+using AvalonStudio.Languages.D.Rendering;
+using Avalonia.Input;
 
 namespace AvalonStudio.Languages.D
 {
     public class DLanguageService : ILanguageService
     {
         private readonly JobRunner intellisenseJobRunner;
+
+        private static readonly ConditionalWeakTable<ISourceFile, DDataAssociation> dataAssociations =
+            new ConditionalWeakTable<ISourceFile, DDataAssociation>();
 
         public DLanguageService()
         {
@@ -49,32 +54,59 @@ namespace AvalonStudio.Languages.D
             get;
         }
 
-        public Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
+        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
         {
-            throw new NotImplementedException();
+            return new List<CodeCompletionData>();
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            
-            throw new NotImplementedException(); // Work out the highlighting data
+            var result = new CodeAnalysisResults();
+
+            var associatedData = GetAssociatedData(file);
+
+            await Task.Factory.StartNew(() =>
+            {
+                var ast = DParser.ParseFile(file.FilePath);
+
+                var highlightingVisitor = new HighlightVisitor();
+
+                ast.Accept(highlightingVisitor);
+
+                result.SyntaxHighlightingData = highlightingVisitor.Highlights;                
+            });
+
+            associatedData.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
+
+            return result;            
         }
 
         public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
         {
-            throw new NotImplementedException();
+            var associatedData = GetAssociatedData(file);
+
+            return associatedData.DocumentLineTransformers;
         }
 
         public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
         {
-            throw new NotImplementedException();
+            var associatedData = GetAssociatedData(file);
+
+            return associatedData.BackgroundRenderers;
         }
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant,
-            TextEditor.TextEditor editor, ISourceFile file, TextDocument textDocument)
+            TextEditor.TextEditor editor, ISourceFile file, TextDocument doc)
         {
-            
-            
+            DDataAssociation association = null;
+
+            if (dataAssociations.TryGetValue(file, out association))
+            {
+                throw new Exception("Source file already registered with language service.");
+            }
+
+            association = new DDataAssociation(doc);
+            dataAssociations.Add(file, association);
         }
 
         public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
@@ -123,14 +155,55 @@ namespace AvalonStudio.Languages.D
             throw new NotImplementedException();
         }
 
-        public Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
         {
             throw new NotImplementedException();
         }
+
+        private DDataAssociation GetAssociatedData(ISourceFile sourceFile)
+        {
+            DDataAssociation result = null;
+
+            if (!dataAssociations.TryGetValue(sourceFile, out result))
+            {
+                throw new Exception("Tried to parse file that has not been registered with the language service.");
+            }
+
+            return result;
+        }
+    }
+
+    internal class DDataAssociation
+    {
+        public DDataAssociation(TextDocument textDocument)
+        {
+            BackgroundRenderers = new List<IBackgroundRenderer>();
+            DocumentLineTransformers = new List<IDocumentLineTransformer>();
+
+            TextColorizer = new TextColoringTransformer(textDocument);
+            TextMarkerService = new TextMarkerService(textDocument);
+
+            
+            BackgroundRenderers.Add(TextMarkerService);
+
+            DocumentLineTransformers.Add(TextColorizer);
+            
+        }
+
+        
+        public TextColoringTransformer TextColorizer { get; }
+        public TextMarkerService TextMarkerService { get; }
+        public List<IBackgroundRenderer> BackgroundRenderers { get; }
+        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }
+        public EventHandler<KeyEventArgs> TunneledKeyUpHandler { get; set; }
+        public EventHandler<KeyEventArgs> TunneledKeyDownHandler { get; set; }
+        public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
+        public EventHandler<KeyEventArgs> KeyDownHandler { get; set; }
+        public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }        
     }
 }
