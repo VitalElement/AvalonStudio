@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Shell;
@@ -15,6 +16,9 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
 
             var recentProjects = RecentProjectsCollection.RecentProjects;
 
+            if(recentProjects == null)
+                recentProjects = new List<RecentProject>();
+
             for (int i = 0; i < 5; i++) {
                 if (i < recentProjects.Count) {
                     _recentProjects.Add(new RecentProjectViewModel(recentProjects[i].Name, recentProjects[i].Path));
@@ -28,6 +32,14 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                 Path = solutionChangedEventArgs.NewValue.CurrentDirectory
             };
 
+            if(RecentProjectsCollection.RecentProjects == null)
+                RecentProjectsCollection.RecentProjects = new List<RecentProject>();
+
+
+            if (RecentProjectsCollection.RecentProjects.Contains(newProject)) {
+                RecentProjectsCollection.Save();
+                return;
+            }
 
             RecentProjectsCollection.RecentProjects.Add(newProject);
 
