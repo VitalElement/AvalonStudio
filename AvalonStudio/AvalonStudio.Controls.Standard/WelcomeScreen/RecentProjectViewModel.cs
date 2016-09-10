@@ -7,7 +7,7 @@ using ReactiveUI;
 namespace AvalonStudio.Controls.Standard.WelcomeScreen {
     public class RecentProjectViewModel : ViewModel {
         public RecentProjectViewModel(string name, string location) {
-            this.name = name;
+            this._name = name;
 
             ClickCommand = ReactiveCommand.Create();
 
@@ -18,12 +18,12 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             });
         }
 
-        private string name;
+        private string _name;
 
         public string Name
         {
-            get { return name; }
-            set { this.RaiseAndSetIfChanged(ref name, value); }
+            get { return _name; }
+            set { this.RaiseAndSetIfChanged(ref _name, value); }
         }
 
         public ReactiveCommand<object> ClickCommand { get; }

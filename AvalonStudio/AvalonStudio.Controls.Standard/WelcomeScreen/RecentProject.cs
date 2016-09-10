@@ -1,17 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen {
-    public class RecentProject {
+    public class RecentProject : IEquatable<RecentProject> {
         public string Name { get; set; }
         public string Path { get; set; }
+
+        public bool Equals(RecentProject other) {
+            return (Name == other.Name && Path == other.Path);
+        }
+
+        public override bool Equals(object obj) {
+            return Equals(obj as RecentProject);
+        }
     }
 
     public static class RecentProjectsCollection {
+        private static string _savePath = Path.Combine(Platform.SettingsDirectory, "RecentProject.json");
+
         private static List<RecentProject> _recentProjects;
 
         public static List<RecentProject> RecentProjects {
@@ -26,12 +35,17 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
         }
 
         public static void Save() {
-            SerializedObject.Serialize(@"c:\RecentProject.json", RecentProjects);
+            try {
+                SerializedObject.Serialize(_savePath, RecentProjects);
+            }
+            catch (Exception) {
+                throw;
+            }
         }
 
         public static void Deserialize() {
             try {
-                _recentProjects = SerializedObject.Deserialize<List<RecentProject>>(@"c:\RecentProject.json");
+                _recentProjects = SerializedObject.Deserialize<List<RecentProject>>(_savePath);
             }
             catch (Exception) {
                 _recentProjects = new List<RecentProject>();
