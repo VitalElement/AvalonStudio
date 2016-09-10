@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Xml.Linq;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
@@ -30,8 +31,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             get { return _name; }
             set { this.RaiseAndSetIfChanged(ref _name, value); }
         }
-
-
 
         private string _location;
 
