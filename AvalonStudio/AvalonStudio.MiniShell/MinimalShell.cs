@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
+using AvalonStudio.Controls;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
@@ -40,7 +41,20 @@ namespace AvalonStudio.Shell
 			IoC.RegisterConstant(this, typeof (IShell));
 		}
 
-		public event EventHandler SolutionChanged;
+        event EventHandler<SolutionChangedEventArgs> IShell.SolutionChanged
+        {
+            add
+            {
+                throw new NotImplementedException();
+            }
+
+            remove
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public event EventHandler SolutionChanged;
 
 		public IEnumerable<IProject> ProjectTypes { get; }
 
@@ -91,9 +105,10 @@ namespace AvalonStudio.Shell
 			set { throw new NotImplementedException(); }
 		}
 
-		public IEditor SelectedDocument
+		public IDocumentTabViewModel SelectedDocument
 		{
 			get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
 		}        
 
         public Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
@@ -156,5 +171,20 @@ namespace AvalonStudio.Shell
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        public void AddDocument(IDocumentTabViewModel document)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveDocument(IDocumentTabViewModel document)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task OpenSolution(string path)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

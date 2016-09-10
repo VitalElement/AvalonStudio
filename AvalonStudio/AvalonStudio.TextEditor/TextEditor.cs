@@ -53,6 +53,11 @@ namespace AvalonStudio.TextEditor
                     s.InvalidateSelectedWord();
                 }
             });
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Application.Current.Styles.Add(new TextEditorTheme());
+            });
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -104,8 +109,6 @@ namespace AvalonStudio.TextEditor
         public TextEditor()
         {
             disposables = new CompositeDisposable();
-
-            Styles.Add(new TextEditorTheme());
 
             Name = "textEditor";
             highestUserSelectedColumn = 1;
