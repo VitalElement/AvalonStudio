@@ -13,15 +13,17 @@
           <Style Selector="Button">
             <Setter Property="Template">
               <Setter.Value>
-                <TextBlock Text="{TemplateBinding Text}" Foreground="SkyBlue" />
+                <ControlTemplate>
+                  <TextBlock Text="{TemplateBinding Content}" Foreground="SkyBlue" />
+                </ControlTemplate>
               </Setter.Value>
             </Setter>
           </Style>
         </ListBox.Styles>
-        
+
         <ListBox.ItemTemplate>
           <DataTemplate >
-            <Button Content="{Binding Name}" Command="{Binding ClickCommand}"/>
+            <Button Content="{Binding Location}" Command="{Binding ClickCommand}"/>
           </DataTemplate>
         </ListBox.ItemTemplate>
       </ListBox>
