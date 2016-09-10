@@ -11,10 +11,10 @@
     </Style>
   </UserControl.Styles>
   
-  <Grid RowDefinitions="100, *" ColumnDefinitions="400,500">
+  <Grid RowDefinitions="100, *" ColumnDefinitions="250, 400, 150">
     <TextBlock FontSize="35" FontFamily="Segoe UI" FontWeight="Light" Margin="10 0">AvalonStudio</TextBlock>
 
-    <StackPanel Gap="0" Grid.Row="2">
+    <StackPanel Gap="0" Grid.Column="0" Grid.Row="2">
       <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
         <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light">Recent Solutions</TextBlock>
       </StackPanel>
@@ -30,8 +30,8 @@
       </StackPanel>
     </StackPanel>
 
-    <!--RSS FEED-->
-    <StackPanel Gap="0" Grid.Column="2" Grid.Row="2">
+    <!--RSS NEWS FEED-->
+    <StackPanel Gap="0" Grid.Column="1" Grid.Row="2">
       <StackPanel Margin="0 0" VerticalAlignment="Top">
         <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light" Grid.Column="2">News </TextBlock>
       </StackPanel>
@@ -40,7 +40,7 @@
         <ListBox Items="{Binding NewsFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
           <ListBox.ItemTemplate>
             <DataTemplate>
-              <StackPanel HorizontalAlignment="Center">
+              <StackPanel>
                 <Button Content="{Binding Title}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
                 <TextBlock Margin="20 0" Text="{Binding Content}"  TextWrapping="Wrap" />
               </StackPanel>
@@ -49,9 +49,25 @@
         </ListBox>
       </StackPanel>
     </StackPanel>
+    
+    <!--RSS VIDEO FEED-->
+    <StackPanel Gap="0" Grid.Column="2" Grid.Row="2">
+      <StackPanel Margin="0 0" VerticalAlignment="Top">
+        <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light" Grid.Column="3">Videos </TextBlock>
+      </StackPanel>
 
-
-
-
+      <StackPanel Margin="20 0" VerticalAlignment="Top" HorizontalAlignment="Center">
+        <ListBox Items="{Binding VideoFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <StackPanel>
+                <Button Content="{Binding Title}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
+                <TextBlock Margin="20 0" Text="{Binding Content}"  TextWrapping="Wrap" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </StackPanel>
+    </StackPanel>
   </Grid>
 </UserControl>
