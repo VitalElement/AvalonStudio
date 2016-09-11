@@ -26,6 +26,12 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             _newsFeed = new ObservableCollection<NewsFeedViewModel>();
             _videoFeed = new ObservableCollection<VideoFeedViewModel>();
 
+            LoadRecentProjects();
+            LoadNewsFeed();
+            LoadVideoFeed();
+        }
+
+        private void LoadRecentProjects() {
             var recentProjects = RecentProjectsCollection.RecentProjects;
 
             if (recentProjects == null)
@@ -37,6 +43,9 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                 }
             }
 
+        }
+
+        private void LoadNewsFeed() {
             // RSS Releated
             var rssurl = @"http://sxp.microsoft.com/feeds/2.0/devblogs";
             var reader = XmlReader.Create(rssurl);
@@ -59,10 +68,12 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
 
                 _newsFeed.Add(new NewsFeedViewModel(syndicationItem.Id, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
             }
+        }
 
-            rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UCOWs5Rx9ot7p10mqYyzjyUA";
-            reader = XmlReader.Create(rssurl);
-            feed = SyndicationFeed.Load(reader);
+        private void LoadVideoFeed() {
+            var rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UCOWs5Rx9ot7p10mqYyzjyUA";
+            var reader = XmlReader.Create(rssurl);
+            var feed = SyndicationFeed.Load(reader);
             reader.Close();
 
             if (feed == null)
