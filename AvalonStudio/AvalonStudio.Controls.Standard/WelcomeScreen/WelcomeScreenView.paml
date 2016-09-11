@@ -62,7 +62,7 @@
             <DataTemplate>
               <StackPanel>
                 <Button Content="{Binding Title}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
-                <TextBlock Margin="20 0" Text="{Binding Content}"  TextWrapping="Wrap" />
+                <Image Source="{Binding Image}"/>
               </StackPanel>
             </DataTemplate>
           </ListBox.ItemTemplate>
