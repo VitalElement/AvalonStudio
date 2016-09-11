@@ -18,6 +18,7 @@ using D_Parser.Dom.Expressions;
 using D_Parser.Parser;
 using Avalonia.Input;
 using AvalonStudio.Languages.Highlighting;
+using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Languages.D
 {
@@ -67,7 +68,16 @@ namespace AvalonStudio.Languages.D
 
             await Task.Factory.StartNew(() =>
             {
-                var ast = DParser.ParseFile(file.FilePath);
+                DModule ast = null;
+
+                if (unsavedFiles.Count > 0 && unsavedFiles.First().FileName.CompareFilePath(file.FilePath) == 0)
+                {
+                    ast = DParser.ParseString(unsavedFiles.First().Contents);
+                }
+                else
+                {
+                    ast = DParser.ParseFile(file.FilePath);
+                }
 
                 var highlightingVisitor = new HighlightVisitor();
 
