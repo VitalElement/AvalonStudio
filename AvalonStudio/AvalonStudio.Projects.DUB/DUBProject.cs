@@ -12,6 +12,8 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using D_Parser.Dom;
+using D_Parser.Misc;
 
 namespace AvalonStudio.Projects.DUB
 {
@@ -35,8 +37,11 @@ namespace AvalonStudio.Projects.DUB
             References = new ObservableCollection<IProject>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
+            ParseCache = new LegacyParseCacheView(new List<string>());   
             Project = this;
         }
+
+        public ParseCacheView ParseCache { get; set; }
 
         public override IList<object> ConfigurationPages
         {

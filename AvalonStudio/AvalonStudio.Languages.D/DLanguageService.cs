@@ -19,9 +19,69 @@ using D_Parser.Parser;
 using Avalonia.Input;
 using AvalonStudio.Languages.Highlighting;
 using AvalonStudio.Platforms;
+using D_Parser.Completion;
+using D_Parser.Resolver;
+using D_Parser.Misc;
+using Avalonia.Interactivity;
 
 namespace AvalonStudio.Languages.D
 {
+
+    class DCompletionDataGenerator : ICompletionDataGenerator
+    {
+        public void Add(INode Node)
+        {
+            Console.WriteLine(Node);
+        }
+
+        public void Add(byte Token)
+        {
+            Console.WriteLine(Token);
+        }
+
+        public void AddCodeGeneratingNodeItem(INode node, string codeToGenerate)
+        {
+            Console.WriteLine(codeToGenerate);
+        }
+
+        public void AddIconItem(string iconName, string text, string description)
+        {
+            Console.WriteLine($"{iconName}, {text}");
+        }
+
+        public void AddModule(DModule module, string nameOverride = null)
+        {
+            Console.WriteLine(module);
+        }
+
+        public void AddPackage(string packageName)
+        {
+            Console.WriteLine(packageName);
+        }
+
+        public void AddPropertyAttribute(string AttributeText)
+        {
+            Console.WriteLine(AttributeText);
+        }
+
+        public void AddTextItem(string Text, string Description)
+        {
+            Console.WriteLine(Text);
+        }
+
+        public void NotifyTimeout()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void SetSuggestedItem(string item)
+        {
+            Console.WriteLine(item);
+        }
+    }
+
+    
+
     public class DLanguageService : ILanguageService
     {
         private readonly JobRunner intellisenseJobRunner;
@@ -57,7 +117,34 @@ namespace AvalonStudio.Languages.D
 
         public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
         {
+            var codeCompletionGenerator = new DCompletionDataGenerator();
+
+            var associatedData = GetAssociatedData(sourceFile);
+            associatedData.EditorContext.CaretLocation = new CodeLocation(column, line);
+            associatedData.EditorContext.SyntaxTree = GetAndParseModule(sourceFile, unsavedFiles);
+
+            await Task.Factory.StartNew(() =>
+            {
+                CodeCompletion.GenerateCompletionData(associatedData.EditorContext, codeCompletionGenerator, 'p');
+            });
+
             return new List<CodeCompletionData>();
+        }
+
+        private DModule GetAndParseModule(ISourceFile file, List<UnsavedFile> unsavedFiles)
+        {
+            DModule ast = null;
+
+            if (unsavedFiles.Count > 0 && unsavedFiles.First().FileName.CompareFilePath(file.FilePath) == 0)
+            {
+                ast = DParser.ParseString(unsavedFiles.First().Contents);
+            }
+            else
+            {
+                ast = DParser.ParseFile(file.FilePath);
+            }
+
+            return ast;
         }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
@@ -68,16 +155,7 @@ namespace AvalonStudio.Languages.D
 
             await Task.Factory.StartNew(() =>
             {
-                DModule ast = null;
-
-                if (unsavedFiles.Count > 0 && unsavedFiles.First().FileName.CompareFilePath(file.FilePath) == 0)
-                {
-                    ast = DParser.ParseString(unsavedFiles.First().Contents);
-                }
-                else
-                {
-                    ast = DParser.ParseFile(file.FilePath);
-                }
+                var ast = GetAndParseModule(file, unsavedFiles);
 
                 var highlightingVisitor = new HighlightVisitor();
 
@@ -116,7 +194,68 @@ namespace AvalonStudio.Languages.D
             }
 
             association = new DDataAssociation(doc);
+
+            association.EditorContext.ParseCache = (file.Project as DUBProject).ParseCache;            
+
             dataAssociations.Add(file, association);
+
+            association.IntellisenseManager = new DIntellisenseManager(this, intellisenseControl, completionAssistant, file, editor);
+
+            association.TunneledKeyUpHandler = async (sender, e) =>
+            {
+                await intellisenseJobRunner.InvokeAsync(() => { association.IntellisenseManager.OnKeyUp(e).Wait(); });
+            };
+
+            association.TunneledKeyDownHandler = async (sender, e) =>
+            {
+                association.IntellisenseManager.OnKeyDown(e);
+
+                await intellisenseJobRunner.InvokeAsync(() => { association.IntellisenseManager.CompleteOnKeyDown(e).Wait(); });
+            };
+
+            association.KeyUpHandler = (sender, e) =>
+            {
+                if (editor.TextDocument == doc)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.Return:
+                            {
+                                if (editor.CaretIndex >= 0 && editor.CaretIndex < editor.TextDocument.TextLength)
+                                {
+                                    if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
+                                    {
+                                        editor.TextDocument.Insert(editor.CaretIndex, Environment.NewLine);
+                                        editor.CaretIndex--;
+
+                                        var currentLine = editor.TextDocument.GetLineByOffset(editor.CaretIndex);
+
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine, editor.CaretIndex);
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine.NextLine,
+                                            editor.CaretIndex);
+                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);
+                                    }
+
+                                    var newCaret = IndentationStrategy.IndentLine(editor.TextDocument,
+                                        editor.TextDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
+
+                                    editor.CaretIndex = newCaret;
+                                }
+                            }
+                            break;
+                    }
+                }
+            };
+
+            association.TextInputHandler = (sender, e) =>
+            {
+            };
+
+            editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, RoutingStrategies.Tunnel);
+            editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, RoutingStrategies.Tunnel);
+            editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, RoutingStrategies.Tunnel);
+
+            editor.TextInput += association.TextInputHandler;
         }
 
         public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
@@ -134,12 +273,11 @@ namespace AvalonStudio.Languages.D
                     result = true;
                     break;
             }
-
-            // ???
-            /*if (!(file.Project.Solution is DUBProject))
+            
+            if (!(file.Project is DUBProject))
             {
                 result = false;
-            }*/
+            }
 
             return result;
         }
@@ -202,10 +340,13 @@ namespace AvalonStudio.Languages.D
             BackgroundRenderers.Add(TextMarkerService);
 
             DocumentLineTransformers.Add(TextColorizer);
+
+            EditorContext = new EditorData();
             
         }
 
-        
+        public DIntellisenseManager IntellisenseManager { get; set; }
+        public EditorData EditorContext { get; }
         public TextColoringTransformer TextColorizer { get; }
         public TextMarkerService TextMarkerService { get; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
