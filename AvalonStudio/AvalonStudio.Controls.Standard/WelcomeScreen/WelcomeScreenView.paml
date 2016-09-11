@@ -9,9 +9,19 @@
         </Setter.Value>
       </Setter>
     </Style>
+    
+    <Style Selector="Button.videofeed">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <Image Stretch="Uniform" Height="150" Source="{TemplateBinding Content}"/>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
   </UserControl.Styles>
   
-  <Grid RowDefinitions="100, *" ColumnDefinitions="250, 400, 150">
+  <Grid RowDefinitions="100, *" ColumnDefinitions="250, 400, 250">
     <TextBlock FontSize="35" FontFamily="Segoe UI" FontWeight="Light" Margin="10 0">AvalonStudio</TextBlock>
 
     <StackPanel Gap="0" Grid.Column="0" Grid.Row="2">
@@ -56,13 +66,13 @@
         <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light" Grid.Column="3">Videos </TextBlock>
       </StackPanel>
 
-      <StackPanel Margin="20 0" VerticalAlignment="Top" HorizontalAlignment="Center">
+      <StackPanel HorizontalAlignment="Left">
         <ListBox Items="{Binding VideoFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
           <ListBox.ItemTemplate>
             <DataTemplate>
               <StackPanel>
                 <Button Content="{Binding Title}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
-                <Image Source="{Binding Image}"/>
+                <Button Content="{Binding Image}" Command="{Binding ClickCommand}" Classes="videofeed"/>
               </StackPanel>
             </DataTemplate>
           </ListBox.ItemTemplate>
