@@ -79,9 +79,17 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
         }
 
         private IBitmap SaveThumbnail(string youtubeID) {
-            var thumbnail = "https://i4.ytimg.com/vi/" + youtubeID + "/hqdefault.jpg";
 
-            var savePath = Path.Combine(Platform.CacheDirectory, youtubeID + ".png");
+            var savePath = Path.Combine(Platform.CacheDirectory, "videoFeed", youtubeID + ".png");
+
+            if (!Directory.Exists(Path.Combine(Platform.CacheDirectory, "videoFeed"))) {
+                Directory.CreateDirectory(Path.Combine(Platform.CacheDirectory, "videoFeed"));
+            }
+
+            if (File.Exists(savePath))
+                return new Bitmap(savePath);
+
+            var thumbnail = "https://i4.ytimg.com/vi/" + youtubeID + "/hqdefault.jpg";
 
             using (WebClient client = new WebClient()) {
                 client.DownloadFile(new Uri(thumbnail), savePath);
