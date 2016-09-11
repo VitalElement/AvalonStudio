@@ -252,6 +252,7 @@
     <Compile Include="SolutionExplorer\StandardProjectViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
+    <Compile Include="WelcomeScreen\VideoFeed.cs" />
     <Compile Include="WelcomeScreen\NewsFeed.cs" />
     <Compile Include="WelcomeScreen\RecentProject.cs" />
     <Compile Include="WelcomeScreen\RecentProjectViewModel.cs" />
