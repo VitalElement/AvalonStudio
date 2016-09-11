@@ -9,11 +9,6 @@ namespace AvalonStudio.Controls
 		public static readonly AvaloniaProperty<string> TitleProprty =
 			AvaloniaProperty.Register<ToolControl, string>(nameof(Title));
 
-		public ToolControl()
-		{
-			Styles.Add(new ControlTheme());
-		}
-
 		public string Title
 		{
 			get { return GetValue(TitleProprty); }
