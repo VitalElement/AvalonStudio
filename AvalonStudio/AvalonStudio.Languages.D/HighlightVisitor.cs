@@ -36,6 +36,7 @@ namespace AvalonStudio.Languages.D
         public override void Visit(DTokenDeclaration td)
         {
             Highlights.Add(new LineColumnSyntaxHighlightingData() { StartLine = td.Location.Line, StartColumn = td.Location.Column, EndLine = td.EndLocation.Line, EndColumn = td.EndLocation.Column, Type = HighlightType.Keyword });
+            base.Visit(td);
         }
 
 
@@ -52,6 +53,8 @@ namespace AvalonStudio.Languages.D
                     Highlights.Add(new LineColumnSyntaxHighlightingData() { StartLine = x.Location.Line, StartColumn = x.Location.Column, EndLine = x.EndLocation.Line, EndColumn = x.EndLocation.Column, Type = HighlightType.Literal });
                     break;
             }
+
+            base.Visit(x);
         }
 
 

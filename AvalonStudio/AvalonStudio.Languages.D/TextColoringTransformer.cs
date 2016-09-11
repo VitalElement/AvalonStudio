@@ -56,7 +56,7 @@ namespace AvalonStudio.Languages.D.Rendering
 					formattedOffset = transform.StartOffset - line.Offset;
 				}
 
-				line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset);
+				line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset - transform.StartOffset);
 			}
 		}
 
