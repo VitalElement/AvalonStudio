@@ -12,7 +12,6 @@
     using TextEditor;
     using TextEditor.Indentation;
     using TextEditor.Rendering;
-    using CPlusPlus.Rendering;
     using CPlusPlus;
     using Avalonia.Input;
     using System.Runtime.CompilerServices;
@@ -23,6 +22,7 @@
     using Extensibility;
     using Utils;
     using Projects.OmniSharp;
+    using Highlighting;
 
     public class CSharpLanguageService : ILanguageService
     {
@@ -341,14 +341,7 @@
             {
                 foreach (var highlight in response.Highlights)
                 {
-                    result.SyntaxHighlightingData.Add(new LineColumnSyntaxHighlightingData
-                    {
-                        StartLine = highlight.StartLine,
-                        EndLine = highlight.EndLine,
-                        StartColumn = highlight.StartColumn,
-                        EndColumn = highlight.EndColumn,
-                        Type = ToAvalonHighlightType(highlight.Kind)
-                    });
+                    result.SyntaxHighlightingData.Add(new LineColumnSyntaxHighlightingData(highlight.StartLine, highlight.StartColumn, highlight.EndLine, highlight.EndColumn, ToAvalonHighlightType(highlight.Kind)));
                 }
 
                 dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);

@@ -16,8 +16,8 @@ using AvalonStudio.TextEditor.Rendering;
 using D_Parser.Dom;
 using D_Parser.Dom.Expressions;
 using D_Parser.Parser;
-using AvalonStudio.Languages.D.Rendering;
 using Avalonia.Input;
+using AvalonStudio.Languages.Highlighting;
 
 namespace AvalonStudio.Languages.D
 {

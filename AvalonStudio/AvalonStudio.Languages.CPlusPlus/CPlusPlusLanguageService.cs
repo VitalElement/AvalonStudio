@@ -20,6 +20,7 @@ using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using NClang;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Languages.Highlighting;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
