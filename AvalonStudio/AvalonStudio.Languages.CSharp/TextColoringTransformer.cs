@@ -56,8 +56,8 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 					formattedOffset = transform.StartOffset - line.Offset;
 				}
 
-				line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset);
-			}
+                line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset - transform.StartOffset);
+            }
 		}
 
 		public void SetTransformations(SyntaxHighlightDataList highlightData)
