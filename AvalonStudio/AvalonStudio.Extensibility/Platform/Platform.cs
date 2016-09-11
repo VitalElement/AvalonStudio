@@ -136,6 +136,8 @@ namespace AvalonStudio.Platforms
 
 		public static string SettingsDirectory => Path.Combine(BaseDirectory, "Settings");
 
+		public static string CacheDirectory => Path.Combine(BaseDirectory, "Cache");
+
         public static string AppDataDirectory => Path.Combine(BaseDirectory, "AppData");
 
 		public static string ReposDirectory => Path.Combine(AppDataDirectory, "Repos");
@@ -185,7 +187,12 @@ namespace AvalonStudio.Platforms
 		        Directory.CreateDirectory(SettingsDirectory);
 		    }
 
-		    if (!Directory.Exists(AppDataDirectory))
+            if (!Directory.Exists(CacheDirectory)) {
+                Directory.CreateDirectory(CacheDirectory);
+            }
+
+
+            if (!Directory.Exists(AppDataDirectory))
 			{
 				Directory.CreateDirectory(AppDataDirectory);
 			}

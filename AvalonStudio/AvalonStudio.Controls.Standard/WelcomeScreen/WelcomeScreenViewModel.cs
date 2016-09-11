@@ -1,25 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
+using System.Net;
 using System.ServiceModel.Syndication;
 using System.Xml;
+using Avalonia.Media.Imaging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using ReactiveUI;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen {
     public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension {
         private ObservableCollection<RecentProjectViewModel> _recentProjects;
-        private ObservableCollection<RSSFeedViewModel> _newsFeed;
-        private ObservableCollection<RSSFeedViewModel> _videoFeed;
+        private ObservableCollection<NewsFeedViewModel> _newsFeed;
+        private ObservableCollection<VideoFeedViewModel> _videoFeed;
 
         public WelcomeScreenViewModel() {
             Title = "Welcome Screen";
 
             _recentProjects = new ObservableCollection<RecentProjectViewModel>();
-            _newsFeed = new ObservableCollection<RSSFeedViewModel>();
-            _videoFeed = new ObservableCollection<RSSFeedViewModel>();
+            _newsFeed = new ObservableCollection<NewsFeedViewModel>();
+            _videoFeed = new ObservableCollection<VideoFeedViewModel>();
 
             var recentProjects = RecentProjectsCollection.RecentProjects;
 
@@ -52,10 +57,10 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                 }
 
 
-                _newsFeed.Add(new RSSFeedViewModel(syndicationItem.Id, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
+                _newsFeed.Add(new NewsFeedViewModel(syndicationItem.Id, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
             }
 
-            rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UC9PgszLOAWhQC6orYejcJlw";
+            rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UCOWs5Rx9ot7p10mqYyzjyUA";
             reader = XmlReader.Create(rssurl);
             feed = SyndicationFeed.Load(reader);
             reader.Close();
@@ -66,11 +71,23 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             foreach (var syndicationItem in feed.Items) {
                 var youtubeID = syndicationItem.Id.Replace("yt:video:", "");
                 var url = "https://www.youtube.com/watch?v=" + youtubeID;
-                var thumbnail = "https://i4.ytimg.com/vi/" + youtubeID + "/hqdefault.jpg";
 
-                _videoFeed.Add(new RSSFeedViewModel(url, syndicationItem.Title.Text, syndicationItem.Title.Text, syndicationItem.Title.Text, syndicationItem.Title.Text));
+                var image = SaveThumbnail(youtubeID);
+
+                _videoFeed.Add(new VideoFeedViewModel(url, syndicationItem.Title.Text, image));
+            }
+        }
+
+        private IBitmap SaveThumbnail(string youtubeID) {
+            var thumbnail = "https://i4.ytimg.com/vi/" + youtubeID + "/hqdefault.jpg";
+
+            var savePath = Path.Combine(Platform.CacheDirectory, youtubeID + ".png");
+
+            using (WebClient client = new WebClient()) {
+                client.DownloadFile(new Uri(thumbnail), savePath);
             }
 
+            return new Bitmap(savePath);
         }
 
         private void ShellOnSolutionChanged(object sender, SolutionChangedEventArgs solutionChangedEventArgs) {
@@ -109,14 +126,14 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             set { this.RaiseAndSetIfChanged(ref _recentProjects, value); }
         }
 
-        public ObservableCollection<RSSFeedViewModel> NewsFeed
+        public ObservableCollection<NewsFeedViewModel> NewsFeed
         {
             get { return _newsFeed; }
             set { this.RaiseAndSetIfChanged(ref _newsFeed, value); }
         }
 
 
-        public ObservableCollection<RSSFeedViewModel> VideoFeed
+        public ObservableCollection<VideoFeedViewModel> VideoFeed
         {
             get { return _videoFeed; }
             set { this.RaiseAndSetIfChanged(ref _videoFeed, value); }
