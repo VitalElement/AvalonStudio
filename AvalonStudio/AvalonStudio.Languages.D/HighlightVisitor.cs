@@ -1,5 +1,6 @@
 ﻿using D_Parser.Dom;
 using D_Parser.Dom.Expressions;
+using D_Parser.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,25 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.D
 {
+    static class DParserExtensions
+    {
+        public static LineColumnSyntaxHighlightingData ToHighlight(this ISyntaxRegion region, HighlightType type)
+        {
+            return new LineColumnSyntaxHighlightingData(region.Location.Line, region.Location.Column, region.EndLocation.Line, region.EndLocation.Column, type);
+        }
+
+        public static LineColumnSyntaxHighlightingData ToHighlight(this Comment comment)
+        {
+            if (comment.CommentType == Comment.Type.SingleLine)
+            {
+                return new LineColumnSyntaxHighlightingData(comment.StartPosition.Line, comment.StartPosition.Column, comment.StartPosition.Line, comment.EndPosition.Column, HighlightType.Comment);
+            }
+            else
+            {
+                return new LineColumnSyntaxHighlightingData(comment.StartPosition.Line, comment.StartPosition.Column, comment.EndPosition.Line, comment.EndPosition.Column, HighlightType.Comment);
+            }
+        }
+    }
     class HighlightVisitor : DefaultDepthFirstVisitor
     {
         public HighlightVisitor()
@@ -22,7 +42,6 @@ namespace AvalonStudio.Languages.D
             base.Visit(n);
         }
 
-
         public override void Visit(DVariable n)
         {
             base.Visit(n);
@@ -33,35 +52,44 @@ namespace AvalonStudio.Languages.D
             base.Visit(td);
         }
 
-        public override void Visit(DTokenDeclaration td)
+        public override void Visit(DTokenDeclaration x)
         {
-            Highlights.Add(new LineColumnSyntaxHighlightingData() { StartLine = td.Location.Line, StartColumn = td.Location.Column, EndLine = td.EndLocation.Line, EndColumn = td.EndLocation.Column, Type = HighlightType.Keyword });
-            base.Visit(td);
-        }
+            Highlights.Add(x.ToHighlight(HighlightType.Keyword));
 
+            base.Visit(x);
+        }
+        
 
         public override void Visit(IdentifierExpression x)
         {
-            
-            // gets locaitons of literals i.e. "string"
             switch (x.Format)
             {
                 case D_Parser.Parser.LiteralFormat.None:
                     break;
 
-                default:
-                    Highlights.Add(new LineColumnSyntaxHighlightingData() { StartLine = x.Location.Line, StartColumn = x.Location.Column, EndLine = x.EndLocation.Line, EndColumn = x.EndLocation.Column, Type = HighlightType.Literal });
+                default:                    
+                    Highlights.Add(x.ToHighlight(HighlightType.Literal));
                     break;
             }
 
             base.Visit(x);
         }
 
-
-        public override void Visit(DClassLike n)
-        {
-            // Gets locations of class definition name
+        public override void Visit(DModule n)
+        {         
+            foreach(var comment in n.Comments)
+            {
+                Highlights.Add(comment.ToHighlight());
+            }
+            
             base.Visit(n);
+        }
+        
+        public override void Visit(DClassLike x)
+        {
+            Highlights.Add(x.ToHighlight(HighlightType.ClassName));
+            
+            base.Visit(x);
         }
     }
 }

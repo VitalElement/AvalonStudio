@@ -60,6 +60,15 @@ namespace AvalonStudio.Languages
 
     public class LineColumnSyntaxHighlightingData : OffsetSyntaxHighlightingData, IComparable<LineColumnSyntaxHighlightingData>
     {
+        public LineColumnSyntaxHighlightingData(int startLine, int startColumn, int endLine, int endColumn, HighlightType type)
+        {
+            StartLine = startLine;
+            StartColumn = startColumn;
+            EndLine = endLine;
+            EndColumn = endColumn;
+            Type = type;
+        }
+
         public int StartColumn { get; set; }
         public int EndColumn { get;set; }
         public int StartLine { get; set; }
