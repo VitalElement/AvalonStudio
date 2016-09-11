@@ -39,17 +39,38 @@ namespace AvalonStudio.Languages.D
 
         public override void Visit(DMethod n)
         {
+            Highlights.Add(n.ToHighlight(HighlightType.Identifier));
+            
             base.Visit(n);
         }
 
         public override void Visit(DVariable n)
         {
+            Highlights.Add(n.ToHighlight(HighlightType.Identifier));
             base.Visit(n);
         }
 
         public override void Visit(IdentifierDeclaration td)
         {
+            Highlights.Add(td.ToHighlight(HighlightType.ClassName));
             base.Visit(td);
+        }
+
+        public override void Visit(ImportStatement s)
+        {
+            Highlights.Add(s.ToHighlight(HighlightType.Keyword));
+            base.Visit(s);
+        }
+
+        public override void Visit(ModuleStatement s)
+        {
+            base.Visit(s);
+        }
+
+        public override void VisitAttribute(Modifier attribute)
+        {
+            Highlights.Add(attribute.ToHighlight(HighlightType.Keyword));
+            base.VisitAttribute(attribute);
         }
 
         public override void Visit(DTokenDeclaration x)
@@ -87,7 +108,8 @@ namespace AvalonStudio.Languages.D
         
         public override void Visit(DClassLike x)
         {
-            Highlights.Add(x.ToHighlight(HighlightType.ClassName));
+            Highlights.Add(new LineColumnSyntaxHighlightingData(x.Location.Line, x.Location.Column, x.Location.Line, x.Location.Column + 5, HighlightType.Keyword));
+            //Highlights.Add(x.ToHighlight(HighlightType.ClassName));
             
             base.Visit(x);
         }

@@ -67,6 +67,10 @@
       <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
       <Name>AvalonStudio.Extensibility</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Languages.D\D_Parser\DParser2\DParser2.csproj">
+      <Project>{0290A229-9AA1-41C3-B525-CAFB86D8BC42}</Project>
+      <Name>DParser2</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
