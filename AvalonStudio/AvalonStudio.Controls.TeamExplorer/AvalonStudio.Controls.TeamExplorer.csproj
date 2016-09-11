@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -215,6 +215,12 @@ call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" 
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent Condition="'$(OS)' != 'Unix'">call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
+call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)"</PostBuildEvent>
+	<PostBuildEvent Condition="'$(OS)' == 'Unix'">"bash $(SolutionDir)postbuild" c "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
+bash "$(SolutionDir)plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
