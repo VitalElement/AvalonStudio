@@ -17,15 +17,13 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
         private string _category;
         private string _url;
         private string _content;
-        private IBitmap _image;
 
-        public NewsFeedViewModel(string url, string content, string category, string author, string title, IBitmap image = null) {
+        public NewsFeedViewModel(string url, string content, string category, string author, string title) {
             _url = url;
             _content = content;
             _category = category;
             _author = author;
             _title = title;
-            _image = image;
 
             ClickCommand = ReactiveCommand.Create();
 
@@ -56,12 +54,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
         {
             get { return _content; }
             set { this.RaiseAndSetIfChanged(ref _content, value); }
-        }
-
-        public IBitmap Image
-        {
-            get { return _image; }
-            set { this.RaiseAndSetIfChanged(ref _image, value); }
         }
 
         public ReactiveCommand<object> ClickCommand { get; }
