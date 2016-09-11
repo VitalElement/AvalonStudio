@@ -195,18 +195,21 @@ namespace AvalonStudio.Projects
             var sourceFile = File.FromPath(this, folder, fullPath.ToPlatformPath());
             SourceFiles.InsertSorted(sourceFile);
 
-            if (folder.Location == Project.CurrentDirectory)
+            if (folder != null)
             {
-                Project.Items.InsertSorted(sourceFile);
-                sourceFile.Parent = Project;
-            }
-            else
-            {
-                folder.Items.InsertSorted(sourceFile);
-                sourceFile.Parent = folder;
-            }
+                if (folder.Location == Project.CurrentDirectory)
+                {
+                    Project.Items.InsertSorted(sourceFile);
+                    sourceFile.Parent = Project;
+                }
+                else
+                {
+                    folder.Items.InsertSorted(sourceFile);
+                    sourceFile.Parent = folder;
+                }
 
-            FileAdded?.Invoke(this, new EventArgs());
+                FileAdded?.Invoke(this, new EventArgs());
+            }
         }
 
         public void FileChanged(string fullPath)
@@ -264,7 +267,7 @@ namespace AvalonStudio.Projects
 
         public void RemoveFile(ISourceFile file)
         {
-            file.Parent.Items.Remove(file);
+            file.Parent?.Items.Remove(file);
             SourceFiles.Remove(file);
         }
 
