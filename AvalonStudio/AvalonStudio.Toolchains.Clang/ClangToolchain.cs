@@ -110,7 +110,7 @@ namespace AvalonStudio.Toolchains.Clang
 					result = project.ToolchainSettings.ClangToolchainSettings;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 
