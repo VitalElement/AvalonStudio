@@ -80,7 +80,7 @@ namespace AvalonStudio.Languages.D
         }
     }
 
-    
+
 
     public class DLanguageService : ILanguageService
     {
@@ -161,12 +161,12 @@ namespace AvalonStudio.Languages.D
 
                 ast.Accept(highlightingVisitor);
 
-                result.SyntaxHighlightingData = highlightingVisitor.Highlights;                
+                result.SyntaxHighlightingData = highlightingVisitor.Highlights;
             });
 
             associatedData.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
-            return result;            
+            return result;
         }
 
         public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
@@ -195,7 +195,7 @@ namespace AvalonStudio.Languages.D
 
             association = new DDataAssociation(doc);
 
-            association.EditorContext.ParseCache = (file.Project as DUBProject).ParseCache;            
+            association.EditorContext.ParseCache = (file.Project as DUBProject).ParseCache;
 
             dataAssociations.Add(file, association);
 
@@ -273,7 +273,7 @@ namespace AvalonStudio.Languages.D
                     result = true;
                     break;
             }
-            
+
             if (!(file.Project is DUBProject))
             {
                 result = false;
@@ -297,10 +297,10 @@ namespace AvalonStudio.Languages.D
             throw new NotImplementedException();
         }
 
-        public Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset,
+        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset,
             string methodName)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
@@ -336,13 +336,13 @@ namespace AvalonStudio.Languages.D
             TextColorizer = new TextColoringTransformer(textDocument);
             TextMarkerService = new TextMarkerService(textDocument);
 
-            
+
             BackgroundRenderers.Add(TextMarkerService);
 
             DocumentLineTransformers.Add(TextColorizer);
 
             EditorContext = new EditorData();
-            
+
         }
 
         public DIntellisenseManager IntellisenseManager { get; set; }
@@ -355,6 +355,6 @@ namespace AvalonStudio.Languages.D
         public EventHandler<KeyEventArgs> TunneledKeyDownHandler { get; set; }
         public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
         public EventHandler<KeyEventArgs> KeyDownHandler { get; set; }
-        public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }        
+        public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
     }
 }
