@@ -9,9 +9,13 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 		private readonly SolidColorBrush brush = new SolidColorBrush(Color.FromArgb(0xD0, 0xB8, 0x48, 0xFF));
 		private readonly IBrush pragmaBrush = Brush.Parse("#68217A");
 
-		public event EventHandler<EventArgs> DataChanged;
+        public event EventHandler<EventArgs> DataChanged
+        {
+            add { throw new NotSupportedException(); }
+            remove { }
+        }
 
-		public void TransformLine(TextView textView, VisualLine line)
+        public void TransformLine(TextView textView, VisualLine line)
 		{
 			if (line.RenderedText.Text.Contains("#define") && !line.RenderedText.Text.Trim().StartsWith("//"))
 			{
