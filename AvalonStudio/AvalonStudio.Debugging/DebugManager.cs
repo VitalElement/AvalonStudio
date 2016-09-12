@@ -18,16 +18,7 @@ namespace AvalonStudio.Debugging
 	{
 		private IConsole _console;
 		private IShell _shell;
-
-		#region Private Fields
-
-		//private EditorViewModel lastDocument;
-		private bool closeLastDocument;
-
-		#endregion
-
 		private bool ignoreEvents;
-
 		private bool IsExecuting;
 		private bool IsUpdating;
 		private IEditor lastDocument;

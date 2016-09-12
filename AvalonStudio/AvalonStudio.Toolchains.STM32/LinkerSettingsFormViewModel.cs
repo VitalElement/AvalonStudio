@@ -42,8 +42,6 @@ namespace AvalonStudio.Toolchains.STM32
 
 		private bool notUseStandardStartup;
 
-		private IProject project;
-
 		private string scatterFile;
 
 		private string selectedLinkedLibrary;
