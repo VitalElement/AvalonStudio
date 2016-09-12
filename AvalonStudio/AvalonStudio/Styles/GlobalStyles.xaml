@@ -1,0 +1,16 @@
+<Styles xmlns="https://github.com/avaloniaui">
+  <Style Selector="Button.hyperLink">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate>
+          <TextBlock Text="{TemplateBinding Content}" Cursor="Hand" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Foreground" Value="#007ACC" />
+  </Style>
+
+  <Style Selector="Button:pointerover.hyperLink">
+    <Setter Property="Foreground" Value="#67CCFE" />
+  </Style>
+</Styles>
