@@ -42,8 +42,6 @@ namespace AvalonStudio.Toolchains.Clang
 
 		private bool notUseStandardStartup;
 
-		private IProject project;
-
 		private string scatterFile;
 
 		private string selectedLinkedLibrary;
