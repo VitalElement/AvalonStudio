@@ -59,12 +59,12 @@ namespace AvalonStudio.Toolchains.LocalGCC
 				{
 					settings = LocalGCCToolchain.GetSettings(project).LinkSettings;
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					Model.ToolchainSettings.LocalGCC = new LocalGccToolchainSettings();
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				Model.ToolchainSettings.LocalGCC = new LocalGccToolchainSettings();
 				settings = Model.ToolchainSettings.LocalGCC.LinkSettings;
