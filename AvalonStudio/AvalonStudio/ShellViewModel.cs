@@ -276,6 +276,8 @@ namespace AvalonStudio
 		{
 			var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.Model.ProjectFile.FilePath == file.FilePath);
 
+            var selectedDocumentTCS = new TaskCompletionSource<IDocumentTabViewModel>();
+
 			if (currentTab == null)
 			{
                 await Dispatcher.UIThread.InvokeTaskAsync(async () =>
@@ -306,12 +308,18 @@ namespace AvalonStudio
                     DocumentTabs.SelectedDocument = newEditor;
                     
                     await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
+
+                    selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
                 });
 			}
 			else
 			{
 				await Dispatcher.UIThread.InvokeTaskAsync(() => { DocumentTabs.SelectedDocument = currentTab; });
-			}
+
+                selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
+            }
+
+            await selectedDocumentTCS.Task;
 
 			if (debugHighlight && DocumentTabs.SelectedDocument is EditorViewModel)
 			{
@@ -328,7 +336,6 @@ namespace AvalonStudio
                 }
             }
 			
-
 			return DocumentTabs.SelectedDocument as EditorViewModel;
 		}
 
