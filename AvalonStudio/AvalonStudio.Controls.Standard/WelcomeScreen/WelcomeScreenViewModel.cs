@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.ServiceModel.Syndication;
 using System.Xml;
@@ -42,7 +43,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                     _recentProjects.Add(new RecentProjectViewModel(recentProjects[i].Name, recentProjects[i].Path));
                 }
             }
-
         }
 
         private void LoadNewsFeed() {
@@ -65,8 +65,12 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                     content = content + "...";
                 }
 
+                var link = syndicationItem.Links.LastOrDefault();
+                var url = "";
+                if (link != null)
+                    url = link.Uri.AbsoluteUri;
 
-                _newsFeed.Add(new NewsFeedViewModel(syndicationItem.Id, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
+                _newsFeed.Add(new NewsFeedViewModel(url, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
             }
         }
 
