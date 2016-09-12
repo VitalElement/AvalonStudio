@@ -50,7 +50,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 					result = project.DebugSettings.JLinkSettings;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				result = project.DebugSettings.JLinkSettings = new JLinkSettings();
 			}
