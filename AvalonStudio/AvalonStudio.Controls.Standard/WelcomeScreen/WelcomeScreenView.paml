@@ -1,21 +1,4 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
-  <UserControl.Styles>
-    <Style Selector="Button.hyperLink">
-      <Setter Property="Template">
-        <Setter.Value>
-          <ControlTemplate>
-            <TextBlock Text="{TemplateBinding Content}" Cursor="Hand" />
-          </ControlTemplate>
-        </Setter.Value>
-      </Setter>
-      <Setter Property="Foreground" Value="#007ACC" />
-    </Style>
-
-    <Style Selector="Button:pointerover.hyperLink">
-      <Setter Property="Foreground" Value="#67CCFE" />
-    </Style>
-  </UserControl.Styles>
-  
   <Grid RowDefinitions="100, *" ColumnDefinitions="250, 400, 250">
     <TextBlock FontSize="35" FontFamily="Segoe UI" FontWeight="Light" Margin="10 0">AvalonStudio</TextBlock>
 
