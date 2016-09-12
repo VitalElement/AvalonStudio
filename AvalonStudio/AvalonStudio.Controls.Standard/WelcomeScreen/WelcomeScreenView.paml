@@ -1,23 +1,18 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <UserControl.Styles>
-    <Style Selector="Button.hyperlink">
+    <Style Selector="Button.hyperLink">
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate>
-            <TextBlock Text="{TemplateBinding Content}" Foreground="SkyBlue" />
+            <TextBlock Text="{TemplateBinding Content}" Cursor="Hand" />
           </ControlTemplate>
         </Setter.Value>
       </Setter>
+      <Setter Property="Foreground" Value="#007ACC" />
     </Style>
-    
-    <Style Selector="Button.videofeed">
-      <Setter Property="Template">
-        <Setter.Value>
-          <ControlTemplate>
-            <Image Stretch="Uniform" Height="150" Source="{TemplateBinding Content}"/>
-          </ControlTemplate>
-        </Setter.Value>
-      </Setter>
+
+    <Style Selector="Button:pointerover.hyperLink">
+      <Setter Property="Foreground" Value="#67CCFE" />
     </Style>
   </UserControl.Styles>
   
@@ -33,7 +28,7 @@
         <ListBox Items="{Binding RecentProjects}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
           <ListBox.ItemTemplate>
             <DataTemplate >
-              <Button Content="{Binding Name}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
+              <Button Content="{Binding Name}" Command="{Binding ClickCommand}" Classes="hyperLink"/>
             </DataTemplate>
           </ListBox.ItemTemplate>
         </ListBox>
