@@ -501,7 +501,6 @@ namespace AvalonStudio.TextEditor.Rendering
 
 		public void Invalidate()
 		{
-			invalidateVisualLines = true;
 			InvalidateVisual();
 		}
 
@@ -659,7 +658,6 @@ namespace AvalonStudio.TextEditor.Rendering
 		{
 		}
 
-		private bool invalidateVisualLines = true;
 		private int lastLineCount;
 
 		private void GenerateVisualLines(DrawingContext context)
@@ -682,8 +680,6 @@ namespace AvalonStudio.TextEditor.Rendering
 				InvalidateMeasure();
 				InvalidateScroll?.Invoke();
 			}
-
-			invalidateVisualLines = false;
 		}
 
 		private void GenerateText(VisualLine line)
