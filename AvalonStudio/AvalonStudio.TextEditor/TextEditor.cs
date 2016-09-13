@@ -369,7 +369,10 @@ namespace AvalonStudio.TextEditor
             get { return offset; }
             set
             {
-                SetAndRaise(OffsetProperty, ref offset, value);
+                if (value.Y != offset.Y && value.X != offset.X)
+                {
+                    SetAndRaise(OffsetProperty, ref offset, value);
+                }
             }
         }
 
