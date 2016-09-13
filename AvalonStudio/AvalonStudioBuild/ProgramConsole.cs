@@ -19,7 +19,7 @@ namespace AvalonStudio
 					canOverwrite = false;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				canOverwrite = false;
 			}

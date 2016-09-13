@@ -51,7 +51,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			{
 				settings = LocalGCCToolchain.GetSettings(project).CompileSettings;
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				Model.ToolchainSettings.LocalGCC = new LocalGccToolchainSettings();
 			}

@@ -21,8 +21,6 @@ namespace AvalonStudio.Shell
 	{
 		public static IShell Instance = null;
 
-		private readonly IEnumerable<IPlugin> plugins;
-
 		[ImportingConstructor]
 		public MinimalShell([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes,
 			[ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates,
@@ -54,7 +52,11 @@ namespace AvalonStudio.Shell
             }
         }
 
-        public event EventHandler SolutionChanged;
+        public event EventHandler SolutionChanged
+        {
+            add { throw new NotSupportedException(); }
+            remove { }
+        }
 
 		public IEnumerable<IProject> ProjectTypes { get; }
 
