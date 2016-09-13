@@ -151,6 +151,7 @@ namespace AvalonStudio.Controls
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
+                Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
                 Save();
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
@@ -174,6 +175,7 @@ namespace AvalonStudio.Controls
             model.DocumentLoaded += (sender, e) =>
             {
                 model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
+                Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
 
                 foreach (var bgRenderer in languageServiceBackgroundRenderers)
                 {
@@ -231,15 +233,8 @@ namespace AvalonStudio.Controls
                             intellisenseManager.OnTextInput(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
                         }
                     };
-
-                    Model.Editor.CaretChangedByPointerClick += (send, ee) =>
-                    {
-                        if (intellisenseManager != null)
-                        {
-                            var location = TextDocument.GetLocation(caretIndex);
-                            intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, EditorModel.UnsavedFiles);
-                        }
-                    };
+                    
+                    Model.Editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
 
                     disposables.Add(Model.Editor.AddHandler(InputElement.KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel));
                     disposables.Add(Model.Editor.AddHandler(InputElement.KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel));
@@ -319,6 +314,15 @@ namespace AvalonStudio.Controls
             margins = new ObservableCollection<TextViewMargin>();
 
             Dock = Dock.Right;
+        }
+
+        private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
+        {
+            if (intellisenseManager != null)
+            {
+                var location = TextDocument.GetLocation(caretIndex);
+                intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, EditorModel.UnsavedFiles);
+            }
         }
 
         private void ProjectFile_FileModifiedExternally(object sender, EventArgs e)
