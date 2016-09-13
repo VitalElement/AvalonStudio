@@ -22,6 +22,8 @@ namespace AvalonStudio.TextEditor.Rendering
 {
 	public class TextView : ContentControl, ILogicalScrollable
 	{
+        private int lastLineScrolledTo = -1;
+
 		public IVisual TextSurface
 		{
 			get { return textSurface; }
@@ -468,7 +470,7 @@ namespace AvalonStudio.TextEditor.Rendering
 			get { return offset; }
 			set
 			{
-                if (value.Y != offset.Y && value.X != offset.X)
+                if (value.Y != offset.Y || value.X != offset.X && firstVisualLine != (int)value.Y)
                 {
                     firstVisualLine = (int)value.Y;
 
@@ -754,7 +756,13 @@ namespace AvalonStudio.TextEditor.Rendering
 				if (caretIndex >= 0 && TextDocument != null)
 				{
 					var position = TextDocument.GetLocation(caretIndex);
-					ScrollToLine(position.Line, 0.1);
+
+                    if (lastLineScrolledTo != position.Line)
+                    {
+                        ScrollToLine(position.Line, 0.1);
+
+                        lastLineScrolledTo = position.Line;
+                    }
 				}
 			}
 		}

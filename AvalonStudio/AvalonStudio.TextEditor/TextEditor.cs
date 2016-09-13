@@ -76,12 +76,9 @@ namespace AvalonStudio.TextEditor
 
             disposables.Add(TextDocumentProperty.Changed.Subscribe(_ => { SelectionStart = SelectionEnd = CaretIndex = -1; }));
 
-            disposables.Add(OffsetProperty.Changed.Subscribe(_ =>
+            disposables.Add(this.GetObservable(OffsetProperty).Subscribe(_ =>
             {
-                if (EditorScrolled != null)
-                {
-                    EditorScrolled(this, new EventArgs());
-                }
+                EditorScrolled?.Invoke(this, new EventArgs());
             }));
 
             disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
@@ -369,7 +366,7 @@ namespace AvalonStudio.TextEditor
             get { return offset; }
             set
             {
-                if (value.Y != offset.Y && value.X != offset.X)
+                if (value.Y != offset.Y || value.X != offset.X)
                 {
                     SetAndRaise(OffsetProperty, ref offset, value);
                 }

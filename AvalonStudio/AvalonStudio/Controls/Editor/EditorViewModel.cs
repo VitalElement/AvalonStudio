@@ -212,7 +212,7 @@ namespace AvalonStudio.Controls
                     {
                         if (caretIndex > 0)
                         {
-                            intellisenseManager.OnKeyUp(ee, TextDocument.GetCharAt(caretIndex - 1), CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                            intellisenseManager.OnKeyUp(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
                         }
                     };
 
@@ -220,7 +220,7 @@ namespace AvalonStudio.Controls
                     {
                         if (caretIndex > 0)
                         {
-                            intellisenseManager.OnKeyDown(ee, TextDocument.GetCharAt(caretIndex), CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                            intellisenseManager.OnKeyDown(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
                         }
                     };
 
@@ -229,6 +229,15 @@ namespace AvalonStudio.Controls
                         if (caretIndex > 0)
                         {
                             intellisenseManager.OnTextInput(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                        }
+                    };
+
+                    Model.Editor.CaretChangedByPointerClick += (send, ee) =>
+                    {
+                        if (intellisenseManager != null)
+                        {
+                            var location = TextDocument.GetLocation(caretIndex);
+                            intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, EditorModel.UnsavedFiles);
                         }
                     };
 
@@ -486,11 +495,6 @@ namespace AvalonStudio.Controls
                     var location = TextDocument.GetLocation(value);
                     ShellViewModel.Instance.StatusBar.LineNumber = location.Line;
                     ShellViewModel.Instance.StatusBar.Column = location.Column;
-
-                    if (intellisenseManager != null && hasChanged)
-                    {
-                        //intellisenseManager.SetCursor(value, location.Line, location.Column, EditorModel.UnsavedFiles);
-                    }
                 }
 
                 selectedIndexEntry = GetSelectIndexEntryByOffset(value);
