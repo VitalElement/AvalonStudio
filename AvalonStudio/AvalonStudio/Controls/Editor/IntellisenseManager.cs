@@ -78,6 +78,15 @@ namespace AvalonStudio.Controls
             this.editor = editor;
         }
 
+        public void Dispose()
+        {
+            editor = null;
+        }
+
+        ~IntellisenseManager()
+        {
+            editor = null;
+        }
 
         private void SetCompletionData(List<CodeCompletionData> completionData)
         {
@@ -137,7 +146,6 @@ namespace AvalonStudio.Controls
         {
             currentFilter = editor.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
 
-            IoC.Get<IConsole>().WriteLine($"Filter: {currentFilter}, caret: {caretIndex}");
             CompletionDataViewModel suggestion = null;
 
             var filteredResults = unfilteredCompletions as IEnumerable<CompletionDataViewModel>;
@@ -250,8 +258,6 @@ namespace AvalonStudio.Controls
             {
                 if (!isProcessingKey)
                 {
-                    Console.WriteLine("Updating Completion Data");
-
                     if (intellisenseControl.IsVisible)
                     {
                         CloseIntellisense();
@@ -260,16 +266,12 @@ namespace AvalonStudio.Controls
                     var codeCompleteTask = languageService.CodeCompleteAtAsync(file, line, column, unsavedFiles);
                     codeCompleteTask.Wait();
                     SetCompletionData(codeCompleteTask.Result);
-
-                    Console.WriteLine("Updated Completion Data");
                 }
             });
         }
 
         public async void OnTextInput(TextInputEventArgs e, int caretIndex, int line, int column)
         {
-            Console.WriteLine("OnTextInput");
-
             if (e.Text.Length == 1)
             {
                 char currentChar = e.Text[0];
@@ -355,8 +357,6 @@ namespace AvalonStudio.Controls
                 {
                     await intellisenseJobRunner.InvokeAsync(async () =>
                     {
-                        Console.WriteLine("IsTriggering");
-
                         await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                         {
                             if (!intellisenseControl.IsVisible)
@@ -379,8 +379,6 @@ namespace AvalonStudio.Controls
                     });
                 }
             }
-
-            Console.WriteLine("OnTextInput Finished");
         }
 
         public async void OnKeyDown(KeyEventArgs e, int caretIndex, int line, int column)
@@ -463,9 +461,7 @@ namespace AvalonStudio.Controls
             if (!intellisenseControl.IsVisible)
             {
                 await SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);
-            }
-
-            IoC.Get<IConsole>().WriteLine("OnKeyDown");
+            }            
         }
 
         public void OnKeyUp(KeyEventArgs e, int caretIndex, int line, int column)
@@ -478,8 +474,6 @@ namespace AvalonStudio.Controls
 
                 SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);
             }
-
-            IoC.Get<IConsole>().WriteLine("OnKeyUp");
         }
     }
 

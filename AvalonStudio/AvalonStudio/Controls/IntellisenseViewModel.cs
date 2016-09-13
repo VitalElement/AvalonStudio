@@ -70,8 +70,6 @@ namespace AvalonStudio.Controls
             {
                 IsOpen = false;
             }
-
-            Console.WriteLine($"Instellisense Open: {IsOpen} Visible: {IsVisible}");
         }
 
         private bool isOpen;
