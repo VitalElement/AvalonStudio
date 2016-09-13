@@ -1,20 +1,12 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <UserControl.Styles>
-    <Style Selector="Button.hyperlink">
-      <Setter Property="Template">
-        <Setter.Value>
-          <ControlTemplate>
-            <TextBlock Text="{TemplateBinding Content}" Foreground="SkyBlue" />
-          </ControlTemplate>
-        </Setter.Value>
-      </Setter>
-    </Style>
-    
     <Style Selector="Button.videofeed">
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate>
-            <Image Stretch="Uniform" Height="150" Source="{TemplateBinding Content}"/>
+            <Grid>
+              <Image Stretch="Uniform" HorizontalAlignment="Left" Height="80" Source="{TemplateBinding Content}"/>
+            </Grid>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
@@ -22,23 +14,26 @@
   </UserControl.Styles>
   
   <Grid RowDefinitions="100, *" ColumnDefinitions="250, 400, 250">
-    <TextBlock FontSize="35" FontFamily="Segoe UI" FontWeight="Light" Margin="10 0">AvalonStudio</TextBlock>
+    <Grid Grid.RowSpan="2" RowDefinitions="100, *" Background="#252526">
+      <TextBlock FontSize="35" FontFamily="Segoe UI" FontWeight="Light" Margin="10 0">AvalonStudio</TextBlock>
 
-    <StackPanel Gap="0" Grid.Column="0" Grid.Row="2">
-      <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
-        <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light">Recent Solutions</TextBlock>
-      </StackPanel>
+      <StackPanel Gap="0" Grid.Column="0" Grid.Row="1">
+        <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+          <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light">Recent Solutions</TextBlock>
+        </StackPanel>
 
-      <StackPanel Margin="20 0" VerticalAlignment="Top" HorizontalAlignment="Left">
-        <ListBox Items="{Binding RecentProjects}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
-          <ListBox.ItemTemplate>
-            <DataTemplate >
-              <Button Content="{Binding Name}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
-            </DataTemplate>
-          </ListBox.ItemTemplate>
-        </ListBox>
-      </StackPanel>
-    </StackPanel>
+        <StackPanel Margin="20 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+          <ListBox Items="{Binding RecentProjects}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
+            <ListBox.ItemTemplate>
+              <DataTemplate >
+                <Button Content="{Binding Name}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </StackPanel>
+      </StackPanel>  
+    </Grid>
+    
 
     <!--RSS NEWS FEED-->
     <StackPanel Gap="0" Grid.Column="1" Grid.Row="2">
@@ -51,8 +46,8 @@
           <ListBox.ItemTemplate>
             <DataTemplate>
               <StackPanel>
-                <Button Content="{Binding Title}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
                 <TextBlock Margin="20 0" Text="{Binding Content}"  TextWrapping="Wrap" />
+                <Button Content="{Binding Title}" Command="{Binding ClickCommand}" Classes="hyperlink" />                
               </StackPanel>
             </DataTemplate>
           </ListBox.ItemTemplate>
@@ -70,9 +65,9 @@
         <ListBox Items="{Binding VideoFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
           <ListBox.ItemTemplate>
             <DataTemplate>
-              <StackPanel>
-                <Button Content="{Binding Title}" Command="{Binding ClickCommand}" Classes="hyperlink"/>
-                <Button Content="{Binding Image}" Command="{Binding ClickCommand}" Classes="videofeed"/>
+              <StackPanel HorizontalAlignment="Left" Margin="0 0 0 10">                
+                <Button Content="{Binding Image}" HorizontalAlignment="Left"  HorizontalContentAlignment="Left" Command="{Binding ClickCommand}" Classes="videofeed"/>
+                <Button Content="{Binding Title}" HorizontalAlignment="Left" HorizontalContentAlignment="Left" Command="{Binding ClickCommand}" Classes="hyperlink"/>
               </StackPanel>
             </DataTemplate>
           </ListBox.ItemTemplate>
