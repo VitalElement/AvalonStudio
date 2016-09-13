@@ -416,21 +416,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             association = new CPlusPlusDataAssociation(doc);
             dataAssociations.Add(file, association);
-
-            association.IntellisenseManager = new CPlusPlusIntellisenseManager(this, intellisense, completionAssistant, file, editor);
-
-            association.TunneledKeyUpHandler = async (sender, e) =>
-            {
-                await intellisenseJobRunner.InvokeAsync(() => { association.IntellisenseManager.OnKeyUp(e).Wait(); });
-            };
-
-            association.TunneledKeyDownHandler = async (sender, e) =>
-            {
-                association.IntellisenseManager.OnKeyDown(e);
-
-                await intellisenseJobRunner.InvokeAsync(() => { association.IntellisenseManager.CompleteOnKeyDown(e).Wait(); });
-            };
-
+            
             association.KeyUpHandler = (sender, e) =>
             {
                 if (editor.TextDocument == doc)
@@ -500,9 +486,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     }
                 }
             };
-
-            editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, RoutingStrategies.Tunnel);
-            editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, RoutingStrategies.Tunnel);
+            
             editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, RoutingStrategies.Tunnel);
 
             editor.TextInput += association.TextInputHandler;
@@ -526,8 +510,8 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             var association = GetAssociatedData(file);
 
-            editor.RemoveHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler);
-            editor.RemoveHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler);
+            //editor.RemoveHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler);
+            //editor.RemoveHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler);
             editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
 
             editor.TextInput -= association.TextInputHandler;
