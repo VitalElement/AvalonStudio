@@ -416,10 +416,6 @@ namespace AvalonStudio.Controls
                             e.Handled = true;
                         }
                         break;
-
-                    case Key.Escape:
-                        await intellisenseJobRunner.InvokeAsync(() => CloseIntellisense());
-                        break;
                 }
 
                 if (capturedOnKeyDown == Key.Enter)
@@ -452,7 +448,19 @@ namespace AvalonStudio.Controls
                 }
             }
 
-            if(!intellisenseControl.IsVisible)
+            if (e.Key == Key.Escape)
+            {
+                if (completionAssistant.IsVisible)
+                {
+                    completionAssistant.Close();
+                }
+                else if (intellisenseControl.IsVisible)
+                {
+                    await intellisenseJobRunner.InvokeAsync(() => CloseIntellisense());
+                }
+            }
+
+            if (!intellisenseControl.IsVisible)
             {
                 await SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);
             }
