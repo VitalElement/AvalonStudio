@@ -510,8 +510,6 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             var association = GetAssociatedData(file);
 
-            //editor.RemoveHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler);
-            //editor.RemoveHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler);
             editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
 
             editor.TextInput -= association.TextInputHandler;
