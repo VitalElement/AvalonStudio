@@ -461,12 +461,13 @@ namespace AvalonStudio.TextEditor
                 if (caretIndex >= 0)
                 {
                     TextDocument.Insert(caretIndex, input);
-                    CaretIndex += input.Length;
-                    SelectionStart = SelectionEnd = CaretIndex;
-                    TextView.Invalidate();
                 }
 
                 TextDocument.EndUpdate();
+
+                CaretIndex += input.Length;
+                SelectionStart = SelectionEnd = CaretIndex;
+                TextView.Invalidate();
             }
         }
 
