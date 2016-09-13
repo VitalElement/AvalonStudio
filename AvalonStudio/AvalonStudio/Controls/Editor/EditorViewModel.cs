@@ -206,16 +206,22 @@ namespace AvalonStudio.Controls
                         DocumentLineTransformers.Add(textTransformer);
                     }
 
-                    intellisenseManager = new IntellisenseManager(Intellisense, model.LanguageService, model.ProjectFile);
+                    intellisenseManager = new IntellisenseManager(Model.Editor, Intellisense, model.LanguageService, model.ProjectFile);
 
                     EventHandler<KeyEventArgs> tunneledKeyUpHandler = (send, ee) =>
                     {
-                        intellisenseManager.OnKeyUp(ee);
+                        if (caretIndex > 0)
+                        {
+                            intellisenseManager.OnKeyUp(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                        }
                     };
 
                     EventHandler<KeyEventArgs> tunneledKeyDownHandler = (send, ee) =>
                     {
-                        intellisenseManager.OnKeyDown(ee);
+                        if (caretIndex > 0)
+                        {
+                            intellisenseManager.OnKeyDown(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                        }
                     };
 
                     disposables.Add(Model.Editor.AddHandler(InputElement.KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel));
