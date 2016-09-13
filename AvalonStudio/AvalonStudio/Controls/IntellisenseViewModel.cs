@@ -20,7 +20,6 @@ namespace AvalonStudio.Controls
         private Thickness position;
 
         private CompletionDataViewModel selectedCompletion;
-        private Thread uiThread;
 
         public IntellisenseViewModel(EditorModel editor, EditorViewModel viewModel)
         {
@@ -29,7 +28,6 @@ namespace AvalonStudio.Controls
             editorViewModel = viewModel;
             this.editor = editor;
             isVisible = false;
-            uiThread = Thread.CurrentThread;
         }
 
         private CompletionAssistantViewModel completionAssistant;

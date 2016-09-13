@@ -206,7 +206,7 @@ namespace AvalonStudio.Controls
                         DocumentLineTransformers.Add(textTransformer);
                     }
 
-                    intellisenseManager = new IntellisenseManager(Model.Editor, Intellisense, model.LanguageService, model.ProjectFile);
+                    intellisenseManager = new IntellisenseManager(Model.Editor, Intellisense, Intellisense.CompletionAssistant, model.LanguageService, model.ProjectFile);
 
                     EventHandler<KeyEventArgs> tunneledKeyUpHandler = (send, ee) =>
                     {
@@ -254,17 +254,20 @@ namespace AvalonStudio.Controls
                     {
                         if (marker.Length == 0)
                         {
-                            var line = TextDocument.GetLineByOffset(marker.StartOffset);
-                            var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, marker.StartOffset,
-                                TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
+                            if (marker.StartOffset < TextDocument.TextLength)
+                            {
+                                var line = TextDocument.GetLineByOffset(marker.StartOffset);
+                                var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, marker.StartOffset,
+                                    TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
 
-                            if (endoffset == -1)
-                            {
-                                marker.Length = line.Length;
-                            }
-                            else
-                            {
-                                marker.EndOffset = endoffset;
+                                if (endoffset == -1)
+                                {
+                                    marker.Length = line.Length;
+                                }
+                                else
+                                {
+                                    marker.EndOffset = endoffset;
+                                }
                             }
                         }
                     }

@@ -1,6 +1,7 @@
 ﻿using Avalonia.Input;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Languages.ViewModels;
@@ -18,9 +19,10 @@ namespace AvalonStudio.Controls
 {
     class IntellisenseManager
     {
-        private ILanguageService languageService;
-        private ISourceFile file;
-        private IIntellisenseControl intellisenseControl;
+        private readonly ILanguageService languageService;
+        private readonly ISourceFile file;
+        private readonly IIntellisenseControl intellisenseControl;
+        private readonly ICompletionAssistant completionAssistant;
         private TextEditor.TextEditor editor;
         private bool isProcessingKey;
         private int intellisenseStartedAt;
@@ -31,7 +33,7 @@ namespace AvalonStudio.Controls
         private readonly JobRunner intellisenseJobRunner;
 
         private readonly char[] searchChars = { '(', ')', '.', ':', '-', '>', ';' };
-        private readonly char[] completionChars = { '.', ':', ';', '-' };
+        private readonly char[] completionChars = { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' };
         private readonly char[] triggerChars = { '.', '>', ':' };
 
 
@@ -63,13 +65,14 @@ namespace AvalonStudio.Controls
         }
 
 
-        public IntellisenseManager(TextEditor.TextEditor editor, IIntellisenseControl intellisenseControl, ILanguageService languageService, ISourceFile file)
+        public IntellisenseManager(TextEditor.TextEditor editor, IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, ILanguageService languageService, ISourceFile file)
         {
             intellisenseJobRunner = new JobRunner();
 
             Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(new CancellationToken()); });
 
             this.intellisenseControl = intellisenseControl;
+            this.completionAssistant = completionAssistant;
             this.languageService = languageService;
             this.file = file;
             this.editor = editor;
@@ -271,6 +274,73 @@ namespace AvalonStudio.Controls
             {
                 char currentChar = e.Text[0];
 
+                if (completionAssistant.IsVisible)
+                {
+                    if (caretIndex < completionAssistant.CurrentSignatureHelp.Offset)
+                    {
+                        completionAssistant.PopMethod();
+                    }
+
+                    if (completionAssistant.CurrentSignatureHelp != null)
+                    {
+                        int index = 0;
+                        int level = 0;
+                        int offset = completionAssistant.CurrentSignatureHelp.Offset;
+
+                        while (offset < caretIndex)
+                        {
+                            var curChar = editor.TextDocument.GetCharAt(offset++);
+
+                            switch (curChar)
+                            {
+                                case ',':
+                                    if (level == 0)
+                                    {
+                                        index++;
+                                    }
+                                    break;
+
+                                case '(':
+                                    level++;
+                                    break;
+
+                                case ')':
+                                    level--;
+                                    break;
+                            }
+                        }
+
+                        completionAssistant.SetParameterIndex(index);
+                    }
+                }
+
+                if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != editor.CaretIndex))
+                {
+                    string currentWord = string.Empty;
+
+                    char behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2);
+
+                    if (behindBehindCaretChar.IsWhiteSpace() && behindBehindCaretChar != '\0')
+                    {
+                        currentWord = editor.GetPreviousWordAtIndex(editor.CaretIndex - 1);
+                    }
+                    else
+                    {
+                        currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
+                    }
+                    
+                    var signatureHelp = await languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles, line, column, editor.CaretIndex, currentWord);
+
+                    if (signatureHelp != null)
+                    {
+                        completionAssistant.PushMethod(signatureHelp);
+                    }
+                }
+                else if (currentChar == ')')
+                {
+                    completionAssistant.PopMethod();
+                }
+
                 if (IsCompletionChar(currentChar))
                 {
                     DoComplete(true);
@@ -358,7 +428,31 @@ namespace AvalonStudio.Controls
                     e.Handled = true;
                 }
             }
-            else
+
+            if (completionAssistant.IsVisible)
+            {
+                if (!e.Handled)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.Down:
+                            {
+                                completionAssistant.IncrementSignatureIndex();
+                                e.Handled = true;
+                            }
+                            break;
+
+                        case Key.Up:
+                            {
+                                completionAssistant.DecrementSignatureIndex();
+                                e.Handled = true;
+                            }
+                            break;
+                    }
+                }
+            }
+
+            if(!intellisenseControl.IsVisible)
             {
                 await SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);
             }
