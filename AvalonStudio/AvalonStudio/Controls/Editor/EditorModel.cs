@@ -157,11 +157,8 @@ namespace AvalonStudio.Controls
 
                     RegisterLanguageService(intellisense, completionAssistant);
 
-					if (DocumentLoaded != null)
-					{
-						DocumentLoaded(this, new EventArgs());
-					}
-				}
+                    DocumentLoaded?.Invoke(this, new EventArgs());
+                }
 			}
 		}        
 
