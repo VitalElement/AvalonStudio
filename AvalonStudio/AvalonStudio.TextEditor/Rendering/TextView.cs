@@ -468,9 +468,12 @@ namespace AvalonStudio.TextEditor.Rendering
 			get { return offset; }
 			set
 			{
-				firstVisualLine = (int)value.Y;
+                if (value.Y != offset.Y && value.X != offset.X)
+                {
+                    firstVisualLine = (int)value.Y;
 
-				SetAndRaise(OffsetProperty, ref offset, value);
+                    SetAndRaise(OffsetProperty, ref offset, value);
+                }
 			}
 		}
 
