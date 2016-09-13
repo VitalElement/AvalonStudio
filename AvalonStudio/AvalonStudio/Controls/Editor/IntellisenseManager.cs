@@ -1,4 +1,5 @@
 ﻿using Avalonia.Input;
+using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Languages;
 using AvalonStudio.Languages.ViewModels;
@@ -24,7 +25,23 @@ namespace AvalonStudio.Controls
         private string currentFilter = string.Empty;
         private readonly CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
         private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
+        private Key capturedOnKeyDown;
         TaskCompletionSource<List<CompletionDataViewModel>> completionDataReady;
+
+        private readonly char[] searchChars = { '(', ')' };
+        private readonly char[] completionChars = { '.' };
+
+        private bool IsTriggerChar(char currentChar)
+        {
+            bool result = false;
+
+            if(char.IsLetter(currentChar))
+            {
+                result = true;
+            }
+
+            return result;
+        }
 
 
         public IntellisenseManager(TextEditor.TextEditor editor, IIntellisenseControl intellisenseControl, ILanguageService languageService, ISourceFile file)
@@ -37,23 +54,20 @@ namespace AvalonStudio.Controls
 
         public async void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles)
         {
-            if (!isProcessingKey)
+            if (intellisenseControl.IsVisible)
             {
-                if (intellisenseControl.IsVisible)
-                {
-                    CloseIntellisense();
-                }
-
-                if (completionDataReady != null)
-                {
-                    await completionDataReady.Task;
-                }
-
-                completionDataReady = new TaskCompletionSource<List<CompletionDataViewModel>>();
-                await SetCompletionData(await languageService.CodeCompleteAtAsync(file, line, column, unsavedFiles));
-
-                IoC.Get<IConsole>().WriteLine("Updated Completion Data");
+                CloseIntellisense();
             }
+
+            if (completionDataReady != null)
+            {
+                await completionDataReady.Task;
+            }
+
+            completionDataReady = new TaskCompletionSource<List<CompletionDataViewModel>>();
+            await SetCompletionData(await languageService.CodeCompleteAtAsync(file, line, column, unsavedFiles));
+
+            IoC.Get<IConsole>().WriteLine("Updated Completion Data");
         }
 
         private async Task SetCompletionData(List<CodeCompletionData> completionData)
@@ -87,22 +101,18 @@ namespace AvalonStudio.Controls
             intellisenseControl.CompletionData = await completionDataCompiled.Task;
         }
 
-        private async Task OpenIntellisense(Key key, int caretIndex)
+        private void OpenIntellisense(char currentChar, int caretIndex)
         {
-            if(completionDataReady!=null)
-            {
-                await completionDataReady.Task;
-            }
-
             if (caretIndex > 1)
             {
-                if (key.IsLanguageSpecificTriggerKey())
+                /*if (key.IsLanguageSpecificTriggerKey())
                 {
                     intellisenseStartedAt = caretIndex;
                 }
-                else
+                else*/
                 {
-                    intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editor.TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                    //intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editor.TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                    intellisenseStartedAt = caretIndex - 1;
                 }
             }
             else
@@ -171,10 +181,8 @@ namespace AvalonStudio.Controls
                 {
                     var list = filteredResults.ToList();
 
-                    intellisenseControl.IsVisible = true;
-
                     intellisenseControl.CompletionData = list;
-
+                    intellisenseControl.IsVisible = true;
                     intellisenseControl.SelectedCompletion = null;
                     intellisenseControl.SelectedCompletion = suggestion;
                 }
@@ -215,63 +223,99 @@ namespace AvalonStudio.Controls
             return result;
         }
 
-        public void OnKeyDown(KeyEventArgs e, int caretIndex, int line, int column)
+        public void OnTextInput(TextInputEventArgs e, int caretIndex, int line, int column)
         {
-            if (!e.Key.IsNavigationKey() && !e.Key.IsSearchKey() && !e.Key.IsCompletionKey() || (intellisenseControl.IsVisible && e.Key == Key.Back))
+            if (!capturedOnKeyDown.IsNavigationKey() && !capturedOnKeyDown.IsModifierKey() || (intellisenseControl.IsVisible && capturedOnKeyDown == Key.Back))
             {
                 isProcessingKey = true;
 
-                switch (e.Key)
+                switch (capturedOnKeyDown)
                 {
                     case Key.Escape:
                         CloseIntellisense();
                         break;
                 }
             }
-            else
+
+            if (e.Text.Length == 1)
             {
-                if(intellisenseControl.IsVisible)
+                char currentChar = e.Text[0];
+
+                if(currentChar.IsWhiteSpace())
                 {
-                    if (e.Key.IsCompletionKey())
+                    SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);
+                }
+                else
+                {
+                    isProcessingKey = true;
+
+                    if (IsTriggerChar(currentChar))
                     {
-                        if (e.Key == Key.Enter)
+                        if (!intellisenseControl.IsVisible)
                         {
-                            DoComplete();
-                            e.Handled = true;
+                            OpenIntellisense(currentChar, caretIndex);
+                        }
+                        else if (caretIndex > intellisenseStartedAt)
+                        {
+                            UpdateFilter(caretIndex);
+
+                            intellisenseControl.IsVisible = true;
                         }
                         else
                         {
-                            DoComplete();
+                            CloseIntellisense();
+                            SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);
                         }
                     }
+                }
+            }
+        }
 
-                    switch (e.Key)
+        public void OnKeyDown(KeyEventArgs e, char caretChar, int caretIndex, int line, int column)
+        {
+            capturedOnKeyDown = e.Key;
+
+            if (intellisenseControl.IsVisible)
+            {
+                switch (capturedOnKeyDown)
+                {
+                    case Key.Down:
+                        {
+                            var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
+
+                            if (index < intellisenseControl.CompletionData.Count - 1)
+                            {
+                                intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index + 1];
+                            }
+
+                            e.Handled = true;
+                        }
+                        break;
+
+                    case Key.Up:
+                        {
+                            var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
+
+                            if (index > 0)
+                            {
+                                intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index - 1];
+                            }
+
+                            e.Handled = true;
+                        }
+                        break;
+                }
+
+                if (capturedOnKeyDown.IsCompletionKey())
+                {
+                    if (capturedOnKeyDown == Key.Enter)
                     {
-                        case Key.Down:
-                            {
-                                var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
-
-                                if (index < intellisenseControl.CompletionData.Count - 1)
-                                {
-                                    intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index + 1];
-                                }
-
-                                e.Handled = true;
-                            }
-                            break;
-
-                        case Key.Up:
-                            {
-                                var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
-
-                                if (index > 0)
-                                {
-                                    intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index - 1];
-                                }
-
-                                e.Handled = true;
-                            }
-                            break;
+                        DoComplete();
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        DoComplete();
                     }
                 }
             }
@@ -279,28 +323,9 @@ namespace AvalonStudio.Controls
             IoC.Get<IConsole>().WriteLine("OnKeyDown");
         }
 
-        public async void OnKeyUp(KeyEventArgs e, int caretIndex, int line, int column)
+        public void OnKeyUp(KeyEventArgs e, char caretChar, int caretIndex, int line, int column)
         {
             isProcessingKey = false;
-
-            if (e.Key.IsTriggerKey() || e.Key.IsLanguageSpecificTriggerKey())
-            {
-                if (!intellisenseControl.IsVisible)
-                {
-                    await OpenIntellisense(e.Key, caretIndex);
-                }
-                else if (caretIndex > intellisenseStartedAt)
-                {
-                    UpdateFilter(caretIndex);
-
-                    intellisenseControl.IsVisible = true;
-                }
-                else
-                {
-                    CloseIntellisense();
-                    SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);
-                }
-            }
 
             IoC.Get<IConsole>().WriteLine("OnKeyUp");
         }
@@ -308,6 +333,25 @@ namespace AvalonStudio.Controls
 
     static class KeyExtensions
     {
+        public static bool IsModifierKey(this Key key)
+        {
+            bool result = false;
+
+            switch(key)
+            {
+                case Key.LeftShift:
+                case Key.LeftAlt:
+                case Key.LeftCtrl:
+                case Key.RightAlt:
+                case Key.RightCtrl:
+                case Key.RightShift:
+                    result = true;
+                    break;
+            }
+
+            return result;
+        }
+
         public static bool IsNavigationKey(this Key key)
         {
             bool result = false;
@@ -336,7 +380,10 @@ namespace AvalonStudio.Controls
 
             if (!key.IsNavigationKey() && !key.IsCompletionKey())
             {
-                result = true;
+                if (key >= Key.A && key <= Key.Z)
+                {
+                    result = true;
+                }
             }
 
             return result;
@@ -366,6 +413,8 @@ namespace AvalonStudio.Controls
                 {
                     case Key.OemPeriod:
                     case Key.Space:
+                    case Key.OemOpenBrackets:
+                    case Key.OemCloseBrackets:
                         result = true;
                         break;
                 }
