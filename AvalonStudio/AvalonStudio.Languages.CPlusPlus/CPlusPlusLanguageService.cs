@@ -20,6 +20,7 @@ using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using NClang;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -1068,12 +1069,15 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             SignatureHelp result = null;
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
-
+            
             unsavedFiles.Add(buffer);
 
             foreach (var unsavedFile in unsavedFiles)
             {
-                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+                if (Platform.CompareFilePath(unsavedFile.FileName, buffer.FileName) != 0)
+                {
+                    clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+                }
             }
 
             var symbols = await GetSymbolsAsync(file, unsavedFiles, methodName);
