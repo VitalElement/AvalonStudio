@@ -22,6 +22,8 @@ using AvalonStudio.TextEditor.Rendering;
 using ReactiveUI;
 using AvalonStudio.Utils;
 using System.IO;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 
 namespace AvalonStudio.Controls
 {
@@ -30,13 +32,14 @@ namespace AvalonStudio.Controls
         public SelectedDebugLineBackgroundRenderer DebugLineHighlighter;
         private readonly CompositeDisposable disposables;
 
-        
         private readonly List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
 
         private readonly List<IDocumentLineTransformer> languageServiceDocumentLineTransformers =
             new List<IDocumentLineTransformer>();
 
-        private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;      
+        private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;
+
+        private IntellisenseManager intellisenseManager;
 
         public TextLocation CaretTextLocation
         {
@@ -144,7 +147,7 @@ namespace AvalonStudio.Controls
 
             SaveCommand = ReactiveCommand.Create();
             disposables.Add(SaveCommand.Subscribe(param => Save()));
-            
+
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
@@ -160,7 +163,7 @@ namespace AvalonStudio.Controls
                 Intellisense.Dispose();
                 disposables.Dispose();
 
-                Model.TextDocument = null;                
+                Model.TextDocument = null;
             }));
 
             AddWatchCommand = ReactiveCommand.Create();
@@ -202,6 +205,21 @@ namespace AvalonStudio.Controls
                     {
                         DocumentLineTransformers.Add(textTransformer);
                     }
+
+                    intellisenseManager = new IntellisenseManager(Intellisense, model.LanguageService, model.ProjectFile);
+
+                    EventHandler<KeyEventArgs> tunneledKeyUpHandler = (send, ee) =>
+                    {
+                        intellisenseManager.OnKeyUp(ee);
+                    };
+
+                    EventHandler<KeyEventArgs> tunneledKeyDownHandler = (send, ee) =>
+                    {
+                        intellisenseManager.OnKeyDown(ee);
+                    };
+
+                    disposables.Add(Model.Editor.AddHandler(InputElement.KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel));
+                    disposables.Add(Model.Editor.AddHandler(InputElement.KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel));
                 }
 
                 model.CodeAnalysisCompleted += (s, ee) =>
@@ -234,14 +252,14 @@ namespace AvalonStudio.Controls
                     selectedIndexEntry = IndexItems.FirstOrDefault();
                     this.RaisePropertyChanged(nameof(SelectedIndexEntry));
 
-                    ShellViewModel.Instance.InvalidateErrors();                    
+                    ShellViewModel.Instance.InvalidateErrors();
                 };
 
                 model.ProjectFile.FileModifiedExternally += ProjectFile_FileModifiedExternally;
 
                 TextDocument = model.TextDocument;
 
-                Title = Model.ProjectFile.Name;           
+                Title = Model.ProjectFile.Name;
             };
 
             model.TextChanged += (sender, e) =>
@@ -272,7 +290,7 @@ namespace AvalonStudio.Controls
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
             margins = new ObservableCollection<TextViewMargin>();
-            
+
             Dock = Dock.Right;
         }
 
@@ -298,9 +316,7 @@ namespace AvalonStudio.Controls
         #endregion
 
         #region Properties
-
         private string tabCharacter;
-
         public string TabCharacter
         {
             get { return tabCharacter; }
@@ -332,7 +348,6 @@ namespace AvalonStudio.Controls
         }
 
         private string wordAtCaret;
-
         public string WordAtCaret
         {
             get { return wordAtCaret; }
@@ -390,7 +405,6 @@ namespace AvalonStudio.Controls
 
 
         private TextDocument textDocument;
-
         public TextDocument TextDocument
         {
             get { return textDocument; }
@@ -437,7 +451,6 @@ namespace AvalonStudio.Controls
         }
 
         private int caretIndex;
-
         public int CaretIndex
         {
             get { return caretIndex; }
@@ -448,6 +461,8 @@ namespace AvalonStudio.Controls
                     value = TextDocument.TextLength - 1;
                 }
 
+                bool hasChanged = value != caretIndex;
+
                 this.RaiseAndSetIfChanged(ref caretIndex, value);
                 ShellViewModel.Instance.StatusBar.Offset = value;
 
@@ -456,6 +471,11 @@ namespace AvalonStudio.Controls
                     var location = TextDocument.GetLocation(value);
                     ShellViewModel.Instance.StatusBar.LineNumber = location.Line;
                     ShellViewModel.Instance.StatusBar.Column = location.Column;
+
+                    if (intellisenseManager != null && hasChanged)
+                    {
+                        intellisenseManager.SetCursor(value, location.Line, location.Column, EditorModel.UnsavedFiles);
+                    }
                 }
 
                 selectedIndexEntry = GetSelectIndexEntryByOffset(value);
@@ -621,7 +641,7 @@ namespace AvalonStudio.Controls
 
         public ReactiveCommand<object> BeforeTextChangedCommand { get; }
         public ReactiveCommand<object> TextChangedCommand { get; }
-        public ReactiveCommand<object> SaveCommand { get; }        
+        public ReactiveCommand<object> SaveCommand { get; }
 
         // todo this menu item and command should be injected via debugging module.
         public ReactiveCommand<object> AddWatchCommand { get; }
