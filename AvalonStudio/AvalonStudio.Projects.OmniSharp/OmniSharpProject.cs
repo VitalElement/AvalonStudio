@@ -71,7 +71,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             get
             {
-                throw new NotImplementedException();
+                return ".csproj";
             }
         }
 
