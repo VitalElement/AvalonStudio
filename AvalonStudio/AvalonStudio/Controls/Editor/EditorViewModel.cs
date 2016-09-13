@@ -212,7 +212,7 @@ namespace AvalonStudio.Controls
                     {
                         if (caretIndex > 0)
                         {
-                            intellisenseManager.OnKeyUp(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                            intellisenseManager.OnKeyUp(ee, TextDocument.GetCharAt(caretIndex - 1), CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
                         }
                     };
 
@@ -220,12 +220,21 @@ namespace AvalonStudio.Controls
                     {
                         if (caretIndex > 0)
                         {
-                            intellisenseManager.OnKeyDown(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                            intellisenseManager.OnKeyDown(ee, TextDocument.GetCharAt(caretIndex), CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                        }
+                    };
+
+                    EventHandler<TextInputEventArgs> tunneledTextInputHandler = (send, ee) =>
+                    {
+                        if (caretIndex > 0)
+                        {
+                            intellisenseManager.OnTextInput(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
                         }
                     };
 
                     disposables.Add(Model.Editor.AddHandler(InputElement.KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel));
                     disposables.Add(Model.Editor.AddHandler(InputElement.KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel));
+                    disposables.Add(Model.Editor.AddHandler(InputElement.TextInputEvent, tunneledTextInputHandler, RoutingStrategies.Bubble));
                 }
 
                 model.CodeAnalysisCompleted += (s, ee) =>
@@ -480,7 +489,7 @@ namespace AvalonStudio.Controls
 
                     if (intellisenseManager != null && hasChanged)
                     {
-                        intellisenseManager.SetCursor(value, location.Line, location.Column, EditorModel.UnsavedFiles);
+                        //intellisenseManager.SetCursor(value, location.Line, location.Column, EditorModel.UnsavedFiles);
                     }
                 }
 
