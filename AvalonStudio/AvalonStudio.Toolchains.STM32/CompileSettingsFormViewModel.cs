@@ -55,7 +55,7 @@ namespace AvalonStudio.Toolchains.STM32
 			{
 				settings = STM32GCCToolchain.GetSettings(project).CompileSettings;
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				Model.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
 			}

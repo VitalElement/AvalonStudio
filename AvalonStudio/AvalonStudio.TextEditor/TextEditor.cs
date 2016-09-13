@@ -405,8 +405,6 @@ namespace AvalonStudio.TextEditor
 
             if (index >= 0 && TextDocument.TextLength > index)
             {
-                var wordFound = false;
-
                 var start = index;
 
                 var currentChar = TextDocument.GetCharAt(index);
@@ -436,7 +434,6 @@ namespace AvalonStudio.TextEditor
                     if (TextUtilities.IsSymbol(word))
                     {
                         result = word;
-                        wordFound = true;
                     }
                 }
             }

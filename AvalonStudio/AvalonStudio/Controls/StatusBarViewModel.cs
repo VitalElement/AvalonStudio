@@ -8,7 +8,6 @@ namespace AvalonStudio.Controls
 		private int column;
 
 		private bool debugMode;
-		private int instanceCount;
 
 		private string language;
 
