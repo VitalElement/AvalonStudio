@@ -13,9 +13,13 @@ namespace AvalonStudio.TextEditor.Rendering
 			selectionBrush = Brush.Parse("#AA569CD6");
 		}
 
-		public event EventHandler<EventArgs> DataChanged;
+        public event EventHandler<EventArgs> DataChanged
+        {
+            add { throw new NotSupportedException(); }
+            remove { }
+        }
 
-		public void Draw(TextView textView, DrawingContext drawingContext)
+        public void Draw(TextView textView, DrawingContext drawingContext)
 		{
 			if (textView.SelectionStart != textView.SelectionEnd && textView.SelectionEnd >= 0 && textView.SelectionStart >= 0)
 			{
