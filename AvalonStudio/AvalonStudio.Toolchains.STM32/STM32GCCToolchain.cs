@@ -110,7 +110,7 @@ namespace AvalonStudio.Toolchains.STM32
 					result = project.ToolchainSettings.STM32ToolchainSettings;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 

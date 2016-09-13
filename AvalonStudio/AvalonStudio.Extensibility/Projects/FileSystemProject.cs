@@ -236,21 +236,24 @@ namespace AvalonStudio.Projects
         {
             var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
-            var existing = FindFolder(fullPath);
-
-            if (existing == null)
+            if (folder != null)
             {
-                var newFolder = GetSubFolders(this, folder, fullPath);
+                var existing = FindFolder(fullPath);
 
-                if (folder.Location == Project.CurrentDirectory)
+                if (existing == null)
                 {
-                    newFolder.Parent = Project;
-                    Project.Items.InsertSorted(newFolder);
-                }
-                else
-                {
-                    newFolder.Parent = folder;
-                    folder.Items.InsertSorted(newFolder);
+                    var newFolder = GetSubFolders(this, folder, fullPath);
+
+                    if (folder.Location == Project.CurrentDirectory)
+                    {
+                        newFolder.Parent = Project;
+                        Project.Items.InsertSorted(newFolder);
+                    }
+                    else
+                    {
+                        newFolder.Parent = folder;
+                        folder.Items.InsertSorted(newFolder);
+                    }
                 }
             }
         }
