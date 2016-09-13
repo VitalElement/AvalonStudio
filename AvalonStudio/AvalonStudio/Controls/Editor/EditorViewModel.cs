@@ -156,6 +156,9 @@ namespace AvalonStudio.Controls
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
 
+                intellisenseManager?.Dispose();
+                intellisenseManager = null;
+
                 Diagnostics.Clear();
 
                 ShellViewModel.Instance.InvalidateErrors();
