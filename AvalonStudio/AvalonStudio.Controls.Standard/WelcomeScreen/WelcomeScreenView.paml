@@ -19,6 +19,17 @@
 
       <StackPanel Gap="0" Grid.Column="0" Grid.Row="1">
         <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+          <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light">Start</TextBlock>
+        </StackPanel>
+        <StackPanel Margin="20 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+          <Button Content="New Project" Command="{Binding NewProject}" Classes="hyperlink"/>
+          <Button Content="Open Project" Command="{Binding OpenProject}" Classes="hyperlink"/>
+        </StackPanel>
+
+        <TextBlock Text=" "/>
+        <TextBlock Text=" "/>
+
+        <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
           <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light">Recent Solutions</TextBlock>
         </StackPanel>
 
@@ -36,18 +47,18 @@
     
 
     <!--RSS NEWS FEED-->
-    <StackPanel Gap="0" Grid.Column="1" Grid.Row="2">
+    <StackPanel Gap="0" Margin="20 0" Grid.Column="1" Grid.Row="2">
       <StackPanel Margin="0 0" VerticalAlignment="Top">
         <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light" Grid.Column="2">News </TextBlock>
       </StackPanel>
 
-      <StackPanel Margin="20 0" VerticalAlignment="Top" HorizontalAlignment="Center">
+      <StackPanel Margin="5 0" VerticalAlignment="Top" HorizontalAlignment="Center">
         <ListBox Items="{Binding NewsFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
           <ListBox.ItemTemplate>
             <DataTemplate>
               <StackPanel>
-                <TextBlock Margin="20 0" Text="{Binding Content}"  TextWrapping="Wrap" />
                 <Button Content="{Binding Title}" Command="{Binding ClickCommand}" Classes="hyperlink" />                
+                <TextBlock Margin="5 0" Text="{Binding Content}"  TextWrapping="Wrap" />
               </StackPanel>
             </DataTemplate>
           </ListBox.ItemTemplate>
@@ -61,13 +72,13 @@
         <TextBlock FontSize="15" FontFamily="Segoe UI" FontWeight="Light" Grid.Column="3">Videos </TextBlock>
       </StackPanel>
 
-      <StackPanel HorizontalAlignment="Left">
+      <StackPanel Margin="5 0" VerticalAlignment="Top" HorizontalAlignment="Center">
         <ListBox Items="{Binding VideoFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
           <ListBox.ItemTemplate>
             <DataTemplate>
               <StackPanel HorizontalAlignment="Left" Margin="0 0 0 10">                
-                <Button Content="{Binding Image}" HorizontalAlignment="Left"  HorizontalContentAlignment="Left" Command="{Binding ClickCommand}" Classes="videofeed"/>
                 <Button Content="{Binding Title}" HorizontalAlignment="Left" HorizontalContentAlignment="Left" Command="{Binding ClickCommand}" Classes="hyperlink"/>
+                <Button Margin="5 0" Content="{Binding Image}" HorizontalAlignment="Left"  HorizontalContentAlignment="Left" Command="{Binding ClickCommand}" Classes="videofeed"/>
               </StackPanel>
             </DataTemplate>
           </ListBox.ItemTemplate>
