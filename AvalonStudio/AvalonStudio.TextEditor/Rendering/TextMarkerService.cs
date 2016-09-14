@@ -33,21 +33,6 @@ namespace AvalonStudio.TextEditor.Rendering
 
 			foreach (var marker in markersInLine)
 			{
-				if (marker.Length == 0)
-				{
-					var endoffset = TextUtilities.GetNextCaretPosition(textView.TextDocument, marker.StartOffset,
-						TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
-
-					if (endoffset == -1)
-					{
-						marker.Length = line.Length;
-					}
-					else
-					{
-						marker.EndOffset = endoffset;
-					}
-				}
-
 				if (marker.EndOffset < textView.TextDocument.TextLength)
 				{
 					foreach (var r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
