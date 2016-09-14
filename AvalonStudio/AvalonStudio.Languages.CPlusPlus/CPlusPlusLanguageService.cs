@@ -341,22 +341,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                         };
 
 
+                        var cursor = translationUnit.GetCursor(diagnostic.Location);
+                        var tokens = translationUnit.Tokenize(cursor.CursorExtent);
+
+                        foreach(var token in tokens.Tokens)
+                        {
+                            if(token.Location == diagnostic.Location)
+                            {
+                                diag.EndOffset = diag.StartOffset + token.Spelling.Length;
+                            }
+                        }
+
                         result.Diagnostics.Add(diag);
-
-                        var data =
-                            dataAssociation.TranslationUnit.GetLocationForOffset(dataAssociation.TranslationUnit.GetFile(file.Location),
-                                diag.StartOffset);
-                        var length = 0;
-
-                        if (diagnostic.RangeCount > 0)
-                        {
-                            length = Math.Abs(diagnostic.GetDiagnosticRange(0).End.FileLocation.Offset - diag.StartOffset);
-                        }
-
-                        if (diagnostic.FixItCount > 0)
-                        {
-                            // TODO implement fixits.
-                        }
+                        tokens.Dispose();
 
                         Color markerColor;
 
@@ -376,7 +373,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 break;
                         }
 
-                        dataAssociation.TextMarkerService.Create(diag.StartOffset, length, diag.Spelling, markerColor);
+                        dataAssociation.TextMarkerService.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
                     }
                 }
             });
