@@ -30,6 +30,20 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             LoadRecentProjects();
             LoadNewsFeed();
             LoadVideoFeed();
+
+            var shell = IoC.Get<IShell>();
+
+            NewProject = ReactiveCommand.Create();
+
+            NewProject.Subscribe(_ => {
+
+            });
+
+            OpenProject = ReactiveCommand.Create();
+
+            OpenProject.Subscribe(_ => {
+
+            });
         }
 
         private void LoadRecentProjects() {
@@ -61,7 +75,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                 int maxCharCount = 150;
 
                 if (content.Length >= maxCharCount) {
-                    content = content.Remove(maxCharCount, syndicationItem.Summary.Text.Length - maxCharCount);
+                    content = content.Truncate(maxCharCount);
                     content = content + "...";
                 }
 
@@ -94,7 +108,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
         }
 
         private IBitmap SaveThumbnail(string youtubeID) {
-
             var savePath = Path.Combine(Platform.CacheDirectory, "videoFeed", youtubeID + ".png");
 
             if (!Directory.Exists(Path.Combine(Platform.CacheDirectory, "videoFeed"))) {
@@ -161,5 +174,8 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             get { return _videoFeed; }
             set { this.RaiseAndSetIfChanged(ref _videoFeed, value); }
         }
+
+        public ReactiveCommand<object> NewProject { get; }
+        public ReactiveCommand<object> OpenProject { get; }
     }
 }
