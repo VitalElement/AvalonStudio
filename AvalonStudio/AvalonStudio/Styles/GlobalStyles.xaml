@@ -13,4 +13,12 @@
   <Style Selector="Button:pointerover.hyperlink">
     <Setter Property="Foreground" Value="#67CCFE" />
   </Style>
+
+    <Style Selector="TextBlock.h1">
+        <Setter Property="FontSize" Value="22" />
+    </Style>
+    
+    <Style Selector="Button.h3">
+        <Setter Property="FontSize" Value="14" />
+    </Style>
 </Styles>

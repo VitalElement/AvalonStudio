@@ -87,7 +87,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
                 if (content.Length >= maxCharCount)
                 {
-                    content = content.Truncate(maxCharCount);
+                    content = content.StripHTML().Truncate(maxCharCount);
                     content = content + "...";
                 }
 
