@@ -61,7 +61,13 @@ namespace AvalonStudio.Languages.CPlusPlus
             get { return typeof(BlankCPlusPlusLangaguageTemplate); }
         }
 
-        public IIndentationStrategy IndentationStrategy { get; }
+        public IIndentationStrategy IndentationStrategy { get; }        
+
+        public IEnumerable<char> IntellisenseTriggerCharacters { get { return new []{ '.', '>', ':' }; } }
+
+        public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '>', ';' }; } }
+
+        public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
 
         CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
