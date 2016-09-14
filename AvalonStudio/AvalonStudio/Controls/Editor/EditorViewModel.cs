@@ -248,28 +248,6 @@ namespace AvalonStudio.Controls
                 {
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
 
-                    foreach (var marker in Diagnostics)
-                    {
-                        if (marker.Length == 0)
-                        {
-                            if (marker.StartOffset < TextDocument.TextLength)
-                            {
-                                var line = TextDocument.GetLineByOffset(marker.StartOffset);
-                                var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, marker.StartOffset,
-                                    TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
-
-                                if (endoffset == -1)
-                                {
-                                    marker.Length = line.Length;
-                                }
-                                else
-                                {
-                                    marker.EndOffset = endoffset;
-                                }
-                            }
-                        }
-                    }
-
                     HighlightingData =
                         new ObservableCollection<OffsetSyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
 
