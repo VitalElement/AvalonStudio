@@ -405,6 +405,15 @@
                             e.Handled = true;
                         }
                         break;
+
+                    case Key.Back:
+                        {
+                            if (caretIndex - 1 >= intellisenseStartedAt)
+                            {
+                                UpdateFilter(caretIndex - 1);
+                            }
+                        }
+                        break;
                 }
 
                 if (capturedOnKeyDown == Key.Enter)
