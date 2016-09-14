@@ -1,22 +1,19 @@
-﻿using Avalonia.Input;
-using Avalonia.Threading;
-using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-using AvalonStudio.Extensibility.Threading;
-using AvalonStudio.Languages;
-using AvalonStudio.Languages.ViewModels;
-using AvalonStudio.Projects;
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
+    using Avalonia.Input;
+    using Avalonia.Threading;
+    using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+    using AvalonStudio.Extensibility.Threading;
+    using AvalonStudio.Languages;
+    using AvalonStudio.Languages.ViewModels;
+    using AvalonStudio.Projects;
+    using AvalonStudio.TextEditor.Document;
+    using AvalonStudio.Utils;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     class IntellisenseManager
     {
         private readonly ILanguageService languageService;
@@ -32,16 +29,11 @@ namespace AvalonStudio.Controls
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
 
-        private readonly char[] searchChars = { '(', ')', '.', ':', '-', '>', ';' };
-        private readonly char[] completionChars = { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' };
-        private readonly char[] triggerChars = { '.', '>', ':' };
-
-
         private bool IsTriggerChar(char currentChar)
         {
             bool result = false;
 
-            if (char.IsLetter(currentChar) || triggerChars.Contains(currentChar))
+            if (char.IsLetter(currentChar) || languageService.IntellisenseTriggerCharacters.Contains(currentChar))
             {
                 result = true;
             }
@@ -51,19 +43,18 @@ namespace AvalonStudio.Controls
 
         private bool IsLanguageSpecificTriggerChar(char currentChar)
         {
-            return triggerChars.Contains(currentChar);
+            return languageService.IntellisenseTriggerCharacters.Contains(currentChar);
         }
 
         private bool IsSearchChar(char currentChar)
         {
-            return searchChars.Contains(currentChar);
+            return languageService.IntellisenseSearchCharacters.Contains(currentChar);
         }
 
         private bool IsCompletionChar(char currentChar)
         {
-            return completionChars.Contains(currentChar);
+            return languageService.IntellisenseCompleteCharacters.Contains(currentChar);
         }
-
 
         public IntellisenseManager(TextEditor.TextEditor editor, IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, ILanguageService languageService, ISourceFile file)
         {
@@ -330,7 +321,7 @@ namespace AvalonStudio.Controls
                     {
                         currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
                     }
-                    
+
                     var signatureHelp = await languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles, line, column, editor.CaretIndex, currentWord);
 
                     if (signatureHelp != null)
@@ -461,7 +452,7 @@ namespace AvalonStudio.Controls
             if (!intellisenseControl.IsVisible)
             {
                 await SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);
-            }            
+            }
         }
 
         public void OnKeyUp(KeyEventArgs e, int caretIndex, int line, int column)
