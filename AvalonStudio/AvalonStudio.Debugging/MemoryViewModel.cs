@@ -14,7 +14,6 @@
     using Extensibility;
     public class MemoryViewModel : ToolViewModel, IExtension
     {
-        private IDebugger _debugger;
         private IDebugManager _debugManager;
         public const string ToolId = "CIDMEM001";
         const int Columns = 32;
