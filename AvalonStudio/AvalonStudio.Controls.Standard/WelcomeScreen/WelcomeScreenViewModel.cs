@@ -13,14 +13,18 @@ using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using ReactiveUI;
+using System.Threading.Tasks;
 
-namespace AvalonStudio.Controls.Standard.WelcomeScreen {
-    public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension {
+namespace AvalonStudio.Controls.Standard.WelcomeScreen
+{
+    public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension
+    {
         private ObservableCollection<RecentProjectViewModel> _recentProjects;
         private ObservableCollection<NewsFeedViewModel> _newsFeed;
         private ObservableCollection<VideoFeedViewModel> _videoFeed;
 
-        public WelcomeScreenViewModel() {
+        public WelcomeScreenViewModel()
+        {
             Title = "Welcome Screen";
 
             _recentProjects = new ObservableCollection<RecentProjectViewModel>();
@@ -35,46 +39,54 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
 
             NewProject = ReactiveCommand.Create();
 
-            NewProject.Subscribe(_ => {
+            NewProject.Subscribe(_ =>
+            {
 
             });
 
             OpenProject = ReactiveCommand.Create();
 
-            OpenProject.Subscribe(_ => {
+            OpenProject.Subscribe(_ =>
+            {
 
             });
         }
 
-        private void LoadRecentProjects() {
+        private void LoadRecentProjects()
+        {
             var recentProjects = RecentProjectsCollection.RecentProjects;
 
             if (recentProjects == null)
                 recentProjects = new List<RecentProject>();
 
-            for (int i = 0; i < 5; i++) {
-                if (i < recentProjects.Count) {
+            for (int i = 0; i < 5; i++)
+            {
+                if (i < recentProjects.Count)
+                {
                     _recentProjects.Add(new RecentProjectViewModel(recentProjects[i].Name, recentProjects[i].Path));
                 }
             }
         }
 
-        private void LoadNewsFeed() {
+        private async Task LoadNewsFeed()
+        {
             // RSS Releated
             var rssurl = @"http://sxp.microsoft.com/feeds/2.0/devblogs";
             var reader = XmlReader.Create(rssurl);
-            var feed = SyndicationFeed.Load(reader);
+            var feed = await LoadFeed(reader);
             reader.Close();
 
             if (feed == null)
                 return;
 
-            foreach (var syndicationItem in feed.Items) {
+            foreach (var syndicationItem in feed.Items)
+            {
                 var content = syndicationItem.Summary.Text;
 
                 int maxCharCount = 150;
 
-                if (content.Length >= maxCharCount) {
+                if (content.Length >= maxCharCount)
+                {
                     content = content.Truncate(maxCharCount);
                     content = content + "...";
                 }
@@ -88,46 +100,64 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             }
         }
 
-        private void LoadVideoFeed() {
+        private async Task LoadVideoFeed()
+        {
             var rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UCOWs5Rx9ot7p10mqYyzjyUA";
             var reader = XmlReader.Create(rssurl);
-            var feed = SyndicationFeed.Load(reader);
+            var feed = await LoadFeed(reader);
+
             reader.Close();
 
             if (feed == null)
                 return;
 
-            foreach (var syndicationItem in feed.Items) {
+            foreach (var syndicationItem in feed.Items)
+            {
                 var youtubeID = syndicationItem.Id.Replace("yt:video:", "");
                 var url = "https://www.youtube.com/watch?v=" + youtubeID;
 
-                var image = SaveThumbnail(youtubeID);
+                var image = await SaveThumbnail(youtubeID);
 
                 _videoFeed.Add(new VideoFeedViewModel(url, syndicationItem.Title.Text, image));
             }
         }
 
-        private IBitmap SaveThumbnail(string youtubeID) {
+        private async Task<SyndicationFeed> LoadFeed(XmlReader reader)
+        {
+            return await Task.Factory.StartNew<SyndicationFeed>(() =>
+            {
+                return SyndicationFeed.Load(reader);
+            });
+        }
+
+        private async Task<IBitmap> SaveThumbnail(string youtubeID)
+        {
             var savePath = Path.Combine(Platform.CacheDirectory, "videoFeed", youtubeID + ".png");
 
-            if (!Directory.Exists(Path.Combine(Platform.CacheDirectory, "videoFeed"))) {
+            if (!Directory.Exists(Path.Combine(Platform.CacheDirectory, "videoFeed")))
+            {
                 Directory.CreateDirectory(Path.Combine(Platform.CacheDirectory, "videoFeed"));
             }
 
             if (File.Exists(savePath))
+            {
                 return new Bitmap(savePath);
+            }
 
             var thumbnail = "https://i4.ytimg.com/vi/" + youtubeID + "/hqdefault.jpg";
 
-            using (WebClient client = new WebClient()) {
-                client.DownloadFile(new Uri(thumbnail), savePath);
+            using (WebClient client = new WebClient())
+            {
+                await client.DownloadFileTaskAsync(new Uri(thumbnail), savePath);
             }
 
             return new Bitmap(savePath);
         }
 
-        private void ShellOnSolutionChanged(object sender, SolutionChangedEventArgs solutionChangedEventArgs) {
-            var newProject = new RecentProject {
+        private void ShellOnSolutionChanged(object sender, SolutionChangedEventArgs solutionChangedEventArgs)
+        {
+            var newProject = new RecentProject
+            {
                 Name = solutionChangedEventArgs.NewValue.Name,
                 Path = solutionChangedEventArgs.NewValue.CurrentDirectory
             };
@@ -136,7 +166,8 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
                 RecentProjectsCollection.RecentProjects = new List<RecentProject>();
 
 
-            if (RecentProjectsCollection.RecentProjects.Contains(newProject)) {
+            if (RecentProjectsCollection.RecentProjects.Contains(newProject))
+            {
                 RecentProjectsCollection.Save();
                 return;
             }
@@ -146,13 +177,15 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
             RecentProjectsCollection.Save();
         }
 
-        public void Activation() {
+        public void Activation()
+        {
             var shell = IoC.Get<IShell>();
             shell.AddDocument(this);
             shell.SolutionChanged += ShellOnSolutionChanged;
         }
 
-        public void BeforeActivation() {
+        public void BeforeActivation()
+        {
 
         }
 
