@@ -13,6 +13,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Utils;
 
 namespace AvalonStudio.Controls
 {
@@ -27,8 +28,6 @@ namespace AvalonStudio.Controls
 		private readonly JobRunner codeAnalysisRunner;
 
 		private readonly IShell shell;
-
-		private UnsavedFile unsavedFile;
 
 		public EditorModel()
 		{
@@ -97,10 +96,11 @@ namespace AvalonStudio.Controls
 		{
 			ShutdownBackgroundWorkers();
 
+            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+
 			if (unsavedFile != null)
 			{
 				UnsavedFiles.Remove(unsavedFile);
-				unsavedFile = null;
 			}
 
 			if (LanguageService != null && ProjectFile != null)
@@ -169,21 +169,22 @@ namespace AvalonStudio.Controls
                 System.IO.File.WriteAllText(ProjectFile.Location, TextDocument.Text);
 				IsDirty = false;
 
+                var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.FilePath);
+
 				if (unsavedFile != null)
 				{
 					UnsavedFiles.Remove(unsavedFile);
-					unsavedFile = null;
 				}
 			}
 		}
 
 		private void TextDocument_TextChanged(object sender, EventArgs e)
 		{
-			if (unsavedFile == null)
-			{
-				unsavedFile = new UnsavedFile(ProjectFile.Location, TextDocument.Text);
+            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.FilePath);
 
-				UnsavedFiles.Add(unsavedFile);
+            if (unsavedFile == null)
+			{
+				UnsavedFiles.InsertSorted(new UnsavedFile(ProjectFile.Location, TextDocument.Text));
 			}
 			else
 			{
@@ -192,11 +193,8 @@ namespace AvalonStudio.Controls
 
 			IsDirty = true;
 
-			if (TextChanged != null)
-			{
-				TextChanged(this, new EventArgs());
-			}
-		}
+            TextChanged?.Invoke(this, new EventArgs());
+        }
 
 		public event EventHandler<EventArgs> CodeAnalysisCompleted;
 
