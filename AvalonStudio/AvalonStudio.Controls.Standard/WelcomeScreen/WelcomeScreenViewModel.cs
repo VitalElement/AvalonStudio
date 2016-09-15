@@ -87,8 +87,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
                 if (content.Length >= maxCharCount)
                 {
-                    content = content.StripHTML().Truncate(maxCharCount);
-                    content = content + "...";
+                    content = content.StripHTML().Truncate(maxCharCount, "...");
                 }
 
                 var link = syndicationItem.Links.LastOrDefault();
