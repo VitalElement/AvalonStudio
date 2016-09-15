@@ -14,6 +14,7 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System.Threading.Tasks;
+using AvalonStudio.Controls.Standard.SolutionExplorer;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {
@@ -31,26 +32,38 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             _newsFeed = new ObservableCollection<NewsFeedViewModel>();
             _videoFeed = new ObservableCollection<VideoFeedViewModel>();
 
+            NewSolution = ReactiveCommand.Create();
+            OpenSolution = ReactiveCommand.Create();
+
             LoadRecentProjects();
+     
+        }
+
+        public void Activation() {
+            var shell = IoC.Get<IShell>();
+            shell.AddDocument(this);
+            shell.SolutionChanged += ShellOnSolutionChanged;
+
             LoadNewsFeed();
             LoadVideoFeed();
 
-            var shell = IoC.Get<IShell>();
+            var soultionExplorer = IoC.Get<ISolutionExplorer>();
 
-            NewProject = ReactiveCommand.Create();
 
-            NewProject.Subscribe(_ =>
-            {
-
+            NewSolution.Subscribe(_ => {
+                soultionExplorer.NewSolution();
             });
 
-            OpenProject = ReactiveCommand.Create();
 
-            OpenProject.Subscribe(_ =>
-            {
-
+            OpenSolution.Subscribe(_ => {
+                soultionExplorer.OpenSolution();
             });
         }
+
+        public void BeforeActivation() {
+
+        }
+
 
         private void LoadRecentProjects()
         {
@@ -177,17 +190,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             RecentProjectsCollection.Save();
         }
 
-        public void Activation()
-        {
-            var shell = IoC.Get<IShell>();
-            shell.AddDocument(this);
-            shell.SolutionChanged += ShellOnSolutionChanged;
-        }
-
-        public void BeforeActivation()
-        {
-
-        }
 
         public ObservableCollection<RecentProjectViewModel> RecentProjects
         {
@@ -208,7 +210,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             set { this.RaiseAndSetIfChanged(ref _videoFeed, value); }
         }
 
-        public ReactiveCommand<object> NewProject { get; }
-        public ReactiveCommand<object> OpenProject { get; }
+        public ReactiveCommand<object> NewSolution { get; }
+        public ReactiveCommand<object> OpenSolution { get; }
     }
 }
