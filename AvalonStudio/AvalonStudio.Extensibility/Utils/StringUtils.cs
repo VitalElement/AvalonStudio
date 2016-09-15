@@ -97,12 +97,12 @@ namespace AvalonStudio.Extensibility
                 .PadLeft(((totalLength - stringToCenter.Length) / 2) + stringToCenter.Length)
                 .PadRight(totalLength);
         }
-
-        public static string Truncate(this string value, int maxLength)
+        
+        public static string Truncate(this string value, int maxLength, string endString = "")
         {
             if (string.IsNullOrEmpty(value))
                 return value;
-            return value.Length <= maxLength ? value : value.Substring(0, maxLength);
+            return $"{value.Length <= maxLength ? value : value.Substring(0, maxLength)}{endString}";
         }
 
 		public static int LevenshteinDistance(this string str, string compare, bool caseSensitive = true)
