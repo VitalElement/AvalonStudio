@@ -21,8 +21,6 @@ namespace AvalonStudio.Shell
 	{
 		public static IShell Instance = null;
 
-		private readonly IEnumerable<IPlugin> plugins;
-
 		[ImportingConstructor]
 		public MinimalShell([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes,
 			[ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates,
@@ -41,7 +39,24 @@ namespace AvalonStudio.Shell
 			IoC.RegisterConstant(this, typeof (IShell));
 		}
 
-		public event EventHandler SolutionChanged;
+        event EventHandler<SolutionChangedEventArgs> IShell.SolutionChanged
+        {
+            add
+            {
+                throw new NotImplementedException();
+            }
+
+            remove
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public event EventHandler SolutionChanged
+        {
+            add { throw new NotSupportedException(); }
+            remove { }
+        }
 
 		public IEnumerable<IProject> ProjectTypes { get; }
 
@@ -165,6 +180,11 @@ namespace AvalonStudio.Shell
         }
 
         public void RemoveDocument(IDocumentTabViewModel document)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task OpenSolution(string path)
         {
             throw new NotImplementedException();
         }

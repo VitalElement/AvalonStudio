@@ -72,7 +72,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 					result = project.DebugSettings.OpenOCDSettings;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				result = project.DebugSettings.OpenOCDSettings = new OpenOCDSettings();
 			}

@@ -203,7 +203,7 @@ namespace AvalonStudio.Controls
 			{
 				SelectedPackageIndex = await reference.DownloadInfoAsync();
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 		}
