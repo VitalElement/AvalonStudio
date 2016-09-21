@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Extensibility.Reactive
 {
+    using Avalonia.Threading;
     using ReactiveUI;
     using System;
     using System.Linq.Expressions;
