@@ -80,8 +80,6 @@ namespace AvalonStudio.Languages.D
         }
     }
 
-
-
     public class DLanguageService : ILanguageService
     {
         private readonly JobRunner intellisenseJobRunner;
@@ -101,6 +99,12 @@ namespace AvalonStudio.Languages.D
         {
             get;
         }
+
+        public IEnumerable<char> IntellisenseTriggerCharacters { get { return new[] { '.', '>', ':' }; } }
+
+        public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '>', ';' }; } }
+
+        public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
 
         public string Title
         {
