@@ -256,6 +256,7 @@
       <DependentUpon>DebugHoverProbeView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DebugHoverProbeViewModel.cs" />
+    <Compile Include="Controls\Editor\IntellisenseManager.cs" />
     <Compile Include="Controls\ErrorProbe.paml.cs">
       <DependentUpon>ErrorProbeView.paml</DependentUpon>
     </Compile>
@@ -5569,6 +5570,9 @@
     <EmbeddedResource Include="Controls\SignatureView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Styles\GlobalStyles.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -144,6 +144,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -200,6 +201,7 @@
     <Compile Include="SolutionExplorer\Commands\CloseSolutionCommandDefinition.cs" />
     <Compile Include="SolutionExplorer\Commands\OpenSolutionCommandDefinition.cs" />
     <Compile Include="SolutionExplorer\Commands\NewSolutionCommandDefinition.cs" />
+    <Compile Include="SolutionExplorer\ISolutionExplorer.cs" />
     <Compile Include="SolutionExplorer\MenuDefinitions.cs" />
     <Compile Include="SolutionExplorer\NewItemDialog.paml.cs">
       <DependentUpon>NewItemDialogView.paml</DependentUpon>
@@ -251,6 +253,14 @@
     <Compile Include="SolutionExplorer\StandardProjectViewModel.cs">
       <DependentUpon>SolutionExplorerView.paml</DependentUpon>
     </Compile>
+    <Compile Include="WelcomeScreen\VideoFeed.cs" />
+    <Compile Include="WelcomeScreen\NewsFeed.cs" />
+    <Compile Include="WelcomeScreen\RecentProject.cs" />
+    <Compile Include="WelcomeScreen\RecentProjectViewModel.cs" />
+    <Compile Include="WelcomeScreen\WelcomeScreen.paml.cs">
+      <DependentUpon>WelcomeScreenView.paml</DependentUpon>
+    </Compile>
+    <Compile Include="WelcomeScreen\WelcomeScreenViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SolutionExplorer\SolutionExplorerView.paml">
@@ -281,6 +291,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SolutionExplorer\NewItemDialogView.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WelcomeScreen\WelcomeScreenView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

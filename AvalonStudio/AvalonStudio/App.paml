@@ -4,5 +4,6 @@
     <StyleInclude Source="resm:AvalonStudio.Themes.BaseDark.xaml?assembly=AvalonStudio"/>
     <StyleInclude Source="resm:AvalonStudio.Controls.MetroWindowTheme.paml?assembly=AvalonStudio" />
     <StyleInclude Source="resm:AvalonStudio.TextEditor.TextEditor.paml?assembly=AvalonStudio.TextEditor" />
+    <StyleInclude Source="resm:AvalonStudio.Styles.GlobalStyles.xaml?assembly=AvalonStudio" />
   </Application.Styles>
 </Application>
