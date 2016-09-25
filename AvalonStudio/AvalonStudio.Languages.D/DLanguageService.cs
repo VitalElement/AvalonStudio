@@ -23,6 +23,7 @@ using D_Parser.Completion;
 using D_Parser.Resolver;
 using D_Parser.Misc;
 using Avalonia.Interactivity;
+using D_Parser.Refactoring;
 
 namespace AvalonStudio.Languages.D
 {
@@ -161,16 +162,143 @@ namespace AvalonStudio.Languages.D
             {
                 var ast = GetAndParseModule(file, unsavedFiles);
 
-                var highlightingVisitor = new HighlightVisitor();
+                associatedData.EditorContext.SyntaxTree = ast;
 
-                ast.Accept(highlightingVisitor);
+                var highlights = new SyntaxHighlightDataList();
 
-                result.SyntaxHighlightingData = highlightingVisitor.Highlights;
+                var locationsToHighlight = TypeReferenceFinder.Scan(associatedData.EditorContext, new CancellationToken());
+
+                int startLine = 0;
+                int startColumn = 0;
+                int endLine = 0;
+                int endColumn = 0;
+
+                if (locationsToHighlight != null)
+                {
+                    foreach (var location in locationsToHighlight)
+                    {
+                        foreach (var kv in location.Value)
+                        {
+                            var ident = string.Empty;
+                            var sr = kv.Key;
+
+                            if (sr is INode)
+                            {
+                                var n = sr as INode;
+
+                                startLine = n.NameLocation.Line;
+                                startColumn = n.NameLocation.Column;
+
+                                endLine = n.NameLocation.Line;
+                                endColumn = n.NameLocation.Column + n.Name.Length;
+
+                            }
+                            else if (sr is TemplateParameter)
+                            {
+                                var tp = sr as TemplateParameter;
+
+                                if (tp.NameLocation.IsEmpty)
+                                {
+                                    continue;
+                                }
+
+                                startLine = tp.NameLocation.Line;
+                                startColumn = tp.NameLocation.Column;
+
+                                endLine = tp.NameLocation.Line;
+                                endColumn = tp.NameLocation.Column + tp.Name.Length;
+                            }
+                            else
+                            {
+                                var templ = sr as TemplateInstanceExpression;
+
+                                if (templ != null)
+                                {
+                                    ident = templ.TemplateId;
+                                }
+
+                                GetIdentifier(ref sr);
+
+                                startLine = sr.Location.Line;
+                                startColumn = sr.Location.Column;
+
+                                endLine = sr.EndLocation.Line;
+                                endColumn = sr.EndLocation.Column;
+                            }
+
+                            if (startColumn != 0 && endColumn != 0 && startLine != 0 && endLine != 0)
+                            {
+                                highlights.Add(new LineColumnSyntaxHighlightingData(startLine, startColumn, endLine, endColumn, GetHighlightType(ident, kv.Value)));
+                            }
+                        }
+                    }
+                }
+
+                result.SyntaxHighlightingData = highlights;
             });
 
             associatedData.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
+        }
+
+        public static HighlightType GetHighlightType(string ident, byte type)
+        {
+            switch (type)
+            {
+                case DTokens.Delegate:
+                case DTokens.Function:
+                    return HighlightType.Identifier;
+                case DTokens.Enum:
+                    return HighlightType.ClassName;
+                case DTokens.Interface:
+                    return HighlightType.ClassName;
+                case (byte)TypeReferenceKind.TemplateTypeParameter:
+                    return HighlightType.ClassName;
+                case DTokens.Struct:
+                    return HighlightType.StructName;
+                case DTokens.Template:
+                    if (ident.Length > 0 && char.IsLower(ident[0]))
+                    {
+                        if (
+                            (ident.Length > 1 && ident.Substring(0, 2) == "is")
+                            || (ident.Length > 2 && ident.Substring(0, 3) == "has"))
+                        {
+                            return HighlightType.Identifier;
+                        }
+                        else
+                        {
+                            return HighlightType.Identifier;
+                        }
+                    }
+                    else
+                    {
+                        return HighlightType.ClassName;
+                    }
+
+                case (byte)TypeReferenceKind.Variable:                     
+                    return HighlightType.Identifier;
+
+                default:
+                    return HighlightType.ClassName;
+            }
+        }
+
+
+        static void GetIdentifier(ref ISyntaxRegion sr)
+        {
+            if (sr is TemplateInstanceExpression)
+            {
+                sr = (sr as TemplateInstanceExpression).Identifier;
+
+                GetIdentifier(ref sr);
+            }
+            else if (sr is NewExpression)
+            {
+                sr = (sr as NewExpression).Type;
+
+                GetIdentifier(ref sr);
+            }
         }
 
         public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
