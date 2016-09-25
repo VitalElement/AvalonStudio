@@ -108,7 +108,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 					result = project.ToolchainSettings.LocalGCC;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 

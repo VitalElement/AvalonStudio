@@ -9,26 +9,26 @@ using ReactiveUI;
 
 namespace AvalonStudio.Controls
 {
-	public class IntellisenseViewModel : ViewModel, IIntellisenseControl, IDisposable
-	{
-		private IList<CompletionDataViewModel> completionData;
-		private EditorModel editor;
-		private EditorViewModel editorViewModel;
+    public class IntellisenseViewModel : ViewModel, IIntellisenseControl, IDisposable
+    {
+        private IList<CompletionDataViewModel> completionData;
+        private EditorModel editor;
+        private EditorViewModel editorViewModel;
 
-		private bool isVisible;
+        private bool isVisible;
 
-		private Thickness position;
+        private Thickness position;
 
-		private CompletionDataViewModel selectedCompletion;
+        private CompletionDataViewModel selectedCompletion;
 
-		public IntellisenseViewModel(EditorModel editor, EditorViewModel viewModel)
-		{
-			completionData = new List<CompletionDataViewModel>();
+        public IntellisenseViewModel(EditorModel editor, EditorViewModel viewModel)
+        {
+            completionData = new List<CompletionDataViewModel>();
             completionAssistant = new CompletionAssistantViewModel(this);
-			editorViewModel = viewModel;
-			this.editor = editor;
-			isVisible = false;
-		}
+            editorViewModel = viewModel;
+            this.editor = editor;
+            isVisible = false;
+        }
 
         private CompletionAssistantViewModel completionAssistant;
         public CompletionAssistantViewModel CompletionAssistant
@@ -38,31 +38,31 @@ namespace AvalonStudio.Controls
         }
 
         public Thickness Position
-		{
-			get { return position; }
-			set { this.RaiseAndSetIfChanged(ref position, value); }
-		}
-
-		public void Dispose()
-		{
-			editor = null;
-			editorViewModel = null;
-		}
-
-		public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
-		{
-			return await editor.DoCompletionRequestAsync(line, column);
-		}
-
-		public CompletionDataViewModel SelectedCompletion
-		{
-			get { return selectedCompletion; }
-			set { this.RaiseAndSetIfChanged(ref selectedCompletion, value); }
-		}
-
-        public void InvalidateIsOpen ()
         {
-            if(IsVisible || CompletionAssistant.IsVisible)
+            get { return position; }
+            set { this.RaiseAndSetIfChanged(ref position, value); }
+        }
+
+        public void Dispose()
+        {
+            editor = null;
+            editorViewModel = null;
+        }
+
+        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
+        {
+            return await editor.DoCompletionRequestAsync(line, column);
+        }
+
+        public CompletionDataViewModel SelectedCompletion
+        {
+            get { return selectedCompletion; }
+            set { this.RaiseAndSetIfChanged(ref selectedCompletion, value); }
+        }
+
+        public void InvalidateIsOpen()
+        {
+            if (IsVisible || CompletionAssistant.IsVisible)
             {
                 IsOpen = true;
             }
@@ -81,15 +81,15 @@ namespace AvalonStudio.Controls
 
 
         public bool IsVisible
-		{
-			get { return isVisible; }
-			set { this.RaiseAndSetIfChanged(ref isVisible, value); InvalidateIsOpen(); }
-		}
+        {
+            get { return isVisible; }
+            set { this.RaiseAndSetIfChanged(ref isVisible, value); InvalidateIsOpen(); }
+        }
 
-		public IList<CompletionDataViewModel> CompletionData
-		{
-			get { return completionData; }
-			set { this.RaiseAndSetIfChanged(ref completionData, value); }
-		}
-	}
+        public IList<CompletionDataViewModel> CompletionData
+        {
+            get { return completionData; }
+            set { this.RaiseAndSetIfChanged(ref completionData, value); }
+        }
+    }
 }

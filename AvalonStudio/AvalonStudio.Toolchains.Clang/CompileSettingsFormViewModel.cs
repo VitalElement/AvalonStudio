@@ -55,7 +55,7 @@ namespace AvalonStudio.Toolchains.Clang
 			{
 				settings = ClangToolchain.GetSettings(project).CompileSettings;
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				Model.ToolchainSettings.ClangToolchainSettings = new ClangToolchainSettings();
 			}

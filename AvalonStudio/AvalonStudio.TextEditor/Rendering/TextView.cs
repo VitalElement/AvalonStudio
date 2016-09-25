@@ -22,6 +22,8 @@ namespace AvalonStudio.TextEditor.Rendering
 {
 	public class TextView : ContentControl, ILogicalScrollable
 	{
+        private int lastLineScrolledTo = -1;
+
 		public IVisual TextSurface
 		{
 			get { return textSurface; }
@@ -468,9 +470,12 @@ namespace AvalonStudio.TextEditor.Rendering
 			get { return offset; }
 			set
 			{
-				firstVisualLine = (int)value.Y;
+                if (value.Y != offset.Y || value.X != offset.X && firstVisualLine != (int)value.Y)
+                {
+                    firstVisualLine = (int)value.Y;
 
-				SetAndRaise(OffsetProperty, ref offset, value);
+                    SetAndRaise(OffsetProperty, ref offset, value);
+                }
 			}
 		}
 
@@ -501,7 +506,6 @@ namespace AvalonStudio.TextEditor.Rendering
 
 		public void Invalidate()
 		{
-			invalidateVisualLines = true;
 			InvalidateVisual();
 		}
 
@@ -659,7 +663,6 @@ namespace AvalonStudio.TextEditor.Rendering
 		{
 		}
 
-		private bool invalidateVisualLines = true;
 		private int lastLineCount;
 
 		private void GenerateVisualLines(DrawingContext context)
@@ -682,8 +685,6 @@ namespace AvalonStudio.TextEditor.Rendering
 				InvalidateMeasure();
 				InvalidateScroll?.Invoke();
 			}
-
-			invalidateVisualLines = false;
 		}
 
 		private void GenerateText(VisualLine line)
@@ -755,7 +756,13 @@ namespace AvalonStudio.TextEditor.Rendering
 				if (caretIndex >= 0 && TextDocument != null)
 				{
 					var position = TextDocument.GetLocation(caretIndex);
-					ScrollToLine(position.Line, 0.1);
+
+                    if (lastLineScrolledTo != position.Line)
+                    {
+                        ScrollToLine(position.Line, 0.1);
+
+                        lastLineScrolledTo = position.Line;
+                    }
 				}
 			}
 		}
