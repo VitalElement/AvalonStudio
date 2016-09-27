@@ -136,18 +136,48 @@ namespace AvalonStudio.Languages.D
             return new List<CodeCompletionData>();
         }
 
-        private DModule GetAndParseModule(ISourceFile file, List<UnsavedFile> unsavedFiles)
+        private DModule GetAndParseModule(ISourceFile file, List<UnsavedFile> unsavedFiles, Action<DToken> OnVisitToken = null)
         {
             DModule ast = null;
+            TextReader reader = null;
 
             if (unsavedFiles.Count > 0 && unsavedFiles.First().FileName.CompareFilePath(file.FilePath) == 0)
             {
                 ast = DParser.ParseString(unsavedFiles.First().Contents);
+
+                reader = new StringReader(unsavedFiles.First().Contents);
+
             }
             else
             {
                 ast = DParser.ParseFile(file.FilePath);
+
+                reader = System.IO.File.OpenText(file.FilePath);
             }
+
+            if (OnVisitToken != null)
+            {
+                Lexer myLexer = new Lexer(reader);
+
+                myLexer.NextToken();
+
+                while (!myLexer.IsEOF)
+                {
+                    if (myLexer.CurrentToken == null)
+                    {
+                        myLexer.NextToken();
+                        continue;
+                    }
+
+                    OnVisitToken(myLexer.CurrentToken);                    
+
+                    myLexer.NextToken();
+                }                
+            }
+
+            reader?.Close();
+
+            reader?.Dispose();
 
             return ast;
         }
@@ -160,11 +190,23 @@ namespace AvalonStudio.Languages.D
 
             await Task.Factory.StartNew(() =>
             {
-                var ast = GetAndParseModule(file, unsavedFiles);
+                var highlightingVisitor = new HighlightVisitor();
 
-                associatedData.EditorContext.SyntaxTree = ast;
+                var ast = GetAndParseModule(file, unsavedFiles, token =>
+                {
+                    if (token.Kind >= DTokens.Align && token.Kind <= DTokens.__gshared)
+                    {
+                        highlightingVisitor.Highlights.Add(new LineColumnSyntaxHighlightingData(token.Location.Line, token.Location.Column, token.EndLocation.Line, token.EndLocation.Column, HighlightType.Keyword));
+                    }
+                });
 
-                var highlights = new SyntaxHighlightDataList();
+                associatedData.EditorContext.SyntaxTree = ast;                                
+
+                ast.Accept(highlightingVisitor);
+
+                result.SyntaxHighlightingData = highlightingVisitor.Highlights;
+
+                var highlights = highlightingVisitor.Highlights;                         
 
                 var locationsToHighlight = TypeReferenceFinder.Scan(associatedData.EditorContext, new CancellationToken());
 
@@ -186,6 +228,11 @@ namespace AvalonStudio.Languages.D
                             {
                                 var n = sr as INode;
 
+                                if (n.NameLocation.IsEmpty)
+                                {
+                                    continue;                                    
+                                }
+                                
                                 startLine = n.NameLocation.Line;
                                 startColumn = n.NameLocation.Column;
 
