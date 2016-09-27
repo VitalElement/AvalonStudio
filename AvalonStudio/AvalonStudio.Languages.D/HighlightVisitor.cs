@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Utils;
 
 namespace AvalonStudio.Languages.D
 {
@@ -51,22 +53,15 @@ namespace AvalonStudio.Languages.D
             dEnum.AddHighlight(HighlightType.StructName, Highlights);
         }
 
-
-
-
         public override void Visit(DMethod n)
         {
-            if (n.ContainsPropertyAttribute(BuiltInAtAttribute.BuiltInAttributes.Property))
-
-
-                n.AddHighlight(HighlightType.Identifier, Highlights);
-
-            base.Visit(n);
+            Highlights.Add(new LineColumnSyntaxHighlightingData(n.NameLocation.Line, n.NameLocation.Column, n.EndLocation.Line, n.EndLocation.Column, HighlightType.Identifier));
+            base.Visit(n);      
         }
 
         public override void Visit(DVariable n)
         {
-            n.AddHighlight(HighlightType.Identifier, Highlights);
+            Highlights.Add(new LineColumnSyntaxHighlightingData(n.NameLocation.Line, n.NameLocation.Column, n.EndLocation.Line, n.EndLocation.Column, HighlightType.Identifier));
             base.Visit(n);
         }
 
@@ -126,34 +121,34 @@ namespace AvalonStudio.Languages.D
             base.Visit(n);
         }
 
-        public override void Visit(DClassLike x)
-        {
-            switch (x.ClassType)
-            {
-                case DTokens.Struct:
-                    Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
-                    break;
+        //public override void Visit(DClassLike x)
+        //{
+        //    switch (x.ClassType)
+        //    {
+        //        case DTokens.Struct:
+        //            Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
+        //            break;
 
-                default:
-                    Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.ClassName));
-                    break;
-                case DTokens.Interface:
-                    Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
-                    break;
+        //        default:
+        //            Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.ClassName));
+        //            break;
+        //        case DTokens.Interface:
+        //            Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
+        //            break;
 
-                case DTokens.Template:
-                    Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
-                    break;
+        //        case DTokens.Template:
+        //            Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
+        //            break;
 
-                case DTokens.Union:
-                    Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
-                    break;
-            }
+        //        case DTokens.Union:
+        //            Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
+        //            break;
+        //    }
 
-            Highlights.Add(new LineColumnSyntaxHighlightingData(x.Location.Line, x.Location.Column, x.Location.Line, x.Location.Column + 5, HighlightType.Keyword));
+        //    Highlights.Add(new LineColumnSyntaxHighlightingData(x.Location.Line, x.Location.Column, x.Location.Line, x.Location.Column + 5, HighlightType.Keyword));
             //Highlights.Add(x.ToHighlight(HighlightType.ClassName));
 
-            base.Visit(x);
-        }
+       //     base.Visit(x);
+       // }
     }
 }
