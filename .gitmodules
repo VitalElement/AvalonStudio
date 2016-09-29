@@ -4,3 +4,6 @@
 [submodule "nclang"]
 	path = nclang
 	url = https://github.com/VitalElement/nclang.git
+[submodule "DockNC"]
+	path = DockNC
+	url = https://github.com/Mabiavalon/DockNC
