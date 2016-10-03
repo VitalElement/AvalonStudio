@@ -1,5 +1,6 @@
 using System;
 using ReactiveUI;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Extensibility.Dialogs
 {
@@ -13,7 +14,9 @@ namespace AvalonStudio.Extensibility.Dialogs
 
 		private string title;
 
-		public ModalDialogViewModelBase(string title, bool okButton = true, bool cancelButton = true)
+        private TaskCompletionSource<bool> dialogCloseCompletionSource;
+
+        public ModalDialogViewModelBase(string title, bool okButton = true, bool cancelButton = true)
 		{
 			OKButtonVisible = okButton;
 			CancelButtonVisible = cancelButton;
@@ -22,7 +25,7 @@ namespace AvalonStudio.Extensibility.Dialogs
 			this.title = title;
 
 			CancelCommand = ReactiveCommand.Create();
-			CancelCommand.Subscribe(_ => { Close(); });
+			CancelCommand.Subscribe(_ => { Close(false); });
 		}
 
 		public bool CancelButtonVisible
@@ -52,14 +55,21 @@ namespace AvalonStudio.Extensibility.Dialogs
 			set { this.RaiseAndSetIfChanged(ref isVisible, value); }
 		}
 
-		public void ShowDialog()
+        
+		public Task<bool> ShowDialog()
 		{
 			IsVisible = true;
+
+            dialogCloseCompletionSource = new TaskCompletionSource<bool>();
+                        
+            return dialogCloseCompletionSource.Task;
 		}
 
-		public void Close()
+		public void Close(bool success = true)
 		{
 			IsVisible = false;
+
+            dialogCloseCompletionSource.SetResult(success);
 		}
 	}
 

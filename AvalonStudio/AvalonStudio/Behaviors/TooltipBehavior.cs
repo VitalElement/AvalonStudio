@@ -98,6 +98,7 @@ namespace AvalonStudio.Behaviors
 
 		protected override void OnDetaching()
 		{
+            popup.Close();
 			popup.PointerWheelChanged -= Popup_PointerWheelChanged;
 			popup.PointerPressed -= Popup_PointerPressed;
 			AssociatedObject.KeyDown -= AssociatedObject_KeyDown;

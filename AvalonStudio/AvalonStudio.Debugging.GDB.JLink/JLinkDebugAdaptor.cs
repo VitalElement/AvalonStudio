@@ -50,7 +50,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 					result = project.DebugSettings.JLinkSettings;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				result = project.DebugSettings.JLinkSettings = new JLinkSettings();
 			}
@@ -99,7 +99,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 			var startInfo = new ProcessStartInfo();
 			startInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed 12000 -noir", settings.TargetDevice, Enum.GetName(typeof (JlinkInterfaceType), settings.Interface));
 			startInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServerCL" + Platform.ExecutableExtension);
-			if (!File.Exists(startInfo.FileName))
+			if (!System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("[JLink] - Error unable to find executable.");
 				return false;

@@ -14,6 +14,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 	{
 		private readonly IShell shell;
 		private SolutionViewModel solutionViewModel;
+        private ProjectConfigurationDialogViewModel configuration;
 
 		private bool visibility;
 
@@ -30,8 +31,20 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
 			ConfigureCommand.Subscribe(o =>
 			{
-				shell.ModalDialog = new ProjectConfigurationDialogViewModel(model, () => { });
-				shell.ModalDialog.ShowDialog();
+                if (configuration == null)
+                {
+                    configuration = new ProjectConfigurationDialogViewModel(model, () =>
+                    {
+                        configuration = null;
+                    });
+
+                    shell.AddDocument(configuration);
+                }
+                else
+                {
+                    shell.SelectedDocument = configuration;
+                }
+				//shell.ModalDialog.ShowDialog();
 			});
 
 			DebugCommand = ReactiveCommand.Create();

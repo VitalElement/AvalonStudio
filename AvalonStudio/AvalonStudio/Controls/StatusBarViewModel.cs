@@ -8,7 +8,6 @@ namespace AvalonStudio.Controls
 		private int column;
 
 		private bool debugMode;
-		private int instanceCount;
 
 		private string language;
 
@@ -17,12 +16,6 @@ namespace AvalonStudio.Controls
 		private int offset;
 
 		private string platformString;
-
-		public int InstanceCount
-		{
-			get { return instanceCount; }
-			set { this.RaiseAndSetIfChanged(ref instanceCount, value); }
-		}
 
 		public bool DebugMode
 		{

@@ -26,11 +26,14 @@ namespace AvalonStudio.MVVM
 
 			if (type != null)
 			{
-                var constructor = type.GetConstructor(Type.EmptyTypes);
-
-                if (constructor != null)
+                if (typeof(Control).IsAssignableFrom(type))
                 {
-                    return (Control)Activator.CreateInstance(type);
+                    var constructor = type.GetConstructor(Type.EmptyTypes);
+
+                    if (constructor != null)
+                    {
+                        return (Control)Activator.CreateInstance(type);
+                    }
                 }
 			}
 

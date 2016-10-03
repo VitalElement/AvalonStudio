@@ -25,7 +25,7 @@ namespace AvalonStudio.Repositories
 
 			using (var client = new WebClient())
 			{
-				var packageIndex = PackageIndex.FromString(await client.DownloadStringTaskAsync(Url));
+				var packageIndex = SerializedObject.FromString<PackageIndex>(await client.DownloadStringTaskAsync(Url));
 
 				result = packageIndex;
 			}
@@ -34,7 +34,7 @@ namespace AvalonStudio.Repositories
 		}
 	}
 
-	public class Repository : SerializedObject<Repository>
+	public class Repository
 	{
 		public const string PackagesFileName = "packages.json";
 
