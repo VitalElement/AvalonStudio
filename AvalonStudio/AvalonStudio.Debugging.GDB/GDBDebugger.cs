@@ -268,22 +268,15 @@ namespace AvalonStudio.Debugging.GDB
 
 		public async Task CloseAsync()
 		{
-			try
-			{
-				if (process != null && !process.HasExited)
-				{
-					await transmitRunner.InvokeAsync(() =>
-					{
-						input.WriteLine("-gdb-exit");
-						process.WaitForExit();
-						closeTokenSource?.Cancel();
-					});
-				}
-			}
-			catch (Exception e)
-			{
-				// Work around for process becoming null between.
-			}
+            if (transmitRunner != null && process != null && !process.HasExited)
+            {
+                await transmitRunner.InvokeAsync(() =>
+                {
+                    input.WriteLine("-gdb-exit");
+                    process?.WaitForExit();
+                    closeTokenSource?.Cancel();
+                });
+            }
 		}
 
 		public virtual async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
@@ -310,7 +303,7 @@ namespace AvalonStudio.Debugging.GDB
 			startInfo.Arguments = string.Format("--interpreter=mi \"{0}\"",
 				Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
 
-			if (!File.Exists(startInfo.FileName))
+			if (!System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("[GDB] - Error unable to find executable.");
 				return false;

@@ -12,17 +12,17 @@ namespace AvalonStudio.Toolchains.Clang
 	{
 		public override string DefaultProjectName
 		{
-			get { return "STM32Project"; }
+			get { return "ClangProject"; }
 		}
 
 		public override string Title
 		{
-			get { return "STM32 C++ Project"; }
+			get { return "Clang C++ Project"; }
 		}
 
 		public override string Description
 		{
-			get { return "Basic template for STM32 based devices. Includes startup code and peripheral libraries."; }
+			get { return "Basic template for projects using Clang Toolchain."; }
 		}
 
 		public override async Task<IProject> Generate(ISolution solution, string name)

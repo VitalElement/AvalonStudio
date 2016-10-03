@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using AvalonStudio.Extensibility;
@@ -6,10 +7,13 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
+using Avalonia.Controls;
+using System.Collections.Generic;
+using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-	public class SolutionExplorerViewModel : ToolViewModel, IExtension
+	public class SolutionExplorerViewModel : ToolViewModel, IExtension, ISolutionExplorer
 	{
 		public const string ToolId = "CIDSEVM00";
 
@@ -101,6 +105,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
 		public void BeforeActivation()
 		{
+            IoC.RegisterConstant<ISolutionExplorer>(this, typeof(ISolutionExplorer));
 		}
 
 		public void Activation()
@@ -109,5 +114,48 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
 			shell.SolutionChanged += (sender, e) => { Model = shell.CurrentSolution; };
 		}
-	}
+
+        public void NewSolution()
+        {
+            shell.ModalDialog = new NewProjectDialogViewModel(shell.CurrentSolution);
+            shell.ModalDialog.ShowDialog();
+        }
+
+        public async void OpenSolution()
+        {
+            var dlg = new OpenFileDialog();
+            dlg.Title = "Open Solution";
+
+            var allExtensions = new List<string>();
+
+            foreach (var solutionType in shell.SolutionTypes)
+            {
+                allExtensions.AddRange(solutionType.Extensions);
+            }
+
+            dlg.Filters.Add(new FileDialogFilter
+            {
+                Name = "All Supported Solution Types",
+                Extensions = allExtensions
+            });
+
+            foreach (var solutionType in shell.SolutionTypes)
+            {
+                dlg.Filters.Add(new FileDialogFilter
+                {
+                    Name = solutionType.Description,
+                    Extensions = solutionType.Extensions
+                });
+            }
+
+            dlg.InitialFileName = string.Empty;
+            dlg.InitialDirectory = Platform.ProjectDirectory;
+            var result = await dlg.ShowAsync();
+
+            if (result != null)
+            {
+                await shell.OpenSolution(result[0]);
+            }
+        }
+    }
 }

@@ -9,6 +9,7 @@ using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using AvalonStudio.Controls;
 
 namespace AvalonStudio.Shell
 {
@@ -21,14 +22,18 @@ namespace AvalonStudio.Shell
 
 	public interface IShell
 	{
+        event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+
 		Perspective CurrentPerspective { get; set; }
 		ISolution CurrentSolution { get; set; }
-		IEditor SelectedDocument { get; }
+        IDocumentTabViewModel SelectedDocument { get; set; }
 		ObservableCollection<object> Tools { get; }
 		ModalDialogViewModelBase ModalDialog { get; set; }
 		object BottomSelectedTool { get; set; }
 
-		IEnumerable<IProject> ProjectTypes { get; }
+        IEnumerable<ISolutionType> SolutionTypes { get; }
+
+        IEnumerable<IProject> ProjectTypes { get; }
 
 		IEnumerable<IProjectTemplate> ProjectTemplates { get; }
 
@@ -36,18 +41,20 @@ namespace AvalonStudio.Shell
 
 		IEnumerable<ILanguageService> LanguageServices { get; }
 
-		IEnumerable<IToolChain> ToolChains { get; }
+		IEnumerable<IToolChain> ToolChains { get; }        
 
 		IEnumerable<IDebugger> Debuggers { get; }
 
 		IEnumerable<ITestFramework> TestFrameworks { get; }
-
-		event EventHandler SolutionChanged;
-
+        
 		IEditor GetDocument(string path);
 
-		Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
-			bool selectLine = false);
+		Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
+
+        Task OpenSolution(string path);
+
+        void AddDocument(IDocumentTabViewModel document);
+        void RemoveDocument(IDocumentTabViewModel document);
 
 		void InvalidateCodeAnalysis();
 

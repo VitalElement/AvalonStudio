@@ -117,6 +117,10 @@
       <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
       <Name>AvalonStudio.Projects.CPlusPlus</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects.Raw\AvalonStudio.Projects.Raw.csproj">
+      <Project>{41c0c2c7-9554-470d-b8c0-634db3b509dc}</Project>
+      <Name>AvalonStudio.Projects.Raw</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
       <Name>AvalonStudio.Projects.Standard</Name>

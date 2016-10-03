@@ -12,12 +12,16 @@ namespace AvalonStudio.Languages
 		Identifier,
 		Literal,
 		Comment,
-		UserType
+		ClassName,
+        StructName,
+        PreProcessor,
+        PreProcessorText,
+
 	}
 
-	public class SyntaxHighlightDataList : List<SyntaxHighlightingData>
+	public class SyntaxHighlightDataList : List<OffsetSyntaxHighlightingData>
 	{
-		public new void Add(SyntaxHighlightingData item)
+		public new void Add(OffsetSyntaxHighlightingData item)
 		{
 			var index = BinarySearch(item);
 
@@ -32,13 +36,13 @@ namespace AvalonStudio.Languages
 		}
 	}
 
-	public class SyntaxHighlightingData : IComparable<SyntaxHighlightingData>
+	public class OffsetSyntaxHighlightingData : IComparable<OffsetSyntaxHighlightingData>
 	{
 		public HighlightType Type { get; set; }
 		public int Start { get; set; }
 		public int Length { get; set; }
 
-		public int CompareTo(SyntaxHighlightingData other)
+		public int CompareTo(OffsetSyntaxHighlightingData other)
 		{
 			if (Start > other.Start)
 			{
@@ -53,4 +57,30 @@ namespace AvalonStudio.Languages
 			return -1;
 		}
 	}
+
+    public class LineColumnSyntaxHighlightingData : OffsetSyntaxHighlightingData, IComparable<LineColumnSyntaxHighlightingData>
+    {
+        public int StartColumn { get; set; }
+        public int EndColumn { get;set; }
+        public int StartLine { get; set; }
+        public int EndLine { get; set; }
+
+        public int CompareTo(LineColumnSyntaxHighlightingData other)
+        {
+            if (StartLine > other.StartLine)
+            {
+                return 1;
+            }
+            else if (StartLine > other.StartLine && EndLine > other.EndLine)
+            {
+                return 1;
+            }
+            else if (StartColumn > other.StartColumn && EndLine > other.EndColumn)
+            {
+                return 1;
+            }
+
+            return -1;
+        }
+    }
 }

@@ -1,3 +1,18 @@
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using AvalonStudio.Extensibility.Languages;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Extensibility.Threading;
+using AvalonStudio.Languages.CPlusPlus.Rendering;
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Projects.Standard;
+using AvalonStudio.TextEditor.Document;
+using AvalonStudio.TextEditor.Indentation;
+using AvalonStudio.TextEditor.Rendering;
+using AvalonStudio.Utils;
+using NClang;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,20 +21,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using AvalonStudio.Extensibility.Languages;
-using AvalonStudio.Extensibility.Threading;
-using AvalonStudio.Languages.CPlusPlus.Rendering;
-using AvalonStudio.Projects;
-using AvalonStudio.Projects.Standard;
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.TextEditor.Indentation;
-using AvalonStudio.TextEditor.Rendering;
-using AvalonStudio.Utils;
-using NClang;
-using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -60,10 +61,64 @@ namespace AvalonStudio.Languages.CPlusPlus
             get { return typeof(BlankCPlusPlusLangaguageTemplate); }
         }
 
-        public IIndentationStrategy IndentationStrategy { get; }
+        public IIndentationStrategy IndentationStrategy { get; }        
+
+        public IEnumerable<char> IntellisenseTriggerCharacters { get { return new []{ '.', '>', ':' }; } }
+
+        public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '>', ';' }; } }
+
+        public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
+
+        CodeCompletionKind FromClangKind(NClang.CursorKind kind)
+        {
+            switch (kind)
+            {
+                case NClang.CursorKind.FunctionDeclaration:
+                case NClang.CursorKind.CXXMethod:
+                case NClang.CursorKind.Constructor:
+                case NClang.CursorKind.Destructor:
+                case NClang.CursorKind.FunctionTemplate:
+                case NClang.CursorKind.ClassTemplate:
+                    return CodeCompletionKind.Method;
+
+                case NClang.CursorKind.ClassDeclaration:
+                    return CodeCompletionKind.Class;
+
+                case NClang.CursorKind.StructDeclaration:
+                    return CodeCompletionKind.Struct;
+
+                case NClang.CursorKind.MacroDefinition:
+                    return CodeCompletionKind.Macro;
+
+                case NClang.CursorKind.NotImplemented:
+                case NClang.CursorKind.TypedefDeclaration:
+                    return CodeCompletionKind.Keyword;
+
+                case NClang.CursorKind.EnumDeclaration:
+                    return CodeCompletionKind.Enum;
+
+                case NClang.CursorKind.EnumConstantDeclaration:
+                    return CodeCompletionKind.EnumConstant;
+
+                case NClang.CursorKind.VarDeclaration:
+                    return CodeCompletionKind.Variable;
+
+                case NClang.CursorKind.Namespace:
+                    return CodeCompletionKind.Namespace;
+
+                case NClang.CursorKind.ParmDeclaration:
+                    return CodeCompletionKind.Field;
+
+                case NClang.CursorKind.FieldDeclaration:
+                    return CodeCompletionKind.Parameter;
+            }
+
+            Console.WriteLine($"dont understand{kind.ToString()}");
+            return CodeCompletionKind.None;
+        }
 
         public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile file, int line, int column,
-            List<UnsavedFile> unsavedFiles)
+            List<UnsavedFile> unsavedFiles, string filter)
         {
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
@@ -117,15 +172,18 @@ namespace AvalonStudio.Languages.CPlusPlus
                         }
                     }
 
-                    result.Add(new CodeCompletionData
+                    if (filter == string.Empty || typedText.StartsWith(filter))
                     {
-                        Suggestion = typedText,
-                        Priority = codeCompletion.CompletionString.Priority,
-                        Kind = (CursorKind)codeCompletion.CursorKind,
-                        Hint = hint,
-                        BriefComment = codeCompletion.CompletionString.BriefComment
-                    });
-                }                
+                        result.Add(new CodeCompletionData
+                        {
+                            Suggestion = typedText,
+                            Priority = codeCompletion.CompletionString.Priority,
+                            Kind = FromClangKind(codeCompletion.CursorKind),
+                            Hint = hint,
+                            BriefComment = codeCompletion.CompletionString.BriefComment
+                        });
+                    }
+                }
 
                 completionResults.Dispose();
             });
@@ -188,11 +246,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 case NClang.CursorKind.EnumDeclaration:
                                 case NClang.CursorKind.UnionDeclaration:
                                 case NClang.CursorKind.CXXBaseSpecifier:
-                                    result.SyntaxHighlightingData.Add(new SyntaxHighlightingData
+                                    result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
                                     {
                                         Start = e.Cursor.CursorExtent.Start.FileLocation.Offset,
                                         Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset,
-                                        Type = HighlightType.UserType
+                                        Type = HighlightType.ClassName
                                     });
                                     break;
                             }
@@ -208,11 +266,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 case NClang.CursorKind.TypeReference:
                                 case NClang.CursorKind.CXXBaseSpecifier:
                                 case NClang.CursorKind.TemplateReference:
-                                    result.SyntaxHighlightingData.Add(new SyntaxHighlightingData
+                                    result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
                                     {
                                         Start = e.Cursor.CursorExtent.Start.FileLocation.Offset,
                                         Length = e.Cursor.CursorExtent.End.FileLocation.Offset - e.Cursor.CursorExtent.Start.FileLocation.Offset,
-                                        Type = HighlightType.UserType
+                                        Type = HighlightType.ClassName
                                     });
                                     break;
                             }
@@ -226,7 +284,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         foreach (var token in tokens.Tokens)
                         {
-                            var highlightData = new SyntaxHighlightingData();
+                            var highlightData = new OffsetSyntaxHighlightingData();
                             highlightData.Start = token.Extent.Start.FileLocation.Offset;
                             highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start;
 
@@ -283,22 +341,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                         };
 
 
+                        var cursor = translationUnit.GetCursor(diagnostic.Location);
+                        var tokens = translationUnit.Tokenize(cursor.CursorExtent);
+
+                        foreach(var token in tokens.Tokens)
+                        {
+                            if(token.Location == diagnostic.Location)
+                            {
+                                diag.EndOffset = diag.StartOffset + token.Spelling.Length;
+                            }
+                        }
+
                         result.Diagnostics.Add(diag);
-
-                        var data =
-                            dataAssociation.TranslationUnit.GetLocationForOffset(dataAssociation.TranslationUnit.GetFile(file.Location),
-                                diag.StartOffset);
-                        var length = 0;
-
-                        if (diagnostic.RangeCount > 0)
-                        {
-                            length = Math.Abs(diagnostic.GetDiagnosticRange(0).End.FileLocation.Offset - diag.StartOffset);
-                        }
-
-                        if (diagnostic.FixItCount > 0)
-                        {
-                            // TODO implement fixits.
-                        }
+                        tokens.Dispose();
 
                         Color markerColor;
 
@@ -318,7 +373,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 break;
                         }
 
-                        dataAssociation.TextMarkerService.Create(diag.StartOffset, length, diag.Spelling, markerColor);
+                        dataAssociation.TextMarkerService.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
                     }
                 }
             });
@@ -353,7 +408,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAdviceControl completionAdvice, ICompletionAssistant completionAssistant,
+        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAssistant completionAssistant,
             TextEditor.TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CPlusPlusDataAssociation association = null;
@@ -362,22 +417,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 throw new Exception("Source file already registered with language service.");
             }
+
             association = new CPlusPlusDataAssociation(doc);
             dataAssociations.Add(file, association);
-
-            association.IntellisenseManager = new CPlusPlusIntellisenseManager(this, intellisense, completionAdvice, completionAssistant, file, editor);
-
-            association.TunneledKeyUpHandler = async (sender, e) =>
-            {
-                await intellisenseJobRunner.InvokeAsync(() => { association.IntellisenseManager.OnKeyUp(e).Wait(); });
-            };
-
-            association.TunneledKeyDownHandler = async (sender, e) =>
-            {
-                association.IntellisenseManager.OnKeyDown(e);
-
-                await intellisenseJobRunner.InvokeAsync(() => { association.IntellisenseManager.CompleteOnKeyDown(e).Wait(); });
-            };
 
             association.KeyUpHandler = (sender, e) =>
             {
@@ -438,7 +480,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 {
                                     var newLine = editor.TextDocument.GetLineByOffset(offset);
                                     editor.CaretIndex = newLine.PreviousLine.EndOffset;
-                                }                                           
+                                }
                             }
                             else
                             {
@@ -449,8 +491,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             };
 
-            editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, RoutingStrategies.Tunnel);
-            editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, RoutingStrategies.Tunnel);
             editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, RoutingStrategies.Tunnel);
 
             editor.TextInput += association.TextInputHandler;
@@ -474,8 +514,6 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             var association = GetAssociatedData(file);
 
-            editor.RemoveHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler);
-            editor.RemoveHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler);
             editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
 
             editor.TextInput -= association.TextInputHandler;
@@ -500,7 +538,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             await clangAccessJobRunner.InvokeAsync(() =>
             {
                 var tu = associatedData.TranslationUnit;
-                var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.File), offset));
+                var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.FilePath), offset));
 
                 switch (cursor.Kind)
                 {
@@ -529,7 +567,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                     var translationUnit = GetAndParseTranslationUnit(file, new List<ClangUnsavedFile>());
 
                     var cursors = FindFunctions(translationUnit.GetCursor(), name);
-
 
                     foreach (var cursor in cursors)
                     {
@@ -605,7 +642,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             ClangTranslationUnit result = null;
 
-            if (File.Exists(file.Location))
+            if (System.IO.File.Exists(file.Location))
             {
                 var args = new List<string>();
 
@@ -684,9 +721,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                 //    args.Add(string.Format("{0}", arg));
                 //}
 
-                switch (file.Language)
+                switch (file.Extension)
                 {
-                    case Language.C:
+                    case ".c":
                         {
                             foreach (var arg in superProject.CCompilerArguments)
                             {
@@ -695,7 +732,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         }
                         break;
 
-                    case Language.Cpp:
+                    case ".cpp":
                         {
                             foreach (var arg in superProject.CppCompilerArguments)
                             {
@@ -716,7 +753,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(),
                     TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble |
-                    TranslationUnitFlags.CacheCompletionResults);
+                    TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.Incomplete);
             }
 
             if (result == null)
@@ -882,16 +919,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                         arg.IsBuiltInType = IsBuiltInType(argument.CursorType);
                         arg.Name = argument.Spelling;
 
-                        if (i < cursor.ArgumentCount - 1)
-                        {
-                            arg.Name += ", ";
-                        }
-
                         arg.TypeDescription = argument.CursorType.Spelling;
                         result.Arguments.Add(arg);
                     }
 
-                    if(cursor.IsVariadic)
+                    if (cursor.IsVariadic)
                     {
                         result.Arguments.Last().Name += ", ";
                         result.Arguments.Add(new ParameterSymbol { Name = "... variadic" });
@@ -918,15 +950,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 var paragraph = discussion.Element("Para");
 
                                 if (isVarArgs != null)
-                                {                                    
+                                {
                                     result.Arguments.Last().Comment = paragraph.Value;
                                 }
                                 else
                                 {
                                     var inx = argument.Element("Index");
-                                    var index = int.Parse(inx.Value);
-                                    
-                                    result.Arguments[index].Comment = paragraph.Value;
+
+                                    if (inx != null)    // This happens when documentation for an argument was left in, but the argument no longer exists.
+                                    {
+                                        var index = int.Parse(inx.Value);
+
+                                        result.Arguments[index].Comment = paragraph.Value;
+                                    }
                                 }
                             }
                         }
@@ -937,6 +973,44 @@ namespace AvalonStudio.Languages.CPlusPlus
                         result.Arguments.Add(new ParameterSymbol { Name = "void" });
                     }
                     break;
+            }
+
+            return result;
+        }
+
+        private static Signature SignatureFromSymbol(Symbol symbol)
+        {
+            var result = new Signature();
+
+            result.Name = symbol.Name;
+            result.Description = symbol.BriefComment;
+
+            if (symbol.IsBuiltInType)
+            {
+                result.BuiltInReturnType = symbol.ResultType;
+            }
+            else
+            {
+                result.ReturnType = symbol.ResultType;
+            }
+
+            foreach (var param in symbol.Arguments)
+            {
+                var newParam = new Parameter();
+
+                if (param.IsBuiltInType)
+                {
+                    newParam.BuiltInType = param.TypeDescription;
+                }
+                else
+                {
+                    newParam.Type = param.TypeDescription;
+                }
+
+                newParam.Name = param.Name;
+                newParam.Documentation = param.Comment;
+
+                result.Parameters.Add(newParam);
             }
 
             return result;
@@ -993,6 +1067,37 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             return result;
         }
+
+        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
+        {
+            SignatureHelp result = null;
+            var clangUnsavedFiles = new List<ClangUnsavedFile>();
+
+            unsavedFiles.Add(buffer);
+
+            foreach (var unsavedFile in unsavedFiles)
+            {
+                if (Platform.CompareFilePath(unsavedFile.FileName, buffer.FileName) != 0)
+                {
+                    clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+                }
+            }
+
+            var symbols = await GetSymbolsAsync(file, unsavedFiles, methodName);
+
+            if (symbols.Count > 0)
+            {
+                result = new SignatureHelp();
+                result.Offset = offset;
+
+                foreach (var symbol in symbols)
+                {
+                    result.Signatures.Add(SignatureFromSymbol(symbol));
+                }
+            }
+
+            return result;
+        }
     }
 
     internal class CPlusPlusDataAssociation
@@ -1018,12 +1123,8 @@ namespace AvalonStudio.Languages.CPlusPlus
         public TextColoringTransformer TextColorizer { get; }
         public TextMarkerService TextMarkerService { get; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
-        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }
-        public EventHandler<KeyEventArgs> TunneledKeyUpHandler { get; set; }
-        public EventHandler<KeyEventArgs> TunneledKeyDownHandler { get; set; }
+        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }        
         public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
-        public EventHandler<KeyEventArgs> KeyDownHandler { get; set; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
-        public CPlusPlusIntellisenseManager IntellisenseManager { get; set; }
     }
 }

@@ -108,7 +108,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 					result = project.ToolchainSettings.LocalGCC;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 
@@ -122,7 +122,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
 			var startInfo = new ProcessStartInfo();
 
-			if (file.Language == Language.Cpp)
+			if (file.Extension == ".cpp")
 			{
 				if (Platform.PlatformIdentifier == PlatformID.Unix)
 				{
@@ -148,7 +148,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			startInfo.EnvironmentVariables["Path"] = BaseDirectory + "bin";
             startInfo.WorkingDirectory = file.CurrentDirectory;
 
-			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
+			if (!System.IO.File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
 			{
 				result.ExitCode = -1;
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
@@ -157,13 +157,13 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			{
 				var fileArguments = string.Empty;
 
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
 				}
 
 				startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments,
-					GetCompilerArguments(superProject, project, file), file.Location, outputFile);
+                    GetCompilerArguments(superProject, project, file), file.Location, outputFile);
 
 				// Hide console window
 				startInfo.UseShellExecute = false;
@@ -235,7 +235,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
 			startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
+			if (!System.IO.File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
 			{
 				result.ExitCode = -1;
 				console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
@@ -353,7 +353,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 				startInfo.FileName = Path.Combine(BaseDirectory, "bin", "size" + Platform.ExecutableExtension);
 			}
 
-			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
+			if (!System.IO.File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
 			{
 				console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
 				result.ExitCode = -1;
@@ -443,7 +443,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			// TODO remove dependency on file?
 			if (file != null)
 			{
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					if (!settings.CompileSettings.Rtti)
 					{
@@ -577,9 +577,9 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			// TODO factor out this code from here!
 			if (file != null)
 			{
-				switch (file.Language)
+				switch (file.Extension)
 				{
-					case Language.C:
+					case ".c":
 					{
 						foreach (var arg in superProject.CCompilerArguments)
 						{
@@ -588,7 +588,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 					}
 						break;
 
-					case Language.Cpp:
+					case ".cpp":
 					{
 						foreach (var arg in superProject.CppCompilerArguments)
 						{
@@ -606,9 +606,13 @@ namespace AvalonStudio.Toolchains.LocalGCC
 		{
 			return new List<string>
 			{
+                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include"),
+                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include-fixed"),
                 Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include"),
                 Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++"),
-			};
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32", "backward")
+            };
 		}
 
 		public override bool SupportsFile(ISourceFile file)
