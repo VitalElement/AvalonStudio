@@ -7,14 +7,14 @@
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
-             Foreground="WhiteSmoke">
+             Foreground="WhiteSmoke" Name="Editor">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid>
       <te:TextEditor Name="editor" TextDocument="{Binding TextDocument, Mode=TwoWay}"
                      FontFamily="{Binding FontFamily}" FontSize="15" Foreground="#A4A4A4" BorderThickness="0"
                      BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
                      TextChangedCommand="{Binding TextChangedCommand}"
-                     TextChangedDelay="400"
+                     TextChangedDelay="200"
                      CaretIndex="{Binding CaretIndex}" VerticalAlignment="Stretch"
                      AcceptsReturn="true" AcceptsTab="true" TabCharacter="{Binding TabCharacter}"
                      CaretLocationInTextView="{Binding CaretLocation}" SelectedWord="{Binding WordAtCaret}"
@@ -37,7 +37,7 @@
         </i:Interaction.Behaviors>
 
         <te:TextEditor.Header>
-          <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10">
+          <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">
             <DropDown.DataTemplates>
               <DataTemplate>
                 <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
@@ -49,9 +49,7 @@
         <te:TextEditor.Content>
           <Grid>
             <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" Margin="{Binding Position}" />
-            <cont:CompletionHint DataContext="{Binding CompletionAdvice}" HorizontalAlignment="Left"
-                                 VerticalAlignment="Top" Margin="{Binding Position}" />            
+                               VerticalAlignment="Top" Margin="{Binding Position}" />          
           </Grid>
         </te:TextEditor.Content>
       </te:TextEditor>

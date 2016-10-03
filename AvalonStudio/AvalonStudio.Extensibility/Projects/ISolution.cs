@@ -1,12 +1,13 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
 
 namespace AvalonStudio.Projects
-{
-	public interface ISolution
+{    
+    public interface ISolution
 	{
-		string Name { get; }
+		string Name { get; }        
 
-		IProject StartupProject { get; set; }
+        IProject StartupProject { get; set; }
 
 		ObservableCollection<IProject> Projects { get; }
 

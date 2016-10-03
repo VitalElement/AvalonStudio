@@ -53,6 +53,11 @@ namespace AvalonStudio.TextEditor
                     s.InvalidateSelectedWord();
                 }
             });
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Application.Current.Styles.Add(new TextEditorTheme());
+            });
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -71,12 +76,9 @@ namespace AvalonStudio.TextEditor
 
             disposables.Add(TextDocumentProperty.Changed.Subscribe(_ => { SelectionStart = SelectionEnd = CaretIndex = -1; }));
 
-            disposables.Add(OffsetProperty.Changed.Subscribe(_ =>
+            disposables.Add(this.GetObservable(OffsetProperty).Subscribe(_ =>
             {
-                if (EditorScrolled != null)
-                {
-                    EditorScrolled(this, new EventArgs());
-                }
+                EditorScrolled?.Invoke(this, new EventArgs());
             }));
 
             disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
@@ -104,8 +106,6 @@ namespace AvalonStudio.TextEditor
         public TextEditor()
         {
             disposables = new CompositeDisposable();
-
-            Styles.Add(new TextEditorTheme());
 
             Name = "textEditor";
             highestUserSelectedColumn = 1;
@@ -366,7 +366,10 @@ namespace AvalonStudio.TextEditor
             get { return offset; }
             set
             {
-                SetAndRaise(OffsetProperty, ref offset, value);
+                if (value.Y != offset.Y || value.X != offset.X)
+                {
+                    SetAndRaise(OffsetProperty, ref offset, value);
+                }
             }
         }
 
@@ -402,8 +405,6 @@ namespace AvalonStudio.TextEditor
 
             if (index >= 0 && TextDocument.TextLength > index)
             {
-                var wordFound = false;
-
                 var start = index;
 
                 var currentChar = TextDocument.GetCharAt(index);
@@ -433,7 +434,6 @@ namespace AvalonStudio.TextEditor
                     if (TextUtilities.IsSymbol(word))
                     {
                         result = word;
-                        wordFound = true;
                     }
                 }
             }
@@ -461,12 +461,13 @@ namespace AvalonStudio.TextEditor
                 if (caretIndex >= 0)
                 {
                     TextDocument.Insert(caretIndex, input);
-                    CaretIndex += input.Length;
-                    SelectionStart = SelectionEnd = CaretIndex;
-                    TextView.Invalidate();
                 }
 
                 TextDocument.EndUpdate();
+
+                CaretIndex += input.Length;
+                SelectionStart = SelectionEnd = CaretIndex;
+                TextView.Invalidate();
             }
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -8,6 +9,8 @@ using Avalonia.Data;
 using ReactiveUI;
 using Splat;
 using ViewLocator = AvalonStudio.MVVM.ViewLocator;
+using Avalonia.Controls;
+using AvalonStudio.Extensibility.Controls;
 
 namespace AvalonStudio.Controls
 {
@@ -16,7 +19,7 @@ namespace AvalonStudio.Controls
 	///     the ViewModel property and display it. This control is very useful
 	///     inside a DataTemplate to display the View associated with a ViewModel.
 	/// </summary>
-	public class ViewModelViewHost : ContentPresenter, IViewFor, IEnableLogger, IActivationForViewFetcher
+	public class ViewModelViewHost : ContentControl, IViewFor, IEnableLogger, IActivationForViewFetcher
 	{
 		public static readonly AvaloniaProperty ViewModelProperty =
 			AvaloniaProperty.Register<ViewModelViewHost, object>(nameof(ViewModel), null, false, BindingMode.OneWay, null,
@@ -82,6 +85,8 @@ namespace AvalonStudio.Controls
 			if (DataContext != null)
 			{
 				Content = ViewLocator.Build(DataContext);
+
+                Console.WriteLine(Presenter?.LogicalParent);
 			}
 		}
 

@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace AvalonStudio.Projects
 {
-	public class Solution : SerializedObject<Solution>, ISolution
+	public class Solution : ISolution
 	{
 		public const string Extension = "asln";
 
@@ -53,7 +53,7 @@ namespace AvalonStudio.Projects
 				ProjectReferences[i] = ProjectReferences[i].ToAvalonPath();
 			}
 
-			Serialize(Path.Combine(CurrentDirectory, Name + "." + Extension));
+			SerializedObject.Serialize(Path.Combine(CurrentDirectory, Name + "." + Extension), this);
 		}
 
 		public ISourceFile FindFile(string file)
@@ -74,7 +74,7 @@ namespace AvalonStudio.Projects
 		}
 
 		[JsonIgnore]
-		public string CurrentDirectory { get; private set; }
+		public string CurrentDirectory { get; set; }
 
 		[JsonIgnore]
 		public ObservableCollection<IProject> Projects { get; set; }
@@ -84,7 +84,7 @@ namespace AvalonStudio.Projects
 
 		public string Name { get; set; }
 
-		public static IProject LoadProjectFile(ISolution solution, string fileName)
+        public static IProject LoadProjectFile(ISolution solution, string fileName)
 		{
 			var shell = IoC.Get<IShell>();
 			IProject result = null;
@@ -113,13 +113,13 @@ namespace AvalonStudio.Projects
 			var projectType = shell.ProjectTypes.FirstOrDefault(p => p.Extension == extension);
 			var projectFilePath = Path.Combine(solution.CurrentDirectory, reference).ToPlatformPath();
 
-			if (projectType != null && File.Exists(projectFilePath))
+			if (projectType != null && System.IO.File.Exists(projectFilePath))
 			{
 				result = projectType.Load(solution, projectFilePath);
 			}
 			else
 			{
-				Console.WriteLine("Failed to load " + projectFilePath);
+                Console.WriteLine("Failed to load " + projectFilePath);
 				// create an unloaded project type.
 			}
 
@@ -131,7 +131,7 @@ namespace AvalonStudio.Projects
 
 		public static Solution Load(string fileName)
 		{
-			var solution = Deserialize(fileName);
+			var solution = SerializedObject.Deserialize<Solution>(fileName);
 
 			solution.CurrentDirectory = (Path.GetDirectoryName(fileName) + Platform.DirectorySeperator).ToPlatformPath();
 
@@ -172,13 +172,17 @@ namespace AvalonStudio.Projects
 			return result;
 		}
 
-		public static Solution Create(string location, string name)
+		public static Solution Create(string location, string name, bool save = true)
 		{
 			var result = new Solution();
 
 			result.Name = name;
 			result.CurrentDirectory = location + Platform.DirectorySeperator;
-			result.Save();
+
+            if (save)
+            {
+                result.Save();
+            }
 
 			return result;
 		}

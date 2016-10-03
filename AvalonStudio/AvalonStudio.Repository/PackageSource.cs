@@ -43,7 +43,7 @@ namespace AvalonStudio.Repositories
 				Clone();
 			}
 
-			var result = Repository.Deserialize(Path.Combine(CatalogDirectory, Repository.PackagesFileName));
+			var result = SerializedObject.Deserialize<Repository>(Path.Combine(CatalogDirectory, Repository.PackagesFileName));
 			result.Source = this;
 
 			foreach (var package in result.Packages)
@@ -55,7 +55,7 @@ namespace AvalonStudio.Repositories
 		}
 	}
 
-	public class PackageSources : SerializedObject<PackageSources>
+	public class PackageSources
 	{
 		private PackageSources()
 		{
@@ -78,10 +78,10 @@ namespace AvalonStudio.Repositories
 					Url = "https://github.com/VitalElement/AvalonStudio.Repository"
 				});
 
-				sources.Serialize(Platform.PackageSourcesFile);
+                SerializedObject.Serialize(Platform.PackageSourcesFile, sources);				
 			}
 
-			var result = Deserialize(Platform.PackageSourcesFile);
+			var result = SerializedObject.Deserialize<PackageSources>(Platform.PackageSourcesFile);
 
 			Instance = result;
 		}
