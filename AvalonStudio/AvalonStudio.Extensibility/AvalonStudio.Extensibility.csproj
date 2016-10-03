@@ -256,6 +256,7 @@
     <Compile Include="Projects\File.cs" />
     <Compile Include="Projects\FileSystemProject.cs" />
     <Compile Include="Projects\Folder.cs" />
+    <Compile Include="Reactive\ObservableToPropertyField.cs" />
     <Compile Include="Shell\IShell.cs" />
     <Compile Include="Languages\CodeAnalysisResults.cs" />
     <Compile Include="Languages\CodeCompletionData.cs" />
