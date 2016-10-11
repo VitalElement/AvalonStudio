@@ -83,6 +83,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     }
                 }
 
+                solution.Save();
 				shell.CurrentSolution = solution;
 				solution = null;
 
