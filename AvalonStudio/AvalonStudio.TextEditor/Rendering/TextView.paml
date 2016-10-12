@@ -4,7 +4,7 @@
       <ControlTemplate>
         <Border Name="border" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                 BorderThickness="0"
-                Padding="0">
+                Padding="0" Cursor="Ibeam">
           <Grid ColumnDefinitions="Auto,*">
             <ItemsControl Items="{TemplateBinding Margins}" Cursor="Arrow">
               <ItemsControl.ItemsPanel>
