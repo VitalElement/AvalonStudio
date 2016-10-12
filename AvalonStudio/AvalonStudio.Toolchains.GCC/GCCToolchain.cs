@@ -79,7 +79,7 @@ namespace AvalonStudio.Toolchains.GCC
                 startInfo.RedirectStandardError = true;
                 startInfo.CreateNoWindow = true;
 
-                console.WriteLine (Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
+                //console.WriteLine (Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
 
                 using (var process = Process.Start(startInfo))
                 {
@@ -191,8 +191,7 @@ namespace AvalonStudio.Toolchains.GCC
                 startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group", GetLinkerArguments(superProject, project), executable, objectArguments, linkedLibraries, libs);
             }
 
-            console.WriteLine(Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
-            //console.WriteLine ("[LL] - " + startInfo.Arguments);
+            //console.WriteLine(Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);            
 
             using (var process = Process.Start(startInfo))
             {
