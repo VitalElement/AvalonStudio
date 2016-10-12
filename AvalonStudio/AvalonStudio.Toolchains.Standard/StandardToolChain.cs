@@ -170,8 +170,6 @@ namespace AvalonStudio.Toolchains.Standard
 
 		public abstract void ProvisionSettings(IProject project);
 
-		public abstract UserControl GetSettingsControl(IProject project);
-
 		public void BeforeActivation()
 		{
 			//throw new NotImplementedException();
@@ -202,7 +200,7 @@ namespace AvalonStudio.Toolchains.Standard
 		public abstract string GetCompilerArguments(IStandardProject superProject, IStandardProject project,
 			ISourceFile sourceFile);
 
-		public abstract string GetLinkerArguments(IStandardProject project);
+		public abstract string GetLinkerArguments(IStandardProject superProject, IStandardProject project);
 
 		public abstract List<string> GetToolchainIncludes();
 
