@@ -33,10 +33,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public string LinkerScript { get; set; }
 
-		public override string GDBExecutable
-		{
-			get { return Path.Combine(BaseDirectory, "bin", "gdb" + Platform.ExecutableExtension); }
-		}
+		public override string GDBExecutable =>  Path.Combine(BaseDirectory, "bin", "gdb" + Platform.ExecutableExtension);		
 
 		public override Version Version
 		{
@@ -48,15 +45,9 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			get { return "GCC based toolchain PC."; }
 		}
 
-		public override string ExecutableExtension
-		{
-			get { return ".exe"; }
-		}
+		public override string ExecutableExtension=> ".exe";		
 
-		public override string StaticLibraryExtension
-		{
-			get { return ".a"; }
-		}
+		public override string StaticLibraryExtension => ".a";		
 
 		public override void ProvisionSettings(IProject project)
 		{
