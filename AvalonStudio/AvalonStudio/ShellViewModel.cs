@@ -321,14 +321,14 @@ namespace AvalonStudio
 
             await selectedDocumentTCS.Task;
 
-            if (debugHighlight && DocumentTabs.SelectedDocument is EditorViewModel)
-            {
-                (DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.Line = line;
-            }
-
             if (DocumentTabs.SelectedDocument is EditorViewModel)
             {
-                if (selectLine)
+                if (debugHighlight)
+                {
+                    (DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.Line = line;
+                }
+
+                if (selectLine || debugHighlight)
                 {
                     Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).Model.ScrollToLine(line));
                     (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, column);
