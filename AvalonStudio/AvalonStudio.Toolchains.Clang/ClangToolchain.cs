@@ -15,39 +15,18 @@ namespace AvalonStudio.Toolchains.Clang
 {
 	public class ClangToolchain : GCCToolchain
 	{
-		private string BaseDirectory
+		public override string BinDirectory
 		{
 			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "bin"); }
 		}
 
-		#region Settings
+        public override string Prefix => string.Empty;
 
-		public string LinkerScript { get; set; }
+        #region Settings
+
+        public string LinkerScript { get; set; }
 
 		#endregion
-
-		//public void GenerateLinkerScript(Project project)
-		//{
-		//    var template = new ArmGCCLinkTemplate(project.SelectedConfiguration);
-
-		//    string linkerScript = GetLinkerScriptLocation(project);
-
-		//    if (File.Exists(linkerScript))
-		//    {
-		//        File.Delete(linkerScript);
-		//    }
-
-		//    var sw = File.CreateText(linkerScript);
-
-		//    sw.Write(template.TransformText());
-
-		//    sw.Close();
-		//}
-
-		//private string GetLinkerScriptLocation(Project project)
-		//{
-		//    return Path.Combine(project.CurrentDirectory, "link.ld");
-		//}
 
 
 		public override Version Version
@@ -62,7 +41,7 @@ namespace AvalonStudio.Toolchains.Clang
 
 		public override string GDBExecutable
 		{
-			get { return Path.Combine(BaseDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension); }
+			get { return Path.Combine(BinDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension); }
 		}
 
 		public override string ExecutableExtension
@@ -126,11 +105,11 @@ namespace AvalonStudio.Toolchains.Clang
 
 			if (file.Extension == ".cpp")
 			{
-				startInfo.FileName = Path.Combine(BaseDirectory, "clang++" + Platform.ExecutableExtension);
+				startInfo.FileName = Path.Combine(BinDirectory, "clang++" + Platform.ExecutableExtension);
 			}
 			else
 			{
-				startInfo.FileName = Path.Combine(BaseDirectory, "clang" + Platform.ExecutableExtension);
+				startInfo.FileName = Path.Combine(BinDirectory, "clang" + Platform.ExecutableExtension);
 			}
 
 
@@ -211,7 +190,36 @@ namespace AvalonStudio.Toolchains.Clang
 			sw.Close();
 		}
 
-		public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project,
+        public override string GetBaseLibraryArguments(IStandardProject superProject)
+        {
+            var settings = GetSettings(superProject);
+            string result = string.Empty;
+
+            // TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
+            switch (settings.LinkSettings.Library)
+            {
+                case LibraryType.NanoCLib:
+                    result += "-lm -lc_nano -lsupc++_nano -lstdc++_nano ";
+                    break;
+
+                case LibraryType.BaseCLib:
+                    result += "-lm -lc -lstdc++ -lsupc++ ";
+                    break;
+
+                case LibraryType.SemiHosting:
+                    result += "-lm -lgcc -lc -lrdimon ";
+                    break;
+
+                case LibraryType.Retarget:
+                    result += "-lm -lc -lnosys -lstdc++ -lsupc++ ";
+                    break;
+            }
+
+            return result;
+        }
+
+
+        public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project,
 			CompileResult assemblies, string outputPath)
 		{
 			var settings = GetSettings(superProject);
@@ -219,11 +227,11 @@ namespace AvalonStudio.Toolchains.Clang
 
 			var startInfo = new ProcessStartInfo();
 
-			startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
+			startInfo.FileName = Path.Combine(BinDirectory, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
 
 			if (project.Type == ProjectType.StaticLibrary)
 			{
-				startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-ar" + Platform.ExecutableExtension);
+				startInfo.FileName = Path.Combine(BinDirectory, "arm-none-eabi-ar" + Platform.ExecutableExtension);
 			}
 
 			startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
@@ -284,25 +292,7 @@ namespace AvalonStudio.Toolchains.Clang
 			}
 
 
-			// TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
-			switch (settings.LinkSettings.Library)
-			{
-				case LibraryType.NanoCLib:
-					linkedLibraries += "-lm -lc_nano -lsupc++_nano -lstdc++_nano ";
-					break;
-
-				case LibraryType.BaseCLib:
-					linkedLibraries += "-lm -lc -lstdc++ -lsupc++ ";
-					break;
-
-				case LibraryType.SemiHosting:
-					linkedLibraries += "-lm -lgcc -lc -lrdimon ";
-					break;
-
-				case LibraryType.Retarget:
-					linkedLibraries += "-lm -lc -lnosys -lstdc++ -lsupc++ ";
-					break;
-			}
+            linkedLibraries += GetBaseLibraryArguments(superProject);
 
 			// Hide console window
 			startInfo.UseShellExecute = false;
@@ -318,7 +308,7 @@ namespace AvalonStudio.Toolchains.Clang
 			else
 			{
 				startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group",
-					GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
+					GetLinkerArguments(superProject, project), executable, objectArguments, linkedLibraries, libs);
 			}
 
 			//console.WriteLine(Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
@@ -361,7 +351,7 @@ namespace AvalonStudio.Toolchains.Clang
 			var result = new ProcessResult();
 
 			var startInfo = new ProcessStartInfo();
-			startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-size" + Platform.ExecutableExtension);
+			startInfo.FileName = Path.Combine(BinDirectory, "arm-none-eabi-size" + Platform.ExecutableExtension);
 
 			if (!System.IO.File.Exists(startInfo.FileName))
 			{
@@ -398,8 +388,8 @@ namespace AvalonStudio.Toolchains.Clang
 			return result;
 		}
 
-		public override string GetLinkerArguments(IStandardProject project)
-		{
+        public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
+        {
 			var settings = GetSettings(project);
 
 			var result = string.Empty;
@@ -749,11 +739,6 @@ namespace AvalonStudio.Toolchains.Clang
 			}
 
 			return result;
-		}
-
-		public override UserControl GetSettingsControl(IProject project)
-		{
-			throw new Exception();
 		}
 	}
 }

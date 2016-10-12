@@ -16,8 +16,6 @@ namespace AvalonStudio.Toolchains
 
 		Task Clean(IConsole console, IProject project);
 
-		UserControl GetSettingsControl(IProject project);
-
 		IList<object> GetConfigurationPages(IProject project);
 
 		void ProvisionSettings(IProject project);

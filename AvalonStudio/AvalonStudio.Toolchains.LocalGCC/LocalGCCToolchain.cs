@@ -20,34 +20,16 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC"); }
 		}
 
-		#region Settings
+        public override string Prefix => string.Empty;
 
-		public string LinkerScript { get; set; }
+        public override string BinDirectory => Path.Combine(BaseDirectory, "bin");
 
-		#endregion
+        public override string GetBaseLibraryArguments(IStandardProject superProject)
+        {
+            return string.Empty;
+        }
 
-		//public void GenerateLinkerScript(Project project)
-		//{
-		//    var template = new ArmGCCLinkTemplate(project.SelectedConfiguration);
-
-		//    string linkerScript = GetLinkerScriptLocation(project);
-
-		//    if (File.Exists(linkerScript))
-		//    {
-		//        File.Delete(linkerScript);
-		//    }
-
-		//    var sw = File.CreateText(linkerScript);
-
-		//    sw.Write(template.TransformText());
-
-		//    sw.Close();
-		//}
-
-		//private string GetLinkerScriptLocation(Project project)
-		//{
-		//    return Path.Combine(project.CurrentDirectory, "link.ld");
-		//}
+        public string LinkerScript { get; set; }
 
 		public override string GDBExecutable
 		{
@@ -115,96 +97,12 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			return result;
 		}
 
-		public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project,
-			ISourceFile file, string outputFile)
-		{
-			var result = new CompileResult();
-
-			var startInfo = new ProcessStartInfo();
-
-			if (file.Extension == ".cpp")
-			{
-				if (Platform.PlatformIdentifier == PlatformID.Unix)
-				{
-					startInfo.FileName = "g++";
-				}
-				else
-				{
-					startInfo.FileName = Path.Combine(BaseDirectory, "bin", "g++" + Platform.ExecutableExtension);
-				}
-			}
-			else
-			{
-				if (Platform.PlatformIdentifier == PlatformID.Unix)
-				{
-					startInfo.FileName = "gcc";
-				}
-				else
-				{
-					startInfo.FileName = Path.Combine(BaseDirectory, "bin", "gcc" + Platform.ExecutableExtension);
-				}
-			}
-
-			startInfo.EnvironmentVariables["Path"] = BaseDirectory + "bin";
-            startInfo.WorkingDirectory = file.CurrentDirectory;
-
-			if (!System.IO.File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
-			{
-				result.ExitCode = -1;
-				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
-			}
-			else
-			{
-				var fileArguments = string.Empty;
-
-				if (file.Extension == ".cpp")
-				{
-					fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
-				}
-
-				startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments,
-                    GetCompilerArguments(superProject, project, file), file.Location, outputFile);
-
-				// Hide console window
-				startInfo.UseShellExecute = false;
-				startInfo.RedirectStandardOutput = true;
-				startInfo.RedirectStandardError = true;
-				startInfo.CreateNoWindow = true;
-
-				//console.WriteLine (Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
-
-				using (var process = Process.Start(startInfo))
-				{
-					process.OutputDataReceived += (sender, e) => { console.WriteLine(e.Data); };
-
-					process.ErrorDataReceived += (sender, e) =>
-					{
-						if (e.Data != null)
-						{
-							console.WriteLine();
-							console.WriteLine(e.Data);
-						}
-					};
-
-					process.BeginOutputReadLine();
-
-					process.BeginErrorReadLine();
-
-					process.WaitForExit();
-
-					result.ExitCode = process.ExitCode;
-				}
-			}
-
-			return result;
-		}
-
 		private string GetLinkerScriptLocation(IStandardProject project)
 		{
 			return Path.Combine(project.CurrentDirectory, "link.ld");
 		}
 
-		public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project,
+		/*public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project,
 			CompileResult assemblies, string outputPath)
 		{
 			var settings = GetSettings(superProject);
@@ -300,7 +198,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			else
 			{
 				startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group",
-					GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
+					GetLinkerArguments(superProject, project), executable, objectArguments, linkedLibraries, libs);
 			}
 
 			//console.WriteLine(Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
@@ -336,7 +234,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			}
 
 			return result;
-		}
+		}*/
 
 		public override ProcessResult Size(IConsole console, IStandardProject project, LinkResult linkResult)
 		{
@@ -388,8 +286,8 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			return result;
 		}
 
-		public override string GetLinkerArguments(IStandardProject project)
-		{
+        public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
+        {
 			var settings = GetSettings(project);
 
 			var result = string.Empty;
@@ -647,11 +545,6 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			}
 
 			return result;
-		}
-
-		public override UserControl GetSettingsControl(IProject project)
-		{
-			return new ToolchainSettingsForm {DataContext = new ToolchainSettingsViewModel(project)};
 		}
 	}
 }
