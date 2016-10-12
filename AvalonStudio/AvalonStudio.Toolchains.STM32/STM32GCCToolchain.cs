@@ -1,19 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.IO;
-using Avalonia.Controls;
-using AvalonStudio.Platforms;
-using AvalonStudio.Projects;
-using AvalonStudio.Projects.Standard;
-using AvalonStudio.Toolchains.GCC;
-using AvalonStudio.Toolchains.Standard;
-using AvalonStudio.Utils;
-
 namespace AvalonStudio.Toolchains.STM32
 {
-	public class STM32GCCToolchain : GCCToolchain
+    using AvalonStudio.Platforms;
+    using AvalonStudio.Projects;
+    using AvalonStudio.Projects.Standard;
+    using AvalonStudio.Toolchains.GCC;
+    using AvalonStudio.Utils;
+    using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.IO;
+
+    public class STM32GCCToolchain : GCCToolchain
 	{
         public override string BinDirectory => Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin");
         

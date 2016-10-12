@@ -1,15 +1,15 @@
-using AvalonStudio.Platforms;
-using AvalonStudio.Projects;
-using AvalonStudio.Projects.Standard;
-using AvalonStudio.Toolchains.GCC;
-using AvalonStudio.Utils;
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.IO;
-
 namespace AvalonStudio.Toolchains.Clang
 {
+    using AvalonStudio.Platforms;
+    using AvalonStudio.Projects;
+    using AvalonStudio.Projects.Standard;
+    using AvalonStudio.Toolchains.GCC;
+    using AvalonStudio.Utils;
+    using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.IO;
+
     public class ClangToolchain : GCCToolchain
     {
         public override string BinDirectory => Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "bin");
