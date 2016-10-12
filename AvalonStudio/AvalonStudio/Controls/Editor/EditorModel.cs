@@ -169,7 +169,7 @@ namespace AvalonStudio.Controls
                 System.IO.File.WriteAllText(ProjectFile.Location, TextDocument.Text);
 				IsDirty = false;
 
-                var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.FilePath);
+                var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
 
 				if (unsavedFile != null)
 				{
