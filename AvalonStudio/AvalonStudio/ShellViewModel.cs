@@ -328,10 +328,9 @@ namespace AvalonStudio
 
             if (DocumentTabs.SelectedDocument is EditorViewModel)
             {
-                Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).Model.ScrollToLine(line));
-
                 if (selectLine)
                 {
+                    Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).Model.ScrollToLine(line));
                     (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, column);
                 }
             }
