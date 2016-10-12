@@ -772,7 +772,6 @@ namespace AvalonStudio.TextEditor
                     // Todo unsubscribe these events.                 
                     TextDocument.Changing += (sender, ee) =>
                     {
-                        TextDocument?.UndoStack.StartUndoGroup();
                         TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
 
                         if (BeforeTextChangedCommand != null)
@@ -783,8 +782,6 @@ namespace AvalonStudio.TextEditor
 
                     TextDocument.Changed += (sender, ee) =>
                     {
-                        TextDocument?.UndoStack.EndUndoGroup();
-
                         InvalidateVisual();
 
                         LineHeight = TextView.CharSize.Height;
