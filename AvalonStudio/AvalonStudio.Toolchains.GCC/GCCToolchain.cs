@@ -32,7 +32,7 @@ namespace AvalonStudio.Toolchains.GCC
 
         public virtual string CCPPName => "g++";
 
-        public virtual string LDName => "ld";
+        public virtual string LDName => "gcc";
 
         public virtual string ARName => "ar";
 
