@@ -467,7 +467,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			startInfo.CreateNoWindow = true;
 
 			startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group",
-				GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
+				GetLinkerArguments(superProject, project), executable, objectArguments, linkedLibraries, libs);
 
 			if (project.Type == ProjectType.StaticLibrary)
 			{
@@ -551,7 +551,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			return result;
 		}
 
-		public override string GetLinkerArguments(IStandardProject project)
+		public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
 		{
 			var result = string.Empty;
 
@@ -613,11 +613,6 @@ namespace AvalonStudio.Toolchains.Llilum
 		}
 
 		public override void ProvisionSettings(IProject project)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override UserControl GetSettingsControl(IProject project)
 		{
 			throw new NotImplementedException();
 		}
