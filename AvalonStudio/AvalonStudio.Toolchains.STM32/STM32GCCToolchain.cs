@@ -190,7 +190,7 @@ namespace AvalonStudio.Toolchains.STM32
 			//var settings = GetSettings(project).CompileSettings;
 			var settings = GetSettings(superProject);
 
-			result += "-Wall -c ";
+			result += "-Wall -c -fshort-enums ";
 
 			if (settings.CompileSettings.DebugInformation)
 			{

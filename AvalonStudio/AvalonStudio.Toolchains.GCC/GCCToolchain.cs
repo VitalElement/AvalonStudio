@@ -10,13 +10,23 @@ namespace AvalonStudio.Toolchains.GCC
 {
 	public abstract class GCCToolchain : StandardToolChain
 	{
-		public abstract string GDBExecutable { get; }
-
-        public abstract string Prefix { get; }
+		public abstract string GDBExecutable { get; }        
 
         public abstract string BinDirectory { get; }
 
         public abstract string GetBaseLibraryArguments(IStandardProject superProject);
+
+        public virtual string Prefix => string.Empty;
+
+        public virtual string CCPrefix => Prefix;
+
+        public virtual string CCPPrefix => Prefix;
+
+        public virtual string LDPrefix => Prefix;
+
+        public virtual string ARPrefix => Prefix;
+
+        public virtual string SizePrefix => Prefix;
 
         public virtual string CCName => "gcc";
 
@@ -36,11 +46,11 @@ namespace AvalonStudio.Toolchains.GCC
 
             if (file.Extension == ".cpp")
             {
-                startInfo.FileName = Path.Combine(BinDirectory, $"{Prefix}{CCPPName}" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(BinDirectory, $"{CCPPrefix}{CCPPName}" + Platform.ExecutableExtension);
             }
             else
             {
-                startInfo.FileName = Path.Combine(BinDirectory, $"{Prefix}{CCName}" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(BinDirectory, $"{CCPPrefix}{CCName}" + Platform.ExecutableExtension);
             }
 
             startInfo.EnvironmentVariables["Path"] = BinDirectory;
@@ -69,7 +79,7 @@ namespace AvalonStudio.Toolchains.GCC
                 startInfo.RedirectStandardError = true;
                 startInfo.CreateNoWindow = true;
 
-                //console.WriteLine (Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
+                console.WriteLine (Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
 
                 using (var process = Process.Start(startInfo))
                 {
@@ -103,11 +113,11 @@ namespace AvalonStudio.Toolchains.GCC
 
             var startInfo = new ProcessStartInfo();
 
-            startInfo.FileName = Path.Combine(BinDirectory, $"{Prefix}{CCName}" + Platform.ExecutableExtension);
+            startInfo.FileName = Path.Combine(BinDirectory, $"{LDPrefix}{LDName}" + Platform.ExecutableExtension);
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-                startInfo.FileName = Path.Combine(BinDirectory, $"{Prefix}{ARName}" + Platform.ExecutableExtension);
+                startInfo.FileName = Path.Combine(BinDirectory, $"{ARPrefix}{ARName}" + Platform.ExecutableExtension);
             }
 
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
@@ -181,7 +191,7 @@ namespace AvalonStudio.Toolchains.GCC
                 startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group", GetLinkerArguments(superProject, project), executable, objectArguments, linkedLibraries, libs);
             }
 
-            //console.WriteLine(Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
+            console.WriteLine(Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
             //console.WriteLine ("[LL] - " + startInfo.Arguments);
 
             using (var process = Process.Start(startInfo))
@@ -221,7 +231,7 @@ namespace AvalonStudio.Toolchains.GCC
             var result = new ProcessResult();
 
             var startInfo = new ProcessStartInfo();
-            startInfo.FileName = Path.Combine(BinDirectory, $"{Prefix}{SizeName}" + Platform.ExecutableExtension);
+            startInfo.FileName = Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
 
             if (!System.IO.File.Exists(startInfo.FileName))
             {
