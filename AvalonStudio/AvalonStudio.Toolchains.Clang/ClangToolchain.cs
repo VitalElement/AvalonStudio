@@ -352,9 +352,7 @@ namespace AvalonStudio.Toolchains.Clang
             }
 
             result += settings.CompileSettings.CustomFlags + " ";
-
-            // toolchain includes
-
+            
             // Referenced includes
             var referencedIncludes = project.GetReferencedIncludes();
 
