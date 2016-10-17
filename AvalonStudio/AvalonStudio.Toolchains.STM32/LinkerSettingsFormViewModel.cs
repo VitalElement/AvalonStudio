@@ -42,8 +42,6 @@ namespace AvalonStudio.Toolchains.STM32
 
 		private bool notUseStandardStartup;
 
-		private IProject project;
-
 		private string scatterFile;
 
 		private string selectedLinkedLibrary;
@@ -59,12 +57,12 @@ namespace AvalonStudio.Toolchains.STM32
 				{
 					settings = STM32GCCToolchain.GetSettings(project).LinkSettings;
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					Model.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				Model.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
 				settings = Model.ToolchainSettings.STM32ToolchainSettings.LinkSettings;
@@ -309,7 +307,7 @@ namespace AvalonStudio.Toolchains.STM32
 
 			if (Model.ToolChain != null && Model.ToolChain is StandardToolChain)
 			{
-				LinkerArguments = (Model.ToolChain as StandardToolChain).GetLinkerArguments(Model as IStandardProject);
+				LinkerArguments = (Model.ToolChain as StandardToolChain).GetLinkerArguments(null, Model as IStandardProject);
 			}
 		}
 

@@ -8,6 +8,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using ReactiveUI;
 using Key = Avalonia.Input.Key;
+using AvalonStudio.Controls;
 
 namespace AvalonStudio.Shell.Commands
 {
@@ -31,7 +32,7 @@ namespace AvalonStudio.Shell.Commands
 			{
 				var shell = IoC.Get<IShell>();
 
-				shell.SelectedDocument.Undo();
+                (shell.SelectedDocument as EditorViewModel)?.Undo();
 			});
 		}
 

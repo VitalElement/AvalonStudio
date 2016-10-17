@@ -42,8 +42,6 @@ namespace AvalonStudio.Toolchains.Clang
 
 		private bool notUseStandardStartup;
 
-		private IProject project;
-
 		private string scatterFile;
 
 		private string selectedLinkedLibrary;
@@ -59,12 +57,12 @@ namespace AvalonStudio.Toolchains.Clang
 				{
 					settings = ClangToolchain.GetSettings(project).LinkSettings;
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					Model.ToolchainSettings.ClangToolchainSettings = new ClangToolchainSettings();
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				Model.ToolchainSettings.ClangToolchainSettings = new ClangToolchainSettings();
 				settings = Model.ToolchainSettings.ClangToolchainSettings.LinkSettings;
@@ -309,7 +307,7 @@ namespace AvalonStudio.Toolchains.Clang
 
 			if (Model.ToolChain != null && Model.ToolChain is StandardToolChain)
 			{
-				LinkerArguments = (Model.ToolChain as StandardToolChain).GetLinkerArguments(Model as IStandardProject);
+				LinkerArguments = (Model.ToolChain as StandardToolChain).GetLinkerArguments(null, Model as IStandardProject);
 			}
 		}
 

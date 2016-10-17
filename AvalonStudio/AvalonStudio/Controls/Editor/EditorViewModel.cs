@@ -22,15 +22,16 @@ using AvalonStudio.TextEditor.Rendering;
 using ReactiveUI;
 using AvalonStudio.Utils;
 using System.IO;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 
 namespace AvalonStudio.Controls
 {
-    public class EditorViewModel : ViewModel<EditorModel>, IEditor
+    public class EditorViewModel : DocumentTabViewModel<EditorModel>, IEditor
     {
         public SelectedDebugLineBackgroundRenderer DebugLineHighlighter;
         private readonly CompositeDisposable disposables;
 
-        private Dock dock;
         private readonly List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
 
         private readonly List<IDocumentLineTransformer> languageServiceDocumentLineTransformers =
@@ -38,12 +39,7 @@ namespace AvalonStudio.Controls
 
         private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;
 
-        public Dock Dock
-        {
-            get { return dock; }
-            set { this.RaiseAndSetIfChanged(ref dock, value); }
-        }
-
+        private IntellisenseManager intellisenseManager;
 
         public TextLocation CaretTextLocation
         {
@@ -152,19 +148,18 @@ namespace AvalonStudio.Controls
             SaveCommand = ReactiveCommand.Create();
             disposables.Add(SaveCommand.Subscribe(param => Save()));
 
-            CloseCommand = ReactiveCommand.Create();
-
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
+                Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
                 Save();
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
 
-                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
-                {
-                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
-                }
+                intellisenseManager?.Dispose();
+                intellisenseManager = null;
+
+                Diagnostics.Clear();
 
                 ShellViewModel.Instance.InvalidateErrors();
 
@@ -173,7 +168,6 @@ namespace AvalonStudio.Controls
                 disposables.Dispose();
 
                 Model.TextDocument = null;
-                ShellViewModel.Instance.DocumentTabs.Documents.Remove(this);
             }));
 
             AddWatchCommand = ReactiveCommand.Create();
@@ -184,6 +178,7 @@ namespace AvalonStudio.Controls
             model.DocumentLoaded += (sender, e) =>
             {
                 model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
+                Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
 
                 foreach (var bgRenderer in languageServiceBackgroundRenderers)
                 {
@@ -215,30 +210,43 @@ namespace AvalonStudio.Controls
                     {
                         DocumentLineTransformers.Add(textTransformer);
                     }
+
+                    intellisenseManager = new IntellisenseManager(Model.Editor, Intellisense, Intellisense.CompletionAssistant, model.LanguageService, model.ProjectFile);
+
+                    EventHandler<KeyEventArgs> tunneledKeyUpHandler = (send, ee) =>
+                    {
+                        if (caretIndex > 0)
+                        {
+                            intellisenseManager.OnKeyUp(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                        }
+                    };
+
+                    EventHandler<KeyEventArgs> tunneledKeyDownHandler = (send, ee) =>
+                    {
+                        if (caretIndex > 0)
+                        {
+                            intellisenseManager.OnKeyDown(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                        }
+                    };
+
+                    EventHandler<TextInputEventArgs> tunneledTextInputHandler = (send, ee) =>
+                    {
+                        if (caretIndex > 0)
+                        {
+                            intellisenseManager.OnTextInput(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
+                        }
+                    };
+                    
+                    Model.Editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
+
+                    disposables.Add(Model.Editor.AddHandler(InputElement.KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel));
+                    disposables.Add(Model.Editor.AddHandler(InputElement.KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel));
+                    disposables.Add(Model.Editor.AddHandler(InputElement.TextInputEvent, tunneledTextInputHandler, RoutingStrategies.Bubble));
                 }
 
                 model.CodeAnalysisCompleted += (s, ee) =>
                 {
                     Diagnostics = model.CodeAnalysisResults.Diagnostics;
-
-                    foreach (var marker in Diagnostics)
-                    {
-                        if (marker.Length == 0)
-                        {
-                            var line = TextDocument.GetLineByOffset(marker.StartOffset);
-                            var endoffset = TextUtilities.GetNextCaretPosition(TextDocument, marker.StartOffset,
-                                TextUtilities.LogicalDirection.Forward, TextUtilities.CaretPositioningMode.WordBorderOrSymbol);
-
-                            if (endoffset == -1)
-                            {
-                                marker.Length = line.Length;
-                            }
-                            else
-                            {
-                                marker.EndOffset = endoffset;
-                            }
-                        }
-                    }
 
                     HighlightingData =
                         new ObservableCollection<OffsetSyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
@@ -247,12 +255,14 @@ namespace AvalonStudio.Controls
                     selectedIndexEntry = IndexItems.FirstOrDefault();
                     this.RaisePropertyChanged(nameof(SelectedIndexEntry));
 
-                    ShellViewModel.Instance.InvalidateErrors();                    
+                    ShellViewModel.Instance.InvalidateErrors();
                 };
 
                 model.ProjectFile.FileModifiedExternally += ProjectFile_FileModifiedExternally;
+
                 TextDocument = model.TextDocument;
-                this.RaisePropertyChanged(nameof(Title));
+
+                Title = Model.ProjectFile.Name;
             };
 
             model.TextChanged += (sender, e) =>
@@ -264,7 +274,7 @@ namespace AvalonStudio.Controls
                     ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
                 }
 
-                this.RaisePropertyChanged(nameof(Title));
+                IsDirty = model.IsDirty;
             };
 
             intellisense = new IntellisenseViewModel(model, this);
@@ -283,8 +293,17 @@ namespace AvalonStudio.Controls
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
             margins = new ObservableCollection<TextViewMargin>();
-            
-            dock = Dock.Right;
+
+            Dock = Dock.Right;
+        }
+
+        private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
+        {
+            if (intellisenseManager != null)
+            {
+                var location = TextDocument.GetLocation(caretIndex);
+                intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, EditorModel.UnsavedFiles);
+            }
         }
 
         private void ProjectFile_FileModifiedExternally(object sender, EventArgs e)
@@ -309,9 +328,7 @@ namespace AvalonStudio.Controls
         #endregion
 
         #region Properties
-
         private string tabCharacter;
-
         public string TabCharacter
         {
             get { return tabCharacter; }
@@ -343,7 +360,6 @@ namespace AvalonStudio.Controls
         }
 
         private string wordAtCaret;
-
         public string WordAtCaret
         {
             get { return wordAtCaret; }
@@ -401,7 +417,6 @@ namespace AvalonStudio.Controls
 
 
         private TextDocument textDocument;
-
         public TextDocument TextDocument
         {
             get { return textDocument; }
@@ -448,7 +463,6 @@ namespace AvalonStudio.Controls
         }
 
         private int caretIndex;
-
         public int CaretIndex
         {
             get { return caretIndex; }
@@ -458,6 +472,8 @@ namespace AvalonStudio.Controls
                 {
                     value = TextDocument.TextLength - 1;
                 }
+
+                bool hasChanged = value != caretIndex;
 
                 this.RaiseAndSetIfChanged(ref caretIndex, value);
                 ShellViewModel.Instance.StatusBar.Offset = value;
@@ -626,22 +642,6 @@ namespace AvalonStudio.Controls
             get { return diagnostics; }
             set { this.RaiseAndSetIfChanged(ref diagnostics, value); }
         }
-
-        public string Title
-        {
-            get
-            {
-                var result = Model.ProjectFile?.Name;
-
-                if (Model.IsDirty)
-                {
-                    result += '*';
-                }
-
-                return result;
-            }
-        }
-
         #endregion
 
         #region Commands
@@ -649,7 +649,6 @@ namespace AvalonStudio.Controls
         public ReactiveCommand<object> BeforeTextChangedCommand { get; }
         public ReactiveCommand<object> TextChangedCommand { get; }
         public ReactiveCommand<object> SaveCommand { get; }
-        public ReactiveCommand<object> CloseCommand { get; }
 
         // todo this menu item and command should be injected via debugging module.
         public ReactiveCommand<object> AddWatchCommand { get; }
@@ -674,7 +673,7 @@ namespace AvalonStudio.Controls
                 ignoreFileModifiedEvents = false;
             });
 
-            this.RaisePropertyChanged(nameof(Title));
+            IsDirty = Model.IsDirty;
         }
 
         public void ClearDebugHighlight()
