@@ -145,6 +145,11 @@ namespace AvalonStudio.Toolchains.Clang
         {
             var settings = GetSettings(project);
 
+            if(superProject != null && project.Type != ProjectType.StaticLibrary)
+            {
+                GenerateLinkerScript(superProject);
+            }
+
             var result = string.Empty;
 
             result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);
