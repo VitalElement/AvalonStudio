@@ -183,7 +183,7 @@
     <Compile Include="CompileSettingsFormViewModel.cs" />
     <Compile Include="GCCLinkSettings.cs" />
     <Compile Include="LinkerSettingsForm.paml.cs">
-      <DependentUpon>LinkerSettingsForm.paml</DependentUpon>
+      <DependentUpon>LinkerSettingsFormView.paml</DependentUpon>
     </Compile>
     <Compile Include="LinkerSettingsFormViewModel.cs" />
     <Compile Include="LocalGCCToolchain.cs" />
@@ -233,7 +233,7 @@
     <EmbeddedResource Include="CompileSettingsFormView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LinkerSettingsForm.paml">
+    <EmbeddedResource Include="LinkerSettingsFormView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
