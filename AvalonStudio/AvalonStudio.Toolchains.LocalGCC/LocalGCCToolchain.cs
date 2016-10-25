@@ -10,12 +10,23 @@ using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
 	public class LocalGCCToolchain : GCCToolchain
 	{
-		private string BaseDirectory
+        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        {
+            return true;
+        }
+
+        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        {
+            return true;
+        }
+
+        private string BaseDirectory
 		{
 			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC"); }
 		}
