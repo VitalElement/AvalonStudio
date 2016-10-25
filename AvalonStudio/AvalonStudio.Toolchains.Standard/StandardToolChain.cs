@@ -66,7 +66,7 @@ namespace AvalonStudio.Toolchains.Standard
 
 
 
-		public async Task<bool> Build(IConsole console, IProject project, string label = "")
+        public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
 		{
 			console.Clear();
 
@@ -80,6 +80,18 @@ namespace AvalonStudio.Toolchains.Standard
 			buildCount = 0;
 
 			var compiledProjects = new List<CompileResult>();
+
+            List<Definition> injectedDefines = new List<Definition>();
+
+            if (defines != null)
+            {
+                foreach (var define in defines)
+                {
+                    var injectableDefinition = new Definition() { Global = true, Value = define };
+                    (project as IStandardProject).Defines.Add(injectableDefinition);
+                    injectedDefines.Add(injectableDefinition);
+                }
+            }       
 
 			if (!terminateBuild)
 			{
@@ -148,6 +160,13 @@ namespace AvalonStudio.Toolchains.Standard
 			{
 				console.WriteLine("Build Failed");
 			}
+
+            foreach(var define in injectedDefines)
+            {
+                (project as IStandardProject).Defines.Remove(define);
+            }
+
+            project.Save();
 
 			return result;
 		}
