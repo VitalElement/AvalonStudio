@@ -12,7 +12,7 @@ namespace AvalonStudio.Toolchains
 	public interface IToolChain : IPlugin
 	{
 		IList<string> Includes { get; }
-		Task<bool> Build(IConsole console, IProject project, string label = "");
+		Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null);
 
 		Task Clean(IConsole console, IProject project);
 
