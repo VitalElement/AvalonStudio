@@ -378,11 +378,9 @@ namespace AvalonStudio
 			MinimalShell.Instance = container.GetExportedValue<IShell>();
 
 			Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
-
-			var result = Parser.Default
-				.ParseArguments
-				<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions,
-					TestOptions>(args).MapResult(
+            
+			var result = Parser.Default.ParseArguments
+				<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions, TestOptions>(args).MapResult(
 						(BuildOptions opts) => RunBuild(opts),
 						(AddOptions opts) => RunAdd(opts),
 						(AddReferenceOptions opts) => RunAddReference(opts),
