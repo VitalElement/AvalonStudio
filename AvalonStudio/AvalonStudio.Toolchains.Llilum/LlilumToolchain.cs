@@ -8,12 +8,23 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.Llilum
 {
 	public class LlilumToolchain : StandardToolChain
 	{
-		public override Version Version
+        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        {
+            return true;
+        }
+
+        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        {
+            return true;
+        }
+
+        public override Version Version
 		{
 			get { return new Version(1, 0, 0, 0); }
 		}
