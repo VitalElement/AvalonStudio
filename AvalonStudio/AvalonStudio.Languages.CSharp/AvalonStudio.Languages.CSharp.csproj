@@ -185,7 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BracketMatchingBackgroundRenderer.cs" />
-    <Compile Include="CppIndentationStrategy.cs" />
+    <Compile Include="CSharpIndentationStrategy.cs" />
     <Compile Include="CSharpLanguageService.cs" />
     <Compile Include="IndentationReformatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
