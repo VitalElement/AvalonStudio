@@ -33,7 +33,7 @@
 
         public CSharpLanguageService()
         {
-            IndentationStrategy = new CppIndentationStrategy();
+            IndentationStrategy = new CSharpIndentationStrategy();
             intellisenseJobRunner = new JobRunner();
 
             Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(new CancellationToken()); });

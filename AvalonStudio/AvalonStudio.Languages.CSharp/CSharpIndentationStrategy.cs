@@ -8,12 +8,12 @@ namespace AvalonStudio.Languages.CSharp
 	/// <summary>
 	///     Smart indentation for C#.
 	/// </summary>
-	public class CppIndentationStrategy : DefaultIndentationStrategy
+	public class CSharpIndentationStrategy : DefaultIndentationStrategy
 	{
 		/// <summary>
 		///     Creates a new CSharpIndentationStrategy and initializes the settings using the text editor options.
 		/// </summary>
-		//public CppIndentationStrategy(TextEditorOptions options)
+		//public CSharpIndentationStrategy(TextEditorOptions options)
 		//{
 		//    this.IndentationString = options.IndentationString;
 		//}
