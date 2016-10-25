@@ -307,7 +307,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
 			if (Model.ToolChain != null && Model.ToolChain is StandardToolChain)
 			{
-				LinkerArguments = (Model.ToolChain as StandardToolChain).GetLinkerArguments(Model as IStandardProject);
+				LinkerArguments = (Model.ToolChain as StandardToolChain).GetLinkerArguments(null, Model as IStandardProject);
 			}
 		}
 
