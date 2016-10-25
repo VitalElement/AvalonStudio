@@ -403,6 +403,9 @@
     <EmbeddedResource Include="Controls\SignatureHelpView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MetroWindowControlsTheme.paml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="libgit2-821131f.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -521,6 +524,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Styles\GlobalStyles.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Themes\Accents\DarkAccent.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
