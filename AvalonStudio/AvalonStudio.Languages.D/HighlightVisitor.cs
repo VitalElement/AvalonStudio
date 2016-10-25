@@ -1,16 +1,9 @@
-﻿using D_Parser.Dom;
-using D_Parser.Dom.Expressions;
-using D_Parser.Parser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AvalonStudio.Extensibility;
-using AvalonStudio.Utils;
-
-namespace AvalonStudio.Languages.D
+﻿namespace AvalonStudio.Languages.D
 {
+    using D_Parser.Dom;
+    using D_Parser.Dom.Expressions;
+    using D_Parser.Parser;
+
     static class DParserExtensions
     {
         public static void AddHighlight(this ISyntaxRegion region, HighlightType type, SyntaxHighlightDataList list)
