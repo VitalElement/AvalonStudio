@@ -17,7 +17,7 @@ namespace AvalonStudio
 {
 	internal class Program
 	{
-		private const string version = "1.0.0.26";
+		private const string version = "1.0.1.0";
 		private const string releaseName = "Gravity";
 
 		private static readonly ProgramConsole console = new ProgramConsole();
@@ -177,7 +177,7 @@ namespace AvalonStudio
 					(project.ToolChain as StandardToolChain).Jobs = options.Jobs;
 				}
 
-				var awaiter = project.ToolChain.Build(console, project, options.Label);
+				var awaiter = project.ToolChain.Build(console, project, options.Label, options.Defines);
 				awaiter.Wait();
 
 				stopWatch.Stop();
@@ -378,11 +378,9 @@ namespace AvalonStudio
 			MinimalShell.Instance = container.GetExportedValue<IShell>();
 
 			Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
-
-			var result = Parser.Default
-				.ParseArguments
-				<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions,
-					TestOptions>(args).MapResult(
+            
+			var result = Parser.Default.ParseArguments
+				<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions, TestOptions>(args).MapResult(
 						(BuildOptions opts) => RunBuild(opts),
 						(AddOptions opts) => RunAdd(opts),
 						(AddReferenceOptions opts) => RunAddReference(opts),

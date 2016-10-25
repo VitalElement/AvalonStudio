@@ -764,15 +764,6 @@ namespace AvalonStudio.TextEditor
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             TextView = e.NameScope.Find<TextView>("textView");
-            TextView.Cursor = new Cursor(StandardCursorType.Ibeam);
-
-            //textView.BackgroundRenderers.Clear();
-            //textView.DocumentLineTransformers.Clear();
-
-            //textView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer());
-            //textView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
-            //textView.BackgroundRenderers.Add(new SelectionBackgroundRenderer());
-            //textView.DocumentLineTransformers.Add(new SelectedWordTextLineTransformer(this));
 
             disposables.Add(TextDocumentProperty.Changed.Subscribe(args =>
             {
@@ -781,7 +772,6 @@ namespace AvalonStudio.TextEditor
                     // Todo unsubscribe these events.                 
                     TextDocument.Changing += (sender, ee) =>
                     {
-                        TextDocument?.UndoStack.StartUndoGroup();
                         TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
 
                         if (BeforeTextChangedCommand != null)
@@ -792,8 +782,6 @@ namespace AvalonStudio.TextEditor
 
                     TextDocument.Changed += (sender, ee) =>
                     {
-                        TextDocument?.UndoStack.EndUndoGroup();
-
                         InvalidateVisual();
 
                         LineHeight = TextView.CharSize.Height;
