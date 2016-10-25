@@ -378,20 +378,6 @@ namespace AvalonStudio.Languages.D
 
             dataAssociations.Add(file, association);
 
-            association.IntellisenseManager = new DIntellisenseManager(this, intellisenseControl, completionAssistant, file, editor);
-
-            association.TunneledKeyUpHandler = async (sender, e) =>
-            {
-                await intellisenseJobRunner.InvokeAsync(() => { association.IntellisenseManager.OnKeyUp(e).Wait(); });
-            };
-
-            association.TunneledKeyDownHandler = async (sender, e) =>
-            {
-                association.IntellisenseManager.OnKeyDown(e);
-
-                await intellisenseJobRunner.InvokeAsync(() => { association.IntellisenseManager.CompleteOnKeyDown(e).Wait(); });
-            };
-
             association.KeyUpHandler = (sender, e) =>
             {
                 if (editor.TextDocument == doc)
@@ -425,13 +411,8 @@ namespace AvalonStudio.Languages.D
                     }
                 }
             };
-
-            association.TextInputHandler = (sender, e) =>
-            {
-            };
-
-            editor.AddHandler(InputElement.KeyDownEvent, association.TunneledKeyDownHandler, RoutingStrategies.Tunnel);
-            editor.AddHandler(InputElement.KeyUpEvent, association.TunneledKeyUpHandler, RoutingStrategies.Tunnel);
+            
+            
             editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, RoutingStrategies.Tunnel);
 
             editor.TextInput += association.TextInputHandler;
@@ -524,14 +505,11 @@ namespace AvalonStudio.Languages.D
 
         }
 
-        public DIntellisenseManager IntellisenseManager { get; set; }
         public EditorData EditorContext { get; }
         public TextColoringTransformer TextColorizer { get; }
         public TextMarkerService TextMarkerService { get; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
-        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }
-        public EventHandler<KeyEventArgs> TunneledKeyUpHandler { get; set; }
-        public EventHandler<KeyEventArgs> TunneledKeyDownHandler { get; set; }
+        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }        
         public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
         public EventHandler<KeyEventArgs> KeyDownHandler { get; set; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
