@@ -14,8 +14,8 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
-	public class LocalGCCToolchain : GCCToolchain
-	{
+    public class LocalGCCToolchain : GCCToolchain
+    {
         public override async Task<bool> PreBuild(IConsole console, IProject project)
         {
             return true;
@@ -27,13 +27,26 @@ namespace AvalonStudio.Toolchains.LocalGCC
         }
 
         private string BaseDirectory
-		{
-			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC"); }
-		}
+        {
+            get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC"); }
+        }
 
         public override string Prefix => string.Empty;
 
-        public override string BinDirectory => Path.Combine(BaseDirectory, "bin");
+        public override string BinDirectory
+        {
+            get
+            {
+                if (Platform.PlatformIdentifier == PlatformID.Unix)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return Path.Combine(BaseDirectory, "bin");
+                }
+            }
+        }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
         {
