@@ -5,10 +5,20 @@ namespace AvalonStudio.Toolchains.Clang
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
+    using Standard;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Dynamic;
     using System.IO;
+    using System.Threading.Tasks;
+
+    public enum AssemblyFormat
+    {
+        Binary,
+        IntelHex,
+        Elf32
+    }
 
     public class ClangToolchain : GCCToolchain
     {
@@ -495,6 +505,101 @@ namespace AvalonStudio.Toolchains.Clang
             }
 
             return result;
+        }
+
+        public async Task<ProcessResult> ObjCopy(IConsole console, IProject project, LinkResult linkResult, AssemblyFormat format)
+        {
+            var result = new ProcessResult();
+
+            var startInfo = new ProcessStartInfo();
+            startInfo.FileName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension);
+
+            if (!System.IO.File.Exists(startInfo.FileName))
+            {
+                console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
+                result.ExitCode = -1;
+                return result;
+            }
+
+            string formatArg = "binary";
+
+            switch (format)
+            {
+                case AssemblyFormat.Binary:
+                    formatArg = "binary";
+                    break;
+
+                case AssemblyFormat.IntelHex:
+                    formatArg = "ihex";
+                    break;
+            }
+
+            string  outputExtension= ".bin";
+
+            switch (format)
+            {
+                case AssemblyFormat.Binary:
+                    outputExtension = ".bin";
+                    break;
+
+                case AssemblyFormat.IntelHex:
+                    outputExtension = ".hex";
+                    break;
+
+                case AssemblyFormat.Elf32:
+                    outputExtension = ".elf";
+                    break;
+            }
+
+            startInfo.Arguments = $"-O {formatArg} {linkResult.Executable} {Path.GetDirectoryName(linkResult.Executable)}\\{Path.GetFileNameWithoutExtension(linkResult.Executable)}{outputExtension}";
+
+            // Hide console window
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
+            startInfo.RedirectStandardInput = true;
+            startInfo.CreateNoWindow = true;
+
+
+            using (var process = Process.Start(startInfo))
+            {
+                process.OutputDataReceived += (sender, e) => { console.WriteLine(e.Data); };
+
+                process.ErrorDataReceived += (sender, e) => { console.WriteLine(e.Data); };
+
+                process.BeginOutputReadLine();
+
+                process.BeginErrorReadLine();
+
+                process.WaitForExit();
+
+                result.ExitCode = process.ExitCode;
+            }
+
+            return result;
+        }
+
+        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        {
+            return true;
+        }
+
+        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        {
+            if((project is IStandardProject) && (project as IStandardProject).Type == ProjectType.Executable)
+            {
+                var result = await ObjCopy(console, project, linkResult, AssemblyFormat.Binary);
+
+                if (result.ExitCode == 0)
+                {
+                    result = await ObjCopy(console, project, linkResult, AssemblyFormat.IntelHex);
+                }
+
+                return result.ExitCode == 0;
+            }
+
+
+            return true;
         }
     }
 }

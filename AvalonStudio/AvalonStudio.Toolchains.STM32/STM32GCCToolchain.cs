@@ -5,13 +5,25 @@ namespace AvalonStudio.Toolchains.STM32
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
+    using Standard;
     using System;
     using System.Collections.Generic;
     using System.Dynamic;
     using System.IO;
+    using System.Threading.Tasks;
 
     public class STM32GCCToolchain : GCCToolchain
 	{
+        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        {
+            return true;
+        }
+
+        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        {
+            return true;
+        }
+
         public override string BinDirectory => Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin");
         
         public string LinkerScript { get; set; }
