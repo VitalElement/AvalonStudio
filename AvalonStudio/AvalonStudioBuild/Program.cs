@@ -17,7 +17,7 @@ namespace AvalonStudio
 {
 	internal class Program
 	{
-		private const string version = "1.0.0.26";
+		private const string version = "1.0.1.0";
 		private const string releaseName = "Gravity";
 
 		private static readonly ProgramConsole console = new ProgramConsole();
@@ -177,7 +177,7 @@ namespace AvalonStudio
 					(project.ToolChain as StandardToolChain).Jobs = options.Jobs;
 				}
 
-				var awaiter = project.ToolChain.Build(console, project, options.Label);
+				var awaiter = project.ToolChain.Build(console, project, options.Label, options.Defines);
 				awaiter.Wait();
 
 				stopWatch.Stop();
