@@ -42,7 +42,7 @@ namespace AvalonStudio.Toolchains.LDC
 
 	    public IList<string> Includes { get; }
 
-	    public Task<bool> Build(IConsole console, IProject project, string label = "")
+	    public Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
 	    {
             var startInfo = new ProcessStartInfo();
 
