@@ -20,7 +20,7 @@ script:
   - cd AvalonBuild
   - git rm -rf .
   - git clean -fxd
-  - cp -a ../AvalonStudio/AvalonStudioBuild/bin/x86/Release/. ./
+  - cp -a ../AvalonStudioBuild/bin/x86/Release/. ./
   - git add .
   - git commit -m 'new CI revision.'
   - git push -f -q https://<VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null
