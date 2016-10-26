@@ -160,7 +160,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DIntellisenseManager.cs" />
+    <Compile Include="DKeywordTextHighlightTransformer.cs" />
     <Compile Include="DLanguageService.cs" />
     <Compile Include="HighlightVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
