@@ -40,7 +40,7 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return typeof(BlankOmniSharpProjectTemplate);
             }
         }
 
