@@ -27,7 +27,7 @@ script:
   - cp -a ./AvalonStudioBuild/bin/Release/. ./AvalonBuild/
   - cd AvalonBuild
   - git add .
-  - git commit -m 'new CI revision.'
+  - git commit -m 'new CI revision.' || true
   - git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null
   - cd ..
   - cd AvalonStudioBuild
@@ -36,8 +36,8 @@ script:
 
 after_success:
   #- if [ "$TRAVIS_BRANCH" == "master" ]; then
-  #  docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-  #  docker push vitalelement/avalon;
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+  - docker push vitalelement/avalon;
   #  fi
 notifications:
   webhooks:
