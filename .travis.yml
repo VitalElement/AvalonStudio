@@ -22,7 +22,9 @@ script:
   - git clean -fxd
   - cd ..
   - pwd
-  - cp -a ./AvalonStudioBuild/bin/Release/. ./AvalonBuild
+  - ls ./AvalonStudioBuild/bin/
+  - ls ./AvalonStudioBuild/bin/Release/
+  - cp -a ./AvalonStudioBuild/bin/Release/. ./AvalonBuild/
   - cd AvalonBuild
   - git add .
   - git commit -m 'new CI revision.'
