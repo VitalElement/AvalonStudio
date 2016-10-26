@@ -14,11 +14,20 @@ namespace AvalonStudio.Projects.TypeScript
 {
     public class TypeScriptProject : FileSystemProject, IProject
     {
-        public static TypeScriptProject Create(ISolution solution, string path)
+        public static TypeScriptProject Create(ISolution solution, string directory)
         {
             TypeScriptProject result = new TypeScriptProject();
-            result.Solution = solution;
-            result.LoadFiles();
+            var projectFileLocation = Path.Combine(directory, Path.GetDirectoryName(directory));
+
+            if (!System.IO.File.Exists(projectFileLocation))
+            {
+                result.Solution = solution;
+                result.Location = projectFileLocation;
+
+                result.Save();
+
+                result.LoadFiles();
+            }
 
             return result;
         }
