@@ -8,7 +8,7 @@ using AvalonStudio.Shell;
 
 namespace AvalonStudio.Toolchains.Clang
 {
-	public class ClangCPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
+	public class ClangCPlusPlusProjectTemplate : BlankCPlusPlusLanguageTemplate
 	{
 		public override string DefaultProjectName
 		{
