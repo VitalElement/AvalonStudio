@@ -514,7 +514,7 @@ namespace AvalonStudio.Toolchains.Clang
             var startInfo = new ProcessStartInfo();
             startInfo.FileName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension);
 
-            if (!System.IO.File.Exists(startInfo.FileName))
+            if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
             {
                 console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
                 result.ExitCode = -1;
