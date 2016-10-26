@@ -44,8 +44,8 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             shell.AddDocument(this);
             shell.SolutionChanged += ShellOnSolutionChanged;
 
-            LoadNewsFeed().GetAwaiter().GetResult();
-            LoadVideoFeed().GetAwaiter().GetResult();
+            LoadNewsFeed();//.GetAwaiter().GetResult();
+            LoadVideoFeed();//.GetAwaiter().GetResult();
 
             var solutionExplorer = IoC.Get<ISolutionExplorer>();
 
