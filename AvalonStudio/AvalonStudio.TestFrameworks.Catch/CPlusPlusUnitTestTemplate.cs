@@ -14,7 +14,7 @@ using AvalonStudio.Utils;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
-	public class CPlusPlusUnitTestTemplate : BlankCPlusPlusLangaguageTemplate, IConsole
+	public class CPlusPlusUnitTestTemplate : BlankCPlusPlusLanguageTemplate, IConsole
 	{
 		public override string DefaultProjectName
 		{

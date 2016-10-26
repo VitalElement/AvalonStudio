@@ -59,7 +59,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public Type BaseTemplateType
         {
-            get { return typeof(BlankCPlusPlusLangaguageTemplate); }
+            get { return typeof(BlankCPlusPlusLanguageTemplate); }
         }
 
         public IIndentationStrategy IndentationStrategy { get; }        
