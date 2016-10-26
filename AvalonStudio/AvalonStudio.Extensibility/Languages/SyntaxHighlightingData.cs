@@ -62,6 +62,14 @@ namespace AvalonStudio.Languages
     {
         public LineColumnSyntaxHighlightingData(int startLine, int startColumn, int endLine, int endColumn, HighlightType type)
         {
+            if (startLine == endLine)
+            {
+                if (endColumn < startColumn)
+                {
+                    throw new ArgumentException("endColumn must be larger than startColumn");
+                }
+            }
+
             StartLine = startLine;
             StartColumn = startColumn;
             EndLine = endLine;
