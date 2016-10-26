@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="BlankTypeScriptProjectTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeScriptProject.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
