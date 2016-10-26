@@ -140,7 +140,7 @@ namespace AvalonStudio.Platforms
                         break;
 
                     case PlatformID.MacOSX:
-                        result = Constants.MacOSXPlatformString;
+                        result = Constants.MacOSPlatformString;
                         break;
 
                     default:
