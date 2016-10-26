@@ -34,7 +34,7 @@ namespace AvalonStudio
 			HelpText = "Provides a label to append to the output file name of the build process. Usually a build number.")]
 		public string Label { get; set; }
 
-        [Option('D', "define", Required = false, Separator = ';')]
+        [Option('D', "define", Required = false, Separator = ':')]
         public IEnumerable<string> Defines { get; set; }
 
         [Option('j', "jobs", Required = false, Default = 4, HelpText = "Number of jobs for compiling.")]
