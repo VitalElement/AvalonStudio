@@ -185,7 +185,10 @@ namespace AvalonStudio.Toolchains.LocalGCC
 					{
 						result += "-fno-exceptions ";
 					}
-				}
+
+                    result += "-std=c++14 ";
+
+                }
 			}
 
 			// TODO make this an option.

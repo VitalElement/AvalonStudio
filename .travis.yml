@@ -1,5 +1,7 @@
 language: csharp
 sudo: required
+services:
+  - docker
 os:
   - linux
 mono:
@@ -8,9 +10,33 @@ solution: AvalonStudio.sln
 before_install:
   - cd AvalonStudio 
   - sudo ./dependencies.sh
+
 install:  
 script:
   - sudo ./buildmono.sh
+
+  #- if [ "$TRAVIS_BRANCH" == "master" ]; then
+  - git clone https://github.com/VitalElement/AvalonBuild.git
+  - cd AvalonBuild
+  - git rm -rf .
+  - git clean -fxd
+  - cd ..
+  - cp -a ./AvalonStudioBuild/bin/Release/. ./AvalonBuild/
+  - cd AvalonBuild
+  - git add .
+  - git commit -m 'new CI revision.' || true
+  - git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null
+  - cd ..
+  - cd AvalonStudioBuild
+  - docker build --no-cache -t vitalelement/avalon:cibuild .
+  # fi
+
+after_success:
+  #- if [ "$TRAVIS_BRANCH" == "master" ]; then
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+  - docker images
+  - docker push vitalelement/avalon:cibuild;
+  #  fi
 notifications:
   webhooks:
     urls:
