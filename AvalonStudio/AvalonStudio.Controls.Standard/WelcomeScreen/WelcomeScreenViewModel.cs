@@ -44,19 +44,19 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             shell.AddDocument(this);
             shell.SolutionChanged += ShellOnSolutionChanged;
 
-            LoadNewsFeed();
-            LoadVideoFeed();
+            LoadNewsFeed().GetAwaiter().GetResult();
+            LoadVideoFeed().GetAwaiter().GetResult();
 
-            var soultionExplorer = IoC.Get<ISolutionExplorer>();
+            var solutionExplorer = IoC.Get<ISolutionExplorer>();
 
 
             NewSolution.Subscribe(_ => {
-                soultionExplorer.NewSolution();
+                solutionExplorer.NewSolution();
             });
 
 
             OpenSolution.Subscribe(_ => {
-                soultionExplorer.OpenSolution();
+                solutionExplorer.OpenSolution();
             });
         }
 
