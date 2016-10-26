@@ -23,6 +23,7 @@ using D_Parser.Completion;
 using D_Parser.Resolver;
 using D_Parser.Misc;
 using Avalonia.Interactivity;
+using AvalonStudio.Utils;
 using D_Parser.Refactoring;
 
 namespace AvalonStudio.Languages.D
@@ -182,6 +183,19 @@ namespace AvalonStudio.Languages.D
             return ast;
         }
 
+        private HighlightType DTokenToHighlightType(byte dtoken)
+        {
+            switch (dtoken)
+            {
+                case DTokens.Import:
+                    return HighlightType.PreProcessor;
+
+                default:
+                    return HighlightType.Keyword;                   
+
+            }
+        }
+
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
@@ -195,9 +209,9 @@ namespace AvalonStudio.Languages.D
                 var ast = GetAndParseModule(file, unsavedFiles, token =>
                 {
                     if (token.Kind >= DTokens.Align && token.Kind <= DTokens.__gshared)
-                    {
-                        highlightingVisitor.Highlights.Add(new LineColumnSyntaxHighlightingData(token.Location.Line, token.Location.Column, token.EndLocation.Line, token.EndLocation.Column, HighlightType.Keyword));
-                    }
+                    {                                                
+                        highlightingVisitor.Highlights.Add(new LineColumnSyntaxHighlightingData(token.Location.Line, token.Location.Column, token.EndLocation.Line, token.EndLocation.Column, DTokenToHighlightType(token.Kind)));
+                    }                    
                 });
 
                 associatedData.EditorContext.SyntaxTree = ast;                                
@@ -208,7 +222,7 @@ namespace AvalonStudio.Languages.D
 
                 var highlights = highlightingVisitor.Highlights;                         
 
-                var locationsToHighlight = TypeReferenceFinder.Scan(associatedData.EditorContext, new CancellationToken());
+                var locationsToHighlight = TypeReferenceFinder.Scan(associatedData.EditorContext, new CancellationToken()); // Are you sure about that? Could this only be finding references in the edited text? Try breakpointing right when application starts
 
                 int startLine = 0;
                 int startColumn = 0;
@@ -232,7 +246,9 @@ namespace AvalonStudio.Languages.D
                                 {
                                     continue;                                    
                                 }
-                                
+
+                                ident = n.Name;
+
                                 startLine = n.NameLocation.Line;
                                 startColumn = n.NameLocation.Column;
 
@@ -248,6 +264,8 @@ namespace AvalonStudio.Languages.D
                                 {
                                     continue;
                                 }
+
+                                ident = tp.Name;
 
                                 startLine = tp.NameLocation.Line;
                                 startColumn = tp.NameLocation.Column;
@@ -289,7 +307,7 @@ namespace AvalonStudio.Languages.D
             return result;
         }
 
-        public static HighlightType GetHighlightType(string ident, byte type)
+        public static HighlightType GetHighlightType(string ident, byte type) 
         {
             switch (type)
             {
@@ -322,6 +340,9 @@ namespace AvalonStudio.Languages.D
                     {
                         return HighlightType.ClassName;
                     }
+
+                case DTokens.Import:
+                    return HighlightType.PreProcessor;
 
                 case (byte)TypeReferenceKind.Variable:                     
                     return HighlightType.Identifier;
@@ -411,16 +432,88 @@ namespace AvalonStudio.Languages.D
                     }
                 }
             };
-            
-            
+
+            association.TextInputHandler = (sender, e) =>
+            {
+                if (editor.TextDocument == doc)
+                {
+                    OpenBracket(editor, editor.TextDocument, e.Text);
+                    CloseBracket(editor, editor.TextDocument, e.Text);
+
+                    switch (e.Text)
+                    {
+                        case "}":
+                        case ";":
+                            editor.CaretIndex = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+                            break;
+
+                        case "{":
+                            var lineCount = editor.TextDocument.LineCount;
+                            var offset = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+
+                            // suggests clang format didnt do anything, so we can assume not moving to new line.
+                            if (lineCount != editor.TextDocument.LineCount)
+                            {
+                                if (offset <= editor.TextDocument.TextLength)
+                                {
+                                    var newLine = editor.TextDocument.GetLineByOffset(offset);
+                                    editor.CaretIndex = newLine.PreviousLine.EndOffset;
+                                }
+                            }
+                            else
+                            {
+                                editor.CaretIndex = offset;
+                            }
+                            break;
+                    }
+                }
+            };
+
+
             editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, RoutingStrategies.Tunnel);
 
             editor.TextInput += association.TextInputHandler;
         }
 
+        private void OpenBracket(TextEditor.TextEditor editor, TextDocument document, string text)
+        {
+            if (text[0].IsOpenBracketChar() && editor.CaretIndex <= document.TextLength && editor.CaretIndex > 0)
+            {
+                var nextChar = ' ';
+
+                if (editor.CaretIndex != document.TextLength)
+                {
+                    document.GetCharAt(editor.CaretIndex);
+                }
+
+                if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
+                {
+                    document.Insert(editor.CaretIndex, text[0].GetCloseBracketChar().ToString());
+                }
+            }
+        }
+
+        private void CloseBracket(TextEditor.TextEditor editor, TextDocument document, string text)
+        {
+            if (text[0].IsCloseBracketChar() && editor.CaretIndex < document.TextLength && editor.CaretIndex > 0)
+            {
+                if (document.GetCharAt(editor.CaretIndex) == text[0])
+                {
+                    document.Replace(editor.CaretIndex - 1, 1, string.Empty);
+                }
+            }
+        }
+
         public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
         {
-            throw new NotImplementedException();
+            var association = GetAssociatedData(file);
+
+            editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
+
+            editor.TextInput -= association.TextInputHandler;
+
+            // TODO dispose D AST
+            dataAssociations.Remove(file);
         }
 
         public bool CanHandle(ISourceFile file)
@@ -444,7 +537,7 @@ namespace AvalonStudio.Languages.D
 
         public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
-            throw new NotImplementedException();
+            return cursor;
         }
 
         public int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)

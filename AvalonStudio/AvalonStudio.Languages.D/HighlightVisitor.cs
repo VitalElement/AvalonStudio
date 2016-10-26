@@ -60,14 +60,14 @@
 
         public override void Visit(IdentifierDeclaration td)
         {
-            td.AddHighlight(HighlightType.ClassName, Highlights);
+            td.AddHighlight(HighlightType.ClassName, Highlights); // This one makes the to in to!string green
             base.Visit(td);
         }
 
-        public override void Visit(ImportStatement s)
+        public override void Visit(IdentityExpression td)
         {
-            s.AddHighlight(HighlightType.Keyword, Highlights);
-            base.Visit(s);
+            td.AddHighlight(HighlightType.Debug, Highlights);
+            base.Visit(td);
         }
 
         public override void Visit(ModuleStatement s)
@@ -88,12 +88,22 @@
             base.Visit(x);
         }
 
+        public override void VisitTemplateParameter(TemplateParameter tp) // I tried these, none of... These ones work: 
+        {
+            base.VisitTemplateParameter(tp);
+        }
+
 
         public override void Visit(IdentifierExpression x)
         {
             switch (x.Format)
             {
                 case D_Parser.Parser.LiteralFormat.None:
+                    break;
+
+                case D_Parser.Parser.LiteralFormat.Scalar:
+                case D_Parser.Parser.LiteralFormat.FloatingPoint:
+                    x.AddHighlight(HighlightType.NumericLiteral, Highlights);
                     break;
 
                 default:
@@ -112,6 +122,13 @@
             }
 
             base.Visit(n);
+        }
+
+        public override void Visit(TemplateAliasParameter p)
+        {
+            p.AddHighlight(HighlightType.Debug, Highlights);
+
+            base.Visit(p);
         }
 
         //public override void Visit(DClassLike x)
@@ -139,9 +156,9 @@
         //    }
 
         //    Highlights.Add(new LineColumnSyntaxHighlightingData(x.Location.Line, x.Location.Column, x.Location.Line, x.Location.Column + 5, HighlightType.Keyword));
-            //Highlights.Add(x.ToHighlight(HighlightType.ClassName));
+        //Highlights.Add(x.ToHighlight(HighlightType.ClassName));
 
-       //     base.Visit(x);
-       // }
+        //     base.Visit(x);
+        // }
     }
 }

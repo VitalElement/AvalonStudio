@@ -21,8 +21,10 @@ namespace AvalonStudio.Languages.Highlighting
             IdentifierBrush = Brush.Parse("#D4D4D4");
             KeywordBrush = Brush.Parse("#569CD6");
             LiteralBrush = Brush.Parse("#D69D85");
+            NumericLiteralBrush = Brush.Parse("#B5CEA8");
             PunctuationBrush = Brush.Parse("#D4D4D4");
             UserTypeBrush = Brush.Parse("#4BB289");
+            PreProcessorBrush = Brush.Parse("Pink");
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
@@ -35,11 +37,15 @@ namespace AvalonStudio.Languages.Highlighting
 
         public IBrush LiteralBrush { get; set; }
 
+        public IBrush NumericLiteralBrush { get; set; }
+
         public IBrush UserTypeBrush { get; set; }
 
         public IBrush CallExpressionBrush { get; set; }
 
         public IBrush CommentBrush { get; set; }
+
+        public IBrush PreProcessorBrush { get; set; }
 
         public event EventHandler<EventArgs> DataChanged;
 
@@ -152,6 +158,18 @@ namespace AvalonStudio.Languages.Highlighting
 
                 case HighlightType.CallExpression:
                     result = CallExpressionBrush;
+                    break;
+
+                case HighlightType.PreProcessor:
+                    result = PreProcessorBrush;
+                    break;
+
+                case HighlightType.NumericLiteral:
+                    result = NumericLiteralBrush;
+                    break;
+
+                case HighlightType.Debug:
+                    result = Brushes.Cyan;
                     break;
 
                 default:
