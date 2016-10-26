@@ -182,7 +182,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlankCPlusPlusLangaguageTemplate.cs" />
+    <Compile Include="BlankCPlusPlusLanguageTemplate.cs" />
     <Compile Include="ClassCodeTemplate.cs" />
     <Compile Include="ClassTemplateSettingsView.paml.cs">
       <DependentUpon>ClassTemplateSettingsView.paml</DependentUpon>
