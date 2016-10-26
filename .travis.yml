@@ -21,6 +21,7 @@ script:
   - git rm -rf .
   - git clean -fxd
   - cd ..
+  - pwd
   - cp -a /AvalonStudioBuild/bin/x86/Release/. ./AvalonBuild
   - cd AvalonBuild
   - git add .
@@ -34,7 +35,7 @@ script:
 after_success:
   #- if [ "$TRAVIS_BRANCH" == "master" ]; then
   #  docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-  #  docker push USER/REPO;
+  #  docker push vitalelement/avalon;
   #  fi
 notifications:
   webhooks:
