@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlankOmniSharpProjectTemplate.cs" />
     <Compile Include="OmniSharpProject.cs" />
     <Compile Include="OmniSharpSolution.cs" />
     <Compile Include="OmniSharp\AutoCompleteOmniSharpRequest.cs" />
