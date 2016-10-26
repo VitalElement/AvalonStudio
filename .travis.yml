@@ -29,7 +29,7 @@ script:
   - git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null
   - cd ..
   - cd AvalonStudioBuild
-  - docker build --no-cache -t vitalelement/avalon .
+  - docker build --no-cache -t vitalelement/avalon:cibuild .
   # fi
 
 after_success:
