@@ -16,16 +16,16 @@ script:
   - sudo ./buildmono.sh
 
   #- if [ "$TRAVIS_BRANCH" == "master" ]; then
-    - git clone https://github.com/VitalElement/AvalonBuild.git
-    - cd AvalonBuild
-    - git rm -rf .
-    - git clean -fxd
-    - cp ../AvalonStudio/AvalonStudioBuild/bin/x86/Release/*.* ./
-    - git add .
-    - git commit -m 'new CI revision.'
-    - git push
-    - docker build -t --no-cache AvalonStudio/AvalonStudioBuild .
-   # fi
+  - git clone https://github.com/VitalElement/AvalonBuild.git
+  - cd AvalonBuild
+  - git rm -rf .
+  - git clean -fxd
+  - cp ../AvalonStudio/AvalonStudioBuild/bin/x86/Release/*.* ./
+  - git add .
+  - git commit -m 'new CI revision.'
+  - git push
+  - docker build -t --no-cache AvalonStudio/AvalonStudioBuild .
+  # fi
 
 after_success:
   #- if [ "$TRAVIS_BRANCH" == "master" ]; then
