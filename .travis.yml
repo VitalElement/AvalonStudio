@@ -20,10 +20,12 @@ script:
   - cd AvalonBuild
   - git rm -rf .
   - git clean -fxd
-  - cp -a ../AvalonStudioBuild/bin/x86/Release/. ./
+  - cd ..
+  - cp -a /AvalonStudioBuild/bin/x86/Release/. ./AvalonBuild
+  - cd AvalonBuild
   - git add .
   - git commit -m 'new CI revision.'
-  - git push -f -q https://<VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null
+  - git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null
   - cd ..
   - cd AvalonStudioBuild
   - docker build --no-cache -t vitalelement/avalon .
