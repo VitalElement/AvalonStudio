@@ -8,7 +8,7 @@ namespace AvalonStudio.Languages.CSharp
 {
 	internal sealed class IndentationSettings
 	{
-		public string IndentString = "   ";
+		public string IndentString = new string(' ', 4);
 
 		/// <summary>Leave empty lines empty.</summary>
 		public bool LeaveEmptyLines = true;
@@ -46,11 +46,11 @@ namespace AvalonStudio.Languages.CSharp
 			wordBuilder = new StringBuilder();
 			blocks = new Stack<Block>();
 			block = new Block();
-			block.InnerIndent = "";
-			block.OuterIndent = "";
+			block.InnerIndent = string.Empty;
+			block.OuterIndent = string.Empty;
 			block.Bracket = '{';
 			block.Continuation = false;
-			block.LastWord = "";
+			block.LastWord = string.Empty;
 			block.OneLineBlock = 0;
 			block.PreviousOneLineBlock = 0;
 			block.StartLine = 0;
@@ -512,7 +512,7 @@ namespace AvalonStudio.Languages.CSharp
 				InnerIndent += indentationString;
 				Continuation = false;
 				ResetOneLineBlock();
-				LastWord = "";
+				LastWord = string.Empty;
 			}
 
 			public override string ToString()
