@@ -105,7 +105,8 @@ namespace AvalonStudio.Platforms
         {
             get
             {
-                return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                //This is ~/AvalonStudio on Unix, and %userprofile%\AvalonStudio on Windows
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AvalonStudio");
             }
         }
 
