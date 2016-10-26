@@ -25,8 +25,7 @@ script:
   - git commit -m 'new CI revision.'
   - git push -f -q https://<VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null
   - cd ..
-  - pwd
-  - cd AvalonStudio/AvalonStudioBuild
+  - cd AvalonStudioBuild
   - docker build --no-cache -t vitalelement/avalon .
   # fi
 
