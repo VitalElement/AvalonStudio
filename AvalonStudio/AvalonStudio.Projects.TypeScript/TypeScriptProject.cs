@@ -9,7 +9,7 @@ using System.IO;
 
 namespace AvalonStudio.Projects.TypeScript
 {
-    public class TypeScriptProject : FileSystemProject
+    public class TypeScriptProject : FileSystemProject, IProject
     {
         public TypeScriptProject() : base(true)
         {
