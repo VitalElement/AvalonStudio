@@ -1,16 +1,28 @@
 ﻿using AvalonStudio.Debugging;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
+using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 
 namespace AvalonStudio.Projects.TypeScript
 {
     public class TypeScriptProject : FileSystemProject, IProject
     {
+        public static TypeScriptProject Create(ISolution solution, string path)
+        {
+            TypeScriptProject result = new TypeScriptProject();
+            result.Solution = solution;
+            result.LoadFiles();
+
+            return result;
+        }
+
         public TypeScriptProject() : base(true)
         {
         }
@@ -56,7 +68,17 @@ namespace AvalonStudio.Projects.TypeScript
         public override ITestFramework TestFramework { get; set; }
 
         //TODO: Set up TS toolchain
-        public override IToolChain ToolChain { get; set; }
+        public override IToolChain ToolChain
+        {
+            get
+            {
+                return IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.TypeScriptToolchain");
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
 
         public override dynamic ToolchainSettings { get; set; }
 
