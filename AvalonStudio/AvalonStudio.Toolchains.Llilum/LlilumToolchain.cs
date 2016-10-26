@@ -56,7 +56,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.FileName = Path.Combine(BaseDirectory, "Roslyn", "csc.exe");
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -105,7 +105,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			startInfo.FileName = Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug",
 				"Microsoft.Zelig.Compiler.exe");
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -153,7 +153,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.FileName = Path.Combine(BaseDirectory, "LLVM", "llc.exe");
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -301,7 +301,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 				startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-				if (!System.IO.File.Exists(startInfo.FileName))
+				if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 				{
 					result.ExitCode = -1;
 					console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
@@ -418,7 +418,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				result.ExitCode = -1;
 				console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
@@ -527,7 +527,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			var startInfo = new ProcessStartInfo();
 			startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-size.exe");
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
 				result.ExitCode = -1;

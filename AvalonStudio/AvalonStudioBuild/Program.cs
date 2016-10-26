@@ -104,15 +104,24 @@ namespace AvalonStudio
 			{
 				if (project.TestFramework != null)
 				{
-					project.ToolChain.Build(console, project, "").Wait();
+                    var buildTask = project.ToolChain.Build(console, project, "");
 
-					var awaiter = project.TestFramework.EnumerateTestsAsync(project);
-					awaiter.Wait();
+                    buildTask.Wait();
 
-					foreach (var test in awaiter.Result)
-					{
-						tests.Add(test);
-					}
+                    if (buildTask.Result)
+                    {
+                        var awaiter = project.TestFramework.EnumerateTestsAsync(project);
+                        awaiter.Wait();
+
+                        foreach (var test in awaiter.Result)
+                        {
+                            tests.Add(test);
+                        }
+                    }
+                    else
+                    {
+                        result = 2;
+                    }
 				}
 			}
 
