@@ -56,7 +56,7 @@ namespace AvalonStudio.Toolchains.GCC
             startInfo.EnvironmentVariables["Path"] = BinDirectory;
             startInfo.WorkingDirectory = file.CurrentDirectory;
 
-            if (!System.IO.File.Exists(startInfo.FileName))
+            if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
             {
                 result.ExitCode = -1;
                 console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
@@ -122,7 +122,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-            if (!System.IO.File.Exists(startInfo.FileName))
+            if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
             {
                 result.ExitCode = -1;
                 console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
@@ -232,7 +232,7 @@ namespace AvalonStudio.Toolchains.GCC
             var startInfo = new ProcessStartInfo();
             startInfo.FileName = Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
 
-            if (!System.IO.File.Exists(startInfo.FileName))
+            if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
             {
                 console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
                 result.ExitCode = -1;
