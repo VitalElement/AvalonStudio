@@ -23,8 +23,9 @@ script:
   - cp ../AvalonStudio/AvalonStudioBuild/bin/x86/Release/*.* ./
   - git add .
   - git commit -m 'new CI revision.'
-  - git push
-  - docker build -t --no-cache AvalonStudio/AvalonStudioBuild .
+  - git push -f -q https://<VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null
+  - cd AvalonStudio/AvalonStudioBuild
+  - docker build --no-cache -t vitalelement/avalon .
   # fi
 
 after_success:
