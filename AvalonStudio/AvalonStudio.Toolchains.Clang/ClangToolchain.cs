@@ -512,9 +512,9 @@ namespace AvalonStudio.Toolchains.Clang
             var result = new ProcessResult();
 
             var startInfo = new ProcessStartInfo();
-            startInfo.FileName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension);
+            startInfo.FileName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension); 
 
-            if (!System.IO.File.Exists(startInfo.FileName))
+            if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
             {
                 console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
                 result.ExitCode = -1;
@@ -551,7 +551,9 @@ namespace AvalonStudio.Toolchains.Clang
                     break;
             }
 
-            startInfo.Arguments = $"-O {formatArg} {linkResult.Executable} {Path.GetDirectoryName(linkResult.Executable)}\\{Path.GetFileNameWithoutExtension(linkResult.Executable)}{outputExtension}";
+            startInfo.Arguments = $"-O {formatArg} {linkResult.Executable} {Path.GetDirectoryName(linkResult.Executable)}{Platform.DirectorySeperator}{Path.GetFileNameWithoutExtension(linkResult.Executable)}{outputExtension}";
+
+            console.WriteLine($"Converting to {format.ToString()}");
 
             // Hide console window
             startInfo.UseShellExecute = false;
