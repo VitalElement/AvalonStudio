@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.TypeScript
@@ -11,9 +11,25 @@ namespace AvalonStudio.Projects.TypeScript
 
         public string Title => "Empty TypeScript Project";
 
-        public Task<IProject> Generate(ISolution solution, string name)
+        public async Task<IProject> Generate(ISolution solution, string name)
         {
-            throw new NotImplementedException();
+            var location = Path.Combine(solution.CurrentDirectory, name);
+
+            if (!Directory.Exists(location))
+            {
+                Directory.CreateDirectory(location);
+            }
+
+            IProject project = TypeScriptProject.Create(solution, location);
+
+            project = solution.AddProject(project);
+
+            if (solution.StartupProject == null)
+            {
+                solution.StartupProject = project;
+            }
+
+            return project;
         }
     }
 }
