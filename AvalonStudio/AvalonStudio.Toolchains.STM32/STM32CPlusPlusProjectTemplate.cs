@@ -8,7 +8,7 @@ using AvalonStudio.Shell;
 
 namespace AvalonStudio.Toolchains.STM32
 {
-    public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
+    public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLanguageTemplate
     {
         public override string DefaultProjectName
         {
