@@ -72,12 +72,12 @@
         {
             if (this.debugger != null)
             {
-                this.debugger.StateChanged -= Debugger_StateChanged;
+                //this.debugger.StateChanged -= Debugger_StateChanged;
             }
 
             if (debugger != null)
             {
-                debugger.StateChanged += Debugger_StateChanged;
+                //debugger.StateChanged += Debugger_StateChanged;
             }
 
             this.debugger = debugger;
