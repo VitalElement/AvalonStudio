@@ -46,7 +46,7 @@ namespace AvalonStudio.Languages.TypeScript
             return result;
         }
 
-        public Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
+        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
         {
             throw new NotImplementedException();
         }
@@ -89,27 +89,42 @@ namespace AvalonStudio.Languages.TypeScript
             throw new NotImplementedException();
         }
 
-        public Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        public async Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
         {
             throw new NotImplementedException();
         }
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file, TextEditor.Document.TextDocument textDocument)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return new CodeAnalysisResults
+            {
+                Diagnostics = new TextEditor.Document.TextSegmentCollection<Diagnostic>
+                {
+                    new Diagnostic
+                    {
+                        Project = file.Project,
+                        Line = 1,
+                        Spelling = "Code analysis is not yet supported for TypeScript. Use with caution.",
+                        StartOffset = 0,
+                        File = file.Name,
+                        Level = DiagnosticLevel.Warning,
+                    }
+                }
+            };
         }
 
-        public Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
+        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
             throw new NotImplementedException();
         }
