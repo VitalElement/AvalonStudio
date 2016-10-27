@@ -507,7 +507,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\grip_pattern.png" />
-    <Content Include="icon.ico" />
+    <EmbeddedResource Include="icon.ico" />
     <EmbeddedResource Include="icon.png" />
     <Content Include="readme.txt" />
   </ItemGroup>
