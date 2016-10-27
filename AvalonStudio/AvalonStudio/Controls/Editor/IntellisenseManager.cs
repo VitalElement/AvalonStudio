@@ -227,12 +227,15 @@
 
                     editor.TextDocument.BeginUpdate();
 
-                    editor.TextDocument.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
-                            intellisenseControl.SelectedCompletion.Title);
+                    if (caretIndex - intellisenseStartedAt - offset > 0)
+                    {
+                        editor.TextDocument.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
+                                intellisenseControl.SelectedCompletion.Title);
 
-                    caretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
+                        caretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
 
-                    editor.CaretIndex = caretIndex;
+                        editor.CaretIndex = caretIndex;
+                    }
 
                     editor.TextDocument.EndUpdate();
 
