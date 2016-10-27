@@ -4,6 +4,7 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -151,7 +152,8 @@ namespace AvalonStudio.Projects.TypeScript
 
         public override void Save()
         {
-            throw new NotImplementedException();
+            //TODO: Anything with references?
+            SerializedObject.Serialize(Location, this); //Write the project
         }
     }
 }
