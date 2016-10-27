@@ -5,9 +5,12 @@ using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 
@@ -19,39 +22,60 @@ namespace AvalonStudio.Projects.TypeScript
         {
             TypeScriptProject result = new TypeScriptProject();
 
+            var projectName = Path.GetDirectoryName(directory);
+
             //Create new project with default name and extension
-            var projectFileLocation = Path.Combine(directory, Path.GetDirectoryName(directory) + $".{result.Extension}");
+            var projectFileContainingDir = Path.Combine(directory, projectName);
+            var projectFileLocation = Path.Combine(projectFileContainingDir, projectName + $".{result.Extension}");
 
-            if (!System.IO.File.Exists(projectFileLocation))
-            {
-                result.Solution = solution;
-                result.Location = projectFileLocation;
+            result.Solution = solution;
+            result.Location = projectFileLocation;
 
-                result.Save();
+            result.Save();
 
-                result.LoadFiles();
-            }
+            result.LoadFiles();
+
+            return result;
+        }
+
+        public override IProject Load(ISolution solution, string filename)
+        {
+            TypeScriptProject result = new TypeScriptProject();
+            result.Location = filename;
+
+            result.Solution = solution;
+            result.LoadFiles();
 
             return result;
         }
 
         public TypeScriptProject() : base(true)
         {
+            ExcludedFiles = new List<string>();
+            Items = new ObservableCollection<IProjectItem>();
+            References = new ObservableCollection<IProject>();
+            ToolchainSettings = new ExpandoObject();
+            DebugSettings = new ExpandoObject();
+            Project = this;
         }
 
+        [JsonIgnore]
         public override IList<object> ConfigurationPages
         {
             get
             {
-                //throw new NotImplementedException();
-                return null;
+                throw new NotImplementedException();
+                //return null;
             }
         }
 
+        [JsonIgnore]
         public override string CurrentDirectory => Path.GetDirectoryName(Location) + Platform.DirectorySeperator;
 
+        [JsonIgnore]
         public override IDebugger Debugger { get; set; }
 
+        [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic DebugSettings { get; set; }
 
         public override List<string> ExcludedFiles { get; set; }
@@ -64,23 +88,31 @@ namespace AvalonStudio.Projects.TypeScript
 
         public override ObservableCollection<IProjectItem> Items { get; }
 
+        [JsonIgnore]
         public override string Location { get; set; }
 
+        [JsonIgnore]
         public override string LocationDirectory => CurrentDirectory;
 
+        [JsonIgnore]
         public override string Name => Path.GetFileNameWithoutExtension(Location);
 
+        [JsonIgnore]
         public override IProjectFolder Parent { get; set; }
 
+        [JsonIgnore]
         public override IProject Project { get; set; }
 
+        [JsonIgnore]
         public override ObservableCollection<IProject> References { get; }
 
+        [JsonIgnore]
         public override ISolution Solution { get; set; }
 
         public override ITestFramework TestFramework { get; set; }
 
         //TODO: Set up TS toolchain
+        [JsonIgnore]
         public override IToolChain ToolChain
         {
             get
@@ -93,6 +125,7 @@ namespace AvalonStudio.Projects.TypeScript
             }
         }
 
+        [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic ToolchainSettings { get; set; }
 
         public override void AddReference(IProject project)
@@ -128,19 +161,6 @@ namespace AvalonStudio.Projects.TypeScript
         public override void ExcludeFolder(IProjectFolder folder)
         {
             throw new NotImplementedException();
-        }
-
-        public override IProject Load(ISolution solution, string filePath)
-        {
-            var result = LoadProject(solution, filePath);
-
-            return result;
-        }
-
-        private IProject LoadProject(ISolution solution, string filePath)
-        {
-            //TODO: Actually load project
-            return null;
         }
 
         public override void RemoveReference(IProject project)
