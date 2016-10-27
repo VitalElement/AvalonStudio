@@ -13,6 +13,7 @@ before_install:
 
 install:  
 script:
+  - rm -rf ./AvalonStudioBuild/bin/Release/
   - sudo ./buildmono.sh
   #- if [ "$TRAVIS_BRANCH" == "master" ]; then
   - mkdir dockerbuild
@@ -32,6 +33,7 @@ script:
   - cd ..
   # fi
 
+after_success:
   - git clone https://github.com/VitalElement/AvalonBuild.git 
   - cd AvalonBuild 
   - git rm -rf . 
@@ -43,8 +45,6 @@ script:
   - git commit -m 'new CI revision.' || true 
   - git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null 
 
-
-after_success:  
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     
     docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
