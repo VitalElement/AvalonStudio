@@ -13,9 +13,9 @@ before_install:
 
 install:  
 script:
-  - rm -rf ./AvalonStudioBuild/bin/Release/
   - sudo ./buildmono.sh
-  #- if [ "$TRAVIS_BRANCH" == "master" ]; then
+  
+  #Prepare Docker build context.
   - mkdir dockerbuild
   - cd dockerbuild
   - mkdir AvalonBuild
@@ -23,31 +23,37 @@ script:
   - cd ..
   - cd ..
   - pwd
+
+  #Copy new build of AvalonBuild to Build Context
   - cp -a ./AvalonStudioBuild/bin/Release/. ./dockerbuild/AvalonBuild/
+  
+  #Copy latest dockerfile
   - cp ./AvalonStudioBuild/Dockerfile ./dockerbuild/Dockerfile
+  
+  #Enter build context dir
   - cd dockerbuild
+
+  #Build Docker container
   - docker build -t vitalelement/avalon:cibuild .
   - cd ..
-  # fi
 
 after_success:
-  - git clone https://github.com/VitalElement/AvalonBuild.git 
-  - cd AvalonBuild 
-  - git rm -rf . 
-  - git clean -fxd 
-  - cd .. 
-  - cp -a ./AvalonStudioBuild/bin/Release/. ./AvalonBuild/ 
-  - cd AvalonBuild
-  - git add . 
-  - git commit -m 'new CI revision.' || true 
-  - git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null 
-
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    
+  - if [ "$TRAVIS_BRANCH" == "fix-docker-building" ]; then
+    git clone https://github.com/VitalElement/AvalonBuild.git; 
+    cd AvalonBuild;
+    git rm -rf .;
+    git clean -fxd; 
+    cd ..;
+    cp -a ./AvalonStudioBuild/bin/Release/. ./AvalonBuild/; 
+    cd AvalonBuild;
+    git add .;
+    git commit -m 'new CI revision.' || true; 
+    git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null;
     docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker images
+    docker images;
     docker push vitalelement/avalon:cibuild;
-  - fi
+    fi
+
 notifications:
   webhooks:
     urls:
