@@ -15,10 +15,7 @@ namespace AvalonStudio.Projects.TypeScript
         {
             var location = Path.Combine(solution.CurrentDirectory, name);
 
-            if (!Directory.Exists(location))
-            {
-                Directory.CreateDirectory(location);
-            }
+            Directory.CreateDirectory(location);
 
             IProject project = TypeScriptProject.Create(solution, location);
 

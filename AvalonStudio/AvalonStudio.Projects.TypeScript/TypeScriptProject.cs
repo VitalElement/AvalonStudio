@@ -22,13 +22,10 @@ namespace AvalonStudio.Projects.TypeScript
         {
             TypeScriptProject result = new TypeScriptProject();
 
-            var projectName = Path.GetDirectoryName(directory);
-
-            var enclosingDir = solution.CurrentDirectory;
+            var projectName = new DirectoryInfo(directory).Name;
 
             //Create new project with default name and extension
-            var projectFileContainingDir = Path.Combine(enclosingDir, projectName);
-            var projectFileLocation = Path.Combine(projectFileContainingDir, projectName + $".{result.Extension}");
+            var projectFileLocation = Path.Combine(directory, projectName + $".{result.Extension}");
 
             result.Solution = solution;
             result.Location = projectFileLocation;
