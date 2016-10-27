@@ -1,12 +1,12 @@
-﻿<Controls:SplashScreen xmlns="https://github.com/avaloniaui" Width="450" Foreground="#FFE4E4E4" Height="600" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" BorderBrush="#3E3E42" BorderThickness="1">
+﻿<Controls:SplashScreen xmlns="https://github.com/avaloniaui" Width="640" Foreground="#FFE4E4E4" Height="400" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" BorderBrush="#3E3E42" BorderThickness="1">
   <Grid>
     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
-      <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
-        <Image Source="resm:AvalonStudio.icon.png?assembly=AvalonStudio" MaxWidth="240" MaxHeight="240" />
-      </StackPanel>
       <StackPanel Margin="20 5" VerticalAlignment="Top" HorizontalAlignment="Left">
         <TextBlock FontSize="60" FontFamily="Segoe UI" FontWeight="Light">AvalonStudio</TextBlock>
         <TextBlock FontSize="18" FontFamily="Segoe UI" FontWeight="Light">Versatile, extensible, cross platform IDE</TextBlock>
+      </StackPanel>
+      <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
+        <Image Source="resm:AvalonStudio.icon.png?assembly=AvalonStudio" MaxWidth="240" MaxHeight="240" />
       </StackPanel>
     </StackPanel>
     <StackPanel VerticalAlignment="Bottom" Margin="10 0 10 15">
