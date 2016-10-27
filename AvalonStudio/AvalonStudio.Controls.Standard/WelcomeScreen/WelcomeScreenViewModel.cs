@@ -26,7 +26,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
         public WelcomeScreenViewModel()
         {
-            Title = "Welcome Screen";
+            Title = "Start Page";
 
             _recentProjects = new ObservableCollection<RecentProjectViewModel>();
             _newsFeed = new ObservableCollection<NewsFeedViewModel>();
