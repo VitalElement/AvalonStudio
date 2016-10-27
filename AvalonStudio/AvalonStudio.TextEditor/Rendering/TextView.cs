@@ -666,7 +666,7 @@ namespace AvalonStudio.TextEditor.Rendering
 		private int lastLineCount;
 
 		private void GenerateVisualLines(DrawingContext context)
-		{
+		{            
 			VisualLines.Clear();
 
 			uint visualLineNumber = 0;
@@ -705,9 +705,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
 		private void RenderText(DrawingContext context, VisualLine line)
 		{
-			context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), line.RenderedText);
-			line.RenderedText.Dispose();
-			line.RenderedText = null;
+			context.DrawText(Foreground, new Point(TextSurfaceBounds.X, line.VisualLineNumber * CharSize.Height), line.RenderedText);			
 		}
 
 		private void RenderCaret(DrawingContext context)
@@ -826,28 +824,35 @@ namespace AvalonStudio.TextEditor.Rendering
 			}
 		}
 
-		public int GetOffsetFromPoint(Point point)
+        public int GetCaretIndex(FormattedText lineText, Point point)
+        {
+            var hit = lineText.HitTestPoint(point);
+
+            return hit.TextPosition + (hit.IsTrailing ? 1 : 0) + 1;
+        }
+
+        public int GetOffsetFromPoint(Point point)
 		{
 			var result = -1;
 
 			if (TextDocument != null)
-			{
-				var column = Math.Ceiling(point.X / CharSize.Width + 0.5);
+			{				
 				var line = (int)Math.Ceiling(point.Y / CharSize.Height);
 
-				if (line > 0 && column > 0 && line - 1 < VisualLines.Count)
-				{
-					if (line - 1 < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted &&
-						VisualLines[line - 1].DocumentLine.LineNumber - 1 < TextDocument.LineCount)
-					{
-						result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
-					}
-					else
-					{
-						// Invalid
-						result = -1;
-					}
-				}
+                if (line > 0 && line -1 < VisualLines.Count)
+                {
+                    var column = GetCaretIndex(VisualLines[line - 1].RenderedText, point);
+
+                    if (line - 1 < VisualLines.Count && !VisualLines[line - 1].DocumentLine.IsDeleted && VisualLines[line - 1].DocumentLine.LineNumber - 1 < TextDocument.LineCount)
+                    {
+                        result = TextDocument.GetOffset(VisualLines[line - 1].DocumentLine.LineNumber, (int)column);
+                    }
+                    else
+                    {
+                        // Invalid
+                        result = -1;
+                    }                    
+                }
 			}
 
 			return result;
