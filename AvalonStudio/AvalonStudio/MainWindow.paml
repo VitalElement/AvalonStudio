@@ -1,48 +1,48 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/avaloniaui"
                       xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
-        Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFE4E4E4" Width="1600" Height="900" >
+                      Icon="resm:AvalonStudio.icon.ico?assembly=AvalonStudio"
+                      Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFE4E4E4" Width="1600" Height="900">
   <Controls:MetroWindow.TitleBarContent>
     <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
   </Controls:MetroWindow.TitleBarContent>
   <Controls:MetroWindow.Styles>
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452"/>
+      <Setter Property="Background" Value="#274452" />
     </Style>
     <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452"/>
+      <Setter Property="Background" Value="#274452" />
     </Style>
     <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
       <Setter Property="Background" Value="#274452" />
     </Style>
     <Style Selector="DropDownItem:selected /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452"/>
+      <Setter Property="Background" Value="#274452" />
     </Style>
     <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452"/>
+      <Setter Property="Background" Value="#274452" />
     </Style>
 
     <!-- GridSplitter.vertical -->
     <Style Selector="GridSplitter:vertical">
-      <Setter Property="Width" Value="6"/>
-      <Setter Property="Background" Value="#00FFFFFF"/>
+      <Setter Property="Width" Value="6" />
+      <Setter Property="Background" Value="#00FFFFFF" />
       <Setter Property="Template">
         <ControlTemplate>
-          <Border Background="{TemplateBinding Background}"/>
+          <Border Background="{TemplateBinding Background}" />
         </ControlTemplate>
       </Setter>
     </Style>
     <!-- GridSplitter.horizontal -->
     <Style Selector="GridSplitter:horizontal">
-      <Setter Property="Height" Value="6"/>
-      <Setter Property="Background" Value="#00FFFFFF"/>
+      <Setter Property="Height" Value="6" />
+      <Setter Property="Background" Value="#00FFFFFF" />
       <Setter Property="Template">
         <ControlTemplate>
-          <Border Background="{TemplateBinding Background}" BorderThickness="1"/>
+          <Border Background="{TemplateBinding Background}" BorderThickness="1" />
         </ControlTemplate>
       </Setter>
     </Style>
-
   </Controls:MetroWindow.Styles>
 
   <Grid RowDefinitions="25,*,25">
@@ -63,9 +63,9 @@
         <Grid RowDefinitions="Auto,5,*">
           <Controls:TabControlView DataContext="{Binding MiddleTopTabs}" />
           <GridSplitter Grid.Row="1" Orientation="Horizontal" Width="0" />
-          <Controls:DocumentTabControl Grid.Row="2" DataContext="{Binding DocumentTabs}"  />
+          <Controls:DocumentTabControl Grid.Row="2" DataContext="{Binding DocumentTabs}" />
         </Grid>
-              
+
         <GridSplitter Grid.Row="1" Orientation="Horizontal" />
         <Grid ColumnDefinitions="*,5,Auto" Grid.Row="2">
           <Controls:TabControlView DataContext="{Binding BottomTabs}" />
@@ -90,7 +90,6 @@
         <GridSplitter Grid.Column="1" />
         <Controls:TabControlView Grid.Column="2" DataContext="{Binding RightTabs}" />
       </Grid>
-
     </Grid>
 
     <Grid Grid.Row="2" Grid.ColumnSpan="5">
