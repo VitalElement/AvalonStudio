@@ -69,6 +69,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.Contracts" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -85,6 +86,10 @@
       <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
       <Name>AvalonStudio.Extensibility</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Languages.TypeScript\AvalonStudio.Languages.TypeScript.csproj">
+      <Project>{23829bba-0bb8-4d7c-84d3-2fa2e69840e7}</Project>
+      <Name>AvalonStudio.Languages.TypeScript</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
       <Name>AvalonStudio.Projects.Standard</Name>
@@ -98,9 +103,7 @@
       <Name>AvalonStudio.Toolchains.Standard</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TSCompiler\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
