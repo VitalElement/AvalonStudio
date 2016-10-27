@@ -534,7 +534,7 @@ namespace AvalonStudio.TextEditor
         {
             var caretIndex = CaretIndex;
 
-            if(caretIndex > TextDocument.TextLength)
+            if (caretIndex > TextDocument.TextLength)
             {
                 caretIndex = TextDocument.TextLength;
             }
@@ -849,7 +849,7 @@ namespace AvalonStudio.TextEditor
 
                 SetHighestColumn();
             }
-        }        
+        }
 
         protected override void OnPointerMoved(PointerEventArgs e)
         {
