@@ -1,84 +1,74 @@
 ﻿using AvalonStudio.Projects;
-using AvalonStudio.Toolchains.Standard;
+using AvalonStudio.Projects.TypeScript;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.TypeScript
 {
-    public class TypeScriptToolchain : StandardToolChain
+    public class TypeScriptToolchain : IToolChain
     {
-        public override string Description => "TypeScript Toolchain";
+        /// <summary>
+        /// Stub
+        /// </summary>
+        public IList<string> Includes => new List<string>();
 
-        public override string ExecutableExtension => "js";
+        public string Name => "TypeScript";
 
-        public override string StaticLibraryExtension => "js";
+        public string Description => "TypeScript Toolchain";
 
-        public override Version Version => new Version(0, 1, 1, 0);
+        public Version Version => new Version(0, 1, 1, 2);
 
-        public override bool CanHandle(IProject project)
+        public void Activation()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
-        public override CompileResult Compile(IConsole console, Projects.Standard.IStandardProject superProject, Projects.Standard.IStandardProject project, ISourceFile file, string outputFile)
+        public void BeforeActivation()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
-        public override string GetCompilerArguments(Projects.Standard.IStandardProject superProject, Projects.Standard.IStandardProject project, ISourceFile sourceFile)
+        public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
-            throw new NotImplementedException();
-        }
-
-        public override IList<object> GetConfigurationPages(IProject project)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string GetLinkerArguments(Projects.Standard.IStandardProject superProject, Projects.Standard.IStandardProject project)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override List<string> GetToolchainIncludes()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override LinkResult Link(IConsole console, Projects.Standard.IStandardProject superProject, Projects.Standard.IStandardProject project, CompileResult assemblies, string outputPath)
-        {
-            var result = new LinkResult()
+            //throw new NotImplementedException();
+            console.WriteLine($"Build Started - {project.Name}");
+            var buildProcess = new Process
             {
-                ExitCode = 0,
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "tsc",
+                    RedirectStandardOutput = true,
+                }
             };
-            //TODO: Executable for JS?
-            //I'm assuming this would be an entrypoint module or something
-            return result;
+            string buildProcessOutput = buildProcess.StandardOutput.ReadToEnd();
+            //Run process and wait
+            buildProcess.Start();
+            buildProcess.WaitForExit();
+            console.WriteLine(buildProcessOutput);
+            console.WriteLine($"Build exited with code {buildProcess.ExitCode}");
+            return buildProcess.ExitCode == 0;
         }
 
-        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        public bool CanHandle(IProject project)
         {
-            return true;
+            return (project is TypeScriptProject);
         }
 
-        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        public async Task Clean(IConsole console, IProject project)
         {
-            return true;
+            //throw new NotImplementedException();
+            //Run Clean task
         }
 
-        public override void ProvisionSettings(IProject project)
+        public IList<object> GetConfigurationPages(IProject project)
         {
             throw new NotImplementedException();
         }
 
-        public override ProcessResult Size(IConsole console, Projects.Standard.IStandardProject project, LinkResult linkResult)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool SupportsFile(ISourceFile file)
+        public void ProvisionSettings(IProject project)
         {
             throw new NotImplementedException();
         }
