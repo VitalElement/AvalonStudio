@@ -30,6 +30,18 @@ namespace AvalonStudio.Projects.TypeScript
             result.Solution = solution;
             result.Location = projectFileLocation;
 
+            //Create Main.TS file
+            var indexFileLocation = Path.Combine(directory, "index.ts");
+            System.IO.File.WriteAllText(indexFileLocation, @"
+class Program {
+    static main() {
+        console.log(""Hello, World!"");
+    }
+}
+
+Program.main();
+");
+
             result.Save();
 
             result.LoadFiles();
