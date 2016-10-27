@@ -11,7 +11,14 @@ namespace AvalonStudio.TextEditor.Rendering
 		{
 			var position = new TextViewPosition(textView.GetLocation(offset));
 
-			return GetTextPositionInViewPort(textView, position);
+            if (position.Line > 0)
+            {
+                return GetTextPositionInViewPort(textView, position);
+            }
+            else
+            {
+                return new Rect();
+            }
 		}
 
 		public static Rect GetTextViewPosition(TextView textView, int offset)
@@ -30,8 +37,18 @@ namespace AvalonStudio.TextEditor.Rendering
 
 		public static Rect GetTextPositionInViewPort(TextView textView, TextViewPosition position)
 		{
-			return new Rect(textView.TextSurfaceBounds.X + textView.CharSize.Width*(position.Column - 1),
-				textView.CharSize.Height*(position.Line - 1), textView.CharSize.Width, textView.CharSize.Height);
+            if (position.Line - 1 < textView.VisualLines.Count)
+            {
+                return new Rect(textView.VisualLines[position.Line - 1].RenderedText.HitTestTextPosition(position.Column - 1).X + textView.TextSurfaceBounds.X,
+                    textView.CharSize.Height * (position.Line - 1),
+                    textView.CharSize.Width,
+                    textView.CharSize.Height);
+            }
+
+            return new Rect(textView.TextSurfaceBounds.X + textView.CharSize.Width * (position.Column - 1),
+                textView.CharSize.Height * (position.Line - 1),
+                textView.CharSize.Width,
+                textView.CharSize.Height);
 		}
 
 		private static IEnumerable<Tuple<int, int>> GetOffsetForLinesInSegmentOnScreen(TextView textView, ISegment segment,
