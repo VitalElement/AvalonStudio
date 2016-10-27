@@ -330,11 +330,11 @@ namespace AvalonStudio.Platforms
         {
             if (other != null && path != null)
             {
-                if (other.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.CurrentCulture) && !path.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.CurrentCulture))
+                if (other.EndsWith(Path.DirectorySeparatorChar.ToString()) && !path.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 {
                     path += Path.DirectorySeparatorChar;
                 }
-                else if (path.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.CurrentCulture) && !other.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.CurrentCulture))
+                else if (path.EndsWith(Path.DirectorySeparatorChar.ToString()) && !other.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 {
                     other += Path.DirectorySeparatorChar;
                 }
@@ -356,10 +356,10 @@ namespace AvalonStudio.Platforms
                     {
                         return -1;
                     }
-                    return string.Compare(path.ToLower(), other.ToLower(), StringComparison.CurrentCulture);
+                    return path.ToLower().CompareTo(other.ToLower());
 
                 default:
-                    return string.Compare(path, other, StringComparison.CurrentCulture);
+                    return path.CompareTo(other);
             }
         }
     }
