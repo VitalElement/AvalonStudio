@@ -1,4 +1,5 @@
 FROM ubuntu:xenial
+ADD /AvalonBuild /opt/AvalonBuild
 
 # Install mono
 RUN apt-get update \
@@ -18,8 +19,6 @@ RUN apt-get update && apt-get install -y git libcurl3 lib32z1 lib32ncurses5
 # Install Built Tools
 RUN ls /opt/
 RUN ls /opt/AvalonBuild
-#RUN mkdir -p /opt/AvalonBuild
-#RUN git    clone --depth 1 https://github.com/VitalElement/AvalonBuild.git   /opt/AvalonBuild  
 
 # Install avalon command
 RUN echo "#!/bin/sh" > /usr/bin/avalon

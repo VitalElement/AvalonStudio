@@ -18,15 +18,12 @@ script:
   #- if [ "$TRAVIS_BRANCH" == "master" ]; then
   - mkdir dockerbuild
   - cd dockerbuild
-  - mkdir opt
-  - cd opt
   - mkdir AvalonBuild
   - cd AvalonBuild
   - cd ..
   - cd ..
-  - cd ..
   - pwd
-  - cp -a ./AvalonStudioBuild/bin/Release/. ./dockerbuild/opt/AvalonBuild/
+  - cp -a ./AvalonStudioBuild/bin/Release/. ./dockerbuild/AvalonBuild/
   - cp ./AvalonStudioBuild/Dockerfile ./dockerbuild/Dockerfile
   - cd dockerbuild
   - docker build -t vitalelement/avalon:cibuild .
