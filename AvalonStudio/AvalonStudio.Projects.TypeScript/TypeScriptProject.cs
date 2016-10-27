@@ -18,7 +18,9 @@ namespace AvalonStudio.Projects.TypeScript
         public static TypeScriptProject Create(ISolution solution, string directory)
         {
             TypeScriptProject result = new TypeScriptProject();
-            var projectFileLocation = Path.Combine(directory, Path.GetDirectoryName(directory));
+
+            //Create new project with default name and extension
+            var projectFileLocation = Path.Combine(directory, Path.GetDirectoryName(directory) + $".{result.Extension}");
 
             if (!System.IO.File.Exists(projectFileLocation))
             {
@@ -41,7 +43,8 @@ namespace AvalonStudio.Projects.TypeScript
         {
             get
             {
-                throw new NotImplementedException();
+                //throw new NotImplementedException();
+                return null;
             }
         }
 
