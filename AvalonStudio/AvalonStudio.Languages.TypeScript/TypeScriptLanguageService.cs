@@ -2,6 +2,7 @@
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.TypeScript;
 using AvalonStudio.TextEditor.Indentation;
+using AvalonStudio.TextEditor.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,22 +51,40 @@ namespace AvalonStudio.Languages.TypeScript
             throw new NotImplementedException();
         }
 
-        public int Comment(AvalonStudio.TextEditor.Document.TextDocument textDocument, AvalonStudio.TextEditor.Document.ISegment segment, int caret = -1, bool format = true)
+        public int Comment(TextEditor.Document.TextDocument textDocument, TextEditor.Document.ISegment segment, int caret = -1, bool format = true)
+        {
+            var result = caret;
+
+            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+
+            textDocument.BeginUpdate();
+
+            foreach (var line in lines)
+            {
+                textDocument.Insert(line.Offset, "//");
+            }
+
+            if (format)
+            {
+                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
+            }
+
+            textDocument.EndUpdate();
+
+            return result;
+        }
+
+        public int Format(TextEditor.Document.TextDocument textDocument, uint offset, uint length, int cursor)
         {
             throw new NotImplementedException();
         }
 
-        public int Format(AvalonStudio.TextEditor.Document.TextDocument textDocument, uint offset, uint length, int cursor)
+        public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
         {
             throw new NotImplementedException();
         }
 
-        public IList<AvalonStudio.TextEditor.Rendering.IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IList<AvalonStudio.TextEditor.Rendering.IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
+        public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
         {
             throw new NotImplementedException();
         }
@@ -80,7 +99,7 @@ namespace AvalonStudio.Languages.TypeScript
             throw new NotImplementedException();
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, AvalonStudio.TextEditor.TextEditor editor, ISourceFile file, AvalonStudio.TextEditor.Document.TextDocument textDocument)
+        public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file, TextEditor.Document.TextDocument textDocument)
         {
             throw new NotImplementedException();
         }
@@ -95,14 +114,37 @@ namespace AvalonStudio.Languages.TypeScript
             throw new NotImplementedException();
         }
 
-        public int UnComment(AvalonStudio.TextEditor.Document.TextDocument textDocument, AvalonStudio.TextEditor.Document.ISegment segment, int caret = -1, bool format = true)
+        public int UnComment(TextEditor.Document.TextDocument textDocument, TextEditor.Document.ISegment segment, int caret = -1, bool format = true)
         {
-            throw new NotImplementedException();
+            var result = caret;
+
+            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+
+            textDocument.BeginUpdate();
+
+            foreach (var line in lines)
+            {
+                var index = textDocument.GetText(line).IndexOf("//", StringComparison.Ordinal);
+
+                if (index >= 0)
+                {
+                    textDocument.Replace(line.Offset + index, 2, string.Empty);
+                }
+            }
+
+            if (format)
+            {
+                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
+            }
+
+            textDocument.EndUpdate();
+
+            return result;
         }
 
-        public void UnregisterSourceFile(AvalonStudio.TextEditor.TextEditor editor, ISourceFile file)
+        public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
