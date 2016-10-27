@@ -24,8 +24,10 @@ namespace AvalonStudio.Projects.TypeScript
 
             var projectName = Path.GetDirectoryName(directory);
 
+            var enclosingDir = solution.CurrentDirectory;
+
             //Create new project with default name and extension
-            var projectFileContainingDir = Path.Combine(directory, projectName);
+            var projectFileContainingDir = Path.Combine(enclosingDir, projectName);
             var projectFileLocation = Path.Combine(projectFileContainingDir, projectName + $".{result.Extension}");
 
             result.Solution = solution;
