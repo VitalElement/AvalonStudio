@@ -826,7 +826,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
         public int GetCaretIndex(FormattedText lineText, Point point)
         {
-            var hit = lineText.HitTestPoint(point);
+            var hit = lineText.HitTestPoint(new Point(point.X, 0));
 
             return hit.TextPosition + (hit.IsTrailing ? 1 : 0) + 1;
         }
