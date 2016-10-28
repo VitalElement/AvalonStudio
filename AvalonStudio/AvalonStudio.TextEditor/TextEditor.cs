@@ -534,7 +534,7 @@ namespace AvalonStudio.TextEditor
         {
             var caretIndex = CaretIndex;
 
-            if(caretIndex > TextDocument.TextLength)
+            if (caretIndex > TextDocument.TextLength)
             {
                 caretIndex = TextDocument.TextLength;
             }
@@ -857,11 +857,11 @@ namespace AvalonStudio.TextEditor
             {
                 var point = e.GetPosition(TextView.TextSurface);
 
-                var currentMouseOffset = TextView.GetOffsetFromPoint(point);
-
-                if (currentMouseOffset != -1)
+                if (e.Device.Captured == TextView)
                 {
-                    if (e.Device.Captured == TextView)
+                    var currentMouseOffset = TextView.GetOffsetFromPoint(point);
+
+                    if (currentMouseOffset != -1)
                     {
                         CaretIndex = currentMouseOffset;
 
