@@ -102,7 +102,12 @@
                     break;
 
                 case D_Parser.Parser.LiteralFormat.Scalar:
+                    x.AddHighlight(HighlightType.NumericLiteral, Highlights);
+                    break;
                 case D_Parser.Parser.LiteralFormat.FloatingPoint:
+                    x.AddHighlight(HighlightType.NumericLiteral, Highlights);
+                    break;
+                case D_Parser.Parser.LiteralFormat.Scalar | D_Parser.Parser.LiteralFormat.FloatingPoint:
                     x.AddHighlight(HighlightType.NumericLiteral, Highlights);
                     break;
 
