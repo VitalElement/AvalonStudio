@@ -50,10 +50,20 @@ namespace AvalonStudio.Toolchains.TypeScript
             var tscVersionResult = PlatformSupport.ExecuteShellCommand("tsc", "-v");
             //Run build
             console.WriteLine($"Using TypeScript compiler {tscVersionResult.Output}");
-            //buildProcess.OutputDataReceived += (s, a) => console.WriteLine(a.Data);
 
-            //console.WriteLine($"Build exited with code {buildProcess.ExitCode}");
-            return false;//buildProcess.ExitCode == 0;
+            console.WriteLine($"TypeScript compile started...");
+            var tsCompileExitCode = PlatformSupport.ExecuteShellCommand("tsc", $"-p {project.CurrentDirectory}", (s, a) => console.WriteLine(a.Data));
+
+            if (tsCompileExitCode != 0) //compile error
+            {
+                console.WriteLine($"Build completed with code {tsCompileExitCode}");
+            }
+            else
+            {
+                console.WriteLine("Build completed successfully.");
+            }
+
+            return tsCompileExitCode == 0;
         }
 
         public bool CanHandle(IProject project)
