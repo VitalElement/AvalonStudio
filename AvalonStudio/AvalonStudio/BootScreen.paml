@@ -1,4 +1,4 @@
-﻿<Controls:SplashScreen xmlns="https://github.com/avaloniaui" Width="640" Foreground="#FFE4E4E4" Height="400" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" BorderBrush="#3E3E42" BorderThickness="1">
+﻿<Controls:SplashScreen xmlns="https://github.com/avaloniaui" Width="640" Foreground="#FFE4E4E4" Height="400" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" BorderBrush="#3E3E42" BorderThickness="1" Icon="resm:AvalonStudio.icon.ico?assembly=AvalonStudio">
   <Grid>
     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
       <StackPanel Margin="20 5" VerticalAlignment="Top" HorizontalAlignment="Left">
