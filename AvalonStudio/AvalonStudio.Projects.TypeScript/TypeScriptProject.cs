@@ -31,7 +31,7 @@ namespace AvalonStudio.Projects.TypeScript
             result.Location = projectFileLocation;
 
             //Create Main.TS file
-            var indexFileLocation = Path.Combine(directory, "index.ts");
+            var indexFileLocation = Path.Combine(directory, "main.ts");
             System.IO.File.WriteAllText(indexFileLocation, @"
 class Program {
     static main() {
@@ -40,6 +40,17 @@ class Program {
 }
 
 Program.main();
+");
+            //Create TypeScript project file
+            var tsProjectFileLocation = Path.Combine(directory, "main.ts");
+            System.IO.File.WriteAllText(tsProjectFileLocation, @"
+{
+    ""compilerOptions"": {
+        ""target"": ""es5"",
+        ""module"": ""commonjs"",
+        ""sourceMap"": true
+    }
+}
 ");
 
             result.Save();
