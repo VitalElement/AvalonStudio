@@ -7,6 +7,7 @@ using AvalonStudio.Utils;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System;
 
 namespace AvalonStudio.Toolchains.GCC
 {
@@ -50,41 +51,56 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string SizeExecutable => Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
 
+        private bool CheckFile(IConsole console, string file)
+        {
+            bool result = true;
+
+            if (!PlatformSupport.CheckExecutableAvailability(file))
+            {
+                console.WriteLine("Unable to find tool (" + file + ") Please check project toolchain settings.");
+                result = false;
+            }
+
+            return result;
+        }
+
+        public override bool ValidateToolchainExecutables(IConsole console)
+        {
+            bool result = true;
+
+            result = CheckFile(console, CCExecutable) && CheckFile(console, CPPExecutable) &&
+            CheckFile(console, ARExecutable) && CheckFile(console, LDExecutable) &&
+            CheckFile(console, SizeExecutable);
+
+            return result;
+        }
+
         public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
         {
             var result = new CompileResult();
 
             string commandName = file.Extension == ".cpp" ? CPPExecutable : CCExecutable;
 
-            if (PlatformSupport.CheckExecutableAvailability(commandName, BinDirectory))
-            {
-                var fileArguments = string.Empty;
+            var fileArguments = string.Empty;
 
-                if (file.Extension == ".cpp")
+            if (file.Extension == ".cpp")
+            {
+                fileArguments = "-x c++ -fno-use-cxa-atexit";
+            }
+
+            var arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile);
+
+            result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) =>
+            {
+                if (e.Data != null)
                 {
-                    fileArguments = "-x c++ -fno-use-cxa-atexit";
+                    console.WriteLine();
+                    console.WriteLine(e.Data);
                 }
+            },
+            false, file.CurrentDirectory, false);
 
-                var arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile);
-
-                result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) =>
-                {
-                    if (e.Data != null)
-                    {
-                        console.WriteLine();
-                        console.WriteLine(e.Data);
-                    }
-                },
-                false, file.CurrentDirectory, false, BinDirectory);
-
-                //console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
-            }
-            else
-            {
-                console.WriteLine("Unable to find compiler (" + commandName + ") Please check project compiler settings.");
-
-                result.ExitCode = -1;
-            }
+            //console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
 
             return result;
         }
@@ -95,85 +111,77 @@ namespace AvalonStudio.Toolchains.GCC
 
             string commandName = project.Type == ProjectType.StaticLibrary ? ARExecutable : LDExecutable;
 
-            if (PlatformSupport.CheckExecutableAvailability(commandName, BinDirectory))
+            var objectArguments = string.Empty;
+            foreach (var obj in assemblies.ObjectLocations)
             {
-                var objectArguments = string.Empty;
-                foreach (var obj in assemblies.ObjectLocations)
-                {
-                    objectArguments += obj + " ";
-                }
+                objectArguments += obj + " ";
+            }
 
-                var libs = string.Empty;
-                foreach (var lib in assemblies.LibraryLocations)
-                {
-                    libs += lib + " ";
-                }
+            var libs = string.Empty;
+            foreach (var lib in assemblies.LibraryLocations)
+            {
+                libs += lib + " ";
+            }
 
-                var outputDir = Path.GetDirectoryName(outputPath);
+            var outputDir = Path.GetDirectoryName(outputPath);
 
-                if (!Directory.Exists(outputDir))
-                {
-                    Directory.CreateDirectory(outputDir);
-                }
+            if (!Directory.Exists(outputDir))
+            {
+                Directory.CreateDirectory(outputDir);
+            }
 
-                var outputName = Path.GetFileNameWithoutExtension(outputPath) + ExecutableExtension;
+            var outputName = Path.GetFileNameWithoutExtension(outputPath) + ExecutableExtension;
 
-                if (project.Type == ProjectType.StaticLibrary)
-                {
-                    outputName = Path.GetFileNameWithoutExtension(outputPath) + StaticLibraryExtension;
-                }
+            if (project.Type == ProjectType.StaticLibrary)
+            {
+                outputName = Path.GetFileNameWithoutExtension(outputPath) + StaticLibraryExtension;
+            }
 
-                var executable = Path.Combine(outputDir, outputName);
+            var executable = Path.Combine(outputDir, outputName);
 
-                var linkedLibraries = string.Empty;
+            var linkedLibraries = string.Empty;
 
-                foreach (var libraryPath in project.StaticLibraries)
-                {
-                    var relativePath = Path.GetDirectoryName(libraryPath);
+            foreach (var libraryPath in project.StaticLibraries)
+            {
+                var relativePath = Path.GetDirectoryName(libraryPath);
 
-                    var libName = Path.GetFileNameWithoutExtension(libraryPath).Substring(3);
+                var libName = Path.GetFileNameWithoutExtension(libraryPath).Substring(3);
 
-                    linkedLibraries += string.Format("-L\"{0}\" -l{1} ", relativePath, libName);
-                }
+                linkedLibraries += string.Format("-L\"{0}\" -l{1} ", relativePath, libName);
+            }
 
-                foreach (var lib in project.BuiltinLibraries)
-                {
-                    linkedLibraries += string.Format("-l{0} ", lib);
-                }
+            foreach (var lib in project.BuiltinLibraries)
+            {
+                linkedLibraries += string.Format("-l{0} ", lib);
+            }
 
-                linkedLibraries += GetBaseLibraryArguments(superProject);
+            linkedLibraries += GetBaseLibraryArguments(superProject);
 
-                string arguments = string.Empty;
+            string arguments = string.Empty;
 
-                if (project.Type == ProjectType.StaticLibrary)
-                {
-                    arguments = string.Format("rvs {0} {1}", executable, objectArguments);
-                }
-                else
-                {
-                    arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group", GetLinkerArguments(superProject, project), executable, objectArguments, linkedLibraries, libs);
-                }
-
-                result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => { },
-                    (s, e) =>
-                {
-                    if (e.Data != null && !e.Data.Contains("creating"))
-                    {
-                        console.WriteLine(e.Data);
-                    }
-                }, false, project.Solution.CurrentDirectory, false, BinDirectory);
-
-                //console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
-
-                if (result.ExitCode == 0)
-                {
-                    result.Executable = executable;
-                }
+            if (project.Type == ProjectType.StaticLibrary)
+            {
+                arguments = string.Format("rvs {0} {1}", executable, objectArguments);
             }
             else
             {
-                result.ExitCode = -1;
-                console.WriteLine("Unable to find linker executable (" + commandName + ") Check project compiler settings.");
+                arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group", GetLinkerArguments(superProject, project), executable, objectArguments, linkedLibraries, libs);
+            }
+
+            result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => { },
+                (s, e) =>
+            {
+                if (e.Data != null && !e.Data.Contains("creating"))
+                {
+                    console.WriteLine(e.Data);
+                }
+            }, false, project.Solution.CurrentDirectory, false);
+
+            //console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
+
+            if (result.ExitCode == 0)
+            {
+                result.Executable = executable;
             }
 
             return result;
@@ -183,19 +191,10 @@ namespace AvalonStudio.Toolchains.GCC
         {
             var result = new ProcessResult();
 
-            if (PlatformSupport.CheckExecutableAvailability(SizeExecutable, BinDirectory))
-            {
-                result.ExitCode = PlatformSupport.ExecuteShellCommand(SizeExecutable, linkResult.Executable,
-                    (s, e) => console.WriteLine(e.Data),
-                    (s, e) => console.WriteLine(e.Data),
-                    false, string.Empty, false, BinDirectory);
-            }
-            else
-            {
-                console.WriteLine("Unable to find tool (" + SizeExecutable + ") check project compiler settings.");
-                result.ExitCode = -1;
-                return result;
-            }
+            result.ExitCode = PlatformSupport.ExecuteShellCommand(SizeExecutable, linkResult.Executable,
+                (s, e) => console.WriteLine(e.Data),
+                (s, e) => console.WriteLine(e.Data),
+                false, string.Empty, false);
 
             return result;
         }
