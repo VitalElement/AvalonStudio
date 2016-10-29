@@ -65,12 +65,13 @@ namespace AvalonStudio.Toolchains.TypeScript
 
         public IList<object> GetConfigurationPages(IProject project)
         {
-            throw new NotImplementedException();
+            //STUB!!
+            return new List<object>();
         }
 
         public void ProvisionSettings(IProject project)
         {
-            throw new NotImplementedException();
+            //STUB!!
         }
     }
 }
