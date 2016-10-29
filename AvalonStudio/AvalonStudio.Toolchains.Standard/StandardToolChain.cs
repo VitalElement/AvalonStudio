@@ -64,10 +64,15 @@ namespace AvalonStudio.Toolchains.Standard
 		public abstract string ExecutableExtension { get; }
 		public abstract string StaticLibraryExtension { get; }
 
-
+        public abstract bool ValidateToolchainExecutables(IConsole console);
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
 		{
+            if(!ValidateToolchainExecutables(console))
+            {
+                return false;
+            }
+
 			console.Clear();
 
             var result = await PreBuild(console, project);
