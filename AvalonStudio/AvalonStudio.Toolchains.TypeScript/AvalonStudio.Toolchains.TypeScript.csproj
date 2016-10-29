@@ -81,6 +81,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeScriptToolchain.cs" />
     <Compile Include="Utilities\PlatformSupport.cs" />
+    <Compile Include="Utilities\ShellExecuteResult.cs" />
     <Compile Include="Utilities\ShellExecutorType.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -26,6 +26,21 @@ namespace AvalonStudio.Toolchains.TypeScript.Utilities
             }
         }
 
+        public static ShellExecuteResult ExecuteShellCommand(string commandName, string args)
+        {
+            var outputBuilder = new StringBuilder();
+            var exitCode = ExecuteShellCommand(commandName, args, (s, e) =>
+            {
+                outputBuilder.AppendLine(e.Data);
+            }, false);
+            var procOutput = outputBuilder.ToString().Trim();
+            return new ShellExecuteResult()
+            {
+                ExitCode = exitCode,
+                Output = procOutput
+            };
+        }
+
         public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs> outputReceivedCallback, bool resolveExecutable = true)
         {
             var shellProc = new Process

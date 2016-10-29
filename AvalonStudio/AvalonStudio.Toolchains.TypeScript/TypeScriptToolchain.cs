@@ -1,9 +1,9 @@
 ﻿using AvalonStudio.Projects;
 using AvalonStudio.Projects.TypeScript;
+using AvalonStudio.Toolchains.TypeScript.Utilities;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.TypeScript
@@ -33,24 +33,26 @@ namespace AvalonStudio.Toolchains.TypeScript
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
-            //throw new NotImplementedException();
             console.WriteLine($"Build Started - {project.Name}");
-            var buildProcess = new Process
+            //Make sure tools are available
+            if (!PlatformSupport.CheckExecutableAvailability("tsc")) //Check if TSC is available
             {
-                StartInfo = new ProcessStartInfo
+                //TypeScript compiler missing
+                console.WriteLine("The TypeScript compiler `tsc` is not available on your path. Please install it with `npm install -g typescript`");
+                //Check if they're also missing Node
+                if (!PlatformSupport.CheckExecutableAvailability("node"))
                 {
-                    FileName = "tsc",
-                    RedirectStandardOutput = true,
+                    console.WriteLine("You seem to be missing Node.js. Please install Node.js and TypeScript globally.");
                 }
-            };
-            buildProcess.OutputDataReceived += (s, a) => console.WriteLine(a.Data);
-            //Run process and wait
-            buildProcess.Start();
-            buildProcess.BeginOutputReadLine();
-            buildProcess.WaitForExit();
-            //console.WriteLine(buildProcessOutput);
-            console.WriteLine($"Build exited with code {buildProcess.ExitCode}");
-            return buildProcess.ExitCode == 0;
+                return false; //Fail build
+            }
+            var tscVersionResult = PlatformSupport.ExecuteShellCommand("tsc", "-v");
+            //Run build
+            console.WriteLine($"Using TypeScript compiler {tscVersionResult}");
+            //buildProcess.OutputDataReceived += (s, a) => console.WriteLine(a.Data);
+
+            //console.WriteLine($"Build exited with code {buildProcess.ExitCode}");
+            return false;//buildProcess.ExitCode == 0;
         }
 
         public bool CanHandle(IProject project)
