@@ -44,11 +44,12 @@ namespace AvalonStudio.Toolchains.TypeScript
                 {
                     console.WriteLine("You seem to be missing Node.js. Please install Node.js and TypeScript globally.");
                 }
+                console.WriteLine("Build failed.");
                 return false; //Fail build
             }
             var tscVersionResult = PlatformSupport.ExecuteShellCommand("tsc", "-v");
             //Run build
-            console.WriteLine($"Using TypeScript compiler {tscVersionResult}");
+            console.WriteLine($"Using TypeScript compiler {tscVersionResult.Output}");
             //buildProcess.OutputDataReceived += (s, a) => console.WriteLine(a.Data);
 
             //console.WriteLine($"Build exited with code {buildProcess.ExitCode}");
