@@ -1,5 +1,6 @@
 ﻿using AvalonStudio.Platforms;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -24,49 +25,89 @@ namespace AvalonStudio.CommandLineTools
                     executorType = ShellExecutorType.Unix;
                     break;
             }
-        }
+        }        
 
         public static ShellExecuteResult ExecuteShellCommand(string commandName, string args)
         {
             var outputBuilder = new StringBuilder();
-            var exitCode = ExecuteShellCommand(commandName, args, (s, e) =>
+            var errorBuilder = new StringBuilder();
+
+            var exitCode = ExecuteShellCommand(commandName, args,
+            (s, e) =>
             {
                 outputBuilder.AppendLine(e.Data);
-            }, false);
-            var procOutput = outputBuilder.ToString().Trim();
+            },
+            (s, e) =>
+            {
+                errorBuilder = new StringBuilder();
+            },
+            false, "");
+
             return new ShellExecuteResult()
             {
                 ExitCode = exitCode,
-                Output = procOutput
+                Output = outputBuilder.ToString().Trim(),
+                ErrorOutput = errorBuilder.ToString().Trim()
             };
         }
 
-        public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs> outputReceivedCallback, bool resolveExecutable = true)
+        public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs> 
+            outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true, 
+            string workingDirectory = "", bool executeInShell = true, params string[] extraPaths)
         {
-            var shellProc = new Process
+            using (var shellProc = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
+                    WorkingDirectory = workingDirectory                    
                 }
-            };
-            if (executorType == ShellExecutorType.Windows)
+            })
             {
-                shellProc.StartInfo.FileName = ResolveFullExecutablePath("cmd.exe");
-                shellProc.StartInfo.Arguments = $"/C {(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}";
-                shellProc.StartInfo.CreateNoWindow = true;
+                foreach(var extraPath in extraPaths)
+                {
+                    shellProc.StartInfo.EnvironmentVariables["PATH"] += $";{extraPath}";
+                }
+
+                if (executeInShell)
+                {
+                    if (executorType == ShellExecutorType.Windows)
+                    {
+                        shellProc.StartInfo.FileName = ResolveFullExecutablePath("cmd.exe");
+                        shellProc.StartInfo.Arguments = $"/C {(resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName)} {args}";
+                        shellProc.StartInfo.CreateNoWindow = true;
+                    }
+                    else //Unix
+                    {
+                        shellProc.StartInfo.FileName = "sh";
+                        shellProc.StartInfo.Arguments = $"-c {(resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName)} {args}";
+                    }
+                }
+                else
+                {
+                    shellProc.StartInfo.FileName = (resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName);
+                    shellProc.StartInfo.Arguments = args;
+                    shellProc.StartInfo.CreateNoWindow = true;
+                }
+
+                shellProc.OutputDataReceived += (s, a) => outputReceivedCallback(s, a);
+
+                if (errorReceivedCallback != null)
+                {
+                    shellProc.ErrorDataReceived += (s, a) => errorReceivedCallback(s, a);
+                }
+
+                shellProc.Start();
+
+                shellProc.BeginOutputReadLine();
+                shellProc.BeginErrorReadLine();
+
+                shellProc.WaitForExit();
+
+                return shellProc.ExitCode;
             }
-            else //Unix
-            {
-                shellProc.StartInfo.FileName = "sh";
-                shellProc.StartInfo.Arguments = $"-c {(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}";
-            }
-            shellProc.OutputDataReceived += (s, a) => outputReceivedCallback(s, a);
-            shellProc.Start();
-            shellProc.BeginOutputReadLine();
-            shellProc.WaitForExit();
-            return shellProc.ExitCode;
         }
 
         /// <summary>
@@ -74,9 +115,9 @@ namespace AvalonStudio.CommandLineTools
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public static bool CheckExecutableAvailability(string fileName)
-        {
-            return ResolveFullExecutablePath(fileName) != null;
+        public static bool CheckExecutableAvailability(string fileName, params string[] extraPaths)
+        {            
+            return ResolveFullExecutablePath(fileName, true, extraPaths) != null;
         }
 
         /// <summary>
@@ -84,15 +125,17 @@ namespace AvalonStudio.CommandLineTools
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public static string ResolveFullExecutablePath(string fileName, bool returnNullOnFailure = true)
+        public static string ResolveFullExecutablePath(string fileName, bool returnNullOnFailure = true, params string[] extraPaths)
         {
             if (File.Exists(fileName))
                 return Path.GetFullPath(fileName);
 
             if (executorType == ShellExecutorType.Windows)
             {
-                var values = Environment.GetEnvironmentVariable("PATH");
-                foreach (var path in values.Split(';'))
+                var values = new List<string>(extraPaths);
+                values.AddRange(new List<string>(Environment.GetEnvironmentVariable("PATH").Split(';')));
+
+                foreach (var path in values)
                 {
                     var fullPath = Path.Combine(path, fileName);
                     if (File.Exists(fullPath))
@@ -106,7 +149,7 @@ namespace AvalonStudio.CommandLineTools
                 ExecuteShellCommand("which", $"\"{fileName}\"", (s, e) =>
                 {
                     outputBuilder.AppendLine(e.Data);
-                }, false);
+                }, (s,e)=> { }, false);
                 var procOutput = outputBuilder.ToString();
                 if (string.IsNullOrWhiteSpace(procOutput))
                 {
