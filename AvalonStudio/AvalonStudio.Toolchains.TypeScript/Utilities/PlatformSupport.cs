@@ -55,6 +55,7 @@ namespace AvalonStudio.Toolchains.TypeScript.Utilities
             {
                 shellProc.StartInfo.FileName = ResolveFullExecutablePath("cmd.exe");
                 shellProc.StartInfo.Arguments = $"/C {(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}";
+                shellProc.StartInfo.CreateNoWindow = true;
             }
             else //Unix
             {
