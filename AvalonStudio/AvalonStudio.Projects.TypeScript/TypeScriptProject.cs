@@ -181,7 +181,7 @@ Program.main();
 
         public override void ResolveReferences()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override void Save()
