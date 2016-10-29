@@ -48,7 +48,8 @@ namespace AvalonStudio.Languages.TypeScript
 
         public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
         {
-            throw new NotImplementedException();
+            //STUB!
+            return new List<CodeCompletionData>();
         }
 
         public int Comment(TextEditor.Document.TextDocument textDocument, TextEditor.Document.ISegment segment, int caret = -1, bool format = true)
@@ -76,27 +77,32 @@ namespace AvalonStudio.Languages.TypeScript
 
         public int Format(TextEditor.Document.TextDocument textDocument, uint offset, uint length, int cursor)
         {
+            //STUB!
             throw new NotImplementedException();
         }
 
         public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
         {
-            throw new NotImplementedException();
+            //STUB!
+            return new List<IBackgroundRenderer>();
         }
 
         public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
         {
-            throw new NotImplementedException();
+            //STUB!
+            return new List<IDocumentLineTransformer>();
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
         {
-            throw new NotImplementedException();
+            //STUB!
+            return new Symbol();
         }
 
         public async Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
         {
-            throw new NotImplementedException();
+            //STUB!
+            return new List<Symbol>();
         }
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file, TextEditor.Document.TextDocument textDocument)
@@ -126,7 +132,8 @@ namespace AvalonStudio.Languages.TypeScript
 
         public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
-            throw new NotImplementedException();
+            //STUB!
+            return new SignatureHelp();
         }
 
         public int UnComment(TextEditor.Document.TextDocument textDocument, TextEditor.Document.ISegment segment, int caret = -1, bool format = true)
