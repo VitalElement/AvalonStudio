@@ -43,11 +43,12 @@ namespace AvalonStudio.Toolchains.TypeScript
                     RedirectStandardOutput = true,
                 }
             };
-            string buildProcessOutput = buildProcess.StandardOutput.ReadToEnd();
+            buildProcess.OutputDataReceived += (s, a) => console.WriteLine(a.Data);
             //Run process and wait
             buildProcess.Start();
+            buildProcess.BeginOutputReadLine();
             buildProcess.WaitForExit();
-            console.WriteLine(buildProcessOutput);
+            //console.WriteLine(buildProcessOutput);
             console.WriteLine($"Build exited with code {buildProcess.ExitCode}");
             return buildProcess.ExitCode == 0;
         }
