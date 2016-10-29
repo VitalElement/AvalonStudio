@@ -550,7 +550,7 @@ namespace AvalonStudio.Toolchains.Clang
 
                 console.WriteLine($"Converting to {format.ToString()}");
 
-                result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) => console.WriteLine(e.Data), false, string.Empty, false, BinDirectory);
+                result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) => console.WriteLine(e.Data), false, string.Empty, false);
             }
             else
             {
