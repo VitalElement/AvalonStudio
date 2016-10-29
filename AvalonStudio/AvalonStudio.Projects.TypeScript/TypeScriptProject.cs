@@ -128,7 +128,8 @@ Program.main();
         {
             get
             {
-                return IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.TypeScriptToolchain");
+                var tsToolchain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.TypeScript.TypeScriptToolchain");
+                return tsToolchain;
             }
             set
             {
