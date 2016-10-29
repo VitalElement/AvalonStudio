@@ -627,5 +627,10 @@ namespace AvalonStudio.Toolchains.Llilum
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        public override bool ValidateToolchainExecutables(IConsole console)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
