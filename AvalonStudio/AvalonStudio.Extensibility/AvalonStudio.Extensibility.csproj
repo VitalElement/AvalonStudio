@@ -189,6 +189,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineTools\PlatformSupport.cs" />
+    <Compile Include="CommandLineTools\ShellExecuteResult.cs" />
+    <Compile Include="CommandLineTools\ShellExecutorType.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandDefinition.cs" />
     <Compile Include="Commands\CommandDefinitionAttribute.cs" />
