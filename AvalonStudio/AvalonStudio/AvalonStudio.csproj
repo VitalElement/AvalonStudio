@@ -420,6 +420,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DockNC\src\Mabiavalon.DockNC\Mabiavalon.DockNC.csproj">
+      <Project>{60fb1e66-2691-453c-918c-38fe5beb83a4}</Project>
+      <Name>Mabiavalon.DockNC</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj">
       <Project>{0B7C8F41-0122-40E8-9701-EFCB89C32CC9}</Project>
       <Name>AvalonStudio.Controls.Standard</Name>
