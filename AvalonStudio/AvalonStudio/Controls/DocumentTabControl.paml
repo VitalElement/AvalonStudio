@@ -1,8 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+             xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <DockPanel>
     <StackPanel DockPanel.Dock="Top">
-      <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}" Focusable="false">
+      <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}">
         <TabStrip.ItemsPanel>
           <ItemsPanelTemplate>
             <DockPanel  LastChildFill="false" />
@@ -28,7 +29,7 @@
           </Style>
         </TabStrip.Styles>
 
-        <TabStrip.DataTemplates>
+        <TabStrip.ItemTemplate>
           <DataTemplate>
             <StackPanel Orientation="Horizontal" Gap="2">
               <Button Height="14" Width="14" Command="{Binding CloseCommand}">
@@ -64,17 +65,17 @@
               <TextBlock Text="{Binding Title}" Foreground="WhiteSmoke" Margin="2"/>              
             </StackPanel>
           </DataTemplate>
-        </TabStrip.DataTemplates>
+        </TabStrip.ItemTemplate>
       </TabStrip>
       <Grid Background="#007ACC" Height="2" />
     </StackPanel>
 
-    <Carousel Items="{Binding Documents}" SelectedIndex="{Binding #strip.SelectedIndex}" IsVirtualized="false">
-      <Carousel.DataTemplates>
+    <Carousel Items="{Binding #strip.Items}" SelectedIndex="{Binding #strip.SelectedIndex}" IsVirtualized="false">
+      <Carousel.ItemTemplate>
         <DataTemplate>
-          <Controls:Editor />
+          <cont:ViewModelViewHost IsVisible ="{Binding IsVisible}" />
         </DataTemplate>
-      </Carousel.DataTemplates>
+      </Carousel.ItemTemplate>    
     </Carousel>
   </DockPanel>
 </UserControl>

@@ -99,7 +99,7 @@
                 <MenuItem Header="Rename" />
                 <Separator />
                 <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
-                <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+                <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
               </ContextMenu>
             </StackPanel.ContextMenu>
             <Panel Width="15" Height="15" Background="#A07cbb78" Margin="0 0 5 0">
@@ -117,30 +117,25 @@
                 <MenuItem Header="Rename" />
                 <Separator />
                 <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
-                <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+                <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
+                <Separator />
+                <MenuItem Header="Add">
+                  <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
+                  <MenuItem Header="Exisiting Item..." />
+                  <MenuItem Header="New Folder..." />
+                  <MenuItem Header="Import Folder..." />
+                  <Separator />
+                  <MenuItem Header="New File..." />
+                </MenuItem>
               </ContextMenu>
             </StackPanel.ContextMenu>
             <Panel Width="15" Height="15" Background="#A0DBA769" Margin="0 0 5 0">
 
-              <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
+
             </Panel>
             <TextBlock Text="{Binding Title}" Height="15" />
           </StackPanel>
         </TreeDataTemplate>
-
-        <!--<TreeDataTemplate DataType="ViewModels:ProjectViewModel" ItemsSource="{Binding Items}">
-            <StackPanel Orientation="Horizontal">
-              <Panel Width="15" Height="15" Background="#A08631c7" Margin="0 0 5 0">
-          
-              </Panel>
-              <TextBlock Text="{Binding Title}" Height="15" />
-            </StackPanel>
-          </TreeDataTemplate>!-->
-
-        <!--
-          <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Children}">
-            <TextBlock Text="{Binding Title}" />
-          </TreeDataTemplate>-->
       </TreeView.DataTemplates>
     </TreeView>
   </Controls:ToolControl>

@@ -17,7 +17,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 			TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
 			CommentBrush = Brush.Parse("#559A3F");
-			CallExpressionBrush = Brush.Parse("Yellow");
+			CallExpressionBrush = Brush.Parse("Pink");
 			IdentifierBrush = Brush.Parse("#D4D4D4");
 			KeywordBrush = Brush.Parse("#569CD6");
 			LiteralBrush = Brush.Parse("#D69D85");
@@ -68,12 +68,15 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 
 				foreach (var transform in highlightData)
 				{
-					transformations.Add(new TextTransformation
-					{
-						Foreground = GetBrush(transform.Type),
-						StartOffset = transform.Start,
-						EndOffset = transform.Start + transform.Length
-					});
+                    if (transform.Type != HighlightType.None)
+                    {
+                        transformations.Add(new TextTransformation
+                        {
+                            Foreground = GetBrush(transform.Type),
+                            StartOffset = transform.Start,
+                            EndOffset = transform.Start + transform.Length
+                        });
+                    }
 				}
 
 				TextTransformations = transformations;
@@ -84,7 +87,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 				}
 			});
 		}
-
+        
 		public void UpdateOffsets(DocumentChangeEventArgs e)
 		{
 			if (TextTransformations != null)
@@ -119,7 +122,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 					result = PunctuationBrush;
 					break;
 
-				case HighlightType.UserType:
+				case HighlightType.ClassName:
 					result = UserTypeBrush;
 					break;
 

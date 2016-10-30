@@ -10,49 +10,54 @@ using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
-	public class LocalGCCToolchain : GCCToolchain
-	{
-		private string BaseDirectory
-		{
-			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC", "bin"); }
-		}
+    public class LocalGCCToolchain : GCCToolchain
+    {
+        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        {
+            return true;
+        }
 
-		#region Settings
+        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        {
+            return true;
+        }
 
-		public string LinkerScript { get; set; }
+        private string BaseDirectory
+        {
+            get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC"); }
+        }
 
-		#endregion
+        public override string Prefix => string.Empty;
 
-		//public void GenerateLinkerScript(Project project)
-		//{
-		//    var template = new ArmGCCLinkTemplate(project.SelectedConfiguration);
+        public override string BinDirectory
+        {
+            get
+            {
+                if (Platform.PlatformIdentifier == PlatformID.Unix)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return Path.Combine(BaseDirectory, "bin");
+                }
+            }
+        }
 
-		//    string linkerScript = GetLinkerScriptLocation(project);
+        public override string GetBaseLibraryArguments(IStandardProject superProject)
+        {
+            return string.Empty;
+        }
 
-		//    if (File.Exists(linkerScript))
-		//    {
-		//        File.Delete(linkerScript);
-		//    }
+        public override string LDName => "g++";
 
-		//    var sw = File.CreateText(linkerScript);
+        public string LinkerScript { get; set; }
 
-		//    sw.Write(template.TransformText());
-
-		//    sw.Close();
-		//}
-
-		//private string GetLinkerScriptLocation(Project project)
-		//{
-		//    return Path.Combine(project.CurrentDirectory, "link.ld");
-		//}
-
-		public override string GDBExecutable
-		{
-			get { return Path.Combine(BaseDirectory, "gdb" + Platform.ExecutableExtension); }
-		}
+		public override string GDBExecutable =>  Path.Combine(BaseDirectory, "bin", "gdb" + Platform.ExecutableExtension);		
 
 		public override Version Version
 		{
@@ -64,15 +69,9 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			get { return "GCC based toolchain PC."; }
 		}
 
-		public override string ExecutableExtension
-		{
-			get { return ".exe"; }
-		}
+		public override string ExecutableExtension=> ".exe";		
 
-		public override string StaticLibraryExtension
-		{
-			get { return ".a"; }
-		}
+		public override string StaticLibraryExtension => ".a";		
 
 		public override void ProvisionSettings(IProject project)
 		{
@@ -108,92 +107,8 @@ namespace AvalonStudio.Toolchains.LocalGCC
 					result = project.ToolchainSettings.LocalGCC;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
-			}
-
-			return result;
-		}
-
-		public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project,
-			ISourceFile file, string outputFile)
-		{
-			var result = new CompileResult();
-
-			var startInfo = new ProcessStartInfo();
-
-			if (file.Language == Language.Cpp)
-			{
-				if (Platform.PlatformIdentifier == PlatformID.Unix)
-				{
-					startInfo.FileName = "g++";
-				}
-				else
-				{
-					startInfo.FileName = Path.Combine(BaseDirectory, "g++" + Platform.ExecutableExtension);
-				}
-			}
-			else
-			{
-				if (Platform.PlatformIdentifier == PlatformID.Unix)
-				{
-					startInfo.FileName = "gcc";
-				}
-				else
-				{
-					startInfo.FileName = Path.Combine(BaseDirectory, "gcc" + Platform.ExecutableExtension);
-				}
-			}
-
-			startInfo.EnvironmentVariables["Path"] = BaseDirectory;
-			startInfo.WorkingDirectory = file.CurrentDirectory;
-
-			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
-			{
-				result.ExitCode = -1;
-				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
-			}
-			else
-			{
-				var fileArguments = string.Empty;
-
-				if (file.Language == Language.Cpp)
-				{
-					fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
-				}
-
-				startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments,
-					GetCompilerArguments(superProject, project, file), file.Location, outputFile);
-
-				// Hide console window
-				startInfo.UseShellExecute = false;
-				startInfo.RedirectStandardOutput = true;
-				startInfo.RedirectStandardError = true;
-				startInfo.CreateNoWindow = true;
-
-				//console.WriteLine (Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
-
-				using (var process = Process.Start(startInfo))
-				{
-					process.OutputDataReceived += (sender, e) => { console.WriteLine(e.Data); };
-
-					process.ErrorDataReceived += (sender, e) =>
-					{
-						if (e.Data != null)
-						{
-							console.WriteLine();
-							console.WriteLine(e.Data);
-						}
-					};
-
-					process.BeginOutputReadLine();
-
-					process.BeginErrorReadLine();
-
-					process.WaitForExit();
-
-					result.ExitCode = process.ExitCode;
-				}
 			}
 
 			return result;
@@ -202,194 +117,10 @@ namespace AvalonStudio.Toolchains.LocalGCC
 		private string GetLinkerScriptLocation(IStandardProject project)
 		{
 			return Path.Combine(project.CurrentDirectory, "link.ld");
-		}
+		}				
 
-		public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project,
-			CompileResult assemblies, string outputPath)
-		{
-			var settings = GetSettings(superProject);
-			var result = new LinkResult();
-
-			var startInfo = new ProcessStartInfo();
-
-			if (Platform.PlatformIdentifier == PlatformID.Unix)
-			{
-				startInfo.FileName = "g++";
-			}
-			else
-			{
-				startInfo.FileName = Path.Combine(BaseDirectory, "g++" + Platform.ExecutableExtension);
-			}
-
-			if (project.Type == ProjectType.StaticLibrary)
-			{
-				if (Platform.PlatformIdentifier == PlatformID.Unix)
-				{
-					startInfo.FileName = "ar";
-				}
-				else
-				{
-					startInfo.FileName = Path.Combine(BaseDirectory, "ar" + Platform.ExecutableExtension);
-				}
-			}
-
-			startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
-
-			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
-			{
-				result.ExitCode = -1;
-				console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
-				return result;
-			}
-
-			var objectArguments = string.Empty;
-			foreach (var obj in assemblies.ObjectLocations)
-			{
-				objectArguments += obj + " ";
-			}
-
-			var libs = string.Empty;
-			foreach (var lib in assemblies.LibraryLocations)
-			{
-				libs += lib + " ";
-			}
-
-			var outputDir = Path.GetDirectoryName(outputPath);
-
-			if (!Directory.Exists(outputDir))
-			{
-				Directory.CreateDirectory(outputDir);
-			}
-
-			var outputName = Path.GetFileNameWithoutExtension(outputPath) + ExecutableExtension;
-
-			if (project.Type == ProjectType.StaticLibrary)
-			{
-				outputName = Path.GetFileNameWithoutExtension(outputPath) + StaticLibraryExtension;
-			}
-
-			var executable = Path.Combine(outputDir, outputName);
-
-			var linkedLibraries = string.Empty;
-
-			foreach (var libraryPath in project.StaticLibraries)
-			{
-				var relativePath = Path.GetDirectoryName(libraryPath);
-
-				var libName = Path.GetFileNameWithoutExtension(libraryPath).Substring(3);
-
-				linkedLibraries += string.Format("-L\"{0}\" -l{1} ", relativePath, libName);
-			}
-
-			foreach (var lib in project.BuiltinLibraries)
-			{
-				linkedLibraries += string.Format("-l{0} ", lib);
-			}
-
-			// Hide console window
-			startInfo.UseShellExecute = false;
-			startInfo.RedirectStandardOutput = true;
-			startInfo.RedirectStandardError = true;
-			startInfo.RedirectStandardInput = true;
-			startInfo.CreateNoWindow = true;
-
-			if (project.Type == ProjectType.StaticLibrary)
-			{
-				startInfo.Arguments = string.Format("rvs {0} {1}", executable, objectArguments);
-			}
-			else
-			{
-				startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group",
-					GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
-			}
-
-			//console.WriteLine(Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
-			//console.WriteLine ("[LL] - " + startInfo.Arguments);
-
-			using (var process = Process.Start(startInfo))
-			{
-				process.OutputDataReceived += (sender, e) =>
-				{
-					//console.WriteLine(e.Data);
-				};
-
-				process.ErrorDataReceived += (sender, e) =>
-				{
-					if (e.Data != null && !e.Data.Contains("creating"))
-					{
-						console.WriteLine(e.Data);
-					}
-				};
-
-				process.BeginOutputReadLine();
-
-				process.BeginErrorReadLine();
-
-				process.WaitForExit();
-
-				result.ExitCode = process.ExitCode;
-
-				if (result.ExitCode == 0)
-				{
-					result.Executable = executable;
-				}
-			}
-
-			return result;
-		}
-
-		public override ProcessResult Size(IConsole console, IStandardProject project, LinkResult linkResult)
-		{
-			var result = new ProcessResult();
-
-			var startInfo = new ProcessStartInfo();
-
-			if (Platform.PlatformIdentifier == PlatformID.Unix)
-			{
-				startInfo.FileName = "size";
-			}
-			else
-			{
-				startInfo.FileName = Path.Combine(BaseDirectory, "size" + Platform.ExecutableExtension);
-			}
-
-			if (!File.Exists(startInfo.FileName) && Platform.PlatformIdentifier != PlatformID.Unix)
-			{
-				console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
-				result.ExitCode = -1;
-				return result;
-			}
-
-			startInfo.Arguments = string.Format("{0}", linkResult.Executable);
-
-			// Hide console window
-			startInfo.UseShellExecute = false;
-			startInfo.RedirectStandardOutput = true;
-			startInfo.RedirectStandardError = true;
-			startInfo.RedirectStandardInput = true;
-			startInfo.CreateNoWindow = true;
-
-
-			using (var process = Process.Start(startInfo))
-			{
-				process.OutputDataReceived += (sender, e) => { console.WriteLine(e.Data); };
-
-				process.ErrorDataReceived += (sender, e) => { console.WriteLine(e.Data); };
-
-				process.BeginOutputReadLine();
-
-				process.BeginErrorReadLine();
-
-				process.WaitForExit();
-
-				result.ExitCode = process.ExitCode;
-			}
-
-			return result;
-		}
-
-		public override string GetLinkerArguments(IStandardProject project)
-		{
+        public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
+        {
 			var settings = GetSettings(project);
 
 			var result = string.Empty;
@@ -443,7 +174,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			// TODO remove dependency on file?
 			if (file != null)
 			{
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					if (!settings.CompileSettings.Rtti)
 					{
@@ -454,7 +185,10 @@ namespace AvalonStudio.Toolchains.LocalGCC
 					{
 						result += "-fno-exceptions ";
 					}
-				}
+
+                    result += "-std=c++14 ";
+
+                }
 			}
 
 			// TODO make this an option.
@@ -577,9 +311,9 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			// TODO factor out this code from here!
 			if (file != null)
 			{
-				switch (file.Language)
+				switch (file.Extension)
 				{
-					case Language.C:
+					case ".c":
 					{
 						foreach (var arg in superProject.CCompilerArguments)
 						{
@@ -588,7 +322,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 					}
 						break;
 
-					case Language.Cpp:
+					case ".cpp":
 					{
 						foreach (var arg in superProject.CppCompilerArguments)
 						{
@@ -606,10 +340,13 @@ namespace AvalonStudio.Toolchains.LocalGCC
 		{
 			return new List<string>
 			{
-				Path.Combine(BaseDirectory, "include"),
-				Path.Combine(BaseDirectory, "include", "c++", "5.3.0"),
-				Path.Combine(BaseDirectory, "lib", "gcc", "i686-w64-mingw32", "5.3.0", "include")
-			};
+                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include"),
+                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include-fixed"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32", "backward")
+            };
 		}
 
 		public override bool SupportsFile(ISourceFile file)
@@ -644,11 +381,6 @@ namespace AvalonStudio.Toolchains.LocalGCC
 			}
 
 			return result;
-		}
-
-		public override UserControl GetSettingsControl(IProject project)
-		{
-			return new ToolchainSettingsForm {DataContext = new ToolchainSettingsViewModel(project)};
 		}
 	}
 }

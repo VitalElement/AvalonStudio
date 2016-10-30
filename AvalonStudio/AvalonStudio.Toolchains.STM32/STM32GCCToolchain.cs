@@ -1,81 +1,46 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.IO;
-using Avalonia.Controls;
-using AvalonStudio.Platforms;
-using AvalonStudio.Projects;
-using AvalonStudio.Projects.Standard;
-using AvalonStudio.Toolchains.GCC;
-using AvalonStudio.Toolchains.Standard;
-using AvalonStudio.Utils;
-
 namespace AvalonStudio.Toolchains.STM32
 {
-	public class STM32GCCToolchain : GCCToolchain
+    using AvalonStudio.Platforms;
+    using AvalonStudio.Projects;
+    using AvalonStudio.Projects.Standard;
+    using AvalonStudio.Toolchains.GCC;
+    using AvalonStudio.Utils;
+    using Standard;
+    using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.IO;
+    using System.Threading.Tasks;
+
+    public class STM32GCCToolchain : GCCToolchain
 	{
-		private string BaseDirectory
-		{
-			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin"); }
-		}
+        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        {
+            return true;
+        }
 
-		#region Settings
+        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        {
+            return true;
+        }
 
-		public string LinkerScript { get; set; }
+        public override string BinDirectory => Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin");
+        
+        public string LinkerScript { get; set; }
 
-		#endregion
+        public override Version Version => new Version(1, 0, 0);
 
-		//public void GenerateLinkerScript(Project project)
-		//{
-		//    var template = new ArmGCCLinkTemplate(project.SelectedConfiguration);
+        public override string Description => "GCC based toolchain for STM32.";
 
-		//    string linkerScript = GetLinkerScriptLocation(project);
+		public override string GDBExecutable => Path.Combine(BinDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension);
 
-		//    if (File.Exists(linkerScript))
-		//    {
-		//        File.Delete(linkerScript);
-		//    }
+        public override string ExecutableExtension => ".elf";
 
-		//    var sw = File.CreateText(linkerScript);
+        public override string StaticLibraryExtension => ".a";
 
-		//    sw.Write(template.TransformText());
+        public override string Prefix => "arm-none-eabi-";
 
-		//    sw.Close();
-		//}
-
-		//private string GetLinkerScriptLocation(Project project)
-		//{
-		//    return Path.Combine(project.CurrentDirectory, "link.ld");
-		//}
-
-
-		public override Version Version
-		{
-			get { return new Version(1, 0, 0); }
-		}
-
-		public override string Description
-		{
-			get { return "GCC based toolchain for STM32."; }
-		}
-
-		public override string GDBExecutable
-		{
-			get { return Path.Combine(BaseDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension); }
-		}
-
-		public override string ExecutableExtension
-		{
-			get { return ".elf"; }
-		}
-
-		public override string StaticLibraryExtension
-		{
-			get { return ".a"; }
-		}
-
-		public override void ProvisionSettings(IProject project)
+        public override void ProvisionSettings(IProject project)
 		{
 			ProvisionSTM32Settings(project);
 		}
@@ -110,78 +75,8 @@ namespace AvalonStudio.Toolchains.STM32
 					result = project.ToolchainSettings.STM32ToolchainSettings;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
-			}
-
-			return result;
-		}
-
-		public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project,
-			ISourceFile file, string outputFile)
-		{
-			var result = new CompileResult();
-
-			var startInfo = new ProcessStartInfo();
-
-			if (file.Language == Language.Cpp)
-			{
-				startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-g++" + Platform.ExecutableExtension);
-			}
-			else
-			{
-				startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
-			}
-
-
-			startInfo.WorkingDirectory = file.CurrentDirectory;
-
-			if (!File.Exists(startInfo.FileName))
-			{
-				result.ExitCode = -1;
-				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
-			}
-			else
-			{
-				var fileArguments = string.Empty;
-
-				if (file.Language == Language.Cpp)
-				{
-					fileArguments = "-x c++ -fno-use-cxa-atexit";
-				}
-
-				startInfo.Arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments,
-					GetCompilerArguments(superProject, project, file), file.Location, outputFile);
-
-				// Hide console window
-				startInfo.UseShellExecute = false;
-				startInfo.RedirectStandardOutput = true;
-				startInfo.RedirectStandardError = true;
-				startInfo.CreateNoWindow = true;
-
-				//console.WriteLine (Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
-
-				using (var process = Process.Start(startInfo))
-				{
-					process.OutputDataReceived += (sender, e) => { console.WriteLine(e.Data); };
-
-					process.ErrorDataReceived += (sender, e) =>
-					{
-						if (e.Data != null)
-						{
-							console.WriteLine();
-							console.WriteLine(e.Data);
-						}
-					};
-
-					process.BeginOutputReadLine();
-
-					process.BeginErrorReadLine();
-
-					process.WaitForExit();
-
-					result.ExitCode = process.ExitCode;
-				}
 			}
 
 			return result;
@@ -199,207 +94,53 @@ namespace AvalonStudio.Toolchains.STM32
 
 			var linkerScript = GetLinkerScriptLocation(project);
 
-			if (File.Exists(linkerScript))
+			if (System.IO.File.Exists(linkerScript))
 			{
-				File.Delete(linkerScript);
+                System.IO.File.Delete(linkerScript);
 			}
 
-			var sw = File.CreateText(linkerScript);
+			var sw = System.IO.File.CreateText(linkerScript);
 
 			sw.Write(template.TransformText());
 
 			sw.Close();
 		}
 
-		public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project,
-			CompileResult assemblies, string outputPath)
-		{
-			var settings = GetSettings(superProject);
-			var result = new LinkResult();
+        public override string GetBaseLibraryArguments(IStandardProject superProject)
+        {
+            var settings = GetSettings(superProject);
+            string result = string.Empty;
 
-			var startInfo = new ProcessStartInfo();
+            // TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
+            switch (settings.LinkSettings.Library)
+            {
+                case LibraryType.NanoCLib:
+                    result += "-lm -lc_nano -lsupc++_nano -lstdc++_nano ";
+                    break;
 
-			startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-gcc" + Platform.ExecutableExtension);
+                case LibraryType.BaseCLib:
+                    result += "-lm -lc -lstdc++ -lsupc++ ";
+                    break;
 
-			if (project.Type == ProjectType.StaticLibrary)
-			{
-				startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-ar" + Platform.ExecutableExtension);
-			}
+                case LibraryType.SemiHosting:
+                    result += "-lm -lgcc -lc -lrdimon ";
+                    break;
 
-			startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
+                case LibraryType.Retarget:
+                    result += "-lm -lc -lnosys -lstdc++ -lsupc++ ";
+                    break;
+            }
 
-			if (!File.Exists(startInfo.FileName))
-			{
-				result.ExitCode = -1;
-				console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
-				return result;
-			}
+            return result;
+        }
 
-			var objectArguments = string.Empty;
-			foreach (var obj in assemblies.ObjectLocations)
-			{
-				objectArguments += obj + " ";
-			}
+        public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
+        {
+            if (superProject != null && project.Type != ProjectType.StaticLibrary)
+            {
+                GenerateLinkerScript(superProject);
+            }
 
-			var libs = string.Empty;
-			foreach (var lib in assemblies.LibraryLocations)
-			{
-				libs += lib + " ";
-			}
-
-			var outputDir = Path.GetDirectoryName(outputPath);
-
-			if (!Directory.Exists(outputDir))
-			{
-				Directory.CreateDirectory(outputDir);
-			}
-
-			var outputName = Path.GetFileNameWithoutExtension(outputPath) + ExecutableExtension;
-
-			if (project.Type == ProjectType.StaticLibrary)
-			{
-				outputName = Path.GetFileNameWithoutExtension(outputPath) + StaticLibraryExtension;
-			}
-			else
-			{
-				GenerateLinkerScript(superProject);
-			}
-
-			var executable = Path.Combine(outputDir, outputName);
-
-			var linkedLibraries = string.Empty;
-
-			foreach (var libraryPath in project.StaticLibraries)
-			{
-				var relativePath = Path.GetDirectoryName(libraryPath);
-
-				var libName = Path.GetFileNameWithoutExtension(libraryPath).Substring(3);
-
-				linkedLibraries += string.Format("-L\"{0}\" -l{1} ", relativePath, libName);
-			}
-
-			foreach (var lib in project.BuiltinLibraries)
-			{
-				linkedLibraries += string.Format("-l{0} ", lib);
-			}
-
-
-			// TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
-			switch (settings.LinkSettings.Library)
-			{
-				case LibraryType.NanoCLib:
-					linkedLibraries += "-lm -lc_nano -lsupc++_nano -lstdc++_nano ";
-					break;
-
-				case LibraryType.BaseCLib:
-					linkedLibraries += "-lm -lc -lstdc++ -lsupc++ ";
-					break;
-
-				case LibraryType.SemiHosting:
-					linkedLibraries += "-lm -lgcc -lc -lrdimon ";
-					break;
-
-				case LibraryType.Retarget:
-					linkedLibraries += "-lm -lc -lnosys -lstdc++ -lsupc++ ";
-					break;
-			}
-
-			// Hide console window
-			startInfo.UseShellExecute = false;
-			startInfo.RedirectStandardOutput = true;
-			startInfo.RedirectStandardError = true;
-			startInfo.RedirectStandardInput = true;
-			startInfo.CreateNoWindow = true;
-
-			if (project.Type == ProjectType.StaticLibrary)
-			{
-				startInfo.Arguments = string.Format("rvs {0} {1}", executable, objectArguments);
-			}
-			else
-			{
-				startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group",
-					GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
-			}
-
-			//console.WriteLine(Path.GetFileNameWithoutExtension(startInfo.FileName) + " " + startInfo.Arguments);
-			//console.WriteLine ("[LL] - " + startInfo.Arguments);
-
-			using (var process = Process.Start(startInfo))
-			{
-				process.OutputDataReceived += (sender, e) =>
-				{
-					//console.WriteLine(e.Data);
-				};
-
-				process.ErrorDataReceived += (sender, e) =>
-				{
-					if (e.Data != null && !e.Data.Contains("creating"))
-					{
-						console.WriteLine(e.Data);
-					}
-				};
-
-				process.BeginOutputReadLine();
-
-				process.BeginErrorReadLine();
-
-				process.WaitForExit();
-
-				result.ExitCode = process.ExitCode;
-
-				if (result.ExitCode == 0)
-				{
-					result.Executable = executable;
-				}
-			}
-
-			return result;
-		}
-
-		public override ProcessResult Size(IConsole console, IStandardProject project, LinkResult linkResult)
-		{
-			var result = new ProcessResult();
-
-			var startInfo = new ProcessStartInfo();
-			startInfo.FileName = Path.Combine(BaseDirectory, "arm-none-eabi-size" + Platform.ExecutableExtension);
-
-			if (!File.Exists(startInfo.FileName))
-			{
-				console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
-				result.ExitCode = -1;
-				return result;
-			}
-
-			startInfo.Arguments = string.Format("{0}", linkResult.Executable);
-
-			// Hide console window
-			startInfo.UseShellExecute = false;
-			startInfo.RedirectStandardOutput = true;
-			startInfo.RedirectStandardError = true;
-			startInfo.RedirectStandardInput = true;
-			startInfo.CreateNoWindow = true;
-
-
-			using (var process = Process.Start(startInfo))
-			{
-				process.OutputDataReceived += (sender, e) => { console.WriteLine(e.Data); };
-
-				process.ErrorDataReceived += (sender, e) => { console.WriteLine(e.Data); };
-
-				process.BeginOutputReadLine();
-
-				process.BeginErrorReadLine();
-
-				process.WaitForExit();
-
-				result.ExitCode = process.ExitCode;
-			}
-
-			return result;
-		}
-
-		public override string GetLinkerArguments(IStandardProject project)
-		{
 			var settings = GetSettings(project);
 
 			var result = string.Empty;
@@ -458,14 +199,14 @@ namespace AvalonStudio.Toolchains.STM32
 			//var settings = GetSettings(project).CompileSettings;
 			var settings = GetSettings(superProject);
 
-			result += "-Wall -c ";
+			result += "-Wall -c -fshort-enums ";
 
 			if (settings.CompileSettings.DebugInformation)
 			{
 				result += "-g ";
 			}
 
-			if (file == null || file.Language == Language.Cpp)
+			if (file == null || file.Extension == ".cpp")
 			{
 				switch (settings.CompileSettings.CppLanguageStandard)
 				{
@@ -494,7 +235,7 @@ namespace AvalonStudio.Toolchains.STM32
 				}
 			}
 
-			if (file == null || file.Language == Language.C)
+			if (file == null || file.Extension == ".c")
 			{
 				switch (settings.CompileSettings.CLanguageStandard)
 				{
@@ -528,7 +269,7 @@ namespace AvalonStudio.Toolchains.STM32
 			// TODO remove dependency on file?
 			if (file != null)
 			{
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					if (!settings.CompileSettings.Rtti)
 					{
@@ -672,9 +413,9 @@ namespace AvalonStudio.Toolchains.STM32
 			// TODO factor out this code from here!
 			if (file != null)
 			{
-				switch (file.Language)
+				switch (file.Extension)
 				{
-					case Language.C:
+                    case ".c":
 					{
 						foreach (var arg in superProject.CCompilerArguments)
 						{
@@ -683,7 +424,7 @@ namespace AvalonStudio.Toolchains.STM32
 					}
 						break;
 
-					case Language.Cpp:
+					case ".cpp":
 					{
 						foreach (var arg in superProject.CppCompilerArguments)
 						{
@@ -742,11 +483,6 @@ namespace AvalonStudio.Toolchains.STM32
 			}
 
 			return result;
-		}
-
-		public override UserControl GetSettingsControl(IProject project)
-		{
-			throw new Exception();
 		}
 	}
 }

@@ -1,10 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" FontFamily="Verdana" FontSize="12">
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" FontFamily="Verdana" FontSize="12" Foreground="#D4D4D4">
     <Grid Background="{StyleResource ThemeControlDarkBrush}">
         <Grid Margin="5">
             <Grid>
                 <StackPanel Margin="4">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                         <TextBlock Text="{Binding ScopeDescription}" />
                         <TextBlock Text="{Binding BuiltInTypeDescription}" Foreground="#FF569CD6" />
                         <TextBlock Text="{Binding EnumTypeDescription}" Foreground="#FFCEE4AE" />
@@ -21,12 +21,11 @@
                             </ListBox.ItemsPanel>
                             <ListBox.DataTemplates>
                                 <DataTemplate DataType="cont:ParameterSymbolViewModel">
-                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
+                                    <StackPanel Orientation="Horizontal" Margin="0 0 0 0" TextBlock.FontWeight="{Binding FontWeight}" >
                                         <TextBlock Margin="0" Text="{Binding BuiltInTypeDescription}"
                                                    Foreground="#FF569CD6" />
                                         <TextBlock Margin="0" Text="{Binding TypeDescription}" Foreground="#FF4ec9b0" />
-                                        <TextBlock Margin="0" Text="{Binding Name}" />
-                                        <TextBlock Margin="0" Text="{Binding Comment}" />
+                                        <TextBlock Margin="0" Text="{Binding Name}"  />
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.DataTemplates>
@@ -34,7 +33,7 @@
                         <TextBlock Margin="-4 0 0 0" Text=")" IsVisible="{Binding ArgumentsVisibility}" />
                     </StackPanel>
                     <TextBlock Text="{Binding Description}" IsVisible="{Binding DescriptionVisibility}" MaxWidth="500"
-                               TextWrapping="Wrap" />
+                               TextWrapping="Wrap" TextAlignment="Left" HorizontalAlignment="Left" />
                 </StackPanel>
             </Grid>
         </Grid>

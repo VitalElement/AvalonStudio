@@ -1,6 +1,9 @@
+using System;
 using System.IO;
 using AvalonStudio.Platforms;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
@@ -12,17 +15,19 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 		public string Flags { get; set; }
 
-		public string File { get; set; }
+		public string FilePath { get; set; }
 
-		public int CompareTo(ISourceFile other)
+        public event EventHandler FileModifiedExternally;
+
+        public int CompareTo(ISourceFile other)
 		{
-			return File.CompareFilePath(other.File);
+			return FilePath.CompareFilePath(other.FilePath);
 		}
 
 		[JsonIgnore]
 		public string Location
 		{
-			get { return Path.Combine(Project.CurrentDirectory, File); }
+			get { return Path.Combine(Project.CurrentDirectory, FilePath); }
 		}
 
 		[JsonIgnore]
@@ -35,7 +40,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 			{
 				var result = Language.C;
 
-				switch (Path.GetExtension(File))
+				switch (Path.GetExtension(FilePath))
 				{
 					case ".c":
 						result = Language.C;
@@ -49,6 +54,10 @@ namespace AvalonStudio.Projects.CPlusPlus
 				return result;
 			}
 		}
+		public string Extension
+        {
+            get { return Path.GetExtension(FilePath); }
+        }
 
 		public string Name
 		{
@@ -69,18 +78,57 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 		public static SourceFile FromPath(IProject project, IProjectFolder parent, string filePath)
 		{
-			return new SourceFile {Project = project, Parent = parent, File = filePath.ToPlatformPath()};
+			return new SourceFile {Project = project, Parent = parent, FilePath = filePath.ToPlatformPath()};
 		}
 
-		public static SourceFile Create(IProject project, IProjectFolder parent, string location, string name,
-			string text = "")
+		public static Task<ISourceFile> Create(IProjectFolder parent, string name, string text = "")
 		{
-			var filePath = Path.Combine(location, name);
+            if(parent.Project == null)
+            {
+                throw new ArgumentNullException("parent.Project");
+            }
+
+            var filePath = Path.Combine(parent.LocationDirectory, name);
+
+            TaskCompletionSource<ISourceFile> fileAddedCompletionSource = new TaskCompletionSource<ISourceFile>();
+
+            EventHandler fileAddedHandler = (sender, e) =>
+            {
+                var newFile = parent.Project.FindFile(filePath);
+
+                if(newFile != null)
+                {
+                    fileAddedCompletionSource.SetResult(newFile);
+                }
+            };
+
+            parent.Project.FileAdded += fileAddedHandler;
+			
 			var file = System.IO.File.CreateText(filePath);
 			file.Write(text);
 			file.Close();
 
-			return new SourceFile {File = filePath.ToPlatformPath(), Project = project};
+            fileAddedCompletionSource.Task.ContinueWith((f) =>
+            {
+                parent.Project.FileAdded -= fileAddedHandler;
+            });
+
+            return fileAddedCompletionSource.Task;
 		}
-	}
+
+        public int CompareTo(IProjectItem other)
+        {
+            return this.CompareProjectItems(other);
+        }
+
+        public int CompareTo(string other)
+        {
+            return Location.CompareFilePath(other);
+        }
+
+        public void RaiseFileModifiedEvent()
+        {
+            FileModifiedExternally?.Invoke(this, new EventArgs());
+        }
+    }
 }

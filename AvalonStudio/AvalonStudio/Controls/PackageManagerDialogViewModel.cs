@@ -108,7 +108,10 @@ namespace AvalonStudio.Controls
 			get { return selectedPackage; }
 			set
 			{
-				GetPackageInfo(value);
+                if (value != null)
+                {
+                    GetPackageInfo(value);
+                }
 
 				this.RaiseAndSetIfChanged(ref selectedPackage, value);
 				this.RaisePropertyChanged(() => ButtonText);
@@ -200,7 +203,7 @@ namespace AvalonStudio.Controls
 			{
 				SelectedPackageIndex = await reference.DownloadInfoAsync();
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 			}
 		}

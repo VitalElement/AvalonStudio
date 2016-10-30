@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
-  <cont:ToolControl Title="Disassembly">
-    <ListBox Name="disassemblyList" BorderThickness="0" Items="{Binding DisassemblyData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
+  <cont:ToolControl Title="Disassembly">    
+    <ListBox Name="disassemblyList" FontFamily="Inconsolata" FontSize="14" FontWeight="Light" IsHitTestVisible="false" IsEnabled="{Binding Enabled}" BorderThickness="0" Items="{Binding DisassemblyData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
       <ListBox.DataTemplates>
         <DataTemplate>
           <Grid IsVisible="{Binding Data.Visible}">
@@ -14,6 +14,6 @@
           </Grid>
         </DataTemplate>
       </ListBox.DataTemplates>
-    </ListBox>
+    </ListBox>    
   </cont:ToolControl>
 </UserControl>

@@ -1,12 +1,13 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
 
 namespace AvalonStudio.Projects
-{
-	public interface ISolution
+{    
+    public interface ISolution
 	{
-		string Name { get; }
+		string Name { get; }        
 
-		IProject StartupProject { get; set; }
+        IProject StartupProject { get; set; }
 
 		ObservableCollection<IProject> Projects { get; }
 
@@ -14,7 +15,7 @@ namespace AvalonStudio.Projects
 
 		IProject AddProject(IProject project);
 
-		ISourceFile FindFile(ISourceFile path);
+		ISourceFile FindFile(string path);
 
 		void RemoveProject(IProject project);
 

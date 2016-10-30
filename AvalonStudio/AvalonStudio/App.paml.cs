@@ -4,11 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
-using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Commands;
-using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Platforms;
-using AvalonStudio.Repositories;
 using Serilog;
 using SharpDX;
 
@@ -35,29 +31,33 @@ namespace AvalonStudio
 				throw new ArgumentNullException(nameof(args));
 			}
 
-			Platform.Initialise();
+			var builder = AppBuilder.Configure<App>();
 
-			PackageSources.InitialisePackageSources();
+			if (args.Length >= 1 && args[0] == "--skia")
+			{
+				builder.UseSkia();
+				
+				if (Platform.PlatformIdentifier == PlatformID.Win32NT)
+				{
+					builder.UseWin32();
+				}
+				else
+				{
+					builder.UseGtk();
+				}
+			}
+			else
+			{
+				builder.UsePlatformDetect();
+			}
 
-			var container = CompositionRoot.CreateContainer();
+			builder.SetupWithoutStarting();
 
-			var builder = AppBuilder.Configure<App>().UseWin32().UseDirect2D1().SetupWithoutStarting();
+			var splash = new BootScreen();
 
-			var commandService = container.GetExportedValue<ICommandService>();
-			IoC.RegisterConstant(commandService, typeof(ICommandService));
+			splash.Show();
 
-			var keyGestureService = container.GetExportedValue<ICommandKeyGestureService>();
-			IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));
-
-			var toolBarBuilder = container.GetExportedValue<IToolBarBuilder>();
-			IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
-
-			ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
-
-
-			builder.Instance.RunWithMainWindow<MainWindow>();
-
-			ShellViewModel.Instance.Cleanup();
+			builder.Instance.Run(splash);
 		}
 
 		public override void Initialize()

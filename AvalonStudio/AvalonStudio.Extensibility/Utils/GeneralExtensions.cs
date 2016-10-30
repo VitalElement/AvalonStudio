@@ -5,259 +5,347 @@ using Avalonia;
 
 namespace AvalonStudio.Utils
 {
-	public static class GeneralExtensions
-	{
-		public static double DistanceTo(this Point p, Point q)
-		{
-			var a = p.X - q.X;
-			var b = p.Y - q.Y;
-			var distance = Math.Sqrt(a*a + b*b);
-			return distance;
-		}
+    public static class GeneralExtensions
+    {
+        public static bool IsFileLocked(this FileInfo file)
+        {
+            FileStream stream = null;
 
-		public static T BinarySearch<T, TKey>(this IList<T> list, Func<T, TKey> keySelector, TKey key)
-			where TKey : IComparable<TKey>
-		{
-			var min = 0;
-			var max = list.Count;
-			while (min < max)
-			{
-				var mid = min + (max - min)/2;
-				var midItem = list[mid];
-				var midKey = keySelector(midItem);
-				var comp = midKey.CompareTo(key);
-				if (comp < 0)
-				{
-					min = mid + 1;
-				}
-				else if (comp > 0)
-				{
-					max = mid - 1;
-				}
-				else
-				{
-					return midItem;
-				}
-			}
+            try
+            {
+                stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
+            }
+            catch (IOException)
+            {
+                //the file is unavailable because it is:
+                //still being written to
+                //or being processed by another thread
+                //or does not exist (has already been processed)
+                return true;
+            }
+            finally
+            {
+                if (stream != null)
+                    stream.Close();
+            }
 
-			if (min == max && min < list.Count &&
-			    keySelector(list[min]).CompareTo(key) == 0)
-			{
-				return list[min];
-			}
+            //file is not locked
+            return false;
+        }
 
-			return default(T);
-		}
+        public static double DistanceTo(this Point p, Point q)
+        {
+            var a = p.X - q.X;
+            var b = p.Y - q.Y;
+            var distance = Math.Sqrt(a * a + b * b);
+            return distance;
+        }
 
-		/// <summary>
-		///     Inserts an element into the collection, keeping it sorted. The collection must be sorted
-		///     already, i.e. populated only with this method. The template type for the collection must
-		///     implement IComparable.
-		/// </summary>
-		/// <typeparam name="T">is the type of items in the collection.</typeparam>
-		/// <param name="myself">is "this" reference.</param>
-		/// <param name="item">is the item to insert.</param>
-		public static void InsertSorted<T>(this IList<T> myself, T item) where T : IComparable<T>
-		{
-			if (myself.Count == 0)
-			{
-				myself.Add(item);
-			}
-			else
-			{
-				var last = true;
+        public static T BinarySearch<T, TKey>(this IList<T> list, Func<T, TKey> keySelector, TKey key)
+            where TKey : IComparable<TKey>
+        {
+            var min = 0;
+            var max = list.Count;
+            while (min < max)
+            {
+                var mid = min + (max - min) / 2;
+                var midItem = list[mid];
+                var midKey = keySelector(midItem);
+                var comp = midKey.CompareTo(key);
+                if (comp < 0)
+                {
+                    min = mid + 1;
+                }
+                else if (comp > 0)
+                {
+                    max = mid - 1;
+                }
+                else
+                {
+                    return midItem;
+                }
+            }
 
-				for (var i = 0; i < myself.Count; i++)
-				{
-					var result = myself[i].CompareTo(item);
+            if (min == max && min < list.Count &&
+                keySelector(list[min]).CompareTo(key) == 0)
+            {
+                return list[min];
+            }
 
-					if (result >= 1)
-					{
-						myself.Insert(i, item);
+            return default(T);
+        }
 
-						last = false;
+        public static T BinarySearch<T, TKey>(this IList<T> list, TKey key)
+            where T : IComparable<TKey>
+        {
+            var min = 0;
+            var max = list.Count;
+            while (min < max)
+            {
+                var mid = min + (max - min) / 2;
+                var midItem = list[mid];
 
-						break;
-					}
-				}
+                var comp = midItem.CompareTo(key);
+                if (comp < 0)
+                {
+                    min = mid + 1;
+                }
+                else if (comp > 0)
+                {
+                    max = mid - 1;
+                }
+                else
+                {
+                    return midItem;
+                }
+            }
 
-				if (last)
-				{
-					myself.Add(item);
-				}
-			}
-		}
+            if (min == max && min < list.Count &&
+                (list[min]).CompareTo(key) == 0)
+            {
+                return list[min];
+            }
+
+            return default(T);
+        }
+
+        public static int BinarySearchIndexOf<T, TKey>(this IList<T> list, TKey value) where T : IComparable<TKey>
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException("list");
+            }
+
+            int lower = 0;
+            int upper = list.Count - 1;
+
+            while (lower <= upper)
+            {
+                int middle = lower + (upper - lower) / 2;
+                int comparisonResult = list[middle].CompareTo(value);
 
 
-		/// <summary>
-		///     Creates a relative path from one file or folder to another.
-		/// </summary>
-		/// <param name="fromPath">Contains the directory that defines the start of the relative path.</param>
-		/// <param name="toPath">Contains the path that defines the endpoint of the relative path.</param>
-		/// <returns>The relative path from the start directory to the end path.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="UriFormatException"></exception>
-		/// <exception cref="InvalidOperationException"></exception>
-		public static string MakeRelativePath(this string fromPath, string toPath)
-		{
-			if (string.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
-			if (string.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
+                if (comparisonResult < 0)
+                {
+                    lower = middle + 1;
+                }
+                else if (comparisonResult > 0)
+                {
+                    upper = middle - 1;
+                }
+                else
+                {
+                    return middle;
+                }
+            }
 
-			var fromUri = new Uri(fromPath);
-			var toUri = new Uri(toPath);
+            return ~lower;
+        }
 
-			if (fromUri.Scheme != toUri.Scheme)
-			{
-				return toPath;
-			} // path can't be made relative.
+        /// <summary>
+        ///     Inserts an element into the collection, keeping it sorted. The collection must be sorted
+        ///     already, i.e. populated only with this method. The template type for the collection must
+        ///     implement IComparable.
+        /// </summary>
+        /// <typeparam name="T">is the type of items in the collection.</typeparam>
+        /// <param name="myself">is "this" reference.</param>
+        /// <param name="item">is the item to insert.</param>
+        public static void InsertSorted<T>(this IList<T> myself, T item, bool exclusive = true) where T : IComparable<T>
+        {
+            var index = myself.BinarySearchIndexOf(item);
 
-			var relativeUri = fromUri.MakeRelativeUri(toUri);
-			var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+            if (index < 0)
+            {
+                myself.Insert(~index, item);
+            }
+            else if (!exclusive)
+            {
+                myself.Insert(index, item);
+            }
+        }
 
-			if (toUri.Scheme.ToUpperInvariant() == "FILE")
-			{
-				relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-			}
 
-			return relativePath;
-		}
+        /// <summary>
+        ///     Creates a relative path from one file or folder to another.
+        /// </summary>
+        /// <param name="fromPath">Contains the directory that defines the start of the relative path.</param>
+        /// <param name="toPath">Contains the path that defines the endpoint of the relative path.</param>
+        /// <returns>The relative path from the start directory to the end path.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="UriFormatException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static string MakeRelativePath(this string fromPath, string toPath)
+        {
+            if (string.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
+            if (string.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
 
-		public static bool IsPunctuationChar(this char c)
-		{
-			var result = false;
+            var fromUri = new Uri(fromPath);
+            var toUri = new Uri(toPath);
 
-			switch (c)
-			{
-				case '"':
-				case '\'':
-				case '.':
-				case '/':
-					result = true;
-					break;
-			}
+            if (fromUri.Scheme != toUri.Scheme)
+            {
+                return toPath;
+            } // path can't be made relative.
 
-			return result;
-		}
+            var relativeUri = fromUri.MakeRelativeUri(toUri);
+            var relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
-		public static bool IsOpenBracketChar(this char c)
-		{
-			var result = false;
+            if (toUri.Scheme.ToUpperInvariant() == "FILE")
+            {
+                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            }
 
-			switch (c)
-			{
-				//case '<':
-				case '(':
-				case '{':
-				case '[':
-				case '"':
-				case '\'':
-					result = true;
-					break;
-			}
+            return relativePath;
+        }
 
-			return result;
-		}
+        public static bool IsPunctuationChar(this char c)
+        {
+            var result = false;
 
-		public static char GetOpenBracketChar(this char c)
-		{
-			if (!c.IsCloseBracketChar())
-			{
-				throw new Exception("Character is not supported as bracket.");
-			}
+            switch (c)
+            {
+                case '"':
+                case '\'':
+                case '.':
+                case '/':
+                    result = true;
+                    break;
+            }
 
-			var result = '(';
+            return result;
+        }
 
-			switch (c)
-			{
-				case ')':
-					result = '(';
-					break;
+        public static bool IsOpenBracketChar(this char c)
+        {
+            var result = false;
 
-				case '>':
-					result = '<';
-					break;
+            switch (c)
+            {
+                //case '<':
+                case '(':
+                case '{':
+                case '[':
+                case '"':
+                case '\'':
+                    result = true;
+                    break;
+            }
 
-				case ']':
-					result = '[';
-					break;
+            return result;
+        }
 
-				case '}':
-					result = '{';
-					break;
+        public static char GetOpenBracketChar(this char c)
+        {
+            if (!c.IsCloseBracketChar())
+            {
+                throw new Exception("Character is not supported as bracket.");
+            }
 
-				case '\'':
-					result = '\'';
-					break;
+            var result = '(';
 
-				case '"':
-					result = '"';
-					break;
-			}
+            switch (c)
+            {
+                case ')':
+                    result = '(';
+                    break;
 
-			return result;
-		}
+                case '>':
+                    result = '<';
+                    break;
 
-		public static char GetCloseBracketChar(this char c)
-		{
-			if (!c.IsOpenBracketChar())
-			{
-				throw new Exception("Character is not supported as bracket.");
-			}
+                case ']':
+                    result = '[';
+                    break;
 
-			var result = ')';
+                case '}':
+                    result = '{';
+                    break;
 
-			switch (c)
-			{
-				case '(':
-					result = ')';
-					break;
+                case '\'':
+                    result = '\'';
+                    break;
 
-				case '<':
-					result = '>';
-					break;
+                case '"':
+                    result = '"';
+                    break;
+            }
 
-				case '[':
-					result = ']';
-					break;
+            return result;
+        }
 
-				case '{':
-					result = '}';
-					break;
+        public static bool IsSymbolChar(this char letter)
+        {
+            bool result = false;
 
-				case '\'':
-					result = '\'';
-					break;
+            if (char.IsLetter(letter) || letter == '_')
+            {
+                result = true;
+            }
 
-				case '"':
-					result = '"';
-					break;
-			}
+            return result;
+        }
 
-			return result;
-		}
+        public static char GetCloseBracketChar(this char c)
+        {
+            if (!c.IsOpenBracketChar())
+            {
+                throw new Exception("Character is not supported as bracket.");
+            }
 
-		public static bool IsWhiteSpace(this char c)
-		{
-			return char.IsWhiteSpace(c);
-		}
+            var result = ')';
 
-		public static bool IsCloseBracketChar(this char c)
-		{
-			var result = false;
+            switch (c)
+            {
+                case '(':
+                    result = ')';
+                    break;
 
-			switch (c)
-			{
-				//case '>':
-				case ')':
-				case '}':
-				case ']':
-				case '"':
-				case '\'':
-					result = true;
-					break;
-			}
+                case '<':
+                    result = '>';
+                    break;
 
-			return result;
-		}
-	}
+                case '[':
+                    result = ']';
+                    break;
+
+                case '{':
+                    result = '}';
+                    break;
+
+                case '\'':
+                    result = '\'';
+                    break;
+
+                case '"':
+                    result = '"';
+                    break;
+            }
+
+            return result;
+        }
+
+        public static bool IsWhiteSpace(this char c)
+        {
+            return char.IsWhiteSpace(c);
+        }
+
+        public static bool IsCloseBracketChar(this char c)
+        {
+            var result = false;
+
+            switch (c)
+            {
+                //case '>':
+                case ')':
+                case '}':
+                case ']':
+                case '"':
+                case '\'':
+                    result = true;
+                    break;
+            }
+
+            return result;
+        }
+    }
 }

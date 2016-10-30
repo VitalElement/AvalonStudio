@@ -18,16 +18,7 @@ namespace AvalonStudio.Debugging
 	{
 		private IConsole _console;
 		private IShell _shell;
-
-		#region Private Fields
-
-		//private EditorViewModel lastDocument;
-		private bool closeLastDocument;
-
-		#endregion
-
 		private bool ignoreEvents;
-
 		private bool IsExecuting;
 		private bool IsUpdating;
 		private IEditor lastDocument;
@@ -523,7 +514,7 @@ namespace AvalonStudio.Debugging
 
                     if (e.Frame != null && e.Frame.File != null)
                     {
-                        var normalizedPath = e.Frame.File.Replace("\\\\", "\\").ToPlatformPath();
+                        var normalizedPath = e.Frame.File.Replace("\\\\", "\\").NormalizePath();
 
                         ISourceFile file = null;
 
@@ -537,7 +528,7 @@ namespace AvalonStudio.Debugging
                         
                         if (file == null)
                         {
-                            file = _shell.CurrentSolution.FindFile(PathSourceFile.FromPath(null, null, normalizedPath));
+                            file = _shell.CurrentSolution.FindFile(normalizedPath);
                         }
 
                         if (file != null)

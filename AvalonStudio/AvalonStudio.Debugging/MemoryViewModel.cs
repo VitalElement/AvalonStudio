@@ -15,7 +15,6 @@
 
     public class MemoryViewModel : ToolViewModel, IExtension
     {
-        private IDebugger _debugger;
         private IDebugManager _debugManager;
         public const string ToolId = "CIDMEM001";        
 
@@ -97,12 +96,12 @@
         {
             if (this.debugger != null)
             {
-                this.debugger.StateChanged -= Debugger_StateChanged;
+                //this.debugger.StateChanged -= Debugger_StateChanged;
             }
 
             if (debugger != null)
             {
-                debugger.StateChanged += Debugger_StateChanged;
+                //debugger.StateChanged += Debugger_StateChanged;
             }
 
             this.debugger = debugger;
@@ -114,11 +113,15 @@
         {
             if (debugger.State == DebuggerState.Paused)
             {
-                Enabled = true;
+                dataProvider.Enable();
+
+                Dispatcher.UIThread.InvokeTaskAsync(() => Enabled = true);
             }
             else
             {
-                Enabled = false;
+                dataProvider?.Clear();
+
+                Dispatcher.UIThread.InvokeTaskAsync(() => Enabled = false);
             }
         }
 
@@ -212,7 +215,7 @@
 
                 // TODO clear out data ready for GC, this requires a fix in Avalonia.
                 //DisassemblyData = null;
-            };
+            };            
         }
 
         private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)

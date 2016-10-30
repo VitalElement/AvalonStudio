@@ -15,7 +15,7 @@ namespace AvalonStudio.Debugging
 
 		public DisassemblyDataProvider()
 		{
-			count = int.MaxValue;
+            Enable();
 		}
 
 		public ulong BaseAddress { get; set; }
@@ -73,8 +73,18 @@ namespace AvalonStudio.Debugging
 			this.debugger = debugger;
 		}
 
+        public void Enable()
+        {
+            Count = int.MaxValue;
+        }
 
-		private List<InstructionLine> FetchRange(int startIndex, int pageCount)
+        public void Clear()
+        {
+            Count = 0;
+        }
+
+
+        private List<InstructionLine> FetchRange(int startIndex, int pageCount)
 		{
 			List<InstructionLine> result = null;
 

@@ -72,7 +72,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 					result = project.DebugSettings.OpenOCDSettings;
 				}
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				result = project.DebugSettings.OpenOCDSettings = new OpenOCDSettings();
 			}
@@ -125,7 +125,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 			startInfo.Arguments = string.Format("-f \"{0}\" -f \"{1}\"", settings.InterfaceConfigFile, settings.TargetConfigFile);
 			startInfo.FileName = Path.Combine(BaseDirectory, "bin", "openocd" + Platform.ExecutableExtension);
 
-			if (!File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("[OpenOCD] - Error unable to find executable.");
 				return false;

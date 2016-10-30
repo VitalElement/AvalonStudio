@@ -8,12 +8,23 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.Llilum
 {
 	public class LlilumToolchain : StandardToolChain
 	{
-		public override Version Version
+        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        {
+            return true;
+        }
+
+        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        {
+            return true;
+        }
+
+        public override Version Version
 		{
 			get { return new Version(1, 0, 0, 0); }
 		}
@@ -45,7 +56,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.FileName = Path.Combine(BaseDirectory, "Roslyn", "csc.exe");
 
-			if (!File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -94,7 +105,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			startInfo.FileName = Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug",
 				"Microsoft.Zelig.Compiler.exe");
 
-			if (!File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -103,7 +114,7 @@ namespace AvalonStudio.Toolchains.Llilum
 				//startInfo.WorkingDirectory = Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug");
 
 				startInfo.Arguments = string.Format("{0} -OutputName {1} {2}",
-					GetZeligCompilerArguments(superProject, project, file), outputFile, outputFile);
+                    GetZeligCompilerArguments(superProject, project, file), outputFile, outputFile);
 
 				// Hide console window
 				startInfo.UseShellExecute = false;
@@ -142,7 +153,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.FileName = Path.Combine(BaseDirectory, "LLVM", "llc.exe");
 
-			if (!File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -237,9 +248,9 @@ namespace AvalonStudio.Toolchains.Llilum
 				result += string.Format(" {0}", arg);
 			}
 
-			switch (file.Language)
+			switch (file.Extension)
 			{
-				case Language.C:
+				case ".c":
 				{
 					foreach (var arg in superProject.CCompilerArguments)
 					{
@@ -248,7 +259,7 @@ namespace AvalonStudio.Toolchains.Llilum
 				}
 					break;
 
-				case Language.Cpp:
+				case ".cpp":
 				{
 					foreach (var arg in superProject.CppCompilerArguments)
 					{
@@ -266,7 +277,7 @@ namespace AvalonStudio.Toolchains.Llilum
 		{
 			var result = new CompileResult();
 
-			if (Path.GetExtension(file.File) == ".cs")
+			if (Path.GetExtension(file.FilePath) == ".cs")
 			{
 				CompileCS(console, superProject, project, file, outputFile);
 
@@ -274,11 +285,11 @@ namespace AvalonStudio.Toolchains.Llilum
 
 				CompileLLVMIR(console, superProject, project, file, outputFile + ".bc", outputFile);
 			}
-			else if (Path.GetExtension(file.File) == ".cpp" || Path.GetExtension(file.File) == ".c")
+			else if (Path.GetExtension(file.FilePath) == ".cpp" || Path.GetExtension(file.FilePath) == ".c")
 			{
 				var startInfo = new ProcessStartInfo();
 
-				if (file.Language == Language.Cpp)
+				if (file.Extension == ".cpp")
 				{
 					startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-g++.exe");
 				}
@@ -290,7 +301,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 				startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-				if (!File.Exists(startInfo.FileName))
+				if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 				{
 					result.ExitCode = -1;
 					console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
@@ -299,7 +310,7 @@ namespace AvalonStudio.Toolchains.Llilum
 				{
 					var fileArguments = string.Empty;
 
-					if (file.Language == Language.Cpp)
+					if (file.Extension == ".cpp")
 					{
 						fileArguments = "-x c++ -std=c++14 -fno-use-cxa-atexit";
 					}
@@ -407,7 +418,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-			if (!File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				result.ExitCode = -1;
 				console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
@@ -467,7 +478,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			startInfo.CreateNoWindow = true;
 
 			startInfo.Arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group",
-				GetLinkerArguments(project), executable, objectArguments, linkedLibraries, libs);
+				GetLinkerArguments(superProject, project), executable, objectArguments, linkedLibraries, libs);
 
 			if (project.Type == ProjectType.StaticLibrary)
 			{
@@ -516,7 +527,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			var startInfo = new ProcessStartInfo();
 			startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-size.exe");
 
-			if (!File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
 				result.ExitCode = -1;
@@ -551,7 +562,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			return result;
 		}
 
-		public override string GetLinkerArguments(IStandardProject project)
+		public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
 		{
 			var result = string.Empty;
 
@@ -617,9 +628,9 @@ namespace AvalonStudio.Toolchains.Llilum
 			throw new NotImplementedException();
 		}
 
-		public override UserControl GetSettingsControl(IProject project)
-		{
-			throw new NotImplementedException();
-		}
-	}
+        public override bool ValidateToolchainExecutables(IConsole console)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

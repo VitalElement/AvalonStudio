@@ -13,8 +13,8 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 		public ClassTemplateSettingsViewModel()
 		{
-			GenerateClass = true;
-			GenerateHeader = true;
+			_generateClass = true;
+			_generateHeader = true;
 		}
 
 		public bool GenerateHeader

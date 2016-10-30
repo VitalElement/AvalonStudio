@@ -1,6 +1,9 @@
+using AvalonStudio.Platforms;
+using System;
+
 namespace AvalonStudio.Languages
 {
-	public class UnsavedFile
+	public class UnsavedFile : IComparable<string>, IComparable<UnsavedFile>
 	{
 		public readonly string FileName;
 		public string Contents;
@@ -10,5 +13,15 @@ namespace AvalonStudio.Languages
 			FileName = filename;
 			Contents = contents;
 		}
-	}
+
+        public int CompareTo(string other)
+        {
+            return FileName.CompareFilePath(other);
+        }
+
+        public int CompareTo(UnsavedFile other)
+        {
+            return Platform.CompareFilePath(FileName, other.FileName);
+        }
+    }
 }

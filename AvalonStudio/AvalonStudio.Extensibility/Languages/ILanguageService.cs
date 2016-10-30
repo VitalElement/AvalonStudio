@@ -6,6 +6,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 
 namespace AvalonStudio.Languages
 {
@@ -25,18 +26,19 @@ namespace AvalonStudio.Languages
 		/// </summary>
 		Type BaseTemplateType { get; }
 
-		Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column,
-			List<UnsavedFile> unsavedFiles);
+		Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "");
 
-		Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
-			Func<bool> interruptRequested);
+        IEnumerable<char> IntellisenseTriggerCharacters { get; }
+        IEnumerable<char> IntellisenseSearchCharacters { get; }
+        IEnumerable<char> IntellisenseCompleteCharacters { get; }
+
+		Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
 		IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file);
 
 		IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-		void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAdviceControl completionAdviceControl,
-			TextEditor.TextEditor editor, ISourceFile file, TextDocument textDocument);
+		void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file, TextDocument textDocument);
 
 		void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file);
 
@@ -45,7 +47,10 @@ namespace AvalonStudio.Languages
 		int Format(TextDocument textDocument, uint offset, uint length, int cursor);
 
 		int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
+
 		int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
+
+        Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
 
 		Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
 

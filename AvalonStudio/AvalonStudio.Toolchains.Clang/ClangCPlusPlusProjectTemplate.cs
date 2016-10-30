@@ -8,21 +8,21 @@ using AvalonStudio.Shell;
 
 namespace AvalonStudio.Toolchains.Clang
 {
-	public class ClangCPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
+	public class ClangCPlusPlusProjectTemplate : BlankCPlusPlusLanguageTemplate
 	{
 		public override string DefaultProjectName
 		{
-			get { return "STM32Project"; }
+			get { return "ClangProject"; }
 		}
 
 		public override string Title
 		{
-			get { return "STM32 C++ Project"; }
+			get { return "Clang C++ Project"; }
 		}
 
 		public override string Description
 		{
-			get { return "Basic template for STM32 based devices. Includes startup code and peripheral libraries."; }
+			get { return "Basic template for projects using Clang Toolchain."; }
 		}
 
 		public override async Task<IProject> Generate(ISolution solution, string name)
@@ -33,7 +33,7 @@ namespace AvalonStudio.Toolchains.Clang
 
 			var settings = ClangToolchain.ProvisionClangSettings(project);
 
-			project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "main.cpp", "int main (void){}"));
+			await SourceFile.Create(project, "main.cpp", "int main (void){}");
 
 			project.Save();
 

@@ -12,6 +12,8 @@ using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TextEditor.Document;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Utils;
 
 namespace AvalonStudio.Controls
 {
@@ -26,8 +28,6 @@ namespace AvalonStudio.Controls
 		private readonly JobRunner codeAnalysisRunner;
 
 		private readonly IShell shell;
-
-		private UnsavedFile unsavedFile;
 
 		public EditorModel()
 		{
@@ -72,7 +72,6 @@ namespace AvalonStudio.Controls
 
 		~EditorModel()
 		{
-			Console.WriteLine("Editor Model Destructed.");
 		}
 
 		public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
@@ -97,10 +96,11 @@ namespace AvalonStudio.Controls
 		{
 			ShutdownBackgroundWorkers();
 
+            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+
 			if (unsavedFile != null)
 			{
 				UnsavedFiles.Remove(unsavedFile);
-				unsavedFile = null;
 			}
 
 			if (LanguageService != null && ProjectFile != null)
@@ -110,23 +110,23 @@ namespace AvalonStudio.Controls
 		}
 
 		public async void RegisterLanguageService(IIntellisenseControl intellisenseControl,
-			ICompletionAdviceControl completionAdviceControl)
+			ICompletionAssistant completionAssistant)
 		{
 			UnRegisterLanguageService();
 
-			try
-			{
-				LanguageService = shell.LanguageServices.Single(o => o.CanHandle(ProjectFile));
+            LanguageService = shell.LanguageServices.FirstOrDefault(o => o.CanHandle(ProjectFile));
 
-				ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
+            if (LanguageService != null)
+            {
+                ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
-				LanguageService.RegisterSourceFile(intellisenseControl, completionAdviceControl, Editor, ProjectFile, TextDocument);
-			}
-			catch (Exception e)
-			{
-				LanguageService = null;
-				ShellViewModel.Instance.StatusBar.Language = "Text";
-			}
+                LanguageService.RegisterSourceFile(intellisenseControl, completionAssistant, Editor, ProjectFile, TextDocument);
+            }
+            else
+            {
+                LanguageService = null;
+                ShellViewModel.Instance.StatusBar.Language = "Text";
+            }
 
 			IsDirty = false;
 
@@ -141,52 +141,50 @@ namespace AvalonStudio.Controls
 		}
 
 		public void OpenFile(ISourceFile file, IIntellisenseControl intellisense,
-			ICompletionAdviceControl completionAdviceControl)
+			ICompletionAssistant completionAssistant)
 		{
 			if (ProjectFile != file)
 			{
-				if (File.Exists(file.Location))
+				if (System.IO.File.Exists(file.Location))
 				{
-					using (var fs = File.OpenText(file.Location))
+					using (var fs = System.IO.File.OpenText(file.Location))
 					{
-						TextDocument = new TextDocument(fs.ReadToEnd());
-						TextDocument.FileName = file.Location;
+                        TextDocument = new TextDocument(fs.ReadToEnd());
+                        TextDocument.FileName = file.Location;
 					}
 
-					ProjectFile = file;
+                    ProjectFile = file;
 
-					RegisterLanguageService(intellisense, completionAdviceControl);
+                    RegisterLanguageService(intellisense, completionAssistant);
 
-					if (DocumentLoaded != null)
-					{
-						DocumentLoaded(this, new EventArgs());
-					}
-				}
+                    DocumentLoaded?.Invoke(this, new EventArgs());
+                }
 			}
-		}
+		}        
 
-		public void Save()
+        public void Save()
 		{
 			if (ProjectFile != null && TextDocument != null && IsDirty)
 			{
-				File.WriteAllText(ProjectFile.Location, TextDocument.Text);
+                System.IO.File.WriteAllText(ProjectFile.Location, TextDocument.Text);
 				IsDirty = false;
+
+                var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
 
 				if (unsavedFile != null)
 				{
 					UnsavedFiles.Remove(unsavedFile);
-					unsavedFile = null;
 				}
 			}
 		}
 
 		private void TextDocument_TextChanged(object sender, EventArgs e)
 		{
-			if (unsavedFile == null)
-			{
-				unsavedFile = new UnsavedFile(ProjectFile.Location, TextDocument.Text);
+            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.FilePath);
 
-				UnsavedFiles.Add(unsavedFile);
+            if (unsavedFile == null)
+			{
+				UnsavedFiles.InsertSorted(new UnsavedFile(ProjectFile.Location, TextDocument.Text));
 			}
 			else
 			{
@@ -195,11 +193,8 @@ namespace AvalonStudio.Controls
 
 			IsDirty = true;
 
-			if (TextChanged != null)
-			{
-				TextChanged(this, new EventArgs());
-			}
-		}
+            TextChanged?.Invoke(this, new EventArgs());
+        }
 
 		public event EventHandler<EventArgs> CodeAnalysisCompleted;
 

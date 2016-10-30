@@ -29,11 +29,6 @@ namespace AvalonStudio.Projects
 		/// </summary>
 		string CurrentDirectory { get; }
 
-		/// <summary>
-		///     The location of the project file
-		/// </summary>
-		string Location { get; }
-
 		IList<object> ConfigurationPages { get; }
 		string Extension { get; }
 
@@ -50,7 +45,9 @@ namespace AvalonStudio.Projects
 
 		void RemoveReference(IProject project);
 
-		ISourceFile FindFile(ISourceFile file);
+        ISourceFile FindFile(string path);
+
+        event EventHandler FileAdded;
 
 
 		/// <summary>
@@ -58,7 +55,6 @@ namespace AvalonStudio.Projects
 		/// </summary>
 		void ResolveReferences();
 
-		// TODO should these 2 methods be in seperate class?
 		IProject Load(ISolution solution, string filePath);
 
 		void Save();

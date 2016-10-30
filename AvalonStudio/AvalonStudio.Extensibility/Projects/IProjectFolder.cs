@@ -1,9 +1,10 @@
+using System;
 using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Projects
 {
-	public interface IProjectFolder : IProjectItem
-	{
+	public interface IProjectFolder : IProjectItem, IComparable<IProjectFolder>, IComparable<string>
+    {
 		/// <summary>
 		///     List of items within the project folder
 		/// </summary>
@@ -12,11 +13,8 @@ namespace AvalonStudio.Projects
 		string Location { get; }
 
 		string LocationDirectory { get; }
-
-		void AddFile(ISourceFile file);
-		void AddFolder(IProjectFolder folder);
-
-		void RemoveFile(ISourceFile file);
-		void RemoveFolder(IProjectFolder folder);
+        
+        void ExcludeFile(ISourceFile file);
+        void ExcludeFolder(IProjectFolder folder);
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Projects.Standard
@@ -18,10 +19,14 @@ namespace AvalonStudio.Projects.Standard
 		}
 
 		public ObservableCollection<IProject> References { get; set; }
-
-
+        
 		public IProject Project { get; set; }
 
 		public IProjectFolder Parent { get; set; }
-	}
+
+        public int CompareTo(IProjectItem other)
+        {
+            return this.CompareProjectItems(other);
+        }
+    }
 }

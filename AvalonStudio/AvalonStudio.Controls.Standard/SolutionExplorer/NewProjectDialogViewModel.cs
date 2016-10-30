@@ -59,23 +59,31 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 				}
 			});
 
-			OKCommand = ReactiveCommand.Create();
-			OKCommand.Subscribe(o =>
+			OKCommand = ReactiveCommand.Create(this.WhenAny(x =>x.Location, x=>x.SolutionName, (location, solution) => !Directory.Exists(Path.Combine(location.Value, solution.Value))));
+			OKCommand.Subscribe(async o =>
 			{
+                bool generateSolutionDirs = false;
+
 				if (solution == null)
 				{
-					var destination = Path.Combine(location, solutionName);
+                    generateSolutionDirs = true;
 
-					if (!Directory.Exists(destination))
-					{
-						Directory.CreateDirectory(destination);
-					}
+                    var destination = Path.Combine(location, solutionName);
+                    solution = Solution.Create(destination, solutionName, false);
+                }
 
-					solution = Solution.Create(destination, solutionName);
-				}
+				if(await selectedTemplate.Generate(solution, name) != null)
+                {
+                    if(generateSolutionDirs)
+                    {                        
+                        if (!Directory.Exists(solution.CurrentDirectory))
+                        {
+                            Directory.CreateDirectory(solution.CurrentDirectory);
+                        }
+                    }
+                }
 
-				selectedTemplate.Generate(solution, name);
-
+                solution.Save();
 				shell.CurrentSolution = solution;
 				solution = null;
 

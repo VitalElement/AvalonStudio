@@ -8,16 +8,20 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 	{
 		private readonly IBrush brush = Brush.Parse("#D69D85");
 
-		public event EventHandler<EventArgs> DataChanged;
+        public event EventHandler<EventArgs> DataChanged
+        {
+            add { throw new NotSupportedException(); }
+            remove { }
+        }
 
-		public void TransformLine(TextView textView, VisualLine line)
+        public void TransformLine(TextView textView, VisualLine line)
 		{
-			if (line.RenderedText.Text.Contains("#include"))
-			{
-				var startIndex = line.RenderedText.Text.IndexOf("#include");
+            if (line.RenderedText.Text.Contains("#include") && !line.RenderedText.Text.Trim().StartsWith("//"))
+            {
+                var startIndex = line.RenderedText.Text.IndexOf("#include");
 
-				line.RenderedText.SetForegroundBrush(brush, startIndex, line.RenderedText.Text.Length - startIndex);
-			}
-		}
+                line.RenderedText.SetForegroundBrush(brush, startIndex, line.RenderedText.Text.Length - startIndex);
+            }
+        }
 	}
 }

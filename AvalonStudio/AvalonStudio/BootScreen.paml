@@ -1,0 +1,20 @@
+﻿<Controls:SplashScreen xmlns="https://github.com/avaloniaui" Width="640" Foreground="#FFE4E4E4" Height="400" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" BorderBrush="#3E3E42" BorderThickness="1" Icon="resm:AvalonStudio.icon.ico?assembly=AvalonStudio">
+  <Grid>
+    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
+      <StackPanel Margin="20 5" VerticalAlignment="Top" HorizontalAlignment="Left">
+        <TextBlock FontSize="60" FontFamily="Segoe UI" FontWeight="Light">AvalonStudio</TextBlock>
+        <TextBlock FontSize="18" FontFamily="Segoe UI" FontWeight="Light">Versatile, extensible, cross platform IDE</TextBlock>
+      </StackPanel>
+      <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
+        <Image Source="resm:AvalonStudio.icon.png?assembly=AvalonStudio" MaxWidth="240" MaxHeight="240" />
+      </StackPanel>
+    </StackPanel>
+    <StackPanel VerticalAlignment="Bottom" Margin="10 0 10 15">
+      <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center">AvalonStudio is licensed under a modified MIT license.</TextBlock>
+      <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center">Copyright © 2012 - 2016 VitalElement and contributors</TextBlock>
+    </StackPanel>
+    <StackPanel VerticalAlignment="Bottom">
+      <ProgressBar Name="StatusProgressBar" Margin="0 0 0 -4" />
+    </StackPanel>
+  </Grid>
+</Controls:SplashScreen>

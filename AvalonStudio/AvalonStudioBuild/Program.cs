@@ -17,10 +17,8 @@ namespace AvalonStudio
 {
 	internal class Program
 	{
-		private const string version = "1.0.0.25";
+		private const string version = "1.0.1.2";
 		private const string releaseName = "Gravity";
-
-		private const string baseDir = @"c:\development\vebuild\test";
 
 		private static readonly ProgramConsole console = new ProgramConsole();
 
@@ -30,7 +28,7 @@ namespace AvalonStudio
 
 			var solutionFile = Path.Combine(currentDir, options.Solution);
 
-			if (File.Exists(solutionFile))
+			if (System.IO.File.Exists(solutionFile))
 			{
 				return Solution.Load(solutionFile);
 			}
@@ -106,15 +104,24 @@ namespace AvalonStudio
 			{
 				if (project.TestFramework != null)
 				{
-					project.ToolChain.Build(console, project, "").Wait();
+                    var buildTask = project.ToolChain.Build(console, project, "");
 
-					var awaiter = project.TestFramework.EnumerateTestsAsync(project);
-					awaiter.Wait();
+                    buildTask.Wait();
 
-					foreach (var test in awaiter.Result)
-					{
-						tests.Add(test);
-					}
+                    if (buildTask.Result)
+                    {
+                        var awaiter = project.TestFramework.EnumerateTestsAsync(project);
+                        awaiter.Wait();
+
+                        foreach (var test in awaiter.Result)
+                        {
+                            tests.Add(test);
+                        }
+                    }
+                    else
+                    {
+                        result = 2;
+                    }
 				}
 			}
 
@@ -179,7 +186,7 @@ namespace AvalonStudio
 					(project.ToolChain as StandardToolChain).Jobs = options.Jobs;
 				}
 
-				var awaiter = project.ToolChain.Build(console, project, options.Label);
+				var awaiter = project.ToolChain.Build(console, project, options.Label, options.Defines);
 				awaiter.Wait();
 
 				stopWatch.Stop();
@@ -228,7 +235,7 @@ namespace AvalonStudio
 		{
 			var file = Path.Combine(Directory.GetCurrentDirectory(), options.File);
 
-			if (File.Exists(file))
+			if (System.IO.File.Exists(file))
 			{
 				var solution = LoadSolution(options);
 				var project = FindProject(solution, options.Project);
@@ -237,21 +244,21 @@ namespace AvalonStudio
 				{
 					// todo normalize paths.
 					var currentFile =
-						project.Items.OfType<ISourceFile>().Where(s => s.File.Normalize() == options.File.Normalize()).FirstOrDefault();
+						project.Items.OfType<ISourceFile>().Where(s => s.FilePath.Normalize() == options.File.Normalize()).FirstOrDefault();
 
 					if (currentFile != null)
 					{
 						project.Items.RemoveAt(project.Items.IndexOf(currentFile));
 						project.Save();
 
-						Console.WriteLine("File removed.");
+                        Console.WriteLine("File removed.");
 
 						return 1;
 					}
-					Console.WriteLine("File not found in project.");
+                    Console.WriteLine("File not found in project.");
 					return -1;
 				}
-				Console.WriteLine("Project not found.");
+                Console.WriteLine("Project not found.");
 				return -1;
 			}
 			Console.WriteLine("File not found.");
@@ -262,7 +269,7 @@ namespace AvalonStudio
 		{
 			var file = Path.Combine(Directory.GetCurrentDirectory(), options.File);
 
-			if (File.Exists(file))
+			if (System.IO.File.Exists(file))
 			{
 				var solution = LoadSolution(options);
 				var project = FindProject(solution, options.Project) as CPlusPlusProject;
@@ -273,10 +280,10 @@ namespace AvalonStudio
 					project.Items.Add(sourceFile);
 					project.SourceFiles.InsertSorted(sourceFile);
 					project.Save();
-					Console.WriteLine("File added.");
+                    Console.WriteLine("File added.");
 					return 1;
 				}
-				Console.WriteLine("Project not found.");
+                Console.WriteLine("Project not found.");
 				return -1;
 			}
 			Console.WriteLine("File not found.");
@@ -380,11 +387,9 @@ namespace AvalonStudio
 			MinimalShell.Instance = container.GetExportedValue<IShell>();
 
 			Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
-
-			var result = Parser.Default
-				.ParseArguments
-				<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions,
-					TestOptions>(args).MapResult(
+            
+			var result = Parser.Default.ParseArguments
+				<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions, TestOptions>(args).MapResult(
 						(BuildOptions opts) => RunBuild(opts),
 						(AddOptions opts) => RunAdd(opts),
 						(AddReferenceOptions opts) => RunAddReference(opts),

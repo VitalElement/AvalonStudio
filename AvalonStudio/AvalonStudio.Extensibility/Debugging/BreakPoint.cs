@@ -1,3 +1,4 @@
+using AvalonStudio.Platforms;
 using System;
 
 namespace AvalonStudio.Debugging
@@ -73,11 +74,11 @@ namespace AvalonStudio.Debugging
 						break;
 
 					case "file":
-						result.File = argument.Value.Replace("\\\\", "\\");
+						result.File = argument.Value.Replace("\\\\", "\\").NormalizePath();
 						break;
 
 					case "fullname":
-						result.FullFileName = argument.Value.Replace("\\\\", "\\");
+						result.FullFileName = argument.Value.Replace("\\\\", "\\").NormalizePath();
 						break;
 
 					case "line":

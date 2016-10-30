@@ -8,36 +8,48 @@ using AvalonStudio.Shell;
 
 namespace AvalonStudio.Toolchains.STM32
 {
-	public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
-	{
-		public override string DefaultProjectName
-		{
-			get { return "STM32Project"; }
-		}
+    public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLanguageTemplate
+    {
+        public override string DefaultProjectName
+        {
+            get { return "STM32Project"; }
+        }
 
-		public override string Title
-		{
-			get { return "STM32 C++ Project"; }
-		}
+        public override string Title
+        {
+            get { return "STM32 C++ Project"; }
+        }
 
-		public override string Description
-		{
-			get { return "Basic template for STM32 based devices. Includes startup code and peripheral libraries."; }
-		}
+        public override string Description
+        {
+            get { return "Basic template for STM32 based devices. Includes startup code and peripheral libraries."; }
+        }
 
-		public override async Task<IProject> Generate(ISolution solution, string name)
-		{
-			var project = await base.Generate(solution, name);
+        public override async Task<IProject> Generate(ISolution solution, string name)
+        {
+            var shell = IoC.Get<IShell>();
+            shell.ModalDialog = new STM32ProjectSetupModalDialogViewModel();
 
-			project.ToolChain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc is STM32GCCToolchain);
+            bool generate = await shell.ModalDialog.ShowDialog();
 
-			var settings = STM32GCCToolchain.ProvisionSTM32Settings(project);
+            if (generate)
+            {
+                var project = await base.Generate(solution, name);
 
-			project.AddFile(SourceFile.Create(project, project, project.CurrentDirectory, "main.cpp", "int main (void){}"));
+                project.ToolChain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc is STM32GCCToolchain);
 
-			project.Save();
+                var settings = STM32GCCToolchain.ProvisionSTM32Settings(project);
 
-			return project;
-		}
-	}
+                await SourceFile.Create(project, "main.cpp", "int main (void){}");
+
+                project.Save();
+
+                return project;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
 }
