@@ -49,9 +49,9 @@ namespace AvalonStudio.Controls
             editorViewModel = null;
         }
 
-        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
+        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int index, int line, int column)
         {
-            return await editor.DoCompletionRequestAsync(line, column);
+            return await editor.DoCompletionRequestAsync(index, line, column);
         }
 
         public CompletionDataViewModel SelectedCompletion
