@@ -188,7 +188,7 @@
     <Compile Include="TypeScriptLanguageService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TSBridge\TSBridge\TSBridge\TSBridge.csproj">
+    <ProjectReference Include="..\..\TSBridge.AvalonStudio\TSBridge\TSBridge\TSBridge.csproj">
       <Project>{90fcc510-9e0a-4781-a3b6-22cc089029b5}</Project>
       <Name>TSBridge</Name>
     </ProjectReference>
