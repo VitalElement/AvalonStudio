@@ -5,7 +5,7 @@ using AvalonStudio.Projects.Standard;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
-	public class StaticLibraryTemplate : BlankCPlusPlusLangaguageTemplate
+	public class StaticLibraryTemplate : BlankCPlusPlusLanguageTemplate
 	{
 		public override string Title
 		{
