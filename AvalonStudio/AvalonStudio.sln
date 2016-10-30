@@ -98,7 +98,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Projects.TypeS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Languages.TypeScript", "AvalonStudio.Languages.TypeScript\AvalonStudio.Languages.TypeScript.csproj", "{23829BBA-0BB8-4D7C-84D3-2FA2E69840E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSBridge", "..\TSBridge\TSBridge\TSBridge\TSBridge.csproj", "{90FCC510-9E0A-4781-A3B6-22CC089029B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSBridge", "..\TSBridge.AvalonStudio\TSBridge\TSBridge\TSBridge.csproj", "{90FCC510-9E0A-4781-A3B6-22CC089029B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -740,18 +740,18 @@ Global
 		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Debug|ARM.Build.0 = Debug|Any CPU
-		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Debug|x64.Build.0 = Debug|Any CPU
+		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Debug|x64.ActiveCfg = Debug|x64
+		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Debug|x64.Build.0 = Debug|x64
 		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Debug|x86.ActiveCfg = Debug|x86
 		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Debug|x86.Build.0 = Debug|x86
 		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|ARM.ActiveCfg = Release|Any CPU
 		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|ARM.Build.0 = Release|Any CPU
-		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|x64.ActiveCfg = Release|Any CPU
-		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|x64.Build.0 = Release|Any CPU
-		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|x86.ActiveCfg = Release|Any CPU
-		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|x86.Build.0 = Release|Any CPU
+		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|x64.ActiveCfg = Release|x64
+		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|x64.Build.0 = Release|x64
+		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|x86.ActiveCfg = Release|x86
+		{90FCC510-9E0A-4781-A3B6-22CC089029B5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
