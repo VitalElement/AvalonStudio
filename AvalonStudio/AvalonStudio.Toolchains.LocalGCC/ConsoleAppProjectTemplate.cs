@@ -10,7 +10,7 @@ using AvalonStudio.Shell;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
-	public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
+	public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLanguageTemplate
 	{
 		public override string DefaultProjectName
 		{
