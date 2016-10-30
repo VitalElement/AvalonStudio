@@ -1,19 +1,59 @@
-﻿using System.Collections.ObjectModel;
-using AvalonStudio.MVVM;
-using ReactiveUI;
-
-namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls
 {
-	public class TabControlViewModel : ViewModel
+    using System.Collections.ObjectModel;
+    using AvalonStudio.MVVM;
+    using ReactiveUI;
+    using System.Collections.Specialized;
+    using System;
+
+    public class TabControlViewModel : ViewModel
 	{
 		private object selectedTool;
 
-		private ObservableCollection<object> tools;
+		private ObservableCollection<object> tools;        
 
 		public TabControlViewModel()
 		{
 			tools = new ObservableCollection<object>();
+
+            tools.CollectionChanged += (sender, e) =>
+            {
+                switch(e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        foreach(var item in e.NewItems)
+                        {
+                            if(item is ToolViewModel)
+                            {
+                                var tvm = item as ToolViewModel;
+
+                                tvm.IsVisibleObservable.Subscribe(_ => InvalidateIsVisible());                                                                
+                            }
+                        }
+                        break;
+                }
+                
+            };
 		}
+        
+        private void InvalidateIsVisible()
+        {
+            bool result = false;
+
+            foreach(var tool in Tools)
+            {
+                if(tool is ToolViewModel)
+                {
+                    if((tool as ToolViewModel).IsVisible)
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+
+            IsVisible = result;
+        }       
 
 		public ObservableCollection<object> Tools
 		{
@@ -26,5 +66,12 @@ namespace AvalonStudio.Controls
 			get { return selectedTool; }
 			set { this.RaiseAndSetIfChanged(ref selectedTool, value); }
 		}
-	}
+
+        private bool isVisible;
+        public bool IsVisible
+        {
+            get { return isVisible; }
+            set { this.RaiseAndSetIfChanged(ref isVisible, value); }
+        }
+    }
 }
