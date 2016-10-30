@@ -9,6 +9,6 @@ namespace AvalonStudio.Languages
 		IList<CompletionDataViewModel> CompletionData { get; set; }
 		CompletionDataViewModel SelectedCompletion { get; set; }
 		bool IsVisible { get; set; }
-		Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column);
+		Task<CodeCompletionResults> DoCompletionRequestAsync(int index, int line, int column);
 	}
 }
