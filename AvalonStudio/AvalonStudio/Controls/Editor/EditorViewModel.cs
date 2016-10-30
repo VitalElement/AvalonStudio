@@ -159,7 +159,7 @@ namespace AvalonStudio.Controls
                 intellisenseManager?.Dispose();
                 intellisenseManager = null;
 
-                Diagnostics.Clear();
+                Diagnostics?.Clear();
 
                 ShellViewModel.Instance.InvalidateErrors();
 
