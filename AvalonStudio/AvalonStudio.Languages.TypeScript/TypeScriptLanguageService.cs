@@ -6,12 +6,16 @@ using AvalonStudio.TextEditor.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using TSBridge;
 
 namespace AvalonStudio.Languages.TypeScript
 {
     public class TypeScriptLanguageService : ILanguageService
     {
+        private TypeScriptContext _tsContext = new TypeScriptContext();
+
         public Type BaseTemplateType => typeof(BlankTypeScriptProjectTemplate);
 
         public IEnumerable<char> IntellisenseTriggerCharacters { get { return new[] { '.', '>', ':' }; } }
@@ -48,6 +52,18 @@ namespace AvalonStudio.Languages.TypeScript
 
         public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
         {
+            //Get position in text
+            var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
+            var currentFileConts = currentUnsavedFile.Contents;
+            var lines = currentFileConts.Split('\n');
+            var caretPosition = 0;
+            for (int i = 0; i < line; i++)
+            {
+                caretPosition += lines[i].Length;
+            }
+            caretPosition += column;
+            var completionChar = currentFileConts[caretPosition];
+            var completions = await _tsContext.GetCompletionsAtPositionAsync(sourceFile.FilePath, caretPosition);
             //STUB!
             return new List<CodeCompletionData>();
         }
@@ -107,7 +123,7 @@ namespace AvalonStudio.Languages.TypeScript
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file, TextEditor.Document.TextDocument textDocument)
         {
-            //throw new NotImplementedException();
+            _tsContext.OpenFile(file.FilePath, System.IO.File.ReadAllText(file.FilePath));
         }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
@@ -166,7 +182,7 @@ namespace AvalonStudio.Languages.TypeScript
 
         public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
         {
-            //throw new NotImplementedException();
+            _tsContext.RemoveFile(file.FilePath);
         }
     }
 }
