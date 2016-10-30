@@ -188,6 +188,10 @@
     <Compile Include="TypeScriptLanguageService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TSBridge\TSBridge\TSBridge\TSBridge.csproj">
+      <Project>{90fcc510-9e0a-4781-a3b6-22cc089029b5}</Project>
+      <Name>TSBridge</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
       <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
       <Name>AvalonStudio.Extensibility</Name>
