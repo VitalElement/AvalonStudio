@@ -50,18 +50,13 @@ namespace AvalonStudio.Languages.TypeScript
             return result;
         }
 
-        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
+        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
         {
             //Get position in text
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
             var currentFileConts = currentUnsavedFile.Contents;
             var lines = currentFileConts.Split('\n');
-            var caretPosition = 0;
-            for (int i = 0; i < line; i++)
-            {
-                caretPosition += lines[i].Length;
-            }
-            caretPosition += column;
+            var caretPosition = index;
             var completionChar = currentFileConts[caretPosition];
             var completions = await _tsContext.GetCompletionsAtPositionAsync(sourceFile.FilePath, caretPosition);
             //STUB!

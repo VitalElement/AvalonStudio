@@ -74,11 +74,11 @@ namespace AvalonStudio.Controls
 		{
 		}
 
-		public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
+		public async Task<CodeCompletionResults> DoCompletionRequestAsync(int caretIndex, int line, int column)
 		{
 			CodeCompletionResults results = null;
 
-			var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, line, column, UnsavedFiles);
+			var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, caretIndex, line, column, UnsavedFiles);
 			results = new CodeCompletionResults {Completions = completions};
 
 			return results;
