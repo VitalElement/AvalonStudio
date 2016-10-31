@@ -67,14 +67,30 @@ namespace AvalonStudio.Languages.TypeScript
             {
                 var ccData = new CodeCompletionData
                 {
-                    Kind = (CodeCompletionKind)Enum.Parse(typeof(CodeCompletionKind), cc.Kind),
+                    Kind = ConvertCodeCompletionKind(cc.Kind),
                     Hint = cc.KindModifiers,
-                    BriefComment = cc.Name
+                    BriefComment = cc.Name,
+                    Suggestion = cc.Name
                 };
                 return ccData;
             }).ToList();
 
             return editorCompletions;
+        }
+
+        private CodeCompletionKind ConvertCodeCompletionKind(string kind)
+        {
+            switch (kind)
+            {
+                case "class":
+                    return CodeCompletionKind.Class;
+                case "var":
+                    return CodeCompletionKind.Variable;
+                case "keyword":
+                    return CodeCompletionKind.Keyword;
+                default:
+                    return CodeCompletionKind.None;
+            }
         }
 
         public int Comment(TextEditor.Document.TextDocument textDocument, TextEditor.Document.ISegment segment, int caret = -1, bool format = true)
