@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using TSBridge;
 
 namespace AvalonStudio.Projects.TypeScript
 {
@@ -66,8 +67,7 @@ Program.main();
             result.Location = filename;
 
             //TODO: Load TS language service from here
-            
-            
+
             result.Solution = solution;
             result.LoadFiles();
 
@@ -81,8 +81,16 @@ Program.main();
             References = new ObservableCollection<IProject>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
-            Project = this;
+            //Project = this;
+
+            //var tsContext = new TypeScriptContext();
+            //tsContext.LoadComponents();
+            //IoC.RegisterConstant(tsContext, typeof(TypeScriptContext));
+            //TypeScriptContext = tsContext;
         }
+
+        //[JsonIgnore]
+        //public TypeScriptContext TypeScriptContext { get; private set; }
 
         [JsonIgnore]
         public override IList<object> ConfigurationPages
