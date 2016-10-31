@@ -56,7 +56,7 @@ namespace AvalonStudio.Languages.TypeScript
         {
             //Get position in text
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
-            var currentFileConts = currentUnsavedFile.Contents;
+            var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
             //var lines = currentFileConts.Split('\n');
             //var caretPosition = index;
             //var completionChar = currentFileConts[caretPosition];
