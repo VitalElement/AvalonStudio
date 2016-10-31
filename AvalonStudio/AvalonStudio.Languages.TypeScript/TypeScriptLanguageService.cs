@@ -58,9 +58,20 @@ namespace AvalonStudio.Languages.TypeScript
             var lines = currentFileConts.Split('\n');
             var caretPosition = index;
             var completionChar = currentFileConts[caretPosition];
-            var completions = await _tsContext.GetCompletionsAtPositionAsync(sourceFile.FilePath, caretPosition);
-            //STUB!
-            return new List<CodeCompletionData>();
+            var lsCompletions = await _tsContext.GetCompletionsAtPositionAsync(sourceFile.FilePath, caretPosition);
+
+            var editorCompletions = lsCompletions.Entries.Select(cc =>
+            {
+                var ccData = new CodeCompletionData
+                {
+                    Kind = (CodeCompletionKind)Enum.Parse(typeof(CodeCompletionKind), cc.Kind),
+                    Hint = cc.KindModifiers,
+                    BriefComment = cc.Name
+                };
+                return ccData;
+            }).ToList();
+
+            return editorCompletions;
         }
 
         public int Comment(TextEditor.Document.TextDocument textDocument, TextEditor.Document.ISegment segment, int caret = -1, bool format = true)
