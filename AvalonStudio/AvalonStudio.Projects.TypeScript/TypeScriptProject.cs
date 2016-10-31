@@ -65,6 +65,9 @@ Program.main();
             TypeScriptProject result = new TypeScriptProject();
             result.Location = filename;
 
+            //TODO: Load TS language service from here
+            
+            
             result.Solution = solution;
             result.LoadFiles();
 

@@ -14,9 +14,7 @@ namespace AvalonStudio.Languages.TypeScript
 {
     public class TypeScriptLanguageService : ILanguageService
     {
-        private TypeScriptContext _tsContext = new TypeScriptContext();
-
-        private bool _contextInitialized = false;
+        private TypeScriptContext _tsContext;
 
         public Type BaseTemplateType => typeof(BlankTypeScriptProjectTemplate);
 
@@ -25,6 +23,12 @@ namespace AvalonStudio.Languages.TypeScript
         public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '>', ';' }; } }
 
         public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
+
+        public TypeScriptLanguageService()
+        {
+            _tsContext = new TypeScriptContext();
+            _tsContext.LoadComponentsAsync().GetAwaiter().GetResult();
+        }
 
         public IIndentationStrategy IndentationStrategy
         {
@@ -84,10 +88,13 @@ namespace AvalonStudio.Languages.TypeScript
             {
                 case "class":
                     return CodeCompletionKind.Class;
+
                 case "var":
                     return CodeCompletionKind.Variable;
+
                 case "keyword":
                     return CodeCompletionKind.Keyword;
+
                 default:
                     return CodeCompletionKind.None;
             }
@@ -148,12 +155,6 @@ namespace AvalonStudio.Languages.TypeScript
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file, TextEditor.Document.TextDocument textDocument)
         {
-            if (!_contextInitialized)
-            {
-                _contextInitialized = true;
-                //TODO: This might need to be somewhere else, relatively slow
-                _tsContext.LoadComponents();
-            }
             _tsContext.OpenFile(file.FilePath, System.IO.File.ReadAllText(file.FilePath));
         }
 
@@ -214,6 +215,11 @@ namespace AvalonStudio.Languages.TypeScript
         public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
         {
             _tsContext.RemoveFile(file.FilePath);
+        }
+
+        public async Task PrepareLanguageServiceAsync()
+        {
+            await _tsContext.LoadComponentsAsync();
         }
     }
 }

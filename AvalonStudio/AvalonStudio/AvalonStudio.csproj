@@ -424,10 +424,6 @@
       <Project>{0B7C8F41-0122-40E8-9701-EFCB89C32CC9}</Project>
       <Name>AvalonStudio.Controls.Standard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Controls.TeamExplorer\AvalonStudio.Controls.TeamExplorer.csproj">
-      <Project>{690F173C-BF89-4F9E-A177-C17313CDBFE3}</Project>
-      <Name>AvalonStudio.Controls.TeamExplorer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">
       <Project>{EB735B57-518A-4DC5-8DFF-CA6D5DB604D2}</Project>
       <Name>AvalonStudio.Debugging.GDB.JLink</Name>
