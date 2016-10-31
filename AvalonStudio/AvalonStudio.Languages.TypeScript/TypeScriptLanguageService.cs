@@ -16,6 +16,8 @@ namespace AvalonStudio.Languages.TypeScript
     {
         private TypeScriptContext _tsContext = new TypeScriptContext();
 
+        private bool _contextInitialized = false;
+
         public Type BaseTemplateType => typeof(BlankTypeScriptProjectTemplate);
 
         public IEnumerable<char> IntellisenseTriggerCharacters { get { return new[] { '.', '>', ':' }; } }
@@ -55,9 +57,10 @@ namespace AvalonStudio.Languages.TypeScript
             //Get position in text
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
             var currentFileConts = currentUnsavedFile.Contents;
-            var lines = currentFileConts.Split('\n');
+            //var lines = currentFileConts.Split('\n');
+            //var caretPosition = index;
+            //var completionChar = currentFileConts[caretPosition];
             var caretPosition = index;
-            var completionChar = currentFileConts[caretPosition];
             var lsCompletions = await _tsContext.GetCompletionsAtPositionAsync(sourceFile.FilePath, caretPosition);
 
             var editorCompletions = lsCompletions.Entries.Select(cc =>
@@ -129,6 +132,12 @@ namespace AvalonStudio.Languages.TypeScript
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file, TextEditor.Document.TextDocument textDocument)
         {
+            if (!_contextInitialized)
+            {
+                _contextInitialized = true;
+                //TODO: This might need to be somewhere else, relatively slow
+                _tsContext.LoadComponents();
+            }
             _tsContext.OpenFile(file.FilePath, System.IO.File.ReadAllText(file.FilePath));
         }
 
