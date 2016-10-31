@@ -27,7 +27,7 @@ namespace AvalonStudio.Languages.TypeScript
         public TypeScriptLanguageService()
         {
             _tsContext = new TypeScriptContext();
-            _tsContext.LoadComponentsAsync().GetAwaiter().GetResult();
+            _tsContext.LoadComponents();
         }
 
         public IIndentationStrategy IndentationStrategy
