@@ -81,16 +81,16 @@ Program.main();
             References = new ObservableCollection<IProject>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
-            //Project = this;
+            Project = this;
 
-            //var tsContext = new TypeScriptContext();
-            //tsContext.LoadComponents();
-            //IoC.RegisterConstant(tsContext, typeof(TypeScriptContext));
-            //TypeScriptContext = tsContext;
+            var tsContext = new TypeScriptContext();
+            tsContext.LoadComponents();
+            IoC.RegisterConstant(tsContext, typeof(TypeScriptContext));
+            TypeScriptContext = tsContext;
         }
 
-        //[JsonIgnore]
-        //public TypeScriptContext TypeScriptContext { get; private set; }
+        [JsonIgnore]
+        public TypeScriptContext TypeScriptContext { get; private set; }
 
         [JsonIgnore]
         public override IList<object> ConfigurationPages
