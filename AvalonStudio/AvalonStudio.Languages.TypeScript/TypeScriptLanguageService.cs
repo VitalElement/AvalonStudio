@@ -24,12 +24,6 @@ namespace AvalonStudio.Languages.TypeScript
 
         public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
 
-        public TypeScriptLanguageService()
-        {
-            _tsContext = new TypeScriptContext();
-            _tsContext.LoadComponents();
-        }
-
         public IIndentationStrategy IndentationStrategy
         {
             get;
@@ -155,6 +149,7 @@ namespace AvalonStudio.Languages.TypeScript
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file, TextEditor.Document.TextDocument textDocument)
         {
+            _tsContext = _tsContext ?? (file.Project as TypeScriptProject).TypeScriptContext;
             _tsContext.OpenFile(file.FilePath, System.IO.File.ReadAllText(file.FilePath));
         }
 
