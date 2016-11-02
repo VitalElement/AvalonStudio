@@ -8,11 +8,7 @@ namespace AvalonStudio.TextEditor.Rendering
 	{
 		private readonly IBrush brush = Brush.Parse("#30E4E4E4");
 
-		public event EventHandler<EventArgs> DataChanged
-        {
-            add { throw new NotSupportedException(); }
-            remove { }
-        }
+        public event EventHandler<EventArgs> DataChanged;
 
 		public void Draw(TextView textView, DrawingContext drawingContext)
 		{
