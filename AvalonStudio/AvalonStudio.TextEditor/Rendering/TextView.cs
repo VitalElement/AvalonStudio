@@ -20,8 +20,16 @@ using AvalonStudio.TextEditor.Document;
 
 namespace AvalonStudio.TextEditor.Rendering
 {
-    public class TextView : ContentControl, ILogicalScrollable
+    public class TextView : TemplatedControl, ILogicalScrollable
     {
+        public static readonly StyledProperty<object> ContentProperty = ContentControl.ContentProperty.AddOwner<TextView>();
+
+        public object Content
+        {
+            get { return GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
+        }
+
         private int lastLineScrolledTo = -1;
 
         public IVisual TextSurface
