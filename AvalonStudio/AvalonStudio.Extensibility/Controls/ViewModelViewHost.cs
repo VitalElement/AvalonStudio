@@ -11,6 +11,7 @@ using Splat;
 using ViewLocator = AvalonStudio.MVVM.ViewLocator;
 using Avalonia.Controls;
 using AvalonStudio.Extensibility.Controls;
+using Avalonia.Controls.Primitives;
 
 namespace AvalonStudio.Controls
 {
@@ -19,7 +20,7 @@ namespace AvalonStudio.Controls
 	///     the ViewModel property and display it. This control is very useful
 	///     inside a DataTemplate to display the View associated with a ViewModel.
 	/// </summary>
-	public class ViewModelViewHost : ContentControl, IViewFor, IEnableLogger, IActivationForViewFetcher
+	public class ViewModelViewHost : TemplatedControl, IViewFor, IEnableLogger, IActivationForViewFetcher
 	{
 		public static readonly AvaloniaProperty ViewModelProperty =
 			AvaloniaProperty.Register<ViewModelViewHost, object>(nameof(ViewModel), null, false, BindingMode.OneWay, null,
@@ -85,8 +86,6 @@ namespace AvalonStudio.Controls
 			if (DataContext != null)
 			{
 				Content = ViewLocator.Build(DataContext);
-
-                Console.WriteLine(Presenter?.LogicalParent);
 			}
 		}
 
@@ -97,5 +96,13 @@ namespace AvalonStudio.Controls
 				((ViewModelViewHost) dependencyObject).updateViewModel.OnNext(Unit.Default);
 			}
 		}
-	}
+
+        public static readonly StyledProperty<object> ContentProperty = ContentControl.ContentProperty.AddOwner<ViewModelViewHost>();
+
+        public object Content
+        {
+            get { return GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
+        }
+    }
 }
