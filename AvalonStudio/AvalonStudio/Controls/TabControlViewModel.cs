@@ -30,6 +30,8 @@
                                 tvm.IsVisibleObservable.Subscribe(_ => InvalidateIsVisible());                                                                
                             }
                         }
+
+                        InvalidateIsVisible();
                         break;
                 }
                 
