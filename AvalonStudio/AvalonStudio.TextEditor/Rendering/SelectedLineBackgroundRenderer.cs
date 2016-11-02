@@ -13,11 +13,7 @@ namespace AvalonStudio.TextEditor.Rendering
 			selectedLineBg = Brush.Parse("#FF0E0E0E");
 		}
 
-        public event EventHandler<EventArgs> DataChanged
-        {
-            add { throw new NotSupportedException(); }
-            remove { }
-        }
+        public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
 		{
