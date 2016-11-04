@@ -9,6 +9,8 @@ mono:
 solution: AvalonStudio.sln
 before_install:
   - cd AvalonStudio 
+  - git submodule sync
+  - git submodule update --init --recursive
   - sudo ./dependencies.sh
 
 install:  
