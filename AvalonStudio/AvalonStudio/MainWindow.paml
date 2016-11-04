@@ -2,6 +2,7 @@
                       xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
+                      xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"
                       Icon="resm:AvalonStudio.icon.ico?assembly=AvalonStudio"
                       Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFE4E4E4" Width="1600" Height="900">
   <Controls:MetroWindow.TitleBarContent>
@@ -53,63 +54,63 @@
 
     <Grid Grid.Row="1">
       <dock:DockControl Name="mainDock">
-        <dock:Branch Orientation="Horizontal" FirstItemLength="0.75*" SecondItemLength="0.25*">
-          <dock:Branch.FirstItem>
-            <dock:Branch Orientation="Horizontal" FirstItemLength="0.75*" SecondItemLength="0.25*">
-              <dock:Branch.FirstItem>
-                <dock:Branch Orientation="Horizontal" FirstItemLength="0.2*" SecondItemLength="0.8*">
-                  <dock:Branch.FirstItem>
+        <docking:Branch Orientation="Horizontal" FirstItemLength="0.75*" SecondItemLength="0.25*">
+          <docking:Branch.FirstItem>
+            <docking:Branch Orientation="Horizontal" FirstItemLength="0.75*" SecondItemLength="0.25*">
+              <docking:Branch.FirstItem>
+                <docking:Branch Orientation="Horizontal" FirstItemLength="0.2*" SecondItemLength="0.8*">
+                  <docking:Branch.FirstItem>
                     <Controls:TabControlView DataContext="{Binding LeftTabs}" IsVisible="{Binding IsVisible}" />
-                  </dock:Branch.FirstItem>
-                  <dock:Branch.SecondItem>
-                    <dock:Branch Orientation="Vertical" FirstItemLength="0.7*" SecondItemLength="0.3*">
-                      <dock:Branch.FirstItem>
-                        <dock:Branch Orientation="Vertical" FirstItemLength="0.3*" SecondItemLength="0.7*">
-                          <dock:Branch.FirstItem>
+                  </docking:Branch.FirstItem>
+                  <docking:Branch.SecondItem>
+                    <docking:Branch Orientation="Vertical" FirstItemLength="0.7*" SecondItemLength="0.3*">
+                      <docking:Branch.FirstItem>
+                        <docking:Branch Orientation="Vertical" FirstItemLength="0.3*" SecondItemLength="0.7*">
+                          <docking:Branch.FirstItem>
                             <Controls:TabControlView DataContext="{Binding MiddleTopTabs}" IsVisible="{Binding IsVisible}" />
-                          </dock:Branch.FirstItem>
-                          <dock:Branch.SecondItem>
+                          </docking:Branch.FirstItem>
+                          <docking:Branch.SecondItem>
                             <Controls:DocumentTabControl DataContext="{Binding DocumentTabs}"  />
-                          </dock:Branch.SecondItem>
-                        </dock:Branch>
-                      </dock:Branch.FirstItem>
-                      <dock:Branch.SecondItem>
-                        <dock:Branch Orientation="Horizontal" FirstItemLength="0.6*" SecondItemLength="0.4*">
-                          <dock:Branch.FirstItem>
+                          </docking:Branch.SecondItem>
+                        </docking:Branch>
+                      </docking:Branch.FirstItem>
+                      <docking:Branch.SecondItem>
+                        <docking:Branch Orientation="Horizontal" FirstItemLength="0.6*" SecondItemLength="0.4*">
+                          <docking:Branch.FirstItem>
                             <Controls:TabControlView DataContext="{Binding BottomTabs}" IsVisible="{Binding IsVisible}" />
-                          </dock:Branch.FirstItem>
-                          <dock:Branch.SecondItem>
+                          </docking:Branch.FirstItem>
+                          <docking:Branch.SecondItem>
                             <Controls:TabControlView DataContext="{Binding BottomRightTabs}" IsVisible="{Binding IsVisible}" />
-                          </dock:Branch.SecondItem>
-                        </dock:Branch>
-                      </dock:Branch.SecondItem>
-                    </dock:Branch>
-                  </dock:Branch.SecondItem>
-                </dock:Branch>
-              </dock:Branch.FirstItem>
-              <dock:Branch.SecondItem>
-                <dock:Branch Orientation="Vertical" FirstItemLength="0.3*" SecondItemLength="0.7*">
-                  <dock:Branch.FirstItem>
+                          </docking:Branch.SecondItem>
+                        </docking:Branch>
+                      </docking:Branch.SecondItem>
+                    </docking:Branch>
+                  </docking:Branch.SecondItem>
+                </docking:Branch>
+              </docking:Branch.FirstItem>
+              <docking:Branch.SecondItem>
+                <docking:Branch Orientation="Vertical" FirstItemLength="0.3*" SecondItemLength="0.7*">
+                  <docking:Branch.FirstItem>
                     <Controls:TabControlView DataContext="{Binding RightTopTabs}" IsVisible="{Binding IsVisible}" />
-                  </dock:Branch.FirstItem>
-                  <dock:Branch.SecondItem>
-                    <dock:Branch Orientation="Vertical" FirstItemLength="0.5*" SecondItemLength="0.5*">
-                      <dock:Branch.FirstItem>
+                  </docking:Branch.FirstItem>
+                  <docking:Branch.SecondItem>
+                    <docking:Branch Orientation="Vertical" FirstItemLength="0.5*" SecondItemLength="0.5*">
+                      <docking:Branch.FirstItem>
                         <Controls:TabControlView DataContext="{Binding RightMiddleTabs}" IsVisible="{Binding IsVisible}" />
-                      </dock:Branch.FirstItem>
-                      <dock:Branch.SecondItem>
+                      </docking:Branch.FirstItem>
+                      <docking:Branch.SecondItem>
                         <Controls:TabControlView DataContext="{Binding RightBottomTabs}" IsVisible="{Binding IsVisible}" />
-                      </dock:Branch.SecondItem>
-                    </dock:Branch>
-                  </dock:Branch.SecondItem>
-                </dock:Branch>
-              </dock:Branch.SecondItem>
-            </dock:Branch>
-          </dock:Branch.FirstItem>
-          <dock:Branch.SecondItem>
+                      </docking:Branch.SecondItem>
+                    </docking:Branch>
+                  </docking:Branch.SecondItem>
+                </docking:Branch>
+              </docking:Branch.SecondItem>
+            </docking:Branch>
+          </docking:Branch.FirstItem>
+          <docking:Branch.SecondItem>
             <Controls:TabControlView DataContext="{Binding RightTabs}" IsVisible="{Binding IsVisible}" />
-          </dock:Branch.SecondItem>
-        </dock:Branch>
+          </docking:Branch.SecondItem>
+        </docking:Branch>
       </dock:DockControl>
     </Grid>
 
