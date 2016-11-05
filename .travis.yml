@@ -51,14 +51,13 @@ after_success:
       git add .;
       git commit -m 'new CI revision.' || true; 
       git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null;
-      cd..
+      cd..;
 
       git clone https://github.com/VitalElement/AvalonStudioBinaries.git; 
-      cd AvalonStudioBinaries
+      cd AvalonStudioBinaries;
       git rm -rf .;
       git clean -fxd; 
-      cd ..;
-      pwd;
+      cd ..;      
       cp -a ./AvalonStudio/bin/Release/. ./AvalonStudioBinaries/; 
       cd AvalonStudioBinaries;
       git add .;
