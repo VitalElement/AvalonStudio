@@ -40,7 +40,7 @@ script:
   - cd ..
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "publish-to-binaries-repo" ]; then
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
       git clone https://github.com/VitalElement/AvalonBuild.git; 
       cd AvalonBuild;
       git rm -rf .;
