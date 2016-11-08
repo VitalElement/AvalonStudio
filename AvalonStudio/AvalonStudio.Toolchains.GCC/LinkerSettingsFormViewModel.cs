@@ -1,16 +1,16 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Input;
-using AvalonStudio.MVVM;
-using AvalonStudio.Projects;
-using AvalonStudio.Projects.Standard;
-using AvalonStudio.Toolchains.Standard;
-using ReactiveUI;
-
-namespace AvalonStudio.Toolchains.Clang
+namespace AvalonStudio.Toolchains.GCC
 {
-	public class LinkerSettingsFormViewModel : HeaderedViewModel<IProject>
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows.Input;
+    using AvalonStudio.MVVM;
+    using AvalonStudio.Projects;
+    using AvalonStudio.Projects.Standard;
+    using AvalonStudio.Toolchains.Standard;
+    using ReactiveUI;
+
+    public class LinkerSettingsFormViewModel : HeaderedViewModel<IProject>
 	{
 		private bool discardUnusedSections;
 
@@ -55,17 +55,17 @@ namespace AvalonStudio.Toolchains.Clang
 			{
 				try
 				{
-					settings = ClangToolchain.GetSettings(project).LinkSettings;
+					settings = GCCToolchain.GetSettings(project).LinkSettings;
 				}
 				catch (Exception)
 				{
-					Model.ToolchainSettings.ClangToolchainSettings = new ClangToolchainSettings();
+					Model.ToolchainSettings.GccToolchainSettings = new GccToolchainSettings();
 				}
 			}
 			catch (Exception)
 			{
-				Model.ToolchainSettings.ClangToolchainSettings = new ClangToolchainSettings();
-				settings = Model.ToolchainSettings.ClangToolchainSettings.LinkSettings;
+				Model.ToolchainSettings.GccToolchainSettings = new GccToolchainSettings();
+				settings = Model.ToolchainSettings.GccToolchainSettings.LinkSettings;
 			}
 
 			if (settings == null)

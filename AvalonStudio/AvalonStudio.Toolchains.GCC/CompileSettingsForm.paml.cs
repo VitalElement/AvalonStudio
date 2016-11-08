@@ -1,11 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace AvalonStudio.Toolchains.STM32
+namespace AvalonStudio.Toolchains.GCC
 {
-	public class LinkerSettingsFormView : UserControl
+	public class CompileSettingsFormView : UserControl
 	{
-		public LinkerSettingsFormView()
+		public CompileSettingsFormView()
 		{
 			InitializeComponent();
 		}

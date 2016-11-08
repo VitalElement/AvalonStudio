@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System;
+using System.Dynamic;
 
 namespace AvalonStudio.Toolchains.GCC
 {
@@ -50,6 +51,49 @@ namespace AvalonStudio.Toolchains.GCC
         public string LDExecutable => Path.Combine(BinDirectory, $"{LDPrefix}{LDName}" + Platform.ExecutableExtension);
 
         public string SizeExecutable => Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
+
+        public static GccToolchainSettings GetSettings(IProject project)
+        {
+            GccToolchainSettings result = null;
+
+            try
+            {
+                if (project.ToolchainSettings.GccToolchainSettings is ExpandoObject)
+                {
+                    result = (project.ToolchainSettings.GccToolchainSettings as ExpandoObject).GetConcreteType<GccToolchainSettings>();
+                }
+                else
+                {
+                    result = project.ToolchainSettings.GccToolchainSettings;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            return result;
+        }
+
+        public static GccToolchainSettings ProvisionGccSettings(IProject project)
+        {
+            var result = GetSettings(project);
+
+            if (result == null)
+            {
+                result = new GccToolchainSettings();
+
+                project.ToolchainSettings.GccToolchainSettings = result;
+
+                project.Save();
+            }
+
+            return result;
+        }
+
+        public override void ProvisionSettings(IProject project)
+        {
+            ProvisionGccSettings(project);
+        }
 
         private bool CheckFile(IConsole console, string file)
         {
