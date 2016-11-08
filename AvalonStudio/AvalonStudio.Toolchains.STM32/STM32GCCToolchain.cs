@@ -5,6 +5,7 @@ namespace AvalonStudio.Toolchains.STM32
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
+    using CommandLineTools;
     using Standard;
     using System;
     using System.Collections.Generic;
@@ -14,16 +15,6 @@ namespace AvalonStudio.Toolchains.STM32
 
     public class STM32GCCToolchain : GCCToolchain
     {
-        public override async Task<bool> PreBuild(IConsole console, IProject project)
-        {
-            return true;
-        }
-
-        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
-        {
-            return true;
-        }
-
         public override string BinDirectory => Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin");
 
         public string LinkerScript { get; set; }
@@ -441,6 +432,89 @@ namespace AvalonStudio.Toolchains.STM32
             }
 
             return result;
+        }
+
+        public enum AssemblyFormat
+        {
+            Binary,
+            IntelHex,
+            Elf32
+        }
+
+        public async Task<ProcessResult> ObjCopy(IConsole console, IProject project, LinkResult linkResult, AssemblyFormat format)
+        {
+            var result = new ProcessResult();
+
+            var commandName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension);
+
+            if (PlatformSupport.CheckExecutableAvailability(commandName, BinDirectory))
+            {
+                string formatArg = "binary";
+
+                switch (format)
+                {
+                    case AssemblyFormat.Binary:
+                        formatArg = "binary";
+                        break;
+
+                    case AssemblyFormat.IntelHex:
+                        formatArg = "ihex";
+                        break;
+                }
+
+                string outputExtension = ".bin";
+
+                switch (format)
+                {
+                    case AssemblyFormat.Binary:
+                        outputExtension = ".bin";
+                        break;
+
+                    case AssemblyFormat.IntelHex:
+                        outputExtension = ".hex";
+                        break;
+
+                    case AssemblyFormat.Elf32:
+                        outputExtension = ".elf";
+                        break;
+                }
+
+                var arguments = $"-O {formatArg} {linkResult.Executable} {Path.GetDirectoryName(linkResult.Executable)}{Platform.DirectorySeperator}{Path.GetFileNameWithoutExtension(linkResult.Executable)}{outputExtension}";
+
+                console.WriteLine($"Converting to {format.ToString()}");
+
+                result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) => console.WriteLine(e.Data), false, string.Empty, false);
+            }
+            else
+            {
+                console.WriteLine("Unable to find tool (" + commandName + ") check project compiler settings.");
+                result.ExitCode = -1;
+            }
+
+            return result;
+        }
+
+        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        {
+            return true;
+        }
+
+        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        {
+            if ((project is IStandardProject) && (project as IStandardProject).Type == ProjectType.Executable)
+            {
+                var result = await ObjCopy(console, project, linkResult, AssemblyFormat.Binary);
+
+                if (result.ExitCode == 0)
+                {
+                    result = await ObjCopy(console, project, linkResult, AssemblyFormat.IntelHex);
+                }
+
+                return result.ExitCode == 0;
+            }
+
+
+            return true;
         }
     }
 }
