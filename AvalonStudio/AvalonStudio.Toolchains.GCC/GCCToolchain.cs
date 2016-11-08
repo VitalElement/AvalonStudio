@@ -153,6 +153,8 @@ namespace AvalonStudio.Toolchains.GCC
         {
             var result = new LinkResult();
 
+            var settings = GetSettings(project);
+
             string commandName = project.Type == ProjectType.StaticLibrary ? ARExecutable : LDExecutable;
 
             var objectArguments = string.Empty;
@@ -194,12 +196,30 @@ namespace AvalonStudio.Toolchains.GCC
                 linkedLibraries += string.Format("-L\"{0}\" -l{1} ", relativePath, libName);
             }
 
+            string libraryPaths = string.Empty;
+
+            foreach(var libraryPath in settings.LinkSettings.LinkedLibraries)
+            {
+                libraryPaths += $"-Wl,--library-path={Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(libraryPath)).ToPlatformPath()} ";
+
+                var libName = Path.GetFileName(libraryPath);
+
+                linkedLibraries += string.Format($"-Wl,--library=:{libName} ");
+            }
+
             foreach (var lib in project.BuiltinLibraries)
             {
                 linkedLibraries += string.Format("-l{0} ", lib);
             }
 
             linkedLibraries += GetBaseLibraryArguments(superProject);
+
+            var linkerScripts = string.Empty;
+
+            foreach(var script in settings.LinkSettings.LinkerScripts)
+            {
+                linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
+            }
 
             string arguments = string.Empty;
 
@@ -209,7 +229,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             else
             {
-                arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group", GetLinkerArguments(superProject, project), executable, objectArguments, linkedLibraries, libs);
+                arguments = string.Format("{0} {1} -o{2} {3} {4} -Wl,--start-group {5} {6} -Wl,--end-group", GetLinkerArguments(superProject, project), linkerScripts, executable, objectArguments, libraryPaths, linkedLibraries, libs);
             }
 
             result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => { },
