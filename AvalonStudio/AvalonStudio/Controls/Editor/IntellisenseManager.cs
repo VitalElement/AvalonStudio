@@ -150,7 +150,7 @@
 
             if (currentFilter != string.Empty)
             {
-                filteredResults = unfilteredCompletions.Where(c => c.Title.ToLower().Contains(currentFilter.ToLower()));
+                filteredResults = unfilteredCompletions.Where(c => c != null && c.Title.ToLower().Contains(currentFilter.ToLower()));
 
                 IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
