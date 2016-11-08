@@ -86,47 +86,6 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public override string StaticLibraryExtension => ".a";
 
-        public override void ProvisionSettings(IProject project)
-        {
-            ProvisionLocalGccSettings(project);
-        }
-
-        public static LocalGccToolchainSettings ProvisionLocalGccSettings(IProject project)
-        {
-            var result = GetSettings(project);
-
-            if (result == null)
-            {
-                project.ToolchainSettings.LocalGCC = new LocalGccToolchainSettings();
-                result = project.ToolchainSettings.LocalGCC;
-                project.Save();
-            }
-
-            return result;
-        }
-
-        public static LocalGccToolchainSettings GetSettings(IProject project)
-        {
-            LocalGccToolchainSettings result = null;
-
-            try
-            {
-                if (project.ToolchainSettings.LocalGCC is ExpandoObject)
-                {
-                    result = (project.ToolchainSettings.LocalGCC as ExpandoObject).GetConcreteType<LocalGccToolchainSettings>();
-                }
-                else
-                {
-                    result = project.ToolchainSettings.LocalGCC;
-                }
-            }
-            catch (Exception)
-            {
-            }
-
-            return result;
-        }
-
         private string GetLinkerScriptLocation(IStandardProject project)
         {
             return Path.Combine(project.CurrentDirectory, "link.ld");
