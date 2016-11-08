@@ -39,48 +39,7 @@ namespace AvalonStudio.Toolchains.STM32
         public override string StaticLibraryExtension => ".a";
 
         public override string Prefix => "arm-none-eabi-";
-
-        public override void ProvisionSettings(IProject project)
-		{
-			ProvisionSTM32Settings(project);
-		}
-
-		public static STM32ToolchainSettings ProvisionSTM32Settings(IProject project)
-		{
-			var result = GetSettings(project);
-
-			if (result == null)
-			{
-				project.ToolchainSettings.STM32ToolchainSettings = new STM32ToolchainSettings();
-				result = project.ToolchainSettings.STM32ToolchainSettings;
-				project.Save();
-			}
-
-			return result;
-		}
-
-		public static STM32ToolchainSettings GetSettings(IProject project)
-		{
-			STM32ToolchainSettings result = null;
-
-			try
-			{
-				if (project.ToolchainSettings.STM32ToolchainSettings is ExpandoObject)
-				{
-					result =
-						(project.ToolchainSettings.STM32ToolchainSettings as ExpandoObject).GetConcreteType<STM32ToolchainSettings>();
-				}
-				else
-				{
-					result = project.ToolchainSettings.STM32ToolchainSettings;
-				}
-			}
-			catch (Exception)
-			{
-			}
-
-			return result;
-		}
+		
 
 		private string GetLinkerScriptLocation(IStandardProject project)
 		{
@@ -127,7 +86,7 @@ namespace AvalonStudio.Toolchains.STM32
                     break;
 
                 case LibraryType.Retarget:
-                    result += "-lm -lc -lnosys -lstdc++ -lsupc++ ";
+                    result += "-lm -lc -lnosys -lgcc -lstdc++ -lsupc++ ";
                     break;
             }
 
@@ -187,7 +146,10 @@ namespace AvalonStudio.Toolchains.STM32
 					break;
 			}
 
-			result += string.Format(" -L{0} -Wl,-T\"{1}\"", project.CurrentDirectory, GetLinkerScriptLocation(project));
+            if (settings.LinkSettings.UseMemoryLayout)
+            {
+                result += string.Format(" -L{0} -Wl,-T\"{1}\"", project.CurrentDirectory, GetLinkerScriptLocation(project));
+            }
 
 			return result;
 		}
@@ -442,13 +404,10 @@ namespace AvalonStudio.Toolchains.STM32
 		{
 			return new List<string>
 			{
-				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "arm-none-eabi", "include"),
-				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "arm-none-eabi", "include", "c++", "5.4.1"),
-				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "arm-none-eabi", "include", "c++", "5.4.1",
-					"arm-none-eabi", "thumb"),
-				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "lib", "gcc", "arm-none-eabi", "5.4.1",
-					"include")
-			};
+				Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "lib", "gcc", "arm-none-eabi", "5.4.1", "include"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "lib", "gcc", "arm-none-eabi", "5.4.1", "include-fixed"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "arm-none-eabi", "include")
+            };
 		}
 
 		public override bool SupportsFile(ISourceFile file)
