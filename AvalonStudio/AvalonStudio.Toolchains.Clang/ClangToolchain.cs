@@ -60,44 +60,9 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override void ProvisionSettings(IProject project)
         {
-            ProvisionClangSettings(project);
-        }
+            base.ProvisionSettings(project);
 
-        public static ClangToolchainSettings ProvisionClangSettings(IProject project)
-        {
-            var result = GetSettings(project);
-
-            if (result == null)
-            {
-                project.ToolchainSettings.ClangToolchainSettings = new ClangToolchainSettings();
-                result = project.ToolchainSettings.ClangToolchainSettings;
-                project.Save();
-            }
-
-            return result;
-        }
-
-        public static ClangToolchainSettings GetSettings(IProject project)
-        {
-            ClangToolchainSettings result = null;
-
-            try
-            {
-                if (project.ToolchainSettings.ClangToolchainSettings is ExpandoObject)
-                {
-                    result =
-                        (project.ToolchainSettings.ClangToolchainSettings as ExpandoObject).GetConcreteType<ClangToolchainSettings>();
-                }
-                else
-                {
-                    result = project.ToolchainSettings.ClangToolchainSettings;
-                }
-            }
-            catch (Exception)
-            {
-            }
-
-            return result;
+            // Provision toolchain specific settings.
         }
 
         private string GetLinkerScriptLocation(IStandardProject project)
@@ -465,9 +430,6 @@ namespace AvalonStudio.Toolchains.Clang
         {
             return new List<string>
             {
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1", "arm-none-eabi"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1", "backward"),
                 Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include"),
                 Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include-fixed"),
                 Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include")

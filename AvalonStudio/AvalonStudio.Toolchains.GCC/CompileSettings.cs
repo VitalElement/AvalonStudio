@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace AvalonStudio.Toolchains.Clang
+namespace AvalonStudio.Toolchains.GCC
 {
 	public enum OptimizationLevel
 	{
@@ -8,7 +8,7 @@ namespace AvalonStudio.Toolchains.Clang
 		Debug,
 		Level1,
 		Level2,
-		Level3
+		Level3,
 	}
 
 	public enum OptimizationPreference

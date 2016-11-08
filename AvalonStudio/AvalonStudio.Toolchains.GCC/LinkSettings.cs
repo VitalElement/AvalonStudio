@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace AvalonStudio.Toolchains.STM32
+namespace AvalonStudio.Toolchains.GCC
 {
 	public enum LibraryType
 	{
