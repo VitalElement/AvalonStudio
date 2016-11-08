@@ -30,7 +30,6 @@ namespace AvalonStudio.Toolchains.Clang
         public override string LDName => "gcc";
         public override string ARName => "ar";
         public override string LDPrefix => "arm-none-eabi-";
-        public override string CCExecutableForSearchPaths => Path.Combine(BinDirectory, $"{LDPrefix}{LDName}" + Platform.ExecutableExtension);
         public override string SizePrefix => LDPrefix;
         public override string ARPrefix => LDPrefix;
 
