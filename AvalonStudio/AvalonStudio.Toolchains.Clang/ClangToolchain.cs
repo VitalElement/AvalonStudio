@@ -30,6 +30,7 @@ namespace AvalonStudio.Toolchains.Clang
         public override string LDName => "gcc";
         public override string ARName => "ar";
         public override string LDPrefix => "arm-none-eabi-";
+        public override string CCExecutableForSearchPaths => Path.Combine(BinDirectory, $"{LDPrefix}{LDName}" + Platform.ExecutableExtension);
         public override string SizePrefix => LDPrefix;
         public override string ARPrefix => LDPrefix;
 
@@ -68,6 +69,20 @@ namespace AvalonStudio.Toolchains.Clang
         private string GetLinkerScriptLocation(IStandardProject project)
         {
             return Path.Combine(project.CurrentDirectory, "link.ld");
+        }
+
+        public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
+        {
+            return new List<string>
+            {
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1", "arm-none-eabi"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1", "backward"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include-fixed"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include")
+            };
         }
 
         private void GenerateLinkerScript(IStandardProject project)
@@ -368,7 +383,7 @@ namespace AvalonStudio.Toolchains.Clang
                 result += string.Format("-D{0} ", define);
             }
 
-            var toolchainIncludes = GetToolchainIncludes();
+            var toolchainIncludes = GetToolchainIncludes(file);
 
             foreach (var include in toolchainIncludes)
             {
@@ -426,15 +441,7 @@ namespace AvalonStudio.Toolchains.Clang
             return result;
         }
 
-        public override List<string> GetToolchainIncludes()
-        {
-            return new List<string>
-            {
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include-fixed"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include")
-            };
-        }
+        
 
         public override bool SupportsFile(ISourceFile file)
         {
