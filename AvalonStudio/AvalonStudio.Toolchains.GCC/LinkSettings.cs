@@ -16,9 +16,11 @@ namespace AvalonStudio.Toolchains.GCC
 		public LinkSettings()
 		{
 			LinkedLibraries = new List<string>();
+            LinkerScripts = new List<string>();
 		}
 
 		public List<string> LinkedLibraries { get; set; }
+        public List<string> LinkerScripts { get; set; }
 
 		public bool UseMemoryLayout { get; set; }
 		public bool DiscardUnusedSections { get; set; }
