@@ -402,7 +402,7 @@ namespace AvalonStudio.Toolchains.GCC
 			settings.Exceptions = exceptions;
 			settings.Rtti = rtti;
 
-			Model.ToolchainSettings.ClangToolchainSettings.CompileSettings = settings;
+			Model.ToolchainSettings.GccToolchainSettings.CompileSettings = settings;
 			Model.Save();
 			//project.SaveChanges();
 		}

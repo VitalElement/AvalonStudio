@@ -339,7 +339,7 @@ namespace AvalonStudio.Toolchains.GCC
 			settings.MiscLinkerArguments = miscOptions;
 			settings.Library = (LibraryType) librarySelectedIndex;
 
-			Model.ToolchainSettings.ClangToolchainSettings.LinkSettings = settings;
+			Model.ToolchainSettings.GccToolchainSettings.LinkSettings = settings;
 			Model.Save();
 		}
 
