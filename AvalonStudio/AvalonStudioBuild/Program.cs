@@ -17,7 +17,7 @@ namespace AvalonStudio
 {
 	internal class Program
 	{
-		private const string version = "1.0.1.2";
+		private const string version = "1.0.1.4";
 		private const string releaseName = "Gravity";
 
 		private static readonly ProgramConsole console = new ProgramConsole();
