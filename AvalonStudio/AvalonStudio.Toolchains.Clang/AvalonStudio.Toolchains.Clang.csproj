@@ -181,15 +181,7 @@
     <Compile Include="ArmGCCLinkTemplateCode.cs" />
     <Compile Include="ClangCPlusPlusProjectTemplate.cs" />
     <Compile Include="ClangToolchain.cs" />
-    <Compile Include="ClangToolchainSettings.cs" />
-    <Compile Include="CompileSettings.cs" />
-    <Compile Include="CompileSettingsForm.paml.cs" />
-    <Compile Include="CompileSettingsFormViewModel.cs" />
-    <Compile Include="LinkerSettingsForm.paml.cs" />
-    <Compile Include="LinkerSettingsFormViewModel.cs" />
-    <Compile Include="LinkSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ToolchainSettingsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ArmGCCLinkTemplate.tt">
@@ -198,8 +190,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CompileSettingsFormView.paml" />
-    <EmbeddedResource Include="LinkerSettingsFormView.paml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
