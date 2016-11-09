@@ -9,7 +9,7 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="150"/>
       <RowDefinition Height="100"/>
-      <RowDefinition Height="30" />
+      <RowDefinition Height="80" />
       <RowDefinition Height="80"/>
       <RowDefinition Height="80"/>
     </Grid.RowDefinitions>
@@ -138,7 +138,7 @@
     <Panel  Grid.Row="2" Grid.ColumnSpan="2">
       <Grid ColumnDefinitions="*,100">
 
-        <ListBox Items="{Binding LinkerScripts}" SelectedItem="{Binding SelectedLinkecript}"/>
+        <ListBox Items="{Binding LinkerScripts}" SelectedItem="{Binding SelectedLinkerScript}"/>
 
         <StackPanel Grid.Column="1" Margin="5 0 0 0">
           <Button Content="Add" Command="{Binding AddLinkerScriptCommand}" />
