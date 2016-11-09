@@ -198,13 +198,16 @@ namespace AvalonStudio.Toolchains.GCC
 
             string libraryPaths = string.Empty;
 
-            foreach(var libraryPath in settings.LinkSettings.LinkedLibraries)
+            if (project.Type == ProjectType.Executable)
             {
-                libraryPaths += $"-Wl,--library-path={Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(libraryPath)).ToPlatformPath()} ";
+                foreach (var libraryPath in settings.LinkSettings.LinkedLibraries)
+                {
+                    libraryPaths += $"-Wl,--library-path={Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(libraryPath)).ToPlatformPath()} ";
 
-                var libName = Path.GetFileName(libraryPath);
+                    var libName = Path.GetFileName(libraryPath);
 
-                linkedLibraries += string.Format($"-Wl,--library=:{libName} ");
+                    linkedLibraries += string.Format($"-Wl,--library=:{libName} ");
+                }
             }
 
             foreach (var lib in project.BuiltinLibraries)
@@ -216,9 +219,12 @@ namespace AvalonStudio.Toolchains.GCC
 
             var linkerScripts = string.Empty;
 
-            foreach(var script in settings.LinkSettings.LinkerScripts)
+            if (project.Type == ProjectType.Executable)
             {
-                linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
+                foreach (var script in settings.LinkSettings.LinkerScripts)
+                {
+                    linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
+                }
             }
 
             string arguments = string.Empty;
