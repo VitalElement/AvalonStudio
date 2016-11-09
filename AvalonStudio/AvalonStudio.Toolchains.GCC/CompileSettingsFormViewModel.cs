@@ -9,7 +9,7 @@ using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
 using ReactiveUI;
 
-namespace AvalonStudio.Toolchains.Clang
+namespace AvalonStudio.Toolchains.GCC
 {
 	public class CompileSettingsFormViewModel : HeaderedViewModel<IProject>
 	{
@@ -53,11 +53,11 @@ namespace AvalonStudio.Toolchains.Clang
 		{
 			try
 			{
-				settings = ClangToolchain.GetSettings(project).CompileSettings;
+				settings = GCCToolchain.GetSettings(project).CompileSettings;
 			}
 			catch (Exception)
 			{
-				Model.ToolchainSettings.ClangToolchainSettings = new ClangToolchainSettings();
+				Model.ToolchainSettings.GccToolchainSettings = new GccToolchainSettings();
 			}
 
 			defines = new ObservableCollection<string>(settings.Defines);
@@ -402,7 +402,7 @@ namespace AvalonStudio.Toolchains.Clang
 			settings.Exceptions = exceptions;
 			settings.Rtti = rtti;
 
-			Model.ToolchainSettings.ClangToolchainSettings.CompileSettings = settings;
+			Model.ToolchainSettings.GccToolchainSettings.CompileSettings = settings;
 			Model.Save();
 			//project.SaveChanges();
 		}
