@@ -101,6 +101,9 @@ namespace AvalonStudio.Toolchains.GCC
             AddLinkerScriptCommand = ReactiveCommand.Create();
             AddLinkerScriptCommand.Subscribe(AddLinkerScript);
 
+            RemoveLinkerScriptCommand = ReactiveCommand.Create();
+            RemoveLinkerScriptCommand.Subscribe(RemoveLinkerScript);
+
             RemoveLinkedLibraryCommand = ReactiveCommand.Create();
             RemoveLinkedLibraryCommand.Subscribe(RemoveLinkedLibrary);
             //BrowseScatterFileCommand = new RoutingCommand(BrowseScatterFile);
@@ -411,6 +414,12 @@ namespace AvalonStudio.Toolchains.GCC
 
                 UpdateLinkerString();
             }
+        }
+
+        private void RemoveLinkerScript (object param)
+        {
+            LinkerScripts.Remove(SelectedLinkerScript);
+            UpdateLinkerString();
         }
 
         private void RemoveLinkedLibrary(object param)
