@@ -64,10 +64,15 @@ namespace AvalonStudio.Toolchains.Standard
 		public abstract string ExecutableExtension { get; }
 		public abstract string StaticLibraryExtension { get; }
 
-
+        public abstract bool ValidateToolchainExecutables(IConsole console);
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
 		{
+            if(!ValidateToolchainExecutables(console))
+            {
+                return false;
+            }
+
 			console.Clear();
 
             var result = await PreBuild(console, project);
@@ -183,11 +188,6 @@ namespace AvalonStudio.Toolchains.Standard
 			});
 		}
 
-		public IList<string> Includes
-		{
-			get { return GetToolchainIncludes(); }
-		}
-
 		public abstract IList<object> GetConfigurationPages(IProject project);
 
 		public abstract bool CanHandle(IProject project);
@@ -226,7 +226,7 @@ namespace AvalonStudio.Toolchains.Standard
 
 		public abstract string GetLinkerArguments(IStandardProject superProject, IStandardProject project);
 
-		public abstract List<string> GetToolchainIncludes();
+		public abstract IEnumerable<string> GetToolchainIncludes(ISourceFile file);
 
 		public abstract bool SupportsFile(ISourceFile file);
 

@@ -1,5 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility" Height="250">
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
     <cont:ToolControl Title="Memory Viewer">
       <Grid RowDefinitions="22,*">
 

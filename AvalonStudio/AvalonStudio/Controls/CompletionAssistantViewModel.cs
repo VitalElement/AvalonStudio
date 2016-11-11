@@ -5,14 +5,17 @@
     using ReactiveUI;
     using System.Collections.Generic;
     using System;
+    using System.Threading;
 
     public class CompletionAssistantViewModel : ViewModel, ICompletionAssistant
     {
         private Stack<SignatureHelpViewModel> methodStack;
         private IntellisenseViewModel intellisense;
+        private Thread uiThread;
 
         public CompletionAssistantViewModel(IntellisenseViewModel intellisense)
         {
+            uiThread = Thread.CurrentThread;
             methodStack = new Stack<SignatureHelpViewModel>();
             this.intellisense = intellisense;
         }
@@ -77,7 +80,12 @@
         public bool IsVisible
         {
             get { return isVisible; }
-            set { this.RaiseAndSetIfChanged(ref isVisible, value); intellisense.InvalidateIsOpen(); }
+            set {
+                if (Thread.CurrentThread != uiThread)
+                {
+                    throw new Exception("Cannot access outside UI Thread.");
+                }
+                this.RaiseAndSetIfChanged(ref isVisible, value); intellisense.InvalidateIsOpen(); }
         }
 
         private SignatureHelpViewModel currentMethod;

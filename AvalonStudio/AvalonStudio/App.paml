@@ -6,5 +6,6 @@
     <StyleInclude Source="resm:AvalonStudio.Controls.MetroWindowTheme.paml?assembly=AvalonStudio" />
     <StyleInclude Source="resm:AvalonStudio.TextEditor.TextEditor.paml?assembly=AvalonStudio.TextEditor" />
     <StyleInclude Source="resm:AvalonStudio.Styles.GlobalStyles.xaml?assembly=AvalonStudio" />
+    <StyleInclude Source="resm:Mabiavalon.DockNC.Themes.Controls.paml?assembly=Mabiavalon.DockNC" />
   </Application.Styles>
 </Application>

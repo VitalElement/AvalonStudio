@@ -5,6 +5,7 @@ namespace AvalonStudio.Toolchains.Clang
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
+    using CommandLineTools;
     using Standard;
     using System;
     using System.Collections.Generic;
@@ -59,49 +60,28 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override void ProvisionSettings(IProject project)
         {
-            ProvisionClangSettings(project);
-        }
+            base.ProvisionSettings(project);
 
-        public static ClangToolchainSettings ProvisionClangSettings(IProject project)
-        {
-            var result = GetSettings(project);
-
-            if (result == null)
-            {
-                project.ToolchainSettings.ClangToolchainSettings = new ClangToolchainSettings();
-                result = project.ToolchainSettings.ClangToolchainSettings;
-                project.Save();
-            }
-
-            return result;
-        }
-
-        public static ClangToolchainSettings GetSettings(IProject project)
-        {
-            ClangToolchainSettings result = null;
-
-            try
-            {
-                if (project.ToolchainSettings.ClangToolchainSettings is ExpandoObject)
-                {
-                    result =
-                        (project.ToolchainSettings.ClangToolchainSettings as ExpandoObject).GetConcreteType<ClangToolchainSettings>();
-                }
-                else
-                {
-                    result = project.ToolchainSettings.ClangToolchainSettings;
-                }
-            }
-            catch (Exception)
-            {
-            }
-
-            return result;
+            // Provision toolchain specific settings.
         }
 
         private string GetLinkerScriptLocation(IStandardProject project)
         {
             return Path.Combine(project.CurrentDirectory, "link.ld");
+        }
+
+        public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
+        {
+            return new List<string>
+            {
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1", "arm-none-eabi"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1", "backward"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include-fixed"),
+                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include")
+            };
         }
 
         private void GenerateLinkerScript(IStandardProject project)
@@ -402,7 +382,7 @@ namespace AvalonStudio.Toolchains.Clang
                 result += string.Format("-D{0} ", define);
             }
 
-            var toolchainIncludes = GetToolchainIncludes();
+            var toolchainIncludes = GetToolchainIncludes(file);
 
             foreach (var include in toolchainIncludes)
             {
@@ -460,18 +440,7 @@ namespace AvalonStudio.Toolchains.Clang
             return result;
         }
 
-        public override List<string> GetToolchainIncludes()
-        {
-            return new List<string>
-            {
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1", "arm-none-eabi"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1", "backward"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include-fixed"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include")
-            };
-        }
+        
 
         public override bool SupportsFile(ISourceFile file)
         {
@@ -511,71 +480,50 @@ namespace AvalonStudio.Toolchains.Clang
         {
             var result = new ProcessResult();
 
-            var startInfo = new ProcessStartInfo();
-            startInfo.FileName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension); 
+            var commandName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension);
 
-            if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
+            if(PlatformSupport.CheckExecutableAvailability(commandName, BinDirectory))
             {
-                console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
+                string formatArg = "binary";
+
+                switch (format)
+                {
+                    case AssemblyFormat.Binary:
+                        formatArg = "binary";
+                        break;
+
+                    case AssemblyFormat.IntelHex:
+                        formatArg = "ihex";
+                        break;
+                }
+
+                string outputExtension = ".bin";
+
+                switch (format)
+                {
+                    case AssemblyFormat.Binary:
+                        outputExtension = ".bin";
+                        break;
+
+                    case AssemblyFormat.IntelHex:
+                        outputExtension = ".hex";
+                        break;
+
+                    case AssemblyFormat.Elf32:
+                        outputExtension = ".elf";
+                        break;
+                }
+
+                var arguments = $"-O {formatArg} {linkResult.Executable} {Path.GetDirectoryName(linkResult.Executable)}{Platform.DirectorySeperator}{Path.GetFileNameWithoutExtension(linkResult.Executable)}{outputExtension}";
+
+                console.WriteLine($"Converting to {format.ToString()}");
+
+                result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) => console.WriteLine(e.Data), false, string.Empty, false);
+            }
+            else
+            {
+                console.WriteLine("Unable to find tool (" + commandName + ") check project compiler settings.");
                 result.ExitCode = -1;
-                return result;
-            }
-
-            string formatArg = "binary";
-
-            switch (format)
-            {
-                case AssemblyFormat.Binary:
-                    formatArg = "binary";
-                    break;
-
-                case AssemblyFormat.IntelHex:
-                    formatArg = "ihex";
-                    break;
-            }
-
-            string  outputExtension= ".bin";
-
-            switch (format)
-            {
-                case AssemblyFormat.Binary:
-                    outputExtension = ".bin";
-                    break;
-
-                case AssemblyFormat.IntelHex:
-                    outputExtension = ".hex";
-                    break;
-
-                case AssemblyFormat.Elf32:
-                    outputExtension = ".elf";
-                    break;
-            }
-
-            startInfo.Arguments = $"-O {formatArg} {linkResult.Executable} {Path.GetDirectoryName(linkResult.Executable)}{Platform.DirectorySeperator}{Path.GetFileNameWithoutExtension(linkResult.Executable)}{outputExtension}";
-
-            console.WriteLine($"Converting to {format.ToString()}");
-
-            // Hide console window
-            startInfo.UseShellExecute = false;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-            startInfo.RedirectStandardInput = true;
-            startInfo.CreateNoWindow = true;
-
-
-            using (var process = Process.Start(startInfo))
-            {
-                process.OutputDataReceived += (sender, e) => { console.WriteLine(e.Data); };
-
-                process.ErrorDataReceived += (sender, e) => { console.WriteLine(e.Data); };
-
-                process.BeginOutputReadLine();
-
-                process.BeginErrorReadLine();
-
-                process.WaitForExit();
-
-                result.ExitCode = process.ExitCode;
             }
 
             return result;
