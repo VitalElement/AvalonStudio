@@ -18,6 +18,7 @@ namespace AvalonStudio.Languages
         PreProcessor,
         PreProcessorText,
         Debug,
+        White,
 
 	}
 

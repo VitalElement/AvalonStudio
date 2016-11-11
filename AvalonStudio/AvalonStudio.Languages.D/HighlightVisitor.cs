@@ -14,6 +14,14 @@
             }
         }
 
+        //public static void AddHighlgiht(this IExpression expression, HighlightType type, SyntaxHighlightDataList list)
+        //{
+        //    if (expression.EndLocation.Line != 0 && expression.EndLocation.Column != 0)
+        //    {
+        //        list.Add(new LineColumnSyntaxHighlightingData(expression.Location.Line, expression.Location.Column, expression.EndLocation.Line, expression.EndLocation.Column, type));
+        //    }
+        //}
+
         public static LineColumnSyntaxHighlightingData ToHighlight(this Comment comment)
         {
             if (comment.CommentType == Comment.Type.SingleLine)
@@ -35,12 +43,6 @@
 
         public SyntaxHighlightDataList Highlights { get; set; }
 
-        public override void Visit(DEnumValue dEnumValue)
-        {
-            //
-        }
-
-
         public override void Visit(DEnum dEnum)
         {
             dEnum.AddHighlight(HighlightType.StructName, Highlights);
@@ -60,7 +62,7 @@
 
         public override void Visit(IdentifierDeclaration td)
         {
-            td.AddHighlight(HighlightType.ClassName, Highlights); // This one makes the to in to!string green
+            td.AddHighlight(HighlightType.ClassName, Highlights);
             base.Visit(td);
         }
 
@@ -68,11 +70,6 @@
         {
             td.AddHighlight(HighlightType.Debug, Highlights);
             base.Visit(td);
-        }
-
-        public override void Visit(ModuleStatement s)
-        {
-            base.Visit(s);
         }
 
         public override void VisitAttribute(Modifier attribute)
@@ -88,26 +85,20 @@
             base.Visit(x);
         }
 
-        public override void VisitTemplateParameter(TemplateParameter tp) // I tried these, none of... These ones work: 
-        {
-            base.VisitTemplateParameter(tp);
-        }
-
-
         public override void Visit(IdentifierExpression x)
         {
             switch (x.Format)
             {
-                case D_Parser.Parser.LiteralFormat.None:
+                case LiteralFormat.None:
                     break;
 
-                case D_Parser.Parser.LiteralFormat.Scalar:
+                case LiteralFormat.Scalar:
                     x.AddHighlight(HighlightType.NumericLiteral, Highlights);
                     break;
-                case D_Parser.Parser.LiteralFormat.FloatingPoint:
+                case LiteralFormat.FloatingPoint:
                     x.AddHighlight(HighlightType.NumericLiteral, Highlights);
                     break;
-                case D_Parser.Parser.LiteralFormat.Scalar | D_Parser.Parser.LiteralFormat.FloatingPoint:
+                case LiteralFormat.Scalar | LiteralFormat.FloatingPoint:
                     x.AddHighlight(HighlightType.NumericLiteral, Highlights);
                     break;
 
@@ -136,34 +127,23 @@
             base.Visit(p);
         }
 
-        //public override void Visit(DClassLike x)
-        //{
-        //    switch (x.ClassType)
-        //    {
-        //        case DTokens.Struct:
-        //            Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
-        //            break;
+        public override void Visit(ArrayInitializer x)
+        {
+            x.AddHighlight(HighlightType.Debug, Highlights);
 
-        //        default:
-        //            Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.ClassName));
-        //            break;
-        //        case DTokens.Interface:
-        //            Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
-        //            break;
+            base.Visit(x);
+        }
 
-        //        case DTokens.Template:
-        //            Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
-        //            break;
+        public override void Visit(ArrayDecl td)
+        {
+            td.AddHighlight(HighlightType.White, Highlights);
 
-        //        case DTokens.Union:
-        //            Highlights.Add(new LineColumnSyntaxHighlightingData(x.NameLocation.Line, x.NameLocation.Column, x.NameLocation.Line, x.Location.Column + 5, HighlightType.StructName));
-        //            break;
-        //    }
+            if (td.KeyExpression != null)
+            {
+                td.KeyExpression.AddHighlight(HighlightType.NumericLiteral, Highlights);
+            }
 
-        //    Highlights.Add(new LineColumnSyntaxHighlightingData(x.Location.Line, x.Location.Column, x.Location.Line, x.Location.Column + 5, HighlightType.Keyword));
-        //Highlights.Add(x.ToHighlight(HighlightType.ClassName));
-
-        //     base.Visit(x);
-        // }
+            base.Visit(td);
+        }
     }
 }

@@ -16,6 +16,7 @@ namespace AvalonStudio.Languages.Highlighting
 
             TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
+            WhiteBrush = Brush.Parse("White");
             CommentBrush = Brush.Parse("#559A3F");
             CallExpressionBrush = Brush.Parse("Pink");
             IdentifierBrush = Brush.Parse("#D4D4D4");
@@ -28,6 +29,8 @@ namespace AvalonStudio.Languages.Highlighting
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
+
+        public IBrush WhiteBrush { get; set; }
 
         public IBrush PunctuationBrush { get; set; }
 
@@ -170,6 +173,10 @@ namespace AvalonStudio.Languages.Highlighting
 
                 case HighlightType.Debug:
                     result = Brushes.Cyan;
+                    break;
+
+                case HighlightType.White:
+                    result = WhiteBrush;
                     break;
 
                 default:
