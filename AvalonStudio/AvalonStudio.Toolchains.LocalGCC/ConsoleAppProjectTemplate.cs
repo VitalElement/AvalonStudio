@@ -34,7 +34,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
 			project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
 
-			var settings = LocalGCCToolchain.ProvisionLocalGccSettings(project);
+            project.ToolChain.ProvisionSettings(project);
 
 			project.Debugger = shell.Debuggers.FirstOrDefault(db => db is LocalDebugAdaptor);
 

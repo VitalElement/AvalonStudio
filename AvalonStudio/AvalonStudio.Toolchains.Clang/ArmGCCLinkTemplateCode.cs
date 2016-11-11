@@ -1,3 +1,5 @@
+using AvalonStudio.Toolchains.GCC;
+
 namespace AvalonStudio.Toolchains.Clang
 {
 	partial class ArmGCCLinkTemplate
