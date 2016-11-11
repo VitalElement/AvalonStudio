@@ -19,7 +19,7 @@ namespace AvalonStudio.TextEditor
 
 		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
 		{
-			textView = Parent.Parent.Parent.Parent as TextView;
+			textView = Parent as TextView;
 
 			if (textView == null)
 			{

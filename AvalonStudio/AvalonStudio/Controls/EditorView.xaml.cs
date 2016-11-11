@@ -19,6 +19,11 @@ namespace AvalonStudio.Controls
             disposables = new CompositeDisposable();
         }
 
+        ~EditorView()
+        {
+            Console.WriteLine("Editor disposed.");
+        }
+
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             editor = this.Find<TextEditor.TextEditor>("editor");
