@@ -295,7 +295,10 @@
                     {
                         if (caretIndex < completionAssistant.CurrentSignatureHelp.Offset)
                         {
-                            completionAssistant.PopMethod();
+                            Dispatcher.UIThread.InvokeTaskAsync(() =>
+                            {
+                                completionAssistant.PopMethod();
+                            }).Wait();
                         }
 
                         if (completionAssistant.CurrentSignatureHelp != null)
