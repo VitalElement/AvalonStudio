@@ -17,6 +17,7 @@ using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using OmniXaml.Attributes;
 using Key = Avalonia.Input.Key;
+using Avalonia.VisualTree;
 
 namespace AvalonStudio.TextEditor
 {
@@ -90,11 +91,11 @@ namespace AvalonStudio.TextEditor
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            var ancestors = this.GetVisualAncestors();
+
             textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;
             TextView = null;
-            TextDocument = null;
-            Header = null;
-            Content = null;
+            TextDocument = null;            
             disposables.Dispose();
         }
 
