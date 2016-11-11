@@ -183,25 +183,13 @@
       <DependentUpon>ArmGCCLinkTemplate.tt</DependentUpon>
     </Compile>
     <Compile Include="ArmGCCLinkTemplateCode.cs" />
-    <Compile Include="CompileSettings.cs" />
-    <Compile Include="CompileSettingsForm.paml.cs">
-      <DependentUpon>CompileSettingsFormView.paml</DependentUpon>
-    </Compile>
-    <Compile Include="CompileSettingsFormViewModel.cs" />
-    <Compile Include="LinkSettings.cs" />
     <Compile Include="STM32CPlusPlusProjectTemplate.cs" />
     <Compile Include="STM32GCCToolchain.cs" />
-    <Compile Include="LinkerSettingsForm.paml.cs">
-      <DependentUpon>LinkerSettingsFormView.paml</DependentUpon>
-    </Compile>
-    <Compile Include="LinkerSettingsFormViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="STM32ProjectSetupModalDialog.cs" />
     <Compile Include="STM32ProjectSetupModalDialogView.xaml.cs">
       <DependentUpon>STM32ProjectSetupModalDialogView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="STM32ToolchainSettings.cs" />
-    <Compile Include="ToolchainSettingsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
@@ -230,14 +218,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CompileSettingsFormView.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="LinkerSettingsFormView.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
