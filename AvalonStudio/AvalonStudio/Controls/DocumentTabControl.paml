@@ -70,12 +70,15 @@
       <Grid Background="#007ACC" Height="2" />
     </StackPanel>
 
+    <cont:ViewModelViewHost DataContext="{Binding #strip.SelectedItem}" IsVisible ="{Binding IsVisible}" />
+    <!--
+    
     <Carousel Items="{Binding #strip.Items}" SelectedIndex="{Binding #strip.SelectedIndex}" IsVirtualized="false">
       <Carousel.ItemTemplate>
         <DataTemplate>
           <cont:ViewModelViewHost IsVisible ="{Binding IsVisible}" />
         </DataTemplate>
       </Carousel.ItemTemplate>    
-    </Carousel>
+    </Carousel-->
   </DockPanel>
 </UserControl>
