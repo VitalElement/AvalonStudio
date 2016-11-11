@@ -9,6 +9,8 @@ mono:
 solution: AvalonStudio.sln
 before_install:
   - cd AvalonStudio 
+  - git submodule sync
+  - git submodule update --init --recursive
   - sudo ./dependencies.sh
 
 install:  
@@ -49,6 +51,19 @@ after_success:
       git add .;
       git commit -m 'new CI revision.' || true; 
       git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonBuild master &2>/dev/null;
+      cd ..;
+
+      git clone https://github.com/VitalElement/AvalonStudioBinaries.git; 
+      cd AvalonStudioBinaries;
+      git rm -rf .;
+      git clean -fxd; 
+      cd ..;      
+      cp -a ./AvalonStudio/bin/Release/. ./AvalonStudioBinaries/; 
+      cd AvalonStudioBinaries;
+      git add .;
+      git commit -m 'new CI revision.' || true; 
+      git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonStudioBinaries master &2>/dev/null;
+
       docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
       docker images;
       docker push vitalelement/avalon:cibuild;

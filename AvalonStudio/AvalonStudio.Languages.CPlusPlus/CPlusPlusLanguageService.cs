@@ -650,7 +650,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 var superProject = file.Project.Solution.StartupProject as IStandardProject;
                 var project = file.Project as IStandardProject;
 
-                var toolchainIncludes = superProject.ToolChain?.Includes;
+                var toolchainIncludes = superProject.ToolChain?.GetToolchainIncludes(file);
 
                 if (toolchainIncludes != null)
                 {

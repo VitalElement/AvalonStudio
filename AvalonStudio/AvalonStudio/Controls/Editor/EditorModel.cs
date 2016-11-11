@@ -180,7 +180,7 @@ namespace AvalonStudio.Controls
 
 		private void TextDocument_TextChanged(object sender, EventArgs e)
 		{
-            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.FilePath);
+            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
 
             if (unsavedFile == null)
 			{
