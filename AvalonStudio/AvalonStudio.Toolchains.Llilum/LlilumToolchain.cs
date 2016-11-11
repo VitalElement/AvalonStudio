@@ -581,7 +581,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			return result;
 		}
 
-		public override List<string> GetToolchainIncludes()
+		public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
 		{
 			//throw new NotImplementedException();
 

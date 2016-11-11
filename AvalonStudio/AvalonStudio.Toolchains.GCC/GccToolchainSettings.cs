@@ -1,8 +1,8 @@
-namespace AvalonStudio.Toolchains.Clang
+namespace AvalonStudio.Toolchains.GCC
 {
-	public class ClangToolchainSettings
+	public class GccToolchainSettings
 	{
-		public ClangToolchainSettings()
+		public GccToolchainSettings()
 		{
 			CompileSettings = new CompileSettings();
 			LinkSettings = new LinkSettings();

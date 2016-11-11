@@ -11,6 +11,7 @@ using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks.Catch;
 using AvalonStudio.Toolchains.LocalGCC;
 using AvalonStudio.Utils;
+using AvalonStudio.Toolchains.GCC;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -88,8 +89,9 @@ namespace AvalonStudio.Languages.CPlusPlus
 			project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
 			project.Debugger = shell.Debuggers.FirstOrDefault(d => d is LocalDebugAdaptor);
 			project.TestFramework = shell.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);
-			var settings = LocalGCCToolchain.ProvisionLocalGccSettings(project);
+            project.ToolChain.ProvisionSettings(project);
 
+            var settings = LocalGCCToolchain.GetSettings(project);
 			settings.CompileSettings.Exceptions = true;
 			settings.CompileSettings.Rtti = true;
 			settings.CompileSettings.Optimization = OptimizationLevel.Debug;

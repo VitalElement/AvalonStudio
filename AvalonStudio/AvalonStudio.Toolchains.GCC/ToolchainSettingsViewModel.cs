@@ -2,7 +2,7 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using ReactiveUI;
 
-namespace AvalonStudio.Toolchains.Clang
+namespace AvalonStudio.Toolchains.GCC
 {
 	public class ToolchainSettingsViewModel : ViewModel<IProject>
 	{
