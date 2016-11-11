@@ -42,6 +42,11 @@ namespace AvalonStudio.Toolchains.LDC
 
 	    public IList<string> Includes { get; }
 
+	    public IEnumerable<string> GetToolchainIncludes(ISourceFile file)
+	    {
+	        return new List<string>();
+	    }
+
 	    public Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
 	    {
             var startInfo = new ProcessStartInfo();
