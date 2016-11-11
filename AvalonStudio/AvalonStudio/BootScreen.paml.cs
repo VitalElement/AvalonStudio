@@ -21,7 +21,7 @@ namespace AvalonStudio
 			this.InitializeComponent();
 			App.AttachDevTools(this);
 
-			this.time.Interval = 3000;
+			this.time.Interval = 500;
 			this.time.AutoReset = false;
 			this.time.Elapsed += TimeOnElapsed;
 			this.time.Start();
