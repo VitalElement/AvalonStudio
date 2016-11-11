@@ -190,6 +190,9 @@ namespace AvalonStudio.Languages.D
                 case DTokens.Import:
                     return HighlightType.PreProcessor;
 
+                case DTokens.Alias:
+                    return HighlightType.PreProcessor;
+
                 default:
                     return HighlightType.Keyword;                   
 
@@ -208,7 +211,7 @@ namespace AvalonStudio.Languages.D
 
                 var ast = GetAndParseModule(file, unsavedFiles, token =>
                 {
-                    if (token.Kind >= DTokens.Align && token.Kind <= DTokens.__gshared)
+                    if ((token.Kind >= DTokens.Align && token.Kind <= DTokens.__gshared) || token.Kind == DTokens.Alias)
                     {                                                
                         highlightingVisitor.Highlights.Add(new LineColumnSyntaxHighlightingData(token.Location.Line, token.Location.Column, token.EndLocation.Line, token.EndLocation.Column, DTokenToHighlightType(token.Kind)));
                     }                    
