@@ -17,6 +17,8 @@ using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using OmniXaml.Attributes;
 using Key = Avalonia.Input.Key;
+using Avalonia.VisualTree;
+using Avalonia.LogicalTree;
 
 namespace AvalonStudio.TextEditor
 {
@@ -51,6 +53,32 @@ namespace AvalonStudio.TextEditor
                     s.InvalidateCaretPosition();
 
                     s.InvalidateSelectedWord();
+                }
+            });
+
+            HeaderProperty.Changed.AddClassHandler<TextEditor>((s, v) => 
+            {
+                if(v.OldValue as ILogical != null)
+                {
+                    s.LogicalChildren.Remove(v.OldValue as ILogical);
+                }
+
+                if (v.NewValue as ILogical != null)
+                {
+                    s.LogicalChildren.Add(v.NewValue as ILogical);
+                }
+            });
+
+            ContentProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
+            {
+                if (v.OldValue as ILogical != null)
+                {
+                    s.LogicalChildren.Remove(v.OldValue as ILogical);
+                }
+
+                if (v.NewValue as ILogical != null)
+                {
+                    s.LogicalChildren.Add(v.NewValue as ILogical);
                 }
             });
 
@@ -90,11 +118,11 @@ namespace AvalonStudio.TextEditor
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            var ancestors = this.GetVisualAncestors();
+
             textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;
             TextView = null;
-            TextDocument = null;
-            Header = null;
-            Content = null;
+            TextDocument = null;            
             disposables.Dispose();
         }
 
@@ -764,6 +792,8 @@ namespace AvalonStudio.TextEditor
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             TextView = e.NameScope.Find<TextView>("textView");
+
+            LogicalChildren.Add(TextView);
 
             disposables.Add(TextDocumentProperty.Changed.Subscribe(args =>
             {
