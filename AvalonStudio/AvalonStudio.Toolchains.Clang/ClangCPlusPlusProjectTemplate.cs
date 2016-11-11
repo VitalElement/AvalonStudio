@@ -31,7 +31,7 @@ namespace AvalonStudio.Toolchains.Clang
 
 			project.ToolChain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc is ClangToolchain);
 
-			var settings = ClangToolchain.ProvisionClangSettings(project);
+            project.ToolChain.ProvisionSettings(project);
 
 			await SourceFile.Create(project, "main.cpp", "int main (void){}");
 

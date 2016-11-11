@@ -1,3 +1,5 @@
+using AvalonStudio.Toolchains.GCC;
+
 namespace AvalonStudio.Toolchains.STM32
 {
 	partial class ArmGCCLinkTemplate

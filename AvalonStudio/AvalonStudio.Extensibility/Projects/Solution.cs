@@ -123,8 +123,6 @@ namespace AvalonStudio.Projects
 				// create an unloaded project type.
 			}
 
-			result?.ToolChain?.ProvisionSettings(result);
-
 			return result;
 		}
 
@@ -151,7 +149,8 @@ namespace AvalonStudio.Projects
 			foreach (var project in solution.Projects)
 			{
 				project.ResolveReferences();
-			}
+                project?.ToolChain?.ProvisionSettings(project);
+            }
 
 			solution.Name = Path.GetFileNameWithoutExtension(fileName);
 
