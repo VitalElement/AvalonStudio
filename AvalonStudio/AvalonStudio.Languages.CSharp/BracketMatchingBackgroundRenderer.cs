@@ -12,11 +12,7 @@ namespace AvalonStudio.Languages.CPlusPlus
     {
         private readonly IBrush bracketHighlightBrush = Brush.Parse("#123e70");
 
-        public event EventHandler<EventArgs> DataChanged
-        {
-            add { throw new NotSupportedException(); }
-            remove { }
-        }
+        public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
