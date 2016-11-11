@@ -12,6 +12,7 @@ using ViewLocator = AvalonStudio.MVVM.ViewLocator;
 using Avalonia.Controls;
 using AvalonStudio.Extensibility.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.LogicalTree;
 
 namespace AvalonStudio.Controls
 {
@@ -83,11 +84,21 @@ namespace AvalonStudio.Controls
 
 		protected override void OnDataContextChanged()
 		{
+            if(Content as ILogical != null)
+            {
+                LogicalChildren.Remove(Content as ILogical);
+            }
+
 			if (DataContext != null)
 			{
 				Content = ViewLocator.Build(DataContext);
 			}
-		}
+
+            if (Content as ILogical != null)
+            {
+                LogicalChildren.Add(Content as ILogical);
+            }
+        }
 
 		private static void somethingChanged(IAvaloniaObject dependencyObject, bool changed)
 		{
