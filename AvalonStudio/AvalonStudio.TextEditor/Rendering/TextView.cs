@@ -1,25 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Reactive.Disposables;
-using System.Windows.Input;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Shapes;
-using Avalonia.Data;
-using Avalonia.Input;
-using Avalonia.Layout;
-using Avalonia.Media;
-using Avalonia.Threading;
-using Avalonia.Utilities;
-using Avalonia.VisualTree;
-using AvalonStudio.TextEditor.Document;
-
 namespace AvalonStudio.TextEditor.Rendering
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.Linq;
+    using System.Reactive.Disposables;
+    using System.Windows.Input;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Controls.Primitives;
+    using Avalonia.Controls.Shapes;
+    using Avalonia.Data;
+    using Avalonia.Input;
+    using Avalonia.Layout;
+    using Avalonia.Media;
+    using Avalonia.Threading;
+    using Avalonia.Utilities;
+    using Avalonia.VisualTree;
+    using AvalonStudio.TextEditor.Document;
+
     public class TextView : ContentControl, ILogicalScrollable
     {
         private int lastLineScrolledTo = -1;
@@ -692,7 +692,7 @@ namespace AvalonStudio.TextEditor.Rendering
             if (!line.DocumentLine.IsDeleted)
             {
                 var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length),
-                    FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+                    FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);                
 
                 line.RenderedText = formattedText;
 
