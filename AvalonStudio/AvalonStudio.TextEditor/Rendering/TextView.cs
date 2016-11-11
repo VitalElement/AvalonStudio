@@ -223,8 +223,7 @@ namespace AvalonStudio.TextEditor.Rendering
             _caretTimer.Tick -= CaretTimerTick;
             textSurface = null;
             marginContainer = null;
-            TextDocument = null;
-            Content = null;
+            TextDocument = null;            
         }
 
 
