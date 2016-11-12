@@ -52,12 +52,8 @@ namespace AvalonStudio.Languages.TypeScript
 
         public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
         {
-            //Get position in text
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
             var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
-            //var lines = currentFileConts.Split('\n');
-            //var caretPosition = index;
-            //var completionChar = currentFileConts[caretPosition];
             var caretPosition = index;
             var lsCompletions = await _tsContext.GetCompletionsAtPositionAsync(sourceFile.FilePath, caretPosition);
 
@@ -153,20 +149,24 @@ namespace AvalonStudio.Languages.TypeScript
             _tsContext.OpenFile(file.FilePath, System.IO.File.ReadAllText(file.FilePath));
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile sourceFile, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            //throw new NotImplementedException();
+            var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
+            var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
+            var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
+            var ast = _tsContext.BuildAstJson(currentFileName, currentFileConts);
+
             return new CodeAnalysisResults
             {
                 Diagnostics = new TextEditor.Document.TextSegmentCollection<Diagnostic>
                 {
                     new Diagnostic
                     {
-                        Project = file.Project,
+                        Project = sourceFile.Project,
                         Line = 1,
                         Spelling = "Code analysis is not yet supported for TypeScript. Use with caution.",
                         StartOffset = 0,
-                        File = file.Name,
+                        File = sourceFile.Name,
                         Level = DiagnosticLevel.Warning,
                     }
                 }
