@@ -79,19 +79,30 @@ namespace AvalonStudio.Behaviors
 			AssociatedObject.PointerMoved += AssociatedObject_PointerMoved;
 			AssociatedObject.AttachedToLogicalTree += AssociatedObject_AttachedToLogicalTree;
 			AssociatedObject.PointerWheelChanged += AssociatedObject_PointerWheelChanged;
-			AssociatedObject.DetachedFromLogicalTree += AssociatedObject_DetachedFromLogicalTree;
-		}
+            AssociatedObject.DetachedFromLogicalTree += AssociatedObject_DetachedFromLogicalTree;
+            AssociatedObject.DetachedFromVisualTree += AssociatedObject_DetachedFromVisualTree;
+        }
 
-		private void AssociatedObject_DetachedFromLogicalTree(object sender, LogicalTreeAttachmentEventArgs e)
-		{
-			OnDetaching();
-			popup.Child = null;
-			popup.PlacementTarget = null;
-			((ISetLogicalParent)popup).SetParent(null);
-			popup = null;
-		}
+        private void AssociatedObject_DetachedFromVisualTree(object sender, VisualTreeAttachmentEventArgs e)
+        {
+            DetachObject();
+        }
 
-		private void AssociatedObject_PointerWheelChanged(object sender, PointerWheelEventArgs e)
+        private void AssociatedObject_DetachedFromLogicalTree(object sender, LogicalTreeAttachmentEventArgs e)
+        {
+            DetachObject();
+        }
+
+        private void DetachObject()
+        {
+            OnDetaching();
+            popup.Child = null;
+            popup.PlacementTarget = null;
+            ((ISetLogicalParent)popup).SetParent(null);
+            popup = null;
+        }
+
+        private void AssociatedObject_PointerWheelChanged(object sender, PointerWheelEventArgs e)
 		{
 			popup.Close();
 		}
