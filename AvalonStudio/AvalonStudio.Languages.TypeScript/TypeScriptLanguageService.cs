@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TSBridge;
 using TSBridge.Ast;
+using TSBridge.Ast.Statements;
 
 namespace AvalonStudio.Languages.TypeScript
 {
@@ -165,12 +166,18 @@ namespace AvalonStudio.Languages.TypeScript
 
             foreach (var rootStatement in tsSyntaxTree.Statements)
             {
-                var startPos = rootStatement.name.pos;
-                var endPos = rootStatement.name.end;
-
                 var highlightData = new OffsetSyntaxHighlightingData();
-                highlightData.Start = startPos;
-                highlightData.Length = endPos - startPos;
+                switch (rootStatement.Kind)
+                {
+                    case SyntaxKind.ClassDeclaration:
+                        var classDeclaration = rootStatement as ClassDeclaration;
+                        var startPos = classDeclaration.Name.Position;
+                        var endPos = classDeclaration.Name.End;
+
+                        highlightData.Start = startPos;
+                        highlightData.Length = endPos - startPos;
+                        break;
+                }
 
                 result.SyntaxHighlightingData.Add(highlightData);
             }
