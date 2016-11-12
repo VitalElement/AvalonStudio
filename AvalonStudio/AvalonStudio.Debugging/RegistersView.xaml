@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:vm="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">
-    	<controls:ToolControl Title="Registers" MaxWidth="250">
+    	<controls:ToolControl Title="Registers">
         <ListBox BorderThickness="0" Items="{Binding Model}" Background="{StyleResource ThemeControlDarkBrush}"
                  VirtualizationMode="None">
             <ListBox.DataTemplates>

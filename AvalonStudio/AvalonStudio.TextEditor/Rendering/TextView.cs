@@ -1,27 +1,37 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Reactive.Disposables;
-using System.Windows.Input;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Shapes;
-using Avalonia.Data;
-using Avalonia.Input;
-using Avalonia.Layout;
-using Avalonia.Media;
-using Avalonia.Threading;
-using Avalonia.Utilities;
-using Avalonia.VisualTree;
-using AvalonStudio.TextEditor.Document;
-
 namespace AvalonStudio.TextEditor.Rendering
 {
-    public class TextView : ContentControl, ILogicalScrollable
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.Linq;
+    using System.Reactive.Disposables;
+    using System.Windows.Input;
+    using Avalonia;
+    using Avalonia.Controls;
+    using Avalonia.Controls.Primitives;
+    using Avalonia.Controls.Shapes;
+    using Avalonia.Data;
+    using Avalonia.Input;
+    using Avalonia.Layout;
+    using Avalonia.Media;
+    using Avalonia.Threading;
+    using Avalonia.Utilities;
+    using Avalonia.VisualTree;
+    using AvalonStudio.TextEditor.Document;
+    using Avalonia.LogicalTree;
+    using System.Reactive.Linq;
+
+    public class TextView : TemplatedControl, ILogicalScrollable
     {
+        public static readonly StyledProperty<object> ContentProperty = ContentControl.ContentProperty.AddOwner<TextView>();
+
+        public object Content
+        {
+            get { return GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
+        }
+
         private int lastLineScrolledTo = -1;
 
         public IVisual TextSurface
@@ -180,6 +190,7 @@ namespace AvalonStudio.TextEditor.Rendering
         private WeakEventArgsSubscriber documentLineTransformerChangedSubscriber;
         private WeakEventArgsSubscriber backgroundRendererChangedSubscriber;
         private WeakEventArgsSubscriber documentTextChangedSubscriber;
+        private IDisposable collectionChangedDisposable;
         private readonly CompositeDisposable disposables;
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -223,14 +234,49 @@ namespace AvalonStudio.TextEditor.Rendering
             _caretTimer.Tick -= CaretTimerTick;
             textSurface = null;
             marginContainer = null;
-            TextDocument = null;
-            Content = null;
+            TextDocument = null;            
         }
 
 
         public TextView()
         {
             disposables = new CompositeDisposable();
+            
+            disposables.Add(MarginProperty.Changed.AddClassHandler<TextView>((s, v) =>
+            {
+                if(collectionChangedDisposable != null)
+                {
+                    collectionChangedDisposable.Dispose();
+                }
+
+                collectionChangedDisposable = Observable.FromEventPattern<NotifyCollectionChangedEventArgs>(s.Margins, "CollectionChanged").Subscribe(o =>
+                {
+                    switch (o.EventArgs.Action)
+                    {
+                        case NotifyCollectionChangedAction.Add:
+                            foreach (var newItem in o.EventArgs.NewItems)
+                            {
+                                if (newItem as ILogical != null)
+                                {
+                                    s.LogicalChildren.Add(newItem as ILogical);
+                                    InstallMargin(newItem as Control);
+                                }
+                            }
+                            break;
+
+                        case NotifyCollectionChangedAction.Remove:
+                            foreach (var oldItem in o.EventArgs.OldItems)
+                            {
+                                if (oldItem as ILogical != null)
+                                {
+                                    s.LogicalChildren.Remove(oldItem as ILogical);
+                                    UninstallMargin(oldItem as Control);
+                                }
+                            }
+                            break;
+                    }
+                });
+            }));
 
             //documentLineTransformersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
             //{
@@ -491,9 +537,47 @@ namespace AvalonStudio.TextEditor.Rendering
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
-            marginContainer = e.NameScope.Find<StackPanel>("marginContainer");
+            marginContainer = e.NameScope.Find<StackPanel>("marginsPanel");
             textSurface = e.NameScope.Find<Rectangle>("textSurface");
             contentPresenter = e.NameScope.Find<ContentControl>("contentPresenter");
+
+            foreach (var margin in Margins)
+            {
+                if (margin is ILogical)
+                {
+                    LogicalChildren.Add(margin as ILogical);
+                }
+
+                InstallMargin(margin);
+            }
+
+            collectionChangedDisposable = Observable.FromEventPattern<NotifyCollectionChangedEventArgs>(Margins, "CollectionChanged").Subscribe(o =>
+            {
+                switch (o.EventArgs.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        foreach (var newItem in o.EventArgs.NewItems)
+                        {
+                            if (newItem as ILogical != null)
+                            {
+                                LogicalChildren.Add(newItem as ILogical);
+                                InstallMargin(newItem as Control);
+                            }
+                        }
+                        break;
+
+                    case NotifyCollectionChangedAction.Remove:
+                        foreach (var oldItem in o.EventArgs.OldItems)
+                        {
+                            if (oldItem as ILogical != null)
+                            {
+                                LogicalChildren.Remove(oldItem as ILogical);
+                                UninstallMargin(oldItem as Control);
+                            }
+                        }
+                        break;
+                }
+            });
         }
 
         public void InstallMargin(Control margin)
@@ -501,6 +585,14 @@ namespace AvalonStudio.TextEditor.Rendering
             if (marginContainer != null)
             {
                 marginContainer.Children.Add(margin);
+            }
+        }
+
+        public void UninstallMargin (Control margin)
+        {
+            if(marginContainer != null)
+            {
+                marginContainer.Children.Remove(margin);
             }
         }
 

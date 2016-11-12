@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System;
+using System.Dynamic;
 
 namespace AvalonStudio.Toolchains.GCC
 {
@@ -51,11 +52,54 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string SizeExecutable => Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
 
+        public static GccToolchainSettings GetSettings(IProject project)
+        {
+            GccToolchainSettings result = null;
+
+            try
+            {
+                if (project.ToolchainSettings.GccToolchainSettings is ExpandoObject)
+                {
+                    result = (project.ToolchainSettings.GccToolchainSettings as ExpandoObject).GetConcreteType<GccToolchainSettings>();
+                }
+                else
+                {
+                    result = project.ToolchainSettings.GccToolchainSettings;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            return result;
+        }
+
+        public static GccToolchainSettings ProvisionGccSettings(IProject project)
+        {
+            var result = GetSettings(project);
+
+            if (result == null)
+            {
+                result = new GccToolchainSettings();
+
+                project.ToolchainSettings.GccToolchainSettings = result;
+
+                project.Save();
+            }
+
+            return result;
+        }
+
+        public override void ProvisionSettings(IProject project)
+        {
+            ProvisionGccSettings(project);
+        }
+
         private bool CheckFile(IConsole console, string file)
         {
             bool result = true;
 
-            if (!PlatformSupport.CheckExecutableAvailability(file))
+            if (Platform.PlatformIdentifier != PlatformID.Unix && !PlatformSupport.CheckExecutableAvailability(file))
             {
                 console.WriteLine("Unable to find tool (" + file + ") Please check project toolchain settings.");
                 result = false;
@@ -109,6 +153,8 @@ namespace AvalonStudio.Toolchains.GCC
         {
             var result = new LinkResult();
 
+            var settings = GetSettings(project);
+
             string commandName = project.Type == ProjectType.StaticLibrary ? ARExecutable : LDExecutable;
 
             var objectArguments = string.Empty;
@@ -150,12 +196,36 @@ namespace AvalonStudio.Toolchains.GCC
                 linkedLibraries += string.Format("-L\"{0}\" -l{1} ", relativePath, libName);
             }
 
+            string libraryPaths = string.Empty;
+
+            if (project.Type == ProjectType.Executable)
+            {
+                foreach (var libraryPath in settings.LinkSettings.LinkedLibraries)
+                {
+                    libraryPaths += $"-Wl,--library-path={Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(libraryPath)).ToPlatformPath()} ";
+
+                    var libName = Path.GetFileName(libraryPath);
+
+                    linkedLibraries += string.Format($"-Wl,--library=:{libName} ");
+                }
+            }
+
             foreach (var lib in project.BuiltinLibraries)
             {
                 linkedLibraries += string.Format("-l{0} ", lib);
             }
 
             linkedLibraries += GetBaseLibraryArguments(superProject);
+
+            var linkerScripts = string.Empty;
+
+            if (project.Type == ProjectType.Executable)
+            {
+                foreach (var script in settings.LinkSettings.LinkerScripts)
+                {
+                    linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
+                }
+            }
 
             string arguments = string.Empty;
 
@@ -165,7 +235,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             else
             {
-                arguments = string.Format("{0} -o{1} {2} -Wl,--start-group {3} {4} -Wl,--end-group", GetLinkerArguments(superProject, project), executable, objectArguments, linkedLibraries, libs);
+                arguments = string.Format("{0} {1} -o{2} {3} {4} -Wl,--start-group {5} {6} -Wl,--end-group", GetLinkerArguments(superProject, project), linkerScripts, executable, objectArguments, libraryPaths, linkedLibraries, libs);
             }
 
             result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => { },

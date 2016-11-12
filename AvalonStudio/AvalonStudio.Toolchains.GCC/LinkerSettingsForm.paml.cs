@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace AvalonStudio.Toolchains.Clang
+namespace AvalonStudio.Toolchains.GCC
 {
 	public class LinkerSettingsFormView : UserControl
 	{
