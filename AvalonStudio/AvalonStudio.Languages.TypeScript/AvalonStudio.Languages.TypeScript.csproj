@@ -186,7 +186,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextColoringTransformer.cs" />
-    <Compile Include="TSCompiler\TypeScriptCompiler.cs" />
     <Compile Include="TypeScriptLanguageService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -206,10 +205,6 @@
       <Project>{2303a1a3-d7aa-41cc-972d-a710d7d3d1d3}</Project>
       <Name>AvalonStudio.TextEditor</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="TSCompiler\Resources\nTypescriptBootstrap.js" />
-    <EmbeddedResource Include="TSCompiler\Resources\typescriptServices.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
