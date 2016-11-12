@@ -15,70 +15,70 @@ namespace AvalonStudio.Behaviors
     using AvalonStudio.Utils;
 
     public class TooltipBehavior : Behavior<Control>
-	{
-		public static readonly AvaloniaProperty ContentProperty =
-			AvaloniaProperty.Register<TooltipBehavior, Control>(nameof(Content));
+    {
+        public static readonly AvaloniaProperty ContentProperty =
+            AvaloniaProperty.Register<TooltipBehavior, Control>(nameof(Content));
 
-		private readonly CompositeDisposable disposables;
-		private Point lastPoint;
-		private Popup popup;
-		private readonly DispatcherTimer timer;
+        private readonly CompositeDisposable disposables;
+        private Point lastPoint;
+        private Popup popup;
+        private readonly DispatcherTimer timer;
 
-		public TooltipBehavior()
-		{
-			disposables = new CompositeDisposable();
-			timer = new DispatcherTimer();
-			timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
-			timer.Tick += Timer_Tick;
+        public TooltipBehavior()
+        {
+            disposables = new CompositeDisposable();
+            timer = new DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
+            timer.Tick += Timer_Tick;
 
-			popup = new Popup
-			{
-				HorizontalOffset = 10,
-				VerticalOffset = 10,
-				PlacementMode = PlacementMode.Pointer,
-				StaysOpen = false
-			};
-		}
+            popup = new Popup
+            {
+                HorizontalOffset = 10,
+                VerticalOffset = 10,
+                PlacementMode = PlacementMode.Pointer,
+                StaysOpen = false
+            };
+        }
 
-		[Content]
-		public Control Content
-		{
-			get { return (Control)GetValue(ContentProperty); }
-			set { SetValue(ContentProperty, value); }
-		}
+        [Content]
+        public Control Content
+        {
+            get { return (Control)GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
+        }
 
-		private void Popup_PointerPressed(object sender, PointerPressedEventArgs e)
-		{
-			popup.Close();
-		}
+        private void Popup_PointerPressed(object sender, PointerPressedEventArgs e)
+        {
+            popup.Close();
+        }
 
-		private void Popup_PointerWheelChanged(object sender, PointerWheelEventArgs e)
-		{
-			popup.Close();
-		}
+        private void Popup_PointerWheelChanged(object sender, PointerWheelEventArgs e)
+        {
+            popup.Close();
+        }
 
-		protected override void OnAttached()
-		{
-			popup.PointerWheelChanged += Popup_PointerWheelChanged;
-			popup.PointerPressed += Popup_PointerPressed;
+        protected override void OnAttached()
+        {
+            popup.PointerWheelChanged += Popup_PointerWheelChanged;
+            popup.PointerPressed += Popup_PointerPressed;
 
-			disposables.Add(ContentProperty.Changed.Subscribe(o =>
-			{
-				if (AssociatedObject != null && popup.PlacementTarget == null)
-				{
-					popup.PlacementTarget = AssociatedObject as TextEditor.TextEditor;
-					popup.Child = new Grid
-					{
-						Children = new Avalonia.Controls.Controls { o.NewValue as Control },
-						Background = Brushes.Transparent
-					};
-				}
-			}));
+            disposables.Add(ContentProperty.Changed.Subscribe(o =>
+            {
+                if (AssociatedObject != null && popup.PlacementTarget == null)
+                {
+                    popup.PlacementTarget = AssociatedObject as TextEditor.TextEditor;
+                    popup.Child = new Grid
+                    {
+                        Children = new Avalonia.Controls.Controls { o.NewValue as Control },
+                        Background = Brushes.Transparent
+                    };
+                }
+            }));
 
-			AssociatedObject.KeyDown += AssociatedObject_KeyDown;
-			AssociatedObject.PointerMoved += AssociatedObject_PointerMoved;
-			AssociatedObject.AttachedToLogicalTree += AssociatedObject_AttachedToLogicalTree;
-			AssociatedObject.PointerWheelChanged += AssociatedObject_PointerWheelChanged;
+            AssociatedObject.KeyDown += AssociatedObject_KeyDown;
+            AssociatedObject.PointerMoved += AssociatedObject_PointerMoved;
+            AssociatedObject.AttachedToLogicalTree += AssociatedObject_AttachedToLogicalTree;
+            AssociatedObject.PointerWheelChanged += AssociatedObject_PointerWheelChanged;
             AssociatedObject.DetachedFromLogicalTree += AssociatedObject_DetachedFromLogicalTree;
             AssociatedObject.DetachedFromVisualTree += AssociatedObject_DetachedFromVisualTree;
         }
@@ -103,81 +103,82 @@ namespace AvalonStudio.Behaviors
         }
 
         private void AssociatedObject_PointerWheelChanged(object sender, PointerWheelEventArgs e)
-		{
-			popup.Close();
-		}
-
-		protected override void OnDetaching()
-		{
+        {
             popup.Close();
-			popup.PointerWheelChanged -= Popup_PointerWheelChanged;
-			popup.PointerPressed -= Popup_PointerPressed;
-			AssociatedObject.KeyDown -= AssociatedObject_KeyDown;
-			AssociatedObject.PointerMoved -= AssociatedObject_PointerMoved;
-			AssociatedObject.AttachedToLogicalTree -= AssociatedObject_AttachedToLogicalTree;
-			AssociatedObject.PointerWheelChanged -= AssociatedObject_PointerWheelChanged;
-			AssociatedObject.DetachedFromLogicalTree -= AssociatedObject_DetachedFromLogicalTree;
-			disposables.Dispose();
-		}
+        }
 
-		private void AssociatedObject_AttachedToLogicalTree(object sender, LogicalTreeAttachmentEventArgs e)
-		{
-			((ISetLogicalParent)popup).SetParent(AssociatedObject);
-		}
+        protected override void OnDetaching()
+        {
+            popup.Close();
+            popup.PointerWheelChanged -= Popup_PointerWheelChanged;
+            popup.PointerPressed -= Popup_PointerPressed;
+            AssociatedObject.KeyDown -= AssociatedObject_KeyDown;
+            AssociatedObject.PointerMoved -= AssociatedObject_PointerMoved;
+            AssociatedObject.AttachedToLogicalTree -= AssociatedObject_AttachedToLogicalTree;
+            AssociatedObject.PointerWheelChanged -= AssociatedObject_PointerWheelChanged;
+            AssociatedObject.DetachedFromLogicalTree -= AssociatedObject_DetachedFromLogicalTree;
+            AssociatedObject.DetachedFromVisualTree -= AssociatedObject_DetachedFromVisualTree;
+            disposables.Dispose();
+        }
 
-
-		private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
-		{
-			popup.Close();
-		}
-
-		private void AssociatedObject_PointerMoved(object sender, PointerEventArgs e)
-		{
-			if (popup.IsOpen)
-			{
-				var distance = e.GetPosition(AssociatedObject).DistanceTo(lastPoint);
-
-				if (distance > 14)
-				{
-					popup.Close();
-				}
-			}
-			else
-			{
-				var newPoint = e.GetPosition(AssociatedObject);
-
-				if (newPoint != lastPoint)
-				{
-					timer.Stop();
-					timer.Start();
-				}
-
-				lastPoint = newPoint;
-			}
-		}
+        private void AssociatedObject_AttachedToLogicalTree(object sender, LogicalTreeAttachmentEventArgs e)
+        {
+            ((ISetLogicalParent)popup).SetParent(AssociatedObject);
+        }
 
 
-		private async void Timer_Tick(object sender, EventArgs e)
-		{
-			timer.Stop();
+        private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
+        {
+            popup.Close();
+        }
 
-			if (await OnBeforePopupOpen())
-			{
-				if (AssociatedObject.IsPointerOver)
-				{
-					lastPoint = MouseDevice.Instance.GetPosition(AssociatedObject);
-					popup.Open();
-				}
-			}
-		}
+        private void AssociatedObject_PointerMoved(object sender, PointerEventArgs e)
+        {
+            if (popup.IsOpen)
+            {
+                var distance = e.GetPosition(AssociatedObject).DistanceTo(lastPoint);
 
-		/// <summary>
-		///     Method is called before popup opens to retrieve data and cancel popup open if required.
-		/// </summary>
-		/// <returns>true if the popup will open, false if it wont.</returns>
-		public virtual async Task<bool> OnBeforePopupOpen()
-		{
-			return true;
-		}
-	}
+                if (distance > 14)
+                {
+                    popup.Close();
+                }
+            }
+            else
+            {
+                var newPoint = e.GetPosition(AssociatedObject);
+
+                if (newPoint != lastPoint)
+                {
+                    timer.Stop();
+                    timer.Start();
+                }
+
+                lastPoint = newPoint;
+            }
+        }
+
+
+        private async void Timer_Tick(object sender, EventArgs e)
+        {
+            timer.Stop();
+
+            if (await OnBeforePopupOpen())
+            {
+                if (AssociatedObject.IsPointerOver)
+                {
+                    lastPoint = MouseDevice.Instance.GetPosition(AssociatedObject);
+                    popup.Open();
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Method is called before popup opens to retrieve data and cancel popup open if required.
+        /// </summary>
+        /// <returns>true if the popup will open, false if it wont.</returns>
+        public virtual async Task<bool> OnBeforePopupOpen()
+        {
+            return true;
+        }
+    }
 }
