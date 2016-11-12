@@ -87,5 +87,11 @@ namespace AvalonStudio.Toolchains.TypeScript
         {
             //STUB!!
         }
+
+        public IEnumerable<string> GetToolchainIncludes(ISourceFile file)
+        {
+            //Irrelevant
+            return new string[0];
+        }
     }
 }
