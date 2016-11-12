@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TSBridge;
+using TSBridge.Ast;
 
 namespace AvalonStudio.Languages.TypeScript
 {
@@ -159,9 +160,10 @@ namespace AvalonStudio.Languages.TypeScript
             var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
             var astJson = _tsContext.BuildAstJson(currentFileName, currentFileConts);
 
-            dynamic tsSyntaxTree = JsonConvert.DeserializeObject(astJson);
+            //dynamic tsSyntaxTree = JsonConvert.DeserializeObject(astJson);
+            var tsSyntaxTree = JsonConvert.DeserializeObject<TypeScriptSyntaxTree>(astJson);
 
-            foreach (var rootStatement in tsSyntaxTree.statements)
+            foreach (var rootStatement in tsSyntaxTree.Statements)
             {
                 var startPos = rootStatement.name.pos;
                 var endPos = rootStatement.name.end;
