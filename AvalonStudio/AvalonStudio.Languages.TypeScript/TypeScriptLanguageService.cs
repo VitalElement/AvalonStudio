@@ -3,6 +3,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.TypeScript;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -151,26 +152,38 @@ namespace AvalonStudio.Languages.TypeScript
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile sourceFile, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
+            var result = new CodeAnalysisResults();
+
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
             var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
             var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
-            var ast = _tsContext.BuildAstJson(currentFileName, currentFileConts);
+            var astJson = _tsContext.BuildAstJson(currentFileName, currentFileConts);
 
-            return new CodeAnalysisResults
+            dynamic tsSyntaxTree = JsonConvert.DeserializeObject(astJson);
+
+            foreach (var rootStatement in tsSyntaxTree.statements)
             {
-                Diagnostics = new TextEditor.Document.TextSegmentCollection<Diagnostic>
-                {
-                    new Diagnostic
-                    {
-                        Project = sourceFile.Project,
-                        Line = 1,
-                        Spelling = "Code analysis is not yet supported for TypeScript. Use with caution.",
-                        StartOffset = 0,
-                        File = sourceFile.Name,
-                        Level = DiagnosticLevel.Warning,
-                    }
-                }
-            };
+                var startPos = rootStatement.name.pos;
+                var endPos = rootStatement.name.end;
+
+                var highlightData = new OffsetSyntaxHighlightingData();
+                highlightData.Start = startPos;
+                highlightData.Length = endPos - startPos;
+
+                result.SyntaxHighlightingData.Add(highlightData);
+            }
+
+            result.Diagnostics.Add(new Diagnostic
+            {
+                Project = sourceFile.Project,
+                Line = 1,
+                Spelling = "Code analysis for TypeScript is experimental and unstable. Use with caution.",
+                StartOffset = 0,
+                File = sourceFile.Name,
+                Level = DiagnosticLevel.Warning,
+            });
+
+            return result;
         }
 
         public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
