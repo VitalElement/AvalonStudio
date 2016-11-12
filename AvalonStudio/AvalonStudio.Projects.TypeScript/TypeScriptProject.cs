@@ -33,7 +33,9 @@ namespace AvalonStudio.Projects.TypeScript
 
             //Create Main.TS file
             var indexFileLocation = Path.Combine(directory, "main.ts");
-            System.IO.File.WriteAllText(indexFileLocation, @"
+            if (!System.IO.File.Exists(indexFileLocation))
+            {
+                System.IO.File.WriteAllText(indexFileLocation, @"
 class Program {
     static main() {
         console.log(""Hello, World!"");
@@ -42,9 +44,12 @@ class Program {
 
 Program.main();
 ");
+            }
             //Create TypeScript project file
             var tsProjectFileLocation = Path.Combine(directory, "tsconfig.json");
-            System.IO.File.WriteAllText(tsProjectFileLocation, @"
+            if (!System.IO.File.Exists(tsProjectFileLocation))
+            {
+                System.IO.File.WriteAllText(tsProjectFileLocation, @"
 {
     ""compilerOptions"": {
         ""target"": ""es5"",
@@ -53,7 +58,7 @@ Program.main();
     }
 }
 ");
-
+            }
             result.Save();
 
             result.LoadFiles();
