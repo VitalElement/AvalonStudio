@@ -127,14 +127,16 @@ namespace AvalonStudio.Languages.TypeScript
 
         public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
         {
-            //STUB!
-            return new List<IBackgroundRenderer>();
+            var associatedData = GetAssociatedData(file);
+
+            return associatedData.BackgroundRenderers;
         }
 
         public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
         {
-            //STUB!
-            return new List<IDocumentLineTransformer>();
+            var associatedData = GetAssociatedData(file);
+
+            return associatedData.DocumentLineTransformers;
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
