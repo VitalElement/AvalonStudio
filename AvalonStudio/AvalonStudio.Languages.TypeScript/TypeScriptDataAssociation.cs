@@ -19,6 +19,8 @@ namespace AvalonStudio.Languages.TypeScript
 
             BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
             BackgroundRenderers.Add(TextMarkerService);
+
+            DocumentLineTransformers.Add(TextColorizer);
         }
 
         public TextColoringTransformer TextColorizer { get; }
