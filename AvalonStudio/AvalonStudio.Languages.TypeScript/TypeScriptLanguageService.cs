@@ -169,11 +169,14 @@ namespace AvalonStudio.Languages.TypeScript
         {
             var result = new CodeAnalysisResults();
 
+            var dataAssociation = GetAssociatedData(sourceFile);
+
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
             var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
             var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
-            var tsSyntaxTree = _tsContext.BuildAst(currentFileName, currentFileConts);
+            var tsSyntaxTree = await _tsContext.BuildAstAsync(currentFileName, currentFileConts);
 
+            //Highlighting
             foreach (var rootStatement in tsSyntaxTree.Statements)
             {
                 var highlightData = new OffsetSyntaxHighlightingData();
@@ -192,7 +195,9 @@ namespace AvalonStudio.Languages.TypeScript
 
                 result.SyntaxHighlightingData.Add(highlightData);
             }
+            dataAssociation.TextMarkerService.Clear();
 
+            //Diagnostics
             result.Diagnostics.Add(new Diagnostic
             {
                 Project = sourceFile.Project,
@@ -202,6 +207,8 @@ namespace AvalonStudio.Languages.TypeScript
                 File = sourceFile.Name,
                 Level = DiagnosticLevel.Warning,
             });
+
+            dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
         }
