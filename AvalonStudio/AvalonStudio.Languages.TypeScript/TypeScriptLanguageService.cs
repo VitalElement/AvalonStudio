@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using TSBridge;
 using TSBridge.Ast;
@@ -17,6 +18,9 @@ namespace AvalonStudio.Languages.TypeScript
     public class TypeScriptLanguageService : ILanguageService
     {
         private TypeScriptContext _tsContext;
+
+        private static readonly ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation> dataAssociations =
+            new ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation>();
 
         public Type BaseTemplateType => typeof(BlankTypeScriptProjectTemplate);
 
@@ -149,6 +153,16 @@ namespace AvalonStudio.Languages.TypeScript
         {
             _tsContext = _tsContext ?? (file.Project as TypeScriptProject).TypeScriptContext;
             _tsContext.OpenFile(file.FilePath, System.IO.File.ReadAllText(file.FilePath));
+
+            TypeScriptDataAssociation association = null;
+
+            if (dataAssociations.TryGetValue(file, out association))
+            {
+                throw new Exception("Source file already registered with language service.");
+            }
+
+            association = new TypeScriptDataAssociation(textDocument);
+            dataAssociations.Add(file, association);
         }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile sourceFile, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
@@ -172,6 +186,7 @@ namespace AvalonStudio.Languages.TypeScript
 
                         highlightData.Start = startPos;
                         highlightData.Length = endPos - startPos;
+                        highlightData.Type = HighlightType.ClassName;
                         break;
                 }
 
@@ -225,9 +240,22 @@ namespace AvalonStudio.Languages.TypeScript
             return result;
         }
 
+        private TypeScriptDataAssociation GetAssociatedData(ISourceFile sourceFile)
+        {
+            TypeScriptDataAssociation result = null;
+
+            if (!dataAssociations.TryGetValue(sourceFile, out result))
+            {
+                throw new Exception("Tried to parse file that has not been registered with the language service.");
+            }
+
+            return result;
+        }
+
         public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
         {
             _tsContext.RemoveFile(file.FilePath);
+            dataAssociations.Remove(file);
         }
 
         public async Task PrepareLanguageServiceAsync()
