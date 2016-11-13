@@ -3,7 +3,6 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.TypeScript;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -159,10 +158,7 @@ namespace AvalonStudio.Languages.TypeScript
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
             var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
             var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
-            var astJson = _tsContext.BuildAstJson(currentFileName, currentFileConts);
-
-            //dynamic tsSyntaxTree = JsonConvert.DeserializeObject(astJson);
-            var tsSyntaxTree = JsonConvert.DeserializeObject<TypeScriptSyntaxTree>(astJson);
+            var tsSyntaxTree = _tsContext.BuildAst(currentFileName, currentFileConts);
 
             foreach (var rootStatement in tsSyntaxTree.Statements)
             {
