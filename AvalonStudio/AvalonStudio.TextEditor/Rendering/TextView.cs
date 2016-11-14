@@ -231,6 +231,7 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             Margins.Clear();
             disposables.Dispose();
+            collectionChangedDisposable.Dispose();
             _caretTimer.Tick -= CaretTimerTick;
             textSurface = null;
             marginContainer = null;
