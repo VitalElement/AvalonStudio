@@ -185,7 +185,7 @@ namespace AvalonStudio.Debugging
 						//throw new NotImplementedException ("This needs implementing cope with type change.");
 					}
 				}
-				else
+				else if(Children != null)
 				{
 					foreach (var child in Children)
 					{
