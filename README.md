@@ -1,3 +1,6 @@
+
+<img src="AvalonStudio/AvalonStudio/icon.png" width="200" height="200" />
+
 # AvalonStudio
 
 An extensible, cross platform IDE written in C#
