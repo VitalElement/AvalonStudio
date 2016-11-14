@@ -303,7 +303,7 @@ namespace AvalonStudio.Debugging.GDB
 			startInfo.Arguments = string.Format("--interpreter=mi \"{0}\"",
 				Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("[GDB] - Error unable to find executable.");
 				return false;

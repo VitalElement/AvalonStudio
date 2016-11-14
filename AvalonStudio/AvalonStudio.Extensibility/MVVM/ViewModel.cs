@@ -1,5 +1,7 @@
 using System.ComponentModel.Composition;
 using ReactiveUI;
+using System;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.MVVM
 {
@@ -32,7 +34,11 @@ namespace AvalonStudio.MVVM
         protected ToolViewModel()
         {
             _isVisible = true;
+
+            IsVisibleObservable = this.ObservableForProperty(x => x.IsVisible).Select(x => x.Value);
         }
+
+        public IObservable<bool> IsVisibleObservable { get; }
 
         public bool IsVisible
         {

@@ -1,28 +1,25 @@
 ﻿namespace AvalonStudio.Languages.CSharp
 {
+    using Avalonia.Input;
+    using Avalonia.Interactivity;
+    using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
+    using AvalonStudio.Projects;
+    using CPlusPlus;
+    using CPlusPlus.Rendering;
+    using Extensibility.Threading;
+    using Projects.OmniSharp;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
-    using System.Text;
+    using System.Runtime.CompilerServices;
+    using System.Threading;
     using System.Threading.Tasks;
-    using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-    using AvalonStudio.Projects;
-    using TextEditor.Document;
     using TextEditor;
+    using TextEditor.Document;
     using TextEditor.Indentation;
     using TextEditor.Rendering;
-    using CPlusPlus.Rendering;
-    using CPlusPlus;
-    using Avalonia.Input;
-    using System.Runtime.CompilerServices;
-    using System.IO;
-    using Avalonia.Interactivity;
-    using Extensibility.Threading;
-    using System.Threading;
-    using Extensibility;
-    using Utils;
-    using Projects.OmniSharp;
 
     public class CSharpLanguageService : ILanguageService
     {
@@ -33,7 +30,7 @@
 
         public CSharpLanguageService()
         {
-            IndentationStrategy = new CppIndentationStrategy();
+            IndentationStrategy = new CSharpIndentationStrategy();
             intellisenseJobRunner = new JobRunner();
 
             Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(new CancellationToken()); });
@@ -43,7 +40,7 @@
         {
             get
             {
-                throw new NotImplementedException();
+                return typeof(BlankOmniSharpProjectTemplate);
             }
         }
 
@@ -85,7 +82,7 @@
             return result;
         }
 
-        CodeCompletionKind FromOmniSharpKind(string kind)
+        private CodeCompletionKind FromOmniSharpKind(string kind)
         {
             if (kind != null)
             {
@@ -162,7 +159,6 @@
                         result.Add(newCompletion);
                     }
                 }
-
             }
 
             return result;
@@ -214,7 +210,7 @@
             }
 
             association = new CSharpDataAssociation(textDocument);
-            association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.            
+            association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.
 
             dataAssociations.Add(file, association);
 
@@ -252,7 +248,6 @@
                 }
             };
 
-            
             editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, RoutingStrategies.Tunnel);
         }
 
@@ -306,8 +301,6 @@
                 case "preprocessor text":
                     return HighlightType.PreProcessorText;
 
-                
-                    
                 default:
                     Console.WriteLine($"Dont understand omnisharp {omniSharpHighlightType}");
                     return HighlightType.None;
@@ -350,7 +343,7 @@
         public void UnregisterSourceFile(TextEditor editor, ISourceFile file)
         {
             var association = GetAssociatedData(file);
-            
+
             editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
 
             association.Solution = null;
@@ -396,7 +389,7 @@
         public TextColoringTransformer TextColorizer { get; }
         public TextMarkerService TextMarkerService { get; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
-        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }        
+        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }
         public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
     }
 }

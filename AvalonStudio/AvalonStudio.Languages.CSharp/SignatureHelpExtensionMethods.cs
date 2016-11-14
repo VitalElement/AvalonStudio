@@ -1,16 +1,12 @@
 ﻿using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.CSharp
 {
-    static class SignatureHelpExtensionMethods
+    internal static class SignatureHelpExtensionMethods
     {
-        public static void ConvertXmlDocumentation (this Signature signature)
+        public static void ConvertXmlDocumentation(this Signature signature)
         {
             if (!string.IsNullOrEmpty(signature.Documentation))
             {
@@ -33,18 +29,18 @@ namespace AvalonStudio.Languages.CSharp
             }
         }
 
-        static readonly string[] CharpInBuiltTypes = { "bool", "byte", "sbyte", "char", "decimal", "double", "float", "int", "uint", "long", "ulong", "object", "short", "ushort", "string" };
+        private static readonly string[] CharpInBuiltTypes = { "bool", "byte", "sbyte", "char", "decimal", "double", "float", "int", "uint", "long", "ulong", "object", "short", "ushort", "string" };
 
-        static bool IsCSharpInBuiltType (this string typeName)
+        private static bool IsCSharpInBuiltType(this string typeName)
         {
             return typeName.Contains(typeName);
         }
 
-        static void DetectReturnType (this Signature signature)
+        private static void DetectReturnType(this Signature signature)
         {
             var parts = signature.Label.Split(' ');
 
-            if(parts.First().IsCSharpInBuiltType())
+            if (parts.First().IsCSharpInBuiltType())
             {
                 signature.BuiltInReturnType = parts.First();
             }
@@ -54,7 +50,7 @@ namespace AvalonStudio.Languages.CSharp
             }
         }
 
-        static void DetectType (this Parameter parameter)
+        private static void DetectType(this Parameter parameter)
         {
             var parts = parameter.Label.Split(' ');
 
@@ -68,15 +64,15 @@ namespace AvalonStudio.Languages.CSharp
             }
         }
 
-        static void DetectParameterTypes (this Signature signature)
+        private static void DetectParameterTypes(this Signature signature)
         {
-            foreach(var parameter in signature.Parameters)
+            foreach (var parameter in signature.Parameters)
             {
                 parameter.DetectType();
             }
         }
 
-        public static void NormalizeSignatureData (this SignatureHelp signatureHelp)
+        public static void NormalizeSignatureData(this SignatureHelp signatureHelp)
         {
             foreach (var signature in signatureHelp.Signatures)
             {
@@ -85,6 +81,6 @@ namespace AvalonStudio.Languages.CSharp
                 signature.DetectReturnType();
                 signature.DetectParameterTypes();
             }
-        }    
+        }
     }
 }

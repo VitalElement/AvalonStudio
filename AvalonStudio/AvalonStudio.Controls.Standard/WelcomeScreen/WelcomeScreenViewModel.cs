@@ -26,7 +26,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
         public WelcomeScreenViewModel()
         {
-            Title = "Welcome Screen";
+            Title = "Start Page";
 
             _recentProjects = new ObservableCollection<RecentProjectViewModel>();
             _newsFeed = new ObservableCollection<NewsFeedViewModel>();
@@ -44,19 +44,19 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             shell.AddDocument(this);
             shell.SolutionChanged += ShellOnSolutionChanged;
 
-            LoadNewsFeed();
-            LoadVideoFeed();
+            LoadNewsFeed();//.GetAwaiter().GetResult();
+            LoadVideoFeed();//.GetAwaiter().GetResult();
 
-            var soultionExplorer = IoC.Get<ISolutionExplorer>();
+            var solutionExplorer = IoC.Get<ISolutionExplorer>();
 
 
             NewSolution.Subscribe(_ => {
-                soultionExplorer.NewSolution();
+                solutionExplorer.NewSolution();
             });
 
 
             OpenSolution.Subscribe(_ => {
-                soultionExplorer.OpenSolution();
+                solutionExplorer.OpenSolution();
             });
         }
 
@@ -166,27 +166,31 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             return new Bitmap(savePath);
         }
 
-        private void ShellOnSolutionChanged(object sender, SolutionChangedEventArgs solutionChangedEventArgs)
+        private void ShellOnSolutionChanged(object sender, SolutionChangedEventArgs e)
         {
-            var newProject = new RecentProject
+            if (e.NewValue != null)
             {
-                Name = solutionChangedEventArgs.NewValue.Name,
-                Path = solutionChangedEventArgs.NewValue.CurrentDirectory
-            };
+                var newProject = new RecentProject
+                {
+                    Name = e.NewValue.Name,
+                    Path = e.NewValue.CurrentDirectory
+                };
 
-            if (RecentProjectsCollection.RecentProjects == null)
-                RecentProjectsCollection.RecentProjects = new List<RecentProject>();
+                if (RecentProjectsCollection.RecentProjects == null)
+                {
+                    RecentProjectsCollection.RecentProjects = new List<RecentProject>();
+                }
 
+                if (RecentProjectsCollection.RecentProjects.Contains(newProject))
+                {
+                    RecentProjectsCollection.Save();
+                    return;
+                }
 
-            if (RecentProjectsCollection.RecentProjects.Contains(newProject))
-            {
+                RecentProjectsCollection.RecentProjects.Add(newProject);
+
                 RecentProjectsCollection.Save();
-                return;
             }
-
-            RecentProjectsCollection.RecentProjects.Add(newProject);
-
-            RecentProjectsCollection.Save();
         }
 
 

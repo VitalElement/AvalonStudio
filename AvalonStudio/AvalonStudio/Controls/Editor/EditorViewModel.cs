@@ -159,7 +159,7 @@ namespace AvalonStudio.Controls
                 intellisenseManager?.Dispose();
                 intellisenseManager = null;
 
-                Diagnostics.Clear();
+                Diagnostics?.Clear();
 
                 ShellViewModel.Instance.InvalidateErrors();
 
@@ -297,6 +297,11 @@ namespace AvalonStudio.Controls
             Dock = Dock.Right;
         }
 
+        ~EditorViewModel()
+        {
+            Console.WriteLine("Vm destructed.");
+        }
+
         private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
         {
             if (intellisenseManager != null)
@@ -320,10 +325,7 @@ namespace AvalonStudio.Controls
             }
         }
 
-        ~EditorViewModel()
-        {
-            Model.ShutdownBackgroundWorkers();
-        }
+       
 
         #endregion
 

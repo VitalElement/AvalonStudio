@@ -58,16 +58,16 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public Type BaseTemplateType
         {
-            get { return typeof(BlankCPlusPlusLangaguageTemplate); }
+            get { return typeof(BlankCPlusPlusLanguageTemplate); }
         }
 
         public IIndentationStrategy IndentationStrategy { get; }        
 
         public IEnumerable<char> IntellisenseTriggerCharacters { get { return new []{ '.', '>', ':' }; } }
 
-        public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '>', ';' }; } }
+        public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#' }; } }
 
-        public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
+        public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
 
         CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
@@ -649,7 +649,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 var superProject = file.Project.Solution.StartupProject as IStandardProject;
                 var project = file.Project as IStandardProject;
 
-                var toolchainIncludes = superProject.ToolChain?.Includes;
+                var toolchainIncludes = superProject.ToolChain?.GetToolchainIncludes(file);
 
                 if (toolchainIncludes != null)
                 {

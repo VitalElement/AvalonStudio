@@ -2,7 +2,7 @@ using AvalonStudio.Languages.CPlusPlus;
 
 namespace AvalonStudio.Toolchains.STM32
 {
-	public class ArmCPlusPlusProjectTemplate : BlankCPlusPlusLangaguageTemplate
+	public class ArmCPlusPlusProjectTemplate : BlankCPlusPlusLanguageTemplate
 	{
 		public override string DefaultProjectName
 		{
