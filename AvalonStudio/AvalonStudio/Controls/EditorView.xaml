@@ -49,7 +49,10 @@
         <te:TextEditor.Content>
           <Grid>
             <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" Margin="{Binding Position}" />          
+                               VerticalAlignment="Top" Margin="{Binding Position}" />   
+              
+            <cont:FindInFile DataContext="{Binding FindInFile}" HorizontalAlignment="Left"
+                               VerticalAlignment="Top" Margin="{Binding Position}" />   
           </Grid>
         </te:TextEditor.Content>
       </te:TextEditor>

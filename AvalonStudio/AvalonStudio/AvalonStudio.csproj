@@ -268,7 +268,11 @@
       <DependentUpon>ErrorProbeView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ErrorProbeViewModel.cs" />
+    <Compile Include="Controls\FindInFile.xaml.cs">
+      <DependentUpon>FindInFile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\IntellisenseToolTipViewModel.cs" />
+    <Compile Include="Controls\FindInFileViewModel.cs" />
     <Compile Include="Controls\ParameterViewModel.cs" />
     <Compile Include="Controls\SignatureHelpView.paml.cs" />
     <Compile Include="Controls\SignatureHelpViewModel.cs" />
@@ -535,6 +539,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Themes\Accents\DarkAccent.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\FindInFile.xaml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
