@@ -324,8 +324,6 @@ namespace AvalonStudio.TextEditor.Rendering
 
         ~TextView()
         {
-            Console.WriteLine("TextView  Destructed.");
-
             foreach (var visualLine in VisualLines)
             {
                 visualLine.RenderedText?.Dispose();
