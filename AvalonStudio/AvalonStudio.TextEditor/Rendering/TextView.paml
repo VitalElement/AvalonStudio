@@ -9,8 +9,8 @@
 
             <StackPanel Orientation="Horizontal" Name="marginsPanel" Cursor="Arrow"/>
 
-            <ContentControl Grid.Column="1" Name="contentPresenter" Content="{TemplateBinding Content}" IsHitTestVisible="false" />
-            <Rectangle Grid.Column="1" Name="textSurface" IsHitTestVisible="false" />            
+            <Rectangle Grid.Column="1" Name="textSurface" IsHitTestVisible="false" />
+            <ContentControl Grid.Column="1" Name="contentPresenter" Content="{TemplateBinding Content}" />
           </Grid>
         </Border>
       </ControlTemplate>
