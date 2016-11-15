@@ -928,7 +928,10 @@ namespace AvalonStudio.TextEditor
 
         protected override void OnTextInput(TextInputEventArgs e)
         {
-            HandleTextInput(e.Text);
+            if (e.Source == this)
+            {
+                HandleTextInput(e.Text);
+            }
         }
 
         private void TransformSelectedLines(Action<IDocumentLine> transformLine)
