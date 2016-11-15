@@ -369,6 +369,8 @@
 
                             var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles, line, column, editor.CaretIndex, currentWord);
                             signatureHelpTask.Wait();
+                        var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, editor.CaretIndex, currentWord);
+                        signatureHelpTask.Wait();
 
                             var signatureHelp = signatureHelpTask.Result;
 
@@ -388,14 +390,31 @@
                             }).Wait();
                         }
 
-                        if (IsCompletionChar(currentChar))
+                    if (IsCompletionChar(currentChar))
+                    {
+                        DoComplete(true);
+                    }
+
+                    if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
+                    {
+                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
+                    }
+
+                    if (IsTriggerChar(currentChar) || IsLanguageSpecificTriggerChar(currentChar))
+                    {
+                        if (!intellisenseControl.IsVisible)
                         {
                             DoComplete(true);
                         }
 
                         if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
                         {
-                            SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles, false);
+                            UpdateFilter(caretIndex);
+                        }
+                        else
+                        {
+                            CloseIntellisense();
+                            SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                         }
 
                         if (IsTriggerChar(currentChar) || IsLanguageSpecificTriggerChar(currentChar))
@@ -535,14 +554,9 @@
                 {
                     isProcessingKey = false;
 
-                    if (intellisenseControl.IsVisible && caretIndex < intellisenseStartedAt)
-                    {
-                        CloseIntellisense();
-
-                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles, false);
-                    }
-                });
-            }
+                    SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
+                }
+            });
         }
     }
 

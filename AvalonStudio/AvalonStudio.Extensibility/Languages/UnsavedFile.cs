@@ -21,7 +21,7 @@ namespace AvalonStudio.Languages
 
         public int CompareTo(UnsavedFile other)
         {
-            return Platform.CompareFilePath(FileName, other.FileName);
+            return FileName.CompareFilePath(other.FileName);
         }
     }
 }
