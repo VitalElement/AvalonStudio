@@ -365,7 +365,7 @@
                             }).Wait();
                         }
 
-                        var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles, line, column, editor.CaretIndex, currentWord);
+                        var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, editor.CaretIndex, currentWord);
                         signatureHelpTask.Wait();
 
                         var signatureHelp = signatureHelpTask.Result;
@@ -393,7 +393,7 @@
 
                     if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
                     {
-                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles, false);
+                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                     }
 
                     if (IsTriggerChar(currentChar) || IsLanguageSpecificTriggerChar(currentChar))
@@ -409,7 +409,7 @@
                         else
                         {
                             CloseIntellisense();
-                            SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles, false);
+                            SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                         }
 
                         isProcessingKey = intellisenseControl.IsVisible;
@@ -531,7 +531,7 @@
                 {
                     CloseIntellisense();
 
-                    SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles, false);
+                    SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                 }
             });
         }

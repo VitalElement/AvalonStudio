@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +19,21 @@ namespace AvalonStudio.Controls
 	[Export(typeof (EditorModel))]
 	public class EditorModel : IDisposable
 	{
-		public static List<UnsavedFile> UnsavedFiles = new List<UnsavedFile>();
+        public static List<UnsavedFile> _unsavedFiles;
+
+        public static List<UnsavedFile> UnsavedFiles
+        {
+            get
+            {
+                if(_unsavedFiles == null)
+                {
+                    _unsavedFiles = new List<UnsavedFile>();
+                }
+
+                return _unsavedFiles;
+            }
+        }
+		
 
 		private CancellationTokenSource cancellationSource;
 
@@ -78,7 +91,7 @@ namespace AvalonStudio.Controls
 		{
 			CodeCompletionResults results = null;
 
-			var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, caretIndex, line, column, UnsavedFiles);
+			var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, caretIndex, line, column, UnsavedFiles.ToList());
 			results = new CodeCompletionResults {Completions = completions};
 
 			return results;
@@ -96,18 +109,28 @@ namespace AvalonStudio.Controls
 		{
 			ShutdownBackgroundWorkers();
 
-            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+            UnsavedFile unsavedFile = null;
+
+            lock (UnsavedFiles)
+            {
+                unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+            }
 
 			if (unsavedFile != null)
 			{
-				UnsavedFiles.Remove(unsavedFile);
+                lock (UnsavedFiles)
+                {
+                    UnsavedFiles.Remove(unsavedFile);
+                }
 			}
 
 			if (LanguageService != null && ProjectFile != null)
 			{
 				LanguageService.UnregisterSourceFile(Editor, ProjectFile);
 			}
-		}
+
+            TextDocument.TextChanged -= TextDocument_TextChanged;
+        }
 
 		public async void RegisterLanguageService(IIntellisenseControl intellisenseControl,
 			ICompletionAssistant completionAssistant)
@@ -169,22 +192,33 @@ namespace AvalonStudio.Controls
                 System.IO.File.WriteAllText(ProjectFile.Location, TextDocument.Text);
 				IsDirty = false;
 
-                var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+                lock (UnsavedFiles)
+                {
+                    var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
 
-				if (unsavedFile != null)
-				{
-					UnsavedFiles.Remove(unsavedFile);
-				}
+                    if (unsavedFile != null)
+                    {
+                        UnsavedFiles.Remove(unsavedFile);
+                    }
+                }
 			}
 		}
 
 		private void TextDocument_TextChanged(object sender, EventArgs e)
 		{
-            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+            UnsavedFile unsavedFile = null;
+
+            lock (UnsavedFiles)
+            {
+                unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+            }
 
             if (unsavedFile == null)
 			{
-				UnsavedFiles.InsertSorted(new UnsavedFile(ProjectFile.Location, TextDocument.Text));
+                lock (UnsavedFiles)
+                {
+                    UnsavedFiles.InsertSorted(new UnsavedFile(ProjectFile.Location, TextDocument.Text));
+                }
 			}
 			else
 			{
@@ -228,7 +262,7 @@ namespace AvalonStudio.Controls
 				if (LanguageService != null)
 				{
 					// TODO allow interruption.
-					var result = await LanguageService.RunCodeAnalysisAsync(ProjectFile, UnsavedFiles, () => false);
+					var result = await LanguageService.RunCodeAnalysisAsync(ProjectFile, UnsavedFiles.ToList(), () => false);
 
 					Dispatcher.UIThread.InvokeAsync(() => { CodeAnalysisResults = result; });
 				}
