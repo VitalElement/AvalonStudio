@@ -68,16 +68,29 @@
             this.languageService = languageService;
             this.file = file;
             this.editor = editor;
-        }
+
+            this.editor.LostFocus += Editor_LostFocus;
+        }        
 
         public void Dispose()
         {
-            editor = null;
+            editor.LostFocus -= Editor_LostFocus;
+            editor = null;            
         }
 
         ~IntellisenseManager()
         {
             editor = null;
+        }
+
+        private void Editor_LostFocus(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            intellisenseJobRunner.InvokeAsync(() =>
+            {
+                CloseIntellisense();                
+            });
+
+            completionAssistant.Close();
         }
 
         private void SetCompletionData(List<CodeCompletionData> completionData)
