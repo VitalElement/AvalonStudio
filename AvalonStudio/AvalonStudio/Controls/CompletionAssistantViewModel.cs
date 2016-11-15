@@ -80,12 +80,10 @@
         public bool IsVisible
         {
             get { return isVisible; }
-            set {
-                if (Thread.CurrentThread != uiThread)
-                {
-                    throw new Exception("Cannot access outside UI Thread.");
-                }
-                this.RaiseAndSetIfChanged(ref isVisible, value); intellisense.InvalidateIsOpen(); }
+            set
+            {                
+                this.RaiseAndSetIfChanged(ref isVisible, value); intellisense.InvalidateIsOpen();
+            }
         }
 
         private SignatureHelpViewModel currentMethod;
