@@ -298,102 +298,15 @@
 
         public void OnTextInput(TextInputEventArgs e, int caretIndex, int line, int column)
         {
-            if (e.Source == editor)
+            intellisenseJobRunner.InvokeAsync(() =>
             {
-                intellisenseJobRunner.InvokeAsync(() =>
+                if (e.Text.Length == 1)
                 {
-                    if (e.Text.Length == 1)
+                    char currentChar = e.Text[0];
+
+                    if (completionAssistant.IsVisible)
                     {
-                        char currentChar = e.Text[0];
-
-                        if (completionAssistant.IsVisible)
-                        {
-                            if (caretIndex < completionAssistant.CurrentSignatureHelp.Offset)
-                            {
-                                Dispatcher.UIThread.InvokeTaskAsync(() =>
-                                {
-                                    completionAssistant.PopMethod();
-                                }).Wait();
-                            }
-
-                            if (completionAssistant.CurrentSignatureHelp != null)
-                            {
-                                int index = 0;
-                                int level = 0;
-                                int offset = completionAssistant.CurrentSignatureHelp.Offset;
-
-                                while (offset < caretIndex)
-                                {
-                                    var curChar = '\0';
-
-                                    Dispatcher.UIThread.InvokeTaskAsync(() =>
-                                    {
-                                        curChar = editor.TextDocument.GetCharAt(offset++);
-                                    }).Wait();
-
-                                    switch (curChar)
-                                    {
-                                        case ',':
-                                            if (level == 0)
-                                            {
-                                                index++;
-                                            }
-                                            break;
-
-                                        case '(':
-                                            level++;
-                                            break;
-
-                                        case ')':
-                                            level--;
-                                            break;
-                                    }
-                                }
-
-                                completionAssistant.SetParameterIndex(index);
-                            }
-                        }
-
-                        if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != editor.CaretIndex))
-                        {
-                            string currentWord = string.Empty;
-
-                            char behindBehindCaretChar = '\0';
-
-                            Dispatcher.UIThread.InvokeTaskAsync(() =>
-                            {
-                                behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2);
-                            }).Wait();
-
-                            if (behindBehindCaretChar.IsWhiteSpace() && behindBehindCaretChar != '\0')
-                            {
-                                Dispatcher.UIThread.InvokeTaskAsync(() =>
-                                {
-                                    currentWord = editor.GetPreviousWordAtIndex(editor.CaretIndex - 1);
-                                }).Wait();
-                            }
-                            else
-                            {
-                                Dispatcher.UIThread.InvokeTaskAsync(() =>
-                                {
-                                    currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
-                                }).Wait();
-                            }
-
-                            var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, editor.CaretIndex, currentWord);
-                            signatureHelpTask.Wait();
-
-                            var signatureHelp = signatureHelpTask.Result;
-
-                            if (signatureHelp != null)
-                            {
-                                Dispatcher.UIThread.InvokeTaskAsync(() =>
-                                {
-                                    completionAssistant.PushMethod(signatureHelp);
-                                }).Wait();
-                            }
-                        }
-                        else if (currentChar == ')')
+                        if (caretIndex < completionAssistant.CurrentSignatureHelp.Offset)
                         {
                             Dispatcher.UIThread.InvokeTaskAsync(() =>
                             {
@@ -401,174 +314,239 @@
                             }).Wait();
                         }
 
-                        if (IsCompletionChar(currentChar))
+                        if (completionAssistant.CurrentSignatureHelp != null)
                         {
-                            DoComplete(true);
+                            int index = 0;
+                            int level = 0;
+                            int offset = completionAssistant.CurrentSignatureHelp.Offset;
+
+                            while (offset < caretIndex)
+                            {
+                                var curChar = '\0';
+
+                                Dispatcher.UIThread.InvokeTaskAsync(() =>
+                                {
+                                    curChar = editor.TextDocument.GetCharAt(offset++);
+                                }).Wait();
+
+                                switch (curChar)
+                                {
+                                    case ',':
+                                        if (level == 0)
+                                        {
+                                            index++;
+                                        }
+                                        break;
+
+                                    case '(':
+                                        level++;
+                                        break;
+
+                                    case ')':
+                                        level--;
+                                        break;
+                                }
+                            }
+
+                            completionAssistant.SetParameterIndex(index);
+                        }
+                    }
+
+                    if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != editor.CaretIndex))
+                    {
+                        string currentWord = string.Empty;
+
+                        char behindBehindCaretChar = '\0';
+
+                        Dispatcher.UIThread.InvokeTaskAsync(() =>
+                        {
+                            behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2);
+                        }).Wait();
+
+                        if (behindBehindCaretChar.IsWhiteSpace() && behindBehindCaretChar != '\0')
+                        {
+                            Dispatcher.UIThread.InvokeTaskAsync(() =>
+                            {
+                                currentWord = editor.GetPreviousWordAtIndex(editor.CaretIndex - 1);
+                            }).Wait();
+                        }
+                        else
+                        {
+                            Dispatcher.UIThread.InvokeTaskAsync(() =>
+                            {
+                                currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
+                            }).Wait();
                         }
 
-                        if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
+                        var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, editor.CaretIndex, currentWord);
+                        signatureHelpTask.Wait();
+
+                        var signatureHelp = signatureHelpTask.Result;
+
+                        if (signatureHelp != null)
                         {
+                            Dispatcher.UIThread.InvokeTaskAsync(() =>
+                            {
+                                completionAssistant.PushMethod(signatureHelp);
+                            }).Wait();
+                        }
+                    }
+                    else if (currentChar == ')')
+                    {
+                        Dispatcher.UIThread.InvokeTaskAsync(() =>
+                        {
+                            completionAssistant.PopMethod();
+                        }).Wait();
+                    }
+
+                    if (IsCompletionChar(currentChar))
+                    {
+                        DoComplete(true);
+                    }
+
+                    if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
+                    {
+                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
+                    }
+
+                    if (IsTriggerChar(currentChar) || IsLanguageSpecificTriggerChar(currentChar))
+                    {
+                        if (!intellisenseControl.IsVisible)
+                        {
+                            OpenIntellisense(currentChar, caretIndex);
+                        }
+                        else if (caretIndex > intellisenseStartedAt)
+                        {
+                            UpdateFilter(caretIndex);
+                        }
+                        else
+                        {
+                            CloseIntellisense();
                             SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                         }
 
-                        if (IsTriggerChar(currentChar) || IsLanguageSpecificTriggerChar(currentChar))
-                        {
-                            if (!intellisenseControl.IsVisible)
-                            {
-                                DoComplete(true);
-                            }
-
-                            if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
-                            {
-                                UpdateFilter(caretIndex);
-                            }
-                            else
-                            {
-                                CloseIntellisense();
-                                SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
-                            }
-
-                            if (IsTriggerChar(currentChar) || IsLanguageSpecificTriggerChar(currentChar))
-                            {
-                                if (!intellisenseControl.IsVisible)
-                                {
-                                    OpenIntellisense(currentChar, caretIndex);
-                                }
-                                else if (caretIndex > intellisenseStartedAt)
-                                {
-                                    UpdateFilter(caretIndex);
-                                }
-                                else
-                                {
-                                    CloseIntellisense();
-                                    SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles, false);
-                                }
-
-                                isProcessingKey = intellisenseControl.IsVisible;
-                            }
-                        }
+                        isProcessingKey = intellisenseControl.IsVisible;
                     }
-                });         
-            }
+                }
+            });
         }
 
         public void OnKeyDown(KeyEventArgs e, int caretIndex, int line, int column)
         {
-            if (e.Source == editor)
-            {
-                capturedOnKeyDown = e.Key;
+            capturedOnKeyDown = e.Key;
 
-                if (intellisenseControl.IsVisible)
+            if (intellisenseControl.IsVisible)
+            {
+                switch (capturedOnKeyDown)
                 {
-                    switch (capturedOnKeyDown)
+                    case Key.Down:
+                        {
+                            var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
+
+                            if (index < intellisenseControl.CompletionData.Count - 1)
+                            {
+                                intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index + 1];
+                            }
+
+                            e.Handled = true;
+                        }
+                        break;
+
+                    case Key.Up:
+                        {
+                            var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
+
+                            if (index > 0)
+                            {
+                                intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index - 1];
+                            }
+
+                            e.Handled = true;
+                        }
+                        break;
+
+                    case Key.Back:
+                        if (caretIndex - 1 >= intellisenseStartedAt)
+                        {
+                            intellisenseJobRunner.InvokeAsync(() =>
+                            {
+                                UpdateFilter(caretIndex - 1);
+                            });
+                        }
+                        break;
+
+                    case Key.Enter:
+                        intellisenseJobRunner.InvokeAsync(() =>
+                        {
+                            DoComplete(false);
+                        });
+
+                        e.Handled = true;
+                        break;
+                }
+            }
+
+            if (completionAssistant.IsVisible)
+            {
+                if (!e.Handled)
+                {
+                    switch (e.Key)
                     {
                         case Key.Down:
                             {
-                                var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
-
-                                if (index < intellisenseControl.CompletionData.Count - 1)
-                                {
-                                    intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index + 1];
-                                }
-
+                                completionAssistant.IncrementSignatureIndex();
                                 e.Handled = true;
                             }
                             break;
 
                         case Key.Up:
                             {
-                                var index = intellisenseControl.CompletionData.IndexOf(intellisenseControl.SelectedCompletion);
-
-                                if (index > 0)
-                                {
-                                    intellisenseControl.SelectedCompletion = intellisenseControl.CompletionData[index - 1];
-                                }
-
+                                completionAssistant.DecrementSignatureIndex();
                                 e.Handled = true;
                             }
                             break;
-
-                        case Key.Back:
-                            if (caretIndex - 1 >= intellisenseStartedAt)
-                            {
-                                intellisenseJobRunner.InvokeAsync(() =>
-                                {
-                                    UpdateFilter(caretIndex - 1);
-                                });
-                            }
-                            break;
-
-                        case Key.Enter:
-                            intellisenseJobRunner.InvokeAsync(() =>
-                            {
-                                DoComplete(false);
-                            });
-
-                            e.Handled = true;
-                            break;
                     }
                 }
+            }
 
+            if (e.Key == Key.Escape)
+            {
                 if (completionAssistant.IsVisible)
                 {
-                    if (!e.Handled)
+                    intellisenseJobRunner.InvokeAsync(() =>
                     {
-                        switch (e.Key)
-                        {
-                            case Key.Down:
-                                {
-                                    completionAssistant.IncrementSignatureIndex();
-                                    e.Handled = true;
-                                }
-                                break;
-
-                            case Key.Up:
-                                {
-                                    completionAssistant.DecrementSignatureIndex();
-                                    e.Handled = true;
-                                }
-                                break;
-                        }
-                    }
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        completionAssistant.Close());
+                    });
                 }
-
-                if (e.Key == Key.Escape)
+                else if (intellisenseControl.IsVisible)
                 {
-                    if (completionAssistant.IsVisible)
+                    intellisenseJobRunner.InvokeAsync(() =>
                     {
-                        intellisenseJobRunner.InvokeAsync(() =>
-                        {
-                            Dispatcher.UIThread.InvokeAsync(() =>
-                            completionAssistant.Close());
-                        });
-                    }
-                    else if (intellisenseControl.IsVisible)
-                    {
-                        intellisenseJobRunner.InvokeAsync(() =>
-                        {
-                            CloseIntellisense();
-                        });
-                    }
+                        CloseIntellisense();
+                    });
                 }
+            }
 
-                if (!intellisenseControl.IsVisible)
-                {
-                    SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);                
-                }
+            if (!intellisenseControl.IsVisible)
+            {
+                //SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);                
             }
         }
 
         public void OnKeyUp(KeyEventArgs e, int caretIndex, int line, int column)
         {
-            if (e.Source == editor)
+            intellisenseJobRunner.InvokeAsync(() =>
             {
-                intellisenseJobRunner.InvokeAsync(() =>
+                isProcessingKey = false;
+
+                if (intellisenseControl.IsVisible && caretIndex < intellisenseStartedAt)
                 {
-                    isProcessingKey = false;
+                    CloseIntellisense();
 
                     SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
-                });
-            }
+                }
+            });
         }
     }
 
