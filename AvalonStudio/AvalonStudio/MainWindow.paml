@@ -4,7 +4,7 @@
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
                       xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"
                       Icon="resm:AvalonStudio.icon.ico?assembly=AvalonStudio"
-                      Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFE4E4E4" IgnoreTaskBarOnMaximize="false" WindowState="Maximized">
+                      Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFE4E4E4" WindowState="Maximized">
   <Controls:MetroWindow.TitleBarContent>
     <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
   </Controls:MetroWindow.TitleBarContent>
