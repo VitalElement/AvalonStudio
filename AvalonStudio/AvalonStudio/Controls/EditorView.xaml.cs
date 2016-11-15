@@ -21,7 +21,6 @@ namespace AvalonStudio.Controls
 
         ~EditorView()
         {
-            Console.WriteLine("Editor disposed.");
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
