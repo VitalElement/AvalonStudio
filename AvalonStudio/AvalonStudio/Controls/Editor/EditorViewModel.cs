@@ -299,7 +299,6 @@ namespace AvalonStudio.Controls
 
         ~EditorViewModel()
         {
-            Console.WriteLine("Vm destructed.");
         }
 
         private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
