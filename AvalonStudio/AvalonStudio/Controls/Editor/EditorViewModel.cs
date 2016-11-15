@@ -661,7 +661,7 @@ namespace AvalonStudio.Controls
 
         #endregion
 
-        #region Public Methods
+       #region Public Methods
         private bool ignoreFileModifiedEvents = false;
         public void Save()
         {
@@ -672,9 +672,8 @@ namespace AvalonStudio.Controls
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ignoreFileModifiedEvents = false;
+                IsDirty = false;
             });
-
-            IsDirty = Model.IsDirty;
         }
 
         public void ClearDebugHighlight()
@@ -682,6 +681,6 @@ namespace AvalonStudio.Controls
             DebugLineHighlighter.Line = -1;
         }
 
-        #endregion
+        #endregion 
     }
 }
