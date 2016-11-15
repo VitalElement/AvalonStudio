@@ -107,7 +107,9 @@ namespace AvalonStudio.Controls
 			{
 				LanguageService.UnregisterSourceFile(Editor, ProjectFile);
 			}
-		}
+
+            TextDocument.TextChanged -= TextDocument_TextChanged;
+        }
 
 		public async void RegisterLanguageService(IIntellisenseControl intellisenseControl,
 			ICompletionAssistant completionAssistant)
