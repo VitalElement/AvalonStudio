@@ -100,6 +100,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LanguageServices", "Languag
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestFrameworks", "TestFrameworks", "{471E42FB-AFA4-4DA0-8185-DDD1B0FB4BD3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B1E34F1B-B7C2-44D9-A350-EC3512596EE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Extensibility.Tests", "AvalonStudio.Extensibility.Tests\AvalonStudio.Extensibility.Tests.csproj", "{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1076,6 +1080,22 @@ Global
 		{0290A229-9AA1-41C3-B525-CAFB86D8BC42}.Release|x64.Build.0 = Release|Any CPU
 		{0290A229-9AA1-41C3-B525-CAFB86D8BC42}.Release|x86.ActiveCfg = Release|x86
 		{0290A229-9AA1-41C3-B525-CAFB86D8BC42}.Release|x86.Build.0 = Release|x86
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Debug|ARM.Build.0 = Debug|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Debug|x64.Build.0 = Debug|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Debug|x86.Build.0 = Debug|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Release|ARM.ActiveCfg = Release|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Release|ARM.Build.0 = Release|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Release|x64.ActiveCfg = Release|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Release|x64.Build.0 = Release|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Release|x86.ActiveCfg = Release|Any CPU
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1120,6 +1140,7 @@ Global
 		{ED41CED3-64D6-4581-B504-6AFCA7867EED} = {2DC36CEA-5C75-4389-B370-9AEDA400F540}
 		{DDBE9857-E332-4B2C-941C-6E6F71151B22} = {528C3D32-4210-4109-AE60-B965C6BED1C3}
 		{0290A229-9AA1-41C3-B525-CAFB86D8BC42} = {528C3D32-4210-4109-AE60-B965C6BED1C3}
+		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8} = {B1E34F1B-B7C2-44D9-A350-EC3512596EE2}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = AvalonStudio\AvalonStudio.csproj
