@@ -128,7 +128,6 @@ namespace AvalonStudio.TextEditor
 
         ~TextEditor()
         {
-            Console.WriteLine("Text Editor Control Destructed.");
         }
 
         public TextEditor()
