@@ -19,7 +19,22 @@ namespace AvalonStudio.Controls
 	[Export(typeof (EditorModel))]
 	public class EditorModel : IDisposable
 	{
-		public static List<UnsavedFile> UnsavedFiles = new List<UnsavedFile>();
+        private static object _unsavedFilesLock = new object();
+        public static List<UnsavedFile> _unsavedFiles;
+
+        public static List<UnsavedFile> UnsavedFiles
+        {
+            get
+            {
+                if(_unsavedFiles == null)
+                {
+                    _unsavedFiles = new List<UnsavedFile>();
+                }
+
+                return _unsavedFiles;
+            }
+        }
+		
 
 		private CancellationTokenSource cancellationSource;
 
@@ -181,11 +196,14 @@ namespace AvalonStudio.Controls
 
 		private void TextDocument_TextChanged(object sender, EventArgs e)
 		{
-            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+             var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
 
             if (unsavedFile == null)
 			{
-				UnsavedFiles.InsertSorted(new UnsavedFile(ProjectFile.Location, TextDocument.Text));
+                lock (_unsavedFilesLock)
+                {
+                    UnsavedFiles.InsertSorted(new UnsavedFile(ProjectFile.Location, TextDocument.Text));
+                }
 			}
 			else
 			{
