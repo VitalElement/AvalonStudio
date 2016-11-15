@@ -306,7 +306,7 @@ namespace AvalonStudio.Controls
             if (intellisenseManager != null)
             {
                 var location = TextDocument.GetLocation(caretIndex);
-                intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, EditorModel.UnsavedFiles);
+                intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, EditorModel.UnsavedFiles.ToList());
             }
         }
 
@@ -557,7 +557,7 @@ namespace AvalonStudio.Controls
 
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor && Model.LanguageService != null)
             {
-                var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
+                var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles.ToList(), offset);
 
                 if (symbol != null)
                 {
@@ -661,7 +661,7 @@ namespace AvalonStudio.Controls
 
         #endregion
 
-        #region Public Methods
+       #region Public Methods
         private bool ignoreFileModifiedEvents = false;
         public void Save()
         {
@@ -672,9 +672,8 @@ namespace AvalonStudio.Controls
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ignoreFileModifiedEvents = false;
+                IsDirty = false;
             });
-
-            IsDirty = Model.IsDirty;
         }
 
         public void ClearDebugHighlight()
@@ -682,6 +681,6 @@ namespace AvalonStudio.Controls
             DebugLineHighlighter.Line = -1;
         }
 
-        #endregion
+        #endregion 
     }
 }
