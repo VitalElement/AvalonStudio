@@ -1,8 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility">
-  <Popup IsOpen="{Binding IsOpen}">
-      <StackPanel Orientation="Horizontal" Gap="2" Background="Black" IsVisible="{Binding IsVisible}">
-        <Button Content="Find" Command="{Binding ClickCommand}" Classes="hyperlink h3"/>
-      </StackPanel>
-  </Popup>  
+        <StackPanel Margin="0 0"  Orientation="Vertical" Background="Black">
+            <TextBox Text="{Binding Path=StringValue}"/>
+            <Button Content="Find" Command="{Binding Find}"/>
+        </StackPanel>
 </UserControl>

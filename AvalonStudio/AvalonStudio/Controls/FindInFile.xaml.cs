@@ -18,7 +18,7 @@ namespace AvalonStudio.Controls
 
 		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
 		{
-			disposables.Add(RequestBringIntoViewEvent.AddClassHandler<Intellisense>(i => OnRequesteBringIntoView));
+			disposables.Add(RequestBringIntoViewEvent.AddClassHandler<FindInFile>(i => OnRequesteBringIntoView));
 		}
 
 		protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
