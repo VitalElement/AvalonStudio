@@ -333,7 +333,7 @@ namespace AvalonStudio.Platforms
 
             if (other != null && path != null)
             {
-                if (other.EndsWith("/") && !path.EndsWith(""))
+                if (other.EndsWith("/") && !path.EndsWith("/"))
                 {
                     path += "/";
                 }
