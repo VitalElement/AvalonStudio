@@ -17,7 +17,6 @@ using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using OmniXaml.Attributes;
 using Key = Avalonia.Input.Key;
-using Avalonia.VisualTree;
 using Avalonia.LogicalTree;
 
 namespace AvalonStudio.TextEditor
@@ -56,9 +55,9 @@ namespace AvalonStudio.TextEditor
                 }
             });
 
-            HeaderProperty.Changed.AddClassHandler<TextEditor>((s, v) => 
+            HeaderProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
             {
-                if(v.OldValue as ILogical != null)
+                if (v.OldValue as ILogical != null)
                 {
                     s.LogicalChildren.Remove(v.OldValue as ILogical);
                 }
@@ -118,11 +117,9 @@ namespace AvalonStudio.TextEditor
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            var ancestors = this.GetVisualAncestors();
-
             textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;
             TextView = null;
-            TextDocument = null;            
+            TextDocument = null;
             disposables.Dispose();
         }
 

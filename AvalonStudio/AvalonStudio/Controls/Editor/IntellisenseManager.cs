@@ -68,16 +68,29 @@
             this.languageService = languageService;
             this.file = file;
             this.editor = editor;
+
+            this.editor.LostFocus += Editor_LostFocus;
         }
 
         public void Dispose()
         {
+            editor.LostFocus -= Editor_LostFocus;
             editor = null;
         }
 
         ~IntellisenseManager()
         {
             editor = null;
+        }
+
+        private void Editor_LostFocus(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            intellisenseJobRunner.InvokeAsync(() =>
+            {
+                CloseIntellisense();
+            });
+
+            completionAssistant.Close();
         }
 
         private void SetCompletionData(List<CodeCompletionData> completionData)
@@ -273,7 +286,7 @@
                 }
             });
 
-            if(invokeOnRunner)
+            if (invokeOnRunner)
             {
                 intellisenseJobRunner.InvokeAsync(action);
             }
@@ -367,10 +380,8 @@
                                 }).Wait();
                             }
 
-                            var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles, line, column, editor.CaretIndex, currentWord);
+                            var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, editor.CaretIndex, currentWord);
                             signatureHelpTask.Wait();
-                        var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, editor.CaretIndex, currentWord);
-                        signatureHelpTask.Wait();
 
                             var signatureHelp = signatureHelpTask.Result;
 
@@ -390,30 +401,13 @@
                             }).Wait();
                         }
 
-                    if (IsCompletionChar(currentChar))
-                    {
-                        DoComplete(true);
-                    }
-
-                    if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
-                    {
-                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
-                    }
-
-                    if (IsTriggerChar(currentChar) || IsLanguageSpecificTriggerChar(currentChar))
-                    {
-                        if (!intellisenseControl.IsVisible)
+                        if (IsCompletionChar(currentChar))
                         {
                             DoComplete(true);
                         }
 
                         if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
                         {
-                            UpdateFilter(caretIndex);
-                        }
-                        else
-                        {
-                            CloseIntellisense();
                             SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                         }
 
@@ -430,7 +424,7 @@
                             else
                             {
                                 CloseIntellisense();
-                                SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles, false);
+                                SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                             }
 
                             isProcessingKey = intellisenseControl.IsVisible;
@@ -538,11 +532,6 @@
                         });
                     }
                 }
-
-                if (!intellisenseControl.IsVisible)
-                {
-                    SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles);                
-                }
             }
         }
 
@@ -554,9 +543,14 @@
                 {
                     isProcessingKey = false;
 
-                    SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
-                }
-            });
+                    if (intellisenseControl.IsVisible && caretIndex < intellisenseStartedAt)
+                    {
+                        CloseIntellisense();
+
+                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
+                    }
+                });
+            }
         }
     }
 
