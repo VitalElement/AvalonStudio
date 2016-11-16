@@ -285,6 +285,7 @@
       <DependentUpon>NewItemDialogView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TabControlViewModel.cs" />
+    <Compile Include="Converters\IconImageConverter.cs" />
     <Compile Include="Debugging\BreakPointMargin.cs" />
     <Compile Include="Controls\Editor\SymbolViewModel.cs" />
     <Compile Include="Controls\EditorView.xaml.cs">
