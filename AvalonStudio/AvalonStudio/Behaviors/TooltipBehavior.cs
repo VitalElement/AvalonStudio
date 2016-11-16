@@ -36,7 +36,8 @@ namespace AvalonStudio.Behaviors
                 HorizontalOffset = 10,
                 VerticalOffset = 10,
                 PlacementMode = PlacementMode.Pointer,
-                StaysOpen = false
+                StaysOpen = false,
+                IsHitTestVisible = false
             };
         }
 
@@ -61,6 +62,8 @@ namespace AvalonStudio.Behaviors
         {
             popup.PointerWheelChanged += Popup_PointerWheelChanged;
             popup.PointerPressed += Popup_PointerPressed;
+            popup.Closed += Popup_Closed;
+            popup.Opened += Popup_Opened;
 
             disposables.Add(ContentProperty.Changed.Subscribe(o =>
             {
@@ -81,6 +84,16 @@ namespace AvalonStudio.Behaviors
             AssociatedObject.PointerWheelChanged += AssociatedObject_PointerWheelChanged;
             AssociatedObject.DetachedFromLogicalTree += AssociatedObject_DetachedFromLogicalTree;
             AssociatedObject.DetachedFromVisualTree += AssociatedObject_DetachedFromVisualTree;
+        }
+
+        private void Popup_Opened(object sender, EventArgs e)
+        {
+            AssociatedObject.Focus();
+        }
+
+        private void Popup_Closed(object sender, EventArgs e)
+        {
+            AssociatedObject.Focus();
         }
 
         private void AssociatedObject_DetachedFromVisualTree(object sender, VisualTreeAttachmentEventArgs e)
@@ -112,6 +125,8 @@ namespace AvalonStudio.Behaviors
             popup.Close();
             popup.PointerWheelChanged -= Popup_PointerWheelChanged;
             popup.PointerPressed -= Popup_PointerPressed;
+            popup.Closed -= Popup_Closed;
+            popup.Opened -= Popup_Opened;
             AssociatedObject.KeyDown -= AssociatedObject_KeyDown;
             AssociatedObject.PointerMoved -= AssociatedObject_PointerMoved;
             AssociatedObject.AttachedToLogicalTree -= AssociatedObject_AttachedToLogicalTree;
@@ -168,6 +183,7 @@ namespace AvalonStudio.Behaviors
                 {
                     lastPoint = MouseDevice.Instance.GetPosition(AssociatedObject);
                     popup.Open();
+                    AssociatedObject.Focus();
                 }
             }
         }
