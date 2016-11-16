@@ -5,6 +5,7 @@ using Avalonia;
 using AvalonStudio.Languages;
 using AvalonStudio.Languages.ViewModels;
 using AvalonStudio.MVVM;
+using AvalonStudio.TextEditor.Document;
 using ReactiveUI;
 
 namespace AvalonStudio.Controls {
@@ -22,13 +23,27 @@ namespace AvalonStudio.Controls {
 
             Find.Subscribe(_ => {
 
-                Console.WriteLine(viewModel.TextDocument.Text);
+                string[] lines = viewModel.TextDocument.Text.Split('\n');
+
+                int caretIndex = 0;
+
+                foreach (var line in lines)
+                {
+                    if(line == "")
+                        caretIndex += 2;
+                    else
+                        caretIndex += line.Length + 1;
+
+                    if (line.Contains(StringValue)) {
+                        viewModel.CaretIndex = caretIndex;
+                    }
+                }
             });
 
             this.editor = editor;
 
             IsOpen = true;
-            Position = new Thickness(30, 50);
+            Position = new Thickness(300, 50);
         }
 
         public Thickness Position
