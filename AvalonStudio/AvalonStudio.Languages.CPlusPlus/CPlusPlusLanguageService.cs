@@ -200,6 +200,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             switch (cursor.Kind)
             {
                 case NClang.CursorKind.StringLiteral:
+                case NClang.CursorKind.CharacterLiteral:
                     break;
 
                 case NClang.CursorKind.IntegerLiteral:
