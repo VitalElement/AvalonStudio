@@ -220,6 +220,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 case NClang.CursorKind.CXXMethod:
                 case NClang.CursorKind.FunctionDeclaration:
+                case NClang.CursorKind.Constructor:
                     useSpellingLocation = true;
                     highlightKind = HighlightType.CallExpression;
                     break;                
