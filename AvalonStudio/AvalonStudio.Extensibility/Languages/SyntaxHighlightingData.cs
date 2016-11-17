@@ -11,6 +11,7 @@ namespace AvalonStudio.Languages
 		Keyword,
 		Identifier,
 		Literal,
+        NumericLiteral,
 		Comment,
 		ClassName,
         StructName,
