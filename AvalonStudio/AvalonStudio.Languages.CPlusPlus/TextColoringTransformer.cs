@@ -18,11 +18,12 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 
 			CommentBrush = Brush.Parse("#559A3F");
 			CallExpressionBrush = Brush.Parse("Pink");
-			IdentifierBrush = Brush.Parse("#D4D4D4");
+			IdentifierBrush = Brush.Parse("#C8C8C8");
 			KeywordBrush = Brush.Parse("#569CD6");
 			LiteralBrush = Brush.Parse("#D69D85");
-			PunctuationBrush = Brush.Parse("#D4D4D4");
-			UserTypeBrush = Brush.Parse("#4BB289");
+            NumericLiteralBrush = Brush.Parse("#B5CEA8");
+			PunctuationBrush = Brush.Parse("#C8C8C8");
+			UserTypeBrush = Brush.Parse("#4EC9B0");
 		}
 
 		public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
@@ -32,6 +33,8 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 		public IBrush KeywordBrush { get; set; }
 
 		public IBrush IdentifierBrush { get; set; }
+
+        public IBrush NumericLiteralBrush { get; set; }
 
 		public IBrush LiteralBrush { get; set; }
 
@@ -117,6 +120,10 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 				case HighlightType.Literal:
 					result = LiteralBrush;
 					break;
+
+                case HighlightType.NumericLiteral:
+                    result = NumericLiteralBrush;
+                    break;
 
 				case HighlightType.Punctuation:
 					result = PunctuationBrush;
