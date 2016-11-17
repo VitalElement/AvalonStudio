@@ -17,7 +17,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 			TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
 			CommentBrush = Brush.Parse("#559A3F");
-			CallExpressionBrush = Brush.Parse("Pink");
+			CallExpressionBrush = Brush.Parse("#DCDCAA");
 			IdentifierBrush = Brush.Parse("#C8C8C8");
 			KeywordBrush = Brush.Parse("#569CD6");
 			LiteralBrush = Brush.Parse("#D69D85");
@@ -59,7 +59,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 					formattedOffset = transform.StartOffset - line.Offset;
 				}
 
-				line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset);
+				line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.Length);
 			}
 		}
 
