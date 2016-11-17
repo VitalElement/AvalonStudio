@@ -328,12 +328,12 @@ namespace AvalonStudio.Platforms
 
         public static int CompareFilePath(this string path, string other)
         {
-            path = path.ToAvalonPath();
-            other = other.ToAvalonPath();
-
             if (other != null && path != null)
             {
-                if (other.EndsWith("/") && !path.EndsWith(""))
+                path = path.ToAvalonPath();
+                other = other.ToAvalonPath();
+
+                if (other.EndsWith("/") && !path.EndsWith("/"))
                 {
                     path += "/";
                 }
