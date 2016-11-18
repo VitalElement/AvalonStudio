@@ -22,7 +22,11 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 			KeywordBrush = Brush.Parse("#569CD6");
 			LiteralBrush = Brush.Parse("#D69D85");
             NumericLiteralBrush = Brush.Parse("#B5CEA8");
-			PunctuationBrush = Brush.Parse("#C8C8C8");
+            EnumConstantBrush = Brush.Parse("#B5CEA8");
+            EnumTypeNameBrush = Brush.Parse("#B5CEA8");
+            InterfaceBrush = Brush.Parse("#B5CEA8");
+
+            PunctuationBrush = Brush.Parse("#C8C8C8");
 			UserTypeBrush = Brush.Parse("#4EC9B0");
 		}
 
@@ -43,6 +47,12 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 		public IBrush CallExpressionBrush { get; set; }
 
 		public IBrush CommentBrush { get; set; }
+
+        public IBrush EnumConstantBrush { get; set; }
+
+        public IBrush InterfaceBrush { get; set; }
+
+        public IBrush EnumTypeNameBrush { get; set; }
 
 		public event EventHandler<EventArgs> DataChanged;
 
@@ -129,6 +139,10 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 					result = PunctuationBrush;
 					break;
 
+                case HighlightType.InterfaceName:
+                    result = InterfaceBrush;
+                    break;
+
 				case HighlightType.ClassName:
 					result = UserTypeBrush;
 					break;
@@ -136,6 +150,10 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 				case HighlightType.CallExpression:
 					result = CallExpressionBrush;
 					break;
+
+                case HighlightType.EnumTypeName:
+                    result = EnumTypeNameBrush;
+                    break;
 
 				default:
 					result = Brushes.Red;
