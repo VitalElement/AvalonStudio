@@ -27,8 +27,12 @@ namespace AvalonStudio.Behaviors
         public TooltipBehavior()
         {
             disposables = new CompositeDisposable();
-            timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 250);
+
+            timer = new DispatcherTimer()
+            {
+                Interval = new TimeSpan(0, 0, 0, 0, 250)
+            };
+
             timer.Tick += Timer_Tick;
 
             popup = new Popup
