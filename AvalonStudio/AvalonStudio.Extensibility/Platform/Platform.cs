@@ -330,13 +330,16 @@ namespace AvalonStudio.Platforms
         {
             if (other != null && path != null)
             {
-                if (other.EndsWith(Path.DirectorySeparatorChar.ToString()) && !path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                path = path.ToAvalonPath();
+                other = other.ToAvalonPath();
+
+                if (other.EndsWith("/") && !path.EndsWith("/"))
                 {
-                    path += Path.DirectorySeparatorChar;
+                    path += "/";
                 }
-                else if (path.EndsWith(Path.DirectorySeparatorChar.ToString()) && !other.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                else if (path.EndsWith("/") && !other.EndsWith("/"))
                 {
-                    other += Path.DirectorySeparatorChar;
+                    other +="/";
                 }
             }
 

@@ -11,7 +11,7 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid>
       <te:TextEditor Name="editor" TextDocument="{Binding TextDocument, Mode=TwoWay}"
-                     FontFamily="{Binding FontFamily}" FontSize="15" Foreground="#A4A4A4" BorderThickness="0"
+                     FontFamily="{Binding FontFamily}" FontSize="13" Foreground="#DCDCDC" BorderThickness="0" FontWeight="ExtraLight"
                      BeforeTextChangedCommand="{Binding BeforeTextChangedCommand}"
                      TextChangedCommand="{Binding TextChangedCommand}"
                      TextChangedDelay="200"
