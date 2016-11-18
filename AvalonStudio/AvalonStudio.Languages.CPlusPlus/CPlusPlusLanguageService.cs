@@ -209,8 +209,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                     highlightKind = HighlightType.NumericLiteral;
                     break;
 
+                case NClang.CursorKind.Constructor:
+                case NClang.CursorKind.Destructor:
                 case NClang.CursorKind.TypedefDeclaration:
                 case NClang.CursorKind.ClassDeclaration:
+                case NClang.CursorKind.TemplateReference:
                     useSpellingLocation = true;
                     highlightKind = HighlightType.ClassName;
                     break;
@@ -219,8 +222,14 @@ namespace AvalonStudio.Languages.CPlusPlus
                 case NClang.CursorKind.UnionDeclaration:
                     useSpellingLocation = true;
                     highlightKind = HighlightType.EnumTypeName;
+                    break;          
+
+                case NClang.CursorKind.TemplateTypeParameter:
+                    useSpellingLocation = true;
+                    highlightKind = HighlightType.InterfaceName;
                     break;
 
+                
                 case NClang.CursorKind.TypeReference:
                     if (parent.Kind == NClang.CursorKind.CXXBaseSpecifier)
                     {
@@ -242,9 +251,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     break;
 
                 case NClang.CursorKind.CXXMethod:
-                case NClang.CursorKind.FunctionDeclaration:
-                case NClang.CursorKind.Constructor:
-                case NClang.CursorKind.Destructor:
+                case NClang.CursorKind.FunctionDeclaration:                
                     useSpellingLocation = true;
                     highlightKind = HighlightType.CallExpression;
                     break;
@@ -298,12 +305,21 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             if (useSpellingLocation)
             {
-                if (cursor.Kind == NClang.CursorKind.TypeReference && parent.Kind == NClang.CursorKind.CXXBaseSpecifier)
+                if (cursor.Kind == NClang.CursorKind.TypeReference && parent.Kind == NClang.CursorKind.CXXBaseSpecifier && cursor.Spelling.StartsWith("class"))
                 {
                     return new OffsetSyntaxHighlightingData()
                     {
                         Start = cursor.Location.SpellingLocation.Offset,
                         Length = cursor.Spelling.Length - 5, // Because spelling includes keyword "class"
+                        Type = highlightKind
+                    };
+                }
+                else if ((cursor.Kind == NClang.CursorKind.Destructor || cursor.Kind == NClang.CursorKind.Constructor) && parent.Kind == NClang.CursorKind.ClassTemplate)
+                {
+                    return new OffsetSyntaxHighlightingData()
+                    {
+                        Start = cursor.Location.SpellingLocation.Offset,
+                        Length = cursor.Spelling.Length, // TODO select only the name...
                         Type = highlightKind
                     };
                 }
