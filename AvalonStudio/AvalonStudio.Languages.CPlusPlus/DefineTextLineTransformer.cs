@@ -7,7 +7,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
     internal class DefineTextLineTransformer : IDocumentLineTransformer
     {
         private readonly SolidColorBrush brush = new SolidColorBrush(Color.FromArgb(0xD0, 0xB8, 0x48, 0xFF));
-        private readonly IBrush pragmaBrush = Brush.Parse("#68217A");
+        private readonly IBrush pragmaBrush = Brush.Parse("#9B9B9B");
 
         public event EventHandler<EventArgs> DataChanged;
 
@@ -21,12 +21,14 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 
                 var firstEndOffset = line.RenderedText.Text.IndexOf(" ", startIndex);
 
-                var lastWordOffset = firstEndOffset != -1 ? line.RenderedText.Text.LastIndexOf(" ", firstEndOffset) + 1 : -1;
+                line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, firstEndOffset - startIndex);
 
-                if (lastWordOffset != -1)
-                {
-                    line.RenderedText.SetForegroundBrush(brush, lastWordOffset, line.RenderedText.Text.Length - lastWordOffset);
-                }
+                //var lastWordOffset = firstEndOffset != -1 ? line.RenderedText.Text.LastIndexOf(" ", firstEndOffset) + 1 : -1;
+
+                //if (lastWordOffset != -1)
+                //{
+                //    line.RenderedText.SetForegroundBrush(brush, lastWordOffset, line.RenderedText.Text.Length - lastWordOffset);
+                //}
             }
         }
     }
