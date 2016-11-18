@@ -11,9 +11,9 @@ namespace AvalonStudio.TextEditor
         private readonly IBrush currentLineForeground;
 
         public LineNumberMargin()
-        {
-            foreground = Brush.Parse("#5d5d5d");
-            currentLineForeground = Brush.Parse("#A4A4A4");
+        { 
+            foreground = Brush.Parse("#2691AF");  
+            currentLineForeground = Brush.Parse("#2691AF");
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -30,7 +30,7 @@ namespace AvalonStudio.TextEditor
         {
             if (textView.TextDocument != null)
             {
-                Width = textInfo.CharWidth * textInfo.NumLines.ToString().Length + 8;
+                Width = textInfo.CharWidth * textInfo.NumLines.ToString().Length + 12;
 
                 if (textView != null && textView.VisualLines.Count > 0)
                 {
@@ -60,11 +60,9 @@ namespace AvalonStudio.TextEditor
                                 }
                             }
 
-                            context.DrawText(textColor, new Point(-4, textInfo.LineHeight * i), formattedText);
+                            context.DrawText(textColor, new Point(-8, textInfo.LineHeight * i), formattedText);
                         }
-                    }
-
-                    context.DrawLine(new Pen(foreground), new Point(Width, 0), new Point(Width, Bounds.Height));
+                    }                    
                 }
             }
         }
