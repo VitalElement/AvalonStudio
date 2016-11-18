@@ -316,8 +316,10 @@ namespace AvalonStudio.TextEditor.Rendering
             //    Invalidate();
             //});
 
-            _caretTimer = new DispatcherTimer();
-            _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
+            _caretTimer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromMilliseconds(500)
+            };
 
             VisualLines = new List<VisualLine>();
         }
