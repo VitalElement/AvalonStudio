@@ -15,6 +15,9 @@ namespace AvalonStudio.Languages
 		Comment,
 		ClassName,
         StructName,
+        EnumConstant,
+        EnumTypeName,
+        InterfaceName,
         PreProcessor,
         PreProcessorText,
 
