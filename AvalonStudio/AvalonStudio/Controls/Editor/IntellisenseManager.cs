@@ -152,10 +152,17 @@
 
         private void UpdateFilter(int caretIndex)
         {
-            Dispatcher.UIThread.InvokeTaskAsync(() =>
+            if (caretIndex > intellisenseStartedAt)
             {
-                currentFilter = editor.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
-            }).Wait();
+                Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    currentFilter = editor.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
+                }).Wait();
+            }
+            else
+            {
+                currentFilter = string.Empty;
+            }
 
             CompletionDataViewModel suggestion = null;
 
