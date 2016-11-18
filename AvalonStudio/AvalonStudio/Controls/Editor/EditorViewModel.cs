@@ -404,7 +404,7 @@ namespace AvalonStudio.Controls
                         return "Inconsolata";
 
                     default:
-                        return "Inconsolata";
+                        return "Consolas";
                 }
             }
         }
