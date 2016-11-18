@@ -160,7 +160,7 @@ namespace AvalonStudio.Languages.TypeScript
 
             if (dataAssociations.TryGetValue(file, out association))
             {
-                throw new Exception("Source file already registered with language service.");
+                throw new InvalidOperationException("Source file already registered with language service.");
             }
 
             association = new TypeScriptDataAssociation(textDocument);
