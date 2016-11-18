@@ -412,7 +412,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 return ChildVisitResult.Recurse;
                             }
 
-                            return ChildVisitResult.Continue;
+                            if(current.Location.IsInSystemHeader)
+                            {
+                                return ChildVisitResult.Continue;
+                            }
+
+                            return ChildVisitResult.Recurse;
                         }, IntPtr.Zero);
                     }
                 }
