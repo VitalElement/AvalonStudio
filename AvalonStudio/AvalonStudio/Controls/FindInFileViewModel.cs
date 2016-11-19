@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia;
 using AvalonStudio.Languages;
@@ -10,15 +11,24 @@ using ReactiveUI;
 
 namespace AvalonStudio.Controls {
     public class FindInFileViewModel : ViewModel, IDisposable {
-        private EditorModel editor;
-        private EditorViewModel editorViewModel;
+        private EditorModel _editor;
+        private EditorViewModel _editorViewModel;
 
-        private Thickness position;
+        private Thickness _position;
+
+        private string _searchField;
+        private bool _caseSensitive;
+        private bool _matchWholeWord;
 
         public FindInFileViewModel(EditorModel editor, EditorViewModel viewModel) {
-            editorViewModel = viewModel;
+            _editor = editor;
+            _editorViewModel = viewModel;
 
+            Position = new Thickness(300, 50);
             Find = ReactiveCommand.Create();
+
+            CaseSensitive = true;
+            MatchWholeWord = false;
 
             Find.Subscribe(_ => {
                 var lines = viewModel.TextDocument.Text.Split('\n');
@@ -26,49 +36,62 @@ namespace AvalonStudio.Controls {
                 var caretIndex = 0;
 
                 foreach (var line in lines) {
-                    if (line.Contains(StringValue)) {
+                    if (MatchLine(line)) {
                         viewModel.CaretIndex = caretIndex;
                     }
 
                     if (line == "\r")
+                        // this is for new empty lines
                         caretIndex += 2;
                     else
+                        // standard text line
                         caretIndex += line.Length + 1;
                 }
             });
+        }
 
-            this.editor = editor;
+        public bool MatchLine(string line) {
+            if (!_caseSensitive) {
+                if (line.ToLower().Contains(SearchField.ToLower()))
+                    return true;
+            }
+            else {
+                if (line.Contains(SearchField))
+                    return true;
+            }
 
-            IsOpen = true;
-            Position = new Thickness(300, 50);
+            return false;
         }
 
         public Thickness Position
         {
-            get { return position; }
-            set { this.RaiseAndSetIfChanged(ref position, value); }
+            get { return _position; }
+            set { this.RaiseAndSetIfChanged(ref _position, value); }
         }
 
         public void Dispose() {
-            editor = null;
-            editorViewModel = null;
-        }
-
-        private bool isOpen;
-        private string _stringValue;
-
-        public bool IsOpen
-        {
-            get { return isOpen; }
-            set { this.RaiseAndSetIfChanged(ref isOpen, value); }
+            _editor = null;
+            _editorViewModel = null;
         }
 
         public ReactiveCommand<object> Find { get; }
 
-        public string StringValue
+        public string SearchField
         {
-            get { return _stringValue; }
-            set { this.RaiseAndSetIfChanged(ref _stringValue, value); }
+            get { return _searchField; }
+            set { this.RaiseAndSetIfChanged(ref _searchField, value); }
+        }
+
+        public bool CaseSensitive
+        {
+            get { return _caseSensitive; }
+            set { this.RaiseAndSetIfChanged(ref _caseSensitive, value); }
+        }
+
+        public bool MatchWholeWord
+        {
+            get { return _matchWholeWord; }
+            set { this.RaiseAndSetIfChanged(ref _matchWholeWord, value); }
         }
     }
 }
