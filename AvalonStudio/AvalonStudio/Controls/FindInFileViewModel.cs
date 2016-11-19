@@ -20,23 +20,20 @@ namespace AvalonStudio.Controls {
 
             Find = ReactiveCommand.Create();
 
-
             Find.Subscribe(_ => {
+                var lines = viewModel.TextDocument.Text.Split('\n');
 
-                string[] lines = viewModel.TextDocument.Text.Split('\n');
+                var caretIndex = 0;
 
-                int caretIndex = 0;
-
-                foreach (var line in lines)
-                {
-                    if(line == "")
-                        caretIndex += 2;
-                    else
-                        caretIndex += line.Length + 1;
-
+                foreach (var line in lines) {
                     if (line.Contains(StringValue)) {
                         viewModel.CaretIndex = caretIndex;
                     }
+
+                    if (line == "\r")
+                        caretIndex += 2;
+                    else
+                        caretIndex += line.Length + 1;
                 }
             });
 
