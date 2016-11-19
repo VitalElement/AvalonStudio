@@ -176,7 +176,7 @@ namespace AvalonStudio.Debugging
 							Value = "{ Out of Scope. }";
 							Model.Children.Clear();
 							Model.ClearEvaluated();
-							Children.Clear();
+							Children?.Clear();
 						});
 					}
 
