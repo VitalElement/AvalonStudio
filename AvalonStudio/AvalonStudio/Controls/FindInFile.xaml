@@ -1,21 +1,21 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility">
-    <StackPanel Background="Black">
+    <StackPanel>
         <StackPanel>
             <TextBox Text="{Binding Path=SearchField}"/>
         </StackPanel>
 
         <Grid RowDefinitions="*, *" ColumnDefinitions="*, *, *" >
             <StackPanel Grid.Column="0" Grid.Row="1">
-                <ToggleButton Content="  " IsChecked="{Binding CaseSensitive, Mode=TwoWay}"/>
+                <ToggleButton ToolTip.Tip="Case Sensitive" Content="  " IsChecked="{Binding CaseSensitive, Mode=TwoWay}"/>
             </StackPanel>
             
             <StackPanel Grid.Column="1" Grid.Row="1">
-                <ToggleButton Content="  " IsChecked="{Binding MatchWholeWord, Mode=TwoWay}"/>
+                <ToggleButton ToolTip.Tip="Match Whole Words" Content="  " IsChecked="{Binding MatchWholeWord, Mode=TwoWay}"/>
             </StackPanel>
 
             <StackPanel Grid.Column="2" Grid.Row="1">
-                <Button Content="Find" Command="{Binding Find}"/>
+                <Button ToolTip.Tip="Find Next" Content="Find" Command="{Binding Find}"/>
             </StackPanel>
         </Grid>
     </StackPanel>

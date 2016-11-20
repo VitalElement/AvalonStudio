@@ -37,21 +37,23 @@
         </i:Interaction.Behaviors>
 
         <te:TextEditor.Header>
-          <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">
-            <DropDown.DataTemplates>
-              <DataTemplate>
-                <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
-              </DataTemplate>
-            </DropDown.DataTemplates>
-          </DropDown>
-        </te:TextEditor.Header>
+            <StackPanel>
+                <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">
+                    <DropDown.DataTemplates>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
+                        </DataTemplate>
+                    </DropDown.DataTemplates>
+                </DropDown>
+                <StackPanel HorizontalAlignment="Right">
+                    <cont:FindInFile DataContext="{Binding FindInFile}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="{Binding Position}" />
+                </StackPanel>
+            </StackPanel>
+         </te:TextEditor.Header>
 
         <te:TextEditor.Content>
           <Grid>
             <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" Margin="{Binding Position}" />   
-              
-            <cont:FindInFile DataContext="{Binding FindInFile}" HorizontalAlignment="Left"
                                VerticalAlignment="Top" Margin="{Binding Position}" />   
           </Grid>
         </te:TextEditor.Content>

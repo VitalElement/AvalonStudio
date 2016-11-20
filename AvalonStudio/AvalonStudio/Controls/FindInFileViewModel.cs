@@ -20,11 +20,14 @@ namespace AvalonStudio.Controls {
         private bool _caseSensitive;
         private bool _matchWholeWord;
 
+        private int _caretIndex = 0;
+        private int _lastLine = 0;
+
         public FindInFileViewModel(EditorModel editor, EditorViewModel viewModel) {
             _editor = editor;
             _editorViewModel = viewModel;
 
-            Position = new Thickness(300, 50);
+            //Position = new Thickness(300, 50);
             Find = ReactiveCommand.Create();
 
             CaseSensitive = true;
@@ -33,21 +36,27 @@ namespace AvalonStudio.Controls {
             Find.Subscribe(_ => {
                 var lines = viewModel.TextDocument.Text.Split('\n');
 
-                var caretIndex = 0;
+                for (var i = 0; i < lines.Length; i++) {
+                    var line = lines[i];
 
-                foreach (var line in lines) {
                     if (MatchLine(line)) {
-                        viewModel.CaretIndex = caretIndex;
+                        viewModel.CaretIndex = _caretIndex;
+                        _lastLine++;
+                        break;
                     }
 
-                    if (line == "\r")
-                        // this is for new empty lines
-                        caretIndex += 2;
-                    else
-                        // standard text line
-                        caretIndex += line.Length + 1;
+                    MoveCaretToNextLine(line);
                 }
             });
+        }
+
+        public void MoveCaretToNextLine(string line) {
+            if (line == "\r")
+                // this is for new empty lines
+                _caretIndex += 2;
+            else
+                // standard text line
+                _caretIndex += line.Length + 1;
         }
 
         public bool MatchLine(string line) {
