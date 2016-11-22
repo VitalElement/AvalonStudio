@@ -44,7 +44,7 @@ namespace AvalonStudio.TextEditor
                         currentLine = textView.TextDocument.GetLineByOffset(textView.CaretIndex);
                     }
 
-                    for (var i = 0; i < textInfo.NumLines && i + firstLine <= textView.TextDocument.LineCount && i + firstLine < lastLine; i++)
+                    for (var i = 0; i < textInfo.NumLines && i + firstLine <= textView.TextDocument.LineCount && i + firstLine <= lastLine; i++)
                     {
                         using (
                             var formattedText = new FormattedText((i + firstLine).ToString(), "Consolas", textView.FontSize, FontStyle.Normal,
