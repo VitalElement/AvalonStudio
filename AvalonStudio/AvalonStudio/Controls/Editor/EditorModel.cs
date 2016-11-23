@@ -255,9 +255,9 @@ namespace AvalonStudio.Controls
 		/// <summary>
 		///     Write lock must be held before calling this.
 		/// </summary>
-		private async Task TriggerCodeAnalysis()
+		public async Task TriggerCodeAnalysis()
 		{
-			await codeAnalysisRunner.InvokeAsync(async () =>
+		    await codeAnalysisRunner.InvokeAsync(async () =>
 			{
 				if (LanguageService != null)
 				{
