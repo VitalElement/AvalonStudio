@@ -925,6 +925,8 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             var elements = replacements.Elements().First().Elements();
 
+            bool replaceCursor = cursor == -1 ? false : true;
+
             document.BeginUpdate();
 
             var offsetChange = 0;
@@ -955,18 +957,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                             }
                         }
 
-                        if (offset >= document.TextLength)
-                        {
-                            //document.Insert(offset, element.Value);
-                        }
-                        if (offset + replacementLength > document.TextLength)
-                        {
-                            //document.Replace(offset, document.TextLength - offset, element.Value);
-                        }
-                        else
-                        {
-                            document.Replace(offsetChange + offset, replacementLength, element.Value);
-                        }
+                        document.Replace(offsetChange + offset, replacementLength, element.Value);
 
                         offsetChange += element.Value.Length - replacementLength;
                         break;
@@ -975,7 +966,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             document.EndUpdate();
 
-            return cursor;
+            return replaceCursor ? cursor : -1;
         }
 
         private static Symbol SymbolFromClangCursor(ClangCursor cursor)
