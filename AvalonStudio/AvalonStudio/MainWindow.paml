@@ -4,9 +4,10 @@
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
                       xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"
                       Icon="resm:AvalonStudio.icon.ico?assembly=AvalonStudio"
-                      Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFE4E4E4" CoverTaskbarOnMaximize="false" WindowState="Maximized">
+                      Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" FontFamily="Segoe UI" FontWeight="Light"
+                      Foreground="#FFE4E4E4" CoverTaskbarOnMaximize="false" WindowState="Maximized">
   <Controls:MetroWindow.TitleBarContent>
-    <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
+
   </Controls:MetroWindow.TitleBarContent>
   <Controls:MetroWindow.Styles>
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
@@ -47,9 +48,13 @@
     </Style>
   </Controls:MetroWindow.Styles>
 
-  <Grid RowDefinitions="25,*,25">
-    <Grid Grid.ColumnSpan="5" Margin="20 0 0 0">
-      <Controls:ToolBar DataContext="{Binding ToolBar}" />
+  <Grid RowDefinitions="Auto,*,25">
+    <Grid Grid.ColumnSpan="5" Margin="0 0 0 0">
+      <Grid RowDefinitions="Auto, Auto">
+        <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="5 4 0 0"  Foreground="White" />
+
+        <Controls:ToolBar DataContext="{Binding ToolBar}" Grid.Row="1" Margin="15 4 0 4" />
+      </Grid>
     </Grid>
 
     <Grid Grid.Row="1">
