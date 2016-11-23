@@ -544,6 +544,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Controls\FindInFile.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
