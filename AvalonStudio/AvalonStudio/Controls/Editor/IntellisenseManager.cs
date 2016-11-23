@@ -30,11 +30,11 @@
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
 
-        private bool IsTriggerChar(char currentChar)
+        private bool IsTriggerChar(char currentChar, bool isVisible)
         {
             bool result = false;
 
-            if (char.IsLetter(currentChar) || languageService.IntellisenseTriggerCharacters.Contains(currentChar))
+            if ((char.IsLetter(currentChar) || isVisible && char.IsLetterOrDigit(currentChar)) || languageService.IntellisenseTriggerCharacters.Contains(currentChar))
             {
                 result = true;
             }
@@ -211,25 +211,19 @@
 
                     Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {
+                        intellisenseControl.CompletionData = null;
                         intellisenseControl.CompletionData = list;
-                    }).Wait();
-
-                    Dispatcher.UIThread.InvokeTaskAsync(() => intellisenseControl.IsVisible = true).Wait();
-
-                    Dispatcher.UIThread.InvokeTaskAsync(() =>
-                    {
-                        intellisenseControl.SelectedCompletion = null;
-                    }).Wait();
-
-                    Dispatcher.UIThread.InvokeTaskAsync(() =>
-                    {
                         intellisenseControl.SelectedCompletion = suggestion;
+                        intellisenseControl.IsVisible = true;
                     }).Wait();
                 }
             }
             else
             {
-                CloseIntellisense();
+                Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    intellisenseControl.SelectedCompletion = noSelectedCompletion;
+                });
             }
         }
 
@@ -256,7 +250,7 @@
                     {
                         editor.TextDocument.BeginUpdate();
 
-                        if (caretIndex - intellisenseStartedAt - offset > 0)
+                        if (caretIndex - intellisenseStartedAt - offset >= 0)
                         {
                             editor.TextDocument.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
                                     intellisenseControl.SelectedCompletion.Title);
@@ -418,7 +412,7 @@
                             SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                         }
 
-                        if (IsTriggerChar(currentChar) || IsLanguageSpecificTriggerChar(currentChar))
+                        if (IsTriggerChar(currentChar, intellisenseControl.IsVisible) || IsLanguageSpecificTriggerChar(currentChar))
                         {
                             if (!intellisenseControl.IsVisible)
                             {
