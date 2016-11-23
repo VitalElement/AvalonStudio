@@ -625,10 +625,17 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
+            bool replaceCursor = cursor >= 0 ? true : false;
+
+            if (!replaceCursor)
+            {
+                cursor = 0;
+            }
+
             var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor,
                 ClangFormatSettings.Default);
 
-            return ApplyReplacements(textDocument, cursor, replacements);
+            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
@@ -921,7 +928,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public static int ApplyReplacements(TextDocument document, int cursor, XDocument replacements)
+        public static int ApplyReplacements(TextDocument document, int cursor, XDocument replacements, bool replaceCursor = true)
         {
             var elements = replacements.Elements().First().Elements();
 
@@ -955,18 +962,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                             }
                         }
 
-                        if (offset >= document.TextLength)
-                        {
-                            //document.Insert(offset, element.Value);
-                        }
-                        if (offset + replacementLength > document.TextLength)
-                        {
-                            //document.Replace(offset, document.TextLength - offset, element.Value);
-                        }
-                        else
-                        {
-                            document.Replace(offsetChange + offset, replacementLength, element.Value);
-                        }
+                        document.Replace(offsetChange + offset, replacementLength, element.Value);
 
                         offsetChange += element.Value.Length - replacementLength;
                         break;
@@ -975,7 +971,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             document.EndUpdate();
 
-            return cursor;
+            return replaceCursor ? cursor : -1;
         }
 
         private static Symbol SymbolFromClangCursor(ClangCursor cursor)
