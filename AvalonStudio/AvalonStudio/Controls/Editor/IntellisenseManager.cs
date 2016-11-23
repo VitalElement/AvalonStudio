@@ -30,11 +30,11 @@
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
 
-        private bool IsTriggerChar(char currentChar)
+        private bool IsTriggerChar(char currentChar, bool isVisible)
         {
             bool result = false;
 
-            if (char.IsLetter(currentChar) || languageService.IntellisenseTriggerCharacters.Contains(currentChar))
+            if ((char.IsLetter(currentChar) || isVisible && char.IsLetterOrDigit(currentChar)) || languageService.IntellisenseTriggerCharacters.Contains(currentChar))
             {
                 result = true;
             }
@@ -418,7 +418,7 @@
                             SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                         }
 
-                        if (IsTriggerChar(currentChar) || IsLanguageSpecificTriggerChar(currentChar))
+                        if (IsTriggerChar(currentChar, intellisenseControl.IsVisible) || IsLanguageSpecificTriggerChar(currentChar))
                         {
                             if (!intellisenseControl.IsVisible)
                             {
