@@ -625,10 +625,17 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
+            bool replaceCursor = cursor >= 0 ? true : false;
+
+            if (!replaceCursor)
+            {
+                cursor = 0;
+            }
+
             var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor,
                 ClangFormatSettings.Default);
 
-            return ApplyReplacements(textDocument, cursor, replacements);
+            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
@@ -921,11 +928,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public static int ApplyReplacements(TextDocument document, int cursor, XDocument replacements)
+        public static int ApplyReplacements(TextDocument document, int cursor, XDocument replacements, bool replaceCursor = true)
         {
             var elements = replacements.Elements().First().Elements();
-
-            bool replaceCursor = cursor == -1 ? false : true;
 
             document.BeginUpdate();
 
