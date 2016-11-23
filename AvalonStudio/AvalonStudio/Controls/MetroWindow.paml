@@ -12,23 +12,25 @@
             <Grid Margin="{TemplateBinding !BorderThickness}" ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto,Auto,*,Auto,Auto" Background="Transparent">
               <Grid Grid.Row="0" Grid.RowSpan="5" Margin="-4 0" Grid.Column="1" RowDefinitions="Auto * Auto" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                 <Grid Grid.Row="1" Margin="-4" Grid.Column="0" Grid.ColumnSpan="5" Background="{TemplateBinding Background}">
-                  <Grid Margin="4 0" RowDefinitions="Auto, *">
-                    <Grid ColumnDefinitions="130,*,100" Name="titlebar">
-                      <Grid Margin="5 2.5 5 5">
+                  <Grid Margin="0 0" RowDefinitions="Auto, *">
+                    <Grid ColumnDefinitions="Auto,*,Auto" Name="titlebar" Margin="4 0">
+                      <Grid Margin="0">
                         <StackPanel Orientation="Horizontal" Gap="10">
-                          <Image Source="{TemplateBinding Icon, Converter={Static convert:IconImageConverter.Converter}}" Name="icon" Height="32" Width="32" />
-                          <TextBlock Text="{TemplateBinding Title}" Margin="5 5 10 5" Foreground="{TemplateBinding Foreground}" />
+                          <Image Source="{TemplateBinding Icon, Converter={Static convert:IconImageConverter.Converter}}" Name="icon" Height="20" Width="20" />
+                          <Border BorderThickness="0">
+                            <TextBlock Margin="0 7 0 0" Text="{TemplateBinding Title}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" />
+                          </Border>
                         </StackPanel>
                       </Grid>
-                      <ContentPresenter Grid.Column="1" Grid.ColumnSpan="1" Content="{TemplateBinding TitleBarContent}" />
-                      <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="5 4 0 5">
+                      <ContentPresenter Grid.Column="1" Grid.ColumnSpan="1" Content="{TemplateBinding TitleBarContent}" Margin="0" />
+                      <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="0">
                         <Grid.Styles>
                           <StyleInclude Source="resm:AvalonStudio.Controls.MetroWindowControlsTheme.paml?assembly=AvalonStudio" />
                         </Grid.Styles>
                         <StackPanel Orientation="Horizontal">
                           <Button Background="Transparent" BorderThickness="0" Name="minimiseButton">
                             <Panel Margin="4">
-                              <Path Height="8" Width="8" Stretch="Uniform" UseLayoutRounding="False"  Data="M20,14H4V10H20" Fill="WhiteSmoke" />
+                              <Path Margin="0" Height="8" Width="8" Stretch="Uniform" UseLayoutRounding="False"  Data="M20,14H4V10H20" Fill="WhiteSmoke" />
                             </Panel>
                           </Button>
 
@@ -47,7 +49,7 @@
                       </Grid>
                     </Grid>
                     <Grid Grid.Row="1">
-                      <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}" />
+                      <ContentPresenter Name="PART_ContentPresenter" Content="{TemplateBinding Content}" Margin="0" />
                     </Grid>
                   </Grid>
                 </Grid>
