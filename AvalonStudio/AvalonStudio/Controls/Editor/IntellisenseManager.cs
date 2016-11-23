@@ -250,7 +250,7 @@
                     {
                         editor.TextDocument.BeginUpdate();
 
-                        if (caretIndex - intellisenseStartedAt - offset > 0)
+                        if (caretIndex - intellisenseStartedAt - offset >= 0)
                         {
                             editor.TextDocument.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
                                     intellisenseControl.SelectedCompletion.Title);
