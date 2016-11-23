@@ -211,25 +211,19 @@
 
                     Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {
+                        intellisenseControl.CompletionData = null;
                         intellisenseControl.CompletionData = list;
-                    }).Wait();
-
-                    Dispatcher.UIThread.InvokeTaskAsync(() => intellisenseControl.IsVisible = true).Wait();
-
-                    Dispatcher.UIThread.InvokeTaskAsync(() =>
-                    {
-                        intellisenseControl.SelectedCompletion = null;
-                    }).Wait();
-
-                    Dispatcher.UIThread.InvokeTaskAsync(() =>
-                    {
                         intellisenseControl.SelectedCompletion = suggestion;
+                        intellisenseControl.IsVisible = true;
                     }).Wait();
                 }
             }
             else
             {
-                CloseIntellisense();
+                Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    intellisenseControl.SelectedCompletion = noSelectedCompletion;
+                });
             }
         }
 
