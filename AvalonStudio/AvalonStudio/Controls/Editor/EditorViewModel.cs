@@ -126,7 +126,7 @@ namespace AvalonStudio.Controls
 
         private void FormatAll()
         {
-            if (Model?.LanguageService != null)
+            if (Model?.LanguageService != null && TextDocument != null)
             {
                 CaretIndex = Model.LanguageService.Format(TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
             }
@@ -666,6 +666,8 @@ namespace AvalonStudio.Controls
         public void Save()
         {
             ignoreFileModifiedEvents = true;
+
+            FormatAll();
 
             Model.Save();
 
