@@ -140,7 +140,7 @@ namespace AvalonStudio.Controls
             highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
 
             BeforeTextChangedCommand = ReactiveCommand.Create();
-            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
+            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));            
 
             TextChangedCommand = ReactiveCommand.Create();
             disposables.Add(TextChangedCommand.Subscribe(model.OnTextChanged));
