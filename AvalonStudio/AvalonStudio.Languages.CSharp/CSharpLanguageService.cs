@@ -171,7 +171,7 @@
 
         public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
-            throw new NotImplementedException();
+            return cursor;
         }
 
         public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
