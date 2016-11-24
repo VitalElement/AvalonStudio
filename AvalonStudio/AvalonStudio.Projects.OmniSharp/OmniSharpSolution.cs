@@ -81,7 +81,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public void Save()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

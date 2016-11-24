@@ -12,6 +12,8 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using System.IO;
 using System.Dynamic;
+using AvalonStudio.Shell;
+using AvalonStudio.Extensibility;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
@@ -112,7 +114,18 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override IToolChain ToolChain
         {
-            get; set;
+            get
+            {
+                var shell = IoC.Get<IShell>();
+                
+                var toolchain = shell.ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.MSBuild.MSBuildToolchain");
+
+                return toolchain;
+            }
+            set
+            {
+
+            }
         }
 
         public override dynamic ToolchainSettings { get; set; }
