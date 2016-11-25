@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 
@@ -12,7 +13,10 @@ namespace AvalonStudio.Controls {
         private bool _matchWholeWord;
 
         private int _caretIndex;
-        private int _lastLine;
+
+        private List<int> _matches;
+        private int _matchesListPosition;
+        private bool _reachedEnd;
 
         public FindInFileViewModel(EditorModel editor, EditorViewModel viewModel) {
             _editor = editor;
@@ -24,21 +28,40 @@ namespace AvalonStudio.Controls {
             MatchWholeWord = false;
 
             Find.Subscribe(_ => {
-                var lines = viewModel.TextDocument.Text.Split('\n');
+                if (_matches == null || _reachedEnd) {
+                    // create the search result list for this document
 
-                _caretIndex = 0;
+                    _matches = new List<int>();
+                    var lines = viewModel.TextDocument.Text.Split('\n');
 
-                for (var i = 0; i < lines.Length; i++) {
-                    var line = lines[i];
+                    _caretIndex = 0;
 
-                    int matchPosition;
-                    if (MatchLine(line, out matchPosition)) {
-                        viewModel.CaretIndex = _caretIndex + matchPosition;
-                        _lastLine++;
-                        break;
+                    foreach (var line in lines) {
+                        int matchPosition;
+                        if (MatchLine(line, out matchPosition)) {
+                            _matches.Add(_caretIndex + matchPosition);
+                        }
+
+                        MoveCaretToNextLine(line);
                     }
 
-                    MoveCaretToNextLine(line);
+                    viewModel.CaretIndex = _matches[0];
+                    _matchesListPosition = 1;
+
+                    if (_matches.Count == _matchesListPosition)
+                        _reachedEnd = true;
+                    else {
+                        _reachedEnd = false;
+                    }
+                }
+                else {
+                    if (_matches.Count == _matchesListPosition) {
+                        _reachedEnd = true;
+                        return;
+                    }
+
+                    viewModel.CaretIndex = _matches[_matchesListPosition];
+                    _matchesListPosition++;
                 }
             });
         }
@@ -54,7 +77,7 @@ namespace AvalonStudio.Controls {
 
         public bool ContainsWord(string line) {
             var words = line.Split(' ');
-                
+
             foreach (var word in words) {
                 if (CaseSensitive) {
                     if (word == SearchField)
@@ -80,8 +103,7 @@ namespace AvalonStudio.Controls {
                         matchPosition = 0;
                         return true;
                     }
-                }
-                else {
+                } else {
                     if (line.ToLower().Contains(SearchField.ToLower())) {
                         matchPosition = 0;
                         return true;
@@ -107,12 +129,20 @@ namespace AvalonStudio.Controls {
 
         public bool CaseSensitive {
             get { return _caseSensitive; }
-            set { this.RaiseAndSetIfChanged(ref _caseSensitive, value); }
+            set {
+                this.RaiseAndSetIfChanged(ref _caseSensitive, value);
+                // reset the search
+                _reachedEnd = true;
+            }
         }
 
         public bool MatchWholeWord {
             get { return _matchWholeWord; }
-            set { this.RaiseAndSetIfChanged(ref _matchWholeWord, value); }
+            set {
+                this.RaiseAndSetIfChanged(ref _matchWholeWord, value);
+                // reset the search
+                _reachedEnd = true;
+            }
         }
     }
 }
