@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AvalonStudio.MVVM;
+using AvalonStudio.TextEditor.Rendering;
 using ReactiveUI;
 
 namespace AvalonStudio.Controls {
@@ -12,8 +13,11 @@ namespace AvalonStudio.Controls {
         private int _caretIndex;
 
         private List<int> _matches;
+        private string _lastSearchWord;
         private int _matchesListPosition;
         private bool _reachedEnd;
+        private FileSearchBackroundRenderer _selectedLinesRenderer;
+
 
         public FindInFileViewModel(EditorModel editor, EditorViewModel viewModel) {
             Find = ReactiveCommand.Create();
@@ -22,6 +26,21 @@ namespace AvalonStudio.Controls {
             MatchWholeWord = false;
 
             Find.Subscribe(_ => {
+                if (_selectedLinesRenderer == null) {
+                    _selectedLinesRenderer = new FileSearchBackroundRenderer();
+
+                    viewModel.BackgroundRenderers.Add(_selectedLinesRenderer);
+                }
+
+                _selectedLinesRenderer.SelectedWord = SearchField;
+                _selectedLinesRenderer.CaseSensitive = CaseSensitive;
+
+                if (SearchField != _lastSearchWord) {
+                    _reachedEnd = true;
+                }
+
+                _lastSearchWord = SearchField;
+
                 if (_matches == null || _reachedEnd) {
                     // create the search result list for this document
 
@@ -48,7 +67,6 @@ namespace AvalonStudio.Controls {
                         _reachedEnd = true;
                         return;
                     }
-
                     viewModel.CaretIndex = _matches[_matchesListPosition];
                     _matchesListPosition++;
                 }
