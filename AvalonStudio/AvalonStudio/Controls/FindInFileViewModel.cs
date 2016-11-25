@@ -4,7 +4,7 @@ using AvalonStudio.MVVM;
 using ReactiveUI;
 
 namespace AvalonStudio.Controls {
-    public class FindInFileViewModel : ViewModel, IDisposable {
+    public class FindInFileViewModel : ViewModel {
         private string _searchField;
         private bool _caseSensitive;
         private bool _matchWholeWord;
