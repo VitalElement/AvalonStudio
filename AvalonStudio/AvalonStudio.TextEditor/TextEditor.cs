@@ -40,9 +40,7 @@ namespace AvalonStudio.TextEditor
         #region Contructors
 
         static TextEditor()
-        {
-            TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>(
-                (s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));
+        {            
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
 
             CaretIndexProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
@@ -108,16 +106,13 @@ namespace AvalonStudio.TextEditor
                 EditorScrolled?.Invoke(this, new EventArgs());
             }));
 
-            disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
-
-            textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
+            disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));            
         }
 
         public event EventHandler<EventArgs> EditorScrolled;
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;
             TextView = null;
             TextDocument = null;
             disposables.Dispose();
@@ -133,16 +128,11 @@ namespace AvalonStudio.TextEditor
 
             Name = "textEditor";
             highestUserSelectedColumn = 1;
-
-            textChangedDelayTimer = new DispatcherTimer();
-            textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
         }
 
         #endregion
 
-        #region Private Data
-
-        private readonly DispatcherTimer textChangedDelayTimer;
+        #region Private Data        
         private int highestUserSelectedColumn;
 
         #endregion
@@ -259,20 +249,7 @@ namespace AvalonStudio.TextEditor
         {
             get { return GetValue(TextChangedCommandProperty); }
             set { SetValue(TextChangedCommandProperty, value); }
-        }
-
-        public static readonly AvaloniaProperty<int> TextChangedDelayProperty =
-            AvaloniaProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
-
-        public int TextChangedDelay
-        {
-            get { return GetValue(TextChangedDelayProperty); }
-            set
-            {
-                SetValue(TextChangedDelayProperty, value);
-                textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value);
-            }
-        }
+        }        
 
         public static readonly AvaloniaProperty<bool> AcceptsReturnProperty =
             AvaloniaProperty.Register<TextEditor, bool>(nameof(AcceptsReturn));
@@ -492,16 +469,6 @@ namespace AvalonStudio.TextEditor
                 CaretIndex += input.Length;
                 SelectionStart = SelectionEnd = CaretIndex;
                 TextView.Invalidate();
-            }
-        }
-
-        private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
-        {
-            textChangedDelayTimer.Stop();
-
-            if (TextChangedCommand != null && TextChangedCommand.CanExecute(null))
-            {
-                TextChangedCommand.Execute(null);
             }
         }
 
@@ -812,8 +779,10 @@ namespace AvalonStudio.TextEditor
 
                         LineHeight = TextView.CharSize.Height;
 
-                        textChangedDelayTimer.Stop();
-                        textChangedDelayTimer.Start();
+                        if (TextChangedCommand != null && TextChangedCommand.CanExecute(null))
+                        {
+                            TextChangedCommand.Execute(null);
+                        }
                     };
                 }
             }));

@@ -70,7 +70,7 @@ namespace AvalonStudio.Controls
                     {
                         var vm = (value as EditorViewModel);
                         vm.Model.Editor?.Focus();
-                        vm.Model.TriggerCodeAnalysis().GetAwaiter();
+                        vm.Model.TriggerCodeAnalysis();
                     });
                 }
 
