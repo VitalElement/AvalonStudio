@@ -5,9 +5,6 @@ using ReactiveUI;
 
 namespace AvalonStudio.Controls {
     public class FindInFileViewModel : ViewModel, IDisposable {
-        private EditorModel _editor;
-        private EditorViewModel _editorViewModel;
-
         private string _searchField;
         private bool _caseSensitive;
         private bool _matchWholeWord;
@@ -19,9 +16,6 @@ namespace AvalonStudio.Controls {
         private bool _reachedEnd;
 
         public FindInFileViewModel(EditorModel editor, EditorViewModel viewModel) {
-            _editor = editor;
-            _editorViewModel = viewModel;
-
             Find = ReactiveCommand.Create();
 
             CaseSensitive = true;
@@ -48,13 +42,8 @@ namespace AvalonStudio.Controls {
                     viewModel.CaretIndex = _matches[0];
                     _matchesListPosition = 1;
 
-                    if (_matches.Count == _matchesListPosition)
-                        _reachedEnd = true;
-                    else {
-                        _reachedEnd = false;
-                    }
-                }
-                else {
+                    _reachedEnd = _matches.Count == _matchesListPosition;
+                } else {
                     if (_matches.Count == _matchesListPosition) {
                         _reachedEnd = true;
                         return;
@@ -113,11 +102,6 @@ namespace AvalonStudio.Controls {
 
             matchPosition = 0;
             return false;
-        }
-
-        public void Dispose() {
-            _editor = null;
-            _editorViewModel = null;
         }
 
         public ReactiveCommand<object> Find { get; }
