@@ -6,6 +6,7 @@ using ReactiveUI;
 
 namespace AvalonStudio.Controls {
     public class FindInFileViewModel : ViewModel {
+        private readonly EditorViewModel _viewModel;
         private string _searchField;
         private bool _caseSensitive;
         private bool _matchWholeWord;
@@ -20,24 +21,18 @@ namespace AvalonStudio.Controls {
 
 
         public FindInFileViewModel(EditorModel editor, EditorViewModel viewModel) {
+            _viewModel = viewModel;
             Find = ReactiveCommand.Create();
 
             CaseSensitive = true;
             MatchWholeWord = false;
 
             Find.Subscribe(_ => {
-                if (_selectedLinesRenderer == null) {
-                    _selectedLinesRenderer = new FileSearchBackroundRenderer();
-
-                    viewModel.BackgroundRenderers.Add(_selectedLinesRenderer);
-                }
-
-                _selectedLinesRenderer.SelectedWord = SearchField;
-                _selectedLinesRenderer.CaseSensitive = CaseSensitive;
-
                 if (SearchField != _lastSearchWord) {
                     _reachedEnd = true;
                 }
+
+                UpdateSearchHighlighting();
 
                 _lastSearchWord = SearchField;
 
@@ -71,6 +66,17 @@ namespace AvalonStudio.Controls {
                     _matchesListPosition++;
                 }
             });
+        }
+
+        public void UpdateSearchHighlighting() {
+            if (_selectedLinesRenderer == null) {
+                _selectedLinesRenderer = new FileSearchBackroundRenderer();
+
+                _viewModel.BackgroundRenderers.Add(_selectedLinesRenderer);
+            }
+
+            _selectedLinesRenderer.SelectedWord = SearchField;
+            _selectedLinesRenderer.CaseSensitive = CaseSensitive;
         }
 
         public void MoveCaretToNextLine(string line) {
@@ -126,7 +132,11 @@ namespace AvalonStudio.Controls {
 
         public string SearchField {
             get { return _searchField; }
-            set { this.RaiseAndSetIfChanged(ref _searchField, value); }
+            set {
+                this.RaiseAndSetIfChanged(ref _searchField, value);
+
+                UpdateSearchHighlighting();
+            }
         }
 
         public bool CaseSensitive {
