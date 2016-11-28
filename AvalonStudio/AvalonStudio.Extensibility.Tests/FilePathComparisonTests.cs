@@ -42,5 +42,16 @@
 
             Assert.Equal(0, path2.CompareFilePath(path1));
         }
+
+        [Fact]
+        void Comparison_Against_Null_Works()
+        {
+            string path1 = null;
+            string path2 = "/c/avalonstudio/test";
+
+            Assert.NotEqual(0, path2.CompareFilePath(path1));
+
+            Assert.NotEqual(0, Platform.CompareFilePath(null, path2));
+        }
     }
 }
