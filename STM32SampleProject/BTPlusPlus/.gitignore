@@ -1,7 +1,0 @@
-obj
-bin
-*.o
-*.map
-*.ld
-*.veuser
-*.veproj.json

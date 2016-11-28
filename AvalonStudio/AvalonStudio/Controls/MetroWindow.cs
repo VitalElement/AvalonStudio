@@ -17,7 +17,7 @@ namespace AvalonStudio.Controls
 		private Grid bottomLeftGrip;
 		private Grid bottomRightGrip;
 		private Button closeButton;
-		private Panel icon;
+		private Image icon;
 		private Grid leftVerticalGrip;
 		private Button minimiseButton;
 
@@ -128,7 +128,7 @@ namespace AvalonStudio.Controls
 			minimiseButton = e.NameScope.Find<Button>("minimiseButton");
 			restoreButton = e.NameScope.Find<Button>("restoreButton");
 			closeButton = e.NameScope.Find<Button>("closeButton");
-			icon = e.NameScope.Find<Panel>("icon");
+			icon = e.NameScope.Find<Image>("icon");
 
 			topHorizontalGrip = e.NameScope.Find<Grid>("topHorizontalGrip");
 			bottomHorizontalGrip = e.NameScope.Find<Grid>("bottomHorizontalGrip");

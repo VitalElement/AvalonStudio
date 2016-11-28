@@ -11,9 +11,13 @@ namespace AvalonStudio.Languages
 		Keyword,
 		Identifier,
 		Literal,
+        NumericLiteral,
 		Comment,
 		ClassName,
         StructName,
+        EnumConstant,
+        EnumTypeName,
+        InterfaceName,
         PreProcessor,
         PreProcessorText,
 
