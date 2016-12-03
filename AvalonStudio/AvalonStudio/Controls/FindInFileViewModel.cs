@@ -17,15 +17,18 @@ namespace AvalonStudio.Controls {
         private string _lastSearchWord;
         private int _matchesListPosition;
         private bool _reachedEnd;
+        private bool _isVisible;
         private FileSearchBackroundRenderer _selectedLinesRenderer;
 
 
         public FindInFileViewModel(EditorModel editor, EditorViewModel viewModel) {
             _viewModel = viewModel;
             Find = ReactiveCommand.Create();
+            Exit = ReactiveCommand.Create();
 
             CaseSensitive = true;
             MatchWholeWord = false;
+            IsVisible = true;
 
             Find.Subscribe(_ => {
                 if (SearchField != _lastSearchWord) {
@@ -65,6 +68,10 @@ namespace AvalonStudio.Controls {
                     viewModel.CaretIndex = _matches[_matchesListPosition];
                     _matchesListPosition++;
                 }
+            });
+
+            Exit.Subscribe(_ => {
+                IsVisible = false;
             });
         }
 
@@ -129,6 +136,7 @@ namespace AvalonStudio.Controls {
         }
 
         public ReactiveCommand<object> Find { get; }
+        public ReactiveCommand<object> Exit { get; }
 
         public string SearchField {
             get { return _searchField; }
@@ -154,6 +162,13 @@ namespace AvalonStudio.Controls {
                 this.RaiseAndSetIfChanged(ref _matchWholeWord, value);
                 // reset the search
                 _reachedEnd = true;
+            }
+        }
+
+        public bool IsVisible {
+            get { return _isVisible; }
+            set {
+                this.RaiseAndSetIfChanged(ref _isVisible, value);
             }
         }
     }
