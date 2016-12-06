@@ -28,3 +28,5 @@ RUN mv /opt/AvalonBuild/NativeBinaries /opt/AvalonBuild/libNativeBinaries
 
 # Test avalon command
 RUN avalon version
+RUN avalon install-package AvalonStudio.Toolchains.STM32 Linux-Slow-v0.04-5.4.1
+RUN avalon install-package AvalonStudio.Toolchains.Clang Linux-Slow-v3.8.1
