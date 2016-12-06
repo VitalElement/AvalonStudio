@@ -1,29 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
-using AvalonStudio.Extensibility;
-using AvalonStudio.MVVM;
-using AvalonStudio.Shell;
-using ReactiveUI;
+﻿namespace AvalonStudio.Controls.Standard.WelcomeScreen
+{
+    using Avalonia.Media.Imaging;
+    using AvalonStudio.MVVM;
+    using ReactiveUI;
+    using System;
 
-namespace AvalonStudio.Controls.Standard.WelcomeScreen {
-    public class VideoFeedViewModel : ViewModel {
+    public class VideoFeedViewModel : ViewModel
+    {
         private string _title;
         private string _url;
         private IBitmap _image;
 
-        public VideoFeedViewModel(string url,  string title, IBitmap image = null) {
+        public VideoFeedViewModel(string url, string title, IBitmap image = null)
+        {
             _url = url;
             _title = title;
             _image = image;
 
             ClickCommand = ReactiveCommand.Create();
 
-            ClickCommand.Subscribe(_ => {
+            ClickCommand.Subscribe(_ =>
+            {
                 System.Diagnostics.Process.Start(url);
             });
         }
