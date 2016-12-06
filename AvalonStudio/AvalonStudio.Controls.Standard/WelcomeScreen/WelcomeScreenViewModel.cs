@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.ServiceModel.Syndication;
-using System.Xml;
-using Avalonia.Media.Imaging;
-using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Platforms;
-using AvalonStudio.Shell;
-using ReactiveUI;
-using System.Threading.Tasks;
-using AvalonStudio.Controls.Standard.SolutionExplorer;
-
-namespace AvalonStudio.Controls.Standard.WelcomeScreen
+﻿namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {
+    using Avalonia.Media.Imaging;
+    using AvalonStudio.Controls.Standard.SolutionExplorer;
+    using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Plugin;
+    using AvalonStudio.Platforms;
+    using AvalonStudio.Shell;
+    using ReactiveUI;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.ServiceModel.Syndication;
+    using System.Threading.Tasks;
+    using System.Xml;
+
     public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension
     {
         private ObservableCollection<RecentProjectViewModel> _recentProjects;
@@ -36,10 +35,11 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             OpenSolution = ReactiveCommand.Create();
 
             LoadRecentProjects();
-     
+
         }
 
-        public void Activation() {
+        public void Activation()
+        {
             var shell = IoC.Get<IShell>();
             shell.AddDocument(this);
             shell.SolutionChanged += ShellOnSolutionChanged;
@@ -50,33 +50,43 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             var solutionExplorer = IoC.Get<ISolutionExplorer>();
 
 
-            NewSolution.Subscribe(_ => {
+            NewSolution.Subscribe(_ =>
+            {
                 solutionExplorer.NewSolution();
             });
 
 
-            OpenSolution.Subscribe(_ => {
+            OpenSolution.Subscribe(_ =>
+            {
                 solutionExplorer.OpenSolution();
             });
         }
 
-        public void BeforeActivation() {
+        public void BeforeActivation()
+        {
 
         }
 
-
         private void LoadRecentProjects()
         {
+            _recentProjects.Clear();
+
             var recentProjects = RecentProjectsCollection.RecentProjects;
 
             if (recentProjects == null)
+            {
                 recentProjects = new List<RecentProject>();
+            }
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 8; i++)
             {
                 if (i < recentProjects.Count)
                 {
                     _recentProjects.Add(new RecentProjectViewModel(recentProjects[i].Name, recentProjects[i].Path));
+                }
+                else
+                {
+                    break;
                 }
             }
         }
@@ -90,7 +100,9 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             reader.Close();
 
             if (feed == null)
+            {
                 return;
+            }
 
             foreach (var syndicationItem in feed.Items)
             {
@@ -105,8 +117,11 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
                 var link = syndicationItem.Links.LastOrDefault();
                 var url = "";
+
                 if (link != null)
+                {
                     url = link.Uri.AbsoluteUri;
+                }
 
                 _newsFeed.Add(new NewsFeedViewModel(url, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
             }
@@ -121,7 +136,9 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             reader.Close();
 
             if (feed == null)
+            {
                 return;
+            }
 
             foreach (var syndicationItem in feed.Items)
             {
@@ -183,16 +200,16 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
                 if (RecentProjectsCollection.RecentProjects.Contains(newProject))
                 {
-                    RecentProjectsCollection.Save();
-                    return;
+                    RecentProjectsCollection.RecentProjects.Remove(newProject);
                 }
 
-                RecentProjectsCollection.RecentProjects.Add(newProject);
+                RecentProjectsCollection.RecentProjects.Insert(0, newProject);
 
                 RecentProjectsCollection.Save();
+
+                LoadRecentProjects();
             }
         }
-
 
         public ObservableCollection<RecentProjectViewModel> RecentProjects
         {
@@ -205,7 +222,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             get { return _newsFeed; }
             set { this.RaiseAndSetIfChanged(ref _newsFeed, value); }
         }
-
 
         public ObservableCollection<VideoFeedViewModel> VideoFeed
         {
