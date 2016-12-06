@@ -279,6 +279,8 @@ namespace AvalonStudio.Controls
 
             intellisense = new IntellisenseViewModel(model, this);
 
+            findInFile = new FindInFileViewModel(model, this);
+
             documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
 
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
@@ -414,6 +416,13 @@ namespace AvalonStudio.Controls
         {
             get { return intellisense; }
             set { this.RaiseAndSetIfChanged(ref intellisense, value); }
+        }
+
+        private FindInFileViewModel findInFile;
+        public FindInFileViewModel FindInFile
+        {
+            get { return findInFile; }
+            set { this.RaiseAndSetIfChanged(ref findInFile, value); }
         }
 
 

@@ -268,7 +268,11 @@
       <DependentUpon>ErrorProbeView.paml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ErrorProbeViewModel.cs" />
+    <Compile Include="Controls\FindInFile.xaml.cs">
+      <DependentUpon>FindInFile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\IntellisenseToolTipViewModel.cs" />
+    <Compile Include="Controls\FindInFileViewModel.cs" />
     <Compile Include="Controls\ParameterViewModel.cs" />
     <Compile Include="Controls\SignatureHelpView.paml.cs" />
     <Compile Include="Controls\SignatureHelpViewModel.cs" />
@@ -332,6 +336,7 @@
     <Compile Include="Controls\NewItemDialogViewModel.cs" />
     <Compile Include="Shell\Commands\CleanCommandDefinition.cs" />
     <Compile Include="Shell\Commands\BuildCommandDefinition.cs" />
+    <Compile Include="Shell\Commands\QuickFindCommandDefinition.cs" />
     <Compile Include="Shell\ToolBarDefinitions.cs" />
     <Compile Include="Shell\Commands\UnCommentCommandDefinition.cs" />
     <Compile Include="Shell\Commands\CopyCommandDefinition.cs" />
@@ -536,6 +541,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Themes\Accents\DarkAccent.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\FindInFile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

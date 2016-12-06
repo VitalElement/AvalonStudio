@@ -226,6 +226,7 @@
     <Compile Include="Rendering\SelectedDebugLineBackgroundRenderer.cs" />
     <Compile Include="Rendering\SelectedLineBackgroundRenderer.cs" />
     <Compile Include="Rendering\SelectedWordBackgroundRenderer.cs" />
+    <Compile Include="Rendering\FileSearchBackroundRenderer.cs" />
     <Compile Include="Rendering\SelectionBackgroundRenderer.cs" />
     <Compile Include="Rendering\TextMarkerService.cs" />
     <Compile Include="Rendering\TextTransformation.cs" />

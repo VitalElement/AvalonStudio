@@ -214,6 +214,15 @@ namespace AvalonStudio.TextEditor
             set { SetValue(HeaderProperty, value); }
         }
 
+        public static readonly StyledProperty<object> FixedContentProperty =
+            AvaloniaProperty.Register<TextEditor, object>(nameof(FixedContent));
+
+        public object FixedContent
+        {
+            get { return GetValue(FixedContentProperty); }
+            set { SetValue(FixedContentProperty, value); }
+        }
+
         public static readonly StyledProperty<ObservableCollection<TextViewMargin>> MarginsProperty =
             TextView.MarginsProperty.AddOwner<TextEditor>();
 
@@ -893,7 +902,10 @@ namespace AvalonStudio.TextEditor
 
         protected override void OnTextInput(TextInputEventArgs e)
         {
-            HandleTextInput(e.Text);
+            if (e.Source == this)
+            {
+                HandleTextInput(e.Text);
+            }
         }
 
         private void TransformSelectedLines(Action<IDocumentLine> transformLine)
