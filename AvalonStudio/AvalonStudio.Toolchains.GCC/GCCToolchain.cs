@@ -153,8 +153,6 @@ namespace AvalonStudio.Toolchains.GCC
         {
             var result = new LinkResult();
 
-            var settings = GetSettings(project);
-
             string commandName = project.Type == ProjectType.StaticLibrary ? ARExecutable : LDExecutable;
 
             var objectArguments = string.Empty;
@@ -198,8 +196,12 @@ namespace AvalonStudio.Toolchains.GCC
 
             string libraryPaths = string.Empty;
 
+            var linkerScripts = string.Empty;
+
             if (project.Type == ProjectType.Executable)
             {
+                var settings = GetSettings(project);
+
                 foreach (var libraryPath in settings.LinkSettings.LinkedLibraries)
                 {
                     libraryPaths += $"-Wl,--library-path={Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(libraryPath)).ToPlatformPath()} ";
@@ -207,6 +209,14 @@ namespace AvalonStudio.Toolchains.GCC
                     var libName = Path.GetFileName(libraryPath);
 
                     linkedLibraries += string.Format($"-Wl,--library=:{libName} ");
+                }
+
+                if (project.Type == ProjectType.Executable)
+                {
+                    foreach (var script in settings.LinkSettings.LinkerScripts)
+                    {
+                        linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
+                    }
                 }
             }
 
@@ -216,16 +226,6 @@ namespace AvalonStudio.Toolchains.GCC
             }
 
             linkedLibraries += GetBaseLibraryArguments(superProject);
-
-            var linkerScripts = string.Empty;
-
-            if (project.Type == ProjectType.Executable)
-            {
-                foreach (var script in settings.LinkSettings.LinkerScripts)
-                {
-                    linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
-                }
-            }
 
             string arguments = string.Empty;
 
