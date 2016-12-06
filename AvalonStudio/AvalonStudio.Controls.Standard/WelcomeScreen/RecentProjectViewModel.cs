@@ -7,15 +7,19 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
 using ReactiveUI;
 
-namespace AvalonStudio.Controls.Standard.WelcomeScreen {
-    public class RecentProjectViewModel : ViewModel {
-        public RecentProjectViewModel(string name, string location) {
+namespace AvalonStudio.Controls.Standard.WelcomeScreen
+{
+    public class RecentProjectViewModel : ViewModel
+    {
+        public RecentProjectViewModel(string name, string location)
+        {
             this._name = name;
             this._location = location;
 
             ClickCommand = ReactiveCommand.Create();
 
-            ClickCommand.Subscribe(_ => {
+            ClickCommand.Subscribe(_ =>
+            {
                 var shell = IoC.Get<IShell>();
 
                 var path = Path.Combine(location, name + ".asln");
