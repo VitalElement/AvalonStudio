@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
-using AvalonStudio.Extensibility;
-using AvalonStudio.MVVM;
-using AvalonStudio.Shell;
-using ReactiveUI;
+﻿namespace AvalonStudio.Controls.Standard.WelcomeScreen
+{
+    using AvalonStudio.MVVM;
+    using ReactiveUI;
+    using System;
 
-namespace AvalonStudio.Controls.Standard.WelcomeScreen {
-    public class NewsFeedViewModel : ViewModel {
+    public class NewsFeedViewModel : ViewModel
+    {
         private string _title;
         private string _author;
         private string _category;
         private string _url;
         private string _content;
 
-        public NewsFeedViewModel(string url, string content, string category, string author, string title) {
+        public NewsFeedViewModel(string url, string content, string category, string author, string title)
+        {
             _url = url;
             _content = content;
             _category = category;
@@ -27,7 +22,8 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen {
 
             ClickCommand = ReactiveCommand.Create();
 
-            ClickCommand.Subscribe(_ => {
+            ClickCommand.Subscribe(_ =>
+            {
                 System.Diagnostics.Process.Start(url);
             });
         }
