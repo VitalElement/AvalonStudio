@@ -126,7 +126,7 @@ namespace AvalonStudio.Controls
 
         private void FormatAll()
         {
-            if (Model?.LanguageService != null)
+            if (Model?.LanguageService != null && TextDocument != null)
             {
                 CaretIndex = Model.LanguageService.Format(TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
             }
@@ -140,7 +140,7 @@ namespace AvalonStudio.Controls
             highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
 
             BeforeTextChangedCommand = ReactiveCommand.Create();
-            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
+            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));            
 
             TextChangedCommand = ReactiveCommand.Create();
             disposables.Add(TextChangedCommand.Subscribe(model.OnTextChanged));
@@ -404,7 +404,7 @@ namespace AvalonStudio.Controls
                         return "Inconsolata";
 
                     default:
-                        return "Inconsolata";
+                        return "Consolas";
                 }
             }
         }
@@ -666,6 +666,8 @@ namespace AvalonStudio.Controls
         public void Save()
         {
             ignoreFileModifiedEvents = true;
+
+            FormatAll();
 
             Model.Save();
 

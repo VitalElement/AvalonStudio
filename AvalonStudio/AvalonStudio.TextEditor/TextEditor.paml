@@ -21,7 +21,7 @@
                           VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}">
 
 
-              <tv:TextView Name="textView" HorizontalAlignment="Stretch" Margin="0, 0"
+              <tv:TextView Name="textView" HorizontalAlignment="Stretch" Margin="5 0 0 0"
                               CaretIndex="{TemplateBinding CaretIndex}"
                               SelectionStart="{TemplateBinding SelectionStart}"
                               SelectionEnd="{TemplateBinding SelectionEnd}"
