@@ -4,8 +4,10 @@ using AvalonStudio.MVVM;
 using AvalonStudio.TextEditor.Rendering;
 using ReactiveUI;
 
-namespace AvalonStudio.Controls {
-    public class FindInFileViewModel : ViewModel {
+namespace AvalonStudio.Controls
+{
+    public class FindInFileViewModel : ViewModel
+    {
         private readonly EditorViewModel _viewModel;
         private string _searchField;
         private bool _caseSensitive;
@@ -21,17 +23,19 @@ namespace AvalonStudio.Controls {
         private FileSearchBackroundRenderer _selectedLinesRenderer;
 
 
-        public FindInFileViewModel(EditorModel editor, EditorViewModel viewModel) {
+        public FindInFileViewModel(EditorModel editor, EditorViewModel viewModel)
+        {
             _viewModel = viewModel;
             Find = ReactiveCommand.Create();
             Exit = ReactiveCommand.Create();
 
             CaseSensitive = true;
             MatchWholeWord = false;
-            IsVisible = true;
 
-            Find.Subscribe(_ => {
-                if (SearchField != _lastSearchWord) {
+            Find.Subscribe(_ =>
+            {
+                if (SearchField != _lastSearchWord)
+                {
                     _reachedEnd = true;
                 }
 
@@ -39,7 +43,8 @@ namespace AvalonStudio.Controls {
 
                 _lastSearchWord = SearchField;
 
-                if (_matches == null || _reachedEnd) {
+                if (_matches == null || _reachedEnd)
+                {
                     // create the search result list for this document
 
                     _matches = new List<int>();
@@ -47,9 +52,11 @@ namespace AvalonStudio.Controls {
 
                     _caretIndex = 0;
 
-                    foreach (var line in lines) {
+                    foreach (var line in lines)
+                    {
                         int matchPosition;
-                        if (MatchLine(line, out matchPosition)) {
+                        if (MatchLine(line, out matchPosition))
+                        {
                             _matches.Add(_caretIndex + matchPosition);
                         }
 
@@ -60,8 +67,11 @@ namespace AvalonStudio.Controls {
                     _matchesListPosition = 1;
 
                     _reachedEnd = _matches.Count == _matchesListPosition;
-                } else {
-                    if (_matches.Count == _matchesListPosition) {
+                }
+                else
+                {
+                    if (_matches.Count == _matchesListPosition)
+                    {
                         _reachedEnd = true;
                         return;
                     }
@@ -70,13 +80,16 @@ namespace AvalonStudio.Controls {
                 }
             });
 
-            Exit.Subscribe(_ => {
+            Exit.Subscribe(_ =>
+            {
                 IsVisible = false;
             });
         }
 
-        public void UpdateSearchHighlighting() {
-            if (_selectedLinesRenderer == null) {
+        public void UpdateSearchHighlighting()
+        {
+            if (_selectedLinesRenderer == null)
+            {
                 _selectedLinesRenderer = new FileSearchBackroundRenderer();
 
                 _viewModel.BackgroundRenderers.Add(_selectedLinesRenderer);
@@ -86,7 +99,8 @@ namespace AvalonStudio.Controls {
             _selectedLinesRenderer.CaseSensitive = CaseSensitive;
         }
 
-        public void MoveCaretToNextLine(string line) {
+        public void MoveCaretToNextLine(string line)
+        {
             if (line == "\r")
                 // this is for new empty lines
                 _caretIndex += 2;
@@ -95,14 +109,19 @@ namespace AvalonStudio.Controls {
                 _caretIndex += line.Length + 1;
         }
 
-        public bool ContainsWord(string line) {
+        public bool ContainsWord(string line)
+        {
             var words = line.Split(' ');
 
-            foreach (var word in words) {
-                if (CaseSensitive) {
+            foreach (var word in words)
+            {
+                if (CaseSensitive)
+                {
                     if (word == SearchField)
                         return true;
-                } else {
+                }
+                else
+                {
                     if (string.Equals(word, SearchField, StringComparison.CurrentCultureIgnoreCase))
                         return true;
                 }
@@ -111,20 +130,30 @@ namespace AvalonStudio.Controls {
             return false;
         }
 
-        public bool MatchLine(string line, out int matchPosition) {
-            if (MatchWholeWord) {
-                if (ContainsWord(line)) {
+        public bool MatchLine(string line, out int matchPosition)
+        {
+            if (MatchWholeWord)
+            {
+                if (ContainsWord(line))
+                {
                     matchPosition = 0;
                     return true;
                 }
-            } else {
-                if (CaseSensitive) {
-                    if (line.Contains(SearchField)) {
+            }
+            else
+            {
+                if (CaseSensitive)
+                {
+                    if (line.Contains(SearchField))
+                    {
                         matchPosition = 0;
                         return true;
                     }
-                } else {
-                    if (line.ToLower().Contains(SearchField.ToLower())) {
+                }
+                else
+                {
+                    if (line.ToLower().Contains(SearchField.ToLower()))
+                    {
                         matchPosition = 0;
                         return true;
                     }
@@ -138,36 +167,44 @@ namespace AvalonStudio.Controls {
         public ReactiveCommand<object> Find { get; }
         public ReactiveCommand<object> Exit { get; }
 
-        public string SearchField {
+        public string SearchField
+        {
             get { return _searchField; }
-            set {
+            set
+            {
                 this.RaiseAndSetIfChanged(ref _searchField, value);
 
                 UpdateSearchHighlighting();
             }
         }
 
-        public bool CaseSensitive {
+        public bool CaseSensitive
+        {
             get { return _caseSensitive; }
-            set {
+            set
+            {
                 this.RaiseAndSetIfChanged(ref _caseSensitive, value);
                 // reset the search
                 _reachedEnd = true;
             }
         }
 
-        public bool MatchWholeWord {
+        public bool MatchWholeWord
+        {
             get { return _matchWholeWord; }
-            set {
+            set
+            {
                 this.RaiseAndSetIfChanged(ref _matchWholeWord, value);
                 // reset the search
                 _reachedEnd = true;
             }
         }
 
-        public bool IsVisible {
+        public bool IsVisible
+        {
             get { return _isVisible; }
-            set {
+            set
+            {
                 this.RaiseAndSetIfChanged(ref _isVisible, value);
             }
         }

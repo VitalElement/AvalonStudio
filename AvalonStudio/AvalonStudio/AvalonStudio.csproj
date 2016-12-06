@@ -336,6 +336,7 @@
     <Compile Include="Controls\NewItemDialogViewModel.cs" />
     <Compile Include="Shell\Commands\CleanCommandDefinition.cs" />
     <Compile Include="Shell\Commands\BuildCommandDefinition.cs" />
+    <Compile Include="Shell\Commands\QuickFindCommandDefinition.cs" />
     <Compile Include="Shell\ToolBarDefinitions.cs" />
     <Compile Include="Shell\Commands\UnCommentCommandDefinition.cs" />
     <Compile Include="Shell\Commands\CopyCommandDefinition.cs" />
