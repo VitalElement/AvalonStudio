@@ -97,6 +97,8 @@ namespace AvalonStudio.Projects.CPlusPlus
         [JsonIgnore]
         public override string LocationDirectory => CurrentDirectory;
 
+        public NClang.ClangIndex ClangIndex { get; set; }
+
         public override void Save()
         {
             UnloadedReferences.Clear();

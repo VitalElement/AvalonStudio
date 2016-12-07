@@ -241,6 +241,10 @@
     <Compile Include="CPlusPlusProject.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\nclang\NClang\NClang.csproj">
+      <Project>{5ae560f9-0e8e-488e-b6c4-3c8196f9013a}</Project>
+      <Name>NClang</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
       <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
       <Name>AvalonStudio.Extensibility</Name>
