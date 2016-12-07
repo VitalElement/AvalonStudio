@@ -24,7 +24,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
                 var path = Path.Combine(location, name + ".asln");
 
-                shell.OpenSolution(path);
+                shell.OpenSolutionAsync(path);
             });
         }
 
