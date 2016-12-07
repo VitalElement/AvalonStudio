@@ -1,22 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
-using System.Threading.Tasks;
-using AvalonStudio.Controls;
-using AvalonStudio.Debugging;
-using AvalonStudio.Documents;
-using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Dialogs;
-using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Languages;
-using AvalonStudio.Projects;
-using AvalonStudio.TestFrameworks;
-using AvalonStudio.Toolchains;
-
 namespace AvalonStudio.Shell
 {
-	[Export(typeof (IShell))]
+    using AvalonStudio.Controls;
+    using AvalonStudio.Debugging;
+    using AvalonStudio.Documents;
+    using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Dialogs;
+    using AvalonStudio.Languages;
+    using AvalonStudio.Projects;
+    using AvalonStudio.TestFrameworks;
+    using AvalonStudio.Toolchains;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel.Composition;
+    using System.Threading.Tasks;
+
+    [Export(typeof (IShell))]
 	public class MinimalShell : IShell
 	{
 		public static IShell Instance = null;
@@ -184,7 +183,17 @@ namespace AvalonStudio.Shell
             throw new NotImplementedException();
         }
 
-        public Task OpenSolution(string path)
+        public Task OpenSolutionAsync(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CloseDocumentsForProjectAsync(IProject project)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CloseSolutionAsync()
         {
             throw new NotImplementedException();
         }
