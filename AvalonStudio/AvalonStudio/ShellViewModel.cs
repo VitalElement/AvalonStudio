@@ -624,9 +624,12 @@ namespace AvalonStudio
             }
         }
 
-        public async Task OpenSolution(string path)
+        public async Task OpenSolutionAsync(string path)
         {
-            // TODO implement closing down current solution cleanly.
+            if(CurrentSolution != null)
+            {
+                await CloseSolutionAsync();
+            }
 
             if (System.IO.File.Exists(path))
             {
@@ -635,6 +638,34 @@ namespace AvalonStudio
                 if (solutionType != null)
                 {
                     CurrentSolution = await solutionType.LoadAsync(path);
+                }
+            }
+        }
+
+        public async Task CloseSolutionAsync ()
+        {
+            var documentsToClose = DocumentTabs.Documents.ToList();
+
+            foreach (var document in documentsToClose)
+            {
+                if (document is EditorViewModel)
+                {
+                    await (document as EditorViewModel).CloseCommand.ExecuteAsyncTask();
+                }
+            }
+
+            CurrentSolution = null;
+        }
+
+        public async Task CloseDocumentsForProjectAsync (IProject project)
+        {
+            var documentsToClose = DocumentTabs.Documents.ToList();
+
+            foreach (var document in documentsToClose)
+            {
+                if (document is EditorViewModel && (document as EditorViewModel).ProjectFile.Project == project)
+                {
+                    await (document as EditorViewModel).CloseCommand.ExecuteAsyncTask();
                 }
             }
         }
