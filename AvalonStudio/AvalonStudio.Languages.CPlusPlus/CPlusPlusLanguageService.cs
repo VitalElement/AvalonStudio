@@ -485,12 +485,12 @@ namespace AvalonStudio.Languages.CPlusPlus
             if (superProject.ClangIndex == null)
             {
                 superProject.ClangIndex = ClangService.CreateIndex();
-            }            
+            }
 
             return result;
         }
 
-        public bool CanHandle (IProject project)
+        public bool CanHandle(IProject project)
         {
             return project is CPlusPlusProject;
         }
@@ -511,14 +511,16 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             if (result)
             {
-                result = CanHandle(file.Project);                
+                result = CanHandle(file.Project);
             }
 
             return result;
         }
 
-        public async Task AnalyseProjectAsync (IProject project)
+        public async Task AnalyseProjectAsync(IProject project)
         {
+            Dictionary<string, ClangSourceLocation> globalSymbols = new Dictionary<string, ClangSourceLocation>();
+
             await Task.Factory.StartNew(async () =>
             {
                 var superProject = project as CPlusPlusProject;
@@ -535,17 +537,21 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         callbacks.IndexDeclaration += (sender, e) =>
                         {
-                            Console.WriteLine("index declaration");
+                            globalSymbols.Add(e.Cursor.UnifiedSymbolResolution, e.Location.SourceLocation);                            
                         };
 
-                        callbacks.IndexEntityReference += (sender, e) =>
-                        {
-                            Console.WriteLine("index entity ref");
-                        };
+                        //callbacks.IndexEntityReference += (sender, e) =>
+                        //{
+                        //    Console.WriteLine($"index entity ref {e.Cursor.UnifiedSymbolResolution}");
+                        //};
 
                         indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
+
+                        tu.Dispose();
                     });
                 }
+
+                Console.WriteLine($"indexing completed.");
             });
         }
 

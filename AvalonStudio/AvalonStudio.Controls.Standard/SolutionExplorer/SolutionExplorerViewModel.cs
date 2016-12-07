@@ -10,6 +10,7 @@ using ReactiveUI;
 using Avalonia.Controls;
 using System.Collections.Generic;
 using AvalonStudio.Platforms;
+using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -112,7 +113,20 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 		{
 			shell = IoC.Get<IShell>();
 
-			shell.SolutionChanged += (sender, e) => { Model = shell.CurrentSolution; };
+            shell.SolutionChanged += async (sender, e) =>
+            {
+                Model = shell.CurrentSolution;
+
+                if (Model != null)
+                {
+                    var languageService = shell.LanguageServices.FirstOrDefault(o => o.CanHandle(Model.StartupProject));
+
+                    if (languageService != null)
+                    {
+                        await languageService.AnalyseProjectAsync(Model.StartupProject);
+                    }
+                }
+            };
 		}
 
         public void NewSolution()
