@@ -63,6 +63,11 @@
             }
         }
 
+        public bool CanHandle(IProject project)
+        {
+            return project is OmniSharpProject;
+        }
+
         public bool CanHandle(ISourceFile file)
         {
             var result = false;
@@ -366,6 +371,12 @@
             }
 
             return result;
+        }
+
+        public async Task AnalyseProjectAsync(IProject project)
+        {
+            // DO nothing not required.
+            
         }
     }
 
