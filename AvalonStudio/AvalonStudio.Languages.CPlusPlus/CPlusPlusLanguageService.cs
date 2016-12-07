@@ -7,6 +7,7 @@ using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages.CPlusPlus.Rendering;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
+using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
@@ -26,8 +27,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 {
     public class CPlusPlusLanguageService : ILanguageService
     {
-        private static readonly ClangIndex index = ClangService.CreateIndex();
-
         private static readonly ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
 
@@ -222,14 +221,14 @@ namespace AvalonStudio.Languages.CPlusPlus
                 case NClang.CursorKind.UnionDeclaration:
                     useSpellingLocation = true;
                     highlightKind = HighlightType.EnumTypeName;
-                    break;          
+                    break;
 
                 case NClang.CursorKind.TemplateTypeParameter:
                     useSpellingLocation = true;
                     highlightKind = HighlightType.InterfaceName;
                     break;
 
-                
+
                 case NClang.CursorKind.TypeReference:
                     if (parent.Kind == NClang.CursorKind.CXXBaseSpecifier)
                     {
@@ -251,7 +250,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     break;
 
                 case NClang.CursorKind.CXXMethod:
-                case NClang.CursorKind.FunctionDeclaration:                
+                case NClang.CursorKind.FunctionDeclaration:
                     useSpellingLocation = true;
                     highlightKind = HighlightType.CallExpression;
                     break;
@@ -412,7 +411,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 return ChildVisitResult.Recurse;
                             }
 
-                            if(current.Location.IsInSystemHeader)
+                            if (current.Location.IsInSystemHeader)
                             {
                                 return ChildVisitResult.Continue;
                             }
@@ -481,7 +480,19 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
+            var superProject = file.Project.Solution.StartupProject as CPlusPlusProject;
+
+            if (superProject.ClangIndex == null)
+            {
+                superProject.ClangIndex = ClangService.CreateIndex();
+            }            
+
             return result;
+        }
+
+        public bool CanHandle (IProject project)
+        {
+            return project is CPlusPlusProject;
         }
 
         public bool CanHandle(ISourceFile file)
@@ -500,13 +511,42 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             if (result)
             {
-                if (!(file.Project is IStandardProject))
-                {
-                    result = false;
-                }
+                result = CanHandle(file.Project);                
             }
 
             return result;
+        }
+
+        public async Task AnalyseProjectAsync (IProject project)
+        {
+            await Task.Factory.StartNew(async () =>
+            {
+                var superProject = project as CPlusPlusProject;
+
+                foreach (var file in superProject.SourceFiles)
+                {
+                    await clangAccessJobRunner.InvokeAsync(() =>
+                    {
+                        var tu = GenerateTranslationUnit(file, new List<ClangUnsavedFile>());
+
+                        var indexAction = superProject.ClangIndex.CreateIndexAction();
+
+                        var callbacks = new ClangIndexerCallbacks();
+
+                        callbacks.IndexDeclaration += (sender, e) =>
+                        {
+                            Console.WriteLine("index declaration");
+                        };
+
+                        callbacks.IndexEntityReference += (sender, e) =>
+                        {
+                            Console.WriteLine("index entity ref");
+                        };
+
+                        indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
+                    });
+                }
+            });
         }
 
         public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAssistant completionAssistant,
@@ -754,8 +794,14 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var args = new List<string>();
 
-                var superProject = file.Project.Solution.StartupProject as IStandardProject;
-                var project = file.Project as IStandardProject;
+                var superProject = file.Project.Solution.StartupProject as CPlusPlusProject;
+
+                if (superProject.ClangIndex == null)
+                {
+                    superProject.ClangIndex = ClangService.CreateIndex();
+                }
+
+                var project = file.Project as CPlusPlusProject;
 
                 var toolchainIncludes = superProject.ToolChain?.GetToolchainIncludes(file);
 
@@ -859,9 +905,9 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 args.Add("-Wunused-variable");
 
-                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(),
+                result = superProject.ClangIndex.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(),
                     TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble |
-                    TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.Incomplete);
+                    TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.Incomplete | TranslationUnitFlags.ForSerialization);
             }
 
             if (result == null)
