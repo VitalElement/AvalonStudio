@@ -537,7 +537,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         callbacks.IndexDeclaration += (sender, e) =>
                         {
-                            globalSymbols.Add(e.Cursor.UnifiedSymbolResolution, e.Location.SourceLocation);                            
+                            if (!globalSymbols.ContainsKey(e.Cursor.UnifiedSymbolResolution))
+                            {
+                                globalSymbols.Add(e.Cursor.UnifiedSymbolResolution, e.Location.SourceLocation);
+                            }
                         };
 
                         //callbacks.IndexEntityReference += (sender, e) =>
