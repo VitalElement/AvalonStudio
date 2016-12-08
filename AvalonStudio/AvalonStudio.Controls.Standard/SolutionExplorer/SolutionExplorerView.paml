@@ -116,7 +116,7 @@
               <ContextMenu>
                 <MenuItem Header="Rename" />
                 <Separator />
-                <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
+                <MenuItem Header="Open Folder"  Command="{Binding OpenInExplorerCommand}" />
                 <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
                 <Separator />
                 <MenuItem Header="Add">
