@@ -1,5 +1,5 @@
-
-<img src="AvalonStudio/AvalonStudio/icon.png" width="200" height="200" />
+<img src="AvalonStudio/AvalonStudio/icon.png" width="50" height="50" />
+<img src="https://cloud.githubusercontent.com/assets/4672627/21014496/36454f48-bd56-11e6-8e00-6cf8f878e9a6.png" />
 
 # AvalonStudio
 
