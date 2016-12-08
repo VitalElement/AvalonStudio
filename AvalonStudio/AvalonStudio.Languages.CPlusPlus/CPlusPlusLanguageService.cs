@@ -907,6 +907,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     args.Add("-xc++");
                     args.Add("-std=c++14");
+                    args.Add("-D__STDC__"); // This is needed to ensure inbuilt functions are appropriately prototyped.
                 }
 
                 args.Add("-Wunused-variable");
