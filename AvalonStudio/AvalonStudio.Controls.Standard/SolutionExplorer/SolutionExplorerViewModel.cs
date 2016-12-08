@@ -154,7 +154,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             if (result != null)
             {
-                await shell.OpenSolution(result[0]);
+                await shell.OpenSolutionAsync(result[0]);
             }
         }
     }
