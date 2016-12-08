@@ -318,10 +318,15 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
+
 call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)" false
+
 call "$(SolutionDir)\plugin" "$(TargetDir)libclang.dll" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.dll" false
+
 call "$(SolutionDir)\plugin" "$(TargetDir)clang-format.exe" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format.exe" false
+
 call "$(SolutionDir)\plugin" "$(TargetDir)clang-format" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "clang-format" false
+
 
 call "$(SolutionDir)\plugin" "$(TargetDir)libclang.so" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "libclang.so" false
 
