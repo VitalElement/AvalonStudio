@@ -52,6 +52,22 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string SizeExecutable => Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
 
+        public override bool SupportsFile(ISourceFile file)
+        {
+            var result = false;
+
+            switch (file.Extension.ToLower())
+            {
+                case ".cpp":
+                case ".c":
+                case ".s":
+                    result = true;
+                    break;
+            }
+
+            return result;
+        }
+
         public static GccToolchainSettings GetSettings(IProject project)
         {
             GccToolchainSettings result = null;
@@ -132,6 +148,11 @@ namespace AvalonStudio.Toolchains.GCC
                 fileArguments = "-x c++ -fno-use-cxa-atexit";
             }
 
+            if(file.Extension.ToLower() == ".s")
+            {
+                fileArguments = "-x assembler-with-cpp";
+            }
+
             var arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile);
 
             result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) =>
@@ -144,7 +165,7 @@ namespace AvalonStudio.Toolchains.GCC
             },
             false, file.CurrentDirectory, false);
 
-            //console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
+           // console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
 
             return result;
         }
