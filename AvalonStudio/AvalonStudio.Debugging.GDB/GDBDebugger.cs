@@ -403,6 +403,8 @@ namespace AvalonStudio.Debugging.GDB
 				closeTokenSource?.Cancel();
 			});
 
+            await SafelyExecuteCommand(async () => await new EnablePrettyPrintingCommand().Execute(this));
+
 			return true;
 		}
 
