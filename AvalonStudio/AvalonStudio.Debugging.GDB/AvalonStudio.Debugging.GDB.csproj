@@ -189,6 +189,7 @@
     <Compile Include="DataListRegisterNamesCommand.cs" />
     <Compile Include="DataListRegisterValuesCommand.cs" />
     <Compile Include="DataReadMemoryBytesCommand.cs" />
+    <Compile Include="EnablePrettyPrintingCommand.cs" />
     <Compile Include="ExecInterruptCommand.cs" />
     <Compile Include="ExecNextInstructionCommand.cs" />
     <Compile Include="FinishCommand.cs" />
