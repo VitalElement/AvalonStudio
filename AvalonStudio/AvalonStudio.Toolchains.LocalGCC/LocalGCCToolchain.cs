@@ -10,19 +10,56 @@ using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
-	public class LocalGCCToolchain : GCCToolchain
-	{
-		private string BaseDirectory
-		{
-			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC"); }
-		}
+    public class LocalGCCToolchain : GCCToolchain
+    {
+        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        {
+            return true;
+        }
+
+        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        {
+            return true;
+        }
+
+        private string BaseDirectory
+        {
+            get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC"); }
+        }
 
         public override string Prefix => string.Empty;
 
-        public override string BinDirectory => Path.Combine(BaseDirectory, "bin");
+        public override string BinDirectory
+        {
+            get
+            {
+                if (Platform.PlatformIdentifier == PlatformID.Unix)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return Path.Combine(BaseDirectory, "bin");
+                }
+            }
+        }
+
+        public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
+        {
+            return new List<string>
+            {
+                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include"),
+                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include-fixed"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32"),
+                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32", "backward")
+            };
+        }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
         {
@@ -33,327 +70,276 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public string LinkerScript { get; set; }
 
-		public override string GDBExecutable =>  Path.Combine(BaseDirectory, "bin", "gdb" + Platform.ExecutableExtension);		
+        public override string GDBExecutable => Path.Combine(BaseDirectory, "bin", "gdb" + Platform.ExecutableExtension);
 
-		public override Version Version
-		{
-			get { return new Version(1, 0, 0); }
-		}
+        public override Version Version
+        {
+            get { return new Version(1, 0, 0); }
+        }
 
-		public override string Description
-		{
-			get { return "GCC based toolchain PC."; }
-		}
+        public override string Description
+        {
+            get { return "GCC based toolchain PC."; }
+        }
 
-		public override string ExecutableExtension=> ".exe";		
+        public override string ExecutableExtension => ".exe";
 
-		public override string StaticLibraryExtension => ".a";		
+        public override string StaticLibraryExtension => ".a";
 
-		public override void ProvisionSettings(IProject project)
-		{
-			ProvisionLocalGccSettings(project);
-		}
-
-		public static LocalGccToolchainSettings ProvisionLocalGccSettings(IProject project)
-		{
-			var result = GetSettings(project);
-
-			if (result == null)
-			{
-				project.ToolchainSettings.LocalGCC = new LocalGccToolchainSettings();
-				result = project.ToolchainSettings.LocalGCC;
-				project.Save();
-			}
-
-			return result;
-		}
-
-		public static LocalGccToolchainSettings GetSettings(IProject project)
-		{
-			LocalGccToolchainSettings result = null;
-
-			try
-			{
-				if (project.ToolchainSettings.LocalGCC is ExpandoObject)
-				{
-					result = (project.ToolchainSettings.LocalGCC as ExpandoObject).GetConcreteType<LocalGccToolchainSettings>();
-				}
-				else
-				{
-					result = project.ToolchainSettings.LocalGCC;
-				}
-			}
-			catch (Exception)
-			{
-			}
-
-			return result;
-		}
-
-		private string GetLinkerScriptLocation(IStandardProject project)
-		{
-			return Path.Combine(project.CurrentDirectory, "link.ld");
-		}				
+        private string GetLinkerScriptLocation(IStandardProject project)
+        {
+            return Path.Combine(project.CurrentDirectory, "link.ld");
+        }
 
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
         {
-			var settings = GetSettings(project);
+            var settings = GetSettings(project);
 
-			var result = string.Empty;
+            var result = string.Empty;
 
-			result += string.Format("-flto -static-libgcc -static-libstdc++ -Wl,-Map={0}.map ",
-				Path.GetFileNameWithoutExtension(project.Name));
+            result += string.Format("-flto -static-libgcc -static-libstdc++ -Wl,-Map={0}.map ",
+                Path.GetFileNameWithoutExtension(project.Name));
 
-			result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);
+            result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);
 
-			if (settings.LinkSettings.DiscardUnusedSections)
-			{
-				result += "-Wl,--gc-sections ";
-			}
+            if (settings.LinkSettings.DiscardUnusedSections)
+            {
+                result += "-Wl,--gc-sections ";
+            }
 
-			switch (settings.CompileSettings.Optimization)
-			{
-				case OptimizationLevel.None:
-					result += " -O0";
-					break;
+            switch (settings.CompileSettings.Optimization)
+            {
+                case OptimizationLevel.None:
+                    result += " -O0";
+                    break;
 
-				case OptimizationLevel.Level1:
-					result += " -O1";
-					break;
+                case OptimizationLevel.Level1:
+                    result += " -O1";
+                    break;
 
-				case OptimizationLevel.Level2:
-					result += " -O2";
-					break;
+                case OptimizationLevel.Level2:
+                    result += " -O2";
+                    break;
 
-				case OptimizationLevel.Level3:
-					result += " -O3";
-					break;
-			}
+                case OptimizationLevel.Level3:
+                    result += " -O3";
+                    break;
+            }
 
-			return result;
-		}
+            return result;
+        }
 
-		public override string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile file)
-		{
-			var result = string.Empty;
+        public override string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile file)
+        {
+            var result = string.Empty;
 
-			//var settings = GetSettings(project).CompileSettings;
-			var settings = GetSettings(superProject);
+            //var settings = GetSettings(project).CompileSettings;
+            var settings = GetSettings(superProject);
 
-			result += "-Wall -c ";
+            result += "-Wall -c ";
 
-			if (settings.CompileSettings.DebugInformation)
-			{
-				result += "-g ";
-			}
+            if (settings.CompileSettings.DebugInformation)
+            {
+                result += "-g ";
+            }
 
-			// TODO remove dependency on file?
-			if (file != null)
-			{
-				if (file.Extension == ".cpp")
-				{
-					if (!settings.CompileSettings.Rtti)
-					{
-						result += "-fno-rtti ";
-					}
+            // TODO remove dependency on file?
+            if (file != null)
+            {
+                if (file.Extension == ".cpp")
+                {
+                    if (!settings.CompileSettings.Rtti)
+                    {
+                        result += "-fno-rtti ";
+                    }
 
-					if (!settings.CompileSettings.Exceptions)
-					{
-						result += "-fno-exceptions ";
-					}
-				}
-			}
+                    if (!settings.CompileSettings.Exceptions)
+                    {
+                        result += "-fno-exceptions ";
+                    }
 
-			// TODO make this an option.
-			result += "-ffunction-sections -fdata-sections ";
+                    result += "-std=c++14 ";
 
-			switch (settings.CompileSettings.Optimization)
-			{
-				case OptimizationLevel.None:
-				{
-					result += "-O0 ";
-				}
-					break;
+                }
+            }
 
-				case OptimizationLevel.Debug:
-				{
-					result += "-Og ";
-				}
-					break;
+            // TODO make this an option.
+            result += "-ffunction-sections -fdata-sections ";
 
-				case OptimizationLevel.Level1:
-				{
-					result += "-O1 ";
-				}
-					break;
+            switch (settings.CompileSettings.Optimization)
+            {
+                case OptimizationLevel.None:
+                    {
+                        result += "-O0 ";
+                    }
+                    break;
 
-				case OptimizationLevel.Level2:
-				{
-					result += "-O2 ";
-				}
-					break;
+                case OptimizationLevel.Debug:
+                    {
+                        result += "-Og ";
+                    }
+                    break;
 
-				case OptimizationLevel.Level3:
-				{
-					result += "-O3 ";
-				}
-					break;
-			}
+                case OptimizationLevel.Level1:
+                    {
+                        result += "-O1 ";
+                    }
+                    break;
 
-			switch (settings.CompileSettings.OptimizationPreference)
-			{
-				case OptimizationPreference.Size:
-				{
-					result += "-Os ";
-				}
-					break;
+                case OptimizationLevel.Level2:
+                    {
+                        result += "-O2 ";
+                    }
+                    break;
 
-				case OptimizationPreference.Speed:
-				{
-					result += "-Ofast ";
-				}
-					break;
-			}
+                case OptimizationLevel.Level3:
+                    {
+                        result += "-O3 ";
+                    }
+                    break;
+            }
 
-			result += settings.CompileSettings.CustomFlags + " ";
+            switch (settings.CompileSettings.OptimizationPreference)
+            {
+                case OptimizationPreference.Size:
+                    {
+                        result += "-Os ";
+                    }
+                    break;
 
-			// toolchain includes
+                case OptimizationPreference.Speed:
+                    {
+                        result += "-Ofast ";
+                    }
+                    break;
+            }
 
-			// Referenced includes
-			var referencedIncludes = project.GetReferencedIncludes();
+            result += settings.CompileSettings.CustomFlags + " ";
 
-			foreach (var include in referencedIncludes)
-			{
-				result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
-			}
+            // toolchain includes
 
-			// global includes
-			var globalIncludes = superProject.GetGlobalIncludes();
+            // Referenced includes
+            var referencedIncludes = project.GetReferencedIncludes();
 
-			foreach (var include in globalIncludes)
-			{
-				result += string.Format("-I\"{0}\" ", include);
-			}
+            foreach (var include in referencedIncludes)
+            {
+                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
+            }
 
-			// public includes
-			foreach (var include in project.PublicIncludes)
-			{
-				result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
-			}
+            // global includes
+            var globalIncludes = superProject.GetGlobalIncludes();
 
-			// includes
-			foreach (var include in project.Includes)
-			{
-				result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include.Value));
-			}
+            foreach (var include in globalIncludes)
+            {
+                result += string.Format("-I\"{0}\" ", include);
+            }
 
-			var referencedDefines = project.GetReferencedDefines();
-			foreach (var define in referencedDefines)
-			{
-				result += string.Format("-D{0} ", define);
-			}
+            // public includes
+            foreach (var include in project.PublicIncludes)
+            {
+                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
+            }
 
-			// global includes
-			var globalDefines = superProject.GetGlobalDefines();
+            // includes
+            foreach (var include in project.Includes)
+            {
+                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include.Value));
+            }
 
-			foreach (var define in globalDefines)
-			{
-				result += string.Format("-D{0} ", define);
-			}
+            var referencedDefines = project.GetReferencedDefines();
+            foreach (var define in referencedDefines)
+            {
+                result += string.Format("-D{0} ", define);
+            }
 
-			foreach (var define in project.Defines)
-			{
-				result += string.Format("-D{0} ", define.Value);
-			}
+            // global includes
+            var globalDefines = superProject.GetGlobalDefines();
 
-			if (Platform.PlatformIdentifier == PlatformID.Win32NT)
-			{
-				result += string.Format("-D{0} ", "WIN32NT");
-			}
+            foreach (var define in globalDefines)
+            {
+                result += string.Format("-D{0} ", define);
+            }
 
-			foreach (var arg in superProject.ToolChainArguments)
-			{
-				result += string.Format(" {0}", arg);
-			}
+            foreach (var define in project.Defines)
+            {
+                result += string.Format("-D{0} ", define.Value);
+            }
 
-			foreach (var arg in superProject.CompilerArguments)
-			{
-				result += string.Format(" {0}", arg);
-			}
+            if (Platform.PlatformIdentifier == PlatformID.Win32NT)
+            {
+                result += string.Format("-D{0} ", "WIN32NT");
+            }
 
-			// TODO factor out this code from here!
-			if (file != null)
-			{
-				switch (file.Extension)
-				{
-					case ".c":
-					{
-						foreach (var arg in superProject.CCompilerArguments)
-						{
-							result += string.Format(" {0}", arg);
-						}
-					}
-						break;
+            foreach (var arg in superProject.ToolChainArguments)
+            {
+                result += string.Format(" {0}", arg);
+            }
 
-					case ".cpp":
-					{
-						foreach (var arg in superProject.CppCompilerArguments)
-						{
-							result += string.Format(" {0}", arg);
-						}
-					}
-						break;
-				}
-			}
+            foreach (var arg in superProject.CompilerArguments)
+            {
+                result += string.Format(" {0}", arg);
+            }
 
-			return result;
-		}
+            // TODO factor out this code from here!
+            if (file != null)
+            {
+                switch (file.Extension)
+                {
+                    case ".c":
+                        {
+                            foreach (var arg in superProject.CCompilerArguments)
+                            {
+                                result += string.Format(" {0}", arg);
+                            }
+                        }
+                        break;
 
-		public override List<string> GetToolchainIncludes()
-		{
-			return new List<string>
-			{
-                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include"),
-                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include-fixed"),
-                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include"),
-                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++"),
-                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32"),
-                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32", "backward")
-            };
-		}
+                    case ".cpp":
+                        {
+                            foreach (var arg in superProject.CppCompilerArguments)
+                            {
+                                result += string.Format(" {0}", arg);
+                            }
+                        }
+                        break;
+                }
+            }
 
-		public override bool SupportsFile(ISourceFile file)
-		{
-			var result = false;
+            return result;
+        }
 
-			if (Path.GetExtension(file.Location) == ".cpp" || Path.GetExtension(file.Location) == ".c")
-			{
-				result = true;
-			}
+        public override bool SupportsFile(ISourceFile file)
+        {
+            var result = false;
 
-			return result;
-		}
+            if (Path.GetExtension(file.Location) == ".cpp" || Path.GetExtension(file.Location) == ".c")
+            {
+                result = true;
+            }
 
-		public override IList<object> GetConfigurationPages(IProject project)
-		{
-			var result = new List<object>();
+            return result;
+        }
 
-			result.Add(new CompileSettingsFormViewModel(project));
-			result.Add(new LinkerSettingsFormViewModel(project));
+        public override IList<object> GetConfigurationPages(IProject project)
+        {
+            var result = new List<object>();
 
-			return result;
-		}
+            result.Add(new CompileSettingsFormViewModel(project));
+            result.Add(new LinkerSettingsFormViewModel(project));
 
-		public override bool CanHandle(IProject project)
-		{
-			var result = false;
+            return result;
+        }
 
-			if (project is IStandardProject)
-			{
-				result = true;
-			}
+        public override bool CanHandle(IProject project)
+        {
+            var result = false;
 
-			return result;
-		}
-	}
+            if (project is IStandardProject)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+    }
 }

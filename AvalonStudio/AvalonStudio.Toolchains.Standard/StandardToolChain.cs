@@ -64,18 +64,39 @@ namespace AvalonStudio.Toolchains.Standard
 		public abstract string ExecutableExtension { get; }
 		public abstract string StaticLibraryExtension { get; }
 
-		public async Task<bool> Build(IConsole console, IProject project, string label = "")
-		{
-			console.Clear();
-			console.WriteLine("Starting Build...");
+        public abstract bool ValidateToolchainExecutables(IConsole console);
 
-			var result = true;
-			terminateBuild = false;
+        public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
+		{
+            if(!ValidateToolchainExecutables(console))
+            {
+                return false;
+            }
+
+			console.Clear();
+
+            var result = await PreBuild(console, project);
+
+            console.WriteLine("Starting Build...");
+            
+			terminateBuild = !result;
 
 			SetFileCount(project as IStandardProject);
 			buildCount = 0;
 
 			var compiledProjects = new List<CompileResult>();
+
+            List<Definition> injectedDefines = new List<Definition>();
+
+            if (defines != null)
+            {
+                foreach (var define in defines)
+                {
+                    var injectableDefinition = new Definition() { Global = true, Value = define };
+                    (project as IStandardProject).Defines.Add(injectableDefinition);
+                    injectedDefines.Add(injectableDefinition);
+                }
+            }       
 
 			if (!terminateBuild)
 			{
@@ -104,15 +125,16 @@ namespace AvalonStudio.Toolchains.Standard
 						{
 							if (compiledProject.Project.Location != project.Location)
 							{
-								Link(console, project as IStandardProject, compiledProject, linkedReferences);
-							}
+								var linkResult = Link(console, project as IStandardProject, compiledProject, linkedReferences);
+                            }
 							else
 							{
 								// if (linkedReferences.Count > 0)
 								{
 									linkedReferences.ObjectLocations = compiledProject.ObjectLocations;
 									linkedReferences.NumberOfObjectsCompiled = compiledProject.NumberOfObjectsCompiled;
-									Link(console, project as IStandardProject, linkedReferences, linkedReferences, label);
+									var linkResult = Link(console, project as IStandardProject, linkedReferences, linkedReferences, label);
+                                    result = await PostBuild(console, project, linkResult);
 								}
 							}
 
@@ -144,6 +166,13 @@ namespace AvalonStudio.Toolchains.Standard
 				console.WriteLine("Build Failed");
 			}
 
+            foreach(var define in injectedDefines)
+            {
+                (project as IStandardProject).Defines.Remove(define);
+            }
+
+            project.Save();
+
 			return result;
 		}
 
@@ -157,11 +186,6 @@ namespace AvalonStudio.Toolchains.Standard
 
 				console.WriteLine("Clean Completed.");
 			});
-		}
-
-		public IList<string> Includes
-		{
-			get { return GetToolchainIncludes(); }
 		}
 
 		public abstract IList<object> GetConfigurationPages(IProject project);
@@ -202,7 +226,7 @@ namespace AvalonStudio.Toolchains.Standard
 
 		public abstract string GetLinkerArguments(IStandardProject superProject, IStandardProject project);
 
-		public abstract List<string> GetToolchainIncludes();
+		public abstract IEnumerable<string> GetToolchainIncludes(ISourceFile file);
 
 		public abstract bool SupportsFile(ISourceFile file);
 
@@ -265,7 +289,7 @@ namespace AvalonStudio.Toolchains.Standard
 			});
 		}
 
-		private void Link(IConsole console, IStandardProject superProject, CompileResult compileResult,
+		private LinkResult Link(IConsole console, IStandardProject superProject, CompileResult compileResult,
 			CompileResult linkResults, string label = "")
 		{
 			var binDirectory = compileResult.Project.GetBinDirectory(superProject);
@@ -333,7 +357,10 @@ namespace AvalonStudio.Toolchains.Standard
 			{
 				if (compileResult.Project.Type == ProjectType.StaticLibrary)
 				{
-					linkResults.LibraryLocations.Add(executable);
+                    if (compileResult.ObjectLocations.Count > 0)  // This is where we have a libray with just headers.
+                    {
+                        linkResults.LibraryLocations.Add(executable);
+                    }
 				}
 				else
 				{
@@ -348,6 +375,8 @@ namespace AvalonStudio.Toolchains.Standard
 			{
 				linkResults.ExitCode = linkResult.ExitCode;
 			}
+
+            return linkResult;
 		}
 
 		private async Task CompileProject(IConsole console, IStandardProject superProject, IStandardProject project,
@@ -549,5 +578,9 @@ namespace AvalonStudio.Toolchains.Standard
 				console.WriteLine(string.Format("[BB] - Cleaning Project - {0}", project.Name));
 			}
 		}
-	}
+
+        public abstract Task<bool>PreBuild(IConsole console, IProject project);
+
+        public abstract Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult);
+    }
 }

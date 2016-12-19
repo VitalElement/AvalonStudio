@@ -126,7 +126,7 @@ namespace AvalonStudio.Controls
 
         private void FormatAll()
         {
-            if (Model?.LanguageService != null)
+            if (Model?.LanguageService != null && TextDocument != null)
             {
                 CaretIndex = Model.LanguageService.Format(TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
             }
@@ -140,7 +140,7 @@ namespace AvalonStudio.Controls
             highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
 
             BeforeTextChangedCommand = ReactiveCommand.Create();
-            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
+            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));            
 
             TextChangedCommand = ReactiveCommand.Create();
             disposables.Add(TextChangedCommand.Subscribe(model.OnTextChanged));
@@ -159,7 +159,7 @@ namespace AvalonStudio.Controls
                 intellisenseManager?.Dispose();
                 intellisenseManager = null;
 
-                Diagnostics.Clear();
+                Diagnostics?.Clear();
 
                 ShellViewModel.Instance.InvalidateErrors();
 
@@ -297,12 +297,16 @@ namespace AvalonStudio.Controls
             Dock = Dock.Right;
         }
 
+        ~EditorViewModel()
+        {
+        }
+
         private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
         {
             if (intellisenseManager != null)
             {
                 var location = TextDocument.GetLocation(caretIndex);
-                intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, EditorModel.UnsavedFiles);
+                intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, EditorModel.UnsavedFiles.ToList());
             }
         }
 
@@ -320,10 +324,7 @@ namespace AvalonStudio.Controls
             }
         }
 
-        ~EditorViewModel()
-        {
-            Model.ShutdownBackgroundWorkers();
-        }
+       
 
         #endregion
 
@@ -403,7 +404,7 @@ namespace AvalonStudio.Controls
                         return "Inconsolata";
 
                     default:
-                        return "Inconsolata";
+                        return "Consolas";
                 }
             }
         }
@@ -556,7 +557,7 @@ namespace AvalonStudio.Controls
 
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor && Model.LanguageService != null)
             {
-                var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles, offset);
+                var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles.ToList(), offset);
 
                 if (symbol != null)
                 {
@@ -660,20 +661,21 @@ namespace AvalonStudio.Controls
 
         #endregion
 
-        #region Public Methods
+       #region Public Methods
         private bool ignoreFileModifiedEvents = false;
         public void Save()
         {
             ignoreFileModifiedEvents = true;
+
+            FormatAll();
 
             Model.Save();
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ignoreFileModifiedEvents = false;
+                IsDirty = false;
             });
-
-            IsDirty = Model.IsDirty;
         }
 
         public void ClearDebugHighlight()
@@ -681,6 +683,6 @@ namespace AvalonStudio.Controls
             DebugLineHighlighter.Line = -1;
         }
 
-        #endregion
+        #endregion 
     }
 }

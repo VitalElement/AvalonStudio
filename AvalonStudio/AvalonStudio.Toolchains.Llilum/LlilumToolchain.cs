@@ -8,12 +8,23 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.Llilum
 {
 	public class LlilumToolchain : StandardToolChain
 	{
-		public override Version Version
+        public override async Task<bool> PreBuild(IConsole console, IProject project)
+        {
+            return true;
+        }
+
+        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
+        {
+            return true;
+        }
+
+        public override Version Version
 		{
 			get { return new Version(1, 0, 0, 0); }
 		}
@@ -45,7 +56,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.FileName = Path.Combine(BaseDirectory, "Roslyn", "csc.exe");
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -94,7 +105,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			startInfo.FileName = Path.Combine(BaseDirectory, "Llilum\\ZeligBuild\\Host\\bin\\Debug",
 				"Microsoft.Zelig.Compiler.exe");
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -142,7 +153,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.FileName = Path.Combine(BaseDirectory, "LLVM", "llc.exe");
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
 			}
@@ -290,7 +301,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 				startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-				if (!System.IO.File.Exists(startInfo.FileName))
+				if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 				{
 					result.ExitCode = -1;
 					console.WriteLine("Unable to find compiler (" + startInfo.FileName + ") Please check project compiler settings.");
@@ -407,7 +418,7 @@ namespace AvalonStudio.Toolchains.Llilum
 
 			startInfo.WorkingDirectory = project.Solution.CurrentDirectory;
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				result.ExitCode = -1;
 				console.WriteLine("Unable to find linker executable (" + startInfo.FileName + ") Check project compiler settings.");
@@ -516,7 +527,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			var startInfo = new ProcessStartInfo();
 			startInfo.FileName = Path.Combine(BaseDirectory, "GCC\\bin", "arm-none-eabi-size.exe");
 
-			if (!System.IO.File.Exists(startInfo.FileName))
+			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("Unable to find tool (" + startInfo.FileName + ") check project compiler settings.");
 				result.ExitCode = -1;
@@ -570,7 +581,7 @@ namespace AvalonStudio.Toolchains.Llilum
 			return result;
 		}
 
-		public override List<string> GetToolchainIncludes()
+		public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
 		{
 			//throw new NotImplementedException();
 
@@ -616,5 +627,10 @@ namespace AvalonStudio.Toolchains.Llilum
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        public override bool ValidateToolchainExecutables(IConsole console)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

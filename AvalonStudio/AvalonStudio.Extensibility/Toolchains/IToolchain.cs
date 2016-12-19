@@ -11,8 +11,9 @@ namespace AvalonStudio.Toolchains
 	[InheritedExport(typeof (IToolChain))]
 	public interface IToolChain : IPlugin
 	{
-		IList<string> Includes { get; }
-		Task<bool> Build(IConsole console, IProject project, string label = "");
+        IEnumerable<string> GetToolchainIncludes(ISourceFile file);
+
+        Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null);
 
 		Task Clean(IConsole console, IProject project);
 

@@ -17,6 +17,7 @@ using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using OmniXaml.Attributes;
 using Key = Avalonia.Input.Key;
+using Avalonia.LogicalTree;
 
 namespace AvalonStudio.TextEditor
 {
@@ -39,9 +40,7 @@ namespace AvalonStudio.TextEditor
         #region Contructors
 
         static TextEditor()
-        {
-            TextChangedDelayProperty.Changed.AddClassHandler<TextEditor>(
-                (s, v) => s.textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, (int)v.NewValue));
+        {            
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
 
             CaretIndexProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
@@ -51,6 +50,32 @@ namespace AvalonStudio.TextEditor
                     s.InvalidateCaretPosition();
 
                     s.InvalidateSelectedWord();
+                }
+            });
+
+            HeaderProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
+            {
+                if (v.OldValue as ILogical != null)
+                {
+                    s.LogicalChildren.Remove(v.OldValue as ILogical);
+                }
+
+                if (v.NewValue as ILogical != null)
+                {
+                    s.LogicalChildren.Add(v.NewValue as ILogical);
+                }
+            });
+
+            ContentProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
+            {
+                if (v.OldValue as ILogical != null)
+                {
+                    s.LogicalChildren.Remove(v.OldValue as ILogical);
+                }
+
+                if (v.NewValue as ILogical != null)
+                {
+                    s.LogicalChildren.Add(v.NewValue as ILogical);
                 }
             });
 
@@ -81,26 +106,20 @@ namespace AvalonStudio.TextEditor
                 EditorScrolled?.Invoke(this, new EventArgs());
             }));
 
-            disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
-
-            textChangedDelayTimer.Tick += TextChangedDelayTimer_Tick;
+            disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));            
         }
 
         public event EventHandler<EventArgs> EditorScrolled;
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            textChangedDelayTimer.Tick -= TextChangedDelayTimer_Tick;
             TextView = null;
             TextDocument = null;
-            Header = null;
-            Content = null;
             disposables.Dispose();
         }
 
         ~TextEditor()
         {
-            Console.WriteLine("Text Editor Control Destructed.");
         }
 
         public TextEditor()
@@ -109,16 +128,11 @@ namespace AvalonStudio.TextEditor
 
             Name = "textEditor";
             highestUserSelectedColumn = 1;
-
-            textChangedDelayTimer = new DispatcherTimer();
-            textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, 225);
         }
 
         #endregion
 
-        #region Private Data
-
-        private readonly DispatcherTimer textChangedDelayTimer;
+        #region Private Data        
         private int highestUserSelectedColumn;
 
         #endregion
@@ -235,20 +249,7 @@ namespace AvalonStudio.TextEditor
         {
             get { return GetValue(TextChangedCommandProperty); }
             set { SetValue(TextChangedCommandProperty, value); }
-        }
-
-        public static readonly AvaloniaProperty<int> TextChangedDelayProperty =
-            AvaloniaProperty.Register<TextEditor, int>(nameof(TextChangedDelay));
-
-        public int TextChangedDelay
-        {
-            get { return GetValue(TextChangedDelayProperty); }
-            set
-            {
-                SetValue(TextChangedDelayProperty, value);
-                textChangedDelayTimer.Interval = new TimeSpan(0, 0, 0, 0, value);
-            }
-        }
+        }        
 
         public static readonly AvaloniaProperty<bool> AcceptsReturnProperty =
             AvaloniaProperty.Register<TextEditor, bool>(nameof(AcceptsReturn));
@@ -471,16 +472,6 @@ namespace AvalonStudio.TextEditor
             }
         }
 
-        private void TextChangedDelayTimer_Tick(object sender, EventArgs e)
-        {
-            textChangedDelayTimer.Stop();
-
-            if (TextChangedCommand != null && TextChangedCommand.CanExecute(null))
-            {
-                TextChangedCommand.Execute(null);
-            }
-        }
-
         private void SelectAll()
         {
             SelectionStart = 0;
@@ -534,7 +525,7 @@ namespace AvalonStudio.TextEditor
         {
             var caretIndex = CaretIndex;
 
-            if(caretIndex > TextDocument.TextLength)
+            if (caretIndex > TextDocument.TextLength)
             {
                 caretIndex = TextDocument.TextLength;
             }
@@ -765,6 +756,8 @@ namespace AvalonStudio.TextEditor
         {
             TextView = e.NameScope.Find<TextView>("textView");
 
+            LogicalChildren.Add(TextView);
+
             disposables.Add(TextDocumentProperty.Changed.Subscribe(args =>
             {
                 if (args.NewValue != null)
@@ -786,8 +779,10 @@ namespace AvalonStudio.TextEditor
 
                         LineHeight = TextView.CharSize.Height;
 
-                        textChangedDelayTimer.Stop();
-                        textChangedDelayTimer.Start();
+                        if (TextChangedCommand != null && TextChangedCommand.CanExecute(null))
+                        {
+                            TextChangedCommand.Execute(null);
+                        }
                     };
                 }
             }));
@@ -857,11 +852,11 @@ namespace AvalonStudio.TextEditor
             {
                 var point = e.GetPosition(TextView.TextSurface);
 
-                var currentMouseOffset = TextView.GetOffsetFromPoint(point);
-
-                if (currentMouseOffset != -1)
+                if (e.Device.Captured == TextView)
                 {
-                    if (e.Device.Captured == TextView)
+                    var currentMouseOffset = TextView.GetOffsetFromPoint(point);
+
+                    if (currentMouseOffset != -1)
                     {
                         CaretIndex = currentMouseOffset;
 
