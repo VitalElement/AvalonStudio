@@ -440,20 +440,6 @@ namespace AvalonStudio.Toolchains.Clang
             return result;
         }
 
-        
-
-        public override bool SupportsFile(ISourceFile file)
-        {
-            var result = false;
-
-            if (Path.GetExtension(file.Location) == ".cpp" || Path.GetExtension(file.Location) == ".c")
-            {
-                result = true;
-            }
-
-            return result;
-        }
-
         public override IList<object> GetConfigurationPages(IProject project)
         {
             var result = new List<object>();
