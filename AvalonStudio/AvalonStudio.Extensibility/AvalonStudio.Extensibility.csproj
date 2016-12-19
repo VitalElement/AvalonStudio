@@ -233,6 +233,7 @@
     <Compile Include="Languages\AccessType.cs" />
     <Compile Include="Languages\CompletionAssistance\ICompletionAssistant.cs" />
     <Compile Include="Languages\CompletionAssistance\SignatureHelpModels.cs" />
+    <Compile Include="Languages\Highlighting\TextColoringTransformer.cs" />
     <Compile Include="Languages\IndexEntry.cs" />
     <Compile Include="MainMenu\IMenu.cs" />
     <Compile Include="MainMenu\IMenuBuilder.cs" />

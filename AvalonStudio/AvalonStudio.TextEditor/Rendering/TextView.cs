@@ -785,7 +785,7 @@ namespace AvalonStudio.TextEditor.Rendering
             if (!line.DocumentLine.IsDeleted)
             {
                 var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length),
-                    FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
+                    FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);                
 
                 line.RenderedText = formattedText;
 

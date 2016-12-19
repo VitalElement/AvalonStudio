@@ -6,8 +6,8 @@
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
     using CPlusPlus;
-    using CPlusPlus.Rendering;
     using Extensibility.Threading;
+    using Highlighting;
     using Projects.OmniSharp;
     using System;
     using System.Collections.Generic;
@@ -319,14 +319,7 @@
             {
                 foreach (var highlight in response.Highlights)
                 {
-                    result.SyntaxHighlightingData.Add(new LineColumnSyntaxHighlightingData
-                    {
-                        StartLine = highlight.StartLine,
-                        EndLine = highlight.EndLine,
-                        StartColumn = highlight.StartColumn,
-                        EndColumn = highlight.EndColumn,
-                        Type = ToAvalonHighlightType(highlight.Kind)
-                    });
+                    result.SyntaxHighlightingData.Add(new LineColumnSyntaxHighlightingData(highlight.StartLine, highlight.StartColumn, highlight.EndLine, highlight.EndColumn, ToAvalonHighlightType(highlight.Kind)));
                 }
 
                 dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);

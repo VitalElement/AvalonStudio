@@ -465,9 +465,17 @@
       <Project>{48a302ff-ece3-4231-8112-688d0e48921e}</Project>
       <Name>AvalonStudio.Languages.CSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Languages.D\AvalonStudio.Languages.D.csproj">
+      <Project>{ddbe9857-e332-4b2c-941c-6e6f71151b22}</Project>
+      <Name>AvalonStudio.Languages.D</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
       <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
       <Name>AvalonStudio.Projects.CPlusPlus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects.DUB\AvalonStudio.Projects.DUB.csproj">
+      <Project>{ed41ced3-64d6-4581-b504-6afca7867eed}</Project>
+      <Name>AvalonStudio.Projects.DUB</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.OmniSharp\AvalonStudio.Projects.OmniSharp.csproj">
       <Project>{a1686d65-2f40-48ea-b04b-a775730fdd55}</Project>
@@ -496,6 +504,10 @@
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj">
       <Project>{1FC43C7D-5758-42D7-9977-986074E9CBC0}</Project>
       <Name>AvalonStudio.Toolchains.Clang</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.LDC\AvalonStudio.Toolchains.LDC.csproj">
+      <Project>{a0e8b38f-f0f8-4afc-bfc8-ecd880fd0e21}</Project>
+      <Name>AvalonStudio.Toolchains.LDC</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj">
       <Project>{7A82C777-039E-47AA-A77B-3A9544E147C5}</Project>
