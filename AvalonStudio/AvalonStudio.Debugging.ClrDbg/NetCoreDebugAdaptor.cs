@@ -26,12 +26,14 @@
         {
             DebugMode = true;
 
-            await base.StartAsync(toolchain, console, project, Path.Combine(BaseDirectory, "clrdbg" + Platform.ExecutableExtension), false);
+            await base.StartAsync(toolchain, console, project, Path.Combine(BaseDirectory, "clrdbg" + Platform.ExecutableExtension), false, Path.GetDirectoryName(project.Executable));
 
             await SafelyExecuteCommand(async () => await new EnablePrettyPrintingCommand().Execute(this));
 
             await SafelyExecuteCommand(async () => await new ExecArgumentsCommand(Path.GetFileName(project.Executable)).Execute(this));
-            
+
+            await SafelyExecuteCommand(async () => await new SetBreakPointCommand("Program.cs", 7).Execute(this));
+
             return true;
         }
 
