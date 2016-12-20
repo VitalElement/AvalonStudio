@@ -36,15 +36,30 @@
         {
             return await Task.Factory.StartNew(() =>
             {
-                var exitCode = PlatformSupport.ExecuteShellCommand(Path.Combine(BinDirectory, "dotnet" + Platform.ExecutableExtension), "build", (s, e) => console.WriteLine(e.Data), (s, e) =>
+            string lastLine = string.Empty;
+
+            var exitCode = PlatformSupport.ExecuteShellCommand(Path.Combine(BinDirectory, "dotnet" + Platform.ExecutableExtension), "build", (s, e) =>
+            {
+                console.WriteLine(e.Data);
+
+                if (!string.IsNullOrEmpty(e.Data))
                 {
-                    if (e.Data != null)
-                    {
-                        console.WriteLine();
-                        console.WriteLine(e.Data);
-                    }
-                },
-                false, project.CurrentDirectory, false);
+                    lastLine = e.Data;
+                }
+            }, (s, e) =>
+            {
+                if (e.Data != null)
+                {
+                    console.WriteLine();
+                    console.WriteLine(e.Data);
+                }
+            },
+            false, project.CurrentDirectory, false);
+
+            if (exitCode == 0 && lastLine.StartsWith($"  {project.Name} -> "))
+            {
+                project.Executable = lastLine.Substring($"  {project.Name} -> ".Length);
+            };
 
                 return exitCode == 0;
             });
