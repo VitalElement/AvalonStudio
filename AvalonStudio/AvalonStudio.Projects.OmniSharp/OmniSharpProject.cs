@@ -62,7 +62,18 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override IDebugger Debugger
         {
-            get; set;
+            get
+            {
+                var shell = IoC.Get<IShell>();
+
+                var debugger = shell.Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.ClrDbg.NetCoreDebugAdaptor");
+
+                return debugger;
+            }
+            set
+            {
+
+            }
         }
 
         public override dynamic DebugSettings { get; set; }
