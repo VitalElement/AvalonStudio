@@ -279,133 +279,149 @@ namespace AvalonStudio.Debugging.GDB
             }
 		}
 
-		public virtual async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
-		{
-			this.console = console;
-			var startInfo = new ProcessStartInfo();
+        public virtual async Task<bool> StartAsync (IToolChain toolchain, IConsole console, IProject project, string gdbExecutable = "", bool loadExecutableAsArgument = true)
+        {
+            this.console = console;
+            var startInfo = new ProcessStartInfo();
 
-			console.WriteLine("[GDB] - Starting...");
+            console.WriteLine("[GDB] - Starting...");
 
-			// This information should be part of this extension... or configurable internally?
-			// This maybe indicates that debuggers are part of toolchain?
+            // This information should be part of this extension... or configurable internally?
+            // This maybe indicates that debuggers are part of toolchain?
 
-			if (toolchain is GCCToolchain)
-			{
-				startInfo.FileName = (toolchain as GCCToolchain).GDBExecutable;
-			}
-			else
-			{
-				console.WriteLine("[GDB] - Error GDB is not able to debug projects compiled on this kind of toolchain (" +
-				                  toolchain.GetType() + ")");
-				return false;
-			}
+            if (gdbExecutable == string.Empty)
+            {
+                if (toolchain is GCCToolchain)
+                {
+                    startInfo.FileName = (toolchain as GCCToolchain).GDBExecutable;
+                }
+                else
+                {
+                    console.WriteLine("[GDB] - Error GDB is not able to debug projects compiled on this kind of toolchain (" +
+                                      toolchain.GetType() + ")");
+                    return false;
+                }
+            }
+            else
+            {
+                startInfo.FileName = gdbExecutable;
+            }
 
-			startInfo.Arguments = string.Format("--interpreter=mi \"{0}\"",
-				Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
+            startInfo.Arguments = "--interpreter=mi";
 
-			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
-			{
-				console.WriteLine("[GDB] - Error unable to find executable.");
-				return false;
-			}
+            if (loadExecutableAsArgument)
+            {
+               startInfo.Arguments +=  string.Format(" \"{0}\"", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
+            }
 
-			// Hide console window
-			startInfo.UseShellExecute = false;
-			startInfo.RedirectStandardOutput = true;
-			startInfo.RedirectStandardError = true;
-			startInfo.RedirectStandardInput = true;
-			startInfo.CreateNoWindow = true;
+            if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
+            {
+                console.WriteLine("[GDB] - Error unable to find executable.");
+                return false;
+            }
 
-			process = Process.Start(startInfo);
+            // Hide console window
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
+            startInfo.RedirectStandardInput = true;
+            startInfo.CreateNoWindow = true;
 
-			input = process.StandardInput;
+            process = Process.Start(startInfo);
 
-			var attempts = 0;
-			while (!Platform.FreeConsole() && attempts < 10)
-			{
-				Console.WriteLine(Marshal.GetLastWin32Error());
-				Thread.Sleep(10);
-				attempts++;
-			}
+            input = process.StandardInput;
 
-			attempts = 0;
+            var attempts = 0;
+            while (!Platform.FreeConsole() && attempts < 10)
+            {
+                Console.WriteLine(Marshal.GetLastWin32Error());
+                Thread.Sleep(10);
+                attempts++;
+            }
 
-			while (!Platform.AttachConsole(process.Id) && attempts < 10)
-			{
-				Thread.Sleep(10);
-				attempts++;
-			}
+            attempts = 0;
 
-			while (!Platform.SetConsoleCtrlHandler(null, true))
-			{
-				Console.WriteLine(Marshal.GetLastWin32Error());
-				Thread.Sleep(10);
-			}
+            while (!Platform.AttachConsole(process.Id) && attempts < 10)
+            {
+                Thread.Sleep(10);
+                attempts++;
+            }
+
+            while (!Platform.SetConsoleCtrlHandler(null, true))
+            {
+                Console.WriteLine(Marshal.GetLastWin32Error());
+                Thread.Sleep(10);
+            }
 
             TaskCompletionSource<JobRunner> transmitRunnerSet = new TaskCompletionSource<JobRunner>();
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Task.Factory.StartNew(() =>
-			{
+            {
                 transmitRunner = new JobRunner();
 
                 transmitRunnerSet.SetResult(transmitRunner);
 
                 closeTokenSource = new CancellationTokenSource();
 
-				transmitRunner.RunLoop(closeTokenSource.Token);
+                transmitRunner.RunLoop(closeTokenSource.Token);
 
-				transmitRunner = null;
-			});
+                transmitRunner = null;
+            });
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             await transmitRunnerSet.Task;
 
-			Task.Factory.StartNew(() =>
-			{
-				console.WriteLine("[GDB] - Started");
+            Task.Factory.StartNew(() =>
+            {
+                console.WriteLine("[GDB] - Started");
 
 
-				process.OutputDataReceived += (sender, e) =>
-				{
-					if (e.Data != null)
-					{
-						ProcessOutput(e.Data);
-					}
-				};
+                process.OutputDataReceived += (sender, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        ProcessOutput(e.Data);
+                    }
+                };
 
-				process.ErrorDataReceived += (sender, e) =>
-				{
-					if (e.Data != null)
-					{
-						console.WriteLine("[GDB] - " + e.Data);
-					}
-				};
+                process.ErrorDataReceived += (sender, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        console.WriteLine("[GDB] - " + e.Data);
+                    }
+                };
 
-				process.BeginOutputReadLine();
-				process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
 
-				try
-				{
-					process.WaitForExit();
+                try
+                {
+                    process.WaitForExit();
 
-					Platform.FreeConsole();
+                    Platform.FreeConsole();
 
-					Platform.SetConsoleCtrlHandler(null, false);
-				}
-				catch (Exception e)
-				{
-					Console.WriteLine(e);
-				}
+                    Platform.SetConsoleCtrlHandler(null, false);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
 
-				console.WriteLine("[GDB] - Closed");
+                console.WriteLine("[GDB] - Closed");
 
-				closeTokenSource?.Cancel();
-			});
+                closeTokenSource?.Cancel();
+            });
 
             await SafelyExecuteCommand(async () => await new EnablePrettyPrintingCommand().Execute(this));
 
-			return true;
+            return true;
+        }
+
+		public virtual async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
+		{
+            return await StartAsync(toolchain, console, project, string.Empty);
 		}
 
 		public event EventHandler<StopRecord> Stopped;
