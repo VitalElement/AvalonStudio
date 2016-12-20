@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26009.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio", "AvalonStudio\AvalonStudio.csproj", "{8E501956-B9A6-430E-86AC-350ED94B44E4}"
 EndProject
@@ -97,6 +97,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Extensibility.Tests", "AvalonStudio.Extensibility.Tests\AvalonStudio.Extensibility.Tests.csproj", "{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Toolchains.MSBuild", "AvalonStudio.Toolchains.MSBuild\AvalonStudio.Toolchains.MSBuild.csproj", "{D8705EB9-8DAE-4FB3-ABD8-421DF9B5E7D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Debugging.ClrDbg", "AvalonStudio.Debugging.ClrDbg\AvalonStudio.Debugging.ClrDbg.csproj", "{1537D08C-98B8-4A9E-AF02-8A162F873B82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -717,6 +719,22 @@ Global
 		{D8705EB9-8DAE-4FB3-ABD8-421DF9B5E7D9}.Release|x64.Build.0 = Release|Any CPU
 		{D8705EB9-8DAE-4FB3-ABD8-421DF9B5E7D9}.Release|x86.ActiveCfg = Release|x86
 		{D8705EB9-8DAE-4FB3-ABD8-421DF9B5E7D9}.Release|x86.Build.0 = Release|x86
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Debug|ARM.Build.0 = Debug|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Debug|x64.Build.0 = Debug|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Debug|x86.ActiveCfg = Debug|x86
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Debug|x86.Build.0 = Debug|x86
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Release|ARM.ActiveCfg = Release|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Release|ARM.Build.0 = Release|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Release|x64.ActiveCfg = Release|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Release|x64.Build.0 = Release|Any CPU
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Release|x86.ActiveCfg = Release|x86
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -759,6 +777,7 @@ Global
 		{A1686D65-2F40-48EA-B04B-A775730FDD55} = {2DC36CEA-5C75-4389-B370-9AEDA400F540}
 		{E07B65AE-FDEF-4911-99A6-42BD1B95CDA8} = {B1E34F1B-B7C2-44D9-A350-EC3512596EE2}
 		{D8705EB9-8DAE-4FB3-ABD8-421DF9B5E7D9} = {E22D2558-C9DA-4E94-9014-084F28A38431}
+		{1537D08C-98B8-4A9E-AF02-8A162F873B82} = {5F514911-0404-4D14-B69A-458BA643F5C7}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = AvalonStudio\AvalonStudio.csproj
