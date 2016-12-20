@@ -279,7 +279,7 @@ namespace AvalonStudio.Debugging.GDB
             }
 		}
 
-        public virtual async Task<bool> StartAsync (IToolChain toolchain, IConsole console, IProject project, string gdbExecutable = "", bool loadExecutableAsArgument = true)
+        public virtual async Task<bool> StartAsync (IToolChain toolchain, IConsole console, IProject project, string gdbExecutable = "", bool loadExecutableAsArgument = true,  string workingDirectory = "")
         {
             this.console = console;
             var startInfo = new ProcessStartInfo();
@@ -308,6 +308,11 @@ namespace AvalonStudio.Debugging.GDB
             }
 
             startInfo.Arguments = "--interpreter=mi";
+
+            if(workingDirectory != string.Empty)
+            {
+                startInfo.WorkingDirectory = workingDirectory;
+            }
 
             if (loadExecutableAsArgument)
             {
