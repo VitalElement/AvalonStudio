@@ -93,23 +93,26 @@
             completionAssistant.Close();
         }
 
-        private void SetCompletionData(List<CodeCompletionData> completionData)
+        private void SetCompletionData(CodeCompletionResults completionData)
         {
             unfilteredCompletions.Clear();
 
-            foreach (var result in completionData)
+            if (completionData.Contexts != CompletionContext.Unexposed)
             {
-                CompletionDataViewModel currentCompletion = null;
-
-                currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
-
-                if (currentCompletion == null)
+                foreach (var result in completionData.Completions)
                 {
-                    unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
-                }
-                else
-                {
-                    currentCompletion.Overloads++;
+                    CompletionDataViewModel currentCompletion = null;
+
+                    currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
+
+                    if (currentCompletion == null)
+                    {
+                        unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
+                    }
+                    else
+                    {
+                        currentCompletion.Overloads++;
+                    }
                 }
             }
         }
