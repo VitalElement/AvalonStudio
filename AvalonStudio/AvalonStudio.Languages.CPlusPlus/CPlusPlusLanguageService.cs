@@ -117,7 +117,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return CodeCompletionKind.None;
         }
 
-        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile file, int line, int column,
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile file, int line, int column,
             List<UnsavedFile> unsavedFiles, string filter)
         {
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
@@ -127,15 +127,17 @@ namespace AvalonStudio.Languages.CPlusPlus
                 clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
             }
 
-            var result = new List<CodeCompletionData>();
+            var result = new CodeCompletionResults();
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
-                var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+              var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
                 var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(),
                     CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
                 completionResults.Sort();
+
+                result.Contexts = (CompletionContext)completionResults.Contexts;
 
                 foreach (var codeCompletion in completionResults.Results)
                 {
@@ -174,7 +176,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     if (filter == string.Empty || typedText.StartsWith(filter))
                     {
-                        result.Add(new CodeCompletionData
+                        result.Completions.Add(new CodeCompletionData
                         {
                             Suggestion = typedText,
                             Priority = codeCompletion.CompletionString.Priority,
