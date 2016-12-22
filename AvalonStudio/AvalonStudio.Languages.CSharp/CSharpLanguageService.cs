@@ -133,9 +133,9 @@
             return CodeCompletionKind.None;
         }
 
-        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
         {
-            var result = new List<CodeCompletionData>();
+            var result = new CodeCompletionResults ();
 
             var dataAssociation = GetAssociatedData(sourceFile);
 
@@ -156,7 +156,7 @@
 
                     if (filter == string.Empty || completion.CompletionText.StartsWith(filter))
                     {
-                        result.Add(newCompletion);
+                        result.Completions.Add(newCompletion);
                     }
                 }
             }
