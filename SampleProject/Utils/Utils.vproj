@@ -1,0 +1,59 @@
+{
+  "Name": "Utils",
+  "Type": "StaticLibrary",
+  "References": [],
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "CRC.cpp",
+      "Name": "CRC.cpp"
+    },
+    {
+      "File": "Event.cpp",
+      "Name": "Event.cpp"
+    },
+    {
+      "File": "PidController.cpp",
+      "Name": "PidController.cpp"
+    },
+    {
+      "File": "StraightLineFormula.cpp",
+      "Name": "StraightLineFormula.cpp"
+    }
+  ],
+  "StaticLibraries": [],
+  "ToolchainSettings": {
+    "STM32ToolchainSettings": {
+      "CompileSettings": {
+        "Defines": [],
+        "Includes": [],
+        "DebugInformation": false,
+        "Rtti": false,
+        "Exceptions": false,
+        "Optimization": "None",
+        "OptimizationPreference": "None",
+        "Fpu": "None"
+      },
+      "LinkSettings": {
+        "LinkedLibraries": [],
+        "UseMemoryLayout": false,
+        "DiscardUnusedSections": false,
+        "NotUseStandardStartupFiles": false,
+        "Fpu": "None",
+        "Library": "None",
+        "SelectedDeviceId": 0,
+        "InRom1Start": 0,
+        "InRom1Size": 0,
+        "InRom2Start": 0,
+        "InRom2Size": 0,
+        "InRam1Start": 0,
+        "InRam1Size": 0,
+        "InRam2Start": 0,
+        "InRam2Size": 0,
+        "DebugInRam": false
+      }
+    }
+  }
+}

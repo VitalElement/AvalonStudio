@@ -1,0 +1,83 @@
+{
+  "Name": "STM32F4Cube",
+  "Type": "StaticLibrary",
+  "References": [],
+  "Includes": [
+    {
+      "Value": "Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
+      "Exported": true,
+      "Global": false
+    },
+    {
+      "Value": "Drivers/STM32F4xx_HAL_Driver/Inc",
+      "Exported": true,
+      "Global": false
+    },
+    {
+      "Value": "../STM32F4Cube",
+      "Exported": false,
+      "Global": false
+    },
+    {
+      "Value": "Drivers/CMSIS/Include",
+      "Exported": true,
+      "Global": true
+    },
+    {
+      "Value": "Drivers/CMSIS/Device/ST/STM32F4xx/Include",
+      "Exported": true,
+      "Global": true
+    }
+  ],
+  "Defines": [
+    {
+      "Value": "STM32F407xx",
+      "Exported": false,
+      "Global": false
+    }
+  ],
+  "StaticLibraries": [],
+  "Toolchain": "AvalonStudio.Toolchains.STM32.STM32GCCToolchain",
+  "ExcludedFiles": [
+    "Drivers/BSP",
+    "Drivers/CMSIS/DSP_Lib",
+    "Middlewares/ST/STemWin",
+    "Middlewares/ST/STM32_Audio",
+    "Middlewares/ST/STM32_USB_Host_Library",
+    "Middlewares/ST/STM32_USB_Device_Library/Class/AUDIO",
+    "Middlewares/ST/STM32_USB_Device_Library/Class",
+    "Middlewares"
+  ],
+  "ToolchainSettings": {
+    "STM32ToolchainSettings": {
+      "CompileSettings": {
+        "Defines": [],
+        "Includes": [],
+        "DebugInformation": true,
+        "Rtti": false,
+        "Exceptions": false,
+        "Optimization": "None",
+        "OptimizationPreference": "None",
+        "Fpu": "None"
+      },
+      "LinkSettings": {
+        "LinkedLibraries": [],
+        "UseMemoryLayout": false,
+        "DiscardUnusedSections": false,
+        "NotUseStandardStartupFiles": false,
+        "Library": "None",
+        "SelectedDeviceId": 0,
+        "InRom1Start": 0,
+        "InRom1Size": 0,
+        "InRom2Start": 0,
+        "InRom2Size": 0,
+        "InRam1Start": 0,
+        "InRam1Size": 0,
+        "InRam2Start": 0,
+        "InRam2Size": 0,
+        "DebugInRam": false
+      }
+    }
+  },
+  "DebugSettings": {}
+}

@@ -1,0 +1,123 @@
+﻿<Controls:MetroWindow xmlns="https://github.com/avaloniaui"
+                      xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+                      xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
+                      xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
+                      xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"
+                      Icon="resm:AvalonStudio.icon.ico?assembly=AvalonStudio"
+                      Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" Foreground="#FFE4E4E4" Width="1600" Height="900">
+  <Controls:MetroWindow.TitleBarContent>
+    <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="0 2 0 0" Height="22" />
+  </Controls:MetroWindow.TitleBarContent>
+  <Controls:MetroWindow.Styles>
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="#274452" />
+    </Style>
+    <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
+      <Setter Property="Background" Value="#274452" />
+    </Style>
+    <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
+      <Setter Property="Background" Value="#274452" />
+    </Style>
+    <Style Selector="DropDownItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="#274452" />
+    </Style>
+    <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#274452" />
+    </Style>
+
+    <!-- GridSplitter.vertical -->
+    <Style Selector="GridSplitter:vertical">
+      <Setter Property="Width" Value="6" />
+      <Setter Property="Background" Value="#00FFFFFF" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" />
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <!-- GridSplitter.horizontal -->
+    <Style Selector="GridSplitter:horizontal">
+      <Setter Property="Height" Value="6" />
+      <Setter Property="Background" Value="#00FFFFFF" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" BorderThickness="1" />
+        </ControlTemplate>
+      </Setter>
+    </Style>
+  </Controls:MetroWindow.Styles>
+
+  <Grid RowDefinitions="25,*,25">
+    <Grid Grid.ColumnSpan="5" Margin="20 0 0 0">
+      <Controls:ToolBar DataContext="{Binding ToolBar}" />
+    </Grid>
+
+    <Grid Grid.Row="1">
+      <dock:DockControl Name="mainDock">
+        <docking:Branch Orientation="Horizontal" FirstItemLength="0.75*" SecondItemLength="0.25*">
+          <docking:Branch.FirstItem>
+            <docking:Branch Orientation="Horizontal" FirstItemLength="0.75*" SecondItemLength="0.25*">
+              <docking:Branch.FirstItem>
+                <docking:Branch Orientation="Horizontal" FirstItemLength="0.2*" SecondItemLength="0.8*">
+                  <docking:Branch.FirstItem>
+                    <Controls:TabControlView DataContext="{Binding LeftTabs}" IsVisible="{Binding IsVisible}" />
+                  </docking:Branch.FirstItem>
+                  <docking:Branch.SecondItem>
+                    <docking:Branch Orientation="Vertical" FirstItemLength="0.7*" SecondItemLength="0.3*">
+                      <docking:Branch.FirstItem>
+                        <docking:Branch Orientation="Vertical" FirstItemLength="0.3*" SecondItemLength="0.7*">
+                          <docking:Branch.FirstItem>
+                            <Controls:TabControlView DataContext="{Binding MiddleTopTabs}" IsVisible="{Binding IsVisible}" />
+                          </docking:Branch.FirstItem>
+                          <docking:Branch.SecondItem>
+                            <Controls:DocumentTabControl DataContext="{Binding DocumentTabs}"  />
+                          </docking:Branch.SecondItem>
+                        </docking:Branch>
+                      </docking:Branch.FirstItem>
+                      <docking:Branch.SecondItem>
+                        <docking:Branch Orientation="Horizontal" FirstItemLength="0.6*" SecondItemLength="0.4*">
+                          <docking:Branch.FirstItem>
+                            <Controls:TabControlView DataContext="{Binding BottomTabs}" IsVisible="{Binding IsVisible}" />
+                          </docking:Branch.FirstItem>
+                          <docking:Branch.SecondItem>
+                            <Controls:TabControlView DataContext="{Binding BottomRightTabs}" IsVisible="{Binding IsVisible}" />
+                          </docking:Branch.SecondItem>
+                        </docking:Branch>
+                      </docking:Branch.SecondItem>
+                    </docking:Branch>
+                  </docking:Branch.SecondItem>
+                </docking:Branch>
+              </docking:Branch.FirstItem>
+              <docking:Branch.SecondItem>
+                <docking:Branch Orientation="Vertical" FirstItemLength="0.3*" SecondItemLength="0.7*">
+                  <docking:Branch.FirstItem>
+                    <Controls:TabControlView DataContext="{Binding RightTopTabs}" IsVisible="{Binding IsVisible}" />
+                  </docking:Branch.FirstItem>
+                  <docking:Branch.SecondItem>
+                    <docking:Branch Orientation="Vertical" FirstItemLength="0.5*" SecondItemLength="0.5*">
+                      <docking:Branch.FirstItem>
+                        <Controls:TabControlView DataContext="{Binding RightMiddleTabs}" IsVisible="{Binding IsVisible}" />
+                      </docking:Branch.FirstItem>
+                      <docking:Branch.SecondItem>
+                        <Controls:TabControlView DataContext="{Binding RightBottomTabs}" IsVisible="{Binding IsVisible}" />
+                      </docking:Branch.SecondItem>
+                    </docking:Branch>
+                  </docking:Branch.SecondItem>
+                </docking:Branch>
+              </docking:Branch.SecondItem>
+            </docking:Branch>
+          </docking:Branch.FirstItem>
+          <docking:Branch.SecondItem>
+            <Controls:TabControlView DataContext="{Binding RightTabs}" IsVisible="{Binding IsVisible}" />
+          </docking:Branch.SecondItem>
+        </docking:Branch>
+      </dock:DockControl>
+    </Grid>
+
+    <Grid Grid.Row="2" Grid.ColumnSpan="5">
+      <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
+    </Grid>
+
+    <Controls:ModalDialog Grid.RowSpan="3" Grid.ColumnSpan="5" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
+  </Grid>
+</Controls:MetroWindow>

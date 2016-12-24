@@ -1,0 +1,35 @@
+{
+  "Name": "BTPlusPlus",
+  "Type": "StaticLibrary",
+  "References": [
+    {
+      "Name": "Utils",
+      "GitUrl": "https://gitlab.com/GXDesign/Utils.git"
+    },
+    {
+      "Name": "FreeRTOS",
+      "GitUrl": "https://gitlab.com/GXDesign/FreeRTOS.git"
+    },
+    {
+      "Name": "Dispatcher",
+      "GitUrl": "https://gitlab.com/GXDesign/Dispatcher.git"
+    }
+  ],
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "Kernel.cpp"
+    },
+    {
+      "File": "Thread.cpp"
+    },
+    {
+      "File": "ThreadDispatcher.cpp"
+    },
+    {
+      "File": "Timer.cpp"
+    }
+  ]
+}

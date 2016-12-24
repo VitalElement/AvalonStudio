@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Id>390ef733-3446-4431-ac40-fef25ba1e04c</Id>
+  <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+  <Name>SampleProject</Name>
+  <FileName>SampleProject</FileName>
+  <DefaultProjectIndex>15</DefaultProjectIndex>
+  <UnloadedChildren>
+    <Item xsi:type="SolutionFolder">
+      <Id>88cd51cf-650e-41ee-9af9-63f26e9c0d55</Id>
+      <ParentId>390ef733-3446-4431-ac40-fef25ba1e04c</ParentId>
+      <Name>Application</Name>
+      <FileName>Application</FileName>
+    </Item>
+    <Item xsi:type="SolutionFolder">
+      <Id>d4cb91cf-d545-49ce-81bb-977b6b5af03c</Id>
+      <ParentId>390ef733-3446-4431-ac40-fef25ba1e04c</ParentId>
+      <Name>HAL</Name>
+      <FileName>HAL</FileName>
+    </Item>
+    <Item xsi:type="SolutionFolder">
+      <Id>a0f514c0-6484-4a50-9524-1c31bbad91c9</Id>
+      <ParentId>390ef733-3446-4431-ac40-fef25ba1e04c</ParentId>
+      <Name>Platform</Name>
+      <FileName>Platform</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>b7e1359d-8812-4ee6-98c8-3f4ca62eb985</Id>
+      <ParentId>a0f514c0-6484-4a50-9524-1c31bbad91c9</ParentId>
+      <FileName>ArmSystem\ArmSystem.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>d0c55329-a405-4297-bc0f-8888a12bbd48</Id>
+      <ParentId>a0f514c0-6484-4a50-9524-1c31bbad91c9</ParentId>
+      <FileName>STM32HalPlatform\STM32HalPlatform.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>e2ab2d9e-1a0d-4bcc-bdc9-535bb48bf1bb</Id>
+      <ParentId>d4cb91cf-d545-49ce-81bb-977b6b5af03c</ParentId>
+      <FileName>CommonHal\CommonHal.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>23024132-dda7-444e-8c5f-b9fa4daafa9c</Id>
+      <ParentId>d4cb91cf-d545-49ce-81bb-977b6b5af03c</ParentId>
+      <FileName>Utils\Utils.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>2db10d92-818b-499f-b9a3-b3d2c5e94b5e</Id>
+      <ParentId>ddc88468-945b-43cf-a18a-983b0b178cb7</ParentId>
+      <FileName>TemperatureController\TemperatureController.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>ec09d668-8796-4ecc-a51a-3c8d0f962073</Id>
+      <ParentId>ddc88468-945b-43cf-a18a-983b0b178cb7</ParentId>
+      <FileName>StepperMotor\StepperMotor.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>e0d822e7-a4aa-4a51-9ed8-6be5d9e82838</Id>
+      <ParentId>ddc88468-945b-43cf-a18a-983b0b178cb7</ParentId>
+      <FileName>StateEngine\StateEngine.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>f322cbd7-56c0-4f05-a6bd-6caf3e9f197c</Id>
+      <ParentId>ddc88468-945b-43cf-a18a-983b0b178cb7</ParentId>
+      <FileName>IntegratedDebugProtocol\IntegratedDebugProtocol.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>5a3e49e5-8de2-45a5-b636-306a3e3926c4</Id>
+      <ParentId>ddc88468-945b-43cf-a18a-983b0b178cb7</ParentId>
+      <FileName>Dispatcher\Dispatcher.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>7ac5d1cf-3169-4bc0-a8e4-a424031baaf6</Id>
+      <ParentId>ddc88468-945b-43cf-a18a-983b0b178cb7</ParentId>
+      <FileName>DCMotor\DCMotor.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>2f117c5a-4bd1-472c-b14a-53a38bbaec3b</Id>
+      <ParentId>a0f514c0-6484-4a50-9524-1c31bbad91c9</ParentId>
+      <FileName>Retarget\Retarget.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>afc28ccb-84f6-485a-80c9-c0664e0aefbf</Id>
+      <ParentId>88cd51cf-650e-41ee-9af9-63f26e9c0d55</ParentId>
+      <Name>Dependency</Name>
+      <FileName>Packages\CatchTestFramework\Dependency.veproj</FileName>
+    </Item>
+    <Item xsi:type="SolutionFolder">
+      <Id>cc4e82d9-2293-42e8-a40f-8e9445da5587</Id>
+      <ParentId>390ef733-3446-4431-ac40-fef25ba1e04c</ParentId>
+      <Name>Kernel</Name>
+      <FileName>Kernel</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>a3f89a1a-5bf7-4646-ad11-fabc6d34616d</Id>
+      <ParentId>cc4e82d9-2293-42e8-a40f-8e9445da5587</ParentId>
+      <FileName>FreeRTOS\FreeRTOS.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>d38027c6-f4fd-4da0-97c7-b2ed59d68fbe</Id>
+      <ParentId>cc4e82d9-2293-42e8-a40f-8e9445da5587</ParentId>
+      <FileName>FreeRTOSCortexM4Port\FreeRTOSCortexM4Port.veproj</FileName>
+    </Item>
+    <Item xsi:type="SolutionFolder">
+      <Id>ddc88468-945b-43cf-a18a-983b0b178cb7</Id>
+      <ParentId>88cd51cf-650e-41ee-9af9-63f26e9c0d55</ParentId>
+      <Name>Modules</Name>
+      <FileName>Modules</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>3e3462a3-388c-4cf6-8913-d623bbdd6b2c</Id>
+      <ParentId>cc4e82d9-2293-42e8-a40f-8e9445da5587</ParentId>
+      <Name>BT++</Name>
+      <FileName>BTPlusPlus\BT++.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>95fb1b73-4f68-42b1-835b-6d18faf0175a</Id>
+      <ParentId>ddc88468-945b-43cf-a18a-983b0b178cb7</ParentId>
+      <FileName>ServoController\ServoController.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>629a9390-defe-40f3-b7b7-23a366dc12bd</Id>
+      <ParentId>ddc88468-945b-43cf-a18a-983b0b178cb7</ParentId>
+      <Name>GxInstrumentationHidDevice</Name>
+      <FileName>GxIntrumentationHidDevice\GxInstrumentationHidDevice.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>3b3689da-dd9d-4a1e-a8e0-cc2e26e20661</Id>
+      <ParentId>88cd51cf-650e-41ee-9af9-63f26e9c0d55</ParentId>
+      <FileName>SampleProject\SampleProject.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>30437416-d016-48e7-95ad-12607c5f8830</Id>
+      <ParentId>a0f514c0-6484-4a50-9524-1c31bbad91c9</ParentId>
+      <Name>STM32F4Cube</Name>
+      <FileName>STM32F4Cube\STM32F4Cube.veproj</FileName>
+    </Item>
+    <Item xsi:type="UnloadedProject">
+      <Id>f0f77bcb-621b-4453-89b1-4f27f91320d0</Id>
+      <ParentId>390ef733-3446-4431-ac40-fef25ba1e04c</ParentId>
+      <Name>LCDSample</Name>
+      <FileName>LCDSample\LCDSample.veproj</FileName>
+    </Item>
+  </UnloadedChildren>
+  <FormattingOptions>
+    <AccessModifierOffset>-2</AccessModifierOffset>
+    <AlignAfterOpenBracket>false</AlignAfterOpenBracket>
+    <AlignConsecutiveAssignments>true</AlignConsecutiveAssignments>
+    <AlignEscapedNewLinesLeft>true</AlignEscapedNewLinesLeft>
+    <AlignTrainlingComments>true</AlignTrainlingComments>
+    <AllowAllParameterDeclarationsOnNextLine>true</AllowAllParameterDeclarationsOnNextLine>
+    <AllowShortFunctionsOnASingleLine>false</AllowShortFunctionsOnASingleLine>
+    <AllowShortIfStatementsOnASingleLine>false</AllowShortIfStatementsOnASingleLine>
+    <AllowShortLoopsOnASingleLine>false</AllowShortLoopsOnASingleLine>
+    <AlwaysBreakBeforeMultiLineStrings>false</AlwaysBreakBeforeMultiLineStrings>
+    <AlwaysBreakTemplateDeclarations>false</AlwaysBreakTemplateDeclarations>
+    <BinPackParameters>true</BinPackParameters>
+    <BreakBeforeBinaryOperators>false</BreakBeforeBinaryOperators>
+    <BreakBeforeBraces>Allman</BreakBeforeBraces>
+    <BreakBeforeTernaryOperators>true</BreakBeforeTernaryOperators>
+    <BreakConstructorInitializersBeforeComma>false</BreakConstructorInitializersBeforeComma>
+    <ColumnLimit>80</ColumnLimit>
+    <ConstructorInitializerAllOnOneLineOrOnePerLine>false</ConstructorInitializerAllOnOneLineOrOnePerLine>
+    <ConstructorInitializerIndentWidth>4</ConstructorInitializerIndentWidth>
+    <ContinuationIndentWidth>0</ContinuationIndentWidth>
+    <Cpp11BracedListStyle>false</Cpp11BracedListStyle>
+    <DerivePointerBinding>false</DerivePointerBinding>
+    <IndentCaseLabels>false</IndentCaseLabels>
+    <IndentFunctionDeclarationAfterType>false</IndentFunctionDeclarationAfterType>
+    <IndentationWidth>4</IndentationWidth>
+    <Language>Cpp</Language>
+    <MaxEmptyLinesToKeep>2</MaxEmptyLinesToKeep>
+    <NamespaceIndentation>None</NamespaceIndentation>
+    <ObjCSpaceAfterProperty>true</ObjCSpaceAfterProperty>
+    <ObjCSpaceBeforeProtocolList>true</ObjCSpaceBeforeProtocolList>
+    <PenaltyBreakBeforeFirstCallParameter>19</PenaltyBreakBeforeFirstCallParameter>
+    <PenaltyBreakComment>300</PenaltyBreakComment>
+    <PenaltyBreakFirstLessLess>120</PenaltyBreakFirstLessLess>
+    <PenaltyBreakString>1000</PenaltyBreakString>
+    <PenaltyExcessCharacter>1000000</PenaltyExcessCharacter>
+    <PenaltyReturnTypeOnItsOwnLine>60</PenaltyReturnTypeOnItsOwnLine>
+    <PointerBindsToType>true</PointerBindsToType>
+    <SpaceBeforeAssignmentOperators>true</SpaceBeforeAssignmentOperators>
+    <SpaceBeforeParenthesis>Always</SpaceBeforeParenthesis>
+    <SpaceInEmptyParenthesis>false</SpaceInEmptyParenthesis>
+    <SpacesBeforeTrailingComments>1</SpacesBeforeTrailingComments>
+    <SpacesInAngles>false</SpacesInAngles>
+    <SpacesInCStyleCastParenthesis>false</SpacesInCStyleCastParenthesis>
+    <SpacesInContainerLiterals>false</SpacesInContainerLiterals>
+    <SpacesInParenthesis>false</SpacesInParenthesis>
+    <Standard>Cpp11</Standard>
+    <TabWidth>4</TabWidth>
+    <UseTab>Never</UseTab>
+  </FormattingOptions>
+</Solution>

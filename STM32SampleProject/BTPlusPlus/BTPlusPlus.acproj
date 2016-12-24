@@ -1,0 +1,28 @@
+{
+  "Name": "BTPlusPlus",
+  "Type": "StaticLibrary",
+  "References": [
+    {
+      "Name": "Dispatcher"
+    },
+    {
+      "Name": "FreeRTOS"
+    },
+    {
+      "Name": "Utils"
+    }
+  ],
+  "Includes": [
+    {
+      "Value": "../BTPlusPlus",
+      "Exported": true,
+      "Global": false
+    }
+  ],
+  "StaticLibraries": [],
+  "ExcludedFiles": [
+    "obj"
+  ],
+  "ToolchainSettings": {},
+  "DebugSettings": {}
+}

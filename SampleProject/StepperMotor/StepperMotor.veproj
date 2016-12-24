@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <LocationRelativeToParent>StepperMotor\StepperMotor.veproj</LocationRelativeToParent>
+  <Children>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>cb2ced52-02c4-4f2e-8346-e913e5bf3150</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>CStepperMotor.c</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>b58efea0-add2-4ead-9dd7-dffc01f231c4</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>CStepperMotor.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>76434482-332b-4c92-9dd7-3dcb2aaae25f</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>RotaryStepperMotor.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>b450f3bb-8bcb-4458-bb23-15c0a578b594</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>RotaryStepperMotor.h</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>99ebe5a4-a610-4402-ab67-27963edfda81</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>StepperMotor.cpp</LocationRelativeToParent>
+    </ProjectItem>
+    <ProjectItem xsi:type="ProjectFile">
+      <Id>952da618-fda0-4697-a3b1-8f04b05c3037</Id>
+      <ParentId>00000000-0000-0000-0000-000000000000</ParentId>
+      <LocationRelativeToParent>StepperMotor.h</LocationRelativeToParent>
+    </ProjectItem>
+  </Children>
+  <ExportedIncludes>
+    <string>StepperMotor</string>
+  </ExportedIncludes>
+  <Configurations>
+    <ProjectConfiguration>
+      <Name>Default</Name>
+      <ToolChain xsi:type="GCCToolChain">
+        <Optimization>Off</Optimization>
+        <OptimizationPriority>None</OptimizationPriority>
+      </ToolChain>
+      <CppSupport>false</CppSupport>
+      <DebugSymbols>false</DebugSymbols>
+      <Rtti>false</Rtti>
+      <Exceptions>false</Exceptions>
+      <IncludePaths />
+      <Defines />
+      <UseMemoryLayout>false</UseMemoryLayout>
+      <DiscardUnusedSections>false</DiscardUnusedSections>
+      <NotUseStandardStartupFiles>false</NotUseStandardStartupFiles>
+      <Fpu>None</Fpu>
+      <Library>None</Library>
+      <Optimization>None</Optimization>
+      <OptimizationPreference>None</OptimizationPreference>
+      <LinkedLibraries />
+      <SelectedDeviceId>0</SelectedDeviceId>
+      <InRom1Start>0</InRom1Start>
+      <InRom1Size>0</InRom1Size>
+      <InRom2Start>0</InRom2Start>
+      <InRom2Size>0</InRom2Size>
+      <InRam1Start>0</InRam1Start>
+      <InRam1Size>0</InRam1Size>
+      <InRam2Start>0</InRam2Start>
+      <InRam2Size>0</InRam2Size>
+      <DebugInRam>false</DebugInRam>
+      <IsLibrary>true</IsLibrary>
+    </ProjectConfiguration>
+  </Configurations>
+  <References>
+    <string>CommonHal\CommonHal.veproj</string>
+  </References>
+</Project>

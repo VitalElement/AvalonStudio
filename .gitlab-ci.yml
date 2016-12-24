@@ -1,0 +1,11 @@
+image: vitalelement/avalon
+before_script:
+  
+AvalonStudio:
+  script:     
+  # update all submodules.
+  - git submodule update --init
+  
+  - cd AvalonStudio
+  - ./dependencies.sh
+  - ./buildmono.sh

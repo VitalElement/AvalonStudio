@@ -1,0 +1,25 @@
+{
+  "Name": "ArmSystem",
+  "Languages": [
+    "C",
+    "Cpp"
+  ],
+  "Type": "StaticLibrary",
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "allocator.c"
+    },
+    {
+      "File": "startup.c"
+    },
+    {
+      "File": "syscalls.c"
+    },
+    {
+      "File": "CPPSupport.cpp"
+    }
+  ]
+}
