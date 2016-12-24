@@ -1,0 +1,18 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
+    </Grid.ColumnDefinitions>
+    
+    <ListBox Items="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}">
+      <ListBox.DataTemplates>
+        <DataTemplate >
+          <TextBlock Text="{Binding Title}"/>
+        </DataTemplate>
+      </ListBox.DataTemplates>
+    </ListBox>
+    
+    <Controls:ViewModelViewHost Grid.Column="1" Margin="20" DataContext="{Binding SelectedTemplate.TemplateForm}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+  </Grid>
+</UserControl>

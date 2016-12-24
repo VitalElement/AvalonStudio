@@ -1,0 +1,22 @@
+{
+  "Name": "Dispatcher",
+  "Type": "StaticLibrary",
+  "References": [
+    {
+      "Name": "Utils",
+      "GitUrl": "https://gitlab.com/GXDesign/Utils.git",
+      "Revision": "HEAD"
+    }
+  ],
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "Dispatcher.cpp",
+      "Name": "Dispatcher.cpp"
+    }
+  ],
+  "StaticLibraries": [],
+  "ToolchainSettings": {}
+}

@@ -1,0 +1,81 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: polarssl - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\hajjemo\AppData\Local\Temp\RSP46C8.tmp" with contents
+[
+/nologo /MLd /W3 /GX /Z7 /Od /I "../../include" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /Fp"temp/polarssl.pch" /YX /Fo"temp/" /Fd"temp/" /FD /GZ /c 
+"C:\SVN\STM32Cube_FW_F4\Firmware\Middleware\Third_Party\PolarSSL\library\aes.c"
+"C:\SVN\STM32Cube_FW_F4\Firmware\Middleware\Third_Party\PolarSSL\library\des.c"
+"C:\SVN\STM32Cube_FW_F4\Firmware\Middleware\Third_Party\PolarSSL\library\md5.c"
+"C:\SVN\STM32Cube_FW_F4\Firmware\Middleware\Third_Party\PolarSSL\library\net.c"
+"C:\SVN\STM32Cube_FW_F4\Firmware\Middleware\Third_Party\PolarSSL\library\sha1.c"
+]
+Creating command line "cl.exe @C:\Users\hajjemo\AppData\Local\Temp\RSP46C8.tmp" 
+Creating temporary file "C:\Users\hajjemo\AppData\Local\Temp\RSP46C9.tmp" with contents
+[
+/nologo /out:"polarssl.lib" 
+.\temp\aes.obj
+.\temp\arc4.obj
+.\temp\asn1parse.obj
+.\temp\base64.obj
+.\temp\bignum.obj
+.\temp\blowfish.obj
+.\temp\camellia.obj
+.\temp\certs.obj
+.\temp\cipher.obj
+.\temp\cipher_wrap.obj
+.\temp\ctr_drbg.obj
+.\temp\debug.obj
+.\temp\des.obj
+.\temp\dhm.obj
+.\temp\entropy.obj
+.\temp\entropy_poll.obj
+.\temp\error.obj
+.\temp\havege.obj
+.\temp\md.obj
+.\temp\md_wrap.obj
+.\temp\md2.obj
+.\temp\md4.obj
+.\temp\md5.obj
+.\temp\net.obj
+.\temp\padlock.obj
+.\temp\pem.obj
+.\temp\rsa.obj
+.\temp\sha1.obj
+.\temp\sha2.obj
+.\temp\sha4.obj
+.\temp\ssl_cli.obj
+.\temp\ssl_srv.obj
+.\temp\ssl_tls.obj
+.\temp\timing.obj
+.\temp\x509parse.obj
+.\temp\xtea.obj
+]
+Creating command line "link.exe -lib @C:\Users\hajjemo\AppData\Local\Temp\RSP46C9.tmp"
+<h3>Output Window</h3>
+Compiling...
+aes.c
+C:\SVN\STM32Cube_FW_F4\Firmware\Middleware\Third_Party\PolarSSL\library\aes.c(36) : fatal error C1083: Cannot open include file: 'main.h': No such file or directory
+des.c
+C:\SVN\STM32Cube_FW_F4\Firmware\Middleware\Third_Party\PolarSSL\library\des.c(36) : fatal error C1083: Cannot open include file: 'main.h': No such file or directory
+md5.c
+C:\SVN\STM32Cube_FW_F4\Firmware\Middleware\Third_Party\PolarSSL\library\md5.c(35) : fatal error C1083: Cannot open include file: 'main.h': No such file or directory
+net.c
+C:\SVN\STM32Cube_FW_F4\Firmware\Middleware\Third_Party\PolarSSL\library\net.c(137) : error C2039: 'sin_len' : is not a member of 'sockaddr_in'
+        C:\Program Files (x86)\Microsoft Visual Studio\VC98\INCLUDE\winsock2.h(368) : see declaration of 'sockaddr_in'
+sha1.c
+C:\SVN\STM32Cube_FW_F4\Firmware\Middleware\Third_Party\PolarSSL\library\sha1.c(35) : fatal error C1083: Cannot open include file: 'main.h': No such file or directory
+Error executing cl.exe.
+
+
+
+<h3>Results</h3>
+ssl_server.exe - 5 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

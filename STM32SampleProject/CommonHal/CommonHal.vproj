@@ -1,0 +1,37 @@
+{
+  "Name": "CommonHal",
+  "Languages": [
+    "Cpp"
+  ],
+  "Type": "StaticLibrary",
+  "References": [
+    {
+      "Name": "Utils",
+      "GitUrl": "https://gitlab.com/GXDesign/Utils.git",
+      "Revision": "HEAD"
+    }
+  ],
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "II2C.cpp"
+    },
+    {
+      "File": "Interrupt.cpp"
+    },
+    {
+      "File": "IPort.cpp"
+    },
+    {
+      "File": "ISpi.cpp"
+    },
+    {
+      "File": "IUsbHidDevice.cpp"
+    },
+    {
+      "File": "SignalGenerator\\IPwmChannel.cpp"
+    }
+  ]
+}

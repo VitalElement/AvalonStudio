@@ -1,0 +1,53 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+  <DockPanel>
+    <StackPanel DockPanel.Dock="Bottom" ZIndex="100">
+      <TabStrip Name="toolStrip" Items="{Binding Tools}" SelectedItem="{Binding SelectedTool, Mode=TwoWay}" Focusable="false">
+        <TabStrip.ItemsPanel>
+          <ItemsPanelTemplate>
+            <DockPanel LastChildFill="false" />
+          </ItemsPanelTemplate>
+        </TabStrip.ItemsPanel>
+
+        <TabStrip.Styles>
+          <Style Selector="TabStripItem">
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Background" Value="#2D2D30" />
+            <Setter Property="BorderBrush" Value="#3E3E42" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Margin" Value="0 -1 0 0" />
+            <Setter Property="Padding" Value="4 0 4 0" />
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
+            <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+          </Style>
+          <Style Selector="TabStripItem:pointerover">
+            <Setter Property="Background" Value="#3E3E40" />
+          </Style>
+          <Style Selector="TabStripItem:selected">
+            <Setter Property="Background" Value="#252526" />
+            <Setter Property="BorderThickness" Value="1" />
+          </Style>
+        </TabStrip.Styles>
+
+        <TabStrip.DataTemplates>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal" Gap="2">
+              <TextBlock Text="{Binding Title}" Foreground="WhiteSmoke" Margin="2"/>
+            </StackPanel>
+          </DataTemplate>
+        </TabStrip.DataTemplates>
+      </TabStrip>
+    </StackPanel>
+
+    <Carousel Items="{Binding Tools}" SelectedItem="{Binding SelectedTool}" IsVirtualized="false" ZIndex="50">
+      <Carousel.DataTemplates>
+        <DataTemplate>
+          <cont:ViewModelViewHost IsVisible ="{Binding IsVisible}" />
+        </DataTemplate>
+      </Carousel.DataTemplates>
+    </Carousel>
+  </DockPanel>
+</UserControl>

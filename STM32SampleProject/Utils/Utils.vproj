@@ -1,0 +1,24 @@
+{
+  "Name": "Utils",
+  "Languages": [
+    "Cpp"
+  ],
+  "Type": "StaticLibrary",
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "CRC.cpp"
+    },
+    {
+      "File": "Event.cpp"
+    },
+    {
+      "File": "PidController.cpp"
+    },
+    {
+      "File": "StraightLineFormula.cpp"
+    }
+  ]
+}

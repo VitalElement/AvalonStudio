@@ -1,0 +1,22 @@
+{
+  "Name": "FreeRTOS",
+  "Type": "StaticLibrary",
+  "References": [
+    {
+      "Name": "CMSIS"
+    }
+  ],
+  "Includes": [
+    {
+      "Value": "include",
+      "Exported": true,
+      "Global": false
+    }
+  ],
+  "StaticLibraries": [],
+  "ExcludedFiles": [
+    "portable"
+  ],
+  "ToolchainSettings": {},
+  "DebugSettings": {}
+}

@@ -1,0 +1,18 @@
+{
+  "Name": "StateEngine",
+  "Type": "StaticLibrary",
+  "References": [
+    {
+      "Name": "Dispatcher",
+      "GitUrl": "https://gitlab.com/GXDesign/Dispatcher.git"
+    }
+  ],
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "StateEngine.cpp"
+    }
+  ]
+}

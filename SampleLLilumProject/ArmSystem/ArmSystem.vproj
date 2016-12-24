@@ -1,0 +1,28 @@
+{
+  "Name": "ArmSystem",
+  "Type": "StaticLibrary",
+  "References": [],
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "allocator.c",
+      "Name": "allocator.c"
+    },
+    {
+      "File": "startup.c",
+      "Name": "startup.c"
+    },
+    {
+      "File": "syscalls.c",
+      "Name": "syscalls.c"
+    },
+    {
+      "File": "CPPSupport.cpp",
+      "Name": "CPPSupport.cpp"
+    }
+  ],
+  "StaticLibraries": [],
+  "Toolchain": "AvalonStudio.Toolchains.Llilum.LlilumToolchain"
+}

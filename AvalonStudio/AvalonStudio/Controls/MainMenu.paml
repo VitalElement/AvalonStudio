@@ -1,0 +1,54 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui">
+  <Menu Grid.ColumnSpan="2">
+    <MenuItem Header="File">
+      <MenuItem Header="New Project" Command="{Binding NewProjectCommand}"/>
+      <MenuItem Header="Open Project" Command="{Binding LoadProjectCommand}"/>
+      <MenuItem Header="Save" HotKey="Ctrl+S" Command="{Binding SaveCommand}" />
+      <MenuItem Header="Save All" HotKey="Ctrl+Shift+S" Command="{Binding SaveAllCommand}" />
+      <MenuItem Header="Exit" HotKey="Alt+F4" Command="{Binding ExitCommand}"/>
+    </MenuItem>
+
+    <MenuItem Header="View">
+      <MenuItem Header="Console" Command="{Binding ViewToolCommand}" CommandParameter="Console"/>
+      <MenuItem Header="Solution Explorer" Command="{Binding ViewToolCommand}" CommandParameter="SolutionExplorer"/>
+      <MenuItem Header="Test Runner"  Command="{Binding ViewToolCommand}" CommandParameter="TestRunner"/>
+      <MenuItem Header="Error List" Command="{Binding ViewToolCommand}" CommandParameter="ErrorList"/>
+      <MenuItem Header="Debugging">
+        <MenuItem Header="Locals" Command="{Binding ViewToolCommand}" CommandParameter="Locals"/>
+        <MenuItem Header="Watch List" Command="{Binding ViewToolCommand}" CommandParameter="WatchList"/>
+        <MenuItem Header="Dissasembly" Command="{Binding ViewToolCommand}" CommandParameter="Dissasembly"/>
+        <MenuItem Header="Memory Viewer" Command="{Binding ViewToolCommand}" CommandParameter="Memory" />
+        <MenuItem Header="Registers" Command="{Binding ViewToolCommand}" CommandParameter="Registers"/>
+        <MenuItem Header="Call Stack" Command="{Binding ViewToolCommand}" CommandParameter="CallStack"/>
+      </MenuItem>
+    </MenuItem>
+
+    <MenuItem Header="Project">
+      <MenuItem Header="Properties" Command="{Binding ProjectPropertiesCommand}" />
+    </MenuItem>
+
+    <MenuItem Header="Build">
+      <MenuItem Header="Clean Project" Command="{Binding CleanProjectCommand}" />
+      <MenuItem Header="Build Project" Command="{Binding BuildProjectCommand}" />
+    </MenuItem>
+
+    <MenuItem Header="Debug">
+      <MenuItem Header="Start Debugging" Command="{Binding StartDebugCommand}" />
+      <MenuItem Header="Step Into" Command="{Binding StepIntoCommand}" />
+      <MenuItem Header="Step Over" Command="{Binding StepOverCommand}" />
+      <MenuItem Header="Pause" Command="{Binding PauseCommand}" />
+      <MenuItem Header="Stop" Command="{Binding StopCommand}" />
+      <MenuItem Header="Restart" Command="{Binding RestartCommand}" />
+    </MenuItem>
+
+    <MenuItem Header="Tools">
+      <MenuItem Header="Formatting" Command="{Binding FormatSettingsCommand}"/>
+      <MenuItem Header="Options" Command="{Binding OptionsCommand}"/>
+      <MenuItem Header="Packages" Command="{Binding PackagesCommand}"/>
+    </MenuItem>
+
+    <MenuItem Header="Help">
+      <MenuItem Header="About" Command="{Binding AboutCommand}"/>
+    </MenuItem>
+  </Menu>
+</UserControl>
