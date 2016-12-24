@@ -1,5 +1,0 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui">
-  <StackPanel HorizontalAlignment="Left">    
-    <DropDown Items="{Binding ProjectTypeOptions}" SelectedItem="{Binding ProjectType, Mode=TwoWay}" Width="150" />
-  </StackPanel>
-</UserControl>
