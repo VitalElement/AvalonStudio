@@ -1,0 +1,23 @@
+﻿<TabItem xmlns="https://github.com/avaloniaui" Header="Component">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+      </Grid.ColumnDefinitions>
+
+      <Panel Grid.Row="1"  >
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="80"/>
+          </Grid.ColumnDefinitions>
+
+          <ListBox Items="{Binding ExportedIncludes}" SelectedItem="{Binding SelectedExportedInclude}"/>
+
+          <StackPanel Grid.Column="1">
+            <Button Content="Add" Command="{Binding AddExportedIncludePathCommand}" Margin="5 0 0 0" />
+            <Button Content="Remove" Command="{Binding RemoveExportedIncludePathCommand}" Margin="5 5 0 0" />
+          </StackPanel>
+        </Grid>
+      </Panel>
+    </Grid>
+  </TabItem>

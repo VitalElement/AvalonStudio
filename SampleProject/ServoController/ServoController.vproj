@@ -1,0 +1,21 @@
+{
+  "Name": "ServoController",
+  "Type": "StaticLibrary",
+  "References": [
+    {
+      "Name": "CommonHal",
+      "GitUrl": "https://gitlab.com/GXDesign/CommonHal.git"
+    }
+  ],
+  "PublicIncludes": [
+    "./"
+  ],
+  "SourceFiles": [
+    {
+      "File": "ServoController.cpp",
+      "Name": "ServoController.cpp"
+    }
+  ],
+  "StaticLibraries": [],
+  "ToolchainSettings": {}
+}

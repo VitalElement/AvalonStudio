@@ -1,0 +1,7 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+  <cont:ToolControl Title="Team Explorer">
+    <Grid>
+      <cont:ViewModelViewHost DataContext="{Binding CurrentView}" />      
+    </Grid>
+  </cont:ToolControl>
+</UserControl>

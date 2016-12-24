@@ -1,0 +1,6 @@
+[submodule "MIEngine"]
+	path = MIEngine
+	url = https://github.com/VitalElement/MIEngine.git
+[submodule "nclang"]
+	path = nclang
+	url = https://github.com/VitalElement/nclang.git

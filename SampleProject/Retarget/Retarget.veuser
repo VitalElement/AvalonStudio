@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfProjectItemUserData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ProjectItemUserData>
+    <Id>2f117c5a-4bd1-472c-b14a-53a38bbaec3b</Id>
+    <IsExpanded>false</IsExpanded>
+    <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
+    <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
+    <BreakOnMain>false</BreakOnMain>
+    <RunImmediately>false</RunImmediately>
+  </ProjectItemUserData>
+  <ProjectItemUserData>
+    <Id>62d4984d-5350-49d1-8ca3-1ca5c25b0394</Id>
+    <IsExpanded>false</IsExpanded>
+    <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
+    <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
+    <BreakOnMain>false</BreakOnMain>
+    <RunImmediately>false</RunImmediately>
+  </ProjectItemUserData>
+  <ProjectItemUserData>
+    <Id>a3cffc54-8e83-434a-8daa-b39f6aad1e37</Id>
+    <IsExpanded>false</IsExpanded>
+    <SelectedDebugAdaptorIndex>0</SelectedDebugAdaptorIndex>
+    <SelectedConfigurationIndex>0</SelectedConfigurationIndex>
+    <BreakOnMain>false</BreakOnMain>
+    <RunImmediately>false</RunImmediately>
+  </ProjectItemUserData>
+</ArrayOfProjectItemUserData>

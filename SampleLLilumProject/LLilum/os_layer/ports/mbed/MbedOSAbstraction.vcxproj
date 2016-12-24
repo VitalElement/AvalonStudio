@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), BuildEnv.props))\BuildEnv.props" Condition="Exists('$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), BuildEnv.props))\BuildEnv.props')" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2832CE7B-8065-4473-A3C7-B8B069920A9C}</ProjectGuid>
+    <Keyword>Android</Keyword>
+    <RootNamespace>MbedOSAbstraction</RootNamespace>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <ApplicationType>Llilum</ApplicationType>
+    <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
+    <ProjectName>MbedOSAbstraction</ProjectName>
+    <ToolchainPrebuiltPath>$(LLILUM_GCC)</ToolchainPrebuiltPath>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <!-- Use the enlistment version of the target props files (rather than the SDK) for Zelig.sln projects -->
+  <PropertyGroup Condition="'$(LLILUM_ROOT)'!='' AND EXISTS('$(LLILUM_ROOT)')">
+    <LlilumSDK>$(LLILUM_ROOT)Zelig\</LlilumSDK>
+    <LlilumApplicationTypeDir>$(LLILUM_ROOT)VisualStudio\LlilumApplicationType\Llilum\1.0\</LlilumApplicationTypeDir>
+  </PropertyGroup>
+  <!-- Supported platform property sheets -->
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <Import Project="$(LlilumApplicationTypeDir)Platforms\Llilum_LPC1768.props" />
+    <Import Project="$(LlilumApplicationTypeDir)Platforms\Llilum_K64F.props" />
+    <Import Project="$(LlilumApplicationTypeDir)Platforms\Llilum_STM32L152.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <Import Project="$(LlilumApplicationTypeDir)Platforms\Llilum_LPC1768.props" />
+    <Import Project="$(LlilumApplicationTypeDir)Platforms\Llilum_K64F.props" />
+    <Import Project="$(LlilumApplicationTypeDir)Platforms\Llilum_STM32L152.props" />
+  </ImportGroup>
+  <!-- General Llilum Settings -->
+  <PropertyGroup Label="Llilum">
+    <LlilumBoardName>LPC1768</LlilumBoardName>
+    <LlilumProductAssembly>$(LlilumBuildRoot)\Host\bin\$(Configuration)\Microsoft.Llilum.BoardConfigurations.$(LlilumBoardName).dll</LlilumProductAssembly>
+    <LlilumOutputName>MbedOSAbstraction_$(LlilumBoardName)</LlilumOutputName>
+    <LlilumOutputBin>$(OutDir)\$(LlilumOutputName).bin</LlilumOutputBin>
+  </PropertyGroup>
+  <PropertyGroup Label="Llilum" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <LlilumCompiler>$(LlilumBuildRoot)\Host\bin\Debug\Microsoft.Zelig.Compiler.exe</LlilumCompiler>
+  </PropertyGroup>
+  <PropertyGroup Label="Llilum" Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <LlilumCompiler>$(LlilumBuildRoot)\Host\bin\Debug\Microsoft.Zelig.Compiler.exe</LlilumCompiler>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NativeIncludes>$(LlilumSourceRoot)\..\os_layer\inc\;$(LlilumSourceRoot)\..\os_layer\inc\api;$(LlilumSourceRoot)\..\os_layer\inc\api\io;$(LlilumSourceRoot)\..\os_layer\inc\hal</NativeIncludes>
+  </PropertyGroup>
+  <!-- Platform specific options -->
+  <!-- LPC1768 -->
+  <PropertyGroup Label="Llilum" Condition="'$(LlilumBoardName)' == 'LPC1768'">
+    <LlilumClAdditionalOptions>$(LlilumClAdditionalOptionsLPC1768)</LlilumClAdditionalOptions>
+    <LlilumClAdditionalIncludes>$(LlilumClAdditionalIncludesLPC1768);$(ProjectDir);$(NativeIncludes)</LlilumClAdditionalIncludes>
+    <LlilumClPreprocessorDefs>$(LlilumClPreprocessorDefsLPC1768)</LlilumClPreprocessorDefs>
+    <LlilumLinkAdditionalDeps>$(LlilumLinkAdditionalDepsLPC1768)</LlilumLinkAdditionalDeps>
+    <LlilumLinkAdditionalLibDirs>$(LlilumLinkAdditionalLibDirsLPC1768)</LlilumLinkAdditionalLibDirs>
+    <LlilumLinkAdditionalOptions>$(LlilumLinkAdditionalOptionsLPC1768)</LlilumLinkAdditionalOptions>
+    <LlilumLinkLibDeps>$(LlilumLinkLibDepsLPC1768)</LlilumLinkLibDeps>
+    <LlilumTargetBoardArchitecture>$(LlilumTargetBoardArchitectureLPC1768)</LlilumTargetBoardArchitecture>
+    <LlilumAsmAdditionalOptions>$(LlilumAsmAdditionalOptionsLPC1768)</LlilumAsmAdditionalOptions>
+    <LlilumStackSize>$(LlilumStackSizeLPC1768)</LlilumStackSize>
+    <LlilumHeapSize>$(LlilumHeapSizeLPC1768)</LlilumHeapSize>
+  </PropertyGroup>
+  <!-- K64F -->
+  <PropertyGroup Label="Llilum" Condition="'$(LlilumBoardName)' == 'K64F'">
+    <LlilumClAdditionalOptions>$(LlilumClAdditionalOptionsK64F)</LlilumClAdditionalOptions>
+    <LlilumClAdditionalIncludes>$(LlilumClAdditionalIncludesK64F);$(ProjectDir);$(NativeIncludes)</LlilumClAdditionalIncludes>
+    <LlilumClPreprocessorDefs>$(LlilumClPreprocessorDefsK64F)</LlilumClPreprocessorDefs>
+    <LlilumLinkAdditionalDeps>$(LlilumLinkAdditionalDepsK64F)</LlilumLinkAdditionalDeps>
+    <LlilumLinkAdditionalLibDirs>$(LlilumLinkAdditionalLibDirsK64F)</LlilumLinkAdditionalLibDirs>
+    <LlilumLinkAdditionalOptions>$(LlilumLinkAdditionalOptionsK64F)</LlilumLinkAdditionalOptions>
+    <LlilumLinkLibDeps>$(LlilumLinkLibDepsK64F)</LlilumLinkLibDeps>
+    <LlilumTargetBoardArchitecture>$(LlilumTargetBoardArchitectureK64F)</LlilumTargetBoardArchitecture>
+    <LlilumAsmAdditionalOptions>$(LlilumAsmAdditionalOptionsK64F)</LlilumAsmAdditionalOptions>
+    <LlilumStackSize>$(LlilumStackSizeK64F)</LlilumStackSize>
+    <LlilumHeapSize>$(LlilumHeapSizeK64F)</LlilumHeapSize>
+  </PropertyGroup>
+  <!-- STM32L152 -->
+  <PropertyGroup Label="Llilum" Condition="'$(LlilumBoardName)' == 'STM32L152'">
+    <LlilumClAdditionalOptions>$(LlilumClAdditionalOptionsSTM32L152)</LlilumClAdditionalOptions>
+    <LlilumClAdditionalIncludes>$(LlilumClAdditionalIncludesSTM32L152);$(ProjectDir);$(NativeIncludes)</LlilumClAdditionalIncludes>
+    <LlilumClPreprocessorDefs>$(LlilumClPreprocessorDefsSTM32L152)</LlilumClPreprocessorDefs>
+    <LlilumLinkAdditionalDeps>$(LlilumLinkAdditionalDepsSTM32L152)</LlilumLinkAdditionalDeps>
+    <LlilumLinkAdditionalLibDirs>$(LlilumLinkAdditionalLibDirsSTM32L152)</LlilumLinkAdditionalLibDirs>
+    <LlilumLinkAdditionalOptions>$(LlilumLinkAdditionalOptionsSTM32L152)</LlilumLinkAdditionalOptions>
+    <LlilumLinkLibDeps>$(LlilumLinkLibDepsSTM32L152)</LlilumLinkLibDeps>
+    <LlilumTargetBoardArchitecture>$(LlilumTargetBoardArchitectureSTM32L152)</LlilumTargetBoardArchitecture>
+    <LlilumAsmAdditionalOptions>$(LlilumAsmAdditionalOptionsSTM32L152)</LlilumAsmAdditionalOptions>
+    <LlilumStackSize>$(LlilumStackSizeSTM32L152)</LlilumStackSize>
+    <LlilumHeapSize>$(LlilumHeapSizeSTM32L152)</LlilumHeapSize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <ArmArchitecture>$(LlilumTargetBoardArchitecture)</ArmArchitecture>
+    <UseOfStl>
+    </UseOfStl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ArmArchitecture>$(LlilumTargetBoardArchitecture)</ArmArchitecture>
+    <UseOfStl>
+    </UseOfStl>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <TargetName>mbedOSAbstraction_$(LlilumBoardName)</TargetName>
+    <TargetExt>.a</TargetExt>
+    <ExecutablePath>$(LlilumGccBin);$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(LlilumBuildRoot)\Target\bin\$(ProjectName)\$(Configuration)\</OutDir>
+    <ExtensionsToDeleteOnClean>*.bin;*.hex;*.elf;*.lst;*.d;*.tlog;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
+    <IntDir>$(LlilumBuildRoot)\Target\obj\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <TargetName>SimpleTestProgram_$(LlilumBoardName)</TargetName>
+    <TargetExt>.elf</TargetExt>
+    <ExecutablePath>$(LlilumGccBin);$(ExecutablePath)</ExecutablePath>
+    <OutDir>$(LlilumBuildRoot)\Target\bin\$(ProjectName)\$(Configuration)\</OutDir>
+    <ExtensionsToDeleteOnClean>*.bin;*.hex;*.elf;*.lst;*.d;*.tlog;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
+    <IntDir>$(LlilumBuildRoot)\Target\obj\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalOptions>$(LlilumClAdditionalOptions) %(AdditionalOptions) -mfloat-abi=softfp</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(LlilumSourceRoot)\..\lwip\lwip;$(LlilumSourceRoot)\..\lwip\lwip\include;$(LlilumSourceRoot)\..\mbed-rtos\rtx\TARGET_CORTEX_M;$(LlilumSourceRoot)\..\mbed-rtos\rtos;$(LlilumSourceRoot)\..\lwip\lwip\include\netif;$(LlilumSourceRoot)\..\lwip\lwip\include\ipv4\lwip;$(LlilumSourceRoot)\..\lwip\lwip\include\lwip;$(LlilumSourceRoot)\..\lwip\lwip-eth\arch\TARGET_Freescale;$(LlilumSourceRoot)\..\lwip\lwip-eth\arch\TARGET_NXP;$(LlilumSourceRoot)\..\lwip\lwip-sys\arch;$(LlilumClAdditionalIncludes);$(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>$(LlilumClPreprocessorDefs);DEBUG;%(PreprocessorDefinitions);__DEFAULT_STACK_SIZE=$(LlilumStackSize);__HEAP_SIZE=$(LlilumHeapSize)</PreprocessorDefinitions>
+    </ClCompile>
+    <ArmAssemble>
+      <AdditionalOptions>$(LlilumAsmAdditionalOptions) %(LlilumClAdditionalOptions) -Wa,--defsym,__HEAP_SIZE=$(LlilumHeapSize)</AdditionalOptions>
+    </ArmAssemble>
+    <Link>
+      <AdditionalDependencies>$(LlilumLinkAdditionalDeps)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(LlilumLinkAdditionalLibDirs)</AdditionalLibraryDirectories>
+      <AdditionalOptions>$(LlilumLinkAdditionalOptions) %(AdditionalOptions)</AdditionalOptions>
+      <LibraryDependencies>$(LlilumLinkLibDeps)</LibraryDependencies>
+      <OutputFile />
+    </Link>
+    <Lib>
+      <CreateIndex>false</CreateIndex>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalOptions>$(LlilumClAdditionalOptions) %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(LlilumSourceRoot)\..\lwip\lwip;$(LlilumSourceRoot)\..\lwip\lwip\include;$(LlilumSourceRoot)\..\mbed-rtos\rtx\TARGET_CORTEX_M;$(LlilumSourceRoot)\..\mbed-rtos\rtos;$(LlilumSourceRoot)\..\lwip\lwip\include\netif;$(LlilumSourceRoot)\..\lwip\lwip\include\ipv4\lwip;$(LlilumSourceRoot)\..\lwip\lwip\include\lwip;$(LlilumSourceRoot)\..\lwip\lwip-eth\arch\TARGET_Freescale;$(LlilumSourceRoot)\..\lwip\lwip-eth\arch\TARGET_NXP;$(LlilumSourceRoot)\..\lwip\lwip-sys\arch;$(LlilumClAdditionalIncludes);$(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>$(LlilumClPreprocessorDefs);%(PreprocessorDefinitions);__DEFAULT_STACK_SIZE=$(LlilumStackSize);__HEAP_SIZE=$(LlilumHeapSize)</PreprocessorDefinitions>
+    </ClCompile>
+    <ArmAssemble>
+      <AdditionalOptions>$(LlilumAsmAdditionalOptions) %(LlilumClAdditionalOptions) -Wa,--defsym,__HEAP_SIZE=$(LlilumHeapSize)</AdditionalOptions>
+    </ArmAssemble>
+    <Link>
+      <AdditionalDependencies>$(LlilumLinkAdditionalDeps)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(LlilumLinkAdditionalLibDirs)</AdditionalLibraryDirectories>
+      <AdditionalOptions>$(LlilumLinkAdditionalOptions) %(AdditionalOptions)</AdditionalOptions>
+      <LibraryDependencies>$(LlilumLinkLibDeps)</LibraryDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="mbed_adc.cpp" />
+    <ClCompile Include="mbed_gpio.cpp" />
+    <ClCompile Include="mbed_memory.cpp" />
+    <ClCompile Include="mbed_i2c.cpp" />
+    <ClCompile Include="mbed_overrides.cpp" />
+    <ClCompile Include="mbed_serial.cpp" />
+    <ClCompile Include="mbed_ethernet.cpp" />
+    <ClCompile Include="mbed_socket.cpp" />
+    <ClCompile Include="mbed_spi.cpp" />
+    <ClCompile Include="mbed_clock.cpp" />
+    <ClCompile Include="mbed_core.cpp" />
+    <ClCompile Include="mbed_debug.cpp" />
+    <ClCompile Include="mbed_mem.cpp" />
+    <ClCompile Include="mbed_nvic.cpp" />
+    <ClCompile Include="mbed_pwm.cpp" />
+    <ClCompile Include="mbed_system_timer.cpp" />
+    <ClCompile Include="mbed_systick.cpp" />
+    <ClCompile Include="mbed_threading.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="mbed_helpers.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ArmAssemble Include="mbed_asm.S" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>

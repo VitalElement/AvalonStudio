@@ -1,0 +1,4 @@
+﻿<Styles xmlns="https://github.com/avaloniaui">
+  <StyleInclude Source="resm:AvalonStudio.Controls.MetroWindow.paml?assembly=AvalonStudio" />
+  <StyleInclude Source="resm:AvalonStudio.Controls.SplashScreen.paml?assembly=AvalonStudio" />
+</Styles>

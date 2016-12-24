@@ -1,0 +1,45 @@
+﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.TextEditor;assembly=AvalonStudio.TextEditor" xmlns:tv="clr-namespace:AvalonStudio.TextEditor.Rendering;assembly=AvalonStudio.TextEditor">
+  <Style Selector="local|TextEditor">
+    <Setter Property="Background" Value="#1e1e1e"/>
+    <Setter Property="BorderBrush" Value="#ff707070"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <DockPanel>
+          <ContentControl DockPanel.Dock="Top"  Content="{TemplateBinding Header}"
+                         Margin="{TemplateBinding Margin}"
+                         VerticalAlignment="Top"/>
+
+          <Border Name="border"
+             Background="{TemplateBinding Background}"
+             BorderBrush="{TemplateBinding BorderBrush}"
+             BorderThickness="0"
+             Padding="0">
+            <ScrollViewer CanScrollHorizontally="{TemplateBinding CanScrollHorizontally}"
+                          HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}"
+                          VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}">
+
+
+              <tv:TextView Name="textView" HorizontalAlignment="Stretch" Margin="0, 0"
+                              CaretIndex="{TemplateBinding CaretIndex}"
+                              SelectionStart="{TemplateBinding SelectionStart}"
+                              SelectionEnd="{TemplateBinding SelectionEnd}"
+                              Foreground="{TemplateBinding Foreground}"
+                              TextDocument="{TemplateBinding TextDocument}"
+                              Content="{TemplateBinding Content}"
+                              BackgroundRenderers="{TemplateBinding BackgroundRenderers}"
+                              DocumentLineTransformers="{TemplateBinding DocumentLineTransformers}"
+                              Margins="{TemplateBinding Margins}"
+                              Offset="{TemplateBinding Offset}"
+                         />
+            </ScrollViewer>
+          </Border>
+        </DockPanel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+  <Style Selector="TextBox:focus /template/ Border#border">
+    <Setter Property="BorderBrush" Value="Black"/>
+  </Style>
+</Styles>

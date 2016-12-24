@@ -1,0 +1,4 @@
+﻿<Styles xmlns="https://github.com/avaloniaui">
+  <StyleInclude Source="resm:AvalonStudio.TextEditor.TextEditor.paml?assembly=AvalonStudio.TextEditor"/>
+  <StyleInclude Source="resm:AvalonStudio.TextEditor.Rendering.TextView.paml?assembly=AvalonStudio.TextEditor"/>
+</Styles>
