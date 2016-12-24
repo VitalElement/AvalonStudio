@@ -10,5 +10,7 @@ namespace AvalonStudio.Languages
 		}
 
 		public List<CodeCompletionData> Completions { get; set; }
+
+        public CompletionContext Contexts { get; set; }
 	}
 }

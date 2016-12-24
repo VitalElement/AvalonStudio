@@ -90,8 +90,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 			});
 
 			RemoveCommand = ReactiveCommand.Create();
-			RemoveCommand.Subscribe(o =>
+			RemoveCommand.Subscribe(async o =>
 			{
+                await shell.CloseDocumentsForProjectAsync(Model);
 				Model.Solution.RemoveProject(Model);
 				Model.Solution.Save();
 			});
@@ -139,7 +140,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 				{
 					return FontWeight.Bold;
 				}
-				return FontWeight.Normal;
+
+                return FontWeight.Light;
 			}
 		}
 

@@ -52,6 +52,22 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string SizeExecutable => Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
 
+        public override bool SupportsFile(ISourceFile file)
+        {
+            var result = false;
+
+            switch (file.Extension.ToLower())
+            {
+                case ".cpp":
+                case ".c":
+                case ".s":
+                    result = true;
+                    break;
+            }
+
+            return result;
+        }
+
         public static GccToolchainSettings GetSettings(IProject project)
         {
             GccToolchainSettings result = null;
@@ -132,6 +148,11 @@ namespace AvalonStudio.Toolchains.GCC
                 fileArguments = "-x c++ -fno-use-cxa-atexit";
             }
 
+            if(file.Extension.ToLower() == ".s")
+            {
+                fileArguments = "-x assembler-with-cpp";
+            }
+
             var arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile);
 
             result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) =>
@@ -144,7 +165,7 @@ namespace AvalonStudio.Toolchains.GCC
             },
             false, file.CurrentDirectory, false);
 
-            //console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
+           // console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
 
             return result;
         }
@@ -152,8 +173,6 @@ namespace AvalonStudio.Toolchains.GCC
         public override LinkResult Link(IConsole console, IStandardProject superProject, IStandardProject project, CompileResult assemblies, string outputPath)
         {
             var result = new LinkResult();
-
-            var settings = GetSettings(project);
 
             string commandName = project.Type == ProjectType.StaticLibrary ? ARExecutable : LDExecutable;
 
@@ -198,8 +217,12 @@ namespace AvalonStudio.Toolchains.GCC
 
             string libraryPaths = string.Empty;
 
+            var linkerScripts = string.Empty;
+
             if (project.Type == ProjectType.Executable)
             {
+                var settings = GetSettings(project);
+
                 foreach (var libraryPath in settings.LinkSettings.LinkedLibraries)
                 {
                     libraryPaths += $"-Wl,--library-path={Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(libraryPath)).ToPlatformPath()} ";
@@ -207,6 +230,14 @@ namespace AvalonStudio.Toolchains.GCC
                     var libName = Path.GetFileName(libraryPath);
 
                     linkedLibraries += string.Format($"-Wl,--library=:{libName} ");
+                }
+
+                if (project.Type == ProjectType.Executable)
+                {
+                    foreach (var script in settings.LinkSettings.LinkerScripts)
+                    {
+                        linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
+                    }
                 }
             }
 
@@ -216,16 +247,6 @@ namespace AvalonStudio.Toolchains.GCC
             }
 
             linkedLibraries += GetBaseLibraryArguments(superProject);
-
-            var linkerScripts = string.Empty;
-
-            if (project.Type == ProjectType.Executable)
-            {
-                foreach (var script in settings.LinkSettings.LinkerScripts)
-                {
-                    linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
-                }
-            }
 
             string arguments = string.Empty;
 

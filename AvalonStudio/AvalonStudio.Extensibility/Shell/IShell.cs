@@ -51,7 +51,11 @@ namespace AvalonStudio.Shell
 
 		Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
 
-        Task OpenSolution(string path);
+        Task CloseDocumentsForProjectAsync(IProject project);
+
+        Task OpenSolutionAsync(string path);
+
+        Task CloseSolutionAsync();
 
         void AddDocument(IDocumentTabViewModel document);
         void RemoveDocument(IDocumentTabViewModel document);
