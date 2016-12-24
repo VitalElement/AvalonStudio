@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,105 +13,136 @@ using AvalonStudio.Shell;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Utils;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.Controls
 {
-	[Export(typeof (EditorModel))]
-	public class EditorModel : IDisposable
-	{
-		public static List<UnsavedFile> UnsavedFiles = new List<UnsavedFile>();
+    [Export(typeof(EditorModel))]
+    public class EditorModel : IDisposable
+    {
+        public static List<UnsavedFile> _unsavedFiles;
 
-		private CancellationTokenSource cancellationSource;
+        public static List<UnsavedFile> UnsavedFiles
+        {
+            get
+            {
+                if (_unsavedFiles == null)
+                {
+                    _unsavedFiles = new List<UnsavedFile>();
+                }
 
-		private CodeAnalysisResults codeAnalysisResults;
-		private readonly JobRunner codeAnalysisRunner;
-
-		private readonly IShell shell;
-
-		public EditorModel()
-		{
-			shell = IoC.Get<IShell>();
-
-			codeAnalysisRunner = new JobRunner();
-			TextDocument = new TextDocument();
-		}
-
-		public TextEditor.TextEditor Editor { get; set; }
-
-		public ISourceFile ProjectFile { get; private set; }
-
-		public TextDocument TextDocument { get; set; }
-		public string Title { get; set; }
-
-		public CodeAnalysisResults CodeAnalysisResults
-		{
-			get { return codeAnalysisResults; }
-			set
-			{
-				codeAnalysisResults = value;
-
-				if (CodeAnalysisCompleted != null)
-				{
-					CodeAnalysisCompleted(this, new EventArgs());
-				}
-			}
-		}
+                return _unsavedFiles;
+            }
+        }
 
 
-		public ILanguageService LanguageService { get; set; }
+        private CancellationTokenSource cancellationSource;
 
-		public bool IsDirty { get; set; }
+        private CodeAnalysisResults codeAnalysisResults;
+        private readonly JobRunner codeAnalysisRunner;
+
+        private readonly IShell shell;
+
+        public EditorModel()
+        {
+            shell = IoC.Get<IShell>();
+
+            codeAnalysisRunner = new JobRunner();
+            TextDocument = new TextDocument();
+
+            AnalysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(500))
+            .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });
+
+            //AnalysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(500)).Subscribe(async _ =>
+            //{
+            //    await DoCodeAnalysisAsync();
+            //});
+        }
+
+        public TextEditor.TextEditor Editor { get; set; }
+
+        public ISourceFile ProjectFile { get; private set; }
+
+        public TextDocument TextDocument { get; set; }
+        public string Title { get; set; }
+
+        public CodeAnalysisResults CodeAnalysisResults
+        {
+            get { return codeAnalysisResults; }
+            set
+            {
+                codeAnalysisResults = value;
+
+                CodeAnalysisCompleted?.Invoke(this, new EventArgs());
+            }
+        }
 
 
-		public void Dispose()
-		{
-			Editor = null;
-			TextDocument.TextChanged -= TextDocument_TextChanged;
-		}
+        public ILanguageService LanguageService { get; set; }
 
-		~EditorModel()
-		{
-		}
+        public bool IsDirty { get; set; }
 
-		public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
-		{
-			CodeCompletionResults results = null;
 
-			var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, line, column, UnsavedFiles);
-			results = new CodeCompletionResults {Completions = completions};
+        public void Dispose()
+        {
+            Editor = null;
+            TextDocument.TextChanged -= TextDocument_TextChanged;
+        }
 
-			return results;
-		}
+        ~EditorModel()
+        {
+        }
 
-		public void ScrollToLine(int line)
-		{
-			Editor?.ScrollToLine(line);
-		}
+        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
+        {
+            CodeCompletionResults results = null;
 
-		public event EventHandler<EventArgs> DocumentLoaded;
-		public event EventHandler<EventArgs> TextChanged;
+            var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, line, column, UnsavedFiles.ToList());
+            results = completions;
 
-		public void UnRegisterLanguageService()
-		{
-			ShutdownBackgroundWorkers();
+            return results;
+        }
 
-            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+        public void ScrollToLine(int line)
+        {
+            Editor?.ScrollToLine(line);
+        }
 
-			if (unsavedFile != null)
-			{
-				UnsavedFiles.Remove(unsavedFile);
-			}
+        public event EventHandler<EventArgs> DocumentLoaded;
+        public event EventHandler<EventArgs> TextChanged;
 
-			if (LanguageService != null && ProjectFile != null)
-			{
-				LanguageService.UnregisterSourceFile(Editor, ProjectFile);
-			}
-		}
+        public void UnRegisterLanguageService()
+        {
+            ShutdownBackgroundWorkers();
 
-		public async void RegisterLanguageService(IIntellisenseControl intellisenseControl,
-			ICompletionAssistant completionAssistant)
-		{
-			UnRegisterLanguageService();
+            UnsavedFile unsavedFile = null;
+
+            lock (UnsavedFiles)
+            {
+                unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+            }
+
+            if (unsavedFile != null)
+            {
+                lock (UnsavedFiles)
+                {
+                    UnsavedFiles.Remove(unsavedFile);
+                }
+            }
+
+            if (LanguageService != null && ProjectFile != null)
+            {
+                LanguageService.UnregisterSourceFile(Editor, ProjectFile);
+            }
+
+            TextDocument.TextChanged -= TextDocument_TextChanged;
+        }
+
+        public void RegisterLanguageService(IIntellisenseControl intellisenseControl,
+            ICompletionAssistant completionAssistant)
+        {
+            UnRegisterLanguageService();
 
             LanguageService = shell.LanguageServices.FirstOrDefault(o => o.CanHandle(ProjectFile));
 
@@ -128,30 +158,29 @@ namespace AvalonStudio.Controls
                 ShellViewModel.Instance.StatusBar.Language = "Text";
             }
 
-			IsDirty = false;
+            IsDirty = false;
 
+            StartBackgroundWorkers();
 
-			StartBackgroundWorkers();
+            TextDocument.TextChanged += TextDocument_TextChanged;
 
-			TextDocument.TextChanged += TextDocument_TextChanged;
+            OnBeforeTextChanged(null);
 
-			OnBeforeTextChanged(null);
+            DoCodeAnalysisAsync().GetAwaiter();
+        }
 
-			await TriggerCodeAnalysis();
-		}
-
-		public void OpenFile(ISourceFile file, IIntellisenseControl intellisense,
-			ICompletionAssistant completionAssistant)
-		{
-			if (ProjectFile != file)
-			{
-				if (System.IO.File.Exists(file.Location))
-				{
-					using (var fs = System.IO.File.OpenText(file.Location))
-					{
+        public void OpenFile(ISourceFile file, IIntellisenseControl intellisense,
+            ICompletionAssistant completionAssistant)
+        {
+            if (ProjectFile != file)
+            {
+                if (System.IO.File.Exists(file.Location))
+                {
+                    using (var fs = System.IO.File.OpenText(file.Location))
+                    {
                         TextDocument = new TextDocument(fs.ReadToEnd());
                         TextDocument.FileName = file.Location;
-					}
+                    }
 
                     ProjectFile = file;
 
@@ -159,87 +188,107 @@ namespace AvalonStudio.Controls
 
                     DocumentLoaded?.Invoke(this, new EventArgs());
                 }
-			}
-		}        
+            }
+        }
 
         public void Save()
-		{
-			if (ProjectFile != null && TextDocument != null && IsDirty)
-			{
+        {
+            if (ProjectFile != null && TextDocument != null && IsDirty)
+            {
                 System.IO.File.WriteAllText(ProjectFile.Location, TextDocument.Text);
-				IsDirty = false;
+                IsDirty = false;
 
-                var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+                lock (UnsavedFiles)
+                {
+                    var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
 
-				if (unsavedFile != null)
-				{
-					UnsavedFiles.Remove(unsavedFile);
-				}
-			}
-		}
+                    if (unsavedFile != null)
+                    {
+                        UnsavedFiles.Remove(unsavedFile);
+                    }
+                }
+            }
+        }
 
-		private void TextDocument_TextChanged(object sender, EventArgs e)
-		{
-            var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+        private void TextDocument_TextChanged(object sender, EventArgs e)
+        {
+            UnsavedFile unsavedFile = null;
+
+            lock (UnsavedFiles)
+            {
+                unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+            }
 
             if (unsavedFile == null)
-			{
-				UnsavedFiles.InsertSorted(new UnsavedFile(ProjectFile.Location, TextDocument.Text));
-			}
-			else
-			{
-				unsavedFile.Contents = TextDocument.Text;
-			}
+            {
+                lock (UnsavedFiles)
+                {
+                    UnsavedFiles.InsertSorted(new UnsavedFile(ProjectFile.Location, TextDocument.Text));
+                }
+            }
+            else
+            {
+                unsavedFile.Contents = TextDocument.Text;
+            }
 
-			IsDirty = true;
+            IsDirty = true;
 
             TextChanged?.Invoke(this, new EventArgs());
         }
 
-		public event EventHandler<EventArgs> CodeAnalysisCompleted;
+        public event EventHandler<EventArgs> CodeAnalysisCompleted;
 
-		private void StartBackgroundWorkers()
-		{
-			cancellationSource = new CancellationTokenSource();
+        private void StartBackgroundWorkers()
+        {
+            cancellationSource = new CancellationTokenSource();
 
-			Task.Factory.StartNew(() =>
-			{
-				codeAnalysisRunner.RunLoop(cancellationSource.Token);
-				cancellationSource = null;
-			});
-		}
+            Task.Factory.StartNew(() =>
+            {
+                codeAnalysisRunner.RunLoop(cancellationSource.Token);
+                cancellationSource = null;
+            });
+        }
 
-		public void ShutdownBackgroundWorkers()
-		{
-			cancellationSource?.Cancel();
-		}
+        public void ShutdownBackgroundWorkers()
+        {
+            cancellationSource?.Cancel();
+        }
 
-		public void OnBeforeTextChanged(object param)
-		{
-		}
+        public void OnBeforeTextChanged(object param)
+        {
+        }
 
-		/// <summary>
-		///     Write lock must be held before calling this.
-		/// </summary>
-		private async Task TriggerCodeAnalysis()
-		{
-			await codeAnalysisRunner.InvokeAsync(async () =>
-			{
-				if (LanguageService != null)
-				{
-					// TODO allow interruption.
-					var result = await LanguageService.RunCodeAnalysisAsync(ProjectFile, UnsavedFiles, () => false);
+        private Subject<bool> AnalysisTriggerEvents = new Subject<bool>();
 
-					Dispatcher.UIThread.InvokeAsync(() => { CodeAnalysisResults = result; });
-				}
-			});
-		}
+        private async Task<bool> DoCodeAnalysisAsync()
+        {
+            await codeAnalysisRunner.InvokeAsync(async () =>
+            {
+                if (LanguageService != null)
+                {
+                    // TODO allow interruption.
+                    var result = await LanguageService.RunCodeAnalysisAsync(ProjectFile, UnsavedFiles.ToList(), () => false);
 
-		public async void OnTextChanged(object param)
-		{
-			IsDirty = true;
+                    Dispatcher.UIThread.InvokeAsync(() => { CodeAnalysisResults = result; });
+                }
+            });
 
-			await TriggerCodeAnalysis();
-		}
-	}
+            return true;
+        }
+
+        /// <summary>
+        ///     Write lock must be held before calling this.
+        /// </summary>
+        public void TriggerCodeAnalysis()
+        {
+            AnalysisTriggerEvents.OnNext(true);
+        }
+
+        public void OnTextChanged(object param)
+        {
+            IsDirty = true;
+
+            TriggerCodeAnalysis();
+        }
+    }
 }

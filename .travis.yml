@@ -24,20 +24,6 @@ script:
   - cd AvalonBuild
   - cd ..
   - cd ..
-  - pwd
-
-  #Copy new build of AvalonBuild to Build Context
-  - cp -a ./AvalonStudioBuild/bin/Release/. ./dockerbuild/AvalonBuild/
-  
-  #Copy latest dockerfile
-  - cp ./AvalonStudioBuild/Dockerfile ./dockerbuild/Dockerfile
-  
-  #Enter build context dir
-  - cd dockerbuild
-
-  #Build Docker container
-  - docker build -t vitalelement/avalon:cibuild .
-  - cd ..
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
@@ -63,6 +49,13 @@ after_success:
       git add .;
       git commit -m 'new CI revision.' || true; 
       git push -f -q https://VitalElement:$GH_TOKEN@github.com/VitalElement/AvalonStudioBinaries master &2>/dev/null;
+      cd..
+
+      cp -a ./AvalonStudioBuild/bin/Release/. ./dockerbuild/AvalonBuild/
+      cp ./AvalonStudioBuild/Dockerfile ./dockerbuild/Dockerfile
+      cd dockerbuild
+      docker build -t vitalelement/avalon:cibuild .
+      cd ..
 
       docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
       docker images;
