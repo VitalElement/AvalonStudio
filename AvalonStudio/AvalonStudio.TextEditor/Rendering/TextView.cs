@@ -231,6 +231,7 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             Margins.Clear();
             disposables.Dispose();
+            collectionChangedDisposable.Dispose();
             _caretTimer.Tick -= CaretTimerTick;
             textSurface = null;
             marginContainer = null;
@@ -315,16 +316,16 @@ namespace AvalonStudio.TextEditor.Rendering
             //    Invalidate();
             //});
 
-            _caretTimer = new DispatcherTimer();
-            _caretTimer.Interval = TimeSpan.FromMilliseconds(500);
+            _caretTimer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromMilliseconds(500)
+            };
 
             VisualLines = new List<VisualLine>();
         }
 
         ~TextView()
         {
-            Console.WriteLine("TextView  Destructed.");
-
             foreach (var visualLine in VisualLines)
             {
                 visualLine.RenderedText?.Dispose();

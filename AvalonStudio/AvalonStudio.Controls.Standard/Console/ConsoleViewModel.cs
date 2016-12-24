@@ -9,6 +9,7 @@ using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using ReactiveUI;
+using System.Text.RegularExpressions;
 
 namespace AvalonStudio.Controls.Standard.Console
 {
@@ -78,7 +79,8 @@ namespace AvalonStudio.Controls.Standard.Console
 			{
 				Dispatcher.UIThread.InvokeAsync(() =>
 				{
-					Document.Insert(Document.TextLength, data);
+                    data = Regex.Replace(data, @"[^\u0000-\u007F]+", string.Empty).Replace("t", "    ");
+                    Document.Insert(Document.TextLength, data);
 					ScrollToEnd();
 				});
 			}
@@ -99,7 +101,8 @@ namespace AvalonStudio.Controls.Standard.Console
 			{
 				Dispatcher.UIThread.InvokeAsync(() =>
 				{
-					Document.Insert(Document.TextLength, data + Environment.NewLine);
+                    data = Regex.Replace(data, @"[^\u0000-\u007F]+", string.Empty).Replace("\t", "    ");
+                    Document.Insert(Document.TextLength, data + Environment.NewLine);
 					ScrollToEnd();
 				});
 			}

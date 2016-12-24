@@ -11,9 +11,9 @@ namespace AvalonStudio.TextEditor
         private readonly IBrush currentLineForeground;
 
         public LineNumberMargin()
-        {
-            foreground = Brush.Parse("#5d5d5d");
-            currentLineForeground = Brush.Parse("#A4A4A4");
+        { 
+            foreground = Brush.Parse("#2691AF");  
+            currentLineForeground = Brush.Parse("#2691AF");
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -30,11 +30,12 @@ namespace AvalonStudio.TextEditor
         {
             if (textView.TextDocument != null)
             {
-                Width = textInfo.CharWidth * textInfo.NumLines.ToString().Length + 8;
+                Width = textInfo.CharWidth * textInfo.NumLines.ToString().Length + 12;
 
                 if (textView != null && textView.VisualLines.Count > 0)
                 {
                     var firstLine = textView.VisualLines.First().DocumentLine.LineNumber;
+                    var lastLine = textView.VisualLines.Last().DocumentLine.LineNumber;
 
                     DocumentLine currentLine = null;
 
@@ -43,7 +44,7 @@ namespace AvalonStudio.TextEditor
                         currentLine = textView.TextDocument.GetLineByOffset(textView.CaretIndex);
                     }
 
-                    for (var i = 0; i < textInfo.NumLines && i + firstLine <= textView.TextDocument.LineCount; i++)
+                    for (var i = 0; i < textInfo.NumLines && i + firstLine <= textView.TextDocument.LineCount && i + firstLine <= lastLine; i++)
                     {
                         using (
                             var formattedText = new FormattedText((i + firstLine).ToString(), "Consolas", textView.FontSize, FontStyle.Normal,
@@ -60,11 +61,9 @@ namespace AvalonStudio.TextEditor
                                 }
                             }
 
-                            context.DrawText(textColor, new Point(-4, textInfo.LineHeight * i), formattedText);
+                            context.DrawText(textColor, new Point(-8, textInfo.LineHeight * i), formattedText);
                         }
-                    }
-
-                    context.DrawLine(new Pen(foreground), new Point(Width, 0), new Point(Width, Bounds.Height));
+                    }                    
                 }
             }
         }
