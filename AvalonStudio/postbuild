@@ -1,4 +1,0 @@
-#!/bin/bash
-echo AvalonStudio PostBuild
-echo mkdir -p $1/AvalonStudio/bin/$2/$3/Plugins
-echo mkdir -p $1/AvalonStudioBuild/bin/$2/$3/Plugins
