@@ -1,4 +1,0 @@
-﻿<Styles xmlns="https://github.com/avaloniaui">
-  <StyleInclude Source="resm:AvalonStudio.Extensibility.Controls.ToolControl.paml?assembly=AvalonStudio.Extensibility"/>
-  <StyleInclude Source="resm:AvalonStudio.Extensibility.Controls.ViewModelViewHost.xaml?assembly=AvalonStudio.Extensibility"/>
-</Styles>
