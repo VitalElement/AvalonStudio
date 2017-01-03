@@ -83,6 +83,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoUpdater.NET, Version=1.3.2.0, Culture=neutral, PublicKeyToken=942f95247e354701, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autoupdater.NET.Official.1.3.2\lib\net40\AutoUpdater.NET.dll</HintPath>
+    </Reference>
     <Reference Include="Avalonia.Animation, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Avalonia.0.4.1-build2420-alpha\lib\net45\Avalonia.Animation.dll</HintPath>
       <Private>True</Private>
@@ -178,6 +181,9 @@
     <Reference Include="Mabiavalon.DockNC, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Mabiavalon.DockNC.0.0.1-build84-alpha\lib\portable-windows8+net45\Mabiavalon.DockNC.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="NAppUpdate.Framework, Version=0.5.1.0, Culture=neutral, PublicKeyToken=d1f1d1f19f9e5a56, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAppUpdate.Framework.0.5.1.0\lib\net40\NAppUpdate.Framework.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=3.1.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.3.1.0\lib\net45\SharpDX.dll</HintPath>
