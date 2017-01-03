@@ -519,48 +519,57 @@ namespace AvalonStudio.Languages.CPlusPlus
         public async Task AnalyseProjectAsync(IProject project)
         {
             Dictionary<string, ClangSourceLocation> globalSymbols = new Dictionary<string, ClangSourceLocation>();
-            var db = new ProjectContext();
+
+            var db = new ProjectContext(project as CPlusPlusProject);
+
             db.Database.Migrate();
 
             await Task.Factory.StartNew(async () =>
             {
                 var superProject = project as CPlusPlusProject;
 
-                foreach (var file in superProject.SourceFiles)
+                foreach (var file in superProject.SourceFiles.Where(f=>CanHandle(f)))
                 {
-                    var existingFile = db.SourceFiles.FirstOrDefault(f => f.RelativePath == file.Location);
+                    var existingFile = db.SourceFiles.FirstOrDefault(f => f.RelativePath == file.Project.Location.MakeRelativePath(file.Location));
 
                     if (existingFile == null)
                     {
-                        db.SourceFiles.Add(new SourceFiles() { RelativePath = file.Location, LastModified = System.IO.File.GetLastWriteTimeUtc(file.Location) });
+                        db.SourceFiles.Add(new SourceFiles() { RelativePath = file.Project.Location.MakeRelativePath(file.Location), LastModified = System.IO.File.GetLastWriteTimeUtc(file.Location) });
                     }
 
                     await db.SaveChangesAsync();
 
                     await clangAccessJobRunner.InvokeAsync(() =>
                     {
-                        var tu = GenerateTranslationUnit(file, new List<ClangUnsavedFile>());
-
-                        var indexAction = superProject.ClangIndex.CreateIndexAction();
-
-                        var callbacks = new ClangIndexerCallbacks();
-
-                        callbacks.IndexDeclaration += (sender, e) =>
+                        try
                         {
-                            if (!globalSymbols.ContainsKey(e.Cursor.UnifiedSymbolResolution))
+                            var tu = GenerateTranslationUnit(file, new List<ClangUnsavedFile>());
+
+                            var indexAction = superProject.ClangIndex.CreateIndexAction();
+
+                            var callbacks = new ClangIndexerCallbacks();
+
+                            callbacks.IndexDeclaration += (sender, e) =>
                             {
-                                globalSymbols.Add(e.Cursor.UnifiedSymbolResolution, e.Location.SourceLocation);
-                            }
-                        };
+                                if (!globalSymbols.ContainsKey(e.Cursor.UnifiedSymbolResolution))
+                                {
+                                    globalSymbols.Add(e.Cursor.UnifiedSymbolResolution, e.Location.SourceLocation);
+                                }
+                            };
 
-                        //callbacks.IndexEntityReference += (sender, e) =>
-                        //{
-                        //    Console.WriteLine($"index entity ref {e.Cursor.UnifiedSymbolResolution}");
-                        //};
+                            //callbacks.IndexEntityReference += (sender, e) =>
+                            //{
+                            //    Console.WriteLine($"index entity ref {e.Cursor.UnifiedSymbolResolution}");
+                            //};
 
-                        indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
+                            indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
 
-                        tu.Dispose();
+                            tu.Dispose();
+                        }
+                        catch(Exception e)
+                        {
+
+                        }
                     });
                 }
 
