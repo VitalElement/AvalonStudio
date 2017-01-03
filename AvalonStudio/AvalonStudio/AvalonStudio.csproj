@@ -420,9 +420,6 @@
     <EmbeddedResource Include="Controls\MetroWindowControlsTheme.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="libgit2-821131f.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
