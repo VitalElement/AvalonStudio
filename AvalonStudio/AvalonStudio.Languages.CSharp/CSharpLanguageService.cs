@@ -26,14 +26,9 @@
         private static readonly ConditionalWeakTable<ISourceFile, CSharpDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, CSharpDataAssociation>();
 
-        private readonly JobRunner intellisenseJobRunner;
-
         public CSharpLanguageService()
         {
             IndentationStrategy = new CSharpIndentationStrategy();
-            intellisenseJobRunner = new JobRunner();
-
-            Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(new CancellationToken()); });
         }
 
         public Type BaseTemplateType
