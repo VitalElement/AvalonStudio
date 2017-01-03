@@ -26,14 +26,9 @@
         private static readonly ConditionalWeakTable<ISourceFile, CSharpDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, CSharpDataAssociation>();
 
-        private readonly JobRunner intellisenseJobRunner;
-
         public CSharpLanguageService()
         {
             IndentationStrategy = new CSharpIndentationStrategy();
-            intellisenseJobRunner = new JobRunner();
-
-            Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(new CancellationToken()); });
         }
 
         public Type BaseTemplateType
@@ -133,9 +128,9 @@
             return CodeCompletionKind.None;
         }
 
-        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
         {
-            var result = new List<CodeCompletionData>();
+            var result = new CodeCompletionResults ();
 
             var dataAssociation = GetAssociatedData(sourceFile);
 
@@ -156,7 +151,7 @@
 
                     if (filter == string.Empty || completion.CompletionText.StartsWith(filter))
                     {
-                        result.Add(newCompletion);
+                        result.Completions.Add(newCompletion);
                     }
                 }
             }
