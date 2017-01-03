@@ -14,6 +14,7 @@ using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
+using Microsoft.EntityFrameworkCore;
 using NClang;
 using System;
 using System.Collections.Generic;
@@ -519,6 +520,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             Dictionary<string, ClangSourceLocation> globalSymbols = new Dictionary<string, ClangSourceLocation>();
             var db = new ProjectContext();
+            db.Database.Migrate();
 
             await Task.Factory.StartNew(async () =>
             {
