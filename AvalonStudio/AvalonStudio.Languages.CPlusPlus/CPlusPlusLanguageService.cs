@@ -4,6 +4,7 @@ using Avalonia.Media;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
+using AvalonStudio.Languages.CPlusPlus.ProjectDatabase;
 using AvalonStudio.Languages.CPlusPlus.Rendering;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -517,6 +518,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         public async Task AnalyseProjectAsync(IProject project)
         {
             Dictionary<string, ClangSourceLocation> globalSymbols = new Dictionary<string, ClangSourceLocation>();
+            var db = new ProjectContext();
 
             await Task.Factory.StartNew(async () =>
             {
@@ -524,6 +526,15 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 foreach (var file in superProject.SourceFiles)
                 {
+                    var existingFile = db.SourceFiles.FirstOrDefault(f => f.RelativePath == file.Location);
+
+                    if (existingFile == null)
+                    {
+                        db.SourceFiles.Add(new SourceFiles() { RelativePath = file.Location, LastModified = System.IO.File.GetLastWriteTimeUtc(file.Location) });
+                    }
+
+                    await db.SaveChangesAsync();
+
                     await clangAccessJobRunner.InvokeAsync(() =>
                     {
                         var tu = GenerateTranslationUnit(file, new List<ClangUnsavedFile>());
