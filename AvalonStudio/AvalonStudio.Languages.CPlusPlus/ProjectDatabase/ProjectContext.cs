@@ -25,7 +25,23 @@
             _fileName = $"{directory}\\Browse.db";
         }
 
+        public ProjectContext()
+        {
+
+        }
+
         public DbSet<SourceFiles> SourceFiles { get; set; }
+        public DbSet<Symbol> Symbols { get; set; }
+        public DbSet<Definition> Definitions { get; set; }
+        public DbSet<Declaration> Declarations { get; set; }
+        public DbSet<SymbolReference> UniqueReferences { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<SymbolReference>()
+            .HasIndex(b => b.Reference)
+            .IsUnique();
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
