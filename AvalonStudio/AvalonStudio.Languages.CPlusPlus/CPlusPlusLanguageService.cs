@@ -518,8 +518,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public async Task AnalyseProjectAsync(IProject project)
         {
-            Dictionary<string, ClangSourceLocation> globalSymbols = new Dictionary<string, ClangSourceLocation>();
-
             var db = new ProjectContext(project as CPlusPlusProject);
 
             db.Database.Migrate();
@@ -560,23 +558,22 @@ namespace AvalonStudio.Languages.CPlusPlus
                                     if (usr == null)
                                     {
                                         db.UniqueReferences.Add(new SymbolReference() { Reference = e.EntityInfo.USR });
+
+                                        // This takes very long time!!!
                                         db.SaveChanges();
+
+                                        // TODO gather the unique symbols in memory first, then send them to db all at once ;)
 
                                         usr = db.UniqueReferences.FirstOrDefault(r => r.Reference == e.EntityInfo.USR);
                                     }
-                                    
+
                                     db.Symbols.Add(new ProjectDatabase.Symbol() { USR = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column });
-
-                                    if (!globalSymbols.ContainsKey(e.Cursor.UnifiedSymbolResolution))
-                                    {
-                                        globalSymbols.Add(e.Cursor.UnifiedSymbolResolution, e.Location.SourceLocation);
-                                    }
                                 };
 
-                                callbacks.IndexEntityReference += (sender, e) =>
-                                {
-                                    Console.WriteLine($"index entity ref {e.Cursor.UnifiedSymbolResolution}");
-                                };
+                                //callbacks.IndexEntityReference += (sender, e) =>
+                                //{
+                                //    Console.WriteLine($"index entity ref {e.Cursor.UnifiedSymbolResolution}");
+                                //};
 
                                 indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
 
