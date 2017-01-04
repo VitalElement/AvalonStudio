@@ -341,14 +341,18 @@
     <Compile Include="DefineTextLineTransformer.cs" />
     <Compile Include="IncludeTextLineTransformer.cs" />
     <Compile Include="IndentationReformatter.cs" />
-    <Compile Include="Migrations\20170103222433_Initial.cs" />
-    <Compile Include="Migrations\20170103222433_Initial.designer.cs">
-      <DependentUpon>20170103222433_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\20170104161612_Initial.cs" />
+    <Compile Include="Migrations\20170104161612_Initial.designer.cs">
+      <DependentUpon>20170104161612_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\ProjectContextModelSnapshot.cs" />
     <Compile Include="PragmaMarkTextLineTransformer.cs" />
+    <Compile Include="ProjectDatabase\Declaration.cs" />
+    <Compile Include="ProjectDatabase\Definition.cs" />
     <Compile Include="ProjectDatabase\ProjectContext.cs" />
     <Compile Include="ProjectDatabase\SourceFiles.cs" />
+    <Compile Include="ProjectDatabase\Symbol.cs" />
+    <Compile Include="ProjectDatabase\SymbolReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextColoringTransformer.cs" />
   </ItemGroup>
@@ -399,6 +403,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
