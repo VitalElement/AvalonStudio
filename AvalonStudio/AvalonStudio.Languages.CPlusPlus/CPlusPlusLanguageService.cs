@@ -127,7 +127,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
-              var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+                var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
                 var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(),
                     CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
@@ -528,7 +528,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var superProject = project as CPlusPlusProject;
 
-                foreach (var file in superProject.SourceFiles.Where(f=>CanHandle(f)))
+                foreach (var file in superProject.SourceFiles.Where(f => CanHandle(f)))
                 {
                     var existingFile = db.SourceFiles.FirstOrDefault(f => f.RelativePath == file.Project.Location.MakeRelativePath(file.Location));
 
@@ -541,34 +541,58 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     await clangAccessJobRunner.InvokeAsync(() =>
                     {
-                        try
+                        int attempts = 0;
+
+                        while (true)
                         {
-                            var tu = GenerateTranslationUnit(file, new List<ClangUnsavedFile>());
-
-                            var indexAction = superProject.ClangIndex.CreateIndexAction();
-
-                            var callbacks = new ClangIndexerCallbacks();
-
-                            callbacks.IndexDeclaration += (sender, e) =>
+                            try
                             {
-                                if (!globalSymbols.ContainsKey(e.Cursor.UnifiedSymbolResolution))
+                                var tu = GenerateTranslationUnit(file, new List<ClangUnsavedFile>());
+
+                                var indexAction = superProject.ClangIndex.CreateIndexAction();
+
+                                var callbacks = new ClangIndexerCallbacks();
+
+                                callbacks.IndexDeclaration += (sender, e) =>
                                 {
-                                    globalSymbols.Add(e.Cursor.UnifiedSymbolResolution, e.Location.SourceLocation);
+                                    var usr = db.UniqueReferences.FirstOrDefault(r => r.Reference == e.EntityInfo.USR);
+
+                                    if (usr == null)
+                                    {
+                                        db.UniqueReferences.Add(new SymbolReference() { Reference = e.EntityInfo.USR });
+                                        db.SaveChanges();
+
+                                        usr = db.UniqueReferences.FirstOrDefault(r => r.Reference == e.EntityInfo.USR);
+                                    }
+                                    
+                                    db.Symbols.Add(new ProjectDatabase.Symbol() { USR = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column });
+
+                                    if (!globalSymbols.ContainsKey(e.Cursor.UnifiedSymbolResolution))
+                                    {
+                                        globalSymbols.Add(e.Cursor.UnifiedSymbolResolution, e.Location.SourceLocation);
+                                    }
+                                };
+
+                                callbacks.IndexEntityReference += (sender, e) =>
+                                {
+                                    Console.WriteLine($"index entity ref {e.Cursor.UnifiedSymbolResolution}");
+                                };
+
+                                indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
+
+                                tu.Dispose();
+                                db.SaveChanges();
+                                break;
+                            }
+                            catch (ClangServiceException e)
+                            {
+                                attempts++;
+
+                                if (attempts == 3)
+                                {
+                                    break;
                                 }
-                            };
-
-                            //callbacks.IndexEntityReference += (sender, e) =>
-                            //{
-                            //    Console.WriteLine($"index entity ref {e.Cursor.UnifiedSymbolResolution}");
-                            //};
-
-                            indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
-
-                            tu.Dispose();
-                        }
-                        catch(Exception e)
-                        {
-
+                            }
                         }
                     });
                 }
