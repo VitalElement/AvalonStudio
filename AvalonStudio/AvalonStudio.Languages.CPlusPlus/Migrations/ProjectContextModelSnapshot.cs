@@ -15,28 +15,6 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
 
-            modelBuilder.Entity("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.Declaration", b =>
-                {
-                    b.Property<int>("DeclarationId")
-                        .ValueGeneratedOnAdd();
-
-                    b.HasKey("DeclarationId");
-
-                    b.ToTable("Declarations");
-                });
-
-            modelBuilder.Entity("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.Definition", b =>
-                {
-                    b.Property<int>("DefinitionId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("UniqueSymbolReference");
-
-                    b.HasKey("DefinitionId");
-
-                    b.ToTable("Definitions");
-                });
-
             modelBuilder.Entity("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SourceFiles", b =>
                 {
                     b.Property<int>("SourceFilesId")
@@ -58,15 +36,11 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
 
                     b.Property<int>("Column");
 
-                    b.Property<int?>("DefinitionId");
-
                     b.Property<int>("Line");
 
                     b.Property<int?>("USRSymbolReferenceId");
 
                     b.HasKey("SymbolId");
-
-                    b.HasIndex("DefinitionId");
 
                     b.HasIndex("USRSymbolReferenceId");
 
@@ -78,9 +52,13 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                     b.Property<int>("SymbolReferenceId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("DefinitionSymbolId");
+
                     b.Property<string>("Reference");
 
                     b.HasKey("SymbolReferenceId");
+
+                    b.HasIndex("DefinitionSymbolId");
 
                     b.HasIndex("Reference")
                         .IsUnique();
@@ -90,13 +68,16 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
 
             modelBuilder.Entity("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.Symbol", b =>
                 {
-                    b.HasOne("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.Definition", "Definition")
-                        .WithMany()
-                        .HasForeignKey("DefinitionId");
-
                     b.HasOne("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SymbolReference", "USR")
-                        .WithMany()
+                        .WithMany("Symbols")
                         .HasForeignKey("USRSymbolReferenceId");
+                });
+
+            modelBuilder.Entity("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SymbolReference", b =>
+                {
+                    b.HasOne("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.Symbol", "Definition")
+                        .WithMany()
+                        .HasForeignKey("DefinitionSymbolId");
                 });
         }
     }
