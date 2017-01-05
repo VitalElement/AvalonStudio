@@ -556,9 +556,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public async Task AnalyseProjectAsync(IProject project)
         {
-            var db = new ProjectContext(project as CPlusPlusProject);
-
-            db.Database.Migrate();
+            var db = new BrowseDatabase(project.Solution);
 
             await Task.Factory.StartNew(() =>
             {
@@ -574,26 +572,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                         var symbolsToAdd = new List<ProjectDatabase.Symbol>();
                         var definitionsToAdd = new Dictionary<SymbolReference, ProjectDatabase.Symbol>();
 
-                        var existingFile = db.SourceFiles.FirstOrDefault(f => f.RelativePath == file.Project.Location.MakeRelativePath(file.Location));
+                        var existingFile = db.GetOrCreateSourceFile(file, out bool modified);
 
-                        var lastModified = System.IO.File.GetLastWriteTimeUtc(file.Location);
-
-                        bool parseFile = true;
-
-                        if (existingFile == null)
-                        {
-                            db.SourceFiles.Add(new SourceFiles() { RelativePath = file.Project.Location.MakeRelativePath(file.Location), LastModified = lastModified });
-                        }
-                        else if (lastModified > existingFile.LastModified)
-                        {
-                            existingFile.LastModified = lastModified;
-                        }
-                        else
-                        {
-                            parseFile = false;
-                        }
-
-                        if (parseFile)
+                        if(modified)
                         {
                             console.WriteLine($"Analysing File: {file.Location}");
 
@@ -620,7 +601,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                         {
                                             if (e.Location.SourceLocation.IsFromMainFile)
                                             {
-                                                var usr = db.UniqueReferences.FirstOrDefault(r => r.Reference == e.EntityInfo.USR);
+                                                var usr = db.GetSymbolReference(e.EntityInfo.USR);
 
                                                 if (usr == null)
                                                 {
@@ -663,10 +644,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                                         tu.Dispose();
 
-                                        db.UniqueReferences.AddRange(uniqueSymbols.Values);
+                                        db.AddSymbolReferences(uniqueSymbols.Values);
                                         db.SaveChanges();
 
-                                        db.Symbols.AddRange(symbolsToAdd);
+                                        db.AddSymbols(symbolsToAdd);
                                         db.SaveChanges();
 
                                         foreach (var definitionLink in definitionsToAdd)

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.CPlusPlus.ProjectDatabase
 {
-    public class SourceFiles
+    public class SourceFile
     {
-        public int SourceFilesId { get; set; }
+        public int SourceFileId { get; set; }
         public string RelativePath { get; set; }
         public DateTime LastModified { get; set; }
     }
