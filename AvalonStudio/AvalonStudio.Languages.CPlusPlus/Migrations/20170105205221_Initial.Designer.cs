@@ -8,7 +8,7 @@ using AvalonStudio.Languages.CPlusPlus.ProjectDatabase;
 namespace AvalonStudio.Languages.CPlusPlus.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    [Migration("20170105141800_Initial")]
+    [Migration("20170105205221_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -16,16 +16,19 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
 
-            modelBuilder.Entity("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SourceFiles", b =>
+            modelBuilder.Entity("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SourceFile", b =>
                 {
-                    b.Property<int>("SourceFilesId")
+                    b.Property<int>("SourceFileId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("LastModified");
 
                     b.Property<string>("RelativePath");
 
-                    b.HasKey("SourceFilesId");
+                    b.HasKey("SourceFileId");
+
+                    b.HasIndex("RelativePath")
+                        .IsUnique();
 
                     b.ToTable("SourceFiles");
                 });

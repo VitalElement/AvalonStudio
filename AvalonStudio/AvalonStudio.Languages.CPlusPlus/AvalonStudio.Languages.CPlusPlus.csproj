@@ -341,14 +341,15 @@
     <Compile Include="DefineTextLineTransformer.cs" />
     <Compile Include="IncludeTextLineTransformer.cs" />
     <Compile Include="IndentationReformatter.cs" />
-    <Compile Include="Migrations\20170105141800_Initial.cs" />
-    <Compile Include="Migrations\20170105141800_Initial.designer.cs">
-      <DependentUpon>20170105141800_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\20170105205221_Initial.cs" />
+    <Compile Include="Migrations\20170105205221_Initial.designer.cs">
+      <DependentUpon>20170105205221_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\ProjectContextModelSnapshot.cs" />
     <Compile Include="PragmaMarkTextLineTransformer.cs" />
+    <Compile Include="ProjectDatabase\BrowseDatabase.cs" />
     <Compile Include="ProjectDatabase\ProjectContext.cs" />
-    <Compile Include="ProjectDatabase\SourceFiles.cs" />
+    <Compile Include="ProjectDatabase\SourceFile.cs" />
     <Compile Include="ProjectDatabase\Symbol.cs" />
     <Compile Include="ProjectDatabase\SymbolReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

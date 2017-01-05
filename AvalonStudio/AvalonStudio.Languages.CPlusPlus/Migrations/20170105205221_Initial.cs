@@ -12,14 +12,14 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                 name: "SourceFiles",
                 columns: table => new
                 {
-                    SourceFilesId = table.Column<int>(nullable: false)
+                    SourceFileId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     LastModified = table.Column<DateTime>(nullable: false),
                     RelativePath = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SourceFiles", x => x.SourceFilesId);
+                    table.PrimaryKey("PK_SourceFiles", x => x.SourceFileId);
                 });
 
             migrationBuilder.CreateTable(
@@ -56,6 +56,12 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                         principalColumn: "SymbolReferenceId",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SourceFiles_RelativePath",
+                table: "SourceFiles",
+                column: "RelativePath",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Symbols_USRSymbolReferenceId",

@@ -41,8 +41,9 @@
             .HasIndex(b => b.Reference)
             .IsUnique();
 
-            //modelBuilder.Entity<SymbolReference>().HasOne(sr => sr.Definition).WithOne().HasForeignKey<SymbolReference>(sr => sr.DefinitionForeignKey);
-            //modelBuilder.Entity<Symbol>().HasOne(s => s.USR).WithOne().HasForeignKey<Symbol>(s=>s.USRForeignKey);
+            modelBuilder.Entity<SourceFile>()
+                .HasIndex(sf => sf.RelativePath)
+                .IsUnique();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
