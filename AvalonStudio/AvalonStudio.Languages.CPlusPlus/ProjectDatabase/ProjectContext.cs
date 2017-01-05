@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus.ProjectDatabase
 {
+    using AvalonStudio.Projects;
     using AvalonStudio.Projects.CPlusPlus;
     using Microsoft.EntityFrameworkCore;
     using System;
@@ -13,9 +14,9 @@
     {
         private string _fileName;
 
-        public ProjectContext(CPlusPlusProject project)
+        public ProjectContext(ISolution solution)
         {
-            var directory = $"{project.Solution.CurrentDirectory}.AvalonStudio";
+            var directory = $"{solution.CurrentDirectory}.AvalonStudio";
 
             if (!Directory.Exists(directory))
             {
@@ -30,7 +31,7 @@
 
         }
 
-        public DbSet<SourceFiles> SourceFiles { get; set; }
+        public DbSet<SourceFile> SourceFiles { get; set; }
         public DbSet<Symbol> Symbols { get; set; }        
         public DbSet<SymbolReference> UniqueReferences { get; set; }
 
