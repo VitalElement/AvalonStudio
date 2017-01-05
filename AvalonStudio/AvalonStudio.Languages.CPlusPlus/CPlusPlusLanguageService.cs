@@ -1,6 +1,7 @@
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
@@ -526,8 +527,16 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var superProject = project as CPlusPlusProject;
 
+                var console = IoC.Get<IConsole>();
+
                 foreach (var file in superProject.SourceFiles.Where(f => CanHandle(f)))
                 {
+                    console.WriteLine($"Analysing File: {file.Location}");
+
+                    var uniqueSymbols = new Dictionary<string, SymbolReference>();
+                    var symbolsToAdd = new List<ProjectDatabase.Symbol>();
+                    var definitionsToAdd = new Dictionary<SymbolReference, ProjectDatabase.Symbol>();
+
                     var existingFile = db.SourceFiles.FirstOrDefault(f => f.RelativePath == file.Project.Location.MakeRelativePath(file.Location));
 
                     if (existingFile == null)
@@ -550,24 +559,45 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 var indexAction = superProject.ClangIndex.CreateIndexAction();
 
                                 var callbacks = new ClangIndexerCallbacks();
+                                
+                                callbacks.PreprocessIncludedFile += (sender, e) =>
+                                {
+                                    return null;
+                                };
 
                                 callbacks.IndexDeclaration += (sender, e) =>
                                 {
-                                    var usr = db.UniqueReferences.FirstOrDefault(r => r.Reference == e.EntityInfo.USR);
-
-                                    if (usr == null)
+                                    if (e.Location.SourceLocation.IsFromMainFile)
                                     {
-                                        db.UniqueReferences.Add(new SymbolReference() { Reference = e.EntityInfo.USR });
+                                        var usr = db.UniqueReferences.FirstOrDefault(r => r.Reference == e.EntityInfo.USR);
 
-                                        // This takes very long time!!!
-                                        db.SaveChanges();
+                                        if (usr == null)
+                                        {
+                                            if (!uniqueSymbols.TryGetValue(e.EntityInfo.USR, out SymbolReference reference))
+                                            {
+                                                usr = new SymbolReference() { Reference = e.EntityInfo.USR };
+                                                uniqueSymbols.Add(e.EntityInfo.USR, usr);
+                                            }
+                                            else
+                                            {
+                                                usr = reference;
+                                            }
+                                        }
 
-                                        // TODO gather the unique symbols in memory first, then send them to db all at once ;)
+                                        var newSymbol = new ProjectDatabase.Symbol() { USR = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column };
+                                        symbolsToAdd.Add(newSymbol);
 
-                                        usr = db.UniqueReferences.FirstOrDefault(r => r.Reference == e.EntityInfo.USR);
-                                    }
-
-                                    db.Symbols.Add(new ProjectDatabase.Symbol() { USR = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column });
+                                        if (e.Cursor.IsDefinition && !definitionsToAdd.TryGetValue(usr, out ProjectDatabase.Symbol sym))
+                                        {
+                                            definitionsToAdd.Add(usr, newSymbol);
+                                        }
+                                    }    
+                                    else
+                                    {
+                                        // TODO keep track of headers already indexed and make a quick decision on if we need
+                                        // to track these symbols.
+                                        console.WriteLine("trying to index include file");
+                                    }                                        
                                 };
 
                                 //callbacks.IndexEntityReference += (sender, e) =>
@@ -576,8 +606,20 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 //};
 
                                 indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
-
+                                                                
                                 tu.Dispose();
+
+                                db.UniqueReferences.AddRange(uniqueSymbols.Values);
+                                db.SaveChanges();
+
+                                db.Symbols.AddRange(symbolsToAdd);
+                                db.SaveChanges();
+
+                                foreach(var definitionLink in definitionsToAdd)
+                                {
+                                    definitionLink.Key.Definition = definitionLink.Value;
+                                }
+
                                 db.SaveChanges();
                                 break;
                             }
