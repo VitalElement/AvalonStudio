@@ -41,11 +41,11 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
 
                     b.Property<int>("Line");
 
-                    b.Property<int?>("USRSymbolReferenceId");
+                    b.Property<int?>("SymbolReferenceId");
 
                     b.HasKey("SymbolId");
 
-                    b.HasIndex("USRSymbolReferenceId");
+                    b.HasIndex("SymbolReferenceId");
 
                     b.ToTable("Symbols");
                 });
@@ -55,13 +55,9 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                     b.Property<int>("SymbolReferenceId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int?>("DefinitionSymbolId");
-
                     b.Property<string>("Reference");
 
                     b.HasKey("SymbolReferenceId");
-
-                    b.HasIndex("DefinitionSymbolId");
 
                     b.HasIndex("Reference")
                         .IsUnique();
@@ -71,16 +67,9 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
 
             modelBuilder.Entity("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.Symbol", b =>
                 {
-                    b.HasOne("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SymbolReference", "USR")
+                    b.HasOne("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SymbolReference", "SymbolReference")
                         .WithMany("Symbols")
-                        .HasForeignKey("USRSymbolReferenceId");
-                });
-
-            modelBuilder.Entity("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SymbolReference", b =>
-                {
-                    b.HasOne("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.Symbol", "Definition")
-                        .WithMany()
-                        .HasForeignKey("DefinitionSymbolId");
+                        .HasForeignKey("SymbolReferenceId");
                 });
         }
     }
