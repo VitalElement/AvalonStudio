@@ -341,9 +341,9 @@
     <Compile Include="DefineTextLineTransformer.cs" />
     <Compile Include="IncludeTextLineTransformer.cs" />
     <Compile Include="IndentationReformatter.cs" />
-    <Compile Include="Migrations\20170105220945_Initial.cs" />
-    <Compile Include="Migrations\20170105220945_Initial.designer.cs">
-      <DependentUpon>20170105220945_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\20170106233347_Initial.cs" />
+    <Compile Include="Migrations\20170106233347_Initial.designer.cs">
+      <DependentUpon>20170106233347_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\ProjectContextModelSnapshot.cs" />
     <Compile Include="PragmaMarkTextLineTransformer.cs" />
