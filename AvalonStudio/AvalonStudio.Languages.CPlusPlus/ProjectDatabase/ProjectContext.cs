@@ -44,6 +44,10 @@
             modelBuilder.Entity<SourceFile>()
                 .HasIndex(sf => sf.RelativePath)
                 .IsUnique();
+
+            modelBuilder.Entity<Symbol>().HasOne(s=>s.SymbolReference).WithMany(sr => sr.Symbols);
+            modelBuilder.Entity<SymbolReference>().HasOne(sr => sr.Definition).WithOne().HasForeignKey<SymbolReference>(s=>s.DefinitionForeignKey);
+            modelBuilder.Entity<SymbolReference>().HasMany(s => s.Symbols).WithOne(s => s.SymbolReference);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
