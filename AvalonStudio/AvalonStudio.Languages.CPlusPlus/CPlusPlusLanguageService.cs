@@ -616,7 +616,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                                     }
                                                 }
 
-                                                var newSymbol = new ProjectDatabase.Symbol() { USR = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column };
+                                                var newSymbol = new ProjectDatabase.Symbol() { SymbolReference = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column };
                                                 symbolsToAdd.Add(newSymbol);
 
                                                 if (e.Cursor.IsDefinition && !definitionsToAdd.TryGetValue(usr, out ProjectDatabase.Symbol sym))
@@ -653,7 +653,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                         foreach (var definitionLink in definitionsToAdd)
                                         {
                                             definitionLink.Key.Definition = definitionLink.Value;
-                                        }
+                                        }                                        
 
                                         db.SaveChanges();
                                         break;
@@ -827,6 +827,20 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
 
                 result = SymbolFromClangCursor(cursor);
+
+                if (!string.IsNullOrEmpty(cursor.UnifiedSymbolResolution))
+                {
+                    var db = new BrowseDatabase(file.Project.Solution);
+                    var usr = db.GetSymbolReference(cursor.UnifiedSymbolResolution);
+
+                    if (usr?.Symbols != null)
+                    {
+                        foreach (var symbol in usr.Symbols)
+                        {
+                            Console.WriteLine($"Line: {symbol.Line}, Column: {symbol.Column}");
+                        }
+                    }
+                }
             });
 
             return result;
