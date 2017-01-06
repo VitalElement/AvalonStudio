@@ -8,7 +8,7 @@ using AvalonStudio.Languages.CPlusPlus.ProjectDatabase;
 namespace AvalonStudio.Languages.CPlusPlus.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    [Migration("20170105220945_Initial")]
+    [Migration("20170106233347_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,9 +56,14 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                     b.Property<int>("SymbolReferenceId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("DefinitionForeignKey");
+
                     b.Property<string>("Reference");
 
                     b.HasKey("SymbolReferenceId");
+
+                    b.HasIndex("DefinitionForeignKey")
+                        .IsUnique();
 
                     b.HasIndex("Reference")
                         .IsUnique();
@@ -71,6 +76,13 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                     b.HasOne("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SymbolReference", "SymbolReference")
                         .WithMany("Symbols")
                         .HasForeignKey("SymbolReferenceId");
+                });
+
+            modelBuilder.Entity("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SymbolReference", b =>
+                {
+                    b.HasOne("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.Symbol", "Definition")
+                        .WithOne()
+                        .HasForeignKey("AvalonStudio.Languages.CPlusPlus.ProjectDatabase.SymbolReference", "DefinitionForeignKey");
                 });
         }
     }
