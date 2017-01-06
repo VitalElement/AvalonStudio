@@ -43,8 +43,8 @@
         }
 
         public SymbolReference GetSymbolReference(string reference)
-        {
-            return db.UniqueReferences.FirstOrDefault(r => r.Reference == reference);
+        {            
+            return db.UniqueReferences.Include(sr=>sr.Symbols).FirstOrDefault(r => r.Reference == reference);
         }
 
         public void AddSymbolReferences(IEnumerable<SymbolReference> references)
