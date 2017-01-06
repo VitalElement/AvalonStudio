@@ -28,7 +28,6 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                 {
                     SymbolReferenceId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    DefinitionSymbolId = table.Column<int>(nullable: true),
                     Reference = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -44,14 +43,14 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Column = table.Column<int>(nullable: false),
                     Line = table.Column<int>(nullable: false),
-                    USRSymbolReferenceId = table.Column<int>(nullable: true)
+                    SymbolReferenceId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Symbols", x => x.SymbolId);
                     table.ForeignKey(
-                        name: "FK_Symbols_UniqueReferences_USRSymbolReferenceId",
-                        column: x => x.USRSymbolReferenceId,
+                        name: "FK_Symbols_UniqueReferences_SymbolReferenceId",
+                        column: x => x.SymbolReferenceId,
                         principalTable: "UniqueReferences",
                         principalColumn: "SymbolReferenceId",
                         onDelete: ReferentialAction.Restrict);
@@ -64,44 +63,27 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Symbols_USRSymbolReferenceId",
+                name: "IX_Symbols_SymbolReferenceId",
                 table: "Symbols",
-                column: "USRSymbolReferenceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UniqueReferences_DefinitionSymbolId",
-                table: "UniqueReferences",
-                column: "DefinitionSymbolId");
+                column: "SymbolReferenceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UniqueReferences_Reference",
                 table: "UniqueReferences",
                 column: "Reference",
                 unique: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_UniqueReferences_Symbols_DefinitionSymbolId",
-                table: "UniqueReferences",
-                column: "DefinitionSymbolId",
-                principalTable: "Symbols",
-                principalColumn: "SymbolId",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Symbols_UniqueReferences_USRSymbolReferenceId",
-                table: "Symbols");
-
             migrationBuilder.DropTable(
                 name: "SourceFiles");
 
             migrationBuilder.DropTable(
-                name: "UniqueReferences");
+                name: "Symbols");
 
             migrationBuilder.DropTable(
-                name: "Symbols");
+                name: "UniqueReferences");
         }
     }
 }
