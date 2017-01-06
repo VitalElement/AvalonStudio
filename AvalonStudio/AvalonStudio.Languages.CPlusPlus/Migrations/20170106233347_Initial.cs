@@ -28,6 +28,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                 {
                     SymbolReferenceId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    DefinitionForeignKey = table.Column<int>(nullable: true),
                     Reference = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -68,22 +69,40 @@ namespace AvalonStudio.Languages.CPlusPlus.Migrations
                 column: "SymbolReferenceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UniqueReferences_DefinitionForeignKey",
+                table: "UniqueReferences",
+                column: "DefinitionForeignKey",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UniqueReferences_Reference",
                 table: "UniqueReferences",
                 column: "Reference",
                 unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_UniqueReferences_Symbols_DefinitionForeignKey",
+                table: "UniqueReferences",
+                column: "DefinitionForeignKey",
+                principalTable: "Symbols",
+                principalColumn: "SymbolId",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Symbols_UniqueReferences_SymbolReferenceId",
+                table: "Symbols");
+
             migrationBuilder.DropTable(
                 name: "SourceFiles");
 
             migrationBuilder.DropTable(
-                name: "Symbols");
+                name: "UniqueReferences");
 
             migrationBuilder.DropTable(
-                name: "UniqueReferences");
+                name: "Symbols");
         }
     }
 }
