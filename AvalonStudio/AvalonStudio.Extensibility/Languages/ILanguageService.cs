@@ -26,7 +26,7 @@ namespace AvalonStudio.Languages
 		/// </summary>
 		Type BaseTemplateType { get; }
 
-		Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "");
+		Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "");
 
         IEnumerable<char> IntellisenseTriggerCharacters { get; }
         IEnumerable<char> IntellisenseSearchCharacters { get; }

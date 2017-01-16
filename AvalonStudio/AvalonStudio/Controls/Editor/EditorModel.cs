@@ -99,7 +99,7 @@ namespace AvalonStudio.Controls
             CodeCompletionResults results = null;
 
             var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, line, column, UnsavedFiles.ToList());
-            results = new CodeCompletionResults { Completions = completions };
+            results = completions;
 
             return results;
         }
