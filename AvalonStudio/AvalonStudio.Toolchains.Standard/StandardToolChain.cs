@@ -382,9 +382,14 @@ namespace AvalonStudio.Toolchains.Standard
 		private async Task CompileProject(IConsole console, IStandardProject superProject, IStandardProject project,
 			List<CompileResult> results = null)
 		{
+            if(project == superProject)
+            {
+                superProject.ToolChain?.ProvisionSettings(project);
+            }
+
 			if (project.Type == ProjectType.Executable && superProject != project)
 			{
-				await Build(console, project);
+                await Build(console, project);
 			}
 			else
 			{

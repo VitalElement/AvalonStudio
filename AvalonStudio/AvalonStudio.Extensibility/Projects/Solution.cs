@@ -149,7 +149,6 @@ namespace AvalonStudio.Projects
 			foreach (var project in solution.Projects)
 			{
 				project.ResolveReferences();
-                project?.ToolChain?.ProvisionSettings(project);
             }
 
 			solution.Name = Path.GetFileNameWithoutExtension(fileName);
