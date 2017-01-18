@@ -33,15 +33,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private readonly JobRunner clangAccessJobRunner;
 
-        private readonly JobRunner intellisenseJobRunner;
-
         public CPlusPlusLanguageService()
         {
             IndentationStrategy = new CppIndentationStrategy();
-            intellisenseJobRunner = new JobRunner();
             clangAccessJobRunner = new JobRunner();
-
-            Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(new CancellationToken()); });
 
             Task.Factory.StartNew(() => { clangAccessJobRunner.RunLoop(new CancellationToken()); });
         }
