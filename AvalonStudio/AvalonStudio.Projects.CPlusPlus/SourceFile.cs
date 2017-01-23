@@ -94,7 +94,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             EventHandler fileAddedHandler = (sender, e) =>
             {
-                var newFile = parent.Project.FindFile(filePath);
+                var newFile = parent.Project.FindFile(filePath.NormalizePath());
 
                 if(newFile != null)
                 {
