@@ -33,6 +33,17 @@
         }
 
         [Fact]
+        void Comparison_Matches_When_Path_Contains_UpperLevel_Symbols()
+        {
+            string path1 = "C:\\avalonstudio\\test\\..\\test\\";
+            string path2 = "c:\\avalonstudio\\test";
+
+            Assert.Equal(0, path1.CompareFilePath(path2));
+
+            Assert.Equal(0, path2.CompareFilePath(path1));
+        }
+
+        [Fact]
         void Comparison_Matches_When_unix_paths()
         {
             string path1 = "/c/avalonstudio/test/";
