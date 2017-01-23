@@ -56,7 +56,7 @@ namespace AvalonStudio.Languages.TypeScript
             return result;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
         {
             //Get position in text
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
@@ -77,7 +77,7 @@ namespace AvalonStudio.Languages.TypeScript
             };
         }
 
-        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int index, List<UnsavedFile> unsavedFiles, string filter = "")
+        private async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int index, List<UnsavedFile> unsavedFiles, string filter = "")
         {
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
             var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
