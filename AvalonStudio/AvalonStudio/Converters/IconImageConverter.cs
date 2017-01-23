@@ -5,6 +5,7 @@
     using Avalonia.Media.Imaging;
     using System;
     using System.Globalization;
+    using System.IO;
 
     class IconImageConverter : IValueConverter
     {
@@ -16,7 +17,16 @@
         {
             if (value is WindowIcon)
             {
-                return new Bitmap((value as WindowIcon).Save());
+                Bitmap result = null;
+
+                using (var stream = new MemoryStream())
+                {
+                    (value as WindowIcon).Save(stream);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    result = new Bitmap(stream);
+                }
+
+                return result;
             }
 
             return null;
