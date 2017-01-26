@@ -45,7 +45,7 @@ namespace AvalonStudio.Projects
 
             foreach (var file in files)
             {
-                var sourceFile = File.FromPath(project, folder, file.ToPlatformPath());
+                var sourceFile = File.FromPath(project, folder, file.ToPlatformPath().NormalizePath());
                 project.SourceFiles.InsertSorted(sourceFile);
                 folder.Items.InsertSorted(sourceFile);
             }
@@ -192,7 +192,7 @@ namespace AvalonStudio.Projects
         {
             var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
-            var sourceFile = File.FromPath(this, folder, fullPath.ToPlatformPath());
+            var sourceFile = File.FromPath(this, folder, fullPath.ToPlatformPath().NormalizePath());
             SourceFiles.InsertSorted(sourceFile);
 
             if (folder != null)
