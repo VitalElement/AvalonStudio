@@ -330,8 +330,8 @@ namespace AvalonStudio.Platforms
         {
             if (other != null && path != null)
             {
-                path = path.ToAvalonPath();
-                other = other.ToAvalonPath();
+                path = path.NormalizePath().ToAvalonPath();
+                other = other.NormalizePath().ToAvalonPath();
 
                 if (other.EndsWith("/") && !path.EndsWith("/"))
                 {
