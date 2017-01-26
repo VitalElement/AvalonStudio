@@ -73,7 +73,7 @@ namespace AvalonStudio.Languages.TypeScript
             return new CodeCompletionResults
             {
                 Completions = completionDataList,
-                Contexts = new CompletionContext() // TODO: ???
+                Contexts = CompletionContext.Unknown // TODO: ???
             };
         }
 
@@ -143,7 +143,7 @@ namespace AvalonStudio.Languages.TypeScript
         public int Format(TextEditor.Document.TextDocument textDocument, uint offset, uint length, int cursor)
         {
             //STUB!
-            throw new NotImplementedException();
+            return -1;
         }
 
         public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
