@@ -218,6 +218,7 @@ namespace AvalonStudio.Languages.TypeScript
             var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
             var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
             var tsSyntaxTree = await _tsContext.BuildAstAsync(currentFileName, currentFileConts);
+            
 #if DEBUG
             var syntaxTreeJsonDebug = Newtonsoft.Json.JsonConvert.SerializeObject(tsSyntaxTree);
             await LogFileWriter?.WriteLineAsync(syntaxTreeJsonDebug);
@@ -254,7 +255,22 @@ namespace AvalonStudio.Languages.TypeScript
             }
             dataAssociation.TextMarkerService.Clear();
 
-            //Diagnostics
+            // Diagnostics
+
+            // Language service has diagnostics
+            foreach (var tsDiagnostic in tsSyntaxTree.ParseDiagnostics)
+            {
+                // Convert diagnostics
+                result.Diagnostics.Add(new Diagnostic
+                {
+                    Project = sourceFile.Project,
+                    Line = 0, // TODO
+                    StartOffset = tsDiagnostic.Start,
+                    Spelling = tsDiagnostic.MessageText,
+                    Level = tsDiagnostic.Category == TSBridge.Ast.Diagnostics.Diagnostic.DiagnosticCategory.Error ? DiagnosticLevel.Error : DiagnosticLevel.Warning
+                });
+            }            
+
             result.Diagnostics.Add(new Diagnostic
             {
                 Project = sourceFile.Project,
