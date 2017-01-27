@@ -124,9 +124,10 @@ namespace AvalonStudio.Debugging.TypeScript
             throw new NotImplementedException();
         }
 
-        public Task RunAsync()
+        public async Task RunAsync()
         {
-            throw new NotImplementedException();
+            // STUB!
+            // throw new NotImplementedException();
         }
 
         public Task<LiveBreakPoint> SetBreakPointAsync(string file, uint line)
