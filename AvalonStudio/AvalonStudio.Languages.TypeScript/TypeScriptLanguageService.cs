@@ -32,7 +32,7 @@ namespace AvalonStudio.Languages.TypeScript
 
         public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
 
-        private SemaphoreSlim analysisThreadSemaphore = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim analysisThreadSemaphore = new SemaphoreSlim(1);
 
 #if DEBUG
         private static string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AvalonStudio", "Diagnostics", $"{nameof(TypeScriptLanguageService)}.log");
@@ -227,7 +227,6 @@ namespace AvalonStudio.Languages.TypeScript
             try
             {
                 tsSyntaxTree = await _tsContext.BuildAstAsync(currentFileName, currentFileConts);
-                analysisThreadSemaphore.Release();
             }
             catch (JavaScriptException)
             {
