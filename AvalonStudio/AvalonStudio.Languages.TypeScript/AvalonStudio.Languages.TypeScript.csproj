@@ -194,6 +194,10 @@
     <Compile Include="TypeScriptLanguageService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TSBridge.AvalonStudio\IridiumJS\Jint\IridiumJS.csproj">
+      <Project>{678738DA-F723-4920-B9E5-CAD667104BDA}</Project>
+      <Name>IridiumJS</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TSBridge.AvalonStudio\TSBridge\TSBridge\TSBridge.csproj">
       <Project>{90fcc510-9e0a-4781-a3b6-22cc089029b5}</Project>
       <Name>TSBridge</Name>

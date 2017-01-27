@@ -3,6 +3,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.TypeScript;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
+using IridiumJS.Runtime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -217,7 +218,29 @@ namespace AvalonStudio.Languages.TypeScript
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
             var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
             var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
-            var tsSyntaxTree = await _tsContext.BuildAstAsync(currentFileName, currentFileConts);
+            TypeScriptSyntaxTree tsSyntaxTree;
+            try
+            {
+                tsSyntaxTree = await _tsContext.BuildAstAsync(currentFileName, currentFileConts);
+            }
+            catch (JavaScriptException)
+            {
+                return new CodeAnalysisResults
+                {
+                    Diagnostics = new TextEditor.Document.TextSegmentCollection<Diagnostic>
+                    {
+                        new Diagnostic
+                        {
+                            Project = sourceFile.Project,
+                            Line = 1,
+                            Spelling = "Code analysis language service call failed.",
+                            StartOffset = 0,
+                            File = sourceFile.Name,
+                            Level = DiagnosticLevel.Error,
+                        }
+                    }
+                };
+            }
 
 #if DEBUG
             var syntaxTreeJsonDebug = Newtonsoft.Json.JsonConvert.SerializeObject(tsSyntaxTree);
@@ -293,7 +316,8 @@ namespace AvalonStudio.Languages.TypeScript
         public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
             //STUB!
-            return new SignatureHelp();
+            //return new SignatureHelp();
+            return null;
         }
 
         public int UnComment(TextEditor.Document.TextDocument textDocument, TextEditor.Document.ISegment segment, int caret = -1, bool format = true)
