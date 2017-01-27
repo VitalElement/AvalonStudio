@@ -156,7 +156,8 @@ namespace AvalonStudio.Debugging.TypeScript
             scriptExecutionEngine.VariableContext.console = new JSConsoleAdapter(console);
             scriptExecutionEngine.Execute(jsScript);
 
-            return true;
+            //return true;
+            return false; // hack
         }
 
         public Task StepInstructionAsync()
