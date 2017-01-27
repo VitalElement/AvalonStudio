@@ -221,7 +221,7 @@ namespace AvalonStudio.Languages.TypeScript
             
 #if DEBUG
             var syntaxTreeJsonDebug = Newtonsoft.Json.JsonConvert.SerializeObject(tsSyntaxTree);
-            await LogFileWriter?.WriteLineAsync(syntaxTreeJsonDebug);
+            LogFileWriter?.WriteLine(syntaxTreeJsonDebug);
             await LogFileWriter?.FlushAsync();
 #endif
 
@@ -264,7 +264,7 @@ namespace AvalonStudio.Languages.TypeScript
                 result.Diagnostics.Add(new Diagnostic
                 {
                     Project = sourceFile.Project,
-                    Line = 0, // TODO
+                    Line = dataAssociation.TextDocument.GetLineByOffset(tsDiagnostic.Start).LineNumber, // TODO
                     StartOffset = tsDiagnostic.Start,
                     Spelling = tsDiagnostic.MessageText,
                     Level = tsDiagnostic.Category == TSBridge.Ast.Diagnostics.Diagnostic.DiagnosticCategory.Error ? DiagnosticLevel.Error : DiagnosticLevel.Warning

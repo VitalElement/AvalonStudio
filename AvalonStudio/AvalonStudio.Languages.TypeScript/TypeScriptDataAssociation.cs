@@ -11,6 +11,7 @@ namespace AvalonStudio.Languages.TypeScript
     {
         public TypeScriptDataAssociation(TextDocument textDocument)
         {
+            TextDocument = textDocument;
             BackgroundRenderers = new List<IBackgroundRenderer>();
             DocumentLineTransformers = new List<IDocumentLineTransformer>();
 
@@ -23,6 +24,7 @@ namespace AvalonStudio.Languages.TypeScript
             DocumentLineTransformers.Add(TextColorizer);
         }
 
+        public TextDocument TextDocument { get; set; }
         public TextColoringTransformer TextColorizer { get; }
         public TextMarkerService TextMarkerService { get; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
