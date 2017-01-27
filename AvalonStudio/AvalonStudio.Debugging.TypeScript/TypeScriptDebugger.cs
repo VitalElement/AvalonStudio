@@ -1,8 +1,10 @@
 ﻿using AvalonStudio.Projects;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
+using IridiumJS;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.TypeScript
@@ -10,6 +12,7 @@ namespace AvalonStudio.Debugging.TypeScript
     public class TypeScriptDebugger : IDebugger
     {
         protected DebuggerState currentState;
+        protected JSEngine scriptExecutionEngine;
 
         public bool DebugMode { get; set; }
 
@@ -81,7 +84,7 @@ namespace AvalonStudio.Debugging.TypeScript
 
         public void Initialise()
         {
-            throw new NotImplementedException();
+            // Nothing here
         }
 
         public Task<List<VariableObject>> ListChildrenAsync(VariableObject variable)
@@ -140,9 +143,20 @@ namespace AvalonStudio.Debugging.TypeScript
             throw new NotImplementedException();
         }
 
-        public Task<bool> StartAsync(IToolChain toolChain, IConsole console, IProject project)
+        public async Task<bool> StartAsync(IToolChain toolChain, IConsole console, IProject project)
         {
-            throw new NotImplementedException();
+            // Start compiled TypeScript program
+            // IridiumJS is a dependency of the toolchain, so we will use it
+
+            // For now we will assume `main.js` as the output file
+            // Later it will have to be set in project settings, and read by toolchain
+            scriptExecutionEngine = new JSEngine();
+            var jsScript = System.IO.File.ReadAllText(Path.Combine(project.LocationDirectory, "main.js"));
+            // Inject console
+            scriptExecutionEngine.VariableContext.console = new JSConsoleAdapter(console);
+            scriptExecutionEngine.Execute(jsScript);
+
+            return true;
         }
 
         public Task StepInstructionAsync()
