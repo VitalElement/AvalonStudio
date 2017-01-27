@@ -31,7 +31,7 @@ namespace AvalonStudio.Languages.TypeScript
         public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
 
 #if DEBUG
-        private static string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AvalonStudio", "Diagnostics", $"nameof(TypeScriptLanguageService).log");
+        private static string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AvalonStudio", "Diagnostics", $"{nameof(TypeScriptLanguageService)}.log");
 
         private static StreamWriter LogFileWriter;
 #endif
@@ -41,9 +41,9 @@ namespace AvalonStudio.Languages.TypeScript
 #if DEBUG
             try
             {
-                Directory.CreateDirectory(LogFilePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(LogFilePath));
                 LogFileWriter = new StreamWriter(System.IO.File.OpenWrite(LogFilePath));
-            }
+            }   
             catch (IOException) // Maybe another instance is running. Anyway, this isn't really needed.
             {
             }
