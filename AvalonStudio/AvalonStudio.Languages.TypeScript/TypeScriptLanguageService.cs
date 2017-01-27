@@ -30,9 +30,25 @@ namespace AvalonStudio.Languages.TypeScript
 
         public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
 
+#if DEBUG
         private static string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AvalonStudio", "Diagnostics", $"nameof(TypeScriptLanguageService).log");
 
-        private static StreamWriter LogFileWriter = new StreamWriter(System.IO.File.OpenWrite(LogFilePath));
+        private static StreamWriter LogFileWriter;
+#endif
+
+        public TypeScriptLanguageService()
+        {
+#if DEBUG
+            try
+            {
+                Directory.CreateDirectory(LogFilePath);
+                LogFileWriter = new StreamWriter(System.IO.File.OpenWrite(LogFilePath));
+            }
+            catch (IOException) // Maybe another instance is running. Anyway, this isn't really needed.
+            {
+            }
+#endif
+        }
 
         public IIndentationStrategy IndentationStrategy
         {
@@ -204,8 +220,8 @@ namespace AvalonStudio.Languages.TypeScript
             var tsSyntaxTree = await _tsContext.BuildAstAsync(currentFileName, currentFileConts);
 #if DEBUG
             var syntaxTreeJsonDebug = Newtonsoft.Json.JsonConvert.SerializeObject(tsSyntaxTree);
-            await LogFileWriter.WriteLineAsync(syntaxTreeJsonDebug);
-            await LogFileWriter.FlushAsync();
+            await LogFileWriter?.WriteLineAsync(syntaxTreeJsonDebug);
+            await LogFileWriter?.FlushAsync();
 #endif
 
             //Highlighting
