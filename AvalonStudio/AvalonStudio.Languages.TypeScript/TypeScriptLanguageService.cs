@@ -203,19 +203,28 @@ namespace AvalonStudio.Languages.TypeScript
             foreach (var rootStatement in tsSyntaxTree.Statements)
             {
                 var highlightData = new OffsetSyntaxHighlightingData();
+                int startPos = 0, endPos = 0;
+                HighlightType highlightType = HighlightType.None;
                 switch (rootStatement.Kind)
                 {
                     case SyntaxKind.ClassDeclaration:
                         var classDeclaration = rootStatement as ClassDeclaration;
-                        var startPos = classDeclaration.Name.Position;
-                        var endPos = classDeclaration.Name.End;
+                        startPos = classDeclaration.Name.Position;
+                        endPos = classDeclaration.Name.End;
+                        highlightType = HighlightType.ClassName;
+                        break;
 
-                        highlightData.Start = startPos;
-                        highlightData.Length = endPos - startPos;
-                        highlightData.Type = HighlightType.ClassName;
+                    case SyntaxKind.FunctionDeclaration:
+                        var functionDeclaration = rootStatement as FunctionDeclaration;
+                        startPos = functionDeclaration.Name.Position;
+                        endPos = functionDeclaration.Name.End;
+                        highlightType = HighlightType.Identifier;
                         break;
                 }
 
+                highlightData.Start = startPos;
+                highlightData.Length = endPos - startPos;
+                highlightData.Type = highlightType;
                 result.SyntaxHighlightingData.Add(highlightData);
             }
             dataAssociation.TextMarkerService.Clear();
