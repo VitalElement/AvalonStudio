@@ -5,7 +5,7 @@
                       xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"
                       Icon="resm:AvalonStudio.icon.ico?assembly=AvalonStudio"
                       Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" FontFamily="Segoe UI" FontWeight="Light"
-                      Foreground="#FFE4E4E4" CoverTaskbarOnMaximize="false" WindowState="Maximized">
+                      Foreground="#FFE4E4E4" WindowState="Maximized">
   <Controls:MetroWindow.TitleBarContent>
 
   </Controls:MetroWindow.TitleBarContent>
