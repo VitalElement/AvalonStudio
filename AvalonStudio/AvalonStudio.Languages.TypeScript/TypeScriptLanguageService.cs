@@ -30,6 +30,10 @@ namespace AvalonStudio.Languages.TypeScript
 
         public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
 
+        private static string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AvalonStudio", "Diagnostics", $"nameof(TypeScriptLanguageService).log");
+
+        private static StreamWriter LogFileWriter = new StreamWriter(System.IO.File.OpenWrite(LogFilePath));
+
         public IIndentationStrategy IndentationStrategy
         {
             get;
@@ -198,6 +202,11 @@ namespace AvalonStudio.Languages.TypeScript
             var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
             var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
             var tsSyntaxTree = await _tsContext.BuildAstAsync(currentFileName, currentFileConts);
+#if DEBUG
+            var syntaxTreeJsonDebug = Newtonsoft.Json.JsonConvert.SerializeObject(tsSyntaxTree);
+            await LogFileWriter.WriteLineAsync(syntaxTreeJsonDebug);
+            await LogFileWriter.FlushAsync();
+#endif
 
             //Highlighting
             foreach (var rootStatement in tsSyntaxTree.Statements)
