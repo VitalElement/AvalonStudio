@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using TSBridge;
 using TSBridge.Ast;
@@ -30,6 +31,8 @@ namespace AvalonStudio.Languages.TypeScript
         public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '>', ';' }; } }
 
         public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
+
+        private SemaphoreSlim analysisThreadSemaphore = new SemaphoreSlim(1, 1);
 
 #if DEBUG
         private static string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AvalonStudio", "Diagnostics", $"{nameof(TypeScriptLanguageService)}.log");
@@ -219,9 +222,12 @@ namespace AvalonStudio.Languages.TypeScript
             var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
             var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
             TypeScriptSyntaxTree tsSyntaxTree;
+            // Only one analyzer at a time; the JS engine is single-threaded. TODO: Workaround with multiple JS engines
+            await analysisThreadSemaphore.WaitAsync();
             try
             {
                 tsSyntaxTree = await _tsContext.BuildAstAsync(currentFileName, currentFileConts);
+                analysisThreadSemaphore.Release();
             }
             catch (JavaScriptException)
             {
@@ -240,6 +246,10 @@ namespace AvalonStudio.Languages.TypeScript
                         }
                     }
                 };
+            }
+            finally
+            {
+                analysisThreadSemaphore.Release();
             }
 
 #if DEBUG
