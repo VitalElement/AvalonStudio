@@ -111,7 +111,18 @@ Program.main();
         public override string CurrentDirectory => Path.GetDirectoryName(Location) + Platform.DirectorySeperator;
 
         [JsonIgnore]
-        public override IDebugger Debugger { get; set; }
+        public override IDebugger Debugger
+        {
+            get
+            {
+                var tsToolchain = IoC.Get<IShell>().Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.TypeScript.TypeScriptDebugger");
+                return tsToolchain;
+            }
+            set
+            {
+                throw new NotSupportedException();
+            }
+        }
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic DebugSettings { get; set; }
@@ -149,7 +160,6 @@ Program.main();
 
         public override ITestFramework TestFramework { get; set; }
 
-        //TODO: Set up TS toolchain
         [JsonIgnore]
         public override IToolChain ToolChain
         {
