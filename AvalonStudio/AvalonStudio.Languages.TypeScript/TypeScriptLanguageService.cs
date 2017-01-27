@@ -43,7 +43,7 @@ namespace AvalonStudio.Languages.TypeScript
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(LogFilePath));
                 LogFileWriter = new StreamWriter(System.IO.File.OpenWrite(LogFilePath));
-            }   
+            }
             catch (IOException) // Maybe another instance is running. Anyway, this isn't really needed.
             {
             }
@@ -218,14 +218,12 @@ namespace AvalonStudio.Languages.TypeScript
             var currentFileConts = currentUnsavedFile?.Contents ?? System.IO.File.ReadAllText(sourceFile.FilePath);
             var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
             var tsSyntaxTree = await _tsContext.BuildAstAsync(currentFileName, currentFileConts);
-            
+
 #if DEBUG
             var syntaxTreeJsonDebug = Newtonsoft.Json.JsonConvert.SerializeObject(tsSyntaxTree);
-            LogFileWriter?.WriteLine(syntaxTreeJsonDebug);
-            await LogFileWriter?.FlushAsync();
 #endif
 
-            //Highlighting
+            // Highlighting
             foreach (var rootStatement in tsSyntaxTree.Statements)
             {
                 var highlightData = new OffsetSyntaxHighlightingData();
@@ -264,12 +262,12 @@ namespace AvalonStudio.Languages.TypeScript
                 result.Diagnostics.Add(new Diagnostic
                 {
                     Project = sourceFile.Project,
-                    Line = dataAssociation.TextDocument.GetLineByOffset(tsDiagnostic.Start).LineNumber, // TODO
+                    Line = GetLineNumber(currentFileConts, tsDiagnostic.Start), // TODO
                     StartOffset = tsDiagnostic.Start,
                     Spelling = tsDiagnostic.MessageText,
                     Level = tsDiagnostic.Category == TSBridge.Ast.Diagnostics.Diagnostic.DiagnosticCategory.Error ? DiagnosticLevel.Error : DiagnosticLevel.Warning
                 });
-            }            
+            }
 
             result.Diagnostics.Add(new Diagnostic
             {
@@ -284,6 +282,11 @@ namespace AvalonStudio.Languages.TypeScript
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
+        }
+
+        private int GetLineNumber(string document, int offset)
+        {
+            return document.Take(offset).Count(x => x == '\n') + 1;
         }
 
         public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
