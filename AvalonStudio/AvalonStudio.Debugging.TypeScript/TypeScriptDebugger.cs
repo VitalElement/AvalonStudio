@@ -9,26 +9,11 @@ namespace AvalonStudio.Debugging.TypeScript
 {
     public class TypeScriptDebugger : IDebugger
     {
-        public bool DebugMode
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
+        protected DebuggerState currentState;
 
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public bool DebugMode { get; set; }
 
-        public DebuggerState State
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public DebuggerState State => currentState;
 
         public event EventHandler<EventArgs> StateChanged;
 
@@ -61,12 +46,12 @@ namespace AvalonStudio.Debugging.TypeScript
 
         public Task<List<InstructionLine>> DisassembleAsync(ulong start, uint count)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public Task<List<InstructionLine>> DisassembleAsync(string file, int line, int numLines)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public Task<string> EvaluateExpressionAsync(string expression)
@@ -76,12 +61,12 @@ namespace AvalonStudio.Debugging.TypeScript
 
         public Task<Dictionary<int, string>> GetChangedRegistersAsync()
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public Task<Dictionary<int, Register>> GetRegistersAsync()
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public object GetSettingsControl(IProject project)
@@ -126,7 +111,7 @@ namespace AvalonStudio.Debugging.TypeScript
 
         public Task<List<MemoryBytes>> ReadMemoryBytesAsync(ulong address, ulong offset, uint count)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public Task RemoveAsync(LiveBreakPoint breakPoint)
