@@ -264,6 +264,7 @@ namespace AvalonStudio.Languages.TypeScript
                     Project = sourceFile.Project,
                     Line = GetLineNumber(currentFileConts, tsDiagnostic.Start), // TODO
                     StartOffset = tsDiagnostic.Start,
+                    EndOffset = tsDiagnostic.Start + tsDiagnostic.Length,
                     Spelling = tsDiagnostic.MessageText,
                     Level = tsDiagnostic.Category == TSBridge.Ast.Diagnostics.Diagnostic.DiagnosticCategory.Error ? DiagnosticLevel.Error : DiagnosticLevel.Warning
                 });
