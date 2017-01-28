@@ -189,7 +189,6 @@
   <ItemGroup>
     <Compile Include="BracketMatchingBackgroundRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextColoringTransformer.cs" />
     <Compile Include="TypeScriptDataAssociation.cs" />
     <Compile Include="TypeScriptLanguageService.cs" />
   </ItemGroup>
