@@ -309,10 +309,26 @@ namespace AvalonStudio.Languages.TypeScript
             if (node is IDeclaration)
             {
                 var declaration = ((IDeclaration)node);
-                startPos = declaration.Name?.Position ?? -1;
-                endPos = declaration.Name?.End ?? -1;
+                startPos = declaration.Position;
+                endPos = declaration.End;
                 if (startPos >= 0 && endPos > 0)
                 {
+                    if (node is VariableDeclaration) // For variables, we only want to highlight the name, not the expression
+                    {
+                        startPos = ((VariableDeclaration)node).Name.Position;
+                        endPos = ((VariableDeclaration)node).Name.End;
+                    }
+                    else if (node is ClassDeclaration) // For classes, we only want to highlight the name, not the entire contents
+                    {
+                        startPos = ((ClassDeclaration)node).Name.Position;
+                        endPos = ((ClassDeclaration)node).Name.End;
+                    }
+                    else if (node is FunctionDeclaration) // For functions, we only want to highlight the name, not the body
+                    {
+                        startPos = ((FunctionDeclaration)node).Name.Position;
+                        endPos = ((FunctionDeclaration)node).Name.End;
+                    }
+
                     highlightData.Start = startPos;
                     highlightData.Length = endPos - startPos;
                     result.SyntaxHighlightingData.Add(highlightData);
