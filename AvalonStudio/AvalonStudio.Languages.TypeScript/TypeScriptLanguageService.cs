@@ -304,6 +304,8 @@ namespace AvalonStudio.Languages.TypeScript
         {
             var highlightData = new OffsetSyntaxHighlightingData();
             int startPos = 0, endPos = 0;
+
+            // This will add highlighting data for declarations, but it will not show up because it is set to highlight as None
             if (node is IDeclaration)
             {
                 var declaration = ((IDeclaration)node);
@@ -316,6 +318,8 @@ namespace AvalonStudio.Languages.TypeScript
                     result.SyntaxHighlightingData.Add(highlightData);
                 }
             }
+
+            // This section will adjust highlight data, and set the highlight type
             switch (node.Kind)
             {
                 case SyntaxKind.ClassDeclaration:
@@ -331,6 +335,30 @@ namespace AvalonStudio.Languages.TypeScript
                     var methodDeclaration = node as MethodDeclaration;
                     highlightData.Type = HighlightType.Identifier;
                     // TODO: Child nodes
+                    foreach (var statement in methodDeclaration.Body.Statements)
+                    {
+                        HighlightNode(statement, result);
+                    }
+                    break;
+
+                case SyntaxKind.Constructor:
+                    highlightData.Type = HighlightType.Identifier;
+                    break;
+
+                case SyntaxKind.VariableStatement:
+                    var variableStatement = node as VariableStatement;
+                    foreach (var declaration in variableStatement.DeclarationList.Declarations)
+                    {
+                        HighlightNode(declaration, result);
+                    }
+                    break;
+
+                case SyntaxKind.VariableDeclaration:
+                    highlightData.Type = HighlightType.Identifier;
+                    break;
+
+                default:
+                    // lol
                     break;
             }
         }
