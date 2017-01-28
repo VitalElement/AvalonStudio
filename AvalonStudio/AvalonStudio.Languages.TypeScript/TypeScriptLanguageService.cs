@@ -265,12 +265,6 @@ namespace AvalonStudio.Languages.TypeScript
 
             // Highlighting
 
-            // Recursively highlight and analyze from parse tree
-            foreach (var rootStatement in tsSyntaxTree.Statements)
-            {
-                HighlightNode(rootStatement, result);
-            }
-
             // Highlight keywords
             var keywordMatches = KeywordPattern.Matches(currentFileConts);
             foreach (Match keywordMatch in keywordMatches)
@@ -281,6 +275,12 @@ namespace AvalonStudio.Languages.TypeScript
                     Length = keywordMatch.Length,
                     Type = HighlightType.Keyword
                 });
+            }
+
+            // Recursively highlight and analyze from parse tree
+            foreach (var rootStatement in tsSyntaxTree.Statements)
+            {
+                HighlightNode(rootStatement, result);
             }
 
             // Clean up previous highlighting
