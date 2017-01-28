@@ -42,7 +42,11 @@ namespace AvalonStudio.Languages.TypeScript
             new Regex(@"\b(break|case|catch|class|constructor|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|function|if|import|in|instanceof|new|null|return|super|switch|this|throw|true|try|typeof|var|void|while|with|as|implements|interface|let|package|private|protected|public|static|yield|symbol|type|from|of|any|boolean|declare|get|module|require|number|set|string)",
                 RegexOptions.Compiled);
 
-        private static Regex CommentPattern =
+        private static Regex LineCommentPattern =
+            new Regex(@"//(.*?)\r?\n",
+                RegexOptions.Compiled);
+
+        private static Regex BlockCommentPattern =
             new Regex(@"(//[\t|\s|\w|\d|\.]*[\r\n|\n])|([\s|\t]*/\*[\t|\s|\w|\W|\d|\.|\r|\n]*\*/)|(\<[!%][ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t%]*)\>)",
                 RegexOptions.Compiled);
 
@@ -270,8 +274,20 @@ namespace AvalonStudio.Languages.TypeScript
             // Highlighting
 
             // Highlight comments
-            var commentMatches = CommentPattern.Matches(currentFileConts);
-            foreach (Match commentMatch in commentMatches)
+
+            var lineCommentMatches = LineCommentPattern.Matches(currentFileConts);
+            foreach (Match commentMatch in lineCommentMatches)
+            {
+                result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
+                {
+                    Start = commentMatch.Index,
+                    Length = commentMatch.Length,
+                    Type = HighlightType.Comment
+                });
+            }
+
+            var blockCommentMatches = BlockCommentPattern.Matches(currentFileConts);
+            foreach (Match commentMatch in blockCommentMatches)
             {
                 result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
                 {
