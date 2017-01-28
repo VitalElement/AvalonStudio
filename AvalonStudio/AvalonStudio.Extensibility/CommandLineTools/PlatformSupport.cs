@@ -82,7 +82,7 @@ namespace AvalonStudio.CommandLineTools
                     else //Unix
                     {
                         shellProc.StartInfo.FileName = "sh";
-                        shellProc.StartInfo.Arguments = $"-c {(resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName)} {args}";
+                        shellProc.StartInfo.Arguments = $"-c \"{(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}\"";
                         shellProc.StartInfo.CreateNoWindow = true;
                     }
                 }
