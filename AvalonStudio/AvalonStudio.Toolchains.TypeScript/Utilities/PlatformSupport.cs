@@ -60,7 +60,7 @@ namespace AvalonStudio.Toolchains.TypeScript.Utilities
             else //Unix
             {
                 shellProc.StartInfo.FileName = "sh";
-                shellProc.StartInfo.Arguments = $"-c {(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}";
+                shellProc.StartInfo.Arguments = $"-c \"{(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}\"";
             }
             shellProc.OutputDataReceived += (s, a) => outputReceivedCallback(s, a);
             shellProc.Start();
