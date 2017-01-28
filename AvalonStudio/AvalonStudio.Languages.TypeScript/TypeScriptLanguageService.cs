@@ -42,6 +42,10 @@ namespace AvalonStudio.Languages.TypeScript
             new Regex(@"\b(break|case|catch|class|constructor|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|function|if|import|in|instanceof|new|null|return|super|switch|this|throw|true|try|typeof|var|void|while|with|as|implements|interface|let|package|private|protected|public|static|yield|symbol|type|from|of|any|boolean|declare|get|module|require|number|set|string)",
                 RegexOptions.Compiled);
 
+        private static Regex CommentPattern =
+            new Regex(@"(//[\t|\s|\w|\d|\.]*[\r\n|\n])|([\s|\t]*/\*[\t|\s|\w|\W|\d|\.|\r|\n]*\*/)|(\<[!%][ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t%]*)\>)",
+                RegexOptions.Compiled);
+
 #if DEBUG
         private static string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AvalonStudio", "Diagnostics", $"{nameof(TypeScriptLanguageService)}.log");
 
@@ -264,6 +268,18 @@ namespace AvalonStudio.Languages.TypeScript
 #endif
 
             // Highlighting
+
+            // Highlight comments
+            var commentMatches = CommentPattern.Matches(currentFileConts);
+            foreach (Match commentMatch in commentMatches)
+            {
+                result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
+                {
+                    Start = commentMatch.Index,
+                    Length = commentMatch.Length,
+                    Type = HighlightType.Comment
+                });
+            }
 
             // Highlight keywords
             var keywordMatches = KeywordPattern.Matches(currentFileConts);
