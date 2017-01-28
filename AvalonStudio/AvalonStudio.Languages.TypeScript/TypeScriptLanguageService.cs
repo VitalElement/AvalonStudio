@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using TSBridge;
@@ -35,6 +36,11 @@ namespace AvalonStudio.Languages.TypeScript
         public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
 
         private SemaphoreSlim analysisThreadSemaphore = new SemaphoreSlim(1);
+
+        // https://github.com/Microsoft/TypeScript/issues/2536
+        private static Regex KeywordPattern =
+            new Regex(@"\b(break|case|catch|class|constructor|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|function|if|import|in|instanceof|new|null|return|super|switch|this|throw|true|try|typeof|var|void|while|with|as|implements|interface|let|package|private|protected|public|static|yield|symbol|type|from|of|any|boolean|declare|get|module|require|number|set|string)",
+                RegexOptions.Compiled);
 
 #if DEBUG
         private static string LogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AvalonStudio", "Diagnostics", $"{nameof(TypeScriptLanguageService)}.log");
@@ -259,10 +265,22 @@ namespace AvalonStudio.Languages.TypeScript
 
             // Highlighting
 
-            // Recursively highlight and analyze
+            // Recursively highlight and analyze from parse tree
             foreach (var rootStatement in tsSyntaxTree.Statements)
             {
                 HighlightNode(rootStatement, result);
+            }
+
+            // Highlight keywords
+            var keywordMatches = KeywordPattern.Matches(currentFileConts);
+            foreach (Match keywordMatch in keywordMatches)
+            {
+                result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
+                {
+                    Start = keywordMatch.Index,
+                    Length = keywordMatch.Length,
+                    Type = HighlightType.Keyword
+                });
             }
 
             // Clean up previous highlighting
