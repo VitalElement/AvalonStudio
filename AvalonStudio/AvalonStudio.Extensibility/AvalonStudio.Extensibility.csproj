@@ -234,6 +234,7 @@
     <Compile Include="Languages\CompletionAssistance\SignatureHelpModels.cs" />
     <Compile Include="Languages\CompletionContext.cs" />
     <Compile Include="Languages\IndexEntry.cs" />
+    <Compile Include="Languages\TextColoringTransformer.cs" />
     <Compile Include="MainMenu\IMenu.cs" />
     <Compile Include="MainMenu\IMenuBuilder.cs" />
     <Compile Include="MainMenu\MenuBuilder.cs" />
