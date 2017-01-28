@@ -214,7 +214,7 @@ namespace AvalonStudio.Languages.TypeScript
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file, TextEditor.Document.TextDocument textDocument)
         {
-            _tsContext = _tsContext ?? (file.Project as TypeScriptProject).TypeScriptContext;
+            _tsContext = _tsContext ?? ((TypeScriptProject) file.Project).TypeScriptContext;
             _tsContext.OpenFile(file.FilePath, System.IO.File.ReadAllText(file.FilePath));
 
             TypeScriptDataAssociation association = null;
