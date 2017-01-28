@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using TSBridge;
 using TSBridge.Ast;
 using TSBridge.Ast.Statements;
+using TSBridge.Ast.SubNodes.ClassElements;
 
 namespace AvalonStudio.Languages.TypeScript
 {
@@ -256,33 +257,14 @@ namespace AvalonStudio.Languages.TypeScript
 #endif
 
             // Highlighting
+
+            // Recursively highlight and analyze
             foreach (var rootStatement in tsSyntaxTree.Statements)
             {
-                var highlightData = new OffsetSyntaxHighlightingData();
-                int startPos = 0, endPos = 0;
-                HighlightType highlightType = HighlightType.None;
-                switch (rootStatement.Kind)
-                {
-                    case SyntaxKind.ClassDeclaration:
-                        var classDeclaration = rootStatement as ClassDeclaration;
-                        startPos = classDeclaration.Name.Position;
-                        endPos = classDeclaration.Name.End;
-                        highlightType = HighlightType.ClassName;
-                        break;
-
-                    case SyntaxKind.FunctionDeclaration:
-                        var functionDeclaration = rootStatement as FunctionDeclaration;
-                        startPos = functionDeclaration.Name.Position;
-                        endPos = functionDeclaration.Name.End;
-                        highlightType = HighlightType.Identifier;
-                        break;
-                }
-
-                highlightData.Start = startPos;
-                highlightData.Length = endPos - startPos;
-                highlightData.Type = highlightType;
-                result.SyntaxHighlightingData.Add(highlightData);
+                HighlightNode(rootStatement, result);
             }
+
+            // Clean up previous highlighting
             dataAssociation.TextMarkerService.Clear();
 
             // Diagnostics
@@ -315,6 +297,47 @@ namespace AvalonStudio.Languages.TypeScript
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
+        }
+
+        private void HighlightNode(INode node, CodeAnalysisResults result)
+        {
+            var highlightData = new OffsetSyntaxHighlightingData();
+            int startPos = 0, endPos = 0;
+            HighlightType highlightType = HighlightType.None;
+            //if (node is IDeclaration)
+            //{ }
+            switch (node.Kind)
+            {
+                case SyntaxKind.ClassDeclaration:
+                    var classDeclaration = node as ClassDeclaration;
+                    startPos = classDeclaration.Name.Position;
+                    endPos = classDeclaration.Name.End;
+                    highlightType = HighlightType.ClassName;
+                    foreach (var member in classDeclaration.Members)
+                    {
+                        HighlightNode(member, result);
+                    }
+                    break;
+
+                case SyntaxKind.MethodDeclaration:
+                    var methodDeclaration = node as MethodDeclaration;
+                    startPos = methodDeclaration.Name.Position;
+                    endPos = methodDeclaration.Name.End;
+                    highlightType = HighlightType.Identifier;
+                    break;
+
+                case SyntaxKind.FunctionDeclaration:
+                    var functionDeclaration = node as FunctionDeclaration;
+                    startPos = functionDeclaration.Name.Position;
+                    endPos = functionDeclaration.Name.End;
+                    highlightType = HighlightType.Identifier;
+                    break;
+            }
+
+            highlightData.Start = startPos;
+            highlightData.Length = endPos - startPos;
+            highlightData.Type = highlightType;
+            result.SyntaxHighlightingData.Add(highlightData);
         }
 
         private int GetLineNumber(string document, int offset)
