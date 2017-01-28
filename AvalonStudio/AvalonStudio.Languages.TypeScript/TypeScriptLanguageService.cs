@@ -15,6 +15,7 @@ using TSBridge;
 using TSBridge.Ast;
 using TSBridge.Ast.Statements;
 using TSBridge.Ast.SubNodes.ClassElements;
+using TSBridge.Ast.SubNodes.Declarations;
 
 namespace AvalonStudio.Languages.TypeScript
 {
@@ -303,16 +304,17 @@ namespace AvalonStudio.Languages.TypeScript
         {
             var highlightData = new OffsetSyntaxHighlightingData();
             int startPos = 0, endPos = 0;
-            HighlightType highlightType = HighlightType.None;
-            //if (node is IDeclaration)
-            //{ }
+            if (node is IDeclaration)
+            {
+                highlightData.Start = startPos;
+                highlightData.Length = endPos - startPos;
+                result.SyntaxHighlightingData.Add(highlightData);
+            }
             switch (node.Kind)
             {
                 case SyntaxKind.ClassDeclaration:
                     var classDeclaration = node as ClassDeclaration;
-                    startPos = classDeclaration.Name.Position;
-                    endPos = classDeclaration.Name.End;
-                    highlightType = HighlightType.ClassName;
+                    highlightData.Type = HighlightType.ClassName;
                     foreach (var member in classDeclaration.Members)
                     {
                         HighlightNode(member, result);
@@ -321,23 +323,9 @@ namespace AvalonStudio.Languages.TypeScript
 
                 case SyntaxKind.MethodDeclaration:
                     var methodDeclaration = node as MethodDeclaration;
-                    startPos = methodDeclaration.Name.Position;
-                    endPos = methodDeclaration.Name.End;
-                    highlightType = HighlightType.Identifier;
-                    break;
-
-                case SyntaxKind.FunctionDeclaration:
-                    var functionDeclaration = node as FunctionDeclaration;
-                    startPos = functionDeclaration.Name.Position;
-                    endPos = functionDeclaration.Name.End;
-                    highlightType = HighlightType.Identifier;
+                    // TODO: Child nodes
                     break;
             }
-
-            highlightData.Start = startPos;
-            highlightData.Length = endPos - startPos;
-            highlightData.Type = highlightType;
-            result.SyntaxHighlightingData.Add(highlightData);
         }
 
         private int GetLineNumber(string document, int offset)
