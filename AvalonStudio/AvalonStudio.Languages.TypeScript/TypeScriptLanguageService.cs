@@ -306,9 +306,15 @@ namespace AvalonStudio.Languages.TypeScript
             int startPos = 0, endPos = 0;
             if (node is IDeclaration)
             {
-                highlightData.Start = startPos;
-                highlightData.Length = endPos - startPos;
-                result.SyntaxHighlightingData.Add(highlightData);
+                var declaration = ((IDeclaration)node);
+                startPos = declaration.Name?.Position ?? -1;
+                endPos = declaration.Name?.End ?? -1;
+                if (startPos >= 0 && endPos > 0)
+                {
+                    highlightData.Start = startPos;
+                    highlightData.Length = endPos - startPos;
+                    result.SyntaxHighlightingData.Add(highlightData);
+                }
             }
             switch (node.Kind)
             {
