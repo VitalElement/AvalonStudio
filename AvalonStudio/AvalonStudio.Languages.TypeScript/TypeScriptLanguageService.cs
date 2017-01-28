@@ -329,6 +329,7 @@ namespace AvalonStudio.Languages.TypeScript
 
                 case SyntaxKind.MethodDeclaration:
                     var methodDeclaration = node as MethodDeclaration;
+                    highlightData.Type = HighlightType.Identifier;
                     // TODO: Child nodes
                     break;
             }
