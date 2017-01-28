@@ -318,6 +318,7 @@ namespace AvalonStudio.Languages.TypeScript
                 });
             }
 
+
             // Highlight keywords
             var keywordMatches = KeywordPattern.Matches(currentFileConts);
             foreach (Match keywordMatch in keywordMatches)
@@ -335,6 +336,7 @@ namespace AvalonStudio.Languages.TypeScript
             {
                 HighlightNode(rootStatement, result);
             }
+
 
             // Clean up previous highlighting
             dataAssociation.TextMarkerService.Clear();
@@ -409,6 +411,10 @@ namespace AvalonStudio.Languages.TypeScript
                     highlightData.Length = endPos - startPos;
                     result.SyntaxHighlightingData.Add(highlightData);
                 }
+            }
+            else if (node is IExpression)
+            {
+                // TODO: Highlight expressions
             }
 
             // This section will adjust highlight data, and set the highlight type
