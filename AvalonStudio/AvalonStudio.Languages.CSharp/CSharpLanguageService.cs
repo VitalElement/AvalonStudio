@@ -6,7 +6,6 @@
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
     using CPlusPlus;
-    using CPlusPlus.Rendering;
     using Extensibility.Threading;
     using Projects.OmniSharp;
     using System;

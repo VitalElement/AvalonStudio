@@ -1,10 +1,10 @@
+﻿using System;
 using Avalonia.Media;
 using Avalonia.Threading;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
-using System;
 
-namespace AvalonStudio.Languages.CPlusPlus.Rendering
+namespace AvalonStudio.Languages
 {
     public class TextColoringTransformer : IDocumentLineTransformer
     {
@@ -17,12 +17,17 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
             TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
             CommentBrush = Brush.Parse("#559A3F");
-            CallExpressionBrush = Brush.Parse("Pink");
-            IdentifierBrush = Brush.Parse("#D4D4D4");
+            CallExpressionBrush = Brush.Parse("#DCDCAA");
+            IdentifierBrush = Brush.Parse("#C8C8C8");
             KeywordBrush = Brush.Parse("#569CD6");
             LiteralBrush = Brush.Parse("#D69D85");
-            PunctuationBrush = Brush.Parse("#D4D4D4");
-            UserTypeBrush = Brush.Parse("#4BB289");
+            NumericLiteralBrush = Brush.Parse("#B5CEA8");
+            EnumConstantBrush = Brush.Parse("#B5CEA8");
+            EnumTypeNameBrush = Brush.Parse("#B5CEA8");
+            InterfaceBrush = Brush.Parse("#B5CEA8");
+
+            PunctuationBrush = Brush.Parse("#C8C8C8");
+            UserTypeBrush = Brush.Parse("#4EC9B0");
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
@@ -33,6 +38,8 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 
         public IBrush IdentifierBrush { get; set; }
 
+        public IBrush NumericLiteralBrush { get; set; }
+
         public IBrush LiteralBrush { get; set; }
 
         public IBrush UserTypeBrush { get; set; }
@@ -40,6 +47,12 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
         public IBrush CallExpressionBrush { get; set; }
 
         public IBrush CommentBrush { get; set; }
+
+        public IBrush EnumConstantBrush { get; set; }
+
+        public IBrush InterfaceBrush { get; set; }
+
+        public IBrush EnumTypeNameBrush { get; set; }
 
         public event EventHandler<EventArgs> DataChanged;
 
@@ -56,7 +69,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
                     formattedOffset = transform.StartOffset - line.Offset;
                 }
 
-                line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.EndOffset);
+                line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.Length);
             }
         }
 
@@ -70,26 +83,12 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
                 {
                     if (transform.Type != HighlightType.None)
                     {
-                        if (transform is LineColumnSyntaxHighlightingData)
+                        transformations.Add(new TextTransformation
                         {
-                            var trans = transform as LineColumnSyntaxHighlightingData;
-
-                            transformations.Add(new TextTransformation
-                            {
-                                Foreground = GetBrush(transform.Type),
-                                StartOffset = document.GetOffset(trans.StartLine, trans.StartColumn),
-                                EndOffset = document.GetOffset(trans.EndLine, trans.EndColumn)
-                            });
-                        }
-                        else
-                        {
-                            transformations.Add(new TextTransformation
-                            {
-                                Foreground = GetBrush(transform.Type),
-                                StartOffset = transform.Start,
-                                EndOffset = transform.Start + transform.Length
-                            });
-                        }
+                            Foreground = GetBrush(transform.Type),
+                            StartOffset = transform.Start,
+                            EndOffset = transform.Start + transform.Length
+                        });
                     }
                 }
 
@@ -132,8 +131,16 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
                     result = LiteralBrush;
                     break;
 
+                case HighlightType.NumericLiteral:
+                    result = NumericLiteralBrush;
+                    break;
+
                 case HighlightType.Punctuation:
                     result = PunctuationBrush;
+                    break;
+
+                case HighlightType.InterfaceName:
+                    result = InterfaceBrush;
                     break;
 
                 case HighlightType.ClassName:
@@ -142,6 +149,10 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 
                 case HighlightType.CallExpression:
                     result = CallExpressionBrush;
+                    break;
+
+                case HighlightType.EnumTypeName:
+                    result = EnumTypeNameBrush;
                     break;
 
                 default:
