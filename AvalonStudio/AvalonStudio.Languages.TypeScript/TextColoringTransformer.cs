@@ -18,7 +18,7 @@ namespace AvalonStudio.Languages.TypeScript.Rendering
 
             CommentBrush = Brush.Parse("#559A3F");
             CallExpressionBrush = Brush.Parse("Pink");
-            IdentifierBrush = Brush.Parse("#7A7777");
+            IdentifierBrush = Brush.Parse("#8C8C8C");
             KeywordBrush = Brush.Parse("#569CD6");
             LiteralBrush = Brush.Parse("#D69D85");
             PunctuationBrush = Brush.Parse("#D4D4D4");
