@@ -71,7 +71,13 @@ namespace AvalonStudio
 
 			var main = new MainWindow();
 
+			main.WindowState = WindowState.Minimized;
+
 			this.Hide();
+
+			Dispatcher.UIThread.InvokeAsync (() => {			
+				main.WindowState = WindowState.Maximized;
+			});
 
 			main.Show();
 
