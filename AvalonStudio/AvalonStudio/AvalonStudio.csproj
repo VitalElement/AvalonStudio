@@ -398,6 +398,9 @@
     <EmbeddedResource Include="Controls\SplashScreen.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="avalonstudio.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj">
