@@ -175,7 +175,6 @@
     <Compile Include="IndentationReformatter.cs" />
     <Compile Include="PragmaMarkTextLineTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextColoringTransformer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\nclang\NClang\NClang.csproj">

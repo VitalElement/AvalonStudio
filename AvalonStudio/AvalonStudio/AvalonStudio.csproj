@@ -404,10 +404,6 @@
       <Project>{0B7C8F41-0122-40E8-9701-EFCB89C32CC9}</Project>
       <Name>AvalonStudio.Controls.Standard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Controls.TeamExplorer\AvalonStudio.Controls.TeamExplorer.csproj">
-      <Project>{690F173C-BF89-4F9E-A177-C17313CDBFE3}</Project>
-      <Name>AvalonStudio.Controls.TeamExplorer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">
       <Project>{EB735B57-518A-4DC5-8DFF-CA6D5DB604D2}</Project>
       <Name>AvalonStudio.Debugging.GDB.JLink</Name>
@@ -440,6 +436,10 @@
       <Project>{48a302ff-ece3-4231-8112-688d0e48921e}</Project>
       <Name>AvalonStudio.Languages.CSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Languages.TypeScript\AvalonStudio.Languages.TypeScript.csproj">
+      <Project>{23829bba-0bb8-4d7c-84d3-2fa2e69840e7}</Project>
+      <Name>AvalonStudio.Languages.TypeScript</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
       <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
       <Name>AvalonStudio.Projects.CPlusPlus</Name>
@@ -455,6 +455,10 @@
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
       <Name>AvalonStudio.Projects.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Projects.TypeScript\AvalonStudio.Projects.TypeScript.csproj">
+      <Project>{047aa86d-1afa-49fb-ab5c-cbf729b7fb05}</Project>
+      <Name>AvalonStudio.Projects.TypeScript</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repositories.csproj">
       <Project>{29C948E9-4D96-4490-B039-A5BBF6EEC2E5}</Project>
@@ -483,6 +487,10 @@
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj">
       <Project>{B761D8E3-611E-434F-887A-8225416F51B8}</Project>
       <Name>AvalonStudio.Toolchains.STM32</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.TypeScript\AvalonStudio.Toolchains.TypeScript.csproj">
+      <Project>{ade74c69-0ffc-4461-96af-b589ce7a7b16}</Project>
+      <Name>AvalonStudio.Toolchains.TypeScript</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
