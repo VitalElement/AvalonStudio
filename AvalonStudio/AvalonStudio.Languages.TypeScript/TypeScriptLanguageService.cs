@@ -412,9 +412,9 @@ namespace AvalonStudio.Languages.TypeScript
                     result.SyntaxHighlightingData.Add(highlightData);
                 }
             }
-            else if (node is IExpression)
+            else if (node is ExpressionStatement)
             {
-                var expressionNode = (BaseExpression)node;
+                var expressionNode = ((ExpressionStatement)node).Expression;
                 // TODO: Highlight expressions
                 if (expressionNode.Kind == SyntaxKind.CallExpression)
                 {
