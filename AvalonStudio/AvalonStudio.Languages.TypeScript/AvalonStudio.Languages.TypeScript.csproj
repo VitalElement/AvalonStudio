@@ -204,7 +204,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
-call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)" false</PostBuildEvent>
+call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)" false
+
+call "$(SolutionDir)\plugin" "$(TargetDir)IridiumJS.dll" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "IridiumJS.dll" false
+call "$(SolutionDir)\plugin" "$(TargetDir)TSBridge.dll" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "TSBridge.dll" false</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
