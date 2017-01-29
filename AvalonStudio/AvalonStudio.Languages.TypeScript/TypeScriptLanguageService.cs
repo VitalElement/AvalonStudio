@@ -412,20 +412,24 @@ namespace AvalonStudio.Languages.TypeScript
                     result.SyntaxHighlightingData.Add(highlightData);
                 }
             }
-            else if (node is ExpressionStatement)
-            {
-                var expressionNode = ((ExpressionStatement)node).Expression;
-                // TODO: Highlight expressions
-                if (expressionNode.Kind == SyntaxKind.CallExpression)
-                {
-                    startPos = expressionNode.Position;
-                    endPos = expressionNode.End;
-                    highlightData.Type = HighlightType.CallExpression;
-                }
-                highlightData.Start = startPos;
-                highlightData.Length = endPos - startPos;
-                result.SyntaxHighlightingData.Add(highlightData);
-            }
+            // Originally, we meant to highlight CallExpression
+            // We are leaving this out because the language service
+            // marks the entire call, including the parameters, as part
+            // of the call. This ends up looking weird.
+            //else if (node is ExpressionStatement)
+            //{
+            //    var expressionNode = ((ExpressionStatement)node).Expression;
+            //    // TODO: Highlight expressions
+            //    if (expressionNode.Kind == SyntaxKind.CallExpression)
+            //    {
+            //        startPos = expressionNode.Position;
+            //        endPos = expressionNode.End;
+            //        highlightData.Type = HighlightType.CallExpression;
+            //    }
+            //    highlightData.Start = startPos;
+            //    highlightData.Length = endPos - startPos;
+            //    result.SyntaxHighlightingData.Add(highlightData);
+            //}
 
             // This section will adjust highlight data, and set the highlight type
             switch (node.Kind)
