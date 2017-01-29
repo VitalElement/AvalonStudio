@@ -112,7 +112,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return CodeCompletionKind.None;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile file, int line, int column,
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile file, int index, int line, int column,
             List<UnsavedFile> unsavedFiles, string filter)
         {
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
