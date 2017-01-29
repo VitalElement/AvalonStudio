@@ -1,12 +1,5 @@
 #!/bin/bash
 
-mkdir bin
-
-echo "#!/bin/sh" > bin/call
-echo "bash \$*" >> bin/call
-chmod +x bin/call
-
-
 export PATH=$PATH:$(pwd)/bin
 
 
@@ -16,4 +9,4 @@ mono .nuget/nuget.exe sources add -name MabiAvalon -source https://www.myget.org
 mono .nuget/nuget.exe restore AvalonStudio.sln
 xbuild /p:Configuration=Release ./AvalonStudio.sln 
 
-
+chmod +x ./AvalonStudio/bin/Release/avalonstudio.sh
