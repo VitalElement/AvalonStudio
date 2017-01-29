@@ -8,9 +8,9 @@ if [ $3 = "AnyCPU" ]
     platform="" && echo removed s3
 fi
 
-mkdir -p $2AvalonStudio/bin/$platform/$4/Plugins && cp $1 $2AvalonStudio/bin/$platform/$4/Plugins/$5
+mkdir -p $2AvalonStudio/bin/$platform/$4/Plugins && cp $1 $2AvalonStudio/bin/$platform/$4/Plugins/$5 && chmod +x $2AvalonStudio/bin/$platform/$4/Plugins/$5
 
 if [ -z "$6" ]
   then
-    mkdir -p $2AvalonStudioBuild/bin/$platform/$4/Plugins && cp $1 $2AvalonStudioBuild/bin/$platform/$4/Plugins/$5
+    mkdir -p $2AvalonStudioBuild/bin/$platform/$4/Plugins && cp $1 $2AvalonStudioBuild/bin/$platform/$4/Plugins/$5 && chmod +x $2AvalonStudioBuild/bin/$platform/$4/Plugins/$5
 fi
