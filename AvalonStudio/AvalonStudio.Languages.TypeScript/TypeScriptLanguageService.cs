@@ -414,7 +414,17 @@ namespace AvalonStudio.Languages.TypeScript
             }
             else if (node is IExpression)
             {
+                var expressionNode = (BaseExpression)node;
                 // TODO: Highlight expressions
+                if (expressionNode.Kind == SyntaxKind.CallExpression)
+                {
+                    startPos = expressionNode.Position;
+                    endPos = expressionNode.End;
+                    highlightData.Type = HighlightType.CallExpression;
+                }
+                highlightData.Start = startPos;
+                highlightData.Length = endPos - startPos;
+                result.SyntaxHighlightingData.Add(highlightData);
             }
 
             // This section will adjust highlight data, and set the highlight type
