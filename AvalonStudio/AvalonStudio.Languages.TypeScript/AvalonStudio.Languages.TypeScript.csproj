@@ -115,6 +115,10 @@
     <Reference Include="Avalonia.Visuals, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Visuals.dll</HintPath>
     </Reference>
+    <Reference Include="IridiumJS, Version=1.0.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>..\packages\IridiumJS.2.10.3\lib\net45\IridiumJS.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="jint, Version=2.10.2.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
       <HintPath>..\packages\jint.2.10.2\lib\net45\jint.dll</HintPath>
       <Private>True</Private>
@@ -177,10 +181,6 @@
     <Compile Include="TypeScriptLanguageService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TSBridge.AvalonStudio\IridiumJS\Jint\IridiumJS.csproj">
-      <Project>{678738DA-F723-4920-B9E5-CAD667104BDA}</Project>
-      <Name>IridiumJS</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\TSBridge.AvalonStudio\TSBridge\TSBridge\TSBridge.csproj">
       <Project>{90fcc510-9e0a-4781-a3b6-22cc089029b5}</Project>
       <Name>TSBridge</Name>
