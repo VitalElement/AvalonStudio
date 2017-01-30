@@ -284,7 +284,7 @@
                         CloseIntellisense();
                     }
 
-                    var codeCompleteTask = languageService.CodeCompleteAtAsync(file, line, column, unsavedFiles);
+                    var codeCompleteTask = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
                     codeCompleteTask.Wait();
                     SetCompletionData(codeCompleteTask.Result);
                 }
