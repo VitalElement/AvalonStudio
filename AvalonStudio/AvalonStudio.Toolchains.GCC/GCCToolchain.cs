@@ -14,7 +14,7 @@ namespace AvalonStudio.Toolchains.GCC
 {
     public abstract class GCCToolchain : StandardToolChain
     {
-        public abstract string GDBExecutable { get; }
+		public virtual string GDBExecutable => "gdb";
 
         public abstract string BinDirectory { get; }
 
