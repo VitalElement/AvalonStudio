@@ -407,6 +407,10 @@
       <Project>{0B7C8F41-0122-40E8-9701-EFCB89C32CC9}</Project>
       <Name>AvalonStudio.Controls.Standard</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Debugging.ClrDbg\AvalonStudio.Debugging.ClrDbg.csproj">
+      <Project>{1537d08c-98b8-4a9e-af02-8a162f873b82}</Project>
+      <Name>AvalonStudio.Debugging.ClrDbg</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">
       <Project>{EB735B57-518A-4DC5-8DFF-CA6D5DB604D2}</Project>
       <Name>AvalonStudio.Debugging.GDB.JLink</Name>
@@ -546,4 +550,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-</Project>
+</Project>
