@@ -30,7 +30,9 @@ namespace AvalonStudio.Controls
 		{
 			AvailablePackages = new ObservableCollection<PackageReference>();
 
-			DownloadCatalog();
+			Dispatcher.UIThread.InvokeAsync (async () => {
+				await DownloadCatalog ();
+			});
 
 			InstallCommand = ReactiveCommand.Create();
 			InstallCommand.Subscribe(async o =>
@@ -39,16 +41,7 @@ namespace AvalonStudio.Controls
 
 				try
 				{
-					await SelectedPackageIndex.Synchronize(SelectedTag, this);
-
-					//if (fullPackage.Install())
-					//{
-					//    Status = "Package Installed Successfully.";
-					//}
-					//else
-					//{
-					//    Status = "An error occurred trying to install package.";
-					//}
+						await SelectedPackageIndex.Synchronize(SelectedTag, this);
 				}
 				catch (Exception e)
 				{
@@ -181,13 +174,13 @@ namespace AvalonStudio.Controls
 			}
 		}
 
-		private async void DownloadCatalog()
+		private async Task DownloadCatalog()
 		{
 			foreach (var packageSource in PackageSources.Instance.Sources)
 			{
 				Repository repo = null;
 
-				await Task.Factory.StartNew(() => repo = packageSource.DownloadCatalog());
+				repo = await packageSource.DownloadCatalog();
 
 				if (repo != null)
 				{
@@ -203,7 +196,7 @@ namespace AvalonStudio.Controls
 			{
 				SelectedPackageIndex = await reference.DownloadInfoAsync();
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
 			}
 		}
