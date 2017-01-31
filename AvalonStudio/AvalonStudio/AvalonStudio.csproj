@@ -84,67 +84,67 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Avalonia.Animation, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Animation.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Animation.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Base, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Base.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Base.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Cairo, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Cairo.0.4.1-build2571-alpha\lib\net45\Avalonia.Cairo.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Cairo.0.4.1-build2574-alpha\lib\net45\Avalonia.Cairo.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Controls, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Controls.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.DesignerSupport, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.DesignerSupport.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.DesignerSupport.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Diagnostics, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Diagnostics.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Diagnostics.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Direct2D1, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Direct2D1.0.4.1-build2571-alpha\lib\net45\Avalonia.Direct2D1.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Direct2D1.0.4.1-build2574-alpha\lib\net45\Avalonia.Direct2D1.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.DotNetFrameworkRuntime, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.DotNetFrameworkRuntime.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.DotNetFrameworkRuntime.dll</HintPath>
     </Reference>
-    <Reference Include="Avalonia.Gtk, Version=1.0.6238.30098, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Gtk.0.4.1-build2571-alpha\lib\net45\Avalonia.Gtk.dll</HintPath>
+    <Reference Include="Avalonia.Gtk, Version=1.0.6238.39114, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalonia.Gtk.0.4.1-build2574-alpha\lib\net45\Avalonia.Gtk.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Input, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Input.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Input.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Interactivity, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Layout, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Layout.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Layout.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Logging.Serilog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Logging.Serilog.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Logging.Serilog.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Markup, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Markup.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Markup.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Markup.Xaml, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Markup.Xaml.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Markup.Xaml.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.ReactiveUI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.ReactiveUI.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.ReactiveUI.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Skia.Desktop, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\Avalonia.Skia.Desktop.0.4.1-build2571-alpha\lib\net45\Avalonia.Skia.Desktop.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Skia.Desktop.0.4.1-build2574-alpha\lib\net45\Avalonia.Skia.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Styling, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Styling.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Styling.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Themes.Default, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Themes.Default.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Themes.Default.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Visuals, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2571-alpha\lib\net45\Avalonia.Visuals.dll</HintPath>
+      <HintPath>..\packages\Avalonia.0.4.1-build2574-alpha\lib\net45\Avalonia.Visuals.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Win32, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.Win32.0.4.1-build2571-alpha\lib\net45\Avalonia.Win32.dll</HintPath>
+      <HintPath>..\packages\Avalonia.Win32.0.4.1-build2574-alpha\lib\net45\Avalonia.Win32.dll</HintPath>
     </Reference>
     <Reference Include="Avalonia.Xaml.Interactions, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Avalonia.Xaml.Behaviors.0.4.1-build328-alpha\lib\portable-windows8+net45\Avalonia.Xaml.Interactions.dll</HintPath>
@@ -407,10 +407,6 @@
       <Project>{0B7C8F41-0122-40E8-9701-EFCB89C32CC9}</Project>
       <Name>AvalonStudio.Controls.Standard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Controls.TeamExplorer\AvalonStudio.Controls.TeamExplorer.csproj">
-      <Project>{690F173C-BF89-4F9E-A177-C17313CDBFE3}</Project>
-      <Name>AvalonStudio.Controls.TeamExplorer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj">
       <Project>{EB735B57-518A-4DC5-8DFF-CA6D5DB604D2}</Project>
       <Name>AvalonStudio.Debugging.GDB.JLink</Name>
@@ -486,10 +482,6 @@
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj">
       <Project>{7A82C777-039E-47AA-A77B-3A9544E147C5}</Project>
       <Name>AvalonStudio.Toolchains.LocalGCC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.MSBuild\AvalonStudio.Toolchains.MSBuild.csproj">
-      <Project>{d8705eb9-8dae-4fb3-abd8-421df9b5e7d9}</Project>
-      <Name>AvalonStudio.Toolchains.MSBuild</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
       <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
