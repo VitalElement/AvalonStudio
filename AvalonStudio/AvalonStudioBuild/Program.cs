@@ -60,7 +60,12 @@ namespace AvalonStudio
 			{
 				Repository repo = null;
 
-				repo = packageSource.DownloadCatalog();
+				var awaiter = packageSource.DownloadCatalog();
+
+                awaiter.Wait();
+
+                repo = awaiter.Result;
+
 				console.WriteLine("Done");
 
 				console.WriteLine("Enumerating Packages...");
