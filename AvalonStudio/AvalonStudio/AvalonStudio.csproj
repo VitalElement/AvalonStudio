@@ -487,6 +487,10 @@
       <Project>{7A82C777-039E-47AA-A77B-3A9544E147C5}</Project>
       <Name>AvalonStudio.Toolchains.LocalGCC</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Toolchains.MSBuild\AvalonStudio.Toolchains.MSBuild.csproj">
+      <Project>{d8705eb9-8dae-4fb3-abd8-421df9b5e7d9}</Project>
+      <Name>AvalonStudio.Toolchains.MSBuild</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
       <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
       <Name>AvalonStudio.Toolchains.Standard</Name>
