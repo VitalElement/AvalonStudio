@@ -27,7 +27,13 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
 		public static string BaseDirectory
 		{
-			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Debugging.JLink\\").ToPlatformPath(); }
+			get {
+				if (Platform.PlatformIdentifier == PlatformID.Unix) {
+					return string.Empty;
+				} else {
+					return Path.Combine (Platform.ReposDirectory, "AvalonStudio.Debugging.JLink\\").ToPlatformPath ();
+				}
+			}
 		}
 
 		public override string Name
@@ -99,6 +105,11 @@ namespace AvalonStudio.Debugging.GDB.JLink
 			var startInfo = new ProcessStartInfo();
 			startInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed 12000 -noir", settings.TargetDevice, Enum.GetName(typeof (JlinkInterfaceType), settings.Interface));
 			startInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServerCL" + Platform.ExecutableExtension);
+
+			if (Platform.PlatformIdentifier == PlatformID.Unix) {
+				startInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServer" + Platform.ExecutableExtension);	
+			}
+
 			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("[JLink] - Error unable to find executable.");
