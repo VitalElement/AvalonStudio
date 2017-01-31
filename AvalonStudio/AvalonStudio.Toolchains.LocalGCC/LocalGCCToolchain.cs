@@ -70,7 +70,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public string LinkerScript { get; set; }
 
-        public override string GDBExecutable => Path.Combine(BaseDirectory, "bin", "gdb" + Platform.ExecutableExtension);
+		public override string GDBExecutable => Path.Combine(BinDirectory, "gdb" + Platform.ExecutableExtension);
 
         public override Version Version
         {
