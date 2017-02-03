@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using AvalonStudio.Debugging;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
-using System.ComponentModel.Composition;
+using System.Composition;
 
 namespace AvalonStudio.Projects
 {
-	[InheritedExport(typeof (IProject))]
+	//[InheritedExport(typeof (IProject))]
 	public interface IProject : IProjectFolder, IComparable<IProject>
 	{
 		ISolution Solution { get; }

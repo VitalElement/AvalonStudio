@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Threading.Tasks;
 using AvalonStudio.Projects;
 using AvalonStudio.TextEditor.Document;
@@ -10,7 +10,7 @@ using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 
 namespace AvalonStudio.Languages
 {
-	[InheritedExport(typeof (ILanguageService))]
+	//[InheritedExport(typeof (ILanguageService))]
 	public interface ILanguageService
 	{
 		IIndentationStrategy IndentationStrategy { get; }

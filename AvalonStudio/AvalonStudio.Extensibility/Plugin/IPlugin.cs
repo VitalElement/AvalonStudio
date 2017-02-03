@@ -1,16 +1,16 @@
 using System;
-using System.ComponentModel.Composition;
+using System.Composition;
 
 namespace AvalonStudio.Extensibility.Plugin
 {
-	[InheritedExport(typeof (IExtension))]
+	//[InheritedExport(typeof (IExtension))]
 	public interface IExtension
 	{
 		void BeforeActivation();
 		void Activation();
 	}
 
-	[InheritedExport(typeof (IPlugin))]
+	//[InheritedExport(typeof (IPlugin))]
 	public interface IPlugin : IExtension
 	{
 		string Name { get; }

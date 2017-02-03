@@ -592,7 +592,7 @@ namespace AvalonStudio.Controls
 
                     if (evaluatedExpression != null)
                     {
-                        var newToolTip = new DebugHoverProbeViewModel(debugManager);
+                        var newToolTip = new DebugHoverProbeViewModel();
                         newToolTip.AddExistingWatch(evaluatedExpression);
 
                         ToolTip = newToolTip;

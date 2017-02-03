@@ -109,7 +109,7 @@ namespace AvalonStudio.Platforms
             get
             {
                 // TODO return something appropriate.
-                return "";
+                return "c:\\AvalonStudio";
             }
         }
 

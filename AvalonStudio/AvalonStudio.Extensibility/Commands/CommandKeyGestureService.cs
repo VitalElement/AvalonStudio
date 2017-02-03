@@ -1,4 +1,4 @@
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;

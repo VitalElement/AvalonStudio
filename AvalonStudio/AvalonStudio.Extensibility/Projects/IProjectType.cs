@@ -1,9 +1,9 @@
 ﻿namespace AvalonStudio.Projects
 {
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
+    using System.Composition;
 
-    [InheritedExport(typeof(IProjectType))]
+    //[InheritedExport(typeof(IProjectType))]
     public interface IProjectType
     {
         List<string> Extensions { get; }

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel.Composition;
+using System.Composition;
 using AvalonStudio.Extensibility.MainMenu.Models;
 using AvalonStudio.MVVM;
 using ReactiveUI;
@@ -9,7 +9,7 @@ using ReactiveUI;
 namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 {
 	[Export(typeof (IMenu))]
-	public class MainMenuViewModel : ViewModel<MenuModel>, IPartImportsSatisfiedNotification, IMenu
+	public class MainMenuViewModel : ViewModel<MenuModel>, IMenu
 	{
 		private readonly IMenuBuilder _menuBuilder;
 
@@ -107,11 +107,6 @@ namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return Model.GetEnumerator();
-		}
-
-		void IPartImportsSatisfiedNotification.OnImportsSatisfied()
-		{
-			_menuBuilder.BuildMenuBar(MenuDefinitions.MainMenuBar, Model);
 		}
 	}
 }
