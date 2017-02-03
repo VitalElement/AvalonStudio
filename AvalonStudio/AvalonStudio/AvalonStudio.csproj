@@ -1,14 +1,70 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>winexe</OutputType>
+    <OutputType>exe</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
-    <OutputTypeEx>winexe</OutputTypeEx>
+    <OutputTypeEx>exe</OutputTypeEx>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Behaviors\EditorToolTipBehavior.cs" />
     <Compile Remove="Behaviors\TooltipBehavior.cs" />
     <Compile Remove="Shell\Commands\NewFileCommandHandler.cs" />
     <Compile Remove="Shell\Commands\NewFileCommandListDefinition.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="App.paml" />
+    <None Remove="BootScreen.paml" />
+    <None Remove="Controls\CompletionAssistantView.paml" />
+    <None Remove="Controls\DebugHoverProbeView.paml" />
+    <None Remove="Controls\DocumentTabControl.paml" />
+    <None Remove="Controls\EditorView.xaml" />
+    <None Remove="Controls\ErrorProbeView.paml" />
+    <None Remove="Controls\Intellisense.xaml" />
+    <None Remove="Controls\MainMenu.paml" />
+    <None Remove="Controls\MetroWindow.paml" />
+    <None Remove="Controls\MetroWindowControlsTheme.paml" />
+    <None Remove="Controls\MetroWindowTheme.paml" />
+    <None Remove="Controls\ModalDialog.paml" />
+    <None Remove="Controls\NewItemDialogView.paml" />
+    <None Remove="Controls\PackageManagerDialogView.paml" />
+    <None Remove="Controls\SignatureHelpView.paml" />
+    <None Remove="Controls\SignatureView.xaml" />
+    <None Remove="Controls\SplashScreen.paml" />
+    <None Remove="Controls\StatusBar.paml" />
+    <None Remove="Controls\SymbolView.xaml" />
+    <None Remove="Controls\TabControlView.paml" />
+    <None Remove="Controls\ToolBar.paml" />
+    <None Remove="MainWindow.paml" />
+    <None Remove="Styles\GlobalStyles.xaml" />
+    <None Remove="Themes\Accents\DarkAccent.xaml" />
+    <None Remove="Themes\BaseDark.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App.paml" />
+    <EmbeddedResource Include="BootScreen.paml" />
+    <EmbeddedResource Include="Controls\CompletionAssistantView.paml" />
+    <EmbeddedResource Include="Controls\DebugHoverProbeView.paml" />
+    <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
+    <EmbeddedResource Include="Controls\EditorView.xaml" />
+    <EmbeddedResource Include="Controls\ErrorProbeView.paml" />
+    <EmbeddedResource Include="Controls\Intellisense.xaml" />
+    <EmbeddedResource Include="Controls\MainMenu.paml" />
+    <EmbeddedResource Include="Controls\MetroWindow.paml" />
+    <EmbeddedResource Include="Controls\MetroWindowControlsTheme.paml" />
+    <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
+    <EmbeddedResource Include="Controls\ModalDialog.paml" />
+    <EmbeddedResource Include="Controls\NewItemDialogView.paml" />
+    <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />
+    <EmbeddedResource Include="Controls\SignatureHelpView.paml" />
+    <EmbeddedResource Include="Controls\SignatureView.xaml" />
+    <EmbeddedResource Include="Controls\SplashScreen.paml" />
+    <EmbeddedResource Include="Controls\StatusBar.paml" />
+    <EmbeddedResource Include="Controls\SymbolView.xaml" />
+    <EmbeddedResource Include="Controls\TabControlView.paml" />
+    <EmbeddedResource Include="Controls\ToolBar.paml" />
+    <EmbeddedResource Include="MainWindow.paml" />
+    <EmbeddedResource Include="Styles\GlobalStyles.xaml" />
+    <EmbeddedResource Include="Themes\Accents\DarkAccent.xaml" />
+    <EmbeddedResource Include="Themes\BaseDark.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.4.1-build2600-alpha" />
@@ -21,6 +77,7 @@
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Behaviors\" />

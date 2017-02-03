@@ -113,10 +113,6 @@
       <Project>{41c0c2c7-9554-470d-b8c0-634db3b509dc}</Project>
       <Name>AvalonStudio.Projects.Raw</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repositories.csproj">
-      <Project>{29C948E9-4D96-4490-B039-A5BBF6EEC2E5}</Project>
-      <Name>AvalonStudio.Repositories</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Llilum\AvalonStudio.Toolchains.Llilum.csproj">
       <Project>{BAAB6832-377B-4115-BE7E-4C90898EAAA3}</Project>
       <Name>AvalonStudio.Toolchains.Llilum</Name>
