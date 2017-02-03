@@ -92,10 +92,6 @@
       <Project>{23829bba-0bb8-4d7c-84d3-2fa2e69840e7}</Project>
       <Name>AvalonStudio.Languages.TypeScript</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
-      <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
-      <Name>AvalonStudio.Projects.Standard</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.TypeScript\AvalonStudio.Projects.TypeScript.csproj">
       <Project>{047aa86d-1afa-49fb-ab5c-cbf729b7fb05}</Project>
       <Name>AvalonStudio.Projects.TypeScript</Name>

@@ -176,14 +176,6 @@
       <Project>{5D5FE113-FFEF-4E49-A011-00A167EFA36E}</Project>
       <Name>AvalonStudio.Languages.CPlusPlus</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
-      <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
-      <Name>AvalonStudio.Projects.CPlusPlus</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
-      <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
-      <Name>AvalonStudio.Projects.Standard</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.GCC\AvalonStudio.Toolchains.GCC.csproj">
       <Project>{F58AE4B2-6FD3-4F0D-B9C3-FAEFECEFECB6}</Project>
       <Name>AvalonStudio.Toolchains.GCC</Name>

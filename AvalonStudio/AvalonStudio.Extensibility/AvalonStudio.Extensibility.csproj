@@ -20,7 +20,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj" />
+    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
+      <Private>true</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
