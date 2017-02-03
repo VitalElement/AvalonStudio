@@ -52,8 +52,7 @@ namespace AvalonStudio
         private ObservableCollection<object> tools;
 
         [ImportingConstructor]
-        public ShellViewModel([ImportMany] IEnumerable<ToolViewModel> importedTools,
-            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes, [ImportMany] IEnumerable<IProject> projectTypes,
+        public ShellViewModel([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes, [ImportMany] IEnumerable<IProject> projectTypes,
             [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains,
             [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks,
             [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IExtension> extensions,
@@ -106,7 +105,7 @@ namespace AvalonStudio
                 extension.Activation();
             }
 
-            foreach (var tool in importedTools)
+            foreach (var tool in extensions.OfType<ToolViewModel>())
             {
                 tools.Add(tool);
 
