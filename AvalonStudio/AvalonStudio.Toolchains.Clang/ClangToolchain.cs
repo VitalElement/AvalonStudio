@@ -1,5 +1,6 @@
 namespace AvalonStudio.Toolchains.Clang
 {
+    using AvalonStudio.Extensibility;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.Standard;
@@ -9,8 +10,6 @@ namespace AvalonStudio.Toolchains.Clang
     using Standard;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Dynamic;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -96,11 +95,12 @@ namespace AvalonStudio.Toolchains.Clang
                 System.IO.File.Delete(linkerScript);
             }
 
-            var sw = System.IO.File.CreateText(linkerScript);
+            IoC.Get<IConsole>().WriteLine("Unable to generate linker script on .net core.");
+           /* var sw = System.IO.File.CreateText(linkerScript);
 
             sw.Write(template.TransformText());
 
-            sw.Close();
+            sw.Close();*/
         }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
