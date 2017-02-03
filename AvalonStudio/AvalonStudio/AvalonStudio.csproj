@@ -463,10 +463,6 @@
       <Project>{7A82C777-039E-47AA-A77B-3A9544E147C5}</Project>
       <Name>AvalonStudio.Toolchains.LocalGCC</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
-      <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
-      <Name>AvalonStudio.Toolchains.Standard</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj">
       <Project>{B761D8E3-611E-434F-887A-8225416F51B8}</Project>
       <Name>AvalonStudio.Toolchains.STM32</Name>

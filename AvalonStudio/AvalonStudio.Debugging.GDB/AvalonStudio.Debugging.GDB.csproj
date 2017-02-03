@@ -202,16 +202,6 @@
     <Compile Include="VarSetFormatCommand.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.GCC\AvalonStudio.Toolchains.GCC.csproj">
-      <Project>{F58AE4B2-6FD3-4F0D-B9C3-FAEFECEFECB6}</Project>
-      <Name>AvalonStudio.Toolchains.GCC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
-      <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
-      <Name>AvalonStudio.Toolchains.Standard</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

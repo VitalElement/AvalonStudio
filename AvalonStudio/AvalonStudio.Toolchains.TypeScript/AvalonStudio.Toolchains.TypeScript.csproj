@@ -96,10 +96,6 @@
       <Project>{047aa86d-1afa-49fb-ab5c-cbf729b7fb05}</Project>
       <Name>AvalonStudio.Projects.TypeScript</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
-      <Project>{72c71854-5897-4e14-a1ae-b3b48f139af7}</Project>
-      <Name>AvalonStudio.Toolchains.Standard</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
