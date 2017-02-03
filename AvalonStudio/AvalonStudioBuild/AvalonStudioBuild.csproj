@@ -105,10 +105,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.MiniShell\AvalonStudio.MiniShell.csproj">
       <Project>{853618d5-76cc-4302-8aff-4b95f51d01f7}</Project>
       <Name>AvalonStudio.MiniShell</Name>

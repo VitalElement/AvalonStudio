@@ -70,14 +70,14 @@ namespace AvalonStudio.Platforms
         {
             get
             {
-                switch (PlatformIdentifier)
+                switch (OSDescription)
                 {
-                    case PlatformID.Unix:
+                    case "Unix":
                         {
                             return string.Empty;
                         }
 
-                    case PlatformID.Win32NT:
+                    case "Windows":
                         {
                             return ".exe";
                         }
@@ -96,7 +96,10 @@ namespace AvalonStudio.Platforms
             }
         }
 
-        public static PlatformID PlatformIdentifier => Environment.OSVersion.Platform;
+
+        public static Architecture OSArchitecture => RuntimeInformation.OSArchitecture;
+        public static string OSDescription => RuntimeInformation.OSDescription;
+        
 
         /// <summary>
         /// The base directory for AvalonStudio's data
@@ -105,8 +108,8 @@ namespace AvalonStudio.Platforms
         {
             get
             {
-                //This is ~/AvalonStudio on Unix, and %userprofile%\AvalonStudio on Windows
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AvalonStudio");
+                // TODO return something appropriate.
+                return "";
             }
         }
 
@@ -130,17 +133,17 @@ namespace AvalonStudio.Platforms
             {
                 var result = string.Empty;
 
-                switch (PlatformIdentifier)
+                switch (OSDescription)
                 {
-                    case PlatformID.Win32NT:
+                    case "Windows":
                         result = Constants.WindowsPlatformString;
                         break;
 
-                    case PlatformID.Unix:
+                    case "Unix":
                         result = Constants.LinuxPlatformString;
                         break;
 
-                    case PlatformID.MacOSX:
+                    case "MacOSX":
                         result = Constants.MacOSPlatformString;
                         break;
 
@@ -217,12 +220,12 @@ namespace AvalonStudio.Platforms
 
         public static int SendSignal(int pid, Signum sig)
         {
-            switch (PlatformIdentifier)
+            switch (OSDescription)
             {
-                case PlatformID.Unix:
+                case "Unix":
                     return kill(pid, sig);
 
-                case PlatformID.Win32NT:
+                case "Windows":
                     switch (sig)
                     {
                         case Signum.SIGINT:
@@ -239,9 +242,9 @@ namespace AvalonStudio.Platforms
 
         public static bool AttachConsole(int pid)
         {
-            switch (PlatformIdentifier)
+            switch (OSDescription)
             {
-                case PlatformID.Win32NT:
+                case "Windows":
                     return Win32AttachConsole(pid);
 
                 default:
@@ -251,9 +254,9 @@ namespace AvalonStudio.Platforms
 
         public static bool FreeConsole()
         {
-            switch (PlatformIdentifier)
+            switch (OSDescription)
             {
-                case PlatformID.Win32NT:
+                case "Windows":
                     return Win32FreeConsole();
 
                 default:
@@ -263,9 +266,9 @@ namespace AvalonStudio.Platforms
 
         public static bool SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add)
         {
-            switch (PlatformIdentifier)
+            switch (OSDescription)
             {
-                case PlatformID.Win32NT:
+                case "Windows":
                     return Win32SetConsoleCtrlHandler(handlerRoutine, add);
 
                 default:
@@ -311,9 +314,9 @@ namespace AvalonStudio.Platforms
 
         public static string ToPlatformPath(this string path)
         {
-            switch (PlatformIdentifier)
+            switch (OSDescription)
             {
-                case PlatformID.Win32NT:
+                case "Windows":
                     return path.Replace('/', '\\');
 
                 default:
@@ -343,9 +346,9 @@ namespace AvalonStudio.Platforms
                 }
             }
 
-            switch (PlatformIdentifier)
+            switch (OSDescription)
             {
-                case PlatformID.Win32NT:
+                case "Windows":
                     // TODO consider using directory info?           
                     if (path == null && other == null)
                     {

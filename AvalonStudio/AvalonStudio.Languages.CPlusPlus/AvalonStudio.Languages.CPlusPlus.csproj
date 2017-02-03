@@ -181,10 +181,6 @@
       <Project>{5AE560F9-0E8E-488E-B6C4-3C8196F9013A}</Project>
       <Name>NClang</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
       <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
       <Name>AvalonStudio.Projects.CPlusPlus</Name>
@@ -192,10 +188,6 @@
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
       <Name>AvalonStudio.Projects.Standard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
-      <Project>{2303A1A3-D7AA-41CC-972D-A710D7D3D1D3}</Project>
-      <Name>AvalonStudio.TextEditor</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
       <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>

@@ -2,7 +2,7 @@ using System;
 
 namespace AvalonStudio.TextEditor.Document
 {
-	[Serializable]
+	
 	public class DocumentChangeEventArgs : TextChangeEventArgs
 	{
 		private volatile OffsetChangeMap offsetChangeMap;

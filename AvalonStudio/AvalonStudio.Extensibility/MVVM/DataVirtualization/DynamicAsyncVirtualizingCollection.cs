@@ -24,7 +24,8 @@ namespace AvalonStudio.MVVM.DataVirtualization
 			: base(itemsProvider, pageSize, pageTimeout)
 		{
 			this.loadCountInterval = loadCountInterval;
-			timer = new Timer(TimerCallback);
+            Console.WriteLine("Port to .NET Core required.");
+			//timer = new Timer(TimerCallback);
 		}
 
 		/// <summary>

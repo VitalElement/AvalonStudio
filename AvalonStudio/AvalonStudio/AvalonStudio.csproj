@@ -427,10 +427,6 @@
       <Project>{AE63AE6C-06AB-4BF0-B68F-96D77FC48730}</Project>
       <Name>AvalonStudio.Debugging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj">
       <Project>{5D5FE113-FFEF-4E49-A011-00A167EFA36E}</Project>
       <Name>AvalonStudio.Languages.CPlusPlus</Name>
@@ -470,10 +466,6 @@
     <ProjectReference Include="..\AvalonStudio.TestFrameworks.Catch\AvalonStudio.TestFrameworks.Catch.csproj">
       <Project>{3464977F-B29D-43E6-8EA8-D9CEC603D989}</Project>
       <Name>AvalonStudio.TestFrameworks.Catch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
-      <Project>{2303A1A3-D7AA-41CC-972D-A710D7D3D1D3}</Project>
-      <Name>AvalonStudio.TextEditor</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj">
       <Project>{1FC43C7D-5758-42D7-9977-986074E9CBC0}</Project>

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
 using AvalonStudio.Debugging;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using System.ComponentModel.Composition;
 
 namespace AvalonStudio.Projects
 {
