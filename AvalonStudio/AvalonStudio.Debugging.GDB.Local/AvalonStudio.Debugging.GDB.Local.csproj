@@ -94,10 +94,6 @@
       <Project>{A9B2958A-0B02-4598-B7B1-42EEC7E2FAE4}</Project>
       <Name>AvalonStudio.Debugging.GDB</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
-      <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
-      <Name>AvalonStudio.Toolchains.Standard</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

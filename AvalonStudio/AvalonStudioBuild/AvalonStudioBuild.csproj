@@ -125,10 +125,6 @@
       <Project>{BAAB6832-377B-4115-BE7E-4C90898EAAA3}</Project>
       <Name>AvalonStudio.Toolchains.Llilum</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
-      <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
-      <Name>AvalonStudio.Toolchains.Standard</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj">
       <Project>{B761D8E3-611E-434F-887A-8225416F51B8}</Project>
       <Name>AvalonStudio.Toolchains.STM32</Name>

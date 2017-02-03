@@ -42,22 +42,21 @@ namespace AvalonStudio.Toolchains
 		{
 			var result = new List<string>();
 
-			var sr = new StreamReader(dependencyFile);
+            using (var sr = File.OpenText(dependencyFile))
+            {
+                while (!sr.EndOfStream)
+                {
+                    var line = sr.ReadLine();
 
-			while (!sr.EndOfStream)
-			{
-				var line = sr.ReadLine();
-
-				if (!string.IsNullOrEmpty(line))
-				{
-					if (!line.EndsWith(":") && !line.EndsWith(": \\"))
-					{
-						result.Add(line.Replace(" \\", string.Empty).Trim());
-					}
-				}
-			}
-
-			sr.Close();
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        if (!line.EndsWith(":") && !line.EndsWith(": \\"))
+                        {
+                            result.Add(line.Replace(" \\", string.Empty).Trim());
+                        }
+                    }
+                }
+            }
 
 			return result;
 		}
