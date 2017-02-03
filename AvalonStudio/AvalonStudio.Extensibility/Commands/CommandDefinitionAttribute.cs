@@ -1,5 +1,5 @@
 using System;
-using System.ComponentModel.Composition;
+using System.Composition;
 
 namespace AvalonStudio.Extensibility.Commands
 {

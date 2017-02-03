@@ -64,7 +64,7 @@ namespace AvalonStudio.TextEditor.Document
 	/// <summary>
 	///     Describes a series of offset changes.
 	/// </summary>
-	[Serializable]
+	
 	[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix",
 		Justification = "It's a mapping old offsets -> new offsets")]
 	public sealed class OffsetChangeMap : Collection<OffsetChangeMapEntry>
@@ -204,7 +204,7 @@ namespace AvalonStudio.TextEditor.Document
 	///     An entry in the OffsetChangeMap.
 	///     This represents the offset of a document change (either insertion or removal, not both at once).
 	/// </summary>
-	[Serializable]
+	
 	public struct OffsetChangeMapEntry : IEquatable<OffsetChangeMapEntry>
 	{
 		// MSB: DefaultAnchorMovementIsBeforeInsertion

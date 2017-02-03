@@ -10,7 +10,8 @@ namespace AvalonStudio.Extensibility.Utils
 	{
 		public static T FromDynamic<T>(this IDictionary<string, object> dictionary)
 		{
-			var bindings = new List<MemberBinding>();
+            throw new Exception("Not supported .net core");
+			/*var bindings = new List<MemberBinding>();
 			foreach (var sourceProperty in typeof (T).GetProperties().Where(x => x.CanWrite))
 			{
 				var key = dictionary.Keys.SingleOrDefault(x => x.Equals(sourceProperty.Name, StringComparison.OrdinalIgnoreCase));
@@ -19,12 +20,13 @@ namespace AvalonStudio.Extensibility.Utils
 				bindings.Add(Expression.Bind(sourceProperty, Expression.Constant(propertyValue)));
 			}
 			Expression memberInit = Expression.MemberInit(Expression.New(typeof (T)), bindings);
-			return Expression.Lambda<Func<T>>(memberInit).Compile().Invoke();
+			return Expression.Lambda<Func<T>>(memberInit).Compile().Invoke();*/
 		}
 
 		public static dynamic ToDynamic<T>(this T obj)
 		{
-			IDictionary<string, object> expando = new ExpandoObject();
+            throw new Exception("Not supported .net core");
+			/*IDictionary<string, object> expando = new ExpandoObject();
 
 			foreach (var propertyInfo in typeof (T).GetProperties())
 			{
@@ -32,7 +34,7 @@ namespace AvalonStudio.Extensibility.Utils
 				var currentValue = Expression.Lambda<Func<string>>(propertyExpression).Compile().Invoke();
 				expando.Add(propertyInfo.Name.ToLower(), currentValue);
 			}
-			return expando as ExpandoObject;
+			return expando as ExpandoObject;*/
 		}
 	}
 }

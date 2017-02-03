@@ -215,7 +215,7 @@ namespace AvalonStudio.TextEditor.Document
 	/// <summary>
 	///     Implements the ITextSource interface using a string.
 	/// </summary>
-	[Serializable]
+	
 	public class StringTextSource : ITextSource
 	{
 		/// <summary>

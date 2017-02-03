@@ -8,14 +8,16 @@ namespace AvalonStudio.Utils
 	{
 		public static void Serialize(string filename, object item)
 		{
-			var writer = new StreamWriter(filename);
-			writer.Write(JsonConvert.SerializeObject(item, Formatting.Indented,
-				new JsonSerializerSettings
-				{
-					NullValueHandling = NullValueHandling.Ignore,
-					Converters = new[] {new StringEnumConverter()}
-				}));
-			writer.Close();
+            using (var writer =File.OpenWrite(filename))
+            {
+                throw new System.Exception("Not compatible .net core");
+                /*writer.Write(JsonConvert.SerializeObject(item, Formatting.Indented,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        Converters = new[] { new StringEnumConverter() }
+                    }));*/
+            }
 		}
 
 		public static T FromString<T>(string data)
@@ -25,13 +27,7 @@ namespace AvalonStudio.Utils
 
 		public static T Deserialize<T>(string filename)
 		{
-			var reader = new StreamReader(filename);
-
-			var result = JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
-
-			reader.Close();
-
-			return result;
+                return JsonConvert.DeserializeObject<T>(File.ReadAllText(filename));
 		}
 	}
 }
