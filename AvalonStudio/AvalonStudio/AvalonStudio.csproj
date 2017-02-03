@@ -435,10 +435,6 @@
       <Project>{23829bba-0bb8-4d7c-84d3-2fa2e69840e7}</Project>
       <Name>AvalonStudio.Languages.TypeScript</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
-      <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
-      <Name>AvalonStudio.Projects.CPlusPlus</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.OmniSharp\AvalonStudio.Projects.OmniSharp.csproj">
       <Project>{a1686d65-2f40-48ea-b04b-a775730fdd55}</Project>
       <Name>AvalonStudio.Projects.OmniSharp</Name>
@@ -446,10 +442,6 @@
     <ProjectReference Include="..\AvalonStudio.Projects.Raw\AvalonStudio.Projects.Raw.csproj">
       <Project>{41c0c2c7-9554-470d-b8c0-634db3b509dc}</Project>
       <Name>AvalonStudio.Projects.Raw</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
-      <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
-      <Name>AvalonStudio.Projects.Standard</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.TypeScript\AvalonStudio.Projects.TypeScript.csproj">
       <Project>{047aa86d-1afa-49fb-ab5c-cbf729b7fb05}</Project>
