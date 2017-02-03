@@ -12,8 +12,6 @@
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Linq;
-    using System.Net;
-    using System.ServiceModel.Syndication;
     using System.Threading.Tasks;
     using System.Xml;
 
@@ -96,10 +94,10 @@
             // RSS Releated
             var rssurl = @"http://sxp.microsoft.com/feeds/2.0/devblogs";
             var reader = XmlReader.Create(rssurl);
-            var feed = await LoadFeed(reader);
-            reader.Close();
+            /*var feed = await LoadFeed(reader);
+            reader.Close();*/
 
-            if (feed == null)
+            /*if (feed == null)
             {
                 return;
             }
@@ -124,14 +122,14 @@
                 }
 
                 _newsFeed.Add(new NewsFeedViewModel(url, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
-            }
+            }*/
         }
 
         private async Task LoadVideoFeed()
         {
             var rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UCOWs5Rx9ot7p10mqYyzjyUA";
             var reader = XmlReader.Create(rssurl);
-            var feed = await LoadFeed(reader);
+            /*var feed = await LoadFeed(reader);
 
             reader.Close();
 
@@ -148,16 +146,16 @@
                 var image = await SaveThumbnail(youtubeID);
 
                 _videoFeed.Add(new VideoFeedViewModel(url, syndicationItem.Title.Text, image));
-            }
+            }*/
         }
 
-        private async Task<SyndicationFeed> LoadFeed(XmlReader reader)
+        /*private async Task<SyndicationFeed> LoadFeed(XmlReader reader)
         {
             return await Task.Factory.StartNew<SyndicationFeed>(() =>
             {
                 return SyndicationFeed.Load(reader);
             });
-        }
+        }*/
 
         private async Task<IBitmap> SaveThumbnail(string youtubeID)
         {
@@ -175,10 +173,10 @@
 
             var thumbnail = "https://i4.ytimg.com/vi/" + youtubeID + "/hqdefault.jpg";
 
-            using (WebClient client = new WebClient())
+            /*using (WebClient client = new WebClient())
             {
                 await client.DownloadFileTaskAsync(new Uri(thumbnail), savePath);
-            }
+            }*/
 
             return new Bitmap(savePath);
         }
