@@ -7,9 +7,18 @@
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Controls\ControlTheme.paml" />
+    <None Remove="Controls\ToolControl.paml" />
+    <None Remove="MainMenu\ViewModels\MainMenuView.paml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Controls\ControlTheme.paml" />
+    <EmbeddedResource Include="Controls\ToolControl.paml" />
+    <EmbeddedResource Include="MainMenu\ViewModels\MainMenuView.paml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.4.1-build2600-alpha" />
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
-    <PackageReference Include="Microsoft.NETCore.App" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>

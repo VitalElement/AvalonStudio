@@ -7,6 +7,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Platforms;
+using AvalonStudio.Repositories;
 
 namespace AvalonStudio
 {
@@ -38,22 +39,22 @@ namespace AvalonStudio
 			PackageSources.InitialisePackageSources();
 			progressBar.Value += 5;
 
-			var container = CompositionRoot.CreateContainer();
+			//var container = CompositionRoot.CreateContainer();
 			progressBar.Value += 50;
 
-			var commandService = container.GetExportedValue<ICommandService>();
-			IoC.RegisterConstant(commandService, typeof(ICommandService));
+			//var commandService = container.GetExportedValue<ICommandService>();
+			//IoC.RegisterConstant(commandService, typeof(ICommandService));
 			progressBar.Value += 10;
 
-			var keyGestureService = container.GetExportedValue<ICommandKeyGestureService>();
-			IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));
+			//var keyGestureService = container.GetExportedValue<ICommandKeyGestureService>();
+			//IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));
 			progressBar.Value += 10;
 
-			var toolBarBuilder = container.GetExportedValue<IToolBarBuilder>();
-			IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
+			//var toolBarBuilder = container.GetExportedValue<IToolBarBuilder>();
+			//IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
 			progressBar.Value += 10;
 
-			ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
+			//ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
 
 			var main = new MainWindow();
 

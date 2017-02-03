@@ -4,6 +4,24 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="CallStackView.paml" />
+    <None Remove="DisassemblyView.paml" />
+    <None Remove="LocalsView.paml" />
+    <None Remove="MemoryView.paml" />
+    <None Remove="RegistersView.xaml" />
+    <None Remove="VariableControlView.paml" />
+    <None Remove="WatchListView.paml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CallStackView.paml" />
+    <EmbeddedResource Include="DisassemblyView.paml" />
+    <EmbeddedResource Include="LocalsView.paml" />
+    <EmbeddedResource Include="MemoryView.paml" />
+    <EmbeddedResource Include="RegistersView.xaml" />
+    <EmbeddedResource Include="VariableControlView.paml" />
+    <EmbeddedResource Include="WatchListView.paml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.4.1-build2600-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
