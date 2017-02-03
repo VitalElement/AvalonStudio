@@ -60,7 +60,6 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        [XmlIgnore]
         public bool StoppedEventIsEnabled { get; set; }
 
         public bool DebugMode { get; set; }
