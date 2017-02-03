@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
+using System.Composition.Hosting;
+using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -18,26 +18,26 @@ namespace AvalonStudio
 			typeof (ILanguageService).GetTypeInfo().Assembly
 		};
 
-		public static CompositionContainer CreateContainer()
-		{
-			EnsurePluginsFolder();
+		//public static CompositionContainer CreateContainer()
+		//{
+		//	EnsurePluginsFolder();
 
-			var catalogs = GetCatalogsToImport();
+		//	var catalogs = GetCatalogsToImport();
 
-			return new CompositionContainer(new AggregateCatalog(catalogs));
-		}
+		//	return new CompositionContainer(new AggregateCatalog(catalogs));
+		//}
 
-		private static List<ComposablePartCatalog> GetCatalogsToImport()
-		{
-			var pluginsCatalog = new DirectoryCatalog(PluginsFolder);
-			var assemblyCatalogs = ScannedAssemblies.Select(assembly => new AssemblyCatalog(assembly));
+		//private static List<ComposablePartCatalog> GetCatalogsToImport()
+		//{
+		//	var pluginsCatalog = new DirectoryCatalog(PluginsFolder);
+		//	var assemblyCatalogs = ScannedAssemblies.Select(assembly => new AssemblyCatalog(assembly));
 
-			var catalogs = new List<ComposablePartCatalog>();
-			catalogs.Add(pluginsCatalog);
-			catalogs.AddRange(assemblyCatalogs);
+		//	var catalogs = new List<ComposablePartCatalog>();
+		//	catalogs.Add(pluginsCatalog);
+		//	catalogs.AddRange(assemblyCatalogs);
 
-			return catalogs;
-		}
+		//	return catalogs;
+		//}
 
 		private static void EnsurePluginsFolder()
 		{

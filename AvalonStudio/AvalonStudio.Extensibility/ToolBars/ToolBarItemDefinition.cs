@@ -1,9 +1,11 @@
 using System;
 using Avalonia.Input;
 using AvalonStudio.Extensibility.Commands;
+using System.ComponentModel.Composition;
 
 namespace AvalonStudio.Extensibility.ToolBars
 {
+    [InheritedExport]
 	public abstract class ToolBarItemDefinition
 	{
 		protected ToolBarItemDefinition(ToolBarItemGroupDefinition group, int sortOrder, ToolBarItemDisplay display)
