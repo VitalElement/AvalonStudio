@@ -455,10 +455,6 @@
       <Project>{3464977F-B29D-43E6-8EA8-D9CEC603D989}</Project>
       <Name>AvalonStudio.TestFrameworks.Catch</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj">
-      <Project>{1FC43C7D-5758-42D7-9977-986074E9CBC0}</Project>
-      <Name>AvalonStudio.Toolchains.Clang</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj">
       <Project>{7A82C777-039E-47AA-A77B-3A9544E147C5}</Project>
       <Name>AvalonStudio.Toolchains.LocalGCC</Name>
