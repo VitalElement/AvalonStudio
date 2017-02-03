@@ -6,7 +6,6 @@ using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Platforms;
 using Serilog;
-using SharpDX;
 
 namespace AvalonStudio
 {
@@ -14,9 +13,7 @@ namespace AvalonStudio
 	{
 		private static void Main(string[] args)
 		{
-			Configuration.EnableReleaseOnFinalizer = true;
-
-			AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+			/*AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
 			{
 				var message = (e.ExceptionObject as Exception)?.Message;
 
@@ -24,7 +21,7 @@ namespace AvalonStudio
 				{
 					Console.WriteLine(message);
 				}
-			};
+			};*/
 
 			if (args == null)
 			{
@@ -37,13 +34,13 @@ namespace AvalonStudio
 			{
 				builder.UseSkia();
 				
-				if (Platform.PlatformIdentifier == PlatformID.Win32NT)
+				if (Platform.OSDescription == "Windows")
 				{
 					builder.UseWin32();
 				}
 				else
 				{
-					builder.UseGtk();
+					builder.UseGtk3();
 				}
 			}
 			else

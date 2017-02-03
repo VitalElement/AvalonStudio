@@ -1,9 +1,11 @@
 using System;
 using Avalonia.Input;
 using AvalonStudio.Extensibility.Commands;
+using System.Composition;
 
 namespace AvalonStudio.Extensibility.Menus
 {
+    [Export]
 	public class MenuDefinition : MenuDefinitionBase
 	{
 		public MenuDefinition(MenuBarDefinition menuBar, int sortOrder, string text)
