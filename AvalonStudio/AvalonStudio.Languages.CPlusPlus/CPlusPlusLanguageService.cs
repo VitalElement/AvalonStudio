@@ -53,7 +53,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public Type BaseTemplateType
         {
-            get { return typeof(BlankCPlusPlusLanguageTemplate); }
+            get { throw new Exception("Templates not supported yet .net core."); }
         }
 
         public IIndentationStrategy IndentationStrategy { get; }
