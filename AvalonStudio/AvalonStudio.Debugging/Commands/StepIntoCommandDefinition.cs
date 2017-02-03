@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.Composition;
 using System.Windows.Input;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
@@ -14,7 +13,7 @@ namespace AvalonStudio.Debugging.Commands
 	[CommandDefinition]
 	internal class StepIntoCommandDefinition : CommandDefinition
 	{
-		[Export] public static CommandKeyboardShortcut KeyGesture =
+		 public static CommandKeyboardShortcut KeyGesture =
 			new CommandKeyboardShortcut<StepIntoCommandDefinition>(new KeyGesture {Key = Key.F11});
 
 		private readonly ReactiveCommand<object> command;

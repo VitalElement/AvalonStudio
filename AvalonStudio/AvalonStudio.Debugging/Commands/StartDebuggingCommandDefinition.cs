@@ -1,5 +1,5 @@
 using System;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Windows.Input;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
@@ -15,7 +15,7 @@ namespace AvalonStudio.Debugging.Commands
 	[CommandDefinition]
 	internal class StartDebuggingCommandDefinition : CommandDefinition
 	{
-		[Export] public static CommandKeyboardShortcut KeyGesture =
+		public static CommandKeyboardShortcut KeyGesture =
 			new CommandKeyboardShortcut<StartDebuggingCommandDefinition>(new KeyGesture {Key = Key.F5});
 
 		private readonly ReactiveCommand<object> command;

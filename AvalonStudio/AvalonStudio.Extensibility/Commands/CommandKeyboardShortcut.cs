@@ -1,10 +1,10 @@
 using System;
 using Avalonia.Input;
+using System.ComponentModel.Composition;
 
 namespace AvalonStudio.Extensibility.Commands
 {
-	//using Caliburn.Micro;
-
+    [InheritedExport]
 	public abstract class CommandKeyboardShortcut
 	{
 		private readonly Func<CommandDefinitionBase> _commandDefinition;
