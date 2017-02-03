@@ -4,7 +4,6 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="**\*.cs" />
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
   <ItemGroup>
@@ -24,6 +23,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
-    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj" />
   </ItemGroup>
 </Project>
