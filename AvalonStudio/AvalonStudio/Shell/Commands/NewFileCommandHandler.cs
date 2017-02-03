@@ -1,7 +1,7 @@
 namespace AvalonStudio.Shell.Commands
 {
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
+    using System.Composition;
     using System.Threading.Tasks;
     using Caliburn.Micro;
     using Extensibility.Commands;

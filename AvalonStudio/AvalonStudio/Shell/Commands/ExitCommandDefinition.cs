@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.Composition;
 using System.Windows.Input;
 using Avalonia.Input;
 using AvalonStudio.Extensibility.Commands;
@@ -11,7 +10,7 @@ namespace AvalonStudio.Shell.Commands
 	[CommandDefinition]
 	public class ExitCommandDefinition : CommandDefinition
 	{
-		[Export] public static CommandKeyboardShortcut KeyGesture =
+		public static CommandKeyboardShortcut KeyGesture =
 			new CommandKeyboardShortcut<ExitCommandDefinition>(new KeyGesture {Key = Key.F4, Modifiers = InputModifiers.Alt});
 
 		private readonly ReactiveCommand<object> _command;

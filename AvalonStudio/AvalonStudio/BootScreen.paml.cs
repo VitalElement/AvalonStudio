@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Timers;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
@@ -8,32 +7,21 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Platforms;
-using AvalonStudio.Repositories;
 
 namespace AvalonStudio
 {
 	public class BootScreen : SplashScreen
 	{
-		Timer time = new Timer();
-
 		public BootScreen()
 		{
 			this.InitializeComponent();
 			App.AttachDevTools(this);
 
-			this.time.Interval = 500;
-			this.time.AutoReset = false;
-			this.time.Elapsed += TimeOnElapsed;
-			this.time.Start();
-		}
-
-		private void TimeOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
-		{
-			Dispatcher.UIThread.InvokeAsync (() => 
-			{				
-				Startup ();
-			});
-		}
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Startup();
+            });
+        }
 
 		private void InitializeComponent()
 		{
@@ -43,8 +31,6 @@ namespace AvalonStudio
 		public void Startup()
 		{
 			var progressBar = this.FindControl<ProgressBar>("StatusProgressBar");
-
-			if (progressBar == null) throw new ApplicationException("Unable to locate progressbar");
 
 			Platform.Initialise();
 			progressBar.Value += 5;

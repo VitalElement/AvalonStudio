@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.Composition;
 using System.Windows.Input;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
@@ -15,10 +14,10 @@ namespace AvalonStudio.Shell.Commands
 	[CommandDefinition]
 	public class RedoCommandDefinition : CommandDefinition
 	{
-		[Export] public static CommandKeyboardShortcut KeyGesture =
-			new CommandKeyboardShortcut<SaveFileCommandDefinition>(new KeyGesture
+		public static CommandKeyboardShortcut KeyGesture =
+			new CommandKeyboardShortcut<RedoCommandDefinition>(new KeyGesture
 			{
-				Key = Key.S,
+				Key = Key.Y,
 				Modifiers = InputModifiers.Control
 			});
 

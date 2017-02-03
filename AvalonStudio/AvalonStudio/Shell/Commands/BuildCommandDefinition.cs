@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.Composition;
 using System.Windows.Input;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
@@ -14,7 +13,7 @@ namespace AvalonStudio.Shell.Commands
 	[CommandDefinition]
 	public class BuildCommandDefinition : CommandDefinition
 	{
-		[Export] public static CommandKeyboardShortcut KeyGesture =
+		public static CommandKeyboardShortcut KeyGesture =
 			new CommandKeyboardShortcut<SaveFileCommandDefinition>(new KeyGesture
 			{
 				Key = Key.S,

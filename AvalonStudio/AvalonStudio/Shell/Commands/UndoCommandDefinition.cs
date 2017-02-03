@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.Composition;
 using System.Windows.Input;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
@@ -7,7 +6,6 @@ using Avalonia.Media;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using ReactiveUI;
-using Key = Avalonia.Input.Key;
 using AvalonStudio.Controls;
 
 namespace AvalonStudio.Shell.Commands
@@ -15,7 +13,7 @@ namespace AvalonStudio.Shell.Commands
 	[CommandDefinition]
 	public class UndoCommandDefinition : CommandDefinition
 	{
-		[Export] public static CommandKeyboardShortcut KeyGesture =
+		public static CommandKeyboardShortcut KeyGesture =
 			new CommandKeyboardShortcut<SaveFileCommandDefinition>(new KeyGesture
 			{
 				Key = Key.S,
