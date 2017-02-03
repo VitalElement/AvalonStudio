@@ -98,6 +98,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Toolchains.Cla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Repository", "AvalonStudio.Repository\AvalonStudio.Repository.csproj", "{EF895FF9-DB35-48FA-96B1-374D831DACB0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mabiavalon.DockNC", "..\DockNC\src\Mabiavalon.DockNC\Mabiavalon.DockNC.csproj", "{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -734,6 +736,22 @@ Global
 		{EF895FF9-DB35-48FA-96B1-374D831DACB0}.Release|x64.Build.0 = Release|x64
 		{EF895FF9-DB35-48FA-96B1-374D831DACB0}.Release|x86.ActiveCfg = Release|x86
 		{EF895FF9-DB35-48FA-96B1-374D831DACB0}.Release|x86.Build.0 = Release|x86
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Debug|ARM.Build.0 = Debug|Any CPU
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Debug|x64.ActiveCfg = Debug|x64
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Debug|x64.Build.0 = Debug|x64
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Debug|x86.ActiveCfg = Debug|x86
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Debug|x86.Build.0 = Debug|x86
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Release|ARM.ActiveCfg = Release|Any CPU
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Release|ARM.Build.0 = Release|Any CPU
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Release|x64.ActiveCfg = Release|x64
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Release|x64.Build.0 = Release|x64
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Release|x86.ActiveCfg = Release|x86
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -777,6 +795,7 @@ Global
 		{D9A9F5BF-8C67-4EFE-AA8D-6AE0E3D004D0} = {E22D2558-C9DA-4E94-9014-084F28A38431}
 		{D88FB116-18CB-46E8-9B87-F0882833127C} = {E22D2558-C9DA-4E94-9014-084F28A38431}
 		{EF895FF9-DB35-48FA-96B1-374D831DACB0} = {0DACCA4D-C93E-45AC-8206-FF2E5C0BC587}
+		{A0A5F3B9-CF23-4459-9329-DE0C55E9677A} = {FF9C1CB4-CB7E-418E-A052-62965F7FD385}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = AvalonStudio\AvalonStudio.csproj
