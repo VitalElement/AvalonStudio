@@ -482,7 +482,8 @@ namespace AvalonStudio.Toolchains.Standard
 								{
 									while (numTasks >= Jobs)
 									{
-                                        Thread.Yield();
+                                        console.WriteLine("tune delay");
+                                        await Task.Delay(10);
 									}
 
 									lock (resultLock)
