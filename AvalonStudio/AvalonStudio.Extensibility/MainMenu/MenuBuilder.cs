@@ -1,4 +1,4 @@
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Linq;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.MainMenu.Models;

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Threading.Tasks;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains;
@@ -24,7 +24,7 @@ namespace AvalonStudio.Debugging
 		Natural
 	}
 
-	[InheritedExport(typeof (IDebugger))]
+	////[InheritedExport(typeof (IDebugger))]
 	public interface IDebugger
 	{
 		DebuggerState State { get; }

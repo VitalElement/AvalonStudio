@@ -28,11 +28,11 @@ using AvalonStudio.TextEditor;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using ReactiveUI;
+using AvalonStudio.Extensibility.Commands;
 
 namespace AvalonStudio
 {
-    [Export(typeof(IShell))]
-    [Export(typeof(ShellViewModel))]
+    [Export]
     public class ShellViewModel : ViewModel, IShell
     {
         public static ShellViewModel Instance = null;
@@ -57,7 +57,7 @@ namespace AvalonStudio
             [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains,
             [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks,
             [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IExtension> extensions,
-            [Import] IMenu mainMenu)
+            [Import] IMenu mainMenu, [Import] ICommandKeyGestureService keyGestureService, [Import] ICommandService commandService, [Import] IToolBarBuilder toolBarBuilder)
         {
             MainMenu = mainMenu;
             LanguageServices = languageServices;
@@ -75,6 +75,10 @@ namespace AvalonStudio
             {
                 extension.BeforeActivation();
             }
+
+            IoC.RegisterConstant(commandService, typeof(ICommandService));
+            IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));            
+            IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
 
             CurrentPerspective = Perspective.Editor;
 
