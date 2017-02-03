@@ -398,9 +398,9 @@ namespace AvalonStudio.Controls
         {
             get
             {
-                switch (Platform.PlatformIdentifier)
+                switch (Platform.OSDescription)
                 {
-                    case PlatformID.Unix:
+                    case "Unix":
                         return "Inconsolata";
 
                     default:

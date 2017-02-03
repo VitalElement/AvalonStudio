@@ -17,8 +17,7 @@
     <EmbeddedResource Include="WelcomeScreen\WelcomeScreenView.paml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build2600-alpha" />
-    <PackageReference Include="Microsoft.NETCore.App" Version="1.0.1" />
+    <PackageReference Include="Avalonia" Version="0.4.1-build2600-alpha" />    
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
   <ItemGroup>

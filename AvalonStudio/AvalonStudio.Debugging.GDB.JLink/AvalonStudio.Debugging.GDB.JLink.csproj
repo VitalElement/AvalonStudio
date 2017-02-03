@@ -5,6 +5,12 @@
     <OutputTypeEx>library</OutputTypeEx>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="JLinkSettingsFormView.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="JLinkSettingsFormView.xaml" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB\AvalonStudio.Debugging.GDB.csproj" />
   </ItemGroup>
 </Project>

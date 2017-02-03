@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AvalonStudio.Utils;
+using System.Net.Http;
 
 namespace AvalonStudio.Repositories
 {
@@ -23,9 +24,9 @@ namespace AvalonStudio.Repositories
 
 			PackageIndex result = null;
 
-			using (var client = new WebClient())
+			using (var client = new HttpClient())
 			{
-				var packageIndex = SerializedObject.FromString<PackageIndex>(await client.DownloadStringTaskAsync(Url));
+				var packageIndex = SerializedObject.FromString<PackageIndex>(await client.GetStringAsync(Url));
 
 				result = packageIndex;
 			}
