@@ -3,6 +3,7 @@
     <OutputType>exe</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <OutputTypeEx>exe</OutputTypeEx>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Behaviors\EditorToolTipBehavior.cs" />
@@ -33,6 +34,8 @@
     <None Remove="Controls\SymbolView.xaml" />
     <None Remove="Controls\TabControlView.paml" />
     <None Remove="Controls\ToolBar.paml" />
+    <None Remove="icon.ico" />
+    <None Remove="icon.png" />
     <None Remove="MainWindow.paml" />
     <None Remove="Styles\GlobalStyles.xaml" />
     <None Remove="Themes\Accents\DarkAccent.xaml" />
@@ -61,6 +64,8 @@
     <EmbeddedResource Include="Controls\SymbolView.xaml" />
     <EmbeddedResource Include="Controls\TabControlView.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
+    <EmbeddedResource Include="icon.ico" />
+    <EmbeddedResource Include="icon.png" />
     <EmbeddedResource Include="MainWindow.paml" />
     <EmbeddedResource Include="Styles\GlobalStyles.xaml" />
     <EmbeddedResource Include="Themes\Accents\DarkAccent.xaml" />
@@ -74,6 +79,7 @@
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DockNC\src\Mabiavalon.DockNC\Mabiavalon.DockNC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
