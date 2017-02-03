@@ -13,15 +13,14 @@ namespace AvalonStudio.CommandLineTools
 
         static PlatformSupport()
         {
-            switch (Platform.PlatformIdentifier)
+            switch (Platform.OSDescription)
             {
-                case PlatformID.Win32Windows:
-                case PlatformID.Win32NT:
+                case "Windows":
                     executorType = ShellExecutorType.Windows;
                     break;
 
-                case PlatformID.MacOSX:
-                case PlatformID.Unix:
+                case "Unix":
+                case "MacOSX":
                     executorType = ShellExecutorType.Unix;
                     break;
             }
@@ -68,7 +67,7 @@ namespace AvalonStudio.CommandLineTools
             {
                 foreach(var extraPath in extraPaths)
                 {
-                    shellProc.StartInfo.EnvironmentVariables["PATH"] += $";{extraPath}";
+                    shellProc.StartInfo.Environment["PATH"] += $";{extraPath}";
                 }
 
                 if (executeInShell)

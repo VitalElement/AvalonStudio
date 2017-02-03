@@ -224,10 +224,6 @@
     <Compile Include="CPlusPlusProject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.Raw\AvalonStudio.Projects.Raw.csproj">
       <Project>{41c0c2c7-9554-470d-b8c0-634db3b509dc}</Project>
       <Name>AvalonStudio.Projects.Raw</Name>

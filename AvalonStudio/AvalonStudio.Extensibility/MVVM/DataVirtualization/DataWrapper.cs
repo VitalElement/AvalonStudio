@@ -44,7 +44,6 @@ namespace AvalonStudio.MVVM.DataVirtualization
 
 		private void OnPropertyChanged(string propertyName)
 		{
-			Debug.Assert(GetType().GetProperty(propertyName) != null);
 			var handler = PropertyChanged;
 			if (handler != null)
 			{

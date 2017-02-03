@@ -250,16 +250,6 @@
     <Compile Include="WelcomeScreen\WelcomeScreenViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
-      <Project>{2303A1A3-D7AA-41CC-972D-A710D7D3D1D3}</Project>
-      <Name>AvalonStudio.TextEditor</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Console\ConsoleView.paml">
       <SubType>Designer</SubType>
     </EmbeddedResource>

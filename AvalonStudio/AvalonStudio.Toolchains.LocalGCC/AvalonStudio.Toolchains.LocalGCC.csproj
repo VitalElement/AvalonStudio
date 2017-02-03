@@ -172,10 +172,6 @@
       <Project>{0EAD4429-5B5A-4EBB-87B6-EA91CE86B09E}</Project>
       <Name>AvalonStudio.Debugging.GDB.Local</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj">
       <Project>{5D5FE113-FFEF-4E49-A011-00A167EFA36E}</Project>
       <Name>AvalonStudio.Languages.CPlusPlus</Name>

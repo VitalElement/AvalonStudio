@@ -191,10 +191,6 @@
       <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
       <Name>AvalonStudio.Toolchains.Standard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CompileSettingsFormView.paml" />

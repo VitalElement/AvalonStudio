@@ -94,10 +94,6 @@
       <Project>{A9B2958A-0B02-4598-B7B1-42EEC7E2FAE4}</Project>
       <Name>AvalonStudio.Debugging.GDB</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
       <Name>AvalonStudio.Projects.Standard</Name>
