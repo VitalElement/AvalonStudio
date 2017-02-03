@@ -37,6 +37,7 @@
     <None Remove="icon.ico" />
     <None Remove="icon.png" />
     <None Remove="MainWindow.paml" />
+    <None Remove="Resources\grip_pattern.png" />
     <None Remove="Styles\GlobalStyles.xaml" />
     <None Remove="Themes\Accents\DarkAccent.xaml" />
     <None Remove="Themes\BaseDark.xaml" />
@@ -67,6 +68,7 @@
     <EmbeddedResource Include="icon.ico" />
     <EmbeddedResource Include="icon.png" />
     <EmbeddedResource Include="MainWindow.paml" />
+    <EmbeddedResource Include="Resources\grip_pattern.png" />
     <EmbeddedResource Include="Styles\GlobalStyles.xaml" />
     <EmbeddedResource Include="Themes\Accents\DarkAccent.xaml" />
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
