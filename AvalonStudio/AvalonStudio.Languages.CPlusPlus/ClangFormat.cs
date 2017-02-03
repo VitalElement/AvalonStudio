@@ -31,7 +31,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 				using (var streamWriter = process.StandardInput)
 				{
 					streamWriter.Write(text);
-					streamWriter.Close();
 
 					using (var streamReader = process.StandardOutput)
 					{

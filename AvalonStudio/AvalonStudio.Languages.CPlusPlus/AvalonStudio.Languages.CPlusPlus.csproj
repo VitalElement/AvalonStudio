@@ -1,8 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>library</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.4.1-build2600-alpha" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\nclang\NClang\NClang.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj" />
+    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj" />
+  </ItemGroup>
 </Project>
