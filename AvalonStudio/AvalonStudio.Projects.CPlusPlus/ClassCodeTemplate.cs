@@ -30,12 +30,14 @@ namespace AvalonStudio.Projects.CPlusPlus
 
 				if (_settings.GenerateHeader)
 				{
-					await SourceFile.Create(folder, $"{(name.Contains('.') ? name : name + ".h")}", headerTemplate.TransformText());
+                    throw new System.Exception("Not compatible .net core");
+                    //await SourceFile.Create(folder, $"{(name.Contains('.') ? name : name + ".h")}", headerTemplate.TransformText());
 				}
 
 				if (_settings.GenerateClass)
 				{
-                    await SourceFile.Create(folder, $"{name}.cpp", sourceTemplate.TransformText());
+                    throw new System.Exception("Not compatible .net core");
+                    //await SourceFile.Create(folder, $"{name}.cpp", sourceTemplate.TransformText());
 				}
 			});
 		}

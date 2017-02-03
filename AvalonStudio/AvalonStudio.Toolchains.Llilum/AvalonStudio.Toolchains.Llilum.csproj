@@ -168,10 +168,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
-      <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
-      <Name>AvalonStudio.Projects.Standard</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
       <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
       <Name>AvalonStudio.Toolchains.Standard</Name>
