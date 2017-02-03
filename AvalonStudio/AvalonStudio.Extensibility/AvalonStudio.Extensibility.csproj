@@ -9,23 +9,21 @@
   <ItemGroup>
     <None Remove="Controls\ControlTheme.paml" />
     <None Remove="Controls\ToolControl.paml" />
+    <None Remove="Controls\ViewModelViewHost.xaml" />
     <None Remove="MainMenu\ViewModels\MainMenuView.paml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\ControlTheme.paml" />
     <EmbeddedResource Include="Controls\ToolControl.paml" />
+    <EmbeddedResource Include="Controls\ViewModelViewHost.xaml" />
     <EmbeddedResource Include="MainMenu\ViewModels\MainMenuView.paml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.4.1-build2600-alpha" />
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.Composition">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.ComponentModel.Composition.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">

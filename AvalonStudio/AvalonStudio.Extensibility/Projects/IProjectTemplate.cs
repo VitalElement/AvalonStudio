@@ -1,9 +1,9 @@
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
 {
-	[InheritedExport(typeof (IProjectTemplate))]
+	//[InheritedExport(typeof (IProjectTemplate))]
 	public interface IProjectTemplate
 	{
 		string Title { get; }

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Linq;
 
 namespace AvalonStudio.Extensibility.Commands
@@ -12,7 +12,7 @@ namespace AvalonStudio.Extensibility.Commands
 		private readonly Dictionary<CommandDefinitionBase, Command> _commands;
 
 #pragma warning disable 649
-		[ImportMany] private CommandDefinitionBase[] _commandDefinitions;
+		//[ImportMany] private CommandDefinitionBase[] _commandDefinitions;
 #pragma warning restore 649
 
 		public CommandService()
@@ -23,10 +23,9 @@ namespace AvalonStudio.Extensibility.Commands
 
 		public CommandDefinitionBase GetCommandDefinition(Type commandDefinitionType)
 		{
-			CommandDefinitionBase commandDefinition;
-			if (!_commandDefinitionsLookup.TryGetValue(commandDefinitionType, out commandDefinition))
-				commandDefinition = _commandDefinitionsLookup[commandDefinitionType] =
-					_commandDefinitions.First(x => x.GetType() == commandDefinitionType);
+            CommandDefinitionBase commandDefinition = null;
+			//if (!_commandDefinitionsLookup.TryGetValue(commandDefinitionType, out commandDefinition))
+				//commandDefinition = _commandDefinitionsLookup[commandDefinitionType] =_commandDefinitions.First(x => x.GetType() == commandDefinitionType);
 			return commandDefinition;
 		}
 

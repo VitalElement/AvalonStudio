@@ -8,15 +8,14 @@ namespace AvalonStudio.Utils
 	{
 		public static void Serialize(string filename, object item)
 		{
-            using (var writer =File.OpenWrite(filename))
+            using (var writer = File.CreateText(filename))
             {
-                throw new System.Exception("Not compatible .net core");
-                /*writer.Write(JsonConvert.SerializeObject(item, Formatting.Indented,
+                writer.Write(JsonConvert.SerializeObject(item, Formatting.Indented,
                     new JsonSerializerSettings
                     {
                         NullValueHandling = NullValueHandling.Ignore,
                         Converters = new[] { new StringEnumConverter() }
-                    }));*/
+                    }));
             }
 		}
 

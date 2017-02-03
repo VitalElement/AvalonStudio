@@ -29,15 +29,18 @@ namespace AvalonStudio.Debugging
 		{
 			_debugManager = IoC.Get<IDebugManager>();
 
-			_debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+            if (_debugManager != null)
+            {
+                _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
 
-			_debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+                _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
-			_debugManager.DebugSessionEnded += (sender, e) =>
-			{
-				IsVisible = false;
-				Clear();
-			};
+                _debugManager.DebugSessionEnded += (sender, e) =>
+                {
+                    IsVisible = false;
+                    Clear();
+                };
+            }
 		}
 
 		public void InvalidateLocals(List<Variable> variables)

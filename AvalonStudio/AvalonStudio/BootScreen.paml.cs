@@ -8,6 +8,7 @@ using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
+using AvalonStudio.Extensibility.Plugin;
 
 namespace AvalonStudio
 {
@@ -34,28 +35,13 @@ namespace AvalonStudio
 			var progressBar = this.FindControl<ProgressBar>("StatusProgressBar");
 
 			Platform.Initialise();
-			progressBar.Value += 5;
-
+			
 			PackageSources.InitialisePackageSources();
-			progressBar.Value += 5;
 
-			//var container = CompositionRoot.CreateContainer();
-			progressBar.Value += 50;
+            var container = CompositionRoot.CreateContainer();
 
-			//var commandService = container.GetExportedValue<ICommandService>();
-			//IoC.RegisterConstant(commandService, typeof(ICommandService));
-			progressBar.Value += 10;
-
-			//var keyGestureService = container.GetExportedValue<ICommandKeyGestureService>();
-			//IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));
-			progressBar.Value += 10;
-
-			//var toolBarBuilder = container.GetExportedValue<IToolBarBuilder>();
-			//IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
-			progressBar.Value += 10;
-
-			//ShellViewModel.Instance = container.GetExportedValue<ShellViewModel>();
-
+            ShellViewModel.Instance = container.GetExport<ShellViewModel>();
+            
 			var main = new MainWindow();
 
 			main.WindowState = WindowState.Minimized;

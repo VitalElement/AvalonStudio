@@ -1,8 +1,8 @@
-using System.ComponentModel.Composition;
+using System.Composition;
 
 namespace AvalonStudio.Extensibility.ToolBars
 {
-    [InheritedExport]
+    //[InheritedExport]
 	public class ToolBarItemGroupDefinition
 	{
 		public ToolBarItemGroupDefinition(ToolBarDefinition toolBar, int sortOrder)
