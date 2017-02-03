@@ -1,6 +1,9 @@
+using System.ComponentModel.Composition;
+
 namespace AvalonStudio.Extensibility.Menus
 {
-	public abstract class MenuItemDefinition : MenuDefinitionBase
+    [Export(typeof(MenuItemDefinition))]
+    public abstract class MenuItemDefinition : MenuDefinitionBase
 	{
 		protected MenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
 		{
