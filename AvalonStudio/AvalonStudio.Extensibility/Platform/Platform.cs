@@ -6,6 +6,13 @@ using AvalonStudio.Utils;
 
 namespace AvalonStudio.Platforms
 {
+    public enum PlatformID
+    {
+        Windows,
+        MacOSX,
+        Linux
+    }
+
     public static class Platform
     {
         public delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
@@ -70,14 +77,15 @@ namespace AvalonStudio.Platforms
         {
             get
             {
-                switch (OSDescription)
+                switch (Platform.PlatformIdentifier)
                 {
-                    case "Unix":
+                    case PlatformID.Linux:
+                    case PlatformID.MacOSX:
                         {
                             return string.Empty;
                         }
 
-                    case "Windows":
+                    case PlatformID.Windows:
                         {
                             return ".exe";
                         }
@@ -99,6 +107,27 @@ namespace AvalonStudio.Platforms
 
         public static Architecture OSArchitecture => RuntimeInformation.OSArchitecture;
         public static string OSDescription => RuntimeInformation.OSDescription;
+
+        public static PlatformID PlatformIdentifier
+        {
+            get
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return PlatformID.Windows;
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    return PlatformID.Linux;
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    return PlatformID.MacOSX;
+                }
+                
+                throw new Exception("Unknow platform");
+            }
+        }
         
 
         /// <summary>
@@ -126,35 +155,6 @@ namespace AvalonStudio.Platforms
         public static string RepoCatalogDirectory => Path.Combine(AppDataDirectory, "RepoCatalog");
 
         public static string PackageSourcesFile => Path.Combine(AppDataDirectory, "PackageSources.json");
-
-        public static string PlatformString
-        {
-            get
-            {
-                var result = string.Empty;
-
-                switch (OSDescription)
-                {
-                    case "Windows":
-                        result = Constants.WindowsPlatformString;
-                        break;
-
-                    case "Unix":
-                        result = Constants.LinuxPlatformString;
-                        break;
-
-                    case "MacOSX":
-                        result = Constants.MacOSPlatformString;
-                        break;
-
-                    default:
-                        result = Constants.UnknownPlatformString;
-                        break;
-                }
-
-                return result;
-            }
-        }
 
         public static void Initialise()
         {
@@ -220,12 +220,13 @@ namespace AvalonStudio.Platforms
 
         public static int SendSignal(int pid, Signum sig)
         {
-            switch (OSDescription)
+            switch (PlatformIdentifier)
             {
-                case "Unix":
+                case PlatformID.Linux:
+                case PlatformID.MacOSX:
                     return kill(pid, sig);
 
-                case "Windows":
+                case PlatformID.Windows:
                     switch (sig)
                     {
                         case Signum.SIGINT:
@@ -242,9 +243,9 @@ namespace AvalonStudio.Platforms
 
         public static bool AttachConsole(int pid)
         {
-            switch (OSDescription)
+            switch (PlatformIdentifier)
             {
-                case "Windows":
+                case PlatformID.Windows:
                     return Win32AttachConsole(pid);
 
                 default:
@@ -254,9 +255,9 @@ namespace AvalonStudio.Platforms
 
         public static bool FreeConsole()
         {
-            switch (OSDescription)
+            switch (PlatformIdentifier)
             {
-                case "Windows":
+                case PlatformID.Windows:
                     return Win32FreeConsole();
 
                 default:
@@ -266,9 +267,9 @@ namespace AvalonStudio.Platforms
 
         public static bool SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add)
         {
-            switch (OSDescription)
+            switch (PlatformIdentifier)
             {
-                case "Windows":
+                case PlatformID.Windows:
                     return Win32SetConsoleCtrlHandler(handlerRoutine, add);
 
                 default:
@@ -314,9 +315,9 @@ namespace AvalonStudio.Platforms
 
         public static string ToPlatformPath(this string path)
         {
-            switch (OSDescription)
+            switch (PlatformIdentifier)
             {
-                case "Windows":
+                case PlatformID.Windows:
                     return path.Replace('/', '\\');
 
                 default:
@@ -346,9 +347,9 @@ namespace AvalonStudio.Platforms
                 }
             }
 
-            switch (OSDescription)
+            switch (PlatformIdentifier)
             {
-                case "Windows":
+                case PlatformID.Windows:
                     // TODO consider using directory info?           
                     if (path == null && other == null)
                     {
