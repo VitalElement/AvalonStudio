@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AvalonStudio.Extensibility.MainMenu
 {
-    class MainMenuBar : MenuBarDefinition
+    public class MainMenuBar : MenuBarDefinition
     {
         public override void Activation()
         {
@@ -14,7 +14,7 @@ namespace AvalonStudio.Extensibility.MainMenu
 
         public override void BeforeActivation()
         {
-            IoC.RegisterConstant(this, typeof(MenuBarDefinition), "MainMenu");
+            
         }
     }
 }
