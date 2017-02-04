@@ -4,11 +4,11 @@ using AvalonStudio.Extensibility.Menus;
 
 namespace AvalonStudio.Extensibility.MainMenu.Models
 {
-	public class TextMenuItem : StandardMenuItem
+	public class MenuItem : StandardMenuItem
 	{
-		private readonly MenuDefinition _menuDefinition;
+		private readonly MenuItemDefinition _menuDefinition;
 
-		public TextMenuItem(MenuDefinition menuDefinition)
+		public MenuItem(MenuItemDefinition menuDefinition)
 		{
 			_menuDefinition = menuDefinition;
 		}
@@ -20,7 +20,7 @@ namespace AvalonStudio.Extensibility.MainMenu.Models
 
 		public override ICommand Command
 		{
-			get { return null; }
+			get { return _menuDefinition.CommandDefinition?.Command; }
 		}
 
 		public override bool IsChecked

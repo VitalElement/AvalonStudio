@@ -17,7 +17,7 @@ namespace AvalonStudio
 
 			DataContext = ShellViewModel.Instance;
 
-			IoC.Get<ICommandKeyGestureService>().BindKeyGestures(this);
+			//IoC.Get<ICommandKeyGestureService>().BindKeyGestures(this);
 			this.AttachDevTools();
 		}
 

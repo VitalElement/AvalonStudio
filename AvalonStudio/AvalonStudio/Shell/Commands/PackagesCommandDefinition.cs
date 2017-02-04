@@ -8,12 +8,9 @@ using ReactiveUI;
 
 namespace AvalonStudio.Shell.Commands
 {
-	[CommandDefinition]
+	
 	public class PackagesCommandDefinition : CommandDefinition
 	{
-		public static CommandKeyboardShortcut KeyGesture =
-			new CommandKeyboardShortcut<ExitCommandDefinition>(new KeyGesture {Key = Key.F4, Modifiers = InputModifiers.Alt});
-
 		private readonly ReactiveCommand<object> _command;
 
 		public PackagesCommandDefinition()

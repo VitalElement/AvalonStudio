@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Input;
+using Avalonia.Input;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Shell;
@@ -7,23 +8,22 @@ using ReactiveUI;
 
 namespace AvalonStudio.Controls.Standard.AboutScreen.Commands
 {
-	[CommandDefinition]
 	internal class AboutScreenCommandDefinition : CommandDefinition
 	{
 		private readonly ReactiveCommand<object> command;
 
-		public AboutScreenCommandDefinition()
-		{
-			command = ReactiveCommand.Create();
-			command.Subscribe(_ =>
-			{
-				var shell = IoC.Get<IShell>();
-				shell.ModalDialog = new AboutDialogViewModel();
-				shell.ModalDialog.ShowDialog();
-			});
-		}
+        public AboutScreenCommandDefinition()
+        {
+            command = ReactiveCommand.Create();
+            command.Subscribe(_ =>
+            {
+                var shell = IoC.Get<IShell>();
+                shell.ModalDialog = new AboutDialogViewModel();
+                shell.ModalDialog.ShowDialog();
+            });
+        }
 
-		public override ICommand Command
+        public override ICommand Command
 		{
 			get { return command; }
 		}
@@ -37,5 +37,7 @@ namespace AvalonStudio.Controls.Standard.AboutScreen.Commands
 		{
 			get { return "Opens the About Screen"; }
 		}
-	}
+
+        public override KeyGesture Gesture => null;
+    }
 }

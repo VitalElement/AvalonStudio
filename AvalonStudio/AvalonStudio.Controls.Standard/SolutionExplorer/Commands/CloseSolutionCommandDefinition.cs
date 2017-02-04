@@ -1,5 +1,7 @@
 using System;
 using System.Windows.Input;
+using Avalonia.Controls.Shapes;
+using Avalonia.Input;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Shell;
@@ -7,7 +9,7 @@ using ReactiveUI;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 {
-	[CommandDefinition]
+	
 	internal class CloseSolutionCommandDefinition : CommandDefinition
 	{
 		private readonly ReactiveCommand<object> command;
@@ -36,5 +38,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 		{
 			get { return "Closes the current Solution"; }
 		}
-	}
+
+        public override Path IconPath => null;
+
+        public override KeyGesture Gesture => throw new NotImplementedException();
+    }
 }

@@ -1,10 +1,12 @@
+using System;
 using System.Windows.Input;
+using Avalonia.Controls.Shapes;
+using Avalonia.Input;
 using AvalonStudio.Extensibility.Commands;
 using ReactiveUI;
 
 namespace AvalonStudio.Shell.Commands
 {
-	[CommandDefinition]
 	public class CloseFileCommandDefinition : CommandDefinition
 	{
 		private ReactiveCommand<object> _command;
@@ -12,5 +14,9 @@ namespace AvalonStudio.Shell.Commands
 
 		public override string ToolTip => "Close ToolTip";
 		public override ICommand Command => _command;
-	}
+
+        public override Path IconPath => null;
+
+        public override KeyGesture Gesture => null;
+    }
 }

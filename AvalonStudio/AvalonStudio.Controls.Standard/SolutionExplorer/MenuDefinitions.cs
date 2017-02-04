@@ -10,19 +10,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
 	internal static class MenuDefinitions
 	{
+
         public class FileNewSolutionMenuItem : MenuItemDefinition
         {
-            public FileNewSolutionMenuItem() : base(()=>IoC.Get<MenuItemGroupDefinition>("FileNewOpenGroup"), 0)
+            public FileNewSolutionMenuItem() : base(()=>IoC.Get<MenuItemGroupDefinition>(FileNewOpenMenuGroupDefinition.FileOpenMenuGroupContract),"New Solution", 0, ()=>IoC.Get<NewSolutionCommandDefinition>())
             {
+                
             }
-
-            public override string Text => "New Solution";
-
-            public override Uri IconSource => null;
-
-            public override KeyGesture KeyGesture => new KeyGesture() { Key = Key.N, Modifiers = InputModifiers.Control };
-
-            public override CommandDefinitionBase CommandDefinition => null;
         }
         //     public static MenuItemDefinition FileNewSolutionItem =
         //new CommandMenuItemDefinition<NewSolutionCommandDefinition>(
