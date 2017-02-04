@@ -71,7 +71,7 @@ namespace AvalonStudio.Platforms
 
         public static string ExecutionPath => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-        public static string PluginsDirectory => Path.Combine(ExecutionPath, "Plugins");
+        public static string ExtensionsFolder => Path.Combine(ExecutionPath, "Extensions");
 
         public static string ExecutableExtension
         {

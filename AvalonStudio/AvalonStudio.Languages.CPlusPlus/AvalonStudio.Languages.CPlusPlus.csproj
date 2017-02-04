@@ -17,7 +17,10 @@
     <None Update="clang-format">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="clang-format.exe">
+    <None Update="Extensions\clang-format">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Extensions\clang-format.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="libclang.dll">
@@ -26,5 +29,8 @@
     <None Update="libclang.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>
