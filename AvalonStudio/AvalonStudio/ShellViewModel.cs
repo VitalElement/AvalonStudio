@@ -81,6 +81,8 @@ namespace AvalonStudio
         private List<MenuDefinition> _menuDefinitions;
         private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
         private List<MenuItemDefinition> _menuItemDefinitions;
+        private List<CommandDefinition> _commandDefinitions;
+        private List<KeyBinding> _keyBindings;
 
         private Perspective currentPerspective;
 
@@ -91,9 +93,7 @@ namespace AvalonStudio
         private ModalDialogViewModelBase modalDialog;
 
         private ObservableCollection<object> tools;
-
         
-
         [ImportingConstructor]
         public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions)
         {
@@ -109,7 +109,10 @@ namespace AvalonStudio
             _menuDefinitions = new List<MenuDefinition>();
             _menuItemGroupDefinitions = new List<MenuItemGroupDefinition>();
             _menuItemDefinitions = new List<MenuItemDefinition>();
-            
+            _commandDefinitions = new List<CommandDefinition>();           
+            _keyBindings = new List<KeyBinding>();
+
+
             IoC.RegisterConstant(this, typeof(IShell));
 
             foreach (var extension in extensions)
@@ -152,9 +155,18 @@ namespace AvalonStudio
                 _menuDefinitions.ConsumeExtension(extension);
                 _menuItemGroupDefinitions.ConsumeExtension(extension);
                 _menuItemDefinitions.ConsumeExtension(extension);
+                _commandDefinitions.ConsumeExtension(extension);
             }
 
             var menuBar = IoC.Get<MenuBarDefinition>("MainMenu");
+
+            foreach(var commandDefinition in _commandDefinitions)
+            {
+                if(commandDefinition.Command != null && commandDefinition.Gesture != null)
+                {
+                    _keyBindings.Add(new KeyBinding { Gesture = commandDefinition.Gesture, Command = commandDefinition.Command });
+                }
+            }
 
             var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
                 
@@ -222,6 +234,8 @@ namespace AvalonStudio
             CurrentPerspective = Perspective.Editor;
 
             ToolBarDefinition = ToolBarDefinitions.MainToolBar;
+
+            IoC.RegisterConstant(this);
         }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
@@ -263,6 +277,8 @@ namespace AvalonStudio
                 //return _toolBar;
             }
         }
+
+        public IEnumerable<KeyBinding> KeyBindings => _keyBindings;
 
         public DocumentTabControlViewModel DocumentTabs { get; }
 
