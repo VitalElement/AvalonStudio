@@ -1,36 +1,38 @@
-using System;
-using Avalonia.Input;
-using AvalonStudio.Extensibility.Commands;
-using AvalonStudio.Extensibility.Plugin;
-using System.Composition;
-
 namespace AvalonStudio.Extensibility.Menus
 {
-    [PartNotDiscoverable]
-    public abstract class MenuDefinition : IExtension
-	{
-        private Func<MenuBarDefinition> _getMenuBar;
-        private Func<CommandDefinition> _getCommandDefinition;
-
-		public MenuDefinition(Func<MenuBarDefinition> menuBar, int sortOrder, string text)
-		{
-            _getMenuBar = menuBar;
+    public abstract class MenuDefinition
+    {
+        public MenuDefinition(int sortOrder, string text)
+        {
             SortOrder = sortOrder;
             Text = text;
-		}
-
-		public MenuBarDefinition MenuBar { get; private set; }
-
-		public int SortOrder { get; }
-
-		public string Text { get; }
-        
-
-        public void Activation()
-        {
-            MenuBar = _getMenuBar();
+            IoC.RegisterConstant(this);
         }
 
-        public abstract void BeforeActivation();
+        public MenuBarDefinition MenuBar { get; protected set; }
+
+        public int SortOrder { get; }
+
+        public string Text { get; }
+
+        public virtual void Activation()
+        {
+
+        }
+    }
+
+    public class MenuDefinition<TMenuBar> : MenuDefinition where TMenuBar : MenuBarDefinition
+    {
+        public MenuDefinition(int sortOrder, string text) : base(sortOrder, text)
+        {
+            
+        }
+
+        public override void Activation()
+        {
+            base.Activation();
+
+            MenuBar = IoC.Get<TMenuBar>();
+        }
     }
 }

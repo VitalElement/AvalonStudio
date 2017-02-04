@@ -1,29 +1,24 @@
-using AvalonStudio.Extensibility.Plugin;
 using System;
-using System.Composition;
 
 namespace AvalonStudio.Extensibility.Menus
 {
-    [PartNotDiscoverable]
-	public abstract class MenuItemGroupDefinition : IExtension
+	public class MenuItemGroupDefinition
 	{
-        private Func<MenuDefinition> getParent;
-
-		public MenuItemGroupDefinition(Func<MenuDefinition> parent, int sortOrder)
+		public MenuItemGroupDefinition(MenuDefinition parent, int sortOrder)
 		{
-			getParent = parent;
+            Parent = parent;
 			SortOrder = sortOrder;
+            
+            IoC.RegisterConstant(this);
 		}
 
-		public MenuDefinition Parent { get; private set; }
+		public MenuDefinition Parent { get; protected set; }
 
 		public int SortOrder { get; }
 
         public void Activation()
         {
-            Parent = getParent();
-        }
 
-        public abstract void BeforeActivation();
+        }
     }
 }

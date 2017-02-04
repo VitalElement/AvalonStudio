@@ -1,27 +1,23 @@
 using AvalonStudio.Extensibility.Menus;
 using System.Composition;
 using System;
+using AvalonStudio.Extensibility.Plugin;
 
 namespace AvalonStudio.Extensibility
 {
-    public class FileNewOpenMenuGroupDefinition : MenuItemGroupDefinition
+    public class MenuDefinitions : IExtension
     {
-        public const string FileOpenMenuGroupContract = "FileNewOpenGroup";
+        public static MenuItemGroupDefinition FileNewOpenMenuGroup = new MenuItemGroupDefinition(MainMenu.MenuDefinitions.FileMenu, 0);
 
-        public FileNewOpenMenuGroupDefinition() : base(() => IoC.Get<MenuDefinition>("FileMenu"), 0)
+        public void Activation()
         {
+
         }
 
-        public override void BeforeActivation()
+        public void BeforeActivation()
         {
-            IoC.RegisterConstant(this, typeof(MenuItemGroupDefinition), FileOpenMenuGroupContract);
-        }
-    }
 
-    public static class MenuDefinitions
-    {
-        
-        //public static MenuItemGroupDefinition FileNewOpenMenuGroup = new MenuItemGroupDefinition(FileMenu, 0);
+        }
 
         //public static MenuItemGroupDefinition FileCloseMenuGroup = new MenuItemGroupDefinition(FileMenu, 3);
 
@@ -48,5 +44,6 @@ namespace AvalonStudio.Extensibility
         //public static MenuItemGroupDefinition WindowDocumentListMenuGroup = new MenuItemGroupDefinition(WindowMenu, 10);
 
         //public static MenuDefinition HelpMenu = new MenuDefinition(MainMenuBar, 30, "_Help");
+
     }
 }

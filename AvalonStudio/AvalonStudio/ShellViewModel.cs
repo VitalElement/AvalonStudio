@@ -93,14 +93,14 @@ namespace AvalonStudio
         private ModalDialogViewModelBase modalDialog;
 
         private ObservableCollection<object> tools;
-        
+
         [ImportingConstructor]
         public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions)
         {
             _languageServices = new List<ILanguageService>();
             _projectTemplates = new List<IProjectTemplate>();
             _debuggers = new List<IDebugger>();
-            _codeTemplates = new List<ICodeTemplate> ();
+            _codeTemplates = new List<ICodeTemplate>();
             _projectTypes = new List<IProjectType>();
             _solutionTypes = new List<ISolutionType>();
             _testFrameworks = new List<ITestFramework>();
@@ -109,7 +109,7 @@ namespace AvalonStudio
             _menuDefinitions = new List<MenuDefinition>();
             _menuItemGroupDefinitions = new List<MenuItemGroupDefinition>();
             _menuItemDefinitions = new List<MenuItemDefinition>();
-            _commandDefinitions = new List<CommandDefinition>();           
+            _commandDefinitions = new List<CommandDefinition>();
             _keyBindings = new List<KeyBinding>();
 
 
@@ -152,24 +152,41 @@ namespace AvalonStudio
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _menuBarDefinitions.ConsumeExtension(extension);
-                _menuDefinitions.ConsumeExtension(extension);
-                _menuItemGroupDefinitions.ConsumeExtension(extension);
-                _menuItemDefinitions.ConsumeExtension(extension);
+                
                 _commandDefinitions.ConsumeExtension(extension);
+            }
+
+            _menuDefinitions.AddRange(IoC.GetServices<MenuDefinition>(typeof(MenuDefinition)));
+            _menuItemGroupDefinitions.AddRange(IoC.GetServices<MenuItemGroupDefinition>(typeof(MenuItemGroupDefinition)));
+            _menuItemDefinitions.AddRange(IoC.GetServices<MenuItemDefinition>(typeof(MenuItemDefinition)));
+
+            foreach (var menuItemDefinition in _menuDefinitions)
+            {
+                menuItemDefinition.Activation();
+            }
+
+            foreach (var menuItemDefinition in _menuItemGroupDefinitions)
+            {
+                menuItemDefinition.Activation();
+            }
+
+            foreach (var extension in _menuItemDefinitions)
+            {
+                extension.Activation();
             }
 
             var menuBar = IoC.Get<MenuBarDefinition>("MainMenu");
 
-            foreach(var commandDefinition in _commandDefinitions)
+            foreach (var commandDefinition in _commandDefinitions)
             {
-                if(commandDefinition.Command != null && commandDefinition.Gesture != null)
+                if (commandDefinition.Command != null && commandDefinition.Gesture != null)
                 {
                     _keyBindings.Add(new KeyBinding { Gesture = commandDefinition.Gesture, Command = commandDefinition.Command });
                 }
             }
 
             var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
-                
+
             var mainMenu = new AvalonStudio.Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
 
             menuBuilder.BuildMenuBar(menuBar, mainMenu.Model);
@@ -265,10 +282,10 @@ namespace AvalonStudio
             get
             {
                 //if (_toolBar != null)
-                  //  return _toolBar;
+                //  return _toolBar;
 
                 //if (ToolBarDefinition == null)
-                    return null;
+                return null;
 
                 //var toolBarBuilder = IoC.Get<IToolBarBuilder>();
                 //_toolBar = new ToolBarModel();
@@ -704,7 +721,7 @@ namespace AvalonStudio
 
         public async Task OpenSolutionAsync(string path)
         {
-            if(CurrentSolution != null)
+            if (CurrentSolution != null)
             {
                 await CloseSolutionAsync();
             }
@@ -720,7 +737,7 @@ namespace AvalonStudio
             }
         }
 
-        public async Task CloseSolutionAsync ()
+        public async Task CloseSolutionAsync()
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 
@@ -735,7 +752,7 @@ namespace AvalonStudio
             CurrentSolution = null;
         }
 
-        public async Task CloseDocumentsForProjectAsync (IProject project)
+        public async Task CloseDocumentsForProjectAsync(IProject project)
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 

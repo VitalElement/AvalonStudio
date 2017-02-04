@@ -1,23 +1,23 @@
 using AvalonStudio.Controls.Standard.SolutionExplorer.Commands;
 using AvalonStudio.Extensibility.Menus;
-using System.Composition;
-using System;
-using AvalonStudio.Extensibility;
-using Avalonia.Input;
-using AvalonStudio.Extensibility.Commands;
+using AvalonStudio.Extensibility.Plugin;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-	internal static class MenuDefinitions
+	internal class MenuDefinitions : IExtension
 	{
+        public MenuItemDefinition NewSolutionMenuItem = new MenuItemDefinition<NewSolutionCommandDefinition>(Extensibility.MenuDefinitions.FileNewOpenMenuGroup, "New Solution", 0);
 
-        public class FileNewSolutionMenuItem : MenuItemDefinition
+        public void Activation()
         {
-            public FileNewSolutionMenuItem() : base(()=>IoC.Get<MenuItemGroupDefinition>(FileNewOpenMenuGroupDefinition.FileOpenMenuGroupContract),"New Solution", 0, ()=>IoC.Get<NewSolutionCommandDefinition>())
-            {
-                
-            }
+            
         }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
         //     public static MenuItemDefinition FileNewSolutionItem =
         //new CommandMenuItemDefinition<NewSolutionCommandDefinition>(
         //	Extensibility.MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0);
