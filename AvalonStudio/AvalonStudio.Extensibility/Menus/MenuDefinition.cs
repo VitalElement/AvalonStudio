@@ -1,20 +1,24 @@
 using System;
 using Avalonia.Input;
 using AvalonStudio.Extensibility.Commands;
+using AvalonStudio.Extensibility.Plugin;
 using System.Composition;
 
 namespace AvalonStudio.Extensibility.Menus
 {
-	public class MenuDefinition : MenuDefinitionBase
+    [PartNotDiscoverable]
+    public abstract class MenuDefinition : MenuDefinitionBase, IExtension
 	{
-		public MenuDefinition(MenuBarDefinition menuBar, int sortOrder, string text)
+        private Func<MenuBarDefinition> _getMenuBar;
+
+		public MenuDefinition(Func<MenuBarDefinition> menuBar, int sortOrder, string text)
 		{
-			MenuBar = menuBar;
-			SortOrder = sortOrder;
-			Text = text;
+            _getMenuBar = menuBar;
+            SortOrder = sortOrder;
+            Text = text;
 		}
 
-		public MenuBarDefinition MenuBar { get; }
+		public MenuBarDefinition MenuBar { get; private set; }
 
 		public override int SortOrder { get; }
 
@@ -34,5 +38,12 @@ namespace AvalonStudio.Extensibility.Menus
 		{
 			get { return null; }
 		}
-	}
+
+        public void Activation()
+        {
+            MenuBar = _getMenuBar();
+        }
+
+        public abstract void BeforeActivation();
+    }
 }
