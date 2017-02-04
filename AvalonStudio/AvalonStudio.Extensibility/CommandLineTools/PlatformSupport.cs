@@ -13,14 +13,14 @@ namespace AvalonStudio.CommandLineTools
 
         static PlatformSupport()
         {
-            switch (Platform.OSDescription)
+            switch (Platform.PlatformIdentifier)
             {
-                case "Windows":
+                case PlatformID.Windows:
                     executorType = ShellExecutorType.Windows;
                     break;
 
-                case "Unix":
-                case "MacOSX":
+                case PlatformID.Linux:
+                case PlatformID.MacOSX:
                     executorType = ShellExecutorType.Unix;
                     break;
             }
