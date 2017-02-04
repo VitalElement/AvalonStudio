@@ -6,17 +6,17 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
 	internal static class MenuDefinitions
 	{
-        public static MenuItemDefinition FileNewSolutionItem =
-			new CommandMenuItemDefinition<NewSolutionCommandDefinition>(
-				Extensibility.MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0);
+   //     public static MenuItemDefinition FileNewSolutionItem =
+			//new CommandMenuItemDefinition<NewSolutionCommandDefinition>(
+			//	Extensibility.MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0);
 
         
-        public static MenuItemDefinition FileOpenSolutionItem =
-			new CommandMenuItemDefinition<OpenSolutionCommandDefinition>(
-				Extensibility.MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0);
+   //     public static MenuItemDefinition FileOpenSolutionItem =
+			//new CommandMenuItemDefinition<OpenSolutionCommandDefinition>(
+			//	Extensibility.MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0);
 
-        public static MenuItemDefinition FileCloseSolutionItem =
-			new CommandMenuItemDefinition<CloseSolutionCommandDefinition>(
-				Extensibility.MainMenu.MenuDefinitions.FileCloseMenuGroup, 1);
+   //     public static MenuItemDefinition FileCloseSolutionItem =
+			//new CommandMenuItemDefinition<CloseSolutionCommandDefinition>(
+			//	Extensibility.MainMenu.MenuDefinitions.FileCloseMenuGroup, 1);
 	}
 }
