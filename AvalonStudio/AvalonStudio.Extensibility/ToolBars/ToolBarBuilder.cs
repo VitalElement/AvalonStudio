@@ -8,22 +8,19 @@ namespace AvalonStudio.Extensibility.ToolBars
 	[Export(typeof (IToolBarBuilder))]
 	public class ToolBarBuilder : IToolBarBuilder
 	{
-		private readonly ICommandService _commandService;
 		private readonly ToolBarItemGroupDefinition[] _toolBarItemGroups;
 		private readonly ToolBarItemDefinition[] _toolBarItems;
 		private readonly ToolBarDefinition[] _toolBars;
 
 		[ImportingConstructor]
-		public ToolBarBuilder(
-			ICommandService commandService,
+		public ToolBarBuilder(	
 			[ImportMany] ToolBarDefinition[] toolBars,
 			[ImportMany] ToolBarItemGroupDefinition[] toolBarItemGroups,
 			[ImportMany] ToolBarItemDefinition[] toolBarItems,
 			[ImportMany] ExcludeToolBarDefinition[] excludeToolBars,
 			[ImportMany] ExcludeToolBarItemGroupDefinition[] excludeToolBarItemGroups,
 			[ImportMany] ExcludeToolBarItemDefinition[] excludeToolBarItems)
-		{
-			_commandService = commandService;
+		{			
 			_toolBars = toolBars
 				.Where(x => !excludeToolBars.Select(y => y.ToolBarDefinitionToExclude).Contains(x))
 				.ToArray();
@@ -62,9 +59,9 @@ namespace AvalonStudio.Extensibility.ToolBars
 					.Where(x => x.Group == group)
 					.OrderByDescending(x => x.SortOrder);
 
-				foreach (var toolBarItem in toolBarItems)
+				/*foreach (var toolBarItem in toolBarItems)
 					result.Add(new CommandToolBarItem(toolBarItem, _commandService.GetCommand(toolBarItem.CommandDefinition),
-						toolBarItem.CommandDefinition.Command, result));
+						toolBarItem.CommandDefinition.Command, result));*/
 
 				if (i < groups.Count - 1 && toolBarItems.Any())
 					result.Add(new ToolBarItemSeparator());

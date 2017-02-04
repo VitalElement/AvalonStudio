@@ -6,17 +6,16 @@ using Avalonia.Media;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using ReactiveUI;
-using Key = Avalonia.Input.Key;
+
 
 namespace AvalonStudio.Debugging.Commands
 {
-	[CommandDefinition]
+	
 	internal class StepOverCommandDefinition : CommandDefinition
 	{
-		public static CommandKeyboardShortcut KeyGesture =
-			new CommandKeyboardShortcut<StepOverCommandDefinition>(new KeyGesture {Key = Key.F10});
+        public override KeyGesture Gesture => KeyGesture.Parse("F10");
 
-		private readonly ReactiveCommand<object> command;
+        private readonly ReactiveCommand<object> command;
 
 		public StepOverCommandDefinition()
 		{

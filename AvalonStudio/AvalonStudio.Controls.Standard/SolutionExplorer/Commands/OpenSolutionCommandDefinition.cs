@@ -6,7 +6,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
     using System;
     using System.Windows.Input;
 
-    [CommandDefinition]
+    
     internal class OpenSolutionCommandDefinition : CommandDefinition
     {
         private readonly ReactiveCommand<object> command;

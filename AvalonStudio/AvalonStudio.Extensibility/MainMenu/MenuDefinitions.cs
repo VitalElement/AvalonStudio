@@ -4,19 +4,23 @@ using System;
 
 namespace AvalonStudio.Extensibility
 {
+    public class FileNewOpenMenuGroupDefinition : MenuItemGroupDefinition
+    {
+        public const string FileOpenMenuGroupContract = "FileNewOpenGroup";
+
+        public FileNewOpenMenuGroupDefinition() : base(() => IoC.Get<MenuDefinition>("FileMenu"), 0)
+        {
+        }
+
+        public override void BeforeActivation()
+        {
+            IoC.RegisterConstant(this, typeof(MenuItemGroupDefinition), FileOpenMenuGroupContract);
+        }
+    }
+
     public static class MenuDefinitions
     {
-        public class FileNewOpenMenuGroupDefinition : MenuItemGroupDefinition
-        {
-            public FileNewOpenMenuGroupDefinition() : base(()=>IoC.Get<MenuDefinition>("FileMenu"), 0)
-            {
-            }
-
-            public override void BeforeActivation()
-            {
-                IoC.RegisterConstant(this, typeof(MenuItemGroupDefinition), "FileNewOpenGroup");
-            }
-        }
+        
         //public static MenuItemGroupDefinition FileNewOpenMenuGroup = new MenuItemGroupDefinition(FileMenu, 0);
 
         //public static MenuItemGroupDefinition FileCloseMenuGroup = new MenuItemGroupDefinition(FileMenu, 3);
