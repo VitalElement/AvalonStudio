@@ -1,8 +1,11 @@
+using AvalonStudio.Extensibility.Plugin;
+using System;
 using System.Composition;
 
 namespace AvalonStudio.Extensibility.Menus
 {
-	public class MenuItemGroupDefinition
+    [PartNotDiscoverable]
+	public class MenuItemGroupDefinition : IExtension
 	{
 		public MenuItemGroupDefinition(MenuDefinitionBase parent, int sortOrder)
 		{
@@ -13,5 +16,15 @@ namespace AvalonStudio.Extensibility.Menus
 		public MenuDefinitionBase Parent { get; }
 
 		public int SortOrder { get; }
-	}
+
+        public void Activation()
+        {
+            
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+    }
 }
