@@ -1,18 +1,32 @@
+using AvalonStudio.Extensibility.Plugin;
+using System;
 using System.Composition;
 
 namespace AvalonStudio.Extensibility.Menus
 {
-    [Export(typeof(MenuItemDefinition))]
-    public abstract class MenuItemDefinition : MenuDefinitionBase
+    [PartNotDiscoverable]
+    public abstract class MenuItemDefinition : MenuDefinitionBase, IExtension
 	{
-		protected MenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
+        private Func<MenuItemGroupDefinition> _getGroup;
+
+		protected MenuItemDefinition(Func<MenuItemGroupDefinition> group, int sortOrder)
 		{
-			Group = group;
+			_getGroup = group;
 			SortOrder = sortOrder;
 		}
 
-		public MenuItemGroupDefinition Group { get; }
+		public MenuItemGroupDefinition Group { get; private set; }
 
 		public override int SortOrder { get; }
-	}
+
+        public void Activation()
+        {
+            Group = _getGroup();
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+    }
 }

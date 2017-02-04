@@ -9,7 +9,7 @@ namespace AvalonStudio.Extensibility.Menus
 	{
 		private readonly CommandDefinitionBase _commandDefinition;
 
-		public CommandMenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
+		public CommandMenuItemDefinition(Func<MenuItemGroupDefinition> group, int sortOrder)
 			: base(group, sortOrder)
 		{
 			var commandService = IoC.Get<ICommandService>();

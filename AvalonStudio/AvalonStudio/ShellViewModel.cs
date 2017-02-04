@@ -62,6 +62,9 @@ namespace AvalonStudio
         private List<ITestFramework> _testFrameworks;
         private List<ICodeTemplate> _codeTemplates;
         private List<MenuBarDefinition> _menuBarDefinitions;
+        private List<MenuDefinition> _menuDefinitions;
+        private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
+        private List<MenuItemDefinition> _menuItemDefinitions;
 
         private Perspective currentPerspective;
 
@@ -88,6 +91,9 @@ namespace AvalonStudio
             _testFrameworks = new List<ITestFramework>();
             _toolChains = new List<IToolChain>();
             _menuBarDefinitions = new List<MenuBarDefinition>();
+            _menuDefinitions = new List<MenuDefinition>();
+            _menuItemGroupDefinitions = new List<MenuItemGroupDefinition>();
+            _menuItemDefinitions = new List<MenuItemDefinition>();
             
             IoC.RegisterConstant(this, typeof(IShell));
 
@@ -132,7 +138,20 @@ namespace AvalonStudio
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _menuBarDefinitions.ConsumeExtension(extension);
+                _menuDefinitions.ConsumeExtension(extension);
+                _menuItemGroupDefinitions.ConsumeExtension(extension);
+                _menuItemDefinitions.ConsumeExtension(extension);
             }
+
+            var menuBar = IoC.Get<MenuBarDefinition>("MainMenu");
+
+            var menuBuilder = new MenuBuilder(null, _menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
+                
+            var mainMenu = new AvalonStudio.Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
+
+            menuBuilder.BuildMenuBar(menuBar, mainMenu.Model);
+
+            MainMenu = mainMenu;
 
             foreach (var tool in extensions.OfType<ToolViewModel>())
             {

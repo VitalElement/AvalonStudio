@@ -1,12 +1,14 @@
 using System;
 using Avalonia.Input;
 using AvalonStudio.Extensibility.Commands;
+using System.Composition;
 
 namespace AvalonStudio.Extensibility.Menus
 {
-	public class TextMenuItemDefinition : MenuItemDefinition
+    [PartNotDiscoverable]
+    public class TextMenuItemDefinition : MenuItemDefinition
 	{
-		public TextMenuItemDefinition(MenuItemGroupDefinition group, int sortOrder, string text, Uri iconSource = null)
+		public TextMenuItemDefinition(Func<MenuItemGroupDefinition> group, int sortOrder, string text, Uri iconSource = null)
 			: base(group, sortOrder)
 		{
 			Text = text;
