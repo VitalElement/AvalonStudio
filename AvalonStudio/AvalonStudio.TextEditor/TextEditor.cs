@@ -16,7 +16,7 @@ using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using OmniXaml.Attributes;
-using Key = Avalonia.Input.Key;
+
 using Avalonia.LogicalTree;
 
 namespace AvalonStudio.TextEditor

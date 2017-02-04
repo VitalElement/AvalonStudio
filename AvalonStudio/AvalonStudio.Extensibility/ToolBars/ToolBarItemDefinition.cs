@@ -23,8 +23,7 @@ namespace AvalonStudio.Extensibility.ToolBars
 
 		public abstract string Text { get; }
 		public abstract Uri IconSource { get; }
-		public abstract KeyGesture KeyGesture { get; }
-		public abstract CommandDefinitionBase CommandDefinition { get; }
+		public abstract KeyGesture KeyGesture { get; }		
 	}
 
 	public enum ToolBarItemDisplay

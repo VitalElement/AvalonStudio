@@ -6,20 +6,13 @@ using Avalonia.Media;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using ReactiveUI;
-using Key = Avalonia.Input.Key;
+
 
 namespace AvalonStudio.Debugging.Commands
 {
-	[CommandDefinition]
+	
 	internal class StepOutCommandDefinition : CommandDefinition
 	{
-		public static CommandKeyboardShortcut KeyGesture =
-			new CommandKeyboardShortcut<StepOverCommandDefinition>(new KeyGesture
-			{
-				Key = Key.F11,
-				Modifiers = InputModifiers.Shift
-			});
-
 		private readonly ReactiveCommand<object> command;
 
 		public StepOutCommandDefinition()
@@ -33,7 +26,9 @@ namespace AvalonStudio.Debugging.Commands
 			});
 		}
 
-		public override Path IconPath
+        public override KeyGesture Gesture => KeyGesture.Parse("SHIFT+F11");
+
+        public override Path IconPath
 		{
 			get
 			{

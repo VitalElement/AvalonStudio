@@ -8,16 +8,13 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using Key = Avalonia.Input.Key;
+
 
 namespace AvalonStudio.Debugging.Commands
 {
-	[CommandDefinition]
+	
 	internal class StartDebuggingCommandDefinition : CommandDefinition
 	{
-		public static CommandKeyboardShortcut KeyGesture =
-			new CommandKeyboardShortcut<StartDebuggingCommandDefinition>(new KeyGesture {Key = Key.F5});
-
 		private readonly ReactiveCommand<object> command;
 
 		public StartDebuggingCommandDefinition()
@@ -73,5 +70,7 @@ namespace AvalonStudio.Debugging.Commands
 				};
 			}
 		}
-	}
+
+        public override KeyGesture Gesture => KeyGesture.Parse("F5");
+    }
 }

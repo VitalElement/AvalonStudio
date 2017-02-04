@@ -6,17 +6,16 @@ using Avalonia.Media;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using ReactiveUI;
-using Key = Avalonia.Input.Key;
+
 
 namespace AvalonStudio.Debugging.Commands
 {
-	[CommandDefinition]
+	
 	internal class StepIntoCommandDefinition : CommandDefinition
 	{
-		 public static CommandKeyboardShortcut KeyGesture =
-			new CommandKeyboardShortcut<StepIntoCommandDefinition>(new KeyGesture {Key = Key.F11});
+        public override KeyGesture Gesture => KeyGesture.Parse("F11");
 
-		private readonly ReactiveCommand<object> command;
+        private readonly ReactiveCommand<object> command;
 
 		public StepIntoCommandDefinition()
 		{

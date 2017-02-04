@@ -30,6 +30,7 @@ using AvalonStudio.Utils;
 using ReactiveUI;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.Menus;
+using Avalonia.Controls;
 
 namespace AvalonStudio
 {
@@ -41,6 +42,21 @@ namespace AvalonStudio
             {
                 destination.Add(extension as T);
             }
+        }
+
+        public static void BindKeyGestures(Control uiElement)
+        {
+            //foreach (var keyboardShortcut in _keyboardShortcuts)
+            //{
+            //    if (keyboardShortcut.KeyGesture != null)
+            //    {
+            //        (uiElement as Window)?.KeyBindings.Add(new KeyBinding
+            //        {
+            //            Gesture = keyboardShortcut.KeyGesture,
+            //            Command = keyboardShortcut.CommandDefinition.Command
+            //        });
+            //    }
+            //}
         }
     }
 
@@ -79,8 +95,7 @@ namespace AvalonStudio
         
 
         [ImportingConstructor]
-        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions,
-            [Import] ICommandKeyGestureService keyGestureService, [Import] ICommandService commandService, [Import] IToolBarBuilder toolBarBuilder)
+        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions)
         {
             _languageServices = new List<ILanguageService>();
             _projectTemplates = new List<IProjectTemplate>();
@@ -101,10 +116,6 @@ namespace AvalonStudio
             {
                 extension.BeforeActivation();
             }
-
-            IoC.RegisterConstant(commandService, typeof(ICommandService));
-            IoC.RegisterConstant(keyGestureService, typeof(ICommandKeyGestureService));            
-            IoC.RegisterConstant(toolBarBuilder, typeof(IToolBarBuilder));
 
             CurrentPerspective = Perspective.Editor;
 
@@ -145,7 +156,7 @@ namespace AvalonStudio
 
             var menuBar = IoC.Get<MenuBarDefinition>("MainMenu");
 
-            var menuBuilder = new MenuBuilder(null, _menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
+            var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
                 
             var mainMenu = new AvalonStudio.Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
 
@@ -239,17 +250,17 @@ namespace AvalonStudio
         {
             get
             {
-                if (_toolBar != null)
-                    return _toolBar;
+                //if (_toolBar != null)
+                  //  return _toolBar;
 
-                if (ToolBarDefinition == null)
+                //if (ToolBarDefinition == null)
                     return null;
 
-                var toolBarBuilder = IoC.Get<IToolBarBuilder>();
-                _toolBar = new ToolBarModel();
+                //var toolBarBuilder = IoC.Get<IToolBarBuilder>();
+                //_toolBar = new ToolBarModel();
 
-                toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
-                return _toolBar;
+                //toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
+                //return _toolBar;
             }
         }
 

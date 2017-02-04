@@ -7,9 +7,10 @@ using System.Composition;
 namespace AvalonStudio.Extensibility.Menus
 {
     [PartNotDiscoverable]
-    public abstract class MenuDefinition : MenuDefinitionBase, IExtension
+    public abstract class MenuDefinition : IExtension
 	{
         private Func<MenuBarDefinition> _getMenuBar;
+        private Func<CommandDefinition> _getCommandDefinition;
 
 		public MenuDefinition(Func<MenuBarDefinition> menuBar, int sortOrder, string text)
 		{
@@ -20,24 +21,10 @@ namespace AvalonStudio.Extensibility.Menus
 
 		public MenuBarDefinition MenuBar { get; private set; }
 
-		public override int SortOrder { get; }
+		public int SortOrder { get; }
 
-		public override string Text { get; }
-
-		public override Uri IconSource
-		{
-			get { return null; }
-		}
-
-		public override KeyGesture KeyGesture
-		{
-			get { return null; }
-		}
-
-		public override CommandDefinitionBase CommandDefinition
-		{
-			get { return null; }
-		}
+		public string Text { get; }
+        
 
         public void Activation()
         {
