@@ -7,11 +7,11 @@ using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Extensibility.Plugin;
 
 namespace AvalonStudio.Languages
 {
-	//[InheritedExport(typeof (ILanguageService))]
-	public interface ILanguageService
+	public interface ILanguageService : IExtension
 	{
 		IIndentationStrategy IndentationStrategy { get; }
 
