@@ -1,9 +1,11 @@
 using System;
 using Avalonia.Input;
 using AvalonStudio.Extensibility.Commands;
+using System.Composition;
 
 namespace AvalonStudio.Extensibility.Menus
 {
+    [PartNotDiscoverable]
 	public abstract class MenuDefinitionBase
 	{
 		public abstract int SortOrder { get; }
