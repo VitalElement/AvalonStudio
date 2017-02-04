@@ -5,26 +5,25 @@ using System.Composition;
 namespace AvalonStudio.Extensibility.Menus
 {
     [PartNotDiscoverable]
-	public class MenuItemGroupDefinition : IExtension
+	public abstract class MenuItemGroupDefinition : IExtension
 	{
-		public MenuItemGroupDefinition(MenuDefinitionBase parent, int sortOrder)
+        private Func<MenuDefinitionBase> getParent;
+
+		public MenuItemGroupDefinition(Func<MenuDefinitionBase> parent, int sortOrder)
 		{
-			Parent = parent;
+			getParent = parent;
 			SortOrder = sortOrder;
 		}
 
-		public MenuDefinitionBase Parent { get; }
+		public MenuDefinitionBase Parent { get; private set; }
 
 		public int SortOrder { get; }
 
         public void Activation()
         {
-            
+            Parent = getParent();
         }
 
-        public void BeforeActivation()
-        {
-            
-        }
+        public abstract void BeforeActivation();
     }
 }
