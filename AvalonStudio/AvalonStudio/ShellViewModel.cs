@@ -29,6 +29,7 @@ using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using ReactiveUI;
 using AvalonStudio.Extensibility.Commands;
+using AvalonStudio.Extensibility.Menus;
 
 namespace AvalonStudio
 {
@@ -60,6 +61,7 @@ namespace AvalonStudio
         private List<IDebugger> _debuggers;
         private List<ITestFramework> _testFrameworks;
         private List<ICodeTemplate> _codeTemplates;
+        private List<MenuBarDefinition> _menuBarDefinitions;
 
         private Perspective currentPerspective;
 
@@ -75,7 +77,7 @@ namespace AvalonStudio
 
         [ImportingConstructor]
         public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions,
-            [Import] IMenu mainMenu, [Import] ICommandKeyGestureService keyGestureService, [Import] ICommandService commandService, [Import] IToolBarBuilder toolBarBuilder)
+            [Import] ICommandKeyGestureService keyGestureService, [Import] ICommandService commandService, [Import] IToolBarBuilder toolBarBuilder)
         {
             _languageServices = new List<ILanguageService>();
             _projectTemplates = new List<IProjectTemplate>();
@@ -85,9 +87,8 @@ namespace AvalonStudio
             _solutionTypes = new List<ISolutionType>();
             _testFrameworks = new List<ITestFramework>();
             _toolChains = new List<IToolChain>();
-
-            MainMenu = mainMenu;
-
+            _menuBarDefinitions = new List<MenuBarDefinition>();
+            
             IoC.RegisterConstant(this, typeof(IShell));
 
             foreach (var extension in extensions)
@@ -130,6 +131,7 @@ namespace AvalonStudio
                 _debuggers.ConsumeExtension(extension);
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
+                _menuBarDefinitions.ConsumeExtension(extension);
             }
 
             foreach (var tool in extensions.OfType<ToolViewModel>())
