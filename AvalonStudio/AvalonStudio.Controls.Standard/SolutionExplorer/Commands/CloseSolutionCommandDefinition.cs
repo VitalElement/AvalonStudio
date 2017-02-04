@@ -38,9 +38,5 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 		{
 			get { return "Closes the current Solution"; }
 		}
-
-        public override Path IconPath => null;
-
-        public override KeyGesture Gesture => throw new NotImplementedException();
     }
 }

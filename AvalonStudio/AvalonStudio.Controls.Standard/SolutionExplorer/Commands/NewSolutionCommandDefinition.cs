@@ -5,6 +5,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
     using ReactiveUI;
     using System;
     using System.Windows.Input;
+    using Avalonia.Input;
 
     internal class NewSolutionCommandDefinition : CommandDefinition
     {
