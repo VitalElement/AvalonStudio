@@ -1,10 +1,10 @@
+using AvalonStudio.Extensibility.Plugin;
 using System.Composition;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
-{
-	//[InheritedExport(typeof (IProjectTemplate))]
-	public interface IProjectTemplate
+{ 
+	public interface IProjectTemplate : IExtension
 	{
 		string Title { get; }
 

@@ -1,11 +1,10 @@
 ﻿namespace AvalonStudio.Projects
 {
+    using AvalonStudio.Extensibility.Plugin;
     using System.Collections.Generic;
-    using System.Composition;
     using System.Threading.Tasks;
-
-    //[InheritedExport(typeof(ISolutionType))]
-    public interface ISolutionType
+    
+    public interface ISolutionType : IExtension
     {
         List<string> Extensions { get; }
         string Description { get; }

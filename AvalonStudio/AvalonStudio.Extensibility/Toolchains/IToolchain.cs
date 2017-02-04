@@ -8,7 +8,6 @@ using AvalonStudio.Utils;
 
 namespace AvalonStudio.Toolchains
 {
-	////[InheritedExport(typeof (IToolChain))]
 	public interface IToolChain : IPlugin
 	{
         IEnumerable<string> GetToolchainIncludes(ISourceFile file);

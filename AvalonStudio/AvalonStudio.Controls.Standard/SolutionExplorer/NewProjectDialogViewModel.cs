@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -164,11 +165,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private void GetTemplates(ILanguageService languageService)
         {
-            throw new Exception("Not dotnet core compatible");
-            /*
             var templates = shell.ProjectTemplates.Where(t => languageService.BaseTemplateType.IsAssignableFrom(t.GetType()));
 
-            ProjectTemplates = new ObservableCollection<IProjectTemplate>(templates);*/
+            ProjectTemplates = new ObservableCollection<IProjectTemplate>(templates);
         }
     }
 }

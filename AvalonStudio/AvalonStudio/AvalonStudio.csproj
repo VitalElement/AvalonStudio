@@ -83,9 +83,18 @@
   <ItemGroup>
     <ProjectReference Include="..\..\DockNC\src\Mabiavalon.DockNC\Mabiavalon.DockNC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Debugging.GDB.Local\AvalonStudio.Debugging.GDB.Local.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Debugging.GDB.OpenOCD\AvalonStudio.Debugging.GDB.OpenOCD.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Debugging.GDB\AvalonStudio.Debugging.GDB.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Behaviors\" />

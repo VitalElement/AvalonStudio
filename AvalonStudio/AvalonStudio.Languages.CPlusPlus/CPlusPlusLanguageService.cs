@@ -7,6 +7,7 @@ using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages.CPlusPlus.Rendering;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
+using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
@@ -53,7 +54,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public Type BaseTemplateType
         {
-            get { throw new Exception("Templates not supported yet .net core."); }
+            get { return typeof(BlankCPlusPlusLanguageTemplate); }
         }
 
         public IIndentationStrategy IndentationStrategy { get; }
@@ -1192,6 +1193,16 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
 
             return result;
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            
         }
     }
 

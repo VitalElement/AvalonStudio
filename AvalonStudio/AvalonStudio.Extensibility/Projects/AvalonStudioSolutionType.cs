@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Projects
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -19,6 +20,16 @@
             {
                 return new List<string> { "asln" };
             }
+        }
+
+        public void Activation()
+        {
+            
+        }
+
+        public void BeforeActivation()
+        {
+            
         }
 
         public async Task<ISolution> LoadAsync(string path)
