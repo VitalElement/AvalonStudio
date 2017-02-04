@@ -1,4 +1,3 @@
-using System.Composition;
 using System.Linq;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.MainMenu.Models;
@@ -6,7 +5,6 @@ using AvalonStudio.Extensibility.Menus;
 
 namespace AvalonStudio.Extensibility.MainMenu
 {
-	[Export(typeof (IMenuBuilder))]
 	public class MenuBuilder : IMenuBuilder
 	{
 		private readonly ICommandService _commandService;
@@ -17,17 +15,16 @@ namespace AvalonStudio.Extensibility.MainMenu
 		private readonly MenuItemGroupDefinition[] _menuItemGroups;
 		private readonly MenuItemDefinition[] _menuItems;
 		private readonly MenuDefinition[] _menus;
-
-		[ImportingConstructor]
+        
 		public MenuBuilder(
 			ICommandService commandService,
-			[ImportMany] MenuBarDefinition[] menuBars,
-			[ImportMany] MenuDefinition[] menus,
-			[ImportMany] MenuItemGroupDefinition[] menuItemGroups,
-			[ImportMany] MenuItemDefinition[] menuItems,
-			[ImportMany] ExcludeMenuDefinition[] excludeMenus,
-			[ImportMany] ExcludeMenuItemGroupDefinition[] excludeMenuItemGroups,
-			[ImportMany] ExcludeMenuItemDefinition[] excludeMenuItems)
+			MenuBarDefinition[] menuBars,
+			MenuDefinition[] menus,
+			MenuItemGroupDefinition[] menuItemGroups,
+			MenuItemDefinition[] menuItems,
+			ExcludeMenuDefinition[] excludeMenus,
+			ExcludeMenuItemGroupDefinition[] excludeMenuItemGroups,
+			ExcludeMenuItemDefinition[] excludeMenuItems)
 		{
 			_commandService = commandService;
 			_menuBars = menuBars;
