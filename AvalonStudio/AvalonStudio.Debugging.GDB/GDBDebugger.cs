@@ -790,5 +790,15 @@ namespace AvalonStudio.Debugging.GDB
 
             await ContinueAsync();
         }
+
+        public virtual void BeforeActivation()
+        {
+
+        }
+
+        public virtual void Activation()
+        {
+
+        }
     }
 }

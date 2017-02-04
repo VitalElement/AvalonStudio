@@ -30,7 +30,6 @@ namespace AvalonStudio.Projects
 		string CurrentDirectory { get; }
 
 		IList<object> ConfigurationPages { get; }
-		string Extension { get; }
 
 		//IDictionary<string, string> Settings { get; }        
 
@@ -54,8 +53,6 @@ namespace AvalonStudio.Projects
 		///     Resolves all references in the project.
 		/// </summary>
 		void ResolveReferences();
-
-		IProject Load(ISolution solution, string filePath);
 
 		void Save();
 	}

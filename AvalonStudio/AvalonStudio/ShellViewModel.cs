@@ -32,6 +32,17 @@ using AvalonStudio.Extensibility.Commands;
 
 namespace AvalonStudio
 {
+    static class ListExtensions
+    {
+        public static void ConsumeExtension<T>(this List<T> destination, IExtension extension) where T : class, IExtension
+        {
+            if (extension is T)
+            {
+                destination.Add(extension as T);
+            }
+        }
+    }
+
     [Export]
     public class ShellViewModel : ViewModel, IShell
     {
@@ -40,6 +51,15 @@ namespace AvalonStudio
         private IToolBar _toolBar;
 
         private ToolBarDefinition _toolBarDefinition;
+
+        private List<ILanguageService> _languageServices;
+        private List<IProjectTemplate> _projectTemplates;
+        private List<ISolutionType> _solutionTypes;
+        private List<IProjectType> _projectTypes;
+        private List<IToolChain> _toolChains;
+        private List<IDebugger> _debuggers;
+        private List<ITestFramework> _testFrameworks;
+        private List<ICodeTemplate> _codeTemplates;
 
         private Perspective currentPerspective;
 
@@ -51,22 +71,22 @@ namespace AvalonStudio
 
         private ObservableCollection<object> tools;
 
+        
+
         [ImportingConstructor]
-        public ShellViewModel([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes, [ImportMany] IEnumerable<IProject> projectTypes,
-            [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains,
-            [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks,
-            [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IExtension> extensions,
+        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions,
             [Import] IMenu mainMenu, [Import] ICommandKeyGestureService keyGestureService, [Import] ICommandService commandService, [Import] IToolBarBuilder toolBarBuilder)
         {
+            _languageServices = new List<ILanguageService>();
+            _projectTemplates = new List<IProjectTemplate>();
+            _debuggers = new List<IDebugger>();
+            _codeTemplates = new List<ICodeTemplate> ();
+            _projectTypes = new List<IProjectType>();
+            _solutionTypes = new List<ISolutionType>();
+            _testFrameworks = new List<ITestFramework>();
+            _toolChains = new List<IToolChain>();
+
             MainMenu = mainMenu;
-            LanguageServices = languageServices;
-            ProjectTemplates = projectTemplates;
-            ToolChains = toolChains;
-            Debuggers = debuggers;
-            SolutionTypes = solutionTypes;
-            ProjectTypes = projectTypes;
-            TestFrameworks = testFrameworks;
-            CodeTemplates = codeTemplates;
 
             IoC.RegisterConstant(this, typeof(IShell));
 
@@ -103,6 +123,13 @@ namespace AvalonStudio
             foreach (var extension in extensions)
             {
                 extension.Activation();
+
+                _languageServices.ConsumeExtension(extension);
+                _toolChains.ConsumeExtension(extension);
+                _projectTemplates.ConsumeExtension(extension);
+                _debuggers.ConsumeExtension(extension);
+                _solutionTypes.ConsumeExtension(extension);
+                _projectTypes.ConsumeExtension(extension);
             }
 
             foreach (var tool in extensions.OfType<ToolViewModel>())
@@ -226,21 +253,21 @@ namespace AvalonStudio
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
-        public IEnumerable<ISolutionType> SolutionTypes { get; }
+        public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
-        public IEnumerable<IProject> ProjectTypes { get; }
+        public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
 
-        public IEnumerable<IProjectTemplate> ProjectTemplates { get; }
+        public IEnumerable<IProjectTemplate> ProjectTemplates => _projectTemplates;
 
-        public IEnumerable<ICodeTemplate> CodeTemplates { get; }
+        public IEnumerable<ICodeTemplate> CodeTemplates => _codeTemplates;
 
-        public IEnumerable<ILanguageService> LanguageServices { get; }
+        public IEnumerable<ILanguageService> LanguageServices => _languageServices;
 
-        public IEnumerable<IToolChain> ToolChains { get; }
+        public IEnumerable<IToolChain> ToolChains => _toolChains;
 
-        public IEnumerable<IDebugger> Debuggers { get; }
+        public IEnumerable<IDebugger> Debuggers => _debuggers;
 
-        public IEnumerable<ITestFramework> TestFrameworks { get; }
+        public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 
         public void AddDocument(IDocumentTabViewModel document)
         {

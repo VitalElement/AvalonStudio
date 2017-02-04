@@ -80,7 +80,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 			});
 
 			OpenInExplorerCommand = ReactiveCommand.Create();
-			OpenInExplorerCommand.Subscribe(o => { Process.Start(Model.CurrentDirectory); });
+			OpenInExplorerCommand.Subscribe(o => { Process.Start(new ProcessStartInfo { FileName = Model.CurrentDirectory, UseShellExecute = true }); });
 
 			NewItemCommand = ReactiveCommand.Create();
 			NewItemCommand.Subscribe(_ =>
