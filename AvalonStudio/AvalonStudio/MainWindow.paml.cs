@@ -5,7 +5,6 @@ using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Controls;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Commands;
 
 namespace AvalonStudio
 {
@@ -17,7 +16,8 @@ namespace AvalonStudio
 
 			DataContext = ShellViewModel.Instance;
 
-			//IoC.Get<ICommandKeyGestureService>().BindKeyGestures(this);
+            KeyBindings.AddRange(IoC.Get<ShellViewModel>().KeyBindings);
+			
 			this.AttachDevTools();
 		}
 
