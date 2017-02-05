@@ -8,11 +8,9 @@
 # would use pacaur instead of yaourt.
 #
 
-mkdir ./bin &> /dev/null
-
-echo "#!/bin/sh" > ./bin/call
-echo "bash \$*" >> ./bin/call
-chmod +x ./bin/call
+sudo echo "#!/bin/sh" > /bin/call
+sudo echo "bash \$*" >> /bin/call
+sudo chmod +x /bin/call
 
 export PATH=$PATH:$(pwd)/bin
 
