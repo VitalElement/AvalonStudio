@@ -10,8 +10,10 @@ namespace AvalonStudio.MVVM
         public static string GetDescription<T>(this T enumerationValue)
             where T : struct
         {
-            Type type = enumerationValue.GetType();
-            if (!type.IsEnum)
+            throw new Exception("Not supported .net core.");
+
+            /*Type type = enumerationValue.GetType();
+            if (!type..IsEnum)
             {
                 throw new ArgumentException("EnumerationValue must be of Enum type", "enumerationValue");
             }
@@ -30,7 +32,7 @@ namespace AvalonStudio.MVVM
                 }
             }
             //If we have no description attribute, just return the ToString of the enum
-            return enumerationValue.ToString();
+            return enumerationValue.ToString();*/
 
         }
         //public static System.Drawing.Point ToSystemDrawing (this Point p)

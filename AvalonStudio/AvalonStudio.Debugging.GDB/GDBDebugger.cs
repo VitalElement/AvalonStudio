@@ -60,7 +60,6 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        [XmlIgnore]
         public bool StoppedEventIsEnabled { get; set; }
 
         public bool DebugMode { get; set; }
@@ -790,6 +789,16 @@ namespace AvalonStudio.Debugging.GDB
             await SafelyExecuteCommandWithoutResume(commandAction);
 
             await ContinueAsync();
+        }
+
+        public virtual void BeforeActivation()
+        {
+
+        }
+
+        public virtual void Activation()
+        {
+
         }
     }
 }

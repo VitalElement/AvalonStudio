@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
 using AvalonStudio.Debugging;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using System.Composition;
 
 namespace AvalonStudio.Projects
 {
-	[InheritedExport(typeof (IProject))]
+	//[InheritedExport(typeof (IProject))]
 	public interface IProject : IProjectFolder, IComparable<IProject>
 	{
 		ISolution Solution { get; }
@@ -30,7 +30,6 @@ namespace AvalonStudio.Projects
 		string CurrentDirectory { get; }
 
 		IList<object> ConfigurationPages { get; }
-		string Extension { get; }
 
 		//IDictionary<string, string> Settings { get; }        
 
@@ -54,8 +53,6 @@ namespace AvalonStudio.Projects
 		///     Resolves all references in the project.
 		/// </summary>
 		void ResolveReferences();
-
-		IProject Load(ISolution solution, string filePath);
 
 		void Save();
 	}

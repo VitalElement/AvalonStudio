@@ -9,8 +9,6 @@ namespace AvalonStudio.TextEditor.Utils
 	// Concat nodes: height>0, left!=null, right!=null, contents==null
 	// Leaf nodes: height==0, left==null, right==null, contents!=null
 	// Function nodes: height==0, left==null, right==null, contents==null, are of type FunctionNode<T>
-
-	[Serializable]
 	internal class RopeNode<T>
 	{
 		internal const int NodeSize = 256;

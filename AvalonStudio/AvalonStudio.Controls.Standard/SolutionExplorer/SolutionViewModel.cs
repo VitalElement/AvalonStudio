@@ -43,7 +43,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
 				foreach (var projectType in shell.ProjectTypes)
 				{
-					extensions.Add(projectType.Extension);
+					extensions.AddRange(projectType.Extensions);
 				}
 
 				dlg.Filters.Add(new FileDialogFilter {Name = "AvalonStudio Project", Extensions = extensions});
@@ -66,7 +66,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 			});
 
 			OpenInExplorerCommand = ReactiveCommand.Create();
-			OpenInExplorerCommand.Subscribe(o => { Process.Start(model.CurrentDirectory); });
+			OpenInExplorerCommand.Subscribe(o => { Process.Start(new ProcessStartInfo { UseShellExecute = true, FileName = model.CurrentDirectory }); });
 
 			ConfigurationCommand = ReactiveCommand.Create();
 			ConfigurationCommand.Subscribe(o =>

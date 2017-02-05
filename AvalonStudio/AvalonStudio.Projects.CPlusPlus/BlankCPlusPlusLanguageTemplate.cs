@@ -1,9 +1,8 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
-using AvalonStudio.Projects;
-using AvalonStudio.Projects.CPlusPlus;
 
-namespace AvalonStudio.Languages.CPlusPlus
+namespace AvalonStudio.Projects.CPlusPlus
 {
 	public class BlankCPlusPlusLanguageTemplate : IProjectTemplate
 	{
@@ -22,7 +21,15 @@ namespace AvalonStudio.Languages.CPlusPlus
 			get { return "Empty C/C++ Project"; }
 		}
 
-		public virtual async Task<IProject> Generate(ISolution solution, string name)
+        public void Activation()
+        {
+        }
+
+        public void BeforeActivation()
+        {
+        }
+
+        public virtual async Task<IProject> Generate(ISolution solution, string name)
 		{
 			var location = Path.Combine(solution.CurrentDirectory, name);
 

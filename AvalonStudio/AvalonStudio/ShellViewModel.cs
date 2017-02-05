@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,11 +28,24 @@ using AvalonStudio.TextEditor;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using ReactiveUI;
+using AvalonStudio.Extensibility.Commands;
+using AvalonStudio.Extensibility.Menus;
+using Avalonia.Controls;
 
 namespace AvalonStudio
 {
-    [Export(typeof(IShell))]
-    [Export(typeof(ShellViewModel))]
+    static class ListExtensions
+    {
+        public static void ConsumeExtension<T>(this List<T> destination, IExtension extension) where T : class, IExtension
+        {
+            if (extension is T)
+            {
+                destination.Add(extension as T);
+            }
+        }
+    }
+
+    [Export]
     public class ShellViewModel : ViewModel, IShell
     {
         public static ShellViewModel Instance = null;
@@ -40,6 +53,24 @@ namespace AvalonStudio
         private IToolBar _toolBar;
 
         private ToolBarDefinition _toolBarDefinition;
+
+        private List<ILanguageService> _languageServices;
+        private List<IProjectTemplate> _projectTemplates;
+        private List<ISolutionType> _solutionTypes;
+        private List<IProjectType> _projectTypes;
+        private List<IToolChain> _toolChains;
+        private List<IDebugger> _debuggers;
+        private List<ITestFramework> _testFrameworks;
+        private List<ICodeTemplate> _codeTemplates;
+        private List<MenuBarDefinition> _menuBarDefinitions;
+        private List<MenuDefinition> _menuDefinitions;
+        private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
+        private List<MenuItemDefinition> _menuItemDefinitions;
+        private List<CommandDefinition> _commandDefinitions;
+        private List<KeyBinding> _keyBindings;
+        private List<ToolBarDefinition> _toolBarDefinitions;
+        private List<ToolBarItemGroupDefinition> _toolBarItemGroupDefinitions;
+        private List<ToolBarItemDefinition> _toolBarItemDefinitions;
 
         private Perspective currentPerspective;
 
@@ -52,22 +83,26 @@ namespace AvalonStudio
         private ObservableCollection<object> tools;
 
         [ImportingConstructor]
-        public ShellViewModel([ImportMany] IEnumerable<ToolViewModel> importedTools,
-            [ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes, [ImportMany] IEnumerable<IProject> projectTypes,
-            [ImportMany] IEnumerable<IProjectTemplate> projectTemplates, [ImportMany] IEnumerable<IToolChain> toolChains,
-            [ImportMany] IEnumerable<IDebugger> debuggers, [ImportMany] IEnumerable<ITestFramework> testFrameworks,
-            [ImportMany] IEnumerable<ICodeTemplate> codeTemplates, [ImportMany] IEnumerable<IExtension> extensions,
-            [Import] IMenu mainMenu)
+        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates)
         {
-            MainMenu = mainMenu;
-            LanguageServices = languageServices;
-            ProjectTemplates = projectTemplates;
-            ToolChains = toolChains;
-            Debuggers = debuggers;
-            SolutionTypes = solutionTypes;
-            ProjectTypes = projectTypes;
-            TestFrameworks = testFrameworks;
-            CodeTemplates = codeTemplates;
+            _languageServices = new List<ILanguageService>();
+            _projectTemplates = new List<IProjectTemplate>();
+            _debuggers = new List<IDebugger>();
+            _codeTemplates = new List<ICodeTemplate>();
+            _projectTypes = new List<IProjectType>();
+            _solutionTypes = new List<ISolutionType>();
+            _testFrameworks = new List<ITestFramework>();
+            _toolChains = new List<IToolChain>();
+            _menuBarDefinitions = new List<MenuBarDefinition>();
+            _menuDefinitions = new List<MenuDefinition>();
+            _menuItemGroupDefinitions = new List<MenuItemGroupDefinition>();
+            _menuItemDefinitions = new List<MenuItemDefinition>();
+            _commandDefinitions = new List<CommandDefinition>();
+            _keyBindings = new List<KeyBinding>();
+            _toolBarDefinitions = new List<ToolBarDefinition>();
+            _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
+            _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
+
 
             IoC.RegisterConstant(this, typeof(IShell));
 
@@ -75,6 +110,8 @@ namespace AvalonStudio
             {
                 extension.BeforeActivation();
             }
+
+            _codeTemplates.AddRange(codeTemplates);
 
             CurrentPerspective = Perspective.Editor;
 
@@ -100,9 +137,68 @@ namespace AvalonStudio
             foreach (var extension in extensions)
             {
                 extension.Activation();
+
+                _languageServices.ConsumeExtension(extension);
+                _toolChains.ConsumeExtension(extension);
+                _projectTemplates.ConsumeExtension(extension);
+                _debuggers.ConsumeExtension(extension);
+                _solutionTypes.ConsumeExtension(extension);
+                _projectTypes.ConsumeExtension(extension);
+                
+                
+                _commandDefinitions.ConsumeExtension(extension);
             }
 
-            foreach (var tool in importedTools)
+            _menuBarDefinitions.AddRange(IoC.GetServices<MenuBarDefinition>(typeof(MenuBarDefinition)));
+            _menuDefinitions.AddRange(IoC.GetServices<MenuDefinition>(typeof(MenuDefinition)));
+            _menuItemGroupDefinitions.AddRange(IoC.GetServices<MenuItemGroupDefinition>(typeof(MenuItemGroupDefinition)));
+            _menuItemDefinitions.AddRange(IoC.GetServices<MenuItemDefinition>(typeof(MenuItemDefinition)));
+
+            _toolBarDefinitions.AddRange(IoC.GetServices<ToolBarDefinition>(typeof(ToolBarDefinition)));
+            _toolBarItemDefinitions.AddRange(IoC.GetServices<ToolBarItemDefinition>(typeof(ToolBarItemDefinition)));
+            _toolBarItemGroupDefinitions.AddRange(IoC.GetServices<ToolBarItemGroupDefinition>(typeof(ToolBarItemGroupDefinition)));
+
+            foreach (var definition in _toolBarItemDefinitions)
+            {
+                definition.Activation();
+            }
+
+            foreach (var menuItemDefinition in _menuDefinitions)
+            {
+                menuItemDefinition.Activation();
+            }
+
+            foreach (var menuItemDefinition in _menuItemGroupDefinitions)
+            {
+                menuItemDefinition.Activation();
+            }
+
+            foreach (var extension in _menuItemDefinitions)
+            {
+                extension.Activation();
+            }
+
+            var menuBar = IoC.Get<MenuBarDefinition>("MainMenu");
+
+            foreach (var commandDefinition in _commandDefinitions)
+            {
+                if (commandDefinition.Command != null && commandDefinition.Gesture != null)
+                {
+                    _keyBindings.Add(new KeyBinding { Gesture = commandDefinition.Gesture, Command = commandDefinition.Command });
+                }
+            }
+
+            ToolBarDefinition = ToolBarDefinitions.MainToolBar;
+
+            var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
+
+            var mainMenu = new Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
+
+            menuBuilder.BuildMenuBar(menuBar, mainMenu.Model);
+
+            MainMenu = mainMenu;
+
+            foreach (var tool in extensions.OfType<ToolViewModel>())
             {
                 tools.Add(tool);
 
@@ -153,13 +249,13 @@ namespace AvalonStudio
 
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
-            StatusBar.PlatformString = Platform.PlatformString;
+            StatusBar.PlatformString = Platform.OSDescription;
 
             ProcessCancellationToken = new CancellationTokenSource();
 
             CurrentPerspective = Perspective.Editor;
 
-            ToolBarDefinition = ToolBarDefinitions.MainToolBar;
+            IoC.RegisterConstant(this);
         }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
@@ -189,18 +285,25 @@ namespace AvalonStudio
             get
             {
                 if (_toolBar != null)
-                    return _toolBar;
+                  return _toolBar;
 
                 if (ToolBarDefinition == null)
-                    return null;
+                return null;
+                
+                var toolBarBuilder = new ToolBarBuilder(_toolBarDefinitions.ToArray(), _toolBarItemGroupDefinitions.ToArray(), _toolBarItemDefinitions.ToArray(), new ExcludeToolBarDefinition[0], new ExcludeToolBarItemGroupDefinition[0], new ExcludeToolBarItemDefinition[0]);
 
-                var toolBarBuilder = IoC.Get<IToolBarBuilder>();
+                var mainToolBar = new Extensibility.ToolBars.ViewModels.ToolBarsViewModel(toolBarBuilder);
+
+                toolBarBuilder.BuildToolBars(mainToolBar);
+                
                 _toolBar = new ToolBarModel();
 
                 toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
                 return _toolBar;
             }
         }
+
+        public IEnumerable<KeyBinding> KeyBindings => _keyBindings;
 
         public DocumentTabControlViewModel DocumentTabs { get; }
 
@@ -223,21 +326,21 @@ namespace AvalonStudio
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
-        public IEnumerable<ISolutionType> SolutionTypes { get; }
+        public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
-        public IEnumerable<IProject> ProjectTypes { get; }
+        public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
 
-        public IEnumerable<IProjectTemplate> ProjectTemplates { get; }
+        public IEnumerable<IProjectTemplate> ProjectTemplates => _projectTemplates;
 
-        public IEnumerable<ICodeTemplate> CodeTemplates { get; }
+        public IEnumerable<ICodeTemplate> CodeTemplates => _codeTemplates;
 
-        public IEnumerable<ILanguageService> LanguageServices { get; }
+        public IEnumerable<ILanguageService> LanguageServices => _languageServices;
 
-        public IEnumerable<IToolChain> ToolChains { get; }
+        public IEnumerable<IToolChain> ToolChains => _toolChains;
 
-        public IEnumerable<IDebugger> Debuggers { get; }
+        public IEnumerable<IDebugger> Debuggers => _debuggers;
 
-        public IEnumerable<ITestFramework> TestFrameworks { get; }
+        public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 
         public void AddDocument(IDocumentTabViewModel document)
         {
@@ -626,7 +729,7 @@ namespace AvalonStudio
 
         public async Task OpenSolutionAsync(string path)
         {
-            if(CurrentSolution != null)
+            if (CurrentSolution != null)
             {
                 await CloseSolutionAsync();
             }
@@ -642,7 +745,7 @@ namespace AvalonStudio
             }
         }
 
-        public async Task CloseSolutionAsync ()
+        public async Task CloseSolutionAsync()
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 
@@ -657,7 +760,7 @@ namespace AvalonStudio
             CurrentSolution = null;
         }
 
-        public async Task CloseDocumentsForProjectAsync (IProject project)
+        public async Task CloseDocumentsForProjectAsync(IProject project)
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 

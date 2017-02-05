@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using Avalonia.Controls;
+using AvalonStudio.Extensibility.Utils;
+using System.Reflection;
 
 namespace AvalonStudio.MVVM
 {
@@ -37,7 +39,7 @@ namespace AvalonStudio.MVVM
                 }
 			}
 
-			return new TextBlock {Text = data.GetType().FullName};
+			return new TextBlock {Text = "View Locator Error: Not ported to .net core"};
 		}
 	}
 }
