@@ -1,12 +1,10 @@
-using System.Composition;
-
 namespace AvalonStudio.Extensibility.ToolBars
 {
-    //[InheritedExport]
 	public class ToolBarItemGroupDefinition
 	{
 		public ToolBarItemGroupDefinition(ToolBarDefinition toolBar, int sortOrder)
 		{
+            IoC.RegisterConstant(this);
 			ToolBar = toolBar;
 			SortOrder = sortOrder;
 		}
