@@ -26,7 +26,12 @@ after_build:
 - cmd: 7z a -r AvalonStudio-osx.10.12-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\osx.10.12-x64\publish\*.*
 
 artifacts:
-- path: AvalonStudio.zip
+- path: AvalonStudio-win10-x86.zip
+- path: AvalonStudio-win7-x86.zip
+- path: AvalonStudio-ubuntu.16.10-x64.zip
+- path: AvalonStudio-debian.8-x64.zip
+- path: AvalonStudio-osx.10.12-x64.zip
+
 deploy:
 - provider: Environment
   name: FastRing
