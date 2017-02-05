@@ -7,12 +7,12 @@ OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 
 MEMORY
 {
-	FLASH (rx)  : ORIGIN = {{ InRom1Start }}, LENGTH = {{ InRom1Size }}
-	RAM (rwx) : ORIGIN = {{ InRam1Start }}, LENGTH = {{ InRam1Size }}
+	FLASH (rx)  : ORIGIN = @Model.InRom1Start, LENGTH = @Model.InRom1Size
+	RAM (rwx) : ORIGIN = @Model.InRam1Start, LENGTH = @Model.InRam1Size
 	RAM1 (rwx) : ORIGIN = 0xD0000000, LENGTH = 0x00800000
 }
 
-_eram = {{ InRam1Start }} + {{ InRam1Size }};
+_eram = @Model.InRam1Start + @Model.InRam1Size;
 
 SECTIONS
 {

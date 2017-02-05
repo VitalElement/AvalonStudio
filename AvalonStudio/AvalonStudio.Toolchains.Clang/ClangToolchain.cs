@@ -7,12 +7,12 @@ namespace AvalonStudio.Toolchains.Clang
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
     using CommandLineTools;
-    using Scriban;
+    using RazorLight;
     using Standard;
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Threading.Tasks;
+    using System.Threading.Tasks;    
 
     public enum AssemblyFormat
     {
@@ -95,8 +95,9 @@ namespace AvalonStudio.Toolchains.Clang
                 System.IO.File.Delete(linkerScript);
             }
 
-            var template = Template.Parse(System.IO.File.ReadAllText(Path.Combine(Platform.TemplatesFolder, "ArmLinkerScriptTemplate.template")));
-            var rendered = template.Render( new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start= settings.InRam1Start, InRam1Size = settings.InRam1Size });
+            var engine = EngineFactory.CreatePhysical(Platform.TemplatesFolder);
+
+            var rendered = engine.Parse("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size });
 
             using (var sw = System.IO.File.CreateText(linkerScript))
             {
