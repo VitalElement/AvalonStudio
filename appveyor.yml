@@ -11,7 +11,7 @@ build_script:
 - ps: dotnet build .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release
 
 after_build:
-- cmd: 7z a -r AvalonStudio.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\x86\Release\*.*
+- cmd: 7z a -r AvalonStudio.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\*.*
 artifacts:
 - path: AvalonStudio.zip
 deploy:
