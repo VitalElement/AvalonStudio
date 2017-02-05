@@ -8,10 +8,10 @@ before_build:
 
 build_script:
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache
-- ps: dotnet build .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release
 
 after_build:
-- cmd: 7z a -r AvalonStudio.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\*.*
+- cmd: 7z a -r AvalonStudio.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\publish\*.*
 artifacts:
 - path: AvalonStudio.zip
 deploy:
