@@ -6,7 +6,16 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
 	internal class MenuDefinitions : IExtension
 	{
-        public MenuItemDefinition NewSolutionMenuItem = new MenuItemDefinition<NewSolutionCommandDefinition>(Extensibility.MenuDefinitions.FileNewOpenMenuGroup, "New Solution", 0);
+        static MenuDefinitions()
+        {
+
+        }
+
+        public static MenuItemDefinition NewSolutionMenuItem = new MenuItemDefinition<NewSolutionCommandDefinition>(Extensibility.MenuDefinitions.FileNewOpenMenuGroup, "New Solution", 0);
+        
+        public static MenuItemDefinition FileOpenSolutionItem = new MenuItemDefinition<OpenSolutionCommandDefinition>(Extensibility.MenuDefinitions.FileNewOpenMenuGroup, "Open Solution", 0);
+
+        public static MenuItemDefinition FileCloseSolutionItem = new MenuItemDefinition<CloseSolutionCommandDefinition>(Extensibility.MenuDefinitions.FileCloseMenuGroup, "Close Solution", 1);
 
         public void Activation()
         {
@@ -15,20 +24,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public void BeforeActivation()
         {
-            
+
         }
-
-        //     public static MenuItemDefinition FileNewSolutionItem =
-        //new CommandMenuItemDefinition<NewSolutionCommandDefinition>(
-        //	Extensibility.MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0);
-
-
-        //     public static MenuItemDefinition FileOpenSolutionItem =
-        //new CommandMenuItemDefinition<OpenSolutionCommandDefinition>(
-        //	Extensibility.MainMenu.MenuDefinitions.FileNewOpenMenuGroup, 0);
-
-        //     public static MenuItemDefinition FileCloseSolutionItem =
-        //new CommandMenuItemDefinition<CloseSolutionCommandDefinition>(
-        //	Extensibility.MainMenu.MenuDefinitions.FileCloseMenuGroup, 1);
     }
 }
