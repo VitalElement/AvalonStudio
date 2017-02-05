@@ -73,6 +73,8 @@ namespace AvalonStudio.Platforms
 
         public static string ExtensionsFolder => Path.Combine(ExecutionPath, "Extensions");
 
+        public static string TemplatesFolder => Path.Combine(ExecutionPath, "Templates");
+
         public static string ExecutableExtension
         {
             get
