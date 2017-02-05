@@ -93,7 +93,7 @@
         {
             // RSS Releated
             var rssurl = @"http://sxp.microsoft.com/feeds/2.0/devblogs";
-            var reader = XmlReader.Create(rssurl);
+            //var reader = XmlReader.Create(rssurl);
             /*var feed = await LoadFeed(reader);
             reader.Close();*/
 
@@ -128,7 +128,7 @@
         private async Task LoadVideoFeed()
         {
             var rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UCOWs5Rx9ot7p10mqYyzjyUA";
-            var reader = XmlReader.Create(rssurl);
+            //var reader = XmlReader.Create(rssurl);
             /*var feed = await LoadFeed(reader);
 
             reader.Close();
