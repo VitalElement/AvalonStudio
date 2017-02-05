@@ -137,8 +137,20 @@ namespace AvalonStudio.Platforms
         {
             get
             {
-                // TODO return something appropriate.
-                return "c:\\AvalonStudio";
+                string userDir = string.Empty;
+
+                switch (PlatformIdentifier)
+                {
+                    case PlatformID.Windows:
+                        userDir = Environment.GetEnvironmentVariable("UserProfile");                        
+                        break;
+
+                    default:
+                        userDir = Environment.GetEnvironmentVariable("HOME");
+                        break;
+                }
+
+                return Path.Combine(userDir, "AvalonStudio");
             }
         }
 
