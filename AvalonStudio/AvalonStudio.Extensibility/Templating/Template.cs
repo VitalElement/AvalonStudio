@@ -2,14 +2,10 @@
 {
     using AvalonStudio.Platforms;
     using RazorLight;
+    using System;
 
     public static class Template
     {
-        public static string Parse(string templateKey, object model)
-        {
-            var engine = EngineFactory.CreatePhysical(Platform.TemplatesFolder);
-
-            return engine.Parse(templateKey, model);
-        }
+        public static IRazorLightEngine Engine => EngineFactory.CreatePhysical(Platform.TemplatesFolder);        
     }
 }
