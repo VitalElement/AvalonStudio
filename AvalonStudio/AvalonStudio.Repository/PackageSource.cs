@@ -68,7 +68,9 @@ namespace AvalonStudio.Repositories
 
 		public static void InitialisePackageSources()
 		{
-			if (!File.Exists(Platform.PackageSourcesFile))
+            PackageSources result = null;
+
+			if (!File.Exists(Platform.PackageSourcesFile) || (result =SerializedObject.Deserialize<PackageSources>(Platform.PackageSourcesFile)) == null)
 			{
 				var sources = new PackageSources();
 
@@ -78,10 +80,10 @@ namespace AvalonStudio.Repositories
 					Url = "https://github.com/VitalElement/AvalonStudio.Repository"
 				});
 
-                SerializedObject.Serialize(Platform.PackageSourcesFile, sources);				
-			}
+                SerializedObject.Serialize(Platform.PackageSourcesFile, sources);
 
-			var result = SerializedObject.Deserialize<PackageSources>(Platform.PackageSourcesFile);
+                result = sources;
+			}
 
 			Instance = result;
 		}
