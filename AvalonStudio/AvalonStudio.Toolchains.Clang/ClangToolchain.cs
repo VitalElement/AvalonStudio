@@ -7,6 +7,7 @@ namespace AvalonStudio.Toolchains.Clang
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
     using CommandLineTools;
+    using Scriban;
     using Standard;
     using System;
     using System.Collections.Generic;
@@ -85,8 +86,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         private void GenerateLinkerScript(IStandardProject project)
         {
-            var settings = GetSettings(project).LinkSettings;
-            var template = new ArmGCCLinkTemplate(settings);
+            var settings = GetSettings(project).LinkSettings;            
 
             var linkerScript = GetLinkerScriptLocation(project);
 
@@ -95,12 +95,13 @@ namespace AvalonStudio.Toolchains.Clang
                 System.IO.File.Delete(linkerScript);
             }
 
-            IoC.Get<IConsole>().WriteLine("Unable to generate linker script on .net core.");
-           /* var sw = System.IO.File.CreateText(linkerScript);
+            var template = Template.Parse(System.IO.File.ReadAllText(Path.Combine(Platform.TemplatesFolder, "ArmLinkerScriptTemplate.template")));
+            var rendered = template.Render( new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start= settings.InRam1Start, InRam1Size = settings.InRam1Size });
 
-            sw.Write(template.TransformText());
-
-            sw.Close();*/
+            using (var sw = System.IO.File.CreateText(linkerScript))
+            {
+                sw.Write(rendered);
+            }
         }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
