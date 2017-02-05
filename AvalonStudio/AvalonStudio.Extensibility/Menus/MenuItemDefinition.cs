@@ -1,9 +1,7 @@
 namespace AvalonStudio.Extensibility.Menus
 {
     using AvalonStudio.Extensibility.Commands;
-    using AvalonStudio.Extensibility.Plugin;    
-    using System;   
-    
+
     public class MenuItemDefinition
     {
         public MenuItemDefinition(MenuItemGroupDefinition group, string text, int sortOrder)
@@ -28,12 +26,12 @@ namespace AvalonStudio.Extensibility.Menus
 
         public int SortOrder { get; }
     }
-    
-    public class MenuItemDefinition<TCommand> :  MenuItemDefinition where TCommand : CommandDefinition
-	{
+
+    public class MenuItemDefinition<TCommand> : MenuItemDefinition where TCommand : CommandDefinition
+    {
         public MenuItemDefinition(MenuItemGroupDefinition group, string text, int sortOrder) : base(group, text, sortOrder)
         {
-            
+
         }
 
         public override void Activation()
