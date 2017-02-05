@@ -5,17 +5,15 @@ using ReactiveUI;
 
 namespace AvalonStudio.Extensibility.ToolBars.ViewModels
 {
-	[Export(typeof (IToolBars))]
 	public class ToolBarsViewModel : ViewModel, IToolBars
 	{
 		private readonly BindableCollection<IToolBar> _items;
 
-		private readonly IToolBarBuilder _toolBarBuilder;
+		private readonly ToolBarBuilder _toolBarBuilder;
 
 		private bool _visible;
-
-		[ImportingConstructor]
-		public ToolBarsViewModel(IToolBarBuilder toolBarBuilder)
+		
+		public ToolBarsViewModel(ToolBarBuilder toolBarBuilder)
 		{
 			_toolBarBuilder = toolBarBuilder;
 			_items = new BindableCollection<IToolBar>();

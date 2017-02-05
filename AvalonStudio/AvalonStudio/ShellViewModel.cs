@@ -68,6 +68,9 @@ namespace AvalonStudio
         private List<MenuItemDefinition> _menuItemDefinitions;
         private List<CommandDefinition> _commandDefinitions;
         private List<KeyBinding> _keyBindings;
+        private List<ToolBarDefinition> _toolBarDefinitions;
+        private List<ToolBarItemGroupDefinition> _toolBarItemGroupDefinitions;
+        private List<ToolBarItemDefinition> _toolBarItemDefinitions;
 
         private Perspective currentPerspective;
 
@@ -96,6 +99,9 @@ namespace AvalonStudio
             _menuItemDefinitions = new List<MenuItemDefinition>();
             _commandDefinitions = new List<CommandDefinition>();
             _keyBindings = new List<KeyBinding>();
+            _toolBarDefinitions = new List<ToolBarDefinition>();
+            _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
+            _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
 
 
             IoC.RegisterConstant(this, typeof(IShell));
@@ -146,6 +152,15 @@ namespace AvalonStudio
             _menuItemGroupDefinitions.AddRange(IoC.GetServices<MenuItemGroupDefinition>(typeof(MenuItemGroupDefinition)));
             _menuItemDefinitions.AddRange(IoC.GetServices<MenuItemDefinition>(typeof(MenuItemDefinition)));
 
+            _toolBarDefinitions.AddRange(IoC.GetServices<ToolBarDefinition>(typeof(ToolBarDefinition)));
+            _toolBarItemDefinitions.AddRange(IoC.GetServices<ToolBarItemDefinition>(typeof(ToolBarItemDefinition)));
+            _toolBarItemGroupDefinitions.AddRange(IoC.GetServices<ToolBarItemGroupDefinition>(typeof(ToolBarItemGroupDefinition)));
+
+            foreach (var definition in _toolBarItemDefinitions)
+            {
+                definition.Activation();
+            }
+
             foreach (var menuItemDefinition in _menuDefinitions)
             {
                 menuItemDefinition.Activation();
@@ -170,6 +185,8 @@ namespace AvalonStudio
                     _keyBindings.Add(new KeyBinding { Gesture = commandDefinition.Gesture, Command = commandDefinition.Command });
                 }
             }
+
+            ToolBarDefinition = ToolBarDefinitions.MainToolBar;
 
             var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
 
@@ -236,8 +253,6 @@ namespace AvalonStudio
 
             CurrentPerspective = Perspective.Editor;
 
-            ToolBarDefinition = ToolBarDefinitions.MainToolBar;
-
             IoC.RegisterConstant(this);
         }
 
@@ -267,17 +282,22 @@ namespace AvalonStudio
         {
             get
             {
-                //if (_toolBar != null)
-                //  return _toolBar;
+                if (_toolBar != null)
+                  return _toolBar;
 
-                //if (ToolBarDefinition == null)
+                if (ToolBarDefinition == null)
                 return null;
+                
+                var toolBarBuilder = new ToolBarBuilder(_toolBarDefinitions.ToArray(), _toolBarItemGroupDefinitions.ToArray(), _toolBarItemDefinitions.ToArray(), new ExcludeToolBarDefinition[0], new ExcludeToolBarItemGroupDefinition[0], new ExcludeToolBarItemDefinition[0]);
 
-                //var toolBarBuilder = IoC.Get<IToolBarBuilder>();
-                //_toolBar = new ToolBarModel();
+                var mainToolBar = new Extensibility.ToolBars.ViewModels.ToolBarsViewModel(toolBarBuilder);
 
-                //toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
-                //return _toolBar;
+                toolBarBuilder.BuildToolBars(mainToolBar);
+                
+                _toolBar = new ToolBarModel();
+
+                toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
+                return _toolBar;
             }
         }
 
