@@ -8,7 +8,7 @@ using ReactiveUI;
 
 namespace AvalonStudio.Shell.Commands
 {
-	[CommandDefinition]
+	
 	public class SaveAllFileCommandDefinition : CommandDefinition
 	{
 		private readonly ReactiveCommand<object> _command;

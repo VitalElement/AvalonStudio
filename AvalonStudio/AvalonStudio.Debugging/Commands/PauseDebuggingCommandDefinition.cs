@@ -8,7 +8,7 @@ using ReactiveUI;
 
 namespace AvalonStudio.Debugging.Commands
 {
-	[CommandDefinition]
+	
 	internal class PauseDebuggingCommandDefinition : CommandDefinition
 	{
 		private readonly ReactiveCommand<object> command;

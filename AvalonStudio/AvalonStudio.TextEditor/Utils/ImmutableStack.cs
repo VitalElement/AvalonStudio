@@ -12,7 +12,7 @@ namespace AvalonStudio.TextEditor.Utils
 	/// </summary>
 	[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
 	[SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-	[Serializable]
+	
 	public sealed class ImmutableStack<T> : IEnumerable<T>
 	{
 		/// <summary>

@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Threading;
 using AvalonStudio.TextEditor.Utils;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AvalonStudio.TextEditor.Document
 {
@@ -1289,10 +1289,11 @@ namespace AvalonStudio.TextEditor.Document
 				VerifyAccess();
 				if (serviceProvider == null)
 				{
-					var container = new ServiceContainer();
+                    
+					/*var container = new Service();
 					container.AddService(typeof (IDocument), this);
 					container.AddService(typeof (TextDocument), this);
-					serviceProvider = container;
+					serviceProvider = container;*/
 				}
 				return serviceProvider;
 			}

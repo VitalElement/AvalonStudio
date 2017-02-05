@@ -81,10 +81,6 @@
     <Compile Include="VisualStudioSolutionType.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.Raw\AvalonStudio.Projects.Raw.csproj">
       <Project>{41c0c2c7-9554-470d-b8c0-634db3b509dc}</Project>
       <Name>AvalonStudio.Projects.Raw</Name>

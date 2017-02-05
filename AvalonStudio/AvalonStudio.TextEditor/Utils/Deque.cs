@@ -9,7 +9,7 @@ namespace AvalonStudio.TextEditor.Utils
 	///     Double-ended queue.
 	/// </summary>
 	[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-	[Serializable]
+	
 	public sealed class Deque<T> : ICollection<T>
 	{
 		private T[] arr = Empty<T>.Array;

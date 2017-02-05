@@ -103,10 +103,11 @@ namespace AvalonStudio.Projects.CPlusPlus
             };
 
             parent.Project.FileAdded += fileAddedHandler;
-			
-			var file = System.IO.File.CreateText(filePath);
-			file.Write(text);
-			file.Close();
+
+            using (var file = System.IO.File.CreateText(filePath))
+            {
+                file.Write(text);
+            }
 
             fileAddedCompletionSource.Task.ContinueWith((f) =>
             {

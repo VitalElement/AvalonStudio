@@ -1,37 +1,23 @@
-using System;
-using Avalonia.Input;
-using AvalonStudio.Extensibility.Commands;
-
 namespace AvalonStudio.Extensibility.Menus
 {
-	public class MenuDefinition : MenuDefinitionBase
-	{
-		public MenuDefinition(MenuBarDefinition menuBar, int sortOrder, string text)
-		{
-			MenuBar = menuBar;
-			SortOrder = sortOrder;
-			Text = text;
-		}
+    public class MenuDefinition
+    {        
+        public MenuDefinition(MenuBarDefinition menuBar, int sortOrder, string text)
+        {
+            SortOrder = sortOrder;
+            Text = text;
+            IoC.RegisterConstant(this);
+        }
 
-		public MenuBarDefinition MenuBar { get; }
+        public MenuBarDefinition MenuBar { get; protected set; }
 
-		public override int SortOrder { get; }
+        public int SortOrder { get; }
 
-		public override string Text { get; }
+        public string Text { get; }
 
-		public override Uri IconSource
-		{
-			get { return null; }
-		}
+        public virtual void Activation()
+        {
 
-		public override KeyGesture KeyGesture
-		{
-			get { return null; }
-		}
-
-		public override CommandDefinitionBase CommandDefinition
-		{
-			get { return null; }
-		}
-	}
+        }
+    }
 }

@@ -58,11 +58,10 @@ namespace AvalonStudio.Toolchains.STM32
                 System.IO.File.Delete(linkerScript);
             }
 
-            var sw = System.IO.File.CreateText(linkerScript);
-
-            sw.Write(template.TransformText());
-
-            sw.Close();
+            using (var sw = System.IO.File.CreateText(linkerScript))
+            {
+               // sw.Write(template.TransformText());
+            }
         }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
