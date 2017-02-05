@@ -5,6 +5,7 @@
     <OutputTypeEx>exe</OutputTypeEx>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <PreserveCompilationContext>true</PreserveCompilationContext>
+    <RuntimeIdentifiers>win7-x86;win10-x86;ubuntu.16.10-x64;debian.8-x64;fedora.24-x64;osx.10.12-x64</RuntimeIdentifiers>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Shell\Commands\NewFileCommandHandler.cs" />
