@@ -7,6 +7,8 @@ before_build:
 
 build_script:
 
+- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r ubuntu.14.04-x64
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r ubuntu.14.04-x64
 - ps: .\download.ps1 "https://www.dropbox.com/s/k1bzo926nod5r55/libskia.so?dl=0" "C:\projects\avalonstudio\AvalonStudio\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\libskia.so"
 - ps: .\download.ps1 "https://www.dropbox.com/s/sw9ilb6d8uivqo9/libSkiaSharp.so?dl=0" "C:\projects\avalonstudio\AvalonStudio\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\libSkiaSharp.dylib.so"
 
