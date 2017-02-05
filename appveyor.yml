@@ -6,7 +6,7 @@ before_build:
 - ps: (new-object net.webclient).DownloadFile('https://dotnetcli.blob.core.windows.net/dotnet/Sdk/rel-1.0.0/dotnet-dev-win-x64.latest.exe', "c:/dotnet-install.exe")
 - ps: Start-Process c:\dotnet-install.exe -ArgumentList "/install","/quiet" -Wait
 
-build:
+build_script:
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache
 - ps: dotnet build .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release
 
