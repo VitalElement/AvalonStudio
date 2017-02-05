@@ -1,18 +1,14 @@
-version: 1.0..0.{build}
+version: 1.0.{build}
 configuration: Release
 platform: x86
-init:
-- ps: (new-object net.webclient).DownloadFile('https://dotnetcli.blob.core.windows.net/dotnet/Sdk/rel-1.0.0/dotnet-dev-win-x64.latest.exe', "c:/dotnet-install.exe")
-- ps: Start-Process c:\dotnet-install.exe -ArgumentList "/install","/quiet" -Wait
 before_build:
 - cmd: >-
     git submodule update --init --recursive
 
     nuget restore AvalonStudio/AvalonStudio.sln
-
 build:
-- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache
-- ps: dotnet build .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release    
+  project: AvalonStudio/AvalonStudio.sln
+  verbosity: minimal
 after_build:
 - cmd: 7z a -r AvalonStudio.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\x86\Release\*.*
 artifacts:
