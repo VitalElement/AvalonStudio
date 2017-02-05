@@ -43,21 +43,6 @@ namespace AvalonStudio
                 destination.Add(extension as T);
             }
         }
-
-        public static void BindKeyGestures(Control uiElement)
-        {
-            //foreach (var keyboardShortcut in _keyboardShortcuts)
-            //{
-            //    if (keyboardShortcut.KeyGesture != null)
-            //    {
-            //        (uiElement as Window)?.KeyBindings.Add(new KeyBinding
-            //        {
-            //            Gesture = keyboardShortcut.KeyGesture,
-            //            Command = keyboardShortcut.CommandDefinition.Command
-            //        });
-            //    }
-            //}
-        }
     }
 
     [Export]
@@ -151,11 +136,12 @@ namespace AvalonStudio
                 _debuggers.ConsumeExtension(extension);
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
-                _menuBarDefinitions.ConsumeExtension(extension);
+                
                 
                 _commandDefinitions.ConsumeExtension(extension);
             }
 
+            _menuBarDefinitions.AddRange(IoC.GetServices<MenuBarDefinition>(typeof(MenuBarDefinition)));
             _menuDefinitions.AddRange(IoC.GetServices<MenuDefinition>(typeof(MenuDefinition)));
             _menuItemGroupDefinitions.AddRange(IoC.GetServices<MenuItemGroupDefinition>(typeof(MenuItemGroupDefinition)));
             _menuItemDefinitions.AddRange(IoC.GetServices<MenuItemDefinition>(typeof(MenuItemDefinition)));
@@ -187,7 +173,7 @@ namespace AvalonStudio
 
             var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
 
-            var mainMenu = new AvalonStudio.Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
+            var mainMenu = new Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
 
             menuBuilder.BuildMenuBar(menuBar, mainMenu.Model);
 

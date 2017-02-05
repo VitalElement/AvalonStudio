@@ -59,7 +59,7 @@ namespace AvalonStudio.Extensibility.MainMenu
 
 			for (var i = 0; i < groups.Count; i++)
 			{
-				var group = groups[i];
+		 		var group = groups[i];
 				var menuItems = _menuItems
 					.Where(x => x.Group == group)
 					.Where(x => !_excludeMenuItems.Contains(x))

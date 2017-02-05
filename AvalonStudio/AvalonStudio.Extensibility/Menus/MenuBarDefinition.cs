@@ -1,12 +1,14 @@
 using System;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility;
 
 namespace AvalonStudio.Extensibility.Menus
 {
-    public abstract class MenuBarDefinition : IExtension
+    public class MenuBarDefinition
     {
-        public abstract void Activation();
-
-        public abstract void BeforeActivation();
+        public MenuBarDefinition()
+        {
+            IoC.RegisterConstant(this);
+        }
     }
 }
