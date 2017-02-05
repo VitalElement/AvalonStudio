@@ -25,7 +25,7 @@ after_build:
 - cmd: 7z a -r AvalonStudio-ubuntu.14.04-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\*.*
 - cmd: 7z a -r AvalonStudio-debian.8-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\debian.8-x64\publish\*.*
 - cmd: 7z a -r AvalonStudio-osx.10.12-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\osx.10.12-x64\publish\*.*
-- ps: (new-object net.webclient).DownloadFile('https://img.shields.io/badge/version-v1.0.0.0-blue.svg', "%APPVEYOR_BUILD_FOLDER%latest-version-badge.svg")
+- ps: (new-object net.webclient).DownloadFile('https://img.shields.io/badge/version-v1.0.0.0-blue.svg', "%APPVEYOR_BUILD_FOLDER%\latest-version-badge.svg")
 
 artifacts:
 - path: AvalonStudio-win7-x64.zip
