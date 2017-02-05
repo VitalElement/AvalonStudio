@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using AvalonStudio.Extensibility.Templating;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
@@ -24,20 +25,17 @@ namespace AvalonStudio.Projects.CPlusPlus
 			await Task.Factory.StartNew(async () =>
 			{
 				var name = _settings.ClassName;
-
-				var sourceTemplate = new CPlusPlusClassTemplate(name, _settings.GenerateHeader);
-				var headerTemplate = new CPlusPlusClassHeaderTemplate(name);
-
+                
 				if (_settings.GenerateHeader)
 				{
-                    throw new System.Exception("Not compatible .net core");
-                    //await SourceFile.Create(folder, $"{(name.Contains('.') ? name : name + ".h")}", headerTemplate.TransformText());
+                    var rendered = Template.Engine.Parse("CppClassHeader.template", new { ClassName = _settings.ClassName });
+                    await SourceFile.Create(folder, $"{(name.Contains('.') ? name : name + ".h")}", rendered);
 				}
 
 				if (_settings.GenerateClass)
 				{
-                    throw new System.Exception("Not compatible .net core");
-                    //await SourceFile.Create(folder, $"{name}.cpp", sourceTemplate.TransformText());
+                    var rendered = Template.Engine.Parse("CppClass.template", new { ClassName = _settings.ClassName });
+                    await SourceFile.Create(folder, $"{name}.cpp", rendered);
 				}
 			});
 		}

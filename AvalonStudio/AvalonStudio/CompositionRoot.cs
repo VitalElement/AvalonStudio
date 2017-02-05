@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyModel;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility.Utils;
+using AvalonStudio.Projects;
 
 namespace AvalonStudio
 {
@@ -24,6 +25,7 @@ namespace AvalonStudio
             var conventions = new ConventionBuilder();
             
             conventions.ForTypesDerivedFrom<IExtension>().Export<IExtension>();
+            conventions.ForTypesDerivedFrom<ICodeTemplate>().Export<ICodeTemplate>();
             
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
