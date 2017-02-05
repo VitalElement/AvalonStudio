@@ -18,7 +18,7 @@ source /etc/os-release
 
 if [[ $ID == "arch" ]]; then
     sudo pacman -S mono clang
-    if [[ $1 == "" ]]; then
+    if [[ -z "$1" ]]; then
         echo If this errors because yaourt is not found, specify your AUR helper as an argument
         echo for example, ./dependancies.sh pacaur.
         yaourt -S dotnet-bin dotnet-coreclr-git icu52
