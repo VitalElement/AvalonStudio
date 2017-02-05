@@ -1,13 +1,13 @@
 namespace AvalonStudio.Toolchains.Clang
 {
     using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Templating;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
-    using CommandLineTools;
-    using RazorLight;
+    using CommandLineTools;    
     using Standard;
     using System;
     using System.Collections.Generic;
@@ -95,10 +95,8 @@ namespace AvalonStudio.Toolchains.Clang
                 System.IO.File.Delete(linkerScript);
             }
 
-            var engine = EngineFactory.CreatePhysical(Platform.TemplatesFolder);
-
-            var rendered = engine.Parse("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size });
-
+            var rendered = Template.Parse("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size });
+            
             using (var sw = System.IO.File.CreateText(linkerScript))
             {
                 sw.Write(rendered);
