@@ -9,6 +9,7 @@ before_build:
     git submodule update --init --recursive
 
     nuget restore AvalonStudio/AvalonStudio.sln
+
 build:
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache
 - ps: dotnet build .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release    
