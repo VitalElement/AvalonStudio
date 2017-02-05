@@ -7,7 +7,6 @@
     <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="CPlusPlusClassHeaderTemplate.cs" />
     <Compile Remove="CPlusPlusClassTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -28,5 +27,10 @@
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Private>true</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Templates\CppClassHeader.template">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

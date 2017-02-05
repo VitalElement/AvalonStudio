@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
 {
-	//[InheritedExport(typeof (ICodeTemplate))]
 	public interface ICodeTemplate
 	{
 		string Title { get; }

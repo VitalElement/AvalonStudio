@@ -83,7 +83,7 @@ namespace AvalonStudio
         private ObservableCollection<object> tools;
 
         [ImportingConstructor]
-        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions)
+        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates)
         {
             _languageServices = new List<ILanguageService>();
             _projectTemplates = new List<IProjectTemplate>();
@@ -110,6 +110,8 @@ namespace AvalonStudio
             {
                 extension.BeforeActivation();
             }
+
+            _codeTemplates.AddRange(codeTemplates);
 
             CurrentPerspective = Perspective.Editor;
 
