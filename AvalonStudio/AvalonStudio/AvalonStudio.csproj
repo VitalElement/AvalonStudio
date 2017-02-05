@@ -6,8 +6,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Behaviors\EditorToolTipBehavior.cs" />
-    <Compile Remove="Behaviors\TooltipBehavior.cs" />
     <Compile Remove="Shell\Commands\NewFileCommandHandler.cs" />
     <Compile Remove="Shell\Commands\NewFileCommandListDefinition.cs" />
   </ItemGroup>
@@ -78,6 +76,7 @@
     <PackageReference Include="Avalonia.Gtk3" Version="0.4.1-build2604-alpha" />
     <PackageReference Include="Avalonia.Skia.Desktop" Version="0.4.1-build2604-alpha" />
     <PackageReference Include="Avalonia.Win32" Version="0.4.1-build2604-alpha" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.4.1-build332-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
   <ItemGroup>
@@ -95,8 +94,5 @@
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Behaviors\" />
   </ItemGroup>
 </Project>
