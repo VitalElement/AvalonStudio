@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <OutputType>library</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>    
+    <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx" />
@@ -15,9 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Templates\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="RazorLight" Version="1.0.0-rc1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Templates\ArmLinkerScriptTemplate.template">
