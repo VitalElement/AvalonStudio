@@ -54,9 +54,8 @@ namespace AvalonStudio.Utils
 						}
 					}
 					else
-					{
-                        throw new Exception("Not compatible net core");
-						/*if (p.PropertyType.IsEnum)
+					{                        
+						if (p.PropertyType.GetTypeInfo().IsEnum)
 						{
 							p.SetValue(destination, Enum.Parse(p.PropertyType, kv.Value as string));
 						}
@@ -67,7 +66,7 @@ namespace AvalonStudio.Utils
 						else
 						{
 							p.SetValue(destination, kv.Value, null);
-						}*/
+						}
 					}
 				}
 			}
