@@ -12,7 +12,7 @@ using AvalonStudio.Projects.Raw;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 {
-    [CommandDefinition]
+    
     public class OpenFolderCommandDefinition : CommandDefinition
     {
         private readonly ReactiveCommand<object> command;

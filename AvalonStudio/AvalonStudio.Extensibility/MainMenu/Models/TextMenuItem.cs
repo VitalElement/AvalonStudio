@@ -6,9 +6,9 @@ namespace AvalonStudio.Extensibility.MainMenu.Models
 {
 	public class TextMenuItem : StandardMenuItem
 	{
-		private readonly MenuDefinitionBase _menuDefinition;
+		private readonly MenuDefinition _menuDefinition;
 
-		public TextMenuItem(MenuDefinitionBase menuDefinition)
+		public TextMenuItem(MenuDefinition menuDefinition)
 		{
 			_menuDefinition = menuDefinition;
 		}
@@ -16,21 +16,6 @@ namespace AvalonStudio.Extensibility.MainMenu.Models
 		public override string Text
 		{
 			get { return _menuDefinition.Text; }
-		}
-
-		public override Uri IconSource
-		{
-			get { return _menuDefinition.IconSource; }
-		}
-
-		public override string InputGestureText
-		{
-			get
-			{
-				return _menuDefinition.KeyGesture == null
-					? string.Empty
-					: "geststring"; // _menuDefinition.KeyGesture.GetDisplayStringForCulture(CultureInfo.CurrentUICulture);
-			}
 		}
 
 		public override ICommand Command
@@ -47,5 +32,5 @@ namespace AvalonStudio.Extensibility.MainMenu.Models
 		{
 			get { return true; }
 		}
-	}
+    }
 }

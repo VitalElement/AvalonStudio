@@ -18,7 +18,7 @@ namespace AvalonStudio.MVVM
                 var enumClass = new MutuallyExclusiveEnumeration<T>();
                 enumClass.Enumeration = value;
                 enumClass.IsChecked = value.Equals(defaultValue) ? true : false;
-                enumClass.Title = value.GetDescription();
+                //enumClass.Title = value.GetDescription();
 
                 Add(enumClass);
             }

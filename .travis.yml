@@ -4,8 +4,7 @@ services:
   - docker
 os:
   - linux
-mono:
-  - latest
+
 solution: AvalonStudio.sln
 before_install:
   - cd AvalonStudio 

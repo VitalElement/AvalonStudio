@@ -91,7 +91,7 @@ namespace AvalonStudio.Projects
 
 			var extension = Path.GetExtension(fileName).Remove(0, 1);
 
-			var projectType = shell.ProjectTypes.FirstOrDefault(p => p.Extension == extension);
+			var projectType = shell.ProjectTypes.FirstOrDefault(p => p.Extensions.Contains(extension));
 
 			if (projectType != null)
 			{
@@ -110,7 +110,7 @@ namespace AvalonStudio.Projects
 
 			var extension = Path.GetExtension(reference).Remove(0, 1);
 
-			var projectType = shell.ProjectTypes.FirstOrDefault(p => p.Extension == extension);
+			var projectType = shell.ProjectTypes.FirstOrDefault(p => p.Extensions.Contains(extension));
 			var projectFilePath = Path.Combine(solution.CurrentDirectory, reference).ToPlatformPath();
 
 			if (projectType != null && System.IO.File.Exists(projectFilePath))

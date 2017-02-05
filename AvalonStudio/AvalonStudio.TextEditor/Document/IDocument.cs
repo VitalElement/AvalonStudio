@@ -230,7 +230,7 @@ namespace AvalonStudio.TextEditor.Document
 	///     Describes a change of the document text.
 	///     This class is thread-safe.
 	/// </summary>
-	[Serializable]
+	
 	public class TextChangeEventArgs : EventArgs
 	{
 		/// <summary>

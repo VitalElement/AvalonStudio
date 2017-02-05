@@ -28,7 +28,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 		public static string BaseDirectory
 		{
 			get {
-				if (Platform.PlatformIdentifier == PlatformID.Unix) {
+				if (Platform.OSDescription == "Unix") {
 					return string.Empty;
 				} else {
 					return Path.Combine (Platform.ReposDirectory, "AvalonStudio.Debugging.JLink\\").ToPlatformPath ();
@@ -106,7 +106,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 			startInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed 12000 -noir", settings.TargetDevice, Enum.GetName(typeof (JlinkInterfaceType), settings.Interface));
 			startInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServerCL" + Platform.ExecutableExtension);
 
-			if (Platform.PlatformIdentifier == PlatformID.Unix) {
+			if (Platform.OSDescription == "Unix") {
 				startInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServer" + Platform.ExecutableExtension);	
 			}
 

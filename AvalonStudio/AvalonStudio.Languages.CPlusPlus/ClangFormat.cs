@@ -15,7 +15,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 			var startInfo = new ProcessStartInfo();
 			var resultText = string.Empty;
 
-			startInfo.FileName = Path.Combine(Platform.PluginsDirectory, "clang-format" + Platform.ExecutableExtension);
+			startInfo.FileName = Path.Combine(Platform.ExtensionsFolder, "clang-format" + Platform.ExecutableExtension);
 			startInfo.Arguments = string.Format("-offset={0} -length={1} -cursor={2} -style=\"{3}\" -output-replacements-xml",
 				offset, length, cursor, settings);
 
@@ -30,15 +30,14 @@ namespace AvalonStudio.Languages.CPlusPlus
 			{
 				using (var streamWriter = process.StandardInput)
 				{
-					streamWriter.Write(text);
-					streamWriter.Close();
-
-					using (var streamReader = process.StandardOutput)
-					{
-						resultText = streamReader.ReadToEnd();
-					}
+					streamWriter.Write(text);					
 				}
-			}
+
+                using (var streamReader = process.StandardOutput)
+                {
+                    resultText = streamReader.ReadToEnd();
+                }
+            }
 
 			return XDocument.Parse(resultText);
 		}

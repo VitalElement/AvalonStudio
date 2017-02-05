@@ -19,7 +19,6 @@ using AvalonStudio.Extensibility.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using System.Runtime.CompilerServices;
-using AvalonStudio.Projects.Raw;
 
 [assembly: InternalsVisibleTo("AvalonStudio.Projects.CPlusPlus.UnitTests")]
 

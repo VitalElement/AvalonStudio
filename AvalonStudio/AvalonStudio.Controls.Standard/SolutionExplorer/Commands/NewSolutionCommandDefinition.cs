@@ -6,33 +6,24 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
     using System;
     using System.Windows.Input;
 
-    [CommandDefinition]
     internal class NewSolutionCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> command;
-
         public NewSolutionCommandDefinition()
         {
-            command = ReactiveCommand.Create();
+            var command = ReactiveCommand.Create();
+
             command.Subscribe(_ =>
             {
                 IoC.Get<ISolutionExplorer>().NewSolution();
             });
+
+            Command = command;            
         }
 
-        public override ICommand Command
-        {
-            get { return command; }
-        }
+        public override ICommand Command { get; }
 
-        public override string Text
-        {
-            get { return "New Solution"; }
-        }
+        public override string Text => "New Solution";
 
-        public override string ToolTip
-        {
-            get { return "Creates a new Solution"; }
-        }
+        public override string ToolTip => "Creates a new solution.";
     }
 }
