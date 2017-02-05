@@ -7,11 +7,24 @@ before_build:
 - ps: Start-Process c:\dotnet-install.exe -ArgumentList "/install","/quiet" -Wait
 
 build_script:
-- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache
-- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release
+- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r win10-x86
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r win10-x86
+- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r win7-x86
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r win7-x86
+- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r ubuntu.16.10-x64
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r ubuntu.16.10-x64
+- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r debian.8-x64
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r debian.8-x64
+- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r osx.10.12-x64
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r osx.10.12-x64
 
 after_build:
-- cmd: 7z a -r AvalonStudio.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\publish\*.*
+- cmd: 7z a -r AvalonStudio-win10-x86.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\win10-x86\publish\*.*
+- cmd: 7z a -r AvalonStudio-win7-x86.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\win7-x86\publish\*.*
+- cmd: 7z a -r AvalonStudio-ubuntu.16.10-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.16.10-x64\publish\*.*
+- cmd: 7z a -r AvalonStudio-debian.8-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\debian.8-x64\publish\*.*
+- cmd: 7z a -r AvalonStudio-osx.10.12-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\osx.10.12-x64\publish\*.*
+
 artifacts:
 - path: AvalonStudio.zip
 deploy:
