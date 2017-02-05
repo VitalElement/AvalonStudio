@@ -623,7 +623,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
-            /*bool replaceCursor = cursor >= 0 ? true : false;
+            bool replaceCursor = cursor >= 0 ? true : false;
 
             if (!replaceCursor)
             {
@@ -633,8 +633,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor,
                 ClangFormatSettings.Default);
 
-            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);*/
-            return cursor;
+            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);            
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)

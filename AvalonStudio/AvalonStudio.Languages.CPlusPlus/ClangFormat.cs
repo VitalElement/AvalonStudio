@@ -30,14 +30,14 @@ namespace AvalonStudio.Languages.CPlusPlus
 			{
 				using (var streamWriter = process.StandardInput)
 				{
-					streamWriter.Write(text);
-
-					using (var streamReader = process.StandardOutput)
-					{
-						resultText = streamReader.ReadToEnd();
-					}
+					streamWriter.Write(text);					
 				}
-			}
+
+                using (var streamReader = process.StandardOutput)
+                {
+                    resultText = streamReader.ReadToEnd();
+                }
+            }
 
 			return XDocument.Parse(resultText);
 		}
