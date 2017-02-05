@@ -9,8 +9,9 @@ before_build:
 - ps: Start-Process c:\dotnet-install.exe -ArgumentList "/install","/quiet" -Wait
 
 build:
-  project: AvalonStudio/AvalonStudio.sln
-  verbosity: minimal
+- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache
+- ps: dotnet build .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release
+
 after_build:
 - cmd: 7z a -r AvalonStudio.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\x86\Release\*.*
 artifacts:
