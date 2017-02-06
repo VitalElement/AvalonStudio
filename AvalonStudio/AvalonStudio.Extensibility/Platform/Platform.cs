@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using AvalonStudio.Utils;
+using System.Diagnostics;
 
 namespace AvalonStudio.Platforms
 {
@@ -201,6 +202,26 @@ namespace AvalonStudio.Platforms
             if (!Directory.Exists(RepoCatalogDirectory))
             {
                 Directory.CreateDirectory(RepoCatalogDirectory);
+            }
+        }
+
+        public static void OpenFolderInExplorer(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                switch (PlatformIdentifier)
+                {
+                    case PlatformID.Windows:
+                        Process.Start(new ProcessStartInfo { FileName = "cmd.exe", Arguments = $"/c start {path}", CreateNoWindow = true });
+                        break;
+
+                    case PlatformID.Linux:
+                        Process.Start(new ProcessStartInfo { FileName = "xdg-open", Arguments = path, CreateNoWindow = true });
+                        break;
+
+                    default:
+                        break;
+                }
             }
         }
 
