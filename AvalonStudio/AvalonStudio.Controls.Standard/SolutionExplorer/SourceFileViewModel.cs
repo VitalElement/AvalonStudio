@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using AvalonStudio.Projects;
 using ReactiveUI;
+using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -11,7 +12,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 		public SourceFileViewModel(ISourceFile model) : base(model)
 		{
 			OpenInExplorerCommand = ReactiveCommand.Create();
-			OpenInExplorerCommand.Subscribe(o => { Process.Start(Path.GetDirectoryName(model.Location)); });
+			OpenInExplorerCommand.Subscribe(o => { Platform.OpenFolderInExplorer(model.CurrentDirectory); });
 
 			RemoveCommand = ReactiveCommand.Create();
 			RemoveCommand.Subscribe(o => { model.Project.ExcludeFile(model); });
