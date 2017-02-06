@@ -195,7 +195,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 				if (result)
 				{
 					console.WriteLine("[OpenOCD] - Connecting...");
-                    asyncModeEnabled = (await new GDBSetCommand("mi-async", "on").Execute(this)).Response == ResponseCode.Done;
+                    SetAsyncMode((await new GDBSetCommand("mi-async", "on").Execute(this)).Response == ResponseCode.Done);
                     result = (await new TargetSelectCommand(":3333").Execute(this)).Response == ResponseCode.Done;
 
 					if (result)
