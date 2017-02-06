@@ -13,20 +13,9 @@ before_install:
   - docker pull microsoft/dotnet:1.1-sdk-msbuild
   - docker run -v /home/travis/build/VitalElement/AvalonStudio:/buildroot microsoft/dotnet:1.1-sdk-msbuild /bin/sh -c "ls buildroot;"
 
-
 install:  
 script:
-  #- sudo ./buildmono.sh
-  - docker run -v /home/travis/build/VitalElement/AvalonStudio:/buildroot microsoft/dotnet:1.1-sdk-msbuild /bin/sh -c "buildroot/AvalonStudio/builddotnet.sh;"
-  - sudo ./builddotnet.sh
-  
-  #Prepare Docker build context.
-  #- mkdir dockerbuild
-  #- cd dockerbuild
-  #- mkdir AvalonBuild
-  #- cd AvalonBuild
-  #- cd ..
-  #- cd ..
+  - docker run -v /home/travis/build/VitalElement/AvalonStudio:/buildroot microsoft/dotnet:1.1-sdk-msbuild /bin/sh -c "sudo buildroot/AvalonStudio/builddotnet.sh;"
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "disabled" ]; then
