@@ -9,15 +9,15 @@ before_install:
   - cd AvalonStudio 
   - git submodule sync
   - git submodule update --init --recursive
-  - ls
+  - pwd
   - docker pull microsoft/dotnet:1.1-sdk-msbuild
-  - docker run -v ./:/buildroot microsoft/dotnet:1.1-sdk-msbuild /bin/sh -c "ls; dotnet --version; cd buildroot; ls;"
+  - docker run -v /:/buildroot microsoft/dotnet:1.1-sdk-msbuild /bin/sh -c "ls; dotnet --version; cd buildroot; ls;"
 
 
 install:  
 script:
   #- sudo ./buildmono.sh
-  - docker run -v ./:/buildroot microsoft/dotnet:1.1-sdk-msbuild /bin/sh -c "cd AvalonStudio; ./builddotnet.sh;"
+  - docker run -v /:/buildroot microsoft/dotnet:1.1-sdk-msbuild /bin/sh -c "cd AvalonStudio; ./builddotnet.sh;"
   - sudo ./builddotnet.sh
   
   #Prepare Docker build context.
