@@ -1,3 +1,4 @@
+#!/bin/bash
 cd AvalonStudio
 pwd
 pwd
