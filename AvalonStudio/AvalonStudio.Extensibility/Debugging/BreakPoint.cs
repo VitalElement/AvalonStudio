@@ -93,6 +93,10 @@ namespace AvalonStudio.Debugging
 						result.OriginalLocation = argument.Value;
 						break;
 
+                    case "thread-groups":
+                        
+                        break;
+
 					default:
 						Console.WriteLine("Unknown field in breakpoint data");
 						break;
