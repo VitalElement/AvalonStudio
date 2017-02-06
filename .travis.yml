@@ -15,6 +15,7 @@ before_install:
 
 install:  
 script:
+  - docker run -v /home/travis/build/VitalElement/AvalonStudio:/buildroot:Z microsoft/dotnet:1.1-sdk-msbuild /bin/bash -c "cat /buildroot/AvalonStudio/builddotnet.sh"
   - docker run -v /home/travis/build/VitalElement/AvalonStudio:/buildroot:Z microsoft/dotnet:1.1-sdk-msbuild /bin/bash -c "/buildroot/AvalonStudio/builddotnet.sh"
 
 after_success:
