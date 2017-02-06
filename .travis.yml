@@ -12,20 +12,24 @@ before_install:
   - git submodule update --init --recursive
   - sudo ./dependencies.sh
 
+  - docker pull microsoft/dotnet:1.1-sdk-msbuild
+  - docker run -d -p 127.0.0.1:80:4567 microsoft/dotnet /bin/sh -c "ls; dotnet version;"
+
 install:  
 script:
-  - sudo ./buildmono.sh
+  #- sudo ./buildmono.sh
+  - sudo ./builddotnet.sh
   
   #Prepare Docker build context.
-  - mkdir dockerbuild
-  - cd dockerbuild
-  - mkdir AvalonBuild
-  - cd AvalonBuild
-  - cd ..
-  - cd ..
+  #- mkdir dockerbuild
+  #- cd dockerbuild
+  #- mkdir AvalonBuild
+  #- cd AvalonBuild
+  #- cd ..
+  #- cd ..
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+  - if [ "$TRAVIS_BRANCH" == "disabled" ]; then
       git clone https://github.com/VitalElement/AvalonBuild.git; 
       cd AvalonBuild;
       git rm -rf .;
