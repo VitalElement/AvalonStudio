@@ -11,10 +11,10 @@ before_install:
   - git submodule update --init --recursive
   - pwd
   - docker pull microsoft/dotnet:1.1-sdk-msbuild
-  
+
 install:  
 script:
-  - docker run -v /home/travis/build/VitalElement/AvalonStudio:/buildroot:Z microsoft/dotnet:1.1-sdk-msbuild /bin/bash -c " -c "cd buildroot/AvalonStudio;./builddotnet.sh;"
+  - docker run -v /home/travis/build/VitalElement/AvalonStudio:/buildroot:Z microsoft/dotnet:1.1-sdk-msbuild /bin/bash -c "cd buildroot/AvalonStudio;./builddotnet.sh;"
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "disabled" ]; then
