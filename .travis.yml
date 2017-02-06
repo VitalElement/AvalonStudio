@@ -9,9 +9,9 @@ before_install:
   - cd AvalonStudio 
   - git submodule sync
   - git submodule update --init --recursive
-
+  - ls
   - docker pull microsoft/dotnet:1.1-sdk-msbuild
-  - docker run microsoft/dotnet:1.1-sdk-msbuild /bin/sh -c "ls; dotnet --version;"
+  - docker run microsoft/dotnet:1.1-sdk-msbuild /bin/sh -v ./:/buildroot -c "ls; dotnet --version; cd buildroot; ls"
 
 
 install:  
