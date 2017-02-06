@@ -11,7 +11,8 @@ before_install:
   - git submodule update --init --recursive
 
   - docker pull microsoft/dotnet:1.1-sdk-msbuild
-  - docker run -d -p 127.0.0.1:80:4567 microsoft/dotnet:1.1-sdk-msbuild /bin/sh -c "ls; dotnet version;"
+  - docker run microsoft/dotnet:1.1-sdk-msbuild /bin/sh -c "ls; dotnet --version;"
+
 
 install:  
 script:
