@@ -6,6 +6,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     using AvalonStudio.Projects;
     using ReactiveUI;
     using System.Diagnostics;
+    using AvalonStudio.Platforms;
 
     public abstract class ProjectItemViewModel : ViewModel
     {
@@ -54,11 +55,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 if (model is IProjectFolder)
                 {
-                    Process.Start((model as IProjectFolder).Location);
+                    Platform.OpenFolderInExplorer((model as IProjectFolder).Location);
                 }
                 else if (model is IProjectItem)
                 {
-                    Process.Start((model as IProjectItem).Parent.Location);
+                    Platform.OpenFolderInExplorer((model as IProjectItem).Parent.Location);
                 }
             });
 
