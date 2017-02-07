@@ -7,6 +7,8 @@ before_build:
 - ps: Start-Process c:\dotnet-install.exe -ArgumentList "/install","/quiet" -Wait
 
 build_script:
+- ps: (new-object net.webclient).DownloadFile('https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg', "c:/latest-version-badge.svg")
+- cmd: tree /f
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r win7-x64
 - ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r win7-x64
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r ubuntu.14.04-x64
@@ -25,8 +27,6 @@ after_build:
 - cmd: 7z a -r AvalonStudio-ubuntu.14.04-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\*.*
 - cmd: 7z a -r AvalonStudio-debian.8-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\debian.8-x64\publish\*.*
 - cmd: 7z a -r AvalonStudio-osx.10.12-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\osx.10.12-x64\publish\*.*
-- ps: (new-object net.webclient).DownloadFile('https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg', "latest-version-badge.svg")
-- cmd: tree /f
 
 artifacts:
 - path: AvalonStudio-win7-x64.zip
