@@ -362,6 +362,16 @@
 
             return result;
         }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            
+        }
     }
 
     internal class CSharpDataAssociation
