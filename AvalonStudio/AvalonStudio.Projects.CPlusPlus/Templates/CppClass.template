@@ -6,10 +6,12 @@
 *
 *******************************************************************************/
 #pragma mark Compiler Pragmas
-
+@{
+string s = string.Format("{0}.h", Model.ClassName);
+}
 
 #pragma mark Includes
-#include "@Model.ClassName.h"
+#include "@s"
 
 #pragma mark Definitions and Constants
 
