@@ -1,4 +1,4 @@
-version: 1.0.0.{build}
+version: 0.2.0.{build}
 before_build:
 - cmd: >-
     git submodule update --init --recursive
@@ -8,24 +8,25 @@ before_build:
 
 build_script:
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r win7-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r win7-x64 /p:RuntimeIdentifier=win7-x64
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r win7-x64
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r ubuntu.14.04-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r ubuntu.14.04-x64 /p:RuntimeIdentifier=ubuntu.14.04-x64
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r ubuntu.14.04-x64
 - ps: (new-object net.webclient).DownloadFile('https://www.dropbox.com/s/k1bzo926nod5r55/libskia.so?dl=1', "C:\projects\avalonstudio\libskia.so")
 - ps: (new-object net.webclient).DownloadFile('https://www.dropbox.com/s/xk9uvkk0le6uvuh/libSkiaSharp.so?dl=1', "C:\projects\avalonstudio\libSkiaSharp.dylib.so")
 - ps: cp C:\projects\avalonstudio\libskia.so C:\projects\avalonstudio\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\
 - ps: cp C:\projects\avalonstudio\libSkiaSharp.dylib.so C:\projects\avalonstudio\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r debian.8-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r debian.8-x64 /p:RuntimeIdentifier=debian.8-x64
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r debian.8-x64
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r osx.10.12-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r osx.10.12-x64 /p:RuntimeIdentifier=osx.10.12-x64
+- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r osx.10.12-x64
 
 after_build:
 - cmd: 7z a -r AvalonStudio-win7-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\win7-x64\publish\*.*
 - cmd: 7z a -r AvalonStudio-ubuntu.14.04-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\*.*
 - cmd: 7z a -r AvalonStudio-debian.8-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\debian.8-x64\publish\*.*
 - cmd: 7z a -r AvalonStudio-osx.10.12-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\osx.10.12-x64\publish\*.*
-- ps: (new-object net.webclient).DownloadFile('https://img.shields.io/badge/version-v1.0.0.{build}-blue.svg', "c:\projects\avalonstudio\AvalonStudio\latest-version-badge.svg")
+- ps: (new-object net.webclient).DownloadFile('https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg', "latest-version-badge.svg")
+- cmd: tree -f
 
 artifacts:
 - path: AvalonStudio-win7-x64.zip
