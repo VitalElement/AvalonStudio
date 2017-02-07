@@ -10,19 +10,18 @@ namespace AvalonStudio.Shell
     using AvalonStudio.TestFrameworks;
     using AvalonStudio.Toolchains;
     using System;
+    using System.Composition;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel.Composition;
+    using System.Collections.ObjectModel;    
     using System.Threading.Tasks;
-
-    [Export(typeof (IShell))]
+    
 	public class MinimalShell : IShell
 	{
 		public static IShell Instance = null;
 
 		[ImportingConstructor]
 		public MinimalShell([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes,
-			[ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates,
+			[ImportMany] IEnumerable<IProjectType> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates,
 			[ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers,
 			[ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates)
 		{
@@ -31,7 +30,7 @@ namespace AvalonStudio.Shell
 			ToolChains = toolChains;
 			Debuggers = debuggers;
             SolutionTypes = solutionTypes;
-			ProjectTypes = projectTypes;
+			//ProjectTypes = projectTypes;
 			TestFrameworks = testFrameworks;
 			CodeTemplates = codeTemplates;
 
@@ -55,9 +54,7 @@ namespace AvalonStudio.Shell
         {
             add { throw new NotSupportedException(); }
             remove { }
-        }
-
-		public IEnumerable<IProject> ProjectTypes { get; }
+        }		
 
         public IEnumerable<ISolutionType> SolutionTypes { get; }
 
@@ -110,7 +107,9 @@ namespace AvalonStudio.Shell
 		{
 			get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
-		}        
+		}
+
+        public IEnumerable<IProjectType> ProjectTypes => throw new NotImplementedException();
 
         public Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
 			bool selectLine = false)
