@@ -1,3 +1,4 @@
+using ReactiveUI;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -8,8 +9,8 @@ namespace AvalonStudio.TextEditor.Utils
 	///     WeakEventManager with AddListener/RemoveListener and CurrentManager implementation.
 	///     Helps implementing the WeakEventManager pattern with less code.
 	/// </summary>
-	public abstract class WeakEventManagerBase<TManager, TEventSource> : WeakEventManager
-		where TManager : WeakEventManagerBase<TManager, TEventSource>, new()
+	public abstract class WeakEventManagerBase<TManager, TEventSource, TEventHandler, TEventArgs> : WeakEventManager<TEventSource, TEventHandler, TEventArgs>
+		where TManager : WeakEventManagerBase<TManager, TEventSource, TEventHandler, TEventArgs>, new()
 		where TEventSource : class
 	{
 		/// <summary>
@@ -17,8 +18,9 @@ namespace AvalonStudio.TextEditor.Utils
 		/// </summary>
 		protected WeakEventManagerBase()
 		{
-			Debug.Assert(GetType() == typeof (TManager));
 		}
+
+        private static TManager s_currentManager;
 
 		/// <summary>
 		///     Gets the current manager.
@@ -28,46 +30,30 @@ namespace AvalonStudio.TextEditor.Utils
 			get
 			{
 				var managerType = typeof (TManager);
-				var manager = (TManager) GetCurrentManager(managerType);
-				if (manager == null)
+				
+				if (s_currentManager == null)
 				{
-					manager = new TManager();
-					SetCurrentManager(managerType, manager);
+                    s_currentManager = new TManager();
 				}
-				return manager;
+
+				return s_currentManager;
 			}
 		}
 
 		/// <summary>
 		///     Adds a weak event listener.
 		/// </summary>
-		public static void AddListener(TEventSource source, IWeakEventListener listener)
+		public static void AddListener(TEventSource source)
 		{
-			CurrentManager.ProtectedAddListener(source, listener);
+			CurrentManager.StartListening(source);
 		}
 
 		/// <summary>
 		///     Removes a weak event listener.
 		/// </summary>
-		public static void RemoveListener(TEventSource source, IWeakEventListener listener)
+		public static void RemoveListener(TEventSource source)
 		{
-			CurrentManager.ProtectedRemoveListener(source, listener);
-		}
-
-		/// <inheritdoc />
-		protected sealed override void StartListening(object source)
-		{
-			if (source == null)
-				throw new ArgumentNullException("source");
-			StartListening((TEventSource) source);
-		}
-
-		/// <inheritdoc />
-		protected sealed override void StopListening(object source)
-		{
-			if (source == null)
-				throw new ArgumentNullException("source");
-			StopListening((TEventSource) source);
+			CurrentManager.StopListening(source);
 		}
 
 		/// <summary>

@@ -1,23 +1,32 @@
-using System;
-using Avalonia.Controls.Shapes;
-
-namespace AvalonStudio.Extensibility.Commands
+﻿namespace AvalonStudio.Extensibility.Commands
 {
-	public abstract class CommandDefinition : CommandDefinitionBase
-	{
-		public override Uri IconSource
-		{
-			get { return null; }
-		}
+    using Avalonia.Controls.Shapes;
+    using Avalonia.Input;
+    using AvalonStudio.Extensibility.Plugin;
+    using System;
+    using System.Windows.Input;
 
-		public override Path IconPath
-		{
-			get { return null; }
-		}
+    public abstract class CommandDefinition : IExtension
+    {
+        public CommandDefinition()
+        {
 
-		public sealed override bool IsList
-		{
-			get { return false; }
-		}
-	}
+        }
+
+        public abstract string Text { get; }
+        public abstract string ToolTip { get; }
+        public virtual Path IconPath => null;
+        public virtual KeyGesture Gesture => null;
+        public abstract ICommand Command { get; }
+
+        public virtual void Activation()
+        {
+
+        }
+
+        public virtual void BeforeActivation()
+        {
+            IoC.RegisterConstant(this, GetType());
+        }
+    }
 }

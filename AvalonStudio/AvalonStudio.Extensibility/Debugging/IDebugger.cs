@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Threading.Tasks;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
+using AvalonStudio.Extensibility.Plugin;
 
 namespace AvalonStudio.Debugging
 {
@@ -23,9 +24,8 @@ namespace AvalonStudio.Debugging
 		Octal,
 		Natural
 	}
-
-	[InheritedExport(typeof (IDebugger))]
-	public interface IDebugger
+    
+	public interface IDebugger : IExtension
 	{
 		DebuggerState State { get; }
 

@@ -7,6 +7,7 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
+using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -80,7 +81,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 			});
 
 			OpenInExplorerCommand = ReactiveCommand.Create();
-			OpenInExplorerCommand.Subscribe(o => { Process.Start(Model.CurrentDirectory); });
+			OpenInExplorerCommand.Subscribe(o => { Platform.OpenFolderInExplorer(Model.CurrentDirectory); });
 
 			NewItemCommand = ReactiveCommand.Create();
 			NewItemCommand.Subscribe(_ =>

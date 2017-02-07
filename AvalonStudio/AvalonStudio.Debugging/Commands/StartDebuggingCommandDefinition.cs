@@ -1,5 +1,5 @@
 using System;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Windows.Input;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
@@ -8,16 +8,13 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using Key = Avalonia.Input.Key;
+
 
 namespace AvalonStudio.Debugging.Commands
 {
-	[CommandDefinition]
+	
 	internal class StartDebuggingCommandDefinition : CommandDefinition
 	{
-		[Export] public static CommandKeyboardShortcut KeyGesture =
-			new CommandKeyboardShortcut<StartDebuggingCommandDefinition>(new KeyGesture {Key = Key.F5});
-
 		private readonly ReactiveCommand<object> command;
 
 		public StartDebuggingCommandDefinition()
@@ -73,5 +70,7 @@ namespace AvalonStudio.Debugging.Commands
 				};
 			}
 		}
-	}
+
+        public override KeyGesture Gesture => KeyGesture.Parse("F5");
+    }
 }

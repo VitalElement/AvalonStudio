@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:Packages="clr-namespace:AvalonStudio.Repositories;assembly=AvalonStudio.Repositories" xmlns:System="clr-namespace:System;assembly=mscorlib">
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:Packages="clr-namespace:AvalonStudio.Repositories;assembly=AvalonStudio.Repository">
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="300"/>
@@ -35,11 +35,11 @@
 
       <TextBlock Grid.Row="3" Text="Version" />
       <DropDown Items="{Binding SelectedPackageIndex.Tags}" SelectedItem="{Binding SelectedTag}"  Grid.Row="3" Grid.Column="1">
-        <DropDown.DataTemplates>
-          <DataTemplate DataType="System:String">
+        <DropDown.ItemTemplate>
+          <DataTemplate>
             <TextBlock Text="{Binding }" />
-          </DataTemplate>
-        </DropDown.DataTemplates>
+          </DataTemplate>          
+        </DropDown.ItemTemplate>        
       </DropDown>
 
       <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Status}"/>

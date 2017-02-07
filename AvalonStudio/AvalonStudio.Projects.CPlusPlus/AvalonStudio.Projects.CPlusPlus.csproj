@@ -1,288 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AvalonStudio.Projects.CPlusPlus</RootNamespace>
-    <AssemblyName>AvalonStudio.Projects.CPlusPlus</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>4</WarningLevel>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <OutputType>library</OutputType>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Avalonia.Animation, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Animation.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Base, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Base.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Controls, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Controls.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.DesignerSupport, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.DesignerSupport.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Diagnostics, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Diagnostics.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.DotNetFrameworkRuntime, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.DotNetFrameworkRuntime.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Input, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Input.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Interactivity, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Interactivity.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Layout, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Layout.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Logging.Serilog, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Logging.Serilog.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Markup, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Markup.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Markup.Xaml, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Markup.Xaml.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.ReactiveUI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.ReactiveUI.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Styling, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Styling.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Themes.Default, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Themes.Default.dll</HintPath>
-    </Reference>
-    <Reference Include="Avalonia.Visuals, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Avalonia.0.4.1-build2590-alpha\lib\net45\Avalonia.Visuals.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.2-beta2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Sprache, Version=2.0.0.51, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sprache.2.0.0.51\lib\portable-net4+netcore45+win8+wp8+sl5+MonoAndroid+Xamarin.iOS10+MonoTouch\Sprache.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
-      <HintPath>..\packages\Serilog.1.5.14\lib\net45\Serilog.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.FullNetFx, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10">
-      <HintPath>..\packages\Serilog.1.5.14\lib\net45\Serilog.FullNetFx.dll</HintPath>
-    </Reference>
-    <Reference Include="Splat, Version=1.6.2.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Splat.1.6.2\lib\Net45\Splat.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
-      <HintPath>..\packages\System.Reactive.Core.3.0.0\lib\net45\System.Reactive.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Interfaces, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
-      <HintPath>..\packages\System.Reactive.Interfaces.3.0.0\lib\net45\System.Reactive.Interfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Linq, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
-      <HintPath>..\packages\System.Reactive.Linq.3.0.0\lib\net45\System.Reactive.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.PlatformServices, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
-      <HintPath>..\packages\System.Reactive.PlatformServices.3.0.0\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reactive.Windows.Threading, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263">
-      <HintPath>..\packages\System.Reactive.Windows.Threading.3.0.0\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
-    </Reference>
+    <EmbeddedResource Include="**\*.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlankCPlusPlusLanguageTemplate.cs" />
-    <Compile Include="ClassCodeTemplate.cs" />
-    <Compile Include="ClassTemplateSettingsView.paml.cs">
-      <DependentUpon>ClassTemplateSettingsView.paml</DependentUpon>
-    </Compile>
-    <Compile Include="ClassTemplateSettingsViewModel.cs">
-      <DependentUpon>ClassTemplateSettingsView.paml</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentSettingsForm.paml.cs">
-      <DependentUpon>ComponentSettingsForm.paml</DependentUpon>
-    </Compile>
-    <Compile Include="CPlusPlusClassTemplate.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CPlusPlusClassTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Include="CPlusPlusClassTemplateCode.cs" />
-    <Compile Include="CPlusPlusClassHeaderTemplate.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CPlusPlusClassHeaderTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Include="CPlusPlusHeaderTemplateCode.cs" />
-    <Compile Include="DebuggerSettingsForm.paml.cs">
-      <DependentUpon>DebuggerSettingsFormView.paml</DependentUpon>
-    </Compile>
-    <Compile Include="DebuggerSettingsFormViewModel.cs" />
-    <Compile Include="DefineViewModel.cs" />
-    <Compile Include="IncludePathSettingsForm.paml.cs">
-      <DependentUpon>IncludePathSettingsFormView.paml</DependentUpon>
-    </Compile>
-    <Compile Include="IncludePathSettingsFormViewModel.cs" />
-    <Compile Include="IncludeViewModel.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reference.cs" />
-    <Compile Include="ReferenceSettingsFormViewModel.cs" />
-    <Compile Include="ReferencesSettingsForm.paml.cs">
-      <DependentUpon>ReferenceSettingsFormView.paml</DependentUpon>
-    </Compile>
-    <Compile Include="SourceFile.cs" />
-    <Compile Include="StaticLibraryTemplate.cs" />
-    <Compile Include="TargetSettingsForm.paml.cs">
-      <DependentUpon>TargetSettingsForm.paml</DependentUpon>
-    </Compile>
-    <Compile Include="TargetSettingsFormViewModel.cs" />
-    <Compile Include="ToolchainSettingsForm.paml.cs">
-      <DependentUpon>ToolchainSettingsFormView.paml</DependentUpon>
-    </Compile>
-    <Compile Include="ToolchainSettingsFormViewModel.cs" />
-    <Compile Include="TypeSettingsForm.paml.cs">
-      <DependentUpon>TypeSettingsFormView.paml</DependentUpon>
-    </Compile>
-    <Compile Include="TypeSettingsFormViewModel.cs" />
-    <Compile Include="CPlusPlusProject.cs" />
+    <Compile Remove="CPlusPlusClassTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.Raw\AvalonStudio.Projects.Raw.csproj">
-      <Project>{41c0c2c7-9554-470d-b8c0-634db3b509dc}</Project>
-      <Name>AvalonStudio.Projects.Raw</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
-      <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
-      <Name>AvalonStudio.Projects.Standard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Llilum\AvalonStudio.Toolchains.Llilum.csproj">
-      <Project>{BAAB6832-377B-4115-BE7E-4C90898EAAA3}</Project>
-      <Name>AvalonStudio.Toolchains.Llilum</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
-      <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
-      <Name>AvalonStudio.Toolchains.Standard</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DebuggerSettingsFormView.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="ClassTemplateSettingsView.paml" />
     <EmbeddedResource Include="ComponentSettingsForm.paml" />
+    <EmbeddedResource Include="DebuggerSettingsFormView.paml" />
     <EmbeddedResource Include="IncludePathSettingsFormView.paml" />
-    <EmbeddedResource Include="ClassTemplateSettingsView.paml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <None Include="packages.config" />
-    <EmbeddedResource Include="TypeSettingsFormView.paml" />
+    <EmbeddedResource Include="ReferenceSettingsFormView.paml" />
     <EmbeddedResource Include="TargetSettingsForm.paml" />
     <EmbeddedResource Include="ToolchainSettingsFormView.paml" />
-    <EmbeddedResource Include="ReferenceSettingsFormView.paml" />
+    <EmbeddedResource Include="TypeSettingsFormView.paml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CPlusPlusClassTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>CPlusPlusClassTemplate.cs</LastGenOutput>
-    </Content>
-    <Content Include="CPlusPlusClassHeaderTemplate.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>CPlusPlusClassHeaderTemplate.cs</LastGenOutput>
-    </Content>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
+      <Private>true</Private>
+    </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>call "$(SolutionDir)postbuild" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)"
-call "$(SolutionDir)\plugin" "$(TargetPath)" "$(SolutionDir)" "$(PlatformName)" "$(ConfigurationName)" "$(TargetFileName)"</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <None Update="Templates\CppClassHeader.template">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
