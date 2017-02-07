@@ -20,7 +20,7 @@
 
         public string Name => "MSBuild Toolchain";
 
-        public Version Version => new Version();
+        public Version Version => new Version(0,0,0);
 
         public void Activation()
         {
