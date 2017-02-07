@@ -9,11 +9,12 @@ namespace AvalonStudio.Utils
     {
         public static bool IsFileLocked(this FileInfo file)
         {
-            FileStream stream = null;
-
             try
             {
-                stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None);
+                using (var stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+
+                }
             }
             catch (IOException)
             {
@@ -22,11 +23,6 @@ namespace AvalonStudio.Utils
                 //or being processed by another thread
                 //or does not exist (has already been processed)
                 return true;
-            }
-            finally
-            {
-                if (stream != null)
-                    stream.Close();
             }
 
             //file is not locked

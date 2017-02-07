@@ -3,9 +3,17 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using AvalonStudio.Utils;
+using System.Diagnostics;
 
 namespace AvalonStudio.Platforms
 {
+    public enum PlatformID
+    {
+        Windows,
+        MacOSX,
+        Linux
+    }
+
     public static class Platform
     {
         public delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
@@ -64,20 +72,23 @@ namespace AvalonStudio.Platforms
 
         public static string ExecutionPath => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-        public static string PluginsDirectory => Path.Combine(ExecutionPath, "Plugins");
+        public static string ExtensionsFolder => Path.Combine(ExecutionPath, "Extensions");
+
+        public static string TemplatesFolder => Path.Combine(ExecutionPath, "Templates");
 
         public static string ExecutableExtension
         {
             get
             {
-                switch (PlatformIdentifier)
+                switch (Platform.PlatformIdentifier)
                 {
-                    case PlatformID.Unix:
+                    case PlatformID.Linux:
+                    case PlatformID.MacOSX:
                         {
                             return string.Empty;
                         }
 
-                    case PlatformID.Win32NT:
+                    case PlatformID.Windows:
                         {
                             return ".exe";
                         }
@@ -96,7 +107,31 @@ namespace AvalonStudio.Platforms
             }
         }
 
-        public static PlatformID PlatformIdentifier => Environment.OSVersion.Platform;
+
+        public static Architecture OSArchitecture => RuntimeInformation.OSArchitecture;
+        public static string OSDescription => RuntimeInformation.OSDescription;
+
+        public static PlatformID PlatformIdentifier
+        {
+            get
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return PlatformID.Windows;
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    return PlatformID.Linux;
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    return PlatformID.MacOSX;
+                }
+                
+                throw new Exception("Unknow platform");
+            }
+        }
+        
 
         /// <summary>
         /// The base directory for AvalonStudio's data
@@ -105,8 +140,20 @@ namespace AvalonStudio.Platforms
         {
             get
             {
-                //This is ~/AvalonStudio on Unix, and %userprofile%\AvalonStudio on Windows
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AvalonStudio");
+                string userDir = string.Empty;
+
+                switch (PlatformIdentifier)
+                {
+                    case PlatformID.Windows:
+                        userDir = Environment.GetEnvironmentVariable("UserProfile");                        
+                        break;
+
+                    default:
+                        userDir = Environment.GetEnvironmentVariable("HOME");
+                        break;
+                }
+
+                return Path.Combine(userDir, "AvalonStudio");
             }
         }
 
@@ -123,35 +170,6 @@ namespace AvalonStudio.Platforms
         public static string RepoCatalogDirectory => Path.Combine(AppDataDirectory, "RepoCatalog");
 
         public static string PackageSourcesFile => Path.Combine(AppDataDirectory, "PackageSources.json");
-
-        public static string PlatformString
-        {
-            get
-            {
-                var result = string.Empty;
-
-                switch (PlatformIdentifier)
-                {
-                    case PlatformID.Win32NT:
-                        result = Constants.WindowsPlatformString;
-                        break;
-
-                    case PlatformID.Unix:
-                        result = Constants.LinuxPlatformString;
-                        break;
-
-                    case PlatformID.MacOSX:
-                        result = Constants.MacOSPlatformString;
-                        break;
-
-                    default:
-                        result = Constants.UnknownPlatformString;
-                        break;
-                }
-
-                return result;
-            }
-        }
 
         public static void Initialise()
         {
@@ -187,6 +205,26 @@ namespace AvalonStudio.Platforms
             }
         }
 
+        public static void OpenFolderInExplorer(string path)
+        {
+            if (Directory.Exists(path))
+            {
+                switch (PlatformIdentifier)
+                {
+                    case PlatformID.Windows:
+                        Process.Start(new ProcessStartInfo { FileName = "cmd.exe", Arguments = $"/c start {path}", CreateNoWindow = true });
+                        break;
+
+                    case PlatformID.Linux:
+                        Process.Start(new ProcessStartInfo { FileName = "xdg-open", Arguments = path, CreateNoWindow = true });
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
         [DllImport(LIB, EntryPoint = "Mono_Posix_FromSignum")]
         private static extern int FromSignum(Signum value, out int rval);
 
@@ -219,10 +257,11 @@ namespace AvalonStudio.Platforms
         {
             switch (PlatformIdentifier)
             {
-                case PlatformID.Unix:
+                case PlatformID.Linux:
+                case PlatformID.MacOSX:
                     return kill(pid, sig);
 
-                case PlatformID.Win32NT:
+                case PlatformID.Windows:
                     switch (sig)
                     {
                         case Signum.SIGINT:
@@ -241,7 +280,7 @@ namespace AvalonStudio.Platforms
         {
             switch (PlatformIdentifier)
             {
-                case PlatformID.Win32NT:
+                case PlatformID.Windows:
                     return Win32AttachConsole(pid);
 
                 default:
@@ -253,7 +292,7 @@ namespace AvalonStudio.Platforms
         {
             switch (PlatformIdentifier)
             {
-                case PlatformID.Win32NT:
+                case PlatformID.Windows:
                     return Win32FreeConsole();
 
                 default:
@@ -265,7 +304,7 @@ namespace AvalonStudio.Platforms
         {
             switch (PlatformIdentifier)
             {
-                case PlatformID.Win32NT:
+                case PlatformID.Windows:
                     return Win32SetConsoleCtrlHandler(handlerRoutine, add);
 
                 default:
@@ -313,7 +352,7 @@ namespace AvalonStudio.Platforms
         {
             switch (PlatformIdentifier)
             {
-                case PlatformID.Win32NT:
+                case PlatformID.Windows:
                     return path.Replace('/', '\\');
 
                 default:
@@ -345,7 +384,7 @@ namespace AvalonStudio.Platforms
 
             switch (PlatformIdentifier)
             {
-                case PlatformID.Win32NT:
+                case PlatformID.Windows:
                     // TODO consider using directory info?           
                     if (path == null && other == null)
                     {

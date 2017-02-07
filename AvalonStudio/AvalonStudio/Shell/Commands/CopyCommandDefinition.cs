@@ -4,7 +4,7 @@ using ReactiveUI;
 
 namespace AvalonStudio.Shell.Commands
 {
-	[CommandDefinition]
+	
 	public class CopyCommandDefinition : CommandDefinition
 	{
 		private ReactiveCommand<object> _command;

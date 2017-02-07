@@ -1,15 +1,12 @@
 ﻿namespace AvalonStudio.Controls
 {
     using AvalonStudio.Debugging;
+    using System.Composition;
 
+    [PartNotDiscoverable]
     public class DebugHoverProbeViewModel : WatchListViewModel
     {
-        private DebugHoverProbeViewModel()
-        {
-
-        }
-
-        public DebugHoverProbeViewModel(IDebugManager debugManager) : base(debugManager)
+        public DebugHoverProbeViewModel()
         {
 
         }

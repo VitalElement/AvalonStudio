@@ -223,14 +223,14 @@ namespace AvalonStudio.TextEditor.Document
 				return CharacterClass.LineTerminator;
 			if (c == '_')
 				return CharacterClass.IdentifierPart;
-			return GetCharacterClass(char.GetUnicodeCategory(c));
+			return GetCharacterClass(CharUnicodeInfo.GetUnicodeCategory(c));
 		}
 
 		private static CharacterClass GetCharacterClass(char highSurrogate, char lowSurrogate)
 		{
 			if (char.IsSurrogatePair(highSurrogate, lowSurrogate))
 			{
-				return GetCharacterClass(char.GetUnicodeCategory(highSurrogate + lowSurrogate.ToString(), 0));
+				return GetCharacterClass(CharUnicodeInfo.GetUnicodeCategory(highSurrogate + lowSurrogate.ToString(), 0));
 			}
 			// malformed surrogate pair
 			return CharacterClass.Other;

@@ -1,5 +1,7 @@
 using System;
 using Splat;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Extensibility
 {
@@ -15,9 +17,19 @@ namespace AvalonStudio.Extensibility
 			return (T) Get(typeof (T), contract);
 		}
 
-		public static void RegisterConstant<T>(T instance, Type type)
+        public static IEnumerable<T> GetServices<T>(Type t, string contract =null)
+        {
+            return Locator.CurrentMutable.GetServices<T>();
+        }
+
+        public static void RegisterConstant<T> (T instance, string contract = "")
+        {
+            RegisterConstant(instance, typeof(T), contract);
+        }
+
+		public static void RegisterConstant<T>(T instance, Type type, string contract = "")
 		{
-			Locator.CurrentMutable.RegisterConstant(instance, type);
+			Locator.CurrentMutable.RegisterConstant(instance, type, contract);    
 		}
 	}
 }

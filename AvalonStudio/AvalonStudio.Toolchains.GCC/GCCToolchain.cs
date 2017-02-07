@@ -14,7 +14,7 @@ namespace AvalonStudio.Toolchains.GCC
 {
     public abstract class GCCToolchain : StandardToolChain
     {
-        public abstract string GDBExecutable { get; }
+		public virtual string GDBExecutable => "gdb";
 
         public abstract string BinDirectory { get; }
 
@@ -115,7 +115,7 @@ namespace AvalonStudio.Toolchains.GCC
         {
             bool result = true;
 
-            if (Platform.PlatformIdentifier != PlatformID.Unix && !PlatformSupport.CheckExecutableAvailability(file))
+            if (Platform.OSDescription != "Unix" && !PlatformSupport.CheckExecutableAvailability(file))
             {
                 console.WriteLine("Unable to find tool (" + file + ") Please check project toolchain settings.");
                 result = false;

@@ -20,7 +20,7 @@ namespace AvalonStudio.Debugging.GDB
         private CancellationTokenSource closeTokenSource;
 
         protected IConsole console;
-        protected bool asyncModeEnabled;
+        private bool asyncModeEnabled;
 
         private Command currentCommand;
 
@@ -43,6 +43,38 @@ namespace AvalonStudio.Debugging.GDB
             asyncModeEnabled = false;
         }
 
+        protected void SetAsyncMode (bool enabled)
+        {
+            asyncModeEnabled = enabled;
+
+            if(!enabled && Platform.PlatformIdentifier == PlatformID.Windows)
+            {
+                // TODO check if this code can be removed, it was used to support  ctrl+c signals, but no longer seems
+                // to be needed for .net core.
+                var attempts = 0;
+                while (!Platform.FreeConsole() && attempts < 10)
+                {
+                    Console.WriteLine(Marshal.GetLastWin32Error());
+                    Thread.Sleep(10);
+                    attempts++;
+                }
+
+                attempts = 0;
+
+                while (!Platform.AttachConsole(process.Id) && attempts < 10)
+                {
+                    Thread.Sleep(10);
+                    attempts++;
+                }
+
+                while (!Platform.SetConsoleCtrlHandler(null, true))
+                {
+                    Console.WriteLine(Marshal.GetLastWin32Error());
+                    Thread.Sleep(10);
+                }
+            }
+        }
+
         protected DebuggerState CurrentState
         {
             get { return currentState; }
@@ -60,7 +92,6 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        [XmlIgnore]
         public bool StoppedEventIsEnabled { get; set; }
 
         public bool DebugMode { get; set; }
@@ -127,6 +158,8 @@ namespace AvalonStudio.Debugging.GDB
 
         public void Initialise()
         {
+            StoppedEventIsEnabled = true;
+            asyncModeEnabled = false;
             responseReceived = new SemaphoreSlim(0, 1);
             currentState = DebuggerState.NotRunning;
         }
@@ -337,28 +370,6 @@ namespace AvalonStudio.Debugging.GDB
 
             input = process.StandardInput;
 
-            var attempts = 0;
-            while (!Platform.FreeConsole() && attempts < 10)
-            {
-                Console.WriteLine(Marshal.GetLastWin32Error());
-                Thread.Sleep(10);
-                attempts++;
-            }
-
-            attempts = 0;
-
-            while (!Platform.AttachConsole(process.Id) && attempts < 10)
-            {
-                Thread.Sleep(10);
-                attempts++;
-            }
-
-            while (!Platform.SetConsoleCtrlHandler(null, true))
-            {
-                Console.WriteLine(Marshal.GetLastWin32Error());
-                Thread.Sleep(10);
-            }
-
             TaskCompletionSource<JobRunner> transmitRunnerSet = new TaskCompletionSource<JobRunner>();
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -406,9 +417,12 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     process.WaitForExit();
 
-                    Platform.FreeConsole();
+                    if (!asyncModeEnabled && Platform.PlatformIdentifier == PlatformID.Windows)
+                    {
+                        Platform.FreeConsole();
 
-                    Platform.SetConsoleCtrlHandler(null, false);
+                        Platform.SetConsoleCtrlHandler(null, false);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -811,6 +825,16 @@ namespace AvalonStudio.Debugging.GDB
             await SafelyExecuteCommandWithoutResume(commandAction);
 
             await ContinueAsync();
+        }
+
+        public virtual void BeforeActivation()
+        {
+
+        }
+
+        public virtual void Activation()
+        {
+
         }
     }
 }

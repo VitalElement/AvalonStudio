@@ -88,25 +88,13 @@
     <Compile Include="Utilities\ShellExecutorType.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614aa2f-2b01-4e0d-807e-924680c570ed}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Languages.TypeScript\AvalonStudio.Languages.TypeScript.csproj">
       <Project>{23829bba-0bb8-4d7c-84d3-2fa2e69840e7}</Project>
       <Name>AvalonStudio.Languages.TypeScript</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
-      <Project>{4726219f-2e8e-4f65-a5ad-3167e3dbf56c}</Project>
-      <Name>AvalonStudio.Projects.Standard</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.TypeScript\AvalonStudio.Projects.TypeScript.csproj">
       <Project>{047aa86d-1afa-49fb-ab5c-cbf729b7fb05}</Project>
       <Name>AvalonStudio.Projects.TypeScript</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
-      <Project>{72c71854-5897-4e14-a1ae-b3b48f139af7}</Project>
-      <Name>AvalonStudio.Toolchains.Standard</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

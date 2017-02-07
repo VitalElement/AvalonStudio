@@ -1,18 +1,18 @@
 namespace AvalonStudio.Toolchains.Clang
 {
+    using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Templating;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
-    using CommandLineTools;
+    using CommandLineTools;    
     using Standard;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Dynamic;
     using System.IO;
-    using System.Threading.Tasks;
+    using System.Threading.Tasks;    
 
     public enum AssemblyFormat
     {
@@ -86,8 +86,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         private void GenerateLinkerScript(IStandardProject project)
         {
-            var settings = GetSettings(project).LinkSettings;
-            var template = new ArmGCCLinkTemplate(settings);
+            var settings = GetSettings(project).LinkSettings;            
 
             var linkerScript = GetLinkerScriptLocation(project);
 
@@ -96,11 +95,13 @@ namespace AvalonStudio.Toolchains.Clang
                 System.IO.File.Delete(linkerScript);
             }
 
-            var sw = System.IO.File.CreateText(linkerScript);
-
-            sw.Write(template.TransformText());
-
-            sw.Close();
+            
+            var rendered = Template.Engine.Parse("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size });
+            
+            using (var sw = System.IO.File.CreateText(linkerScript))
+            {
+                sw.Write(rendered);
+            }
         }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)

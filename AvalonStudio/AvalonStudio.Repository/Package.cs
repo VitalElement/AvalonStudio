@@ -73,7 +73,10 @@ namespace AvalonStudio.Repositories
 				});
 					}
 
-					LibGit2Sharp.Commands.Checkout (repository, tag, new CheckoutOptions{ OnCheckoutProgress = checkoutHandler });
+            await Task.Factory.StartNew(() =>
+            {
+                LibGit2Sharp.Commands.Checkout(repository, tag, new CheckoutOptions { OnCheckoutProgress = checkoutHandler });
+            });
 
 			console.OverWrite ("Package installed Successfully.");
 				

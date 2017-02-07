@@ -37,7 +37,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
         {
             get
             {
-                if (Platform.PlatformIdentifier == PlatformID.Unix)
+                if (Platform.OSDescription == "Unix")
                 {
                     return string.Empty;
                 }
@@ -70,7 +70,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public string LinkerScript { get; set; }
 
-        public override string GDBExecutable => Path.Combine(BaseDirectory, "bin", "gdb" + Platform.ExecutableExtension);
+		public override string GDBExecutable => Path.Combine(BinDirectory, "gdb" + Platform.ExecutableExtension);
 
         public override Version Version
         {
@@ -265,7 +265,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
                 result += string.Format("-D{0} ", define.Value);
             }
 
-            if (Platform.PlatformIdentifier == PlatformID.Win32NT)
+            if (Platform.OSDescription == "Windows")
             {
                 result += string.Format("-D{0} ", "WIN32NT");
             }
