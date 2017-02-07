@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AvalonStudio.Debugging;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
-using AvalonStudio.Projects.Raw;
 using AvalonStudio.Platforms;
-using AvalonStudio.Utils;
 using System.IO;
 using System.Dynamic;
 using AvalonStudio.Shell;
