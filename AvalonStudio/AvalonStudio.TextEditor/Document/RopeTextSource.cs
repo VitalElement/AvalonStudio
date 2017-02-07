@@ -8,7 +8,7 @@ namespace AvalonStudio.TextEditor.Document
 	/// <summary>
 	///     Implements the ITextSource interface using a rope.
 	/// </summary>
-	[Serializable]
+	
 	public sealed class RopeTextSource : ITextSource
 	{
 		private readonly Rope<char> rope;

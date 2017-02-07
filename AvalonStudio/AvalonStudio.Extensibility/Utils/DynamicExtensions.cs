@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace AvalonStudio.Extensibility.Utils
 {
 	public static class DynamicExtensions
 	{
 		public static T FromDynamic<T>(this IDictionary<string, object> dictionary)
-		{
+		{            
 			var bindings = new List<MemberBinding>();
 			foreach (var sourceProperty in typeof (T).GetProperties().Where(x => x.CanWrite))
 			{

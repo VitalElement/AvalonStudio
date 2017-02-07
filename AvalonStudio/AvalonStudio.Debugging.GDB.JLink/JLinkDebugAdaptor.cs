@@ -27,7 +27,13 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
 		public static string BaseDirectory
 		{
-			get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Debugging.JLink\\").ToPlatformPath(); }
+			get {
+				if (Platform.OSDescription == "Unix") {
+					return string.Empty;
+				} else {
+					return Path.Combine (Platform.ReposDirectory, "AvalonStudio.Debugging.JLink\\").ToPlatformPath ();
+				}
+			}
 		}
 
 		public override string Name
@@ -99,6 +105,11 @@ namespace AvalonStudio.Debugging.GDB.JLink
 			var startInfo = new ProcessStartInfo();
 			startInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed 12000 -noir", settings.TargetDevice, Enum.GetName(typeof (JlinkInterfaceType), settings.Interface));
 			startInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServerCL" + Platform.ExecutableExtension);
+
+			if (Platform.OSDescription == "Unix") {
+				startInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServer" + Platform.ExecutableExtension);	
+			}
+
 			if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
 			{
 				console.WriteLine("[JLink] - Error unable to find executable.");
@@ -170,7 +181,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 				if (result)
 				{
 					console.WriteLine("[JLink] - Connecting...");
-                    asyncModeEnabled = (await new GDBSetCommand("mi-async", "on").Execute(this)).Response == ResponseCode.Done;
+                    SetAsyncMode((await new GDBSetCommand("mi-async", "on").Execute(this)).Response == ResponseCode.Done);
 					result = (await new TargetSelectCommand(":2331").Execute(this)).Response == ResponseCode.Done;
 
 					if (result)

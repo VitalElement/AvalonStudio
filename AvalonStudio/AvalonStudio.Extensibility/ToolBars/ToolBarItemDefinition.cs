@@ -11,7 +11,8 @@ namespace AvalonStudio.Extensibility.ToolBars
 			Group = group;
 			SortOrder = sortOrder;
 			Display = display;
-		}
+            IoC.RegisterConstant(this);
+        }
 
 		public ToolBarItemGroupDefinition Group { get; }
 
@@ -19,13 +20,32 @@ namespace AvalonStudio.Extensibility.ToolBars
 
 		public ToolBarItemDisplay Display { get; }
 
-		public abstract string Text { get; }
-		public abstract Uri IconSource { get; }
-		public abstract KeyGesture KeyGesture { get; }
-		public abstract CommandDefinitionBase CommandDefinition { get; }
+		public string Text { get; }		
+		public KeyGesture KeyGesture { get; }
+
+        public CommandDefinition CommandDefinition { get; protected set; }
+
+        public virtual void Activation()
+        {
+
+        }
 	}
 
-	public enum ToolBarItemDisplay
+    public class ToolBarItemDefinition<TCommand> : ToolBarItemDefinition where TCommand : CommandDefinition
+    {
+        public ToolBarItemDefinition(ToolBarItemGroupDefinition group, int sortOrder, ToolBarItemDisplay display = ToolBarItemDisplay.IconOnly) : base(group, sortOrder, display)
+        {
+        }
+
+        public override void Activation()
+        {
+            base.Activation();
+
+            CommandDefinition = IoC.Get<TCommand>();
+        }
+    }
+
+    public enum ToolBarItemDisplay
 	{
 		IconOnly,
 		IconAndText

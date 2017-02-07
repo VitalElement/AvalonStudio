@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using AvalonStudio.Extensibility.Plugin;
@@ -8,7 +8,6 @@ using AvalonStudio.Utils;
 
 namespace AvalonStudio.Toolchains
 {
-	[InheritedExport(typeof (IToolChain))]
 	public interface IToolChain : IPlugin
 	{
         IEnumerable<string> GetToolchainIncludes(ISourceFile file);

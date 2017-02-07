@@ -1,4 +1,4 @@
-using AvalonStudio.Languages.CPlusPlus;
+using AvalonStudio.Projects.CPlusPlus;
 
 namespace AvalonStudio.Toolchains.Clang
 {

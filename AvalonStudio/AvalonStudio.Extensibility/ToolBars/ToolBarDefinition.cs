@@ -6,6 +6,7 @@ namespace AvalonStudio.Extensibility.ToolBars
 		{
 			SortOrder = sortOrder;
 			Name = name;
+            IoC.RegisterConstant(this);
 		}
 
 		public int SortOrder { get; }

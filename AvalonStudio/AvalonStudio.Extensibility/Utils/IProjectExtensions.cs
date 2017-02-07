@@ -54,8 +54,8 @@ namespace AvalonStudio.Utils
 						}
 					}
 					else
-					{
-						if (p.PropertyType.IsEnum)
+					{                        
+						if (p.PropertyType.GetTypeInfo().IsEnum)
 						{
 							p.SetValue(destination, Enum.Parse(p.PropertyType, kv.Value as string));
 						}

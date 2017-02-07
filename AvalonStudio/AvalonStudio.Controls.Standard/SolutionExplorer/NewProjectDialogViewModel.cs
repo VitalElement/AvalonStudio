@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -59,7 +60,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
             });
 
-            OKCommand = ReactiveCommand.Create(this.WhenAny(x => x.Location, x => x.SolutionName, (location, solution) => !Directory.Exists(Path.Combine(location.Value, solution.Value))));
+            OKCommand = ReactiveCommand.Create(this.WhenAny(x => x.Location, x => x.SolutionName, (location, solution) => solution.Value != null && !Directory.Exists(Path.Combine(location.Value, solution.Value))));
             OKCommand.Subscribe(async o =>
             {
                 bool generateSolutionDirs = false;

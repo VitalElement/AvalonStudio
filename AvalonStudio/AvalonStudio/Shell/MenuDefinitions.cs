@@ -1,36 +1,34 @@
+using System;
 using AvalonStudio.Extensibility.Menus;
+using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Shell.Commands;
 
 namespace AvalonStudio.Shell
 {
-	internal class MenuDefinitions
+	internal class MenuDefinitions : IExtension
 	{
-		//[MenuItem]
-		//public static MenuItemDefinition FileNewMenuItemList = new CommandMenuItemDefinition<NewFileCommandDefinition>(
-		//    FileNewCascadeGroup, 0);
+        static MenuDefinitions()
+        {
+        }
 
-		//[MenuGroup]
-		//public static MenuItemGroupDefinition FileNewCascadeGroup = new MenuItemGroupDefinition(
-		//    FileNewMenuItem, 0);
+        public static MenuItemGroupDefinition ToolsPackagesMenuGroup = new MenuItemGroupDefinition(Extensibility.MenuDefinitions.ToolsMenu, 6);
 
-		[Menu] public static MenuDefinition ToolsMenu = new MenuDefinition(
-			Extensibility.MainMenu.MenuDefinitions.MainMenuBar, 8, "Tools");
+        public static MenuItemDefinition ToolsPackagesMenuItem = new MenuItemDefinition<PackagesCommandDefinition>(ToolsPackagesMenuGroup, "Packages", 1);
 
-		[MenuGroup] public static MenuItemGroupDefinition ToolsPackagesMenuGroup = new MenuItemGroupDefinition(ToolsMenu, 6);
+        public static MenuItemDefinition FileSaveAllMenuItem = new MenuItemDefinition<SaveAllFileCommandDefinition>(Extensibility.MenuDefinitions.FileSaveMenuGroup, "SaveAll", 1);
 
-		[MenuItem] public static MenuItemDefinition ToolsPackagesMenuItems = new CommandMenuItemDefinition
-			<PackagesCommandDefinition>(
-			ToolsPackagesMenuGroup, 1);
+        public static MenuItemDefinition FileSaveMenuItem = new MenuItemDefinition<SaveFileCommandDefinition>(Extensibility.MenuDefinitions.FileSaveMenuGroup, "Save", 0);
 
-		[MenuItem] public static MenuItemDefinition FileSaveAllMenuItem = new CommandMenuItemDefinition
-			<SaveAllFileCommandDefinition>(
-			Extensibility.MainMenu.MenuDefinitions.FileSaveMenuGroup, 1);
+        public static MenuItemDefinition FileExitMenuItem = new MenuItemDefinition<ExitCommandDefinition>(Extensibility.MenuDefinitions.FileExitOpenMenuGroup, "Exit", 0);
 
-		[MenuItem] public static MenuItemDefinition FileSaveMenuItem = new CommandMenuItemDefinition
-			<SaveFileCommandDefinition>(
-			Extensibility.MainMenu.MenuDefinitions.FileSaveMenuGroup, 0);
+        public void Activation()
+        {
+            
+        }
 
-		[MenuItem] public static MenuItemDefinition FileExitMenuItem = new CommandMenuItemDefinition<ExitCommandDefinition>(
-			Extensibility.MainMenu.MenuDefinitions.FileExitOpenMenuGroup, 0);
-	}
+        public void BeforeActivation()
+        {
+            
+        }
+    }
 }

@@ -33,7 +33,7 @@ namespace AvalonStudio.Shell
 
         IEnumerable<ISolutionType> SolutionTypes { get; }
 
-        IEnumerable<IProject> ProjectTypes { get; }
+        IEnumerable<IProjectType> ProjectTypes { get; }
 
 		IEnumerable<IProjectTemplate> ProjectTemplates { get; }
 

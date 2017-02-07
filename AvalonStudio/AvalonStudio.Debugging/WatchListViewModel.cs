@@ -6,6 +6,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using System.Composition;
 
 namespace AvalonStudio.Debugging
 {
@@ -23,22 +24,9 @@ namespace AvalonStudio.Debugging
 			Title = "Watch List";
 			Children = new ObservableCollection<WatchViewModel>();
 			LastChangedRegisters = new List<WatchViewModel>();
-		}
 
-		public WatchListViewModel(IDebugManager debugManager) : this()
-		{
-			_debugManager = IoC.Get<IDebugManager>();
-
-			_debugManager.DebugFrameChanged += WatchListViewModel_DebugFrameChanged;
-
-			_debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
-
-			_debugManager.DebugSessionEnded += (sender, e) =>
-			{
-				IsVisible = false;
-				Clear();
-			};
-		}
+            Activation(); // for when we create the part outside of composition.
+        }
 
 		public ObservableCollection<WatchViewModel> Children
 		{

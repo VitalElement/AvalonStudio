@@ -105,41 +105,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj">
-      <Project>{5614AA2F-2B01-4E0D-807E-924680C570ED}</Project>
-      <Name>AvalonStudio.Extensibility</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.MiniShell\AvalonStudio.MiniShell.csproj">
       <Project>{853618d5-76cc-4302-8aff-4b95f51d01f7}</Project>
       <Name>AvalonStudio.MiniShell</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj">
-      <Project>{47E266EA-BBC4-4794-96DA-B1F3ECB5BB9B}</Project>
-      <Name>AvalonStudio.Projects.CPlusPlus</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Projects.Raw\AvalonStudio.Projects.Raw.csproj">
       <Project>{41c0c2c7-9554-470d-b8c0-634db3b509dc}</Project>
       <Name>AvalonStudio.Projects.Raw</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
-      <Project>{4726219F-2E8E-4F65-A5AD-3167E3DBF56C}</Project>
-      <Name>AvalonStudio.Projects.Standard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repositories.csproj">
-      <Project>{29C948E9-4D96-4490-B039-A5BBF6EEC2E5}</Project>
-      <Name>AvalonStudio.Repositories</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj">
-      <Project>{1fc43c7d-5758-42d7-9977-986074e9cbc0}</Project>
-      <Name>AvalonStudio.Toolchains.Clang</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.Llilum\AvalonStudio.Toolchains.Llilum.csproj">
       <Project>{BAAB6832-377B-4115-BE7E-4C90898EAAA3}</Project>
       <Name>AvalonStudio.Toolchains.Llilum</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj">
-      <Project>{72C71854-5897-4E14-A1AE-B3B48F139AF7}</Project>
-      <Name>AvalonStudio.Toolchains.Standard</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj">
       <Project>{B761D8E3-611E-434F-887A-8225416F51B8}</Project>

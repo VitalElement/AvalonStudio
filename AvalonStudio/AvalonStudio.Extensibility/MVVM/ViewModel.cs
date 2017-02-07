@@ -1,4 +1,4 @@
-using System.ComponentModel.Composition;
+using System.Composition;
 using ReactiveUI;
 using System;
 using System.Reactive.Linq;
@@ -23,7 +23,7 @@ namespace AvalonStudio.MVVM
     }
 
 
-    [InheritedExport(typeof(ToolViewModel))]
+    //[InheritedExport(typeof(ToolViewModel))]
     public abstract class ToolViewModel : ViewModel
     {
         private bool _isVisible;

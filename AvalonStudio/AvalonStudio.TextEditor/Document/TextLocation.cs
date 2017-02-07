@@ -13,7 +13,7 @@ namespace AvalonStudio.TextEditor.Document
 	///     The document provides the methods <see cref="IDocument.GetLocation" /> and
 	///     <see cref="IDocument.GetOffset(TextLocation)" /> to convert between offsets and TextLocations.
 	/// </remarks>
-	[Serializable]
+	
 	[TypeConverter(typeof (TextLocationConverter))]
 	public struct TextLocation : IComparable<TextLocation>, IEquatable<TextLocation>
 	{

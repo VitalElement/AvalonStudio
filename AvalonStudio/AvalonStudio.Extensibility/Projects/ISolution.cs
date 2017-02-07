@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
+using System.Composition;
 
 namespace AvalonStudio.Projects
 {    

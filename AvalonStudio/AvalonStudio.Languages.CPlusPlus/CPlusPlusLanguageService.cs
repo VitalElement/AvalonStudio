@@ -7,6 +7,7 @@ using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages.CPlusPlus.Rendering;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
+using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
@@ -632,7 +633,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor,
                 ClangFormatSettings.Default);
 
-            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
+            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);            
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
@@ -1192,6 +1193,16 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
 
             return result;
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            
         }
     }
 
