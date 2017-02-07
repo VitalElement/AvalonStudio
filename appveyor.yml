@@ -7,12 +7,9 @@ before_build:
 - ps: Start-Process c:\dotnet-install.exe -ArgumentList "/install","/quiet" -Wait
 
 build_script:
-- ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:build  + '-blue.svg'
-- ps: $url2='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
-- ps: (new-object net.webclient).DownloadFile($url1, "c:/latest-version-badge.svg")
+- ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
+- ps: .\download.ps1 $url1, "latest-version-badge.svg")
 - ps: (new-object net.webclient).DownloadFile($url2, "c:/latest-version-badge1.svg")
-- ps: echo $url1
-- ps: echo $url2
 - cmd: tree /f
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r win7-x64
 - ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r win7-x64
