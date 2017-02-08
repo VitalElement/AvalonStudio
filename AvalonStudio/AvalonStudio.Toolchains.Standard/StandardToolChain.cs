@@ -482,7 +482,7 @@ namespace AvalonStudio.Toolchains.Standard
 								{
 									while (numTasks >= Jobs)
 									{
-                                        Thread.Yield();
+                                        await Task.Delay(100);
 									}
 
 									lock (resultLock)

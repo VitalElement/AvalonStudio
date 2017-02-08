@@ -6,7 +6,6 @@
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
     using CPlusPlus;
-    using CPlusPlus.Rendering;
     using Extensibility.Threading;
     using Projects.OmniSharp;
     using System;
@@ -133,7 +132,7 @@
             return CodeCompletionKind.None;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
         {
             var result = new CodeCompletionResults ();
 
@@ -157,6 +156,7 @@
                     if (filter == string.Empty || completion.CompletionText.StartsWith(filter))
                     {
                         result.Completions.Add(newCompletion);
+                        result.Contexts = CompletionContext.Unknown;
                     }
                 }
             }
@@ -171,7 +171,7 @@
 
         public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
-            throw new NotImplementedException();
+            return cursor;
         }
 
         public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
@@ -366,6 +366,17 @@
             }
 
             return result;
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            
+        }
         }
 
         public async Task AnalyseProjectAsync(IProject project)

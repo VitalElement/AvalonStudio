@@ -114,7 +114,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return CodeCompletionKind.None;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile file, int line, int column,
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile file, int index, int line, int column,
             List<UnsavedFile> unsavedFiles, string filter)
         {
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
@@ -803,7 +803,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor,
                 ClangFormatSettings.Default);
 
-            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
+            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);            
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
@@ -1383,6 +1383,16 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
 
             return result;
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            
         }
     }
 

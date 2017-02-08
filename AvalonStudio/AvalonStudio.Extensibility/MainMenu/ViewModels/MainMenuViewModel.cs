@@ -1,29 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel.Composition;
 using AvalonStudio.Extensibility.MainMenu.Models;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 
 namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 {
-	[Export(typeof (IMenu))]
-	public class MainMenuViewModel : ViewModel<MenuModel>, IPartImportsSatisfiedNotification, IMenu
+	public class MainMenuViewModel : ViewModel<MenuModel>, IMenu
 	{
 		private readonly IMenuBuilder _menuBuilder;
 
 		private bool _autoHide;
 
-		//private readonly SettingsPropertyChangedEventManager<Properties.Settings> _settingsEventManager =
-		//    new SettingsPropertyChangedEventManager<Properties.Settings>(Properties.Settings.Default);
-
-		[ImportingConstructor]
+		
 		public MainMenuViewModel(IMenuBuilder menuBuilder) : base(new MenuModel())
 		{
 			_menuBuilder = menuBuilder;
-			//_autoHide = Properties.Settings.Default.AutoHideMainMenu;
-			//_settingsEventManager.AddListener(s => s.AutoHideMainMenu, value => { AutoHide = value; });
 		}
 
 		public bool AutoHide
@@ -107,11 +100,6 @@ namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return Model.GetEnumerator();
-		}
-
-		void IPartImportsSatisfiedNotification.OnImportsSatisfied()
-		{
-			_menuBuilder.BuildMenuBar(MenuDefinitions.MainMenuBar, Model);
 		}
 	}
 }

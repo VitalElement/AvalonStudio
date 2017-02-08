@@ -1,15 +1,44 @@
 namespace AvalonStudio.Extensibility.Menus
 {
-	public abstract class MenuItemDefinition : MenuDefinitionBase
-	{
-		protected MenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
-		{
-			Group = group;
-			SortOrder = sortOrder;
-		}
+    using AvalonStudio.Extensibility.Commands;
 
-		public MenuItemGroupDefinition Group { get; }
+    public class MenuItemDefinition
+    {
+        public MenuItemDefinition(MenuItemGroupDefinition group, string text, int sortOrder)
+        {
+            Group = group;
+            SortOrder = sortOrder;
+            Text = text;
 
-		public override int SortOrder { get; }
-	}
+            IoC.RegisterConstant(this);
+        }
+
+        public virtual void Activation()
+        {
+
+        }
+
+        public MenuItemGroupDefinition Group { get; protected set; }
+
+        public CommandDefinition CommandDefinition { get; protected set; }
+
+        public string Text { get; }
+
+        public int SortOrder { get; }
+    }
+
+    public class MenuItemDefinition<TCommand> : MenuItemDefinition where TCommand : CommandDefinition
+    {
+        public MenuItemDefinition(MenuItemGroupDefinition group, string text, int sortOrder) : base(group, text, sortOrder)
+        {
+
+        }
+
+        public override void Activation()
+        {
+            base.Activation();
+
+            CommandDefinition = IoC.Get<TCommand>();
+        }
+    }
 }

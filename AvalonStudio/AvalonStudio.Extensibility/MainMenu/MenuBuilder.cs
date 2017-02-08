@@ -1,4 +1,3 @@
-using System.ComponentModel.Composition;
 using System.Linq;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.MainMenu.Models;
@@ -6,10 +5,8 @@ using AvalonStudio.Extensibility.Menus;
 
 namespace AvalonStudio.Extensibility.MainMenu
 {
-	[Export(typeof (IMenuBuilder))]
 	public class MenuBuilder : IMenuBuilder
 	{
-		private readonly ICommandService _commandService;
 		private readonly MenuItemGroupDefinition[] _excludeMenuItemGroups;
 		private readonly MenuItemDefinition[] _excludeMenuItems;
 		private readonly MenuDefinition[] _excludeMenus;
@@ -17,19 +14,16 @@ namespace AvalonStudio.Extensibility.MainMenu
 		private readonly MenuItemGroupDefinition[] _menuItemGroups;
 		private readonly MenuItemDefinition[] _menuItems;
 		private readonly MenuDefinition[] _menus;
-
-		[ImportingConstructor]
-		public MenuBuilder(
-			ICommandService commandService,
-			[ImportMany] MenuBarDefinition[] menuBars,
-			[ImportMany] MenuDefinition[] menus,
-			[ImportMany] MenuItemGroupDefinition[] menuItemGroups,
-			[ImportMany] MenuItemDefinition[] menuItems,
-			[ImportMany] ExcludeMenuDefinition[] excludeMenus,
-			[ImportMany] ExcludeMenuItemGroupDefinition[] excludeMenuItemGroups,
-			[ImportMany] ExcludeMenuItemDefinition[] excludeMenuItems)
+        
+		public MenuBuilder(			
+			MenuBarDefinition[] menuBars,
+			MenuDefinition[] menus,
+			MenuItemGroupDefinition[] menuItemGroups,
+			MenuItemDefinition[] menuItems,
+			ExcludeMenuDefinition[] excludeMenus,
+			ExcludeMenuItemGroupDefinition[] excludeMenuItemGroups,
+			ExcludeMenuItemDefinition[] excludeMenuItems)
 		{
-			_commandService = commandService;
 			_menuBars = menuBars;
 			_menus = menus;
 			_menuItemGroups = menuItemGroups;
@@ -55,7 +49,7 @@ namespace AvalonStudio.Extensibility.MainMenu
 			}
 		}
 
-		private void AddGroupsRecursive(MenuDefinitionBase menu, StandardMenuItem menuModel)
+		private void AddGroupsRecursive(MenuDefinition menu, StandardMenuItem menuModel)
 		{
 			var groups = _menuItemGroups
 				.Where(x => x.Parent == menu)
@@ -65,7 +59,7 @@ namespace AvalonStudio.Extensibility.MainMenu
 
 			for (var i = 0; i < groups.Count; i++)
 			{
-				var group = groups[i];
+		 		var group = groups[i];
 				var menuItems = _menuItems
 					.Where(x => x.Group == group)
 					.Where(x => !_excludeMenuItems.Contains(x))
@@ -73,11 +67,9 @@ namespace AvalonStudio.Extensibility.MainMenu
 
 				foreach (var menuItem in menuItems)
 				{
-					var menuItemModel = menuItem.CommandDefinition != null
-						? new CommandMenuItem(_commandService.GetCommand(menuItem.CommandDefinition), menuItem.CommandDefinition.Command,
-							menuModel)
-						: (StandardMenuItem) new TextMenuItem(menuItem);
-					AddGroupsRecursive(menuItem, menuItemModel);
+                    var menuItemModel = new MenuItem(menuItem);
+
+                    //AddGroupsRecursive(menuItem, menuItemModel);
 					menuModel.Add(menuItemModel);
 				}
 

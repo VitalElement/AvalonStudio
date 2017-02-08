@@ -15,13 +15,12 @@ namespace AvalonStudio.CommandLineTools
         {
             switch (Platform.PlatformIdentifier)
             {
-                case PlatformID.Win32Windows:
-                case PlatformID.Win32NT:
+                case PlatformID.Windows:
                     executorType = ShellExecutorType.Windows;
                     break;
 
+                case PlatformID.Linux:
                 case PlatformID.MacOSX:
-                case PlatformID.Unix:
                     executorType = ShellExecutorType.Unix;
                     break;
             }
@@ -68,7 +67,7 @@ namespace AvalonStudio.CommandLineTools
             {
                 foreach(var extraPath in extraPaths)
                 {
-                    shellProc.StartInfo.EnvironmentVariables["PATH"] += $";{extraPath}";
+                    shellProc.StartInfo.Environment["PATH"] += $";{extraPath}";
                 }
 
                 if (executeInShell)
@@ -82,7 +81,7 @@ namespace AvalonStudio.CommandLineTools
                     else //Unix
                     {
                         shellProc.StartInfo.FileName = "sh";
-                        shellProc.StartInfo.Arguments = $"-c {(resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName)} {args}";
+                        shellProc.StartInfo.Arguments = $"-c \"{(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}\"";
                         shellProc.StartInfo.CreateNoWindow = true;
                     }
                 }

@@ -1,8 +1,11 @@
 using System.Threading.Tasks;
+using System;
 using AvalonStudio.Debugging.GDB;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Models.Tools.Debuggers.Local
 {
@@ -19,8 +22,11 @@ namespace AvalonStudio.Models.Tools.Debuggers.Local
 
 			if (result)
 			{
-                asyncModeEnabled = (await new GDBSetCommand("mi-async", "on").Execute(this)).Response == ResponseCode.Done;
-                await new SetCommand("new-console", "on").Execute(this);
+                SetAsyncMode((await new GDBSetCommand("mi-async", "on").Execute(this)).Response == ResponseCode.Done);
+
+				if (Platform.PlatformIdentifier == PlatformID.Windows) {
+					await new SetCommand ("new-console", "on").Execute (this);
+				}
 			}
 
 			return result;
