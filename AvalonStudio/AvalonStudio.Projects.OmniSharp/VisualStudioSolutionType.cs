@@ -24,6 +24,16 @@
             }
         }
 
+        public void Activation()
+        {
+            
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
         public async Task<ISolution> LoadAsync(string path)
         {
             return await OmniSharpSolution.Create(path);
