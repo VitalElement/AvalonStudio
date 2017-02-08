@@ -134,7 +134,7 @@
 
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
         {
-            var result = new CodeCompletionResults ();
+            var result = new CodeCompletionResults();
 
             var dataAssociation = GetAssociatedData(sourceFile);
 
@@ -370,21 +370,20 @@
 
         public void BeforeActivation()
         {
-            
+
         }
 
         public void Activation()
         {
-            
-        }
+
         }
 
         public async Task AnalyseProjectAsync(IProject project)
         {
-            // DO nothing not required.
-            
+            // Do nothing
         }
     }
+
 
     internal class CSharpDataAssociation
     {
