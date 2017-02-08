@@ -512,9 +512,9 @@ namespace AvalonStudio.Debugging
 						DebugFrameChanged(this, args);
 					}
 
-                    if (e.Frame != null && e.Frame.File != null)
+                    if (e.Frame != null && e.Frame.FullFileName != null)
                     {
-                        var normalizedPath = e.Frame.File.Replace("\\\\", "\\").NormalizePath();
+                        var normalizedPath = e.Frame.FullFileName.Replace("\\\\", "\\").NormalizePath();
 
                         ISourceFile file = null;
 
