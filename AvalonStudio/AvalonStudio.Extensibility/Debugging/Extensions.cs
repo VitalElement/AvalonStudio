@@ -30,6 +30,9 @@ namespace AvalonStudio.Debugging
 				case "signal-received":
 					return StopReason.SignalReceived;
 
+                case "entry-point-hit":
+                    return StopReason.EntryPointHit;
+
 				default:
 					throw new NotImplementedException();
 			}
