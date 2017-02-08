@@ -17,8 +17,8 @@ namespace AvalonStudio
 {
 	internal class Program
 	{
-		private const string version = "1.0.1.4";
-		private const string releaseName = "Gravity";
+		private const string version = "1.0.2.0";
+		private const string releaseName = "Dark Matter";
 
 		private static readonly ProgramConsole console = new ProgramConsole();
 
@@ -389,9 +389,9 @@ namespace AvalonStudio
 
 			var container = CompositionRoot.CreateContainer();
 
-			MinimalShell.Instance = container.GetExportedValue<IShell>();
+			MinimalShell.Instance = container.GetExport<MinimalShell>();
 
-			Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
+            Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
             
 			var result = Parser.Default.ParseArguments
 				<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions, TestOptions>(args).MapResult(
