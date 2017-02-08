@@ -17,9 +17,9 @@ Cross platform IDE on Avalonia for Avalonia
 |         |Version |Installers|
 |---------|:------:|:------:|:------:|
 |**Windows 7 8.1 10 x64**|![](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-win7-x64.zip)|
-|**MacOSX 10.12 x64**|![](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/latest-version-badge)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-osx.10.12-x64.zip)|
-|**Ubuntu 14.04+ x64**|![](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/latest-version-badge)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-ubuntu.14.04-x64.zip)|
-|**Debian 8 x64**|![](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/latest-version-badge)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-debian.8-x64.zip)|
+|**MacOSX 10.12 x64**|![](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-osx.10.12-x64.zip)|
+|**Ubuntu 14.04+ x64**|![](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-ubuntu.14.04-x64.zip)|
+|**Debian 8 x64**|![](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-debian.8-x64.zip)|
 
 ## Building from source
 
