@@ -7,7 +7,7 @@ using AvalonStudio.Utils;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
 
-namespace AvalonStudio.Models.Tools.Debuggers.Local
+namespace AvalonStudio.Debuggers.GDB.Local
 {
 	public class LocalDebugAdaptor : GDBDebugger
 	{
