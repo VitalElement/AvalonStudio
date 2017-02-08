@@ -389,9 +389,9 @@ namespace AvalonStudio
 
 			var container = CompositionRoot.CreateContainer();
 
-			MinimalShell.Instance = container.GetExportedValue<IShell>();
+			MinimalShell.Instance = container.GetExport<MinimalShell>();
 
-			Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
+            Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
             
 			var result = Parser.Default.ParseArguments
 				<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions, TestOptions>(args).MapResult(
