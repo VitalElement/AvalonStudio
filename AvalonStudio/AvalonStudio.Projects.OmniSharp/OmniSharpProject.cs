@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AvalonStudio.Debugging;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
-using AvalonStudio.Projects.Raw;
 using AvalonStudio.Platforms;
-using AvalonStudio.Utils;
 using System.IO;
 using System.Dynamic;
+using AvalonStudio.Shell;
+using AvalonStudio.Extensibility;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
@@ -60,7 +58,18 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override IDebugger Debugger
         {
-            get; set;
+            get
+            {
+                var shell = IoC.Get<IShell>();
+
+                var debugger = shell.Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.ClrDbg.NetCoreDebugAdaptor");
+
+                return debugger;
+            }
+            set
+            {
+
+            }
         }
 
         public override dynamic DebugSettings { get; set; }
@@ -112,7 +121,18 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override IToolChain ToolChain
         {
-            get; set;
+            get
+            {
+                var shell = IoC.Get<IShell>();
+                
+                var toolchain = shell.ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.MSBuild.MSBuildToolchain");
+
+                return toolchain;
+            }
+            set
+            {
+
+            }
         }
 
         public override dynamic ToolchainSettings { get; set; }
