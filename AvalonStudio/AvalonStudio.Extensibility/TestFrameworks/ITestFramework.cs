@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using System.Composition;
 using System.Threading.Tasks;
 using AvalonStudio.Projects;
+using AvalonStudio.Extensibility.Plugin;
 
 namespace AvalonStudio.TestFrameworks
 {
-	////[InheritedExport(typeof (ITestFramework))]
-	public interface ITestFramework
+	public interface ITestFramework : IExtension
 	{
 		Task<IEnumerable<Test>> EnumerateTestsAsync(IProject project);
 
