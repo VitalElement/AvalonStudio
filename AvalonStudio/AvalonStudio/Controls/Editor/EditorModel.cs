@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -94,11 +94,11 @@ namespace AvalonStudio.Controls
         {
         }
 
-        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int line, int column)
+        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int index, int line, int column)
         {
             CodeCompletionResults results = null;
 
-            var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, line, column, UnsavedFiles.ToList());
+            var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, index, line, column, UnsavedFiles.ToList());
             results = completions;
 
             return results;

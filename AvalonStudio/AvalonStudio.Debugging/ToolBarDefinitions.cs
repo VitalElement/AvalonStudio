@@ -1,40 +1,54 @@
-using System.ComponentModel.Composition;
+using System;
 using AvalonStudio.Debugging.Commands;
+using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.ToolBars;
 
 namespace AvalonStudio.Debugging
 {
-	internal static class ToolBarDefinitions
-	{
-		[Export] public static ToolBarItemGroupDefinition DebuggingGroup = new ToolBarItemGroupDefinition(
-			Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 5);
+    internal class ToolBarDefinitions : IExtension
+    {
+        static ToolBarDefinitions()
+        {
 
-		[Export] public static ToolBarItemDefinition StartDebuggingToolBarItem = new CommandToolBarItemDefinition
-			<StartDebuggingCommandDefinition>(
-			DebuggingGroup, 1);
+        }
 
-		[Export] public static ToolBarItemDefinition PauseDebuggingToolBarItem = new CommandToolBarItemDefinition
-			<PauseDebuggingCommandDefinition>(
-			DebuggingGroup, 2);
+        public static ToolBarItemGroupDefinition DebuggingGroup = new ToolBarItemGroupDefinition(
+           Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 5);
 
-		[Export] public static ToolBarItemDefinition StopDebuggingToolBarItem = new CommandToolBarItemDefinition
-			<StopDebuggingCommandDefinition>(
-			DebuggingGroup, 3);
+        public static ToolBarItemDefinition StartDebuggingToolBarItem = new ToolBarItemDefinition<StartDebuggingCommandDefinition>(DebuggingGroup, 1);
 
-		[Export] public static ToolBarItemDefinition RestartDebuggingToolBarItem = new CommandToolBarItemDefinition
-			<RestartDebuggingCommandDefinition>(
-			DebuggingGroup, 4);
+        public static ToolBarItemDefinition PauseDebuggingToolBarItem = new ToolBarItemDefinition
+           <PauseDebuggingCommandDefinition>(
+           DebuggingGroup, 2);
 
-		[Export] public static ToolBarItemDefinition StepOverToolBarItem = new CommandToolBarItemDefinition
-			<StepOverCommandDefinition>(
-			DebuggingGroup, 5);
+        public static ToolBarItemDefinition StopDebuggingToolBarItem = new ToolBarItemDefinition
+           <StopDebuggingCommandDefinition>(
+           DebuggingGroup, 3);
 
-		[Export] public static ToolBarItemDefinition StepIntoToolBarItem = new CommandToolBarItemDefinition
-			<StepIntoCommandDefinition>(
-			DebuggingGroup, 6);
+        public static ToolBarItemDefinition RestartDebuggingToolBarItem = new ToolBarItemDefinition
+           <RestartDebuggingCommandDefinition>(
+           DebuggingGroup, 4);
 
-		[Export] public static ToolBarItemDefinition StepOutToolBarItem = new CommandToolBarItemDefinition
-			<StepOutCommandDefinition>(
-			DebuggingGroup, 7);
-	}
+        public static ToolBarItemDefinition StepOverToolBarItem = new ToolBarItemDefinition
+           <StepOverCommandDefinition>(
+           DebuggingGroup, 5);
+
+        public static ToolBarItemDefinition StepIntoToolBarItem = new ToolBarItemDefinition
+           <StepIntoCommandDefinition>(
+           DebuggingGroup, 6);
+
+        public static ToolBarItemDefinition StepOutToolBarItem = new ToolBarItemDefinition
+           <StepOutCommandDefinition>(
+           DebuggingGroup, 7);
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            
+        }
+    }
 }

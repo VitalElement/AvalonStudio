@@ -19,7 +19,6 @@ namespace AvalonStudio.TextEditor.Utils
 	///     Concurrent reads, however, are safe.
 	///     However, clones of a rope are safe to use on other threads even though they share data with the original rope.
 	/// </remarks>
-	[Serializable]
 	[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
 	public sealed class Rope<T> : IList<T>, ICloneable
 	{
@@ -686,7 +685,7 @@ namespace AvalonStudio.TextEditor.Utils
 		}
 
 		// cached pointer to 'last used node', used to speed up accesses by index that are close together
-		[NonSerialized] private volatile ImmutableStack<RopeCacheEntry> lastUsedNodeStack;
+		private volatile ImmutableStack<RopeCacheEntry> lastUsedNodeStack;
 
 		internal void OnChanged()
 		{

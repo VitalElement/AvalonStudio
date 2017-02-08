@@ -1,5 +1,6 @@
 <img src="AvalonStudio/AvalonStudio/icon.png" width="50" height="50" />
 <img src="https://cloud.githubusercontent.com/assets/4672627/21014496/36454f48-bd56-11e6-8e00-6cf8f878e9a6.png" />
+<img src="https://files.gitter.im/AvaloniaUI/Avalonia/LoHY/Screenshot-from-2017-01-27-00-51-26.png" />
 
 # AvalonStudio
 
@@ -13,10 +14,12 @@ An extensible, cross platform IDE written in C#
 Cross platform IDE on Avalonia for Avalonia
 
 ## Try the bleeding-edge builds?
-You can get the very latest binaries compiled directly from Git here:
-<https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio.zip>
-
-To run on an OS other than Windows, you need [Mono](http://www.mono-project.com/download/).
+|         |Version |Installers|
+|---------|:------:|:------:|:------:|
+|**Windows 7 8.1 10 x64**|![](https://github.com/VitalElement/AvalonStudio/releases/download/0.2.0-alpha2/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-win7-x64.zip)|
+|**MacOSX 10.12 x64**|![](https://github.com/VitalElement/AvalonStudio/releases/download/0.2.0-alpha2/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-osx.10.12-x64.zip)|
+|**Ubuntu 14.04+ x64**|![](https://github.com/VitalElement/AvalonStudio/releases/download/0.2.0-alpha2/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-ubuntu.14.04-x64.zip)|
+|**Debian 8 x64**|![](https://https://github.com/VitalElement/AvalonStudio/releases/download/0.2.0-alpha2/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-debian.8-x64.zip)|
 
 ## Building from source
 
@@ -64,4 +67,3 @@ once build has completed.
 ```
 cd AvalonStudio/bin/Release
 mono AvalonStudio.exe
-```

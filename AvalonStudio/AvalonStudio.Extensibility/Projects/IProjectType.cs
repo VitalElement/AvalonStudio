@@ -1,14 +1,13 @@
 ﻿namespace AvalonStudio.Projects
 {
+    using AvalonStudio.Extensibility.Plugin;
     using System.Collections.Generic;
-    using System.ComponentModel.Composition;
-
-    [InheritedExport(typeof(IProjectType))]
-    public interface IProjectType
+    
+    public interface IProjectType : IExtension
     {
         List<string> Extensions { get; }
         string Description { get; }
-
-        IProject Load(string path);
+        
+        IProject Load(ISolution solution, string filePath);
     }
 }

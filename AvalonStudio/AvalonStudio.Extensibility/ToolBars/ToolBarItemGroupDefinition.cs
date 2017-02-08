@@ -4,6 +4,7 @@ namespace AvalonStudio.Extensibility.ToolBars
 	{
 		public ToolBarItemGroupDefinition(ToolBarDefinition toolBar, int sortOrder)
 		{
+            IoC.RegisterConstant(this);
 			ToolBar = toolBar;
 			SortOrder = sortOrder;
 		}

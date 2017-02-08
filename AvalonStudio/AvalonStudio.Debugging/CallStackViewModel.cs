@@ -5,6 +5,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using AvalonStudio.Shell;
 
 namespace AvalonStudio.Debugging
 {
@@ -32,8 +33,9 @@ namespace AvalonStudio.Debugging
 
 				if (selectedFrame != null)
 				{
-					// TODO implement click interaction
-					//WorkspaceViewModel.Instance.OpenDocument(Workspace.This.SolutionExplorer.Model.FindFile(selectedFrame.Model.FullFileName.NormalizePath()), selectedFrame.Model.Line, 1, true, false, false, true);
+                    var shell = IoC.Get<IShell>();
+
+                    shell?.OpenDocument(shell?.CurrentSolution?.FindFile(selectedFrame.Model.FullFileName), selectedFrame.Model.Line, 1, true, true);					
 				}
 
 				this.RaisePropertyChanged(nameof(SelectedFrame));
@@ -42,7 +44,8 @@ namespace AvalonStudio.Debugging
 
 		public ObservableCollection<FrameViewModel> Frames { get; set; }
 
-		public override Location DefaultLocation
+
+        public override Location DefaultLocation
 		{
 			get { return Location.BottomRight; }
 		}

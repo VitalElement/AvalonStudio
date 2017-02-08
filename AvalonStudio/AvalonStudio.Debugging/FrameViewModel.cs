@@ -32,11 +32,11 @@ namespace AvalonStudio.Debugging
 		{
 			get
 			{
-				if (Model.File != null)
+				if (Model.FullFileName != null)
 				{
-					var filePath = Path.GetDirectoryName(Model.File);
+					var filePath = Path.GetDirectoryName(Model.FullFileName);
 
-					var file = Path.GetFileName(Model.File);
+					var file = Path.GetFileName(Model.FullFileName);
 
 					var relativePath = filePath.MakeRelativePath(_debugManager.Project.CurrentDirectory);
 

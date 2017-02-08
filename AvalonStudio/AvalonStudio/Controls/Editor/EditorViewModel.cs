@@ -398,9 +398,9 @@ namespace AvalonStudio.Controls
         {
             get
             {
-                switch (Platform.PlatformIdentifier)
+                switch (Platform.OSDescription)
                 {
-                    case PlatformID.Unix:
+                    case "Unix":
                         return "Inconsolata";
 
                     default:
@@ -592,7 +592,7 @@ namespace AvalonStudio.Controls
 
                     if (evaluatedExpression != null)
                     {
-                        var newToolTip = new DebugHoverProbeViewModel(debugManager);
+                        var newToolTip = new DebugHoverProbeViewModel();
                         newToolTip.AddExistingWatch(evaluatedExpression);
 
                         ToolTip = newToolTip;

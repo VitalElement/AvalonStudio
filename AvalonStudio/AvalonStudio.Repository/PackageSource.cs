@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
+using System.Threading.Tasks;
 using LibGit2Sharp;
 
 namespace AvalonStudio.Repositories
@@ -21,7 +22,7 @@ namespace AvalonStudio.Repositories
 			LibGit2Sharp.Repository.Clone(Url, CatalogDirectory);
 		}
 
-		public Repository DownloadCatalog()
+		public async Task<Repository> DownloadCatalog()
 		{
 			if (Directory.Exists(CatalogDirectory))
 			{
@@ -29,8 +30,7 @@ namespace AvalonStudio.Repositories
 				{
 					var repo = new LibGit2Sharp.Repository(CatalogGitDirectory);
 
-					repo.Network.Pull(new Signature("AvalonStudio", "catalog@avalonstudio", new DateTimeOffset(DateTime.Now)),
-						new PullOptions());
+					await Task.Factory.StartNew(()=>{LibGit2Sharp.Commands.Pull(repo, new Signature("AvalonStudio", "catalog@avalonstudio", new DateTimeOffset(DateTime.Now)), new PullOptions());});
 				}
 				else
 				{
@@ -68,7 +68,9 @@ namespace AvalonStudio.Repositories
 
 		public static void InitialisePackageSources()
 		{
-			if (!File.Exists(Platform.PackageSourcesFile))
+            PackageSources result = null;
+
+			if (!File.Exists(Platform.PackageSourcesFile) || (result =SerializedObject.Deserialize<PackageSources>(Platform.PackageSourcesFile)) == null)
 			{
 				var sources = new PackageSources();
 
@@ -78,10 +80,10 @@ namespace AvalonStudio.Repositories
 					Url = "https://github.com/VitalElement/AvalonStudio.Repository"
 				});
 
-                SerializedObject.Serialize(Platform.PackageSourcesFile, sources);				
-			}
+                SerializedObject.Serialize(Platform.PackageSourcesFile, sources);
 
-			var result = SerializedObject.Deserialize<PackageSources>(Platform.PackageSourcesFile);
+                result = sources;
+			}
 
 			Instance = result;
 		}
