@@ -313,7 +313,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        public virtual async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
+        public virtual async Task<bool> StartAsync (IToolChain toolchain, IConsole console, IProject project, string gdbExecutable = "", bool loadExecutableAsArgument = true,  string workingDirectory = "")
         {
             this.console = console;
             var startInfo = new ProcessStartInfo();
@@ -323,19 +323,35 @@ namespace AvalonStudio.Debugging.GDB
             // This information should be part of this extension... or configurable internally?
             // This maybe indicates that debuggers are part of toolchain?
 
-            if (toolchain is GCCToolchain)
+            if (gdbExecutable == string.Empty)
             {
-                startInfo.FileName = (toolchain as GCCToolchain).GDBExecutable;
+                if (toolchain is GCCToolchain)
+                {
+                    startInfo.FileName = (toolchain as GCCToolchain).GDBExecutable;
+                }
+                else
+                {
+                    console.WriteLine("[GDB] - Error GDB is not able to debug projects compiled on this kind of toolchain (" +
+                                      toolchain.GetType() + ")");
+                    return false;
+                }
             }
             else
             {
-                console.WriteLine("[GDB] - Error GDB is not able to debug projects compiled on this kind of toolchain (" +
-                                  toolchain.GetType() + ")");
-                return false;
+                startInfo.FileName = gdbExecutable;
             }
 
-            startInfo.Arguments = string.Format("--interpreter=mi \"{0}\"",
-                Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
+            startInfo.Arguments = "--interpreter=mi";
+
+            if(workingDirectory != string.Empty)
+            {
+                startInfo.WorkingDirectory = workingDirectory;
+            }
+
+            if (loadExecutableAsArgument)
+            {
+               startInfo.Arguments +=  string.Format(" \"{0}\"", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
+            }
 
             if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
             {
@@ -422,6 +438,11 @@ namespace AvalonStudio.Debugging.GDB
 
             return true;
         }
+
+		public virtual async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
+		{
+            return await StartAsync(toolchain, console, project, string.Empty);
+		}
 
         public event EventHandler<StopRecord> Stopped;
 
