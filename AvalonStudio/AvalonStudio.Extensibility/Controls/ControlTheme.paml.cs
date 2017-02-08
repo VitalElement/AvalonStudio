@@ -6,7 +6,7 @@ using AvalonStudio.Extensibility.Plugin;
 
 namespace AvalonStudio.Extensibility.Controls
 {
-	public class ControlTheme : Styles, IExtension
+	public class ControlTheme : Styles
 	{
         static ControlTheme()
         {
@@ -15,7 +15,7 @@ namespace AvalonStudio.Extensibility.Controls
 
 		public ControlTheme()
 		{
-			AvaloniaXamlLoader.Load(this);
+            
 		}
 
         public void Activation()

@@ -2,11 +2,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Languages.CPlusPlus;
-using AvalonStudio.Models.Tools.Debuggers.Local;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Shell;
+using AvalonStudio.Debuggers.GDB.Local;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
