@@ -11,6 +11,16 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public string Title => "Empty C# Project (OmniSharp)";
 
+        public void Activation()
+        {
+            
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
         public Task<IProject> Generate(ISolution solution, string name)
         {
             throw new NotImplementedException();

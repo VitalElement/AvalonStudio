@@ -15,7 +15,7 @@ namespace AvalonStudio.Debugging.GDB
 			}
 
 			this.expression = expression;
-			commandText = string.Format("-var-create {0} {1} {2}", id, typeChar, expression);
+			commandText = string.Format("-var-create {0} {1} \"{2}\"", id, typeChar, expression);
 		}
 
 		public override int TimeoutMs
