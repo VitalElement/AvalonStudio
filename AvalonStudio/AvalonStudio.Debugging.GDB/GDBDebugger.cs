@@ -20,7 +20,7 @@ namespace AvalonStudio.Debugging.GDB
         private CancellationTokenSource closeTokenSource;
 
         protected IConsole console;
-        protected bool asyncModeEnabled;
+        private bool asyncModeEnabled;
 
         private Command currentCommand;
 
@@ -41,6 +41,38 @@ namespace AvalonStudio.Debugging.GDB
         {
             StoppedEventIsEnabled = true;
             asyncModeEnabled = false;
+        }
+
+        protected void SetAsyncMode (bool enabled)
+        {
+            asyncModeEnabled = enabled;
+
+            if(!enabled && Platform.PlatformIdentifier == PlatformID.Windows)
+            {
+                // TODO check if this code can be removed, it was used to support  ctrl+c signals, but no longer seems
+                // to be needed for .net core.
+                var attempts = 0;
+                while (!Platform.FreeConsole() && attempts < 10)
+                {
+                    Console.WriteLine(Marshal.GetLastWin32Error());
+                    Thread.Sleep(10);
+                    attempts++;
+                }
+
+                attempts = 0;
+
+                while (!Platform.AttachConsole(process.Id) && attempts < 10)
+                {
+                    Thread.Sleep(10);
+                    attempts++;
+                }
+
+                while (!Platform.SetConsoleCtrlHandler(null, true))
+                {
+                    Console.WriteLine(Marshal.GetLastWin32Error());
+                    Thread.Sleep(10);
+                }
+            }
         }
 
         protected DebuggerState CurrentState
@@ -126,6 +158,8 @@ namespace AvalonStudio.Debugging.GDB
 
         public void Initialise()
         {
+            StoppedEventIsEnabled = true;
+            asyncModeEnabled = false;
             responseReceived = new SemaphoreSlim(0, 1);
             currentState = DebuggerState.NotRunning;
         }
@@ -279,7 +313,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        public virtual async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
+        public virtual async Task<bool> StartAsync (IToolChain toolchain, IConsole console, IProject project, string gdbExecutable = "", bool loadExecutableAsArgument = true,  string workingDirectory = "")
         {
             this.console = console;
             var startInfo = new ProcessStartInfo();
@@ -289,19 +323,35 @@ namespace AvalonStudio.Debugging.GDB
             // This information should be part of this extension... or configurable internally?
             // This maybe indicates that debuggers are part of toolchain?
 
-            if (toolchain is GCCToolchain)
+            if (gdbExecutable == string.Empty)
             {
-                startInfo.FileName = (toolchain as GCCToolchain).GDBExecutable;
+                if (toolchain is GCCToolchain)
+                {
+                    startInfo.FileName = (toolchain as GCCToolchain).GDBExecutable;
+                }
+                else
+                {
+                    console.WriteLine("[GDB] - Error GDB is not able to debug projects compiled on this kind of toolchain (" +
+                                      toolchain.GetType() + ")");
+                    return false;
+                }
             }
             else
             {
-                console.WriteLine("[GDB] - Error GDB is not able to debug projects compiled on this kind of toolchain (" +
-                                  toolchain.GetType() + ")");
-                return false;
+                startInfo.FileName = gdbExecutable;
             }
 
-            startInfo.Arguments = string.Format("--interpreter=mi \"{0}\"",
-                Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
+            startInfo.Arguments = "--interpreter=mi";
+
+            if(workingDirectory != string.Empty)
+            {
+                startInfo.WorkingDirectory = workingDirectory;
+            }
+
+            if (loadExecutableAsArgument)
+            {
+               startInfo.Arguments +=  string.Format(" \"{0}\"", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath());
+            }
 
             if (Path.IsPathRooted(startInfo.FileName) && !System.IO.File.Exists(startInfo.FileName))
             {
@@ -319,28 +369,6 @@ namespace AvalonStudio.Debugging.GDB
             process = Process.Start(startInfo);
 
             input = process.StandardInput;
-
-            var attempts = 0;
-            while (!Platform.FreeConsole() && attempts < 10)
-            {
-                Console.WriteLine(Marshal.GetLastWin32Error());
-                Thread.Sleep(10);
-                attempts++;
-            }
-
-            attempts = 0;
-
-            while (!Platform.AttachConsole(process.Id) && attempts < 10)
-            {
-                Thread.Sleep(10);
-                attempts++;
-            }
-
-            while (!Platform.SetConsoleCtrlHandler(null, true))
-            {
-                Console.WriteLine(Marshal.GetLastWin32Error());
-                Thread.Sleep(10);
-            }
 
             TaskCompletionSource<JobRunner> transmitRunnerSet = new TaskCompletionSource<JobRunner>();
 
@@ -389,9 +417,12 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     process.WaitForExit();
 
-                    Platform.FreeConsole();
+                    if (!asyncModeEnabled && Platform.PlatformIdentifier == PlatformID.Windows)
+                    {
+                        Platform.FreeConsole();
 
-                    Platform.SetConsoleCtrlHandler(null, false);
+                        Platform.SetConsoleCtrlHandler(null, false);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -407,6 +438,11 @@ namespace AvalonStudio.Debugging.GDB
 
             return true;
         }
+
+		public virtual async Task<bool> StartAsync(IToolChain toolchain, IConsole console, IProject project)
+		{
+            return await StartAsync(toolchain, console, project, string.Empty);
+		}
 
         public event EventHandler<StopRecord> Stopped;
 

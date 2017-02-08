@@ -69,9 +69,21 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public IProject StartupProject { get; set; }
 
-        public ISourceFile FindFile(string path)
+        public ISourceFile FindFile(string file)
         {
-            throw new NotImplementedException();
+            ISourceFile result = null;
+
+            foreach (var project in Projects)
+            {
+                result = project.FindFile(file);
+
+                if (result != null)
+                {
+                    break;
+                }
+            }
+
+            return result;
         }
 
         public void RemoveProject(IProject project)
@@ -81,7 +93,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public void Save()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

@@ -151,6 +151,7 @@
                     if (filter == string.Empty || completion.CompletionText.StartsWith(filter))
                     {
                         result.Completions.Add(newCompletion);
+                        result.Contexts = CompletionContext.Unknown;
                     }
                 }
             }
@@ -165,7 +166,7 @@
 
         public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
-            throw new NotImplementedException();
+            return cursor;
         }
 
         public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
@@ -360,6 +361,16 @@
             }
 
             return result;
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            
         }
     }
 
