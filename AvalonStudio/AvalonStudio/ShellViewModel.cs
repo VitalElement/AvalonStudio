@@ -144,7 +144,7 @@ namespace AvalonStudio
                 _debuggers.ConsumeExtension(extension);
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
-                
+                _testFrameworks.ConsumeExtension(extension);
                 
                 _commandDefinitions.ConsumeExtension(extension);
             }

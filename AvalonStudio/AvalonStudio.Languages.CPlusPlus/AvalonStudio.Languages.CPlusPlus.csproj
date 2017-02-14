@@ -4,13 +4,13 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build2612-alpha" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational.Design" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="1.1.0" />
+    <PackageReference Include="Avalonia" Version="0.4.1-build2636-alpha" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\nclang\NClang\NClang.csproj" />
