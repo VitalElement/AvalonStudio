@@ -75,10 +75,10 @@
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build2636-alpha" />
-    <PackageReference Include="Avalonia.Gtk3" Version="0.4.1-build2636-alpha" />
-    <PackageReference Include="Avalonia.Skia.Desktop" Version="0.4.1-build2636-alpha" />
-    <PackageReference Include="Avalonia.Win32" Version="0.4.1-build2636-alpha" />
+    <PackageReference Include="Avalonia" Version="0.4.1-build2661-alpha" />
+    <PackageReference Include="Avalonia.Gtk3" Version="0.4.1-build2661-alpha" />
+    <PackageReference Include="Avalonia.Skia.Desktop" Version="0.4.1-build2661-alpha" />
+    <PackageReference Include="Avalonia.Win32" Version="0.4.1-build2661-alpha" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.4.1-build332-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
