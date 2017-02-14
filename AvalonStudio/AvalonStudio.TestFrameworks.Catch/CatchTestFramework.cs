@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,7 +12,15 @@ namespace AvalonStudio.TestFrameworks.Catch
 {
 	public class CatchTestFramework : ITestFramework
 	{
-		public async Task<IEnumerable<Test>> EnumerateTestsAsync(IProject project)
+        public void Activation()
+        {
+        }
+
+        public void BeforeActivation()
+        {
+        }
+
+        public async Task<IEnumerable<Test>> EnumerateTestsAsync(IProject project)
 		{
 			var result = new List<Test>();
 
