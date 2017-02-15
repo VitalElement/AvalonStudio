@@ -574,7 +574,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         var existingFile = db.GetOrCreateSourceFile(file, out bool modified);
 
-                        if(modified)
+                        //if(modified)
                         {
                             console.WriteLine($"Analysing File: {file.Location}");
 
@@ -599,7 +599,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                                         callbacks.IndexDeclaration += (sender, e) =>
                                         {
-                                            if (e.Location.SourceLocation.IsFromMainFile)
+                                            if (e.Cursor.Location.IsInSystemHeader)
+                                            {
+                                                // TODO keep track of headers already indexed and make a quick decision on if we need
+                                                // to track these symbols.                                        
+                                            }
+                                            else
                                             {
                                                 var usr = db.GetSymbolReference(e.EntityInfo.USR);
 
@@ -623,22 +628,28 @@ namespace AvalonStudio.Languages.CPlusPlus
                                                 {
                                                     definitionsToAdd.Add(usr, newSymbol);
                                                 }
-                                            }
-                                            else if (e.Cursor.Location.IsInSystemHeader)
-                                            {
-                                            // TODO keep track of headers already indexed and make a quick decision on if we need
-                                            // to track these symbols.                                        
-                                        }
-                                            else
-                                            {
-
+                                                else // TODO test for declaration.
+                                                {
+                                                    symbolsToAdd.Add(newSymbol);
+                                                }
                                             }
                                         };
 
-                                    //callbacks.IndexEntityReference += (sender, e) =>
-                                    //{
-                                    //    Console.WriteLine($"index entity ref {e.Cursor.UnifiedSymbolResolution}");
-                                    //};
+                                    callbacks.IndexEntityReference += (sender, e) =>
+                                    {
+                                        var usr = db.GetSymbolReference(e.Cursor.Referenced.UnifiedSymbolResolution);
+
+                                        if(usr == null)
+                                        {
+                                            uniqueSymbols.TryGetValue(e.Cursor.Referenced.UnifiedSymbolResolution, out usr);
+                                        }
+
+                                        if (usr != null)
+                                        {
+                                            var newSymbol = new ProjectDatabase.Symbol() { SymbolReference = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column };
+                                            symbolsToAdd.Add(newSymbol);                                            
+                                        }
+                                    };
 
                                     indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
 
