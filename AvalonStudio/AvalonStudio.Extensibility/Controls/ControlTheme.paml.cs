@@ -8,22 +8,9 @@ namespace AvalonStudio.Extensibility.Controls
 {
 	public class ControlTheme : Styles
 	{
-        static ControlTheme()
-        {
-            Application.Current.Styles.Add(new ControlTheme());
-        }
-
 		public ControlTheme()
 		{
             
 		}
-
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-        }
     }
 }
