@@ -786,12 +786,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                     AddArgument(args, string.Format("-I{0}", include));
                 }
 
-                // public includes
-                foreach (var include in project.PublicIncludes)
-                {
-                    AddArgument(args, string.Format("-I{0}", include));
-                }
-
                 // includes
                 foreach (var include in project.Includes)
                 {
