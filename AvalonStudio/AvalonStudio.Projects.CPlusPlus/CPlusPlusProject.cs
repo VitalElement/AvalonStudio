@@ -473,7 +473,14 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             foreach (var includePath in Includes.Where(i => i.Exported && !i.Global))
             {
-                result.Add(Path.Combine(CurrentDirectory, includePath.Value).ToPlatformPath());
+                if (includePath.Value != string.Empty && includePath.Value != "./")
+                {
+                    result.Add(Path.Combine(CurrentDirectory, includePath.Value).ToPlatformPath());
+                }
+                else
+                {
+                    result.Add(CurrentDirectory.Substring(0, CurrentDirectory.Length - 1).ToPlatformPath());
+                }
             }
 
             return result;
