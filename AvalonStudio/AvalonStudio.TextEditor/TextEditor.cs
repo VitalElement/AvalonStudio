@@ -695,7 +695,7 @@ namespace AvalonStudio.TextEditor
                 return;
             }
 
-            HandleTextInput(text);
+            HandleTextInput(text.Replace("\t", TabCharacter));
         }
 
         private void Undo()
