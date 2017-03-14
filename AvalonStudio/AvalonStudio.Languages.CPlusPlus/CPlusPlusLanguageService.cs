@@ -61,7 +61,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IEnumerable<char> IntellisenseTriggerCharacters { get { return new[] { '.', '>', ':' }; } }
 
-        public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#' }; } }
+        public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ',' }; } }
 
         public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
 
@@ -782,12 +782,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                 var globalIncludes = superProject.GetGlobalIncludes();
 
                 foreach (var include in globalIncludes)
-                {
-                    AddArgument(args, string.Format("-I{0}", include));
-                }
-
-                // public includes
-                foreach (var include in project.PublicIncludes)
                 {
                     AddArgument(args, string.Format("-I{0}", include));
                 }

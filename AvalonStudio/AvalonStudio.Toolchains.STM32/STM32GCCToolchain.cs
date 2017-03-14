@@ -330,12 +330,6 @@ namespace AvalonStudio.Toolchains.STM32
                 result += string.Format("-I\"{0}\" ", include);
             }
 
-            // public includes
-            foreach (var include in project.PublicIncludes)
-            {
-                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
-            }
-
             // includes
             foreach (var include in project.Includes)
             {
