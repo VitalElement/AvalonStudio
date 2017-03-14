@@ -38,10 +38,6 @@ namespace AvalonStudio.Projects.Standard
 
 		IList<Definition> Defines { get; }
 
-		IList<string> PublicIncludes { get; }
-
-		IList<string> GlobalIncludes { get; }
-
 		IList<Include> Includes { get; }
 
 		IList<ISourceFile> SourceFiles { get; }
