@@ -125,7 +125,7 @@ namespace AvalonStudio.Toolchains.Clang
                     break;
 
                 case LibraryType.Retarget:
-                    result += "-lm -lc -lnosys -lstdc++ -lsupc++ ";
+                    result += "-lm -lc -lg -lnosys -lstdc++ -lsupc++ ";
                     break;
             }
 
@@ -136,7 +136,7 @@ namespace AvalonStudio.Toolchains.Clang
         {
             var settings = GetSettings(project);
 
-            if(superProject != null && project.Type != ProjectType.StaticLibrary)
+            if (superProject != null && settings.LinkSettings.UseMemoryLayout && project.Type != ProjectType.StaticLibrary)
             {
                 GenerateLinkerScript(superProject);
             }
@@ -185,7 +185,10 @@ namespace AvalonStudio.Toolchains.Clang
                     break;
             }
 
-            result += string.Format(" -L{0} -Wl,-T\"{1}\"", project.CurrentDirectory, GetLinkerScriptLocation(project));
+            if (settings.LinkSettings.UseMemoryLayout)
+            {
+                result += string.Format(" -L{0} -Wl,-T\"{1}\"", project.CurrentDirectory, GetLinkerScriptLocation(project));
+            }
 
             return result;
         }
@@ -363,12 +366,6 @@ namespace AvalonStudio.Toolchains.Clang
             foreach (var include in globalIncludes)
             {
                 result += string.Format("-I\"{0}\" ", include);
-            }
-
-            // public includes
-            foreach (var include in project.PublicIncludes)
-            {
-                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
             }
 
             // includes

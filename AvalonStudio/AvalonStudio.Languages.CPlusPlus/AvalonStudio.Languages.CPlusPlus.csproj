@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build2661-alpha" />
+    <PackageReference Include="Avalonia" Version="0.4.1-build2788-alpha" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\nclang\NClang\NClang.csproj" />

@@ -49,8 +49,6 @@ namespace AvalonStudio.Projects.CPlusPlus
             UnloadedReferences = new List<Reference>();
             StaticLibraries = new List<string>();
             References = new ObservableCollection<IProject>();
-            PublicIncludes = new List<string>();
-            GlobalIncludes = new List<string>();
             Includes = new List<Include>();
             Defines = new List<Definition>();
             CompilerArguments = new List<string>();
@@ -236,10 +234,6 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         [JsonIgnore]
         public override ObservableCollection<IProject> References { get; }
-
-        public IList<string> PublicIncludes { get; }
-
-        public IList<string> GlobalIncludes { get; }
 
         public IList<Include> Includes { get; }
 
@@ -479,7 +473,14 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             foreach (var includePath in Includes.Where(i => i.Exported && !i.Global))
             {
-                result.Add(Path.Combine(CurrentDirectory, includePath.Value).ToPlatformPath());
+                if (includePath.Value != string.Empty && includePath.Value != "./")
+                {
+                    result.Add(Path.Combine(CurrentDirectory, includePath.Value).ToPlatformPath());
+                }
+                else
+                {
+                    result.Add(CurrentDirectory.Substring(0, CurrentDirectory.Length - 1).ToPlatformPath());
+                }
             }
 
             return result;
@@ -535,17 +536,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         public bool ShouldSerializeReferences()
         {
             return UnloadedReferences.Count > 0;
-        }
-
-        public bool ShouldSerializePublicIncludes()
-        {
-            return PublicIncludes.Count > 0;
-        }
-
-
-        public bool ShouldSerializeGlobalIncludes()
-        {
-            return GlobalIncludes.Count > 0;
         }
 
         public bool ShouldSerializeIncludes()
