@@ -2,14 +2,10 @@ version: 0.2.0.{build}
 before_build:
 - cmd: >-
     git submodule update --init --recursive
-
-- ps: (new-object net.webclient).DownloadFile('https://dotnetcli.blob.core.windows.net/dotnet/Sdk/rel-1.0.0/dotnet-dev-win-x64.latest.exe', "c:/dotnet-install.exe")
-- ps: Start-Process c:\dotnet-install.exe -ArgumentList "/install","/quiet" -Wait
-
+    
 build_script:
 - ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
-- cmd: tree /f
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r win7-x64
 - ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r win7-x64
 - ps: dotnet publish .\AvalonStudio\AvalonStudioBuild\AvalonStudioBuild.csproj -c Release -r win7-x64
