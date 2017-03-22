@@ -1,10 +1,11 @@
 version: 0.2.0.{build}
+install:
+  - if not exist dotnet-1.0.1.exe appveyor DownloadFile https://go.microsoft.com/fwlink/?linkid=843448 -FileName "dotnet-1.0.1.exe"
+  - ps: Start-Process -FilePath "dotnet-1.0.1.exe" -ArgumentList "/quiet" -Wait
+
 before_build:
 - cmd: >-
     git submodule update --init --recursive
-
-- ps: (new-object net.webclient).DownloadFile('https://dotnetcli.blob.core.windows.net/dotnet/Sdk/rel-1.0.0/dotnet-dev-win-x64.latest.exe', "c:/dotnet-install.exe")
-- ps: Start-Process c:\dotnet-install.exe -ArgumentList "/install","/quiet" -Wait
 
 build_script:
 - ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
@@ -48,12 +49,17 @@ artifacts:
 - path: AvalonBuild-osx.10.12-x64.zip
 - path: latest-version-badge.svg
 
+cache:
+  - gtk-sharp-2.12.26.msi
+  - dotnet-1.0.1.exe
+
 deploy:
 - provider: Environment
   name: FastRing
   on:
     branch: master
     APPVEYOR_REPO_TAG: true
+    
 notifications:
 - provider: Webhook
   url: https://webhooks.gitter.im/e/e8ce2449e773a183903b
