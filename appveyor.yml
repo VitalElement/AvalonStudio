@@ -12,7 +12,7 @@ build_script:
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r win7-x64
 - ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r win7-x64
-- ps: C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\bin\HostX86\x86\editbin.exe /subsystem:windows %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\win7-x64\publish\AvalonStudio.exe
+- ps: "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\bin\HostX86\x86\editbin.exe" /subsystem:windows %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\win7-x64\publish\AvalonStudio.exe
 - ps: dotnet publish .\AvalonStudio\AvalonStudioBuild\AvalonStudioBuild.csproj -c Release -r win7-x64
 - ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r ubuntu.14.04-x64
 - ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r ubuntu.14.04-x64
@@ -59,7 +59,7 @@ deploy:
   on:
     branch: master
     APPVEYOR_REPO_TAG: true
-    
+
 notifications:
 - provider: Webhook
   url: https://webhooks.gitter.im/e/e8ce2449e773a183903b
