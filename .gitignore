@@ -5,6 +5,8 @@
 *.suo
 *.user
 *.sln.docstates
+artifacts
+tools
 .vs
 
 # Build results

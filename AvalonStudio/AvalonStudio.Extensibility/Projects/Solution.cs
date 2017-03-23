@@ -96,6 +96,8 @@ namespace AvalonStudio.Projects
 			if (projectType != null)
 			{
 				result = projectType.Load(solution, fileName);
+
+                result.ResolveReferences();
 			}
 
 			result.ToolChain?.ProvisionSettings(result);
