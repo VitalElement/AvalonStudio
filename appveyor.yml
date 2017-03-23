@@ -9,17 +9,19 @@ before_build:
     git submodule update --init --recursive
 
 build_script:
+- ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
+- ps: .\download.ps1 $url1 "latest-version-badge.svg"
 - ps: .\build.ps1
 
 artifacts:
 - path: artifacts/zip/AvalonStudio-win7-x64.zip
-- path: artifacts/zip/AvalonBuild-win7-x64.zip
+- path: artifacts/zip/AvalonStudioBuild-win7-x64.zip
 - path: artifacts/zip/AvalonStudio-ubuntu.14.04-x64.zip
-- path: artifacts/zip/AvalonBuild-ubuntu.14.04-x64.zip
+- path: artifacts/zip/AvalonStudioBuild-ubuntu.14.04-x64.zip
 - path: artifacts/zip/AvalonStudio-debian.8-x64.zip
-- path: artifacts/zip/AvalonBuild-debian.8-x64.zip
-- path: artifacts/zip/valonStudio-osx.10.12-x64.zip
-- path: artifacts/zip/AvalonBuild-osx.10.12-x64.zip
+- path: artifacts/zip/AvalonStudioBuild-debian.8-x64.zip
+- path: artifacts/zip/AvalonStudio-osx.10.12-x64.zip
+- path: artifacts/zip/AvalonStudioBuild-osx.10.12-x64.zip
 - path: latest-version-badge.svg
 
 cache:
