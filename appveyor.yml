@@ -8,7 +8,7 @@ before_build:
     git submodule update --init --recursive
 
 build_script:
-- ps: build.ps1
+- ps: .\build.ps1 -Platform $env:platform -Configuration $env:configuration
 
 artifacts:
 - path: artifacts/zip/AvalonStudio-win7-x64.zip
@@ -23,7 +23,7 @@ artifacts:
 
 cache:
   - dotnet-1.0.1.exe
-  
+
 deploy:
 - provider: Environment
   name: FastRing
