@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <AssemblyName>avalon</AssemblyName>
     <PreserveCompilationContext>true</PreserveCompilationContext>
+    <RuntimeIdentifiers>win7-x64;ubuntu.14.04-x64;debian.8-x64;osx.10.12-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
