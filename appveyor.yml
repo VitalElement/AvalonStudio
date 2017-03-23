@@ -8,51 +8,22 @@ before_build:
     git submodule update --init --recursive
 
 build_script:
-- ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
-- ps: .\download.ps1 $url1 "latest-version-badge.svg"
-- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r win7-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r win7-x64
-- cmd: 'c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\bin\HostX86\x86\editbin.exe' /subsystem:windows %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\win7-x64\publish\AvalonStudio.exe
-- ps: dotnet publish .\AvalonStudio\AvalonStudioBuild\AvalonStudioBuild.csproj -c Release -r win7-x64
-- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r ubuntu.14.04-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r ubuntu.14.04-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudioBuild\AvalonStudioBuild.csproj -c Release -r ubuntu.14.04-x64
-- ps: (new-object net.webclient).DownloadFile('https://www.dropbox.com/s/k1bzo926nod5r55/libskia.so?dl=1', "C:\projects\avalonstudio\libskia.so")
-- ps: (new-object net.webclient).DownloadFile('https://www.dropbox.com/s/xk9uvkk0le6uvuh/libSkiaSharp.so?dl=1', "C:\projects\avalonstudio\libSkiaSharp.dylib.so")
-- ps: cp C:\projects\avalonstudio\libskia.so C:\projects\avalonstudio\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\
-- ps: cp C:\projects\avalonstudio\libSkiaSharp.dylib.so C:\projects\avalonstudio\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\
-- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r debian.8-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r debian.8-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudioBuild\AvalonStudioBuild.csproj -c Release -r debian.8-x64
-- ps: dotnet restore .\AvalonStudio\AvalonStudio.sln --no-cache -r osx.10.12-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudio\AvalonStudio.csproj -c Release -r osx.10.12-x64
-- ps: dotnet publish .\AvalonStudio\AvalonStudioBuild\AvalonStudioBuild.csproj -c Release -r osx.10.12-x64
-
-after_build:
-- cmd: 7z a -r AvalonStudio-win7-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\win7-x64\publish\*.*
-- cmd: 7z a -r AvalonBuild-win7-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudioBuild\bin\Release\netcoreapp1.1\win7-x64\publish\*.*
-- cmd: 7z a -r AvalonStudio-ubuntu.14.04-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\*.*
-- cmd: 7z a -r AvalonBuild-ubuntu.14.04-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudioBuild\bin\Release\netcoreapp1.1\ubuntu.14.04-x64\publish\*.*
-- cmd: 7z a -r AvalonStudio-debian.8-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\debian.8-x64\publish\*.*
-- cmd: 7z a -r AvalonBuild-debian.8-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudioBuild\bin\Release\netcoreapp1.1\debian.8-x64\publish\*.*
-- cmd: 7z a -r AvalonStudio-osx.10.12-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudio\bin\Release\netcoreapp1.1\osx.10.12-x64\publish\*.*
-- cmd: 7z a -r AvalonBuild-osx.10.12-x64.zip %APPVEYOR_BUILD_FOLDER%\AvalonStudio\AvalonStudioBuild\bin\Release\netcoreapp1.1\osx.10.12-x64\publish\*.*
+- ps: build.ps1
 
 artifacts:
-- path: AvalonStudio-win7-x64.zip
-- path: AvalonBuild-win7-x64.zip
-- path: AvalonStudio-ubuntu.14.04-x64.zip
-- path: AvalonBuild-ubuntu.14.04-x64.zip
-- path: AvalonStudio-debian.8-x64.zip
-- path: AvalonBuild-debian.8-x64.zip
-- path: AvalonStudio-osx.10.12-x64.zip
-- path: AvalonBuild-osx.10.12-x64.zip
+- path: artifacts/zip/AvalonStudio-win7-x64.zip
+- path: artifacts/zip/AvalonBuild-win7-x64.zip
+- path: artifacts/zip/AvalonStudio-ubuntu.14.04-x64.zip
+- path: artifacts/zip/AvalonBuild-ubuntu.14.04-x64.zip
+- path: artifacts/zip/AvalonStudio-debian.8-x64.zip
+- path: artifacts/zip/AvalonBuild-debian.8-x64.zip
+- path: artifacts/zip/valonStudio-osx.10.12-x64.zip
+- path: artifacts/zip/AvalonBuild-osx.10.12-x64.zip
 - path: latest-version-badge.svg
 
 cache:
-  - gtk-sharp-2.12.26.msi
   - dotnet-1.0.1.exe
-
+  
 deploy:
 - provider: Environment
   name: FastRing

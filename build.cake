@@ -10,7 +10,7 @@ var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC
 var artifactsDir = (DirectoryPath)Directory("./artifacts");
 var zipRootDir = artifactsDir.Combine("zip");
 
-var fileZipSuffix = configuration + "-" + version + ".zip";
+var fileZipSuffix = ".zip";
 
 var buildDirs = GetDirectories("./AvalonStudio/AvalonStudio/**/bin/**") + 
     GetDirectories("./AvalonStudio/AvalonStudio/**/obj/**") + 
