@@ -10,33 +10,69 @@ namespace AvalonStudio.Shell
     using AvalonStudio.TestFrameworks;
     using AvalonStudio.Toolchains;
     using System;
+    using System.Composition;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel.Composition;
+    using System.Collections.ObjectModel;    
     using System.Threading.Tasks;
+    using AvalonStudio.Extensibility.Plugin;
 
-    [Export(typeof (IShell))]
-	public class MinimalShell : IShell
+    static class ListExtensions
+    {
+        public static void ConsumeExtension<T>(this List<T> destination, IExtension extension) where T : class, IExtension
+        {
+            if (extension is T)
+            {
+                destination.Add(extension as T);
+            }
+        }
+    }
+
+    [Export]
+    public class MinimalShell : IShell
 	{
 		public static IShell Instance = null;
 
-		[ImportingConstructor]
-		public MinimalShell([ImportMany] IEnumerable<ILanguageService> languageServices, [ImportMany] IEnumerable<ISolutionType> solutionTypes,
-			[ImportMany] IEnumerable<IProject> projectTypes, [ImportMany] IEnumerable<IProjectTemplate> projectTemplates,
-			[ImportMany] IEnumerable<IToolChain> toolChains, [ImportMany] IEnumerable<IDebugger> debuggers,
-			[ImportMany] IEnumerable<ITestFramework> testFrameworks, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates)
-		{
-			LanguageServices = languageServices;
-			ProjectTemplates = projectTemplates;
-			ToolChains = toolChains;
-			Debuggers = debuggers;
-            SolutionTypes = solutionTypes;
-			ProjectTypes = projectTypes;
-			TestFrameworks = testFrameworks;
-			CodeTemplates = codeTemplates;
+        private List<ILanguageService> _languageServices;
+        private List<IProjectTemplate> _projectTemplates;
+        private List<ISolutionType> _solutionTypes;
+        private List<IProjectType> _projectTypes;
+        private List<IToolChain> _toolChains;
+        private List<IDebugger> _debuggers;
+        private List<ITestFramework> _testFrameworks;
 
-			IoC.RegisterConstant(this, typeof (IShell));
-		}
+        [ImportingConstructor]
+		public MinimalShell([ImportMany] IEnumerable<IExtension> extensions)
+		{
+            _languageServices = new List<ILanguageService>();
+            _projectTemplates = new List<IProjectTemplate>();
+            _debuggers = new List<IDebugger>();
+            _projectTypes = new List<IProjectType>();
+            _solutionTypes = new List<ISolutionType>();
+            _testFrameworks = new List<ITestFramework>();
+            _toolChains = new List<IToolChain>();
+
+            IoC.RegisterConstant(this, typeof (IShell));
+
+            foreach (var extension in extensions)
+            {
+                extension.BeforeActivation();
+            }
+
+            foreach (var extension in extensions)
+            {
+                extension.Activation();
+
+                _languageServices.ConsumeExtension(extension);
+                _toolChains.ConsumeExtension(extension);
+                _projectTemplates.ConsumeExtension(extension);
+                _debuggers.ConsumeExtension(extension);
+                _solutionTypes.ConsumeExtension(extension);
+                _projectTypes.ConsumeExtension(extension);
+                _testFrameworks.ConsumeExtension(extension);
+            }
+
+            IoC.RegisterConstant(this);
+        }
 
         event EventHandler<SolutionChangedEventArgs> IShell.SolutionChanged
         {
@@ -57,23 +93,21 @@ namespace AvalonStudio.Shell
             remove { }
         }
 
-		public IEnumerable<IProject> ProjectTypes { get; }
+        public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
-        public IEnumerable<ISolutionType> SolutionTypes { get; }
+        public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
 
-        public IEnumerable<IProjectTemplate> ProjectTemplates { get; }
+        public IEnumerable<IProjectTemplate> ProjectTemplates => _projectTemplates;
 
-		public IEnumerable<ICodeTemplate> CodeTemplates { get; }
+        public IEnumerable<ILanguageService> LanguageServices => _languageServices;
 
-		public IEnumerable<ILanguageService> LanguageServices { get; }
+        public IEnumerable<IToolChain> ToolChains => _toolChains;
 
-		public IEnumerable<IToolChain> ToolChains { get; }
+        public IEnumerable<IDebugger> Debuggers => _debuggers;
 
-		public IEnumerable<IDebugger> Debuggers { get; }
+        public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 
-		public IEnumerable<ITestFramework> TestFrameworks { get; }
-
-		public ISolution CurrentSolution
+        public ISolution CurrentSolution
 		{
 			get { throw new NotImplementedException(); }
 
@@ -110,7 +144,9 @@ namespace AvalonStudio.Shell
 		{
 			get { throw new NotImplementedException(); }
             set { throw new NotImplementedException(); }
-		}        
+		}
+
+        public IEnumerable<ICodeTemplate> CodeTemplates { get; }
 
         public Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
 			bool selectLine = false)

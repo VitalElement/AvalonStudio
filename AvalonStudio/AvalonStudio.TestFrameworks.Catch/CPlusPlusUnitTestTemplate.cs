@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Git;
-using AvalonStudio.Models.Tools.Debuggers.Local;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Shell;
@@ -12,6 +11,8 @@ using AvalonStudio.TestFrameworks.Catch;
 using AvalonStudio.Toolchains.LocalGCC;
 using AvalonStudio.Utils;
 using AvalonStudio.Toolchains.GCC;
+using AvalonStudio.Extensibility.Templating;
+using AvalonStudio.Debuggers.GDB.Local;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -84,7 +85,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 			// Reference catch.
 			project.AddReference(catchProject);
 
-			await SourceFile.Create(project, "UnitTest1.cpp", new UnitTestTemplate().TransformText());
+			await SourceFile.Create(project, "UnitTest1.cpp", Template.Engine.Parse("CatchUnitTest.template", new { }));
 
 			project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
 			project.Debugger = shell.Debuggers.FirstOrDefault(d => d is LocalDebugAdaptor);

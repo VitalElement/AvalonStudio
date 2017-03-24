@@ -2,6 +2,18 @@ namespace AvalonStudio.Debugging.GDB
 {
 	public class RunCommand : Command<GDBResponse<string>>
 	{
+        private string _args;
+
+        public RunCommand()
+        {
+            _args = string.Empty;
+        }
+
+        public RunCommand(string args)
+        {
+            _args = args;
+        }
+
 		public override int TimeoutMs
 		{
 			get { return DefaultCommandTimeout; }
@@ -9,7 +21,14 @@ namespace AvalonStudio.Debugging.GDB
 
 		public override string Encode()
 		{
-			return "-exec-run";
+            if (_args == string.Empty)
+            {
+                return "-exec-run";
+            }
+            else
+            {
+                return $"-exec-run {_args}";
+            }
 		}
 
 		protected override GDBResponse<string> Decode(string response)

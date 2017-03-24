@@ -83,12 +83,26 @@ namespace AvalonStudio.Languages
                 {
                     if (transform.Type != HighlightType.None)
                     {
-                        transformations.Add(new TextTransformation
+                        if (transform is LineColumnSyntaxHighlightingData)
                         {
-                            Foreground = GetBrush(transform.Type),
-                            StartOffset = transform.Start,
-                            EndOffset = transform.Start + transform.Length
-                        });
+                            var trans = transform as LineColumnSyntaxHighlightingData;
+
+                            transformations.Add(new TextTransformation
+                            {
+                                Foreground = GetBrush(transform.Type),
+                                StartOffset = document.GetOffset(trans.StartLine, trans.StartColumn),
+                                EndOffset = document.GetOffset(trans.EndLine, trans.EndColumn)
+                            });
+                        }
+                        else
+                        {
+                            transformations.Add(new TextTransformation
+                            {
+                                Foreground = GetBrush(transform.Type),
+                                StartOffset = transform.Start,
+                                EndOffset = transform.Start + transform.Length
+                            });
+                        }
                     }
                 }
 

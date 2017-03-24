@@ -97,22 +97,19 @@
         {
             unfilteredCompletions.Clear();
 
-            if (completionData.Contexts != CompletionContext.Unexposed)
+            foreach (var result in completionData.Completions)
             {
-                foreach (var result in completionData.Completions)
+                CompletionDataViewModel currentCompletion = null;
+
+                currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
+
+                if (currentCompletion == null)
                 {
-                    CompletionDataViewModel currentCompletion = null;
-
-                    currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
-
-                    if (currentCompletion == null)
-                    {
-                        unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
-                    }
-                    else
-                    {
-                        currentCompletion.Overloads++;
-                    }
+                    unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
+                }
+                else
+                {
+                    currentCompletion.Overloads++;
                 }
             }
         }

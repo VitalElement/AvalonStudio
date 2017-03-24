@@ -4,6 +4,7 @@ namespace AvalonStudio.Debugging
 {
 	public enum StopReason
 	{
+        EntryPointHit,
 		BreakPointHit,
 		WatchPointTrigger,
 		ReadWatchPointTrigger,

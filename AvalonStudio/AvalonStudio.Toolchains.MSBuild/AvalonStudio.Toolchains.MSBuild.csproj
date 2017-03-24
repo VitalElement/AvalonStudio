@@ -3,12 +3,10 @@
     <OutputType>library</OutputType>
     <TargetFramework>netcoreapp1.1</TargetFramework>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="RestSharp.NetCore" Version="105.2.4-rc4-24214-01" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Projects.OmniSharp\AvalonStudio.Projects.OmniSharp.csproj" />
   </ItemGroup>
 
 </Project>

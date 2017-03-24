@@ -7,7 +7,7 @@ using AvalonStudio.Utils;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
 
-namespace AvalonStudio.Models.Tools.Debuggers.Local
+namespace AvalonStudio.Debuggers.GDB.Local
 {
 	public class LocalDebugAdaptor : GDBDebugger
 	{
@@ -22,9 +22,9 @@ namespace AvalonStudio.Models.Tools.Debuggers.Local
 
 			if (result)
 			{
-                asyncModeEnabled = (await new GDBSetCommand("mi-async", "on").Execute(this)).Response == ResponseCode.Done;
+                SetAsyncMode((await new GDBSetCommand("mi-async", "on").Execute(this)).Response == ResponseCode.Done);
 
-				if (Platform.OSDescription == "Windows") {
+				if (Platform.PlatformIdentifier == PlatformID.Windows) {
 					await new SetCommand ("new-console", "on").Execute (this);
 				}
 			}

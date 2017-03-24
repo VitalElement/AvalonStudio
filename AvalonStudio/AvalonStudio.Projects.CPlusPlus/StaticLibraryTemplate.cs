@@ -27,6 +27,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 			var project = await base.Generate(solution, name) as CPlusPlusProject;
 
 			project.Type = ProjectType.StaticLibrary;
+            project.Includes.Add(new Include() { Exported = true, Value = "./" });
 
 			project.Save();
 

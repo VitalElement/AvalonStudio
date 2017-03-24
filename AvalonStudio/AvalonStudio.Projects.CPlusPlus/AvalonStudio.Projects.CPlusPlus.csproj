@@ -29,6 +29,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Update="Templates\CppClass.template">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Templates\CppClassHeader.template">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
