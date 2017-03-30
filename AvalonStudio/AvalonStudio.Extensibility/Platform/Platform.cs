@@ -9,10 +9,15 @@ namespace AvalonStudio.Platforms
 {
     public enum PlatformID
     {
-        Windows,
-        MacOSX,
-        Linux
+        Win32S = 0,
+        Win32Windows = 1,
+        Win32NT = 2,
+        WinCE = 3,
+        Unix = 4,
+        Xbox = 5,
+        MacOSX = 6
     }
+
 
     public static class Platform
     {
@@ -82,13 +87,13 @@ namespace AvalonStudio.Platforms
             {
                 switch (Platform.PlatformIdentifier)
                 {
-                    case PlatformID.Linux:
+                    case PlatformID.Unix:
                     case PlatformID.MacOSX:
                         {
                             return string.Empty;
                         }
 
-                    case PlatformID.Windows:
+                    case PlatformID.Win32NT:
                         {
                             return ".exe";
                         }
@@ -117,11 +122,11 @@ namespace AvalonStudio.Platforms
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    return PlatformID.Windows;
+                    return PlatformID.Win32NT;
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                    return PlatformID.Linux;
+                    return PlatformID.Unix;
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
@@ -144,7 +149,7 @@ namespace AvalonStudio.Platforms
 
                 switch (PlatformIdentifier)
                 {
-                    case PlatformID.Windows:
+                    case PlatformID.Win32NT:
                         userDir = Environment.GetEnvironmentVariable("UserProfile");                        
                         break;
 
@@ -211,11 +216,11 @@ namespace AvalonStudio.Platforms
             {
                 switch (PlatformIdentifier)
                 {
-                    case PlatformID.Windows:
+                    case PlatformID.Win32NT:
                         Process.Start(new ProcessStartInfo { FileName = "cmd.exe", Arguments = $"/c start {path}", CreateNoWindow = true });
                         break;
 
-                    case PlatformID.Linux:
+                    case PlatformID.Unix:
                         Process.Start(new ProcessStartInfo { FileName = "xdg-open", Arguments = path, CreateNoWindow = true });
                         break;
 
@@ -257,11 +262,11 @@ namespace AvalonStudio.Platforms
         {
             switch (PlatformIdentifier)
             {
-                case PlatformID.Linux:
+                case PlatformID.Unix:
                 case PlatformID.MacOSX:
                     return kill(pid, sig);
 
-                case PlatformID.Windows:
+                case PlatformID.Win32NT:
                     switch (sig)
                     {
                         case Signum.SIGINT:
@@ -280,7 +285,7 @@ namespace AvalonStudio.Platforms
         {
             switch (PlatformIdentifier)
             {
-                case PlatformID.Windows:
+                case PlatformID.Win32NT:
                     return Win32AttachConsole(pid);
 
                 default:
@@ -292,7 +297,7 @@ namespace AvalonStudio.Platforms
         {
             switch (PlatformIdentifier)
             {
-                case PlatformID.Windows:
+                case PlatformID.Win32NT:
                     return Win32FreeConsole();
 
                 default:
@@ -304,7 +309,7 @@ namespace AvalonStudio.Platforms
         {
             switch (PlatformIdentifier)
             {
-                case PlatformID.Windows:
+                case PlatformID.Win32NT:
                     return Win32SetConsoleCtrlHandler(handlerRoutine, add);
 
                 default:
@@ -352,7 +357,7 @@ namespace AvalonStudio.Platforms
         {
             switch (PlatformIdentifier)
             {
-                case PlatformID.Windows:
+                case PlatformID.Win32NT:
                     return path.Replace('/', '\\');
 
                 default:
@@ -384,7 +389,7 @@ namespace AvalonStudio.Platforms
 
             switch (PlatformIdentifier)
             {
-                case PlatformID.Windows:
+                case PlatformID.Win32NT:
                     // TODO consider using directory info?           
                     if (path == null && other == null)
                     {

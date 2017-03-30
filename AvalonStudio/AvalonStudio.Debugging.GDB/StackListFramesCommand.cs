@@ -33,7 +33,7 @@ namespace AvalonStudio.Debugging.GDB
 
 				foreach (var obj in data)
 				{
-					result.Value.Add(Frame.FromDataString(obj.Substring(6, obj.Length - 6)));
+					result.Value.Add(obj.Substring(6, obj.Length - 6).FrameFromDataString());
 				}
 			}
 

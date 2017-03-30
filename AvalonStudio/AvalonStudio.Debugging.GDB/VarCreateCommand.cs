@@ -34,8 +34,8 @@ namespace AvalonStudio.Debugging.GDB
 
 			if (result.Response == ResponseCode.Done)
 			{
-				result.Value = VariableObject.FromDataString(null, response.Substring(6), expression);
-			}
+                result.Value = response.Substring(6).VariableObjectFromDataString(null, expression);
+            }
 
 			return result;
 		}

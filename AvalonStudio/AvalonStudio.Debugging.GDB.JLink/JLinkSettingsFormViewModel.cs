@@ -15,17 +15,22 @@ namespace AvalonStudio.Debugging.GDB.JLink
     public class JLinkSettingsFormViewModel : ViewModel<IProject>
     {
         private int interfaceSelectedIndex;
+        private int speedSelectedIndex;
 
+        private string speed;
         private JlinkInterfaceType interfaceType;
         private readonly JLinkSettings settings;
 
         public JLinkSettingsFormViewModel(IProject model) : base(model)
         {
             settings = JLinkDebugAdaptor.GetSettings(model);
-
-            //InterfaceOptions = new List<string>(Enum.GetNames(typeof(JlinkInterfaceType)));
+            
             interfaceSelectedIndex = (int)settings.Interface;
             interfaceType = settings.Interface;
+
+            speedSelectedIndex = SpeedOptions.IndexOf(settings.SpeedkHz.ToString());
+
+            speed = settings.SpeedkHz.ToString();
 
             string devPath = Path.Combine(JLinkDebugAdaptor.BaseDirectory, "devices.csv");
 
@@ -86,6 +91,56 @@ namespace AvalonStudio.Debugging.GDB.JLink
             get { return Enum.GetNames(typeof(JlinkInterfaceType)); }
         }
 
+        public List<string> SpeedOptions
+        {
+            get
+            {
+                return new List<string>
+                {
+                    "5",
+                    "10",
+                    "20",
+                    "30",
+                    "50",
+                    "100",
+                    "200",
+                    "300",
+                    "400",
+                    "500",
+                    "600",
+                    "750",
+                    "900",
+                    "1000",
+                    "1334",
+                    "1600",
+                    "2000",
+                    "2667",
+                    "3200",
+                    "4000",
+                    "4800",
+                    "5334",
+                    "6000",
+                    "8000",
+                    "9600",
+                    "12000"
+                };
+            }
+        }
+
+        public int SpeedSelectedIndex
+        {
+            get { return speedSelectedIndex; }
+            set
+            {
+                speedSelectedIndex = value;
+
+                if (value >= 0)
+                {
+                    Speed = SpeedOptions[value];
+                }
+            }
+        }
+
         public int InterfaceSelectedIndex
         {
             get { return interfaceSelectedIndex; }
@@ -93,6 +148,16 @@ namespace AvalonStudio.Debugging.GDB.JLink
             {
                 interfaceSelectedIndex = value;
                 InterfaceType = (JlinkInterfaceType)interfaceSelectedIndex;
+            }
+        }
+        
+        public string Speed
+        {
+            get { return speed; }
+            set
+            {
+                speed = value;
+                Save();
             }
         }
 
@@ -113,6 +178,15 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 settings.Interface = (JlinkInterfaceType)interfaceSelectedIndex;
                 settings.DeviceKey = selectedDevice?.Device;
                 settings.TargetDevice = selectedDevice?.Device.Split(' ')[0].Trim();
+
+                if (!string.IsNullOrEmpty(speed))
+                {
+                    settings.SpeedkHz = Convert.ToInt32(speed);
+                }
+                else
+                {
+                    settings.SpeedkHz = 12000;
+                }
 
                 JLinkDebugAdaptor.SetSettings(Model, settings);
                 Model.Save();
