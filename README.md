@@ -10,16 +10,18 @@ An extensible, cross platform IDE written in C#
 
 [![Build Status](https://travis-ci.org/VitalElement/AvalonStudio.svg?branch=master)](https://travis-ci.org/VitalElement/AvalonStudio)
 
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/VitalElement/AvalonStudio?utm_campaign=pr-badge&utm_content=badge&utm_medium=badge&utm_source=badge)
+[![Gitter](https://badges.gitter.im/VitalElement/AvalonStudio.svg)](https://gitter.im/VitalElement/AvalonStudio?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 Cross platform IDE on Avalonia for Avalonia
 
 ## Try the bleeding-edge builds?
-|         |Version |Installers|
-|---------|:------:|:------:|:------:|
-|**Windows 7 8.1 10 x64**|![](https://github.com/VitalElement/AvalonStudio/releases/download/0.2.0-alpha2/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-win7-x64.zip)|
-|**MacOSX 10.12 x64**|![](https://github.com/VitalElement/AvalonStudio/releases/download/0.2.0-alpha2/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-osx.10.12-x64.zip)|
-|**Ubuntu 14.04+ x64**|![](https://github.com/VitalElement/AvalonStudio/releases/download/0.2.0-alpha2/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-ubuntu.14.04-x64.zip)|
-|**Debian 8 x64**|![](https://https://github.com/VitalElement/AvalonStudio/releases/download/0.2.0-alpha2/latest-version-badge.svg)|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-debian.8-x64.zip)|
+
+| Version | Installers |
+|---------|------------|
+|**Windows 7 8.1 10 x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-win7-x64.zip)|
+|**MacOSX 10.12 x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-osx.10.12-x64.zip)|
+|**Ubuntu 14.04+ x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-ubuntu.14.04-x64.zip)|
+|**Debian 8 x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-debian.8-x64.zip)|
 
 ## Building from source
 
