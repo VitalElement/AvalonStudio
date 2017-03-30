@@ -45,7 +45,7 @@ namespace AvalonStudio.Debugging.GDB
 							{
 								var childPair = child.ToNameValuePair();
 
-								result.Value.Add(VariableObject.FromDataString(variable, childPair.Value.RemoveBraces()));
+                                result.Value.Add(childPair.Value.RemoveBraces().VariableObjectFromDataString(variable));
 							}
 
 							break;

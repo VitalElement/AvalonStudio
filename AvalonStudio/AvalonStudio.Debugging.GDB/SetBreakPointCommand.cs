@@ -40,7 +40,7 @@ namespace AvalonStudio.Debugging.GDB
 				if (split[1].Substring(0, 4) == "bkpt")
 				{
 					// TODO if breakpoint may come back with multiple addresses.                    
-					result.Value = LiveBreakPoint.FromArgumentList(split[1].Substring(6, split[1].Length - 6 - 1).ToNameValuePairs());
+					result.Value = split[1].Substring(6, split[1].Length - 6 - 1).ToNameValuePairs().LiveBreakPointFromArgumentList();
 				}
 			}
 

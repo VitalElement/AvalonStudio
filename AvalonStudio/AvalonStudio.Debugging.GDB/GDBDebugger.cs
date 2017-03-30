@@ -779,7 +779,7 @@ namespace AvalonStudio.Debugging.GDB
         {
             CurrentState = DebuggerState.Paused;
 
-            var stopRecord = StopRecord.FromArgumentList(data.ToNameValuePairs());
+            var stopRecord = data.ToNameValuePairs().StopRecordFromArgumentList();
 
             if (InternalStopped != null)
             {
