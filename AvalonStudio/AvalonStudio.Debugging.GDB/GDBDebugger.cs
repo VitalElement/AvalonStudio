@@ -47,7 +47,7 @@ namespace AvalonStudio.Debugging.GDB
         {
             asyncModeEnabled = enabled;
 
-            if(!enabled && Platform.PlatformIdentifier == PlatformID.Windows)
+            if(!enabled && Platform.PlatformIdentifier == PlatformID.Win32NT)
             {
                 // TODO check if this code can be removed, it was used to support  ctrl+c signals, but no longer seems
                 // to be needed for .net core.
@@ -417,7 +417,7 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     process.WaitForExit();
 
-                    if (!asyncModeEnabled && Platform.PlatformIdentifier == PlatformID.Windows)
+                    if (!asyncModeEnabled && Platform.PlatformIdentifier == PlatformID.Win32NT)
                     {
                         Platform.FreeConsole();
 
