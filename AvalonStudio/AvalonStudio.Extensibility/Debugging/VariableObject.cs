@@ -25,10 +25,10 @@ namespace AvalonStudio.Debugging
 
 		public int NumChildren { get; set; }
 
-		public string Id { get; private set; }
-		public string Value { get; private set; }
-		public string Expression { get; private set; }
-		public string Type { get; private set; }
+		public string Id { get; set; }
+		public string Value { get; set; }
+		public string Expression { get; set; }
+		public string Type { get; set; }
 		public List<VariableObject> Children { get; }
 
 		public bool AreChildrenEvaluated { get; private set; }
@@ -85,55 +85,6 @@ namespace AvalonStudio.Debugging
 				await debugger.SetWatchFormatAsync(Id, format);
 				this.format = format;
 			}
-		}
-
-		public static VariableObject FromDataString(VariableObject parent, string data, string expression = "")
-		{
-			var result = new VariableObject();
-
-			result.Expression = expression;
-
-			var pairs = data.ToNameValuePairs();
-
-			foreach (var pair in pairs)
-			{
-				switch (pair.Name)
-				{
-					case "name":
-						result.Id = pair.Value;
-						break;
-
-					case "numchild":
-						result.NumChildren = Convert.ToInt32(pair.Value);
-						break;
-
-					case "value":
-						result.Value = pair.Value;
-						break;
-
-					case "type":
-						result.Type = pair.Value;
-						break;
-
-					case "thread-id":
-						break;
-
-					case "has_more":
-						break;
-
-					case "exp":
-						result.Expression = pair.Value;
-						break;
-
-					default:
-						Console.WriteLine("Unimplemented variable object field.");
-						break;
-				}
-			}
-
-			result.Parent = parent;
-
-			return result;
 		}
 	}
 }

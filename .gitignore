@@ -8,6 +8,8 @@
 artifacts
 tools
 .vs
+tools/
+artifacts/
 
 # Build results
 [Dd]ebug/

@@ -27,7 +27,7 @@ namespace AvalonStudio.Debugging.GDB
 
 			if (result.Response == ResponseCode.Done)
 			{
-				result.Value = MemoryBytes.FromDataString(response);
+                result.Value = response.MemoryBytesListFromDataString();
 			}
 
 			return result;

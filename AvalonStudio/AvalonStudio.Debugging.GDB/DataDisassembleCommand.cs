@@ -62,7 +62,7 @@ namespace AvalonStudio.Debugging.GDB
 
 				foreach (var line in lines)
 				{
-					result.Value.AddRange(SourceLine.FromDataString(line));
+					result.Value.AddRange(line.InstructionLineListFromDataString());
 				}
 			}
 

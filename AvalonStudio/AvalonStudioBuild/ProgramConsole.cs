@@ -14,7 +14,7 @@ namespace AvalonStudio
 			{
 				OverWrite(string.Empty);
 
-				if (Platform.PlatformIdentifier != PlatformID.Windows)
+				if (Platform.PlatformIdentifier != PlatformID.Win32NT)
 				{
 					canOverwrite = false;
 				}
