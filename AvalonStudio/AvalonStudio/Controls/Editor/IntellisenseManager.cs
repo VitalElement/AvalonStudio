@@ -140,11 +140,11 @@
 
         private void CloseIntellisense()
         {
-            intellisenseStartedAt = editor.CaretIndex;
             currentFilter = string.Empty;
 
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
+                intellisenseStartedAt = editor.CaretIndex;
                 intellisenseControl.SelectedCompletion = noSelectedCompletion;
                 intellisenseControl.IsVisible = false;
             }).Wait();
@@ -229,7 +229,12 @@
 
         private bool DoComplete(bool includeLastChar)
         {
-            var caretIndex = editor.CaretIndex;
+            int caretIndex = -1;
+
+            Dispatcher.UIThread.InvokeTaskAsync(() =>
+            {
+                caretIndex = editor.CaretIndex;
+            }).Wait();
 
             var result = false;
 
