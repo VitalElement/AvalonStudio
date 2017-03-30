@@ -386,7 +386,7 @@
                                 }).Wait();
                             }
 
-                            var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, editor.CaretIndex, currentWord);
+                            var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, caretIndex, currentWord);
                             signatureHelpTask.Wait();
 
                             var signatureHelp = signatureHelpTask.Result;
