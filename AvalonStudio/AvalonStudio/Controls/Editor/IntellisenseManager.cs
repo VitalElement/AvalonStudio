@@ -555,6 +555,11 @@
 
                         SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                     }
+
+                    if(e.Key == Key.Enter)
+                    {
+                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
+                    }
                 });
             }
         }
