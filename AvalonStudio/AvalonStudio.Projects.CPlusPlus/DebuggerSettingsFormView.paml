@@ -1,9 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
     <Grid IsEnabled="{Binding IsEnabled}">
       <Grid.RowDefinitions>
-        <RowDefinition Height="30"/>
-        <RowDefinition />
-        <RowDefinition />
+        <RowDefinition Height="15*"/>
+        <RowDefinition Height="25*" />
+        <RowDefinition Height="60*" />
       </Grid.RowDefinitions>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="282*"/>
@@ -11,22 +11,25 @@
         <ColumnDefinition Width="397*"/>
       </Grid.ColumnDefinitions>
 
-      <TextBlock Grid.Row="0" Text="Debugger" Grid.ColumnSpan="2"/>
-      <DropDown Grid.Row="0" Grid.Column="2" Items="{Binding Debuggers}" SelectedItem="{Binding SelectedDebugger, Mode=TwoWay}">
-        <DropDown.Styles>
-          <Style Selector="DropDownItem">
-            <Setter Property="Background" Value="#1e1e1e" />
-          </Style>
+      <StackPanel Grid.Row="0" Gap="4">
+        <TextBlock  Text="Debug Adaptor:"/>
+        <DropDown  Items="{Binding Debuggers}" SelectedItem="{Binding SelectedDebugger, Mode=TwoWay}">
+          <DropDown.Styles>
+            <Style Selector="DropDownItem">
+              <Setter Property="Background" Value="#1e1e1e" />
+            </Style>
 
-          <Style Selector="DropDownItem:selected">
-            <Setter Property="Background" Value="#3f3f46" />
-          </Style>
+            <Style Selector="DropDownItem:selected">
+              <Setter Property="Background" Value="#3f3f46" />
+            </Style>
 
-          <Style Selector="DropDownItem:pointerover">
-            <Setter Property="Background" Value="Red" />
-          </Style>
-        </DropDown.Styles>
-      </DropDown>
+            <Style Selector="DropDownItem:pointerover">
+              <Setter Property="Background" Value="Red" />
+            </Style>
+          </DropDown.Styles>
+        </DropDown>
+      </StackPanel>
+
 
       <Panel Grid.Row="1" Grid.ColumnSpan="3" DataContext="{Binding SelectedDebugger}"  >
         <Grid>
@@ -49,8 +52,7 @@
           <TextBlock Grid.Row="2" Text="Description:" HorizontalAlignment="Right" />
           <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Description}" Margin="10 5 0 0"/>
 
-          <Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{Binding ButtonText}" Command="{Binding InstallCommand}"/>
-
+          <!--Button Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{Binding ButtonText}" Command="{Binding InstallCommand}"/>-->
 
           <TextBlock Grid.Row="3" Grid.ColumnSpan="3" Text="{Binding StatusMessage}"/>
         </Grid>

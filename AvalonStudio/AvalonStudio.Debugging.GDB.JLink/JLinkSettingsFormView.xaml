@@ -1,24 +1,31 @@
 <UserControl xmlns="https://github.com/avaloniaui">
     <StackPanel Gap="10"  HorizontalAlignment="Left" Margin="10">
         <StackPanel Orientation="Horizontal" Gap="5">
-            <TextBlock Text="Interface" />
-            <DropDown Items="{Binding InterfaceOptions}" SelectedIndex="{Binding InterfaceSelectedIndex, Mode=TwoWay}" />
+            <StackPanel Orientation="Horizontal" Gap="5">
+                <TextBlock Text="Interface" />
+                <DropDown Items="{Binding InterfaceOptions}" SelectedIndex="{Binding InterfaceSelectedIndex, Mode=TwoWay}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Gap="5">
+                <TextBlock Text="Speed (kHz)" />
+                <DropDown Items="{Binding SpeedOptions}" SelectedIndex="{Binding SpeedSelectedIndex, Mode=TwoWay}" />
+            </StackPanel>
         </StackPanel>
 
-      <StackPanel Width="500">
-      <TextBlock Text="Target Device" />
-      <TextBox Text="{Binding Filter}" Watermark="Search ..." />
-        <ListBox Name="deviceListBox" Items="{Binding DeviceList}" SelectedItem="{Binding SelectedDevice}" Width="500" Height="200" AutoScrollToSelectedItem="true">
-          <ListBox.DataTemplates>
-            <DataTemplate>
-              <Grid ColumnDefinitions="40*,45*,100*">
-                <TextBlock Text="{Binding Manufacturer}" />
-                <TextBlock Grid.Column="1" Text="{Binding Core}" />
-                <TextBlock Grid.Column="2" Text="{Binding Device}" />
-              </Grid>
-            </DataTemplate>
-          </ListBox.DataTemplates>
-        </ListBox>
-      </StackPanel>
-      </StackPanel>
+        <StackPanel Width="500">
+            <TextBlock Text="Target Device" />
+            <TextBox Text="{Binding Filter}" Watermark="Search ..." />
+            <ListBox Name="deviceListBox" Items="{Binding DeviceList}" SelectedItem="{Binding SelectedDevice}" Width="500" Height="200" AutoScrollToSelectedItem="true">
+                <ListBox.DataTemplates>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="40*,45*,100*">
+                            <TextBlock Text="{Binding Manufacturer}" />
+                            <TextBlock Grid.Column="1" Text="{Binding Core}" />
+                            <TextBlock Grid.Column="2" Text="{Binding Device}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.DataTemplates>
+            </ListBox>
+        </StackPanel>
+    </StackPanel>
 </UserControl>
