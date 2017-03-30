@@ -248,6 +248,13 @@ namespace AvalonStudio.Debugging
 								currentString += c;
 								break;
 
+                            case '{':
+                                stateStack.Push(currentState);
+                                currentState = NameValueProcessState.parsingObject;
+                                currentString += c;
+                                break;
+
+
 							case '[':
 								stateStack.Push(currentState);
 								currentString += c;
