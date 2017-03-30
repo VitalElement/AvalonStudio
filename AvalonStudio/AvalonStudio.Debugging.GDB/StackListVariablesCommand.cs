@@ -28,7 +28,7 @@ namespace AvalonStudio.Debugging.GDB
 
 					foreach (var obj in data)
 					{
-						result.Value.Add(Variable.FromDataString(obj.RemoveBraces()));
+						result.Value.Add(obj.RemoveBraces().VariableFromDataString());
 					}
 				}
 
