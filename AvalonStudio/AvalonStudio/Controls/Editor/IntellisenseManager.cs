@@ -140,11 +140,11 @@
 
         private void CloseIntellisense()
         {
-            intellisenseStartedAt = editor.CaretIndex;
             currentFilter = string.Empty;
 
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
+                intellisenseStartedAt = editor.CaretIndex;
                 intellisenseControl.SelectedCompletion = noSelectedCompletion;
                 intellisenseControl.IsVisible = false;
             }).Wait();
@@ -229,7 +229,12 @@
 
         private bool DoComplete(bool includeLastChar)
         {
-            var caretIndex = editor.CaretIndex;
+            int caretIndex = -1;
+
+            Dispatcher.UIThread.InvokeTaskAsync(() =>
+            {
+                caretIndex = editor.CaretIndex;
+            }).Wait();
 
             var result = false;
 
@@ -381,7 +386,7 @@
                                 }).Wait();
                             }
 
-                            var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, editor.CaretIndex, currentWord);
+                            var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, caretIndex, currentWord);
                             signatureHelpTask.Wait();
 
                             var signatureHelp = signatureHelpTask.Result;
@@ -548,6 +553,11 @@
                     {
                         CloseIntellisense();
 
+                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
+                    }
+
+                    if(e.Key == Key.Enter)
+                    {
                         SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                     }
                 });
