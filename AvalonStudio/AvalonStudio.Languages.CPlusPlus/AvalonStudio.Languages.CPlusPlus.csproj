@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.4.1-build2920-alpha" />
+    <PackageReference Include="AvalonStudio.Languages.CPlusPlus.LibClang.Native" Version="4.0.6" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\nclang\NClang\NClang.csproj" />
@@ -21,9 +22,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Extensions\clang-format.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="libclang.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="libclang.so">
