@@ -15,7 +15,7 @@ using System.IO;
 using System.Linq;
 using TSBridge;
 
-namespace AvalonStudio.Projects.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 {
     public class TypeScriptProject : FileSystemProject, IProject
     {

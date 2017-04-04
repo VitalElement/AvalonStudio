@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Debugging.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.Debugging
 {
     public class TypeScriptDebugger : IDebugger
     {

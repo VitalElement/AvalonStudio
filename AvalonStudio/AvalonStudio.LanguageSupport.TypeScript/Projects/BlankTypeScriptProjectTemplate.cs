@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Projects.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 {
     public class BlankTypeScriptProjectTemplate : IProjectTemplate
     {

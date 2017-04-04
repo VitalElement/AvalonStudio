@@ -21,7 +21,7 @@ using TSBridge.Ast.SubNodes.ClassElements;
 using TSBridge.Ast.SubNodes.Declarations;
 using File = System.IO.File;
 
-namespace AvalonStudio.Languages.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 {
     public class TypeScriptLanguageService : ILanguageService
     {

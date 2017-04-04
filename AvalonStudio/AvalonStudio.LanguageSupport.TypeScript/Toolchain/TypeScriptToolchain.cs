@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Toolchains.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
 {
     public class TypeScriptToolchain : IToolChain
     {

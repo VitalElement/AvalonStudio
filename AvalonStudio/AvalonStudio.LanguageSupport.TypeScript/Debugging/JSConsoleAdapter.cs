@@ -1,6 +1,6 @@
 ﻿using AvalonStudio.Utils;
 
-namespace AvalonStudio.Debugging.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.Debugging
 {
     public class JSConsoleAdapter
     {
