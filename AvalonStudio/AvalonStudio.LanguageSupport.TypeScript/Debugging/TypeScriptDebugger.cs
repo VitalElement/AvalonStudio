@@ -132,6 +132,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Debugging
         {
             // STUB!
             // throw new NotImplementedException();
+            await Task.Delay(0);
         }
 
         public Task<LiveBreakPoint> SetBreakPointAsync(string file, uint line)
@@ -144,7 +145,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Debugging
             throw new NotImplementedException();
         }
 
-        public async Task<bool> StartAsync(IToolChain toolChain, IConsole console, IProject project)
+        public Task<bool> StartAsync(IToolChain toolChain, IConsole console, IProject project)
         {
             // Start compiled TypeScript program
             // IridiumJS is a dependency of the toolchain, so we will use it
@@ -158,7 +159,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Debugging
             scriptExecutionEngine.Execute(jsScript);
 
             //return true;
-            return false; // hack
+            return Task.FromResult(false); // hack
         }
 
         public Task StepInstructionAsync()

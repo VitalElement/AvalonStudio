@@ -65,11 +65,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 @"(//[\t|\s|\w|\d|\.]*[\r\n|\n])|([\s|\t]*/\*[\t|\s|\w|\W|\d|\.|\r|\n]*\*/)|(\<[!%][ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t%]*)\>)",
                 RegexOptions.Compiled);
 
-#if DEBUG
-
-        private static StreamWriter LogFileWriter;
-#endif
-
         public TypeScriptLanguageService()
         {
 #if DEBUG
