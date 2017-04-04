@@ -1,5 +1,7 @@
 ﻿using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.LanguageSupport.TypeScript.Debugging;
+using AvalonStudio.LanguageSupport.TypeScript.Toolchain;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -114,11 +116,7 @@ Program.main();
         [JsonIgnore]
         public override IDebugger Debugger
         {
-            get
-            {
-                var tsToolchain = IoC.Get<IShell>().Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.TypeScript.TypeScriptDebugger");
-                return tsToolchain;
-            }
+            get => IoC.Get<IShell>().Debuggers.FirstOrDefault(dbg => dbg.GetType() == typeof(TypeScriptDebugger));
             set
             {
                 throw new NotSupportedException();
@@ -164,11 +162,7 @@ Program.main();
         [JsonIgnore]
         public override IToolChain ToolChain
         {
-            get
-            {
-                var tsToolchain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.TypeScript.TypeScriptToolchain");
-                return tsToolchain;
-            }
+            get => IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType() == typeof(TypeScriptToolchain));
             set
             {
                 throw new NotSupportedException();
