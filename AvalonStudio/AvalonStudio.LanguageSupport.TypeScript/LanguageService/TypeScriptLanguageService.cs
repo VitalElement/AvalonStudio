@@ -215,16 +215,16 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return associatedData.DocumentLineTransformers;
         }
 
-        public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
         {
             //STUB!
-            return new Symbol();
+            return Task.FromResult(new Symbol());
         }
 
-        public async Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
         {
             //STUB!
-            return new List<Symbol>();
+            return Task.FromResult(new List<Symbol>());
         }
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl,
@@ -245,16 +245,16 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             dataAssociations.Add(file, association);
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile sourceFile,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file,
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 
-            var dataAssociation = GetAssociatedData(sourceFile);
+            var dataAssociation = GetAssociatedData(file);
 
-            var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
-            var currentFileConts = currentUnsavedFile?.Contents ?? File.ReadAllText(sourceFile.FilePath);
-            var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
+            var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == file.FilePath);
+            var currentFileConts = currentUnsavedFile?.Contents ?? File.ReadAllText(file.FilePath);
+            var currentFileName = currentUnsavedFile?.FileName ?? file.FilePath;
             TypeScriptSyntaxTree tsSyntaxTree;
             // Only one analyzer at a time; the JS engine is single-threaded. TODO: Workaround with multiple JS engines
             await analysisThreadSemaphore.WaitAsync();
@@ -270,11 +270,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                     {
                         new Diagnostic
                         {
-                            Project = sourceFile.Project,
+                            Project = file.Project,
                             Line = 1,
                             Spelling = "Code analysis language service call failed.",
                             StartOffset = 0,
-                            File = sourceFile.Name,
+                            File = file.Name,
                             Level = DiagnosticLevel.Error,
                         }
                     }
@@ -344,7 +344,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 // Convert diagnostics
                 result.Diagnostics.Add(new Diagnostic
                 {
-                    Project = sourceFile.Project,
+                    Project = file.Project,
                     Line = GetLineNumber(currentFileConts, tsDiagnostic.Start), // TODO
                     StartOffset = tsDiagnostic.Start,
                     EndOffset = tsDiagnostic.Start + tsDiagnostic.Length,
@@ -357,11 +357,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
             result.Diagnostics.Add(new Diagnostic
             {
-                Project = sourceFile.Project,
+                Project = file.Project,
                 Line = 1,
                 Spelling = "Code analysis for TypeScript is experimental and unstable. Use with caution.",
                 StartOffset = 0,
-                File = sourceFile.Name,
+                File = file.Name,
                 Level = DiagnosticLevel.Warning,
             });
 
@@ -475,12 +475,12 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return document.Take(offset).Count(x => x == '\n') + 1;
         }
 
-        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer,
+        public Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer,
             List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
             //STUB!
             //return new SignatureHelp();
-            return null;
+            return Task.FromResult<SignatureHelp>(null);
         }
 
         public int UnComment(TextDocument textDocument, ISegment segment,
