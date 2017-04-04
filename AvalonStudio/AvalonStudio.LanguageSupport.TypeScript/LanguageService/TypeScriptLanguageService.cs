@@ -8,7 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Projects;
-using AvalonStudio.Projects.TypeScript;
+using AvalonStudio.Languages;
+using AvalonStudio.LanguageSupport.TypeScript.Projects;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
@@ -21,7 +22,7 @@ using TSBridge.Ast.SubNodes.ClassElements;
 using TSBridge.Ast.SubNodes.Declarations;
 using File = System.IO.File;
 
-namespace AvalonStudio.Languages.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 {
     public class TypeScriptLanguageService : ILanguageService
     {
@@ -34,17 +35,17 @@ namespace AvalonStudio.Languages.TypeScript
 
         public IEnumerable<char> IntellisenseTriggerCharacters
         {
-            get { return new[] {'.', '>', ':'}; }
+            get { return new[] { '.', '>', ':' }; }
         }
 
         public IEnumerable<char> IntellisenseSearchCharacters
         {
-            get { return new[] {'(', ')', '.', ':', '-', '>', ';'}; }
+            get { return new[] { '(', ')', '.', ':', '-', '>', ';' }; }
         }
 
         public IEnumerable<char> IntellisenseCompleteCharacters
         {
-            get { return new[] {'.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^'}; }
+            get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; }
         }
 
         private SemaphoreSlim analysisThreadSemaphore = new SemaphoreSlim(1);
@@ -64,22 +65,13 @@ namespace AvalonStudio.Languages.TypeScript
                 @"(//[\t|\s|\w|\d|\.]*[\r\n|\n])|([\s|\t]*/\*[\t|\s|\w|\W|\d|\.|\r|\n]*\*/)|(\<[!%][ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t%]*)\>)",
                 RegexOptions.Compiled);
 
-#if DEBUG
-
-        private static string LogFilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AvalonStudio", "Diagnostics",
-            $"{nameof(TypeScriptLanguageService)}.log");
-
-        private static StreamWriter LogFileWriter;
-#endif
-
         public TypeScriptLanguageService()
         {
 #if DEBUG
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(LogFilePath));
-                LogFileWriter = new StreamWriter(File.OpenWrite(LogFilePath));
+                //Directory.CreateDirectory(Path.GetDirectoryName(LogFilePath));
+                //LogFileWriter = new StreamWriter(File.OpenWrite(LogFilePath));
             }
             catch (IOException) // Maybe another instance is running. Anyway, this isn't really needed.
             {
@@ -190,7 +182,7 @@ namespace AvalonStudio.Languages.TypeScript
 
             if (format)
             {
-                result = Format(textDocument, (uint) segment.Offset, (uint) segment.Length, caret);
+                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
             }
 
             textDocument.EndUpdate();
@@ -218,23 +210,23 @@ namespace AvalonStudio.Languages.TypeScript
             return associatedData.DocumentLineTransformers;
         }
 
-        public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
         {
             //STUB!
-            return new Symbol();
+            return Task.FromResult(new Symbol());
         }
 
-        public async Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
         {
             //STUB!
-            return new List<Symbol>();
+            return Task.FromResult(new List<Symbol>());
         }
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl,
             ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file,
             TextDocument textDocument)
         {
-            _tsContext = _tsContext ?? ((TypeScriptProject) file.Project).TypeScriptContext;
+            _tsContext = _tsContext ?? ((TypeScriptProject)file.Project).TypeScriptContext;
             _tsContext.OpenFile(file.FilePath, File.ReadAllText(file.FilePath));
 
             TypeScriptDataAssociation association = null;
@@ -248,16 +240,16 @@ namespace AvalonStudio.Languages.TypeScript
             dataAssociations.Add(file, association);
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile sourceFile,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file,
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 
-            var dataAssociation = GetAssociatedData(sourceFile);
+            var dataAssociation = GetAssociatedData(file);
 
-            var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
-            var currentFileConts = currentUnsavedFile?.Contents ?? File.ReadAllText(sourceFile.FilePath);
-            var currentFileName = currentUnsavedFile?.FileName ?? sourceFile.FilePath;
+            var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == file.FilePath);
+            var currentFileConts = currentUnsavedFile?.Contents ?? File.ReadAllText(file.FilePath);
+            var currentFileName = currentUnsavedFile?.FileName ?? file.FilePath;
             TypeScriptSyntaxTree tsSyntaxTree;
             // Only one analyzer at a time; the JS engine is single-threaded. TODO: Workaround with multiple JS engines
             await analysisThreadSemaphore.WaitAsync();
@@ -273,11 +265,11 @@ namespace AvalonStudio.Languages.TypeScript
                     {
                         new Diagnostic
                         {
-                            Project = sourceFile.Project,
+                            Project = file.Project,
                             Line = 1,
                             Spelling = "Code analysis language service call failed.",
                             StartOffset = 0,
-                            File = sourceFile.Name,
+                            File = file.Name,
                             Level = DiagnosticLevel.Error,
                         }
                     }
@@ -318,7 +310,6 @@ namespace AvalonStudio.Languages.TypeScript
                 });
             }
 
-
             // Highlight keywords
             var keywordMatches = KeywordPattern.Matches(currentFileConts);
             foreach (Match keywordMatch in keywordMatches)
@@ -337,7 +328,6 @@ namespace AvalonStudio.Languages.TypeScript
                 HighlightNode(rootStatement, result);
             }
 
-
             // Clean up previous highlighting
             dataAssociation.TextMarkerService.Clear();
 
@@ -349,7 +339,7 @@ namespace AvalonStudio.Languages.TypeScript
                 // Convert diagnostics
                 result.Diagnostics.Add(new Diagnostic
                 {
-                    Project = sourceFile.Project,
+                    Project = file.Project,
                     Line = GetLineNumber(currentFileConts, tsDiagnostic.Start), // TODO
                     StartOffset = tsDiagnostic.Start,
                     EndOffset = tsDiagnostic.Start + tsDiagnostic.Length,
@@ -362,11 +352,11 @@ namespace AvalonStudio.Languages.TypeScript
 
             result.Diagnostics.Add(new Diagnostic
             {
-                Project = sourceFile.Project,
+                Project = file.Project,
                 Line = 1,
                 Spelling = "Code analysis for TypeScript is experimental and unstable. Use with caution.",
                 StartOffset = 0,
-                File = sourceFile.Name,
+                File = file.Name,
                 Level = DiagnosticLevel.Warning,
             });
 
@@ -383,7 +373,7 @@ namespace AvalonStudio.Languages.TypeScript
             // This will add highlighting data for declarations, but it will not show up because it is set to highlight as None
             if (node is IDeclaration)
             {
-                var declaration = ((IDeclaration) node);
+                var declaration = ((IDeclaration)node);
                 startPos = declaration.Position;
                 endPos = declaration.End;
                 if (startPos >= 0 && endPos > 0)
@@ -391,20 +381,20 @@ namespace AvalonStudio.Languages.TypeScript
                     if (node is VariableDeclaration
                     ) // For variables, we only want to highlight the name, not the expression
                     {
-                        startPos = ((VariableDeclaration) node).Name.Position;
-                        endPos = ((VariableDeclaration) node).Name.End;
+                        startPos = ((VariableDeclaration)node).Name.Position;
+                        endPos = ((VariableDeclaration)node).Name.End;
                     }
                     else if (node is ClassDeclaration
                     ) // For classes, we only want to highlight the name, not the entire contents
                     {
-                        startPos = ((ClassDeclaration) node).Name.Position;
-                        endPos = ((ClassDeclaration) node).Name.End;
+                        startPos = ((ClassDeclaration)node).Name.Position;
+                        endPos = ((ClassDeclaration)node).Name.End;
                     }
                     else if (node is FunctionDeclaration
                     ) // For functions, we only want to highlight the name, not the body
                     {
-                        startPos = ((FunctionDeclaration) node).Name.Position;
-                        endPos = ((FunctionDeclaration) node).Name.End;
+                        startPos = ((FunctionDeclaration)node).Name.Position;
+                        endPos = ((FunctionDeclaration)node).Name.End;
                     }
 
                     highlightData.Start = startPos;
@@ -480,12 +470,12 @@ namespace AvalonStudio.Languages.TypeScript
             return document.Take(offset).Count(x => x == '\n') + 1;
         }
 
-        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer,
+        public Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer,
             List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
             //STUB!
             //return new SignatureHelp();
-            return null;
+            return Task.FromResult<SignatureHelp>(null);
         }
 
         public int UnComment(TextDocument textDocument, ISegment segment,
@@ -509,7 +499,7 @@ namespace AvalonStudio.Languages.TypeScript
 
             if (format)
             {
-                result = Format(textDocument, (uint) segment.Offset, (uint) segment.Length, caret);
+                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
             }
 
             textDocument.EndUpdate();
@@ -538,6 +528,14 @@ namespace AvalonStudio.Languages.TypeScript
         public async Task PrepareLanguageServiceAsync()
         {
             await _tsContext.LoadComponentsAsync();
+        }
+
+        public virtual void BeforeActivation()
+        {
+        }
+
+        public virtual void Activation()
+        {
         }
     }
 }

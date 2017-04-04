@@ -6,7 +6,7 @@ using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 
-namespace AvalonStudio.Languages.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 {
     public class BracketMatchingBackgroundRenderer : IBackgroundRenderer
     {

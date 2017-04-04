@@ -1,10 +1,11 @@
 ﻿using Avalonia.Input;
+using AvalonStudio.Languages;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
 using System;
 using System.Collections.Generic;
 
-namespace AvalonStudio.Languages.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 {
     internal class TypeScriptDataAssociation
     {
