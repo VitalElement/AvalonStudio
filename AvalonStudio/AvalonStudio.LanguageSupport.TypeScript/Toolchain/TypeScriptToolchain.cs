@@ -1,13 +1,13 @@
 ﻿using AvalonStudio.Projects;
-using AvalonStudio.Projects.TypeScript;
+using AvalonStudio.LanguageSupport.TypeScript.Projects;
 using AvalonStudio.Toolchains;
-using AvalonStudio.Toolchains.TypeScript.Utilities;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AvalonStudio.CommandLineTools;
 
-namespace AvalonStudio.Toolchains.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
 {
     public class TypeScriptToolchain : IToolChain
     {
@@ -32,7 +32,7 @@ namespace AvalonStudio.Toolchains.TypeScript
             //throw new NotImplementedException();
         }
 
-        public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
+        public Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
             console.WriteLine($"Build Started - {project.Name}");
             //Make sure tools are available
@@ -46,7 +46,7 @@ namespace AvalonStudio.Toolchains.TypeScript
                     console.WriteLine("You seem to be missing Node.js. Please install Node.js and TypeScript globally.");
                 }
                 console.WriteLine("Build failed.");
-                return false; //Fail build
+                return Task.FromResult(false); //Fail build
             }
             var tscVersionResult = PlatformSupport.ExecuteShellCommand("tsc", "-v");
             //Run build
@@ -64,7 +64,7 @@ namespace AvalonStudio.Toolchains.TypeScript
                 console.WriteLine("Build completed successfully.");
             }
 
-            return tsCompileExitCode == 0;
+            return Task.FromResult(tsCompileExitCode == 0);
         }
 
         public bool CanHandle(IProject project)
@@ -76,6 +76,7 @@ namespace AvalonStudio.Toolchains.TypeScript
         {
             //throw new NotImplementedException();
             //Run Clean task
+            await Task.Delay(0);
         }
 
         public IList<object> GetConfigurationPages(IProject project)

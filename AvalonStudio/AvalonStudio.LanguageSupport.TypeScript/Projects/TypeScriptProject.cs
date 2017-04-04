@@ -1,6 +1,7 @@
 ﻿using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
@@ -15,7 +16,7 @@ using System.IO;
 using System.Linq;
 using TSBridge;
 
-namespace AvalonStudio.Projects.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 {
     public class TypeScriptProject : FileSystemProject, IProject
     {

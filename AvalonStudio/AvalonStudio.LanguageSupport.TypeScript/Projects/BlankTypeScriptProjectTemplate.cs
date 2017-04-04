@@ -1,7 +1,8 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using AvalonStudio.Projects;
 
-namespace AvalonStudio.Projects.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 {
     public class BlankTypeScriptProjectTemplate : IProjectTemplate
     {
@@ -11,7 +12,7 @@ namespace AvalonStudio.Projects.TypeScript
 
         public string Title => "Empty TypeScript Project";
 
-        public virtual async Task<IProject> Generate(ISolution solution, string name)
+        public virtual Task<IProject> Generate(ISolution solution, string name)
         {
             var location = Path.Combine(solution.CurrentDirectory, name);
 
@@ -26,7 +27,15 @@ namespace AvalonStudio.Projects.TypeScript
                 solution.StartupProject = project;
             }
 
-            return project;
+            return Task.FromResult(project);
+        }
+
+        public virtual void BeforeActivation()
+        {
+        }
+
+        public virtual void Activation()
+        {
         }
     }
 }
