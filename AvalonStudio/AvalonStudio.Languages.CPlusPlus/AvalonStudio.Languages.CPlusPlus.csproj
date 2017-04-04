@@ -5,7 +5,7 @@
   </PropertyGroup>  
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.4.1-build2920-alpha" />
-    <PackageReference Include="AvalonStudio.Languages.CPlusPlus.LibClang" Version="4.0.0" />
+    <PackageReference Include="AvalonStudio.Languages.CPlusPlus.LibClang" Version="4.0.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\nclang\NClang\NClang.csproj" />
