@@ -12,13 +12,13 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 
         public string Title => "Empty TypeScript Project";
 
-        public virtual Task<IProject> Generate(ISolution solution, string name)
+        public virtual async Task<IProject> Generate(ISolution solution, string name)
         {
             var location = Path.Combine(solution.CurrentDirectory, name);
 
             Directory.CreateDirectory(location);
 
-            IProject project = TypeScriptProject.Create(solution, location);
+            IProject project = await TypeScriptProject.Create(solution, location);
 
             project = solution.AddProject(project);
 
@@ -27,7 +27,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Projects
                 solution.StartupProject = project;
             }
 
-            return Task.FromResult(project);
+            return project;
         }
 
         public virtual void BeforeActivation()

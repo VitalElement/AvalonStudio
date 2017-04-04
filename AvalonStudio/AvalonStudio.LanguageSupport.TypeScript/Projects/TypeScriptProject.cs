@@ -1,5 +1,7 @@
 ﻿using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.LanguageSupport.TypeScript.Debugging;
+using AvalonStudio.LanguageSupport.TypeScript.Toolchain;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -14,29 +16,32 @@ using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using TSBridge;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 {
     public class TypeScriptProject : FileSystemProject, IProject
     {
-        public static TypeScriptProject Create(ISolution solution, string directory)
+        public static async Task<TypeScriptProject> Create(ISolution solution, string directory)
         {
-            TypeScriptProject result = new TypeScriptProject();
-
-            var projectName = new DirectoryInfo(directory).Name;
-
-            //Create new project with default name and extension
-            var projectFileLocation = Path.Combine(directory, projectName + $".{result.Extension}");
-
-            result.Solution = solution;
-            result.Location = projectFileLocation;
-
-            //Create Main.TS file
-            var indexFileLocation = Path.Combine(directory, "main.ts");
-            if (!System.IO.File.Exists(indexFileLocation))
+            return await Task.Run(() =>
             {
-                System.IO.File.WriteAllText(indexFileLocation, @"
+                TypeScriptProject result = new TypeScriptProject();
+
+                var projectName = new DirectoryInfo(directory).Name;
+
+                //Create new project with default name and extension
+                var projectFileLocation = Path.Combine(directory, projectName + $".{result.Extension}");
+
+                result.Solution = solution;
+                result.Location = projectFileLocation;
+
+                //Create Main.TS file
+                var indexFileLocation = Path.Combine(directory, "main.ts");
+                if (!System.IO.File.Exists(indexFileLocation))
+                {
+                    System.IO.File.WriteAllText(indexFileLocation, @"
 class Program {
     static main() {
         console.log(""Hello, World!"");
@@ -45,12 +50,12 @@ class Program {
 
 Program.main();
 ");
-            }
-            //Create TypeScript project file
-            var tsProjectFileLocation = Path.Combine(directory, "tsconfig.json");
-            if (!System.IO.File.Exists(tsProjectFileLocation))
-            {
-                System.IO.File.WriteAllText(tsProjectFileLocation, @"
+                }
+                //Create TypeScript project file
+                var tsProjectFileLocation = Path.Combine(directory, "tsconfig.json");
+                if (!System.IO.File.Exists(tsProjectFileLocation))
+                {
+                    System.IO.File.WriteAllText(tsProjectFileLocation, @"
 {
     ""compilerOptions"": {
         ""target"": ""es5"",
@@ -59,12 +64,13 @@ Program.main();
     }
 }
 ");
-            }
-            result.Save();
+                }
+                result.Save();
 
-            result.LoadFiles();
+                result.LoadFiles();
 
-            return result;
+                return result;
+            });
         }
 
         public override IProject Load(ISolution solution, string filename)
@@ -114,11 +120,7 @@ Program.main();
         [JsonIgnore]
         public override IDebugger Debugger
         {
-            get
-            {
-                var tsToolchain = IoC.Get<IShell>().Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.TypeScript.TypeScriptDebugger");
-                return tsToolchain;
-            }
+            get => IoC.Get<IShell>().Debuggers.FirstOrDefault(dbg => dbg.GetType() == typeof(TypeScriptDebugger));
             set
             {
                 throw new NotSupportedException();
@@ -164,11 +166,7 @@ Program.main();
         [JsonIgnore]
         public override IToolChain ToolChain
         {
-            get
-            {
-                var tsToolchain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.TypeScript.TypeScriptToolchain");
-                return tsToolchain;
-            }
+            get => IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType() == typeof(TypeScriptToolchain));
             set
             {
                 throw new NotSupportedException();
