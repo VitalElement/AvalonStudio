@@ -1,8 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.5</TargetFramework>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
     <Description />
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TSBridge.AvalonStudio\TSBridge\TSBridge\TSBridge.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+  </ItemGroup>
 
 </Project>
