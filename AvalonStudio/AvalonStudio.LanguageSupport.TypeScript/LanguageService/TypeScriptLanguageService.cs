@@ -8,7 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Projects;
-using AvalonStudio.Projects.TypeScript;
+using AvalonStudio.Languages;
+using AvalonStudio.LanguageSupport.TypeScript.Projects;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
@@ -34,17 +35,17 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public IEnumerable<char> IntellisenseTriggerCharacters
         {
-            get { return new[] {'.', '>', ':'}; }
+            get { return new[] { '.', '>', ':' }; }
         }
 
         public IEnumerable<char> IntellisenseSearchCharacters
         {
-            get { return new[] {'(', ')', '.', ':', '-', '>', ';'}; }
+            get { return new[] { '(', ')', '.', ':', '-', '>', ';' }; }
         }
 
         public IEnumerable<char> IntellisenseCompleteCharacters
         {
-            get { return new[] {'.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^'}; }
+            get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; }
         }
 
         private SemaphoreSlim analysisThreadSemaphore = new SemaphoreSlim(1);
@@ -190,7 +191,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
             if (format)
             {
-                result = Format(textDocument, (uint) segment.Offset, (uint) segment.Length, caret);
+                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
             }
 
             textDocument.EndUpdate();
@@ -234,7 +235,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file,
             TextDocument textDocument)
         {
-            _tsContext = _tsContext ?? ((TypeScriptProject) file.Project).TypeScriptContext;
+            _tsContext = _tsContext ?? ((TypeScriptProject)file.Project).TypeScriptContext;
             _tsContext.OpenFile(file.FilePath, File.ReadAllText(file.FilePath));
 
             TypeScriptDataAssociation association = null;
@@ -318,7 +319,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 });
             }
 
-
             // Highlight keywords
             var keywordMatches = KeywordPattern.Matches(currentFileConts);
             foreach (Match keywordMatch in keywordMatches)
@@ -336,7 +336,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 HighlightNode(rootStatement, result);
             }
-
 
             // Clean up previous highlighting
             dataAssociation.TextMarkerService.Clear();
@@ -383,7 +382,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             // This will add highlighting data for declarations, but it will not show up because it is set to highlight as None
             if (node is IDeclaration)
             {
-                var declaration = ((IDeclaration) node);
+                var declaration = ((IDeclaration)node);
                 startPos = declaration.Position;
                 endPos = declaration.End;
                 if (startPos >= 0 && endPos > 0)
@@ -391,20 +390,20 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                     if (node is VariableDeclaration
                     ) // For variables, we only want to highlight the name, not the expression
                     {
-                        startPos = ((VariableDeclaration) node).Name.Position;
-                        endPos = ((VariableDeclaration) node).Name.End;
+                        startPos = ((VariableDeclaration)node).Name.Position;
+                        endPos = ((VariableDeclaration)node).Name.End;
                     }
                     else if (node is ClassDeclaration
                     ) // For classes, we only want to highlight the name, not the entire contents
                     {
-                        startPos = ((ClassDeclaration) node).Name.Position;
-                        endPos = ((ClassDeclaration) node).Name.End;
+                        startPos = ((ClassDeclaration)node).Name.Position;
+                        endPos = ((ClassDeclaration)node).Name.End;
                     }
                     else if (node is FunctionDeclaration
                     ) // For functions, we only want to highlight the name, not the body
                     {
-                        startPos = ((FunctionDeclaration) node).Name.Position;
-                        endPos = ((FunctionDeclaration) node).Name.End;
+                        startPos = ((FunctionDeclaration)node).Name.Position;
+                        endPos = ((FunctionDeclaration)node).Name.End;
                     }
 
                     highlightData.Start = startPos;
@@ -509,7 +508,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
             if (format)
             {
-                result = Format(textDocument, (uint) segment.Offset, (uint) segment.Length, caret);
+                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
             }
 
             textDocument.EndUpdate();
@@ -538,6 +537,14 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         public async Task PrepareLanguageServiceAsync()
         {
             await _tsContext.LoadComponentsAsync();
+        }
+
+        public virtual void BeforeActivation()
+        {
+        }
+
+        public virtual void Activation()
+        {
         }
     }
 }

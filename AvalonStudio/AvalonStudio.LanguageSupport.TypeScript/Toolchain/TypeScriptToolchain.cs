@@ -1,5 +1,5 @@
 ﻿using AvalonStudio.Projects;
-using AvalonStudio.Projects.TypeScript;
+using AvalonStudio.LanguageSupport.TypeScript.Projects;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Toolchains.TypeScript.Utilities;
 using AvalonStudio.Utils;

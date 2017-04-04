@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using AvalonStudio.Projects;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 {
@@ -27,6 +28,14 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Projects
             }
 
             return project;
+        }
+
+        public virtual void BeforeActivation()
+        {
+        }
+
+        public virtual void Activation()
+        {
         }
     }
 }

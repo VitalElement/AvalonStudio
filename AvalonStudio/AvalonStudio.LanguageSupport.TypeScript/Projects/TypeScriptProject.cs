@@ -1,6 +1,7 @@
 ﻿using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;

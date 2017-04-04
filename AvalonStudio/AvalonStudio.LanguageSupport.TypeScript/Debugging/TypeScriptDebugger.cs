@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Projects;
+﻿using AvalonStudio.Debugging;
+using AvalonStudio.Projects;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using IridiumJS;
@@ -188,6 +189,14 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Debugging
         public Task<List<VariableObjectChange>> UpdateVariablesAsync()
         {
             throw new NotImplementedException();
+        }
+
+        public virtual void BeforeActivation()
+        {
+        }
+
+        public virtual void Activation()
+        {
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Avalonia.Input;
+using AvalonStudio.Languages;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
 using System;
