@@ -67,10 +67,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
 #if DEBUG
 
-        private static string LogFilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AvalonStudio", "Diagnostics",
-            $"{nameof(TypeScriptLanguageService)}.log");
-
         private static StreamWriter LogFileWriter;
 #endif
 
@@ -79,8 +75,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 #if DEBUG
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(LogFilePath));
-                LogFileWriter = new StreamWriter(File.OpenWrite(LogFilePath));
+                //Directory.CreateDirectory(Path.GetDirectoryName(LogFilePath));
+                //LogFileWriter = new StreamWriter(File.OpenWrite(LogFilePath));
             }
             catch (IOException) // Maybe another instance is running. Anyway, this isn't really needed.
             {
