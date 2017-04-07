@@ -1,12 +1,10 @@
 language: csharp
-sudo: required
-
 os:
   - linux
 
 dist: trusty
 script:
-  - ./build.sh --target "Travis" --configuration "Release"
+  - ./build.sh --configuration "Release"
 
 notifications:
   webhooks:
