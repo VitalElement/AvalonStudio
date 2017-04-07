@@ -5,9 +5,8 @@ dist: trusty
 
 mono:
   - latest
-dotnet:
-  - 1.0.1
-  
+dotnet: 1.0.1
+
 script:
   - ./build.sh --configuration "Release"
 
