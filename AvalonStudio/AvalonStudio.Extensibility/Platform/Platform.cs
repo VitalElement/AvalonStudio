@@ -79,6 +79,32 @@ namespace AvalonStudio.Platforms
 
         public static string ExtensionsFolder => Path.Combine(ExecutionPath, "Extensions");
 
+        public static string NativeFolder
+        {
+            get
+            {
+                string osdir = string.Empty;
+
+                switch(PlatformIdentifier)
+                {
+                    case PlatformID.Win32NT:
+                        osdir = "win7-x64";
+                        break;
+
+                    case PlatformID.Unix:
+                        osdir = "unix";
+                        break;
+
+                    case PlatformID.MacOSX:
+                        osdir = "mac";
+                        break;
+                }
+
+                return Path.Combine(ExecutionPath, "native", osdir);
+            }
+        }
+
+
         public static string TemplatesFolder => Path.Combine(ExecutionPath, "Templates");
 
         public static string ExecutableExtension
