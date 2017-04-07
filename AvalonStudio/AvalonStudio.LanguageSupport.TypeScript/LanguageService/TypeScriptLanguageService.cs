@@ -537,5 +537,15 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         public virtual void Activation()
         {
         }
+
+        public bool CanHandle(IProject project)
+        {
+            return project is TypeScriptProject;
+        }
+
+        public async Task AnalyseProjectAsync(IProject project)
+        {
+            return;
+        }
     }
 }
