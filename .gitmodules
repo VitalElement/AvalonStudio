@@ -10,3 +10,6 @@
 [submodule "DockNC"]
 	path = DockNC
 	url = https://github.com/Mabiavalon/DockNC.git
+[submodule "debugger-libs"]
+	path = debugger-libs
+	url = https://github.com/danwalmsley/debugger-libs.git
