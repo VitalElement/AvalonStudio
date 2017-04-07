@@ -11,7 +11,7 @@ before_build:
 build_script:
 - ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
-- ps: .\build.ps1
+- ps: .\build.ps1 --configuration= "Release"
 
 artifacts:
 - path: artifacts/zip/AvalonStudio-win7-x64.zip
