@@ -75,11 +75,12 @@
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build2661-alpha" />
-    <PackageReference Include="Avalonia.Gtk3" Version="0.4.1-build2661-alpha" />
-    <PackageReference Include="Avalonia.Skia.Desktop" Version="0.4.1-build2661-alpha" />
-    <PackageReference Include="Avalonia.Win32" Version="0.4.1-build2661-alpha" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.4.1-build332-alpha" />
+    <PackageReference Include="Avalonia" Version="0.4.1-build2920-alpha" />
+    <PackageReference Include="Avalonia.Gtk3" Version="0.4.1-build2920-alpha" />
+    <PackageReference Include="Avalonia.Skia.Desktop" Version="0.4.1-build2920-alpha" />
+    <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.56.1.3" />
+    <PackageReference Include="Avalonia.Win32" Version="0.4.1-build2920-alpha" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.4.1-build387-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +94,7 @@
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Languages.CSharp\AvalonStudio.Languages.CSharp.csproj" />
+    <ProjectReference Include="..\AvalonStudio.LanguageSupport.TypeScript\AvalonStudio.LanguageSupport.TypeScript.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.OmniSharp\AvalonStudio.Projects.OmniSharp.csproj" />
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />

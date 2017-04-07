@@ -30,7 +30,7 @@ namespace AvalonStudio.Debugging.GDB
 
 					foreach (var change in changes)
 					{
-						result.Value.Add(VariableObjectChange.FromDataString(change.RemoveBraces()));
+						result.Value.Add(change.RemoveBraces().VariableObjectChangeFromDataString());
 					}
 				}
 			}

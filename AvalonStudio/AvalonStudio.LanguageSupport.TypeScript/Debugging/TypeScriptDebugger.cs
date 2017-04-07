@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Projects;
+﻿using AvalonStudio.Debugging;
+using AvalonStudio.Projects;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using IridiumJS;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Debugging.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.Debugging
 {
     public class TypeScriptDebugger : IDebugger
     {
@@ -131,6 +132,7 @@ namespace AvalonStudio.Debugging.TypeScript
         {
             // STUB!
             // throw new NotImplementedException();
+            await Task.Delay(0);
         }
 
         public Task<LiveBreakPoint> SetBreakPointAsync(string file, uint line)
@@ -143,7 +145,7 @@ namespace AvalonStudio.Debugging.TypeScript
             throw new NotImplementedException();
         }
 
-        public async Task<bool> StartAsync(IToolChain toolChain, IConsole console, IProject project)
+        public Task<bool> StartAsync(IToolChain toolChain, IConsole console, IProject project)
         {
             // Start compiled TypeScript program
             // IridiumJS is a dependency of the toolchain, so we will use it
@@ -157,7 +159,7 @@ namespace AvalonStudio.Debugging.TypeScript
             scriptExecutionEngine.Execute(jsScript);
 
             //return true;
-            return false; // hack
+            return Task.FromResult(false); // hack
         }
 
         public Task StepInstructionAsync()
@@ -188,6 +190,14 @@ namespace AvalonStudio.Debugging.TypeScript
         public Task<List<VariableObjectChange>> UpdateVariablesAsync()
         {
             throw new NotImplementedException();
+        }
+
+        public virtual void BeforeActivation()
+        {
+        }
+
+        public virtual void Activation()
+        {
         }
     }
 }

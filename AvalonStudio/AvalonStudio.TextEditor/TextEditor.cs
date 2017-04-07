@@ -45,7 +45,7 @@ namespace AvalonStudio.TextEditor
 
             CaretIndexProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
             {
-                if (s.TextDocument != null && s.CaretIndex != -1 && s.TextView != null)
+                if (s.TextDocument != null && s.CaretIndex >= 0 && s.TextView != null)
                 {
                     s.InvalidateCaretPosition();
 
@@ -695,7 +695,7 @@ namespace AvalonStudio.TextEditor
                 return;
             }
 
-            HandleTextInput(text);
+            HandleTextInput(text.Replace("\t", TabCharacter));
         }
 
         private void Undo()

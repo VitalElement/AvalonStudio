@@ -5,7 +5,11 @@
 *.suo
 *.user
 *.sln.docstates
+artifacts
+tools
 .vs
+tools/
+artifacts/
 
 # Build results
 [Dd]ebug/

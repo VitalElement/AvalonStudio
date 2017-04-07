@@ -1,7 +1,8 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using AvalonStudio.Projects;
 
-namespace AvalonStudio.Projects.TypeScript
+namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 {
     public class BlankTypeScriptProjectTemplate : IProjectTemplate
     {
@@ -17,7 +18,7 @@ namespace AvalonStudio.Projects.TypeScript
 
             Directory.CreateDirectory(location);
 
-            IProject project = TypeScriptProject.Create(solution, location);
+            IProject project = await TypeScriptProject.Create(solution, location);
 
             project = solution.AddProject(project);
 
@@ -27,6 +28,14 @@ namespace AvalonStudio.Projects.TypeScript
             }
 
             return project;
+        }
+
+        public virtual void BeforeActivation()
+        {
+        }
+
+        public virtual void Activation()
+        {
         }
     }
 }
