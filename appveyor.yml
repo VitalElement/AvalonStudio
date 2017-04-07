@@ -13,6 +13,8 @@ build_script:
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
 - ps: .\build.ps1
 
+test: off
+
 artifacts:
 - path: artifacts/zip/AvalonStudio-win7-x64.zip
 - path: artifacts/zip/AvalonStudioBuild-win7-x64.zip
