@@ -137,8 +137,9 @@ Task("Zip-NetCore")
 
 Task("Default")
     .IsDependentOn("Restore-NetCore")
-    .IsDependentOn("Publish-NetCore")
+    .IsDependentOn("Build-NetCore")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
+    .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Zip-NetCore");
 
 RunTarget(target);
