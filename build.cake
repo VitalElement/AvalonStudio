@@ -64,6 +64,30 @@ Task("Build-NetCore")
     }
 });
 
+void RunCoreTest(string dir, bool net461Only)
+{
+    Information("Running tests from " + dir);
+    DotNetCoreRestore(dir);
+    var frameworks = new List<string>(){"netcoreapp1.1"};
+    foreach(var fw in frameworks)
+    {
+        if(fw != "net461" && net461Only)
+            continue;
+        Information("Running for " + fw);
+        DotNetCoreTest(System.IO.Path.Combine(dir, System.IO.Path.GetFileName(dir)+".csproj"),
+            new DotNetCoreTestSettings{Framework = fw});
+    }
+}
+
+
+Task("Run-Net-Core-Unit-Tests")
+    .IsDependentOn("Clean")
+    .Does(() => {
+        RunCoreTest("./AvalonStudio/AvalonStudio.Extensibility.Tests", false);
+    });
+
+
+
 Task("Publish-NetCore")
     .IsDependentOn("Restore-NetCore")
     .Does(() =>
@@ -114,6 +138,7 @@ Task("Zip-NetCore")
 Task("Default")
     .IsDependentOn("Restore-NetCore")
     .IsDependentOn("Publish-NetCore")
+    .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Zip-NetCore");
 
 RunTarget(target);
