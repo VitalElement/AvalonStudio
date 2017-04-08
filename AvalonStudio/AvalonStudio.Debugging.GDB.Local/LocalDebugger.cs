@@ -24,7 +24,7 @@ namespace AvalonStudio.Debuggers.GDB.Local
 			{
                 SetAsyncMode((await new GDBSetCommand("mi-async", "on").Execute(this)).Response == ResponseCode.Done);
 
-				if (Platform.PlatformIdentifier == PlatformID.Win32NT) {
+				if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT) {
 					await new SetCommand ("new-console", "on").Execute (this);
 				}
 			}
