@@ -36,7 +36,7 @@
     public class DebugManager2 : IDebugManager2, IExtension
     {
         private DebuggerSession _session;
-
+        private IShell _shell;
         private IEditor _lastDocument;
 
         public DebugManager2()
@@ -60,7 +60,7 @@
         {
             if (!_loadingBreakpoints)
             {
-                var solution = IoC.Get<IShell>().CurrentSolution;
+                var solution = _shell.CurrentSolution;
 
                 Platform.EnsureSolutionUserDataDirectory(solution);
 
@@ -77,7 +77,7 @@
         {
             _loadingBreakpoints = true;
 
-            var solution = IoC.Get<IShell>().CurrentSolution;
+            var solution = _shell.CurrentSolution;
 
             if (solution != null)
             {
@@ -108,7 +108,9 @@
 
         public void Activation()
         {
-            IoC.Get<IShell>().SolutionChanged += (sender, e) =>
+            _shell = IoC.Get<IShell>();
+
+            _shell.SolutionChanged += (sender, e) =>
             {
                 LoadBreakpoints();
             };
@@ -125,21 +127,17 @@
             _session?.Dispose();
         }
 
-        public void Start()
+        public async void Start()
         {
             if (CurrentDebugger != null)
             {
-                var project = IoC.Get<IShell>().GetDefaultProject();
+                var project = _shell.GetDefaultProject();
 
-                if (string.IsNullOrEmpty(project.Executable))
+                if(!await project.ToolChain.Build(IoC.Get<IConsole>(), project))
                 {
-                    IoC.Get<IConsole>().WriteLine("No Executable found to debug. This is a temporary error until dotnet tooling is improved.");
-                    IoC.Get<IConsole>().WriteLine("Build project first (F6)");
-
-                    OnEndSession();
                     return;
                 }
-
+                
                 _session = CurrentDebugger.CreateSession();
 
                 _session.Breakpoints = Breakpoints;
@@ -183,9 +181,7 @@
         }
 
         private void _session_TargetStopped(object sender, TargetEventArgs e)
-        {
-            var _shell = IoC.Get<IShell>();
-
+        {            
             var sourceLocation = e.Backtrace.GetFrame(0).SourceLocation;
 
             var normalizedPath = sourceLocation.FileName.Replace("\\\\", "\\").NormalizePath();
