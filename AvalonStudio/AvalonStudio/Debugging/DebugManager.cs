@@ -1,6 +1,7 @@
 ﻿namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
+    using AvalonStudio.Documents;
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Plugin;
     using AvalonStudio.Platforms;
@@ -35,6 +36,8 @@
     {
         private DebuggerSession _session;
 
+        private IEditor _lastDocument;        
+
         public DebugManager2()
         {
             Breakpoints = new BreakpointStore();
@@ -54,6 +57,12 @@
             IoC.RegisterConstant<IDebugManager2>(this);
         }
 
+        private void OnEndSession()
+        {
+            CurrentDebugger = null;
+            _session?.Dispose();
+        }
+
         public void Start()
         {
             if(CurrentDebugger != null)
@@ -64,6 +73,8 @@
                 {
                     IoC.Get<IConsole>().WriteLine("No Executable found to debug. This is a temporary error until dotnet tooling is improved.");
                     IoC.Get<IConsole>().WriteLine("Build project first (F6)");
+
+                    OnEndSession();
                     return;
                 }
 
@@ -84,10 +95,23 @@
 
                 _session.TargetExited += (sender, e) =>
                 {
-                    _session.Dispose();
+                    OnEndSession();
 
-                    CurrentDebugger = null;
-                };                
+                    if (_lastDocument != null)
+                    {
+                        _lastDocument.ClearDebugHighlight();
+                        _lastDocument = null;
+                    }
+                };
+
+                _session.TargetStarted += (sender, e) =>
+                {
+                    if (_lastDocument != null)
+                    {
+                        _lastDocument.ClearDebugHighlight();
+                        _lastDocument = null;
+                    }
+                };
             }
         }
 
@@ -105,7 +129,7 @@
 
             if (document != null)
             {
-                //lastDocument = document;
+                _lastDocument = document;
                 file = document?.ProjectFile;
             }
 
@@ -116,7 +140,7 @@
 
             if (file != null)
             {
-                Dispatcher.UIThread.InvokeAsync(async () => { await _shell.OpenDocument(file, sourceLocation.Line, 1, true); });
+                Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument =  await _shell.OpenDocument(file, sourceLocation.Line, 1, true); });
             }
             else
             {
