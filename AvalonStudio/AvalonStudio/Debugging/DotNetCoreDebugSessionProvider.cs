@@ -654,7 +654,7 @@ namespace AvalonStudio.Debugging
                 Command = "dotnet.exe",
                 Arguments = project.Executable,
                 WorkingDirectory = System.IO.Path.GetDirectoryName(project.Executable),
-                UseExternalConsole = true,
+                UseExternalConsole = false,
                 CloseExternalConsoleOnExit = true
             };
 

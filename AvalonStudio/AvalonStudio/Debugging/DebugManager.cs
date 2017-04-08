@@ -174,6 +174,11 @@
                         _lastDocument = null;
                     }
                 };
+
+                _session.OutputWriter = (stdError, text) => 
+                {
+                    IoC.Get<IConsole>().Write(text);
+                };
             }
         }
 
