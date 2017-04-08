@@ -16,9 +16,19 @@
     {
         IDebugger2 CurrentDebugger { get; set; }
 
+        BreakpointStore Breakpoints { get; set; }
+
         void Start();
 
-        void StepLine();
+        void Continue();
+
+        void SteoOver();
+
+        void StepInto();
+
+        void StepInstruction();
+
+        void StepOut();
     }
 
     public class DebugManager2 : IDebugManager2, IExtension
@@ -27,8 +37,10 @@
 
         public DebugManager2()
         {
-
+            Breakpoints = new BreakpointStore();
         }
+
+        public BreakpointStore Breakpoints { get; set; }
 
         public IDebugger2 CurrentDebugger { get; set; }
 
@@ -50,7 +62,7 @@
 
                 _session = CurrentDebugger.CreateSession();
 
-                _session.Breakpoints.Add("c:\\dev\\repos\\dotnettest\\Program.cs", 9);
+                _session.Breakpoints = Breakpoints;
 
                 _session.Run(CurrentDebugger.GetDebuggerStartInfo(project), CurrentDebugger.GetDebuggerSessionOptions(project));
 
@@ -105,9 +117,29 @@
             }
         }
 
-        public void StepLine()
+        public void SteoOver()
+        {
+            _session?.NextLine();
+        }
+
+        public void Continue()
+        {
+            _session?.Continue();
+        }
+
+        public void StepInto()
         {
             _session?.StepLine();
+        }
+
+        public void StepInstruction()
+        {
+            _session?.StepInstruction();            
+        }
+
+        public void StepOut()
+        {
+            _session?.Finish();
         }
     }
 }

@@ -466,7 +466,7 @@ namespace AvalonStudio.Debugging
             {
                 var manager = IoC.Get<IDebugManager2>();
 
-                manager.StepLine();
+                manager.SteoOver();
             });
         }
 
@@ -520,7 +520,7 @@ namespace AvalonStudio.Debugging
                 }
                 else
                 {
-                    //manager.Continue();
+                    manager.Continue();
                 }
             });
         }
