@@ -37,6 +37,7 @@
     {
         private DebuggerSession _session;
         private IShell _shell;
+        private IConsole _console;
         private IEditor _lastDocument;
 
         public DebugManager2()
@@ -109,6 +110,7 @@
         public void Activation()
         {
             _shell = IoC.Get<IShell>();
+            _console = IoC.Get<IConsole>();
 
             _shell.SolutionChanged += (sender, e) =>
             {
@@ -133,7 +135,13 @@
             {
                 var project = _shell.GetDefaultProject();
 
-                if(!await project.ToolChain.Build(IoC.Get<IConsole>(), project))
+                if( project == null)
+                {
+                    _console.WriteLine("No Default project set. Please set a default project before debugging.");
+                    return;
+                }
+
+                if(!await project.ToolChain.Build(_console, project))
                 {
                     return;
                 }
@@ -148,7 +156,7 @@
 
                 _session.TargetEvent += (sender, e) =>
                 {
-                    IoC.Get<IConsole>().WriteLine(e.Type.ToString());
+                    _console.WriteLine(e.Type.ToString());
                 };
 
                 _session.TargetHitBreakpoint += _session_TargetStopped;
@@ -175,7 +183,7 @@
 
                 _session.OutputWriter = (stdError, text) => 
                 {
-                    IoC.Get<IConsole>().Write(text);
+                    _console.Write(text);
                 };
             }
         }
@@ -207,7 +215,7 @@
             }
             else
             {
-                IoC.Get<IConsole>().WriteLine("Unable to find file: " + normalizedPath);
+                _console.WriteLine("Unable to find file: " + normalizedPath);
             }
         }
 
