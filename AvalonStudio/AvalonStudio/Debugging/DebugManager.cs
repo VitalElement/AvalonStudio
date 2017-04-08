@@ -125,6 +125,7 @@
 
         private void OnEndSession()
         {
+            _shell.CurrentPerspective = Perspective.Editor;
             CurrentDebugger = null;
             _session?.Dispose();
         }
@@ -137,12 +138,14 @@
 
                 if( project == null)
                 {
+                    OnEndSession();
                     _console.WriteLine("No Default project set. Please set a default project before debugging.");
                     return;
                 }
 
                 if(!await project.ToolChain.Build(_console, project))
                 {
+                    OnEndSession();
                     return;
                 }
                 
@@ -185,6 +188,8 @@
                 {
                     _console.Write(text);
                 };
+
+                _shell.CurrentPerspective = Perspective.Debug;
             }
         }
 
