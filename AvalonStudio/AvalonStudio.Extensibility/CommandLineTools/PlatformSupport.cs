@@ -15,12 +15,12 @@ namespace AvalonStudio.CommandLineTools
         {
             switch (Platform.PlatformIdentifier)
             {
-                case PlatformID.Win32NT:
+                case Platforms.PlatformID.Win32NT:
                     executorType = ShellExecutorType.Windows;
                     break;
 
-                case PlatformID.Unix:
-                case PlatformID.MacOSX:
+                case Platforms.PlatformID.PlatformID.Unix:
+                case Platforms.PlatformID.PlatformID.MacOSX:
                     executorType = ShellExecutorType.Unix;
                     break;
             }

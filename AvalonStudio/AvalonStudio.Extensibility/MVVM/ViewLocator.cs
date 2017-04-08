@@ -12,7 +12,7 @@ namespace AvalonStudio.MVVM
 		{
 			var name = data.GetType().FullName.Replace("ViewModel", "View");
 
-			var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => name.Contains(a.GetName().Name));
+			var assemblies = AvalonStudio.Extensibility.Utils.AppDomain.CurrentDomain.GetAssemblies().Where(a => name.Contains(a.GetName().Name));
 
 			Type type = null;
 
