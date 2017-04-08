@@ -12,6 +12,7 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using System.Xml;
 
     public interface IDebugManager2
     {
@@ -36,11 +37,69 @@
     {
         private DebuggerSession _session;
 
-        private IEditor _lastDocument;        
+        private IEditor _lastDocument;
 
         public DebugManager2()
         {
-            Breakpoints = new BreakpointStore();
+            Breakpoints = new BreakpointStore();            
+
+            Breakpoints.BreakpointAdded += (sender, e) =>
+            {
+                SaveBreakpoints();
+            };
+
+            Breakpoints.BreakpointRemoved += (sender, e) =>
+            {
+                SaveBreakpoints();
+            };
+        }
+
+        private bool _loadingBreakpoints;
+
+        private void SaveBreakpoints()
+        {
+            if (!_loadingBreakpoints)
+            {
+                var solution = IoC.Get<IShell>().CurrentSolution;
+
+                Platform.EnsureSolutionUserDataDirectory(solution);
+
+                var file = System.IO.Path.Combine(Platform.GetUserDataDirectory(solution), "Breakpoints.xml");
+
+                using (var writer = XmlWriter.Create(file))
+                {
+                    Breakpoints.Save().WriteTo(writer);
+                }
+            }
+        }
+
+        private void LoadBreakpoints()
+        {
+            _loadingBreakpoints = true;
+
+            var solution = IoC.Get<IShell>().CurrentSolution;
+
+            if (solution != null)
+            {
+                var file = System.IO.Path.Combine(Platform.GetUserDataDirectory(solution), "Breakpoints.xml");
+
+                if (System.IO.File.Exists(file))
+                {
+                    using (var reader = XmlReader.Create(file))
+                    {
+                        var doc = new XmlDocument();
+                        doc.Load(reader);
+
+                        Breakpoints.Load(doc.DocumentElement);
+                    }
+                }
+            }
+            else
+            {
+                Breakpoints.Clear();
+            }
+
+            _loadingBreakpoints = false;
         }
 
         public BreakpointStore Breakpoints { get; set; }
@@ -49,7 +108,10 @@
 
         public void Activation()
         {
-            
+            IoC.Get<IShell>().SolutionChanged += (sender, e) =>
+            {
+                LoadBreakpoints();
+            };
         }
 
         public void BeforeActivation()
@@ -65,11 +127,11 @@
 
         public void Start()
         {
-            if(CurrentDebugger != null)
+            if (CurrentDebugger != null)
             {
                 var project = IoC.Get<IShell>().GetDefaultProject();
 
-                if(string.IsNullOrEmpty(project.Executable))
+                if (string.IsNullOrEmpty(project.Executable))
                 {
                     IoC.Get<IConsole>().WriteLine("No Executable found to debug. This is a temporary error until dotnet tooling is improved.");
                     IoC.Get<IConsole>().WriteLine("Build project first (F6)");
@@ -140,7 +202,7 @@
 
             if (file != null)
             {
-                Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument =  await _shell.OpenDocument(file, sourceLocation.Line, 1, true); });
+                Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, 1, true); });
             }
             else
             {
@@ -165,7 +227,7 @@
 
         public void StepInstruction()
         {
-            _session?.StepInstruction();            
+            _session?.StepInstruction();
         }
 
         public void StepOut()

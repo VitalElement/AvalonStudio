@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using AvalonStudio.Utils;
 using System.Diagnostics;
+using AvalonStudio.Projects;
 
 namespace AvalonStudio.Platforms
 {
@@ -74,6 +75,8 @@ namespace AvalonStudio.Platforms
 
         internal const string LIBC = "libc";
         private const string LIB = "MonoPosixHelper";
+
+        private const string UserDataDir = ".as";
 
         public static string ExecutionPath => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
@@ -186,6 +189,19 @@ namespace AvalonStudio.Platforms
 
                 return Path.Combine(userDir, "AvalonStudio");
             }
+        }
+
+        public static void EnsureSolutionUserDataDirectory (ISolution solution)
+        {
+            if(!Directory.Exists(GetUserDataDirectory(solution)))
+            {
+                Directory.CreateDirectory(GetUserDataDirectory(solution));
+            }
+        }
+
+        public static string GetUserDataDirectory (ISolution solution)
+        {
+            return Path.Combine(solution.CurrentDirectory, UserDataDir);
         }
 
         public static string ProjectDirectory => Path.Combine(BaseDirectory, "Projects");
