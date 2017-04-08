@@ -65,9 +65,8 @@
 
                 _session.TargetExited += (sender, e) =>
                 {
-                    _session.Dispose();
-                    //_session.Exit();
-                };
+                    _session.Dispose();                    
+                };                
             }
         }
 
