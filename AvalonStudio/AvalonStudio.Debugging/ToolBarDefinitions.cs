@@ -33,9 +33,9 @@ namespace AvalonStudio.Debugging
         //   <StepOverCommandDefinition>(
         //   DebuggingGroup, 5);
 
-        public static ToolBarItemDefinition StepIntoToolBarItem = new ToolBarItemDefinition
-           <StepIntoCommandDefinition>(
-           DebuggingGroup, 6);
+        //public static ToolBarItemDefinition StepIntoToolBarItem = new ToolBarItemDefinition
+          // <StepIntoCommandDefinition>(
+           //DebuggingGroup, 6);
 
         public static ToolBarItemDefinition StepOutToolBarItem = new ToolBarItemDefinition
            <StepOutCommandDefinition>(
