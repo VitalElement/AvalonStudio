@@ -10,6 +10,7 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <PackageTargetFallback>$(PackageTargetFallback);net45</PackageTargetFallback>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
     <Compile Remove="Shell\Commands\NewFileCommandHandler.cs" />
     <Compile Remove="Shell\Commands\NewFileCommandListDefinition.cs" />
