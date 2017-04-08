@@ -60,6 +60,13 @@
             {
                 var project = IoC.Get<IShell>().GetDefaultProject();
 
+                if(string.IsNullOrEmpty(project.Executable))
+                {
+                    IoC.Get<IConsole>().WriteLine("No Executable found to debug. This is a temporary error until dotnet tooling is improved.");
+                    IoC.Get<IConsole>().WriteLine("Build project first (F6)");
+                    return;
+                }
+
                 _session = CurrentDebugger.CreateSession();
 
                 _session.Breakpoints = Breakpoints;
