@@ -65,7 +65,9 @@
 
                 _session.TargetExited += (sender, e) =>
                 {
-                    _session.Dispose();                    
+                    _session.Dispose();
+
+                    CurrentDebugger = null;
                 };                
             }
         }
