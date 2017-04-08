@@ -103,7 +103,6 @@ namespace AvalonStudio
             _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
             _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
 
-
             IoC.RegisterConstant(this, typeof(IShell));
 
             foreach (var extension in extensions)
@@ -255,6 +254,8 @@ namespace AvalonStudio
 
             CurrentPerspective = Perspective.Editor;
 
+            DebugManager2 = new DebugManager2();
+
             IoC.RegisterConstant(this);
         }
 
@@ -269,6 +270,8 @@ namespace AvalonStudio
         }
 
         public DebugManager DebugManager { get; private set; }
+
+        public DebugManager2 DebugManager2 { get; private set; }
 
         public ToolBarDefinition ToolBarDefinition
         {

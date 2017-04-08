@@ -25,7 +25,7 @@ namespace AvalonStudio.Debugging
 		Natural
 	}
     
-	public interface IDebugger : IExtension
+    public interface IDebugger : IExtension
 	{
 		DebuggerState State { get; }
 

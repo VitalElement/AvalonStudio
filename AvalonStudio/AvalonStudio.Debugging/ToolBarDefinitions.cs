@@ -15,7 +15,7 @@ namespace AvalonStudio.Debugging
         public static ToolBarItemGroupDefinition DebuggingGroup = new ToolBarItemGroupDefinition(
            Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 5);
 
-        public static ToolBarItemDefinition StartDebuggingToolBarItem = new ToolBarItemDefinition<StartDebuggingCommandDefinition>(DebuggingGroup, 1);
+        //public static ToolBarItemDefinition StartDebuggingToolBarItem = new ToolBarItemDefinition<StartDebuggingCommandDefinition>(DebuggingGroup, 1);
 
         public static ToolBarItemDefinition PauseDebuggingToolBarItem = new ToolBarItemDefinition
            <PauseDebuggingCommandDefinition>(
@@ -29,9 +29,9 @@ namespace AvalonStudio.Debugging
            <RestartDebuggingCommandDefinition>(
            DebuggingGroup, 4);
 
-        public static ToolBarItemDefinition StepOverToolBarItem = new ToolBarItemDefinition
-           <StepOverCommandDefinition>(
-           DebuggingGroup, 5);
+        //public static ToolBarItemDefinition StepOverToolBarItem = new ToolBarItemDefinition
+        //   <StepOverCommandDefinition>(
+        //   DebuggingGroup, 5);
 
         public static ToolBarItemDefinition StepIntoToolBarItem = new ToolBarItemDefinition
            <StepIntoCommandDefinition>(
