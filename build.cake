@@ -42,6 +42,7 @@ Task("Clean")
 });
 
 Task("Restore-NetCore")
+    .ContinueOnError()
     .IsDependentOn("Clean")
     .Does(() =>
 {
