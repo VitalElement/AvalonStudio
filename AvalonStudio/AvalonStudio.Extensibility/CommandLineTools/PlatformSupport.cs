@@ -19,8 +19,8 @@ namespace AvalonStudio.CommandLineTools
                     executorType = ShellExecutorType.Windows;
                     break;
 
-                case Platforms.PlatformID.PlatformID.Unix:
-                case Platforms.PlatformID.PlatformID.MacOSX:
+                case Platforms.PlatformID.Unix:
+                case Platforms.PlatformID.MacOSX:
                     executorType = ShellExecutorType.Unix;
                     break;
             }
