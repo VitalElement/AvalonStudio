@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Avalonia;
 using AvalonStudio.TextEditor.Document;
+using System.Linq;
 
 namespace AvalonStudio.TextEditor.Rendering
 {
@@ -99,6 +100,19 @@ namespace AvalonStudio.TextEditor.Rendering
                         lineEndOffset = line.EndOffset - (line.EndOffset - segment.EndOffset);
                     }
 
+                    if (!extendToFullWidthAtLineEnd)
+                    {
+                        var text = textView.TextDocument.GetText(lineStartOffset, lineEndOffset - lineStartOffset);
+
+                        int offset = text.TakeWhile(c => char.IsWhiteSpace(c)).Count();
+
+                        lineStartOffset += offset;
+
+                        offset = text.Reverse().TakeWhile(c => char.IsWhiteSpace(c)).Count();
+
+                        lineEndOffset -= offset;
+                    }
+
                     // generate rect for section in this line.
                     yield return new Tuple<int, int>(lineStartOffset, lineEndOffset);
                 }
@@ -143,7 +157,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
                     if (segment.Offset > line.Offset)
                     {
-                        lineStartOffset = line.Offset + (segment.Offset - line.Offset);
+                        lineStartOffset = line.Offset + (segment.Offset - line.Offset);                        
                     }
 
                     var lineEndOffset = line.EndOffset;
@@ -151,6 +165,19 @@ namespace AvalonStudio.TextEditor.Rendering
                     if (segment.EndOffset < line.EndOffset)
                     {
                         lineEndOffset = line.EndOffset - (line.EndOffset - segment.EndOffset);
+                    }
+
+                    if (!extendToFullWidthAtLineEnd)
+                    {
+                        var text = textDocument.GetText(lineStartOffset, lineEndOffset - lineStartOffset);
+
+                        int offset = text.TakeWhile(c => char.IsWhiteSpace(c)).Count();
+
+                        lineStartOffset += offset;
+
+                        offset = text.Reverse().TakeWhile(c => char.IsWhiteSpace(c)).Count();
+
+                        lineEndOffset -= offset;
                     }
 
                     // generate rect for section in this line.

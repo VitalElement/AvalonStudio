@@ -11,7 +11,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
 		public SelectedDebugLineBackgroundRenderer()
 		{
-			selectedLineBg = Brush.Parse("#44008299");
+			selectedLineBg = Brush.Parse("#C5C870");
 		}
 
 		public int Line
@@ -34,13 +34,13 @@ namespace AvalonStudio.TextEditor.Rendering
 		{
 			if (line > 0 && line < textView.TextDocument.LineCount)
 			{
-				var currentLine = textView.TextDocument.GetLineByNumber(line);
+				var currentLine = textView.TextDocument.GetLineByNumber(line);                                  
 
 				var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, currentLine);
 
 				foreach (var rect in rects)
 				{
-					var drawRect = new Rect(rect.TopLeft.X, rect.TopLeft.Y, textView.Bounds.Width, rect.Height);
+					var drawRect = new Rect(rect.TopLeft.X - 1, rect.TopLeft.Y - 1, rect.Width + 2, rect.Height + 2);
 					drawingContext.FillRectangle(selectedLineBg, drawRect);
 				}
 			}
@@ -48,6 +48,10 @@ namespace AvalonStudio.TextEditor.Rendering
 
 		public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
 		{
+            if (line.DocumentLine.LineNumber == Line)
+            {
+                line.RenderedText.SetForegroundBrush(Brushes.Black, 0, line.Length);
+            }
 		}
 	}
 }
