@@ -8,6 +8,7 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <RuntimeIdentifiers>win7-x64;ubuntu.14.04-x64;debian.8-x64;osx.10.12-x64</RuntimeIdentifiers>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <PackageTargetFallback>$(PackageTargetFallback);net45</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Shell\Commands\NewFileCommandHandler.cs" />
