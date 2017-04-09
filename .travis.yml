@@ -7,7 +7,7 @@ script:
   - sudo apt-get install -y libunwind8 libcurl3
   - wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu52_52.1-8ubuntu0.2_amd64.deb
   - sudo dpkg -i libicu52_52.1-8ubuntu0.2_amd64.deb
-  - sudo apt-get install dotnet-dev
+  - sudo apt-get install dotnet-dev-2.0.0-preview1-005743
   - dotnet --info
   - ./build.sh --configuration "Release"
 
