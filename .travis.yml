@@ -3,9 +3,10 @@ os:
   - linux
 dist: trusty
 
-dotnet: 1.0.1
-
 script:
+  - wget https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-sdk-ubuntu-x64.latest.deb
+  - sudo dpkg -i dotnet-sdk-ubuntu-x64.latest.deb
+  - dotnet --info
   - ./build.sh --configuration "Release"
 
 notifications:
