@@ -4,9 +4,11 @@ os:
 dist: trusty
 
 script:
+  - mkdir dotnet
+  - cd dotnet
   - wget https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-ubuntu-x64.latest.tar.gz
   - tar -xvzf dotnet-dev-ubuntu-x64.latest.tar.gz
-  - PATH="$PATH:$HOME/dotnet-dev-ubuntu-x64.latest"
+  - PATH="$PATH:$HOME/dotnet"
   - dotnet --info
   - ./build.sh --configuration "Release"
 
