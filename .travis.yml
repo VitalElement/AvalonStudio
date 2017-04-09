@@ -1,4 +1,3 @@
-language: csharp
 sudo: required
 os:
   - linux
