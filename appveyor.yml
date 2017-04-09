@@ -1,6 +1,8 @@
 version: 0.2.0.{build}
 os: Visual Studio 2017
 install:
+  - if not exist dotnet-2.0.0.exe appveyor DownloadFile https://dotnetcli.blob.core.windows.net/dotnet/master/Installers/Latest/dotnet-win-x64.latest.exe -FileName "dotnet-2.0.0.exe"
+  - ps: Start-Process -FilePath "dotnet-2.0.0.exe" -ArgumentList "/quiet" -Wait  
   - if not exist dotnet-2.0.0-sdk.exe appveyor DownloadFile https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-win-x64.latest.exe -FileName "dotnet-2.0.0-sdk.exe"
   - ps: Start-Process -FilePath "dotnet-2.0.0-sdk.exe" -ArgumentList "/quiet" -Wait
 
