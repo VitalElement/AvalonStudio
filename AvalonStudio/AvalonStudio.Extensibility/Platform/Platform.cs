@@ -432,25 +432,27 @@ namespace AvalonStudio.Platforms
                 }
             }
 
+            if (path == null && other == null)
+            {
+                return 0;
+            }
+            if (path == null)
+            {
+                return 1;
+            }
+            if (other == null)
+            {
+                return -1;
+            }
+
             switch (PlatformIdentifier)
             {
                 case PlatformID.Win32NT:
                     // TODO consider using directory info?           
-                    if (path == null && other == null)
-                    {
-                        return 0;
-                    }
-                    if (path == null)
-                    {
-                        return 1;
-                    }
-                    if (other == null)
-                    {
-                        return -1;
-                    }
                     return path.ToLower().CompareTo(other.ToLower());
 
                 default:
+
                     return path.CompareTo(other);
             }
         }
