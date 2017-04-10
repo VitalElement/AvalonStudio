@@ -109,6 +109,12 @@
             _session = null;
         }
 
+        public void Restart()
+        {
+            OnEndSession();
+            Start();
+        }
+
         public async void Start()
         {
                 var project = _shell.GetDefaultProject();

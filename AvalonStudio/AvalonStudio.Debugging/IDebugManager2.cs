@@ -8,6 +8,8 @@
 
         void Start();
 
+        void Restart();
+
         void Continue();
 
         void SteoOver();
