@@ -19,14 +19,7 @@ build_script:
 test: off
 
 artifacts:
-- path: artifacts/zip/AvalonStudio-win7-x64.zip
-- path: artifacts/zip/AvalonStudioBuild-win7-x64.zip
-- path: artifacts/zip/AvalonStudio-ubuntu.14.04-x64.zip
-- path: artifacts/zip/AvalonStudioBuild-ubuntu.14.04-x64.zip
-- path: artifacts/zip/AvalonStudio-debian.8-x64.zip
-- path: artifacts/zip/AvalonStudioBuild-debian.8-x64.zip
-- path: artifacts/zip/AvalonStudio-osx.10.12-x64.zip
-- path: artifacts/zip/AvalonStudioBuild-osx.10.12-x64.zip
+- path: artifacts/zip/*.zip
 - path: latest-version-badge.svg
 
 deploy:
