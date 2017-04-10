@@ -36,6 +36,23 @@ if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
         version += "-build" + EnvironmentVariable("APPVEYOR_BUILD_NUMBER");
 }
 
+var isPlatformAnyCPU = StringComparer.OrdinalIgnoreCase.Equals(platform, "Any CPU");
+var isPlatformX86 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x86");
+var isPlatformX64 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x64");
+var isLocalBuild = BuildSystem.IsLocalBuild;
+var isRunningOnUnix = IsRunningOnUnix();
+var isRunningOnWindows = IsRunningOnWindows();
+var isRunningOnAppVeyor = BuildSystem.AppVeyor.IsRunningOnAppVeyor;
+var isPullRequest = BuildSystem.AppVeyor.Environment.PullRequest.IsPullRequest;
+var isMainRepo = StringComparer.OrdinalIgnoreCase.Equals(MainRepo, BuildSystem.AppVeyor.Environment.Repository.Name);
+var isMasterBranch = StringComparer.OrdinalIgnoreCase.Equals(MasterBranch, BuildSystem.AppVeyor.Environment.Repository.Branch);
+var isTagged = BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag 
+               && !string.IsNullOrWhiteSpace(BuildSystem.AppVeyor.Environment.Repository.Tag.Name);
+var isReleasable = StringComparer.OrdinalIgnoreCase.Equals(ReleasePlatform, platform) 
+                   && StringComparer.OrdinalIgnoreCase.Equals(ReleaseConfiguration, configuration);
+var isMyGetRelease = !isTagged && isReleasable;
+var isNuGetRelease = isTagged && isReleasable;
+
 Task("Clean")
 .Does(()=>{
     CleanDirectories(buildDirs);
@@ -92,30 +109,37 @@ Task("Publish-NetCore")
     .IsDependentOn("Restore-NetCore")
     .Does(() =>
 {
-    foreach (var project in netCoreProjects)
+    if(isMainRepo && isMasterBranch)
     {
-        foreach(var runtime in project.Runtimes)
+        foreach (var project in netCoreProjects)
         {
-            var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
-
-            Information("Publishing: {0}, runtime: {1}", project.Name, runtime);
-            DotNetCorePublish(project.Path, new DotNetCorePublishSettings {
-                Framework = project.Framework,
-                Configuration = configuration,
-                Runtime = runtime,
-                OutputDirectory = outputDir.FullPath
-            });
-
-            if (IsRunningOnWindows() && (runtime == "win7-x86" || runtime == "win7-x64"))
+            foreach(var runtime in project.Runtimes)
             {
-                Information("Patching executable subsystem for: {0}, runtime: {1}", project.Name, runtime);
-                var targetExe = outputDir.CombineWithFilePath(project.Name + ".exe");
-                var exitCodeWithArgument = StartProcess(editbin, new ProcessSettings { 
-                    Arguments = "/subsystem:windows " + targetExe.FullPath
+                var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
+
+                Information("Publishing: {0}, runtime: {1}", project.Name, runtime);
+                DotNetCorePublish(project.Path, new DotNetCorePublishSettings {
+                    Framework = project.Framework,
+                    Configuration = configuration,
+                    Runtime = runtime,
+                    OutputDirectory = outputDir.FullPath
                 });
-                Information("The editbin command exit code: {0}", exitCodeWithArgument);
+
+                if (IsRunningOnWindows() && (runtime == "win7-x86" || runtime == "win7-x64"))
+                {
+                    Information("Patching executable subsystem for: {0}, runtime: {1}", project.Name, runtime);
+                    var targetExe = outputDir.CombineWithFilePath(project.Name + ".exe");
+                    var exitCodeWithArgument = StartProcess(editbin, new ProcessSettings { 
+                        Arguments = "/subsystem:windows " + targetExe.FullPath
+                    });
+                    Information("The editbin command exit code: {0}", exitCodeWithArgument);
+                }
             }
         }
+    }
+    else
+    {
+        Information("Skipping Publish because build is not on MasterBranch");
     }
 });
 
