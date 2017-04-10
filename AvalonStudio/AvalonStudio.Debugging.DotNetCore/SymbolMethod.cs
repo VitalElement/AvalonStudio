@@ -12,13 +12,11 @@
         private List<SequencePoint> _sequencePoints;
         private SymbolToken _token;
 
-        public SymbolMethod(ISymbolDocument document, SequencePointCollection sequencePoints, SymbolToken token)
+        public SymbolMethod(SequencePointCollection sequencePoints, SymbolToken token)
         {
             _sequencePoints = sequencePoints.ToList();
 
             _token = token;
-
-            Document = document;
         }
 
         public List<SequencePoint> SequencePoints => _sequencePoints;

@@ -57,10 +57,6 @@
         readonly Dictionary<string, Dictionary<string, List<SourceFileDebugInfo>>> sourceFilesDebugInfo = new Dictionary<string, Dictionary<string, List<SourceFileDebugInfo>>>();
         readonly Dictionary<int, SymbolMethod> methodTokenLookup = new Dictionary<int, SymbolMethod>();
 
-        private Dictionary<string, ISymbolDocument> _documentLookup;
-
-        private List<SymbolDocument> _documents;
-
         public int Token(MetadataReader reader, Func<Handle> handleFunc, bool displayTable = true)
         {
             Handle handle;
@@ -105,7 +101,7 @@
 
                     var token = new SymbolToken(methodToken);
 
-                    var newMethod = new SymbolMethod(new SymbolDocument(), method.GetSequencePoints(), token);
+                    var newMethod = new SymbolMethod(method.GetSequencePoints(), token);
                     methodTokenLookup.Add(token.GetToken(), newMethod);
                     list.Add(newMethod);
                 }
