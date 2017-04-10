@@ -85,6 +85,8 @@
     <PackageReference Include="Avalonia.Win32" Version="0.4.1-build2920-alpha" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.4.1-build387-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
+    <PackageReference Include="Microsoft.NETCore.Runtime.CoreCLR" Version="2.0.0-preview1-25207-02" />
+    <PackageReference Include="Microsoft.NETCore.DotNetHostPolicy" Version="2.0.0-preview1-001915-00" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DockNC\src\Mabiavalon.DockNC\Mabiavalon.DockNC.csproj" />
