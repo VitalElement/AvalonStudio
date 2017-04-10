@@ -41,7 +41,7 @@
         {
             var startInfo = new DebuggerStartInfo()
             {
-                Command = "dotnet.exe",
+                Command = "dotnet" + Platforms.Platform.ExecutableExtension,
                 Arguments = project.Executable,
                 WorkingDirectory = System.IO.Path.GetDirectoryName(project.Executable),
                 UseExternalConsole = false,
