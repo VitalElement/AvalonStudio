@@ -111,8 +111,13 @@
 
         public void Restart()
         {
-            OnEndSession();
+            Stop();
             Start();
+        }
+
+        public void Stop ()
+        {
+            OnEndSession();
         }
 
         public async void Start()

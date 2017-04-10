@@ -18,7 +18,7 @@ namespace AvalonStudio.Debugging.Commands
 			command = ReactiveCommand.Create();
 			command.Subscribe(_ =>
 			{
-				var manager = IoC.Get<IDebugManager>();
+				var manager = IoC.Get<IDebugManager2>();
 
 				manager.Stop();
 			});

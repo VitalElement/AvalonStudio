@@ -10,6 +10,8 @@
 
         void Restart();
 
+        void Stop();
+
         void Continue();
 
         void SteoOver();
