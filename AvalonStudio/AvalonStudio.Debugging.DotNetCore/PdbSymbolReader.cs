@@ -45,7 +45,24 @@
 
             public int FindClosestLine(int line)
             {
-                return line; // todo implement as per mono example.
+                int closestLine = 0;
+                int closestDistance = int.MaxValue;
+
+                foreach (var method in PdbMethods)
+                {
+                    foreach (var sequencePoint in method.SequencePoints)
+                    {
+                        int distance = Math.Abs(sequencePoint.StartLine - line);
+
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestLine = sequencePoint.StartLine;
+                        }
+                    }
+                }
+
+                return closestLine;
             }
 
             public byte[] GetSourceRange(int startLine, int startColumn, int endLine, int endColumn)

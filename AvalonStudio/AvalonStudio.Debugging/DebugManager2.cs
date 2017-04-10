@@ -119,6 +119,9 @@
 
             _lastDocument?.ClearDebugHighlight();
             _lastDocument = null;
+
+            // This will save breakpoints that were moved to be closer to actual sequence points.
+            Breakpoints.Save();
         }
 
         public void Restart()
