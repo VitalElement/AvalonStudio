@@ -388,9 +388,12 @@ namespace AvalonStudio.Platforms
         {
             string result = path.ToPlatformPath();
 
-            DirectoryInfo info = new DirectoryInfo(result);
+            if (!string.IsNullOrEmpty(result))
+            {
+                DirectoryInfo info = new DirectoryInfo(result);
 
-            result = info.FullName;
+                result = info.FullName;
+            }
 
             return result;
         }

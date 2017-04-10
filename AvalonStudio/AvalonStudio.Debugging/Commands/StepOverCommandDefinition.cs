@@ -21,7 +21,7 @@ namespace AvalonStudio.Debugging.Commands
             {
                 var manager = IoC.Get<IDebugManager2>();
 
-                manager.SteoOver();
+                manager.StepOver();
             });
         }
 

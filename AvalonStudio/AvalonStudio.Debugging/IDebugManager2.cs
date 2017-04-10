@@ -14,7 +14,9 @@
 
         void Continue();
 
-        void SteoOver();
+        void Pause();
+
+        void StepOver();
 
         void StepInto();
 

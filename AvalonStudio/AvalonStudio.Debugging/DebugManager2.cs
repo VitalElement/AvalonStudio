@@ -189,36 +189,39 @@
 
         private void _session_TargetStopped(object sender, TargetEventArgs e)
         {
-            var sourceLocation = e.Backtrace.GetFrame(0).SourceLocation;
-
-            var normalizedPath = sourceLocation.FileName.Replace("\\\\", "\\").NormalizePath();
-
-            ISourceFile file = null;
-
-            var document = _shell.GetDocument(normalizedPath);
-
-            if (document != null)
+            if (e.Backtrace != null && e.Backtrace.FrameCount > 0)
             {
-                _lastDocument = document;
-                file = document?.ProjectFile;
-            }
+                var sourceLocation = e.Backtrace.GetFrame(0).SourceLocation;
 
-            if (file == null)
-            {
-                file = _shell.CurrentSolution.FindFile(normalizedPath);
-            }
+                var normalizedPath = sourceLocation.FileName.Replace("\\\\", "\\").NormalizePath();
 
-            if (file != null)
-            {
-                Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, 1, true); });
-            }
-            else
-            {
-                _console.WriteLine("Unable to find file: " + normalizedPath);
+                ISourceFile file = null;
+
+                var document = _shell.GetDocument(normalizedPath);
+
+                if (document != null)
+                {
+                    _lastDocument = document;
+                    file = document?.ProjectFile;
+                }
+
+                if (file == null)
+                {
+                    file = _shell.CurrentSolution.FindFile(normalizedPath);
+                }
+
+                if (file != null)
+                {
+                    Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, 1, true); });
+                }
+                else
+                {
+                    _console.WriteLine("Unable to find file: " + normalizedPath);
+                }
             }
         }
 
-        public void SteoOver()
+        public void StepOver()
         {
             _session?.NextLine();
         }
@@ -241,6 +244,11 @@
         public void StepOut()
         {
             _session?.Finish();
+        }
+
+        public void Pause()
+        {
+            _session?.Stop();
         }
     }
 }
