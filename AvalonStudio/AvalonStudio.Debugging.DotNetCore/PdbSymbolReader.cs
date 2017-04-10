@@ -118,6 +118,23 @@
 
                     var token = new SymbolToken(methodToken);
 
+                    var scopes = pdb.GetLocalScopes(methodHandle.ToDefinitionHandle());
+
+                    foreach (var scopeHandle in scopes)
+                    {
+                        var scope = pdb.GetLocalScope(scopeHandle);
+
+                        var localVarHandles = scope.GetLocalVariables();
+
+                        foreach (var varHandle in localVarHandles)
+                        {
+                            var localVar = pdb.GetLocalVariable(varHandle);
+
+
+                        }
+
+                    }
+
                     var newMethod = new SymbolMethod(method.GetSequencePoints(), token);
                     methodTokenLookup.Add(token.GetToken(), newMethod);
                     list.Add(newMethod);
