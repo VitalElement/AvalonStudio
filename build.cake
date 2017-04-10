@@ -112,63 +112,51 @@ Task("Run-Net-Core-Unit-Tests")
 
 Task("Publish-NetCore")
     .IsDependentOn("Restore-NetCore")
+    .WithCriteria(()=>isMainRepo && isMasterBranch)
     .Does(() =>
 {
-    if(isMainRepo && isMasterBranch)
+    foreach (var project in netCoreProjects)
     {
-        foreach (var project in netCoreProjects)
+        foreach(var runtime in project.Runtimes)
         {
-            foreach(var runtime in project.Runtimes)
+            var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
+
+            Information("Publishing: {0}, runtime: {1}", project.Name, runtime);
+            DotNetCorePublish(project.Path, new DotNetCorePublishSettings {
+                Framework = project.Framework,
+                Configuration = configuration,
+                Runtime = runtime,
+                OutputDirectory = outputDir.FullPath
+            });
+
+            if (IsRunningOnWindows() && (runtime == "win7-x86" || runtime == "win7-x64"))
             {
-                var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
-
-                Information("Publishing: {0}, runtime: {1}", project.Name, runtime);
-                DotNetCorePublish(project.Path, new DotNetCorePublishSettings {
-                    Framework = project.Framework,
-                    Configuration = configuration,
-                    Runtime = runtime,
-                    OutputDirectory = outputDir.FullPath
+                Information("Patching executable subsystem for: {0}, runtime: {1}", project.Name, runtime);
+                var targetExe = outputDir.CombineWithFilePath(project.Name + ".exe");
+                var exitCodeWithArgument = StartProcess(editbin, new ProcessSettings { 
+                    Arguments = "/subsystem:windows " + targetExe.FullPath
                 });
-
-                if (IsRunningOnWindows() && (runtime == "win7-x86" || runtime == "win7-x64"))
-                {
-                    Information("Patching executable subsystem for: {0}, runtime: {1}", project.Name, runtime);
-                    var targetExe = outputDir.CombineWithFilePath(project.Name + ".exe");
-                    var exitCodeWithArgument = StartProcess(editbin, new ProcessSettings { 
-                        Arguments = "/subsystem:windows " + targetExe.FullPath
-                    });
-                    Information("The editbin command exit code: {0}", exitCodeWithArgument);
-                }
+                Information("The editbin command exit code: {0}", exitCodeWithArgument);
             }
         }
-    }
-    else
-    {
-        Information("Skipping Publish because build is not on " + MasterBranch);
     }
 });
 
 Task("Zip-NetCore")
     .IsDependentOn("Publish-NetCore")
+    .WithCriteria(()=>isMainRepo && isMasterBranch)
     .Does(() =>
 {
-    if(isMainRepo && isMasterBranch)
+    foreach (var project in netCoreProjects)
     {
-        foreach (var project in netCoreProjects)
+        foreach(var runtime in project.Runtimes)
         {
-            foreach(var runtime in project.Runtimes)
-            {
-                var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
+            var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
 
-                Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix), 
-                    GetFiles(outputDir.FullPath + "/*.*"));
-            }
+            Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix), 
+                GetFiles(outputDir.FullPath + "/*.*"));
         }
-    }
-    else
-    {
-        Information("Skipping Zip because build is not on " + MasterBranch);
-    }
+    }    
 });
 
 Task("Default")
