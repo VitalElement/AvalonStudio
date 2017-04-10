@@ -105,8 +105,20 @@
         private void OnEndSession()
         {
             _shell.CurrentPerspective = Perspective.Editor;
+
+            if (_session != null)
+            {
+                _session.TargetStopped -= _session_TargetStopped;
+                _session.TargetHitBreakpoint -= _session_TargetStopped;
+                _session.TargetExited -= _session_TargetExited;
+                _session.TargetStarted -= _session_TargetStarted;
+            }
+
             _session?.Dispose();
             _session = null;
+
+            _lastDocument?.ClearDebugHighlight();
+            _lastDocument = null;
         }
 
         public void Restart()
@@ -115,76 +127,64 @@
             Start();
         }
 
-        public void Stop ()
+        public void Stop()
         {
             OnEndSession();
         }
 
         public async void Start()
         {
-                var project = _shell.GetDefaultProject();
+            var project = _shell.GetDefaultProject();
 
-                if (project == null)
-                {
-                    OnEndSession();
-                    _console.WriteLine("No Default project set. Please set a default project before debugging.");
-                    return;
-                }
+            if (project == null)
+            {
+                OnEndSession();
+                _console.WriteLine("No Default project set. Please set a default project before debugging.");
+                return;
+            }
 
-                if (!await project.ToolChain.Build(_console, project))
-                {
-                    OnEndSession();
-                    return;
-                }
+            if (!await project.ToolChain.Build(_console, project))
+            {
+                OnEndSession();
+                return;
+            }
 
-                if(project.Debugger2 == null)
-                {
-                    OnEndSession();
-                    _console.WriteLine("No Debug adaptor is set for default project.");
-                    return;
-                }
+            if (project.Debugger2 == null)
+            {
+                OnEndSession();
+                _console.WriteLine("No Debug adaptor is set for default project.");
+                return;
+            }
 
-                _session = project.Debugger2.CreateSession();
+            _session = project.Debugger2.CreateSession();
 
-                _session.Breakpoints = Breakpoints;
+            _session.Breakpoints = Breakpoints;
 
-                _session.Run(project.Debugger2.GetDebuggerStartInfo(project), project.Debugger2.GetDebuggerSessionOptions(project));
+            _session.Run(project.Debugger2.GetDebuggerStartInfo(project), project.Debugger2.GetDebuggerSessionOptions(project));
 
-                _session.TargetStopped += _session_TargetStopped;
+            _session.TargetStopped += _session_TargetStopped;
 
-                _session.TargetEvent += (sender, e) =>
-                {
-                    _console.WriteLine(e.Type.ToString());
-                };
+            _session.TargetHitBreakpoint += _session_TargetStopped;
 
-                _session.TargetHitBreakpoint += _session_TargetStopped;
+            _session.TargetExited += _session_TargetExited;
 
-                _session.TargetExited += (sender, e) =>
-                {
-                    OnEndSession();
+            _session.TargetStarted += _session_TargetStarted;
 
-                    if (_lastDocument != null)
-                    {
-                        _lastDocument.ClearDebugHighlight();
-                        _lastDocument = null;
-                    }
-                };
+            _shell.CurrentPerspective = Perspective.Debug;
+        }
 
-                _session.TargetStarted += (sender, e) =>
-                {
-                    if (_lastDocument != null)
-                    {
-                        _lastDocument.ClearDebugHighlight();
-                        _lastDocument = null;
-                    }
-                };
+        private void _session_TargetStarted(object sender, EventArgs e)
+        {
+            if (_lastDocument != null)
+            {
+                _lastDocument.ClearDebugHighlight();
+                _lastDocument = null;
+            }
+        }
 
-                _session.OutputWriter = (stdError, text) =>
-                {
-                    _console.Write(text);
-                };
-
-                _shell.CurrentPerspective = Perspective.Debug;
+        private void _session_TargetExited(object sender, TargetEventArgs e)
+        {
+            OnEndSession();
         }
 
         private void _session_TargetStopped(object sender, TargetEventArgs e)
