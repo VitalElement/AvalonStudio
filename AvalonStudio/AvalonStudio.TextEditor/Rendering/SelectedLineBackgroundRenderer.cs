@@ -22,7 +22,7 @@ namespace AvalonStudio.TextEditor.Rendering
 			{
 				var currentLine = textView.TextDocument.GetLineByOffset(textView.CaretIndex);
 
-				var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, currentLine);
+				var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, currentLine, true);
 
 				foreach (var rect in rects)
 				{
