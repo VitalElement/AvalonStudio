@@ -144,7 +144,7 @@ Task("Publish-NetCore")
     }
     else
     {
-        Information("Skipping Publish because build is not on MasterBranch");
+        Information("Skipping Publish because build is not on " + MasterBranch);
     }
 });
 
@@ -152,15 +152,22 @@ Task("Zip-NetCore")
     .IsDependentOn("Publish-NetCore")
     .Does(() =>
 {
-    foreach (var project in netCoreProjects)
+    if(isMainRepo && isMasterBranch)
     {
-        foreach(var runtime in project.Runtimes)
+        foreach (var project in netCoreProjects)
         {
-            var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
+            foreach(var runtime in project.Runtimes)
+            {
+                var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
 
-            Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix), 
-                GetFiles(outputDir.FullPath + "/*.*"));
+                Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix), 
+                    GetFiles(outputDir.FullPath + "/*.*"));
+            }
         }
+    }
+    else
+    {
+        Information("Skipping Zip because build is not on " + MasterBranch);
     }
 });
 
