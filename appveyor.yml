@@ -1,5 +1,5 @@
 version: 0.2.0.{build}
-os: Visual Studio 2015
+os: Visual Studio 2017
 install:
   - if not exist dotnet-dev-win-x64.latest.zip appveyor DownloadFile https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-win-x64.latest.zip -FileName "dotnet-dev-win-x64.latest.zip"  
   - cmd: 7z x dotnet-dev-win-x64.latest.zip -oc:\dotnet
