@@ -38,6 +38,7 @@ namespace AvalonStudio.Shell
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debuggers;
+        private List<IDebugger2> _debugger2s;
         private List<ITestFramework> _testFrameworks;
 
         [ImportingConstructor]
@@ -66,6 +67,7 @@ namespace AvalonStudio.Shell
                 _toolChains.ConsumeExtension(extension);
                 _projectTemplates.ConsumeExtension(extension);
                 _debuggers.ConsumeExtension(extension);
+                _debugger2s.ConsumeExtension(extension);
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
@@ -104,6 +106,8 @@ namespace AvalonStudio.Shell
         public IEnumerable<IToolChain> ToolChains => _toolChains;
 
         public IEnumerable<IDebugger> Debuggers => _debuggers;
+
+        public IEnumerable<IDebugger2> Debugger2s => _debugger2s;
 
         public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 
@@ -148,6 +152,7 @@ namespace AvalonStudio.Shell
 
         public IEnumerable<ICodeTemplate> CodeTemplates { get; }
 
+        
         public Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
 			bool selectLine = false)
 		{

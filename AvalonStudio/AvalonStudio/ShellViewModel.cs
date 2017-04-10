@@ -60,6 +60,7 @@ namespace AvalonStudio
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debuggers;
+        private List<IDebugger2> _debugger2s;
         private List<ITestFramework> _testFrameworks;
         private List<ICodeTemplate> _codeTemplates;
         private List<MenuBarDefinition> _menuBarDefinitions;
@@ -88,6 +89,7 @@ namespace AvalonStudio
             _languageServices = new List<ILanguageService>();
             _projectTemplates = new List<IProjectTemplate>();
             _debuggers = new List<IDebugger>();
+            _debugger2s = new List<IDebugger2>();
             _codeTemplates = new List<ICodeTemplate>();
             _projectTypes = new List<IProjectType>();
             _solutionTypes = new List<ISolutionType>();
@@ -141,10 +143,10 @@ namespace AvalonStudio
                 _toolChains.ConsumeExtension(extension);
                 _projectTemplates.ConsumeExtension(extension);
                 _debuggers.ConsumeExtension(extension);
+                _debugger2s.ConsumeExtension(extension);
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
-                
                 _commandDefinitions.ConsumeExtension(extension);
             }
 
@@ -342,6 +344,8 @@ namespace AvalonStudio
         public IEnumerable<IToolChain> ToolChains => _toolChains;
 
         public IEnumerable<IDebugger> Debuggers => _debuggers;
+
+        public IEnumerable<IDebugger2> Debugger2s => _debugger2s;
 
         public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 

@@ -73,7 +73,14 @@ namespace AvalonStudio.Projects.OmniSharp
             }
         }
         
-        public override IDebugger2 Debugger2 { get => IoC.Get<DotNetCoreDebugger>(); set { } }
+        public override IDebugger2 Debugger2 { get
+            {
+                var shell = IoC.Get<IShell>();
+
+                var debugger = shell.Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.DotNetCore.DotNetCoreDebugger");
+
+                return debugger;
+            } set { } }
 
         public override dynamic DebugSettings { get; set; }
 

@@ -45,6 +45,8 @@ namespace AvalonStudio.Shell
 
 		IEnumerable<IDebugger> Debuggers { get; }
 
+        IEnumerable<IDebugger2> Debugger2s { get; }
+
 		IEnumerable<ITestFramework> TestFrameworks { get; }
         
 		IEditor GetDocument(string path);
