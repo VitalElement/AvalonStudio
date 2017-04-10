@@ -7,13 +7,6 @@
 # ./dependencies.sh pacaur
 # would use pacaur instead of yaourt.
 #
-
-sudo echo "#!/bin/sh" > /bin/call
-sudo echo "bash \$*" >> /bin/call
-sudo chmod +x /bin/call
-
-export PATH=$PATH:$(pwd)/bin
-
 source /etc/os-release
 
 if [[ $ID == "arch" ]]; then
