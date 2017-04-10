@@ -6,20 +6,9 @@ dist: trusty
 script:
   - sudo apt-get install -f
   - sudo apt-get install -y libunwind8 libunwind8-dev gettext libicu-dev liblttng-ust-dev libcurl4-openssl-dev libssl-dev uuid-dev unzip
-  #- wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu52_52.1-8ubuntu0.2_amd64.deb 
-  #- sudo dpkg -i libicu52_52.1-8ubuntu0.2_amd64.deb
-  - sudo sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet-release/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list' 
-  - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893
-  - sudo apt-get update
-  - sudo apt-get install dotnet-dev-1.0.1
-  - wget https://dotnetcli.blob.core.windows.net/dotnet/master/Installers/Latest/dotnet-host-ubuntu-x64.latest.deb
-  - wget https://dotnetcli.blob.core.windows.net/dotnet/master/Installers/Latest/dotnet-hostfxr-ubuntu-x64.latest.deb
-  - wget https://dotnetcli.blob.core.windows.net/dotnet/master/Installers/Latest/dotnet-sharedframework-ubuntu-x64.latest.deb
-  - wget https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-sdk-ubuntu-x64.latest.deb
-  - sudo dpkg -i dotnet-host-ubuntu-x64.latest.deb
-  - sudo dpkg -i dotnet-hostfxr-ubuntu-x64.latest.deb
-  - sudo dpkg -i dotnet-sharedframework-ubuntu-x64.latest.deb
-  - sudo dpkg -i dotnet-sdk-ubuntu-x64.latest.deb
+  - wget https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-ubuntu-x64.latest.tar.gz
+  - tar zxf dotnet-dev-ubuntu-x64.latest.tar.gz -C ~/dotnet
+  - sudo ln -s ~/dotnet/dotnet /usr/bin/
   - dotnet --info
   - ./build.sh --configuration "Release"
 
