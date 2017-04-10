@@ -36,6 +36,11 @@ if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
         version += "-build" + EnvironmentVariable("APPVEYOR_BUILD_NUMBER");
 }
 
+var MainRepo = "VitalElement/AvalonStudio";
+var MasterBranch = "master";
+var ReleasePlatform = "Any CPU";
+var ReleaseConfiguration = "Release";
+
 var isPlatformAnyCPU = StringComparer.OrdinalIgnoreCase.Equals(platform, "Any CPU");
 var isPlatformX86 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x86");
 var isPlatformX64 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x64");
