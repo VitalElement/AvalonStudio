@@ -197,7 +197,7 @@
                 var currentFrame = e.Backtrace.GetFrame(0);
                 var sourceLocation = currentFrame.SourceLocation;
 
-                var locals = currentFrame.GetLocalVariables();
+                //var locals = currentFrame.GetLocalVariables();
 
                 var normalizedPath = sourceLocation.FileName.Replace("\\\\", "\\").NormalizePath();
 
