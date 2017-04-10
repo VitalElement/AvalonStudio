@@ -1,10 +1,9 @@
-using System;
-using AvalonStudio.Debugging.Commands;
-using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Extensibility.ToolBars;
-
 namespace AvalonStudio.Debugging
 {
+    using AvalonStudio.Debugging.Commands;
+    using AvalonStudio.Extensibility.Plugin;
+    using AvalonStudio.Extensibility.ToolBars;
+
     internal class ToolBarDefinitions : IExtension
     {
         static ToolBarDefinitions()
@@ -15,7 +14,7 @@ namespace AvalonStudio.Debugging
         public static ToolBarItemGroupDefinition DebuggingGroup = new ToolBarItemGroupDefinition(
            Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 5);
 
-        //public static ToolBarItemDefinition StartDebuggingToolBarItem = new ToolBarItemDefinition<StartDebuggingCommandDefinition>(DebuggingGroup, 1);
+        public static ToolBarItemDefinition StartDebuggingToolBarItem = new ToolBarItemDefinition<StartDebuggingCommandDefinition>(DebuggingGroup, 1);
 
         public static ToolBarItemDefinition PauseDebuggingToolBarItem = new ToolBarItemDefinition
            <PauseDebuggingCommandDefinition>(
@@ -29,13 +28,11 @@ namespace AvalonStudio.Debugging
            <RestartDebuggingCommandDefinition>(
            DebuggingGroup, 4);
 
-        //public static ToolBarItemDefinition StepOverToolBarItem = new ToolBarItemDefinition
-        //   <StepOverCommandDefinition>(
-        //   DebuggingGroup, 5);
+        public static ToolBarItemDefinition StepOverToolBarItem = new ToolBarItemDefinition
+           <StepOverCommandDefinition>(
+           DebuggingGroup, 5);
 
-        //public static ToolBarItemDefinition StepIntoToolBarItem = new ToolBarItemDefinition
-          // <StepIntoCommandDefinition>(
-           //DebuggingGroup, 6);
+        public static ToolBarItemDefinition StepIntoToolBarItem = new ToolBarItemDefinition<StepIntoCommandDefinition>(DebuggingGroup, 6);
 
         public static ToolBarItemDefinition StepOutToolBarItem = new ToolBarItemDefinition
            <StepOutCommandDefinition>(
@@ -43,12 +40,12 @@ namespace AvalonStudio.Debugging
 
         public void BeforeActivation()
         {
-            
+
         }
 
         public void Activation()
         {
-            
+
         }
     }
 }
