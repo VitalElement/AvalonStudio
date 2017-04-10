@@ -346,6 +346,9 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
         [JsonIgnore]
+        public override IDebugger2 Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        [JsonIgnore]
         public override ITestFramework TestFramework
         {
             get

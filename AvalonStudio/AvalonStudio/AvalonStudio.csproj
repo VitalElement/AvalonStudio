@@ -87,8 +87,6 @@
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\debugger-libs\Mono.Debugging.Win32\Mono.Debugging.Win32.NetCore2.csproj" />
-    <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.NetCore2.csproj" />
     <ProjectReference Include="..\..\DockNC\src\Mabiavalon.DockNC\Mabiavalon.DockNC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj" />

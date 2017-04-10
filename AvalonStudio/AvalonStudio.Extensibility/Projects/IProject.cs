@@ -20,6 +20,8 @@ namespace AvalonStudio.Projects
 
 		IToolChain ToolChain { get; set; }
 		IDebugger Debugger { get; set; }
+        IDebugger2 Debugger2 { get; set; }
+
 		ITestFramework TestFramework { get; set; }
 
 		bool Hidden { get; set; }

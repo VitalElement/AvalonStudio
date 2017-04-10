@@ -10,6 +10,7 @@ using System.IO;
 using System.Dynamic;
 using AvalonStudio.Shell;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Debugging.DotNetCore;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
@@ -71,6 +72,8 @@ namespace AvalonStudio.Projects.OmniSharp
 
             }
         }
+        
+        public override IDebugger2 Debugger2 { get => IoC.Get<DotNetCoreDebugger>(); set { } }
 
         public override dynamic DebugSettings { get; set; }
 

@@ -127,6 +127,9 @@ Program.main();
             }
         }
 
+        [JsonIgnore]
+        public override IDebugger2 Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic DebugSettings { get; set; }
 

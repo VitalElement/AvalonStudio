@@ -28,6 +28,7 @@
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.NetCore2.csproj" />
     <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
       <Private>true</Private>
     </ProjectReference>

@@ -6,6 +6,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using AvalonStudio.Extensibility.Plugin;
+using Mono.Debugging.Client;
 
 namespace AvalonStudio.Debugging
 {
@@ -24,7 +25,16 @@ namespace AvalonStudio.Debugging
 		Octal,
 		Natural
 	}
-    
+
+    public interface IDebugger2 : IExtension
+    {
+        DebuggerSession CreateSession();
+
+        DebuggerStartInfo GetDebuggerStartInfo(IProject project);
+
+        DebuggerSessionOptions GetDebuggerSessionOptions(IProject project);
+    }
+
     public interface IDebugger : IExtension
 	{
 		DebuggerState State { get; }
