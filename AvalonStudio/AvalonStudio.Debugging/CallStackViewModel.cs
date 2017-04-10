@@ -35,7 +35,7 @@ namespace AvalonStudio.Debugging
 				{
                     var shell = IoC.Get<IShell>();
 
-                    shell?.OpenDocument(shell?.CurrentSolution?.FindFile(selectedFrame.Model.FullFileName), selectedFrame.Model.Line, 1, true, true);					
+                    shell?.OpenDocument(shell?.CurrentSolution?.FindFile(selectedFrame.Model.FullFileName), selectedFrame.Model.Line, -1, -1, true, true);					
 				}
 
 				this.RaisePropertyChanged(nameof(SelectedFrame));

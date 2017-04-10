@@ -144,11 +144,11 @@ namespace AvalonStudio.Debugging
 		{
 			VariableObject result = null;
 
-			if (CurrentDebugger.State == DebuggerState.Paused)
+			/*if (CurrentDebugger.State == DebuggerState.Paused)
 			{
 				result =
 					await CurrentDebugger.CreateWatchAsync(string.Format("probe{0}", CurrentDebugger.GetVariableId()), expression);
-			}
+			}*/
 
 			return result;
 		}
@@ -535,7 +535,7 @@ namespace AvalonStudio.Debugging
                         {
                             await
                                 Dispatcher.UIThread.InvokeTaskAsync(
-                                    async () => { lastDocument = document = await _shell.OpenDocument(file, e.Frame.Line, 1, true); });
+                                    async () => { lastDocument = document = await _shell.OpenDocument(file, e.Frame.Line, -1, -1, true); });
                         }
                         else
                         {

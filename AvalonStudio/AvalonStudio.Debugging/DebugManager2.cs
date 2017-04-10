@@ -212,7 +212,7 @@
 
                 if (file != null)
                 {
-                    Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, 1, true); });
+                    Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true); });
                 }
                 else
                 {

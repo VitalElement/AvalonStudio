@@ -1,42 +1,82 @@
 using System;
 using Avalonia;
 using Avalonia.Media;
+using AvalonStudio.TextEditor.Document;
 
 namespace AvalonStudio.TextEditor.Rendering
 {
 	public class SelectedDebugLineBackgroundRenderer : IBackgroundRenderer
 	{
-		private int line;
+		private int _line;
 		private readonly IBrush selectedLineBg;
+        private int _startColumn;
+        private int _endColumn;
 
-		public SelectedDebugLineBackgroundRenderer()
+        public SelectedDebugLineBackgroundRenderer()
 		{
 			selectedLineBg = Brush.Parse("#C5C870");
+            _startColumn = -1;
+            _endColumn = -1;
 		}
+
+        public void SetLocation(int line, int startColumn = -1, int endColumn = -1)
+        {
+            _line = line;
+            _startColumn = startColumn;
+            _endColumn = endColumn;
+        }
 
 		public int Line
 		{
-			get { return line; }
+			get { return _line; }
 			set
 			{
-				line = value;
+				_line = value;
 
-				if (DataChanged != null)
-				{
-					DataChanged(this, new EventArgs());
-				}
-			}
+                DataChanged?.Invoke(this, new EventArgs());
+            }
 		}
 
-		public event EventHandler<EventArgs> DataChanged;
+        public int StartColumn
+        {
+            get { return _startColumn; }
+            set {
+                _startColumn = value;
+                DataChanged?.Invoke(this, new EventArgs());
+            }
+        }
+
+        public int EndColumn
+        {
+            get { return _endColumn; }
+            set
+            {
+                _endColumn = value;
+                DataChanged?.Invoke(this, new EventArgs());
+            }
+        }
+
+
+
+        public event EventHandler<EventArgs> DataChanged;
 
 		public void Draw(TextView textView, DrawingContext drawingContext)
 		{
-			if (line > 0 && line < textView.TextDocument.LineCount)
+			if (_line > 0 && _line < textView.TextDocument.LineCount)
 			{
-				var currentLine = textView.TextDocument.GetLineByNumber(line);                                  
+                var currentLine = textView.TextDocument.GetLineByNumber(_line);
 
-				var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, currentLine);
+                var segment = new TextSegment();
+                segment.StartOffset = currentLine.Offset;
+                segment.EndOffset = currentLine.EndOffset;
+
+                if(_startColumn != -1 && _endColumn != -1)
+                {
+                    segment.StartOffset = textView.TextDocument.GetOffset(_line, _startColumn);
+                    segment.EndOffset = textView.TextDocument.GetOffset(_line, _endColumn);
+                }
+                
+				var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, segment);
 
 				foreach (var rect in rects)
 				{
@@ -50,7 +90,7 @@ namespace AvalonStudio.TextEditor.Rendering
 		{
             if (line.DocumentLine.LineNumber == Line)
             {
-                line.RenderedText.SetForegroundBrush(Brushes.Black, 0, line.Length);
+                line.RenderedText.SetForegroundBrush(Brushes.Black, StartColumn-1, EndColumn - StartColumn);
             }
 		}
 	}

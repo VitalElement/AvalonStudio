@@ -381,7 +381,7 @@ namespace AvalonStudio
             }
         }
 
-        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
+        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
             bool selectLine = false)
         {
             var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.Model.ProjectFile.FilePath == file.FilePath);
@@ -435,13 +435,13 @@ namespace AvalonStudio
             {
                 if (debugHighlight)
                 {
-                    (DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.Line = line;
+                    (DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.SetLocation(line, startColumn, endColumn);
                 }
 
                 if (selectLine || debugHighlight)
                 {
                     Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).Model.ScrollToLine(line));
-                    (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, column);
+                    (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, startColumn != -1? 1 : startColumn);
                 }
             }
 

@@ -680,7 +680,7 @@ namespace AvalonStudio.Controls
 
         public void ClearDebugHighlight()
         {
-            DebugLineHighlighter.Line = -1;
+            DebugLineHighlighter.SetLocation(-1);
         }
 
         #endregion 
