@@ -144,7 +144,11 @@
 
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
-                intellisenseStartedAt = editor.CaretIndex;
+                if (editor != null)
+                {
+                    intellisenseStartedAt = editor.CaretIndex;
+                }
+
                 intellisenseControl.SelectedCompletion = noSelectedCompletion;
                 intellisenseControl.IsVisible = false;
             }).Wait();
