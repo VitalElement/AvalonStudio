@@ -5,51 +5,69 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.MVVM;
-using AvalonStudio.Repositories;
 using AvalonStudio.Utils;
 using ReactiveUI;
+using NuGet.Protocol.Core.Types;
+using AvalonStudio.Packages;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Controls
 {
+    public class VersionInfoViewModel : ViewModel<VersionInfo>
+    {
+        public VersionInfoViewModel(VersionInfo model) : base(model)
+        {
+
+        }
+
+        public string Title => Model.Version.ToNormalizedString();
+    }
+
+    public class PackageReferenceViewModel : ViewModel<NuGet.Packaging.PackageReference>
+    {
+        public PackageReferenceViewModel(NuGet.Packaging.PackageReference model) : base(model)
+        {
+
+        }
+
+        public string Title => Model.PackageIdentity.Id;
+    }
+
+
 	public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole
 	{
-		private ObservableCollection<PackageReference> availablePackage;
+		private ObservableCollection<IPackageSearchMetadata> availablePackages;
 
 		private bool enableInterface = true;
 
-		private PackageReference selectedPackage;
+		private IPackageSearchMetadata selectedPackage;
 
-		private PackageIndex selectedPackageIndex;
+        private PackageManager _packageManager;
 
-		private string selectedTag;
+		//private PackageIndex selectedPackageIndex;
+
+		private VersionInfoViewModel selectedVersion;
 
 		private string status;
 
 		public PackageManagerDialogViewModel()
 			: base("Packages")
 		{
-			AvailablePackages = new ObservableCollection<PackageReference>();
+            _packageManager = new PackageManager();            
+
+			AvailablePackages = new ObservableCollection<IPackageSearchMetadata>();
 
 			Dispatcher.UIThread.InvokeAsync (async () => {
+                InstalledPackages = new  ObservableCollection<PackageReferenceViewModel>((await _packageManager.ListInstalledPackages()).Select(pr=>new PackageReferenceViewModel(pr)));
+                
 				await DownloadCatalog ();
 			});
 
 			InstallCommand = ReactiveCommand.Create();
-			InstallCommand.Subscribe(async o =>
-			{
-				EnableInterface = false;
-
-				try
-				{
-						await SelectedPackageIndex.Synchronize(SelectedTag, this);
-				}
-				catch (Exception e)
-				{
-					Status = "An error occurred trying to install package. " + e.Message;
-				}
-
-				EnableInterface = true;
-			});
+            InstallCommand.Subscribe(async _ => 
+            {
+                await _packageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
+            });
 
 			OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.EnableInterface));
 
@@ -96,44 +114,64 @@ namespace AvalonStudio.Controls
 			set { this.RaiseAndSetIfChanged(ref status, value); }
 		}
 
-		public PackageReference SelectedPackage
+		public IPackageSearchMetadata SelectedPackage
 		{
 			get { return selectedPackage; }
 			set
 			{
                 if (value != null)
                 {
-                    GetPackageInfo(value);
+                    Task.Run(async () => { Versions = (await value.GetVersionsAsync()).Select(vi=>new VersionInfoViewModel(vi)); });                   
                 }
 
 				this.RaiseAndSetIfChanged(ref selectedPackage, value);
 				this.RaisePropertyChanged(() => ButtonText);
 			}
 		}
+        
+        private IEnumerable<VersionInfoViewModel> _versions;
 
-		public PackageIndex SelectedPackageIndex
+        public IEnumerable<VersionInfoViewModel> Versions
+        {
+            get { return _versions; }
+            set { this.RaiseAndSetIfChanged(ref _versions, value); }
+        }
+
+
+        //public PackageIndex SelectedPackageIndex
+        //{
+        //	get { return selectedPackageIndex; }
+        //	set
+        //	{
+        //		this.RaiseAndSetIfChanged(ref selectedPackageIndex, value);
+        //		SelectedTag = value.Tags.FirstOrDefault();
+        //	}
+        //}
+
+        public VersionInfoViewModel SelectedVersion
 		{
-			get { return selectedPackageIndex; }
+			get { return selectedVersion; }
 			set
-			{
-				this.RaiseAndSetIfChanged(ref selectedPackageIndex, value);
-				SelectedTag = value.Tags.FirstOrDefault();
-			}
+            {
+                this.RaiseAndSetIfChanged(ref selectedVersion, value);            }
 		}
 
-		public string SelectedTag
+		public ObservableCollection<IPackageSearchMetadata> AvailablePackages
 		{
-			get { return selectedTag; }
-			set { this.RaiseAndSetIfChanged(ref selectedTag, value); }
+			get { return availablePackages; }
+			set { this.RaiseAndSetIfChanged(ref availablePackages, value); }
 		}
 
-		public ObservableCollection<PackageReference> AvailablePackages
-		{
-			get { return availablePackage; }
-			set { this.RaiseAndSetIfChanged(ref availablePackage, value); }
-		}
+        private ObservableCollection<PackageReferenceViewModel> installedPackages;
 
-		public ReactiveCommand<object> InstallCommand { get; }
+        public ObservableCollection<PackageReferenceViewModel> InstalledPackages
+        {
+            get { return installedPackages; }
+            set { this.RaiseAndSetIfChanged(ref installedPackages, value); }
+        }
+
+
+        public ReactiveCommand<object> InstallCommand { get; }
 		public override ReactiveCommand<object> OKCommand { get; protected set; }
 
 		public void WriteLine(string data)
@@ -164,40 +202,15 @@ namespace AvalonStudio.Controls
 		public void Clear()
 		{
 			throw new NotImplementedException();
-		}
-
-		private void AddPackages(RepositoryOld repo)
-		{
-			foreach (var package in repo.Packages)
-			{
-				AvailablePackages.Add(package);
-			}
-		}
+		}		
 
 		private async Task DownloadCatalog()
 		{
-			foreach (var packageSource in PackageSources.Instance.Sources)
+            var packages = await _packageManager.ListPackages(100);
+
+			foreach (var package in packages)
 			{
-				RepositoryOld repo = null;
-
-				repo = await packageSource.DownloadCatalog();
-
-				if (repo != null)
-				{
-					AddPackages(repo);
-				}
-			}
-		}
-
-
-		private async void GetPackageInfo(PackageReference reference)
-		{
-			try
-			{
-				SelectedPackageIndex = await reference.DownloadInfoAsync();
-			}
-			catch (Exception e)
-			{
+                availablePackages.Add(package);
 			}
 		}
 	}

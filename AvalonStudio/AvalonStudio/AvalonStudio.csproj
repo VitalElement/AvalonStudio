@@ -8,7 +8,7 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <RuntimeIdentifiers>win7-x64;ubuntu.14.04-x64;debian.8-x64;osx.10.12-x64</RuntimeIdentifiers>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net40</PackageTargetFallback>
+    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net40;net45</PackageTargetFallback>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
