@@ -166,7 +166,7 @@ namespace AvalonStudio.Controls
 			throw new NotImplementedException();
 		}
 
-		private void AddPackages(Repository repo)
+		private void AddPackages(RepositoryOld repo)
 		{
 			foreach (var package in repo.Packages)
 			{
@@ -178,7 +178,7 @@ namespace AvalonStudio.Controls
 		{
 			foreach (var packageSource in PackageSources.Instance.Sources)
 			{
-				Repository repo = null;
+				RepositoryOld repo = null;
 
 				repo = await packageSource.DownloadCatalog();
 
