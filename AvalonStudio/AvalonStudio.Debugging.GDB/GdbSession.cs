@@ -207,7 +207,7 @@ namespace AvalonStudio.Debugging.GDB
             sin = proc.StandardInput;
 
             closeTokenSource = new CancellationTokenSource();
-            Task.Factory.StartNew(OutputInterpreter, closeTokenSource.Token);            
+            Task.Factory.StartNew(OutputInterpreter, closeTokenSource.Token);
         }
 
         public override void Dispose()
@@ -240,15 +240,16 @@ namespace AvalonStudio.Debugging.GDB
             {
                 if (asyncMode)
                 {
-                    RunCommand("-exec-interrupt", "--all");                    
+                    RunCommand("-exec-interrupt", "--all");
                 }
                 else
                 {
-                    Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
-
-                    if (!Monitor.Wait(eventLock, 4000))
-                        throw new InvalidOperationException("Target could not be interrupted.");
-                }                
+                    do
+                    {
+                        Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                    }
+                    while (!Monitor.Wait(eventLock, 100));
+                }
             }
         }
 
@@ -681,7 +682,7 @@ namespace AvalonStudio.Debugging.GDB
                     if (logGdb)
                         _console.WriteLine("gdb<: " + command + " " + string.Join(" ", args));
 
-                    sin.WriteLine(command + " " + string.Join(" ", args));                    
+                    sin.WriteLine(command + " " + string.Join(" ", args));
 
                     if (!Monitor.Wait(syncLock, timeout))
                     {
@@ -707,15 +708,16 @@ namespace AvalonStudio.Debugging.GDB
 
                 if (asyncMode)
                 {
-                    RunCommand("-exec-interrupt", "--all");                    
+                    RunCommand("-exec-interrupt", "--all");
                 }
                 else
                 {
-                    Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
-
-                    if (!Monitor.Wait(eventLock, 4000))
-                        throw new InvalidOperationException("Target could not be interrupted.");
-                }                
+                    do
+                    {
+                        Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                    }
+                    while (!Monitor.Wait(eventLock, 100));
+                }
             }
             return true;
         }
