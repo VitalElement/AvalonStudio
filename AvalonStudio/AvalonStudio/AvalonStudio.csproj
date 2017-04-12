@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <RuntimeFrameworkVersion>2.0.0-preview1-001915-00</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.0.0-preview1-001961-00</RuntimeFrameworkVersion>
     <OutputTypeEx>exe</OutputTypeEx>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <PreserveCompilationContext>true</PreserveCompilationContext>
