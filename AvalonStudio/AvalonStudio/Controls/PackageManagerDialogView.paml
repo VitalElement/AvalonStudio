@@ -28,6 +28,7 @@
         <RowDefinition Height="30"/>
         <RowDefinition Height="30"/>
         <RowDefinition Height="30"/>
+        <RowDefinition Height="30"/>
         <RowDefinition/>
         <RowDefinition Height="*"/>
       </Grid.RowDefinitions>
@@ -53,6 +54,7 @@
 
       <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Status}"/>
       <Button Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{Binding ButtonText}" Command="{Binding InstallCommand}"/>
+      <Button Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Uninstall" Command="{Binding UninstallCommand}"/>
     </Grid>
   </Grid>
 </UserControl>

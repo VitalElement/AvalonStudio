@@ -11,11 +11,12 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Packages
 {
-    internal class InstalledPackagesCache : IDisposable
+    public class InstalledPackagesCache : IDisposable
     {
         private readonly List<CachedPackage> _installedPackages = new List<CachedPackage>(); // The packages installed during this session
-        private readonly string _fullPath;
-        private readonly CachedPackage[] _cachedPackages;
+        private readonly string _cacheFilePath;
+        private readonly string _installedFilePath;
+        private readonly List<CachedPackage> _cachedPackages = new List<CachedPackage>();
 
         public class EmptyDisposable : IDisposable
     {
@@ -29,14 +30,13 @@ namespace AvalonStudio.Packages
 
         private CachedPackageEntry _currentlyInstallingPackage = null;
 
-        public InstalledPackagesCache(string fullPath, bool updatePackages)
+        public InstalledPackagesCache(string cachePath, string installedPath, bool updatePackages)
         {
-            if (fullPath == null)
-            {
-                throw new ArgumentNullException(nameof(fullPath));
-            }
-            _fullPath = fullPath;
-            _cachedPackages = ReadCacheFile(fullPath, updatePackages);
+            _installedFilePath = installedPath ?? throw new ArgumentException(nameof(installedPath));
+            _cacheFilePath = cachePath ?? throw new ArgumentNullException(nameof(cachePath));
+
+            _cachedPackages = ReadCacheFile(cachePath, updatePackages).ToList();
+            _installedPackages = ReadCacheFile(installedPath, updatePackages).ToList();
         }
 
         private static CachedPackage[] ReadCacheFile(string fullPath, bool updatePackages)
@@ -114,10 +114,35 @@ namespace AvalonStudio.Packages
             return _currentlyInstallingPackage;
         }
 
-        public void Dispose() =>
+        public IDisposable RemovePackage(PackageIdentity identity, NuGetFramework targetFramework)
+        {
+            var current = _installedPackages.FirstOrDefault(p => p.PackageReference.PackageIdentity == identity);
+
+            if(current != null)
+            {
+                _installedPackages.Remove(current);
+            }
+
+            current = _cachedPackages.FirstOrDefault(p => p.PackageReference.PackageIdentity == identity);
+
+            if(current != null)
+            {
+                _cachedPackages.Remove(current);
+            }
+
+            return EmptyDisposable.Instance;
+        }
+
+        public void Dispose()
+        {
             new XDocument(
                 new XElement(CachedPackage.PackagesElementName,
-                    _installedPackages.Select(x => (object)x.Element).ToArray())).Save(_fullPath);
+                    _installedPackages.Select(x => (object)x.Element).ToArray())).Save(_cacheFilePath);
+
+            new XDocument(
+                new XElement(CachedPackage.PackagesElementName,
+                    _installedPackages.Select(x => (object)x.Element).ToArray())).Save(_installedFilePath);
+        }
 
         private class CachedPackageEntry : IDisposable
         {

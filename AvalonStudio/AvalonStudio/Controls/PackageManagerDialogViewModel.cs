@@ -10,6 +10,8 @@ using ReactiveUI;
 using NuGet.Protocol.Core.Types;
 using AvalonStudio.Packages;
 using System.Collections.Generic;
+using NuGet.Packaging.Core;
+using NuGet.Common;
 
 namespace AvalonStudio.Controls
 {
@@ -23,18 +25,18 @@ namespace AvalonStudio.Controls
         public string Title => Model.Version.ToNormalizedString();
     }
 
-    public class PackageReferenceViewModel : ViewModel<NuGet.Packaging.PackageReference>
+    public class PackageIdentityViewModel : ViewModel<PackageIdentity>
     {
-        public PackageReferenceViewModel(NuGet.Packaging.PackageReference model) : base(model)
+        public PackageIdentityViewModel(PackageIdentity model) : base(model)
         {
 
         }
 
-        public string Title => Model.PackageIdentity.Id;
+        public string Title => Model.Id;
     }
 
 
-	public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole
+	public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole, ILogger
 	{
 		private ObservableCollection<IPackageSearchMetadata> availablePackages;
 
@@ -50,15 +52,20 @@ namespace AvalonStudio.Controls
 
 		private string status;
 
+        private void InvalidateInstalledPackages()
+        {
+            InstalledPackages = new ObservableCollection<PackageIdentityViewModel>((_packageManager.ListInstalledPackages()).Select(pr => new PackageIdentityViewModel(pr)));
+        }
+
 		public PackageManagerDialogViewModel()
 			: base("Packages")
 		{
-            _packageManager = new PackageManager();            
+            _packageManager = new PackageManager(this);            
 
 			AvailablePackages = new ObservableCollection<IPackageSearchMetadata>();
 
 			Dispatcher.UIThread.InvokeAsync (async () => {
-                InstalledPackages = new  ObservableCollection<PackageReferenceViewModel>((await _packageManager.ListInstalledPackages()).Select(pr=>new PackageReferenceViewModel(pr)));
+                InvalidateInstalledPackages();
                 
 				await DownloadCatalog ();
 			});
@@ -67,6 +74,16 @@ namespace AvalonStudio.Controls
             InstallCommand.Subscribe(async _ => 
             {
                 await _packageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
+
+                InvalidateInstalledPackages();
+            });
+
+            UninstallCommand = ReactiveCommand.Create();
+            UninstallCommand.Subscribe(async _ =>
+            {
+                await _packageManager.UninstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToNormalizedString());
+
+                InvalidateInstalledPackages();
             });
 
 			OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.EnableInterface));
@@ -162,9 +179,9 @@ namespace AvalonStudio.Controls
 			set { this.RaiseAndSetIfChanged(ref availablePackages, value); }
 		}
 
-        private ObservableCollection<PackageReferenceViewModel> installedPackages;
+        private ObservableCollection<PackageIdentityViewModel> installedPackages;
 
-        public ObservableCollection<PackageReferenceViewModel> InstalledPackages
+        public ObservableCollection<PackageIdentityViewModel> InstalledPackages
         {
             get { return installedPackages; }
             set { this.RaiseAndSetIfChanged(ref installedPackages, value); }
@@ -172,6 +189,7 @@ namespace AvalonStudio.Controls
 
 
         public ReactiveCommand<object> InstallCommand { get; }
+        public ReactiveCommand<object> UninstallCommand { get; }
 		public override ReactiveCommand<object> OKCommand { get; protected set; }
 
 		public void WriteLine(string data)
@@ -213,5 +231,45 @@ namespace AvalonStudio.Controls
                 availablePackages.Add(package);
 			}
 		}
-	}
+
+        public void LogDebug(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogVerbose(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogInformation(string data)
+        {
+            Status = data;
+        }
+
+        public void LogMinimal(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogWarning(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogError(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogInformationSummary(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogErrorSummary(string data)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

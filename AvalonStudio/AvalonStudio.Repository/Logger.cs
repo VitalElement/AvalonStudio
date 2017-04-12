@@ -14,7 +14,7 @@ namespace AvalonStudio.Repositories
         public static void Dump(this string s) => Console.WriteLine(s);
     }
 
-    public class Logger : ILogger
+    public class ConsoleNuGetLogger : ILogger
     {
         public void LogDebug(string data) => $"DEBUG: {data}".Dump();
         public void LogVerbose(string data) => $"VERBOSE: {data}".Dump();

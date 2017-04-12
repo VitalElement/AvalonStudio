@@ -1,4 +1,5 @@
-﻿using NuGet.Packaging;
+﻿using NuGet.Common;
+using NuGet.Packaging;
 using NuGet.ProjectManagement;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,16 @@ namespace AvalonStudio.Packages
 {
     public class ProjectContext : INuGetProjectContext
     {
+        private ILogger _logger;
+
+        public ProjectContext (ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public void Log(MessageLevel level, string message, params object[] args)
         {
-            Console.WriteLine(message);
+            _logger.LogInformation(string.Format(message, args));
         }
 
         public FileConflictAction ResolveFileConflict(string message) => FileConflictAction.Ignore;

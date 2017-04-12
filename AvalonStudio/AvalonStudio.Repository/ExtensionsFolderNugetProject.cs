@@ -34,9 +34,16 @@ namespace AvalonStudio.Packages
         public override Task<bool> InstallPackageAsync(PackageIdentity packageIdentity, DownloadResourceResult downloadResourceResult,
             INuGetProjectContext nuGetProjectContext, CancellationToken token)
         {
+            
             _installedPackages.AddPackage(packageIdentity, _currentFramework);
             Trace.TraceInformation($"Installing package or dependency {packageIdentity.Id} {(packageIdentity.HasVersion ? packageIdentity.Version.ToNormalizedString() : string.Empty)}");
             return base.InstallPackageAsync(packageIdentity, downloadResourceResult, nuGetProjectContext, token);
+        }
+
+        public override Task<bool> UninstallPackageAsync(PackageIdentity packageIdentity, INuGetProjectContext nuGetProjectContext, CancellationToken token)
+        {
+            _installedPackages.RemovePackage(packageIdentity, _currentFramework);
+            return base.UninstallPackageAsync(packageIdentity, nuGetProjectContext, token);
         }
 
         // Probably going to hell for using a region
