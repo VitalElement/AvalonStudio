@@ -346,7 +346,19 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
         [JsonIgnore]
-        public override IDebugger2 Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override IDebugger2 Debugger2
+        {
+            get
+            {
+                var shell = IoC.Get<IShell>();
+
+                var debugger = shell.Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.GDB.JLink.JLinkDebugger");
+
+                return debugger;
+            }
+
+            set { }
+        }
 
         [JsonIgnore]
         public override ITestFramework TestFramework

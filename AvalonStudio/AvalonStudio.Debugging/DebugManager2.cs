@@ -159,7 +159,7 @@
                 return;
             }
 
-            _session = project.Debugger2.CreateSession();
+            _session = project.Debugger2.CreateSession(project);
 
             _session.Breakpoints = Breakpoints;
 
@@ -199,30 +199,33 @@
 
                 //var locals = currentFrame.GetLocalVariables();
 
-                var normalizedPath = sourceLocation.FileName.Replace("\\\\", "\\").NormalizePath();
-
-                ISourceFile file = null;
-
-                var document = _shell.GetDocument(normalizedPath);
-
-                if (document != null)
+                if (sourceLocation.FileName != null)
                 {
-                    _lastDocument = document;
-                    file = document?.ProjectFile;
-                }
+                    var normalizedPath = sourceLocation.FileName.Replace("\\\\", "\\").NormalizePath();
 
-                if (file == null)
-                {
-                    file = _shell.CurrentSolution.FindFile(normalizedPath);
-                }
+                    ISourceFile file = null;
 
-                if (file != null)
-                {
-                    Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true); });
-                }
-                else
-                {
-                    _console.WriteLine("Unable to find file: " + normalizedPath);
+                    var document = _shell.GetDocument(normalizedPath);
+
+                    if (document != null)
+                    {
+                        _lastDocument = document;
+                        file = document?.ProjectFile;
+                    }
+
+                    if (file == null)
+                    {
+                        file = _shell.CurrentSolution.FindFile(normalizedPath);
+                    }
+
+                    if (file != null)
+                    {
+                        Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true); });
+                    }
+                    else
+                    {
+                        _console.WriteLine("Unable to find file: " + normalizedPath);
+                    }
                 }
             }
         }
