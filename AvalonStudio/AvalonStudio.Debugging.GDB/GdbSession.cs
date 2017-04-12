@@ -207,11 +207,7 @@ namespace AvalonStudio.Debugging.GDB
             sin = proc.StandardInput;
 
             closeTokenSource = new CancellationTokenSource();
-            Task.Factory.StartNew(OutputInterpreter, closeTokenSource.Token);
-            thread = new Thread(OutputInterpreter);
-            thread.Name = "GDB output interpeter";
-            thread.IsBackground = true;
-            thread.Start();
+            Task.Factory.StartNew(OutputInterpreter, closeTokenSource.Token);            
         }
 
         public override void Dispose()
