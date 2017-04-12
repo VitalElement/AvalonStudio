@@ -244,22 +244,15 @@ namespace AvalonStudio.Debugging.GDB
             {
                 if (asyncMode)
                 {
-                    //Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
-                    lock(gdbLock)
-                    {
-                        lock(syncLock)
-                        {
-                            sin.WriteLine("-exec-interrupt");
-                        }
-                    }
+                    RunCommand("-exec-interrupt", "--all");                    
                 }
                 else
                 {
                     Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
-                }
 
-                if (!Monitor.Wait(eventLock, 4000))
-                    throw new InvalidOperationException("Target could not be interrupted.");
+                    if (!Monitor.Wait(eventLock, 4000))
+                        throw new InvalidOperationException("Target could not be interrupted.");
+                }                
             }
         }
 
@@ -718,22 +711,15 @@ namespace AvalonStudio.Debugging.GDB
 
                 if (asyncMode)
                 {
-                    lock(gdbLock)
-                    {
-                        lock(syncLock)
-                        {
-                            sin.WriteLine("-exec-interrupt");
-                        }
-                    }
-                    //Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                    RunCommand("-exec-interrupt", "--all");                    
                 }
                 else
                 {
                     Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
-                }
 
-                if (!Monitor.Wait(eventLock, 4000))
-                    throw new InvalidOperationException("Target could not be interrupted.");
+                    if (!Monitor.Wait(eventLock, 4000))
+                        throw new InvalidOperationException("Target could not be interrupted.");
+                }                
             }
             return true;
         }
