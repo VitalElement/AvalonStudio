@@ -25,19 +25,27 @@
 //
 //
 
+using AvalonStudio.Extensibility;
+using AvalonStudio.Platforms;
+using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB
 {
     public class GdbSession : DebuggerSession
     {
+        IConsole _console;
         Process proc;
+        private CancellationTokenSource closeTokenSource;
+
         StreamReader sout;
         StreamWriter sin;
         GdbCommandResult lastResult;
@@ -57,7 +65,8 @@ namespace AvalonStudio.Debugging.GDB
         const int BreakEventUpdateNotifyDelay = 500;
 
         bool internalStop;
-        bool logGdb;
+        bool logGdb = true;
+        bool asyncMode;
 
         object syncLock = new object();
         object eventLock = new object();
@@ -68,6 +77,7 @@ namespace AvalonStudio.Debugging.GDB
         public GdbSession(string gdbExecutable)
         {
             _gdbExecutable = gdbExecutable;
+            _console = IoC.Get<IConsole>();
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)
@@ -80,72 +90,72 @@ namespace AvalonStudio.Debugging.GDB
                 string ttyfileDone = ttyfile + "_done";
                 string tty = string.Empty;
 
-                /*try
-                {
-                    //File.WriteAllText(script, "tty > " + ttyfile + "\ntouch " + ttyfileDone + "\nsleep 10000d");
-                    //Mono.Unix.Native.Syscall.chmod (script, FilePermissions.ALLPERMS);
-
-                    //console = Runtime.ProcessService.StartConsoleProcess (script, "", ".", ExternalConsoleFactory.Instance.CreateConsole (true), null);
-
-                    DateTime tim = DateTime.Now;
-                    while (!File.Exists(ttyfileDone))
-                    {
-                        System.Threading.Thread.Sleep(100);
-                        if ((DateTime.Now - tim).TotalSeconds > 10)
-                            throw new InvalidOperationException("Console could not be created.");
-                    }
-                    tty = File.ReadAllText(ttyfile).Trim(' ', '\n');
-                }
-                finally
-                {
-                    try
-                    {
-                        if (File.Exists(script))
-                            File.Delete(script);
-                        if (File.Exists(ttyfile))
-                            File.Delete(ttyfile);
-                        if (File.Exists(ttyfileDone))
-                            File.Delete(ttyfileDone);
-                    }
-                    catch
-                    {
-                        // Ignore
-                    }
-                }*/
-
                 StartGdb(startInfo);
 
                 // Initialize the terminal
                 RunCommand("-inferior-tty-set", Escape(tty));
 
-               /* try
+                try
                 {
-                    RunCommand("-file-exec-and-symbols", Escape(startInfo.Command));
+                    RunCommand("-file-exec-and-symbols", Escape(startInfo.Command.ToAvalonPath()));
                 }
                 catch
                 {
                     FireTargetEvent(TargetEventType.TargetExited, null);
                     throw;
-                }*/
+                }
 
                 RunCommand("-environment-cd", Escape(startInfo.WorkingDirectory));
 
-                /*// Set inferior arguments
+                // Set inferior arguments
                 if (!string.IsNullOrEmpty(startInfo.Arguments))
-                    RunCommand("-exec-arguments", startInfo.Arguments);*/
+                    RunCommand("-exec-arguments", startInfo.Arguments);
 
-                /*if (startInfo.EnvironmentVariables != null)
+                if (startInfo.EnvironmentVariables != null)
                 {
                     foreach (var v in startInfo.EnvironmentVariables)
                         RunCommand("-gdb-set", "environment", v.Key, v.Value);
-                }*/
+                }
 
                 currentProcessName = startInfo.Command + " " + startInfo.Arguments;
 
-               // CheckIsMonoProcess();
-                //OnStarted();
+                asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
 
-               // RunCommand("-exec-run");
+                if (!false && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
+                {
+                    // TODO check if this code can be removed, it was used to support  ctrl+c signals, but no longer seems
+                    // to be needed for .net core.
+                    var attempts = 0;
+                    while (!Platform.FreeConsole() && attempts < 10)
+                    {
+                        _console.WriteLine(Marshal.GetLastWin32Error().ToString());
+                        Thread.Sleep(10);
+                        attempts++;
+                    }
+
+                    attempts = 0;
+
+                    while (!Platform.AttachConsole(proc.Id) && attempts < 10)
+                    {
+                        Thread.Sleep(10);
+                        attempts++;
+                    }
+
+                    while (!Platform.SetConsoleCtrlHandler(null, true))
+                    {
+                        _console.WriteLine(Marshal.GetLastWin32Error().ToString());
+                        Thread.Sleep(10);
+                    }
+                }
+
+                if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+                {
+                    RunCommand("-gdb-set", "new-console", "on");
+                }
+
+                OnStarted();
+
+                RunCommand("-exec-run");
             }
         }
 
@@ -196,6 +206,8 @@ namespace AvalonStudio.Debugging.GDB
             sout = proc.StandardOutput;
             sin = proc.StandardInput;
 
+            closeTokenSource = new CancellationTokenSource();
+            Task.Factory.StartNew(OutputInterpreter, closeTokenSource.Token);
             thread = new Thread(OutputInterpreter);
             thread.Name = "GDB output interpeter";
             thread.IsBackground = true;
@@ -209,8 +221,16 @@ namespace AvalonStudio.Debugging.GDB
 				console = null;
 			}*/
 
-            if (thread != null)
-                thread.Abort();
+            sin.WriteLine("-gdb-exit");
+
+            closeTokenSource?.Cancel();
+
+            if (!false && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
+            {
+                Platform.FreeConsole();
+
+                Platform.SetConsoleCtrlHandler(null, false);
+            }
         }
 
         protected override void OnSetActiveThread(long processId, long threadId)
@@ -220,7 +240,27 @@ namespace AvalonStudio.Debugging.GDB
 
         protected override void OnStop()
         {
-            //Syscall.kill (proc.Id, Signum.SIGINT);
+            lock (eventLock)
+            {
+                if (asyncMode)
+                {
+                    //Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                    lock(gdbLock)
+                    {
+                        lock(syncLock)
+                        {
+                            sin.WriteLine("-exec-interrupt");
+                        }
+                    }
+                }
+                else
+                {
+                    Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                }
+
+                if (!Monitor.Wait(eventLock, 4000))
+                    throw new InvalidOperationException("Target could not be interrupted.");
+            }
         }
 
         protected override void OnDetach()
@@ -238,13 +278,11 @@ namespace AvalonStudio.Debugging.GDB
             lock (gdbLock)
             {
                 InternalStop();
-                RunCommand("kill");
+                sin.WriteLine("-gdb-exit");
+                closeTokenSource?.Cancel();
+                proc.Kill();
                 TargetEventArgs args = new TargetEventArgs(TargetEventType.TargetExited);
                 OnTargetEvent(args);
-                /*				proc.Kill ();
-                                TargetEventArgs args = new TargetEventArgs (TargetEventType.TargetExited);
-                                OnTargetEvent (args);
-                */
             }
         }
 
@@ -330,11 +368,11 @@ namespace AvalonStudio.Debugging.GDB
                     {
                         // Breakpoint locations must be double-quoted if files contain spaces.
                         // For example: -break-insert "\"C:/Documents and Settings/foo.c\":17"
-                        RunCommand("-environment-directory", Escape(Path.GetDirectoryName(bp.FileName)));
+                        RunCommand("-environment-directory", Escape(Path.GetDirectoryName(bp.FileName).ToAvalonPath()));
 
                         try
                         {
-                            res = RunCommand("-break-insert", extraCmd.Trim(), Escape(Escape(bp.FileName) + ":" + bp.Line));
+                            res = RunCommand("-break-insert", extraCmd.Trim(), Escape(Escape(bp.FileName.ToAvalonPath()) + ":" + bp.Line));
                         }
                         catch (Exception ex)
                         {
@@ -632,12 +670,12 @@ namespace AvalonStudio.Debugging.GDB
                 return str;
         }
 
-        public GdbCommandResult RunCommand (string command, params string[] args)
+        public GdbCommandResult RunCommand(string command, params string[] args)
         {
-            return RunCommand(command, 4000, args);
+            return RunCommand(command, 30000, args);
         }
 
-        public GdbCommandResult RunCommand(string command, int timeout = 4000, params string[] args)
+        public GdbCommandResult RunCommand(string command, int timeout = 30000, params string[] args)
         {
             lock (gdbLock)
             {
@@ -648,16 +686,15 @@ namespace AvalonStudio.Debugging.GDB
                     lock (eventLock)
                     {
                         running = true;
+                        _console.WriteLine("Running true");
                     }
 
                     if (logGdb)
-                        Console.WriteLine("gdb<: " + command + " " + string.Join(" ", args));
+                        _console.WriteLine("gdb<: " + command + " " + string.Join(" ", args));
 
-                    sin.WriteLine(command + " " + string.Join(" ", args));
+                    sin.WriteLine(command + " " + string.Join(" ", args));                    
 
-                    Console.WriteLine(command + " " + string.Join(" ", args));
-
-                    if(!Monitor.Wait(syncLock, timeout))
+                    if (!Monitor.Wait(syncLock, timeout))
                     {
                         lastResult = new GdbCommandResult("");
                         lastResult.Status = CommandStatus.Timeout;
@@ -673,10 +710,28 @@ namespace AvalonStudio.Debugging.GDB
         {
             lock (eventLock)
             {
+                _console.WriteLine($"Internal Stop: {running}");
+
                 if (!running)
                     return false;
                 internalStop = true;
-                //Syscall.kill (proc.Id, Signum.SIGINT);
+
+                if (asyncMode)
+                {
+                    lock(gdbLock)
+                    {
+                        lock(syncLock)
+                        {
+                            sin.WriteLine("-exec-interrupt");
+                        }
+                    }
+                    //Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                }
+                else
+                {
+                    Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                }
+
                 if (!Monitor.Wait(eventLock, 4000))
                     throw new InvalidOperationException("Target could not be interrupted.");
             }
@@ -700,7 +755,7 @@ namespace AvalonStudio.Debugging.GDB
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    _console.WriteLine(ex.ToString());
                 }
             }
         }
@@ -708,14 +763,21 @@ namespace AvalonStudio.Debugging.GDB
         void ProcessOutput(string line)
         {
             if (logGdb)
-                Console.WriteLine("dbg>: '" + line + "'");
+                _console.WriteLine("dbg>: '" + line + "'");
             switch (line[0])
             {
                 case '^':
                     lock (syncLock)
                     {
                         lastResult = new GdbCommandResult(line);
-                        running = (lastResult.Status == CommandStatus.Running);
+
+                        lock (eventLock)
+                        {
+                            running = (lastResult.Status == CommandStatus.Running);
+
+                            _console.WriteLine($"Running: {running}");
+                        }
+
                         Monitor.PulseAll(syncLock);
                     }
                     break;
@@ -731,32 +793,40 @@ namespace AvalonStudio.Debugging.GDB
                     break;
 
                 case '*':
-                    GdbEvent ev;
+                    GdbEvent ev = null;
                     lock (eventLock)
                     {
-                        running = false;
-                        ev = new GdbEvent(line);
-                        string ti = ev.GetValue("thread-id");
-                        if (ti != null && ti != "all")
-                            currentThread = activeThread = int.Parse(ti);
-                        Monitor.PulseAll(eventLock);
-                        if (internalStop)
+                        if (!line.StartsWith("*running"))
                         {
-                            internalStop = false;
-                            return;
+                            running = false;
+                            _console.WriteLine("Running: false");
+                            ev = new GdbEvent(line);
+                            string ti = ev.GetValue("thread-id");
+                            if (ti != null && ti != "all")
+                                currentThread = activeThread = int.Parse(ti);
+                            Monitor.PulseAll(eventLock);
+                            if (internalStop)
+                            {
+                                internalStop = false;
+                                return;
+                            }
                         }
                     }
-                    ThreadPool.QueueUserWorkItem(delegate
+
+                    if (ev != null)
                     {
-                        try
+                        ThreadPool.QueueUserWorkItem(delegate
                         {
-                            HandleEvent(ev);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex);
-                        }
-                    });
+                            try
+                            {
+                                HandleEvent(ev);
+                            }
+                            catch (Exception ex)
+                            {
+                                _console.WriteLine(ex.ToString());
+                            }
+                        });
+                    }
                     break;
             }
         }
@@ -765,7 +835,7 @@ namespace AvalonStudio.Debugging.GDB
         {
             if (ev.Name != "stopped")
             {
-                Console.WriteLine("Unknown event: " + ev.Name);
+                _console.WriteLine("Unknown event: " + ev.Name);
                 return;
             }
 
