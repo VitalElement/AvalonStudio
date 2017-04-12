@@ -28,7 +28,7 @@ namespace AvalonStudio.Debugging
 
     public interface IDebugger2 : IExtension
     {
-        DebuggerSession CreateSession();
+        DebuggerSession CreateSession(IProject project);
 
         DebuggerStartInfo GetDebuggerStartInfo(IProject project);
 

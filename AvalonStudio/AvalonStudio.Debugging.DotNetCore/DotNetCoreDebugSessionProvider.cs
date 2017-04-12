@@ -17,7 +17,7 @@
             IoC.RegisterConstant<DotNetCoreDebugger>(this);
         }
 
-        public DebuggerSession CreateSession()
+        public DebuggerSession CreateSession(IProject project)
         {
             var result = new CoreClrDebuggerSession(System.IO.Path.GetInvalidPathChars(), "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\1.1.1\\dbgshim.dll");
 
