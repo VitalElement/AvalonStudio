@@ -352,7 +352,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             {
                 var shell = IoC.Get<IShell>();
 
-                var debugger = shell.Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.GDB.JLink.JLinkDebugger");
+                var debugger = shell.Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debuggers.GDB.Local.LocalGdbDebugger");
 
                 return debugger;
             }
