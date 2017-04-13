@@ -169,6 +169,10 @@
 
             _session.TargetHitBreakpoint += _session_TargetStopped;
 
+            _session.TargetSignaled += _session_TargetStopped;
+
+            _session.TargetInterrupted += _session_TargetStopped;
+
             _session.TargetExited += _session_TargetExited;
 
             _session.TargetStarted += _session_TargetStarted;
