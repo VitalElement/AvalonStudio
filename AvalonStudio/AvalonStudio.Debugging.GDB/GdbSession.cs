@@ -155,6 +155,8 @@ namespace AvalonStudio.Debugging.GDB
                     RunCommand("-gdb-set", "new-console", "on");
                 }
 
+                RunCommand("-enable-pretty-printing");
+
                 OnStarted();
 
                // RunCommand(_runCommand);
