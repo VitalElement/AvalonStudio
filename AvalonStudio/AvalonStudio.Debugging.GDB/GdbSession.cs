@@ -55,7 +55,7 @@ namespace AvalonStudio.Debugging.GDB
         long activeThread = -1;
         bool isMonoProcess;
         string currentProcessName;
-        List<string> tempVariableObjects = new List<string>();
+        Dictionary<string, WeakReference<ObjectValue>> tempVariableObjects = new Dictionary<string, WeakReference<ObjectValue>>();
         Dictionary<int, BreakEventInfo> breakpoints = new Dictionary<int, BreakEventInfo>();
         List<BreakEventInfo> breakpointsWithHitCount = new List<BreakEventInfo>();
 
@@ -881,16 +881,29 @@ namespace AvalonStudio.Debugging.GDB
             OnTargetEvent(args);
         }
 
-        internal void RegisterTempVariableObject(string var)
+        internal void RegisterTempVariableObject(string id, ObjectValue var)
         {
-            tempVariableObjects.Add(var);
+            tempVariableObjects.Add(id, new WeakReference<ObjectValue>(var));
         }
 
         void CleanTempVariableObjects()
         {
-            foreach (string s in tempVariableObjects)
-                RunCommand("-var-delete", s);
-            tempVariableObjects.Clear();
+            List<string> keysToRemove = new List<string>();
+
+            foreach(var item in tempVariableObjects)
+            {
+                if (!item.Value.TryGetTarget(out ObjectValue result))
+                {
+                    RunCommand("-var-delete", item.Key);
+
+                    keysToRemove.Add(item.Key);
+                }
+            }
+            
+            foreach(var key in keysToRemove)
+            {
+                tempVariableObjects.Remove(key);
+            }
         }
     }
 }
