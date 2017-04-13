@@ -57,5 +57,15 @@
 
             return startInfo;
         }
+
+        public object GetSettingsControl(IProject project)
+        {
+            return null;
+        }
+
+        public void ProvisionSettings(IProject project)
+        {
+            
+        }
     }
 }

@@ -59,10 +59,27 @@ namespace AvalonStudio.Debugging.GDB.JLink
             return result;
         }
 
-        public JLinkGdbSession(IProject project, string gdbExecutable) : base(gdbExecutable)
+        public JLinkGdbSession(IProject project, string gdbExecutable) : base(gdbExecutable, "-exec-continue")
         {
             this._project = project;
             console = IoC.Get<IConsole>();
+
+            TargetReady += JLinkGdbSession_TargetReady;
+        }
+
+        private void JLinkGdbSession_TargetReady(object sender, TargetEventArgs e)
+        {
+            bool result = (RunCommand("-target-select", "remote", ":2331").Status == CommandStatus.Done);
+
+            if (result)
+            {
+                RunCommand("monitor", "halt");
+                RunCommand("monitor", "reset");
+
+                console.WriteLine(RunCommand("-target-download").Status.ToString());
+
+                console.WriteLine("[JLink] - Connected.");
+            }
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)
@@ -148,34 +165,6 @@ namespace AvalonStudio.Debugging.GDB.JLink
             {
                 base.OnRun(startInfo);
                 console.WriteLine("[JLink] - Connecting...");
-
-                RunCommand("mi-async", "on");
-
-
-                result = (RunCommand("-target-select", "remote", ":2331").Status == CommandStatus.Done);
-
-                if (result)
-                {
-                    RunCommand("monitor", "halt");
-                    RunCommand("monitor", "reset");
-
-                    console.WriteLine(RunCommand("-target-download").Status.ToString());
-
-                    RunCommand("-exec-continue");
-
-                    console.WriteLine("[JLink] - Connected.");
-                }
-            }
-
-            if (!result)
-            {
-                console.WriteLine(
-                    "[JLink] - Unable to connect. Ensure target is powered, connected and that debug settings are correct.");
-
-                if (jlinkProcess != null && !jlinkProcess.HasExited)
-                {
-                    jlinkProcess.Kill();
-                }
             }
         }
     }
