@@ -9,6 +9,8 @@
         event EventHandler DebugSessionEnded;
         event EventHandler<TargetEventArgs> TargetStopped;
 
+        StackFrame LastStackFrame { get; }
+
         DebuggerSession Session { get; }
 
         BreakpointStore Breakpoints { get; set; }

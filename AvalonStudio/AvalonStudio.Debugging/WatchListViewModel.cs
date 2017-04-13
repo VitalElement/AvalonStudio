@@ -35,6 +35,11 @@ namespace AvalonStudio.Debugging
             Activation(); // for when we create the part outside of composition.
         }
 
+        public void SetCurrentFrame(StackFrame frame)
+        {
+            _currentFrame = frame;
+        }
+
         public ObservableCollection<ObjectValueViewModel> Children
         {
             get { return children; }
@@ -157,8 +162,10 @@ namespace AvalonStudio.Debugging
             watches.Clear();
         }
 
-        public void AddWatch(string expression)
+        public bool AddWatch(string expression)
         {
+            bool result = false;
+
             if (_debugManager.SessionActive && !_debugManager.Session.IsRunning && _debugManager.Session.IsConnected && !_expressions.Contains(expression))
             {
                 _expressions.Add(expression);
@@ -166,7 +173,11 @@ namespace AvalonStudio.Debugging
                var watch = _currentFrame.GetExpressionValue(expression, false);
 
                 Task.Run(() => { InvalidateObjects(watch); });
+
+                return true;
             }
+
+            return result;
         }
     }
 }

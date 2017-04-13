@@ -161,7 +161,7 @@ namespace AvalonStudio.Debugging
         {
             var result = false;
 
-            bool hasChanged = Model.Value != newValue.Value;
+            bool hasChanged = Model.Value != newValue?.Value;
             bool didHaveChildren = Model.HasChildren;
 
             Model = newValue;

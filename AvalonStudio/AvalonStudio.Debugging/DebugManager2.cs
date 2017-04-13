@@ -15,6 +15,7 @@
     public class DebugManager2 : IDebugManager2, IExtension
     {
         private DebuggerSession _session;
+        private StackFrame _lastStackFrame;
         private IShell _shell;
         private IConsole _console;
         private IEditor _lastDocument;
@@ -124,7 +125,7 @@
 
             _session?.Dispose();
             _session = null;
-
+            _lastStackFrame = null;
             _lastDocument?.ClearDebugHighlight();
             _lastDocument = null;
 
@@ -190,6 +191,8 @@
             DebugSessionStarted?.Invoke(this, new EventArgs());
         }
 
+        public StackFrame LastStackFrame => _lastStackFrame;
+
         private void _session_TargetStarted(object sender, EventArgs e)
         {
             if (_lastDocument != null)
@@ -208,7 +211,7 @@
         {
             if (e.Backtrace != null && e.Backtrace.FrameCount > 0)
             {
-                var currentFrame = e.Backtrace.GetFrame(0);
+                var currentFrame = _lastStackFrame = e.Backtrace.GetFrame(0);
                 var sourceLocation = currentFrame.SourceLocation;
 
                 if (sourceLocation.FileName != null)
