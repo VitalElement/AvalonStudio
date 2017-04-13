@@ -108,7 +108,7 @@ namespace AvalonStudio.Debugging
 
         public string Value
         {
-            get { return Model.Value; }
+            get { return Model?.Value; }
         }
 
         public IBrush Background
@@ -137,12 +137,12 @@ namespace AvalonStudio.Debugging
 
         public string DisplayName
         {
-            get { return Model.Name; }
+            get { return Model?.Name; }
         }
 
         public string TypeName
         {
-            get { return Model.TypeName; }
+            get { return Model?.TypeName; }
         }
 
         private void Expand()
@@ -166,13 +166,16 @@ namespace AvalonStudio.Debugging
 
             Model = newValue;
 
-            if (Model.HasChildren && !didHaveChildren)
+            if (Model != null)
             {
-                hasChanged = true;
+                if (Model.HasChildren && !didHaveChildren)
+                {
+                    hasChanged = true;
 
-                Children = new ObservableCollection<ObjectValueViewModel>();
+                    Children = new ObservableCollection<ObjectValueViewModel>();
 
-                Children.Add(DummyChild);
+                    Children.Add(DummyChild);
+                }
             }
 
             if (IsExpanded)
