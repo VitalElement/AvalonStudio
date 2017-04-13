@@ -210,9 +210,12 @@ namespace AvalonStudio.Debugging.GDB
 				exp = exp.Replace ("\"", "\\\"");
 				GdbCommandResult res = session.RunCommand ("-var-create", "-", "*", "\"" + exp + "\"");
 				string vname = res.GetValue ("name");
-				session.RegisterTempVariableObject (vname);
-				return CreateObjectValue (exp, res);
-			} catch {
+				var result = CreateObjectValue (exp, res);
+
+                session.RegisterTempVariableObject(vname, result);
+
+                return result;
+            } catch {
 				return ObjectValue.CreateUnknown (exp);
 			}
 		}
