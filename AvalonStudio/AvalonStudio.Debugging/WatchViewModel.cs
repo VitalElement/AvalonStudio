@@ -10,30 +10,44 @@ using Mono.Debugging.Client;
 
 namespace AvalonStudio.Debugging
 {
-	public class ObjectValueViewModel : ViewModel<ObjectValue>
-	{
-		private IBrush background;
+    public class ObjectValueViewModel : ViewModel<ObjectValue>
+    {
+        private static readonly ObjectValueViewModel DummyChild = new ObjectValueViewModel();
+        private ObservableCollection<ObjectValueViewModel> children;
 
-		private bool hasChanged;
+        private IBrush background;
 
-		private bool isExpanded;
+        private bool hasChanged;
 
-		private string val;
-		private readonly WatchListViewModel watchList;
+        private bool isExpanded;
 
-		public ObjectValueViewModel(WatchListViewModel watchList, ObjectValue model)
-			: base(model)
-		{
-			this.watchList = watchList;
+        private readonly WatchListViewModel watchList;
 
-			DeleteCommand = ReactiveCommand.Create();
-			//DeleteCommand.Subscribe(_ => { IoC.Get<IWatchList>().RemoveWatch(this); });
+        private ObjectValueViewModel() : base(ObjectValue.CreateUnknown("Dummy"))
+        {
+
+        }
+
+        public ObjectValueViewModel(WatchListViewModel watchList, ObjectValue model)
+            : base(model)
+        {
+            this.watchList = watchList;
+
+            DeleteCommand = ReactiveCommand.Create();
+
+            if (model.HasChildren)
+            {
+                children = new ObservableCollection<ObjectValueViewModel>();
+                children.Add(DummyChild);
+            }
+
+            DeleteCommand.Subscribe(_ => { IoC.Get<IWatchList>().Remove(Model); });
 
 
-			DisplayFormatCommand = ReactiveCommand.Create();
-			DisplayFormatCommand.Subscribe(s =>
-			{
-				/*var format = s as string;
+            DisplayFormatCommand = ReactiveCommand.Create();
+            DisplayFormatCommand.Subscribe(s =>
+            {
+                /*var format = s as string;
 
 				switch (format)
 				{
@@ -59,199 +73,134 @@ namespace AvalonStudio.Debugging
 				}
                 
 				await Invalidate(debugger);*/
-			});
-		}
+            });
+        }
 
-		public bool IsExpanded
-		{
-			get { return isExpanded; }
-			set
-			{
-				if (value)
-				{
-					Expand();
-				}
+        public bool IsExpanded
+        {
+            get { return isExpanded; }
+            set
+            {
+                if (value)
+                {
+                    Expand();
+                }
+                else
+                {
+                    Children?.Clear();
+                    Children?.Add(DummyChild);
+                }
 
-				this.RaiseAndSetIfChanged(ref isExpanded, value);
-			}
-		}
+                this.RaiseAndSetIfChanged(ref isExpanded, value);
+            }
+        }
 
-		/*public ObservableCollection<ObjectValueViewModel> Children
-		{
-			get { return children; }
-			set { this.RaiseAndSetIfChanged(ref children, value); }
-		}*/
 
-		public ReactiveCommand<object> DeleteCommand { get; }
+        public ObservableCollection<ObjectValueViewModel> Children
+        {
+            get { return children; }
+            set { this.RaiseAndSetIfChanged(ref children, value); }
+        }
 
-		public ReactiveCommand<object> DisplayFormatCommand { get; }
+        public ReactiveCommand<object> DeleteCommand { get; }
 
-		public string Value
-		{
-			get { return Model.Value; }
-		}
+        public ReactiveCommand<object> DisplayFormatCommand { get; }
 
-		public IBrush Background
-		{
-			get { return background; }
-			set { this.RaiseAndSetIfChanged(ref background, value); }
-		}
+        public string Value
+        {
+            get { return Model.Value; }
+        }
 
-		public bool HasChanged
-		{
-			get { return hasChanged; }
-			set
-			{
-				this.RaiseAndSetIfChanged(ref hasChanged, value);
+        public IBrush Background
+        {
+            get { return background; }
+            set { this.RaiseAndSetIfChanged(ref background, value); }
+        }
 
-				if (value)
-				{
-					Background = Brush.Parse("#33008299");
-				}
-				else
-				{
-					Background = null;
-				}
-			}
-		}
+        public bool HasChanged
+        {
+            get { return hasChanged; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref hasChanged, value);
 
-		public string DisplayName
-		{
-			get { return Model.Name; }
-		}
+                if (value)
+                {
+                    Background = Brush.Parse("#33008299");
+                }
+                else
+                {
+                    Background = null;
+                }
+            }
+        }
 
-		public string TypeName
-		{
-			get { return Model.TypeName; }
-		}
+        public string DisplayName
+        {
+            get { return Model.Name; }
+        }
 
-		private async void Expand()
-		{
-			/*foreach (var child in Children)
-			{
-				if (child.Children == null)
-				{
-					child.Children = new ObservableCollection<ObjectValueViewModel>();
+        public string TypeName
+        {
+            get { return Model.TypeName; }
+        }
 
-					if (!child.Model.AreChildrenEvaluated)
-					{
-						await child.Model.EvaluateChildrenAsync();
+        private void Expand()
+        {
+            Children.Remove(DummyChild);
 
-						for (var i = 0; i < child.Model.Children.Count; i++)
-						{
-							var newchild = new ObjectValueViewModel(watchList, debugger, child.Model.Children[i]);
-							await newchild.Evaluate(debugger);
-							child.Children.Add(newchild);
-						}
-					}
-				}
-			}*/
-		}
+            var children = Model.GetAllChildren();
 
-		public bool ApplyChange(VariableObjectChange change)
-		{
-			var result = false;
+            foreach (var child in children)
+            {
+                Children.Add(new ObjectValueViewModel(watchList, child));
+            }
+        }
 
-			/*if (change.Expression.Contains(Model.Id))
-			{
-				if (change.Expression == Model.Id)
-				{
-					result = true;
+        public bool ApplyChange(ObjectValue newValue)
+        {
+            var result = false;
 
-					if (change.InScope)
-					{
-						Dispatcher.UIThread.InvokeAsync(() => { Value = change.Value; });
-					}
-					else
-					{
-						Dispatcher.UIThread.InvokeAsync(() =>
-						{
-							Value = "{ Out of Scope. }";
-							Model.Children.Clear();
-							Model.ClearEvaluated();
-							Children?.Clear();
-						});
-					}
+            bool hasChanged = Model.Value != newValue.Value;
+            bool didHaveChildren = Model.HasChildren;
 
-					if (change.TypeChanged)
-					{
-						//throw new NotImplementedException ("This needs implementing cope with type change.");
-					}
-				}
-				else if(Children != null)
-				{
-					foreach (var child in Children)
-					{
-						if (child != null)
-						{
-							result = child.ApplyChange(change);
+            Model = newValue;
 
-							if (result)
-							{
-								break;
-							}
-						}
-						else
-						{
-							Console.WriteLine("Investigate this case.");
-						}
-					}
-				}
+            if (Model.HasChildren && !didHaveChildren)
+            {
+                hasChanged = true;
 
-				if (!HasChanged)
-				{
-					watchList.LastChangedRegisters.Add(this);
+                Children = new ObservableCollection<ObjectValueViewModel>();
 
-					Dispatcher.UIThread.InvokeAsync(() => { HasChanged = true; });
-				}
-			}*/
-            
-			return result;
-		}
+                Children.Add(DummyChild);
+            }
 
-		public async Task Invalidate(IDebugger debugger)
-		{
-			/*await Model.EvaluateAsync(debugger, false);
+            if (IsExpanded)
+            {
+                if (newValue.Value != null)
+                {
+                    for (int i = 0; i < Children.Count; i++)
+                    {
+                        Children[i].ApplyChange(newValue.GetChild(Children[i].Model.Name));
+                    }
+                }
+                else
+                {
+                    Children.Clear();
+                }
+            }
 
-			foreach (var child in Children)
-			{
-				if (child.IsExpanded)
-				{
-					child.Invalidate();
-				}
-			}
+            Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    HasChanged = hasChanged;
 
-			if (Model.Value != null)
-			{
-				Value = Model.Value;
-			}
-			else
-			{
-				Value = "{ " + Model.Type + " }";
-			}*/
-		}
+                    if (hasChanged)
+                    {
+                        Invalidate();
+                    }
+                }).Wait();
 
-		public async Task Evaluate(IDebugger debugger)
-		{
-			/*await Model.EvaluateAsync(debugger);
-
-			Children = new ObservableCollection<ObjectValueViewModel>();
-
-			await Model.EvaluateChildrenAsync();
-
-			for (var i = 0; i < Model.NumChildren; i++)
-			{
-				Children.Add(new ObjectValueViewModel(watchList, debugger, Model.Children[i]));
-			}
-
-			if (Model.Value != null)
-			{
-				Value = Model.Value;
-			}
-			else
-			{
-				Value = "{ " + Model.Type + " }";
-			}*/
-		}
-	}
+            return result;
+        }
+    }
 }
