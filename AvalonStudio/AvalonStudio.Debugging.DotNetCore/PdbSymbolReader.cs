@@ -88,49 +88,71 @@
             return reader.GetToken(handle);
         }
 
-        private void AddChildScopes(MetadataReader pdb, SymbolScope parent, LocalScopeHandleCollection.ChildrenEnumerator scopes, SymbolMethod owner)
+        private void AddChildScopes(MetadataReader pdb, SymbolScope parent, IEnumerator<LocalScopeHandle> scopes, SymbolMethod owner)
         {
-            do
+            
+
+            while (true)
             {
-                var scope = pdb.GetLocalScope(scopes.Current);
+                scopes.MoveNext();
 
-                var newScope = new SymbolScope(owner, parent, scope.StartOffset, scope.EndOffset);
+                if (scopes.Current.IsNil)
+                {
+                    break;
+                }
 
-                AddChildScopes(pdb, newScope, scope.GetChildren(), owner);
+                var currentScope = pdb.GetLocalScope(scopes.Current);
 
-                AddLocalVars(pdb, newScope, scope.GetLocalVariables());
-            } while (scopes.Current != null);
+                var current = new SymbolScope(owner, null, currentScope.StartOffset, currentScope.EndOffset);
+
+                AddLocalVars(pdb, current, currentScope.GetLocalVariables());
+
+                AddChildScopes(pdb, current, currentScope.GetChildren(), owner);
+
+                parent.AddChild(current);
+            }
+
         }
 
         private void AddLocalVars (MetadataReader pdb, SymbolScope scope, LocalVariableHandleCollection localVars)
         {
             foreach (var varHandle in localVars)
             {
-                var localVar = pdb.GetLocalVariable(varHandle);
+                var localVar = pdb.GetLocalVariable(varHandle);               
 
-                scope.AddLocal(new SymbolVariable(pdb.GetString(localVar.Name), localVar.Attributes));
+                scope.AddLocal(new SymbolVariable(pdb.GetString(localVar.Name), localVar.Attributes, localVar.Index));
             }
         }
 
-        private SymbolScope CreateSymbolScope (MetadataReader pdb, LocalScopeHandleCollection scopes, SymbolMethod owner)
+        private ISymbolScope CreateSymbolScope (MetadataReader pdb, LocalScopeHandleCollection scopes, SymbolMethod owner, int methodEndOffset)
         {
-            SymbolScope result = null;
+            SymbolScope result = null;            
 
-            foreach (var scopeHandle in scopes)
+            var scope = scopes.GetEnumerator();
+
+            while (true)
             {
-                var scope = pdb.GetLocalScope(scopeHandle);
+                scope.MoveNext();
 
-                var newScope = new SymbolScope(owner, null, scope.StartOffset, scope.EndOffset);
+                if(scope.Current.IsNil)
+                {
+                    break;
+                }
 
-                var childScopes = scope.GetChildren();
+                var currentScope = pdb.GetLocalScope(scope.Current);
 
-                AddChildScopes(pdb, newScope, childScopes, owner);
+                var current = new SymbolScope(owner, null, currentScope.StartOffset, currentScope.EndOffset);
 
-                AddLocalVars(pdb, newScope, scope.GetLocalVariables());
+                if (result ==null)
+                {
+                    result = current;
+                }
+                
+                AddLocalVars(pdb, current, currentScope.GetLocalVariables());
 
-                result = newScope;
+                AddChildScopes(pdb, current, currentScope.GetChildren(), owner);
             }
-
+            
             return result;
         }
 
@@ -162,13 +184,16 @@
 
                     var methodToken = MetadataTokens.GetToken(methodHandle.ToDefinitionHandle());
 
+
                     var token = new SymbolToken(methodToken);                    
 
-                    var newMethod = new SymbolMethod(method.GetSequencePoints(), token);
+                    var newMethod = new SymbolMethod(method.GetSequencePoints(), token);                    
                     methodTokenLookup.Add(token.GetToken(), newMethod);
                     list.Add(newMethod);
 
-                    newMethod.SetRootScope(CreateSymbolScope(pdb, pdb.GetLocalScopes(methodHandle.ToDefinitionHandle()), newMethod));
+                    var def = pdb.GetMethodDefinition(methodHandle.ToDefinitionHandle());                   
+                                        
+                    newMethod.SetRootScope(CreateSymbolScope(pdb, pdb.GetLocalScopes(methodHandle.ToDefinitionHandle()), newMethod, 0));
                 }
 
                 foreach (var documentHandle in pdb.Documents)

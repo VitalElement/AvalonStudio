@@ -10,14 +10,16 @@
     {
         private string _name;
         private LocalVariableAttributes _attributes;
+        private int _index;
 
-        public SymbolVariable(string name, LocalVariableAttributes attributes)
+        public SymbolVariable(string name, LocalVariableAttributes attributes, int index)
         {
             _name = name;
             _attributes = attributes;
+            _index = index;
         }
 
-        public int AddressField1 => throw new NotImplementedException();
+        public int AddressField1 => _index;
 
         public int AddressField2 => throw new NotImplementedException();
 

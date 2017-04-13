@@ -18,6 +18,9 @@
         {
             _children = new List<ISymbolScope>();
             _locals = new List<ISymbolVariable>();
+            _startOffset = startOffset;
+            _endOffset = endOffset;
+            _parent = parent;
         }
 
         internal void AddChild (ISymbolScope childScope)
