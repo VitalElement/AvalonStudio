@@ -184,7 +184,10 @@ namespace AvalonStudio.Debugging
                 {
                     for (int i = 0; i < Children.Count; i++)
                     {
-                        Children[i].ApplyChange(newValue.GetChild(Children[i].Model.Name));
+                        if (Children[i].Model != null)
+                        {
+                            Children[i].ApplyChange(newValue.GetChild(Children[i].Model.Name));
+                        }
                     }
                 }
                 else
