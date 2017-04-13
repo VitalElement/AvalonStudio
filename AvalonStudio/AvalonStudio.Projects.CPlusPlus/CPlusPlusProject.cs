@@ -77,6 +77,9 @@ namespace AvalonStudio.Projects.CPlusPlus
         [JsonProperty(PropertyName = "Debugger")]
         public string DebuggerReference { get; set; }
 
+        [JsonProperty(PropertyName = "Debugger2")]
+        public string Debugger2Reference { get; set; }
+
         [JsonProperty(PropertyName = "TestFramework")]
         public string TestFrameworkReference { get; set; }
 
@@ -350,14 +353,11 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var shell = IoC.Get<IShell>();
+                var result = IoC.Get<IShell>().Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
 
-                var debugger = shell.Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debuggers.GDB.Local.LocalGdbDebugger");
-
-                return debugger;
+                return result;
             }
-
-            set { }
+            set { Debugger2Reference = value.GetType().ToString(); }
         }
 
         [JsonIgnore]

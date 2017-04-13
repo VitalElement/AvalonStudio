@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Debugging.DotNetCore
 {
+    using System;
     using AvalonStudio.Extensibility;
     using AvalonStudio.Projects;
     using Mono.Debugging.Client;
@@ -49,6 +50,16 @@
             };
 
             return startInfo;
+        }
+
+        public object GetSettingsControl(IProject project)
+        {
+            return null;
+        }
+
+        public void ProvisionSettings(IProject project)
+        {
+            
         }
     }
 }

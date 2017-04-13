@@ -33,6 +33,10 @@ namespace AvalonStudio.Debugging
         DebuggerStartInfo GetDebuggerStartInfo(IProject project);
 
         DebuggerSessionOptions GetDebuggerSessionOptions(IProject project);
+
+        object GetSettingsControl(IProject project);
+
+        void ProvisionSettings(IProject project);
     }
 
     public interface IDebugger : IExtension

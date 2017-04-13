@@ -7,6 +7,8 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Toolchains.GCC;
 using System.IO;
 using AvalonStudio.Platforms;
+using System.Dynamic;
+using AvalonStudio.Utils;
 
 namespace AvalonStudio.Debugging.GDB.JLink
 {
@@ -56,6 +58,51 @@ namespace AvalonStudio.Debugging.GDB.JLink
             };
 
             return startInfo;
+        }
+
+        public object GetSettingsControl(IProject project)
+        {
+            return new JLinkSettingsFormViewModel(project);
+        }
+
+        public static JLinkSettings GetSettings(IProject project)
+        {
+            JLinkSettings result = null;
+
+            try
+            {
+                if (project.DebugSettings.JLinkSettings is ExpandoObject)
+                {
+                    result = (project.DebugSettings.JLinkSettings as ExpandoObject).GetConcreteType<JLinkSettings>();
+                }
+                else
+                {
+                    result = project.DebugSettings.JLinkSettings;
+                }
+            }
+            catch (Exception)
+            {
+                result = project.DebugSettings.JLinkSettings = new JLinkSettings();
+            }
+
+            return result;
+        }
+
+        public static void SetSettings(IProject project, JLinkSettings settings)
+        {
+            project.DebugSettings.JLinkSettings = settings;
+        }
+
+        public void ProvisionSettings(IProject project)
+        {
+            var result = GetSettings(project);
+
+            if (result == null)
+            {
+                project.DebugSettings.JLinkSettings = new JLinkSettings();
+                result = project.DebugSettings.JLinkSettings;
+                project.Save();
+            }
         }
     }
 }
