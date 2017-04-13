@@ -159,7 +159,10 @@ namespace AvalonStudio.Debugging.GDB
 
                 OnStarted();
 
-               // RunCommand(_runCommand);
+                ThreadPool.QueueUserWorkItem(delegate
+                {
+                    RunCommand(_runCommand);
+                });
             }
         }
 
