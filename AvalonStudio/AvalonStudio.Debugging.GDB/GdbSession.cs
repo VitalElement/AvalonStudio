@@ -384,7 +384,7 @@ namespace AvalonStudio.Debugging.GDB
                         }
                     }
 
-                    if (res == null)
+                    if (res == null || res.Status != CommandStatus.Done)
                     {
                         bi.SetStatus(BreakEventStatus.Invalid, errorMsg);
                         return bi;
