@@ -828,31 +828,35 @@ namespace AvalonStudio.Debugging.GDB
 
             CleanTempVariableObjects();
 
-            TargetEventType type;
-            switch (ev.Reason)
+            TargetEventType type = TargetEventType.TargetStopped;
+
+            if (!string.IsNullOrEmpty(ev.Reason))
             {
-                case "breakpoint-hit":
-                    type = TargetEventType.TargetHitBreakpoint;
-                    if (!CheckBreakpoint(ev.GetInt("bkptno")))
-                    {
-                        RunCommand("-exec-continue");
-                        return;
-                    }
-                    break;
-                case "signal-received":
-                    if (ev.GetValue("signal-name") == "SIGINT")
-                        type = TargetEventType.TargetInterrupted;
-                    else
-                        type = TargetEventType.TargetSignaled;
-                    break;
-                case "exited":
-                case "exited-signalled":
-                case "exited-normally":
-                    type = TargetEventType.TargetExited;
-                    break;
-                default:
-                    type = TargetEventType.TargetStopped;
-                    break;
+                switch (ev.Reason)
+                {
+                    case "breakpoint-hit":
+                        type = TargetEventType.TargetHitBreakpoint;
+                        if (!CheckBreakpoint(ev.GetInt("bkptno")))
+                        {
+                            RunCommand("-exec-continue");
+                            return;
+                        }
+                        break;
+                    case "signal-received":
+                        if (ev.GetValue("signal-name") == "SIGINT")
+                            type = TargetEventType.TargetInterrupted;
+                        else
+                            type = TargetEventType.TargetSignaled;
+                        break;
+                    case "exited":
+                    case "exited-signalled":
+                    case "exited-normally":
+                        type = TargetEventType.TargetExited;
+                        break;
+                    default:
+                        type = TargetEventType.TargetStopped;
+                        break;
+                }
             }
 
             ResultData curFrame = ev.GetObject("frame");
