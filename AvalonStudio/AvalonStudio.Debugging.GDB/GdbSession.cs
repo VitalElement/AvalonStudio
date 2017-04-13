@@ -704,8 +704,6 @@ namespace AvalonStudio.Debugging.GDB
 
         bool InternalStop()
         {
-            _console.WriteLine($"Internal Stop: {running}");
-
             if (!running)
                 return false;
             internalStop = true;
