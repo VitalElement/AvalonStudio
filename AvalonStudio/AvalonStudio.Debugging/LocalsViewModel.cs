@@ -42,11 +42,14 @@ namespace AvalonStudio.Debugging
 
         private void _debugManager_TargetStopped(object sender, Mono.Debugging.Client.TargetEventArgs e)
         {
-            var currentFrame = e.Backtrace.GetFrame(0);
+            if (e.IsStopEvent)
+            {
+                var currentFrame = e.Backtrace.GetFrame(0);
 
-            var locals = currentFrame.GetAllLocals();
+                var locals = currentFrame.GetAllLocals();
 
-            InvalidateObjects(locals);
+                InvalidateObjects(locals);
+            }
         }
     }
 }

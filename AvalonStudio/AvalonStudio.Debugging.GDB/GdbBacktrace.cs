@@ -90,8 +90,11 @@ namespace AvalonStudio.Debugging.GDB
 			SelectFrame (frameIndex);
 			
 			GdbCommandResult res = session.RunCommand ("-stack-list-locals", "0");
-			foreach (ResultData data in res.GetObject ("locals"))
-				values.Add (CreateVarObject (data.GetValue ("name")));
+            if (res.Status == CommandStatus.Done)
+            {
+                foreach (ResultData data in res.GetObject("locals"))
+                    values.Add(CreateVarObject(data.GetValue("name")));
+            }
 			
 			return values.ToArray ();
 		}
@@ -101,8 +104,11 @@ namespace AvalonStudio.Debugging.GDB
 			List<ObjectValue> values = new List<ObjectValue> ();
 			SelectFrame (frameIndex);
 			GdbCommandResult res = session.RunCommand ("-stack-list-arguments", "0", frameIndex.ToString (), frameIndex.ToString ());
-			foreach (ResultData data in res.GetObject ("stack-args").GetObject (0).GetObject ("frame").GetObject ("args"))
-				values.Add (CreateVarObject (data.GetValue ("name")));
+
+            if(res.Status == CommandStatus.Done){
+                foreach (ResultData data in res.GetObject("stack-args").GetObject(0).GetObject("frame").GetObject("args"))
+                    values.Add(CreateVarObject(data.GetValue("name")));
+            }
 			
 			return values.ToArray ();
 		}
