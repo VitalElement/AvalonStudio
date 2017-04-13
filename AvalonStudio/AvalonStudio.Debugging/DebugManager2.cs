@@ -19,6 +19,10 @@
         private IConsole _console;
         private IEditor _lastDocument;
 
+        public event EventHandler DebugSessionStarted;
+        public event EventHandler DebugSessionEnded;
+        public event EventHandler<TargetEventArgs> TargetStopped;
+
         public DebugManager2()
         {
             Breakpoints = new BreakpointStore();
@@ -82,6 +86,8 @@
             _loadingBreakpoints = false;
         }
 
+        public DebuggerSession Session => _session;
+
         public BreakpointStore Breakpoints { get; set; }
 
         public bool SessionActive => _session != null;
@@ -104,6 +110,8 @@
 
         private void OnEndSession()
         {
+            DebugSessionEnded?.Invoke(this, new EventArgs());
+
             _shell.CurrentPerspective = Perspective.Editor;
 
             if (_session != null)
@@ -178,6 +186,8 @@
             _session.TargetStarted += _session_TargetStarted;
 
             _shell.CurrentPerspective = Perspective.Debug;
+
+            DebugSessionStarted?.Invoke(this, new EventArgs());
         }
 
         private void _session_TargetStarted(object sender, EventArgs e)
@@ -200,8 +210,6 @@
             {
                 var currentFrame = e.Backtrace.GetFrame(0);
                 var sourceLocation = currentFrame.SourceLocation;
-
-                //var locals = currentFrame.GetLocalVariables();
 
                 if (sourceLocation.FileName != null)
                 {
@@ -231,6 +239,8 @@
                         _console.WriteLine("Unable to find file: " + normalizedPath);
                     }
                 }
+
+                TargetStopped?.Invoke(this, e);
             }
         }
 
