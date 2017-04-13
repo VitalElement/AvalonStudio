@@ -6,16 +6,13 @@ using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using Mono.Debugging.Client;
 
 namespace AvalonStudio.Debugging
 {
-	public class WatchViewModel : ViewModel<VariableObject>
+	public class ObjectValueViewModel : ViewModel<ObjectValue>
 	{
 		private IBrush background;
-
-		private ObservableCollection<WatchViewModel> children;
-
-		private readonly IDebugger debugger;
 
 		private bool hasChanged;
 
@@ -24,22 +21,19 @@ namespace AvalonStudio.Debugging
 		private string val;
 		private readonly WatchListViewModel watchList;
 
-		public WatchViewModel(WatchListViewModel watchList, IDebugger debugger, VariableObject model)
+		public ObjectValueViewModel(WatchListViewModel watchList, ObjectValue model)
 			: base(model)
 		{
 			this.watchList = watchList;
-			this.debugger = debugger;
-
-			Value = model.Value;
 
 			DeleteCommand = ReactiveCommand.Create();
-			DeleteCommand.Subscribe(_ => { IoC.Get<IWatchList>().RemoveWatch(this); });
+			//DeleteCommand.Subscribe(_ => { IoC.Get<IWatchList>().RemoveWatch(this); });
 
 
 			DisplayFormatCommand = ReactiveCommand.Create();
-			DisplayFormatCommand.Subscribe(async s =>
+			DisplayFormatCommand.Subscribe(s =>
 			{
-				var format = s as string;
+				/*var format = s as string;
 
 				switch (format)
 				{
@@ -63,8 +57,8 @@ namespace AvalonStudio.Debugging
 						await Model.SetFormat(WatchFormat.Octal);
 						break;
 				}
-
-				await Invalidate(debugger);
+                
+				await Invalidate(debugger);*/
 			});
 		}
 
@@ -82,11 +76,11 @@ namespace AvalonStudio.Debugging
 			}
 		}
 
-		public ObservableCollection<WatchViewModel> Children
+		/*public ObservableCollection<ObjectValueViewModel> Children
 		{
 			get { return children; }
 			set { this.RaiseAndSetIfChanged(ref children, value); }
-		}
+		}*/
 
 		public ReactiveCommand<object> DeleteCommand { get; }
 
@@ -94,8 +88,7 @@ namespace AvalonStudio.Debugging
 
 		public string Value
 		{
-			get { return val; }
-			set { this.RaiseAndSetIfChanged(ref val, value); }
+			get { return Model.Value; }
 		}
 
 		public IBrush Background
@@ -122,23 +115,23 @@ namespace AvalonStudio.Debugging
 			}
 		}
 
-		public string Name
+		public string DisplayName
 		{
-			get { return Model.Expression; }
+			get { return Model.Name; }
 		}
 
-		public string Type
+		public string TypeName
 		{
-			get { return Model.Type; }
+			get { return Model.TypeName; }
 		}
 
 		private async void Expand()
 		{
-			foreach (var child in Children)
+			/*foreach (var child in Children)
 			{
 				if (child.Children == null)
 				{
-					child.Children = new ObservableCollection<WatchViewModel>();
+					child.Children = new ObservableCollection<ObjectValueViewModel>();
 
 					if (!child.Model.AreChildrenEvaluated)
 					{
@@ -146,20 +139,20 @@ namespace AvalonStudio.Debugging
 
 						for (var i = 0; i < child.Model.Children.Count; i++)
 						{
-							var newchild = new WatchViewModel(watchList, debugger, child.Model.Children[i]);
+							var newchild = new ObjectValueViewModel(watchList, debugger, child.Model.Children[i]);
 							await newchild.Evaluate(debugger);
 							child.Children.Add(newchild);
 						}
 					}
 				}
-			}
+			}*/
 		}
 
 		public bool ApplyChange(VariableObjectChange change)
 		{
 			var result = false;
 
-			if (change.Expression.Contains(Model.Id))
+			/*if (change.Expression.Contains(Model.Id))
 			{
 				if (change.Expression == Model.Id)
 				{
@@ -211,14 +204,14 @@ namespace AvalonStudio.Debugging
 
 					Dispatcher.UIThread.InvokeAsync(() => { HasChanged = true; });
 				}
-			}
-
+			}*/
+            
 			return result;
 		}
 
 		public async Task Invalidate(IDebugger debugger)
 		{
-			await Model.EvaluateAsync(debugger, false);
+			/*await Model.EvaluateAsync(debugger, false);
 
 			foreach (var child in Children)
 			{
@@ -235,20 +228,20 @@ namespace AvalonStudio.Debugging
 			else
 			{
 				Value = "{ " + Model.Type + " }";
-			}
+			}*/
 		}
 
 		public async Task Evaluate(IDebugger debugger)
 		{
-			await Model.EvaluateAsync(debugger);
+			/*await Model.EvaluateAsync(debugger);
 
-			Children = new ObservableCollection<WatchViewModel>();
+			Children = new ObservableCollection<ObjectValueViewModel>();
 
 			await Model.EvaluateChildrenAsync();
 
 			for (var i = 0; i < Model.NumChildren; i++)
 			{
-				Children.Add(new WatchViewModel(watchList, debugger, Model.Children[i]));
+				Children.Add(new ObjectValueViewModel(watchList, debugger, Model.Children[i]));
 			}
 
 			if (Model.Value != null)
@@ -258,7 +251,7 @@ namespace AvalonStudio.Debugging
 			else
 			{
 				Value = "{ " + Model.Type + " }";
-			}
+			}*/
 		}
 	}
 }

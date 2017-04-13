@@ -7,28 +7,31 @@ using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System.Composition;
+using Mono.Debugging.Client;
+using System;
+using System.Linq;
 
 namespace AvalonStudio.Debugging
 {
 	public class WatchListViewModel : ToolViewModel, IExtension, IWatchList
 	{
-		protected IDebugManager _debugManager;
+		protected IDebugManager2 _debugManager;
 
-		private ObservableCollection<WatchViewModel> children;
-		public List<WatchViewModel> LastChangedRegisters;
+		private ObservableCollection<ObjectValueViewModel> children;
+		public List<ObjectValueViewModel> LastChangedRegisters;
 
 		public WatchListViewModel()
 		{
 			Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
 
 			Title = "Watch List";
-			Children = new ObservableCollection<WatchViewModel>();
-			LastChangedRegisters = new List<WatchViewModel>();
+			Children = new ObservableCollection<ObjectValueViewModel>();
+			LastChangedRegisters = new List<ObjectValueViewModel>();
 
             Activation(); // for when we create the part outside of composition.
         }
 
-		public ObservableCollection<WatchViewModel> Children
+		public ObservableCollection<ObjectValueViewModel> Children
 		{
 			get { return children; }
 			set { this.RaiseAndSetIfChanged(ref children, value); }
@@ -46,11 +49,12 @@ namespace AvalonStudio.Debugging
 
 		public virtual void Activation()
 		{
-			_debugManager = IoC.Get<IDebugManager>();
+			_debugManager = IoC.Get<IDebugManager2>();
 
             if (_debugManager != null)
             {
-                _debugManager.DebugFrameChanged += WatchListViewModel_DebugFrameChanged;
+                //_debugManager.TargetStopped += _debugManager_TargetStopped;
+                //_debugManager.DebugFrameChanged += WatchListViewModel_DebugFrameChanged;
 
                 _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
@@ -62,46 +66,25 @@ namespace AvalonStudio.Debugging
             }
 		}
 
-		public async void AddWatch(string expression)
+		public void Add(ObjectValue model)
 		{
-			var newWatch =
-				await
-					_debugManager.CurrentDebugger.CreateWatchAsync(
-						string.Format("var{0}", _debugManager.CurrentDebugger.GetVariableId()), expression);
+			var newWatch = new ObjectValueViewModel(this, model);
 
-			if (newWatch != null)
-			{
-				Add(newWatch);
-			}
+            Dispatcher.UIThread.InvokeTaskAsync(() =>
+            {
+                Children.Add(newWatch);
+            }).Wait();
 		}
 
-		public async void RemoveWatch(WatchViewModel watch)
-		{
-			if (watch != null)
-			{
-				Dispatcher.UIThread.InvokeAsync(() => { Children.Remove(watch); });
+        public void Remove(ObjectValue value)
+        {
+            Dispatcher.UIThread.InvokeTaskAsync(() =>
+            {
+                Children.Remove(Children.FirstOrDefault(c => c.Model == value));
+            }).Wait();
+        }
 
-				await _debugManager.CurrentDebugger.DeleteWatchAsync(watch.Model.Id);
-			}
-		}
-
-		public void AddExistingWatch(VariableObject variable)
-		{
-			Add(variable);
-		}
-
-		public async void Add(VariableObject model)
-		{
-			var newWatch = new WatchViewModel(this, _debugManager.CurrentDebugger, model);
-
-			await newWatch.Evaluate(_debugManager.CurrentDebugger);
-
-			Dispatcher.UIThread.InvokeAsync(() => { Children.Add(newWatch); });
-
-			//InvalidateColumnWidths();
-		}
-
-		private void ApplyChange(VariableObjectChange change)
+        private void ApplyChange(VariableObjectChange change)
 		{
 			foreach (var watch in Children)
 			{
@@ -139,5 +122,5 @@ namespace AvalonStudio.Debugging
 		{
 			await Invalidate(e.VariableChanges);
 		}
-	}
+    }
 }

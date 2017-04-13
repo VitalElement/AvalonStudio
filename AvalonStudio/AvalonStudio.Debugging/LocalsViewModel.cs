@@ -4,17 +4,18 @@ using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
+using Mono.Debugging.Client;
 
 namespace AvalonStudio.Debugging
 {
 	public class LocalsViewModel : WatchListViewModel, IExtension
 	{
-		private readonly List<Variable> locals;
+		private readonly List<ObjectValue> locals;
 
 		public LocalsViewModel()
 		{
 			Title = "Locals";
-			locals = new List<Variable>();
+			locals = new List<ObjectValue>();
 
 			Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
 		}
@@ -27,11 +28,11 @@ namespace AvalonStudio.Debugging
 
 		public override void Activation()
 		{
-			_debugManager = IoC.Get<IDebugManager>();
+			_debugManager = IoC.Get<IDebugManager2>();
 
             if (_debugManager != null)
             {
-                _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+                _debugManager.TargetStopped += _debugManager_TargetStopped;
 
                 _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
@@ -43,10 +44,19 @@ namespace AvalonStudio.Debugging
             }
 		}
 
-		public void InvalidateLocals(List<Variable> variables)
+        private void _debugManager_TargetStopped(object sender, Mono.Debugging.Client.TargetEventArgs e)
+        {
+            var currentFrame = e.Backtrace.GetFrame(0);
+
+            var locals = currentFrame.GetAllLocals();
+
+            InvalidateLocals(locals);
+        }
+
+        public void InvalidateLocals(ObjectValue[] variables)
 		{
-			var updated = new List<Variable>();
-			var removed = new List<Variable>();
+			var updated = new List<ObjectValue>();
+			var removed = new List<ObjectValue>();
 
 			for (var i = 0; i < locals.Count; i++)
 			{
@@ -71,14 +81,22 @@ namespace AvalonStudio.Debugging
 				if (currentVar == null)
 				{
 					locals.Add(variable);
-					AddWatch(variable.Name);
+                    Add(variable);
 				}
+                else if(currentVar.CanRefresh)
+                {
+                    var currentVm = Children.FirstOrDefault(c => c.Model.Name == currentVar.Name);
+
+                    currentVm.Model = variable;
+
+                    currentVm.Invalidate();
+                }
 			}
 
 			foreach (var removedvar in removed)
 			{
 				locals.Remove(removedvar);
-				RemoveWatch(Children.FirstOrDefault(w => w.Name == removedvar.Name));
+                Remove(removedvar);
 			}
 		}
 
@@ -86,18 +104,6 @@ namespace AvalonStudio.Debugging
 		{
 			locals.Clear();
 			base.Clear();
-		}
-
-		private async void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
-		{
-			var stackVariables = await _debugManager.CurrentDebugger.ListStackVariablesAsync();
-
-            if (stackVariables != null)
-            {
-                InvalidateLocals(stackVariables);
-            }
-
-			await Invalidate(e.VariableChanges);
 		}
 	}
 }
