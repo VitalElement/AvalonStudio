@@ -58,7 +58,14 @@ namespace AvalonStudio.Debugging.GDB
 		
 		public int GetInt (string name)
 		{
-			return int.Parse (GetValue (name));
+            var value = GetValue(name);
+
+            if (value == null)
+            {
+                return 0;
+            }
+
+            return int.Parse (value);
 		}
 		
 		public string GetValue (int index)
