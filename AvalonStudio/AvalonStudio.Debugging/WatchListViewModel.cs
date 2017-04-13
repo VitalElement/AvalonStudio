@@ -158,7 +158,11 @@ namespace AvalonStudio.Debugging
 
         public virtual void Clear()
         {
-            Children.Clear();
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Children.Clear();
+            });
+
             watches.Clear();
         }
 
