@@ -73,11 +73,13 @@ namespace AvalonStudio.Debugging.GDB
         protected object gdbLock = new object();
 
         private string _gdbExecutable;
+        private string _runCommand;
 
-        public GdbSession(string gdbExecutable)
+        public GdbSession(string gdbExecutable, string runCommand = "-exec-run")
         {
             _gdbExecutable = gdbExecutable;
             _console = IoC.Get<IConsole>();
+            _runCommand = runCommand;
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)
@@ -155,7 +157,7 @@ namespace AvalonStudio.Debugging.GDB
 
                 OnStarted();
 
-                RunCommand("-exec-run");
+               // RunCommand(_runCommand);
             }
         }
 
