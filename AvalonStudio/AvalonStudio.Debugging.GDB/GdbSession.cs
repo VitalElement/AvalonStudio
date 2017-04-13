@@ -123,7 +123,7 @@ namespace AvalonStudio.Debugging.GDB
 
                 asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
 
-                if (!false && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
+                if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
                 {
                     // TODO check if this code can be removed, it was used to support  ctrl+c signals, but no longer seems
                     // to be needed for .net core.
@@ -223,7 +223,7 @@ namespace AvalonStudio.Debugging.GDB
 
             closeTokenSource?.Cancel();
 
-            if (!false && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
+            if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
             {
                 Platform.FreeConsole();
 
@@ -238,13 +238,13 @@ namespace AvalonStudio.Debugging.GDB
 
         protected override void OnStop()
         {
-            lock (eventLock)
+            if (asyncMode)
             {
-                if (asyncMode)
-                {
-                    RunCommand("-exec-interrupt", "--all");
-                }
-                else
+                RunCommand("-exec-interrupt");
+            }
+            else
+            {
+                lock (eventLock)
                 {
                     do
                     {
@@ -700,19 +700,19 @@ namespace AvalonStudio.Debugging.GDB
 
         bool InternalStop()
         {
-            lock (eventLock)
+            _console.WriteLine($"Internal Stop: {running}");
+
+            if (!running)
+                return false;
+            internalStop = true;
+
+            if (asyncMode)
             {
-                _console.WriteLine($"Internal Stop: {running}");
-
-                if (!running)
-                    return false;
-                internalStop = true;
-
-                if (asyncMode)
-                {
-                    RunCommand("-exec-interrupt", "--all");
-                }
-                else
+                RunCommand("-exec-interrupt");
+            }
+            else
+            {
+                lock (eventLock)
                 {
                     do
                     {
@@ -721,6 +721,7 @@ namespace AvalonStudio.Debugging.GDB
                     while (!Monitor.Wait(eventLock, 100));
                 }
             }
+
             return true;
         }
 
