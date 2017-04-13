@@ -65,7 +65,7 @@ namespace AvalonStudio.Debugging.GDB
         const int BreakEventUpdateNotifyDelay = 500;
 
         bool internalStop;
-        bool logGdb = true;
+        bool logGdb = false;
         bool asyncMode;
 
         object syncLock = new object();
@@ -680,7 +680,6 @@ namespace AvalonStudio.Debugging.GDB
                     lock (eventLock)
                     {
                         running = true;
-                        _console.WriteLine("Running true");
                     }
 
                     if (logGdb)
@@ -763,8 +762,6 @@ namespace AvalonStudio.Debugging.GDB
                         lock (eventLock)
                         {
                             running = (lastResult.Status == CommandStatus.Running);
-
-                            _console.WriteLine($"Running: {running}");
                         }
 
                         Monitor.PulseAll(syncLock);
@@ -788,7 +785,6 @@ namespace AvalonStudio.Debugging.GDB
                         if (!line.StartsWith("*running"))
                         {
                             running = false;
-                            _console.WriteLine("Running: false");
                             ev = new GdbEvent(line);
                             string ti = ev.GetValue("thread-id");
                             if (ti != null && ti != "all")
@@ -824,7 +820,6 @@ namespace AvalonStudio.Debugging.GDB
         {
             if (ev.Name != "stopped")
             {
-                _console.WriteLine("Unknown event: " + ev.Name);
                 return;
             }
 
