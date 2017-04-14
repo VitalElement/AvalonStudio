@@ -32,6 +32,8 @@ namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 				this.RaiseAndSetIfChanged(ref _autoHide, value);
 			}
 		}		
+		
+		public event NotifyCollectionChangedEventHandler CollectionChanged; 
 
 		public int Count
 		{
