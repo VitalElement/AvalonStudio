@@ -461,7 +461,7 @@ namespace AvalonStudio.Toolchains.Clang
         }
 
         public async Task<ProcessResult> ObjCopy(IConsole console, IProject project, LinkResult linkResult, AssemblyFormat format)
-        {
+        {            
             var result = new ProcessResult();
 
             var commandName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension);

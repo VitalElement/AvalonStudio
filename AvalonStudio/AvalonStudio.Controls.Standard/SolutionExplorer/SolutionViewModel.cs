@@ -111,6 +111,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 		public ReactiveCommand<object> AddExistingProjectCommand { get; }
 		public ReactiveCommand<object> OpenInExplorerCommand { get; }
 
+		void CleanSolution(){}
+
+		void BuildSolution(){}
+
+		void RunTests(){}
+
 		public string Title
 		{
 			get

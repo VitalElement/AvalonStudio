@@ -50,7 +50,6 @@ namespace AvalonStudio.Debugging.GDB
         StreamWriter sin;
         GdbCommandResult lastResult;
         bool running;
-        Thread thread;
         long currentThread = -1;
         long activeThread = -1;
         bool isMonoProcess;
