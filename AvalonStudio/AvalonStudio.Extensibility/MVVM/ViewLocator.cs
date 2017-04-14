@@ -39,7 +39,7 @@ namespace AvalonStudio.MVVM
                 }
 			}
 
-			return new TextBlock {Text = "View Locator Error: Not ported to .net core"};
+			return new TextBlock {Text = $"View Locator Error: Unable to find type {name}"};
 		}
 	}
 }
