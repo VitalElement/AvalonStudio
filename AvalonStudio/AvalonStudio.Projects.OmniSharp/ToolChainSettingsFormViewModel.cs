@@ -7,6 +7,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using ReactiveUI;
 using AvalonStudio.GlobalSettings;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
@@ -18,10 +19,29 @@ namespace AvalonStudio.Projects.OmniSharp
 		{
             _settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
 
-			
+            BrowseCommand = ReactiveCommand.Create();
+
+            BrowseCommand.Subscribe(async _ =>
+            {
+                var ofd = new OpenFileDialog();                
+                ofd.Filters.Add(new FileDialogFilter { Name = "Dotnet Executable", Extensions = new List<string> { "exe" } });
+                ofd.AllowMultiple = false;
+                ofd.Title = "Select Dotnet Executable (dotnet.exe)";
+
+                var result = await ofd.ShowAsync();
+
+                if (result != null && !string.IsNullOrEmpty(result.First()))
+                {
+                    DotNetPath = result.First();
+
+                    _settings.DotNetPath = DotNetPath;
+
+                    _settings.Save();
+                }
+            });
 		}
 
-		public ReactiveCommand<object> AddIncludePathCommand { get; }
+		public ReactiveCommand<object> BrowseCommand { get; }
 
         private string dotnetPath;
 
