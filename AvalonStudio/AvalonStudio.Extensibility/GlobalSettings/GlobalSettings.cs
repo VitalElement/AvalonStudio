@@ -60,7 +60,7 @@ namespace AvalonStudio.GlobalSettings
 
         public void Save()
         {
-            SerializedObject.Serialize(GlobalSettingsFile, this);
+            SerializedObject.Serialize(GlobalSettingsFile, _root);
         }
         
         public T GetSettings<T>()
