@@ -37,6 +37,8 @@ namespace AvalonStudio.Controls
 
 		private readonly Subject<Unit> updateViewModel = new Subject<Unit>();
 
+		private string viewContract = string.Empty;
+
 		/// <summary>
 		///     If no ViewModel is displayed, this content (i.e. a control) will be displayed.
 		/// </summary>
