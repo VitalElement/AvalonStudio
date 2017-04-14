@@ -16,7 +16,7 @@ namespace AvalonStudio.GlobalSettings
             {
                 return Settings.Instance.GetSettings<T>();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return ProvisionSettings<T>();
             }
