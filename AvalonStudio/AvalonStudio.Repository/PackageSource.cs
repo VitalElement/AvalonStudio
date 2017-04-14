@@ -8,7 +8,7 @@ using LibGit2Sharp;
 
 namespace AvalonStudio.Repositories
 {
-	public class PackageSource
+	public class PackageSourceOld
 	{
 		public string Name { get; set; }
 		public string Url { get; set; }
@@ -22,7 +22,7 @@ namespace AvalonStudio.Repositories
 			LibGit2Sharp.Repository.Clone(Url, CatalogDirectory);
 		}
 
-		public async Task<Repository> DownloadCatalog()
+		public async Task<RepositoryOld> DownloadCatalog()
 		{
 			if (Directory.Exists(CatalogDirectory))
 			{
@@ -43,7 +43,7 @@ namespace AvalonStudio.Repositories
 				Clone();
 			}
 
-			var result = SerializedObject.Deserialize<Repository>(Path.Combine(CatalogDirectory, Repository.PackagesFileName));
+			var result = SerializedObject.Deserialize<RepositoryOld>(Path.Combine(CatalogDirectory, RepositoryOld.PackagesFileName));
 			result.Source = this;
 
 			foreach (var package in result.Packages)
@@ -59,12 +59,12 @@ namespace AvalonStudio.Repositories
 	{
 		private PackageSources()
 		{
-			Sources = new List<PackageSource>();
+			Sources = new List<PackageSourceOld>();
 		}
 
 		public static PackageSources Instance { get; private set; }
 
-		public IList<PackageSource> Sources { get; set; }
+		public IList<PackageSourceOld> Sources { get; set; }
 
 		public static void InitialisePackageSources()
 		{
@@ -74,7 +74,7 @@ namespace AvalonStudio.Repositories
 			{
 				var sources = new PackageSources();
 
-				sources.Sources.Add(new PackageSource
+				sources.Sources.Add(new PackageSourceOld
 				{
 					Name = "VitalElement",
 					Url = "https://github.com/VitalElement/AvalonStudio.Repository"

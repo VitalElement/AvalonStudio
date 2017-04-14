@@ -14,7 +14,7 @@ namespace AvalonStudio.Repositories
 
 	public class PackageReference
 	{
-		public Repository Repository { get; internal set; }
+		public RepositoryOld Repository { get; internal set; }
 		public string Name { get; set; }
 		public string Url { get; set; }
 
@@ -35,16 +35,16 @@ namespace AvalonStudio.Repositories
 		}
 	}
 
-	public class Repository
+	public class RepositoryOld
 	{
 		public const string PackagesFileName = "packages.json";
 
-		public Repository()
+		public RepositoryOld()
 		{
 			Packages = new List<PackageReference>();
 		}
 
-		public PackageSource Source { get; internal set; }
+		public PackageSourceOld Source { get; internal set; }
 		public IList<PackageReference> Packages { get; set; }
 	}
 }

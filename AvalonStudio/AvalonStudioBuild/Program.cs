@@ -58,7 +58,7 @@ namespace AvalonStudio
 
 			foreach (var packageSource in PackageSources.Instance.Sources)
 			{
-				Repository repo = null;
+				RepositoryOld repo = null;
 
 				var awaiter = packageSource.DownloadCatalog();
 

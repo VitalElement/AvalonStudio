@@ -5,51 +5,86 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.MVVM;
-using AvalonStudio.Repositories;
 using AvalonStudio.Utils;
 using ReactiveUI;
+using NuGet.Protocol.Core.Types;
+using AvalonStudio.Packages;
+using System.Collections.Generic;
+using NuGet.Packaging.Core;
+using NuGet.Common;
 
 namespace AvalonStudio.Controls
 {
-	public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole
+    public class VersionInfoViewModel : ViewModel<VersionInfo>
+    {
+        public VersionInfoViewModel(VersionInfo model) : base(model)
+        {
+
+        }
+
+        public string Title => Model.Version.ToNormalizedString();
+    }
+
+    public class PackageIdentityViewModel : ViewModel<PackageIdentity>
+    {
+        public PackageIdentityViewModel(PackageIdentity model) : base(model)
+        {
+
+        }
+
+        public string Title => Model.Id;
+    }
+
+
+	public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole, ILogger
 	{
-		private ObservableCollection<PackageReference> availablePackage;
+		private ObservableCollection<IPackageSearchMetadata> availablePackages;
 
 		private bool enableInterface = true;
 
-		private PackageReference selectedPackage;
+		private IPackageSearchMetadata selectedPackage;
 
-		private PackageIndex selectedPackageIndex;
+        private PackageManager _packageManager;
 
-		private string selectedTag;
+		//private PackageIndex selectedPackageIndex;
+
+		private VersionInfoViewModel selectedVersion;
 
 		private string status;
+
+        private void InvalidateInstalledPackages()
+        {
+            InstalledPackages = new ObservableCollection<PackageIdentityViewModel>((_packageManager.ListInstalledPackages()).Select(pr => new PackageIdentityViewModel(pr)));
+        }
 
 		public PackageManagerDialogViewModel()
 			: base("Packages")
 		{
-			AvailablePackages = new ObservableCollection<PackageReference>();
+            _packageManager = new PackageManager(this);            
+
+			AvailablePackages = new ObservableCollection<IPackageSearchMetadata>();
 
 			Dispatcher.UIThread.InvokeAsync (async () => {
+                InvalidateInstalledPackages();
+                
 				await DownloadCatalog ();
 			});
 
 			InstallCommand = ReactiveCommand.Create();
-			InstallCommand.Subscribe(async o =>
-			{
-				EnableInterface = false;
+            InstallCommand.Subscribe(async _ => 
+            {
+                await _packageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
 
-				try
-				{
-						await SelectedPackageIndex.Synchronize(SelectedTag, this);
-				}
-				catch (Exception e)
-				{
-					Status = "An error occurred trying to install package. " + e.Message;
-				}
+                InvalidateInstalledPackages();
+            });
 
-				EnableInterface = true;
-			});
+            UninstallCommand = ReactiveCommand.Create();
+            UninstallCommand.Subscribe(async _ =>
+            {
+                await _packageManager.UninstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToNormalizedString());
+
+                InvalidateInstalledPackages();
+            });
 
 			OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.EnableInterface));
 
@@ -96,44 +131,65 @@ namespace AvalonStudio.Controls
 			set { this.RaiseAndSetIfChanged(ref status, value); }
 		}
 
-		public PackageReference SelectedPackage
+		public IPackageSearchMetadata SelectedPackage
 		{
 			get { return selectedPackage; }
 			set
 			{
                 if (value != null)
                 {
-                    GetPackageInfo(value);
+                    Task.Run(async () => { Versions = (await value.GetVersionsAsync()).Select(vi=>new VersionInfoViewModel(vi)); });                   
                 }
 
 				this.RaiseAndSetIfChanged(ref selectedPackage, value);
 				this.RaisePropertyChanged(() => ButtonText);
 			}
 		}
+        
+        private IEnumerable<VersionInfoViewModel> _versions;
 
-		public PackageIndex SelectedPackageIndex
+        public IEnumerable<VersionInfoViewModel> Versions
+        {
+            get { return _versions; }
+            set { this.RaiseAndSetIfChanged(ref _versions, value); }
+        }
+
+
+        //public PackageIndex SelectedPackageIndex
+        //{
+        //	get { return selectedPackageIndex; }
+        //	set
+        //	{
+        //		this.RaiseAndSetIfChanged(ref selectedPackageIndex, value);
+        //		SelectedTag = value.Tags.FirstOrDefault();
+        //	}
+        //}
+
+        public VersionInfoViewModel SelectedVersion
 		{
-			get { return selectedPackageIndex; }
+			get { return selectedVersion; }
 			set
-			{
-				this.RaiseAndSetIfChanged(ref selectedPackageIndex, value);
-				SelectedTag = value.Tags.FirstOrDefault();
-			}
+            {
+                this.RaiseAndSetIfChanged(ref selectedVersion, value);            }
 		}
 
-		public string SelectedTag
+		public ObservableCollection<IPackageSearchMetadata> AvailablePackages
 		{
-			get { return selectedTag; }
-			set { this.RaiseAndSetIfChanged(ref selectedTag, value); }
+			get { return availablePackages; }
+			set { this.RaiseAndSetIfChanged(ref availablePackages, value); }
 		}
 
-		public ObservableCollection<PackageReference> AvailablePackages
-		{
-			get { return availablePackage; }
-			set { this.RaiseAndSetIfChanged(ref availablePackage, value); }
-		}
+        private ObservableCollection<PackageIdentityViewModel> installedPackages;
 
-		public ReactiveCommand<object> InstallCommand { get; }
+        public ObservableCollection<PackageIdentityViewModel> InstalledPackages
+        {
+            get { return installedPackages; }
+            set { this.RaiseAndSetIfChanged(ref installedPackages, value); }
+        }
+
+
+        public ReactiveCommand<object> InstallCommand { get; }
+        public ReactiveCommand<object> UninstallCommand { get; }
 		public override ReactiveCommand<object> OKCommand { get; protected set; }
 
 		public void WriteLine(string data)
@@ -164,41 +220,56 @@ namespace AvalonStudio.Controls
 		public void Clear()
 		{
 			throw new NotImplementedException();
-		}
-
-		private void AddPackages(Repository repo)
-		{
-			foreach (var package in repo.Packages)
-			{
-				AvailablePackages.Add(package);
-			}
-		}
+		}		
 
 		private async Task DownloadCatalog()
 		{
-			foreach (var packageSource in PackageSources.Instance.Sources)
+            var packages = await _packageManager.ListPackages(100);
+
+			foreach (var package in packages)
 			{
-				Repository repo = null;
-
-				repo = await packageSource.DownloadCatalog();
-
-				if (repo != null)
-				{
-					AddPackages(repo);
-				}
+                availablePackages.Add(package);
 			}
 		}
 
+        public void LogDebug(string data)
+        {
+            throw new NotImplementedException();
+        }
 
-		private async void GetPackageInfo(PackageReference reference)
-		{
-			try
-			{
-				SelectedPackageIndex = await reference.DownloadInfoAsync();
-			}
-			catch (Exception e)
-			{
-			}
-		}
-	}
+        public void LogVerbose(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogInformation(string data)
+        {
+            Status = data;
+        }
+
+        public void LogMinimal(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogWarning(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogError(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogInformationSummary(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LogErrorSummary(string data)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
