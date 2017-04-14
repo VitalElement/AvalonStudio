@@ -88,7 +88,7 @@
 
         public IList<object> GetConfigurationPages(IProject project)
         {
-            return new List<object>();
+            return new List<object>() {  };
         }
 
         public IEnumerable<string> GetToolchainIncludes(ISourceFile file)

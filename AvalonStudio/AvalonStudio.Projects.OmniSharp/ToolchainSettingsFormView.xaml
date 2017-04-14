@@ -1,0 +1,11 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" Foreground="WhiteSmoke">
+    <Grid>
+      <Grid.Styles>
+        <Style Selector="TextBox">
+          <Setter Property="Background" Value="Transparent" />
+        </Style>
+      </Grid.Styles>
+
+        <TextBlock Text="DotNet Toolchain Settings" />
+    </Grid>    
+</UserControl>

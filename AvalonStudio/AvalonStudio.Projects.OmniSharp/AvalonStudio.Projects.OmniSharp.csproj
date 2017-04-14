@@ -6,6 +6,9 @@
     <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net40</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ToolchainSettingsFormView.xaml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="RestSharp.NetCore" Version="105.2.4-rc4-24214-01" />
   </ItemGroup>
 
