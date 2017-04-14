@@ -11,6 +11,7 @@
     using AvalonStudio.CommandLineTools;
     using AvalonStudio.Platforms;
     using System.IO;
+    using AvalonStudio.GlobalSettings;
 
     public class MSBuildToolchain : IToolChain
     {
@@ -20,46 +21,48 @@
 
         public string Name => "MSBuild Toolchain";
 
-        public Version Version => new Version(0,0,0);
+        public Version Version => new Version(0, 0, 0);
 
         public void Activation()
         {
-            
+
         }
 
         public void BeforeActivation()
         {
-            
+
         }
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
             return await Task.Factory.StartNew(() =>
             {
-            string lastLine = string.Empty;
+                string lastLine = string.Empty;
 
-            var exitCode = PlatformSupport.ExecuteShellCommand(Path.Combine(BinDirectory, "dotnet" + Platform.ExecutableExtension), "build", (s, e) =>
-            {
-                console.WriteLine(e.Data);
+                var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();               
 
-                if (!string.IsNullOrEmpty(e.Data))
+                var exitCode = PlatformSupport.ExecuteShellCommand(settings.DotNetPath, "build", (s, e) =>
                 {
-                    lastLine = e.Data;
-                }
-            }, (s, e) =>
-            {
-                if (e.Data != null)
-                {
-                    console.WriteLine();
                     console.WriteLine(e.Data);
-                }
-            },
-            false, project.CurrentDirectory, false);
 
-            if (exitCode == 0 && lastLine.StartsWith($"  {project.Name} -> "))
-            {
-                project.Executable = lastLine.Substring($"  {project.Name} -> ".Length);
-            };
+                    if (!string.IsNullOrEmpty(e.Data))
+                    {
+                        lastLine = e.Data;
+                    }
+                }, (s, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        console.WriteLine();
+                        console.WriteLine(e.Data);
+                    }
+                },
+                false, project.CurrentDirectory, false);
+
+                if (exitCode == 0 && lastLine.StartsWith($"  {project.Name} -> "))
+                {
+                    project.Executable = lastLine.Substring($"  {project.Name} -> ".Length);
+                };
 
                 return exitCode == 0;
             });
@@ -74,7 +77,15 @@
         {
             await Task.Factory.StartNew(() =>
             {
-                var exitCode = PlatformSupport.ExecuteShellCommand(Path.Combine(BinDirectory, "dotnet" + Platform.ExecutableExtension), "clean", (s, e) => console.WriteLine(e.Data), (s, e) =>
+                var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
+
+                if (string.IsNullOrEmpty(settings.DotNetPath))
+                {
+                    console.WriteLine("Please configure the location of the dotnet runtime and sdk.");
+                    return;
+                }
+
+                var exitCode = PlatformSupport.ExecuteShellCommand(settings.DotNetPath, "clean", (s, e) => console.WriteLine(e.Data), (s, e) =>
                 {
                     if (e.Data != null)
                     {
@@ -82,13 +93,13 @@
                         console.WriteLine(e.Data);
                     }
                 },
-                false, project.CurrentDirectory, false);                
+                false, project.CurrentDirectory, false);
             });
         }
 
         public IList<object> GetConfigurationPages(IProject project)
         {
-            return new List<object>() {  };
+            return new List<object>() { };
         }
 
         public IEnumerable<string> GetToolchainIncludes(ISourceFile file)
@@ -98,7 +109,7 @@
 
         public void ProvisionSettings(IProject project)
         {
-            
+
         }
     }
 }

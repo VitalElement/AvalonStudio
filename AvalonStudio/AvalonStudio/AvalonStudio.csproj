@@ -106,7 +106,6 @@
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj" />
-    <ProjectReference Include="..\AvalonStudio.Toolchains.MSBuild\AvalonStudio.Toolchains.MSBuild.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
   </ItemGroup>
 </Project>
