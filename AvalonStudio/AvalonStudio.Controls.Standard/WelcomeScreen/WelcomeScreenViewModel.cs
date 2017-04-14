@@ -42,8 +42,8 @@
             shell.AddDocument(this);
             shell.SolutionChanged += ShellOnSolutionChanged;
 
-            LoadNewsFeed();//.GetAwaiter().GetResult();
-            LoadVideoFeed();//.GetAwaiter().GetResult();
+            //LoadNewsFeed().GetAwaiter().GetResult();
+            //LoadVideoFeed().GetAwaiter().GetResult();
 
             var solutionExplorer = IoC.Get<ISolutionExplorer>();
 
@@ -89,65 +89,65 @@
             }
         }
 
-        private async Task LoadNewsFeed()
-        {
-            // RSS Releated
-            var rssurl = @"http://sxp.microsoft.com/feeds/2.0/devblogs";
-            //var reader = XmlReader.Create(rssurl);
-            /*var feed = await LoadFeed(reader);
-            reader.Close();*/
+        //private async Task LoadNewsFeed()
+        //{
+        //    // RSS Releated
+        //    //var rssurl = @"http://sxp.microsoft.com/feeds/2.0/devblogs";
+        //    //var reader = XmlReader.Create(rssurl);
+        //    /*var feed = await LoadFeed(reader);
+        //    reader.Close();*/
 
-            /*if (feed == null)
-            {
-                return;
-            }
+        //    /*if (feed == null)
+        //    {
+        //        return;
+        //    }
 
-            foreach (var syndicationItem in feed.Items)
-            {
-                var content = syndicationItem.Summary.Text;
+        //    foreach (var syndicationItem in feed.Items)
+        //    {
+        //        var content = syndicationItem.Summary.Text;
 
-                int maxCharCount = 150;
+        //        int maxCharCount = 150;
 
-                if (content.Length >= maxCharCount)
-                {
-                    content = content.StripHTML().Truncate(maxCharCount, "...");
-                }
+        //        if (content.Length >= maxCharCount)
+        //        {
+        //            content = content.StripHTML().Truncate(maxCharCount, "...");
+        //        }
 
-                var link = syndicationItem.Links.LastOrDefault();
-                var url = "";
+        //        var link = syndicationItem.Links.LastOrDefault();
+        //        var url = "";
 
-                if (link != null)
-                {
-                    url = link.Uri.AbsoluteUri;
-                }
+        //        if (link != null)
+        //        {
+        //            url = link.Uri.AbsoluteUri;
+        //        }
 
-                _newsFeed.Add(new NewsFeedViewModel(url, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
-            }*/
-        }
+        //        _newsFeed.Add(new NewsFeedViewModel(url, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
+        //    }*/
+        //}
 
-        private async Task LoadVideoFeed()
-        {
-            var rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UCOWs5Rx9ot7p10mqYyzjyUA";
-            //var reader = XmlReader.Create(rssurl);
-            /*var feed = await LoadFeed(reader);
+        //private async Task LoadVideoFeed()
+        //{
+        //    var rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UCOWs5Rx9ot7p10mqYyzjyUA";
+        //    //var reader = XmlReader.Create(rssurl);
+        //    /*var feed = await LoadFeed(reader);
 
-            reader.Close();
+        //    reader.Close();
 
-            if (feed == null)
-            {
-                return;
-            }
+        //    if (feed == null)
+        //    {
+        //        return;
+        //    }
 
-            foreach (var syndicationItem in feed.Items)
-            {
-                var youtubeID = syndicationItem.Id.Replace("yt:video:", "");
-                var url = "https://www.youtube.com/watch?v=" + youtubeID;
+        //    foreach (var syndicationItem in feed.Items)
+        //    {
+        //        var youtubeID = syndicationItem.Id.Replace("yt:video:", "");
+        //        var url = "https://www.youtube.com/watch?v=" + youtubeID;
 
-                var image = await SaveThumbnail(youtubeID);
+        //        var image = await SaveThumbnail(youtubeID);
 
-                _videoFeed.Add(new VideoFeedViewModel(url, syndicationItem.Title.Text, image));
-            }*/
-        }
+        //        _videoFeed.Add(new VideoFeedViewModel(url, syndicationItem.Title.Text, image));
+        //    }*/
+        //}
 
         /*private async Task<SyndicationFeed> LoadFeed(XmlReader reader)
         {

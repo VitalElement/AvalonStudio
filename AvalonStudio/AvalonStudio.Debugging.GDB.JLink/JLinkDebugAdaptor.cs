@@ -129,7 +129,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 				process.Kill();
 			}
 
-			Task.Factory.StartNew(async () =>
+			Task.Run(async () =>
 			{
 				using (var process = Process.Start(startInfo))
 				{

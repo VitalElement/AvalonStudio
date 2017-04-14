@@ -33,7 +33,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 			solution = new ObservableCollection<SolutionViewModel>();
 		}
 
-		public ISolution Model
+		public new ISolution Model
 		{
 			get { return model; }
 			set

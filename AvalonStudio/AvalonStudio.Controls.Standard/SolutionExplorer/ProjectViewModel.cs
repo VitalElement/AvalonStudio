@@ -14,7 +14,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 	public abstract class ProjectViewModel : ViewModel<IProject>
 	{
 		private readonly IShell shell;
-		private SolutionViewModel solutionViewModel;
         private ProjectConfigurationDialogViewModel configuration;
 
 		private bool visibility;

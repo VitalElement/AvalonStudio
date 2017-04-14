@@ -86,6 +86,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Debugging
         public void Initialise()
         {
             // Nothing here
+
+            // Quiet warning message for now.
+            StateChanged?.Invoke(this, new EventArgs());
+            Stopped?.Invoke(this, new StopRecord());
         }
 
         public Task<List<VariableObject>> ListChildrenAsync(VariableObject variable)

@@ -9,7 +9,9 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 		private readonly IBrush brush = Brush.Parse("#D69D85");
         private readonly IBrush pragmaBrush = Brush.Parse("#9B9B9B");
 
+#pragma warning disable 67
         public event EventHandler<EventArgs> DataChanged;
+#pragma warning restore 67
 
         public void TransformLine(TextView textView, VisualLine line)
 		{
