@@ -75,6 +75,11 @@ namespace AvalonStudio.TextEditor.Rendering
                     segment.StartOffset = textView.TextDocument.GetOffset(_line, _startColumn);
                     segment.EndOffset = textView.TextDocument.GetOffset(_line, _endColumn);
                 }
+                else
+                {
+                    _startColumn = textView.TextDocument.GetLocation(segment.StartOffset).Column;
+                    _endColumn = textView.TextDocument.GetLocation(segment.EndOffset).Column;
+                }
                 
 				var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, segment);
 

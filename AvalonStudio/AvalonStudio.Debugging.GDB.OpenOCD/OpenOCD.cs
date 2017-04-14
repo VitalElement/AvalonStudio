@@ -145,7 +145,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 				process.Kill();
 			}
 
-			Task.Factory.StartNew(async () =>
+			Task.Run(async () =>
 			{
 				using (var process = Process.Start(startInfo))
 				{

@@ -70,45 +70,12 @@ namespace AvalonStudio.Toolchains.GCC
 
         public static GccToolchainSettings GetSettings(IProject project)
         {
-            GccToolchainSettings result = null;
-
-            try
-            {
-                if (project.ToolchainSettings.GccToolchainSettings is ExpandoObject)
-                {
-                    result = (project.ToolchainSettings.GccToolchainSettings as ExpandoObject).GetConcreteType<GccToolchainSettings>();
-                }
-                else
-                {
-                    result = project.ToolchainSettings.GccToolchainSettings;
-                }
-            }
-            catch (Exception)
-            {
-            }
-
-            return result;
-        }
-
-        public static GccToolchainSettings ProvisionGccSettings(IProject project)
-        {
-            var result = GetSettings(project);
-
-            if (result == null)
-            {
-                result = new GccToolchainSettings();
-
-                project.ToolchainSettings.GccToolchainSettings = result;
-
-                project.Save();
-            }
-
-            return result;
+            return project.GetSettings<GccToolchainSettings>((d) => d.GccToolchainSettings);
         }
 
         public override void ProvisionSettings(IProject project)
         {
-            ProvisionGccSettings(project);
+            project.ProvisionSettings<GccToolchainSettings>((d) => d.GccToolchainSettings, (d, settings) => d.GccToolchainSettings = settings);            
         }
 
         private bool CheckFile(IConsole console, string file)

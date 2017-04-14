@@ -28,11 +28,15 @@ namespace AvalonStudio.Debugging
 
     public interface IDebugger2 : IExtension
     {
-        DebuggerSession CreateSession();
+        DebuggerSession CreateSession(IProject project);
 
         DebuggerStartInfo GetDebuggerStartInfo(IProject project);
 
         DebuggerSessionOptions GetDebuggerSessionOptions(IProject project);
+
+        object GetSettingsControl(IProject project);
+
+        void ProvisionSettings(IProject project);
     }
 
     public interface IDebugger : IExtension

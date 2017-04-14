@@ -15,9 +15,14 @@
     public class DebugManager2 : IDebugManager2, IExtension
     {
         private DebuggerSession _session;
+        private StackFrame _lastStackFrame;
         private IShell _shell;
         private IConsole _console;
         private IEditor _lastDocument;
+
+        public event EventHandler DebugSessionStarted;
+        public event EventHandler DebugSessionEnded;
+        public event EventHandler<TargetEventArgs> TargetStopped;
 
         public DebugManager2()
         {
@@ -82,6 +87,8 @@
             _loadingBreakpoints = false;
         }
 
+        public DebuggerSession Session => _session;
+
         public BreakpointStore Breakpoints { get; set; }
 
         public bool SessionActive => _session != null;
@@ -104,6 +111,8 @@
 
         private void OnEndSession()
         {
+            DebugSessionEnded?.Invoke(this, new EventArgs());
+
             _shell.CurrentPerspective = Perspective.Editor;
 
             if (_session != null)
@@ -116,7 +125,7 @@
 
             _session?.Dispose();
             _session = null;
-
+            _lastStackFrame = null;
             _lastDocument?.ClearDebugHighlight();
             _lastDocument = null;
 
@@ -159,7 +168,7 @@
                 return;
             }
 
-            _session = project.Debugger2.CreateSession();
+            _session = project.Debugger2.CreateSession(project);
 
             _session.Breakpoints = Breakpoints;
 
@@ -169,12 +178,20 @@
 
             _session.TargetHitBreakpoint += _session_TargetStopped;
 
+            _session.TargetSignaled += _session_TargetStopped;
+
+            _session.TargetInterrupted += _session_TargetStopped;
+
             _session.TargetExited += _session_TargetExited;
 
             _session.TargetStarted += _session_TargetStarted;
 
             _shell.CurrentPerspective = Perspective.Debug;
+
+            DebugSessionStarted?.Invoke(this, new EventArgs());
         }
+
+        public StackFrame LastStackFrame => _lastStackFrame;
 
         private void _session_TargetStarted(object sender, EventArgs e)
         {
@@ -194,36 +211,39 @@
         {
             if (e.Backtrace != null && e.Backtrace.FrameCount > 0)
             {
-                var currentFrame = e.Backtrace.GetFrame(0);
+                var currentFrame = _lastStackFrame = e.Backtrace.GetFrame(0);
                 var sourceLocation = currentFrame.SourceLocation;
 
-                //var locals = currentFrame.GetLocalVariables();
-
-                var normalizedPath = sourceLocation.FileName.Replace("\\\\", "\\").NormalizePath();
-
-                ISourceFile file = null;
-
-                var document = _shell.GetDocument(normalizedPath);
-
-                if (document != null)
+                if (sourceLocation.FileName != null)
                 {
-                    _lastDocument = document;
-                    file = document?.ProjectFile;
+                    var normalizedPath = sourceLocation.FileName.Replace("\\\\", "\\").NormalizePath();
+
+                    ISourceFile file = null;
+
+                    var document = _shell.GetDocument(normalizedPath);
+
+                    if (document != null)
+                    {
+                        _lastDocument = document;
+                        file = document?.ProjectFile;
+                    }
+
+                    if (file == null)
+                    {
+                        file = _shell.CurrentSolution.FindFile(normalizedPath);
+                    }
+
+                    if (file != null)
+                    {
+                        Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true); });
+                    }
+                    else
+                    {
+                        _console.WriteLine("Unable to find file: " + normalizedPath);
+                    }
                 }
 
-                if (file == null)
-                {
-                    file = _shell.CurrentSolution.FindFile(normalizedPath);
-                }
-
-                if (file != null)
-                {
-                    Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true); });
-                }
-                else
-                {
-                    _console.WriteLine("Unable to find file: " + normalizedPath);
-                }
+                TargetStopped?.Invoke(this, e);
             }
         }
 

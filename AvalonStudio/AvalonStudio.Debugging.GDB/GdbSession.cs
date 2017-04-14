@@ -1,0 +1,906 @@
+// GdbSession.cs
+//
+// Author:
+//   Lluis Sanchez Gual <lluis@novell.com>
+//
+// Copyright (c) 2008 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+//
+
+using AvalonStudio.Extensibility;
+using AvalonStudio.Platforms;
+using AvalonStudio.Utils;
+using Mono.Debugging.Client;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace AvalonStudio.Debugging.GDB
+{
+    public class GdbSession : DebuggerSession
+    {
+        IConsole _console;
+        Process proc;
+        private CancellationTokenSource closeTokenSource;
+
+        StreamReader sout;
+        StreamWriter sin;
+        GdbCommandResult lastResult;
+        bool running;
+        long currentThread = -1;
+        long activeThread = -1;
+        bool isMonoProcess;
+        string currentProcessName;
+        Dictionary<string, WeakReference<ObjectValue>> tempVariableObjects = new Dictionary<string, WeakReference<ObjectValue>>();
+        Dictionary<int, BreakEventInfo> breakpoints = new Dictionary<int, BreakEventInfo>();
+        List<BreakEventInfo> breakpointsWithHitCount = new List<BreakEventInfo>();
+
+        DateTime lastBreakEventUpdate = DateTime.Now;
+        Dictionary<int, WaitCallback> breakUpdates = new Dictionary<int, WaitCallback>();
+        bool breakUpdateEventsQueued;
+        const int BreakEventUpdateNotifyDelay = 500;
+
+        bool internalStop;
+        bool logGdb = false;
+        bool asyncMode;
+
+        object syncLock = new object();
+        object eventLock = new object();
+        protected object gdbLock = new object();
+
+        private string _gdbExecutable;
+        private string _runCommand;
+
+        public GdbSession(string gdbExecutable, string runCommand = "-exec-run")
+        {
+            _gdbExecutable = gdbExecutable;
+            _console = IoC.Get<IConsole>();
+            _runCommand = runCommand;
+        }
+
+        protected override void OnRun(DebuggerStartInfo startInfo)
+        {
+            lock (gdbLock)
+            {
+                // Create a script to be run in a terminal
+                string script = Path.GetTempFileName();
+                string ttyfile = Path.GetTempFileName();
+                string ttyfileDone = ttyfile + "_done";
+                string tty = string.Empty;
+
+                StartGdb(startInfo);
+
+                // Initialize the terminal
+                RunCommand("-inferior-tty-set", Escape(tty));
+
+                try
+                {
+                    RunCommand("-file-exec-and-symbols", Escape(startInfo.Command.ToAvalonPath()));
+                }
+                catch
+                {
+                    FireTargetEvent(TargetEventType.TargetExited, null);
+                    throw;
+                }
+
+                RunCommand("-environment-cd", Escape(startInfo.WorkingDirectory));
+
+                // Set inferior arguments
+                if (!string.IsNullOrEmpty(startInfo.Arguments))
+                    RunCommand("-exec-arguments", startInfo.Arguments);
+
+                if (startInfo.EnvironmentVariables != null)
+                {
+                    foreach (var v in startInfo.EnvironmentVariables)
+                        RunCommand("-gdb-set", "environment", v.Key, v.Value);
+                }
+
+                currentProcessName = startInfo.Command + " " + startInfo.Arguments;
+
+                asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
+
+                if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
+                {
+                    // TODO check if this code can be removed, it was used to support  ctrl+c signals, but no longer seems
+                    // to be needed for .net core.
+                    var attempts = 0;
+                    while (!Platform.FreeConsole() && attempts < 10)
+                    {
+                        _console.WriteLine(Marshal.GetLastWin32Error().ToString());
+                        Thread.Sleep(10);
+                        attempts++;
+                    }
+
+                    attempts = 0;
+
+                    while (!Platform.AttachConsole(proc.Id) && attempts < 10)
+                    {
+                        Thread.Sleep(10);
+                        attempts++;
+                    }
+
+                    while (!Platform.SetConsoleCtrlHandler(null, true))
+                    {
+                        _console.WriteLine(Marshal.GetLastWin32Error().ToString());
+                        Thread.Sleep(10);
+                    }
+                }
+
+                if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+                {
+                    RunCommand("-gdb-set", "new-console", "on");
+                }
+
+                RunCommand("-enable-pretty-printing");
+
+                OnStarted();
+
+                ThreadPool.QueueUserWorkItem(delegate
+                {
+                    RunCommand(_runCommand);
+                });
+            }
+        }
+
+        protected override void OnAttachToProcess(long processId)
+        {
+            lock (gdbLock)
+            {
+                //StartGdb();
+                currentProcessName = "PID " + processId.ToString();
+                RunCommand("attach", processId.ToString());
+                currentThread = activeThread = 1;
+                CheckIsMonoProcess();
+                OnStarted();
+                FireTargetEvent(TargetEventType.TargetStopped, null);
+            }
+        }
+
+        public bool IsMonoProcess
+        {
+            get { return isMonoProcess; }
+        }
+
+        void CheckIsMonoProcess()
+        {
+            try
+            {
+                RunCommand("-data-evaluate-expression", "mono_pmip");
+                isMonoProcess = true;
+            }
+            catch
+            {
+                isMonoProcess = false;
+                // Ignore
+            }
+        }
+
+        void StartGdb(DebuggerStartInfo startinfo)
+        {
+            proc = new Process();
+            proc.StartInfo.FileName = _gdbExecutable;
+            proc.StartInfo.Arguments = "--interpreter=mi " + startinfo.Command;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardInput = true;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
+            proc.Start();
+
+            sout = proc.StandardOutput;
+            sin = proc.StandardInput;
+
+            closeTokenSource = new CancellationTokenSource();
+            Task.Factory.StartNew(OutputInterpreter, closeTokenSource.Token);
+        }
+
+        public override void Dispose()
+        {
+            /*if (console != null && !console.IsCompleted) {
+				console.Cancel ();
+				console = null;
+			}*/
+
+            sin.WriteLine("-gdb-exit");
+
+            closeTokenSource?.Cancel();
+
+            if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
+            {
+                Platform.FreeConsole();
+
+                Platform.SetConsoleCtrlHandler(null, false);
+            }
+        }
+
+        protected override void OnSetActiveThread(long processId, long threadId)
+        {
+            activeThread = threadId;
+        }
+
+        protected override void OnStop()
+        {
+            if (asyncMode)
+            {
+                RunCommand("-exec-interrupt");
+            }
+            else
+            {
+                lock (eventLock)
+                {
+                    do
+                    {
+                        Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                    }
+                    while (!Monitor.Wait(eventLock, 100));
+                }
+            }
+        }
+
+        protected override void OnDetach()
+        {
+            lock (gdbLock)
+            {
+                InternalStop();
+                RunCommand("detach");
+                FireTargetEvent(TargetEventType.TargetExited, null);
+            }
+        }
+
+        protected override void OnExit()
+        {
+            lock (gdbLock)
+            {
+                InternalStop();
+                sin.WriteLine("-gdb-exit");
+                closeTokenSource?.Cancel();
+                proc.Kill();
+                TargetEventArgs args = new TargetEventArgs(TargetEventType.TargetExited);
+                OnTargetEvent(args);
+            }
+        }
+
+        protected override void OnStepLine()
+        {
+            SelectThread(activeThread);
+            RunCommand("-exec-step");
+        }
+
+        protected override void OnNextLine()
+        {
+            SelectThread(activeThread);
+            RunCommand("-exec-next");
+        }
+
+        protected override void OnStepInstruction()
+        {
+            SelectThread(activeThread);
+            RunCommand("-exec-step-instruction");
+        }
+
+        protected override void OnNextInstruction()
+        {
+            SelectThread(activeThread);
+            RunCommand("-exec-next-instruction");
+        }
+
+        protected override void OnFinish()
+        {
+            SelectThread(activeThread);
+            GdbCommandResult res = RunCommand("-stack-info-depth", "2");
+            if (res.GetValue("depth") == "1")
+            {
+                RunCommand("-exec-continue");
+            }
+            else
+            {
+                RunCommand("-stack-select-frame", "0");
+                RunCommand("-exec-finish");
+            }
+        }
+
+        protected override BreakEventInfo OnInsertBreakEvent(BreakEvent be)
+        {
+            Breakpoint bp = be as Breakpoint;
+            if (bp == null)
+                throw new NotSupportedException();
+
+            BreakEventInfo bi = new BreakEventInfo();
+
+            lock (gdbLock)
+            {
+                bool dres = InternalStop();
+                try
+                {
+                    string extraCmd = string.Empty;
+                    if (bp.HitCount > 0)
+                    {
+                        extraCmd += "-i " + bp.HitCount;
+                        breakpointsWithHitCount.Add(bi);
+                    }
+                    if (!string.IsNullOrEmpty(bp.ConditionExpression))
+                    {
+                        if (!bp.BreakIfConditionChanges)
+                            extraCmd += " -c " + bp.ConditionExpression;
+                    }
+
+                    GdbCommandResult res = null;
+                    string errorMsg = null;
+
+                    if (bp is FunctionBreakpoint)
+                    {
+                        try
+                        {
+                            res = RunCommand("-break-insert", extraCmd.Trim(), ((FunctionBreakpoint)bp).FunctionName);
+                        }
+                        catch (Exception ex)
+                        {
+                            errorMsg = ex.Message;
+                        }
+                    }
+                    else
+                    {
+                        // Breakpoint locations must be double-quoted if files contain spaces.
+                        // For example: -break-insert "\"C:/Documents and Settings/foo.c\":17"
+                        RunCommand("-environment-directory", Escape(Path.GetDirectoryName(bp.FileName).ToAvalonPath()));
+
+                        try
+                        {
+                            res = RunCommand("-break-insert", extraCmd.Trim(), Escape(Escape(bp.FileName.ToAvalonPath()) + ":" + bp.Line));
+                        }
+                        catch (Exception ex)
+                        {
+                            errorMsg = ex.Message;
+                        }
+
+                        if (res == null)
+                        {
+                            try
+                            {
+                                res = RunCommand("-break-insert", extraCmd.Trim(), Escape(Escape(Path.GetFileName(bp.FileName)) + ":" + bp.Line));
+                            }
+                            catch
+                            {
+                                // Ignore
+                            }
+                        }
+                    }
+
+                    if (res == null || res.Status != CommandStatus.Done)
+                    {
+                        bi.SetStatus(BreakEventStatus.Invalid, errorMsg);
+                        return bi;
+                    }
+                    int bh = res.GetObject("bkpt").GetInt("number");
+                    if (!be.Enabled)
+                        RunCommand("-break-disable", bh.ToString());
+                    breakpoints[bh] = bi;
+                    bi.Handle = bh;
+                    bi.SetStatus(BreakEventStatus.Bound, null);
+                    return bi;
+                }
+                finally
+                {
+                    InternalResume(dres);
+                }
+            }
+        }
+
+        bool CheckBreakpoint(int handle)
+        {
+            BreakEventInfo binfo;
+            if (!breakpoints.TryGetValue(handle, out binfo))
+                return true;
+
+            Breakpoint bp = (Breakpoint)binfo.BreakEvent;
+
+            if (!string.IsNullOrEmpty(bp.ConditionExpression) && bp.BreakIfConditionChanges)
+            {
+                // Update the condition expression
+                GdbCommandResult res = RunCommand("-data-evaluate-expression", Escape(bp.ConditionExpression));
+                string val = res.GetValue("value");
+                RunCommand("-break-condition", handle.ToString(), "(" + bp.ConditionExpression + ") != " + val);
+            }
+
+            if (!string.IsNullOrEmpty(bp.TraceExpression) && bp.HitAction == HitAction.PrintExpression)
+            {
+                GdbCommandResult res = RunCommand("-data-evaluate-expression", Escape(bp.TraceExpression));
+                string val = res.GetValue("value");
+                NotifyBreakEventUpdate(binfo, 0, val);
+                return false;
+            }
+            return true;
+        }
+
+        void NotifyBreakEventUpdate(BreakEventInfo binfo, int hitCount, string lastTrace)
+        {
+            bool notify = false;
+
+            WaitCallback nc = delegate
+            {
+                if (hitCount != -1)
+                    binfo.IncrementHitCount();
+                if (lastTrace != null)
+                    binfo.UpdateLastTraceValue(lastTrace);
+            };
+
+            lock (breakUpdates)
+            {
+                int span = (int)(DateTime.Now - lastBreakEventUpdate).TotalMilliseconds;
+                if (span >= BreakEventUpdateNotifyDelay && !breakUpdateEventsQueued)
+                {
+                    // Last update was more than 0.5s ago. The update can be sent.
+                    lastBreakEventUpdate = DateTime.Now;
+                    notify = true;
+                }
+                else
+                {
+                    // Queue the event notifications to avoid wasting too much time
+                    breakUpdates[(int)binfo.Handle] = nc;
+                    if (!breakUpdateEventsQueued)
+                    {
+                        breakUpdateEventsQueued = true;
+
+                        ThreadPool.QueueUserWorkItem(delegate
+                        {
+                            Thread.Sleep(BreakEventUpdateNotifyDelay - span);
+                            List<WaitCallback> copy;
+                            lock (breakUpdates)
+                            {
+                                copy = new List<WaitCallback>(breakUpdates.Values);
+                                breakUpdates.Clear();
+                                breakUpdateEventsQueued = false;
+                                lastBreakEventUpdate = DateTime.Now;
+                            }
+                            foreach (WaitCallback wc in copy)
+                                wc(null);
+                        });
+                    }
+                }
+            }
+            if (notify)
+                nc(null);
+        }
+
+        void UpdateHitCountData()
+        {
+            foreach (BreakEventInfo bp in breakpointsWithHitCount)
+            {
+                GdbCommandResult res = RunCommand("-break-info", bp.Handle.ToString());
+                string val = res.GetObject("BreakpointTable").GetObject("body").GetObject(0).GetObject("bkpt").GetValue("ignore");
+                if (val != null)
+                    NotifyBreakEventUpdate(bp, int.Parse(val), null);
+                else
+                    NotifyBreakEventUpdate(bp, 0, null);
+            }
+            breakpointsWithHitCount.Clear();
+        }
+
+        protected override void OnRemoveBreakEvent(BreakEventInfo binfo)
+        {
+            lock (gdbLock)
+            {
+                if (binfo.Handle == null)
+                    return;
+                bool dres = InternalStop();
+                breakpointsWithHitCount.Remove(binfo);
+                breakpoints.Remove((int)binfo.Handle);
+                try
+                {
+                    RunCommand("-break-delete", binfo.Handle.ToString());
+                }
+                finally
+                {
+                    InternalResume(dres);
+                }
+            }
+        }
+
+        protected override void OnEnableBreakEvent(BreakEventInfo binfo, bool enable)
+        {
+            lock (gdbLock)
+            {
+                if (binfo.Handle == null)
+                    return;
+                bool dres = InternalStop();
+                try
+                {
+                    if (enable)
+                        RunCommand("-break-enable", binfo.Handle.ToString());
+                    else
+                        RunCommand("-break-disable", binfo.Handle.ToString());
+                }
+                finally
+                {
+                    InternalResume(dres);
+                }
+            }
+        }
+
+        protected override void OnUpdateBreakEvent(BreakEventInfo binfo)
+        {
+            Breakpoint bp = binfo.BreakEvent as Breakpoint;
+            if (bp == null)
+                throw new NotSupportedException();
+
+            if (binfo.Handle == null)
+                return;
+
+            bool ss = InternalStop();
+
+            try
+            {
+                if (bp.HitCount > 0)
+                {
+                    RunCommand("-break-after", binfo.Handle.ToString(), bp.HitCount.ToString());
+                    breakpointsWithHitCount.Add(binfo);
+                }
+                else
+                    breakpointsWithHitCount.Remove(binfo);
+
+                if (!string.IsNullOrEmpty(bp.ConditionExpression) && !bp.BreakIfConditionChanges)
+                    RunCommand("-break-condition", binfo.Handle.ToString(), bp.ConditionExpression);
+                else
+                    RunCommand("-break-condition", binfo.Handle.ToString());
+            }
+            finally
+            {
+                InternalResume(ss);
+            }
+        }
+
+        protected override void OnContinue()
+        {
+            SelectThread(activeThread);
+            RunCommand("-exec-continue");
+        }
+
+        protected override ThreadInfo[] OnGetThreads(long processId)
+        {
+            List<ThreadInfo> list = new List<ThreadInfo>();
+            ResultData data = RunCommand("-thread-list-ids").GetObject("thread-ids");
+            foreach (string id in data.GetAllValues("thread-id"))
+                list.Add(GetThread(long.Parse(id)));
+            return list.ToArray();
+        }
+
+        protected override ProcessInfo[] OnGetProcesses()
+        {
+            ProcessInfo p = new ProcessInfo(0, currentProcessName);
+            return new ProcessInfo[] { p };
+        }
+
+        ThreadInfo GetThread(long id)
+        {
+            return new ThreadInfo(0, id, "Thread #" + id, null);
+        }
+
+        protected override Backtrace OnGetThreadBacktrace(long processId, long threadId)
+        {
+            ResultData data = SelectThread(threadId);
+            GdbCommandResult res = RunCommand("-stack-info-depth");
+            int fcount = int.Parse(res.GetValue("depth"));
+            GdbBacktrace bt = new GdbBacktrace(this, threadId, fcount, data != null ? data.GetObject("frame") : null);
+            return new Backtrace(bt);
+        }
+
+        protected override AssemblyLine[] OnDisassembleFile(string file)
+        {
+            List<AssemblyLine> lines = new List<AssemblyLine>();
+            int cline = 1;
+            do
+            {
+                ResultData data = null;
+                try
+                {
+                    data = RunCommand("-data-disassemble", "-f", file, "-l", cline.ToString(), "--", "1");
+                }
+                catch
+                {
+                    break;
+                }
+                ResultData asm_insns = data.GetObject("asm_insns");
+                int newLine = cline;
+                for (int n = 0; n < asm_insns.Count; n++)
+                {
+                    ResultData src_and_asm_line = asm_insns.GetObject(n).GetObject("src_and_asm_line");
+                    newLine = src_and_asm_line.GetInt("line");
+                    ResultData line_asm_insn = src_and_asm_line.GetObject("line_asm_insn");
+                    for (int i = 0; i < line_asm_insn.Count; i++)
+                    {
+                        ResultData asm = line_asm_insn.GetObject(i);
+                        long addr = long.Parse(asm.GetValue("address").Substring(2), NumberStyles.HexNumber);
+                        string code = asm.GetValue("inst");
+                        lines.Add(new AssemblyLine(addr, code, newLine));
+                    }
+                }
+                if (newLine <= cline)
+                    break;
+                cline = newLine + 1;
+
+            } while (true);
+
+            return lines.ToArray();
+        }
+
+        public ResultData SelectThread(long id)
+        {
+            if (id == currentThread)
+                return null;
+            currentThread = id;
+            return RunCommand("-thread-select", id.ToString());
+        }
+
+        string Escape(string str)
+        {
+            if (str == null)
+                return null;
+            else if (str.IndexOf(' ') != -1 || str.IndexOf('"') != -1)
+            {
+                str = str.Replace("\"", "\\\"");
+                return "\"" + str + "\"";
+            }
+            else
+                return str;
+        }
+
+        public GdbCommandResult RunCommand(string command, params string[] args)
+        {
+            return RunCommand(command, 30000, args);
+        }
+
+        public GdbCommandResult RunCommand(string command, int timeout = 30000, params string[] args)
+        {
+            lock (gdbLock)
+            {
+                lock (syncLock)
+                {
+                    lastResult = null;
+
+                    lock (eventLock)
+                    {
+                        running = true;
+                    }
+
+                    if (logGdb)
+                        _console.WriteLine("gdb<: " + command + " " + string.Join(" ", args));
+
+                    sin.WriteLine(command + " " + string.Join(" ", args));
+
+                    if (!Monitor.Wait(syncLock, timeout))
+                    {
+                        lastResult = new GdbCommandResult("");
+                        lastResult.Status = CommandStatus.Timeout;
+                        throw new TimeoutException();
+                    }
+
+                    return lastResult;
+                }
+            }
+        }
+
+        bool InternalStop()
+        {
+            if (!running)
+                return false;
+            internalStop = true;
+
+            if (asyncMode)
+            {
+                RunCommand("-exec-interrupt");
+            }
+            else
+            {
+                lock (eventLock)
+                {
+                    do
+                    {
+                        Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                    }
+                    while (!Monitor.Wait(eventLock, 100));
+                }
+            }
+
+            return true;
+        }
+
+        void InternalResume(bool resume)
+        {
+            if (resume)
+                RunCommand("-exec-continue");
+        }
+
+        void OutputInterpreter()
+        {
+            string line;
+            while ((line = sout.ReadLine()) != null)
+            {
+                try
+                {
+                    ProcessOutput(line);
+                }
+                catch (Exception ex)
+                {
+                    _console.WriteLine(ex.ToString());
+                }
+            }
+        }
+
+        void ProcessOutput(string line)
+        {
+            if (logGdb)
+                _console.WriteLine("dbg>: '" + line + "'");
+            switch (line[0])
+            {
+                case '^':
+                    lock (syncLock)
+                    {
+                        lastResult = new GdbCommandResult(line);
+
+                        lock (eventLock)
+                        {
+                            running = (lastResult.Status == CommandStatus.Running);
+                        }
+
+                        Monitor.PulseAll(syncLock);
+                    }
+                    break;
+
+                case '~':
+                case '&':
+                    if (line.Length > 1 && line[1] == '"')
+                        line = line.Substring(2, line.Length - 5);
+                    ThreadPool.QueueUserWorkItem(delegate
+                    {
+                        OnTargetOutput(false, line + "\n");
+                    });
+                    break;
+
+                case '*':
+                    GdbEvent ev = null;
+                    lock (eventLock)
+                    {
+                        if (!line.StartsWith("*running"))
+                        {
+                            running = false;
+                            ev = new GdbEvent(line);
+                            string ti = ev.GetValue("thread-id");
+                            if (ti != null && ti != "all")
+                                currentThread = activeThread = int.Parse(ti);
+                            Monitor.PulseAll(eventLock);
+                            if (internalStop)
+                            {
+                                internalStop = false;
+                                return;
+                            }
+                        }
+                    }
+
+                    if (ev != null)
+                    {
+                        ThreadPool.QueueUserWorkItem(delegate
+                        {
+                            try
+                            {
+                                HandleEvent(ev);
+                            }
+                            catch (Exception ex)
+                            {
+                                _console.WriteLine(ex.ToString());
+                            }
+                        });
+                    }
+                    break;
+            }
+        }
+
+        void HandleEvent(GdbEvent ev)
+        {
+            if (ev.Name != "stopped")
+            {
+                return;
+            }
+
+            CleanTempVariableObjects();
+
+            TargetEventType type = TargetEventType.TargetStopped;
+
+            if (!string.IsNullOrEmpty(ev.Reason))
+            {
+                switch (ev.Reason)
+                {
+                    case "breakpoint-hit":
+                        type = TargetEventType.TargetHitBreakpoint;
+                        if (!CheckBreakpoint(ev.GetInt("bkptno")))
+                        {
+                            RunCommand("-exec-continue");
+                            return;
+                        }
+                        break;
+                    case "signal-received":
+                        if (ev.GetValue("signal-name") == "SIGINT")
+                            type = TargetEventType.TargetInterrupted;
+                        else
+                            type = TargetEventType.TargetSignaled;
+                        break;
+                    case "exited":
+                    case "exited-signalled":
+                    case "exited-normally":
+                        type = TargetEventType.TargetExited;
+                        break;
+                    default:
+                        type = TargetEventType.TargetStopped;
+                        break;
+                }
+            }
+
+            ResultData curFrame = ev.GetObject("frame");
+            FireTargetEvent(type, curFrame);
+        }
+
+        void FireTargetEvent(TargetEventType type, ResultData curFrame)
+        {
+            UpdateHitCountData();
+
+            TargetEventArgs args = new TargetEventArgs(type);
+
+            if (type != TargetEventType.TargetExited)
+            {
+                GdbCommandResult res = RunCommand("-stack-info-depth");
+                int fcount = int.Parse(res.GetValue("depth"));
+
+                GdbBacktrace bt = new GdbBacktrace(this, activeThread, fcount, curFrame);
+                args.Backtrace = new Backtrace(bt);
+                args.Thread = GetThread(activeThread);
+            }
+            OnTargetEvent(args);
+        }
+
+        internal void RegisterTempVariableObject(string id, ObjectValue var)
+        {
+            tempVariableObjects.Add(id, new WeakReference<ObjectValue>(var));
+        }
+
+        void CleanTempVariableObjects()
+        {
+            List<string> keysToRemove = new List<string>();
+
+            foreach(var item in tempVariableObjects)
+            {
+                if (!item.Value.TryGetTarget(out ObjectValue result))
+                {
+                    RunCommand("-var-delete", item.Key);
+
+                    keysToRemove.Add(item.Key);
+                }
+            }
+            
+            foreach(var key in keysToRemove)
+            {
+                tempVariableObjects.Remove(key);
+            }
+        }
+    }
+}

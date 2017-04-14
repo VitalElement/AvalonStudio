@@ -372,8 +372,7 @@ namespace AvalonStudio.Debugging.GDB
 
             TaskCompletionSource<JobRunner> transmitRunnerSet = new TaskCompletionSource<JobRunner>();
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            Task.Factory.StartNew(() =>
+            Task.Run(() =>
             {
                 transmitRunner = new JobRunner();
 
@@ -385,11 +384,10 @@ namespace AvalonStudio.Debugging.GDB
 
                 transmitRunner = null;
             });
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             await transmitRunnerSet.Task;
 
-            Task.Factory.StartNew(() =>
+            Task.Run(() =>
             {
                 console.WriteLine("[GDB] - Started");
 

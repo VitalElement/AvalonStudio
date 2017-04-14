@@ -6,40 +6,48 @@ using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using Mono.Debugging.Client;
 
 namespace AvalonStudio.Debugging
 {
-	public class WatchViewModel : ViewModel<VariableObject>
-	{
-		private IBrush background;
+    public class ObjectValueViewModel : ViewModel<ObjectValue>
+    {
+        private static readonly ObjectValueViewModel DummyChild = new ObjectValueViewModel();
+        private ObservableCollection<ObjectValueViewModel> children;
 
-		private ObservableCollection<WatchViewModel> children;
+        private IBrush background;
 
-		private readonly IDebugger debugger;
+        private bool hasChanged;
 
-		private bool hasChanged;
+        private bool isExpanded;
 
-		private bool isExpanded;
+        private readonly WatchListViewModel watchList;
 
-		private string val;
-		private readonly WatchListViewModel watchList;
+        private ObjectValueViewModel() : base(ObjectValue.CreateUnknown("Dummy"))
+        {
 
-		public WatchViewModel(WatchListViewModel watchList, IDebugger debugger, VariableObject model)
-			: base(model)
-		{
-			this.watchList = watchList;
-			this.debugger = debugger;
+        }
 
-			Value = model.Value;
+        public ObjectValueViewModel(WatchListViewModel watchList, ObjectValue model)
+            : base(model)
+        {
+            this.watchList = watchList;
 
-			DeleteCommand = ReactiveCommand.Create();
-			DeleteCommand.Subscribe(_ => { IoC.Get<IWatchList>().RemoveWatch(this); });
+            DeleteCommand = ReactiveCommand.Create();
+
+            if (model.HasChildren)
+            {
+                children = new ObservableCollection<ObjectValueViewModel>();
+                children.Add(DummyChild);
+            }
+
+            DeleteCommand.Subscribe(_ => { IoC.Get<IWatchList>().Remove(Model); });
 
 
-			DisplayFormatCommand = ReactiveCommand.Create();
-			DisplayFormatCommand.Subscribe(async s =>
-			{
-				var format = s as string;
+            DisplayFormatCommand = ReactiveCommand.Create();
+            DisplayFormatCommand.Subscribe(s =>
+            {
+                /*var format = s as string;
 
 				switch (format)
 				{
@@ -63,202 +71,142 @@ namespace AvalonStudio.Debugging
 						await Model.SetFormat(WatchFormat.Octal);
 						break;
 				}
+                
+				await Invalidate(debugger);*/
+            });
+        }
 
-				await Invalidate(debugger);
-			});
-		}
+        public bool IsExpanded
+        {
+            get { return isExpanded; }
+            set
+            {
+                if (value)
+                {
+                    Expand();
+                }
+                else
+                {
+                    Children?.Clear();
+                    Children?.Add(DummyChild);
+                }
 
-		public bool IsExpanded
-		{
-			get { return isExpanded; }
-			set
-			{
-				if (value)
-				{
-					Expand();
-				}
+                this.RaiseAndSetIfChanged(ref isExpanded, value);
+            }
+        }
 
-				this.RaiseAndSetIfChanged(ref isExpanded, value);
-			}
-		}
 
-		public ObservableCollection<WatchViewModel> Children
-		{
-			get { return children; }
-			set { this.RaiseAndSetIfChanged(ref children, value); }
-		}
+        public ObservableCollection<ObjectValueViewModel> Children
+        {
+            get { return children; }
+            set { this.RaiseAndSetIfChanged(ref children, value); }
+        }
 
-		public ReactiveCommand<object> DeleteCommand { get; }
+        public ReactiveCommand<object> DeleteCommand { get; }
 
-		public ReactiveCommand<object> DisplayFormatCommand { get; }
+        public ReactiveCommand<object> DisplayFormatCommand { get; }
 
-		public string Value
-		{
-			get { return val; }
-			set { this.RaiseAndSetIfChanged(ref val, value); }
-		}
+        public string Value
+        {
+            get { return Model?.Value; }
+        }
 
-		public IBrush Background
-		{
-			get { return background; }
-			set { this.RaiseAndSetIfChanged(ref background, value); }
-		}
+        public IBrush Background
+        {
+            get { return background; }
+            set { this.RaiseAndSetIfChanged(ref background, value); }
+        }
 
-		public bool HasChanged
-		{
-			get { return hasChanged; }
-			set
-			{
-				this.RaiseAndSetIfChanged(ref hasChanged, value);
+        public bool HasChanged
+        {
+            get { return hasChanged; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref hasChanged, value);
 
-				if (value)
-				{
-					Background = Brush.Parse("#33008299");
-				}
-				else
-				{
-					Background = null;
-				}
-			}
-		}
+                if (value)
+                {
+                    Background = Brush.Parse("#33008299");
+                }
+                else
+                {
+                    Background = null;
+                }
+            }
+        }
 
-		public string Name
-		{
-			get { return Model.Expression; }
-		}
+        public string DisplayName
+        {
+            get { return Model?.Name; }
+        }
 
-		public string Type
-		{
-			get { return Model.Type; }
-		}
+        public string TypeName
+        {
+            get { return Model?.TypeName; }
+        }
 
-		private async void Expand()
-		{
-			foreach (var child in Children)
-			{
-				if (child.Children == null)
-				{
-					child.Children = new ObservableCollection<WatchViewModel>();
+        private void Expand()
+        {
+            Children.Remove(DummyChild);
 
-					if (!child.Model.AreChildrenEvaluated)
-					{
-						await child.Model.EvaluateChildrenAsync();
+            var children = Model.GetAllChildren();
 
-						for (var i = 0; i < child.Model.Children.Count; i++)
-						{
-							var newchild = new WatchViewModel(watchList, debugger, child.Model.Children[i]);
-							await newchild.Evaluate(debugger);
-							child.Children.Add(newchild);
-						}
-					}
-				}
-			}
-		}
+            foreach (var child in children)
+            {
+                Children.Add(new ObjectValueViewModel(watchList, child));
+            }
+        }
 
-		public bool ApplyChange(VariableObjectChange change)
-		{
-			var result = false;
+        public bool ApplyChange(ObjectValue newValue)
+        {
+            var result = false;
 
-			if (change.Expression.Contains(Model.Id))
-			{
-				if (change.Expression == Model.Id)
-				{
-					result = true;
+            bool hasChanged = Model.Value != newValue?.Value;
+            bool didHaveChildren = Model.HasChildren;
 
-					if (change.InScope)
-					{
-						Dispatcher.UIThread.InvokeAsync(() => { Value = change.Value; });
-					}
-					else
-					{
-						Dispatcher.UIThread.InvokeAsync(() =>
-						{
-							Value = "{ Out of Scope. }";
-							Model.Children.Clear();
-							Model.ClearEvaluated();
-							Children?.Clear();
-						});
-					}
+            Model = newValue;
 
-					if (change.TypeChanged)
-					{
-						//throw new NotImplementedException ("This needs implementing cope with type change.");
-					}
-				}
-				else if(Children != null)
-				{
-					foreach (var child in Children)
-					{
-						if (child != null)
-						{
-							result = child.ApplyChange(change);
+            if (Model != null)
+            {
+                if (Model.HasChildren && !didHaveChildren)
+                {
+                    hasChanged = true;
 
-							if (result)
-							{
-								break;
-							}
-						}
-						else
-						{
-							Console.WriteLine("Investigate this case.");
-						}
-					}
-				}
+                    Children = new ObservableCollection<ObjectValueViewModel>();
 
-				if (!HasChanged)
-				{
-					watchList.LastChangedRegisters.Add(this);
+                    Children.Add(DummyChild);
+                }
+            }
 
-					Dispatcher.UIThread.InvokeAsync(() => { HasChanged = true; });
-				}
-			}
+            if (IsExpanded)
+            {
+                if (newValue.Value != null)
+                {
+                    for (int i = 0; i < Children.Count; i++)
+                    {
+                        if (Children[i].Model != null)
+                        {
+                            Children[i].ApplyChange(newValue.GetChild(Children[i].Model.Name));
+                        }
+                    }
+                }
+                else
+                {
+                    Children.Clear();
+                }
+            }
 
-			return result;
-		}
+            Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    HasChanged = hasChanged;
 
-		public async Task Invalidate(IDebugger debugger)
-		{
-			await Model.EvaluateAsync(debugger, false);
+                    if (hasChanged)
+                    {
+                        Invalidate();
+                    }
+                }).Wait();
 
-			foreach (var child in Children)
-			{
-				if (child.IsExpanded)
-				{
-					child.Invalidate();
-				}
-			}
-
-			if (Model.Value != null)
-			{
-				Value = Model.Value;
-			}
-			else
-			{
-				Value = "{ " + Model.Type + " }";
-			}
-		}
-
-		public async Task Evaluate(IDebugger debugger)
-		{
-			await Model.EvaluateAsync(debugger);
-
-			Children = new ObservableCollection<WatchViewModel>();
-
-			await Model.EvaluateChildrenAsync();
-
-			for (var i = 0; i < Model.NumChildren; i++)
-			{
-				Children.Add(new WatchViewModel(watchList, debugger, Model.Children[i]));
-			}
-
-			if (Model.Value != null)
-			{
-				Value = Model.Value;
-			}
-			else
-			{
-				Value = "{ " + Model.Type + " }";
-			}
-		}
-	}
+            return result;
+        }
+    }
 }

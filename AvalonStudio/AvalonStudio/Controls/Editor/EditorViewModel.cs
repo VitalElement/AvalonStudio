@@ -586,17 +586,17 @@ namespace AvalonStudio.Controls
 
                 if (expression != string.Empty)
                 {
-                    var debugManager = IoC.Get<IDebugManager>();
+                    var debugManager = IoC.Get<IDebugManager2>();
 
-                    var evaluatedExpression = await debugManager.ProbeExpressionAsync(expression);
-
-                    if (evaluatedExpression != null)
+                    if (debugManager.LastStackFrame != null)
                     {
                         var newToolTip = new DebugHoverProbeViewModel();
-                        newToolTip.AddExistingWatch(evaluatedExpression);
+                        newToolTip.SetCurrentFrame(debugManager.LastStackFrame);
+
+                        bool result = newToolTip.AddWatch(expression);
 
                         ToolTip = newToolTip;
-                        return true;
+                        return result;
                     }
                 }
             }

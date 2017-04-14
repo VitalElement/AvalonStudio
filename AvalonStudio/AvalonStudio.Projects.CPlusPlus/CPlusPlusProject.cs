@@ -77,6 +77,9 @@ namespace AvalonStudio.Projects.CPlusPlus
         [JsonProperty(PropertyName = "Debugger")]
         public string DebuggerReference { get; set; }
 
+        [JsonProperty(PropertyName = "Debugger2")]
+        public string Debugger2Reference { get; set; }
+
         [JsonProperty(PropertyName = "TestFramework")]
         public string TestFrameworkReference { get; set; }
 
@@ -346,7 +349,16 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
         [JsonIgnore]
-        public override IDebugger2 Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override IDebugger2 Debugger2
+        {
+            get
+            {
+                var result = IoC.Get<IShell>().Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
+
+                return result;
+            }
+            set { Debugger2Reference = value.GetType().ToString(); }
+        }
 
         [JsonIgnore]
         public override ITestFramework TestFramework

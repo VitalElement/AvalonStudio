@@ -11,12 +11,18 @@
     {
         private List<SequencePoint> _sequencePoints;
         private SymbolToken _token;
+        private ISymbolScope _rootScope;
 
         public SymbolMethod(SequencePointCollection sequencePoints, SymbolToken token)
         {
             _sequencePoints = sequencePoints.ToList();
 
             _token = token;
+        }
+
+        internal void SetRootScope (ISymbolScope rootScope)
+        {
+            _rootScope = rootScope;
         }
 
         public List<SequencePoint> SequencePoints => _sequencePoints;
@@ -27,7 +33,7 @@
 
         public int SequencePointCount => _sequencePoints.Count();
 
-        public ISymbolScope RootScope => throw new NotImplementedException();
+        public ISymbolScope RootScope => _rootScope;
 
         public ISymbolNamespace GetNamespace()
         {

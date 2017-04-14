@@ -88,6 +88,74 @@
             return reader.GetToken(handle);
         }
 
+        private void AddChildScopes(MetadataReader pdb, SymbolScope parent, IEnumerator<LocalScopeHandle> scopes, SymbolMethod owner)
+        {
+            
+
+            while (true)
+            {
+                scopes.MoveNext();
+
+                if (scopes.Current.IsNil)
+                {
+                    break;
+                }
+
+                var currentScope = pdb.GetLocalScope(scopes.Current);
+
+                var current = new SymbolScope(owner, null, currentScope.StartOffset, currentScope.EndOffset);
+
+                AddLocalVars(pdb, current, currentScope.GetLocalVariables());
+
+                AddChildScopes(pdb, current, currentScope.GetChildren(), owner);
+
+                parent.AddChild(current);
+            }
+
+        }
+
+        private void AddLocalVars (MetadataReader pdb, SymbolScope scope, LocalVariableHandleCollection localVars)
+        {
+            foreach (var varHandle in localVars)
+            {
+                var localVar = pdb.GetLocalVariable(varHandle);               
+
+                scope.AddLocal(new SymbolVariable(pdb.GetString(localVar.Name), localVar.Attributes, localVar.Index));
+            }
+        }
+
+        private ISymbolScope CreateSymbolScope (MetadataReader pdb, LocalScopeHandleCollection scopes, SymbolMethod owner, int methodEndOffset)
+        {
+            SymbolScope result = null;            
+
+            var scope = scopes.GetEnumerator();
+
+            while (true)
+            {
+                scope.MoveNext();
+
+                if(scope.Current.IsNil)
+                {
+                    break;
+                }
+
+                var currentScope = pdb.GetLocalScope(scope.Current);
+
+                var current = new SymbolScope(owner, null, currentScope.StartOffset, currentScope.EndOffset);
+
+                if (result ==null)
+                {
+                    result = current;
+                }
+                
+                AddLocalVars(pdb, current, currentScope.GetLocalVariables());
+
+                AddChildScopes(pdb, current, currentScope.GetChildren(), owner);
+            }
+            
+            return result;
+        }
+
         bool LoadPdbFile(string pdbFileName)
         {
             if (!System.IO.File.Exists(pdbFileName))
@@ -116,28 +184,16 @@
 
                     var methodToken = MetadataTokens.GetToken(methodHandle.ToDefinitionHandle());
 
-                    var token = new SymbolToken(methodToken);
 
-                    var scopes = pdb.GetLocalScopes(methodHandle.ToDefinitionHandle());
+                    var token = new SymbolToken(methodToken);                    
 
-                    foreach (var scopeHandle in scopes)
-                    {
-                        var scope = pdb.GetLocalScope(scopeHandle);
-
-                        var localVarHandles = scope.GetLocalVariables();
-
-                        foreach (var varHandle in localVarHandles)
-                        {
-                            var localVar = pdb.GetLocalVariable(varHandle);
-
-
-                        }
-
-                    }
-
-                    var newMethod = new SymbolMethod(method.GetSequencePoints(), token);
+                    var newMethod = new SymbolMethod(method.GetSequencePoints(), token);                    
                     methodTokenLookup.Add(token.GetToken(), newMethod);
                     list.Add(newMethod);
+
+                    var def = pdb.GetMethodDefinition(methodHandle.ToDefinitionHandle());                   
+                                        
+                    newMethod.SetRootScope(CreateSymbolScope(pdb, pdb.GetLocalScopes(methodHandle.ToDefinitionHandle()), newMethod, 0));
                 }
 
                 foreach (var documentHandle in pdb.Documents)
@@ -224,10 +280,7 @@
                         if (document.URL == sourceFile.URL)
                         {
                             foreach (var method in sourceFile.PdbMethods)
-                            {
-                                SequencePoint sequencePointBefore;
-                                SequencePoint sequencePointAfter;
-
+                            {                               
                                 foreach (var point in method.SequencePoints)
                                 {
                                     if (point.IsWithin((uint)line, (uint)column))

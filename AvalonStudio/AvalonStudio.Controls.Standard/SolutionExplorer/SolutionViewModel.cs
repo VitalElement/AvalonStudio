@@ -111,6 +111,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 		public ReactiveCommand<object> AddExistingProjectCommand { get; }
 		public ReactiveCommand<object> OpenInExplorerCommand { get; }
 
+		void CleanSolution(){}
+
+		void BuildSolution(){}
+
+		void RunTests(){}
+
 		public string Title
 		{
 			get
@@ -133,80 +139,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 				}
 				return "projects";
 			}
-		}
-
-
-		private async void CleanSolution()
-		{
-			// await Model.Solution.DefaultProject.SelectedConfiguration.ToolChain.Clean(Workspace.Instance.StudioConsole, Model.Solution.DefaultProject, Workspace.Instance.ProcessCancellationToken);
-		}
-
-		private async void BuildSolution()
-		{
-			//Workspace.Instance.SaveAllCommand.Execute(null);
-			//await Model.Solution.DefaultProject.SelectedConfiguration.ToolChain.Build(Workspace.Instance.StudioConsole, this.Model.Solution.DefaultProject, Workspace.Instance.ProcessCancellationToken);
-		}
-
-		private async void RunTests()
-		{
-			//var testProjects = Model.Solution.LoadedProjects.OfType<CatchTestProject>();
-			//var tests = new List<Test>();
-
-			//foreach(var testProject in testProjects)
-			//{
-			//    await testProject.Build(Workspace.Instance.StudioConsole, Workspace.Instance.ProcessCancellationToken);
-
-			//    tests.AddRange(testProject.EnumerateTests(Workspace.Instance.StudioConsole));            
-			//}
-
-			//Workspace.Instance.TestRunner.AddTests(tests);
-			//Workspace.Instance.TestRunner.RunTests();
-		}
-
-		//public override void Drop(ProjectItemViewModel item)
-		//}
-
-		//    return result;
-		//    }
-		//        result = true;
-		//    {
-
-		//    if (type == typeof(SolutionFolderViewModel))
-		//    //}
-		//    //    result = true;
-		//    //{
-
-		//    //if (type == typeof(TestProjectViewModel))
-		//    }
-		//        result = true;
-		//    {
-
-		//    if (type == typeof(StandardProjectViewModel))
-		//    bool result = false;
-		//{
-
-		//public override bool CanAcceptDrop(Type type)
-		//{
-		//    var project = item as ProjectViewModel;
-
-		//    if (project != null)
-		//    {
-		//        var parent = project.Model.Solution.GetParent(project.Model);
-
-		//        parent.RemoveItem(project.Model);
-
-		//        Model.AttachItem(project.Model);
-		//    }
-		//    else if (item is SolutionFolderViewModel)
-		//    {
-		//        var folder = item as SolutionFolderViewModel;
-
-		//        var parent = folder.Model.Solution.GetParent(folder.Model);
-
-		//        parent.DetachItem(folder.Model);
-
-		//        Model.AttachItem(folder.Model);
-		//    }
-		//}
+		}        
 	}
 }

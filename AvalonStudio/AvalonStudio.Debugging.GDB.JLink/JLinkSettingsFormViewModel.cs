@@ -216,7 +216,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
             set
             {
                 this.RaiseAndSetIfChanged(ref filter, value);
-                FilterListAsync();
+                Task.Run(FilterListAsync);
             }
         }
 

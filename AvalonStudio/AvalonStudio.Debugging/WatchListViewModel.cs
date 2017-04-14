@@ -1,57 +1,68 @@
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using Avalonia.Threading;
-using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.MVVM;
-using ReactiveUI;
-using System.Composition;
-
 namespace AvalonStudio.Debugging
 {
-	public class WatchListViewModel : ToolViewModel, IExtension, IWatchList
-	{
-		protected IDebugManager _debugManager;
+    using Avalonia.Threading;
+    using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Plugin;
+    using AvalonStudio.MVVM;
+    using Mono.Debugging.Client;
+    using ReactiveUI;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Threading.Tasks;
 
-		private ObservableCollection<WatchViewModel> children;
-		public List<WatchViewModel> LastChangedRegisters;
+    public class WatchListViewModel : ToolViewModel, IExtension, IWatchList
+    {
+        protected IDebugManager2 _debugManager;
 
-		public WatchListViewModel()
-		{
-			Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
+        private readonly List<ObjectValue> watches;
+        private List<string> _expressions;
+        StackFrame _currentFrame;
 
-			Title = "Watch List";
-			Children = new ObservableCollection<WatchViewModel>();
-			LastChangedRegisters = new List<WatchViewModel>();
+        private ObservableCollection<ObjectValueViewModel> children;
+        public List<ObjectValueViewModel> LastChangedRegisters;
+
+        public WatchListViewModel()
+        {
+            Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
+            watches = new List<ObjectValue>();
+            Title = "Watch List";
+            Children = new ObservableCollection<ObjectValueViewModel>();
+            LastChangedRegisters = new List<ObjectValueViewModel>();
+
+            _expressions = new List<string>();
 
             Activation(); // for when we create the part outside of composition.
         }
 
-		public ObservableCollection<WatchViewModel> Children
-		{
-			get { return children; }
-			set { this.RaiseAndSetIfChanged(ref children, value); }
-		}
+        public void SetCurrentFrame(StackFrame frame)
+        {
+            _currentFrame = frame;
+        }
 
-		public override Location DefaultLocation
-		{
-			get { return Location.RightMiddle; }
-		}
+        public ObservableCollection<ObjectValueViewModel> Children
+        {
+            get { return children; }
+            set { this.RaiseAndSetIfChanged(ref children, value); }
+        }
 
-		public virtual void BeforeActivation()
-		{
-			IoC.RegisterConstant(this, typeof (IWatchList));
-		}
+        public override Location DefaultLocation
+        {
+            get { return Location.RightMiddle; }
+        }
 
-		public virtual void Activation()
-		{
-			_debugManager = IoC.Get<IDebugManager>();
+        public virtual void BeforeActivation()
+        {
+            IoC.RegisterConstant(this, typeof(IWatchList));
+        }
+
+        public virtual void Activation()
+        {
+            _debugManager = IoC.Get<IDebugManager2>();
 
             if (_debugManager != null)
             {
-                _debugManager.DebugFrameChanged += WatchListViewModel_DebugFrameChanged;
-
+                _debugManager.TargetStopped += _debugManager_TargetStopped;
                 _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
                 _debugManager.DebugSessionEnded += (sender, e) =>
@@ -60,84 +71,117 @@ namespace AvalonStudio.Debugging
                     Clear();
                 };
             }
-		}
+        }
 
-		public async void AddWatch(string expression)
-		{
-			var newWatch =
-				await
-					_debugManager.CurrentDebugger.CreateWatchAsync(
-						string.Format("var{0}", _debugManager.CurrentDebugger.GetVariableId()), expression);
+        private void _debugManager_TargetStopped(object sender, TargetEventArgs e)
+        {
+            _currentFrame = e.Backtrace.GetFrame(0);
 
-			if (newWatch != null)
-			{
-				Add(newWatch);
-			}
-		}
+            var expressions = _currentFrame.GetExpressionValues(_expressions.ToArray(), false);
 
-		public async void RemoveWatch(WatchViewModel watch)
-		{
-			if (watch != null)
-			{
-				Dispatcher.UIThread.InvokeAsync(() => { Children.Remove(watch); });
+            InvalidateObjects(expressions);
+        }
 
-				await _debugManager.CurrentDebugger.DeleteWatchAsync(watch.Model.Id);
-			}
-		}
+        public void InvalidateObjects(params ObjectValue[] variables)
+        {
+            var updated = new List<ObjectValue>();
+            var removed = new List<ObjectValue>();
 
-		public void AddExistingWatch(VariableObject variable)
-		{
-			Add(variable);
-		}
+            for (var i = 0; i < watches.Count; i++)
+            {
+                var watch = watches[i];
 
-		public async void Add(VariableObject model)
-		{
-			var newWatch = new WatchViewModel(this, _debugManager.CurrentDebugger, model);
+                var currentVar = variables.FirstOrDefault(v => v.Name == watch.Name);
 
-			await newWatch.Evaluate(_debugManager.CurrentDebugger);
+                if (currentVar == null)
+                {
+                    removed.Add(watch);
+                }
+                else
+                {
+                    updated.Add(watch);
+                }
+            }
 
-			Dispatcher.UIThread.InvokeAsync(() => { Children.Add(newWatch); });
+            foreach (var variable in variables)
+            {
+                var currentVar = updated.FirstOrDefault(v => v.Name == variable.Name);
 
-			//InvalidateColumnWidths();
-		}
+                if (currentVar == null)
+                {
+                    watches.Add(variable);
+                    Add(variable);
+                }
+                else
+                {
+                    var currentVm = Children.FirstOrDefault(c => c.Model.Name == currentVar.Name);
 
-		private void ApplyChange(VariableObjectChange change)
-		{
-			foreach (var watch in Children)
-			{
-				if (watch.ApplyChange(change))
-				{
-					break;
-				}
-			}
-		}
+                    currentVm.ApplyChange(variable);
+                }
+            }
 
-		public virtual void Clear()
-		{
-			Children.Clear();
-		}
+            foreach (var removedvar in removed)
+            {
+                watches.Remove(removedvar);
+                Remove(removedvar);
+            }
+        }
 
-		public async Task Invalidate(List<VariableObjectChange> updates)
-		{
-			foreach (var watch in LastChangedRegisters)
-			{
-				await Dispatcher.UIThread.InvokeTaskAsync(() => { watch.HasChanged = false; });
-			}
+        public void Add(ObjectValue model)
+        {
+            var newWatch = new ObjectValueViewModel(this, model);
 
-			LastChangedRegisters.Clear();
+            Dispatcher.UIThread.InvokeTaskAsync(() =>
+            {
+                Children.Add(newWatch);
+            }).Wait();
+        }
 
-			if (updates != null)
-			{
-				foreach (var update in updates)
-				{
-					ApplyChange(update);
-				}
-			}
-		}
+        public void Remove(ObjectValue value)
+        {
+            Dispatcher.UIThread.InvokeTaskAsync(() =>
+            {
+                Children.Remove(Children.FirstOrDefault(c => c.Model.Name == value.Name));
+            }).Wait();
+        }
 
-		private async void WatchListViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
-		{
-			await Invalidate(e.VariableChanges);
-		}
-	}
+        private void ApplyChange(ObjectValue change)
+        {
+            foreach (var watch in Children)
+            {
+                if (watch.ApplyChange(change))
+                {
+                    break;
+                }
+            }
+        }
+
+        public virtual void Clear()
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Children.Clear();
+            });
+
+            watches.Clear();
+        }
+
+        public bool AddWatch(string expression)
+        {
+            bool result = false;
+
+            if (_debugManager.SessionActive && !_debugManager.Session.IsRunning && _debugManager.Session.IsConnected && !_expressions.Contains(expression))
+            {
+                _expressions.Add(expression);
+
+               var watch = _currentFrame.GetExpressionValue(expression, false);
+
+                Task.Run(() => { InvalidateObjects(watch); });
+
+                return true;
+            }
+
+            return result;
+        }
+    }
 }

@@ -46,7 +46,7 @@ namespace AvalonStudio.Debugging
 
 							//WorkspaceViewModel.Instance.SaveAllCommand.Execute(null);
 
-							Task.Factory.StartNew(async () =>
+							Task.Run(async () =>
 							{
 								//WorkspaceViewModel.Instance.ExecutingCompileTask = true;
 
@@ -144,11 +144,11 @@ namespace AvalonStudio.Debugging
 		{
 			VariableObject result = null;
 
-			/*if (CurrentDebugger.State == DebuggerState.Paused)
+			if (CurrentDebugger.State == DebuggerState.Paused)
 			{
 				result =
 					await CurrentDebugger.CreateWatchAsync(string.Format("probe{0}", CurrentDebugger.GetVariableId()), expression);
-			}*/
+			}
 
 			return result;
 		}

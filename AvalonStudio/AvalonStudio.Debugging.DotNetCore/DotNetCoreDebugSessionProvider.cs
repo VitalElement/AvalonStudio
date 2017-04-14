@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Debugging.DotNetCore
 {
+    using System;
     using AvalonStudio.Extensibility;
     using AvalonStudio.Projects;
     using Mono.Debugging.Client;
@@ -17,7 +18,7 @@
             IoC.RegisterConstant<DotNetCoreDebugger>(this);
         }
 
-        public DebuggerSession CreateSession()
+        public DebuggerSession CreateSession(IProject project)
         {
             var result = new CoreClrDebuggerSession(System.IO.Path.GetInvalidPathChars(), "C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\1.1.1\\dbgshim.dll");
 
@@ -49,6 +50,16 @@
             };
 
             return startInfo;
+        }
+
+        public object GetSettingsControl(IProject project)
+        {
+            return null;
+        }
+
+        public void ProvisionSettings(IProject project)
+        {
+            
         }
     }
 }

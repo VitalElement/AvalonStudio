@@ -9,8 +9,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
 	/// </summary>
 	public class DynamicAsyncVirtualizingCollection<T> : AsyncVirtualizingCollection<T> where T : class
 	{
-		private readonly int loadCountInterval;
-		private readonly Timer timer;
+		private readonly int loadCountInterval;		
 
 		/// <summary>
 		///     Constructor. Hooks up the event handler triggered when the timer ticks.
@@ -33,8 +32,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
 		/// </summary>
 		protected override void LoadCountCompleted(object args)
 		{
-			base.LoadCountCompleted(args);
-			timer.Change(TimeSpan.FromMilliseconds(loadCountInterval), TimeSpan.FromMilliseconds(loadCountInterval));
+			base.LoadCountCompleted(args);			
 		}
 
 		/// <summary>
