@@ -121,7 +121,7 @@ namespace AvalonStudio.Platforms
                     case PlatformID.MacOSX:
                         return ".dylib";
                     case PlatformID.Win32NT:
-                        return ".exe";
+                        return ".dll";
 
                     default:
                         throw new NotImplementedException("Not implemented for your platform.");
