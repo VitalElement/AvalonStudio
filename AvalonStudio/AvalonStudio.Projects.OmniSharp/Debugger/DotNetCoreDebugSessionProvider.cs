@@ -8,6 +8,7 @@
     using AvalonStudio.GlobalSettings;
     using AvalonStudio.Projects.OmniSharp;
     using System.IO;
+    using AvalonStudio.Platforms;
 
     public class DotNetCoreDebugger : IDebugger2
     {
@@ -25,7 +26,7 @@
         {
             var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
 
-            var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", "1.1.1");
+            var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", "1.1.1", "dbgshim" + Platform.DLLExtension);
 
             var result = new CoreClrDebuggerSession(System.IO.Path.GetInvalidPathChars(), dbgShimPath);
 
