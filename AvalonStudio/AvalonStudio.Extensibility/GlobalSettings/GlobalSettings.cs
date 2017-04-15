@@ -1,5 +1,7 @@
 ﻿using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -33,11 +35,24 @@ namespace AvalonStudio.GlobalSettings
         }
     }
 
-    public class Settings
+    class Settings
     {
         private dynamic _root = new ExpandoObject();
 
         private IDictionary<string, object> _rootIndex => ((IDictionary<string, object>)_root);
+
+        [JsonConverter(typeof(ExpandoObjectConverter))]
+        public ExpandoObject Root
+        {
+            get
+            {
+                return _root;
+            }
+            set
+            {
+                _root = value;
+            }
+        }
 
         private static string GlobalSettingsFile => Path.Combine(Platform.SettingsDirectory, "GlobalSettings.json");
 
@@ -49,18 +64,22 @@ namespace AvalonStudio.GlobalSettings
         }
 
         private static Settings Load ()
-        {
-            if(File.Exists(GlobalSettingsFile))
+        {            
+            if (File.Exists(GlobalSettingsFile))
             {
-                return SerializedObject.Deserialize<Settings>(GlobalSettingsFile);
+               return SerializedObject.Deserialize<Settings>(GlobalSettingsFile);
             }
 
-            return new Settings();
+            var result = new Settings();
+
+            result.Save();
+
+            return result;
         }
 
         public void Save()
         {
-            SerializedObject.Serialize(GlobalSettingsFile, _root);
+            SerializedObject.Serialize(GlobalSettingsFile, this);
         }
         
         public T GetSettings<T>()
