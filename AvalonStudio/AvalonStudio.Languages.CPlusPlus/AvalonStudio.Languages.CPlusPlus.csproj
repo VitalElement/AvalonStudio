@@ -6,7 +6,7 @@
     <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net40</PackageTargetFallback>
   </PropertyGroup>  
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build2920-alpha" />
+    <PackageReference Include="Avalonia" Version="0.4.1-build2959-alpha" />
     <PackageReference Include="AvalonStudio.Languages.CPlusPlus.LibClang" Version="4.0.0.2" />
   </ItemGroup>
   <ItemGroup>
