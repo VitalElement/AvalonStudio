@@ -110,6 +110,25 @@ namespace AvalonStudio.Platforms
 
         public static string TemplatesFolder => Path.Combine(ExecutionPath, "Templates");
 
+        public static string DLLExtension
+        {
+            get
+            {
+                switch (PlatformIdentifier)
+                {
+                    case PlatformID.Unix:
+                        return ".so";
+                    case PlatformID.MacOSX:
+                        return ".dylib";
+                    case PlatformID.Win32NT:
+                        return ".exe";
+
+                    default:
+                        throw new NotImplementedException("Not implemented for your platform.");
+                }
+            }
+        }
+
         public static string ExecutableExtension
         {
             get
