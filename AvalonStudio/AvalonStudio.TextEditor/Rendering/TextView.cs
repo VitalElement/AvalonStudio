@@ -101,7 +101,6 @@ namespace AvalonStudio.TextEditor.Rendering
             return result;
         }
 
-
         public int FindMatchingBracketBackward(int startOffset, char close, char open)
         {
             var result = startOffset;
@@ -212,7 +211,6 @@ namespace AvalonStudio.TextEditor.Rendering
                     documentLineTransformersChangedSubscriber);
             }));
 
-
             disposables.Add(FontSizeProperty.Changed.Subscribe(o =>
             {
                 GenerateTextProperties();
@@ -235,17 +233,16 @@ namespace AvalonStudio.TextEditor.Rendering
             _caretTimer.Tick -= CaretTimerTick;
             textSurface = null;
             marginContainer = null;
-            TextDocument = null;            
+            TextDocument = null;
         }
-
 
         public TextView()
         {
             disposables = new CompositeDisposable();
-            
+
             disposables.Add(MarginProperty.Changed.AddClassHandler<TextView>((s, v) =>
             {
-                if(collectionChangedDisposable != null)
+                if (collectionChangedDisposable != null)
                 {
                     collectionChangedDisposable.Dispose();
                 }
@@ -278,43 +275,6 @@ namespace AvalonStudio.TextEditor.Rendering
                     }
                 });
             }));
-
-            //documentLineTransformersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
-            //{
-            //    if (e.NewItems != null)
-            //    {
-            //        foreach (var item in e.NewItems)
-            //        {
-            //            WeakSubscriptionManager.Subscribe(item, nameof(IDocumentLineTransformer.DataChanged), documentLineTransformerChangedSubscriber);
-            //        }
-            //    }
-            //});
-
-            //backgroundRenderersChangedSubscriber = new WeakCollectionChangedEventArgsSubscriber((e) =>
-            //{
-            //    if (e.NewItems != null)
-            //    {
-            //        foreach (var item in e.NewItems)
-            //        {
-            //            WeakSubscriptionManager.Subscribe(item, nameof(IBackgroundRenderer.DataChanged), backgroundRendererChangedSubscriber);
-            //        }
-            //    }
-            //});
-
-            //documentLineTransformerChangedSubscriber = new WeakEventArgsSubscriber(() =>
-            //{
-            //    Invalidate();                
-            //});
-
-            //backgroundRendererChangedSubscriber = new WeakEventArgsSubscriber(() =>
-            //{
-            //    Invalidate();
-            //});
-
-            //documentTextChangedSubscriber = new WeakEventArgsSubscriber(() =>
-            //{
-            //    Invalidate();
-            //});
 
             _caretTimer = new DispatcherTimer()
             {
@@ -408,7 +368,10 @@ namespace AvalonStudio.TextEditor.Rendering
 
         public TextDocument TextDocument
         {
-            get { return GetValue(TextDocumentProperty); }
+            get
+            {
+                return GetValue(TextDocumentProperty);
+            }
             set
             {
                 SetValue(TextDocumentProperty, value);
@@ -514,10 +477,13 @@ namespace AvalonStudio.TextEditor.Rendering
 
         public Vector Offset
         {
-            get { return offset; }
+            get
+            {
+                return offset;
+            }
             set
             {
-                if (value.Y != offset.Y || value.X != offset.X && firstVisualLine != (int)value.Y)
+                if ((value.Y != offset.Y || value.X != offset.X) && firstVisualLine != (int)value.Y)
                 {
                     firstVisualLine = (int)value.Y;
 
@@ -589,9 +555,9 @@ namespace AvalonStudio.TextEditor.Rendering
             }
         }
 
-        public void UninstallMargin (Control margin)
+        public void UninstallMargin(Control margin)
         {
-            if(marginContainer != null)
+            if (marginContainer != null)
             {
                 marginContainer.Children.Remove(margin);
             }
@@ -731,7 +697,7 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             for (var i = 0; i < count; i++)
             {
-                yield return new Point(start.X + i * offset, start.Y - ((i + 1) % 2 == 0 ? offset : 0));
+                yield return new Point(start.X + (i * offset), start.Y - ((i + 1) % 2 == 0 ? offset : 0));
             }
         }
 
@@ -860,7 +826,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
         public void ScrollToLine(int line, double borderSizePc = 0.5)
         {
-            var offset = line - Viewport.Height * borderSizePc;
+            var offset = line - (Viewport.Height * borderSizePc);
 
             if (offset < 0)
             {
@@ -869,7 +835,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
             this.BringIntoView(new Rect(1, offset, 0, 1));
 
-            offset = line + Viewport.Height * borderSizePc;
+            offset = line + (Viewport.Height * borderSizePc);
 
             if (offset >= 0)
             {
