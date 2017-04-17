@@ -12,44 +12,44 @@ namespace AvalonStudio.Shell.Commands
 
         }
 
-        public static ToolBarItemGroupDefinition StandardOpenSaveToolBarGroup = new ToolBarItemGroupDefinition(
+        public static readonly ToolBarItemGroupDefinition StandardOpenSaveToolBarGroup = new ToolBarItemGroupDefinition(
            Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 1);
 
-        public static ToolBarItemDefinition SaveFileToolBarItem = new ToolBarItemDefinition
+        public static readonly ToolBarItemDefinition SaveFileToolBarItem = new ToolBarItemDefinition
             <SaveFileCommandDefinition>(
             StandardOpenSaveToolBarGroup, 2);
 
-        public static ToolBarItemDefinition SaveAllToolBarItem = new ToolBarItemDefinition
+        public static readonly ToolBarItemDefinition SaveAllToolBarItem = new ToolBarItemDefinition
             <SaveAllFileCommandDefinition>(
             StandardOpenSaveToolBarGroup, 3);
 
-        public static ToolBarItemGroupDefinition StandardEditGroup = new ToolBarItemGroupDefinition(
+        public static readonly ToolBarItemGroupDefinition StandardEditGroup = new ToolBarItemGroupDefinition(
             Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 2);
 
-        public static ToolBarItemDefinition UndoToolBarItem = new ToolBarItemDefinition<UndoCommandDefinition>
+        public static readonly ToolBarItemDefinition UndoToolBarItem = new ToolBarItemDefinition<UndoCommandDefinition>
             (
             StandardEditGroup, 0);
 
-        public static ToolBarItemDefinition RedoToolBarItem = new ToolBarItemDefinition<RedoCommandDefinition>
+        public static readonly ToolBarItemDefinition RedoToolBarItem = new ToolBarItemDefinition<RedoCommandDefinition>
             (
             StandardEditGroup, 1);
 
-        public static ToolBarItemDefinition CommentToolBarItem = new ToolBarItemDefinition
+        public static readonly ToolBarItemDefinition CommentToolBarItem = new ToolBarItemDefinition
             <CommentCommandDefinition>(
             StandardEditGroup, 2);
 
-        public static ToolBarItemDefinition UnCommentToolBarItem = new ToolBarItemDefinition
+        public static readonly ToolBarItemDefinition UnCommentToolBarItem = new ToolBarItemDefinition
             <UnCommentCommandDefinition>(
             StandardEditGroup, 3);
 
-        public static ToolBarItemGroupDefinition StandardBuildGroup = new ToolBarItemGroupDefinition(
+        public static readonly ToolBarItemGroupDefinition StandardBuildGroup = new ToolBarItemGroupDefinition(
             Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 3);
 
-        public static ToolBarItemDefinition BuildToolBarItem = new ToolBarItemDefinition
+        public static readonly ToolBarItemDefinition BuildToolBarItem = new ToolBarItemDefinition
             <BuildCommandDefinition>(
             StandardBuildGroup, 0);
 
-        public static ToolBarItemDefinition CleanToolBarItem = new ToolBarItemDefinition
+        public static readonly ToolBarItemDefinition CleanToolBarItem = new ToolBarItemDefinition
             <CleanCommandDefinition>(
             StandardBuildGroup, 1);
 
