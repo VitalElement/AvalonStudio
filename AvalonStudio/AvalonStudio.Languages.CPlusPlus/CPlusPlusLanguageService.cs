@@ -709,7 +709,6 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-
         public int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
         {
             var result = caret;
@@ -771,7 +770,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                 // This code is same as in toolchain, get compiler arguments... does this need a refactor, or toolchain get passed in? Clang take GCC compatible arguments.
                 // perhaps this language service has its own clang tool chain, to generate compiler arguments from project configuration?
 
-
                 // Referenced includes
                 var referencedIncludes = project.GetReferencedIncludes();
 
@@ -813,16 +811,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                     AddArgument(args, string.Format("-D{0}", define));
                 }
 
-                //foreach (var arg in superProject.ToolChainArguments)
-                //{
-                //    args.Add(string.Format("{0}", arg));
-                //}
-
-                //foreach (var arg in superProject.CompilerArguments)
-                //{
-                //    args.Add(string.Format("{0}", arg));
-                //}
-
                 switch (file.Extension)
                 {
                     case ".c":
@@ -854,9 +842,13 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 args.Add("-Wunused-variable");
 
-                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(),
-                    TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble |
-                    TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.Incomplete);
+                var tuFlags = 
+                    TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | 
+                    TranslationUnitFlags.PrecompiledPreamble |
+                    TranslationUnitFlags.CacheCompletionResults | 
+                    TranslationUnitFlags.Incomplete;
+
+                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), tuFlags);
             }
 
             if (result == null)
@@ -1049,8 +1041,10 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 {
                                     var inx = argument.Element("Index");
 
-                                    if (inx != null)    // This happens when documentation for an argument was left in, but the argument no longer exists.
+                                    if (inx != null)
                                     {
+                                        // This happens when documentation for an argument was left in, but the argument no longer exists.
+
                                         var index = int.Parse(inx.Value);
 
                                         result.Arguments[index].Comment = paragraph.Value;
@@ -1193,12 +1187,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void BeforeActivation()
         {
-
         }
 
         public void Activation()
         {
-
         }
     }
 }
