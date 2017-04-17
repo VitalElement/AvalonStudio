@@ -7,12 +7,13 @@ namespace AvalonStudio.Toolchains.Clang
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
-    using CommandLineTools;    
+    using CommandLineTools;
     using Standard;
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Threading.Tasks;    
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public enum AssemblyFormat
     {
@@ -86,7 +87,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         private void GenerateLinkerScript(IStandardProject project)
         {
-            var settings = GetSettings(project).LinkSettings;            
+            var settings = GetSettings(project).LinkSettings;
 
             var linkerScript = GetLinkerScriptLocation(project);
 
@@ -95,9 +96,8 @@ namespace AvalonStudio.Toolchains.Clang
                 System.IO.File.Delete(linkerScript);
             }
 
-            
             var rendered = Template.Engine.Parse("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size });
-            
+
             using (var sw = System.IO.File.CreateText(linkerScript))
             {
                 sw.Write(rendered);
@@ -254,7 +254,6 @@ namespace AvalonStudio.Toolchains.Clang
                 }
             }
 
-
             switch (settings.CompileSettings.Fpu)
             {
                 case FPUSupport.Soft:
@@ -265,7 +264,6 @@ namespace AvalonStudio.Toolchains.Clang
                     result += "-mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
                     break;
             }
-
 
             // TODO remove dependency on file?
             if (file != null)
@@ -351,34 +349,23 @@ namespace AvalonStudio.Toolchains.Clang
             }
 
             result += settings.CompileSettings.CustomFlags + " ";
-            
+
             // Referenced includes
             var referencedIncludes = project.GetReferencedIncludes();
 
-            foreach (var include in referencedIncludes)
-            {
-                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include));
-            }
+            referencedIncludes.Select(s => result += $"-I\"{Path.Combine(project.CurrentDirectory, s)}\" ");
 
             // global includes
             var globalIncludes = superProject.GetGlobalIncludes();
 
-            foreach (var include in globalIncludes)
-            {
-                result += string.Format("-I\"{0}\" ", include);
-            }
+            globalIncludes.Select(s => result += $"-I\"{s}\" ");
 
             // includes
-            foreach (var include in project.Includes)
-            {
-                result += string.Format("-I\"{0}\" ", Path.Combine(project.CurrentDirectory, include.Value));
-            }
+            project.Includes.Select(s => result += $"-I\"{Path.Combine(project.CurrentDirectory, s.Value)}\" ");
 
             var referencedDefines = project.GetReferencedDefines();
-            foreach (var define in referencedDefines)
-            {
-                result += string.Format("-D{0} ", define);
-            }
+
+            referencedDefines.Select(s => result += $"-D{s} ");
 
             var toolchainIncludes = GetToolchainIncludes(file);
 
@@ -466,7 +453,7 @@ namespace AvalonStudio.Toolchains.Clang
 
             var commandName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension);
 
-            if(PlatformSupport.CheckExecutableAvailability(commandName, BinDirectory))
+            if (PlatformSupport.CheckExecutableAvailability(commandName, BinDirectory))
             {
                 string formatArg = "binary";
 
@@ -520,7 +507,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
         {
-            if((project is IStandardProject) && (project as IStandardProject).Type == ProjectType.Executable)
+            if ((project is IStandardProject) && (project as IStandardProject).Type == ProjectType.Executable)
             {
                 var result = await ObjCopy(console, project, linkResult, AssemblyFormat.Binary);
 
