@@ -1,3 +1,8 @@
+[![CodeFactor](https://www.codefactor.io/repository/github/vitalelement/avalonstudio/badge)](https://www.codefactor.io/repository/github/vitalelement/avalonstudio)
+[![Build status](https://ci.appveyor.com/api/projects/status/l2k85kekoby4tb4j?svg=true)](https://ci.appveyor.com/project/danwalmsley/avalonstudio)
+[![Build Status](https://travis-ci.org/VitalElement/AvalonStudio.svg?branch=master)](https://travis-ci.org/VitalElement/AvalonStudio)
+[![Gitter](https://badges.gitter.im/VitalElement/AvalonStudio.svg)](https://gitter.im/VitalElement/AvalonStudio?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 <img src="AvalonStudio/AvalonStudio/icon.png" width="50" height="50" />
 <img src="https://cloud.githubusercontent.com/assets/4672627/21014496/36454f48-bd56-11e6-8e00-6cf8f878e9a6.png" />
 <img src="https://files.gitter.im/AvaloniaUI/Avalonia/LoHY/Screenshot-from-2017-01-27-00-51-26.png" />
@@ -5,14 +10,6 @@
 # AvalonStudio
 
 An extensible, cross platform IDE written in C#
-
-[![Build status](https://ci.appveyor.com/api/projects/status/l2k85kekoby4tb4j?svg=true)](https://ci.appveyor.com/project/danwalmsley/avalonstudio)
-
-[![Build Status](https://travis-ci.org/VitalElement/AvalonStudio.svg?branch=master)](https://travis-ci.org/VitalElement/AvalonStudio)
-
-[![Gitter](https://badges.gitter.im/VitalElement/AvalonStudio.svg)](https://gitter.im/VitalElement/AvalonStudio?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
-Cross platform IDE on Avalonia for Avalonia
 
 ## Try the bleeding-edge builds?
 
