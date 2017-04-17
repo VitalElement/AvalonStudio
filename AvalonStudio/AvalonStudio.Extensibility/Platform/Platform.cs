@@ -341,7 +341,6 @@ namespace AvalonStudio.Platforms
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true, EntryPoint = "FreeConsole")]
         private static extern bool Win32FreeConsole();
 
-
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GenerateConsoleCtrlEvent(CtrlTypes ctrlEvent, uint processGroupId);
