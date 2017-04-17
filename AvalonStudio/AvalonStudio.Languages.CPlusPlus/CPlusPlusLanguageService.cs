@@ -842,13 +842,13 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 args.Add("-Wunused-variable");
 
-                var tuFlags = 
+                var translationUnitFlags = 
                     TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | 
                     TranslationUnitFlags.PrecompiledPreamble |
                     TranslationUnitFlags.CacheCompletionResults | 
                     TranslationUnitFlags.Incomplete;
 
-                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), tuFlags);
+                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), translationUnitFlags);
             }
 
             if (result == null)
@@ -1044,7 +1044,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                                     if (inx != null)
                                     {
                                         // This happens when documentation for an argument was left in, but the argument no longer exists.
-
                                         var index = int.Parse(inx.Value);
 
                                         result.Arguments[index].Comment = paragraph.Value;
