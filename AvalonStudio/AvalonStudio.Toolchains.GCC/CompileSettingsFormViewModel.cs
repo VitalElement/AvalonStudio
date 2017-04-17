@@ -13,7 +13,7 @@ namespace AvalonStudio.Toolchains.GCC
 {
     public class CompileSettingsFormViewModel : HeaderedViewModel<IProject>
     {
-        private int cLanguageStandardSelectedIndex;
+        private int clanguageStandardSelectedIndex;
 
         private string compilerArguments;
 
@@ -60,16 +60,12 @@ namespace AvalonStudio.Toolchains.GCC
             defines = new ObservableCollection<string>(settings.Defines);
             includePaths = new ObservableCollection<string>(settings.Includes);
 
-            //var config = project.SelectedConfiguration;
-            //cppSupport = config.CppSupport;
             miscOptions = settings.CustomFlags;
-            //includePaths = new ObservableCollection<string>(config.IncludePaths);            
-
 
             optimizationLevelSelectedIndex = (int)settings.Optimization;
             optimizationPreferenceSelectedIndex = (int)settings.OptimizationPreference;
             cppLanguageStandardSelectedIndex = (int)settings.CppLanguageStandard;
-            cLanguageStandardSelectedIndex = (int)settings.CLanguageStandard;
+            clanguageStandardSelectedIndex = (int)settings.CLanguageStandard;
             fpuSelectedIndex = (int)settings.Fpu;
             debugSymbols = settings.DebugInformation;
             rtti = settings.Rtti;
@@ -106,11 +102,11 @@ namespace AvalonStudio.Toolchains.GCC
         {
             get
             {
-                return cLanguageStandardSelectedIndex;
+                return clanguageStandardSelectedIndex;
             }
             set
             {
-                cLanguageStandardSelectedIndex = value;
+                clanguageStandardSelectedIndex = value;
                 UpdateCompileString();
             }
         }
@@ -146,28 +142,11 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                fpuSelectedIndex = value; //OnPropertyChanged();
-
-                //Workspace.This.BeginDispatchUi(() =>
-                //{
-                //    switch ((FPUSupport)value)
-                //    {
-                //        case FPUSupport.Soft:
-                //        case FPUSupport.Hard:
-                //            Defines.Remove("__FPU_USED");
-                //            Defines.Add("__FPU_USED");
-                //            break;
-
-                //        default:
-                //            Defines.Remove("__FPU_USED");
-                //            break;
-                //    }
+                fpuSelectedIndex = value;
 
                 UpdateCompileString();
-                //});
             }
         }
-
 
         public string[] OptimizationPreferenceOptions
         {
@@ -188,7 +167,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
         }
 
-        public string[] OptimizationLevelOptions => Enum.GetNames(typeof(OptimizationLevel));        
+        public string[] OptimizationLevelOptions => Enum.GetNames(typeof(OptimizationLevel));
 
         public int OptimizationLevelSelectedIndex
         {
@@ -304,7 +283,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public ObservableCollection<string> Defines
         {
-            get { return defines; }
+            get
+            {
+                return defines;
+            }
             set
             {
                 defines = value;
@@ -422,7 +404,7 @@ namespace AvalonStudio.Toolchains.GCC
             settings.Defines = defines.ToList();
             settings.CustomFlags = miscOptions;
             settings.CppLanguageStandard = (CppLanguageStandard)cppLanguageStandardSelectedIndex;
-            settings.CLanguageStandard = (CLanguageStandard)cLanguageStandardSelectedIndex;
+            settings.CLanguageStandard = (CLanguageStandard)clanguageStandardSelectedIndex;
             //base.Model.CompilerSettings.Defines = defines.ToList();
             //var config = project.SelectedConfiguration;
 
@@ -443,7 +425,7 @@ namespace AvalonStudio.Toolchains.GCC
         }
 
         private void OnPropertyChanged()
-        {            
+        {
         }
     }
 }
