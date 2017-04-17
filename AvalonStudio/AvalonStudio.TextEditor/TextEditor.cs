@@ -112,7 +112,6 @@ namespace AvalonStudio.TextEditor
             var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
                 .Select(x => !x);
 
-
             var horizontalScrollBarVisibility = this.GetObservable(AcceptsReturnProperty)
                 .Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
 
@@ -296,7 +295,10 @@ namespace AvalonStudio.TextEditor
 
         public int CaretIndex
         {
-            get { return GetValue(CaretIndexProperty); }
+            get
+            {
+                return GetValue(CaretIndexProperty);
+            }
             set
             {
                 SetValue(CaretIndexProperty, value);
@@ -386,7 +388,10 @@ namespace AvalonStudio.TextEditor
         private Vector offset;
         public Vector Offset
         {
-            get { return offset; }
+            get
+            {
+                return offset;
+            }
             set
             {
                 if (value.Y != offset.Y || value.X != offset.X)
@@ -420,7 +425,6 @@ namespace AvalonStudio.TextEditor
                 return GetWordAtIndex(index);
             }
         }
-
 
         public string GetWordAtIndex(int index)
         {
@@ -542,6 +546,68 @@ namespace AvalonStudio.TextEditor
             }
         }
 
+        private void MoveToWordBoundard(int count, int caretIndex)
+        {
+            if (count > 0)
+            {
+                count =
+                    TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
+                        TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
+            }
+            else
+            {
+                count =
+                    TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward,
+                        TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
+            }
+
+            if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
+            {
+                CaretIndex += count;
+            }
+        }
+
+        private void MoveForward(int count, int caretIndex)
+        {
+            for (var i = 0; i < Math.Abs(count); i++)
+            {
+                var line = TextDocument.GetLineByOffset(caretIndex);
+
+                if (caretIndex == line.EndOffset)
+                {
+                    if (line.NextLine != null)
+                    {
+                        caretIndex = line.NextLine.Offset;
+                    }
+                }
+                else
+                {
+                    caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
+                        TextUtilities.CaretPositioningMode.Normal);
+                }
+            }
+        }
+
+        private void MoveBackward(int count, int caretIndex)
+        {
+            for (var i = 0; i < Math.Abs(count); i++)
+            {
+                var line = TextDocument.GetLineByOffset(caretIndex);
+
+                if (caretIndex == line.Offset)
+                {
+                    if (line.PreviousLine != null)
+                    {
+                        caretIndex = line.PreviousLine.EndOffset;
+                    }
+                }
+                else
+                {
+                    caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex,
+                        TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
+                }
+            }
+        }
 
         private void MoveHorizontal(int count, InputModifiers modifiers)
         {
@@ -556,65 +622,17 @@ namespace AvalonStudio.TextEditor
             {
                 if ((modifiers & InputModifiers.Control) != 0)
                 {
-                    if (count > 0)
-                    {
-                        count =
-                            TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
-                                TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
-                    }
-                    else
-                    {
-                        count =
-                            TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward,
-                                TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
-                    }
-
-                    if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
-                    {
-                        CaretIndex += count;
-                    }
+                    MoveToWordBoundard(count, caretIndex);
                 }
                 else
                 {
                     if (count > 0)
                     {
-                        for (var i = 0; i < Math.Abs(count); i++)
-                        {
-                            var line = TextDocument.GetLineByOffset(caretIndex);
-
-                            if (caretIndex == line.EndOffset)
-                            {
-                                if (line.NextLine != null)
-                                {
-                                    caretIndex = line.NextLine.Offset;
-                                }
-                            }
-                            else
-                            {
-                                caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
-                                    TextUtilities.CaretPositioningMode.Normal);
-                            }
-                        }
+                        MoveForward(count, caretIndex);
                     }
                     else
                     {
-                        for (var i = 0; i < Math.Abs(count); i++)
-                        {
-                            var line = TextDocument.GetLineByOffset(caretIndex);
-
-                            if (caretIndex == line.Offset)
-                            {
-                                if (line.PreviousLine != null)
-                                {
-                                    caretIndex = line.PreviousLine.EndOffset;
-                                }
-                            }
-                            else
-                            {
-                                caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex,
-                                    TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
-                            }
-                        }
+                        MoveBackward(count, caretIndex);
                     }
 
                     CaretIndex = caretIndex;
@@ -765,12 +783,7 @@ namespace AvalonStudio.TextEditor
                 Undo();
             }
         }
-
-        #endregion
-
-        #region Public Methods        
-
-        #endregion
+        #endregion        
 
         #region Overrides
 
@@ -870,7 +883,8 @@ namespace AvalonStudio.TextEditor
 
         protected override void OnPointerMoved(PointerEventArgs e)
         {
-            if (TextView != null) // Need to check this incase control was virtualized?
+            // Need to check this incase control was virtualized?
+            if (TextView != null)
             {
                 var point = e.GetPosition(TextView.TextSurface);
 
@@ -928,7 +942,6 @@ namespace AvalonStudio.TextEditor
                 var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
 
                 anchors.Add(selection);
-                // TODO Add an achor to the caret index...
 
                 TextDocument.BeginUpdate();
 
@@ -942,7 +955,6 @@ namespace AvalonStudio.TextEditor
                 SetSelection(selection);
             }
         }
-
 
         protected void OnKeyDown(object sender, KeyEventArgs e)
         {
@@ -1105,8 +1117,6 @@ namespace AvalonStudio.TextEditor
                         e.Handled = true;
 
                         var shiftedLines = false;
-
-                        // TODO implement Selection.IsMultiLine
 
                         if (SelectionStart != SelectionEnd)
                         {
