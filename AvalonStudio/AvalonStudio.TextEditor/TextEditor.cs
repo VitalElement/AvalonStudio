@@ -684,7 +684,6 @@ namespace AvalonStudio.TextEditor
                     caretIndex = lineOffset + whiteSpace.Length;
                 }
 
-
                 CaretIndex = caretIndex;
                 SetHighestColumn();
             }
@@ -956,6 +955,90 @@ namespace AvalonStudio.TextEditor
             }
         }
 
+        private void OnBackKey ()
+        {
+            // TODO use thread-safe copy of caret index.
+            if (!DeleteSelection() && CaretIndex > 0)
+            {
+                var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                if (CaretIndex == line.Offset && line.PreviousLine != null)
+                {
+                    var delimiterLength = line.PreviousLine.DelimiterLength;
+                    TextDocument.Remove(CaretIndex - delimiterLength, delimiterLength);
+                    CaretIndex -= delimiterLength;
+                }
+                else
+                {
+                    TextDocument.Remove(CaretIndex - 1, 1);
+                    --CaretIndex;
+                }
+
+                TextView.Invalidate();
+            }
+        }
+
+        void OnTabKey(KeyEventArgs e)
+        {
+            var shiftedLines = false;
+
+            if (SelectionStart != SelectionEnd)
+            {
+                if (e.Modifiers == InputModifiers.Shift)
+                {
+                    var selection = GetSelectionAsSegment();
+                    var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+
+                    if (lines.Count() > 1)
+                    {
+                        TransformSelectedLines(line =>
+                        {
+                            var offset = line.Offset;
+                            var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
+
+                            if (s.Length > 0)
+                            {
+                                TextDocument.Remove(s.Offset, s.Length);
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    var selection = GetSelectionAsSegment();
+                    var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+
+                    if (lines.Count() > 1)
+                    {
+                        TransformSelectedLines(line => { TextDocument.Insert(line.Offset, TabCharacter); });
+
+                        shiftedLines = true;
+                    }
+                }
+            }
+
+            if (!shiftedLines)
+            {
+                if (e.Modifiers == InputModifiers.Shift)
+                {
+                    TransformSelectedLines(line =>
+                    {
+                        var offset = CaretIndex - TabCharacter.Length;
+                        var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
+
+                        if (s.Length > 0)
+                        {
+                            TextDocument.Remove(s.Offset, s.Length);
+                        }
+                    });
+                }
+                else
+                {
+                    HandleTextInput(TabCharacter);
+                }
+            }
+        }
+
         protected void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Handled)
@@ -1063,25 +1146,7 @@ namespace AvalonStudio.TextEditor
                     break;
 
                 case Key.Back:
-                    if (!DeleteSelection() && CaretIndex > 0)
-                    {
-                        var line = TextDocument.GetLineByOffset(CaretIndex);
-
-                        if (CaretIndex == line.Offset && line.PreviousLine != null)
-                        {
-                            var delimiterLength = line.PreviousLine.DelimiterLength;
-                            TextDocument.Remove(CaretIndex - delimiterLength, delimiterLength);
-                            CaretIndex -= delimiterLength;
-                        }
-                        else
-                        {
-                            TextDocument.Remove(caretIndex - 1, 1);
-                            --CaretIndex;
-                        }
-
-                        TextView.Invalidate();
-                    }
-
+                    OnBackKey();
                     break;
 
                 case Key.Delete:
@@ -1116,63 +1181,7 @@ namespace AvalonStudio.TextEditor
                     {
                         e.Handled = true;
 
-                        var shiftedLines = false;
-
-                        if (SelectionStart != SelectionEnd)
-                        {
-                            if (e.Modifiers == InputModifiers.Shift)
-                            {
-                                var selection = GetSelectionAsSegment();
-                                var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
-
-                                if (lines.Count() > 1)
-                                {
-                                    TransformSelectedLines(line =>
-                                    {
-                                        var offset = line.Offset;
-                                        var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
-
-                                        if (s.Length > 0)
-                                        {
-                                            TextDocument.Remove(s.Offset, s.Length);
-                                        }
-                                    });
-                                }
-                            }
-                            else
-                            {
-                                var selection = GetSelectionAsSegment();
-                                var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
-
-                                if (lines.Count() > 1)
-                                {
-                                    TransformSelectedLines(line => { TextDocument.Insert(line.Offset, TabCharacter); });
-
-                                    shiftedLines = true;
-                                }
-                            }
-                        }
-
-                        if (!shiftedLines)
-                        {
-                            if (e.Modifiers == InputModifiers.Shift)
-                            {
-                                TransformSelectedLines(line =>
-                                {
-                                    var offset = CaretIndex - TabCharacter.Length;
-                                    var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
-
-                                    if (s.Length > 0)
-                                    {
-                                        TextDocument.Remove(s.Offset, s.Length);
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                HandleTextInput(TabCharacter);
-                            }
-                        }
+                        OnTabKey(e);
                     }
                     else
                     {
@@ -1196,7 +1205,7 @@ namespace AvalonStudio.TextEditor
                 SelectionEnd = CaretIndex;
             }
             else if (movement)
-            {
+            {                
                 SelectionStart = SelectionEnd = CaretIndex;
             }
 
