@@ -16,7 +16,6 @@ using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using OmniXaml.Attributes;
-
 using Avalonia.LogicalTree;
 
 namespace AvalonStudio.TextEditor
@@ -37,10 +36,33 @@ namespace AvalonStudio.TextEditor
             TextView.ScrollToLine(line);
         }
 
+        public void Indent(IIndentationStrategy indentationStrategy)
+        {
+            if (CaretIndex >= 0 && CaretIndex < TextDocument.TextLength)
+            {
+                if (TextDocument.GetCharAt(CaretIndex) == '}')
+                {
+                    TextDocument.Insert(CaretIndex, Environment.NewLine);
+                    CaretIndex--;
+
+                    var currentLine = TextDocument.GetLineByOffset(CaretIndex);
+
+                    CaretIndex = indentationStrategy.IndentLine(TextDocument, currentLine, CaretIndex);
+                    CaretIndex = indentationStrategy.IndentLine(TextDocument, currentLine.NextLine.NextLine, CaretIndex);
+                    CaretIndex = indentationStrategy.IndentLine(TextDocument, currentLine.NextLine, CaretIndex);
+                }
+
+                var newCaret = indentationStrategy.IndentLine(TextDocument,
+                    TextDocument.GetLineByOffset(CaretIndex), CaretIndex);
+
+                CaretIndex = newCaret;
+            }
+        }
+
         #region Contructors
 
         static TextEditor()
-        {            
+        {
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
 
             CaretIndexProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
@@ -106,7 +128,7 @@ namespace AvalonStudio.TextEditor
                 EditorScrolled?.Invoke(this, new EventArgs());
             }));
 
-            disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));            
+            disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
         }
 
         public event EventHandler<EventArgs> EditorScrolled;
@@ -249,7 +271,7 @@ namespace AvalonStudio.TextEditor
         {
             get { return GetValue(TextChangedCommandProperty); }
             set { SetValue(TextChangedCommandProperty, value); }
-        }        
+        }
 
         public static readonly AvaloniaProperty<bool> AcceptsReturnProperty =
             AvaloniaProperty.Register<TextEditor, bool>(nameof(AcceptsReturn));

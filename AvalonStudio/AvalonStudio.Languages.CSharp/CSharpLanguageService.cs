@@ -217,26 +217,7 @@
                     {
                         case Key.Return:
                             {
-                                if (editor.CaretIndex >= 0 && editor.CaretIndex < editor.TextDocument.TextLength)
-                                {
-                                    if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
-                                    {
-                                        editor.TextDocument.Insert(editor.CaretIndex, Environment.NewLine);
-                                        editor.CaretIndex--;
-
-                                        var currentLine = editor.TextDocument.GetLineByOffset(editor.CaretIndex);
-
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine, editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine.NextLine,
-                                            editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);
-                                    }
-
-                                    var newCaret = IndentationStrategy.IndentLine(editor.TextDocument,
-                                        editor.TextDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
-
-                                    editor.CaretIndex = newCaret;
-                                }
+                                editor.Indent(IndentationStrategy);
                             }
                             break;
                     }
