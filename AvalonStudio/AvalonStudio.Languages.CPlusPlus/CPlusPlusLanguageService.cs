@@ -718,6 +718,14 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
+        private void AddArguments(List<string> list, IEnumerable<string> arguments)
+        {
+            foreach (var argument in arguments)
+            {
+                AddArgument(list, argument);
+            }
+        }
+
         private void AddArgument(List<string> list, string argument)
         {
             if (!list.Contains(argument))
@@ -741,10 +749,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 if (toolchainIncludes != null)
                 {
-                    foreach (var include in toolchainIncludes)
-                    {
-                        AddArgument(args, string.Format("-isystem{0}", include));
-                    }
+                    AddArguments(args, toolchainIncludes.Select(s => $"-isystem{s}"));
                 }
 
                 // toolchain includes
@@ -754,61 +759,38 @@ namespace AvalonStudio.Languages.CPlusPlus
                 // Referenced includes
                 var referencedIncludes = project.GetReferencedIncludes();
 
-                foreach (var include in referencedIncludes)
-                {
-                    AddArgument(args, string.Format("-I{0}", include));
-                }
+                AddArguments(args, referencedIncludes.Select(s => $"-I{s}"));
 
                 // global includes
                 var globalIncludes = superProject.GetGlobalIncludes();
 
-                foreach (var include in globalIncludes)
-                {
-                    AddArgument(args, string.Format("-I{0}", include));
-                }
+                AddArguments(args, globalIncludes.Select(s => $"-I{s}"));
 
                 // includes
-                foreach (var include in project.Includes)
-                {
-                    AddArgument(args, string.Format("-I{0}", Path.Combine(project.CurrentDirectory, include.Value)));
-                }
+                AddArguments(args, project.Includes.Select(s => $"-I{Path.Combine(project.CurrentDirectory, s.Value)}"));
 
                 var referencedDefines = project.GetReferencedDefines();
-                foreach (var define in referencedDefines)
-                {
-                    AddArgument(args, string.Format("-D{0}", define));
-                }
+
+                AddArguments(args, referencedDefines.Select(s => $"-D{s}"));
 
                 // global includes
                 var globalDefines = superProject.GetGlobalDefines();
 
-                foreach (var define in globalDefines)
-                {
-                    AddArgument(args, string.Format("-D{0}", define));
-                }
+                AddArguments(args, globalDefines.Select(s => $"-D{s}"));
 
-                foreach (var define in project.Defines)
-                {
-                    AddArgument(args, string.Format("-D{0}", define));
-                }
+                AddArguments(args, project.Defines.Select(s => $"-D{s}"));
 
                 switch (file.Extension)
                 {
                     case ".c":
                         {
-                            foreach (var arg in superProject.CCompilerArguments)
-                            {
-                                args.Add(string.Format("{0}", arg));
-                            }
+                            AddArguments(args, superProject.CCompilerArguments);
                         }
                         break;
 
                     case ".cpp":
                         {
-                            foreach (var arg in superProject.CppCompilerArguments)
-                            {
-                                args.Add(string.Format("{0}", arg));
-                            }
+                            AddArguments(args, superProject.CppCompilerArguments);
                         }
                         break;
                 }
@@ -823,10 +805,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 args.Add("-Wunused-variable");
 
-                var translationUnitFlags = 
-                    TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | 
+                var translationUnitFlags =
+                    TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion |
                     TranslationUnitFlags.PrecompiledPreamble |
-                    TranslationUnitFlags.CacheCompletionResults | 
+                    TranslationUnitFlags.CacheCompletionResults |
                     TranslationUnitFlags.Incomplete;
 
                 result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), translationUnitFlags);
