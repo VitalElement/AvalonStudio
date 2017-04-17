@@ -59,11 +59,11 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IIndentationStrategy IndentationStrategy { get; }
 
-        public IEnumerable<char> IntellisenseTriggerCharacters { get { return new[] { '.', '>', ':' }; } }
+        public IEnumerable<char> IntellisenseTriggerCharacters => new[] { '.', '>', ':' };
 
-        public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ',' }; } }
+        public IEnumerable<char> IntellisenseSearchCharacters => new[] { '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ',' };
 
-        public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
+        public IEnumerable<char> IntellisenseCompleteCharacters => new[] { '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^' };
 
         CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
@@ -127,7 +127,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
-              var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+                var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
                 var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(),
                     CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
@@ -220,14 +220,13 @@ namespace AvalonStudio.Languages.CPlusPlus
                 case NClang.CursorKind.UnionDeclaration:
                     useSpellingLocation = true;
                     highlightKind = HighlightType.EnumTypeName;
-                    break;          
+                    break;
 
                 case NClang.CursorKind.TemplateTypeParameter:
                     useSpellingLocation = true;
                     highlightKind = HighlightType.InterfaceName;
                     break;
 
-                
                 case NClang.CursorKind.TypeReference:
                     if (parent.Kind == NClang.CursorKind.CXXBaseSpecifier)
                     {
@@ -249,7 +248,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     break;
 
                 case NClang.CursorKind.CXXMethod:
-                case NClang.CursorKind.FunctionDeclaration:                
+                case NClang.CursorKind.FunctionDeclaration:
                     useSpellingLocation = true;
                     highlightKind = HighlightType.CallExpression;
                     break;
@@ -345,14 +344,12 @@ namespace AvalonStudio.Languages.CPlusPlus
         private void ScanTokens(NClang.ClangTranslationUnit tu, SyntaxHighlightDataList result)
         {
             var tokens = tu.Tokenize(tu.GetCursor().CursorExtent);
-            //var annotatedTokens = tokens.Annotate();           //TODO see if this can provide us with additional data.
 
             foreach (var token in tokens.Tokens)
             {
                 var highlightData = new OffsetSyntaxHighlightingData();
                 highlightData.Start = token.Extent.Start.FileLocation.Offset;
                 highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start;
-
 
                 switch (token.Kind)
                 {
@@ -367,7 +364,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                         break;
                 }
             }
-
         }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
@@ -410,7 +406,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 return ChildVisitResult.Recurse;
                             }
 
-                            if(current.Location.IsInSystemHeader)
+                            if (current.Location.IsInSystemHeader)
                             {
                                 return ChildVisitResult.Continue;
                             }
@@ -437,7 +433,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                             File = diagnostic.Location.FileLocation.File.FileName,
                             Level = (DiagnosticLevel)diagnostic.Severity
                         };
-
 
                         var cursor = translationUnit.GetCursor(diagnostic.Location);
 
@@ -633,7 +628,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor,
                 ClangFormatSettings.Default);
 
-            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);            
+            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
@@ -1191,12 +1186,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void BeforeActivation()
         {
-            
+
         }
 
         public void Activation()
         {
-            
+
         }
-    }    
+    }
 }
