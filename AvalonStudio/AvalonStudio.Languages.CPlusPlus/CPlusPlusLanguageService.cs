@@ -373,6 +373,85 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
+        private void GenerateHighlightData(ClangCursor cursor, SyntaxHighlightDataList highlightList)
+        {
+            cursor.VisitChildren((current, parent, ptr) =>
+            {
+                if (current.Location.IsFromMainFile)
+                {
+                    var highlight = CreateOffsetData(current, parent);
+
+                    if (highlight != null)
+                    {
+                        highlightList.Add(highlight);
+                    }
+
+                    return ChildVisitResult.Recurse;
+                }
+
+                if (current.Location.IsInSystemHeader)
+                {
+                    return ChildVisitResult.Continue;
+                }
+
+                return ChildVisitResult.Recurse;
+            }, IntPtr.Zero);
+        }
+
+        private void GenerateDiagnostics (IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result, TextMarkerService service)
+        {
+            foreach (var diagnostic in clangDiagnostics)
+            {
+                if (diagnostic.Location.IsFromMainFile)
+                {
+                    var diag = new Diagnostic
+                    {
+                        Project = project,
+                        StartOffset = diagnostic.Location.FileLocation.Offset,
+                        Line = diagnostic.Location.FileLocation.Line,
+                        Spelling = diagnostic.Spelling,
+                        File = diagnostic.Location.FileLocation.File.FileName,
+                        Level = (DiagnosticLevel)diagnostic.Severity
+                    };
+
+                    var cursor = translationUnit.GetCursor(diagnostic.Location);
+
+                    var tokens = translationUnit.Tokenize(cursor.CursorExtent);
+
+                    foreach (var token in tokens.Tokens)
+                    {
+                        if (token.Location == diagnostic.Location)
+                        {
+                            diag.EndOffset = diag.StartOffset + token.Spelling.Length;
+                        }
+                    }
+
+                    result.Add(diag);
+                    tokens.Dispose();
+
+                    Color markerColor;
+
+                    switch (diag.Level)
+                    {
+                        case DiagnosticLevel.Error:
+                        case DiagnosticLevel.Fatal:
+                            markerColor = Color.FromRgb(253, 45, 45);
+                            break;
+
+                        case DiagnosticLevel.Warning:
+                            markerColor = Color.FromRgb(255, 207, 40);
+                            break;
+
+                        default:
+                            markerColor = Color.FromRgb(0, 42, 74);
+                            break;
+                    }
+
+                    service.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
+                }
+            }        
+        }
+
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
@@ -382,101 +461,22 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
-            foreach (var unsavedFile in unsavedFiles)
-            {
-                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
-            }
+            clangUnsavedFiles.AddRange(unsavedFiles.Select(f => new ClangUnsavedFile(f.FileName, f.Contents)));            
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
                 var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
-                if (file != null)
+                if (file != null && translationUnit != null)
                 {
-                    if (translationUnit != null)
-                    {
-                        ScanTokens(translationUnit, result.SyntaxHighlightingData);
+                    ScanTokens(translationUnit, result.SyntaxHighlightingData);
 
-                        var cursor = translationUnit.GetCursor();
-
-                        cursor.VisitChildren((current, parent, ptr) =>
-                        {
-                            if (current.Location.IsFromMainFile)
-                            {
-                                var highlight = CreateOffsetData(current, parent);
-
-                                if (highlight != null)
-                                {
-                                    result.SyntaxHighlightingData.Add(highlight);
-                                }
-
-                                return ChildVisitResult.Recurse;
-                            }
-
-                            if (current.Location.IsInSystemHeader)
-                            {
-                                return ChildVisitResult.Continue;
-                            }
-
-                            return ChildVisitResult.Recurse;
-                        }, IntPtr.Zero);
-                    }
+                    GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);                    
                 }
 
                 dataAssociation.TextMarkerService.Clear();
-
-                var diags = translationUnit.DiagnosticSet.Items;
-
-                foreach (var diagnostic in diags)
-                {
-                    if (diagnostic.Location.IsFromMainFile)
-                    {
-                        var diag = new Diagnostic
-                        {
-                            Project = file.Project,
-                            StartOffset = diagnostic.Location.FileLocation.Offset,
-                            Line = diagnostic.Location.FileLocation.Line,
-                            Spelling = diagnostic.Spelling,
-                            File = diagnostic.Location.FileLocation.File.FileName,
-                            Level = (DiagnosticLevel)diagnostic.Severity
-                        };
-
-                        var cursor = translationUnit.GetCursor(diagnostic.Location);
-
-                        var tokens = translationUnit.Tokenize(cursor.CursorExtent);
-
-                        foreach (var token in tokens.Tokens)
-                        {
-                            if (token.Location == diagnostic.Location)
-                            {
-                                diag.EndOffset = diag.StartOffset + token.Spelling.Length;
-                            }
-                        }
-
-                        result.Diagnostics.Add(diag);
-                        tokens.Dispose();
-
-                        Color markerColor;
-
-                        switch (diag.Level)
-                        {
-                            case DiagnosticLevel.Error:
-                            case DiagnosticLevel.Fatal:
-                                markerColor = Color.FromRgb(253, 45, 45);
-                                break;
-
-                            case DiagnosticLevel.Warning:
-                                markerColor = Color.FromRgb(255, 207, 40);
-                                break;
-
-                            default:
-                                markerColor = Color.FromRgb(0, 42, 74);
-                                break;
-                        }
-
-                        dataAssociation.TextMarkerService.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
-                    }
-                }
+                
+                GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);                
             });
 
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
