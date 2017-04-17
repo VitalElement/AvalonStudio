@@ -36,7 +36,7 @@ namespace AvalonStudio
     [Export]
     public class ShellViewModel : ViewModel, IShell
     {
-        public static readonly ShellViewModel Instance = null;
+        public static ShellViewModel Instance { get; internal set; }
 
         private IToolBar _toolBar;
 
