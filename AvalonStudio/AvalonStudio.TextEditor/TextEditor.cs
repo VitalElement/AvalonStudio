@@ -1039,6 +1039,25 @@ namespace AvalonStudio.TextEditor
             }
         }
 
+        private void OnDeleteKey(int caretIndex)
+        {
+            if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
+            {
+                var line = TextDocument.GetLineByOffset(caretIndex);
+
+                if (CaretIndex == line.EndOffset && line.NextLine != null)
+                {
+                    TextDocument.Remove(caretIndex, line.DelimiterLength);
+                }
+                else
+                {
+                    TextDocument.Remove(caretIndex, 1);
+                }
+
+                TextView.Invalidate();
+            }
+        }
+
         protected void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Handled)
@@ -1150,22 +1169,7 @@ namespace AvalonStudio.TextEditor
                     break;
 
                 case Key.Delete:
-                    if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
-                    {
-                        var line = TextDocument.GetLineByOffset(CaretIndex);
-
-                        if (CaretIndex == line.EndOffset && line.NextLine != null)
-                        {
-                            TextDocument.Remove(CaretIndex, line.DelimiterLength);
-                        }
-                        else
-                        {
-                            TextDocument.Remove(caretIndex, 1);
-                        }
-
-                        TextView.Invalidate();
-                    }
-
+                    OnDeleteKey(caretIndex);
                     break;
 
                 case Key.Enter:
@@ -1173,7 +1177,6 @@ namespace AvalonStudio.TextEditor
                     {
                         HandleTextInput("\r\n");
                     }
-
                     break;
 
                 case Key.Tab:
