@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Composition;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Avalonia.Input;
 using Avalonia.Threading;
 using AvalonStudio.Controls;
@@ -12,9 +5,11 @@ using AvalonStudio.Controls.Standard.ErrorList;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
+using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Extensibility.ToolBars.Models;
@@ -28,27 +23,20 @@ using AvalonStudio.TextEditor;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using ReactiveUI;
-using AvalonStudio.Extensibility.Commands;
-using AvalonStudio.Extensibility.Menus;
-using Avalonia.Controls;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Composition;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AvalonStudio
 {
-    static class ListExtensions
-    {
-        public static void ConsumeExtension<T>(this List<T> destination, IExtension extension) where T : class, IExtension
-        {
-            if (extension is T)
-            {
-                destination.Add(extension as T);
-            }
-        }
-    }
-
     [Export]
     public class ShellViewModel : ViewModel, IShell
     {
-        public static ShellViewModel Instance = null;
+        public static ShellViewModel Instance { get; internal set; }
 
         private IToolBar _toolBar;
 
@@ -103,7 +91,6 @@ namespace AvalonStudio
             _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
             _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
 
-
             IoC.RegisterConstant(this, typeof(IShell));
 
             foreach (var extension in extensions)
@@ -145,7 +132,7 @@ namespace AvalonStudio
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
-                
+
                 _commandDefinitions.ConsumeExtension(extension);
             }
 
@@ -272,7 +259,10 @@ namespace AvalonStudio
 
         public ToolBarDefinition ToolBarDefinition
         {
-            get { return _toolBarDefinition; }
+            get
+            {
+                return _toolBarDefinition;
+            }
             protected set
             {
                 this.RaiseAndSetIfChanged(ref _toolBarDefinition, value);
@@ -285,17 +275,17 @@ namespace AvalonStudio
             get
             {
                 if (_toolBar != null)
-                  return _toolBar;
+                    return _toolBar;
 
                 if (ToolBarDefinition == null)
-                return null;
-                
+                    return null;
+
                 var toolBarBuilder = new ToolBarBuilder(_toolBarDefinitions.ToArray(), _toolBarItemGroupDefinitions.ToArray(), _toolBarItemDefinitions.ToArray(), new ExcludeToolBarDefinition[0], new ExcludeToolBarItemGroupDefinition[0], new ExcludeToolBarItemDefinition[0]);
 
                 var mainToolBar = new Extensibility.ToolBars.ViewModels.ToolBarsViewModel(toolBarBuilder);
 
                 toolBarBuilder.BuildToolBars(mainToolBar);
-                
+
                 _toolBar = new ToolBarModel();
 
                 toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
@@ -482,7 +472,6 @@ namespace AvalonStudio
             }
         }
 
-
         public void Clean(IProject project)
         {
             Console.Clear();
@@ -521,7 +510,10 @@ namespace AvalonStudio
 
         public Perspective CurrentPerspective
         {
-            get { return currentPerspective; }
+            get
+            {
+                return currentPerspective;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref currentPerspective, value);
@@ -543,7 +535,10 @@ namespace AvalonStudio
 
         public ModalDialogViewModelBase ModalDialog
         {
-            get { return modalDialog; }
+            get
+            {
+                return modalDialog;
+            }
             set
             {
                 modalDialog = value;
@@ -561,7 +556,10 @@ namespace AvalonStudio
 
         public ISolution CurrentSolution
         {
-            get { return currentSolution; }
+            get
+            {
+                return currentSolution;
+            }
             set
             {
                 var oldValue = CurrentSolution;
@@ -638,25 +636,6 @@ namespace AvalonStudio
         {
             switch (e.Key)
             {
-                //case Key.F9:
-                //    DebugManager.StepInstruction();
-                //    break;
-
-                //case Key.F10:
-                //    DebugManager.StepOver();
-                //    break;
-
-                //case Key.F11:
-                //    DebugManager.StepInto();
-                //    break;
-
-                //case Key.F5:
-                //    if (CurrentSolution?.StartupProject != null)
-                //    {
-                //        Debug(CurrentSolution.StartupProject);
-                //    }
-                //    break;
-
                 case Key.F6:
                     Build();
                     break;

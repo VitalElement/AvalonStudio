@@ -36,14 +36,12 @@ namespace AvalonStudio.Toolchains.GCC
 
         private int librarySelectedIndex;
 
-
         private ObservableCollection<string> linkedLibraries;
         private ObservableCollection<string> linkerScripts;
 
         private string linkerArguments;
 
         private string miscOptions;
-
 
         private bool notUseStandardStartup;
 
@@ -106,8 +104,6 @@ namespace AvalonStudio.Toolchains.GCC
 
             RemoveLinkedLibraryCommand = ReactiveCommand.Create();
             RemoveLinkedLibraryCommand.Subscribe(RemoveLinkedLibrary);
-            //BrowseScatterFileCommand = new RoutingCommand(BrowseScatterFile);
-            //EditScatterFileCommand = new RoutingCommand(EditScatterFile);
 
             UpdateLinkerString();
         }
@@ -145,7 +141,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public bool UseMemoryLayout
         {
-            get { return useMemoryLayout; }
+            get
+            {
+                return useMemoryLayout;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref useMemoryLayout, value);
@@ -157,7 +156,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public bool DiscardUnusedSections
         {
-            get { return discardUnusedSections; }
+            get
+            {
+                return discardUnusedSections;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref discardUnusedSections, value);
@@ -167,7 +169,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public bool NotUseStandardStartup
         {
-            get { return notUseStandardStartup; }
+            get
+            {
+                return notUseStandardStartup;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref notUseStandardStartup, value);
@@ -177,14 +182,16 @@ namespace AvalonStudio.Toolchains.GCC
 
         public int LibrarySelectedIndex
         {
-            get { return librarySelectedIndex; }
+            get
+            {
+                return librarySelectedIndex;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref librarySelectedIndex, value);
                 UpdateLinkerString();
             }
         }
-
 
         public string[] LibraryOptions
         {
@@ -193,7 +200,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string SelectedLinkedLibrary
         {
-            get { return selectedLinkedLibrary; }
+            get
+            {
+                return selectedLinkedLibrary;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedLinkedLibrary, value);
@@ -203,7 +213,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public ObservableCollection<string> LinkedLibraries
         {
-            get { return linkedLibraries; }
+            get
+            {
+                return linkedLibraries;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref linkedLibraries, value);
@@ -213,7 +226,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public ObservableCollection<string> LinkerScripts
         {
-            get { return linkerScripts; }
+            get
+            {
+                return linkerScripts;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref linkerScripts, value);
@@ -223,7 +239,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string SelectedLinkerScript
         {
-            get { return selectedLinkerScript; }
+            get
+            {
+                return selectedLinkerScript;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedLinkerScript, value);
@@ -233,7 +252,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string InRom1Start
         {
-            get { return inRom1Start; }
+            get
+            {
+                return inRom1Start;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref inRom1Start, value);
@@ -243,7 +265,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string InRom1Size
         {
-            get { return inRom1Size; }
+            get
+            {
+                return inRom1Size;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref inRom1Size, value);
@@ -253,7 +278,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string InRom2Start
         {
-            get { return inRom2Start; }
+            get
+            {
+                return inRom2Start;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref inRom2Start, value);
@@ -263,7 +291,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string InRom2Size
         {
-            get { return inRom2Size; }
+            get
+            {
+                return inRom2Size;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref inRom2Size, value);
@@ -273,7 +304,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string InRam1Start
         {
-            get { return inRam1Start; }
+            get
+            {
+                return inRam1Start;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref inRam1Start, value);
@@ -283,7 +317,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string InRam1Size
         {
-            get { return inRam1Size; }
+            get
+            {
+                return inRam1Size;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref inRam1Size, value);
@@ -293,7 +330,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string InRam2Start
         {
-            get { return inRam2Start; }
+            get
+            {
+                return inRam2Start;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref inRam2Start, value);
@@ -303,7 +343,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string InRam2Size
         {
-            get { return inRam2Size; }
+            get
+            {
+                return inRam2Size;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref inRam2Size, value);
@@ -313,7 +356,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string ScatterFile
         {
-            get { return scatterFile; }
+            get
+            {
+                return scatterFile;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref scatterFile, value);
@@ -323,7 +369,10 @@ namespace AvalonStudio.Toolchains.GCC
 
         public string MiscOptions
         {
-            get { return miscOptions; }
+            get
+            {
+                return miscOptions;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref miscOptions, value);
@@ -416,7 +465,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
         }
 
-        private void RemoveLinkerScript (object param)
+        private void RemoveLinkerScript(object param)
         {
             LinkerScripts.Remove(SelectedLinkerScript);
             UpdateLinkerString();

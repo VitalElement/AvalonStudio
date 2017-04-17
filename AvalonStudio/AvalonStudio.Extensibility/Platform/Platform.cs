@@ -18,7 +18,6 @@ namespace AvalonStudio.Platforms
         MacOSX = 6
     }
 
-
     public static class Platform
     {
         public delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
@@ -85,7 +84,7 @@ namespace AvalonStudio.Platforms
             {
                 string osdir = string.Empty;
 
-                switch(PlatformIdentifier)
+                switch (PlatformIdentifier)
                 {
                     case PlatformID.Win32NT:
                         osdir = "win7-x64";
@@ -103,7 +102,6 @@ namespace AvalonStudio.Platforms
                 return Path.Combine(ExecutionPath, "native", osdir);
             }
         }
-
 
         public static string TemplatesFolder => Path.Combine(ExecutionPath, "Templates");
 
@@ -138,7 +136,6 @@ namespace AvalonStudio.Platforms
             }
         }
 
-
         public static Architecture OSArchitecture => RuntimeInformation.OSArchitecture;
         public static string OSDescription => RuntimeInformation.OSDescription;
 
@@ -158,16 +155,15 @@ namespace AvalonStudio.Platforms
                 {
                     return PlatformID.MacOSX;
                 }
-                
+
                 throw new Exception("Unknow platform");
             }
         }
-        
 
         /// <summary>
         /// The base directory for AvalonStudio's data
         /// </summary>
-		public static string BaseDirectory
+        public static string BaseDirectory
         {
             get
             {
@@ -176,7 +172,7 @@ namespace AvalonStudio.Platforms
                 switch (PlatformIdentifier)
                 {
                     case PlatformID.Win32NT:
-                        userDir = Environment.GetEnvironmentVariable("UserProfile");                        
+                        userDir = Environment.GetEnvironmentVariable("UserProfile");
                         break;
 
                     default:
@@ -219,7 +215,6 @@ namespace AvalonStudio.Platforms
                 Directory.CreateDirectory(CacheDirectory);
             }
 
-
             if (!Directory.Exists(AppDataDirectory))
             {
                 Directory.CreateDirectory(AppDataDirectory);
@@ -259,12 +254,10 @@ namespace AvalonStudio.Platforms
         [DllImport(LIB, EntryPoint = "Mono_Posix_FromSignum")]
         private static extern int FromSignum(Signum value, out int rval);
 
-
         private static bool TryFromSignum(Signum value, out int rval)
         {
             return FromSignum(value, out rval) == 0;
         }
-
 
         private static int FromSignum(Signum value)
         {
@@ -273,7 +266,6 @@ namespace AvalonStudio.Platforms
                 throw new ArgumentException();
             return rval;
         }
-
 
         [DllImport(LIBC, SetLastError = true, EntryPoint = "kill")]
         private static extern int sys_kill(int pid, int sig);
@@ -344,15 +336,14 @@ namespace AvalonStudio.Platforms
         }
 
         [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "AttachConsole")]
-        private static extern bool Win32AttachConsole(int dwProcessId);
+        private static extern bool Win32AttachConsole(int processId);
 
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true, EntryPoint = "FreeConsole")]
         private static extern bool Win32FreeConsole();
 
-
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GenerateConsoleCtrlEvent(CtrlTypes dwCtrlEvent, uint dwProcessGroupId);
+        private static extern bool GenerateConsoleCtrlEvent(CtrlTypes ctrlEvent, uint processGroupId);
 
         [DllImport("kernel32.dll", EntryPoint = "SetConsoleCtrlHandler")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -409,7 +400,7 @@ namespace AvalonStudio.Platforms
                 }
                 else if (path.EndsWith("/") && !other.EndsWith("/"))
                 {
-                    other +="/";
+                    other += "/";
                 }
             }
 
