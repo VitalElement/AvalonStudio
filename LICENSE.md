@@ -1,6 +1,6 @@
-# AvalonStudio License
+AvalonStudio License
 
-AvalonStudio is (c) Copyright 2013 - 2016 Daniel Walmsley
+AvalonStudio is (c) Copyright 2013 - 2017 Daniel Walmsley
 
 It is licensed under terms similar to the MIT License with a few
 simple restrictions. These restrictions are to ensure the project
