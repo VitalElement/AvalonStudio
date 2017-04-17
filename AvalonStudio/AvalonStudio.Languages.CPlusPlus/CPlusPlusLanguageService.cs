@@ -1,10 +1,8 @@
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
-using AvalonStudio.Languages.CPlusPlus.Rendering;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
@@ -59,11 +57,20 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IIndentationStrategy IndentationStrategy { get; }
 
-        public IEnumerable<char> IntellisenseTriggerCharacters => new[] { '.', '>', ':' };
+        public IEnumerable<char> IntellisenseTriggerCharacters => new[]
+        {
+            '.', '>', ':'
+        };
 
-        public IEnumerable<char> IntellisenseSearchCharacters => new[] { '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ',' };
+        public IEnumerable<char> IntellisenseSearchCharacters => new[]
+        {
+            '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ','
+        };
 
-        public IEnumerable<char> IntellisenseCompleteCharacters => new[] { '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^' };
+        public IEnumerable<char> IntellisenseCompleteCharacters => new[]
+        {
+            '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
+        };
 
         CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
