@@ -34,7 +34,7 @@
         {
             bool result = false;
 
-            if ((char.IsLetter(currentChar) || isVisible && char.IsLetterOrDigit(currentChar)) || languageService.IntellisenseTriggerCharacters.Contains(currentChar))
+            if ((char.IsLetter(currentChar) || (isVisible && char.IsLetterOrDigit(currentChar))) || languageService.IntellisenseTriggerCharacters.Contains(currentChar))
             {
                 result = true;
             }
@@ -174,8 +174,8 @@
 
                 IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
-                newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
                 // try find exact match case sensitive
+                newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
 
                 if (newSelectedCompletions.Count() == 0)
                 {
@@ -556,12 +556,12 @@
                         SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                     }
 
-                    if(e.Key == Key.Enter)
+                    if (e.Key == Key.Enter)
                     {
                         SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                     }
                 });
             }
         }
-    }    
+    }
 }
