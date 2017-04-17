@@ -382,7 +382,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                         endPos = ((ClassDeclaration)node).Name.End;
                     }
                     else if (node is FunctionDeclaration)
-                    {// For functions, we only want to highlight the name, not the body
+                    {
+                        // For functions, we only want to highlight the name, not the body
                         startPos = ((FunctionDeclaration)node).Name.Position;
                         endPos = ((FunctionDeclaration)node).Name.End;
                     }
