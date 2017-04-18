@@ -14,6 +14,22 @@ namespace AvalonStudio.Debugging.GDB.JLink
 {
     class JLinkDebugger : IDebugger2
     {
+        public static string BaseDirectory
+        {
+            get
+            {
+                if (Platform.OSDescription == "Unix")
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Debugging.JLink\\").ToPlatformPath();
+                }
+            }
+        }
+
+
         public void Activation()
         {
             

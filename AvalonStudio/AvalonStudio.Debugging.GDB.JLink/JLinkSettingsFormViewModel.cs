@@ -23,7 +23,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public JLinkSettingsFormViewModel(IProject model) : base(model)
         {
-            settings = JLinkDebugAdaptor.GetSettings(model);
+            settings = JLinkDebugger.GetSettings(model);
             
             interfaceSelectedIndex = (int)settings.Interface;
             interfaceType = settings.Interface;
@@ -32,7 +32,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
             speed = settings.SpeedkHz.ToString();
 
-            string devPath = Path.Combine(JLinkDebugAdaptor.BaseDirectory, "devices.csv");
+            string devPath = Path.Combine(JLinkDebugger.BaseDirectory, "devices.csv");
 
             deviceList = new ObservableCollection<JLinkTargetDeviceViewModel>();
 
@@ -188,7 +188,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
                     settings.SpeedkHz = 12000;
                 }
 
-                JLinkDebugAdaptor.SetSettings(Model, settings);
+                JLinkDebugger.SetSettings(Model, settings);
                 Model.Save();
             }
         }
