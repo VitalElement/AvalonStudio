@@ -9,9 +9,9 @@ using Mono.Debugging.Client;
 
 namespace AvalonStudio.TextEditor
 {
-	public class BreakPointMargin : TextViewMargin
-	{
-		private readonly BreakpointStore _manager;
+    public class BreakPointMargin : TextViewMargin
+    {
+        private readonly BreakpointStore _manager;
 
         private int previewLine;
         private bool previewPointVisible;
@@ -21,15 +21,15 @@ namespace AvalonStudio.TextEditor
             FocusableProperty.OverrideDefaultValue(typeof(BreakPointMargin), true);
         }
 
-		public BreakPointMargin(BreakpointStore manager)
-		{
-			if (manager == null)
-			{
-				throw new ArgumentNullException("manager");
-			}
+        public BreakPointMargin(BreakpointStore manager)
+        {
+            if (manager == null)
+            {
+                throw new ArgumentNullException("manager");
+            }
 
-			this._manager = manager;
-		}
+            this._manager = manager;
+        }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
@@ -50,14 +50,14 @@ namespace AvalonStudio.TextEditor
                         Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
             }
 
-			foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(textView.TextDocument.FileName)))
-			{
-				context.FillRectangle(Brush.Parse("#FF3737"),
-					new Rect(Bounds.Size.Width/4 - 1,
-						textInfo.LineHeight*(breakPoint.Line - textView.VisualLines.First().DocumentLine.LineNumber) + Bounds.Size.Width/4,
-						Bounds.Size.Width/1.5, textInfo.LineHeight/1.5), (float) textInfo.LineHeight);
-			}
-		}
+            foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(textView.TextDocument.FileName)))
+            {
+                context.FillRectangle(Brush.Parse("#FF3737"),
+                    new Rect((Bounds.Size.Width / 4) - 1,
+                        textInfo.LineHeight * (breakPoint.Line - textView.VisualLines.First().DocumentLine.LineNumber) + (Bounds.Size.Width / 4),
+                        Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
+            }
+        }
 
         protected override void OnPointerMoved(PointerEventArgs e)
         {
@@ -73,9 +73,9 @@ namespace AvalonStudio.TextEditor
             InvalidateVisual();
         }
 
-		protected override void OnPointerReleased(PointerEventArgs e)
-		{
-			previewPointVisible = true;
+        protected override void OnPointerReleased(PointerEventArgs e)
+        {
+            previewPointVisible = true;
 
             var offset = textView.GetOffsetFromPoint(e.GetPosition(this));
 
@@ -84,21 +84,21 @@ namespace AvalonStudio.TextEditor
                 var lineClicked = -1;
                 lineClicked = textView.TextDocument.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
 
-				var currentBreakPoint =
-					_manager.OfType<Breakpoint>().FirstOrDefault(bp => bp.FileName == textView.TextDocument.FileName && bp.Line == lineClicked) as BreakEvent;
+                var currentBreakPoint =
+                    _manager.OfType<Breakpoint>().FirstOrDefault(bp => bp.FileName == textView.TextDocument.FileName && bp.Line == lineClicked) as BreakEvent;
 
-				if (currentBreakPoint != null)
-				{
-					_manager.Remove(currentBreakPoint);
-				}
-				else
-				{
-					if (!string.IsNullOrEmpty(textView.TextDocument.FileName))
-					{
+                if (currentBreakPoint != null)
+                {
+                    _manager.Remove(currentBreakPoint);
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(textView.TextDocument.FileName))
+                    {
                         _manager.Add(textView.TextDocument.FileName, lineClicked);
-					}
-				}
-			}
+                    }
+                }
+            }
 
             InvalidateVisual();
         }
