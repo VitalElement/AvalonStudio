@@ -25,19 +25,17 @@
 
         public void Activation()
         {
-
         }
 
         public void BeforeActivation()
         {
-
         }
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
             return await Task.Factory.StartNew(() =>
-            {               
-                var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();               
+            {
+                var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
 
                 var exitCode = PlatformSupport.ExecuteShellCommand(settings.DotNetPath, "build", (s, e) =>
                 {
@@ -45,10 +43,10 @@
 
                     if (!string.IsNullOrEmpty(e.Data))
                     {
-                        if(e.Data.StartsWith($"  {project.Name} -> "))
+                        if (e.Data.StartsWith($"  {project.Name} -> "))
                         {
                             project.Executable = e.Data.Substring($"  {project.Name} -> ".Length);
-                        }                        
+                        }
                     }
                 }, (s, e) =>
                 {
@@ -58,7 +56,7 @@
                         console.WriteLine(e.Data);
                     }
                 },
-                false, project.CurrentDirectory, false);                
+                false, project.CurrentDirectory, false);
 
                 return exitCode == 0;
             });

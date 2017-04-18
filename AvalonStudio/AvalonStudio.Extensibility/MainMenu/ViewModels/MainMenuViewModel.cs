@@ -7,99 +7,98 @@ using ReactiveUI;
 
 namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 {
-	public class MainMenuViewModel : ViewModel<MenuModel>, IMenu
-	{
-		private readonly IMenuBuilder _menuBuilder;
+    public class MainMenuViewModel : ViewModel<MenuModel>, IMenu
+    {
+        private readonly IMenuBuilder _menuBuilder;
 
-		private bool _autoHide;
+        private bool _autoHide;
 
-		
-		public MainMenuViewModel(IMenuBuilder menuBuilder) : base(new MenuModel())
-		{
-			_menuBuilder = menuBuilder;
-		}
+        public MainMenuViewModel(IMenuBuilder menuBuilder) : base(new MenuModel())
+        {
+            _menuBuilder = menuBuilder;
+        }
 
-		public bool AutoHide
-		{
-			get { return _autoHide; }
-			private set
-			{
-				if (_autoHide == value)
-					return;
+        public bool AutoHide
+        {
+            get { return _autoHide; }
+            private set
+            {
+                if (_autoHide == value)
+                    return;
 
-				_autoHide = value;
+                _autoHide = value;
 
-				this.RaiseAndSetIfChanged(ref _autoHide, value);
-			}
-		}		
-		
-		public event NotifyCollectionChangedEventHandler CollectionChanged; 
+                this.RaiseAndSetIfChanged(ref _autoHide, value);
+            }
+        }
 
-		public int Count
-		{
-			get { return Model.Count; }
-		}
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-		public bool IsReadOnly
-		{
-			get { return false; }
-		}
+        public int Count
+        {
+            get { return Model.Count; }
+        }
 
-		public MenuItemBase this[int index]
-		{
-			get { return Model[index]; }
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
 
-			set { Model[index] = value; }
-		}
+        public MenuItemBase this[int index]
+        {
+            get { return Model[index]; }
 
-		public int IndexOf(MenuItemBase item)
-		{
-			return Model.IndexOf(item);
-		}
+            set { Model[index] = value; }
+        }
 
-		public void Insert(int index, MenuItemBase item)
-		{
-			Model.Insert(index, item);
-		}
+        public int IndexOf(MenuItemBase item)
+        {
+            return Model.IndexOf(item);
+        }
 
-		public void RemoveAt(int index)
-		{
-			Model.RemoveAt(index);
-		}
+        public void Insert(int index, MenuItemBase item)
+        {
+            Model.Insert(index, item);
+        }
 
-		public void Add(MenuItemBase item)
-		{
-			Model.Add(item);
-		}
+        public void RemoveAt(int index)
+        {
+            Model.RemoveAt(index);
+        }
 
-		public void Clear()
-		{
-			Model.Clear();
-		}
+        public void Add(MenuItemBase item)
+        {
+            Model.Add(item);
+        }
 
-		public bool Contains(MenuItemBase item)
-		{
-			return Model.Contains(item);
-		}
+        public void Clear()
+        {
+            Model.Clear();
+        }
 
-		public void CopyTo(MenuItemBase[] array, int arrayIndex)
-		{
-			Model.CopyTo(array, arrayIndex);
-		}
+        public bool Contains(MenuItemBase item)
+        {
+            return Model.Contains(item);
+        }
 
-		public bool Remove(MenuItemBase item)
-		{
-			return Model.Remove(item);
-		}
+        public void CopyTo(MenuItemBase[] array, int arrayIndex)
+        {
+            Model.CopyTo(array, arrayIndex);
+        }
 
-		public IEnumerator<MenuItemBase> GetEnumerator()
-		{
-			return Model.GetEnumerator();
-		}
+        public bool Remove(MenuItemBase item)
+        {
+            return Model.Remove(item);
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return Model.GetEnumerator();
-		}
-	}
+        public IEnumerator<MenuItemBase> GetEnumerator()
+        {
+            return Model.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Model.GetEnumerator();
+        }
+    }
 }

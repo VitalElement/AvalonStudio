@@ -94,7 +94,6 @@ namespace AvalonStudio.Languages.ViewModels
                     result = new EnumConstantCompletionDataViewModel(data);
                     break;
 
-
                 case CodeCompletionKind.Keyword:
                     result = new KeywordCompletionDataViewModel(data);
                     break;
@@ -115,89 +114,4 @@ namespace AvalonStudio.Languages.ViewModels
             return result;
         }
     }
-
-    public class MethodCompletionDataViewModel : CompletionDataViewModel
-    {
-        public MethodCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class MacroCompletionDataViewModel : CompletionDataViewModel
-    {
-        public MacroCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class VariableCompletionDataViewModel : CompletionDataViewModel
-    {
-        public VariableCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class ClassCompletionDataViewModel : CompletionDataViewModel
-    {
-        public ClassCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class StructCompletionDataViewModel : CompletionDataViewModel
-    {
-        public StructCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class PropertyCompletionDataViewModel : CompletionDataViewModel
-    {
-        public PropertyCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class KeywordCompletionDataViewModel : CompletionDataViewModel
-    {
-        public KeywordCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class EnumCompletionDataViewModel : CompletionDataViewModel
-    {
-        public EnumCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class EnumConstantCompletionDataViewModel : CompletionDataViewModel
-    {
-        public EnumConstantCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class FieldCompletionDataViewModel : CompletionDataViewModel
-    {
-        public FieldCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class ParameterCompletionDataViewModel : CompletionDataViewModel
-    {
-        public ParameterCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
-    public class DefaultCompletionDataViewModel : CompletionDataViewModel
-    {
-        public DefaultCompletionDataViewModel(CodeCompletionData model) : base(model)
-        {
-        }
-    }
-
 }

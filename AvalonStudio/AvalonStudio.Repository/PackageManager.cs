@@ -16,8 +16,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,7 +29,7 @@ namespace AvalonStudio.Packages
         {
             _logger = logger;
 
-            if(logger == null)
+            if (logger == null)
             {
                 _logger = new ConsoleNuGetLogger();
             }
@@ -61,7 +59,6 @@ namespace AvalonStudio.Packages
             var settings = (NuGet.Configuration.Settings)NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
 
             ISourceRepositoryProvider sourceRepositoryProvider = new SourceRepositoryProvider(settings, providers);  // See part 2           
-            
 
             using (var installedPackageCache = GetCache())
             {
@@ -69,7 +66,6 @@ namespace AvalonStudio.Packages
 
                 if (!project.PackageExists(identity))
                 {
-
                     var packageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, Platform.ReposDirectory)
                     {
                         PackagesFolderNuGetProject = project,
@@ -84,7 +80,6 @@ namespace AvalonStudio.Packages
                     INuGetProjectContext projectContext = new ProjectContext(_logger);
                     var sourceRepositories = new List<SourceRepository>();
                     sourceRepositories.Add(new SourceRepository(new NuGet.Configuration.PackageSource(DefaultPackageSource), providers));
-
 
                     await packageManager.InstallPackageAsync(packageManager.PackagesFolderNuGetProject,
                         identity, resolutionContext, projectContext, sourceRepositories,
@@ -103,7 +98,7 @@ namespace AvalonStudio.Packages
             PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));
 
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
-            
+
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
             providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
 
@@ -114,7 +109,6 @@ namespace AvalonStudio.Packages
             using (var installedPackageCache = GetCache())
             {
                 var project = new AvalonStudioExtensionsFolderProject(new NuGet.PhysicalFileSystem(Platform.ReposDirectory), GetFramework(), installedPackageCache, Platform.ReposDirectory);
-
 
                 var packageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, new SolutionManager(), new DeleteOnRestartManager())
                 {
@@ -128,7 +122,6 @@ namespace AvalonStudio.Packages
                 await packageManager.UninstallPackageAsync(project, packageId, uninstallationContext, projectContext, CancellationToken.None);
             }
         }
-
 
         public async Task<IEnumerable<IPackageSearchMetadata>> ListPackages(int max = 20)
         {
@@ -209,6 +202,5 @@ namespace AvalonStudio.Packages
                 return null;
             }
         }
-
     }
 }
