@@ -33,7 +33,6 @@
             OpenSolution = ReactiveCommand.Create();
 
             LoadRecentProjects();
-
         }
 
         public void Activation()
@@ -44,15 +43,12 @@
 
             //LoadNewsFeed().GetAwaiter().GetResult();
             //LoadVideoFeed().GetAwaiter().GetResult();
-
             var solutionExplorer = IoC.Get<ISolutionExplorer>();
-
 
             NewSolution.Subscribe(_ =>
             {
                 solutionExplorer.NewSolution();
             });
-
 
             OpenSolution.Subscribe(_ =>
             {
@@ -62,7 +58,6 @@
 
         public void BeforeActivation()
         {
-
         }
 
         private void LoadRecentProjects()

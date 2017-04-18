@@ -94,7 +94,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public string Name
         {
-            get { return name; }
+            get
+            {
+                return name;
+            }
             set
             {
                 if (solutionName == name)
@@ -125,7 +128,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public IProjectTemplate SelectedTemplate
         {
-            get { return selectedTemplate; }
+            get
+            {
+                return selectedTemplate;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedTemplate, value);

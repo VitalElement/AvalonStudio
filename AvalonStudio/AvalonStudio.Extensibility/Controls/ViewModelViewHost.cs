@@ -1,18 +1,15 @@
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
+using Avalonia.LogicalTree;
+using ReactiveUI;
+using Splat;
 using System;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Avalonia;
-using Avalonia.Controls.Presenters;
-using Avalonia.Data;
-using ReactiveUI;
-using Splat;
 using ViewLocator = AvalonStudio.MVVM.ViewLocator;
-using Avalonia.Controls;
-using AvalonStudio.Extensibility.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.LogicalTree;
 
 namespace AvalonStudio.Controls
 {
