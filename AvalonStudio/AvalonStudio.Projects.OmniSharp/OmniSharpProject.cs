@@ -56,22 +56,6 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
         }
-
-        public override IDebugger Debugger
-        {
-            get
-            {
-                var shell = IoC.Get<IShell>();
-
-                var debugger = shell.Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.ClrDbg.NetCoreDebugAdaptor");
-
-                return debugger;
-            }
-            set
-            {
-
-            }
-        }
         
         public override IDebugger2 Debugger2 { get
             {

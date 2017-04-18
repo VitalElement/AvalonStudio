@@ -11,7 +11,7 @@ namespace AvalonStudio.Debugging
 {
 	public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IExtension
 	{
-		private IDebugManager _debugManager;
+		private IDebugManager2 _debugManager;
 
 		private double columnWidth;
 
@@ -44,9 +44,7 @@ namespace AvalonStudio.Debugging
 
 		public void Activation()
 		{
-			_debugManager = IoC.Get<IDebugManager>();
-			_debugManager.DebugFrameChanged += RegistersViewModel_DebugFrameChanged;
-			_debugManager.DebuggerChanged += (sender, e) => { firstStopInSession = true; };
+			_debugManager = IoC.Get<IDebugManager2>();
 
 			_debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
@@ -81,15 +79,11 @@ namespace AvalonStudio.Debugging
 
 				List<Register> registers = null;
 
-				registers = (await _debugManager.CurrentDebugger.GetRegistersAsync()).Values.ToList();
-
 				SetRegisters(registers);
 			}
 			else
 			{
 				Dictionary<int, string> changedRegisters = null;
-
-				changedRegisters = await _debugManager.CurrentDebugger.GetChangedRegistersAsync();
 
 				Dispatcher.UIThread.InvokeAsync(() => { UpdateRegisters(changedRegisters); });
 			}
@@ -124,11 +118,6 @@ namespace AvalonStudio.Debugging
 
 			ColumnWidth = 0;
 			ColumnWidth = double.NaN;
-		}
-
-		private void RegistersViewModel_DebugFrameChanged(object sender, FrameChangedEventArgs e)
-		{
-			Dispatcher.UIThread.InvokeAsync(() => { Invalidate(); });
 		}
 	}
 }

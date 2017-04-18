@@ -75,8 +75,8 @@ namespace AvalonStudio.Debugging
 
 	public class DisassemblyViewModel : ToolViewModel, IExtension
 	{
-		private IDebugger _debugger;
-		private IDebugManager _debugManager;
+		private IDebugger2 _debugger;
+		private IDebugManager2 _debugManager;
 
 		private readonly DisassemblyDataProvider dataProvider;
 
@@ -119,10 +119,10 @@ namespace AvalonStudio.Debugging
 
 		public void Activation()
 		{
-			_debugManager = IoC.Get<IDebugManager>();
-			_debugManager.DebuggerChanged += (sender, e) => { SetDebugger(_debugManager.CurrentDebugger); };
+			_debugManager = IoC.Get<IDebugManager2>();
+			//_debugManager.DebuggerChanged += (sender, e) => { SetDebugger(_debugManager.CurrentDebugger); };
 
-			_debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+			//_debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
 
 			_debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
@@ -138,42 +138,7 @@ namespace AvalonStudio.Debugging
 		public void BeforeActivation()
 		{
 		}
-
-		private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
-		{
-			Dispatcher.UIThread.InvokeAsync(() => { SetAddress(e.Address); });
-		}
-
-		public void SetDebugger(IDebugger debugger)
-		{
-			if (_debugger != null)
-			{
-				_debugger.StateChanged -= Debugger_StateChanged;
-			}
-
-			_debugger = debugger;
-
-			if (debugger != null)
-			{
-				debugger.StateChanged += Debugger_StateChanged;
-			}
-
-			dataProvider.SetDebugger(debugger);
-		}
-
-		private void Debugger_StateChanged(object sender, EventArgs e)
-		{
-			if (_debugger.State == DebuggerState.Paused)
-			{
-                Dispatcher.UIThread.InvokeTaskAsync(()=>  Enabled = true);
-			}
-			else
-			{
-                Dispatcher.UIThread.InvokeTaskAsync(() => Enabled = false);
-            }
-		}
-
-
+        
 		public void SetAddress(ulong currentAddress)
 		{
             if (DisassemblyData == null)

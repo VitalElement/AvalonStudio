@@ -336,21 +336,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
         [JsonIgnore]
-        public override IDebugger Debugger
-        {
-            get
-            {
-                var result = IoC.Get<IShell>().Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == DebuggerReference);
-
-                return result;
-            }
-            set
-            {
-                DebuggerReference = value.GetType().ToString();
-            }
-        }
-
-        [JsonIgnore]
         public override IDebugger2 Debugger2
         {
             get

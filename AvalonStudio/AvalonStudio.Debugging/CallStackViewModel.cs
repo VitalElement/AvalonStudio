@@ -11,7 +11,7 @@ namespace AvalonStudio.Debugging
 {
 	public class CallStackViewModel : ToolViewModel, IExtension
 	{
-		private IDebugManager _debugManager;
+		private IDebugManager2 _debugManager;
 
 		private FrameViewModel selectedFrame;
 
@@ -35,7 +35,7 @@ namespace AvalonStudio.Debugging
 				{
                     var shell = IoC.Get<IShell>();
 
-                    shell?.OpenDocument(shell?.CurrentSolution?.FindFile(selectedFrame.Model.FullFileName), selectedFrame.Model.Line, -1, -1, true, true);					
+                    //shell?.OpenDocument(shell?.CurrentSolution?.FindFile(selectedFrame.Model.FullFileName), selectedFrame.Model.Line, -1, -1, true, true);					
 				}
 
 				this.RaisePropertyChanged(nameof(SelectedFrame));
@@ -56,9 +56,7 @@ namespace AvalonStudio.Debugging
 
 		public void Activation()
 		{
-			_debugManager = IoC.Get<IDebugManager>();
-
-			_debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+			_debugManager = IoC.Get<IDebugManager2>();
 
 			_debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
@@ -74,7 +72,7 @@ namespace AvalonStudio.Debugging
 			Frames.Clear();
 		}
 
-		public void Update(List<Frame> frames)
+		/*public void Update(List<Frame> frames)
 		{
 			if (frames != null)
 			{
@@ -85,13 +83,6 @@ namespace AvalonStudio.Debugging
 					Frames.Add(new FrameViewModel(_debugManager, frame));
 				}
 			}
-		}
-
-		private async void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
-		{
-			var updates = await _debugManager.CurrentDebugger.ListStackFramesAsync();
-
-			Dispatcher.UIThread.InvokeAsync(() => { Update(updates); });
-		}
+		}*/
 	}
 }

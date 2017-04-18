@@ -39,7 +39,7 @@
             Enable();
         }
 
-        public void SetDebugger(IDebugger debugger)
+        public void SetDebugger(IDebugger2 debugger)
         {
             this.debugger = debugger;
         }
@@ -49,7 +49,7 @@
             columns = width;
         }
 
-        private IDebugger debugger;
+        private IDebugger2 debugger;
         private int columns;
 
         private int count;
@@ -125,7 +125,7 @@
 
         private async Task<List<MemoryBytes>> ReadMemoryBytesAsync (ulong address, ulong offset, uint count)
         {
-            var result = await debugger.ReadMemoryBytesAsync(address, offset, count);
+            /*var result = await debugger.ReadMemoryBytesAsync(address, offset, count);
 
             if(result == null)
             {
@@ -134,7 +134,8 @@
                 result.Add(new MemoryBytes() { Address = address, Data = new byte[count] });
             }
 
-            return result;
+            return result;*/
+            throw new NotImplementedException();
         }
 
         private async Task<List<MemoryBytesViewModel>> FetchRange (int startIndex, int pageCount)

@@ -57,6 +57,11 @@
             return result;
         }
 
+        public override Task InvalidateAsync(IDebugger2 debugger)
+        {
+            throw new NotImplementedException();
+        }
+
         private uint count;
         private Func<byte[], IList<T>> converter;
 
@@ -69,38 +74,7 @@
         }
 
         private List<MemoryValueViewModel<T>> lastChangedValues;
-
-        public override async Task InvalidateAsync (IDebugger debugger)
-        {
-            foreach(var value in lastChangedValues)
-            {
-                value.HasChanged = false;
-            }
-
-            lastChangedValues.Clear();
-
-            List<MemoryBytes> newData = null;
-
-            newData = await debugger.ReadMemoryBytesAsync(actualAddress, 0, count);
-
-            if (newData != null)
-            {
-                var newValues = converter(newData.First().Data);
-
-                for (int i = 0; i < values.Count; i++)
-                {
-                    if (!Values[i].Value.Equals(newValues[i]))
-                    {
-                        Values[i].Value = newValues[i];
-                        Values[i].HasChanged = true;
-                        lastChangedValues.Add(Values[i]);
-                    }
-                }
-
-                Text = GetText(newData.First().Data);
-            }
-        }
-
+        
 
         private ObservableCollection<MemoryValueViewModel<T>> values;
         public ObservableCollection<MemoryValueViewModel<T>> Values
@@ -119,6 +93,6 @@
 
     public abstract class MemoryBytesViewModel : ViewModel
     {
-        public abstract Task InvalidateAsync(IDebugger debugger);
+        public abstract Task InvalidateAsync(IDebugger2 debugger);
     }
 }

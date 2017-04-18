@@ -14,7 +14,7 @@
     using Extensibility;
     public class MemoryViewModel : ToolViewModel, IExtension
     {
-        private IDebugManager _debugManager;
+        private IDebugManager2 _debugManager;
         public const string ToolId = "CIDMEM001";
         const int Columns = 32;
 
@@ -67,8 +67,8 @@
 
 
         private MemoryViewDataProvider dataProvider;
-        private IDebugger debugger;
-        public void SetDebugger(IDebugger debugger)
+        private IDebugger2 debugger;
+        public void SetDebugger(IDebugger2 debugger)
         {
             if (this.debugger != null)
             {
@@ -83,22 +83,6 @@
             this.debugger = debugger;
 
             dataProvider.SetDebugger(debugger);
-        }
-
-        private void Debugger_StateChanged(object sender, EventArgs e)
-        {
-            if (debugger.State == DebuggerState.Paused)
-            {
-                dataProvider.Enable();
-
-                Dispatcher.UIThread.InvokeTaskAsync(() => Enabled = true);
-            }
-            else
-            {
-                dataProvider?.Clear();
-
-                Dispatcher.UIThread.InvokeTaskAsync(() => Enabled = false);
-            }
         }
 
         private bool enabled;
@@ -178,11 +162,8 @@
 
         public void Activation()
         {
-            _debugManager = IoC.Get<IDebugManager>();
-            _debugManager.DebuggerChanged += (sender, e) => { SetDebugger(_debugManager.CurrentDebugger); };
-
-            _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
-
+            _debugManager = IoC.Get<IDebugManager2>();
+            
             _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
             _debugManager.DebugSessionEnded += (sender, e) =>
@@ -192,11 +173,6 @@
                 // TODO clear out data ready for GC, this requires a fix in Avalonia.
                 //DisassemblyData = null;
             };            
-        }
-
-        private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
-        {
-            Dispatcher.UIThread.InvokeAsync(() => { Invalidate(); });
         }
 
         private ulong currentAddress;

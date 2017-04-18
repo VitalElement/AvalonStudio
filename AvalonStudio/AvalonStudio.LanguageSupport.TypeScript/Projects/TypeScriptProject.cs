@@ -118,16 +118,6 @@ Program.main();
         public override string CurrentDirectory => Path.GetDirectoryName(Location) + Platform.DirectorySeperator;
 
         [JsonIgnore]
-        public override IDebugger Debugger
-        {
-            get => IoC.Get<IShell>().Debuggers.FirstOrDefault(dbg => dbg.GetType() == typeof(TypeScriptDebugger));
-            set
-            {
-                throw new NotSupportedException();
-            }
-        }
-
-        [JsonIgnore]
         public override IDebugger2 Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         [JsonConverter(typeof(ExpandoObjectConverter))]

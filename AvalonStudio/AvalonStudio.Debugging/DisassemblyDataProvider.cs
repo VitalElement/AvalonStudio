@@ -11,7 +11,7 @@ namespace AvalonStudio.Debugging
 	{
 		private int count;
 
-		private IDebugger debugger;
+		private IDebugger2 debugger;
 
 		public DisassemblyDataProvider()
 		{
@@ -68,7 +68,7 @@ namespace AvalonStudio.Debugging
 			return result;
 		}
 
-		public void SetDebugger(IDebugger debugger)
+		public void SetDebugger(IDebugger2 debugger)
 		{
 			this.debugger = debugger;
 		}
@@ -88,7 +88,7 @@ namespace AvalonStudio.Debugging
 		{
 			List<InstructionLine> result = null;
 
-			var task = debugger.DisassembleAsync(BaseAddress + (ulong) startIndex, (uint) pageCount);
+			/*var task = debugger.DisassembleAsync(BaseAddress + (ulong) startIndex, (uint) pageCount);
 			task.Wait();
 
 			var instructions = task.Result;
@@ -112,7 +112,7 @@ namespace AvalonStudio.Debugging
 						result.Add(instruction.First());
 					}
 				}
-			}
+			}*/
 
 			return result;
 		}

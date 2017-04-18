@@ -8,7 +8,6 @@ using System.Composition;
 
 namespace AvalonStudio.Projects
 {
-	//[InheritedExport(typeof (IProject))]
 	public interface IProject : IProjectFolder, IComparable<IProject>
 	{
 		ISolution Solution { get; }
@@ -19,7 +18,6 @@ namespace AvalonStudio.Projects
 		ObservableCollection<IProject> References { get; }
 
 		IToolChain ToolChain { get; set; }
-		IDebugger Debugger { get; set; }
         IDebugger2 Debugger2 { get; set; }
 
 		ITestFramework TestFramework { get; set; }

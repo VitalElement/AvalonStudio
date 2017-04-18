@@ -325,8 +325,6 @@ namespace AvalonStudio.Projects
 
         public abstract string CurrentDirectory { get; }
 
-        public abstract IDebugger Debugger { get; set; }
-
         public abstract IDebugger2 Debugger2 { get; set; }
 
         public abstract dynamic DebugSettings { get; set; }
