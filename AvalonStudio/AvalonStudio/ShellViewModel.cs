@@ -48,6 +48,7 @@ namespace AvalonStudio
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debuggers;
+        private List<IDebugger2> _debugger2s;
         private List<ITestFramework> _testFrameworks;
         private List<ICodeTemplate> _codeTemplates;
         private List<MenuBarDefinition> _menuBarDefinitions;
@@ -76,6 +77,7 @@ namespace AvalonStudio
             _languageServices = new List<ILanguageService>();
             _projectTemplates = new List<IProjectTemplate>();
             _debuggers = new List<IDebugger>();
+            _debugger2s = new List<IDebugger2>();
             _codeTemplates = new List<ICodeTemplate>();
             _projectTypes = new List<IProjectType>();
             _solutionTypes = new List<ISolutionType>();
@@ -129,6 +131,7 @@ namespace AvalonStudio
                 _toolChains.ConsumeExtension(extension);
                 _projectTemplates.ConsumeExtension(extension);
                 _debuggers.ConsumeExtension(extension);
+                _debugger2s.ConsumeExtension(extension);
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
@@ -255,8 +258,6 @@ namespace AvalonStudio
             set { this.RaiseAndSetIfChanged(ref debugControlsVisible, value); }
         }
 
-        public DebugManager DebugManager { get; private set; }
-
         public ToolBarDefinition ToolBarDefinition
         {
             get
@@ -330,6 +331,8 @@ namespace AvalonStudio
 
         public IEnumerable<IDebugger> Debuggers => _debuggers;
 
+        public IEnumerable<IDebugger2> Debugger2s => _debugger2s;
+
         public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 
         public void AddDocument(IDocumentTabViewModel document)
@@ -364,10 +367,9 @@ namespace AvalonStudio
             }
         }
 
-        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
-            bool selectLine = false)
+        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
         {
-            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.Model.ProjectFile.FilePath == file.FilePath);
+            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.Model.ProjectFile?.FilePath == file.FilePath);
 
             var selectedDocumentTCS = new TaskCompletionSource<IDocumentTabViewModel>();
 
@@ -378,18 +380,21 @@ namespace AvalonStudio
                     if (DocumentTabs.TemporaryDocument != null)
                     {
                         var documentToClose = DocumentTabs.TemporaryDocument;
+
                         DocumentTabs.TemporaryDocument = null;
+
                         await documentToClose.CloseCommand.ExecuteAsyncTask(null);
+
                         SelectedDocument = null;
                     }
                 });
 
                 EditorViewModel newEditor = null;
+
                 await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                 {
                     newEditor = new EditorViewModel(new EditorModel());
-
-                    newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
+                    newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager2>().Breakpoints));
                     newEditor.Margins.Add(new LineNumberMargin());
 
                     await Dispatcher.UIThread.InvokeTaskAsync(() =>
@@ -418,18 +423,19 @@ namespace AvalonStudio
             {
                 if (debugHighlight)
                 {
-                    (DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.Line = line;
+                    (DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.SetLocation(line, startColumn, endColumn);
                 }
 
                 if (selectLine || debugHighlight)
                 {
                     Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).Model.ScrollToLine(line));
-                    (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, column);
+                    (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
                 }
             }
 
             return DocumentTabs.SelectedDocument as EditorViewModel;
         }
+
 
         public IEditor GetDocument(string path)
         {

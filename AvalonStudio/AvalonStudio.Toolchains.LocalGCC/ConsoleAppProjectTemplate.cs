@@ -35,7 +35,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
             project.ToolChain.ProvisionSettings(project);
 
-			project.Debugger = shell.Debuggers.FirstOrDefault(db => db is LocalDebugAdaptor);
+			project.Debugger2 = shell.Debugger2s.FirstOrDefault(db => db is LocalGdbDebugger);
 
 			var code = new StringBuilder();
 
