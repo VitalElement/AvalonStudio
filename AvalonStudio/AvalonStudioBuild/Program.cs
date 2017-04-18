@@ -49,7 +49,6 @@ namespace AvalonStudio
 			}
 		}
 
-
 		private static int RunInstallPackage(PackageOptions options)
 		{
 			console.Write("Downloading catalogs...");
@@ -89,8 +88,8 @@ namespace AvalonStudio
 
 				var repo = task.Result;
 
-				var dlTask = repo.Synchronize(options.Tag, console);
-				dlTask.Wait();
+				var downloadTask = repo.Synchronize(options.Tag, console);
+				downloadTask.Wait();
 
 				return 1;
 			}

@@ -49,7 +49,6 @@ namespace AvalonStudio.Debugging.GDB
 
             if (firstFrame != null)
                 this.firstFrame = CreateFrame(firstFrame);
-
         }
 
         public int FrameCount
@@ -193,7 +192,6 @@ namespace AvalonStudio.Debugging.GDB
                 cdata.ExpressionLength = partialWord.Length;
 
                 // Local variables
-
                 GdbCommandResult res = session.RunCommand("-stack-list-locals", "0");
                 foreach (ResultData data in res.GetObject("locals"))
                 {
@@ -203,7 +201,6 @@ namespace AvalonStudio.Debugging.GDB
                 }
 
                 // Parameters
-
                 res = session.RunCommand("-stack-list-arguments", "0", frameIndex.ToString(), frameIndex.ToString());
                 foreach (ResultData data in res.GetObject("stack-args").GetObject(0).GetObject("frame").GetObject("args"))
                 {
@@ -217,7 +214,6 @@ namespace AvalonStudio.Debugging.GDB
             }
             return null;
         }
-
 
         ObjectValue CreateVarObject(string exp)
         {
@@ -240,8 +236,6 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     return ObjectValue.CreateUnknown(exp);
                 }
-
-
             }
             catch
             {

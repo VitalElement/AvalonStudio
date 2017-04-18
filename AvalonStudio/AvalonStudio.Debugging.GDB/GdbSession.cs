@@ -637,7 +637,6 @@ namespace AvalonStudio.Debugging.GDB
                 if (newLine <= cline)
                     break;
                 cline = newLine + 1;
-
             }
             while (true);
 

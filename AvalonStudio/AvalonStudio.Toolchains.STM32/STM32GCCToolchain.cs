@@ -213,7 +213,6 @@ namespace AvalonStudio.Toolchains.STM32
                 }
             }
 
-
             switch (settings.CompileSettings.Fpu)
             {
                 case FPUSupport.Soft:
@@ -224,7 +223,6 @@ namespace AvalonStudio.Toolchains.STM32
                     result += "-mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
                     break;
             }
-
 
             // TODO remove dependency on file?
             if (file != null)

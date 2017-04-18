@@ -70,7 +70,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public string LinkerScript { get; set; }
 
-		public override string GDBExecutable => Path.Combine(BinDirectory, "gdb" + Platform.ExecutableExtension);
+        public override string GDBExecutable => Path.Combine(BinDirectory, "gdb" + Platform.ExecutableExtension);
 
         public override Version Version
         {
@@ -132,7 +132,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
         public override string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile file)
         {
             var result = string.Empty;
-            
+
             var settings = superProject.GetSettings<GccToolchainSettings>();
 
             result += "-Wall -c ";
@@ -158,7 +158,6 @@ namespace AvalonStudio.Toolchains.LocalGCC
                     }
 
                     result += "-std=c++14 ";
-
                 }
             }
 

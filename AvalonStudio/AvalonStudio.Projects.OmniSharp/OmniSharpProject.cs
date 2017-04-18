@@ -24,25 +24,18 @@ namespace AvalonStudio.Projects.OmniSharp
 
             result.LoadFiles();
 
-            //foreach(var file in project.SourceFiles)
-            //{
-            //    var sourceFile = File.FromPath(result, result, file.ToPlatformPath());
-            //    result.SourceFiles.InsertSorted(sourceFile);
-            //    result.Items.Add(sourceFile);
-            //}
-
             return result;
         }
 
         public OmniSharpProject() : base(true)
         {
             ExcludedFiles = new List<string>();
-            Items = new ObservableCollection<IProjectItem>();            
-            References = new ObservableCollection<IProject>();            
+            Items = new ObservableCollection<IProjectItem>();
+            References = new ObservableCollection<IProject>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
             Project = this;
-        }        
+        }
 
         public override IList<object> ConfigurationPages
         {
@@ -56,15 +49,21 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
         }
-        
-        public override IDebugger2 Debugger2 { get
+
+        public override IDebugger2 Debugger2
+        {
+            get
             {
                 var shell = IoC.Get<IShell>();
 
                 var debugger = shell.Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.DotNetCore.DotNetCoreDebugger");
 
                 return debugger;
-            } set { } }
+            }
+            set
+            {
+            }
+        }
 
         public override dynamic DebugSettings { get; set; }
 
@@ -118,7 +117,7 @@ namespace AvalonStudio.Projects.OmniSharp
             get
             {
                 var shell = IoC.Get<IShell>();
-                
+
                 var toolchain = shell.ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.MSBuild.MSBuildToolchain");
 
                 return toolchain;

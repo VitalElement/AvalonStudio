@@ -42,7 +42,6 @@ namespace AvalonStudio.Debugging
 
             DeleteCommand.Subscribe(_ => { IoC.Get<IWatchList>().Remove(Model); });
 
-
             DisplayFormatCommand = ReactiveCommand.Create();
             DisplayFormatCommand.Subscribe(s =>
             {

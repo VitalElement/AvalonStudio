@@ -206,15 +206,15 @@ namespace AvalonStudio.Platforms
             }
         }
 
-        public static void EnsureSolutionUserDataDirectory (ISolution solution)
+        public static void EnsureSolutionUserDataDirectory(ISolution solution)
         {
-            if(!Directory.Exists(GetUserDataDirectory(solution)))
+            if (!Directory.Exists(GetUserDataDirectory(solution)))
             {
                 Directory.CreateDirectory(GetUserDataDirectory(solution));
             }
         }
 
-        public static string GetUserDataDirectory (ISolution solution)
+        public static string GetUserDataDirectory(ISolution solution)
         {
             return Path.Combine(solution.CurrentDirectory, UserDataDir);
         }
