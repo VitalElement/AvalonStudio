@@ -1,50 +1,48 @@
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 using AvalonStudio.Utils;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Repositories
 {
-	public class PackageInfo
-	{
-		public List<string> Versions { get; set; }
-	}
+    public class PackageInfo
+    {
+        public List<string> Versions { get; set; }
+    }
 
+    public class PackageReference
+    {
+        public RepositoryOld Repository { get; internal set; }
+        public string Name { get; set; }
+        public string Url { get; set; }
 
-	public class PackageReference
-	{
-		public RepositoryOld Repository { get; internal set; }
-		public string Name { get; set; }
-		public string Url { get; set; }
+        public async Task<PackageIndex> DownloadInfoAsync()
+        {
+            var source = Repository.Source;
 
-		public async Task<PackageIndex> DownloadInfoAsync()
-		{
-			var source = Repository.Source;
+            PackageIndex result = null;
 
-			PackageIndex result = null;
+            using (var client = new HttpClient())
+            {
+                var packageIndex = SerializedObject.FromString<PackageIndex>(await client.GetStringAsync(Url));
 
-			using (var client = new HttpClient())
-			{
-				var packageIndex = SerializedObject.FromString<PackageIndex>(await client.GetStringAsync(Url));
+                result = packageIndex;
+            }
 
-				result = packageIndex;
-			}
+            return result;
+        }
+    }
 
-			return result;
-		}
-	}
+    public class RepositoryOld
+    {
+        public const string PackagesFileName = "packages.json";
 
-	public class RepositoryOld
-	{
-		public const string PackagesFileName = "packages.json";
+        public RepositoryOld()
+        {
+            Packages = new List<PackageReference>();
+        }
 
-		public RepositoryOld()
-		{
-			Packages = new List<PackageReference>();
-		}
-
-		public PackageSourceOld Source { get; internal set; }
-		public IList<PackageReference> Packages { get; set; }
-	}
+        public PackageSourceOld Source { get; internal set; }
+        public IList<PackageReference> Packages { get; set; }
+    }
 }

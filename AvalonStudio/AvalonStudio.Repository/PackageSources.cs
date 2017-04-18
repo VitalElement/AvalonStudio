@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using AvalonStudio.Platforms;
+﻿using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
+using System.Collections.Generic;
+using System.IO;
 
 namespace AvalonStudio.Repositories
 {
