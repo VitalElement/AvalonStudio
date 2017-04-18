@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Composition;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Avalonia.Input;
 using Avalonia.Threading;
 using AvalonStudio.Controls;
@@ -12,9 +5,11 @@ using AvalonStudio.Controls.Standard.ErrorList;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
+using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Extensibility.ToolBars.Models;
@@ -28,27 +23,20 @@ using AvalonStudio.TextEditor;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using ReactiveUI;
-using AvalonStudio.Extensibility.Commands;
-using AvalonStudio.Extensibility.Menus;
-using Avalonia.Controls;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Composition;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AvalonStudio
 {
-    static class ListExtensions
-    {
-        public static void ConsumeExtension<T>(this List<T> destination, IExtension extension) where T : class, IExtension
-        {
-            if (extension is T)
-            {
-                destination.Add(extension as T);
-            }
-        }
-    }
-
     [Export]
     public class ShellViewModel : ViewModel, IShell
     {
-        public static ShellViewModel Instance = null;
+        public static ShellViewModel Instance { get; internal set; }
 
         private IToolBar _toolBar;
 
@@ -60,7 +48,6 @@ namespace AvalonStudio
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debuggers;
-        private List<IDebugger2> _debugger2s;
         private List<ITestFramework> _testFrameworks;
         private List<ICodeTemplate> _codeTemplates;
         private List<MenuBarDefinition> _menuBarDefinitions;
@@ -89,7 +76,6 @@ namespace AvalonStudio
             _languageServices = new List<ILanguageService>();
             _projectTemplates = new List<IProjectTemplate>();
             _debuggers = new List<IDebugger>();
-            _debugger2s = new List<IDebugger2>();
             _codeTemplates = new List<ICodeTemplate>();
             _projectTypes = new List<IProjectType>();
             _solutionTypes = new List<ISolutionType>();
@@ -143,10 +129,10 @@ namespace AvalonStudio
                 _toolChains.ConsumeExtension(extension);
                 _projectTemplates.ConsumeExtension(extension);
                 _debuggers.ConsumeExtension(extension);
-                _debugger2s.ConsumeExtension(extension);
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
+
                 _commandDefinitions.ConsumeExtension(extension);
             }
 
@@ -256,8 +242,6 @@ namespace AvalonStudio
 
             CurrentPerspective = Perspective.Editor;
 
-            DebugManager2 = new DebugManager2();
-
             IoC.RegisterConstant(this);
         }
 
@@ -273,11 +257,12 @@ namespace AvalonStudio
 
         public DebugManager DebugManager { get; private set; }
 
-        public DebugManager2 DebugManager2 { get; private set; }
-
         public ToolBarDefinition ToolBarDefinition
         {
-            get { return _toolBarDefinition; }
+            get
+            {
+                return _toolBarDefinition;
+            }
             protected set
             {
                 this.RaiseAndSetIfChanged(ref _toolBarDefinition, value);
@@ -290,17 +275,17 @@ namespace AvalonStudio
             get
             {
                 if (_toolBar != null)
-                  return _toolBar;
+                    return _toolBar;
 
                 if (ToolBarDefinition == null)
-                return null;
-                
+                    return null;
+
                 var toolBarBuilder = new ToolBarBuilder(_toolBarDefinitions.ToArray(), _toolBarItemGroupDefinitions.ToArray(), _toolBarItemDefinitions.ToArray(), new ExcludeToolBarDefinition[0], new ExcludeToolBarItemGroupDefinition[0], new ExcludeToolBarItemDefinition[0]);
 
                 var mainToolBar = new Extensibility.ToolBars.ViewModels.ToolBarsViewModel(toolBarBuilder);
 
                 toolBarBuilder.BuildToolBars(mainToolBar);
-                
+
                 _toolBar = new ToolBarModel();
 
                 toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
@@ -345,8 +330,6 @@ namespace AvalonStudio
 
         public IEnumerable<IDebugger> Debuggers => _debuggers;
 
-        public IEnumerable<IDebugger2> Debugger2s => _debugger2s;
-
         public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 
         public void AddDocument(IDocumentTabViewModel document)
@@ -381,10 +364,10 @@ namespace AvalonStudio
             }
         }
 
-        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
+        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false,
             bool selectLine = false)
         {
-            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.Model.ProjectFile?.FilePath == file.FilePath);
+            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.Model.ProjectFile.FilePath == file.FilePath);
 
             var selectedDocumentTCS = new TaskCompletionSource<IDocumentTabViewModel>();
 
@@ -406,7 +389,7 @@ namespace AvalonStudio
                 {
                     newEditor = new EditorViewModel(new EditorModel());
 
-                    newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager2>().Breakpoints));
+                    newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager>().BreakPointManager));
                     newEditor.Margins.Add(new LineNumberMargin());
 
                     await Dispatcher.UIThread.InvokeTaskAsync(() =>
@@ -435,13 +418,13 @@ namespace AvalonStudio
             {
                 if (debugHighlight)
                 {
-                    (DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.SetLocation(line, startColumn, endColumn);
+                    (DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.Line = line;
                 }
 
                 if (selectLine || debugHighlight)
                 {
                     Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).Model.ScrollToLine(line));
-                    (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, startColumn != -1? 1 : startColumn);
+                    (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, column);
                 }
             }
 
@@ -489,7 +472,6 @@ namespace AvalonStudio
             }
         }
 
-
         public void Clean(IProject project)
         {
             Console.Clear();
@@ -528,7 +510,10 @@ namespace AvalonStudio
 
         public Perspective CurrentPerspective
         {
-            get { return currentPerspective; }
+            get
+            {
+                return currentPerspective;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref currentPerspective, value);
@@ -550,7 +535,10 @@ namespace AvalonStudio
 
         public ModalDialogViewModelBase ModalDialog
         {
-            get { return modalDialog; }
+            get
+            {
+                return modalDialog;
+            }
             set
             {
                 modalDialog = value;
@@ -568,7 +556,10 @@ namespace AvalonStudio
 
         public ISolution CurrentSolution
         {
-            get { return currentSolution; }
+            get
+            {
+                return currentSolution;
+            }
             set
             {
                 var oldValue = CurrentSolution;
@@ -645,25 +636,6 @@ namespace AvalonStudio
         {
             switch (e.Key)
             {
-                //case Key.F9:
-                //    DebugManager.StepInstruction();
-                //    break;
-
-                //case Key.F10:
-                //    DebugManager.StepOver();
-                //    break;
-
-                //case Key.F11:
-                //    DebugManager.StepInto();
-                //    break;
-
-                //case Key.F5:
-                //    if (CurrentSolution?.StartupProject != null)
-                //    {
-                //        Debug(CurrentSolution.StartupProject);
-                //    }
-                //    break;
-
                 case Key.F6:
                     Build();
                     break;

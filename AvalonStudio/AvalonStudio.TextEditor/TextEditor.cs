@@ -16,7 +16,6 @@ using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using OmniXaml.Attributes;
-
 using Avalonia.LogicalTree;
 
 namespace AvalonStudio.TextEditor
@@ -37,10 +36,33 @@ namespace AvalonStudio.TextEditor
             TextView.ScrollToLine(line);
         }
 
+        public void Indent(IIndentationStrategy indentationStrategy)
+        {
+            if (CaretIndex >= 0 && CaretIndex < TextDocument.TextLength)
+            {
+                if (TextDocument.GetCharAt(CaretIndex) == '}')
+                {
+                    TextDocument.Insert(CaretIndex, Environment.NewLine);
+                    CaretIndex--;
+
+                    var currentLine = TextDocument.GetLineByOffset(CaretIndex);
+
+                    CaretIndex = indentationStrategy.IndentLine(TextDocument, currentLine, CaretIndex);
+                    CaretIndex = indentationStrategy.IndentLine(TextDocument, currentLine.NextLine.NextLine, CaretIndex);
+                    CaretIndex = indentationStrategy.IndentLine(TextDocument, currentLine.NextLine, CaretIndex);
+                }
+
+                var newCaret = indentationStrategy.IndentLine(TextDocument,
+                    TextDocument.GetLineByOffset(CaretIndex), CaretIndex);
+
+                CaretIndex = newCaret;
+            }
+        }
+
         #region Contructors
 
         static TextEditor()
-        {            
+        {
             FocusableProperty.OverrideDefaultValue(typeof(TextEditor), true);
 
             CaretIndexProperty.Changed.AddClassHandler<TextEditor>((s, v) =>
@@ -90,7 +112,6 @@ namespace AvalonStudio.TextEditor
             var canScrollHorizontally = this.GetObservable(AcceptsReturnProperty)
                 .Select(x => !x);
 
-
             var horizontalScrollBarVisibility = this.GetObservable(AcceptsReturnProperty)
                 .Select(x => x ? ScrollBarVisibility.Auto : ScrollBarVisibility.Hidden);
 
@@ -106,7 +127,7 @@ namespace AvalonStudio.TextEditor
                 EditorScrolled?.Invoke(this, new EventArgs());
             }));
 
-            disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));            
+            disposables.Add(AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Bubble));
         }
 
         public event EventHandler<EventArgs> EditorScrolled;
@@ -249,7 +270,7 @@ namespace AvalonStudio.TextEditor
         {
             get { return GetValue(TextChangedCommandProperty); }
             set { SetValue(TextChangedCommandProperty, value); }
-        }        
+        }
 
         public static readonly AvaloniaProperty<bool> AcceptsReturnProperty =
             AvaloniaProperty.Register<TextEditor, bool>(nameof(AcceptsReturn));
@@ -274,7 +295,10 @@ namespace AvalonStudio.TextEditor
 
         public int CaretIndex
         {
-            get { return GetValue(CaretIndexProperty); }
+            get
+            {
+                return GetValue(CaretIndexProperty);
+            }
             set
             {
                 SetValue(CaretIndexProperty, value);
@@ -364,7 +388,10 @@ namespace AvalonStudio.TextEditor
         private Vector offset;
         public Vector Offset
         {
-            get { return offset; }
+            get
+            {
+                return offset;
+            }
             set
             {
                 if (value.Y != offset.Y || value.X != offset.X)
@@ -398,7 +425,6 @@ namespace AvalonStudio.TextEditor
                 return GetWordAtIndex(index);
             }
         }
-
 
         public string GetWordAtIndex(int index)
         {
@@ -520,6 +546,68 @@ namespace AvalonStudio.TextEditor
             }
         }
 
+        private void MoveToWordBoundard(int count, int caretIndex)
+        {
+            if (count > 0)
+            {
+                count =
+                    TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
+                        TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
+            }
+            else
+            {
+                count =
+                    TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward,
+                        TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
+            }
+
+            if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
+            {
+                CaretIndex += count;
+            }
+        }
+
+        private void MoveForward(int count, int caretIndex)
+        {
+            for (var i = 0; i < Math.Abs(count); i++)
+            {
+                var line = TextDocument.GetLineByOffset(caretIndex);
+
+                if (caretIndex == line.EndOffset)
+                {
+                    if (line.NextLine != null)
+                    {
+                        caretIndex = line.NextLine.Offset;
+                    }
+                }
+                else
+                {
+                    caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
+                        TextUtilities.CaretPositioningMode.Normal);
+                }
+            }
+        }
+
+        private void MoveBackward(int count, int caretIndex)
+        {
+            for (var i = 0; i < Math.Abs(count); i++)
+            {
+                var line = TextDocument.GetLineByOffset(caretIndex);
+
+                if (caretIndex == line.Offset)
+                {
+                    if (line.PreviousLine != null)
+                    {
+                        caretIndex = line.PreviousLine.EndOffset;
+                    }
+                }
+                else
+                {
+                    caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex,
+                        TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
+                }
+            }
+        }
 
         private void MoveHorizontal(int count, InputModifiers modifiers)
         {
@@ -534,65 +622,17 @@ namespace AvalonStudio.TextEditor
             {
                 if ((modifiers & InputModifiers.Control) != 0)
                 {
-                    if (count > 0)
-                    {
-                        count =
-                            TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
-                                TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
-                    }
-                    else
-                    {
-                        count =
-                            TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward,
-                                TextUtilities.CaretPositioningMode.WordStartOrSymbol) - caretIndex;
-                    }
-
-                    if (caretIndex + count <= TextDocument.TextLength && caretIndex + count >= 0)
-                    {
-                        CaretIndex += count;
-                    }
+                    MoveToWordBoundard(count, caretIndex);
                 }
                 else
                 {
                     if (count > 0)
                     {
-                        for (var i = 0; i < Math.Abs(count); i++)
-                        {
-                            var line = TextDocument.GetLineByOffset(caretIndex);
-
-                            if (caretIndex == line.EndOffset)
-                            {
-                                if (line.NextLine != null)
-                                {
-                                    caretIndex = line.NextLine.Offset;
-                                }
-                            }
-                            else
-                            {
-                                caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex, TextUtilities.LogicalDirection.Forward,
-                                    TextUtilities.CaretPositioningMode.Normal);
-                            }
-                        }
+                        MoveForward(count, caretIndex);
                     }
                     else
                     {
-                        for (var i = 0; i < Math.Abs(count); i++)
-                        {
-                            var line = TextDocument.GetLineByOffset(caretIndex);
-
-                            if (caretIndex == line.Offset)
-                            {
-                                if (line.PreviousLine != null)
-                                {
-                                    caretIndex = line.PreviousLine.EndOffset;
-                                }
-                            }
-                            else
-                            {
-                                caretIndex = TextUtilities.GetNextCaretPosition(TextDocument, caretIndex,
-                                    TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
-                            }
-                        }
+                        MoveBackward(count, caretIndex);
                     }
 
                     CaretIndex = caretIndex;
@@ -643,7 +683,6 @@ namespace AvalonStudio.TextEditor
                     var whiteSpace = TextUtilities.GetWhitespaceAfter(TextDocument, lineOffset);
                     caretIndex = lineOffset + whiteSpace.Length;
                 }
-
 
                 CaretIndex = caretIndex;
                 SetHighestColumn();
@@ -743,12 +782,7 @@ namespace AvalonStudio.TextEditor
                 Undo();
             }
         }
-
-        #endregion
-
-        #region Public Methods        
-
-        #endregion
+        #endregion        
 
         #region Overrides
 
@@ -848,7 +882,8 @@ namespace AvalonStudio.TextEditor
 
         protected override void OnPointerMoved(PointerEventArgs e)
         {
-            if (TextView != null) // Need to check this incase control was virtualized?
+            // Need to check this incase control was virtualized?
+            if (TextView != null)
             {
                 var point = e.GetPosition(TextView.TextSurface);
 
@@ -906,7 +941,6 @@ namespace AvalonStudio.TextEditor
                 var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
 
                 anchors.Add(selection);
-                // TODO Add an achor to the caret index...
 
                 TextDocument.BeginUpdate();
 
@@ -921,6 +955,108 @@ namespace AvalonStudio.TextEditor
             }
         }
 
+        private void OnBackKey ()
+        {
+            // TODO use thread-safe copy of caret index.
+            if (!DeleteSelection() && CaretIndex > 0)
+            {
+                var line = TextDocument.GetLineByOffset(CaretIndex);
+
+                if (CaretIndex == line.Offset && line.PreviousLine != null)
+                {
+                    var delimiterLength = line.PreviousLine.DelimiterLength;
+                    TextDocument.Remove(CaretIndex - delimiterLength, delimiterLength);
+                    CaretIndex -= delimiterLength;
+                }
+                else
+                {
+                    TextDocument.Remove(CaretIndex - 1, 1);
+                    --CaretIndex;
+                }
+
+                TextView.Invalidate();
+            }
+        }
+
+        void OnTabKey(KeyEventArgs e)
+        {
+            var shiftedLines = false;
+
+            if (SelectionStart != SelectionEnd)
+            {
+                if (e.Modifiers == InputModifiers.Shift)
+                {
+                    var selection = GetSelectionAsSegment();
+                    var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+
+                    if (lines.Count() > 1)
+                    {
+                        TransformSelectedLines(line =>
+                        {
+                            var offset = line.Offset;
+                            var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
+
+                            if (s.Length > 0)
+                            {
+                                TextDocument.Remove(s.Offset, s.Length);
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    var selection = GetSelectionAsSegment();
+                    var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
+
+                    if (lines.Count() > 1)
+                    {
+                        TransformSelectedLines(line => { TextDocument.Insert(line.Offset, TabCharacter); });
+
+                        shiftedLines = true;
+                    }
+                }
+            }
+
+            if (!shiftedLines)
+            {
+                if (e.Modifiers == InputModifiers.Shift)
+                {
+                    TransformSelectedLines(line =>
+                    {
+                        var offset = CaretIndex - TabCharacter.Length;
+                        var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
+
+                        if (s.Length > 0)
+                        {
+                            TextDocument.Remove(s.Offset, s.Length);
+                        }
+                    });
+                }
+                else
+                {
+                    HandleTextInput(TabCharacter);
+                }
+            }
+        }
+
+        private void OnDeleteKey(int caretIndex)
+        {
+            if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
+            {
+                var line = TextDocument.GetLineByOffset(caretIndex);
+
+                if (CaretIndex == line.EndOffset && line.NextLine != null)
+                {
+                    TextDocument.Remove(caretIndex, line.DelimiterLength);
+                }
+                else
+                {
+                    TextDocument.Remove(caretIndex, 1);
+                }
+
+                TextView.Invalidate();
+            }
+        }
 
         protected void OnKeyDown(object sender, KeyEventArgs e)
         {
@@ -1029,44 +1165,11 @@ namespace AvalonStudio.TextEditor
                     break;
 
                 case Key.Back:
-                    if (!DeleteSelection() && CaretIndex > 0)
-                    {
-                        var line = TextDocument.GetLineByOffset(CaretIndex);
-
-                        if (CaretIndex == line.Offset && line.PreviousLine != null)
-                        {
-                            var delimiterLength = line.PreviousLine.DelimiterLength;
-                            TextDocument.Remove(CaretIndex - delimiterLength, delimiterLength);
-                            CaretIndex -= delimiterLength;
-                        }
-                        else
-                        {
-                            TextDocument.Remove(caretIndex - 1, 1);
-                            --CaretIndex;
-                        }
-
-                        TextView.Invalidate();
-                    }
-
+                    OnBackKey();
                     break;
 
                 case Key.Delete:
-                    if (!DeleteSelection() && caretIndex < TextDocument.TextLength)
-                    {
-                        var line = TextDocument.GetLineByOffset(CaretIndex);
-
-                        if (CaretIndex == line.EndOffset && line.NextLine != null)
-                        {
-                            TextDocument.Remove(CaretIndex, line.DelimiterLength);
-                        }
-                        else
-                        {
-                            TextDocument.Remove(caretIndex, 1);
-                        }
-
-                        TextView.Invalidate();
-                    }
-
+                    OnDeleteKey(caretIndex);
                     break;
 
                 case Key.Enter:
@@ -1074,7 +1177,6 @@ namespace AvalonStudio.TextEditor
                     {
                         HandleTextInput("\r\n");
                     }
-
                     break;
 
                 case Key.Tab:
@@ -1082,65 +1184,7 @@ namespace AvalonStudio.TextEditor
                     {
                         e.Handled = true;
 
-                        var shiftedLines = false;
-
-                        // TODO implement Selection.IsMultiLine
-
-                        if (SelectionStart != SelectionEnd)
-                        {
-                            if (e.Modifiers == InputModifiers.Shift)
-                            {
-                                var selection = GetSelectionAsSegment();
-                                var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
-
-                                if (lines.Count() > 1)
-                                {
-                                    TransformSelectedLines(line =>
-                                    {
-                                        var offset = line.Offset;
-                                        var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
-
-                                        if (s.Length > 0)
-                                        {
-                                            TextDocument.Remove(s.Offset, s.Length);
-                                        }
-                                    });
-                                }
-                            }
-                            else
-                            {
-                                var selection = GetSelectionAsSegment();
-                                var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(TextDocument, selection);
-
-                                if (lines.Count() > 1)
-                                {
-                                    TransformSelectedLines(line => { TextDocument.Insert(line.Offset, TabCharacter); });
-
-                                    shiftedLines = true;
-                                }
-                            }
-                        }
-
-                        if (!shiftedLines)
-                        {
-                            if (e.Modifiers == InputModifiers.Shift)
-                            {
-                                TransformSelectedLines(line =>
-                                {
-                                    var offset = CaretIndex - TabCharacter.Length;
-                                    var s = TextUtilities.GetSingleIndentationSegment(TextDocument, offset, TabCharacter.Length);
-
-                                    if (s.Length > 0)
-                                    {
-                                        TextDocument.Remove(s.Offset, s.Length);
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                HandleTextInput(TabCharacter);
-                            }
-                        }
+                        OnTabKey(e);
                     }
                     else
                     {
@@ -1164,7 +1208,7 @@ namespace AvalonStudio.TextEditor
                 SelectionEnd = CaretIndex;
             }
             else if (movement)
-            {
+            {                
                 SelectionStart = SelectionEnd = CaretIndex;
             }
 

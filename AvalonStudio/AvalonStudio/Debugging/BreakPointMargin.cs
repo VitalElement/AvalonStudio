@@ -13,13 +13,13 @@ namespace AvalonStudio.TextEditor
 	{
 		private readonly BreakpointStore _manager;
 
-		private int previewLine;
-		private bool previewPointVisible;
+        private int previewLine;
+        private bool previewPointVisible;
 
-		static BreakPointMargin()
-		{
-			FocusableProperty.OverrideDefaultValue(typeof (BreakPointMargin), true);
-		}
+        static BreakPointMargin()
+        {
+            FocusableProperty.OverrideDefaultValue(typeof(BreakPointMargin), true);
+        }
 
 		public BreakPointMargin(BreakpointStore manager)
 		{
@@ -31,24 +31,24 @@ namespace AvalonStudio.TextEditor
 			this._manager = manager;
 		}
 
-		protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-		{
-			base.OnDetachedFromVisualTree(e);
-		}
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromVisualTree(e);
+        }
 
-		public override void Render(DrawingContext context, TextInfo textInfo)
-		{
-			Width = textInfo.LineHeight;
+        public override void Render(DrawingContext context, TextInfo textInfo)
+        {
+            Width = textInfo.LineHeight;
 
-			context.FillRectangle(Brush.Parse("#333333"), Bounds);
+            context.FillRectangle(Brush.Parse("#333333"), Bounds);
 
-			if (previewPointVisible)
-			{
-				context.FillRectangle(Brush.Parse("#E67466"),
-					new Rect(Bounds.Size.Width/4 - 1,
-						textInfo.LineHeight*(previewLine - textView.VisualLines.First().DocumentLine.LineNumber) + Bounds.Size.Width/4,
-						Bounds.Size.Width/1.5, textInfo.LineHeight/1.5), (float) textInfo.LineHeight);
-			}
+            if (previewPointVisible)
+            {
+                context.FillRectangle(Brush.Parse("#E67466"),
+                    new Rect((Bounds.Size.Width / 4) - 1,
+                        (textInfo.LineHeight * (previewLine - textView.VisualLines.First().DocumentLine.LineNumber)) + (Bounds.Size.Width / 4),
+                        Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
+            }
 
 			foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(textView.TextDocument.FileName)))
 			{
@@ -59,30 +59,30 @@ namespace AvalonStudio.TextEditor
 			}
 		}
 
-		protected override void OnPointerMoved(PointerEventArgs e)
-		{
-			previewPointVisible = true;
+        protected override void OnPointerMoved(PointerEventArgs e)
+        {
+            previewPointVisible = true;
 
-			var offset = textView.GetOffsetFromPoint(e.GetPosition(this));
+            var offset = textView.GetOffsetFromPoint(e.GetPosition(this));
 
-			if (offset != -1)
-			{
-				previewLine = textView.TextDocument.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
-			}
+            if (offset != -1)
+            {
+                previewLine = textView.TextDocument.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
+            }
 
-			InvalidateVisual();
-		}
+            InvalidateVisual();
+        }
 
 		protected override void OnPointerReleased(PointerEventArgs e)
 		{
 			previewPointVisible = true;
 
-			var offset = textView.GetOffsetFromPoint(e.GetPosition(this));
+            var offset = textView.GetOffsetFromPoint(e.GetPosition(this));
 
-			if (offset != -1)
-			{
-				var lineClicked = -1;
-				lineClicked = textView.TextDocument.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
+            if (offset != -1)
+            {
+                var lineClicked = -1;
+                lineClicked = textView.TextDocument.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
 
 				var currentBreakPoint =
 					_manager.OfType<Breakpoint>().FirstOrDefault(bp => bp.FileName == textView.TextDocument.FileName && bp.Line == lineClicked) as BreakEvent;
@@ -100,24 +100,24 @@ namespace AvalonStudio.TextEditor
 				}
 			}
 
-			InvalidateVisual();
-		}
+            InvalidateVisual();
+        }
 
-		protected override Size MeasureOverride(Size availableSize)
-		{
-			return new Size(100, 0);
-		}
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            return new Size(100, 0);
+        }
 
-		protected override void OnPointerLeave(PointerEventArgs e)
-		{
-			previewPointVisible = false;
+        protected override void OnPointerLeave(PointerEventArgs e)
+        {
+            previewPointVisible = false;
 
-			InvalidateVisual();
-		}
+            InvalidateVisual();
+        }
 
-		protected override void OnPointerPressed(PointerPressedEventArgs e)
-		{
-			InvalidateVisual();
-		}
-	}
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
+        {
+            InvalidateVisual();
+        }
+    }
 }

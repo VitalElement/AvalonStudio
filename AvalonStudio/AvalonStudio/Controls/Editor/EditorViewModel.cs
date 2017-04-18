@@ -29,7 +29,8 @@ namespace AvalonStudio.Controls
 {
     public class EditorViewModel : DocumentTabViewModel<EditorModel>, IEditor
     {
-        public SelectedDebugLineBackgroundRenderer DebugLineHighlighter;
+        public SelectedDebugLineBackgroundRenderer DebugLineHighlighter { get; set; }
+
         private readonly CompositeDisposable disposables;
 
         private readonly List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -140,7 +141,7 @@ namespace AvalonStudio.Controls
             highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
 
             BeforeTextChangedCommand = ReactiveCommand.Create();
-            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));            
+            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
 
             TextChangedCommand = ReactiveCommand.Create();
             disposables.Add(TextChangedCommand.Subscribe(model.OnTextChanged));
@@ -236,7 +237,7 @@ namespace AvalonStudio.Controls
                             intellisenseManager.OnTextInput(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
                         }
                     };
-                    
+
                     Model.Editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
 
                     disposables.Add(Model.Editor.AddHandler(InputElement.KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel));
@@ -314,7 +315,7 @@ namespace AvalonStudio.Controls
         {
             if (!ignoreFileModifiedEvents && TextDocument != null)
             {
-                if (!(new FileInfo(Model.ProjectFile.Location).IsFileLocked()))
+                if (!new FileInfo(Model.ProjectFile.Location).IsFileLocked())
                 {
                     using (var fs = System.IO.File.OpenText(Model.ProjectFile.Location))
                     {
@@ -323,8 +324,6 @@ namespace AvalonStudio.Controls
                 }
             }
         }
-
-       
 
         #endregion
 
@@ -363,7 +362,10 @@ namespace AvalonStudio.Controls
         private string wordAtCaret;
         public string WordAtCaret
         {
-            get { return wordAtCaret; }
+            get
+            {
+                return wordAtCaret;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref wordAtCaret, value);
@@ -382,7 +384,10 @@ namespace AvalonStudio.Controls
         private Point caretLocation;
         public Point CaretLocation
         {
-            get { return caretLocation; }
+            get
+            {
+                return caretLocation;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref caretLocation, value);
@@ -415,7 +420,6 @@ namespace AvalonStudio.Controls
             get { return intellisense; }
             set { this.RaiseAndSetIfChanged(ref intellisense, value); }
         }
-
 
         private TextDocument textDocument;
         public TextDocument TextDocument
@@ -466,7 +470,10 @@ namespace AvalonStudio.Controls
         private int caretIndex;
         public int CaretIndex
         {
-            get { return caretIndex; }
+            get
+            {
+                return caretIndex;
+            }
             set
             {
                 if (TextDocument != null && value > TextDocument.TextLength)
@@ -490,7 +497,6 @@ namespace AvalonStudio.Controls
                 this.RaisePropertyChanged(nameof(SelectedIndexEntry));
             }
         }
-
 
         private string GetWordAtOffset(int offset)
         {
@@ -608,7 +614,10 @@ namespace AvalonStudio.Controls
 
         public IndexEntry SelectedIndexEntry
         {
-            get { return selectedIndexEntry; }
+            get
+            {
+                return selectedIndexEntry;
+            }
             set
             {
                 if (value != null && value != selectedIndexEntry)
@@ -628,7 +637,6 @@ namespace AvalonStudio.Controls
             get { return indexItems; }
             set { this.RaiseAndSetIfChanged(ref indexItems, value); }
         }
-
 
         private ObservableCollection<OffsetSyntaxHighlightingData> highlightingData;
         public ObservableCollection<OffsetSyntaxHighlightingData> HighlightingData
@@ -661,7 +669,7 @@ namespace AvalonStudio.Controls
 
         #endregion
 
-       #region Public Methods
+        #region Public Methods
         private bool ignoreFileModifiedEvents = false;
         public void Save()
         {

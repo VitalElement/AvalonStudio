@@ -5,7 +5,6 @@
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
-    using CPlusPlus;
     using Extensibility.Threading;
     using Projects.OmniSharp;
     using System;
@@ -38,11 +37,20 @@
             }
         }
 
-        public IEnumerable<char> IntellisenseTriggerCharacters { get { return new[] { '.', '>', ':' }; } }
+        public IEnumerable<char> IntellisenseTriggerCharacters => new[]
+        {
+            '.', '>', ':'
+        };
 
-        public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '>', ';' }; } }
+        public IEnumerable<char> IntellisenseSearchCharacters => new[]
+        {
+            '(', ')', '.', ':', '-', '>', ';'
+        };
 
-        public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
+        public IEnumerable<char> IntellisenseCompleteCharacters => new[]
+        {
+            '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^'
+        };
 
         public IIndentationStrategy IndentationStrategy
         {
@@ -129,7 +137,7 @@
 
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter)
         {
-            var result = new CodeCompletionResults ();
+            var result = new CodeCompletionResults();
 
             var dataAssociation = GetAssociatedData(sourceFile);
 
@@ -217,26 +225,7 @@
                     {
                         case Key.Return:
                             {
-                                if (editor.CaretIndex >= 0 && editor.CaretIndex < editor.TextDocument.TextLength)
-                                {
-                                    if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
-                                    {
-                                        editor.TextDocument.Insert(editor.CaretIndex, Environment.NewLine);
-                                        editor.CaretIndex--;
-
-                                        var currentLine = editor.TextDocument.GetLineByOffset(editor.CaretIndex);
-
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine, editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine.NextLine,
-                                            editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);
-                                    }
-
-                                    var newCaret = IndentationStrategy.IndentLine(editor.TextDocument,
-                                        editor.TextDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
-
-                                    editor.CaretIndex = newCaret;
-                                }
+                                editor.Indent(IndentationStrategy);
                             }
                             break;
                     }
@@ -365,36 +354,10 @@
 
         public void BeforeActivation()
         {
-            
         }
 
         public void Activation()
         {
-            
         }
-    }
-
-    internal class CSharpDataAssociation
-    {
-        public CSharpDataAssociation(TextDocument textDocument)
-        {
-            BackgroundRenderers = new List<IBackgroundRenderer>();
-            DocumentLineTransformers = new List<IDocumentLineTransformer>();
-
-            TextColorizer = new TextColoringTransformer(textDocument);
-            TextMarkerService = new TextMarkerService(textDocument);
-
-            BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
-            BackgroundRenderers.Add(TextMarkerService);
-
-            DocumentLineTransformers.Add(TextColorizer);
-        }
-
-        public OmniSharpSolution Solution { get; set; }
-        public TextColoringTransformer TextColorizer { get; }
-        public TextMarkerService TextMarkerService { get; }
-        public List<IBackgroundRenderer> BackgroundRenderers { get; }
-        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }
-        public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
     }
 }
