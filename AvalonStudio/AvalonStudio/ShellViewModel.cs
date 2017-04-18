@@ -526,7 +526,7 @@ namespace AvalonStudio
 
                     case Perspective.Debug:
                         // TODO close intellisense, and tooltips.
-                        // disable documents, get rid of error list, solution explorer, etc.    (isreadonly)   
+                        // disable documents, get rid of error list, solution explorer, etc.    (isreadonly)
                         DebugVisible = true;
                         break;
                 }

@@ -1,11 +1,10 @@
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
-using ReactiveUI;
 using AvalonStudio.Shell;
+using ReactiveUI;
+using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Debugging
 {
@@ -38,7 +37,7 @@ namespace AvalonStudio.Debugging
                 {
                     var shell = IoC.Get<IShell>();
 
-                    //shell?.OpenDocument(shell?.CurrentSolution?.FindFile(selectedFrame.Model.FullFileName), selectedFrame.Model.Line, -1, -1, true, true);					
+                    //shell?.OpenDocument(shell?.CurrentSolution?.FindFile(selectedFrame.Model.FullFileName), selectedFrame.Model.Line, -1, -1, true, true);
                 }
 
                 this.RaisePropertyChanged(nameof(SelectedFrame));

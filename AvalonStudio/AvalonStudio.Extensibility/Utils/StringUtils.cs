@@ -107,3 +107,4 @@ namespace AvalonStudio.Extensibility
             }
         }
     }
+}

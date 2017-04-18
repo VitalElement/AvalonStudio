@@ -7,7 +7,7 @@
     using System.Globalization;
     using System.IO;
 
-    class IconImageConverter : IValueConverter
+    internal class IconImageConverter : IValueConverter
     {
         private static IconImageConverter s_converter = new IconImageConverter();
 

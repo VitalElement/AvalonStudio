@@ -4,13 +4,13 @@ using System.Collections;
 
 namespace AvalonStudio.Debugging
 {
-	public class DisassemblyView : UserControl
-	{
+    public class DisassemblyView : UserControl
+    {
         private ListBox disassemblyList;
 
         public DisassemblyView()
-		{
-			InitializeComponent();
+        {
+            InitializeComponent();
 
             disassemblyList = this.FindControl<ListBox>("disassemblyList");
 
@@ -31,11 +31,11 @@ namespace AvalonStudio.Debugging
                     }
                 }
             };
-		}
+        }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
-	}
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
+    }
 }

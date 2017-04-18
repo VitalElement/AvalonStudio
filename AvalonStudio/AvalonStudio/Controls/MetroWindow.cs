@@ -1,10 +1,10 @@
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Styling;
 using AvalonStudio.Utils;
+using System;
 
 namespace AvalonStudio.Controls
 {

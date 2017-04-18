@@ -1,8 +1,8 @@
-using System;
-using System.Reactive.Disposables;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using System;
+using System.Reactive.Disposables;
 
 namespace AvalonStudio.Controls
 {
@@ -59,7 +59,6 @@ namespace AvalonStudio.Controls
 
             disposables.Dispose();
         }
-
 
         private void InitializeComponent()
         {

@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AvalonStudio.Projects;
-using Mono.Debugging.Client;
-using AvalonStudio.Extensibility;
-using AvalonStudio.Toolchains.GCC;
-using System.IO;
+﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
-using System.Dynamic;
-using AvalonStudio.Utils;
+using AvalonStudio.Projects;
+using AvalonStudio.Toolchains.GCC;
+using Mono.Debugging.Client;
+using System;
+using System.IO;
 
 namespace AvalonStudio.Debugging.GDB.JLink
 {
-    class JLinkDebugger : IDebugger2
+    internal class JLinkDebugger : IDebugger2
     {
         public static string BaseDirectory
         {

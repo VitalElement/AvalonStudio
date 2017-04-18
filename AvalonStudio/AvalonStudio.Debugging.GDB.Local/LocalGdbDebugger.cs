@@ -14,7 +14,6 @@
     {
         public void Activation()
         {
-            
         }
 
         public void BeforeActivation()
@@ -30,7 +29,6 @@
             }
 
             throw new Exception("No toolchain");
-
         }
 
         public DebuggerSessionOptions GetDebuggerSessionOptions(IProject project)

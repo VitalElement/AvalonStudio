@@ -2,11 +2,6 @@
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.MVVM;
 using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
@@ -23,6 +18,7 @@ namespace AvalonStudio.Controls
         }
 
         private FontWeight fontWeight;
+
         public FontWeight FontWeight
         {
             get { return fontWeight; }
@@ -76,6 +72,5 @@ namespace AvalonStudio.Controls
                 return !string.IsNullOrEmpty(Documentation);
             }
         }
-
     }
 }

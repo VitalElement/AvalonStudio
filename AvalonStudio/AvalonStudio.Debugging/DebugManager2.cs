@@ -9,8 +9,8 @@
     using AvalonStudio.Shell;
     using AvalonStudio.Utils;
     using Mono.Debugging.Client;
-    using System.Xml;
     using System;
+    using System.Xml;
 
     public class DebugManager2 : IDebugManager2, IExtension
     {
@@ -21,7 +21,9 @@
         private IEditor _lastDocument;
 
         public event EventHandler DebugSessionStarted;
+
         public event EventHandler DebugSessionEnded;
+
         public event EventHandler<TargetEventArgs> TargetStopped;
 
         public DebugManager2()

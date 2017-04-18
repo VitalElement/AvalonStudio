@@ -7,7 +7,6 @@ namespace AvalonStudio.Controls
     {
         public VersionInfoViewModel(VersionInfo model) : base(model)
         {
-
         }
 
         public string Title => Model.Version.ToNormalizedString();

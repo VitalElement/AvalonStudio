@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using AvalonStudio.MVVM;
 using AvalonStudio.MVVM.DataVirtualization;
 using ReactiveUI;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Debugging
 {
@@ -25,7 +23,6 @@ namespace AvalonStudio.Debugging
             get { return count; }
             set { this.RaiseAndSetIfChanged(ref count, value); }
         }
-
 
         /// <summary>
         ///     Fetches a range of items.
@@ -82,7 +79,6 @@ namespace AvalonStudio.Debugging
         {
             Count = 0;
         }
-
 
         private List<InstructionLine> FetchRange(int startIndex, int pageCount)
         {

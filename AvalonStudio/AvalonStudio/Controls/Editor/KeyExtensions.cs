@@ -1,11 +1,8 @@
 ﻿using Avalonia.Input;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AvalonStudio.Controls.Editor
 {
-    static class KeyExtensions
+    internal static class KeyExtensions
     {
         public static bool IsModifierKey(this Key key)
         {

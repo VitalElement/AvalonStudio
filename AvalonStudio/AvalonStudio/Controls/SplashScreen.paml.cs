@@ -1,22 +1,22 @@
-﻿using System;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Styling;
+using System;
 
 namespace AvalonStudio.Controls
 {
-	public class SplashScreen : Window, IStyleable
-	{
-		Type IStyleable.StyleKey => typeof(SplashScreen);
-        bool _mouseDown = false;
+    public class SplashScreen : Window, IStyleable
+    {
+        Type IStyleable.StyleKey => typeof(SplashScreen);
+        private bool _mouseDown = false;
 
         protected override void OnPointerMoved(PointerEventArgs e)
         {
             base.OnPointerMoved(e);
 
-            if(IsPointerOver && _mouseDown)
+            if (IsPointerOver && _mouseDown)
             {
-                BeginMoveDrag();                
+                BeginMoveDrag();
             }
         }
 

@@ -6,7 +6,9 @@
     public interface IDebugManager2
     {
         event EventHandler DebugSessionStarted;
+
         event EventHandler DebugSessionEnded;
+
         event EventHandler<TargetEventArgs> TargetStopped;
 
         StackFrame LastStackFrame { get; }

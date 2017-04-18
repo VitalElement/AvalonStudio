@@ -1,7 +1,5 @@
-using System.Composition;
-using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Extensibility.Plugin;
-using System;
+using AvalonStudio.Extensibility.ToolBars;
 
 namespace AvalonStudio.Shell.Commands
 {

@@ -2,7 +2,7 @@
 {
     using Avalonia.Controls;
     using Avalonia.Markup.Xaml;
-    
+
     /// <summary>
     /// Interaction logic for MemoryView.xaml
     /// </summary>

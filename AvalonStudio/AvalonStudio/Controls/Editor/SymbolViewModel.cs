@@ -1,7 +1,7 @@
-using System.Collections.ObjectModel;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Controls
 {
@@ -205,6 +205,7 @@ namespace AvalonStudio.Controls
         }
 
         private int argumentIndex;
+
         public int ArgumentIndex
         {
             get

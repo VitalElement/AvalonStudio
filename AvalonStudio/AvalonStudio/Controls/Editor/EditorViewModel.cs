@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reactive.Disposables;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
@@ -19,11 +15,15 @@ using AvalonStudio.Shell;
 using AvalonStudio.TextEditor;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
-using ReactiveUI;
 using AvalonStudio.Utils;
+using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
-using Avalonia.Input;
-using Avalonia.Interactivity;
+using System.Linq;
+using System.Reactive.Disposables;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
@@ -325,10 +325,12 @@ namespace AvalonStudio.Controls
             }
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Properties
+
         private string tabCharacter;
+
         public string TabCharacter
         {
             get { return tabCharacter; }
@@ -360,6 +362,7 @@ namespace AvalonStudio.Controls
         }
 
         private string wordAtCaret;
+
         public string WordAtCaret
         {
             get
@@ -382,6 +385,7 @@ namespace AvalonStudio.Controls
         }
 
         private Point caretLocation;
+
         public Point CaretLocation
         {
             get
@@ -415,6 +419,7 @@ namespace AvalonStudio.Controls
         }
 
         private IntellisenseViewModel intellisense;
+
         public IntellisenseViewModel Intellisense
         {
             get { return intellisense; }
@@ -422,6 +427,7 @@ namespace AvalonStudio.Controls
         }
 
         private TextDocument textDocument;
+
         public TextDocument TextDocument
         {
             get { return textDocument; }
@@ -468,6 +474,7 @@ namespace AvalonStudio.Controls
         }
 
         private int caretIndex;
+
         public int CaretIndex
         {
             get
@@ -541,6 +548,7 @@ namespace AvalonStudio.Controls
         }
 
         private object toolTip;
+
         public object ToolTip
         {
             get { return toolTip; }
@@ -639,6 +647,7 @@ namespace AvalonStudio.Controls
         }
 
         private ObservableCollection<OffsetSyntaxHighlightingData> highlightingData;
+
         public ObservableCollection<OffsetSyntaxHighlightingData> HighlightingData
         {
             get { return highlightingData; }
@@ -646,12 +655,14 @@ namespace AvalonStudio.Controls
         }
 
         private TextSegmentCollection<Diagnostic> diagnostics;
+
         public TextSegmentCollection<Diagnostic> Diagnostics
         {
             get { return diagnostics; }
             set { this.RaiseAndSetIfChanged(ref diagnostics, value); }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Commands
 
@@ -667,10 +678,12 @@ namespace AvalonStudio.Controls
             get { return Model.ProjectFile; }
         }
 
-        #endregion
+        #endregion Commands
 
         #region Public Methods
+
         private bool ignoreFileModifiedEvents = false;
+
         public void Save()
         {
             ignoreFileModifiedEvents = true;
@@ -691,6 +704,7 @@ namespace AvalonStudio.Controls
             DebugLineHighlighter.SetLocation(-1);
         }
 
-        #endregion 
+        #endregion Public Methods
+
     }
 }
