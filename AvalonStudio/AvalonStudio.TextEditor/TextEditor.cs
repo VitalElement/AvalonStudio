@@ -567,7 +567,7 @@ namespace AvalonStudio.TextEditor
             }
         }
 
-        private void MoveForward(int count, int caretIndex)
+        private int MoveForward(int count, int caretIndex)
         {
             for (var i = 0; i < Math.Abs(count); i++)
             {
@@ -586,9 +586,11 @@ namespace AvalonStudio.TextEditor
                         TextUtilities.CaretPositioningMode.Normal);
                 }
             }
+
+            return caretIndex;
         }
 
-        private void MoveBackward(int count, int caretIndex)
+        private int MoveBackward(int count, int caretIndex)
         {
             for (var i = 0; i < Math.Abs(count); i++)
             {
@@ -607,6 +609,8 @@ namespace AvalonStudio.TextEditor
                         TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
                 }
             }
+
+            return caretIndex;
         }
 
         private void MoveHorizontal(int count, InputModifiers modifiers)
@@ -628,14 +632,12 @@ namespace AvalonStudio.TextEditor
                 {
                     if (count > 0)
                     {
-                        MoveForward(count, caretIndex);
+                        CaretIndex = MoveForward(count, caretIndex);
                     }
                     else
                     {
-                        MoveBackward(count, caretIndex);
+                        CaretIndex = MoveBackward(count, caretIndex);
                     }
-
-                    CaretIndex = caretIndex;
                 }
 
                 SetHighestColumn();
@@ -955,7 +957,7 @@ namespace AvalonStudio.TextEditor
             }
         }
 
-        private void OnBackKey ()
+        private void OnBackKey()
         {
             // TODO use thread-safe copy of caret index.
             if (!DeleteSelection() && CaretIndex > 0)
@@ -1208,7 +1210,7 @@ namespace AvalonStudio.TextEditor
                 SelectionEnd = CaretIndex;
             }
             else if (movement)
-            {                
+            {
                 SelectionStart = SelectionEnd = CaretIndex;
             }
 
