@@ -20,7 +20,10 @@ namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 
         public bool AutoHide
         {
-            get { return _autoHide; }
+            get
+            {
+                return _autoHide;
+            }
             private set
             {
                 if (_autoHide == value)
