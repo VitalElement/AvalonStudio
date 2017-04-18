@@ -25,7 +25,6 @@ namespace AvalonStudio.Debugging
 
         private ObjectValueViewModel() : base(ObjectValue.CreateUnknown("Dummy"))
         {
-
         }
 
         public ObjectValueViewModel(WatchListViewModel watchList, ObjectValue model)
@@ -78,7 +77,10 @@ namespace AvalonStudio.Debugging
 
         public bool IsExpanded
         {
-            get { return isExpanded; }
+            get
+            {
+                return isExpanded;
+            }
             set
             {
                 if (value)
@@ -94,7 +96,6 @@ namespace AvalonStudio.Debugging
                 this.RaiseAndSetIfChanged(ref isExpanded, value);
             }
         }
-
 
         public ObservableCollection<ObjectValueViewModel> Children
         {
@@ -119,7 +120,10 @@ namespace AvalonStudio.Debugging
 
         public bool HasChanged
         {
-            get { return hasChanged; }
+            get
+            {
+                return hasChanged;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref hasChanged, value);

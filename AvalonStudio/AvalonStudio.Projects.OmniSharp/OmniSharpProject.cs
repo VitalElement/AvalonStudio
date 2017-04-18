@@ -125,7 +125,6 @@ namespace AvalonStudio.Projects.OmniSharp
             }
             set
             {
-
             }
         }
 
