@@ -114,9 +114,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 case NClang.CursorKind.FieldDeclaration:
                     return CodeCompletionKind.Parameter;
+
+                case NClang.CursorKind.OverloadCandidate:
+                    return CodeCompletionKind.OverloadCandidate;
             }
 
-            Console.WriteLine($"dont understand{kind.ToString()}");
+           Console.WriteLine($"dont understand{kind.ToString()}");
             return CodeCompletionKind.None;
         }
 
@@ -179,14 +182,21 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     if (filter == string.Empty || typedText.StartsWith(filter))
                     {
-                        result.Completions.Add(new CodeCompletionData
+                        var completion = new CodeCompletionData
                         {
                             Suggestion = typedText,
                             Priority = codeCompletion.CompletionString.Priority,
                             Kind = FromClangKind(codeCompletion.CursorKind),
                             Hint = hint,
                             BriefComment = codeCompletion.CompletionString.BriefComment
-                        });
+                        };
+
+                        result.Completions.Add(completion);
+                        
+                        if(completion.Kind == CodeCompletionKind.OverloadCandidate)
+                        {
+                            Console.WriteLine("TODO Implement overload candidate.");
+                        }
                     }
                 }
 

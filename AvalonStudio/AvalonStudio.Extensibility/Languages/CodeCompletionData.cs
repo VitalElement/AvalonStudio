@@ -18,6 +18,7 @@ namespace AvalonStudio.Languages
         None,
         Macro,
         Variable,
+        OverloadCandidate
     }
 
 	public class CodeCompletionData
