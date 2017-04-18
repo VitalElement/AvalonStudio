@@ -1,7 +1,7 @@
+using Avalonia;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Avalonia;
 
 namespace AvalonStudio.Utils
 {

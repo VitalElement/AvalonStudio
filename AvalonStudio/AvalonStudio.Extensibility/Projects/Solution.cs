@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 
 namespace AvalonStudio.Projects
 {

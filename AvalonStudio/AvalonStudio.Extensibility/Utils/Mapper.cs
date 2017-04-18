@@ -35,7 +35,7 @@ namespace AvalonStudio.Utils
                     {
                         if (!propType.IsByRef && propType.Name != "Nullable`1")
                         {
-                            // Throw if type is a value type 
+                            // Throw if type is a value type
                             // but not Nullable<>
                             throw new ArgumentException("not nullable");
                         }

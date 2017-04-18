@@ -92,7 +92,7 @@ namespace AvalonStudio.Extensibility
                     endIndex = str.LastIndexOfAny(splitters, maxIndex);
 
                     if (endIndex < startIndex) // We didn't find one in bounds
-                        endIndex = maxIndex; // So we have to return to splitting the word               
+                        endIndex = maxIndex; // So we have to return to splitting the word
 
                     // Make our chunk. We'll leave splitters at the start, if they exist.
                     var chunk = str.Substring(startIndex, endIndex - startIndex + 1).TrimEnd(removedSplitters);

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 namespace AvalonStudio.Packages
@@ -19,14 +18,14 @@ namespace AvalonStudio.Packages
         private readonly List<CachedPackage> _cachedPackages = new List<CachedPackage>();
 
         public class EmptyDisposable : IDisposable
-    {
-        public static EmptyDisposable Instance = new EmptyDisposable();
-
-        public void Dispose()
         {
-            // Do nothing
+            public static EmptyDisposable Instance = new EmptyDisposable();
+
+            public void Dispose()
+            {
+                // Do nothing
+            }
         }
-    }
 
         private CachedPackageEntry _currentlyInstallingPackage = null;
 
@@ -118,14 +117,14 @@ namespace AvalonStudio.Packages
         {
             var current = _installedPackages.FirstOrDefault(p => p.PackageReference.PackageIdentity == identity);
 
-            if(current != null)
+            if (current != null)
             {
                 _installedPackages.Remove(current);
             }
 
             current = _cachedPackages.FirstOrDefault(p => p.PackageReference.PackageIdentity == identity);
 
-            if(current != null)
+            if (current != null)
             {
                 _cachedPackages.Remove(current);
             }
@@ -162,5 +161,4 @@ namespace AvalonStudio.Packages
             }
         }
     }
-
 }

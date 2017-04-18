@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using AvalonStudio.Controls;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Dialogs;
@@ -9,7 +6,10 @@ using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
-using AvalonStudio.Controls;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Shell
 {
@@ -57,17 +57,21 @@ namespace AvalonStudio.Shell
         Task CloseSolutionAsync();
 
         void AddDocument(IDocumentTabViewModel document);
+
         void RemoveDocument(IDocumentTabViewModel document);
 
         void InvalidateCodeAnalysis();
 
         void Build(IProject project);
+
         void Clean(IProject project);
 
         void Build();
+
         void Clean();
 
         void Save();
+
         void SaveAll();
 
         IProject GetDefaultProject();

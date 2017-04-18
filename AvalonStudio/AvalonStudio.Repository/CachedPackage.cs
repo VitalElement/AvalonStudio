@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 namespace AvalonStudio.Packages
@@ -107,5 +106,4 @@ namespace AvalonStudio.Packages
 
         public IEnumerable<PackageReference> Dependencies => _dependencies.Select(x => x.PackageReference);
     }
-
 }

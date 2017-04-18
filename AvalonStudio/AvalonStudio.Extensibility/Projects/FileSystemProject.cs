@@ -297,7 +297,7 @@
             }
         }
 
-        void Invoke(Action action)
+        private void Invoke(Action action)
         {
             if (uiDispatcher != null)
             {
@@ -319,6 +319,7 @@
         public IList<IProjectFolder> Folders { get; private set; }
 
         #region IProject Implementation
+
         public abstract IList<object> ConfigurationPages { get; }
 
         public abstract string CurrentDirectory { get; }
@@ -386,6 +387,7 @@
         public abstract void Save();
 
         public abstract IProject Load(ISolution solution, string filePath);
-        #endregion
+
+        #endregion IProject Implementation
     }
 }

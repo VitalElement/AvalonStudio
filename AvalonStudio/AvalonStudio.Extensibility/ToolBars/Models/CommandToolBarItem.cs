@@ -1,6 +1,6 @@
-using System.Windows.Input;
 using Avalonia.Controls.Shapes;
 using AvalonStudio.Extensibility.Commands;
+using System.Windows.Input;
 
 namespace AvalonStudio.Extensibility.ToolBars.Models
 {

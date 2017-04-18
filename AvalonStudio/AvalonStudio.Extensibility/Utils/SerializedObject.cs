@@ -1,13 +1,13 @@
-using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.IO;
 
 namespace AvalonStudio.Utils
 {
     public class SerializedObject
-	{
-		public static void Serialize(string filename, object item)
-		{
+    {
+        public static void Serialize(string filename, object item)
+        {
             using (var writer = File.CreateText(filename))
             {
                 writer.Write(JsonConvert.SerializeObject(item, Formatting.Indented,
@@ -17,16 +17,16 @@ namespace AvalonStudio.Utils
                         Converters = new[] { new StringEnumConverter() }
                     }));
             }
-		}
+        }
 
-		public static T FromString<T>(string data)
-		{
-			return JsonConvert.DeserializeObject<T>(data);
-		}
+        public static T FromString<T>(string data)
+        {
+            return JsonConvert.DeserializeObject<T>(data);
+        }
 
-		public static T Deserialize<T>(string filename)
-		{
-                return JsonConvert.DeserializeObject<T>(File.ReadAllText(filename));
-		}
-	}
+        public static T Deserialize<T>(string filename)
+        {
+            return JsonConvert.DeserializeObject<T>(File.ReadAllText(filename));
+        }
+    }
 }

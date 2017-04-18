@@ -30,7 +30,6 @@
                 IScheduler scheduler = null)
             where TObj : IReactiveObject
         {
-
             Expression expression = Reflection.Rewrite(property.Body);
 
             if (expression.GetParent().NodeType != ExpressionType.Parameter)
