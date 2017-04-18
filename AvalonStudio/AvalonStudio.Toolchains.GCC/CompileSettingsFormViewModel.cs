@@ -54,7 +54,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             catch (Exception)
             {
-                Model.ToolchainSettings.GccToolchainSettings = new GccToolchainSettings();
+                settings = project.ProvisionSettings<GccToolchainSettings>().CompileSettings;
             }
 
             defines = new ObservableCollection<string>(settings.Defines);
@@ -419,7 +419,7 @@ namespace AvalonStudio.Toolchains.GCC
             settings.Exceptions = exceptions;
             settings.Rtti = rtti;
 
-            Model.ToolchainSettings.GccToolchainSettings.CompileSettings = settings;
+            Model.GetSettings<GccToolchainSettings>().CompileSettings = settings;
             Model.Save();
             //project.SaveChanges();
         }

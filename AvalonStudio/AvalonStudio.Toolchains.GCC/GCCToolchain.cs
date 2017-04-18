@@ -70,12 +70,12 @@ namespace AvalonStudio.Toolchains.GCC
 
         public static GccToolchainSettings GetSettings(IProject project)
         {
-            return project.GetSettings<GccToolchainSettings>((d) => d.GccToolchainSettings);
+            return project.GetSettings<GccToolchainSettings>();
         }
 
         public override void ProvisionSettings(IProject project)
         {
-            project.ProvisionSettings<GccToolchainSettings>((d) => d.GccToolchainSettings, (d, settings) => d.GccToolchainSettings = settings);            
+            project.ProvisionSettings<GccToolchainSettings>();            
         }
 
         private bool CheckFile(IConsole console, string file)

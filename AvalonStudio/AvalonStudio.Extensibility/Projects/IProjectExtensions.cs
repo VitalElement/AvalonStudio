@@ -8,19 +8,22 @@ namespace AvalonStudio.Projects
 {
     public static class IProjectExtensions
     {
-        public static T GetSettings<T>(this IProject project, Func<dynamic, T> selector)
+        public static T GetSettings<T>(this IProject project)
         {
             T result = default(T);
 
             try
             {
-                if (selector(project.ToolchainSettings) is ExpandoObject)
+                var rootIndex = (IDictionary<string, object>)project.ToolchainSettings;
+                var root = project.ToolchainSettings;
+
+                if (rootIndex[typeof(T).FullName] is ExpandoObject)
                 {
-                    result = (selector(project.ToolchainSettings) as ExpandoObject).GetConcreteType<T>();
+                    result = (rootIndex[typeof(T).FullName] as ExpandoObject).GetConcreteType<T>();
                 }
                 else
                 {
-                    result = selector(project.ToolchainSettings);
+                    result = (T)rootIndex[typeof(T).FullName];
                 }
             }
             catch (Exception)
@@ -30,15 +33,16 @@ namespace AvalonStudio.Projects
             return result;
         }
 
-        public static T ProvisionSettings<T>(this IProject project, Func<dynamic, T> selector, Action<dynamic, T> setter)
+        public static T ProvisionSettings<T>(this IProject project) where T : new()
         {
-            var result = project.GetSettings<T>(selector);
+            var result = project.GetSettings<T>();
 
             if (result == null)
             {
-                result = default(T);
+                result = new T();
 
-                setter(project.ToolchainSettings, result);
+                var rootIndex = (IDictionary<string, object>)project.ToolchainSettings;
+                rootIndex[typeof(T).FullName] = result;
 
                 project.Save();
             }

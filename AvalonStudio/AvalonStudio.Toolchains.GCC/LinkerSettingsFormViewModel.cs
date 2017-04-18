@@ -56,19 +56,11 @@ namespace AvalonStudio.Toolchains.GCC
         {
             try
             {
-                try
-                {
-                    settings = GCCToolchain.GetSettings(project).LinkSettings;
-                }
-                catch (Exception)
-                {
-                    Model.ToolchainSettings.GccToolchainSettings = new GccToolchainSettings();
-                }
+                settings = GCCToolchain.GetSettings(project).LinkSettings;
             }
             catch (Exception)
             {
-                Model.ToolchainSettings.GccToolchainSettings = new GccToolchainSettings();
-                settings = Model.ToolchainSettings.GccToolchainSettings.LinkSettings;
+                settings = project.ProvisionSettings<GccToolchainSettings>().LinkSettings;
             }
 
             if (settings == null)
@@ -425,7 +417,7 @@ namespace AvalonStudio.Toolchains.GCC
             settings.MiscLinkerArguments = miscOptions;
             settings.Library = (LibraryType)librarySelectedIndex;
 
-            Model.ToolchainSettings.GccToolchainSettings.LinkSettings = settings;
+            Model.GetSettings<GccToolchainSettings>().LinkSettings = settings;
             Model.Save();
         }
 

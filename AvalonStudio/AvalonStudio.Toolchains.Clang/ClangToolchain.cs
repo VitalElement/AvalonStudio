@@ -353,32 +353,32 @@ namespace AvalonStudio.Toolchains.Clang
             // Referenced includes
             var referencedIncludes = project.GetReferencedIncludes();
 
-            referencedIncludes.Select(s => result += $"I\"{ Path.Combine(project.CurrentDirectory, s)}\" ");
+            referencedIncludes.Select(s => result += $"-I\"{ Path.Combine(project.CurrentDirectory, s)}\" ").ToList();
 
             // global includes
             var globalIncludes = superProject.GetGlobalIncludes();
 
-            globalIncludes.Select(s => result += $"I\"{s}\" ");
+            globalIncludes.Select(s => result += $"-I\"{s}\" ").ToList();
 
             // includes
-            project.Includes.Select(s => result += $"I\"{ Path.Combine(project.CurrentDirectory, s.Value)}\" ");
+            project.Includes.Select(s => result += $"-I\"{ Path.Combine(project.CurrentDirectory, s.Value)}\" ").ToList();
 
             var referencedDefines = project.GetReferencedDefines();
-            referencedDefines.Select(s => result += $"-D{s} ");
+            referencedDefines.Select(s => result += $"-D{s} ").ToList();
 
             var toolchainIncludes = GetToolchainIncludes(file);
-            toolchainIncludes.Select(s => result += $"-isystem\"{s}\" ");
+            toolchainIncludes.Select(s => result += $"-isystem\"{s}\" ").ToList();
 
             // global includes
             var globalDefines = superProject.GetGlobalDefines();
 
-            globalDefines.Select(s => result += $"-D{s} ");
+            globalDefines.Select(s => result += $"-D{s} ").ToList();
 
-            project.Defines.Select(s => result += $"-D{s.Value} ");
+            project.Defines.Select(s => result += $"-D{s.Value} ").ToList();
 
-            superProject.ToolChainArguments.Select(s => result += $" {s}");
+            superProject.ToolChainArguments.Select(s => result += $" {s}").ToList();
 
-            superProject.CompilerArguments.Select(s => result += $" {s}");
+            superProject.CompilerArguments.Select(s => result += $" {s}").ToList();
 
             // TODO factor out this code from here!
             if (file != null)
