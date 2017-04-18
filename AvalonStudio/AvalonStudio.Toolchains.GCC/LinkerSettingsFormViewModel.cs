@@ -56,7 +56,7 @@ namespace AvalonStudio.Toolchains.GCC
         {
             try
             {
-                settings = GCCToolchain.GetSettings(project).LinkSettings;
+                settings = project.GetSettings<GccToolchainSettings>().LinkSettings;
             }
             catch (Exception)
             {
@@ -417,7 +417,11 @@ namespace AvalonStudio.Toolchains.GCC
             settings.MiscLinkerArguments = miscOptions;
             settings.Library = (LibraryType)librarySelectedIndex;
 
-            Model.GetSettings<GccToolchainSettings>().LinkSettings = settings;
+            var currentSettings = Model.GetSettings<GccToolchainSettings>();
+            currentSettings.LinkSettings = settings;
+
+            Model.SetSettings(currentSettings);
+
             Model.Save();
         }
 

@@ -50,7 +50,7 @@ namespace AvalonStudio.Toolchains.GCC
         {
             try
             {
-                settings = GCCToolchain.GetSettings(project).CompileSettings;
+                settings = project.GetSettings<GccToolchainSettings>().CompileSettings;
             }
             catch (Exception)
             {
@@ -419,9 +419,12 @@ namespace AvalonStudio.Toolchains.GCC
             settings.Exceptions = exceptions;
             settings.Rtti = rtti;
 
-            Model.GetSettings<GccToolchainSettings>().CompileSettings = settings;
+            var currentSettings = Model.GetSettings<GccToolchainSettings>();
+            currentSettings.CompileSettings = settings;
+
+            Model.SetSettings(currentSettings);
+            
             Model.Save();
-            //project.SaveChanges();
         }
 
         private void OnPropertyChanged()

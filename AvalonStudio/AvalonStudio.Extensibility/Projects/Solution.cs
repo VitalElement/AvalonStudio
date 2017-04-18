@@ -100,8 +100,6 @@ namespace AvalonStudio.Projects
                 result.ResolveReferences();
 			}
 
-			result.ToolChain?.ProvisionSettings(result);
-
 			return result;
 		}
 

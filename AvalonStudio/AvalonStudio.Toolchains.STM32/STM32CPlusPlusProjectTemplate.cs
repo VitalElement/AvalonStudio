@@ -38,8 +38,6 @@ namespace AvalonStudio.Toolchains.STM32
 
                 project.ToolChain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc is STM32GCCToolchain);
 
-                project.ToolChain.ProvisionSettings(project);
-
                 await SourceFile.Create(project, "main.cpp", "int main (void){}");
 
                 project.Save();

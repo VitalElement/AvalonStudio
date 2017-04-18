@@ -33,6 +33,14 @@ namespace AvalonStudio.Projects
             return result;
         }
 
+        public static void SetSettings<T>(this IProject project, T value)
+        {
+            var rootIndex = (IDictionary<string, object>)project.ToolchainSettings;
+            rootIndex[typeof(T).FullName] = value;
+
+            project.Save();
+        }
+
         public static T ProvisionSettings<T>(this IProject project) where T : new()
         {
             var result = project.GetSettings<T>();

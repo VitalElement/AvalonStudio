@@ -64,10 +64,5 @@
         {
             return null;
         }
-
-        public void ProvisionSettings(IProject project)
-        {
-            
-        }
     }
 }

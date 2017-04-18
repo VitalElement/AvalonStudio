@@ -68,16 +68,6 @@ namespace AvalonStudio.Toolchains.GCC
             return result;
         }
 
-        public static GccToolchainSettings GetSettings(IProject project)
-        {
-            return project.GetSettings<GccToolchainSettings>();
-        }
-
-        public override void ProvisionSettings(IProject project)
-        {
-            project.ProvisionSettings<GccToolchainSettings>();            
-        }
-
         private bool CheckFile(IConsole console, string file)
         {
             bool result = true;
@@ -188,7 +178,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             if (project.Type == ProjectType.Executable)
             {
-                var settings = GetSettings(project);
+                var settings = project.GetSettings<GccToolchainSettings>();
 
                 foreach (var libraryPath in settings.LinkSettings.LinkedLibraries)
                 {

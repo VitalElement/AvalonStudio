@@ -105,7 +105,6 @@
 
         public void ProvisionSettings(IProject project)
         {
-
         }
     }
 }

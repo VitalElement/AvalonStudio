@@ -59,13 +59,6 @@ namespace AvalonStudio.Toolchains.Clang
             get { return ".a"; }
         }
 
-        public override void ProvisionSettings(IProject project)
-        {
-            base.ProvisionSettings(project);
-
-            // Provision toolchain specific settings.
-        }
-
         private string GetLinkerScriptLocation(IStandardProject project)
         {
             return Path.Combine(project.CurrentDirectory, "link.ld");
@@ -87,7 +80,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         private void GenerateLinkerScript(IStandardProject project)
         {
-            var settings = GetSettings(project).LinkSettings;
+            var settings = project.GetSettings<GccToolchainSettings>().LinkSettings;
 
             var linkerScript = GetLinkerScriptLocation(project);
 
@@ -106,7 +99,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
         {
-            var settings = GetSettings(superProject);
+            var settings = superProject.GetSettings<GccToolchainSettings>();
             string result = string.Empty;
 
             // TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
@@ -134,7 +127,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
         {
-            var settings = GetSettings(project);
+            var settings = project.GetSettings<GccToolchainSettings>();
 
             if (superProject != null && settings.LinkSettings.UseMemoryLayout && project.Type != ProjectType.StaticLibrary)
             {
@@ -196,9 +189,8 @@ namespace AvalonStudio.Toolchains.Clang
         public override string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile file)
         {
             var result = string.Empty;
-
-            //var settings = GetSettings(project).CompileSettings;
-            var settings = GetSettings(superProject);
+            
+            var settings = superProject.GetSettings<GccToolchainSettings>();
 
             result += "-Wall -c -fshort-enums ";
 
@@ -497,6 +489,11 @@ namespace AvalonStudio.Toolchains.Clang
             }
 
             return true;
+        }
+
+        public override void ProvisionSettings(IProject project)
+        {
+            project.ProvisionSettings<GccToolchainSettings>();
         }
     }
 }

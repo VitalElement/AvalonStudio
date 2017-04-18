@@ -161,8 +161,6 @@ namespace AvalonStudio.Toolchains.Standard
 
         public abstract bool CanHandle(IProject project);
 
-        public abstract void ProvisionSettings(IProject project);
-
         public void BeforeActivation()
         {
             //throw new NotImplementedException();
@@ -351,11 +349,6 @@ namespace AvalonStudio.Toolchains.Standard
         private async Task CompileProject(IConsole console, IStandardProject superProject, IStandardProject project,
             List<CompileResult> results = null)
         {
-            if (project == superProject)
-            {
-                superProject.ToolChain?.ProvisionSettings(project);
-            }
-
             if (project.Type == ProjectType.Executable && superProject != project)
             {
                 await Build(console, project);
@@ -556,5 +549,7 @@ namespace AvalonStudio.Toolchains.Standard
         public abstract Task<bool> PreBuild(IConsole console, IProject project);
 
         public abstract Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult);
+
+        public abstract void ProvisionSettings(IProject project);
     }
 }

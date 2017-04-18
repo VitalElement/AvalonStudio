@@ -22,7 +22,5 @@ namespace AvalonStudio.Debugging
         DebuggerSessionOptions GetDebuggerSessionOptions(IProject project);
 
         object GetSettingsControl(IProject project);
-
-        void ProvisionSettings(IProject project);
     }
 }

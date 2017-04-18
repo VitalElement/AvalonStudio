@@ -63,7 +63,6 @@ namespace AvalonStudio.Projects.CPlusPlus
 		public void Save()
 		{
 			Model.ToolchainReference = selectedToolchain?.GetType().ToString();
-			selectedToolchain?.ProvisionSettings(Model);
 			Model.Save();
 		}
 	}

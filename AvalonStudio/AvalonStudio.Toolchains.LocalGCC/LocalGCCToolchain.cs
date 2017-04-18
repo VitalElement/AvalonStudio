@@ -93,7 +93,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
         {
-            var settings = GetSettings(project);
+            var settings = project.GetSettings<GccToolchainSettings>();
 
             var result = string.Empty;
 
@@ -132,9 +132,8 @@ namespace AvalonStudio.Toolchains.LocalGCC
         public override string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile file)
         {
             var result = string.Empty;
-
-            //var settings = GetSettings(project).CompileSettings;
-            var settings = GetSettings(superProject);
+            
+            var settings = superProject.GetSettings<GccToolchainSettings>();
 
             result += "-Wall -c ";
 
@@ -334,6 +333,11 @@ namespace AvalonStudio.Toolchains.LocalGCC
             }
 
             return result;
+        }
+
+        public override void ProvisionSettings(IProject project)
+        {
+            project.ProvisionSettings<GccToolchainSettings>();
         }
     }
 }

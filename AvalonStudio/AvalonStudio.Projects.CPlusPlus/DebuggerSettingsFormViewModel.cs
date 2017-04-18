@@ -54,7 +54,6 @@ namespace AvalonStudio.Projects.CPlusPlus
 			if (selectedDebugger != null)
 			{
                 Model.Debugger2Reference = selectedDebugger.GetType().ToString();
-				selectedDebugger.ProvisionSettings(Model);
 				Model.Save();
 			}
 		}
