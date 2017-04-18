@@ -1,11 +1,11 @@
-﻿using AvalonStudio.Projects;
+﻿using AvalonStudio.CommandLineTools;
 using AvalonStudio.LanguageSupport.TypeScript.Projects;
+using AvalonStudio.Projects;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AvalonStudio.CommandLineTools;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
 {
