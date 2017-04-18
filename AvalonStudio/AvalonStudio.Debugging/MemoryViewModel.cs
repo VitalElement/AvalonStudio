@@ -65,7 +65,6 @@
             }
         }
 
-
         private MemoryViewDataProvider dataProvider;
         private IDebugger2 debugger;
         public void SetDebugger(IDebugger2 debugger)
@@ -95,7 +94,10 @@
         private string address;
         public string Address
         {
-            get { return address; }
+            get
+            {
+                return address;
+            }
             set
             {
                 ulong parsedValue = 0;
@@ -121,7 +123,7 @@
             SelectedIndex = (long)(address / Columns);
         }
 
-        new public async void Invalidate()
+        public new async void Invalidate()
         {
             if (MemoryData == null)
             {
@@ -156,8 +158,7 @@
         }
 
         public void BeforeActivation()
-        {
-            
+        {            
         }
 
         public void Activation()
@@ -182,7 +183,6 @@
             get { return selectedIndex; }
             set { this.RaiseAndSetIfChanged(ref selectedIndex, value); }
         }
-
 
         private AsyncVirtualizingCollection<MemoryBytesViewModel> memoryData;
         public AsyncVirtualizingCollection<MemoryBytesViewModel> MemoryData

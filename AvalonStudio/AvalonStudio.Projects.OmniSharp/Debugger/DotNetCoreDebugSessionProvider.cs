@@ -14,7 +14,6 @@
     {
         public void Activation()
         {
-
         }
 
         public void BeforeActivation()

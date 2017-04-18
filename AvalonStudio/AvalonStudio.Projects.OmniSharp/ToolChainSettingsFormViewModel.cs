@@ -12,12 +12,12 @@ using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
-	public class ToolchainSettingsFormViewModel : HeaderedViewModel
-	{
+    public class ToolchainSettingsFormViewModel : HeaderedViewModel
+    {
         private DotNetToolchainSettings _settings;
 
-		public ToolchainSettingsFormViewModel() : base("DotNet Core Location")
-		{
+        public ToolchainSettingsFormViewModel() : base("DotNet Core Location")
+        {
             _settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
 
             DotNetPath = _settings.DotNetPath;
@@ -26,7 +26,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
             BrowseCommand.Subscribe(async _ =>
             {
-                var ofd = new OpenFileDialog();                
+                var ofd = new OpenFileDialog();
                 ofd.Filters.Add(new FileDialogFilter { Name = "Dotnet Executable", Extensions = new List<string> { Platform.ExecutableExtension.Substring(1) } });
                 ofd.AllowMultiple = false;
                 ofd.Title = "Select Dotnet Executable (dotnet)";
@@ -42,9 +42,9 @@ namespace AvalonStudio.Projects.OmniSharp
                     _settings.Save();
                 }
             });
-		}
+        }
 
-		public ReactiveCommand<object> BrowseCommand { get; }
+        public ReactiveCommand<object> BrowseCommand { get; }
 
         private string dotnetPath;
 
@@ -54,11 +54,8 @@ namespace AvalonStudio.Projects.OmniSharp
             set { this.RaiseAndSetIfChanged(ref dotnetPath, value); }
         }
 
-
         public void Save()
-		{
-			
-			
-		}
-	}
+        {
+        }
+    }
 }

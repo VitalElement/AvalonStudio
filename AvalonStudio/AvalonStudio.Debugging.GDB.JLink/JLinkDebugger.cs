@@ -29,10 +29,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
             }
         }
 
-
         public void Activation()
         {
-            
         }
 
         public void BeforeActivation()
@@ -42,13 +40,12 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public DebuggerSession CreateSession(IProject project)
         {
-            if(project.ToolChain is GCCToolchain)
+            if (project.ToolChain is GCCToolchain)
             {
                 return new JLinkGdbSession(project, (project.ToolChain as GCCToolchain).GDBExecutable);
             }
 
             throw new Exception("No toolchain");
-            
         }
 
         public DebuggerSessionOptions GetDebuggerSessionOptions(IProject project)

@@ -138,7 +138,6 @@ namespace AvalonStudio.Debugging.GDB.JLink
                         {
                             console.WriteLine("[JLink] - " + e.Data);
                         }
-                        ;
                     };
 
                     process.BeginOutputReadLine();

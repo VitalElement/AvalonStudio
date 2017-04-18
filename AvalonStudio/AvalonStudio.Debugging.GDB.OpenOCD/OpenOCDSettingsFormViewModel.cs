@@ -11,89 +11,95 @@ using ReactiveUI;
 
 namespace AvalonStudio.Debugging.GDB.OpenOCD
 {
-	public class OpenOCDSettingsFormViewModel : ViewModel<IProject>
-	{
+    public class OpenOCDSettingsFormViewModel : ViewModel<IProject>
+    {
         public static string BaseDirectory
         {
             get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Debugging.OpenOCD\\").ToPlatformPath(); }
         }
 
         private string interfaceConfigFile;
-		private readonly OpenOCDSettings settings;
+        private readonly OpenOCDSettings settings;
 
-		private string targetConfigFile;
+        private string targetConfigFile;
 
-		public OpenOCDSettingsFormViewModel(IProject model) : base(model)
-		{
+        public OpenOCDSettingsFormViewModel(IProject model) : base(model)
+        {
             settings = model.GetSettings<OpenOCDSettings>();
-			interfaceConfigFile = settings.InterfaceConfigFile;
-			targetConfigFile = settings.TargetConfigFile;
+            interfaceConfigFile = settings.InterfaceConfigFile;
+            targetConfigFile = settings.TargetConfigFile;
 
-			BrowseInterfaceConfigFileCommand = ReactiveCommand.Create();
-			BrowseInterfaceConfigFileCommand.Subscribe(async _ =>
-			{
-				var ofd = new OpenFileDialog();
-				ofd.InitialDirectory = Path.Combine(BaseDirectory, "scripts", "interface");
-				ofd.Filters.Add(new FileDialogFilter {Name = "OpenOCD Config File", Extensions = new List<string> {"cfg"}});
-				ofd.AllowMultiple = false;
-				ofd.Title = "Open OpenOCD Interface Config File";
+            BrowseInterfaceConfigFileCommand = ReactiveCommand.Create();
+            BrowseInterfaceConfigFileCommand.Subscribe(async _ =>
+            {
+                var ofd = new OpenFileDialog();
+                ofd.InitialDirectory = Path.Combine(BaseDirectory, "scripts", "interface");
+                ofd.Filters.Add(new FileDialogFilter { Name = "OpenOCD Config File", Extensions = new List<string> { "cfg" } });
+                ofd.AllowMultiple = false;
+                ofd.Title = "Open OpenOCD Interface Config File";
 
-				var result = await ofd.ShowAsync();
+                var result = await ofd.ShowAsync();
 
-				if (result != null && !string.IsNullOrEmpty(result.First()))
-				{
-					InterfaceConfigFile = BaseDirectory.MakeRelativePath(result.First());
-				}
-			});
+                if (result != null && !string.IsNullOrEmpty(result.First()))
+                {
+                    InterfaceConfigFile = BaseDirectory.MakeRelativePath(result.First());
+                }
+            });
 
-			BrowseTargetConfigFileCommand = ReactiveCommand.Create();
-			BrowseTargetConfigFileCommand.Subscribe(async _ =>
-			{
-				var ofd = new OpenFileDialog();
-				ofd.InitialDirectory = Path.Combine(BaseDirectory, "scripts", "target");
-				ofd.Filters.Add(new FileDialogFilter {Name = "OpenOCD Config File", Extensions = new List<string> {"cfg"}});
-				ofd.AllowMultiple = false;
-				ofd.Title = "Open OpenOCD Target Config File";
+            BrowseTargetConfigFileCommand = ReactiveCommand.Create();
+            BrowseTargetConfigFileCommand.Subscribe(async _ =>
+            {
+                var ofd = new OpenFileDialog();
+                ofd.InitialDirectory = Path.Combine(BaseDirectory, "scripts", "target");
+                ofd.Filters.Add(new FileDialogFilter { Name = "OpenOCD Config File", Extensions = new List<string> { "cfg" } });
+                ofd.AllowMultiple = false;
+                ofd.Title = "Open OpenOCD Target Config File";
 
-				var result = await ofd.ShowAsync();
+                var result = await ofd.ShowAsync();
 
-				if (result != null && !string.IsNullOrEmpty(result.First()))
-				{
-					TargetConfigFile = BaseDirectory.MakeRelativePath(result.First());
-				}
-			});
-		}
+                if (result != null && !string.IsNullOrEmpty(result.First()))
+                {
+                    TargetConfigFile = BaseDirectory.MakeRelativePath(result.First());
+                }
+            });
+        }
 
-		public string InterfaceConfigFile
-		{
-			get { return interfaceConfigFile; }
-			set
-			{
-				this.RaiseAndSetIfChanged(ref interfaceConfigFile, value);
-				Save();
-			}
-		}
+        public string InterfaceConfigFile
+        {
+            get
+            {
+                return interfaceConfigFile;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref interfaceConfigFile, value);
+                Save();
+            }
+        }
 
-		public string TargetConfigFile
-		{
-			get { return targetConfigFile; }
-			set
-			{
-				this.RaiseAndSetIfChanged(ref targetConfigFile, value);
-				Save();
-			}
-		}
+        public string TargetConfigFile
+        {
+            get
+            {
+                return targetConfigFile;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref targetConfigFile, value);
+                Save();
+            }
+        }
 
-		public ReactiveCommand<object> BrowseInterfaceConfigFileCommand { get; }
-		public ReactiveCommand<object> BrowseTargetConfigFileCommand { get; }
+        public ReactiveCommand<object> BrowseInterfaceConfigFileCommand { get; }
+        public ReactiveCommand<object> BrowseTargetConfigFileCommand { get; }
 
-		private void Save()
-		{
-			settings.InterfaceConfigFile = interfaceConfigFile?.ToAvalonPath();
-			settings.TargetConfigFile = targetConfigFile?.ToAvalonPath();
+        private void Save()
+        {
+            settings.InterfaceConfigFile = interfaceConfigFile?.ToAvalonPath();
+            settings.TargetConfigFile = targetConfigFile?.ToAvalonPath();
 
-			Model.SetSettings(settings);
-			Model.Save();
-		}
-	}
+            Model.SetSettings(settings);
+            Model.Save();
+        }
+    }
 }

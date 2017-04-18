@@ -19,7 +19,6 @@ namespace AvalonStudio.Shell
         Debug
     }
 
-
     public interface IShell
     {
         event EventHandler<SolutionChangedEventArgs> SolutionChanged;
