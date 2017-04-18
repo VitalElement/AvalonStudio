@@ -25,15 +25,13 @@
 //
 //
 
-using System;
-
 namespace AvalonStudio.Debugging.GDB
 {
-	public enum CommandStatus
-	{
-		Done,
-		Running,
-		Error,
+    public enum CommandStatus
+    {
+        Done,
+        Running,
+        Error,
         Timeout
-	}
+    }
 }

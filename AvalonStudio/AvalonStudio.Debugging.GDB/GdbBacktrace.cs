@@ -24,22 +24,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using Mono.Debugging.Backend;
+using Mono.Debugging.Client;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Mono.Debugging.Client;
-using Mono.Debugging.Backend;
 
 namespace AvalonStudio.Debugging.GDB
 {
-    class GdbBacktrace : IBacktrace, IObjectValueSource
+    internal class GdbBacktrace : IBacktrace, IObjectValueSource
     {
-        int fcount;
-        StackFrame firstFrame;
-        GdbSession session;
-        DissassemblyBuffer[] disBuffers;
-        int currentFrame = -1;
-        long threadId;
+        private int fcount;
+        private StackFrame firstFrame;
+        private GdbSession session;
+        private DissassemblyBuffer[] disBuffers;
+        private int currentFrame = -1;
+        private long threadId;
 
         public GdbBacktrace(GdbSession session, long threadId, int count, ResultData firstFrame)
         {
@@ -215,7 +215,7 @@ namespace AvalonStudio.Debugging.GDB
             return null;
         }
 
-        ObjectValue CreateVarObject(string exp)
+        private ObjectValue CreateVarObject(string exp)
         {
             try
             {
@@ -243,7 +243,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        ObjectValue CreateObjectValue(string name, ResultData data)
+        private ObjectValue CreateObjectValue(string name, ResultData data)
         {
             string vname = data.GetValue("name");
             string typeName = data.GetValue("type");
@@ -328,7 +328,7 @@ namespace AvalonStudio.Debugging.GDB
             throw new NotSupportedException();
         }
 
-        void SelectFrame(int frame)
+        private void SelectFrame(int frame)
         {
             session.SelectThread(threadId);
             if (frame != currentFrame)
@@ -338,7 +338,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        StackFrame CreateFrame(ResultData frameData)
+        private StackFrame CreateFrame(ResultData frameData)
         {
             string lang = "Native";
             string func = frameData.GetValue("func");
@@ -415,9 +415,9 @@ namespace AvalonStudio.Debugging.GDB
         }
     }
 
-    class GdbDissassemblyBuffer : DissassemblyBuffer
+    internal class GdbDissassemblyBuffer : DissassemblyBuffer
     {
-        GdbSession session;
+        private GdbSession session;
 
         public GdbDissassemblyBuffer(GdbSession session, long addr) : base(addr)
         {

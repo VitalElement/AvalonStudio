@@ -3,16 +3,16 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Debugging
 {
-	public class RegistersView : UserControl
-	{
-		public RegistersView()
-		{
-			InitializeComponent();
-		}
+    public class RegistersView : UserControl
+    {
+        public RegistersView()
+        {
+            InitializeComponent();
+        }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
-	}
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
+    }
 }

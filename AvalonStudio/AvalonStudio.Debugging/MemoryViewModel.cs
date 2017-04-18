@@ -1,22 +1,19 @@
 ﻿namespace AvalonStudio.Debugging
 {
+    using Avalonia.Threading;
+    using Extensibility;
+    using Extensibility.Plugin;
     using MVVM;
     using MVVM.DataVirtualization;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using ReactiveUI;
-    using Avalonia.Threading;
-    using Extensibility.Plugin;
-    using Extensibility;
+    using System;
+    using System.Linq;
+
     public class MemoryViewModel : ToolViewModel, IExtension
     {
         private IDebugManager2 _debugManager;
         public const string ToolId = "CIDMEM001";
-        const int Columns = 32;
+        private const int Columns = 32;
 
         public MemoryViewModel()
         {
@@ -38,6 +35,7 @@
         }
 
         private MutuallyExclusiveEnumerationCollection<MemoryViewDataProvider.IntegerSize> integerSizeOptions;
+
         public MutuallyExclusiveEnumerationCollection<MemoryViewDataProvider.IntegerSize> IntegerSizeOptions
         {
             get { return integerSizeOptions; }
@@ -67,6 +65,7 @@
 
         private MemoryViewDataProvider dataProvider;
         private IDebugger2 debugger;
+
         public void SetDebugger(IDebugger2 debugger)
         {
             if (this.debugger != null)
@@ -85,6 +84,7 @@
         }
 
         private bool enabled;
+
         public bool Enabled
         {
             get { return enabled; }
@@ -92,6 +92,7 @@
         }
 
         private string address;
+
         public string Address
         {
             get
@@ -158,13 +159,13 @@
         }
 
         public void BeforeActivation()
-        {            
+        {
         }
 
         public void Activation()
         {
             _debugManager = IoC.Get<IDebugManager2>();
-            
+
             _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
             _debugManager.DebugSessionEnded += (sender, e) =>
@@ -173,11 +174,12 @@
 
                 // TODO clear out data ready for GC, this requires a fix in Avalonia.
                 //DisassemblyData = null;
-            };            
+            };
         }
 
         private ulong currentAddress;
         private long selectedIndex;
+
         public long SelectedIndex
         {
             get { return selectedIndex; }
@@ -185,6 +187,7 @@
         }
 
         private AsyncVirtualizingCollection<MemoryBytesViewModel> memoryData;
+
         public AsyncVirtualizingCollection<MemoryBytesViewModel> MemoryData
         {
             get { return memoryData; }

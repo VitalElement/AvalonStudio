@@ -17,7 +17,7 @@ namespace AvalonStudio.Debugging
 
         private readonly List<ObjectValue> watches;
         private List<string> _expressions;
-        StackFrame _currentFrame;
+        private StackFrame _currentFrame;
 
         private ObservableCollection<ObjectValueViewModel> children;
         public List<ObjectValueViewModel> LastChangedRegisters;
@@ -174,7 +174,7 @@ namespace AvalonStudio.Debugging
             {
                 _expressions.Add(expression);
 
-               var watch = _currentFrame.GetExpressionValue(expression, false);
+                var watch = _currentFrame.GetExpressionValue(expression, false);
 
                 Task.Run(() => { InvalidateObjects(watch); });
 

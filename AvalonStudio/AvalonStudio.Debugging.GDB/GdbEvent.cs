@@ -25,11 +25,9 @@
 //
 //
 
-using System;
-
 namespace AvalonStudio.Debugging.GDB
 {
-    class GdbEvent : ResultData
+    internal class GdbEvent : ResultData
     {
         public string Name;
         public string Reason;
