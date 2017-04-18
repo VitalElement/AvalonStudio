@@ -90,9 +90,8 @@ namespace AvalonStudio.Languages.CPlusPlus
             project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
             project.Debugger2 = shell.Debugger2s.FirstOrDefault(d => d is LocalGdbDebugger);
             project.TestFramework = shell.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);
-            project.ToolChain.ProvisionSettings(project);
 
-            var settings = LocalGCCToolchain.GetSettings(project);
+            var settings = project.GetSettings<GccToolchainSettings>();
             settings.CompileSettings.Exceptions = true;
             settings.CompileSettings.Rtti = true;
             settings.CompileSettings.Optimization = OptimizationLevel.Debug;
