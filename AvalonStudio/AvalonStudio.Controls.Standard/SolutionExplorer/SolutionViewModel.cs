@@ -111,11 +111,17 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand<object> AddExistingProjectCommand { get; }
         public ReactiveCommand<object> OpenInExplorerCommand { get; }
 
-        void CleanSolution() { }
+        void CleanSolution()
+        {
+        }
 
-        void BuildSolution() { }
+        void BuildSolution()
+        {
+        }
 
-        void RunTests() { }
+        void RunTests()
+        {
+        }
 
         public string Title
         {
@@ -125,6 +131,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 {
                     return string.Format("Solution '{0}' ({1} {2})", Model.Name, Model.Projects.Count, StringProjects);
                 }
+
                 return string.Empty;
             }
         }
@@ -137,6 +144,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 {
                     return "project";
                 }
+
                 return "projects";
             }
         }
