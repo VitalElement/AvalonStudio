@@ -24,7 +24,10 @@ namespace AvalonStudio.Languages.CSharp
         /// </summary>
         public string IndentationString
         {
-            get { return indentationString; }
+            get
+            {
+                return indentationString;
+            }
             set
             {
                 if (string.IsNullOrEmpty(value))

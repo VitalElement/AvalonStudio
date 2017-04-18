@@ -5,14 +5,12 @@
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
-    using Extensibility.Threading;
     using Projects.OmniSharp;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Runtime.CompilerServices;
-    using System.Threading;
     using System.Threading.Tasks;
     using TextEditor;
     using TextEditor.Document;

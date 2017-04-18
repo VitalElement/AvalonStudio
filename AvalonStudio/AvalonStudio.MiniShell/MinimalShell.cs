@@ -5,18 +5,18 @@ namespace AvalonStudio.Shell
     using AvalonStudio.Documents;
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Dialogs;
+    using AvalonStudio.Extensibility.Plugin;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
     using AvalonStudio.TestFrameworks;
     using AvalonStudio.Toolchains;
     using System;
-    using System.Composition;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Composition;
     using System.Threading.Tasks;
-    using AvalonStudio.Extensibility.Plugin;
 
-    static class ListExtensions
+    internal static class ListExtensions
     {
         public static void ConsumeExtension<T>(this List<T> destination, IExtension extension) where T : class, IExtension
         {

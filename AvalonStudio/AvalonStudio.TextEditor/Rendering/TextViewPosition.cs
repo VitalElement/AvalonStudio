@@ -1,6 +1,6 @@
+using AvalonStudio.TextEditor.Document;
 using System;
 using System.Globalization;
-using AvalonStudio.TextEditor.Document;
 
 namespace AvalonStudio.TextEditor.Rendering
 {
@@ -149,7 +149,7 @@ namespace AvalonStudio.TextEditor.Rendering
             return !left.Equals(right); // use operator == and negate result
         }
 
-        #endregion
+        #endregion Equals and GetHashCode implementation
 
         /// <inheritdoc />
         public int CompareTo(TextViewPosition other)
