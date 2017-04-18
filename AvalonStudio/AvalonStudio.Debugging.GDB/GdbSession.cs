@@ -22,8 +22,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-//
-//
 
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
@@ -69,7 +67,7 @@ namespace AvalonStudio.Debugging.GDB
 
         object syncLock = new object();
         object eventLock = new object();
-        protected object gdbLock = new object();
+        private object gdbLock = new object();
 
         private string _gdbExecutable;
         private string _runCommand;
@@ -640,7 +638,8 @@ namespace AvalonStudio.Debugging.GDB
                     break;
                 cline = newLine + 1;
 
-            } while (true);
+            }
+            while (true);
 
             return lines.ToArray();
         }
@@ -761,7 +760,7 @@ namespace AvalonStudio.Debugging.GDB
 
                         lock (eventLock)
                         {
-                            running = (lastResult.Status == CommandStatus.Running);
+                            running = lastResult.Status == CommandStatus.Running;
                         }
 
                         Monitor.PulseAll(syncLock);
