@@ -155,7 +155,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public ILanguageService SelectedLanguage
         {
-            get { return selectedLanguage; }
+            get
+            {
+                return selectedLanguage;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedLanguage, value);
