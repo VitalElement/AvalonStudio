@@ -69,7 +69,7 @@ namespace AvalonStudio.Debugging
 
 		public void Clear()
 		{
-			Frames.Clear();
+			//Frames.Clear();
 		}
 
 		/*public void Update(List<Frame> frames)
