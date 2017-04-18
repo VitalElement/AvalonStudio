@@ -359,7 +359,10 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 return result;
             }
-            set { Debugger2Reference = value.GetType().ToString(); }
+            set
+            {
+                Debugger2Reference = value.GetType().ToString();
+            }
         }
 
         [JsonIgnore]
