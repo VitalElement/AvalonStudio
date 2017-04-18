@@ -88,7 +88,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 			await SourceFile.Create(project, "UnitTest1.cpp", Template.Engine.Parse("CatchUnitTest.template", new { }));
 
 			project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
-			project.Debugger = shell.Debuggers.FirstOrDefault(d => d is LocalDebugAdaptor);
+			project.Debugger2 = shell.Debugger2s.FirstOrDefault(d => d is LocalGdbDebugger);
 			project.TestFramework = shell.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);
             project.ToolChain.ProvisionSettings(project);
 
