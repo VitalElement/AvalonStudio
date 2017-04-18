@@ -5,11 +5,6 @@ namespace AvalonStudio.Extensibility
 
     public class MenuDefinitions : IExtension
     {
-        static MenuDefinitions()
-        {
-
-        }
-
         public static readonly MenuBarDefinition MainMenuBar = new MenuBarDefinition();
 
         public static readonly MenuDefinition FileMenu = new MenuDefinition(MainMenuBar, 0, "_File");
@@ -27,7 +22,7 @@ namespace AvalonStudio.Extensibility
         public static readonly MenuItemGroupDefinition EditUndoRedoMenuGroup = new MenuItemGroupDefinition(EditMenu, 0);
 
         public static readonly MenuDefinition ViewMenu = new MenuDefinition(MainMenuBar, 2, "_View");
-        
+
         public static readonly MenuItemGroupDefinition ViewToolsMenuGroup = new MenuItemGroupDefinition(ViewMenu, 0);
 
         public static readonly MenuItemGroupDefinition ViewPropertiesMenuGroup = new MenuItemGroupDefinition(ViewMenu, 100);
@@ -42,12 +37,10 @@ namespace AvalonStudio.Extensibility
 
         public void Activation()
         {
-            
         }
 
         public void BeforeActivation()
         {
-
         }
     }
 }
