@@ -137,16 +137,6 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref _versions, value); }
         }
 
-        //public PackageIndex SelectedPackageIndex
-        //{
-        //	get { return selectedPackageIndex; }
-        //	set
-        //	{
-        //		this.RaiseAndSetIfChanged(ref selectedPackageIndex, value);
-        //		SelectedTag = value.Tags.FirstOrDefault();
-        //	}
-        //}
-
         public VersionInfoViewModel SelectedVersion
         {
             get

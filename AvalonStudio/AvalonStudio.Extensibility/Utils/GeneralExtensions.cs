@@ -13,7 +13,6 @@ namespace AvalonStudio.Utils
             {
                 using (var stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-
                 }
             }
             catch (IOException)
@@ -120,7 +119,6 @@ namespace AvalonStudio.Utils
                 int middle = lower + (upper - lower) / 2;
                 int comparisonResult = list[middle].CompareTo(value);
 
-
                 if (comparisonResult < 0)
                 {
                     lower = middle + 1;
@@ -159,7 +157,6 @@ namespace AvalonStudio.Utils
                 myself.Insert(index, item);
             }
         }
-
 
         /// <summary>
         ///     Creates a relative path from one file or folder to another.
