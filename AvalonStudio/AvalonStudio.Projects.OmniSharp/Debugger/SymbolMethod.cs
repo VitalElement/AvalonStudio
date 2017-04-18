@@ -3,9 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.SymbolStore;
-    using System.Reflection.Metadata;
-    using System.Text;
     using System.Linq;
+    using System.Reflection.Metadata;
 
     public class SymbolMethod : ISymbolMethod
     {
@@ -20,7 +19,7 @@
             _token = token;
         }
 
-        internal void SetRootScope (ISymbolScope rootScope)
+        internal void SetRootScope(ISymbolScope rootScope)
         {
             _rootScope = rootScope;
         }

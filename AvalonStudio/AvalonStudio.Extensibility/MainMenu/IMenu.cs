@@ -3,7 +3,7 @@ using AvalonStudio.Extensibility.MVVM;
 
 namespace AvalonStudio.Extensibility.MainMenu
 {
-	public interface IMenu : IObservableCollection<MenuItemBase>
-	{
-	}
+    public interface IMenu : IObservableCollection<MenuItemBase>
+    {
+    }
 }

@@ -1,10 +1,9 @@
+using AvalonStudio.Projects;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using AvalonStudio.Utils;
-using System.Diagnostics;
-using AvalonStudio.Projects;
 
 namespace AvalonStudio.Platforms
 {
@@ -116,8 +115,10 @@ namespace AvalonStudio.Platforms
                 {
                     case PlatformID.Unix:
                         return ".so";
+
                     case PlatformID.MacOSX:
                         return ".dylib";
+
                     case PlatformID.Win32NT:
                         return ".dll";
 
@@ -458,7 +459,7 @@ namespace AvalonStudio.Platforms
             switch (PlatformIdentifier)
             {
                 case PlatformID.Win32NT:
-                    // TODO consider using directory info?           
+                    // TODO consider using directory info?
                     return path.ToLower().CompareTo(other.ToLower());
 
                 default:

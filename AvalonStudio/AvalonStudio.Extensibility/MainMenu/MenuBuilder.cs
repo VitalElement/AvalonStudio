@@ -1,81 +1,80 @@
-using System.Linq;
-using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.MainMenu.Models;
 using AvalonStudio.Extensibility.Menus;
+using System.Linq;
 
 namespace AvalonStudio.Extensibility.MainMenu
 {
-	public class MenuBuilder : IMenuBuilder
-	{
-		private readonly MenuItemGroupDefinition[] _excludeMenuItemGroups;
-		private readonly MenuItemDefinition[] _excludeMenuItems;
-		private readonly MenuDefinition[] _excludeMenus;
-		private readonly MenuBarDefinition[] _menuBars;
-		private readonly MenuItemGroupDefinition[] _menuItemGroups;
-		private readonly MenuItemDefinition[] _menuItems;
-		private readonly MenuDefinition[] _menus;
-        
-		public MenuBuilder(			
-			MenuBarDefinition[] menuBars,
-			MenuDefinition[] menus,
-			MenuItemGroupDefinition[] menuItemGroups,
-			MenuItemDefinition[] menuItems,
-			ExcludeMenuDefinition[] excludeMenus,
-			ExcludeMenuItemGroupDefinition[] excludeMenuItemGroups,
-			ExcludeMenuItemDefinition[] excludeMenuItems)
-		{
-			_menuBars = menuBars;
-			_menus = menus;
-			_menuItemGroups = menuItemGroups;
-			_menuItems = menuItems;
-			_excludeMenus = excludeMenus.Select(x => x.MenuDefinitionToExclude).ToArray();
-			_excludeMenuItemGroups = excludeMenuItemGroups.Select(x => x.MenuItemGroupDefinitionToExclude).ToArray();
-			_excludeMenuItems = excludeMenuItems.Select(x => x.MenuItemDefinitionToExclude).ToArray();
-		}
+    public class MenuBuilder : IMenuBuilder
+    {
+        private readonly MenuItemGroupDefinition[] _excludeMenuItemGroups;
+        private readonly MenuItemDefinition[] _excludeMenuItems;
+        private readonly MenuDefinition[] _excludeMenus;
+        private readonly MenuBarDefinition[] _menuBars;
+        private readonly MenuItemGroupDefinition[] _menuItemGroups;
+        private readonly MenuItemDefinition[] _menuItems;
+        private readonly MenuDefinition[] _menus;
 
-		public void BuildMenuBar(MenuBarDefinition menuBarDefinition, MenuModel result)
-		{
-			var menus = _menus
-				.Where(x => x.MenuBar == menuBarDefinition)
-				.Where(x => !_excludeMenus.Contains(x))
-				.OrderBy(x => x.SortOrder);
+        public MenuBuilder(
+            MenuBarDefinition[] menuBars,
+            MenuDefinition[] menus,
+            MenuItemGroupDefinition[] menuItemGroups,
+            MenuItemDefinition[] menuItems,
+            ExcludeMenuDefinition[] excludeMenus,
+            ExcludeMenuItemGroupDefinition[] excludeMenuItemGroups,
+            ExcludeMenuItemDefinition[] excludeMenuItems)
+        {
+            _menuBars = menuBars;
+            _menus = menus;
+            _menuItemGroups = menuItemGroups;
+            _menuItems = menuItems;
+            _excludeMenus = excludeMenus.Select(x => x.MenuDefinitionToExclude).ToArray();
+            _excludeMenuItemGroups = excludeMenuItemGroups.Select(x => x.MenuItemGroupDefinitionToExclude).ToArray();
+            _excludeMenuItems = excludeMenuItems.Select(x => x.MenuItemDefinitionToExclude).ToArray();
+        }
 
-			foreach (var menu in menus)
-			{
-				var menuModel = new TextMenuItem(menu);
-				AddGroupsRecursive(menu, menuModel);
-				if (menuModel.Children.Any())
-					result.Add(menuModel);
-			}
-		}
+        public void BuildMenuBar(MenuBarDefinition menuBarDefinition, MenuModel result)
+        {
+            var menus = _menus
+                .Where(x => x.MenuBar == menuBarDefinition)
+                .Where(x => !_excludeMenus.Contains(x))
+                .OrderBy(x => x.SortOrder);
 
-		private void AddGroupsRecursive(MenuDefinition menu, StandardMenuItem menuModel)
-		{
-			var groups = _menuItemGroups
-				.Where(x => x.Parent == menu)
-				.Where(x => !_excludeMenuItemGroups.Contains(x))
-				.OrderBy(x => x.SortOrder)
-				.ToList();
+            foreach (var menu in menus)
+            {
+                var menuModel = new TextMenuItem(menu);
+                AddGroupsRecursive(menu, menuModel);
+                if (menuModel.Children.Any())
+                    result.Add(menuModel);
+            }
+        }
 
-			for (var i = 0; i < groups.Count; i++)
-			{
-		 		var group = groups[i];
-				var menuItems = _menuItems
-					.Where(x => x.Group == group)
-					.Where(x => !_excludeMenuItems.Contains(x))
-					.OrderBy(x => x.SortOrder);
+        private void AddGroupsRecursive(MenuDefinition menu, StandardMenuItem menuModel)
+        {
+            var groups = _menuItemGroups
+                .Where(x => x.Parent == menu)
+                .Where(x => !_excludeMenuItemGroups.Contains(x))
+                .OrderBy(x => x.SortOrder)
+                .ToList();
 
-				foreach (var menuItem in menuItems)
-				{
+            for (var i = 0; i < groups.Count; i++)
+            {
+                var group = groups[i];
+                var menuItems = _menuItems
+                    .Where(x => x.Group == group)
+                    .Where(x => !_excludeMenuItems.Contains(x))
+                    .OrderBy(x => x.SortOrder);
+
+                foreach (var menuItem in menuItems)
+                {
                     var menuItemModel = new MenuItem(menuItem);
 
                     //AddGroupsRecursive(menuItem, menuItemModel);
-					menuModel.Add(menuItemModel);
-				}
+                    menuModel.Add(menuItemModel);
+                }
 
-				if (i < groups.Count - 1 && menuItems.Any())
-					menuModel.Add(new MenuItemSeparator());
-			}
-		}
-	}
+                if (i < groups.Count - 1 && menuItems.Any())
+                    menuModel.Add(new MenuItemSeparator());
+            }
+        }
+    }
 }

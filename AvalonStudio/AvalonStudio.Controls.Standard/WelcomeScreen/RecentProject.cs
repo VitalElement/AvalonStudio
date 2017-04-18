@@ -1,10 +1,10 @@
 ﻿namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {
+    using AvalonStudio.Platforms;
+    using AvalonStudio.Utils;
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using AvalonStudio.Platforms;
-    using AvalonStudio.Utils;
 
     public class RecentProject : IEquatable<RecentProject>
     {
@@ -39,7 +39,10 @@
 
                 return _recentProjects;
             }
-            set { _recentProjects = value; }
+            set
+            {
+                _recentProjects = value;
+            }
         }
 
         public static void Save()
@@ -65,6 +68,5 @@
                 _recentProjects = new List<RecentProject>();
             }
         }
-
     }
 }

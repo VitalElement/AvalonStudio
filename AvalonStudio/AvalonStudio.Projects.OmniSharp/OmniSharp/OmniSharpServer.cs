@@ -3,13 +3,9 @@
     using AvalonStudio.Platforms;
     using Extensibility.Languages.CompletionAssistance;
     using RestSharp;
-    using RestSharp.Deserializers;
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -85,15 +81,15 @@
 
                 client = new RestClient($"http://localhost:{port}");
 
-                while(true)
+                while (true)
                 {
-                    if(await SendRequest(new CheckReadyStatusRequest()))
+                    if (await SendRequest(new CheckReadyStatusRequest()))
                     {
                         break;
                     }
 
                     Thread.Sleep(100);
-                }                
+                }
 
                 processStartedCompletionSource.SetResult(process);
 

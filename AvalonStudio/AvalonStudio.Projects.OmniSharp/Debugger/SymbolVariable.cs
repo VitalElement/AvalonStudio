@@ -1,12 +1,10 @@
 ﻿namespace AvalonStudio.Debugging.DotNetCore
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.SymbolStore;
     using System.Reflection.Metadata;
-    using System.Text;
 
-    class SymbolVariable : ISymbolVariable
+    internal class SymbolVariable : ISymbolVariable
     {
         private string _name;
         private LocalVariableAttributes _attributes;

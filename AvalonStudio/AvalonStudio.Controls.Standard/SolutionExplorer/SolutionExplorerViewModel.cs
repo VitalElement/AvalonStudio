@@ -1,15 +1,14 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using Avalonia.Controls;
 using System.Collections.Generic;
-using AvalonStudio.Platforms;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -34,7 +33,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public new ISolution Model
         {
-            get { return model; }
+            get
+            {
+                return model;
+            }
             set
             {
                 Projects = new ObservableCollection<ProjectItemViewModel>();

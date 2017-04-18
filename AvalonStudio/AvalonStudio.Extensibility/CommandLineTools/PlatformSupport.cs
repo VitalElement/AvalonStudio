@@ -24,7 +24,7 @@ namespace AvalonStudio.CommandLineTools
                     executorType = ShellExecutorType.Unix;
                     break;
             }
-        }        
+        }
 
         public static ShellExecuteResult ExecuteShellCommand(string commandName, string args)
         {
@@ -50,8 +50,8 @@ namespace AvalonStudio.CommandLineTools
             };
         }
 
-        public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs> 
-            outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true, 
+        public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>
+            outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,
             string workingDirectory = "", bool executeInShell = true, params string[] extraPaths)
         {
             using (var shellProc = new Process
@@ -61,11 +61,11 @@ namespace AvalonStudio.CommandLineTools
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
-                    WorkingDirectory = workingDirectory                    
+                    WorkingDirectory = workingDirectory
                 }
             })
             {
-                foreach(var extraPath in extraPaths)
+                foreach (var extraPath in extraPaths)
                 {
                     shellProc.StartInfo.Environment["PATH"] += $";{extraPath}";
                 }
@@ -116,7 +116,7 @@ namespace AvalonStudio.CommandLineTools
         /// <param name="fileName"></param>
         /// <returns></returns>
         public static bool CheckExecutableAvailability(string fileName, params string[] extraPaths)
-        {            
+        {
             return ResolveFullExecutablePath(fileName, true, extraPaths) != null;
         }
 
@@ -149,7 +149,7 @@ namespace AvalonStudio.CommandLineTools
                 ExecuteShellCommand("which", $"\"{fileName}\"", (s, e) =>
                 {
                     outputBuilder.AppendLine(e.Data);
-                }, (s,e)=> { }, false);
+                }, (s, e) => { }, false);
                 var procOutput = outputBuilder.ToString();
                 if (string.IsNullOrWhiteSpace(procOutput))
                 {

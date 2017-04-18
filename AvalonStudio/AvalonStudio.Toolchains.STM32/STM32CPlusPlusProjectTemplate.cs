@@ -1,10 +1,9 @@
-using System.Linq;
-using System.Threading.Tasks;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Languages.CPlusPlus;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Shell;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.STM32
 {

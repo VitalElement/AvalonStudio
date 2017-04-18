@@ -1,9 +1,6 @@
 ﻿namespace AvalonStudio.Projects.OmniSharp
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
 
     public class VisualStudioSolutionType : ISolutionType
@@ -26,12 +23,10 @@
 
         public void Activation()
         {
-            
         }
 
         public void BeforeActivation()
         {
-            
         }
 
         public async Task<ISolution> LoadAsync(string path)

@@ -1,5 +1,4 @@
 using AvalonStudio.MVVM;
-using System;
 
 namespace AvalonStudio.Languages.ViewModels
 {

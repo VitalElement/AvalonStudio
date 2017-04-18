@@ -1,6 +1,6 @@
 namespace AvalonStudio.Extensibility.MainMenu.Models
 {
-	public class MenuItemSeparator : MenuItemBase
-	{
-	}
+    public class MenuItemSeparator : MenuItemBase
+    {
+    }
 }

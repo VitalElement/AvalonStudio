@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    class CPlusPlusProjectType : IProjectType
+    internal class CPlusPlusProjectType : IProjectType
     {
         public List<string> Extensions => new List<string>
         {

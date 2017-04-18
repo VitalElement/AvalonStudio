@@ -4,14 +4,14 @@ namespace AvalonStudio.Debugging
     using AvalonStudio.Projects;
     using Mono.Debugging.Client;
 
-	public enum WatchFormat
-	{
-		Binary,
-		Decimal,
-		Hexadecimal,
-		Octal,
-		Natural
-	}
+    public enum WatchFormat
+    {
+        Binary,
+        Decimal,
+        Hexadecimal,
+        Octal,
+        Natural
+    }
 
     public interface IDebugger2 : IExtension
     {

@@ -15,7 +15,6 @@ namespace AvalonStudio.Extensibility.Menus
 
         public virtual void Activation()
         {
-
         }
 
         public MenuItemGroupDefinition Group { get; protected set; }
@@ -31,7 +30,6 @@ namespace AvalonStudio.Extensibility.Menus
     {
         public MenuItemDefinition(MenuItemGroupDefinition group, string text, int sortOrder) : base(group, text, sortOrder)
         {
-
         }
 
         public override void Activation()

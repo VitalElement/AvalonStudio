@@ -1,9 +1,9 @@
+using ReactiveUI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using ReactiveUI;
 
 namespace AvalonStudio.MVVM.DataVirtualization
 {
@@ -69,7 +69,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             ItemsProvider.PropertyChanged += _itemsProvider_PropertyChanged;
         }
 
-        #endregion
+        #endregion Constructors
 
         #region ItemsProvider
 
@@ -79,7 +79,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
         /// <value>The items provider.</value>
         public IItemsProvider<T> ItemsProvider { get; }
 
-        #endregion
+        #endregion ItemsProvider
 
         #region PageSize
 
@@ -89,7 +89,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
         /// <value>The size of the page.</value>
         public int PageSize { get; } = 100;
 
-        #endregion
+        #endregion PageSize
 
         #region PageTimeout
 
@@ -99,7 +99,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
         /// <value>The page timeout.</value>
         public long PageTimeout { get; } = 10000;
 
-        #endregion
+        #endregion PageTimeout
 
         #region IList<DataWrapper<T>>, IList
 
@@ -133,7 +133,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             }
         }
 
-        #endregion
+        #endregion Count
 
         private void RemovePage(int pageIndex)
         {
@@ -215,7 +215,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             set { throw new NotSupportedException(); }
         }
 
-        #endregion
+        #endregion Indexer
 
         #region IEnumerator<DataWrapper<T>>, IEnumerator
 
@@ -247,7 +247,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             return GetEnumerator();
         }
 
-        #endregion
+        #endregion IEnumerator<DataWrapper<T>>, IEnumerator
 
         #region Add
 
@@ -268,7 +268,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             throw new NotSupportedException();
         }
 
-        #endregion
+        #endregion Add
 
         #region Contains
 
@@ -296,7 +296,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             return false;
         }
 
-        #endregion
+        #endregion Contains
 
         #region Clear
 
@@ -308,7 +308,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             throw new NotSupportedException();
         }
 
-        #endregion
+        #endregion Clear
 
         #region IndexOf
 
@@ -337,7 +337,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             return -1;
         }
 
-        #endregion
+        #endregion IndexOf
 
         #region Insert
 
@@ -362,7 +362,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             Insert(index, (DataWrapper<T>)value);
         }
 
-        #endregion
+        #endregion Insert
 
         #region Remove
 
@@ -403,7 +403,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             throw new NotSupportedException();
         }
 
-        #endregion
+        #endregion Remove
 
         #region CopyTo
 
@@ -442,7 +442,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             throw new NotSupportedException();
         }
 
-        #endregion
+        #endregion CopyTo
 
         #region Misc
 
@@ -495,9 +495,9 @@ namespace AvalonStudio.MVVM.DataVirtualization
             get { return false; }
         }
 
-        #endregion
+        #endregion Misc
 
-        #endregion
+        #endregion IList<DataWrapper<T>>, IList
 
         #region Paging
 
@@ -576,7 +576,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             Pages = new Dictionary<int, DataPage<T>>();
         }
 
-        #endregion
+        #endregion Paging
 
         #region Load methods
 
@@ -600,7 +600,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             Count = count;
         }
 
-        #endregion
+        #endregion Load methods
 
         #region Fetch methods
 
@@ -623,6 +623,6 @@ namespace AvalonStudio.MVVM.DataVirtualization
             return ItemsProvider.Count;
         }
 
-        #endregion
+        #endregion Fetch methods
     }
 }

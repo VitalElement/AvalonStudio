@@ -1,6 +1,5 @@
 namespace AvalonStudio.Toolchains.Clang
 {
-    using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Templating;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
@@ -189,7 +188,7 @@ namespace AvalonStudio.Toolchains.Clang
         public override string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile file)
         {
             var result = string.Empty;
-            
+
             var settings = superProject.GetSettings<GccToolchainSettings>();
 
             result += "-Wall -c -fshort-enums ";

@@ -3,69 +3,68 @@ using System.Collections.Generic;
 
 namespace AvalonStudio.Languages
 {
-	public enum HighlightType
-	{
+    public enum HighlightType
+    {
         None,
-		CallExpression,
-		Punctuation,
-		Keyword,
-		Identifier,
-		Literal,
+        CallExpression,
+        Punctuation,
+        Keyword,
+        Identifier,
+        Literal,
         NumericLiteral,
-		Comment,
-		ClassName,
+        Comment,
+        ClassName,
         StructName,
         EnumConstant,
         EnumTypeName,
         InterfaceName,
         PreProcessor,
         PreProcessorText,
+    }
 
-	}
+    public class SyntaxHighlightDataList : List<OffsetSyntaxHighlightingData>
+    {
+        public new void Add(OffsetSyntaxHighlightingData item)
+        {
+            var index = BinarySearch(item);
 
-	public class SyntaxHighlightDataList : List<OffsetSyntaxHighlightingData>
-	{
-		public new void Add(OffsetSyntaxHighlightingData item)
-		{
-			var index = BinarySearch(item);
+            if (index < 0)
+            {
+                Insert(~index, item);
+            }
+            else
+            {
+                Insert(index + 1, item);
+            }
+        }
+    }
 
-			if (index < 0)
-			{
-				Insert(~index, item);
-			}
-			else
-			{
-				Insert(index + 1, item);
-			}
-		}
-	}
+    public class OffsetSyntaxHighlightingData : IComparable<OffsetSyntaxHighlightingData>
+    {
+        public HighlightType Type { get; set; }
+        public int Start { get; set; }
+        public int Length { get; set; }
 
-	public class OffsetSyntaxHighlightingData : IComparable<OffsetSyntaxHighlightingData>
-	{
-		public HighlightType Type { get; set; }
-		public int Start { get; set; }
-		public int Length { get; set; }
+        public int CompareTo(OffsetSyntaxHighlightingData other)
+        {
+            if (Start > other.Start)
+            {
+                return 1;
+            }
 
-		public int CompareTo(OffsetSyntaxHighlightingData other)
-		{
-			if (Start > other.Start)
-			{
-				return 1;
-			}
+            if (Start == other.Start)
+            {
+                return 0;
+            }
 
-			if (Start == other.Start)
-			{
-				return 0;
-			}
-
-			return -1;
-		}
-	}
+            return -1;
+        }
+    }
 
     public class LineColumnSyntaxHighlightingData : OffsetSyntaxHighlightingData, IComparable<LineColumnSyntaxHighlightingData>
     {
         public int StartColumn { get; set; }
-        public int EndColumn { get;set; }
+        public int EndColumn { get; set; }
         public int StartLine { get; set; }
         public int EndLine { get; set; }
 

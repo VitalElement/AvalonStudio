@@ -1,12 +1,10 @@
-using System;
 using Avalonia;
-using System.Reflection;
-using System.ComponentModel;
+using System;
 
 namespace AvalonStudio.MVVM
 {
-	public static class Extensions
-	{
+    public static class Extensions
+    {
         public static string GetDescription<T>(this T enumerationValue)
             where T : struct
         {
@@ -33,8 +31,8 @@ namespace AvalonStudio.MVVM
             }
             //If we have no description attribute, just return the ToString of the enum
             return enumerationValue.ToString();*/
-
         }
+
         //public static System.Drawing.Point ToSystemDrawing (this Point p)
         //{
         //    return new System.Drawing.Point ((int)p.X, (int)p.Y);
@@ -91,15 +89,14 @@ namespace AvalonStudio.MVVM
         //    return new Point (point.X * matrix.M11, point.Y * matrix.M22);
         //}
 
-
         public static double GetDistance(this Point start, Point point)
-		{
-			var a2 = Math.Pow(Math.Abs(start.X - point.X), 2);
-			var b2 = Math.Pow(Math.Abs(start.Y - point.Y), 2);
+        {
+            var a2 = Math.Pow(Math.Abs(start.X - point.X), 2);
+            var b2 = Math.Pow(Math.Abs(start.Y - point.Y), 2);
 
-			return Math.Sqrt(a2 + b2);
-		}
+            return Math.Sqrt(a2 + b2);
+        }
 
-		//#endregion
-	}
+        //#endregion
+    }
 }

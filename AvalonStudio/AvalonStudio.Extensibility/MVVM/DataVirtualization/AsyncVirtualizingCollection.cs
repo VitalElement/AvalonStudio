@@ -1,8 +1,7 @@
-using System;
+using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Threading;
-using ReactiveUI;
 
 namespace AvalonStudio.MVVM.DataVirtualization
 {
@@ -33,7 +32,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
         /// <value>The synchronization context.</value>
         protected SynchronizationContext SynchronizationContext { get; }
 
-        #endregion
+        #endregion SynchronizationContext
 
         #region INotifyCollectionChanged
 
@@ -65,7 +64,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             OnCollectionChanged(e);
         }
 
-        #endregion
+        #endregion INotifyCollectionChanged
 
         #region IsLoading
 
@@ -113,7 +112,7 @@ namespace AvalonStudio.MVVM.DataVirtualization
             }
         }
 
-        #endregion
+        #endregion IsLoading
 
         #region Load overrides
 
@@ -204,6 +203,6 @@ namespace AvalonStudio.MVVM.DataVirtualization
             RequestsWaiting--;
         }
 
-        #endregion
+        #endregion Load overrides
     }
 }

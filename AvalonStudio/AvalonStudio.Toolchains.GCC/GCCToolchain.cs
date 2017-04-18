@@ -4,17 +4,13 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System;
-using System.Dynamic;
 
 namespace AvalonStudio.Toolchains.GCC
 {
     public abstract class GCCToolchain : StandardToolChain
     {
-		public virtual string GDBExecutable => "gdb";
+        public virtual string GDBExecutable => "gdb";
 
         public abstract string BinDirectory { get; }
 
@@ -105,7 +101,7 @@ namespace AvalonStudio.Toolchains.GCC
                 fileArguments = "-x c++ -fno-use-cxa-atexit";
             }
 
-            if(file.Extension.ToLower() == ".s")
+            if (file.Extension.ToLower() == ".s")
             {
                 fileArguments = "-x assembler-with-cpp";
             }
@@ -122,7 +118,7 @@ namespace AvalonStudio.Toolchains.GCC
             },
             false, file.CurrentDirectory, false);
 
-           // console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
+            // console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
 
             return result;
         }

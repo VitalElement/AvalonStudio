@@ -1,26 +1,23 @@
 ﻿using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Languages.CSharp.OmniSharp;
-using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpSolution : ISolution
     {
-        public static async Task<OmniSharpSolution> Create (string path)
+        public static async Task<OmniSharpSolution> Create(string path)
         {
             OmniSharpSolution result = new OmniSharpSolution();
 
             await result.LoadSolution(path);
 
-            return result;            
+            return result;
         }
 
         private OmniSharpServer server;
@@ -31,13 +28,13 @@ namespace AvalonStudio.Projects.OmniSharp
             Projects = new ObservableCollection<IProject>();
         }
 
-        private async Task LoadSolution (string path)
+        private async Task LoadSolution(string path)
         {
             await server.StartAsync(Path.GetDirectoryName(path));
 
             var workspace = await server.SendRequest(new WorkspaceInformationRequest() { ExcludeSourceFiles = false });
 
-            foreach(var project in workspace.MsBuild.Projects)
+            foreach (var project in workspace.MsBuild.Projects)
             {
                 AddProject(OmniSharpProject.Create(this, project.Path, project));
             }
@@ -57,7 +54,6 @@ namespace AvalonStudio.Projects.OmniSharp
 
             return currentProject;
         }
-
 
         public OmniSharpServer Server { get { return server; } }
 

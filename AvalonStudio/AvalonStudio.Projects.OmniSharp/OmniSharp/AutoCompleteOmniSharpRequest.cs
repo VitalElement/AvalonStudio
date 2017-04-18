@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    class AutoCompleteOmniSharpRequest : OmniSharpRequest<List<CompletionData>>
+    internal class AutoCompleteOmniSharpRequest : OmniSharpRequest<List<CompletionData>>
     {
         public AutoCompleteOmniSharpRequest()
         {
@@ -15,14 +15,14 @@
         }
 
         /// <summary
-        ///   Specifies whether to return the code documentation 
+        ///   Specifies whether to return the code documentation
         ///   each and every returned autocomplete result
         /// </summary>
 
         public bool WantDocumentationForEveryCompletionResult { get; set; }
 
         /// <summary
-        ///   Specifies whether to return importable types. Defaults 
+        ///   Specifies whether to return importable types. Defaults
         ///   false. Can be turned off to get a small speed boost
         /// </summary
         public bool WantImportableTypes { get; set; }
@@ -33,18 +33,18 @@
         public bool WantMethodHeader { get; set; }
 
         /// <summary
-        /// Returns a snippet that can be used by common snippet 
+        /// Returns a snippet that can be used by common snippet
         /// to provide parameter and type parameter placeholders
         /// </summary>
         public bool WantSnippet { get; set; }
 
         /// <summary>
-        /// Returns the return type    
+        /// Returns the return type
         /// </summary>
         public bool WantReturnType { get; set; }
 
         /// <summary>
-        /// Returns the kind (i.e Method, Property, Field)    
+        /// Returns the kind (i.e Method, Property, Field)
         /// </summary>
         public bool WantKind { get; set; }
 

@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace AvalonStudio.Extensibility.MVVM
 {
-	public interface IObservableCollection<T> : IList<T>, INotifyPropertyChanged, INotifyCollectionChanged
-	{
-	}
+    public interface IObservableCollection<T> : IList<T>, INotifyPropertyChanged, INotifyCollectionChanged
+    {
+    }
 }

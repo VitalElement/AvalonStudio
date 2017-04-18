@@ -1,14 +1,13 @@
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Projects.Standard;
+using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Controls;
-using AvalonStudio.Platforms;
-using AvalonStudio.Projects;
-using AvalonStudio.Projects.Standard;
-using AvalonStudio.Utils;
 
 namespace AvalonStudio.Toolchains.Standard
 {

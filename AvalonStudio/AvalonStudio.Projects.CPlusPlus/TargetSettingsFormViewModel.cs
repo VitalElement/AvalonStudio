@@ -1,6 +1,6 @@
 namespace AvalonStudio.Projects.CPlusPlus
 {
-	public class TargetSettingsFormViewModel
-	{
-	}
+    public class TargetSettingsFormViewModel
+    {
+    }
 }
