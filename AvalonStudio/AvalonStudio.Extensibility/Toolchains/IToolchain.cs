@@ -18,8 +18,6 @@ namespace AvalonStudio.Toolchains
 
 		IList<object> GetConfigurationPages(IProject project);
 
-		void ProvisionSettings(IProject project);
-
 		bool CanHandle(IProject project);
 	}
 }

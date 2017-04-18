@@ -8,7 +8,7 @@ namespace AvalonStudio.Projects
 {
     public static class IProjectExtensions
     {
-        public static T GetSettings<T>(this IProject project)
+        public static T GetSettings<T>(this IProject project) where T : new()
         {
             T result = default(T);
 
@@ -28,6 +28,7 @@ namespace AvalonStudio.Projects
             }
             catch (Exception)
             {
+                return project.ProvisionSettings<T>();
             }
 
             return result;
@@ -41,19 +42,14 @@ namespace AvalonStudio.Projects
             project.Save();
         }
 
-        public static T ProvisionSettings<T>(this IProject project) where T : new()
+        private static T ProvisionSettings<T>(this IProject project) where T : new()
         {
-            var result = project.GetSettings<T>();
+            var result = new T();
 
-            if (result == null)
-            {
-                result = new T();
+            var rootIndex = (IDictionary<string, object>)project.ToolchainSettings;
+            rootIndex[typeof(T).FullName] = result;
 
-                var rootIndex = (IDictionary<string, object>)project.ToolchainSettings;
-                rootIndex[typeof(T).FullName] = result;
-
-                project.Save();
-            }
+            project.Save();
 
             return result;
         }

@@ -549,7 +549,5 @@ namespace AvalonStudio.Toolchains.Standard
         public abstract Task<bool> PreBuild(IConsole console, IProject project);
 
         public abstract Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult);
-
-        public abstract void ProvisionSettings(IProject project);
     }
 }

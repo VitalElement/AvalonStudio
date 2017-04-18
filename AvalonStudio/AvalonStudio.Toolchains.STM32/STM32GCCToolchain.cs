@@ -60,7 +60,7 @@ namespace AvalonStudio.Toolchains.STM32
 
             using (var sw = System.IO.File.CreateText(linkerScript))
             {
-               // sw.Write(template.TransformText());
+                // sw.Write(template.TransformText());
             }
         }
 
@@ -156,7 +156,7 @@ namespace AvalonStudio.Toolchains.STM32
         public override string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile file)
         {
             var result = string.Empty;
-            
+
             var settings = superProject.GetSettings<GccToolchainSettings>();
 
             result += "-Wall -c -fshort-enums ";
@@ -422,7 +422,7 @@ namespace AvalonStudio.Toolchains.STM32
         }
 
         public async Task<ProcessResult> ObjCopy(IConsole console, IProject project, LinkResult linkResult, AssemblyFormat format)
-        {          
+        {
             var result = new ProcessResult();
 
             var commandName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension);
@@ -493,13 +493,7 @@ namespace AvalonStudio.Toolchains.STM32
                 return result.ExitCode == 0;
             }
 
-
             return true;
-        }
-
-        public override void ProvisionSettings(IProject project)
-        {
-            project.ProvisionSettings<GccToolchainSettings>();
         }
     }
 }

@@ -25,7 +25,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 
 		public OpenOCDSettingsFormViewModel(IProject model) : base(model)
 		{
-			//settings = OpenOCDDebugAdaptor.GetSettings(model);
+            settings = model.GetSettings<OpenOCDSettings>();
 			interfaceConfigFile = settings.InterfaceConfigFile;
 			targetConfigFile = settings.TargetConfigFile;
 
@@ -33,7 +33,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 			BrowseInterfaceConfigFileCommand.Subscribe(async _ =>
 			{
 				var ofd = new OpenFileDialog();
-				//ofd.InitialDirectory = Path.Combine(OpenOCDDebugAdaptor.BaseDirectory, "scripts", "interface");
+				ofd.InitialDirectory = Path.Combine(BaseDirectory, "scripts", "interface");
 				ofd.Filters.Add(new FileDialogFilter {Name = "OpenOCD Config File", Extensions = new List<string> {"cfg"}});
 				ofd.AllowMultiple = false;
 				ofd.Title = "Open OpenOCD Interface Config File";
@@ -42,7 +42,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 
 				if (result != null && !string.IsNullOrEmpty(result.First()))
 				{
-					//InterfaceConfigFile = OpenOCDDebugAdaptor.BaseDirectory.MakeRelativePath(result.First());
+					InterfaceConfigFile = BaseDirectory.MakeRelativePath(result.First());
 				}
 			});
 
@@ -50,7 +50,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 			BrowseTargetConfigFileCommand.Subscribe(async _ =>
 			{
 				var ofd = new OpenFileDialog();
-				//ofd.InitialDirectory = Path.Combine(OpenOCDDebugAdaptor.BaseDirectory, "scripts", "target");
+				ofd.InitialDirectory = Path.Combine(BaseDirectory, "scripts", "target");
 				ofd.Filters.Add(new FileDialogFilter {Name = "OpenOCD Config File", Extensions = new List<string> {"cfg"}});
 				ofd.AllowMultiple = false;
 				ofd.Title = "Open OpenOCD Target Config File";
@@ -59,7 +59,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 
 				if (result != null && !string.IsNullOrEmpty(result.First()))
 				{
-					//TargetConfigFile = OpenOCDDebugAdaptor.BaseDirectory.MakeRelativePath(result.First());
+					TargetConfigFile = BaseDirectory.MakeRelativePath(result.First());
 				}
 			});
 		}
@@ -92,7 +92,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 			settings.InterfaceConfigFile = interfaceConfigFile?.ToAvalonPath();
 			settings.TargetConfigFile = targetConfigFile?.ToAvalonPath();
 
-			//OpenOCDDebugAdaptor.SetSettings(Model, settings);
+			Model.SetSettings(settings);
 			Model.Save();
 		}
 	}

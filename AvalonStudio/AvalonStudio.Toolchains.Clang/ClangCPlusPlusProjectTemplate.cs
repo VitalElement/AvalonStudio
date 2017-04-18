@@ -8,36 +8,34 @@ using AvalonStudio.Shell;
 
 namespace AvalonStudio.Toolchains.Clang
 {
-	public class ClangCPlusPlusProjectTemplate : BlankCPlusPlusLanguageTemplate
-	{
-		public override string DefaultProjectName
-		{
-			get { return "ClangProject"; }
-		}
+    public class ClangCPlusPlusProjectTemplate : BlankCPlusPlusLanguageTemplate
+    {
+        public override string DefaultProjectName
+        {
+            get { return "ClangProject"; }
+        }
 
-		public override string Title
-		{
-			get { return "Clang C++ Project"; }
-		}
+        public override string Title
+        {
+            get { return "Clang C++ Project"; }
+        }
 
-		public override string Description
-		{
-			get { return "Basic template for projects using Clang Toolchain."; }
-		}
+        public override string Description
+        {
+            get { return "Basic template for projects using Clang Toolchain."; }
+        }
 
-		public override async Task<IProject> Generate(ISolution solution, string name)
-		{
-			var project = await base.Generate(solution, name);
+        public override async Task<IProject> Generate(ISolution solution, string name)
+        {
+            var project = await base.Generate(solution, name);
 
-			project.ToolChain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc is ClangToolchain);
-            
-            project.ToolChain.ProvisionSettings(project);
+            project.ToolChain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc is ClangToolchain);
 
-			await SourceFile.Create(project, "main.cpp", "int main (void){}");
+            await SourceFile.Create(project, "main.cpp", "int main (void){}");
 
-			project.Save();
+            project.Save();
 
-			return project;
-		}
-	}
+            return project;
+        }
+    }
 }

@@ -490,10 +490,5 @@ namespace AvalonStudio.Toolchains.Clang
 
             return true;
         }
-
-        public override void ProvisionSettings(IProject project)
-        {
-            project.ProvisionSettings<GccToolchainSettings>();
-        }
     }
 }

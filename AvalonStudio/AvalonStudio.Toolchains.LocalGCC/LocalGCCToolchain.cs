@@ -334,10 +334,5 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
             return result;
         }
-
-        public override void ProvisionSettings(IProject project)
-        {
-            project.ProvisionSettings<GccToolchainSettings>();
-        }
     }
 }

@@ -54,14 +54,7 @@ namespace AvalonStudio.Toolchains.GCC
 
         public LinkerSettingsFormViewModel(IProject project) : base("Linker", project)
         {
-            try
-            {
-                settings = project.GetSettings<GccToolchainSettings>().LinkSettings;
-            }
-            catch (Exception)
-            {
-                settings = project.ProvisionSettings<GccToolchainSettings>().LinkSettings;
-            }
+            settings = project.GetSettings<GccToolchainSettings>().LinkSettings;
 
             if (settings == null)
             {

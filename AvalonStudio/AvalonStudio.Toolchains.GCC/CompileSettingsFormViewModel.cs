@@ -48,14 +48,7 @@ namespace AvalonStudio.Toolchains.GCC
 
         public CompileSettingsFormViewModel(IProject project) : base("Compiler", project)
         {
-            try
-            {
-                settings = project.GetSettings<GccToolchainSettings>().CompileSettings;
-            }
-            catch (Exception)
-            {
-                settings = project.ProvisionSettings<GccToolchainSettings>().CompileSettings;
-            }
+            settings = project.GetSettings<GccToolchainSettings>().CompileSettings;
 
             defines = new ObservableCollection<string>(settings.Defines);
             includePaths = new ObservableCollection<string>(settings.Includes);
