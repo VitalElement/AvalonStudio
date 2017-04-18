@@ -887,7 +887,7 @@ namespace AvalonStudio.Debugging.GDB
         {
             List<string> keysToRemove = new List<string>();
 
-            foreach(var item in tempVariableObjects)
+            foreach (var item in tempVariableObjects)
             {
                 if (!item.Value.TryGetTarget(out ObjectValue result))
                 {
@@ -896,8 +896,8 @@ namespace AvalonStudio.Debugging.GDB
                     keysToRemove.Add(item.Key);
                 }
             }
-            
-            foreach(var key in keysToRemove)
+
+            foreach (var key in keysToRemove)
             {
                 tempVariableObjects.Remove(key);
             }

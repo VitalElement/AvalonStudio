@@ -32,16 +32,17 @@ using Mono.Debugging.Client;
 
 namespace AvalonStudio.Debugging.GDB
 {
-	public class GdbSessionFactory
-	{
-		struct FileData {
-			public DateTime LastCheck;
-			public bool IsExe;
-		}
-		
-		Dictionary<string,FileData> fileCheckCache = new Dictionary<string, FileData> ();
-		
-		/*public bool CanDebugCommand (ExecutionCommand command)
+    public class GdbSessionFactory
+    {
+        struct FileData
+        {
+            public DateTime LastCheck;
+            public bool IsExe;
+        }
+
+        Dictionary<string, FileData> fileCheckCache = new Dictionary<string, FileData>();
+
+        /*public bool CanDebugCommand (ExecutionCommand command)
 		{
 			NativeExecutionCommand cmd = command as NativeExecutionCommand;
 			if (cmd == null)
@@ -73,8 +74,8 @@ namespace AvalonStudio.Debugging.GDB
 			fileCheckCache [file] = data;
 			return data.IsExe;
 		}*/
-		
-		/*public DebuggerStartInfo CreateDebuggerStartInfo (ExecutionCommand command)
+
+        /*public DebuggerStartInfo CreateDebuggerStartInfo (ExecutionCommand command)
 		{
 			NativeExecutionCommand pec = (NativeExecutionCommand) command;
 			DebuggerStartInfo startInfo = new DebuggerStartInfo ();
@@ -87,63 +88,69 @@ namespace AvalonStudio.Debugging.GDB
 			}
 			return startInfo;
 		}*/
-		
-		public bool IsExecutable (string file)
-		{
-			// HACK: this is a quick but not very reliable way of checking if a file
-			// is a native executable. Actually, we are interested in checking that
-			// the file is not a script.
-			using (StreamReader sr = new StreamReader (file)) {
-				char[] chars = new char[3];
-				int n = 0, nr = 0;
-				while (n < chars.Length && (nr = sr.ReadBlock (chars, n, chars.Length - n)) != 0)
-					n += nr;
-				if (nr != chars.Length)
-					return true;
-				if (chars [0] == '#' && chars [1] == '!')
-					return false;
-			}
-			return true;
-		}
 
-		public DebuggerSession CreateSession ()
-		{
-			GdbSession ds = new GdbSession ("gdb");
-			return ds;
-		}
-		
-		public ProcessInfo[] GetAttachableProcesses ()
-		{
-			List<ProcessInfo> procs = new List<ProcessInfo> ();
-			foreach (string dir in Directory.GetDirectories ("/proc")) {
-				int id;
-				if (!int.TryParse (Path.GetFileName (dir), out id))
-					continue;
-				try {
-					File.ReadAllText (Path.Combine (dir, "sessionid"));
-				} catch {
-					continue;
-				}
-				string cmdline = File.ReadAllText (Path.Combine (dir, "cmdline"));
-				cmdline = cmdline.Replace ('\0',' ');
-				ProcessInfo pi = new ProcessInfo (id, cmdline);
-				procs.Add (pi);
-			}
-			return procs.ToArray ();
-		}
-		
-		string FindFile (string cmd)
-		{
-			if (Path.IsPathRooted (cmd))
-				return cmd;
-			string pathVar = Environment.GetEnvironmentVariable ("PATH");
-			string[] paths = pathVar.Split (Path.PathSeparator);
-			foreach (string path in paths) {
-				string file = Path.Combine (path, cmd);
-				if (File.Exists (file))
-					return file;
-			}
-			return cmd;
-		}
-	}
+        public bool IsExecutable(string file)
+        {
+            // HACK: this is a quick but not very reliable way of checking if a file
+            // is a native executable. Actually, we are interested in checking that
+            // the file is not a script.
+            using (StreamReader sr = new StreamReader(file))
+            {
+                char[] chars = new char[3];
+                int n = 0, nr = 0;
+                while (n < chars.Length && (nr = sr.ReadBlock(chars, n, chars.Length - n)) != 0)
+                    n += nr;
+                if (nr != chars.Length)
+                    return true;
+                if (chars[0] == '#' && chars[1] == '!')
+                    return false;
+            }
+            return true;
+        }
+
+        public DebuggerSession CreateSession()
+        {
+            GdbSession ds = new GdbSession("gdb");
+            return ds;
+        }
+
+        public ProcessInfo[] GetAttachableProcesses()
+        {
+            List<ProcessInfo> procs = new List<ProcessInfo>();
+            foreach (string dir in Directory.GetDirectories("/proc"))
+            {
+                int id;
+                if (!int.TryParse(Path.GetFileName(dir), out id))
+                    continue;
+                try
+                {
+                    File.ReadAllText(Path.Combine(dir, "sessionid"));
+                }
+                catch
+                {
+                    continue;
+                }
+                string cmdline = File.ReadAllText(Path.Combine(dir, "cmdline"));
+                cmdline = cmdline.Replace('\0', ' ');
+                ProcessInfo pi = new ProcessInfo(id, cmdline);
+                procs.Add(pi);
+            }
+            return procs.ToArray();
+        }
+
+        string FindFile(string cmd)
+        {
+            if (Path.IsPathRooted(cmd))
+                return cmd;
+            string pathVar = Environment.GetEnvironmentVariable("PATH");
+            string[] paths = pathVar.Split(Path.PathSeparator);
+            foreach (string path in paths)
+            {
+                string file = Path.Combine(path, cmd);
+                if (File.Exists(file))
+                    return file;
+            }
+            return cmd;
+        }
+    }
 }

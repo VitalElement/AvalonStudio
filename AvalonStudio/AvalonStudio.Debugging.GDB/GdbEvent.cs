@@ -29,21 +29,21 @@ using System;
 
 namespace AvalonStudio.Debugging.GDB
 {
-	class GdbEvent: ResultData
-	{
-		public string Name;
-		public string Reason;
-		
-		public GdbEvent (string line)
-		{
-			int i = line.IndexOf (',');
-			if (i == -1)
-				i = line.Length;
-			Name = line.Substring (1, i - 1);
-			ReadResults (line, i+1);
-			object[] reasons = GetAllValues ("reason");
-			if (reasons.Length > 0)
-				Reason = (string) reasons [0]; 
-		}
-	}
+    class GdbEvent : ResultData
+    {
+        public string Name;
+        public string Reason;
+
+        public GdbEvent(string line)
+        {
+            int i = line.IndexOf(',');
+            if (i == -1)
+                i = line.Length;
+            Name = line.Substring(1, i - 1);
+            ReadResults(line, i + 1);
+            object[] reasons = GetAllValues("reason");
+            if (reasons.Length > 0)
+                Reason = (string)reasons[0];
+        }
+    }
 }
