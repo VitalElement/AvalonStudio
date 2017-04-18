@@ -1,20 +1,18 @@
-﻿using AvalonStudio.Projects;
-using AvalonStudio.Utils;
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Text;
-using Mono.Debugging.Client;
-using AvalonStudio.Extensibility;
-using System.Diagnostics;
+﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Utils;
+using Mono.Debugging.Client;
+using System;
+using System.Diagnostics;
+using System.Dynamic;
 using System.IO;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB.JLink
 {
-    class JLinkGdbSession : GdbSession
+    internal class JLinkGdbSession : GdbSession
     {
         private IConsole console;
         private IProject _project;

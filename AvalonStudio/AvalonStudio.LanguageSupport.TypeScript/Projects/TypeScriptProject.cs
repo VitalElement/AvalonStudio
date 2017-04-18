@@ -1,6 +1,5 @@
 ﻿using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
-using AvalonStudio.LanguageSupport.TypeScript.Debugging;
 using AvalonStudio.LanguageSupport.TypeScript.Toolchain;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -160,10 +159,7 @@ Program.main();
         public override IToolChain ToolChain
         {
             get => IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType() == typeof(TypeScriptToolchain));
-            set
-            {
-                throw new NotSupportedException();
-            }
+            set { throw new NotSupportedException(); }
         }
 
         [JsonConverter(typeof(ExpandoObjectConverter))]

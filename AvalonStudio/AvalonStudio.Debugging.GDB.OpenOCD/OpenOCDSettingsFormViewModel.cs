@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Avalonia.Controls;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace AvalonStudio.Debugging.GDB.OpenOCD
 {

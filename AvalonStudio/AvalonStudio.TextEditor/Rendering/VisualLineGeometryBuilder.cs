@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
 using Avalonia;
 using AvalonStudio.TextEditor.Document;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AvalonStudio.TextEditor.Rendering
@@ -157,7 +157,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
                     if (segment.Offset > line.Offset)
                     {
-                        lineStartOffset = line.Offset + (segment.Offset - line.Offset);                        
+                        lineStartOffset = line.Offset + (segment.Offset - line.Offset);
                     }
 
                     var lineEndOffset = line.EndOffset;

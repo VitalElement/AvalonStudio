@@ -1,12 +1,11 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
-using ReactiveUI;
 using Mono.Debugging.Client;
+using ReactiveUI;
+using System;
+using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Debugging
 {
@@ -69,7 +68,7 @@ namespace AvalonStudio.Debugging
 						await Model.SetFormat(WatchFormat.Octal);
 						break;
 				}
-                
+
 				await Invalidate(debugger);*/
             });
         }

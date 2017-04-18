@@ -1,13 +1,12 @@
 ﻿namespace AvalonStudio.Debugging
 {
+    using MVVM;
+    using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
-    using ReactiveUI;
-    using MVVM;
+
     public class MemoryBytesViewModel<T> : MemoryBytesViewModel
     {
         public MemoryBytesViewModel(MemoryBytes model, string formatString, Func<byte[], IList<T>> converter)
@@ -15,7 +14,7 @@
             lastChangedValues = new List<MemoryValueViewModel<T>>();
 
             this.values = new ObservableCollection<MemoryValueViewModel<T>>();
-            
+
             this.converter = converter;
 
             this.text = GetText(model.Data);
@@ -37,10 +36,10 @@
             count = (uint)(values.Count * (int)typeSize);
         }
 
-        private string GetText (byte[] data)
+        private string GetText(byte[] data)
         {
             string result = string.Empty;
-           // var text = Encoding.ASCII.GetString(data);
+            // var text = Encoding.ASCII.GetString(data);
 
             foreach (byte character in data)
             {
@@ -67,6 +66,7 @@
 
         private ulong actualAddress;
         private string address;
+
         public string Address
         {
             get { return address; }
@@ -74,9 +74,9 @@
         }
 
         private List<MemoryValueViewModel<T>> lastChangedValues;
-        
 
         private ObservableCollection<MemoryValueViewModel<T>> values;
+
         public ObservableCollection<MemoryValueViewModel<T>> Values
         {
             get { return values; }
@@ -84,6 +84,7 @@
         }
 
         private string text;
+
         public string Text
         {
             get { return text; }

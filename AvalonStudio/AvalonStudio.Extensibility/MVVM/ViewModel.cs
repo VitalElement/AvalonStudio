@@ -1,4 +1,3 @@
-using System.Composition;
 using ReactiveUI;
 using System;
 using System.Reactive.Linq;
@@ -21,7 +20,6 @@ namespace AvalonStudio.MVVM
         RightTop,
         MiddleTop,
     }
-
 
     //[InheritedExport(typeof(ToolViewModel))]
     public abstract class ToolViewModel : ViewModel
@@ -106,7 +104,10 @@ namespace AvalonStudio.MVVM
 
         public T Model
         {
-            get { return _model; }
+            get
+            {
+                return _model;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref _model, value);

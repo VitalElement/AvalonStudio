@@ -10,7 +10,7 @@
 
     public class PdbSymbolReader : ISymbolReader
     {
-        class SourceFileDebugInfo : ISymbolDocument
+        private class SourceFileDebugInfo : ISymbolDocument
         {
             public string FullFilePath { get; set; }
             public int FileID { get; set; }
@@ -71,8 +71,8 @@
             }
         }
 
-        readonly Dictionary<string, Dictionary<string, List<SourceFileDebugInfo>>> sourceFilesDebugInfo = new Dictionary<string, Dictionary<string, List<SourceFileDebugInfo>>>();
-        readonly Dictionary<int, SymbolMethod> methodTokenLookup = new Dictionary<int, SymbolMethod>();
+        private readonly Dictionary<string, Dictionary<string, List<SourceFileDebugInfo>>> sourceFilesDebugInfo = new Dictionary<string, Dictionary<string, List<SourceFileDebugInfo>>>();
+        private readonly Dictionary<int, SymbolMethod> methodTokenLookup = new Dictionary<int, SymbolMethod>();
 
         public int Token(MetadataReader reader, Func<Handle> handleFunc, bool displayTable = true)
         {
@@ -90,8 +90,6 @@
 
         private void AddChildScopes(MetadataReader pdb, SymbolScope parent, IEnumerator<LocalScopeHandle> scopes, SymbolMethod owner)
         {
-            
-
             while (true)
             {
                 scopes.MoveNext();
@@ -111,22 +109,21 @@
 
                 parent.AddChild(current);
             }
-
         }
 
-        private void AddLocalVars (MetadataReader pdb, SymbolScope scope, LocalVariableHandleCollection localVars)
+        private void AddLocalVars(MetadataReader pdb, SymbolScope scope, LocalVariableHandleCollection localVars)
         {
             foreach (var varHandle in localVars)
             {
-                var localVar = pdb.GetLocalVariable(varHandle);               
+                var localVar = pdb.GetLocalVariable(varHandle);
 
                 scope.AddLocal(new SymbolVariable(pdb.GetString(localVar.Name), localVar.Attributes, localVar.Index));
             }
         }
 
-        private ISymbolScope CreateSymbolScope (MetadataReader pdb, LocalScopeHandleCollection scopes, SymbolMethod owner, int methodEndOffset)
+        private ISymbolScope CreateSymbolScope(MetadataReader pdb, LocalScopeHandleCollection scopes, SymbolMethod owner, int methodEndOffset)
         {
-            SymbolScope result = null;            
+            SymbolScope result = null;
 
             var scope = scopes.GetEnumerator();
 
@@ -134,7 +131,7 @@
             {
                 scope.MoveNext();
 
-                if(scope.Current.IsNil)
+                if (scope.Current.IsNil)
                 {
                     break;
                 }
@@ -143,20 +140,20 @@
 
                 var current = new SymbolScope(owner, null, currentScope.StartOffset, currentScope.EndOffset);
 
-                if (result ==null)
+                if (result == null)
                 {
                     result = current;
                 }
-                
+
                 AddLocalVars(pdb, current, currentScope.GetLocalVariables());
 
                 AddChildScopes(pdb, current, currentScope.GetChildren(), owner);
             }
-            
+
             return result;
         }
 
-        bool LoadPdbFile(string pdbFileName)
+        private bool LoadPdbFile(string pdbFileName)
         {
             if (!System.IO.File.Exists(pdbFileName))
                 return false;
@@ -184,15 +181,14 @@
 
                     var methodToken = MetadataTokens.GetToken(methodHandle.ToDefinitionHandle());
 
+                    var token = new SymbolToken(methodToken);
 
-                    var token = new SymbolToken(methodToken);                    
-
-                    var newMethod = new SymbolMethod(method.GetSequencePoints(), token);                    
+                    var newMethod = new SymbolMethod(method.GetSequencePoints(), token);
                     methodTokenLookup.Add(token.GetToken(), newMethod);
                     list.Add(newMethod);
 
-                    var def = pdb.GetMethodDefinition(methodHandle.ToDefinitionHandle());                   
-                                        
+                    var def = pdb.GetMethodDefinition(methodHandle.ToDefinitionHandle());
+
                     newMethod.SetRootScope(CreateSymbolScope(pdb, pdb.GetLocalScopes(methodHandle.ToDefinitionHandle()), newMethod, 0));
                 }
 
@@ -280,7 +276,7 @@
                         if (document.URL == sourceFile.URL)
                         {
                             foreach (var method in sourceFile.PdbMethods)
-                            {                               
+                            {
                                 foreach (var point in method.SequencePoints)
                                 {
                                     if (point.IsWithin((uint)line, (uint)column))

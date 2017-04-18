@@ -1,14 +1,11 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Avalonia.Controls;
-using AvalonStudio.MVVM;
-using AvalonStudio.Projects;
-using AvalonStudio.Utils;
-using ReactiveUI;
 using AvalonStudio.GlobalSettings;
-using System.Collections.Generic;
+using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
+using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AvalonStudio.Projects.OmniSharp
 {

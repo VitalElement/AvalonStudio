@@ -1,9 +1,9 @@
-using System;
-using System.IO;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
-using System.Threading.Tasks;
 using LibGit2Sharp;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Repositories
 {

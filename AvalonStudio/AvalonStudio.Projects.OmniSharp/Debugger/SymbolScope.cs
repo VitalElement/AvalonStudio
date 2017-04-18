@@ -3,9 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.SymbolStore;
-    using System.Text;
 
-    class SymbolScope : ISymbolScope
+    internal class SymbolScope : ISymbolScope
     {
         private ISymbolMethod _method;
         private ISymbolScope _parent;
@@ -23,12 +22,12 @@
             _parent = parent;
         }
 
-        internal void AddChild (ISymbolScope childScope)
+        internal void AddChild(ISymbolScope childScope)
         {
             _children.Add(childScope);
         }
 
-        internal void AddLocal (ISymbolVariable variable)
+        internal void AddLocal(ISymbolVariable variable)
         {
             _locals.Add(variable);
         }
@@ -39,7 +38,7 @@
 
         public ISymbolMethod Method => _method;
 
-        public ISymbolScope Parent => _parent;        
+        public ISymbolScope Parent => _parent;
 
         public ISymbolScope[] GetChildren()
         {

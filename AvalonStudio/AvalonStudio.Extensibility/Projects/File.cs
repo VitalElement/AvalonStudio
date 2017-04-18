@@ -1,8 +1,8 @@
 ﻿namespace AvalonStudio.Projects
 {
+    using AvalonStudio.Platforms;
     using System;
     using System.IO;
-    using AvalonStudio.Platforms;
 
     public class File : ISourceFile
     {
@@ -25,7 +25,7 @@
 
         public string Location
         {
-            get { return Path.Combine(Project.CurrentDirectory,  FilePath); }
+            get { return Path.Combine(Project.CurrentDirectory, FilePath); }
         }
 
         public string Name

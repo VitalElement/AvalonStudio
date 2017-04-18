@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Avalonia;
 using AvalonStudio.Languages;
 using AvalonStudio.Languages.ViewModels;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
@@ -31,6 +31,7 @@ namespace AvalonStudio.Controls
         }
 
         private CompletionAssistantViewModel completionAssistant;
+
         public CompletionAssistantViewModel CompletionAssistant
         {
             get { return completionAssistant; }
@@ -73,12 +74,12 @@ namespace AvalonStudio.Controls
         }
 
         private bool isOpen;
+
         public bool IsOpen
         {
             get { return isOpen; }
             set { this.RaiseAndSetIfChanged(ref isOpen, value); }
         }
-
 
         public bool IsVisible
         {

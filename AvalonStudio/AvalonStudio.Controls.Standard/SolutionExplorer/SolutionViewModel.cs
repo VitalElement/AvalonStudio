@@ -1,14 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using AvalonStudio.Platforms;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -111,15 +110,15 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand<object> AddExistingProjectCommand { get; }
         public ReactiveCommand<object> OpenInExplorerCommand { get; }
 
-        void CleanSolution()
+        private void CleanSolution()
         {
         }
 
-        void BuildSolution()
+        private void BuildSolution()
         {
         }
 
-        void RunTests()
+        private void RunTests()
         {
         }
 

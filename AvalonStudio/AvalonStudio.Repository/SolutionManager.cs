@@ -1,16 +1,15 @@
-﻿using NuGet.PackageManagement;
+﻿using AvalonStudio.Platforms;
+using NuGet.PackageManagement;
+using NuGet.Packaging.Core;
+using NuGet.ProjectManagement;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using NuGet.ProjectManagement;
-using System.Threading.Tasks;
-using AvalonStudio.Platforms;
-using NuGet.Packaging.Core;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Packages
 {
-    class SolutionManager : ISolutionManager
+    internal class SolutionManager : ISolutionManager
     {
         public string SolutionDirectory => Platform.RepoCatalogDirectory;
 
@@ -27,20 +26,29 @@ namespace AvalonStudio.Packages
         public INuGetProjectContext NuGetProjectContext { get; set; }
 
         public event EventHandler SolutionOpening;
+
         public event EventHandler SolutionOpened;
+
         public event EventHandler SolutionClosing;
+
         public event EventHandler SolutionClosed;
+
         public event EventHandler<NuGetEventArgs<string>> AfterNuGetCacheUpdated;
+
         public event EventHandler<NuGetProjectEventArgs> NuGetProjectAdded;
+
         public event EventHandler<NuGetProjectEventArgs> NuGetProjectRemoved;
+
         public event EventHandler<NuGetProjectEventArgs> NuGetProjectRenamed;
+
         public event EventHandler<NuGetProjectEventArgs> NuGetProjectUpdated;
+
         public event EventHandler<NuGetProjectEventArgs> AfterNuGetProjectRenamed;
+
         public event EventHandler<ActionsExecutedEventArgs> ActionsExecuted;
 
         public void EnsureSolutionIsLoaded()
         {
-            
         }
 
         public NuGetProject GetNuGetProject(string nuGetProjectSafeName)
@@ -56,7 +64,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-            public string GetNuGetProjectSafeName(NuGetProject nuGetProject)
+        public string GetNuGetProjectSafeName(NuGetProject nuGetProject)
         {
             throw new NotImplementedException();
         }
@@ -89,7 +97,7 @@ namespace AvalonStudio.Packages
 
         public void DeleteMarkedPackageDirectories(INuGetProjectContext projectContext)
         {
-            foreach(var package in packagesToDelete)
+            foreach (var package in packagesToDelete)
             {
                 Directory.Delete(package, true);
             }

@@ -15,7 +15,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    class IntellisenseManager
+    internal class IntellisenseManager
     {
         private readonly ILanguageService languageService;
         private readonly ISourceFile file;

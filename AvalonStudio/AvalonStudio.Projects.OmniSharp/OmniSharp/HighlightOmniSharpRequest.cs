@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RestSharp;
+﻿using System.Collections.Generic;
 
 namespace AvalonStudio.Languages.CSharp.OmniSharp
 {
@@ -22,7 +17,7 @@ namespace AvalonStudio.Languages.CSharp.OmniSharp
         public List<Highlight> Highlights { get; set; }
     }
 
-    class HighlightOmniSharpRequest : OmniSharpRequest<OmniSharpHighlightData>
+    internal class HighlightOmniSharpRequest : OmniSharpRequest<OmniSharpHighlightData>
     {
         public override string EndPoint
         {

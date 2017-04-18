@@ -1,13 +1,12 @@
-using System;
+using Avalonia.Threading;
 using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
-using System.Collections.Generic;
 using ReactiveUI;
-using System.IO;
-using AvalonStudio.Platforms;
-using System.Linq;
-using Avalonia.Threading;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB.JLink
@@ -207,6 +206,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         private ObservableCollection<JLinkTargetDeviceViewModel> unfilteredList;
         private ObservableCollection<JLinkTargetDeviceViewModel> deviceList;
+
         public ObservableCollection<JLinkTargetDeviceViewModel> DeviceList
         {
             get { return deviceList; }
@@ -214,6 +214,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
         }
 
         private JLinkTargetDeviceViewModel selectedDevice;
+
         public JLinkTargetDeviceViewModel SelectedDevice
         {
             get

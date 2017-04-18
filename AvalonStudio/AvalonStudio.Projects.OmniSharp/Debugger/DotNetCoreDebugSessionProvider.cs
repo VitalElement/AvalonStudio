@@ -1,14 +1,13 @@
 ﻿namespace AvalonStudio.Debugging.DotNetCore
 {
-    using System;
     using AvalonStudio.Extensibility;
+    using AvalonStudio.GlobalSettings;
+    using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
+    using AvalonStudio.Projects.OmniSharp;
     using Mono.Debugging.Client;
     using Mono.Debugging.Win32;
-    using AvalonStudio.GlobalSettings;
-    using AvalonStudio.Projects.OmniSharp;
     using System.IO;
-    using AvalonStudio.Platforms;
 
     public class DotNetCoreDebugger : IDebugger2
     {

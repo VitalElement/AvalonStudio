@@ -4,7 +4,6 @@
     using AvalonStudio.MVVM;
     using ReactiveUI;
     using System.Collections.Generic;
-    using System;
     using System.Threading;
 
     public class CompletionAssistantViewModel : ViewModel, ICompletionAssistant
@@ -77,21 +76,19 @@
         }
 
         private bool isVisible;
+
         public bool IsVisible
         {
             get { return isVisible; }
-            set
-            {                
-                this.RaiseAndSetIfChanged(ref isVisible, value); intellisense.InvalidateIsOpen();
-            }
+            set { this.RaiseAndSetIfChanged(ref isVisible, value); intellisense.InvalidateIsOpen(); }
         }
 
         private SignatureHelpViewModel currentMethod;
+
         public SignatureHelpViewModel CurrentMethod
         {
             get { return currentMethod; }
             set { this.RaiseAndSetIfChanged(ref currentMethod, value); }
         }
-
     }
 }

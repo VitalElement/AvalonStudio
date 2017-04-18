@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using AvalonStudio.Debugging;
+﻿using AvalonStudio.Debugging;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Platforms;
+using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
-using AvalonStudio.Platforms;
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Dynamic;
-using AvalonStudio.Shell;
-using AvalonStudio.Extensibility;
-using AvalonStudio.Debugging.DotNetCore;
+using System.IO;
+using System.Linq;
 
 namespace AvalonStudio.Projects.OmniSharp
 {

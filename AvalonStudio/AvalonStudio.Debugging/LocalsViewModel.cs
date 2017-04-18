@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
-using Mono.Debugging.Client;
 
 namespace AvalonStudio.Debugging
 {

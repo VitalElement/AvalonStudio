@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
-using System.Text;
 
 namespace AvalonStudio.GlobalSettings
 {
@@ -26,7 +25,7 @@ namespace AvalonStudio.GlobalSettings
 
         public static T ProvisionSettings<T>() where T : new()
         {
-            return Settings.Instance.ProvisionSettings<T>();            
+            return Settings.Instance.ProvisionSettings<T>();
         }
 
         public void Save()
@@ -35,7 +34,7 @@ namespace AvalonStudio.GlobalSettings
         }
     }
 
-    class Settings
+    internal class Settings
     {
         private dynamic _root = new ExpandoObject();
 
@@ -58,16 +57,16 @@ namespace AvalonStudio.GlobalSettings
 
         public static Settings Instance { get; private set; }
 
-        static Settings ()
+        static Settings()
         {
             Instance = Load();
         }
 
-        private static Settings Load ()
-        {            
+        private static Settings Load()
+        {
             if (File.Exists(GlobalSettingsFile))
             {
-               return SerializedObject.Deserialize<Settings>(GlobalSettingsFile);
+                return SerializedObject.Deserialize<Settings>(GlobalSettingsFile);
             }
 
             var result = new Settings();
@@ -81,11 +80,11 @@ namespace AvalonStudio.GlobalSettings
         {
             SerializedObject.Serialize(GlobalSettingsFile, this);
         }
-        
+
         public T GetSettings<T>()
         {
             T result = default(T);
-            
+
             if (_rootIndex[typeof(T).FullName] is ExpandoObject)
             {
                 result = (_rootIndex[typeof(T).FullName] as ExpandoObject).GetConcreteType<T>();

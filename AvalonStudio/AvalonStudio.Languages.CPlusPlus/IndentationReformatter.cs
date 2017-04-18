@@ -1,8 +1,8 @@
+using AvalonStudio.TextEditor.Indentation.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using AvalonStudio.TextEditor.Indentation.CSharp;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -138,10 +138,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 blockComment = true;
                         }
                         break;
+
                     case '#':
                         if (!(inChar || blockComment || inString))
                             lineComment = true;
                         break;
+
                     case '"':
                         if (!(inChar || lineComment || blockComment))
                         {
@@ -164,19 +166,21 @@ namespace AvalonStudio.Languages.CPlusPlus
                             }
                         }
                         break;
+
                     case '\'':
                         if (!(inString || lineComment || blockComment))
                         {
                             inChar = !inChar;
                         }
                         break;
+
                     case '\\':
                         if ((inString && !verbatim) || inChar)
                             escape = true; // skip next character
                         break;
                 }
 
-                #endregion
+                #endregion Check for comment/string chars
 
                 if (lineComment || blockComment || inString || inChar)
                 {
@@ -233,6 +237,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         }
                         block.Bracket = '{';
                         break;
+
                     case '}':
                         while (block.Bracket != '{')
                         {
@@ -244,6 +249,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         block.Continuation = false;
                         block.ResetOneLineBlock();
                         break;
+
                     case '(':
                     case '[':
                         blocks.Push(block);
@@ -256,6 +262,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                      (i == line.Length - 1 ? set.IndentString : new string(' ', i + 1)));
                         block.Bracket = c;
                         break;
+
                     case ')':
                         if (blocks.Count == 0) break;
                         if (block.Bracket == '(')
@@ -265,16 +272,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 block.Continuation = false;
                         }
                         break;
+
                     case ']':
                         if (blocks.Count == 0) break;
                         if (block.Bracket == '[')
                             block = blocks.Pop();
                         break;
+
                     case ';':
                     case ',':
                         block.Continuation = false;
                         block.ResetOneLineBlock();
                         break;
+
                     case ':':
                         if (block.LastWord == "case"
                             || line.StartsWith("case ", StringComparison.Ordinal)
@@ -292,10 +302,10 @@ namespace AvalonStudio.Languages.CPlusPlus
                     lastRealChar = c;
                 }
 
-                #endregion
+                #endregion Push/Pop the blocks
             }
 
-            #endregion
+            #endregion Parse char by char
 
             if (wordBuilder.Length > 0)
                 block.LastWord = wordBuilder.ToString();
@@ -423,6 +433,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 case "using":
                 case "lock":
                     return true;
+
                 default:
                     return false;
             }
@@ -450,7 +461,6 @@ namespace AvalonStudio.Languages.CPlusPlus
             ///     The indentation outside of the block.
             /// </summary>
             public string OuterIndent;
-
 
             /// <summary>
             ///     The indentation inside the block.

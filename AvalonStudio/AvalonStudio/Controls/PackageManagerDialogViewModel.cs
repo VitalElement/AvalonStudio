@@ -1,16 +1,16 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.MVVM;
-using AvalonStudio.Utils;
-using ReactiveUI;
-using NuGet.Protocol.Core.Types;
 using AvalonStudio.Packages;
-using System.Collections.Generic;
+using AvalonStudio.Utils;
 using NuGet.Common;
+using NuGet.Protocol.Core.Types;
+using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {

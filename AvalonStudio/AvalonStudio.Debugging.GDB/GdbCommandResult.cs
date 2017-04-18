@@ -25,8 +25,6 @@
 //
 //
 
-using System;
-
 namespace AvalonStudio.Debugging.GDB
 {
     public class GdbCommandResult : ResultData

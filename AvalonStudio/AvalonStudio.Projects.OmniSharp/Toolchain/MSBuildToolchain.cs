@@ -1,17 +1,15 @@
 ﻿namespace AvalonStudio.Toolchains.MSBuild
 {
+    using AvalonStudio.CommandLineTools;
+    using AvalonStudio.GlobalSettings;
+    using AvalonStudio.Platforms;
+    using AvalonStudio.Projects;
+    using AvalonStudio.Projects.OmniSharp;
+    using AvalonStudio.Utils;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using AvalonStudio.Projects;
-    using AvalonStudio.Utils;
-    using AvalonStudio.Projects.OmniSharp;
-    using AvalonStudio.CommandLineTools;
-    using AvalonStudio.Platforms;
     using System.IO;
-    using AvalonStudio.GlobalSettings;
+    using System.Threading.Tasks;
 
     public class MSBuildToolchain : IToolChain
     {

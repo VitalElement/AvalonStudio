@@ -20,6 +20,7 @@ namespace AvalonStudio.Controls
         }
 
         private Dock dock;
+
         public Dock Dock
         {
             get { return dock; }
@@ -29,6 +30,7 @@ namespace AvalonStudio.Controls
         public ReactiveCommand<object> CloseCommand { get; protected set; }
 
         private string title;
+
         public string Title
         {
             get
@@ -49,6 +51,7 @@ namespace AvalonStudio.Controls
         }
 
         private bool isDirty;
+
         public bool IsDirty
         {
             get
@@ -61,7 +64,5 @@ namespace AvalonStudio.Controls
                 this.RaisePropertyChanged(nameof(Title));
             }
         }
-
-
     }
 }

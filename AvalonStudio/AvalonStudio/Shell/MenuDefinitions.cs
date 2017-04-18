@@ -1,12 +1,11 @@
-using System;
 using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Shell.Commands;
 
 namespace AvalonStudio.Shell
 {
-	internal class MenuDefinitions : IExtension
-	{
+    internal class MenuDefinitions : IExtension
+    {
         static MenuDefinitions()
         {
         }
@@ -23,12 +22,10 @@ namespace AvalonStudio.Shell
 
         public void Activation()
         {
-            
         }
 
         public void BeforeActivation()
         {
-            
         }
     }
 }

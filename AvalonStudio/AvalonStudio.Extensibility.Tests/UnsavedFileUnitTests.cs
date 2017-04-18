@@ -2,11 +2,8 @@
 {
     using AvalonStudio.Languages;
     using AvalonStudio.Utils;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Xunit;
 
     public class UnsavedFileUnitTests
@@ -42,7 +39,6 @@
             UnsavedFiles.InsertSorted(new UnsavedFile("G:\\development\\repos\\KHGD\\Modules\\CommonHal\\IFileSystem.h", "my contents"));
             UnsavedFiles.InsertSorted(new UnsavedFile("G:\\development\\repos\\KHGD\\Gateway\\Gateway.h", "my contents"));
             UnsavedFiles.InsertSorted(new UnsavedFile("G:\\development\\repos\\KHGD\\Gateway\\IPlatform.h", "my contents"));
-            
 
             List<UnsavedFile> expected = new List<UnsavedFile>();
             expected.Add(new UnsavedFile("G:\\development\\repos\\KHGD\\Gateway\\Gateway.h", "my contents"));
@@ -51,7 +47,6 @@
 
             Assert.True(expected.Select(u => u.FileName).SequenceEqual(UnsavedFiles.Select(u => u.FileName)));
         }
-
 
         [Fact]
         public void UnsavedFiles_Are_Sorted_Alphabetically_When_Paths_Are_Equivalent_But_Not_Equal()

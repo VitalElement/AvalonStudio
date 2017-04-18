@@ -1,11 +1,11 @@
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AvalonStudio.Debuggers.GDB.Local;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Shell;
-using AvalonStudio.Debuggers.GDB.Local;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {

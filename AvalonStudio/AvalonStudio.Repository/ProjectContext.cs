@@ -1,9 +1,6 @@
 ﻿using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.ProjectManagement;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Linq;
 
 namespace AvalonStudio.Packages
@@ -12,7 +9,7 @@ namespace AvalonStudio.Packages
     {
         private ILogger _logger;
 
-        public ProjectContext (ILogger logger)
+        public ProjectContext(ILogger logger)
         {
             _logger = logger;
         }

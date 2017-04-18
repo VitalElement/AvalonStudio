@@ -1,6 +1,6 @@
 namespace AvalonStudio.Projects.Standard
 {
-	public class Include : ExportableProperty<string>
-	{
-	}
+    public class Include : ExportableProperty<string>
+    {
+    }
 }

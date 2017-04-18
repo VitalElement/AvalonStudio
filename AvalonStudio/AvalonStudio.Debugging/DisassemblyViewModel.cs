@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
-using ReactiveUI;
 using AvalonStudio.MVVM.DataVirtualization;
+using ReactiveUI;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging

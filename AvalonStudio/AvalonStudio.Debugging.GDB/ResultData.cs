@@ -31,9 +31,9 @@ namespace AvalonStudio.Debugging.GDB
 
     public class ResultData : IEnumerable
     {
-        Hashtable props;
-        object[] array;
-        bool isArrayProperty;
+        private Hashtable props;
+        private object[] array;
+        private bool isArrayProperty;
 
         public int Count
         {
@@ -97,7 +97,7 @@ namespace AvalonStudio.Debugging.GDB
             ReadTuple(str, ref pos, this);
         }
 
-        void ReadResult(string str, ref int pos, out string name, out object value)
+        private void ReadResult(string str, ref int pos, out string name, out object value)
         {
             name = null;
             value = null;
@@ -107,7 +107,7 @@ namespace AvalonStudio.Debugging.GDB
             value = ReadValue(str, ref pos);
         }
 
-        string ReadString(string str, char term, ref int pos)
+        private string ReadString(string str, char term, ref int pos)
         {
             StringBuilder sb = new StringBuilder();
             while (pos < str.Length && str[pos] != term)
@@ -124,7 +124,7 @@ namespace AvalonStudio.Debugging.GDB
             return sb.ToString();
         }
 
-        object ReadValue(string str, ref int pos)
+        private object ReadValue(string str, ref int pos)
         {
             if (str[pos] == '"')
             {
@@ -156,7 +156,7 @@ namespace AvalonStudio.Debugging.GDB
             return sdata;
         }
 
-        void ReadTuple(string str, ref int pos, ResultData data)
+        private void ReadTuple(string str, ref int pos, ResultData data)
         {
             if (data.props == null)
                 data.props = new Hashtable();
@@ -196,7 +196,7 @@ namespace AvalonStudio.Debugging.GDB
             TryReadChar(str, ref pos, '}');
         }
 
-        ResultData ReadArray(string str, ref int pos)
+        private ResultData ReadArray(string str, ref int pos)
         {
             ArrayList list = new ArrayList();
             while (pos < str.Length && str[pos] != ']')
@@ -211,13 +211,13 @@ namespace AvalonStudio.Debugging.GDB
             return arr;
         }
 
-        void ReadChar(string str, ref int pos, char c)
+        private void ReadChar(string str, ref int pos, char c)
         {
             if (!TryReadChar(str, ref pos, c))
                 ThrownParseError(str, pos);
         }
 
-        bool TryReadChar(string str, ref int pos, char c)
+        private bool TryReadChar(string str, ref int pos, char c)
         {
             if (pos >= str.Length || str[pos] != c)
                 return false;
@@ -225,7 +225,7 @@ namespace AvalonStudio.Debugging.GDB
             return true;
         }
 
-        void ThrownParseError(string str, int pos)
+        private void ThrownParseError(string str, int pos)
         {
             if (pos > str.Length)
                 pos = str.Length;

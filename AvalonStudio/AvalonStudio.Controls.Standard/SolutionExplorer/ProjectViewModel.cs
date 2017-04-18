@@ -1,13 +1,12 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using Avalonia.Media;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using AvalonStudio.Platforms;
+using System;
+using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -50,7 +49,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             DebugCommand = ReactiveCommand.Create();
             DebugCommand.Subscribe(_ =>
             {
-                //shell.Debug(model);                
+                //shell.Debug(model);
             });
 
             BuildCommand = ReactiveCommand.Create();

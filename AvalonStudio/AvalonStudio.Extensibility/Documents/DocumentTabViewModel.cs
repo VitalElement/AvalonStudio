@@ -5,5 +5,5 @@
         public DocumentTabViewModel() : base(null)
         {
         }
-    }    
+    }
 }

@@ -1,11 +1,10 @@
-using System;
-using System.Linq;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
-using AvalonStudio.Debugging;
 using AvalonStudio.Platforms;
 using Mono.Debugging.Client;
+using System;
+using System.Linq;
 
 namespace AvalonStudio.TextEditor
 {

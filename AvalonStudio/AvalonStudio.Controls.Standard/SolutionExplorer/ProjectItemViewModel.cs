@@ -1,12 +1,11 @@
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    using System;
-    using System.IO;
     using AvalonStudio.MVVM;
+    using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using ReactiveUI;
-    using System.Diagnostics;
-    using AvalonStudio.Platforms;
+    using System;
+    using System.IO;
 
     public abstract class ProjectItemViewModel : ViewModel
     {
@@ -88,7 +87,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public bool IsEditingTitle
         {
-            get { return isEditingTitle; }
+            get
+            {
+                return isEditingTitle;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref isEditingTitle, value);

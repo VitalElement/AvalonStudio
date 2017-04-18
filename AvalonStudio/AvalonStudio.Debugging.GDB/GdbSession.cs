@@ -40,33 +40,33 @@ namespace AvalonStudio.Debugging.GDB
 {
     public class GdbSession : DebuggerSession
     {
-        IConsole _console;
-        Process proc;
+        private IConsole _console;
+        private Process proc;
         private CancellationTokenSource closeTokenSource;
 
-        StreamReader sout;
-        StreamWriter sin;
-        GdbCommandResult lastResult;
-        bool running;
-        long currentThread = -1;
-        long activeThread = -1;
-        bool isMonoProcess;
-        string currentProcessName;
-        Dictionary<string, WeakReference<ObjectValue>> tempVariableObjects = new Dictionary<string, WeakReference<ObjectValue>>();
-        Dictionary<int, BreakEventInfo> breakpoints = new Dictionary<int, BreakEventInfo>();
-        List<BreakEventInfo> breakpointsWithHitCount = new List<BreakEventInfo>();
+        private StreamReader sout;
+        private StreamWriter sin;
+        private GdbCommandResult lastResult;
+        private bool running;
+        private long currentThread = -1;
+        private long activeThread = -1;
+        private bool isMonoProcess;
+        private string currentProcessName;
+        private Dictionary<string, WeakReference<ObjectValue>> tempVariableObjects = new Dictionary<string, WeakReference<ObjectValue>>();
+        private Dictionary<int, BreakEventInfo> breakpoints = new Dictionary<int, BreakEventInfo>();
+        private List<BreakEventInfo> breakpointsWithHitCount = new List<BreakEventInfo>();
 
-        DateTime lastBreakEventUpdate = DateTime.Now;
-        Dictionary<int, WaitCallback> breakUpdates = new Dictionary<int, WaitCallback>();
-        bool breakUpdateEventsQueued;
-        const int BreakEventUpdateNotifyDelay = 500;
+        private DateTime lastBreakEventUpdate = DateTime.Now;
+        private Dictionary<int, WaitCallback> breakUpdates = new Dictionary<int, WaitCallback>();
+        private bool breakUpdateEventsQueued;
+        private const int BreakEventUpdateNotifyDelay = 500;
 
-        bool internalStop;
-        bool logGdb = false;
-        bool asyncMode;
+        private bool internalStop;
+        private bool logGdb = false;
+        private bool asyncMode;
 
-        object syncLock = new object();
-        object eventLock = new object();
+        private object syncLock = new object();
+        private object eventLock = new object();
         private object gdbLock = new object();
 
         private string _gdbExecutable;
@@ -182,7 +182,7 @@ namespace AvalonStudio.Debugging.GDB
             get { return isMonoProcess; }
         }
 
-        void CheckIsMonoProcess()
+        private void CheckIsMonoProcess()
         {
             try
             {
@@ -196,7 +196,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        void StartGdb(DebuggerStartInfo startinfo)
+        private void StartGdb(DebuggerStartInfo startinfo)
         {
             proc = new Process();
             proc.StartInfo.FileName = _gdbExecutable;
@@ -406,7 +406,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        bool CheckBreakpoint(int handle)
+        private bool CheckBreakpoint(int handle)
         {
             BreakEventInfo binfo;
             if (!breakpoints.TryGetValue(handle, out binfo))
@@ -432,7 +432,7 @@ namespace AvalonStudio.Debugging.GDB
             return true;
         }
 
-        void NotifyBreakEventUpdate(BreakEventInfo binfo, int hitCount, string lastTrace)
+        private void NotifyBreakEventUpdate(BreakEventInfo binfo, int hitCount, string lastTrace)
         {
             bool notify = false;
 
@@ -482,7 +482,7 @@ namespace AvalonStudio.Debugging.GDB
                 nc(null);
         }
 
-        void UpdateHitCountData()
+        private void UpdateHitCountData()
         {
             foreach (BreakEventInfo bp in breakpointsWithHitCount)
             {
@@ -590,7 +590,7 @@ namespace AvalonStudio.Debugging.GDB
             return new ProcessInfo[] { p };
         }
 
-        ThreadInfo GetThread(long id)
+        private ThreadInfo GetThread(long id)
         {
             return new ThreadInfo(0, id, "Thread #" + id, null);
         }
@@ -651,7 +651,7 @@ namespace AvalonStudio.Debugging.GDB
             return RunCommand("-thread-select", id.ToString());
         }
 
-        string Escape(string str)
+        private string Escape(string str)
         {
             if (str == null)
                 return null;
@@ -699,7 +699,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        bool InternalStop()
+        private bool InternalStop()
         {
             if (!running)
                 return false;
@@ -724,13 +724,13 @@ namespace AvalonStudio.Debugging.GDB
             return true;
         }
 
-        void InternalResume(bool resume)
+        private void InternalResume(bool resume)
         {
             if (resume)
                 RunCommand("-exec-continue");
         }
 
-        void OutputInterpreter()
+        private void OutputInterpreter()
         {
             string line;
             while ((line = sout.ReadLine()) != null)
@@ -746,7 +746,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        void ProcessOutput(string line)
+        private void ProcessOutput(string line)
         {
             if (logGdb)
                 _console.WriteLine("dbg>: '" + line + "'");
@@ -814,7 +814,7 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        void HandleEvent(GdbEvent ev)
+        private void HandleEvent(GdbEvent ev)
         {
             if (ev.Name != "stopped")
             {
@@ -837,17 +837,20 @@ namespace AvalonStudio.Debugging.GDB
                             return;
                         }
                         break;
+
                     case "signal-received":
                         if (ev.GetValue("signal-name") == "SIGINT")
                             type = TargetEventType.TargetInterrupted;
                         else
                             type = TargetEventType.TargetSignaled;
                         break;
+
                     case "exited":
                     case "exited-signalled":
                     case "exited-normally":
                         type = TargetEventType.TargetExited;
                         break;
+
                     default:
                         type = TargetEventType.TargetStopped;
                         break;
@@ -858,7 +861,7 @@ namespace AvalonStudio.Debugging.GDB
             FireTargetEvent(type, curFrame);
         }
 
-        void FireTargetEvent(TargetEventType type, ResultData curFrame)
+        private void FireTargetEvent(TargetEventType type, ResultData curFrame)
         {
             UpdateHitCountData();
 
@@ -881,7 +884,7 @@ namespace AvalonStudio.Debugging.GDB
             tempVariableObjects.Add(id, new WeakReference<ObjectValue>(var));
         }
 
-        void CleanTempVariableObjects()
+        private void CleanTempVariableObjects()
         {
             List<string> keysToRemove = new List<string>();
 

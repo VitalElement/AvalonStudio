@@ -1,10 +1,8 @@
-using Avalonia.Controls;
-using Avalonia.Input;
 //using Avalonia.Xaml.Interactivity;
 
 namespace AvalonStudio.Behaviors
 {
-	/*public class FocusOnPointerMovedBehavior : Behavior<Control>
+    /*public class FocusOnPointerMovedBehavior : Behavior<Control>
 	{
 		protected override void OnAttached()
 		{

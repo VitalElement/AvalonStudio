@@ -1,8 +1,8 @@
-﻿using System;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using Avalonia.Threading;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
+using System;
 
 namespace AvalonStudio.Languages
 {

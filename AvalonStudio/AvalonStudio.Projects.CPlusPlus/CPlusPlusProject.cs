@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Dynamic;
-using System.IO;
-using System.Linq;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Menus;
@@ -15,9 +9,12 @@ using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using AvalonStudio.Extensibility.Threading;
-using System.Threading.Tasks;
-using Avalonia.Threading;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Dynamic;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("AvalonStudio.Projects.CPlusPlus.UnitTests")]

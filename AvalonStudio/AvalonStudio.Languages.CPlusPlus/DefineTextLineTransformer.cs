@@ -1,6 +1,6 @@
-using System;
 using Avalonia.Media;
 using AvalonStudio.TextEditor.Rendering;
+using System;
 
 namespace AvalonStudio.Languages.CPlusPlus.Rendering
 {
@@ -10,7 +10,9 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
         private readonly IBrush pragmaBrush = Brush.Parse("#9B9B9B");
 
 #pragma warning disable 67
+
         public event EventHandler<EventArgs> DataChanged;
+
 #pragma warning restore 67
 
         public void TransformLine(TextView textView, VisualLine line)

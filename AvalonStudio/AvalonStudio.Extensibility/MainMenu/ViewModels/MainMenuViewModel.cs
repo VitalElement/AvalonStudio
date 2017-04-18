@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using AvalonStudio.Extensibility.MainMenu.Models;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 
 namespace AvalonStudio.Extensibility.MainMenu.ViewModels
 {

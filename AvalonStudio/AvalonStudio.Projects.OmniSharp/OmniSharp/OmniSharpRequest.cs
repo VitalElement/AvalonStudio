@@ -1,11 +1,4 @@
-﻿using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AvalonStudio.Languages.CSharp.OmniSharp
+﻿namespace AvalonStudio.Languages.CSharp.OmniSharp
 {
     public abstract class OmniSharpRequest<T>
     {
@@ -19,7 +12,6 @@ namespace AvalonStudio.Languages.CSharp.OmniSharp
         public int Line { get; set; }
         public int Column { get; set; }
         public string Buffer { get; set; }
-        public string FileName { get; set; }       
-
+        public string FileName { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 {
     using ReactiveUI;
     using System;
+
     public class PropertyHelper<TRet>
     {
         public PropertyHelper(IReactiveObject source, IObservable<TRet> observable, string propertyName)

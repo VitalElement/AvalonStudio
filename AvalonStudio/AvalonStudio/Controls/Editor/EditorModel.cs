@@ -1,20 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Composition;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TextEditor.Document;
-using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Utils;
-using System.Reactive.Subjects;
+using System;
+using System.Collections.Generic;
+using System.Composition;
+using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
@@ -110,6 +110,7 @@ namespace AvalonStudio.Controls
         }
 
         public event EventHandler<EventArgs> DocumentLoaded;
+
         public event EventHandler<EventArgs> TextChanged;
 
         public void UnRegisterLanguageService()

@@ -1,11 +1,11 @@
-using System;
-using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Utils;
 using ReactiveUI;
+using System;
+using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
@@ -64,7 +64,10 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         public DefinitionViewModel SelectedDefine
         {
-            get { return selectedDefine; }
+            get
+            {
+                return selectedDefine;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedDefine, value);

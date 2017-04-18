@@ -9,7 +9,6 @@ namespace AvalonStudio.Toolchains.STM32
     using Standard;
     using System;
     using System.Collections.Generic;
-    using System.Dynamic;
     using System.IO;
     using System.Threading.Tasks;
 

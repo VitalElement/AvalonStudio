@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Media;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
+using System;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -13,7 +13,9 @@ namespace AvalonStudio.Languages.CPlusPlus
         private readonly IBrush bracketHighlightBrush = Brush.Parse("#123e70");
 
 #pragma warning disable 67
+
         public event EventHandler<EventArgs> DataChanged;
+
 #pragma warning restore 67
 
         public void Draw(TextView textView, DrawingContext drawingContext)

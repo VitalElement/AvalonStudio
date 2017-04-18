@@ -1,10 +1,6 @@
 ﻿using AvalonStudio.MVVM;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ReactiveUI;
+using System;
 
 namespace AvalonStudio.Debugging.GDB.JLink
 {
@@ -65,6 +61,5 @@ namespace AvalonStudio.Debugging.GDB.JLink
             get { return ramLength; }
             set { this.RaiseAndSetIfChanged(ref ramLength, value); }
         }
-
     }
 }

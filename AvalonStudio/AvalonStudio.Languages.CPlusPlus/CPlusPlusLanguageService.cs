@@ -72,7 +72,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        CodeCompletionKind FromClangKind(NClang.CursorKind kind)
+        private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
             switch (kind)
             {

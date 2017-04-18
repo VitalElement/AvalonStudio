@@ -1,8 +1,5 @@
 namespace AvalonStudio.Behaviors
 {
-    using System;
-    using System.Reactive.Disposables;
-    using System.Threading.Tasks;
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Controls.Primitives;
@@ -13,6 +10,9 @@ namespace AvalonStudio.Behaviors
     using Avalonia.Threading;
     using Avalonia.Xaml.Interactivity;
     using AvalonStudio.Utils;
+    using System;
+    using System.Reactive.Disposables;
+    using System.Threading.Tasks;
 
     public class TooltipBehavior : Behavior<Control>
     {
@@ -130,7 +130,6 @@ namespace AvalonStudio.Behaviors
             ((ISetLogicalParent)popup).SetParent(AssociatedObject);
         }
 
-
         private void AssociatedObject_KeyDown(object sender, KeyEventArgs e)
         {
             popup.Close();
@@ -160,7 +159,6 @@ namespace AvalonStudio.Behaviors
                 lastPoint = newPoint;
             }
         }
-
 
         private async void Timer_Tick(object sender, EventArgs e)
         {

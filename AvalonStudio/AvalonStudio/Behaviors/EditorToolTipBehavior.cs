@@ -1,7 +1,7 @@
-using System;
-using System.Threading.Tasks;
 using Avalonia.Input;
 using AvalonStudio.Controls;
+using System;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Behaviors
 {

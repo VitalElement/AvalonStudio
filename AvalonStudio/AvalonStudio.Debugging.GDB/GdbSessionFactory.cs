@@ -25,29 +25,29 @@
 //
 //
 
+using Mono.Debugging.Client;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Mono.Debugging.Client;
 
 namespace AvalonStudio.Debugging.GDB
 {
     public class GdbSessionFactory
     {
-        struct FileData
+        private struct FileData
         {
             public DateTime LastCheck;
             public bool IsExe;
         }
 
-        Dictionary<string, FileData> fileCheckCache = new Dictionary<string, FileData>();
+        private Dictionary<string, FileData> fileCheckCache = new Dictionary<string, FileData>();
 
         /*public bool CanDebugCommand (ExecutionCommand command)
 		{
 			NativeExecutionCommand cmd = command as NativeExecutionCommand;
 			if (cmd == null)
 				return false;
-			
+
 			string file = FindFile (cmd.Command);
 			if (!File.Exists (file)) {
 				// The provided file is not guaranteed to exist. If it doesn't
@@ -56,10 +56,10 @@ namespace AvalonStudio.Debugging.GDB
 				// command will build the project if the exec doesn't yet exist.
 				return true;
 			}
-			
+
 			file = Path.GetFullPath (file);
 			DateTime currentTime = File.GetLastWriteTime (file);
-				
+
 			FileData data;
 			if (fileCheckCache.TryGetValue (file, out data)) {
 				if (data.LastCheck == currentTime)
@@ -138,7 +138,7 @@ namespace AvalonStudio.Debugging.GDB
             return procs.ToArray();
         }
 
-        string FindFile(string cmd)
+        private string FindFile(string cmd)
         {
             if (Path.IsPathRooted(cmd))
                 return cmd;

@@ -2,31 +2,35 @@
 {
     using AvalonStudio.MVVM.DataVirtualization;
     using MVVM;
+    using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
-    using ReactiveUI;
 
     public class MemoryViewDataProvider : ViewModel, IItemsProvider<MemoryBytesViewModel>
-    {        
+    {
         public enum IntegerSize
         {
             [Description("No Data")]
             NoData = 0,
-            [Description ("1-byte Integer")]
+
+            [Description("1-byte Integer")]
             U8 = 1,
+
             [Description("2-byte Integer")]
             U16 = 2,
+
             [Description("4-byte Integer")]
             U32 = 4,
+
             [Description("8-byte Integer")]
             U64 = 8
         }
 
         private IntegerSize integerDisplaySize = IntegerSize.U8;
+
         public IntegerSize IntegerDisplaySize
         {
             get { return integerDisplaySize; }
@@ -34,7 +38,7 @@
         }
 
         public MemoryViewDataProvider(int columns)
-        {           
+        {
             this.columns = columns;
             Enable();
         }
@@ -53,37 +57,38 @@
         private int columns;
 
         private int count;
+
         public int Count
         {
             get { return count; }
             set { this.RaiseAndSetIfChanged(ref count, value); }
-        }      
+        }
 
-        public void Enable ()
+        public void Enable()
         {
             Count = (int)(UInt32.MaxValue / columns) + 1;
         }
-        
+
         public void Clear()
         {
             Count = 0;
-        } 
+        }
 
         private MemoryBytesViewModel GenerateViewModels(MemoryBytes data)
         {
             switch (IntegerDisplaySize)
             {
                 case IntegerSize.NoData:
-                    return new MemoryBytesViewModel<byte>(data, string.Empty, (source)=> { return source; });
+                    return new MemoryBytesViewModel<byte>(data, string.Empty, (source) => { return source; });
 
-                case IntegerSize.U8:                    
+                case IntegerSize.U8:
                     return new MemoryBytesViewModel<byte>(data, "{0:X2}", (source) => { return source; });
 
-                case IntegerSize.U16:                    
+                case IntegerSize.U16:
                     return new MemoryBytesViewModel<UInt16>(data, "{0:X4}", (source) =>
                     {
                         var values = new List<UInt16>();
-                        
+
                         for (int i = 0; i < source.Length; i += 2)
                         {
                             values.Add(BitConverter.ToUInt16(source, i));
@@ -93,7 +98,7 @@
                     });
 
                 case IntegerSize.U32:
-                    return new MemoryBytesViewModel<UInt32>(data, "{0:X8}", (source)=>
+                    return new MemoryBytesViewModel<UInt32>(data, "{0:X8}", (source) =>
                     {
                         var values = new List<UInt32>();
 
@@ -105,8 +110,8 @@
                         return values;
                     });
 
-                case IntegerSize.U64:                    
-                    return new MemoryBytesViewModel<UInt64>(data, "{0:X16}", (source)=>
+                case IntegerSize.U64:
+                    return new MemoryBytesViewModel<UInt64>(data, "{0:X16}", (source) =>
                     {
                         var values = new List<UInt64>();
 
@@ -123,7 +128,7 @@
             }
         }
 
-        private async Task<List<MemoryBytes>> ReadMemoryBytesAsync (ulong address, ulong offset, uint count)
+        private async Task<List<MemoryBytes>> ReadMemoryBytesAsync(ulong address, ulong offset, uint count)
         {
             /*var result = await debugger.ReadMemoryBytesAsync(address, offset, count);
 
@@ -138,10 +143,10 @@
             throw new NotImplementedException();
         }
 
-        private async Task<List<MemoryBytesViewModel>> FetchRange (int startIndex, int pageCount)
+        private async Task<List<MemoryBytesViewModel>> FetchRange(int startIndex, int pageCount)
         {
             List<MemoryBytesViewModel> result = null;
-            
+
             result = new List<MemoryBytesViewModel>();
 
             for (int i = 0; i < pageCount; i++)
@@ -170,7 +175,7 @@
 
                 result = task.Result;
             }
-            
+
             return result;
         }
     }

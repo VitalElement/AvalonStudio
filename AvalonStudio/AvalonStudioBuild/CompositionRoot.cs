@@ -1,16 +1,9 @@
-using System.Collections.Generic;
-using System.Composition.Hosting;
-using System.Composition;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using AvalonStudio.Languages;
-using System.Composition.Convention;
-using Microsoft.Extensions.DependencyModel;
 using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Projects;
+using System.Composition.Convention;
+using System.Composition.Hosting;
+using System.IO;
 
 namespace AvalonStudio
 {

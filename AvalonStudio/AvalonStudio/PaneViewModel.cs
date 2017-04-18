@@ -1,5 +1,5 @@
-using System;
 using ReactiveUI;
+using System;
 
 namespace AvalonStudio
 {
@@ -26,6 +26,7 @@ namespace AvalonStudio
                 this.RaisePropertyChanged();
             }
         }
+
         #region Title
 
         private string title;
@@ -42,9 +43,11 @@ namespace AvalonStudio
                 this.RaisePropertyChanged();
             }
         }
-        #endregion
+
+        #endregion Title
 
         #region ContentId
+
         private string contentId;
 
         public string ContentId
@@ -59,9 +62,11 @@ namespace AvalonStudio
                 this.RaisePropertyChanged();
             }
         }
-        #endregion
+
+        #endregion ContentId
 
         #region IsSelected
+
         private bool isSelected;
 
         public bool IsSelected
@@ -76,7 +81,8 @@ namespace AvalonStudio
                 this.RaisePropertyChanged();
             }
         }
-        #endregion
+
+        #endregion IsSelected
 
         #region IsActive
 
@@ -94,6 +100,7 @@ namespace AvalonStudio
                 this.RaisePropertyChanged();
             }
         }
-        #endregion
+
+        #endregion IsActive
     }
 }

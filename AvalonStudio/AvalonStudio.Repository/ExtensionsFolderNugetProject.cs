@@ -4,11 +4,9 @@ using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
 using NuGet.Protocol.Core.Types;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -47,6 +45,7 @@ namespace AvalonStudio.Packages
 
         // Probably going to hell for using a region
         // The following methods are originally from the internal MSBuildNuGetProjectSystemUtility class
+
         #region MSBuildNuGetProjectSystemUtility
 
         private static FrameworkSpecificGroup GetMostCompatibleGroup(NuGetFramework projectTargetFramework,

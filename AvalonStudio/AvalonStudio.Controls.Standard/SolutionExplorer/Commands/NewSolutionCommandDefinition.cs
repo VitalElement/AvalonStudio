@@ -17,7 +17,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
                 IoC.Get<ISolutionExplorer>().NewSolution();
             });
 
-            Command = command;            
+            Command = command;
         }
 
         public override ICommand Command { get; }

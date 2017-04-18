@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.IO;
-using Avalonia.Controls;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.LocalGCC

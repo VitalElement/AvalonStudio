@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Avalonia;
 using Avalonia.Media;
 using AvalonStudio.TextEditor.Document;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AvalonStudio.TextEditor.Rendering
 {

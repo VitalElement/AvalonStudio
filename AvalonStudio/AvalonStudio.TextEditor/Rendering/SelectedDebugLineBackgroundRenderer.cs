@@ -1,7 +1,7 @@
-using System;
 using Avalonia;
 using Avalonia.Media;
 using AvalonStudio.TextEditor.Document;
+using System;
 
 namespace AvalonStudio.TextEditor.Rendering
 {

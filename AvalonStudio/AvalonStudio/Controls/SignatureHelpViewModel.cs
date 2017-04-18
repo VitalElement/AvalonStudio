@@ -2,12 +2,8 @@
 {
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.MVVM;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using ReactiveUI;
+    using System.Collections.Generic;
 
     public class SignatureHelpViewModel : ViewModel<SignatureHelp>
     {
@@ -45,9 +41,13 @@
         }
 
         private int selectedIndex;
+
         public int SelectedIndex
         {
-            get { return selectedIndex; }
+            get
+            {
+                return selectedIndex;
+            }
             set
             {
                 if (value < 0 || value >= Signatures.Count)
@@ -66,14 +66,15 @@
         }
 
         private List<SignatureViewModel> signatures;
+
         public List<SignatureViewModel> Signatures
         {
             get { return signatures; }
             set { this.RaiseAndSetIfChanged(ref signatures, value); }
         }
 
-
         private SignatureViewModel selectedSignature;
+
         public SignatureViewModel SelectedSignature
         {
             get { return selectedSignature; }

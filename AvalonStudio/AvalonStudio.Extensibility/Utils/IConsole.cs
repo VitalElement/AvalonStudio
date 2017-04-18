@@ -1,17 +1,17 @@
 namespace AvalonStudio.Utils
 {
-	public interface IConsole
-	{
-		void WriteLine(string data);
+    public interface IConsole
+    {
+        void WriteLine(string data);
 
-		void WriteLine();
+        void WriteLine();
 
-		void OverWrite(string data);
+        void OverWrite(string data);
 
-		void Write(string data);
+        void Write(string data);
 
-		void Write(char data);
+        void Write(char data);
 
-		void Clear();
-	}
+        void Clear();
+    }
 }

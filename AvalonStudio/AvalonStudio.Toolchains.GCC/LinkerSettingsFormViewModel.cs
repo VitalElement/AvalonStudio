@@ -1,18 +1,17 @@
 namespace AvalonStudio.Toolchains.GCC
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Windows.Input;
+    using Avalonia.Controls;
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.Standard;
-    using ReactiveUI;
-    using Avalonia.Controls;
-    using Utils;
-    using System.IO;
     using Platforms;
+    using ReactiveUI;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows.Input;
+    using Utils;
 
     public class LinkerSettingsFormViewModel : HeaderedViewModel<IProject>
     {
