@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AvalonStudio.Debugging;
-using AvalonStudio.TestFrameworks;
-using AvalonStudio.Toolchains;
-using System.IO;
-using AvalonStudio.Platforms;
-using AvalonStudio.Utils;
-using Avalonia.Threading;
-using System.Dynamic;
-using Newtonsoft.Json;
-
-namespace AvalonStudio.Projects
+﻿namespace AvalonStudio.Projects
 {
+    using Avalonia.Threading;
+    using AvalonStudio.Debugging;
+    using AvalonStudio.Platforms;
+    using AvalonStudio.TestFrameworks;
+    using AvalonStudio.Toolchains;
+    using AvalonStudio.Utils;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Dynamic;
+    using System.IO;
+    using System.Linq;
+
     public abstract class FileSystemProject : IProject
     {
         private FileSystemWatcher fileSystemWatcher;
@@ -23,10 +21,10 @@ namespace AvalonStudio.Projects
         private Dispatcher uiDispatcher;
 
         public FileSystemProject(bool useDispatcher)
-        {   
-            Folders = new ObservableCollection<IProjectFolder>();            
-            
-            SourceFiles = new List<ISourceFile>();            
+        {
+            Folders = new ObservableCollection<IProjectFolder>();
+
+            SourceFiles = new List<ISourceFile>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
             Project = this;
@@ -41,7 +39,7 @@ namespace AvalonStudio.Projects
         {
             var files = Directory.EnumerateFiles(folder.Location);
 
-            files = files.Where(f =>!IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()) && f != project.Location);
+            files = files.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()) && f != project.Location);
 
             foreach (var file in files)
             {
@@ -69,7 +67,7 @@ namespace AvalonStudio.Projects
             var folders = Directory.GetDirectories(path);
 
             if (folders.Count() > 0)
-            {                
+            {
                 foreach (var folder in folders.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath())))
                 {
                     result.Items.InsertSorted(GetSubFolders(project, result, folder));
@@ -336,7 +334,7 @@ namespace AvalonStudio.Projects
         public abstract bool Hidden { get; set; }
 
         public abstract ObservableCollection<IProjectItem> Items { get; }
-        
+
         public abstract List<string> ExcludedFiles { get; set; }
 
         public abstract string Location { get; set; }
