@@ -324,8 +324,9 @@ namespace AvalonStudio.Toolchains.Standard
             {
                 if (compileResult.Project.Type == ProjectType.StaticLibrary)
                 {
-                    if (compileResult.ObjectLocations.Count > 0)  // This is where we have a libray with just headers.
+                    if (compileResult.ObjectLocations.Count > 0)
                     {
+                        // This is where we have a libray with just headers.
                         linkResults.LibraryLocations.Add(executable);
                     }
                 }

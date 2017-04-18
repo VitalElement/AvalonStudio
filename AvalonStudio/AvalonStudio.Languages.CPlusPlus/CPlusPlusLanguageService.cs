@@ -119,7 +119,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     return CodeCompletionKind.OverloadCandidate;
             }
 
-           Console.WriteLine($"dont understand{kind.ToString()}");
+            Console.WriteLine($"dont understand{kind.ToString()}");
             return CodeCompletionKind.None;
         }
 
@@ -192,8 +192,8 @@ namespace AvalonStudio.Languages.CPlusPlus
                         };
 
                         result.Completions.Add(completion);
-                        
-                        if(completion.Kind == CodeCompletionKind.OverloadCandidate)
+
+                        if (completion.Kind == CodeCompletionKind.OverloadCandidate)
                         {
                             Console.WriteLine("TODO Implement overload candidate.");
                         }
@@ -408,7 +408,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }, IntPtr.Zero);
         }
 
-        private void GenerateDiagnostics (IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result, TextMarkerService service)
+        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result, TextMarkerService service)
         {
             foreach (var diagnostic in clangDiagnostics)
             {
@@ -459,7 +459,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     service.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
                 }
-            }        
+            }
         }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
@@ -471,7 +471,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
-            clangUnsavedFiles.AddRange(unsavedFiles.Select(f => new ClangUnsavedFile(f.FileName, f.Contents)));            
+            clangUnsavedFiles.AddRange(unsavedFiles.Select(f => new ClangUnsavedFile(f.FileName, f.Contents)));
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
@@ -490,7 +490,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                 }
             });

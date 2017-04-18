@@ -431,7 +431,6 @@ namespace AvalonStudio
             return DocumentTabs.SelectedDocument as EditorViewModel;
         }
 
-
         public IEditor GetDocument(string path)
         {
             return DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(d => d.Model.ProjectFile?.FilePath == path);
