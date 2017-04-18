@@ -133,7 +133,6 @@ namespace AvalonStudio.Controls
                     Spelling = model.Name;
                     break;
 
-
                 default:
                     // dontShow = true;
                     //DebugData = cursor.Kind.ToString().Replace(" &", "&").Replace(" *", "*");
@@ -246,7 +245,6 @@ namespace AvalonStudio.Controls
                 }
             }
         }
-
 
         public bool IsVisible
         {
