@@ -15,10 +15,10 @@ An extensible, cross platform IDE written in C#
 
 | Version | Installers |
 |---------|------------|
-|**Windows 7 8.1 10 x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-win7-x64.zip)|
-|**MacOSX 10.12 x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-osx.10.12-x64.zip)|
-|**Ubuntu 14.04+ x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-ubuntu.14.04-x64.zip)|
-|**Debian 8 x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/avalonstudio/artifacts/AvalonStudio-debian.8-x64.zip)|
+|**Windows 7 8.1 10 x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/AvalonStudio/artifacts/artifacts/zip/AvalonStudio-win7-x64.zip?branch=master)|
+|**MacOSX 10.12 x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/AvalonStudio/artifacts/artifacts/zip/AvalonStudio-osx.10.12-x64.zip?branch=master)|
+|**Ubuntu 14.04+ x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/AvalonStudio/artifacts/artifacts/zip/AvalonStudio-ubuntu.14.04-x64.zip?branch=master)|
+|**Debian 8 x64**|[Download](https://ci.appveyor.com/api/projects/danwalmsley/AvalonStudio/artifacts/artifacts/zip/AvalonStudio-debian.8-x64.zip?branch=master)|
 
 ## Building from source
 
