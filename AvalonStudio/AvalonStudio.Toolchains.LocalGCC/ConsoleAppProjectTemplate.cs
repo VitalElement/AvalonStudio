@@ -1,58 +1,56 @@
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AvalonStudio.Debuggers.GDB.Local;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Shell;
-using AvalonStudio.Debuggers.GDB.Local;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
-	public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLanguageTemplate
-	{
-		public override string DefaultProjectName
-		{
-			get { return "ConsoleApplication"; }
-		}
+    public class STM32CPlusPlusProjectTemplate : BlankCPlusPlusLanguageTemplate
+    {
+        public override string DefaultProjectName
+        {
+            get { return "ConsoleApplication"; }
+        }
 
-		public override string Title
-		{
-			get { return "C++ Console Application"; }
-		}
+        public override string Title
+        {
+            get { return "C++ Console Application"; }
+        }
 
-		public override string Description
-		{
-			get { return "Creates a simple console application."; }
-		}
+        public override string Description
+        {
+            get { return "Creates a simple console application."; }
+        }
 
-		public override async Task<IProject> Generate(ISolution solution, string name)
-		{
-			var shell = IoC.Get<IShell>();
-			var project = await base.Generate(solution, name);
+        public override async Task<IProject> Generate(ISolution solution, string name)
+        {
+            var shell = IoC.Get<IShell>();
+            var project = await base.Generate(solution, name);
 
-			project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
+            project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
 
-            project.ToolChain.ProvisionSettings(project);
+            project.Debugger2 = shell.Debugger2s.FirstOrDefault(db => db is LocalGdbDebugger);
 
-			project.Debugger = shell.Debuggers.FirstOrDefault(db => db is LocalDebugAdaptor);
+            var code = new StringBuilder();
 
-			var code = new StringBuilder();
+            code.AppendLine("#include <stdio.h>");
+            code.AppendLine();
+            code.AppendLine("int main (void)");
+            code.AppendLine("{");
+            code.AppendLine("    printf(\"Hello World\");");
+            code.AppendLine("    return 0;");
+            code.AppendLine("}");
+            code.AppendLine();
 
-			code.AppendLine("#include <stdio.h>");
-			code.AppendLine();
-			code.AppendLine("int main (void)");
-			code.AppendLine("{");
-			code.AppendLine("    printf(\"Hello World\");");
-			code.AppendLine("    return 0;");
-			code.AppendLine("}");
-			code.AppendLine();
+            await SourceFile.Create(project, "main.cpp", code.ToString());
 
-			await SourceFile.Create(project, "main.cpp", code.ToString());
+            project.Save();
 
-			project.Save();
-
-			return project;
-		}
-	}
+            return project;
+        }
+    }
 }

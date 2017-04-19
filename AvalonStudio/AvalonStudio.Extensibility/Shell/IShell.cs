@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using AvalonStudio.Controls;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Dialogs;
@@ -9,47 +6,49 @@ using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
-using AvalonStudio.Controls;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Shell
 {
-	public enum Perspective
-	{
-		Editor,
-		Debug
-	}
+    public enum Perspective
+    {
+        Editor,
+        Debug
+    }
 
-
-	public interface IShell
-	{
+    public interface IShell
+    {
         event EventHandler<SolutionChangedEventArgs> SolutionChanged;
 
-		Perspective CurrentPerspective { get; set; }
-		ISolution CurrentSolution { get; set; }
+        Perspective CurrentPerspective { get; set; }
+        ISolution CurrentSolution { get; set; }
         IDocumentTabViewModel SelectedDocument { get; set; }
-		ObservableCollection<object> Tools { get; }
-		ModalDialogViewModelBase ModalDialog { get; set; }
-		object BottomSelectedTool { get; set; }
+        ObservableCollection<object> Tools { get; }
+        ModalDialogViewModelBase ModalDialog { get; set; }
+        object BottomSelectedTool { get; set; }
 
         IEnumerable<ISolutionType> SolutionTypes { get; }
 
         IEnumerable<IProjectType> ProjectTypes { get; }
 
-		IEnumerable<IProjectTemplate> ProjectTemplates { get; }
+        IEnumerable<IProjectTemplate> ProjectTemplates { get; }
 
-		IEnumerable<ICodeTemplate> CodeTemplates { get; }
+        IEnumerable<ICodeTemplate> CodeTemplates { get; }
 
-		IEnumerable<ILanguageService> LanguageServices { get; }
+        IEnumerable<ILanguageService> LanguageServices { get; }
 
-		IEnumerable<IToolChain> ToolChains { get; }        
+        IEnumerable<IToolChain> ToolChains { get; }
 
-		IEnumerable<IDebugger> Debuggers { get; }
+        IEnumerable<IDebugger2> Debugger2s { get; }
 
-		IEnumerable<ITestFramework> TestFrameworks { get; }
-        
-		IEditor GetDocument(string path);
+        IEnumerable<ITestFramework> TestFrameworks { get; }
 
-		Task<IEditor> OpenDocument(ISourceFile file, int line, int column = 1, bool debugHighlight = false, bool selectLine = false);
+        IEditor GetDocument(string path);
+
+        Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false);
 
         Task CloseDocumentsForProjectAsync(IProject project);
 
@@ -58,19 +57,23 @@ namespace AvalonStudio.Shell
         Task CloseSolutionAsync();
 
         void AddDocument(IDocumentTabViewModel document);
+
         void RemoveDocument(IDocumentTabViewModel document);
 
-		void InvalidateCodeAnalysis();
+        void InvalidateCodeAnalysis();
 
-		void Build(IProject project);
-		void Clean(IProject project);
+        void Build(IProject project);
 
-		void Build();
-		void Clean();
+        void Clean(IProject project);
 
-		void Save();
-		void SaveAll();
+        void Build();
 
-		IProject GetDefaultProject();
-	}
+        void Clean();
+
+        void Save();
+
+        void SaveAll();
+
+        IProject GetDefaultProject();
+    }
 }

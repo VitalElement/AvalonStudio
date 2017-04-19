@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.IO;
-using Avalonia.Controls;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.LocalGCC
@@ -70,7 +67,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public string LinkerScript { get; set; }
 
-		public override string GDBExecutable => Path.Combine(BinDirectory, "gdb" + Platform.ExecutableExtension);
+        public override string GDBExecutable => Path.Combine(BinDirectory, "gdb" + Platform.ExecutableExtension);
 
         public override Version Version
         {
@@ -93,7 +90,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
         {
-            var settings = GetSettings(project);
+            var settings = project.GetSettings<GccToolchainSettings>();
 
             var result = string.Empty;
 
@@ -133,8 +130,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
         {
             var result = string.Empty;
 
-            //var settings = GetSettings(project).CompileSettings;
-            var settings = GetSettings(superProject);
+            var settings = superProject.GetSettings<GccToolchainSettings>();
 
             result += "-Wall -c ";
 
@@ -159,7 +155,6 @@ namespace AvalonStudio.Toolchains.LocalGCC
                     }
 
                     result += "-std=c++14 ";
-
                 }
             }
 

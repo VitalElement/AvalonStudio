@@ -1,16 +1,16 @@
-using System;
-using System.Windows.Input;
 using Avalonia.Input;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Shell;
 using ReactiveUI;
+using System;
+using System.Windows.Input;
 
 namespace AvalonStudio.Controls.Standard.AboutScreen.Commands
 {
-	internal class AboutScreenCommandDefinition : CommandDefinition
-	{
-		private readonly ReactiveCommand<object> command;
+    internal class AboutScreenCommandDefinition : CommandDefinition
+    {
+        private readonly ReactiveCommand<object> command;
 
         public AboutScreenCommandDefinition()
         {
@@ -24,19 +24,19 @@ namespace AvalonStudio.Controls.Standard.AboutScreen.Commands
         }
 
         public override ICommand Command
-		{
-			get { return command; }
-		}
+        {
+            get { return command; }
+        }
 
-		public override string Text
-		{
-			get { return "About"; }
-		}
+        public override string Text
+        {
+            get { return "About"; }
+        }
 
-		public override string ToolTip
-		{
-			get { return "Opens the About Screen"; }
-		}
+        public override string ToolTip
+        {
+            get { return "Opens the About Screen"; }
+        }
 
         public override KeyGesture Gesture => null;
     }

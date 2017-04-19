@@ -1,101 +1,106 @@
-using System;
 using ReactiveUI;
+using System;
 
 namespace AvalonStudio
 {
-	public abstract class PaneViewModel : ReactiveObject
-	{
-		//private Visibility visibility;
-		//public Visibility Visibility
-		//{
-		//    get { return visibility; }
-		//    set { visibility = value; this.RaisePropertyChanged(); }
-		//}
+    public abstract class PaneViewModel : ReactiveObject
+    {
+        private bool isCollapsed;
 
+        public PaneViewModel(string contentId)
+        {
+            ContentId = contentId;
+        }
 
-		private bool isCollapsed;
+        public virtual Uri IconSource { get; protected set; }
 
-		public PaneViewModel(string contentId)
-		{
-			ContentId = contentId;
-		}
+        public bool IsCollapsed
+        {
+            get
+            {
+                return isCollapsed;
+            }
+            set
+            {
+                isCollapsed = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
-		public virtual Uri IconSource { get; protected set; }
+        #region Title
 
-		public bool IsCollapsed
-		{
-			get { return isCollapsed; }
-			set
-			{
-				isCollapsed = value;
-				this.RaisePropertyChanged();
-			}
-		}
+        private string title;
 
-		#region Title
+        public string ToolTitle
+        {
+            get
+            {
+                return title;
+            }
+            set
+            {
+                title = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
-		private string title;
+        #endregion Title
 
-		public string ToolTitle
-		{
-			get { return title; }
-			set
-			{
-				title = value;
-				this.RaisePropertyChanged();
-			}
-		}
+        #region ContentId
 
-		#endregion
+        private string contentId;
 
-		#region ContentId
+        public string ContentId
+        {
+            get
+            {
+                return contentId;
+            }
+            set
+            {
+                contentId = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
-		private string contentId;
+        #endregion ContentId
 
-		public string ContentId
-		{
-			get { return contentId; }
+        #region IsSelected
 
-			set
-			{
-				contentId = value;
-				this.RaisePropertyChanged();
-			}
-		}
+        private bool isSelected;
 
-		#endregion
+        public bool IsSelected
+        {
+            get
+            {
+                return isSelected;
+            }
+            set
+            {
+                isSelected = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
-		#region IsSelected
+        #endregion IsSelected
 
-		private bool isSelected;
+        #region IsActive
 
-		public bool IsSelected
-		{
-			get { return isSelected; }
-			set
-			{
-				isSelected = value;
-				this.RaisePropertyChanged();
-			}
-		}
+        private bool isActive;
 
-		#endregion
+        public bool IsActive
+        {
+            get
+            {
+                return isActive;
+            }
+            set
+            {
+                isActive = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
-		#region IsActive
-
-		private bool isActive;
-
-		public bool IsActive
-		{
-			get { return isActive; }
-
-			set
-			{
-				isActive = value;
-				this.RaisePropertyChanged();
-			}
-		}
-
-		#endregion
-	}
+        #endregion IsActive
+    }
 }

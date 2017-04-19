@@ -3,16 +3,16 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Debugging
 {
-	public class VariableControlView : UserControl
-	{
-		public VariableControlView()
-		{
-			InitializeComponent();
-		}
+    public class VariableControlView : UserControl
+    {
+        public VariableControlView()
+        {
+            InitializeComponent();
+        }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
-	}
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
+    }
 }

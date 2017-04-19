@@ -1,9 +1,9 @@
+using AvalonStudio.Projects;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using AvalonStudio.Utils;
-using System.Diagnostics;
 
 namespace AvalonStudio.Platforms
 {
@@ -17,7 +17,6 @@ namespace AvalonStudio.Platforms
         Xbox = 5,
         MacOSX = 6
     }
-
 
     public static class Platform
     {
@@ -75,6 +74,8 @@ namespace AvalonStudio.Platforms
         internal const string LIBC = "libc";
         private const string LIB = "MonoPosixHelper";
 
+        private const string UserDataDir = ".as";
+
         public static string ExecutionPath => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
         public static string ExtensionsFolder => Path.Combine(ExecutionPath, "Extensions");
@@ -85,7 +86,7 @@ namespace AvalonStudio.Platforms
             {
                 string osdir = string.Empty;
 
-                switch(PlatformIdentifier)
+                switch (PlatformIdentifier)
                 {
                     case PlatformID.Win32NT:
                         osdir = "win7-x64";
@@ -104,8 +105,28 @@ namespace AvalonStudio.Platforms
             }
         }
 
-
         public static string TemplatesFolder => Path.Combine(ExecutionPath, "Templates");
+
+        public static string DLLExtension
+        {
+            get
+            {
+                switch (PlatformIdentifier)
+                {
+                    case PlatformID.Unix:
+                        return ".so";
+
+                    case PlatformID.MacOSX:
+                        return ".dylib";
+
+                    case PlatformID.Win32NT:
+                        return ".dll";
+
+                    default:
+                        throw new NotImplementedException("Not implemented for your platform.");
+                }
+            }
+        }
 
         public static string ExecutableExtension
         {
@@ -138,7 +159,6 @@ namespace AvalonStudio.Platforms
             }
         }
 
-
         public static Architecture OSArchitecture => RuntimeInformation.OSArchitecture;
         public static string OSDescription => RuntimeInformation.OSDescription;
 
@@ -158,16 +178,15 @@ namespace AvalonStudio.Platforms
                 {
                     return PlatformID.MacOSX;
                 }
-                
+
                 throw new Exception("Unknow platform");
             }
         }
-        
 
         /// <summary>
         /// The base directory for AvalonStudio's data
         /// </summary>
-		public static string BaseDirectory
+        public static string BaseDirectory
         {
             get
             {
@@ -176,7 +195,7 @@ namespace AvalonStudio.Platforms
                 switch (PlatformIdentifier)
                 {
                     case PlatformID.Win32NT:
-                        userDir = Environment.GetEnvironmentVariable("UserProfile");                        
+                        userDir = Environment.GetEnvironmentVariable("UserProfile");
                         break;
 
                     default:
@@ -186,6 +205,19 @@ namespace AvalonStudio.Platforms
 
                 return Path.Combine(userDir, "AvalonStudio");
             }
+        }
+
+        public static void EnsureSolutionUserDataDirectory(ISolution solution)
+        {
+            if (!Directory.Exists(GetUserDataDirectory(solution)))
+            {
+                Directory.CreateDirectory(GetUserDataDirectory(solution));
+            }
+        }
+
+        public static string GetUserDataDirectory(ISolution solution)
+        {
+            return Path.Combine(solution.CurrentDirectory, UserDataDir);
         }
 
         public static string ProjectDirectory => Path.Combine(BaseDirectory, "Projects");
@@ -218,7 +250,6 @@ namespace AvalonStudio.Platforms
             {
                 Directory.CreateDirectory(CacheDirectory);
             }
-
 
             if (!Directory.Exists(AppDataDirectory))
             {
@@ -259,12 +290,10 @@ namespace AvalonStudio.Platforms
         [DllImport(LIB, EntryPoint = "Mono_Posix_FromSignum")]
         private static extern int FromSignum(Signum value, out int rval);
 
-
         private static bool TryFromSignum(Signum value, out int rval)
         {
             return FromSignum(value, out rval) == 0;
         }
-
 
         private static int FromSignum(Signum value)
         {
@@ -273,7 +302,6 @@ namespace AvalonStudio.Platforms
                 throw new ArgumentException();
             return rval;
         }
-
 
         [DllImport(LIBC, SetLastError = true, EntryPoint = "kill")]
         private static extern int sys_kill(int pid, int sig);
@@ -344,15 +372,14 @@ namespace AvalonStudio.Platforms
         }
 
         [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "AttachConsole")]
-        private static extern bool Win32AttachConsole(int dwProcessId);
+        private static extern bool Win32AttachConsole(int processId);
 
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true, EntryPoint = "FreeConsole")]
         private static extern bool Win32FreeConsole();
 
-
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GenerateConsoleCtrlEvent(CtrlTypes dwCtrlEvent, uint dwProcessGroupId);
+        private static extern bool GenerateConsoleCtrlEvent(CtrlTypes ctrlEvent, uint processGroupId);
 
         [DllImport("kernel32.dll", EntryPoint = "SetConsoleCtrlHandler")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -372,9 +399,12 @@ namespace AvalonStudio.Platforms
         {
             string result = path.ToPlatformPath();
 
-            DirectoryInfo info = new DirectoryInfo(result);
+            if (!string.IsNullOrEmpty(result))
+            {
+                DirectoryInfo info = new DirectoryInfo(result);
 
-            result = info.FullName;
+                result = info.FullName;
+            }
 
             return result;
         }
@@ -409,29 +439,31 @@ namespace AvalonStudio.Platforms
                 }
                 else if (path.EndsWith("/") && !other.EndsWith("/"))
                 {
-                    other +="/";
+                    other += "/";
                 }
+            }
+
+            if (path == null && other == null)
+            {
+                return 0;
+            }
+            if (path == null)
+            {
+                return 1;
+            }
+            if (other == null)
+            {
+                return -1;
             }
 
             switch (PlatformIdentifier)
             {
                 case PlatformID.Win32NT:
-                    // TODO consider using directory info?           
-                    if (path == null && other == null)
-                    {
-                        return 0;
-                    }
-                    if (path == null)
-                    {
-                        return 1;
-                    }
-                    if (other == null)
-                    {
-                        return -1;
-                    }
+                    // TODO consider using directory info?
                     return path.ToLower().CompareTo(other.ToLower());
 
                 default:
+
                     return path.CompareTo(other);
             }
         }

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using AvalonStudio.Debugging;
+﻿using AvalonStudio.Debugging;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Platforms;
+using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
-using AvalonStudio.Platforms;
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Dynamic;
-using AvalonStudio.Shell;
-using AvalonStudio.Extensibility;
+using System.IO;
+using System.Linq;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
@@ -23,31 +23,24 @@ namespace AvalonStudio.Projects.OmniSharp
 
             result.LoadFiles();
 
-            //foreach(var file in project.SourceFiles)
-            //{
-            //    var sourceFile = File.FromPath(result, result, file.ToPlatformPath());
-            //    result.SourceFiles.InsertSorted(sourceFile);
-            //    result.Items.Add(sourceFile);
-            //}
-
             return result;
         }
 
         public OmniSharpProject() : base(true)
         {
             ExcludedFiles = new List<string>();
-            Items = new ObservableCollection<IProjectItem>();            
-            References = new ObservableCollection<IProject>();            
+            Items = new ObservableCollection<IProjectItem>();
+            References = new ObservableCollection<IProject>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
             Project = this;
-        }        
+        }
 
         public override IList<object> ConfigurationPages
         {
             get
             {
-                throw new NotImplementedException();
+                return new List<object>() { new ToolchainSettingsFormViewModel() };
             }
         }
 
@@ -56,19 +49,18 @@ namespace AvalonStudio.Projects.OmniSharp
             get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
         }
 
-        public override IDebugger Debugger
+        public override IDebugger2 Debugger2
         {
             get
             {
                 var shell = IoC.Get<IShell>();
 
-                var debugger = shell.Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.ClrDbg.NetCoreDebugAdaptor");
+                var debugger = shell.Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.DotNetCore.DotNetCoreDebugger");
 
                 return debugger;
             }
             set
             {
-
             }
         }
 
@@ -124,14 +116,13 @@ namespace AvalonStudio.Projects.OmniSharp
             get
             {
                 var shell = IoC.Get<IShell>();
-                
+
                 var toolchain = shell.ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.MSBuild.MSBuildToolchain");
 
                 return toolchain;
             }
             set
             {
-
             }
         }
 

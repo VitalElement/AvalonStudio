@@ -1,6 +1,5 @@
 ﻿using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
-using AvalonStudio.LanguageSupport.TypeScript.Debugging;
 using AvalonStudio.LanguageSupport.TypeScript.Toolchain;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -118,14 +117,7 @@ Program.main();
         public override string CurrentDirectory => Path.GetDirectoryName(Location) + Platform.DirectorySeperator;
 
         [JsonIgnore]
-        public override IDebugger Debugger
-        {
-            get => IoC.Get<IShell>().Debuggers.FirstOrDefault(dbg => dbg.GetType() == typeof(TypeScriptDebugger));
-            set
-            {
-                throw new NotSupportedException();
-            }
-        }
+        public override IDebugger2 Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic DebugSettings { get; set; }
@@ -167,10 +159,7 @@ Program.main();
         public override IToolChain ToolChain
         {
             get => IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType() == typeof(TypeScriptToolchain));
-            set
-            {
-                throw new NotSupportedException();
-            }
+            set { throw new NotSupportedException(); }
         }
 
         [JsonConverter(typeof(ExpandoObjectConverter))]

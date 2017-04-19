@@ -3,13 +3,9 @@
     using AvalonStudio.Platforms;
     using Extensibility.Languages.CompletionAssistance;
     using RestSharp;
-    using RestSharp.Deserializers;
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -35,10 +31,6 @@
         {
             return SendRequest(new SignatureHelpOmniSharpRequest() { FileName = file, Buffer = buffer, Line = line, Column = column });
         }
-
-        //var projects = await dataAssociation.OmniSharpServer.SendRequest(new WorkspaceInformationRequest());
-
-        //var projectInfo = await dataAssociation.OmniSharpServer.SendRequest(new ProjectInformationRequest());
 
         public Task<List<CompletionData>> AutoComplete(string file, string buffer, int line, int column, bool wantDocumentationForEveryCompletionResult = true, bool wantImportableTypes = true, bool wantKind = true, bool wantMethodHeader = true, bool wantReturnType = true, bool wantSnippet = true)
         {
@@ -76,7 +68,6 @@
             //startInfo.RedirectStandardError = true;
             //startInfo.RedirectStandardInput = true;
             //startInfo.CreateNoWindow = true;
-
             TaskCompletionSource<Process> processStartedCompletionSource = new TaskCompletionSource<Process>();
 
             Task.Factory.StartNew(async () =>
@@ -85,15 +76,15 @@
 
                 client = new RestClient($"http://localhost:{port}");
 
-                while(true)
+                while (true)
                 {
-                    if(await SendRequest(new CheckReadyStatusRequest()))
+                    if (await SendRequest(new CheckReadyStatusRequest()))
                     {
                         break;
                     }
 
                     Thread.Sleep(100);
-                }                
+                }
 
                 processStartedCompletionSource.SetResult(process);
 

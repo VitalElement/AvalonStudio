@@ -1,59 +1,57 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using AvalonStudio.Debugging;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
-using System.Composition;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Projects
 {
-	//[InheritedExport(typeof (IProject))]
-	public interface IProject : IProjectFolder, IComparable<IProject>
-	{
-		ISolution Solution { get; }
+    public interface IProject : IProjectFolder, IComparable<IProject>
+    {
+        ISolution Solution { get; }
 
-		/// <summary>
-		///     List of references with the project.
-		/// </summary>
-		ObservableCollection<IProject> References { get; }
+        /// <summary>
+        ///     List of references with the project.
+        /// </summary>
+        ObservableCollection<IProject> References { get; }
 
-		IToolChain ToolChain { get; set; }
-		IDebugger Debugger { get; set; }
-		ITestFramework TestFramework { get; set; }
+        IToolChain ToolChain { get; set; }
+        IDebugger2 Debugger2 { get; set; }
 
-		bool Hidden { get; set; }
+        ITestFramework TestFramework { get; set; }
 
-		/// <summary>
-		///     The directory the project file resides in.
-		/// </summary>
-		string CurrentDirectory { get; }
+        bool Hidden { get; set; }
 
-		IList<object> ConfigurationPages { get; }
+        /// <summary>
+        ///     The directory the project file resides in.
+        /// </summary>
+        string CurrentDirectory { get; }
 
-		//IDictionary<string, string> Settings { get; }        
+        IList<object> ConfigurationPages { get; }
 
-		// TODO perhaps this shouldnt be tied to IProject?
-		string Executable { get; set; }
+        //IDictionary<string, string> Settings { get; }
 
-		dynamic ToolchainSettings { get; }
+        // TODO perhaps this shouldnt be tied to IProject?
+        string Executable { get; set; }
 
-		dynamic DebugSettings { get; }
+        dynamic ToolchainSettings { get; }
 
-		void AddReference(IProject project);
+        dynamic DebugSettings { get; }
 
-		void RemoveReference(IProject project);
+        void AddReference(IProject project);
+
+        void RemoveReference(IProject project);
 
         ISourceFile FindFile(string path);
 
         event EventHandler FileAdded;
 
+        /// <summary>
+        ///     Resolves all references in the project.
+        /// </summary>
+        void ResolveReferences();
 
-		/// <summary>
-		///     Resolves all references in the project.
-		/// </summary>
-		void ResolveReferences();
-
-		void Save();
-	}
+        void Save();
+    }
 }

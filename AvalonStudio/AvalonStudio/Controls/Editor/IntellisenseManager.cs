@@ -15,7 +15,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    class IntellisenseManager
+    internal class IntellisenseManager
     {
         private readonly ILanguageService languageService;
         private readonly ISourceFile file;
@@ -34,7 +34,7 @@
         {
             bool result = false;
 
-            if ((char.IsLetter(currentChar) || isVisible && char.IsLetterOrDigit(currentChar)) || languageService.IntellisenseTriggerCharacters.Contains(currentChar))
+            if ((char.IsLetter(currentChar) || (isVisible && char.IsLetterOrDigit(currentChar))) || languageService.IntellisenseTriggerCharacters.Contains(currentChar))
             {
                 result = true;
             }
@@ -144,7 +144,11 @@
 
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
-                intellisenseStartedAt = editor.CaretIndex;
+                if (editor != null)
+                {
+                    intellisenseStartedAt = editor.CaretIndex;
+                }
+
                 intellisenseControl.SelectedCompletion = noSelectedCompletion;
                 intellisenseControl.IsVisible = false;
             }).Wait();
@@ -174,8 +178,8 @@
 
                 IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
-                newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
                 // try find exact match case sensitive
+                newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
 
                 if (newSelectedCompletions.Count() == 0)
                 {
@@ -360,7 +364,7 @@
                             }
                         }
 
-                        if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != editor.CaretIndex))
+                        if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
                         {
                             string currentWord = string.Empty;
 
@@ -375,14 +379,14 @@
                             {
                                 Dispatcher.UIThread.InvokeTaskAsync(() =>
                                 {
-                                    currentWord = editor.GetPreviousWordAtIndex(editor.CaretIndex - 1);
+                                    currentWord = editor.GetPreviousWordAtIndex(caretIndex - 1);
                                 }).Wait();
                             }
                             else
                             {
                                 Dispatcher.UIThread.InvokeTaskAsync(() =>
                                 {
-                                    currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
+                                    currentWord = editor.GetWordAtIndex(caretIndex - 1);
                                 }).Wait();
                             }
 
@@ -556,105 +560,12 @@
                         SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                     }
 
-                    if(e.Key == Key.Enter)
+                    if (e.Key == Key.Enter)
                     {
                         SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
                     }
                 });
             }
-        }
-    }
-
-    static class KeyExtensions
-    {
-        public static bool IsModifierKey(this Key key)
-        {
-            bool result = false;
-
-            switch (key)
-            {
-                case Key.LeftShift:
-                case Key.LeftAlt:
-                case Key.LeftCtrl:
-                case Key.RightAlt:
-                case Key.RightCtrl:
-                case Key.RightShift:
-                    result = true;
-                    break;
-            }
-
-            return result;
-        }
-
-        public static bool IsNavigationKey(this Key key)
-        {
-            bool result = false;
-
-            switch (key)
-            {
-                case Key.Left:
-                case Key.Up:
-                case Key.Right:
-                case Key.Down:
-                case Key.Escape:
-                    result = true;
-                    break;
-
-                default:
-                    // Do nothing
-                    break;
-            }
-
-            return result;
-        }
-
-        public static bool IsTriggerKey(this Key key)
-        {
-            bool result = false;
-
-            if (!key.IsNavigationKey())
-            {
-                if (key >= Key.A && key <= Key.Z)
-                {
-                    result = true;
-                }
-            }
-
-            return result;
-        }
-
-        public static bool IsLanguageSpecificTriggerKey(this Key key)
-        {
-            bool result = false;
-
-            switch (key)
-            {
-                case Key.OemPeriod:
-                    result = true;
-                    break;
-            }
-
-            return result;
-        }
-
-        public static bool IsSearchKey(this Key key)
-        {
-            bool result = false;
-
-            if (!key.IsNavigationKey() && !key.IsTriggerKey())
-            {
-                switch (key)
-                {
-                    case Key.OemPeriod:
-                    case Key.Space:
-                    case Key.OemOpenBrackets:
-                    case Key.OemCloseBrackets:
-                        result = true;
-                        break;
-                }
-            }
-
-            return result;
         }
     }
 }

@@ -1,50 +1,17 @@
 using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using AvalonStudio.Utils;
-using System.Net.Http;
 
 namespace AvalonStudio.Repositories
 {
-	public class PackageInfo
-	{
-		public List<string> Versions { get; set; }
-	}
+    public class RepositoryOld
+    {
+        public const string PackagesFileName = "packages.json";
 
+        public RepositoryOld()
+        {
+            Packages = new List<PackageReference>();
+        }
 
-	public class PackageReference
-	{
-		public Repository Repository { get; internal set; }
-		public string Name { get; set; }
-		public string Url { get; set; }
-
-		public async Task<PackageIndex> DownloadInfoAsync()
-		{
-			var source = Repository.Source;
-
-			PackageIndex result = null;
-
-			using (var client = new HttpClient())
-			{
-				var packageIndex = SerializedObject.FromString<PackageIndex>(await client.GetStringAsync(Url));
-
-				result = packageIndex;
-			}
-
-			return result;
-		}
-	}
-
-	public class Repository
-	{
-		public const string PackagesFileName = "packages.json";
-
-		public Repository()
-		{
-			Packages = new List<PackageReference>();
-		}
-
-		public PackageSource Source { get; internal set; }
-		public IList<PackageReference> Packages { get; set; }
-	}
+        public PackageSourceOld Source { get; internal set; }
+        public IList<PackageReference> Packages { get; set; }
+    }
 }

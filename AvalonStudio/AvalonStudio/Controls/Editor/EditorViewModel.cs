@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reactive.Disposables;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
@@ -19,17 +15,22 @@ using AvalonStudio.Shell;
 using AvalonStudio.TextEditor;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
-using ReactiveUI;
 using AvalonStudio.Utils;
+using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
-using Avalonia.Input;
-using Avalonia.Interactivity;
+using System.Linq;
+using System.Reactive.Disposables;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
     public class EditorViewModel : DocumentTabViewModel<EditorModel>, IEditor
     {
-        public SelectedDebugLineBackgroundRenderer DebugLineHighlighter;
+        public SelectedDebugLineBackgroundRenderer DebugLineHighlighter { get; set; }
+
         private readonly CompositeDisposable disposables;
 
         private readonly List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -140,7 +141,7 @@ namespace AvalonStudio.Controls
             highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
 
             BeforeTextChangedCommand = ReactiveCommand.Create();
-            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));            
+            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
 
             TextChangedCommand = ReactiveCommand.Create();
             disposables.Add(TextChangedCommand.Subscribe(model.OnTextChanged));
@@ -236,7 +237,7 @@ namespace AvalonStudio.Controls
                             intellisenseManager.OnTextInput(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
                         }
                     };
-                    
+
                     Model.Editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
 
                     disposables.Add(Model.Editor.AddHandler(InputElement.KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel));
@@ -314,7 +315,7 @@ namespace AvalonStudio.Controls
         {
             if (!ignoreFileModifiedEvents && TextDocument != null)
             {
-                if (!(new FileInfo(Model.ProjectFile.Location).IsFileLocked()))
+                if (!new FileInfo(Model.ProjectFile.Location).IsFileLocked())
                 {
                     using (var fs = System.IO.File.OpenText(Model.ProjectFile.Location))
                     {
@@ -324,12 +325,12 @@ namespace AvalonStudio.Controls
             }
         }
 
-       
-
-        #endregion
+        #endregion Constructors
 
         #region Properties
+
         private string tabCharacter;
+
         public string TabCharacter
         {
             get { return tabCharacter; }
@@ -361,9 +362,13 @@ namespace AvalonStudio.Controls
         }
 
         private string wordAtCaret;
+
         public string WordAtCaret
         {
-            get { return wordAtCaret; }
+            get
+            {
+                return wordAtCaret;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref wordAtCaret, value);
@@ -380,9 +385,13 @@ namespace AvalonStudio.Controls
         }
 
         private Point caretLocation;
+
         public Point CaretLocation
         {
-            get { return caretLocation; }
+            get
+            {
+                return caretLocation;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref caretLocation, value);
@@ -410,14 +419,15 @@ namespace AvalonStudio.Controls
         }
 
         private IntellisenseViewModel intellisense;
+
         public IntellisenseViewModel Intellisense
         {
             get { return intellisense; }
             set { this.RaiseAndSetIfChanged(ref intellisense, value); }
         }
 
-
         private TextDocument textDocument;
+
         public TextDocument TextDocument
         {
             get { return textDocument; }
@@ -464,9 +474,13 @@ namespace AvalonStudio.Controls
         }
 
         private int caretIndex;
+
         public int CaretIndex
         {
-            get { return caretIndex; }
+            get
+            {
+                return caretIndex;
+            }
             set
             {
                 if (TextDocument != null && value > TextDocument.TextLength)
@@ -490,7 +504,6 @@ namespace AvalonStudio.Controls
                 this.RaisePropertyChanged(nameof(SelectedIndexEntry));
             }
         }
-
 
         private string GetWordAtOffset(int offset)
         {
@@ -535,6 +548,7 @@ namespace AvalonStudio.Controls
         }
 
         private object toolTip;
+
         public object ToolTip
         {
             get { return toolTip; }
@@ -586,17 +600,17 @@ namespace AvalonStudio.Controls
 
                 if (expression != string.Empty)
                 {
-                    var debugManager = IoC.Get<IDebugManager>();
+                    var debugManager = IoC.Get<IDebugManager2>();
 
-                    var evaluatedExpression = await debugManager.ProbeExpressionAsync(expression);
-
-                    if (evaluatedExpression != null)
+                    if (debugManager.LastStackFrame != null)
                     {
                         var newToolTip = new DebugHoverProbeViewModel();
-                        newToolTip.AddExistingWatch(evaluatedExpression);
+                        newToolTip.SetCurrentFrame(debugManager.LastStackFrame);
+
+                        bool result = newToolTip.AddWatch(expression);
 
                         ToolTip = newToolTip;
-                        return true;
+                        return result;
                     }
                 }
             }
@@ -608,7 +622,10 @@ namespace AvalonStudio.Controls
 
         public IndexEntry SelectedIndexEntry
         {
-            get { return selectedIndexEntry; }
+            get
+            {
+                return selectedIndexEntry;
+            }
             set
             {
                 if (value != null && value != selectedIndexEntry)
@@ -629,8 +646,8 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref indexItems, value); }
         }
 
-
         private ObservableCollection<OffsetSyntaxHighlightingData> highlightingData;
+
         public ObservableCollection<OffsetSyntaxHighlightingData> HighlightingData
         {
             get { return highlightingData; }
@@ -638,12 +655,14 @@ namespace AvalonStudio.Controls
         }
 
         private TextSegmentCollection<Diagnostic> diagnostics;
+
         public TextSegmentCollection<Diagnostic> Diagnostics
         {
             get { return diagnostics; }
             set { this.RaiseAndSetIfChanged(ref diagnostics, value); }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Commands
 
@@ -659,10 +678,12 @@ namespace AvalonStudio.Controls
             get { return Model.ProjectFile; }
         }
 
-        #endregion
+        #endregion Commands
 
-       #region Public Methods
+        #region Public Methods
+
         private bool ignoreFileModifiedEvents = false;
+
         public void Save()
         {
             ignoreFileModifiedEvents = true;
@@ -680,9 +701,9 @@ namespace AvalonStudio.Controls
 
         public void ClearDebugHighlight()
         {
-            DebugLineHighlighter.Line = -1;
+            DebugLineHighlighter.SetLocation(-1);
         }
 
-        #endregion 
+        #endregion Public Methods
     }
 }

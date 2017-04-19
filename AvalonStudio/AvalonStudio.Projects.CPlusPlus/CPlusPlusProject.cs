@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Dynamic;
-using System.IO;
-using System.Linq;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Menus;
@@ -15,18 +9,20 @@ using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using AvalonStudio.Extensibility.Threading;
-using System.Threading.Tasks;
-using Avalonia.Threading;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Dynamic;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("AvalonStudio.Projects.CPlusPlus.UnitTests")]
 
 namespace AvalonStudio.Projects.CPlusPlus
-{    
+{
     public class CPlusPlusProject : FileSystemProject, IStandardProject
     {
-
         public const string ProjectExtension = "acproj";
 
         private static Dictionary<string, Tuple<string, string>> passwordCache =
@@ -39,10 +35,9 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         public CPlusPlusProject() : this(true)
         {
-
         }
 
-        public CPlusPlusProject(bool useDispatcher) : base (useDispatcher)
+        public CPlusPlusProject(bool useDispatcher) : base(useDispatcher)
         {
             ExcludedFiles = new List<string>();
             Items = new ObservableCollection<IProjectItem>();
@@ -76,6 +71,9 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         [JsonProperty(PropertyName = "Debugger")]
         public string DebuggerReference { get; set; }
+
+        [JsonProperty(PropertyName = "Debugger2")]
+        public string Debugger2Reference { get; set; }
 
         [JsonProperty(PropertyName = "TestFramework")]
         public string TestFrameworkReference { get; set; }
@@ -176,7 +174,6 @@ namespace AvalonStudio.Projects.CPlusPlus
             return result;
         }
 
-
         public IList<string> GetGlobalIncludes()
         {
             var result = new List<string>();
@@ -241,7 +238,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         public IList<Include> Includes { get; }
 
         public IList<Definition> Defines { get; }
-        
+
         public IList<string> CompilerArguments { get; }
 
         public IList<string> CCompilerArguments { get; }
@@ -297,7 +294,6 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             return result;
         }
-       
 
         public override int CompareTo(IProject other)
         {
@@ -333,19 +329,25 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 return result;
             }
-            set { ToolchainReference = value.GetType().ToString(); }
+            set
+            {
+                ToolchainReference = value.GetType().ToString();
+            }
         }
 
         [JsonIgnore]
-        public override IDebugger Debugger
+        public override IDebugger2 Debugger2
         {
             get
             {
-                var result = IoC.Get<IShell>().Debuggers.FirstOrDefault(tc => tc.GetType().ToString() == DebuggerReference);
+                var result = IoC.Get<IShell>().Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
 
                 return result;
             }
-            set { DebuggerReference = value.GetType().ToString(); }
+            set
+            {
+                Debugger2Reference = value.GetType().ToString();
+            }
         }
 
         [JsonIgnore]
@@ -358,7 +360,10 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 return result;
             }
-            set { TestFrameworkReference = value.GetType().ToString(); }
+            set
+            {
+                TestFrameworkReference = value.GetType().ToString();
+            }
         }
 
         [JsonIgnore]
@@ -435,7 +440,6 @@ namespace AvalonStudio.Projects.CPlusPlus
             return project;
         }
 
-
         public static CPlusPlusProject Create(ISolution solution, string directory, string name)
         {
             CPlusPlusProject result = null;
@@ -447,7 +451,7 @@ namespace AvalonStudio.Projects.CPlusPlus
                 var project = new CPlusPlusProject();
                 project.Solution = solution;
                 project.Location = projectFile;
-                
+
                 project.Save();
                 project.LoadFiles();
 

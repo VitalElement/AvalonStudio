@@ -18,14 +18,15 @@ namespace AvalonStudio.Languages
         None,
         Macro,
         Variable,
+        OverloadCandidate
     }
 
-	public class CodeCompletionData
-	{
-		public uint Priority { get; set; }
-		public string Suggestion { get; set; }
-		public CodeCompletionKind Kind { get; set; }
-		public string Hint { get; set; }
-		public string BriefComment { get; set; }
-	}
+    public class CodeCompletionData
+    {
+        public uint Priority { get; set; }
+        public string Suggestion { get; set; }
+        public CodeCompletionKind Kind { get; set; }
+        public string Hint { get; set; }
+        public string BriefComment { get; set; }
+    }
 }

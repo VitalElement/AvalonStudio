@@ -1,7 +1,7 @@
-using System.Linq;
 using Avalonia;
 using Avalonia.Media;
 using AvalonStudio.TextEditor.Document;
+using System.Linq;
 
 namespace AvalonStudio.TextEditor
 {
@@ -11,8 +11,8 @@ namespace AvalonStudio.TextEditor
         private readonly IBrush currentLineForeground;
 
         public LineNumberMargin()
-        { 
-            foreground = Brush.Parse("#2691AF");  
+        {
+            foreground = Brush.Parse("#2691AF");
             currentLineForeground = Brush.Parse("#2691AF");
         }
 
@@ -30,7 +30,7 @@ namespace AvalonStudio.TextEditor
         {
             if (textView.TextDocument != null)
             {
-                Width = textInfo.CharWidth * textInfo.NumLines.ToString().Length + 12;
+                Width = (textInfo.CharWidth * textInfo.NumLines.ToString().Length) + 12;
 
                 if (textView != null && textView.VisualLines.Count > 0)
                 {
@@ -63,7 +63,7 @@ namespace AvalonStudio.TextEditor
 
                             context.DrawText(textColor, new Point(-8, textInfo.LineHeight * i), formattedText);
                         }
-                    }                    
+                    }
                 }
             }
         }

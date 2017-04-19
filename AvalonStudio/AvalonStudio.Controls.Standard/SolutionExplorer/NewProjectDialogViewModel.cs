@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -94,7 +93,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public string Name
         {
-            get { return name; }
+            get
+            {
+                return name;
+            }
             set
             {
                 if (solutionName == name)
@@ -125,7 +127,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public IProjectTemplate SelectedTemplate
         {
-            get { return selectedTemplate; }
+            get
+            {
+                return selectedTemplate;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedTemplate, value);
@@ -149,7 +154,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public ILanguageService SelectedLanguage
         {
-            get { return selectedLanguage; }
+            get
+            {
+                return selectedLanguage;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedLanguage, value);

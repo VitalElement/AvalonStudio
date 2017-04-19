@@ -10,8 +10,8 @@
       </TreeView.Styles>
 
       <TreeView.DataTemplates>
-        <TreeDataTemplate DataType="vm:WatchViewModel" ItemsSource="{Binding Children, Mode=TwoWay}">
-          <Grid ColumnDefinitions="*,*,*" Background="{Binding Background}">
+        <TreeDataTemplate DataType="vm:ObjectValueViewModel" ItemsSource="{Binding Children, Mode=TwoWay}">
+          <Grid Background="{Binding Background}">
             <Grid.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
@@ -24,9 +24,11 @@
                 </MenuItem>
               </ContextMenu>
             </Grid.ContextMenu>
-            <TextBlock Text="{Binding Name}"/>
-            <TextBlock Margin="10 0 0 0" Grid.Column="1" Text="{Binding Value}"/>
-            <TextBlock Margin="10 0 0 0" Grid.Column="2" Text="{Binding Type}"/>
+            <StackPanel Orientation="Horizontal" Gap="4">
+              <TextBlock Text="{Binding DisplayName}"/>
+              <TextBlock Margin="10 0 0 0" Grid.Column="1" Text="{Binding Value}"/>
+              <TextBlock Margin="10 0 0 0" Grid.Column="2" Text="{Binding TypeName}"/>  
+            </StackPanel>
           </Grid>
         </TreeDataTemplate>
       </TreeView.DataTemplates>

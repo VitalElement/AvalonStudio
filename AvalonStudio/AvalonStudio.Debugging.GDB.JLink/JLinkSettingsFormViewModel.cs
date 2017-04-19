@@ -1,13 +1,12 @@
-using System;
+using Avalonia.Threading;
 using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
-using System.Collections.Generic;
 using ReactiveUI;
-using System.IO;
-using AvalonStudio.Platforms;
-using System.Linq;
-using Avalonia.Threading;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB.JLink
@@ -23,8 +22,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public JLinkSettingsFormViewModel(IProject model) : base(model)
         {
-            settings = JLinkDebugAdaptor.GetSettings(model);
-            
+            settings = model.GetSettings<JLinkSettings>();
+
             interfaceSelectedIndex = (int)settings.Interface;
             interfaceType = settings.Interface;
 
@@ -32,7 +31,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
             speed = settings.SpeedkHz.ToString();
 
-            string devPath = Path.Combine(JLinkDebugAdaptor.BaseDirectory, "devices.csv");
+            string devPath = Path.Combine(JLinkDebugger.BaseDirectory, "devices.csv");
 
             deviceList = new ObservableCollection<JLinkTargetDeviceViewModel>();
 
@@ -129,7 +128,10 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public int SpeedSelectedIndex
         {
-            get { return speedSelectedIndex; }
+            get
+            {
+                return speedSelectedIndex;
+            }
             set
             {
                 speedSelectedIndex = value;
@@ -143,17 +145,23 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public int InterfaceSelectedIndex
         {
-            get { return interfaceSelectedIndex; }
+            get
+            {
+                return interfaceSelectedIndex;
+            }
             set
             {
                 interfaceSelectedIndex = value;
                 InterfaceType = (JlinkInterfaceType)interfaceSelectedIndex;
             }
         }
-        
+
         public string Speed
         {
-            get { return speed; }
+            get
+            {
+                return speed;
+            }
             set
             {
                 speed = value;
@@ -163,7 +171,10 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public JlinkInterfaceType InterfaceType
         {
-            get { return interfaceType; }
+            get
+            {
+                return interfaceType;
+            }
             set
             {
                 interfaceType = value;
@@ -188,13 +199,14 @@ namespace AvalonStudio.Debugging.GDB.JLink
                     settings.SpeedkHz = 12000;
                 }
 
-                JLinkDebugAdaptor.SetSettings(Model, settings);
+                Model.SetSettings(settings);
                 Model.Save();
             }
         }
 
         private ObservableCollection<JLinkTargetDeviceViewModel> unfilteredList;
         private ObservableCollection<JLinkTargetDeviceViewModel> deviceList;
+
         public ObservableCollection<JLinkTargetDeviceViewModel> DeviceList
         {
             get { return deviceList; }
@@ -202,21 +214,32 @@ namespace AvalonStudio.Debugging.GDB.JLink
         }
 
         private JLinkTargetDeviceViewModel selectedDevice;
+
         public JLinkTargetDeviceViewModel SelectedDevice
         {
-            get { return selectedDevice; }
-            set { this.RaiseAndSetIfChanged(ref selectedDevice, value); Save(); }
+            get
+            {
+                return selectedDevice;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedDevice, value);
+                Save();
+            }
         }
 
         private string filter = string.Empty;
 
         public string Filter
         {
-            get { return filter; }
+            get
+            {
+                return filter;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref filter, value);
-                FilterListAsync();
+                Task.Run(FilterListAsync);
             }
         }
 

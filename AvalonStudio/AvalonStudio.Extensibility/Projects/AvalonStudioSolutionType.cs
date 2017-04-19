@@ -1,6 +1,5 @@
 ﻿namespace AvalonStudio.Projects
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -24,12 +23,10 @@
 
         public void Activation()
         {
-            
         }
 
         public void BeforeActivation()
         {
-            
         }
 
         public async Task<ISolution> LoadAsync(string path)

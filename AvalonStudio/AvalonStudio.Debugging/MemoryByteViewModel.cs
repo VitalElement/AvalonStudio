@@ -17,6 +17,7 @@
         private string formatString = string.Empty;
 
         private ulong address;
+
         public ulong Address
         {
             get { return address; }
@@ -24,20 +25,33 @@
         }
 
         private T dataValue;
+
         public T Value
         {
-            get { return dataValue; }
-            set { this.RaiseAndSetIfChanged(ref dataValue, value); this.RaisePropertyChanged(nameof(FormattedValue)); }
+            get
+            {
+                return dataValue;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref dataValue, value);
+                this.RaisePropertyChanged(nameof(FormattedValue));
+            }
         }
 
         private bool hasChanged;
+
         public bool HasChanged
         {
-            get { return hasChanged; }
-            set {
+            get
+            {
+                return hasChanged;
+            }
+            set
+            {
                 this.RaiseAndSetIfChanged(ref hasChanged, value);
 
-                if(hasChanged)
+                if (hasChanged)
                 {
                     ValueForeground = Brush.Parse("#FFF38B76");
                 }
@@ -49,14 +63,12 @@
         }
 
         private IBrush valueForeground;
+
         public IBrush ValueForeground
         {
             get { return valueForeground; }
             set { this.RaiseAndSetIfChanged(ref valueForeground, value); }
         }
-
-
-
 
         public string FormattedValue
         {
@@ -64,6 +76,6 @@
             {
                 return string.Format(formatString, dataValue);
             }
-        } 
+        }
     }
 }

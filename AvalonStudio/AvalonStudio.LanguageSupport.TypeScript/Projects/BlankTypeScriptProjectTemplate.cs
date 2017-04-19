@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using AvalonStudio.Projects;
+using System.IO;
 using System.Threading.Tasks;
-using AvalonStudio.Projects;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 {

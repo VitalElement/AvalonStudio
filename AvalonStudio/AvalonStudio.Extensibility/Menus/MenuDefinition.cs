@@ -1,7 +1,7 @@
 namespace AvalonStudio.Extensibility.Menus
 {
     public class MenuDefinition
-    {        
+    {
         public MenuDefinition(MenuBarDefinition menuBar, int sortOrder, string text)
         {
             SortOrder = sortOrder;
@@ -17,7 +17,6 @@ namespace AvalonStudio.Extensibility.Menus
 
         public virtual void Activation()
         {
-
         }
     }
 }

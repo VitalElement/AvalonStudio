@@ -12,7 +12,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
     {
         private readonly IBrush bracketHighlightBrush = Brush.Parse("#123e70");
 
+#pragma warning disable 67
+
         public event EventHandler<EventArgs> DataChanged;
+
+#pragma warning restore 67
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {

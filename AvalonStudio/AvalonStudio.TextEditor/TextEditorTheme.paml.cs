@@ -3,11 +3,11 @@ using Avalonia.Styling;
 
 namespace AvalonStudio.TextEditor
 {
-	public class TextEditorTheme : Styles
+    public class TextEditorTheme : Styles
     {
-		public TextEditorTheme()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
-	}
+        public TextEditorTheme()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
+    }
 }

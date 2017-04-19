@@ -4,17 +4,13 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System;
-using System.Dynamic;
 
 namespace AvalonStudio.Toolchains.GCC
 {
     public abstract class GCCToolchain : StandardToolChain
     {
-		public virtual string GDBExecutable => "gdb";
+        public virtual string GDBExecutable => "gdb";
 
         public abstract string BinDirectory { get; }
 
@@ -68,49 +64,6 @@ namespace AvalonStudio.Toolchains.GCC
             return result;
         }
 
-        public static GccToolchainSettings GetSettings(IProject project)
-        {
-            GccToolchainSettings result = null;
-
-            try
-            {
-                if (project.ToolchainSettings.GccToolchainSettings is ExpandoObject)
-                {
-                    result = (project.ToolchainSettings.GccToolchainSettings as ExpandoObject).GetConcreteType<GccToolchainSettings>();
-                }
-                else
-                {
-                    result = project.ToolchainSettings.GccToolchainSettings;
-                }
-            }
-            catch (Exception)
-            {
-            }
-
-            return result;
-        }
-
-        public static GccToolchainSettings ProvisionGccSettings(IProject project)
-        {
-            var result = GetSettings(project);
-
-            if (result == null)
-            {
-                result = new GccToolchainSettings();
-
-                project.ToolchainSettings.GccToolchainSettings = result;
-
-                project.Save();
-            }
-
-            return result;
-        }
-
-        public override void ProvisionSettings(IProject project)
-        {
-            ProvisionGccSettings(project);
-        }
-
         private bool CheckFile(IConsole console, string file)
         {
             bool result = true;
@@ -148,7 +101,7 @@ namespace AvalonStudio.Toolchains.GCC
                 fileArguments = "-x c++ -fno-use-cxa-atexit";
             }
 
-            if(file.Extension.ToLower() == ".s")
+            if (file.Extension.ToLower() == ".s")
             {
                 fileArguments = "-x assembler-with-cpp";
             }
@@ -165,7 +118,7 @@ namespace AvalonStudio.Toolchains.GCC
             },
             false, file.CurrentDirectory, false);
 
-           // console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
+            // console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
 
             return result;
         }
@@ -221,7 +174,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             if (project.Type == ProjectType.Executable)
             {
-                var settings = GetSettings(project);
+                var settings = project.GetSettings<GccToolchainSettings>();
 
                 foreach (var libraryPath in settings.LinkSettings.LinkedLibraries)
                 {

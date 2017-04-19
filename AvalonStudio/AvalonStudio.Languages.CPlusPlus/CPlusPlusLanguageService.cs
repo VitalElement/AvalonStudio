@@ -2,11 +2,9 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages.CPlusPlus.ProjectDatabase;
-using AvalonStudio.Languages.CPlusPlus.Rendering;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
@@ -15,7 +13,6 @@ using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
-using Microsoft.EntityFrameworkCore;
 using NClang;
 using System;
 using System.Collections.Generic;
@@ -60,13 +57,22 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IIndentationStrategy IndentationStrategy { get; }
 
-        public IEnumerable<char> IntellisenseTriggerCharacters { get { return new[] { '.', '>', ':' }; } }
+        public IEnumerable<char> IntellisenseTriggerCharacters => new[]
+        {
+            '.', '>', ':'
+        };
 
-        public IEnumerable<char> IntellisenseSearchCharacters { get { return new[] { '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ',' }; } }
+        public IEnumerable<char> IntellisenseSearchCharacters => new[]
+        {
+            '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ','
+        };
 
-        public IEnumerable<char> IntellisenseCompleteCharacters { get { return new[] { '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; } }
+        public IEnumerable<char> IntellisenseCompleteCharacters => new[]
+        {
+            '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
+        };
 
-        CodeCompletionKind FromClangKind(NClang.CursorKind kind)
+        private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
             switch (kind)
             {
@@ -108,6 +114,9 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 case NClang.CursorKind.FieldDeclaration:
                     return CodeCompletionKind.Parameter;
+
+                case NClang.CursorKind.OverloadCandidate:
+                    return CodeCompletionKind.OverloadCandidate;
             }
 
             Console.WriteLine($"dont understand{kind.ToString()}");
@@ -173,14 +182,21 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     if (filter == string.Empty || typedText.StartsWith(filter))
                     {
-                        result.Completions.Add(new CodeCompletionData
+                        var completion = new CodeCompletionData
                         {
                             Suggestion = typedText,
                             Priority = codeCompletion.CompletionString.Priority,
                             Kind = FromClangKind(codeCompletion.CursorKind),
                             Hint = hint,
                             BriefComment = codeCompletion.CompletionString.BriefComment
-                        });
+                        };
+
+                        result.Completions.Add(completion);
+
+                        if (completion.Kind == CodeCompletionKind.OverloadCandidate)
+                        {
+                            Console.WriteLine("TODO Implement overload candidate.");
+                        }
                     }
                 }
 
@@ -227,7 +243,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                     useSpellingLocation = true;
                     highlightKind = HighlightType.InterfaceName;
                     break;
-
 
                 case NClang.CursorKind.TypeReference:
                     if (parent.Kind == NClang.CursorKind.CXXBaseSpecifier)
@@ -346,14 +361,12 @@ namespace AvalonStudio.Languages.CPlusPlus
         private void ScanTokens(NClang.ClangTranslationUnit tu, SyntaxHighlightDataList result)
         {
             var tokens = tu.Tokenize(tu.GetCursor().CursorExtent);
-            //var annotatedTokens = tokens.Annotate();           //TODO see if this can provide us with additional data.
 
             foreach (var token in tokens.Tokens)
             {
                 var highlightData = new OffsetSyntaxHighlightingData();
                 highlightData.Start = token.Extent.Start.FileLocation.Offset;
                 highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start;
-
 
                 switch (token.Kind)
                 {
@@ -368,7 +381,233 @@ namespace AvalonStudio.Languages.CPlusPlus
                         break;
                 }
             }
+        }
 
+        private void GenerateHighlightData(ClangCursor cursor, SyntaxHighlightDataList highlightList)
+        {
+            cursor.VisitChildren((current, parent, ptr) =>
+            {
+                if (current.Location.IsFromMainFile)
+                {
+                    var highlight = CreateOffsetData(current, parent);
+
+                    if (highlight != null)
+                    {
+                        highlightList.Add(highlight);
+                    }
+
+                    return ChildVisitResult.Recurse;
+                }
+
+                if (current.Location.IsInSystemHeader)
+                {
+                    return ChildVisitResult.Continue;
+                }
+
+                return ChildVisitResult.Recurse;
+            }, IntPtr.Zero);
+        }
+
+        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result, TextMarkerService service)
+        {
+            foreach (var diagnostic in clangDiagnostics)
+            {
+                if (diagnostic.Location.IsFromMainFile)
+                {
+                    var diag = new Diagnostic
+                    {
+                        Project = project,
+                        StartOffset = diagnostic.Location.FileLocation.Offset,
+                        Line = diagnostic.Location.FileLocation.Line,
+                        Spelling = diagnostic.Spelling,
+                        File = diagnostic.Location.FileLocation.File.FileName,
+                        Level = (DiagnosticLevel)diagnostic.Severity
+                    };
+
+                    var cursor = translationUnit.GetCursor(diagnostic.Location);
+
+                    var tokens = translationUnit.Tokenize(cursor.CursorExtent);
+
+                    foreach (var token in tokens.Tokens)
+                    {
+                        if (token.Location == diagnostic.Location)
+                        {
+                            diag.EndOffset = diag.StartOffset + token.Spelling.Length;
+                        }
+                    }
+
+                    result.Add(diag);
+                    tokens.Dispose();
+
+                    Color markerColor;
+
+                    switch (diag.Level)
+                    {
+                        case DiagnosticLevel.Error:
+                        case DiagnosticLevel.Fatal:
+                            markerColor = Color.FromRgb(253, 45, 45);
+                            break;
+
+                        case DiagnosticLevel.Warning:
+                            markerColor = Color.FromRgb(255, 207, 40);
+                            break;
+
+                        default:
+                            markerColor = Color.FromRgb(0, 42, 74);
+                            break;
+                    }
+
+                    service.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
+                }
+            }
+        }
+
+        private void VisitAllFiles(IProject project, Action<ISourceFile> fileAction)
+        {
+            foreach (var reference in project.References)
+            {
+                VisitAllFiles(reference, fileAction);
+            }
+
+            foreach (var sourceFile in project.Items.OfType<ISourceFile>())
+            {
+                fileAction(sourceFile);
+            }
+        }
+
+        public async Task AnalyseProjectAsync(IProject project)
+        {
+            var db = new BrowseDatabase(project.Solution);
+
+
+            await Task.Factory.StartNew(() =>
+            {
+                var superProject = project as CPlusPlusProject;
+
+                var console = IoC.Get<IConsole>();
+
+                VisitAllFiles(superProject, file =>
+                {
+                    if (CanHandle(file))
+                    {
+                        var uniqueSymbols = new Dictionary<string, SymbolReference>();
+                        var definitionsToAdd = new Dictionary<SymbolReference, ProjectDatabase.Symbol>();
+                        var symbolsToAdd = new List<ProjectDatabase.Symbol>();
+
+
+                        var existingFile = db.GetOrCreateSourceFile(file, out bool modified);
+                        //if(modified)
+                        {
+                            console.WriteLine($"Analysing File: {file.Location}");
+
+                            clangAccessJobRunner.InvokeAsync(() =>
+                            {
+                                int attempts = 0;
+
+                                while (true)
+                                {
+                                    try
+                                    {
+                                        var tu = GenerateTranslationUnit(file, new List<ClangUnsavedFile>());
+
+                                        var indexAction = superProject.ClangIndex.CreateIndexAction();
+
+                                        var callbacks = new ClangIndexerCallbacks();
+
+                                        callbacks.PreprocessIncludedFile += (sender, e) =>
+                                        {
+                                            return null;
+                                        };
+
+                                        callbacks.IndexDeclaration += (sender, e) =>
+                                        {
+                                            if (e.Cursor.Location.IsInSystemHeader)
+                                            // TODO keep track of headers already indexed and make a quick decision on if we need
+                                            {
+                                                // to track these symbols.                                        
+                                            }
+                                            else
+                                            {
+                                                var usr = db.GetSymbolReference(e.EntityInfo.USR);
+                                                if (usr == null)
+
+                                                {
+                                                    if (!uniqueSymbols.TryGetValue(e.EntityInfo.USR, out SymbolReference reference))
+                                                    {
+                                                        usr = new SymbolReference() { Reference = e.EntityInfo.USR };
+                                                        uniqueSymbols.Add(e.EntityInfo.USR, usr);
+                                                    }
+                                                    else
+                                                    {
+                                                        usr = reference;
+                                                    }
+                                                }
+
+                                                var newSymbol = new ProjectDatabase.Symbol() { SymbolReference = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column };
+                                                symbolsToAdd.Add(newSymbol);
+
+                                                if (e.Cursor.IsDefinition && !definitionsToAdd.TryGetValue(usr, out ProjectDatabase.Symbol sym))
+                                                {
+                                                    definitionsToAdd.Add(usr, newSymbol);
+                                                }
+                                                else // TODO test for declaration.
+                                                {
+                                                    symbolsToAdd.Add(newSymbol);
+                                                }
+                                            }
+                                        };
+
+                                        callbacks.IndexEntityReference += (sender, e) =>
+                                        {
+                                            var usr = db.GetSymbolReference(e.Cursor.Referenced.UnifiedSymbolResolution);
+
+                                            if (usr == null)
+                                            {
+                                                uniqueSymbols.TryGetValue(e.Cursor.Referenced.UnifiedSymbolResolution, out usr);
+                                            }
+
+                                            if (usr != null)
+                                            {
+                                                var newSymbol = new ProjectDatabase.Symbol() { SymbolReference = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column };
+                                                symbolsToAdd.Add(newSymbol);
+                                            }
+                                        };
+                                        indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
+
+
+                                        tu.Dispose();
+
+                                        db.AddSymbolReferences(uniqueSymbols.Values);
+                                        db.SaveChanges();
+
+                                        db.AddSymbols(symbolsToAdd);
+                                        db.SaveChanges();
+                                        foreach (var definitionLink in definitionsToAdd)
+
+                                        {
+                                            definitionLink.Key.Definition = definitionLink.Value;
+                                        }
+
+                                        db.SaveChanges();
+                                        break;
+                                    }
+                                    catch (ClangServiceException e)
+                                    {
+                                        attempts++;
+                                        if (attempts == 3)
+
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }).Wait();
+                        }
+                    }
+                });
+
+                console.WriteLine($"indexing completed.");
+            });
         }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
@@ -380,101 +619,27 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
-            foreach (var unsavedFile in unsavedFiles)
-            {
-                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
-            }
+            clangUnsavedFiles.AddRange(unsavedFiles.Select(f => new ClangUnsavedFile(f.FileName, f.Contents)));
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
-                var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
-
-                if (file != null)
+                try
                 {
-                    if (translationUnit != null)
+                    var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+
+                    if (file != null && translationUnit != null)
                     {
                         ScanTokens(translationUnit, result.SyntaxHighlightingData);
 
-                        var cursor = translationUnit.GetCursor();
-
-                        cursor.VisitChildren((current, parent, ptr) =>
-                        {
-                            if (current.Location.IsFromMainFile)
-                            {
-                                var highlight = CreateOffsetData(current, parent);
-
-                                if (highlight != null)
-                                {
-                                    result.SyntaxHighlightingData.Add(highlight);
-                                }
-
-                                return ChildVisitResult.Recurse;
-                            }
-
-                            if (current.Location.IsInSystemHeader)
-                            {
-                                return ChildVisitResult.Continue;
-                            }
-
-                            return ChildVisitResult.Recurse;
-                        }, IntPtr.Zero);
+                        GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);
                     }
+
+                    dataAssociation.TextMarkerService.Clear();
+
+                    GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);
                 }
-
-                dataAssociation.TextMarkerService.Clear();
-
-                var diags = translationUnit.DiagnosticSet.Items;
-
-                foreach (var diagnostic in diags)
+                catch (Exception)
                 {
-                    if (diagnostic.Location.IsFromMainFile)
-                    {
-                        var diag = new Diagnostic
-                        {
-                            Project = file.Project,
-                            StartOffset = diagnostic.Location.FileLocation.Offset,
-                            Line = diagnostic.Location.FileLocation.Line,
-                            Spelling = diagnostic.Spelling,
-                            File = diagnostic.Location.FileLocation.File.FileName,
-                            Level = (DiagnosticLevel)diagnostic.Severity
-                        };
-
-
-                        var cursor = translationUnit.GetCursor(diagnostic.Location);
-
-                        var tokens = translationUnit.Tokenize(cursor.CursorExtent);
-
-                        foreach (var token in tokens.Tokens)
-                        {
-                            if (token.Location == diagnostic.Location)
-                            {
-                                diag.EndOffset = diag.StartOffset + token.Spelling.Length;
-                            }
-                        }
-
-                        result.Diagnostics.Add(diag);
-                        tokens.Dispose();
-
-                        Color markerColor;
-
-                        switch (diag.Level)
-                        {
-                            case DiagnosticLevel.Error:
-                            case DiagnosticLevel.Fatal:
-                                markerColor = Color.FromRgb(253, 45, 45);
-                                break;
-
-                            case DiagnosticLevel.Warning:
-                                markerColor = Color.FromRgb(255, 207, 40);
-                                break;
-
-                            default:
-                                markerColor = Color.FromRgb(0, 42, 74);
-                                break;
-                        }
-
-                        dataAssociation.TextMarkerService.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
-                    }
                 }
             });
 
@@ -511,181 +676,13 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             if (result)
             {
-                result = CanHandle(file.Project);
-            }
-
-            return result;
-        }
-
-        private int GetFileCount(IStandardProject project)
-        {
-            var result = 0;
-
-            foreach (var reference in project.References)
-            {
-                var standardReference = reference as IStandardProject;
-
-                if (standardReference != null)
+                if (!(file.Project is IStandardProject))
                 {
-                    result += GetFileCount(standardReference);
+                    result = false;
                 }
             }
 
-            if (!project.IsBuilding)
-            {
-                project.IsBuilding = true;
-
-                result += project.SourceFiles.Where(sf => CanHandle(sf)).Count();
-            }
-
             return result;
-        }
-
-        private void VisitAllFiles (IProject project, Action<ISourceFile> fileAction)
-        {
-            foreach (var reference in project.References)
-            {
-                VisitAllFiles(reference, fileAction);
-            }
-
-            foreach(var sourceFile in project.Items.OfType<ISourceFile>())
-            {
-                fileAction(sourceFile);
-            }
-        }
-
-        public async Task AnalyseProjectAsync(IProject project)
-        {
-            var db = new BrowseDatabase(project.Solution);
-
-            await Task.Factory.StartNew(() =>
-            {
-                var superProject = project as CPlusPlusProject;
-
-                var console = IoC.Get<IConsole>();
-
-                VisitAllFiles(superProject, file =>
-                {
-                    if (CanHandle(file))
-                    {                        
-                        var uniqueSymbols = new Dictionary<string, SymbolReference>();
-                        var symbolsToAdd = new List<ProjectDatabase.Symbol>();
-                        var definitionsToAdd = new Dictionary<SymbolReference, ProjectDatabase.Symbol>();
-
-                        var existingFile = db.GetOrCreateSourceFile(file, out bool modified);
-
-                        //if(modified)
-                        {
-                            console.WriteLine($"Analysing File: {file.Location}");
-
-                            clangAccessJobRunner.InvokeAsync(() =>
-                            {
-                                int attempts = 0;
-
-                                while (true)
-                                {
-                                    try
-                                    {
-                                        var tu = GenerateTranslationUnit(file, new List<ClangUnsavedFile>());
-
-                                        var indexAction = superProject.ClangIndex.CreateIndexAction();
-
-                                        var callbacks = new ClangIndexerCallbacks();
-
-                                        callbacks.PreprocessIncludedFile += (sender, e) =>
-                                        {
-                                            return null;
-                                        };
-
-                                        callbacks.IndexDeclaration += (sender, e) =>
-                                        {
-                                            if (e.Cursor.Location.IsInSystemHeader)
-                                            {
-                                                // TODO keep track of headers already indexed and make a quick decision on if we need
-                                                // to track these symbols.                                        
-                                            }
-                                            else
-                                            {
-                                                var usr = db.GetSymbolReference(e.EntityInfo.USR);
-
-                                                if (usr == null)
-                                                {
-                                                    if (!uniqueSymbols.TryGetValue(e.EntityInfo.USR, out SymbolReference reference))
-                                                    {
-                                                        usr = new SymbolReference() { Reference = e.EntityInfo.USR };
-                                                        uniqueSymbols.Add(e.EntityInfo.USR, usr);
-                                                    }
-                                                    else
-                                                    {
-                                                        usr = reference;
-                                                    }
-                                                }
-
-                                                var newSymbol = new ProjectDatabase.Symbol() { SymbolReference = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column };
-                                                symbolsToAdd.Add(newSymbol);
-
-                                                if (e.Cursor.IsDefinition && !definitionsToAdd.TryGetValue(usr, out ProjectDatabase.Symbol sym))
-                                                {
-                                                    definitionsToAdd.Add(usr, newSymbol);
-                                                }
-                                                else // TODO test for declaration.
-                                                {
-                                                    symbolsToAdd.Add(newSymbol);
-                                                }
-                                            }
-                                        };
-
-                                    callbacks.IndexEntityReference += (sender, e) =>
-                                    {
-                                        var usr = db.GetSymbolReference(e.Cursor.Referenced.UnifiedSymbolResolution);
-
-                                        if(usr == null)
-                                        {
-                                            uniqueSymbols.TryGetValue(e.Cursor.Referenced.UnifiedSymbolResolution, out usr);
-                                        }
-
-                                        if (usr != null)
-                                        {
-                                            var newSymbol = new ProjectDatabase.Symbol() { SymbolReference = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column };
-                                            symbolsToAdd.Add(newSymbol);                                            
-                                        }
-                                    };
-
-                                    indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
-
-                                        tu.Dispose();
-
-                                        db.AddSymbolReferences(uniqueSymbols.Values);
-                                        db.SaveChanges();
-
-                                        db.AddSymbols(symbolsToAdd);
-                                        db.SaveChanges();
-
-                                        foreach (var definitionLink in definitionsToAdd)
-                                        {
-                                            definitionLink.Key.Definition = definitionLink.Value;
-                                        }                                        
-
-                                        db.SaveChanges();
-                                        break;
-                                    }
-                                    catch (ClangServiceException e)
-                                    {
-                                        attempts++;
-
-                                        if (attempts == 3)
-                                        {
-                                            break;
-                                        }
-                                    }
-                                }
-                            }).Wait();
-                        }
-                    }
-                });
-                
-                console.WriteLine($"indexing completed.");
-            });
         }
 
         public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAssistant completionAssistant,
@@ -709,26 +706,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     {
                         case Key.Return:
                             {
-                                if (editor.CaretIndex >= 0 && editor.CaretIndex < editor.TextDocument.TextLength)
-                                {
-                                    if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
-                                    {
-                                        editor.TextDocument.Insert(editor.CaretIndex, Environment.NewLine);
-                                        editor.CaretIndex--;
-
-                                        var currentLine = editor.TextDocument.GetLineByOffset(editor.CaretIndex);
-
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine, editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine.NextLine,
-                                            editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);
-                                    }
-
-                                    var newCaret = IndentationStrategy.IndentLine(editor.TextDocument,
-                                        editor.TextDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
-
-                                    editor.CaretIndex = newCaret;
-                                }
+                                editor.Indent(IndentationStrategy);
                             }
                             break;
                     }
@@ -814,7 +792,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor,
                 ClangFormatSettings.Default);
 
-            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);            
+            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
@@ -838,20 +816,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
 
                 result = SymbolFromClangCursor(cursor);
-
-                if (!string.IsNullOrEmpty(cursor.UnifiedSymbolResolution))
-                {
-                    var db = new BrowseDatabase(file.Project.Solution);
-                    var usr = db.GetSymbolReference(cursor.UnifiedSymbolResolution);
-
-                    if (usr?.Symbols != null)
-                    {
-                        foreach (var symbol in usr.Symbols)
-                        {
-                            Console.WriteLine($"Line: {symbol.Line}, Column: {symbol.Column}");
-                        }
-                    }
-                }
             });
 
             return result;
@@ -902,7 +866,6 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-
         public int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
         {
             var result = caret;
@@ -931,6 +894,14 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
+        private void AddArguments(List<string> list, IEnumerable<string> arguments)
+        {
+            foreach (var argument in arguments)
+            {
+                AddArgument(list, argument);
+            }
+        }
+
         private void AddArgument(List<string> list, string argument)
         {
             if (!list.Contains(argument))
@@ -954,91 +925,54 @@ namespace AvalonStudio.Languages.CPlusPlus
                     superProject.ClangIndex = ClangService.CreateIndex();
                 }
 
-                var project = file.Project as CPlusPlusProject;
+                var project = file.Project as IStandardProject;
 
                 var toolchainIncludes = superProject.ToolChain?.GetToolchainIncludes(file);
 
                 if (toolchainIncludes != null)
                 {
-                    foreach (var include in toolchainIncludes)
-                    {
-                        AddArgument(args, string.Format("-isystem{0}", include));
-                    }
+                    AddArguments(args, toolchainIncludes.Select(s => $"-isystem{s}"));
                 }
 
                 // toolchain includes
                 // This code is same as in toolchain, get compiler arguments... does this need a refactor, or toolchain get passed in? Clang take GCC compatible arguments.
                 // perhaps this language service has its own clang tool chain, to generate compiler arguments from project configuration?
 
-
                 // Referenced includes
                 var referencedIncludes = project.GetReferencedIncludes();
 
-                foreach (var include in referencedIncludes)
-                {
-                    AddArgument(args, string.Format("-I{0}", include));
-                }
+                AddArguments(args, referencedIncludes.Select(s => $"-I{s}"));
 
                 // global includes
                 var globalIncludes = superProject.GetGlobalIncludes();
 
-                foreach (var include in globalIncludes)
-                {
-                    AddArgument(args, string.Format("-I{0}", include));
-                }
+                AddArguments(args, globalIncludes.Select(s => $"-I{s}"));
 
                 // includes
-                foreach (var include in project.Includes)
-                {
-                    AddArgument(args, string.Format("-I{0}", Path.Combine(project.CurrentDirectory, include.Value)));
-                }
+                AddArguments(args, project.Includes.Select(s => $"-I{Path.Combine(project.CurrentDirectory, s.Value)}"));
 
                 var referencedDefines = project.GetReferencedDefines();
-                foreach (var define in referencedDefines)
-                {
-                    AddArgument(args, string.Format("-D{0}", define));
-                }
+
+                AddArguments(args, referencedDefines.Select(s => $"-D{s}"));
 
                 // global includes
                 var globalDefines = superProject.GetGlobalDefines();
 
-                foreach (var define in globalDefines)
-                {
-                    AddArgument(args, string.Format("-D{0}", define));
-                }
+                AddArguments(args, globalDefines.Select(s => $"-D{s}"));
 
-                foreach (var define in project.Defines)
-                {
-                    AddArgument(args, string.Format("-D{0}", define));
-                }
-
-                //foreach (var arg in superProject.ToolChainArguments)
-                //{
-                //    args.Add(string.Format("{0}", arg));
-                //}
-
-                //foreach (var arg in superProject.CompilerArguments)
-                //{
-                //    args.Add(string.Format("{0}", arg));
-                //}
+                AddArguments(args, project.Defines.Select(s => $"-D{s}"));
 
                 switch (file.Extension)
                 {
                     case ".c":
                         {
-                            foreach (var arg in superProject.CCompilerArguments)
-                            {
-                                args.Add(string.Format("{0}", arg));
-                            }
+                            AddArguments(args, superProject.CCompilerArguments);
                         }
                         break;
 
                     case ".cpp":
                         {
-                            foreach (var arg in superProject.CppCompilerArguments)
-                            {
-                                args.Add(string.Format("{0}", arg));
-                            }
+                            AddArguments(args, superProject.CppCompilerArguments);
                         }
                         break;
                 }
@@ -1053,9 +987,13 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 args.Add("-Wunused-variable");
 
-                result = superProject.ClangIndex.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(),
-                    TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion | TranslationUnitFlags.PrecompiledPreamble |
-                    TranslationUnitFlags.CacheCompletionResults | TranslationUnitFlags.Incomplete | TranslationUnitFlags.ForSerialization);
+                var translationUnitFlags =
+                    TranslationUnitFlags.IncludeBriefCommentsInCodeCompletion |
+                    TranslationUnitFlags.PrecompiledPreamble |
+                    TranslationUnitFlags.CacheCompletionResults |
+                    TranslationUnitFlags.Incomplete;
+
+                result = superProject.ClangIndex.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), translationUnitFlags);
             }
 
             if (result == null)
@@ -1248,8 +1186,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 {
                                     var inx = argument.Element("Index");
 
-                                    if (inx != null)    // This happens when documentation for an argument was left in, but the argument no longer exists.
+                                    if (inx != null)
                                     {
+                                        // This happens when documentation for an argument was left in, but the argument no longer exists.
                                         var index = int.Parse(inx.Value);
 
                                         result.Arguments[index].Comment = paragraph.Value;
@@ -1392,40 +1331,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void BeforeActivation()
         {
-            
         }
 
         public void Activation()
         {
-            
         }
-    }
-
-    internal class CPlusPlusDataAssociation
-    {
-        public CPlusPlusDataAssociation(TextDocument textDocument)
-        {
-            BackgroundRenderers = new List<IBackgroundRenderer>();
-            DocumentLineTransformers = new List<IDocumentLineTransformer>();
-
-            TextColorizer = new TextColoringTransformer(textDocument);
-            TextMarkerService = new TextMarkerService(textDocument);
-
-            BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
-            BackgroundRenderers.Add(TextMarkerService);
-
-            DocumentLineTransformers.Add(TextColorizer);
-            DocumentLineTransformers.Add(new DefineTextLineTransformer());
-            DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
-            DocumentLineTransformers.Add(new IncludeTextLineTransformer());
-        }
-
-        public ClangTranslationUnit TranslationUnit { get; set; }
-        public TextColoringTransformer TextColorizer { get; }
-        public TextMarkerService TextMarkerService { get; }
-        public List<IBackgroundRenderer> BackgroundRenderers { get; }
-        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }
-        public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
-        public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
     }
 }

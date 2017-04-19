@@ -1,10 +1,9 @@
-using System.Linq;
-using System.Threading.Tasks;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Languages.CPlusPlus;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Shell;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.STM32
 {
@@ -37,8 +36,6 @@ namespace AvalonStudio.Toolchains.STM32
                 var project = await base.Generate(solution, name);
 
                 project.ToolChain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc is STM32GCCToolchain);
-
-                project.ToolChain.ProvisionSettings(project);
 
                 await SourceFile.Create(project, "main.cpp", "int main (void){}");
 

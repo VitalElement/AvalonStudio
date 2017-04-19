@@ -11,7 +11,9 @@
         void SetParameterIndex(int index);
 
         void IncrementSignatureIndex();
+
         void DecrementSignatureIndex();
+
         void Close();
 
         bool IsVisible { get; set; }

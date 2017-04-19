@@ -1,6 +1,5 @@
-using System.Linq;
-using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.ToolBars.Models;
+using System.Linq;
 
 namespace AvalonStudio.Extensibility.ToolBars
 {

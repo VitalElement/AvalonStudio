@@ -9,7 +9,6 @@ namespace AvalonStudio.Toolchains.STM32
     using Standard;
     using System;
     using System.Collections.Generic;
-    using System.Dynamic;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -48,7 +47,7 @@ namespace AvalonStudio.Toolchains.STM32
 
         private void GenerateLinkerScript(IStandardProject project)
         {
-            var settings = GetSettings(project).LinkSettings;
+            var settings = project.GetSettings<GccToolchainSettings>().LinkSettings;
             var template = new ArmGCCLinkTemplate(settings);
 
             var linkerScript = GetLinkerScriptLocation(project);
@@ -60,13 +59,13 @@ namespace AvalonStudio.Toolchains.STM32
 
             using (var sw = System.IO.File.CreateText(linkerScript))
             {
-               // sw.Write(template.TransformText());
+                // sw.Write(template.TransformText());
             }
         }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
         {
-            var settings = GetSettings(superProject);
+            var settings = superProject.GetSettings<GccToolchainSettings>();
             string result = string.Empty;
 
             // TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
@@ -99,7 +98,7 @@ namespace AvalonStudio.Toolchains.STM32
                 GenerateLinkerScript(superProject);
             }
 
-            var settings = GetSettings(project);
+            var settings = project.GetSettings<GccToolchainSettings>();
 
             var result = string.Empty;
 
@@ -157,8 +156,7 @@ namespace AvalonStudio.Toolchains.STM32
         {
             var result = string.Empty;
 
-            //var settings = GetSettings(project).CompileSettings;
-            var settings = GetSettings(superProject);
+            var settings = superProject.GetSettings<GccToolchainSettings>();
 
             result += "-Wall -c -fshort-enums ";
 
@@ -214,7 +212,6 @@ namespace AvalonStudio.Toolchains.STM32
                 }
             }
 
-
             switch (settings.CompileSettings.Fpu)
             {
                 case FPUSupport.Soft:
@@ -225,7 +222,6 @@ namespace AvalonStudio.Toolchains.STM32
                     result += "-mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
                     break;
             }
-
 
             // TODO remove dependency on file?
             if (file != null)
@@ -493,7 +489,6 @@ namespace AvalonStudio.Toolchains.STM32
 
                 return result.ExitCode == 0;
             }
-
 
             return true;
         }

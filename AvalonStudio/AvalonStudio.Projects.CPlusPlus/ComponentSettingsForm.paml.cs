@@ -3,16 +3,16 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
-	public class ComponentSettingsForm : UserControl
-	{
-		public ComponentSettingsForm()
-		{
-			InitializeComponent();
-		}
+    public class ComponentSettingsForm : UserControl
+    {
+        public ComponentSettingsForm()
+        {
+            InitializeComponent();
+        }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
-	}
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
+    }
 }

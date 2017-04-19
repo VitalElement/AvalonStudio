@@ -3,7 +3,7 @@ using AvalonStudio.Extensibility.ToolBars.Models;
 
 namespace AvalonStudio.Extensibility.ToolBars
 {
-	public interface IToolBar : IObservableCollection<ToolBarItemBase>
-	{
-	}
+    public interface IToolBar : IObservableCollection<ToolBarItemBase>
+    {
+    }
 }

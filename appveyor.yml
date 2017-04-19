@@ -1,14 +1,17 @@
 version: 0.2.0.{build}
 os: Visual Studio 2017
 install:
-  - if not exist dotnet-1.0.1.exe appveyor DownloadFile https://go.microsoft.com/fwlink/?linkid=843448 -FileName "dotnet-1.0.1.exe"
-  - ps: Start-Process -FilePath "dotnet-1.0.1.exe" -ArgumentList "/quiet" -Wait
+  - if not exist dotnet-dev-win-x64.latest.zip appveyor DownloadFile https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-win-x64.latest.zip -FileName "dotnet-dev-win-x64.latest.zip"  
+  - cmd: 7z x dotnet-dev-win-x64.latest.zip -oc:\dotnet
 
 before_build:
-- cmd: >-
-    git submodule update --init --recursive
+- cmd: git submodule update --init --recursive
+- cmd: path c:\dotnet
+- cmd: dotnet --info  
 
 build_script:
+- cmd: dotnet --info
+- ps: path c:\dotnet
 - ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
 - ps: .\build.ps1
@@ -16,18 +19,8 @@ build_script:
 test: off
 
 artifacts:
-- path: artifacts/zip/AvalonStudio-win7-x64.zip
-- path: artifacts/zip/AvalonStudioBuild-win7-x64.zip
-- path: artifacts/zip/AvalonStudio-ubuntu.14.04-x64.zip
-- path: artifacts/zip/AvalonStudioBuild-ubuntu.14.04-x64.zip
-- path: artifacts/zip/AvalonStudio-debian.8-x64.zip
-- path: artifacts/zip/AvalonStudioBuild-debian.8-x64.zip
-- path: artifacts/zip/AvalonStudio-osx.10.12-x64.zip
-- path: artifacts/zip/AvalonStudioBuild-osx.10.12-x64.zip
+- path: artifacts/zip/*.zip
 - path: latest-version-badge.svg
-
-cache:
-  - dotnet-1.0.1.exe
 
 deploy:
 - provider: Environment
