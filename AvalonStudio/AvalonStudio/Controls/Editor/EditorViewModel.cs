@@ -705,6 +705,5 @@ namespace AvalonStudio.Controls
         }
 
         #endregion Public Methods
-
     }
 }

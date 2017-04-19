@@ -55,7 +55,7 @@ namespace AvalonStudio.Projects.OmniSharp
             return currentProject;
         }
 
-        public OmniSharpServer Server { get { return server; } }
+        public OmniSharpServer Server => server;
 
         public string CurrentDirectory { get; set; }
 

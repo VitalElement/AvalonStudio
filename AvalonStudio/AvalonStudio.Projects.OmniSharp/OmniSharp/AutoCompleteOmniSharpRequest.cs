@@ -18,7 +18,6 @@
         ///   Specifies whether to return the code documentation
         ///   each and every returned autocomplete result
         /// </summary>
-
         public bool WantDocumentationForEveryCompletionResult { get; set; }
 
         /// <summary

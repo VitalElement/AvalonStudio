@@ -43,11 +43,6 @@ namespace AvalonStudio.Packages
             return base.UninstallPackageAsync(packageIdentity, nugetProjectContext, token);
         }
 
-        // Probably going to hell for using a region
-        // The following methods are originally from the internal MSBuildNuGetProjectSystemUtility class
-
-        #region MSBuildNuGetProjectSystemUtility
-
         private static FrameworkSpecificGroup GetMostCompatibleGroup(NuGetFramework projectTargetFramework,
             IEnumerable<FrameworkSpecificGroup> itemGroups)
         {
@@ -84,7 +79,5 @@ namespace AvalonStudio.Packages
 
             return false;
         }
-
-        #endregion MSBuildNuGetProjectSystemUtility
     }
 }

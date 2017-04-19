@@ -10,15 +10,15 @@ namespace AvalonStudio.Extensibility.Dialogs
 
         private bool isVisible;
 
-        private bool okButtonVisible;
+        private bool okayButtonVisible;
 
         private string title;
 
         private TaskCompletionSource<bool> dialogCloseCompletionSource;
 
-        public ModalDialogViewModelBase(string title, bool okButton = true, bool cancelButton = true)
+        public ModalDialogViewModelBase(string title, bool okayButton = true, bool cancelButton = true)
         {
-            OKButtonVisible = okButton;
+            OKButtonVisible = okayButton;
             CancelButtonVisible = cancelButton;
 
             isVisible = false;
@@ -36,8 +36,8 @@ namespace AvalonStudio.Extensibility.Dialogs
 
         public bool OKButtonVisible
         {
-            get { return okButtonVisible; }
-            set { this.RaiseAndSetIfChanged(ref okButtonVisible, value); }
+            get { return okayButtonVisible; }
+            set { this.RaiseAndSetIfChanged(ref okayButtonVisible, value); }
         }
 
         public virtual ReactiveCommand<object> OKCommand { get; protected set; }
@@ -70,15 +70,5 @@ namespace AvalonStudio.Extensibility.Dialogs
 
             dialogCloseCompletionSource.SetResult(success);
         }
-    }
-
-    public abstract class ModalDialogReactiveObject<T> : ModalDialogViewModelBase
-    {
-        public ModalDialogReactiveObject(T model, string title) : base(title)
-        {
-            Model = model;
-        }
-
-        public T Model { get; private set; }
     }
 }

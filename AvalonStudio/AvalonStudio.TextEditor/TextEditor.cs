@@ -790,8 +790,6 @@ namespace AvalonStudio.TextEditor
 
         #endregion Private Methods
 
-
-
         #region Overrides
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)

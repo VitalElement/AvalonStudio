@@ -5,7 +5,6 @@ namespace AvalonStudio.Extensibility.Utils
 {
     public static class EnumerableExtensions
     {
-        //
         // Summary:
         //     Applies the action to each element in the list.
         //

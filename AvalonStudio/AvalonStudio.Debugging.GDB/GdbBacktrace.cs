@@ -414,37 +414,4 @@ namespace AvalonStudio.Debugging.GDB
         {
         }
     }
-
-    internal class GdbDissassemblyBuffer : DissassemblyBuffer
-    {
-        private GdbSession session;
-
-        public GdbDissassemblyBuffer(GdbSession session, long addr) : base(addr)
-        {
-            this.session = session;
-        }
-
-        public override AssemblyLine[] GetLines(long startAddr, long endAddr)
-        {
-            try
-            {
-                ResultData data = session.RunCommand("-data-disassemble", "-s", startAddr.ToString(), "-e", endAddr.ToString(), "--", "0");
-                ResultData ins = data.GetObject("asm_insns");
-
-                AssemblyLine[] alines = new AssemblyLine[ins.Count];
-                for (int n = 0; n < ins.Count; n++)
-                {
-                    ResultData aline = ins.GetObject(n);
-                    long addr = long.Parse(aline.GetValue("address").Substring(2), NumberStyles.HexNumber);
-                    AssemblyLine line = new AssemblyLine(addr, aline.GetValue("inst"));
-                    alines[n] = line;
-                }
-                return alines;
-            }
-            catch
-            {
-                return new AssemblyLine[0];
-            }
-        }
-    }
 }

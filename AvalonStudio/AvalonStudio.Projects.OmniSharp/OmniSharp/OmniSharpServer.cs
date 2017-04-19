@@ -32,10 +32,6 @@
             return SendRequest(new SignatureHelpOmniSharpRequest() { FileName = file, Buffer = buffer, Line = line, Column = column });
         }
 
-        //var projects = await dataAssociation.OmniSharpServer.SendRequest(new WorkspaceInformationRequest());
-
-        //var projectInfo = await dataAssociation.OmniSharpServer.SendRequest(new ProjectInformationRequest());
-
         public Task<List<CompletionData>> AutoComplete(string file, string buffer, int line, int column, bool wantDocumentationForEveryCompletionResult = true, bool wantImportableTypes = true, bool wantKind = true, bool wantMethodHeader = true, bool wantReturnType = true, bool wantSnippet = true)
         {
             return SendRequest(new AutoCompleteOmniSharpRequest() { FileName = file, Buffer = buffer, Line = line, Column = column, WantDocumentationForEveryCompletionResult = wantDocumentationForEveryCompletionResult, WantImportableTypes = wantImportableTypes, WantKind = wantKind, WantMethodHeader = wantMethodHeader, WantReturnType = wantReturnType, WantSnippet = wantSnippet });

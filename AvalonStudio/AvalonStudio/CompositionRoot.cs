@@ -27,18 +27,6 @@ namespace AvalonStudio
             return configuration.CreateContainer();
         }
 
-        //private static List<ComposablePartCatalog> GetCatalogsToImport()
-        //{
-        //	var pluginsCatalog = new DirectoryCatalog(PluginsFolder);
-        //	var assemblyCatalogs = ScannedAssemblies.Select(assembly => new AssemblyCatalog(assembly));
-
-        //	var catalogs = new List<ComposablePartCatalog>();
-        //	catalogs.Add(pluginsCatalog);
-        //	catalogs.AddRange(assemblyCatalogs);
-
-        //	return catalogs;
-        //}
-
         private static void EnsurePluginsFolder()
         {
             Directory.CreateDirectory(PluginsFolder);

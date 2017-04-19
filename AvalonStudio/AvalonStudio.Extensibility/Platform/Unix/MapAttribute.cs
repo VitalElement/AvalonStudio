@@ -1,12 +1,9 @@
-//
 // MapAttribute.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@gnome.org)
 //
 // (C) Novell, Inc.
-//
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

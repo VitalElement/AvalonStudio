@@ -209,9 +209,7 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             foreach (var tuple in GetOffsetForLinesInSegmentOnScreen(textView, segment, extendToFullWidthAtLineEnd))
             {
-                yield return
-                    new Rect(GetViewPortPosition(textView, tuple.Item1).TopLeft, GetViewPortPosition(textView, tuple.Item2).BottomLeft)
-                    ;
+                yield return new Rect(GetViewPortPosition(textView, tuple.Item1).TopLeft, GetViewPortPosition(textView, tuple.Item2).BottomLeft);
             }
         }
     }

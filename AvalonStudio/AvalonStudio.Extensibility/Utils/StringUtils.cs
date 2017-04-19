@@ -7,10 +7,10 @@ namespace AvalonStudio.Extensibility
 {
     public static class Ext
     {
-        public static string StripHTML(this string HTMLText)
+        public static string StripHTML(this string html)
         {
             Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
-            var stripped = reg.Replace(HTMLText, "");
+            var stripped = reg.Replace(html, "");
             return stripped;
         }
 
