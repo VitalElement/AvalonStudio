@@ -77,7 +77,7 @@ namespace AvalonStudio.Utils
             var max = list.Count;
             while (min < max)
             {
-                var mid = min + (max - min) / 2;
+                var mid = min + ((max - min) / 2);
                 var midItem = list[mid];
 
                 var comp = midItem.CompareTo(key);

@@ -68,7 +68,6 @@
             //startInfo.RedirectStandardError = true;
             //startInfo.RedirectStandardInput = true;
             //startInfo.CreateNoWindow = true;
-
             TaskCompletionSource<Process> processStartedCompletionSource = new TaskCompletionSource<Process>();
 
             Task.Factory.StartNew(async () =>

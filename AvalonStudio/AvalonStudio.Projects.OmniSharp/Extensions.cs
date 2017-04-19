@@ -33,7 +33,7 @@
 
         public static bool IsWithinLineOnly(this SequencePoint point, UInt32 line)
         {
-            return (point.StartLine <= line && line <= point.EndLine);
+            return point.StartLine <= line && line <= point.EndLine;
         }
 
         public static bool IsGreaterThan(this SequencePoint point, UInt32 line, UInt32 column)
