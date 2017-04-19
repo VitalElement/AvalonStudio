@@ -6,6 +6,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     internal class MenuDefinitions : IExtension
     {
+        static MenuDefinitions()
+        {
+            // Do Nothing
+        }
+
         public static readonly MenuItemDefinition NewSolutionMenuItem = new MenuItemDefinition<NewSolutionCommandDefinition>(Extensibility.MenuDefinitions.FileNewOpenMenuGroup, "New Solution", 0);
 
         public static readonly MenuItemDefinition FileOpenSolutionItem = new MenuItemDefinition<OpenSolutionCommandDefinition>(Extensibility.MenuDefinitions.FileNewOpenMenuGroup, "Open Solution", 0);

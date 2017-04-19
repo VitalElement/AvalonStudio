@@ -5,6 +5,11 @@ namespace AvalonStudio.Extensibility
 
     public class MenuDefinitions : IExtension
     {
+        static MenuDefinitions()
+        {
+            // Do Nothing
+        }
+
         public static readonly MenuBarDefinition MainMenuBar = new MenuBarDefinition();
 
         public static readonly MenuDefinition FileMenu = new MenuDefinition(MainMenuBar, 0, "_File");

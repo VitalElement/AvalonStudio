@@ -8,6 +8,7 @@ namespace AvalonStudio.Shell
     {
         static MenuDefinitions()
         {
+            // Do Nothing
         }
 
         public static readonly MenuItemGroupDefinition ToolsPackagesMenuGroup = new MenuItemGroupDefinition(Extensibility.MenuDefinitions.ToolsMenu, 6);

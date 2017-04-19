@@ -6,6 +6,11 @@ namespace AvalonStudio.Debugging
 
     internal class ToolBarDefinitions : IExtension
     {
+        static ToolBarDefinitions()
+        {
+            // Do Nothing
+        }
+
         public static readonly ToolBarItemGroupDefinition DebuggingGroup = new ToolBarItemGroupDefinition(Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 5);
 
         public static readonly ToolBarItemDefinition StartDebuggingToolBarItem = new ToolBarItemDefinition<StartDebuggingCommandDefinition>(DebuggingGroup, 1);

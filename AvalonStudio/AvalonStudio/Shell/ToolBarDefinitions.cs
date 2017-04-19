@@ -5,6 +5,11 @@ namespace AvalonStudio.Shell.Commands
 {
     public class ToolBarDefinitions : IExtension
     {
+        static ToolBarDefinitions()
+        {
+            // Do Nothing
+        }
+
         public static readonly ToolBarItemGroupDefinition StandardOpenSaveToolBarGroup = new ToolBarItemGroupDefinition(Extensibility.MainToolBar.ToolBarDefinitions.MainToolBar, 1);
 
         public static readonly ToolBarItemDefinition SaveFileToolBarItem = new ToolBarItemDefinition<SaveFileCommandDefinition>(StandardOpenSaveToolBarGroup, 2);
