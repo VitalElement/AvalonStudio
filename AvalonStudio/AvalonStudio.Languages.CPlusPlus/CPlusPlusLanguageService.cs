@@ -496,7 +496,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
 
                         var existingFile = db.GetOrCreateSourceFile(file, out bool modified);
-                        //if(modified)
+                        
+                        if(modified)
                         {
                             console.WriteLine($"Analysing File: {file.Location}");
 
