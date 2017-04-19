@@ -34,7 +34,7 @@ namespace AvalonStudio.Extensibility.Utils
 
         private static bool IsCandidateCompilationLibrary(Library compilationLibrary)
         {
-            return compilationLibrary.Name.ToLower() == ("avalonStudio")
+            return compilationLibrary.Name.ToLower() == "avalonStudio"
                 || compilationLibrary.Dependencies.Any(d => d.Name.ToLower().StartsWith("avalonstudio"));
         }
     }

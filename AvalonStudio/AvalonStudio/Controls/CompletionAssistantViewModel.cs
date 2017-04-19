@@ -79,8 +79,15 @@
 
         public bool IsVisible
         {
-            get { return isVisible; }
-            set { this.RaiseAndSetIfChanged(ref isVisible, value); intellisense.InvalidateIsOpen(); }
+            get
+            {
+                return isVisible;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref isVisible, value);
+                intellisense.InvalidateIsOpen();
+            }
         }
 
         private SignatureHelpViewModel currentMethod;

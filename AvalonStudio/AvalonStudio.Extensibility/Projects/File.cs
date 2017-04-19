@@ -59,7 +59,8 @@
 
         public int CompareTo(IProjectItem other)
         {
-            return this.CompareProjectItems(other); throw new NotImplementedException();
+            return this.CompareProjectItems(other);
+            throw new NotImplementedException();
         }
 
         public void RaiseFileModifiedEvent()

@@ -67,7 +67,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         private void JLinkGdbSession_TargetReady(object sender, TargetEventArgs e)
         {
-            bool result = (RunCommand("-target-select", "remote", ":2331").Status == CommandStatus.Done);
+            bool result = RunCommand("-target-select", "remote", ":2331").Status == CommandStatus.Done;
 
             if (result)
             {

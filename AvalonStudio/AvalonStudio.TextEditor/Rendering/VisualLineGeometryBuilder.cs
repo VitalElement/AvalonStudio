@@ -46,7 +46,7 @@ namespace AvalonStudio.TextEditor.Rendering
                     textView.CharSize.Height);
             }
 
-            return new Rect(textView.TextSurfaceBounds.X + textView.CharSize.Width * (position.Column - 1),
+            return new Rect(textView.TextSurfaceBounds.X + (textView.CharSize.Width * (position.Column - 1)),
                 textView.CharSize.Height * (position.Line - 1),
                 textView.CharSize.Width,
                 textView.CharSize.Height);

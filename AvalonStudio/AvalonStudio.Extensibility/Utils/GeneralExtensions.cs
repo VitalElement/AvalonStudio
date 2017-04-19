@@ -32,7 +32,7 @@ namespace AvalonStudio.Utils
         {
             var a = p.X - q.X;
             var b = p.Y - q.Y;
-            var distance = Math.Sqrt(a * a + b * b);
+            var distance = Math.Sqrt((a * a) + (b * b));
             return distance;
         }
 
@@ -43,7 +43,7 @@ namespace AvalonStudio.Utils
             var max = list.Count;
             while (min < max)
             {
-                var mid = min + (max - min) / 2;
+                var mid = min + ((max - min) / 2);
                 var midItem = list[mid];
                 var midKey = keySelector(midItem);
                 var comp = midKey.CompareTo(key);
@@ -96,7 +96,7 @@ namespace AvalonStudio.Utils
             }
 
             if (min == max && min < list.Count &&
-                (list[min]).CompareTo(key) == 0)
+                list[min].CompareTo(key) == 0)
             {
                 return list[min];
             }
@@ -116,7 +116,7 @@ namespace AvalonStudio.Utils
 
             while (lower <= upper)
             {
-                int middle = lower + (upper - lower) / 2;
+                int middle = lower + ((upper - lower) / 2);
                 int comparisonResult = list[middle].CompareTo(value);
 
                 if (comparisonResult < 0)

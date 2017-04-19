@@ -83,8 +83,15 @@ namespace AvalonStudio.Controls
 
         public bool IsVisible
         {
-            get { return isVisible; }
-            set { this.RaiseAndSetIfChanged(ref isVisible, value); InvalidateIsOpen(); }
+            get
+            {
+                return isVisible;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref isVisible, value);
+                InvalidateIsOpen();
+            }
         }
 
         public IList<CompletionDataViewModel> CompletionData

@@ -9,7 +9,7 @@
 
         public bool Equals(RecentProject other)
         {
-            return (Name == other.Name && Path == other.Path);
+            return Name == other.Name && Path == other.Path;
         }
 
         public override bool Equals(object obj)

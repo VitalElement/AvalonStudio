@@ -70,7 +70,7 @@ namespace AvalonStudio.Controls
                     // Dispatcher invoke is hack to make sure the Editor propery has been generated.
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        var vm = (value as EditorViewModel);
+                        var vm = value as EditorViewModel;
                         vm.Model.Editor?.Focus();
                         vm.Model.TriggerCodeAnalysis();
                     });

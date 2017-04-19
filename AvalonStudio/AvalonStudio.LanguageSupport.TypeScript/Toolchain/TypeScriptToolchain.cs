@@ -69,7 +69,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
 
         public bool CanHandle(IProject project)
         {
-            return (project is TypeScriptProject);
+            return project is TypeScriptProject;
         }
 
         public async Task Clean(IConsole console, IProject project)

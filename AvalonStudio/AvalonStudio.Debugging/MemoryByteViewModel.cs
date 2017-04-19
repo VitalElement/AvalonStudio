@@ -28,8 +28,15 @@
 
         public T Value
         {
-            get { return dataValue; }
-            set { this.RaiseAndSetIfChanged(ref dataValue, value); this.RaisePropertyChanged(nameof(FormattedValue)); }
+            get
+            {
+                return dataValue;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref dataValue, value);
+                this.RaisePropertyChanged(nameof(FormattedValue));
+            }
         }
 
         private bool hasChanged;

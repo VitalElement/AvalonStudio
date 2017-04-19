@@ -33,8 +33,15 @@
 
         public IntegerSize IntegerDisplaySize
         {
-            get { return integerDisplaySize; }
-            set { this.RaiseAndSetIfChanged(ref integerDisplaySize, value); Count = Count; }
+            get
+            {
+                return integerDisplaySize;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref integerDisplaySize, value);
+                Count = Count;
+            }
         }
 
         public MemoryViewDataProvider(int columns)
@@ -151,7 +158,7 @@
 
             for (int i = 0; i < pageCount; i++)
             {
-                ulong address = ((ulong)startIndex * (ulong)columns) + (ulong)i * (ulong)columns;
+                ulong address = (((ulong)startIndex * (ulong)columns)) + ((ulong)i * (ulong)columns);
 
                 var data = await ReadMemoryBytesAsync(address, 0, (uint)columns);
 

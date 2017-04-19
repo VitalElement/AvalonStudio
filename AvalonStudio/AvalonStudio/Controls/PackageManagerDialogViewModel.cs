@@ -30,7 +30,7 @@ namespace AvalonStudio.Controls
 
         private void InvalidateInstalledPackages()
         {
-            InstalledPackages = new ObservableCollection<PackageIdentityViewModel>((_packageManager.ListInstalledPackages()).Select(pr => new PackageIdentityViewModel(pr)));
+            InstalledPackages = new ObservableCollection<PackageIdentityViewModel>(_packageManager.ListInstalledPackages().Select(pr => new PackageIdentityViewModel(pr)));
         }
 
         public PackageManagerDialogViewModel()

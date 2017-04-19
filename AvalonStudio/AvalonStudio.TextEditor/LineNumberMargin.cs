@@ -30,7 +30,7 @@ namespace AvalonStudio.TextEditor
         {
             if (textView.TextDocument != null)
             {
-                Width = textInfo.CharWidth * textInfo.NumLines.ToString().Length + 12;
+                Width = (textInfo.CharWidth * textInfo.NumLines.ToString().Length) + 12;
 
                 if (textView != null && textView.VisualLines.Count > 0)
                 {

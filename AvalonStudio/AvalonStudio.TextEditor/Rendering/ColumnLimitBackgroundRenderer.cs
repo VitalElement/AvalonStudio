@@ -12,7 +12,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            var horizontalPosition = textView.TextSurfaceBounds.X + textView.CharSize.Width * 120.0;
+            var horizontalPosition = textView.TextSurfaceBounds.X + (textView.CharSize.Width * 120.0);
 
             drawingContext.DrawLine(new Pen(brush, 1), new Point(horizontalPosition, 0), new Point(horizontalPosition, textView.Bounds.Bottom));
         }
