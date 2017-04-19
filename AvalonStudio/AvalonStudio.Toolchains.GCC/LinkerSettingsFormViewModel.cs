@@ -1,18 +1,17 @@
 namespace AvalonStudio.Toolchains.GCC
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Windows.Input;
+    using Avalonia.Controls;
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.Standard;
     using AvalonStudio.Toolchains.Standard;
-    using ReactiveUI;
-    using Avalonia.Controls;
-    using Utils;
-    using System.IO;
     using Platforms;
+    using ReactiveUI;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Windows.Input;
+    using Utils;
 
     public class LinkerSettingsFormViewModel : HeaderedViewModel<IProject>
     {
@@ -54,22 +53,7 @@ namespace AvalonStudio.Toolchains.GCC
 
         public LinkerSettingsFormViewModel(IProject project) : base("Linker", project)
         {
-            try
-            {
-                try
-                {
-                    settings = GCCToolchain.GetSettings(project).LinkSettings;
-                }
-                catch (Exception)
-                {
-                    Model.ToolchainSettings.GccToolchainSettings = new GccToolchainSettings();
-                }
-            }
-            catch (Exception)
-            {
-                Model.ToolchainSettings.GccToolchainSettings = new GccToolchainSettings();
-                settings = Model.ToolchainSettings.GccToolchainSettings.LinkSettings;
-            }
+            settings = project.GetSettings<GccToolchainSettings>().LinkSettings;
 
             if (settings == null)
             {
@@ -425,7 +409,11 @@ namespace AvalonStudio.Toolchains.GCC
             settings.MiscLinkerArguments = miscOptions;
             settings.Library = (LibraryType)librarySelectedIndex;
 
-            Model.ToolchainSettings.GccToolchainSettings.LinkSettings = settings;
+            var currentSettings = Model.GetSettings<GccToolchainSettings>();
+            currentSettings.LinkSettings = settings;
+
+            Model.SetSettings(currentSettings);
+
             Model.Save();
         }
 

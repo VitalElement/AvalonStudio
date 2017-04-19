@@ -1,11 +1,11 @@
-﻿using AvalonStudio.Projects;
+﻿using AvalonStudio.CommandLineTools;
 using AvalonStudio.LanguageSupport.TypeScript.Projects;
+using AvalonStudio.Projects;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AvalonStudio.CommandLineTools;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
 {
@@ -36,7 +36,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
         {
             console.WriteLine($"Build Started - {project.Name}");
             //Make sure tools are available
-            if (!PlatformSupport.CheckExecutableAvailability("tsc")) //Check if TSC is available
+            if (!PlatformSupport.CheckExecutableAvailability("tsc"))
             {
                 //TypeScript compiler missing
                 console.WriteLine("The TypeScript compiler `tsc` is not available on your path. Please install it with `npm install -g typescript`");
@@ -53,23 +53,23 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
             console.WriteLine($"Using TypeScript compiler {tscVersionResult.Output}");
 
             console.WriteLine($"TypeScript compile started...");
-            var tsCompileExitCode = PlatformSupport.ExecuteShellCommand("tsc", $"-p {project.CurrentDirectory}", (s, a) => console.WriteLine(a.Data));
+            var compileExitCode = PlatformSupport.ExecuteShellCommand("tsc", $"-p {project.CurrentDirectory}", (s, a) => console.WriteLine(a.Data));
 
-            if (tsCompileExitCode != 0) //compile error
+            if (compileExitCode != 0)
             {
-                console.WriteLine($"Build completed with code {tsCompileExitCode}");
+                console.WriteLine($"Build completed with code {compileExitCode}");
             }
             else
             {
                 console.WriteLine("Build completed successfully.");
             }
 
-            return Task.FromResult(tsCompileExitCode == 0);
+            return Task.FromResult(compileExitCode == 0);
         }
 
         public bool CanHandle(IProject project)
         {
-            return (project is TypeScriptProject);
+            return project is TypeScriptProject;
         }
 
         public async Task Clean(IConsole console, IProject project)

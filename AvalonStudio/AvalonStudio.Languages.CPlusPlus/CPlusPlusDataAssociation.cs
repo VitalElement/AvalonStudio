@@ -1,8 +1,6 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus
 {
     using Avalonia.Input;
-    using Avalonia.Interactivity;
-    using Avalonia.Media;
     using AvalonStudio.Languages.CPlusPlus.Rendering;
     using AvalonStudio.TextEditor.Document;
     using AvalonStudio.TextEditor.Rendering;

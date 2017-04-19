@@ -1,9 +1,3 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -11,12 +5,18 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using OmniXaml.Attributes;
-using Avalonia.LogicalTree;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Windows.Input;
 
 namespace AvalonStudio.TextEditor
 {
@@ -29,7 +29,7 @@ namespace AvalonStudio.TextEditor
 
         public TextView TextView { get; private set; }
 
-        #endregion
+        #endregion Properties
 
         public void ScrollToLine(int line)
         {
@@ -151,12 +151,13 @@ namespace AvalonStudio.TextEditor
             highestUserSelectedColumn = 1;
         }
 
-        #endregion
+        #endregion Contructors
 
-        #region Private Data        
+        #region Private Data
+
         private int highestUserSelectedColumn;
 
-        #endregion
+        #endregion Private Data
 
         #region Pespex Properties
 
@@ -386,6 +387,7 @@ namespace AvalonStudio.TextEditor
                 (o, v) => o.Offset = v);
 
         private Vector offset;
+
         public Vector Offset
         {
             get
@@ -401,7 +403,7 @@ namespace AvalonStudio.TextEditor
             }
         }
 
-        #endregion
+        #endregion Pespex Properties
 
         #region Private Methods
 
@@ -567,7 +569,7 @@ namespace AvalonStudio.TextEditor
             }
         }
 
-        private void MoveForward(int count, int caretIndex)
+        private int MoveForward(int count, int caretIndex)
         {
             for (var i = 0; i < Math.Abs(count); i++)
             {
@@ -586,9 +588,11 @@ namespace AvalonStudio.TextEditor
                         TextUtilities.CaretPositioningMode.Normal);
                 }
             }
+
+            return caretIndex;
         }
 
-        private void MoveBackward(int count, int caretIndex)
+        private int MoveBackward(int count, int caretIndex)
         {
             for (var i = 0; i < Math.Abs(count); i++)
             {
@@ -607,6 +611,8 @@ namespace AvalonStudio.TextEditor
                         TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.Normal);
                 }
             }
+
+            return caretIndex;
         }
 
         private void MoveHorizontal(int count, InputModifiers modifiers)
@@ -628,14 +634,12 @@ namespace AvalonStudio.TextEditor
                 {
                     if (count > 0)
                     {
-                        MoveForward(count, caretIndex);
+                        CaretIndex = MoveForward(count, caretIndex);
                     }
                     else
                     {
-                        MoveBackward(count, caretIndex);
+                        CaretIndex = MoveBackward(count, caretIndex);
                     }
-
-                    CaretIndex = caretIndex;
                 }
 
                 SetHighestColumn();
@@ -752,6 +756,7 @@ namespace AvalonStudio.TextEditor
             private readonly int caretPosition;
             private readonly int selectionEnd;
             private readonly int selectionStart;
+
             // keep textarea in weak reference because the IUndoableOperation is stored with the document
             private readonly WeakReference textAreaReference;
 
@@ -782,7 +787,8 @@ namespace AvalonStudio.TextEditor
                 Undo();
             }
         }
-        #endregion        
+
+        #endregion Private Methods
 
         #region Overrides
 
@@ -796,7 +802,7 @@ namespace AvalonStudio.TextEditor
             {
                 if (args.NewValue != null)
                 {
-                    // Todo unsubscribe these events.                 
+                    // Todo unsubscribe these events.
                     TextDocument.Changing += (sender, ee) =>
                     {
                         TextDocument?.UndoStack.PushOptional(new RestoreCaretAndSelectionUndoAction(this));
@@ -843,6 +849,7 @@ namespace AvalonStudio.TextEditor
                         case 1:
                             SelectionStart = SelectionEnd = index;
                             break;
+
                         case 2:
                             SelectionStart = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Backward,
                                 TextUtilities.CaretPositioningMode.WordStart);
@@ -850,6 +857,7 @@ namespace AvalonStudio.TextEditor
                             SelectionEnd = TextUtilities.GetNextCaretPosition(TextDocument, index, TextUtilities.LogicalDirection.Forward,
                                 TextUtilities.CaretPositioningMode.WordBorder);
                             break;
+
                         case 3:
                             SelectionStart = 0;
                             SelectionEnd = text.TextLength;
@@ -955,7 +963,7 @@ namespace AvalonStudio.TextEditor
             }
         }
 
-        private void OnBackKey ()
+        private void OnBackKey()
         {
             // TODO use thread-safe copy of caret index.
             if (!DeleteSelection() && CaretIndex > 0)
@@ -978,7 +986,7 @@ namespace AvalonStudio.TextEditor
             }
         }
 
-        void OnTabKey(KeyEventArgs e)
+        private void OnTabKey(KeyEventArgs e)
         {
             var shiftedLines = false;
 
@@ -1208,7 +1216,7 @@ namespace AvalonStudio.TextEditor
                 SelectionEnd = CaretIndex;
             }
             else if (movement)
-            {                
+            {
                 SelectionStart = SelectionEnd = CaretIndex;
             }
 
@@ -1218,6 +1226,6 @@ namespace AvalonStudio.TextEditor
             }
         }
 
-        #endregion
+        #endregion Overrides
     }
 }

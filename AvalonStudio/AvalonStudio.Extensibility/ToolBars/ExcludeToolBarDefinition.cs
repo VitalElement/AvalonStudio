@@ -1,12 +1,12 @@
 namespace AvalonStudio.Extensibility.ToolBars
 {
-	public class ExcludeToolBarDefinition
-	{
-		public ExcludeToolBarDefinition(ToolBarDefinition toolBarDefinition)
-		{
-			ToolBarDefinitionToExclude = toolBarDefinition;
-		}
+    public class ExcludeToolBarDefinition
+    {
+        public ExcludeToolBarDefinition(ToolBarDefinition toolBarDefinition)
+        {
+            ToolBarDefinitionToExclude = toolBarDefinition;
+        }
 
-		public ToolBarDefinition ToolBarDefinitionToExclude { get; }
-	}
+        public ToolBarDefinition ToolBarDefinitionToExclude { get; }
+    }
 }

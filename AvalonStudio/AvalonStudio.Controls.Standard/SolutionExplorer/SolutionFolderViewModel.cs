@@ -4,7 +4,7 @@
 //    using Microsoft.Win32;
 //    using System;
 //    using System.Collections.ObjectModel;
-//    using System.Windows.Input;    
+//    using System.Windows.Input;
 //    using AvalonStudio.MVVM;
 //    using Avalonia.Controls;
 //    using ReactiveUI;
@@ -13,7 +13,6 @@
 //    {
 //        public SolutionFolderViewModel(SolutionFolder folder) : base(folder)
 //        {
-
 //        }
 
 //        public static SolutionFolderViewModel Create(SolutionFolder folder)
@@ -30,7 +29,6 @@
 //        {
 //            Children = new ObservableCollection<ViewModel>();
 //            Children.BindCollections(Model.Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.Model == m);
-
 
 //            AddNewFolderCommand = ReactiveCommand.Create();
 //            AddNewFolderCommand.Subscribe((args) =>
@@ -67,7 +65,6 @@
 //                    }
 //                }
 //            });
-
 
 //            RemoveCommand = ReactiveCommand.Create();
 //            RemoveCommand.Subscribe((o) =>
@@ -119,7 +116,6 @@
 //            get { return base.Model as SolutionFolder; }
 //        }
 
-
 //        private ObservableCollection<ViewModel> children;
 //        public ObservableCollection<ViewModel> Children
 //        {
@@ -135,4 +131,3 @@
 //        }
 //    }
 //}
-

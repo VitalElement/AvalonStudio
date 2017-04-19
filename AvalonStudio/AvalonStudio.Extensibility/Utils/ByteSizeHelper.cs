@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AvalonStudio.Extensibility.Utils
+﻿namespace AvalonStudio.Extensibility.Utils
 {
     public static class ByteSizeHelper
     {

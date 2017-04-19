@@ -7,26 +7,10 @@
     using System.Reactive;
     using System.Reactive.Concurrency;
 
-    public class PropertyHelper<TRet>
-    {
-        public PropertyHelper(IReactiveObject source, IObservable<TRet> observable, string propertyName)
-        {
-            observable.Subscribe(
-                v =>
-                {
-                    source.RaisePropertyChanging(propertyName);
-                    Value = v;
-                    source.RaisePropertyChanged(propertyName);
-                });
-        }
-
-        public TRet Value { get; set; }
-    }
-
     public static class AvaloniaObservableExtensions
     {
         public static PropertyHelper<TRet> ToProperty<TObj, TRet>(
-            this IObservable<TRet> This,
+            this IObservable<TRet> instance,
             TObj source,
             Expression<Func<TObj, TRet>> property,
             TRet initialValue = default(TRet),
@@ -34,12 +18,11 @@
             IScheduler scheduler = null)
             where TObj : IReactiveObject
         {
-            return source.ObservableToProperty(This, property, initialValue, deferSubscription, scheduler);
+            return source.ObservableToProperty(instance, property, initialValue, deferSubscription, scheduler);
         }
 
-
         public static PropertyHelper<TRet> ObservableToProperty<TObj, TRet>(
-                this TObj This,
+                this TObj instance,
                 IObservable<TRet> observable,
                 Expression<Func<TObj, TRet>> property,
                 TRet initialValue = default(TRet),
@@ -47,7 +30,6 @@
                 IScheduler scheduler = null)
             where TObj : IReactiveObject
         {
-
             Expression expression = Reflection.Rewrite(property.Body);
 
             if (expression.GetParent().NodeType != ExpressionType.Parameter)
@@ -59,9 +41,8 @@
             if (expression is IndexExpression)
                 name += "[]";
 
-            return new PropertyHelper<TRet>(This, observable, name);
+            return new PropertyHelper<TRet>(instance, observable, name);
         }
-
 
         public static IObservable<TSource> ObserveOnUi<TSource>(this IObservable<TSource> source)
         {
@@ -73,6 +54,5 @@
                         () => Dispatcher.UIThread.InvokeAsync(() => observer.OnCompleted()));
             });
         }
-
     }
 }

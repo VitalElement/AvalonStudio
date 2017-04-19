@@ -1,11 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Xml.Linq;
-using AvalonStudio.Extensibility;
+﻿using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
 using ReactiveUI;
+using System;
+using System.IO;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {

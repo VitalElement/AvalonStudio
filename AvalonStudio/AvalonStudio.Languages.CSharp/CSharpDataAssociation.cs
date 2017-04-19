@@ -8,6 +8,7 @@
     using System.Collections.Generic;
     using TextEditor.Document;
     using TextEditor.Rendering;
+
     internal class CSharpDataAssociation
     {
         public CSharpDataAssociation(TextDocument textDocument)

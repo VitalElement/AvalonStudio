@@ -4,11 +4,8 @@
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.MVVM;
     using ReactiveUI;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public class SignatureViewModel : ViewModel<Signature>
     {
@@ -27,12 +24,16 @@
         public List<ParameterViewModel> Parameters { get; private set; }
 
         private ParameterViewModel selectedParameter;
+
         public ParameterViewModel SelectedParameter
         {
-            get { return selectedParameter; }
+            get
+            {
+                return selectedParameter;
+            }
             set
             {
-                if(selectedParameter != null)
+                if (selectedParameter != null)
                 {
                     selectedParameter.ResetFontWeight();
                 }
@@ -43,7 +44,6 @@
                 }
 
                 this.RaiseAndSetIfChanged(ref selectedParameter, value);
-                
             }
         }
 
@@ -54,7 +54,6 @@
                 return Parameters.Count > 0;
             }
         }
-
 
         public string Name
         {
@@ -81,9 +80,13 @@
         }
 
         private int parameterIndex;
+
         public int ParameterIndex
         {
-            get { return parameterIndex; }
+            get
+            {
+                return parameterIndex;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref parameterIndex, value);

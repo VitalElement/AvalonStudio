@@ -1,12 +1,11 @@
 ﻿namespace AvalonStudio.Controls
 {
-    using System.Collections.ObjectModel;
     using AvalonStudio.MVVM;
     using ReactiveUI;
-    using System.Collections.Specialized;
     using System;
-    using System.Reactive.Disposables;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
 
     public class TabControlViewModel : ViewModel
     {
@@ -93,6 +92,7 @@
         }
 
         private bool isVisible;
+
         public bool IsVisible
         {
             get { return isVisible; }

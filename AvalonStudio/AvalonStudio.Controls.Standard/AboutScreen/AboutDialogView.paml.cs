@@ -3,16 +3,16 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Controls.Standard.AboutScreen
 {
-	public class AboutDialogView : UserControl
-	{
-		public AboutDialogView()
-		{
-			InitializeComponent();
-		}
+    public class AboutDialogView : UserControl
+    {
+        public AboutDialogView()
+        {
+            InitializeComponent();
+        }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
-	}
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
+    }
 }

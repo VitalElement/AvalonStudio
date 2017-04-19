@@ -1,16 +1,16 @@
-using System;
-using System.Linq;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
-using AvalonStudio.Debugging;
 using AvalonStudio.Platforms;
+using Mono.Debugging.Client;
+using System;
+using System.Linq;
 
 namespace AvalonStudio.TextEditor
 {
     public class BreakPointMargin : TextViewMargin
     {
-        private readonly BreakPointManager manager;
+        private readonly BreakpointStore _manager;
 
         private int previewLine;
         private bool previewPointVisible;
@@ -20,14 +20,14 @@ namespace AvalonStudio.TextEditor
             FocusableProperty.OverrideDefaultValue(typeof(BreakPointMargin), true);
         }
 
-        public BreakPointMargin(BreakPointManager manager)
+        public BreakPointMargin(BreakpointStore manager)
         {
             if (manager == null)
             {
                 throw new ArgumentNullException("manager");
             }
 
-            this.manager = manager;
+            this._manager = manager;
         }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -49,7 +49,7 @@ namespace AvalonStudio.TextEditor
                         Bounds.Size.Width / 1.5, textInfo.LineHeight / 1.5), (float)textInfo.LineHeight);
             }
 
-            foreach (var breakPoint in manager?.Where(bp => bp.File.IsSamePathAs(textView.TextDocument.FileName)))
+            foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(textView.TextDocument.FileName)))
             {
                 context.FillRectangle(Brush.Parse("#FF3737"),
                     new Rect((Bounds.Size.Width / 4) - 1,
@@ -72,7 +72,7 @@ namespace AvalonStudio.TextEditor
             InvalidateVisual();
         }
 
-        protected override async void OnPointerReleased(PointerEventArgs e)
+        protected override void OnPointerReleased(PointerEventArgs e)
         {
             previewPointVisible = true;
 
@@ -84,17 +84,17 @@ namespace AvalonStudio.TextEditor
                 lineClicked = textView.TextDocument.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
 
                 var currentBreakPoint =
-                    manager.FirstOrDefault(bp => bp.File == textView.TextDocument.FileName && bp.Line == lineClicked);
+                    _manager.OfType<Breakpoint>().FirstOrDefault(bp => bp.FileName == textView.TextDocument.FileName && bp.Line == lineClicked) as BreakEvent;
 
                 if (currentBreakPoint != null)
                 {
-                    await manager.Remove(currentBreakPoint);
+                    _manager.Remove(currentBreakPoint);
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(textView.TextDocument.FileName))
                     {
-                        await manager.Add(new BreakPoint { File = textView.TextDocument.FileName, Line = (uint)lineClicked });
+                        _manager.Add(textView.TextDocument.FileName, lineClicked);
                     }
                 }
             }

@@ -1,27 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Composition;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TextEditor.Document;
-using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Utils;
-using System.Reactive.Subjects;
+using System;
+using System.Collections.Generic;
+using System.Composition;
+using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
     [Export(typeof(EditorModel))]
     public class EditorModel : IDisposable
     {
-        public static List<UnsavedFile> _unsavedFiles;
+        private static List<UnsavedFile> _unsavedFiles;
 
         public static List<UnsavedFile> UnsavedFiles
         {
@@ -35,7 +35,6 @@ namespace AvalonStudio.Controls
                 return _unsavedFiles;
             }
         }
-
 
         private CancellationTokenSource cancellationSource;
 
@@ -51,7 +50,7 @@ namespace AvalonStudio.Controls
             codeAnalysisRunner = new JobRunner();
             TextDocument = new TextDocument();
 
-            AnalysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(500))
+            analysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(500))
             .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });
 
             //AnalysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(500)).Subscribe(async _ =>
@@ -69,7 +68,10 @@ namespace AvalonStudio.Controls
 
         public CodeAnalysisResults CodeAnalysisResults
         {
-            get { return codeAnalysisResults; }
+            get
+            {
+                return codeAnalysisResults;
+            }
             set
             {
                 codeAnalysisResults = value;
@@ -78,11 +80,9 @@ namespace AvalonStudio.Controls
             }
         }
 
-
         public ILanguageService LanguageService { get; set; }
 
         public bool IsDirty { get; set; }
-
 
         public void Dispose()
         {
@@ -110,6 +110,7 @@ namespace AvalonStudio.Controls
         }
 
         public event EventHandler<EventArgs> DocumentLoaded;
+
         public event EventHandler<EventArgs> TextChanged;
 
         public void UnRegisterLanguageService()
@@ -258,7 +259,7 @@ namespace AvalonStudio.Controls
         {
         }
 
-        private Subject<bool> AnalysisTriggerEvents = new Subject<bool>();
+        private Subject<bool> analysisTriggerEvents = new Subject<bool>();
 
         private async Task<bool> DoCodeAnalysisAsync()
         {
@@ -281,7 +282,7 @@ namespace AvalonStudio.Controls
         /// </summary>
         public void TriggerCodeAnalysis()
         {
-            AnalysisTriggerEvents.OnNext(true);
+            analysisTriggerEvents.OnNext(true);
         }
 
         public void OnTextChanged(object param)

@@ -3,14 +3,12 @@
     using Avalonia.Controls.Shapes;
     using Avalonia.Input;
     using AvalonStudio.Extensibility.Plugin;
-    using System;
     using System.Windows.Input;
 
     public abstract class CommandDefinition : IExtension
     {
         public CommandDefinition()
         {
-
         }
 
         public abstract string Text { get; }
@@ -21,7 +19,6 @@
 
         public virtual void Activation()
         {
-
         }
 
         public virtual void BeforeActivation()

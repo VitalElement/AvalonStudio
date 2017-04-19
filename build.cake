@@ -36,6 +36,28 @@ if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
         version += "-build" + EnvironmentVariable("APPVEYOR_BUILD_NUMBER");
 }
 
+var MainRepo = "VitalElement/AvalonStudio";
+var MasterBranch = "master";
+var ReleasePlatform = "Any CPU";
+var ReleaseConfiguration = "Release";
+
+var isPlatformAnyCPU = StringComparer.OrdinalIgnoreCase.Equals(platform, "Any CPU");
+var isPlatformX86 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x86");
+var isPlatformX64 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x64");
+var isLocalBuild = BuildSystem.IsLocalBuild;
+var isRunningOnUnix = IsRunningOnUnix();
+var isRunningOnWindows = IsRunningOnWindows();
+var isRunningOnAppVeyor = BuildSystem.AppVeyor.IsRunningOnAppVeyor;
+var isPullRequest = BuildSystem.AppVeyor.Environment.PullRequest.IsPullRequest;
+var isMainRepo = StringComparer.OrdinalIgnoreCase.Equals(MainRepo, BuildSystem.AppVeyor.Environment.Repository.Name);
+var isMasterBranch = StringComparer.OrdinalIgnoreCase.Equals(MasterBranch, BuildSystem.AppVeyor.Environment.Repository.Branch);
+var isTagged = BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag 
+               && !string.IsNullOrWhiteSpace(BuildSystem.AppVeyor.Environment.Repository.Tag.Name);
+var isReleasable = StringComparer.OrdinalIgnoreCase.Equals(ReleasePlatform, platform) 
+                   && StringComparer.OrdinalIgnoreCase.Equals(ReleaseConfiguration, configuration);
+var isMyGetRelease = !isTagged && isReleasable;
+var isNuGetRelease = isTagged && isReleasable;
+
 Task("Clean")
 .Does(()=>{
     CleanDirectories(buildDirs);
@@ -68,7 +90,7 @@ void RunCoreTest(string dir, bool net461Only)
 {
     Information("Running tests from " + dir);
     DotNetCoreRestore(dir);
-    var frameworks = new List<string>(){"netcoreapp1.1"};
+    var frameworks = new List<string>(){"netcoreapp2.0"};
     foreach(var fw in frameworks)
     {
         if(fw != "net461" && net461Only)
@@ -90,6 +112,7 @@ Task("Run-Net-Core-Unit-Tests")
 
 Task("Publish-NetCore")
     .IsDependentOn("Restore-NetCore")
+    .WithCriteria(()=>isMainRepo && isMasterBranch)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -121,6 +144,7 @@ Task("Publish-NetCore")
 
 Task("Zip-NetCore")
     .IsDependentOn("Publish-NetCore")
+    .WithCriteria(()=>isMainRepo && isMasterBranch)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -132,7 +156,7 @@ Task("Zip-NetCore")
             Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix), 
                 GetFiles(outputDir.FullPath + "/*.*"));
         }
-    }
+    }    
 });
 
 Task("Default")

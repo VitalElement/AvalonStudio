@@ -1,6 +1,5 @@
 namespace AvalonStudio.Toolchains.Clang
 {
-    using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Templating;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
@@ -59,13 +58,6 @@ namespace AvalonStudio.Toolchains.Clang
             get { return ".a"; }
         }
 
-        public override void ProvisionSettings(IProject project)
-        {
-            base.ProvisionSettings(project);
-
-            // Provision toolchain specific settings.
-        }
-
         private string GetLinkerScriptLocation(IStandardProject project)
         {
             return Path.Combine(project.CurrentDirectory, "link.ld");
@@ -87,7 +79,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         private void GenerateLinkerScript(IStandardProject project)
         {
-            var settings = GetSettings(project).LinkSettings;
+            var settings = project.GetSettings<GccToolchainSettings>().LinkSettings;
 
             var linkerScript = GetLinkerScriptLocation(project);
 
@@ -106,7 +98,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
         {
-            var settings = GetSettings(superProject);
+            var settings = superProject.GetSettings<GccToolchainSettings>();
             string result = string.Empty;
 
             // TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
@@ -134,7 +126,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
         {
-            var settings = GetSettings(project);
+            var settings = project.GetSettings<GccToolchainSettings>();
 
             if (superProject != null && settings.LinkSettings.UseMemoryLayout && project.Type != ProjectType.StaticLibrary)
             {
@@ -197,8 +189,7 @@ namespace AvalonStudio.Toolchains.Clang
         {
             var result = string.Empty;
 
-            //var settings = GetSettings(project).CompileSettings;
-            var settings = GetSettings(superProject);
+            var settings = superProject.GetSettings<GccToolchainSettings>();
 
             result += "-Wall -c -fshort-enums ";
 
@@ -353,49 +344,32 @@ namespace AvalonStudio.Toolchains.Clang
             // Referenced includes
             var referencedIncludes = project.GetReferencedIncludes();
 
-            referencedIncludes.Select(s => result += $"-I\"{Path.Combine(project.CurrentDirectory, s)}\" ");
+            referencedIncludes.Select(s => result += $"-I\"{ Path.Combine(project.CurrentDirectory, s)}\" ").ToList();
 
             // global includes
             var globalIncludes = superProject.GetGlobalIncludes();
 
-            globalIncludes.Select(s => result += $"-I\"{s}\" ");
+            globalIncludes.Select(s => result += $"-I\"{s}\" ").ToList();
 
             // includes
-            project.Includes.Select(s => result += $"-I\"{Path.Combine(project.CurrentDirectory, s.Value)}\" ");
+            project.Includes.Select(s => result += $"-I\"{ Path.Combine(project.CurrentDirectory, s.Value)}\" ").ToList();
 
             var referencedDefines = project.GetReferencedDefines();
-
-            referencedDefines.Select(s => result += $"-D{s} ");
+            referencedDefines.Select(s => result += $"-D{s} ").ToList();
 
             var toolchainIncludes = GetToolchainIncludes(file);
-
-            foreach (var include in toolchainIncludes)
-            {
-                result += string.Format("-isystem\"{0}\" ", include);
-            }
+            toolchainIncludes.Select(s => result += $"-isystem\"{s}\" ").ToList();
 
             // global includes
             var globalDefines = superProject.GetGlobalDefines();
 
-            foreach (var define in globalDefines)
-            {
-                result += string.Format("-D{0} ", define);
-            }
+            globalDefines.Select(s => result += $"-D{s} ").ToList();
 
-            foreach (var define in project.Defines)
-            {
-                result += string.Format("-D{0} ", define.Value);
-            }
+            project.Defines.Select(s => result += $"-D{s.Value} ").ToList();
 
-            foreach (var arg in superProject.ToolChainArguments)
-            {
-                result += string.Format(" {0}", arg);
-            }
+            superProject.ToolChainArguments.Select(s => result += $" {s}").ToList();
 
-            foreach (var arg in superProject.CompilerArguments)
-            {
-                result += string.Format(" {0}", arg);
-            }
+            superProject.CompilerArguments.Select(s => result += $" {s}").ToList();
 
             // TODO factor out this code from here!
             if (file != null)
@@ -404,19 +378,13 @@ namespace AvalonStudio.Toolchains.Clang
                 {
                     case ".c":
                         {
-                            foreach (var arg in superProject.CCompilerArguments)
-                            {
-                                result += string.Format(" {0}", arg);
-                            }
+                            superProject.CCompilerArguments.Select(s => result += $" {s}");
                         }
                         break;
 
                     case ".cpp":
                         {
-                            foreach (var arg in superProject.CppCompilerArguments)
-                            {
-                                result += string.Format(" {0}", arg);
-                            }
+                            superProject.CppCompilerArguments.Select(s => result += $" {s}");
                         }
                         break;
                 }
@@ -518,7 +486,6 @@ namespace AvalonStudio.Toolchains.Clang
 
                 return result.ExitCode == 0;
             }
-
 
             return true;
         }

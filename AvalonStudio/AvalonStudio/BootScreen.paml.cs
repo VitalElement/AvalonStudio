@@ -1,23 +1,18 @@
-﻿using System;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using AvalonStudio.Controls;
-using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Commands;
-using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
-using AvalonStudio.Extensibility.Plugin;
 
 namespace AvalonStudio
 {
-	public class BootScreen : SplashScreen
-	{
-		public BootScreen()
-		{
-			this.InitializeComponent();
-			App.AttachDevTools(this);
+    public class BootScreen : SplashScreen
+    {
+        public BootScreen()
+        {
+            this.InitializeComponent();
+            App.AttachDevTools(this);
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -25,36 +20,37 @@ namespace AvalonStudio
             });
         }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
 
-		public void Startup()
-		{
-			var progressBar = this.FindControl<ProgressBar>("StatusProgressBar");
+        public void Startup()
+        {
+            var progressBar = this.FindControl<ProgressBar>("StatusProgressBar");
 
-			Platform.Initialise();
-			
-			PackageSources.InitialisePackageSources();
+            Platform.Initialise();
+
+            PackageSources.InitialisePackageSources();
 
             var container = CompositionRoot.CreateContainer();
 
             ShellViewModel.Instance = container.GetExport<ShellViewModel>();
-            
-			var main = new MainWindow();
 
-			main.WindowState = WindowState.Minimized;
+            var main = new MainWindow();
 
-			this.Hide();
+            main.WindowState = WindowState.Minimized;
 
-			Dispatcher.UIThread.InvokeAsync (() => {			
-				main.WindowState = WindowState.Maximized;
-			});
+            this.Hide();
 
-			main.Show();
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                main.WindowState = WindowState.Maximized;
+            });
 
-			ShellViewModel.Instance.Cleanup();
-		}
-	}
+            main.Show();
+
+            ShellViewModel.Instance.Cleanup();
+        }
+    }
 }

@@ -72,7 +72,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        CodeCompletionKind FromClangKind(NClang.CursorKind kind)
+        private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
             switch (kind)
             {
@@ -114,6 +114,9 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 case NClang.CursorKind.FieldDeclaration:
                     return CodeCompletionKind.Parameter;
+
+                case NClang.CursorKind.OverloadCandidate:
+                    return CodeCompletionKind.OverloadCandidate;
             }
 
             Console.WriteLine($"dont understand{kind.ToString()}");
@@ -179,14 +182,21 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     if (filter == string.Empty || typedText.StartsWith(filter))
                     {
-                        result.Completions.Add(new CodeCompletionData
+                        var completion = new CodeCompletionData
                         {
                             Suggestion = typedText,
                             Priority = codeCompletion.CompletionString.Priority,
                             Kind = FromClangKind(codeCompletion.CursorKind),
                             Hint = hint,
                             BriefComment = codeCompletion.CompletionString.BriefComment
-                        });
+                        };
+
+                        result.Completions.Add(completion);
+
+                        if (completion.Kind == CodeCompletionKind.OverloadCandidate)
+                        {
+                            Console.WriteLine("TODO Implement overload candidate.");
+                        }
                     }
                 }
 
@@ -398,7 +408,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }, IntPtr.Zero);
         }
 
-        private void GenerateDiagnostics (IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result, TextMarkerService service)
+        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result, TextMarkerService service)
         {
             foreach (var diagnostic in clangDiagnostics)
             {
@@ -449,7 +459,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     service.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
                 }
-            }        
+            }
         }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
@@ -461,22 +471,28 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
-            clangUnsavedFiles.AddRange(unsavedFiles.Select(f => new ClangUnsavedFile(f.FileName, f.Contents)));            
+            clangUnsavedFiles.AddRange(unsavedFiles.Select(f => new ClangUnsavedFile(f.FileName, f.Contents)));
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
-                var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
-
-                if (file != null && translationUnit != null)
+                try
                 {
-                    ScanTokens(translationUnit, result.SyntaxHighlightingData);
+                    var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
-                    GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);                    
+                    if (file != null && translationUnit != null)
+                    {
+                        ScanTokens(translationUnit, result.SyntaxHighlightingData);
+
+                        GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);
+                    }
+
+                    dataAssociation.TextMarkerService.Clear();
+
+                    GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);
                 }
-
-                dataAssociation.TextMarkerService.Clear();
-                
-                GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);                
+                catch (Exception)
+                {
+                }
             });
 
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);

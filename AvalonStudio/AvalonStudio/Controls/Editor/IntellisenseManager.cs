@@ -15,7 +15,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    class IntellisenseManager
+    internal class IntellisenseManager
     {
         private readonly ILanguageService languageService;
         private readonly ISourceFile file;
@@ -144,7 +144,11 @@
 
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
-                intellisenseStartedAt = editor.CaretIndex;
+                if (editor != null)
+                {
+                    intellisenseStartedAt = editor.CaretIndex;
+                }
+
                 intellisenseControl.SelectedCompletion = noSelectedCompletion;
                 intellisenseControl.IsVisible = false;
             }).Wait();
@@ -360,7 +364,7 @@
                             }
                         }
 
-                        if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != editor.CaretIndex))
+                        if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
                         {
                             string currentWord = string.Empty;
 
@@ -375,14 +379,14 @@
                             {
                                 Dispatcher.UIThread.InvokeTaskAsync(() =>
                                 {
-                                    currentWord = editor.GetPreviousWordAtIndex(editor.CaretIndex - 1);
+                                    currentWord = editor.GetPreviousWordAtIndex(caretIndex - 1);
                                 }).Wait();
                             }
                             else
                             {
                                 Dispatcher.UIThread.InvokeTaskAsync(() =>
                                 {
-                                    currentWord = editor.GetWordAtIndex(editor.CaretIndex - 1);
+                                    currentWord = editor.GetWordAtIndex(caretIndex - 1);
                                 }).Wait();
                             }
 

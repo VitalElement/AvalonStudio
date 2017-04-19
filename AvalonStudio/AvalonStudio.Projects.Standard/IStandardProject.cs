@@ -1,56 +1,59 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Projects.Standard
 {
-	[JsonConverter(typeof (StringEnumConverter))]
-	public enum ProjectType
-	{
-		Executable,
-		SharedLibrary,
-		StaticLibrary,
-		SuperProject
-	}
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum ProjectType
+    {
+        Executable,
+        SharedLibrary,
+        StaticLibrary,
+        SuperProject
+    }
 
-	public interface IStandardProject : IProject
-	{
-		ProjectType Type { get; }
+    public interface IStandardProject : IProject
+    {
+        ProjectType Type { get; }
 
-		bool IsBuilding { get; set; }
+        bool IsBuilding { get; set; }
 
-		string BuildDirectory { get; }
-		string LinkerScript { get; }
+        string BuildDirectory { get; }
+        string LinkerScript { get; }
 
-		IList<string> BuiltinLibraries { get; }
+        IList<string> BuiltinLibraries { get; }
 
-		IList<string> StaticLibraries { get; }
+        IList<string> StaticLibraries { get; }
 
-		IList<string> ToolChainArguments { get; }
+        IList<string> ToolChainArguments { get; }
 
-		IList<string> LinkerArguments { get; }
+        IList<string> LinkerArguments { get; }
 
-		IList<string> CompilerArguments { get; }
+        IList<string> CompilerArguments { get; }
 
-		IList<string> CCompilerArguments { get; }
+        IList<string> CCompilerArguments { get; }
 
-		IList<string> CppCompilerArguments { get; }
+        IList<string> CppCompilerArguments { get; }
 
-		IList<Definition> Defines { get; }
+        IList<Definition> Defines { get; }
 
-		IList<Include> Includes { get; }
+        IList<Include> Includes { get; }
 
-		IList<ISourceFile> SourceFiles { get; }
+        IList<ISourceFile> SourceFiles { get; }
 
-		string GetObjectDirectory(IStandardProject superProject);
+        string GetObjectDirectory(IStandardProject superProject);
 
-		string GetBuildDirectory(IStandardProject superProject);
+        string GetBuildDirectory(IStandardProject superProject);
 
-		string GetOutputDirectory(IStandardProject superProject);
-		IList<string> GetReferencedIncludes();
-		IList<string> GetGlobalIncludes();
+        string GetOutputDirectory(IStandardProject superProject);
 
-		IList<string> GetReferencedDefines();
-		IList<string> GetGlobalDefines();
-	}
+        IList<string> GetReferencedIncludes();
+
+        IList<string> GetGlobalIncludes();
+
+        IList<string> GetReferencedDefines();
+
+        IList<string> GetGlobalDefines();
+    }
 }

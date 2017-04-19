@@ -1,22 +1,19 @@
 ﻿namespace AvalonStudio.Debugging
 {
+    using Avalonia.Threading;
+    using Extensibility;
+    using Extensibility.Plugin;
     using MVVM;
     using MVVM.DataVirtualization;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using ReactiveUI;
-    using Avalonia.Threading;
-    using Extensibility.Plugin;
-    using Extensibility;
+    using System;
+    using System.Linq;
+
     public class MemoryViewModel : ToolViewModel, IExtension
     {
-        private IDebugManager _debugManager;
+        private IDebugManager2 _debugManager;
         public const string ToolId = "CIDMEM001";
-        const int Columns = 32;
+        private const int Columns = 32;
 
         public MemoryViewModel()
         {
@@ -38,6 +35,7 @@
         }
 
         private MutuallyExclusiveEnumerationCollection<MemoryViewDataProvider.IntegerSize> integerSizeOptions;
+
         public MutuallyExclusiveEnumerationCollection<MemoryViewDataProvider.IntegerSize> IntegerSizeOptions
         {
             get { return integerSizeOptions; }
@@ -65,10 +63,10 @@
             }
         }
 
-
         private MemoryViewDataProvider dataProvider;
-        private IDebugger debugger;
-        public void SetDebugger(IDebugger debugger)
+        private IDebugger2 debugger;
+
+        public void SetDebugger(IDebugger2 debugger)
         {
             if (this.debugger != null)
             {
@@ -85,23 +83,8 @@
             dataProvider.SetDebugger(debugger);
         }
 
-        private void Debugger_StateChanged(object sender, EventArgs e)
-        {
-            if (debugger.State == DebuggerState.Paused)
-            {
-                dataProvider.Enable();
-
-                Dispatcher.UIThread.InvokeTaskAsync(() => Enabled = true);
-            }
-            else
-            {
-                dataProvider?.Clear();
-
-                Dispatcher.UIThread.InvokeTaskAsync(() => Enabled = false);
-            }
-        }
-
         private bool enabled;
+
         public bool Enabled
         {
             get { return enabled; }
@@ -109,9 +92,13 @@
         }
 
         private string address;
+
         public string Address
         {
-            get { return address; }
+            get
+            {
+                return address;
+            }
             set
             {
                 ulong parsedValue = 0;
@@ -137,7 +124,7 @@
             SelectedIndex = (long)(address / Columns);
         }
 
-        new public async void Invalidate()
+        public new async void Invalidate()
         {
             if (MemoryData == null)
             {
@@ -173,15 +160,11 @@
 
         public void BeforeActivation()
         {
-            
         }
 
         public void Activation()
         {
-            _debugManager = IoC.Get<IDebugManager>();
-            _debugManager.DebuggerChanged += (sender, e) => { SetDebugger(_debugManager.CurrentDebugger); };
-
-            _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+            _debugManager = IoC.Get<IDebugManager2>();
 
             _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
@@ -191,24 +174,20 @@
 
                 // TODO clear out data ready for GC, this requires a fix in Avalonia.
                 //DisassemblyData = null;
-            };            
-        }
-
-        private void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
-        {
-            Dispatcher.UIThread.InvokeAsync(() => { Invalidate(); });
+            };
         }
 
         private ulong currentAddress;
         private long selectedIndex;
+
         public long SelectedIndex
         {
             get { return selectedIndex; }
             set { this.RaiseAndSetIfChanged(ref selectedIndex, value); }
         }
 
-
         private AsyncVirtualizingCollection<MemoryBytesViewModel> memoryData;
+
         public AsyncVirtualizingCollection<MemoryBytesViewModel> MemoryData
         {
             get { return memoryData; }

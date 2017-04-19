@@ -1,7 +1,7 @@
+using Avalonia;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Avalonia;
 
 namespace AvalonStudio.Utils
 {
@@ -13,7 +13,6 @@ namespace AvalonStudio.Utils
             {
                 using (var stream = file.Open(FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-
                 }
             }
             catch (IOException)
@@ -33,7 +32,7 @@ namespace AvalonStudio.Utils
         {
             var a = p.X - q.X;
             var b = p.Y - q.Y;
-            var distance = Math.Sqrt(a * a + b * b);
+            var distance = Math.Sqrt((a * a) + (b * b));
             return distance;
         }
 
@@ -44,7 +43,7 @@ namespace AvalonStudio.Utils
             var max = list.Count;
             while (min < max)
             {
-                var mid = min + (max - min) / 2;
+                var mid = min + ((max - min) / 2);
                 var midItem = list[mid];
                 var midKey = keySelector(midItem);
                 var comp = midKey.CompareTo(key);
@@ -78,7 +77,7 @@ namespace AvalonStudio.Utils
             var max = list.Count;
             while (min < max)
             {
-                var mid = min + (max - min) / 2;
+                var mid = min + ((max - min) / 2);
                 var midItem = list[mid];
 
                 var comp = midItem.CompareTo(key);
@@ -97,7 +96,7 @@ namespace AvalonStudio.Utils
             }
 
             if (min == max && min < list.Count &&
-                (list[min]).CompareTo(key) == 0)
+                list[min].CompareTo(key) == 0)
             {
                 return list[min];
             }
@@ -117,9 +116,8 @@ namespace AvalonStudio.Utils
 
             while (lower <= upper)
             {
-                int middle = lower + (upper - lower) / 2;
+                int middle = lower + ((upper - lower) / 2);
                 int comparisonResult = list[middle].CompareTo(value);
-
 
                 if (comparisonResult < 0)
                 {
@@ -159,7 +157,6 @@ namespace AvalonStudio.Utils
                 myself.Insert(index, item);
             }
         }
-
 
         /// <summary>
         ///     Creates a relative path from one file or folder to another.

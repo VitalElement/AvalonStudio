@@ -1,34 +1,32 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Controls;
 using AvalonStudio.Extensibility;
 
 namespace AvalonStudio
 {
-	public class MainWindow : MetroWindow
-	{
-		public MainWindow()
-		{
-			InitializeComponent();
+    public class MainWindow : MetroWindow
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
 
-			DataContext = ShellViewModel.Instance;
+            DataContext = ShellViewModel.Instance;
 
             KeyBindings.AddRange(IoC.Get<ShellViewModel>().KeyBindings);
-			
-			this.AttachDevTools();
-		}
+
+            this.AttachDevTools();
+        }
 
         protected override void OnKeyDown(KeyEventArgs e)
-		{
-			(DataContext as ShellViewModel)?.OnKeyDown(e);
-		}
+        {
+            (DataContext as ShellViewModel)?.OnKeyDown(e);
+        }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
-	}
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
+    }
 }

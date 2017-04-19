@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
@@ -7,97 +5,48 @@ using AvalonStudio.MVVM;
 
 namespace AvalonStudio.Debugging
 {
-	public class LocalsViewModel : WatchListViewModel, IExtension
-	{
-		private readonly List<Variable> locals;
+    public class LocalsViewModel : WatchListViewModel, IExtension
+    {
+        public LocalsViewModel()
+        {
+            Title = "Locals";
 
-		public LocalsViewModel()
-		{
-			Title = "Locals";
-			locals = new List<Variable>();
+            Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
+        }
 
-			Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
-		}
+        public override Location DefaultLocation
+        {
+            get { return Location.RightBottom; }
+        }
 
-		public override Location DefaultLocation
-		{
-			get { return Location.RightBottom; }
-		}
+        public override void Activation()
+        {
+            DebugManager = IoC.Get<IDebugManager2>();
 
-
-		public override void Activation()
-		{
-			_debugManager = IoC.Get<IDebugManager>();
-
-            if (_debugManager != null)
+            if (DebugManager != null)
             {
-                _debugManager.DebugFrameChanged += _debugManager_DebugFrameChanged;
+                DebugManager.TargetStopped += _debugManager_TargetStopped;
 
-                _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+                DebugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
-                _debugManager.DebugSessionEnded += (sender, e) =>
+                DebugManager.DebugSessionEnded += (sender, e) =>
                 {
                     IsVisible = false;
                     Clear();
                 };
             }
-		}
+        }
 
-		public void InvalidateLocals(List<Variable> variables)
-		{
-			var updated = new List<Variable>();
-			var removed = new List<Variable>();
-
-			for (var i = 0; i < locals.Count; i++)
-			{
-				var local = locals[i];
-
-				var currentVar = variables.FirstOrDefault(v => v.Name == local.Name);
-
-				if (currentVar == null)
-				{
-					removed.Add(local);
-				}
-				else
-				{
-					updated.Add(local);
-				}
-			}
-
-			foreach (var variable in variables)
-			{
-				var currentVar = updated.FirstOrDefault(v => v.Name == variable.Name);
-
-				if (currentVar == null)
-				{
-					locals.Add(variable);
-					AddWatch(variable.Name);
-				}
-			}
-
-			foreach (var removedvar in removed)
-			{
-				locals.Remove(removedvar);
-				RemoveWatch(Children.FirstOrDefault(w => w.Name == removedvar.Name));
-			}
-		}
-
-		public override void Clear()
-		{
-			locals.Clear();
-			base.Clear();
-		}
-
-		private async void _debugManager_DebugFrameChanged(object sender, FrameChangedEventArgs e)
-		{
-			var stackVariables = await _debugManager.CurrentDebugger.ListStackVariablesAsync();
-
-            if (stackVariables != null)
+        private void _debugManager_TargetStopped(object sender, Mono.Debugging.Client.TargetEventArgs e)
+        {
+            if (e.IsStopEvent)
             {
-                InvalidateLocals(stackVariables);
-            }
+                var currentFrame = e.Backtrace.GetFrame(0);
 
-			await Invalidate(e.VariableChanges);
-		}
-	}
+                var locals = currentFrame.GetAllLocals();
+
+                InvalidateObjects(locals);
+            }
+        }
+    }
 }

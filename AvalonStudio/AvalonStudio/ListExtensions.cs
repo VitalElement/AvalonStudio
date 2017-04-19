@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using AvalonStudio.Extensibility.Plugin;
+﻿using AvalonStudio.Extensibility.Plugin;
+using System.Collections.Generic;
 
 namespace AvalonStudio
 {
-    static class ListExtensions
+    internal static class ListExtensions
     {
         public static void ConsumeExtension<T>(this List<T> destination, IExtension extension) where T : class, IExtension
         {

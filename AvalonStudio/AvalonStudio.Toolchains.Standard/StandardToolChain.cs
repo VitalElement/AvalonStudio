@@ -1,14 +1,13 @@
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Projects.Standard;
+using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Controls;
-using AvalonStudio.Platforms;
-using AvalonStudio.Projects;
-using AvalonStudio.Projects.Standard;
-using AvalonStudio.Utils;
 
 namespace AvalonStudio.Toolchains.Standard
 {
@@ -160,8 +159,6 @@ namespace AvalonStudio.Toolchains.Standard
         public abstract IList<object> GetConfigurationPages(IProject project);
 
         public abstract bool CanHandle(IProject project);
-
-        public abstract void ProvisionSettings(IProject project);
 
         public void BeforeActivation()
         {
@@ -326,8 +323,9 @@ namespace AvalonStudio.Toolchains.Standard
             {
                 if (compileResult.Project.Type == ProjectType.StaticLibrary)
                 {
-                    if (compileResult.ObjectLocations.Count > 0)  // This is where we have a libray with just headers.
+                    if (compileResult.ObjectLocations.Count > 0)
                     {
+                        // This is where we have a libray with just headers.
                         linkResults.LibraryLocations.Add(executable);
                     }
                 }
@@ -351,11 +349,6 @@ namespace AvalonStudio.Toolchains.Standard
         private async Task CompileProject(IConsole console, IStandardProject superProject, IStandardProject project,
             List<CompileResult> results = null)
         {
-            if (project == superProject)
-            {
-                superProject.ToolChain?.ProvisionSettings(project);
-            }
-
             if (project.Type == ProjectType.Executable && superProject != project)
             {
                 await Build(console, project);

@@ -1,119 +1,125 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using Avalonia.Controls;
 using System.Collections.Generic;
-using AvalonStudio.Platforms;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-	public class SolutionExplorerViewModel : ToolViewModel, IExtension, ISolutionExplorer
-	{
-		public const string ToolId = "CIDSEVM00";
+    public class SolutionExplorerViewModel : ToolViewModel, IExtension, ISolutionExplorer
+    {
+        public const string ToolId = "CIDSEVM00";
 
-		private ISolution model;
+        private ISolution model;
 
-		private ProjectItemViewModel selectedItem;
+        private ProjectItemViewModel selectedItem;
 
+        private IProject selectedProject;
+        private IShell shell;
 
-		private IProject selectedProject;
-		private IShell shell;
+        private ObservableCollection<SolutionViewModel> solution;
 
-		private ObservableCollection<SolutionViewModel> solution;
+        public SolutionExplorerViewModel()
+        {
+            Title = "Solution Explorer";
+            solution = new ObservableCollection<SolutionViewModel>();
+        }
 
-		public SolutionExplorerViewModel()
-		{
-			Title = "Solution Explorer";
-			solution = new ObservableCollection<SolutionViewModel>();
-		}
+        public new ISolution Model
+        {
+            get
+            {
+                return model;
+            }
+            set
+            {
+                Projects = new ObservableCollection<ProjectItemViewModel>();
+                model = value;
 
-		public ISolution Model
-		{
-			get { return model; }
-			set
-			{
-				Projects = new ObservableCollection<ProjectItemViewModel>();
-				model = value;
+                if (Model != null)
+                {
+                    if (Model.Projects.Count > 0)
+                    {
+                        SelectedProject = Model.StartupProject;
+                    }
 
-				if (Model != null)
-				{
-					if (Model.Projects.Count > 0)
-					{
-						SelectedProject = Model.StartupProject;
-					}
+                    var sol = new ObservableCollection<SolutionViewModel>();
+                    sol.Add(new SolutionViewModel(model));
 
-					var sol = new ObservableCollection<SolutionViewModel>();
-					sol.Add(new SolutionViewModel(model));
+                    Solution = sol;
+                }
+                else
+                {
+                    Solution = null;
+                }
 
-					Solution = sol;
-				}
-				else
-				{
-					Solution = null;
-				}
+                this.RaisePropertyChanged();
+                this.RaisePropertyChanged(nameof(Projects));
+            }
+        }
 
-				this.RaisePropertyChanged();
-				this.RaisePropertyChanged(nameof(Projects));
-			}
-		}
+        public ObservableCollection<SolutionViewModel> Solution
+        {
+            get { return solution; }
+            set { this.RaiseAndSetIfChanged(ref solution, value); }
+        }
 
-		public ObservableCollection<SolutionViewModel> Solution
-		{
-			get { return solution; }
-			set { this.RaiseAndSetIfChanged(ref solution, value); }
-		}
+        public IProject SelectedProject
+        {
+            get
+            {
+                return selectedProject;
+            }
+            set
+            {
+                selectedProject = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
-		public IProject SelectedProject
-		{
-			get { return selectedProject; }
+        public ProjectItemViewModel SelectedItem
+        {
+            get
+            {
+                return selectedItem;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedItem, value);
 
-			set
-			{
-				selectedProject = value;
-				this.RaisePropertyChanged();
-			}
-		}
+                if (value is SourceFileViewModel)
+                {
+                    // might need wait here?
+                    Task.Factory.StartNew(
+                        async () => { await shell.OpenDocument((ISourceFile)(value as SourceFileViewModel).Model, 1); });
+                }
+            }
+        }
 
-		public ProjectItemViewModel SelectedItem
-		{
-			get { return selectedItem; }
-			set
-			{
-				this.RaiseAndSetIfChanged(ref selectedItem, value);
+        public ObservableCollection<ProjectItemViewModel> Projects { get; set; }
 
-				if (value is SourceFileViewModel)
-				{
-					// might need wait here?
-					Task.Factory.StartNew(
-						async () => { await shell.OpenDocument((ISourceFile) (value as SourceFileViewModel).Model, 1); });
-				}
-			}
-		}
+        public override Location DefaultLocation
+        {
+            get { return Location.Right; }
+        }
 
-		public ObservableCollection<ProjectItemViewModel> Projects { get; set; }
-
-		public override Location DefaultLocation
-		{
-			get { return Location.Right; }
-		}
-
-		public void BeforeActivation()
-		{
+        public void BeforeActivation()
+        {
             IoC.RegisterConstant<ISolutionExplorer>(this, typeof(ISolutionExplorer));
-		}
+        }
 
-		public void Activation()
-		{
-			shell = IoC.Get<IShell>();
+        public void Activation()
+        {
+            shell = IoC.Get<IShell>();
 
-			shell.SolutionChanged += (sender, e) => { Model = shell.CurrentSolution; };
-		}
+            shell.SolutionChanged += (sender, e) => { Model = shell.CurrentSolution; };
+        }
 
         public void NewSolution()
         {

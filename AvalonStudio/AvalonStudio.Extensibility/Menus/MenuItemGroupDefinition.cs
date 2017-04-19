@@ -1,24 +1,21 @@
-using System;
-
 namespace AvalonStudio.Extensibility.Menus
 {
-	public class MenuItemGroupDefinition
-	{
-		public MenuItemGroupDefinition(MenuDefinition parent, int sortOrder)
-		{
+    public class MenuItemGroupDefinition
+    {
+        public MenuItemGroupDefinition(MenuDefinition parent, int sortOrder)
+        {
             Parent = parent;
-			SortOrder = sortOrder;
-            
+            SortOrder = sortOrder;
+
             IoC.RegisterConstant(this);
-		}
+        }
 
-		public MenuDefinition Parent { get; protected set; }
+        public MenuDefinition Parent { get; protected set; }
 
-		public int SortOrder { get; }
+        public int SortOrder { get; }
 
         public void Activation()
         {
-
         }
     }
 }

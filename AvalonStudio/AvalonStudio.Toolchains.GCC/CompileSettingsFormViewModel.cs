@@ -1,6 +1,3 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Avalonia.Controls;
 using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
@@ -8,6 +5,9 @@ using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
 using ReactiveUI;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AvalonStudio.Toolchains.GCC
 {
@@ -48,14 +48,7 @@ namespace AvalonStudio.Toolchains.GCC
 
         public CompileSettingsFormViewModel(IProject project) : base("Compiler", project)
         {
-            try
-            {
-                settings = GCCToolchain.GetSettings(project).CompileSettings;
-            }
-            catch (Exception)
-            {
-                Model.ToolchainSettings.GccToolchainSettings = new GccToolchainSettings();
-            }
+            settings = project.GetSettings<GccToolchainSettings>().CompileSettings;
 
             defines = new ObservableCollection<string>(settings.Defines);
             includePaths = new ObservableCollection<string>(settings.Includes);
@@ -162,7 +155,7 @@ namespace AvalonStudio.Toolchains.GCC
             set
             {
                 optimizationPreferenceSelectedIndex = value;
-                //OnPropertyChanged(); 
+                //OnPropertyChanged();
                 UpdateCompileString();
             }
         }
@@ -178,7 +171,7 @@ namespace AvalonStudio.Toolchains.GCC
             set
             {
                 optimizationLevelSelectedIndex = value;
-                //OnPropertyChanged(); 
+                //OnPropertyChanged();
                 UpdateCompileString();
             }
         }
@@ -229,7 +222,7 @@ namespace AvalonStudio.Toolchains.GCC
             set
             {
                 rtti = value;
-                //OnPropertyChanged(); 
+                //OnPropertyChanged();
                 UpdateCompileString();
             }
         }
@@ -419,9 +412,12 @@ namespace AvalonStudio.Toolchains.GCC
             settings.Exceptions = exceptions;
             settings.Rtti = rtti;
 
-            Model.ToolchainSettings.GccToolchainSettings.CompileSettings = settings;
+            var currentSettings = Model.GetSettings<GccToolchainSettings>();
+            currentSettings.CompileSettings = settings;
+
+            Model.SetSettings(currentSettings);
+
             Model.Save();
-            //project.SaveChanges();
         }
 
         private void OnPropertyChanged()

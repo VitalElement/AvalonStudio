@@ -2,19 +2,29 @@
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="300"/>
+      <ColumnDefinition Width="300"/>
       <ColumnDefinition/>
     </Grid.ColumnDefinitions>
 
     <ListBox Items="{Binding AvailablePackages}" SelectedItem="{Binding Path=SelectedPackage, Mode=TwoWay}" IsEnabled="{Binding EnableInterface}">
-      <ListBox.DataTemplates>
-        <DataTemplate DataType="Packages:PackageReference">
-          <TextBlock Text="{Binding Name}"/>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding Title}"/>
         </DataTemplate>
-      </ListBox.DataTemplates>
+      </ListBox.ItemTemplate>
     </ListBox>
 
-    <Grid Grid.Column="1">
+    <ListBox Items="{Binding InstalledPackages}" SelectedItem="{Binding Path=SelectedInstalledPackage, Mode=TwoWay}" IsEnabled="{Binding EnableInterface}" Grid.Column="1">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding Title}"/>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <Grid Grid.Column="2">
       <Grid.RowDefinitions>
+        <RowDefinition Height="30"/>
         <RowDefinition Height="30"/>
         <RowDefinition Height="30"/>
         <RowDefinition Height="30"/>
@@ -31,19 +41,20 @@
       <TextBlock Grid.Column="1" Text="{Binding SelectedPackage.Name}"/>
 
       <TextBlock Grid.Row="1" Text="Description" HorizontalAlignment="Right"/>
-      <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedPackageIndex.Description}"/>
+      <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedPackage.Description}"/>
 
       <TextBlock Grid.Row="3" Text="Version" />
-      <DropDown Items="{Binding SelectedPackageIndex.Tags}" SelectedItem="{Binding SelectedTag}"  Grid.Row="3" Grid.Column="1">
+      <DropDown Items="{Binding Versions}" SelectedItem="{Binding SelectedVersion}"  Grid.Row="3" Grid.Column="1">
         <DropDown.ItemTemplate>
           <DataTemplate>
-            <TextBlock Text="{Binding }" />
+            <TextBlock Text="{Binding Title}" />
           </DataTemplate>          
         </DropDown.ItemTemplate>        
       </DropDown>
 
       <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Status}"/>
       <Button Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{Binding ButtonText}" Command="{Binding InstallCommand}"/>
+      <Button Grid.Row="5" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Uninstall" Command="{Binding UninstallCommand}"/>
     </Grid>
   </Grid>
 </UserControl>

@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using System;
 
 namespace AvalonStudio.Controls
 {
@@ -8,7 +7,7 @@ namespace AvalonStudio.Controls
     {
         public SignatureHelpView()
         {
-            this.InitializeComponent();            
+            this.InitializeComponent();
         }
 
         private void InitializeComponent()

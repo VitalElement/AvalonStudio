@@ -1,12 +1,5 @@
 namespace AvalonStudio.TextEditor.Rendering
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Collections.Specialized;
-    using System.Linq;
-    using System.Reactive.Disposables;
-    using System.Windows.Input;
     using Avalonia;
     using Avalonia.Controls;
     using Avalonia.Controls.Primitives;
@@ -14,13 +7,20 @@ namespace AvalonStudio.TextEditor.Rendering
     using Avalonia.Data;
     using Avalonia.Input;
     using Avalonia.Layout;
+    using Avalonia.LogicalTree;
     using Avalonia.Media;
     using Avalonia.Threading;
     using Avalonia.Utilities;
     using Avalonia.VisualTree;
     using AvalonStudio.TextEditor.Document;
-    using Avalonia.LogicalTree;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.Linq;
+    using System.Reactive.Disposables;
     using System.Reactive.Linq;
+    using System.Windows.Input;
 
     public class TextView : TemplatedControl, ILogicalScrollable
     {
@@ -294,7 +294,7 @@ namespace AvalonStudio.TextEditor.Rendering
             VisualLines.Clear();
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Avalonia Properties
 
@@ -461,7 +461,7 @@ namespace AvalonStudio.TextEditor.Rendering
             set { SetValue(SelectionEndProperty, value); }
         }
 
-        #endregion
+        #endregion Avalonia Properties
 
         #region Properties
 
@@ -494,7 +494,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
         public Size Viewport { get; private set; }
 
-        #endregion
+        #endregion Properties
 
         #region Control Overrides
 
@@ -647,7 +647,7 @@ namespace AvalonStudio.TextEditor.Rendering
             return result;
         }
 
-        #endregion
+        #endregion Control Overrides
 
         #region Private Fields
 
@@ -655,7 +655,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
         private bool _caretBlink;
 
-        #endregion
+        #endregion Private Fields
 
         #region Private Methods
 
@@ -849,7 +849,7 @@ namespace AvalonStudio.TextEditor.Rendering
             InvalidateVisual();
         }
 
-        #endregion
+        #endregion Private Methods
 
         #region Public Methods
 
@@ -955,6 +955,6 @@ namespace AvalonStudio.TextEditor.Rendering
             return null;
         }
 
-        #endregion
+        #endregion Public Methods
     }
 }

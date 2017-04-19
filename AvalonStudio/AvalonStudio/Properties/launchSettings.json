@@ -1,7 +1,8 @@
 {
   "profiles": {
     "AvalonStudio": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "workingDirectory": "C:\\dev\\repos\\AvalonStudio\\AvalonStudio\\AvalonStudio\\bin\\Debug\\netcoreapp2.0"
     }
   }
 }
