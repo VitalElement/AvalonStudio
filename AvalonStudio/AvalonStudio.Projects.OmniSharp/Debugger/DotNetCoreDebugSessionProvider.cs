@@ -24,6 +24,7 @@
         {
             var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
 
+            // TODO resolve correct paths.
             var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", "2.0.0-preview1-002021-00", "dbgshim" + Platform.DLLExtension);
 
             var result = new CoreClrDebuggerSession(System.IO.Path.GetInvalidPathChars(), dbgShimPath);
