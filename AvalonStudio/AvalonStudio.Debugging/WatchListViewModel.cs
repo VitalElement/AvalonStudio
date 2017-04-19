@@ -13,14 +13,14 @@ namespace AvalonStudio.Debugging
 
     public class WatchListViewModel : ToolViewModel, IExtension, IWatchList
     {
-        protected IDebugManager2 _debugManager;
+        protected IDebugManager2 DebugManager { get; set; }
 
         private readonly List<ObjectValue> watches;
         private List<string> _expressions;
         private StackFrame _currentFrame;
 
         private ObservableCollection<ObjectValueViewModel> children;
-        public List<ObjectValueViewModel> LastChangedRegisters;
+        public List<ObjectValueViewModel> LastChangedRegisters { get; set; }
 
         public WatchListViewModel()
         {
@@ -58,14 +58,14 @@ namespace AvalonStudio.Debugging
 
         public virtual void Activation()
         {
-            _debugManager = IoC.Get<IDebugManager2>();
+            DebugManager = IoC.Get<IDebugManager2>();
 
-            if (_debugManager != null)
+            if (DebugManager != null)
             {
-                _debugManager.TargetStopped += _debugManager_TargetStopped;
-                _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+                DebugManager.TargetStopped += _debugManager_TargetStopped;
+                DebugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
-                _debugManager.DebugSessionEnded += (sender, e) =>
+                DebugManager.DebugSessionEnded += (sender, e) =>
                 {
                     IsVisible = false;
                     Clear();
@@ -170,7 +170,7 @@ namespace AvalonStudio.Debugging
         {
             bool result = false;
 
-            if (_debugManager.SessionActive && !_debugManager.Session.IsRunning && _debugManager.Session.IsConnected && !_expressions.Contains(expression))
+            if (DebugManager.SessionActive && !DebugManager.Session.IsRunning && DebugManager.Session.IsConnected && !_expressions.Contains(expression))
             {
                 _expressions.Add(expression);
 

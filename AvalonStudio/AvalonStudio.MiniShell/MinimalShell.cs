@@ -19,7 +19,7 @@ namespace AvalonStudio.Shell
     [Export]
     public class MinimalShell : IShell
     {
-        public static IShell Instance = null;
+        public static IShell Instance { get; internal set; }
 
         private List<ILanguageService> _languageServices;
         private List<IProjectTemplate> _projectTemplates;

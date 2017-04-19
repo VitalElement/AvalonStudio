@@ -28,8 +28,8 @@ namespace AvalonStudio.Debugging.GDB
 {
     public class GdbCommandResult : ResultData
     {
-        public CommandStatus Status;
-        public string ErrorMessage;
+        public CommandStatus Status { get; set; }
+        public string ErrorMessage { get; set; }
 
         public GdbCommandResult(string line)
         {

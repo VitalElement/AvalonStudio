@@ -28,8 +28,8 @@ namespace AvalonStudio.Debugging.GDB
 {
     internal class GdbEvent : ResultData
     {
-        public string Name;
-        public string Reason;
+        public string Name { get; set; }
+        public string Reason { get; set; }
 
         public GdbEvent(string line)
         {

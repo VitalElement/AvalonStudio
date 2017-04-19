@@ -5,6 +5,6 @@ namespace AvalonStudio.TextEditor.Rendering
 {
     public class TextTransformation : TextSegment
     {
-        public IBrush Foreground;
+        public IBrush Foreground { get; set; }
     }
 }

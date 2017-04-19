@@ -21,7 +21,7 @@ namespace AvalonStudio.Controls
     [Export(typeof(EditorModel))]
     public class EditorModel : IDisposable
     {
-        public static List<UnsavedFile> _unsavedFiles;
+        private static List<UnsavedFile> _unsavedFiles;
 
         public static List<UnsavedFile> UnsavedFiles
         {

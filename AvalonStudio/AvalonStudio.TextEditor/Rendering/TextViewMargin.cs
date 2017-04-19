@@ -8,7 +8,7 @@ namespace AvalonStudio.TextEditor
 {
     public abstract class TextViewMargin : Control
     {
-        protected TextView textView;
+        protected TextView textView { get; set; }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {

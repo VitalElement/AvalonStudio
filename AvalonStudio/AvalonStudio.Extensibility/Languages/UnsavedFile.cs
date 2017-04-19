@@ -6,7 +6,7 @@ namespace AvalonStudio.Languages
     public class UnsavedFile : IComparable<string>, IComparable<UnsavedFile>
     {
         public readonly string FileName;
-        public string Contents;
+        public string Contents { get; set; }
 
         public UnsavedFile(string filename, string contents)
         {

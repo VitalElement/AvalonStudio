@@ -21,15 +21,15 @@ namespace AvalonStudio.Debugging
 
         public override void Activation()
         {
-            _debugManager = IoC.Get<IDebugManager2>();
+            DebugManager = IoC.Get<IDebugManager2>();
 
-            if (_debugManager != null)
+            if (DebugManager != null)
             {
-                _debugManager.TargetStopped += _debugManager_TargetStopped;
+                DebugManager.TargetStopped += _debugManager_TargetStopped;
 
-                _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+                DebugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
-                _debugManager.DebugSessionEnded += (sender, e) =>
+                DebugManager.DebugSessionEnded += (sender, e) =>
                 {
                     IsVisible = false;
                     Clear();
