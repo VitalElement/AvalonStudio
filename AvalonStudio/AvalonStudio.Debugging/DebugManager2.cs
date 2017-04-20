@@ -134,9 +134,7 @@
         }
 
         private void OnEndSession()
-        {
-            _session.Exit();
-
+        {            
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 DebugSessionEnded?.Invoke(this, new EventArgs());
@@ -146,14 +144,15 @@
 
             if (_session != null)
             {
+                _session.Exit();
                 _session.TargetStopped -= _session_TargetStopped;
                 _session.TargetHitBreakpoint -= _session_TargetStopped;
                 _session.TargetExited -= _session_TargetExited;
                 _session.TargetStarted -= _session_TargetStarted;
+                _session.Dispose();
+                _session = null;
             }
-
-            _session?.Dispose();
-            _session = null;
+            
             _lastDocument?.ClearDebugHighlight();
             _lastDocument = null;
 
