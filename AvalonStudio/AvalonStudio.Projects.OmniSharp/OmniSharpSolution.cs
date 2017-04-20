@@ -30,6 +30,8 @@ namespace AvalonStudio.Projects.OmniSharp
 
         private async Task LoadSolution(string path)
         {
+            Name = Path.GetFileNameWithoutExtension(path);
+
             await server.StartAsync(Path.GetDirectoryName(path));
 
             var workspace = await server.SendRequest(new WorkspaceInformationRequest() { ExcludeSourceFiles = false });
