@@ -170,8 +170,8 @@ namespace AvalonStudio.Controls
 
                 Model.TextDocument = null;
             }));
-
-            AddWatchCommand = ReactiveCommand.Create();
+            
+            AddWatchCommand = ReactiveCommand.Create(this.WhenAny(x=>x.WordAtCaret, (word) => !string.IsNullOrEmpty(word.Value)));
             disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(WordAtCaret); }));
 
             tabCharacter = "    ";
