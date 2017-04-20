@@ -51,7 +51,7 @@ namespace AvalonStudio.Controls
             InstallCommand = ReactiveCommand.Create();
             InstallCommand.Subscribe(async _ =>
             {
-                await _packageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
+                await PackageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
 
                 InvalidateInstalledPackages();
             });
@@ -61,7 +61,7 @@ namespace AvalonStudio.Controls
             {
                 if (SelectedInstalledPackage != null)
                 {
-                    await _packageManager.UninstallPackage(SelectedInstalledPackage.Model.Id, SelectedInstalledPackage.Model.Version.ToNormalizedString());
+                    await PackageManager.UninstallPackage(SelectedInstalledPackage.Model.Id, SelectedInstalledPackage.Model.Version.ToNormalizedString());
 
                     InvalidateInstalledPackages();
                 }
