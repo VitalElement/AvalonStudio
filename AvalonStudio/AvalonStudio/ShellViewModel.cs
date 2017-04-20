@@ -236,7 +236,7 @@ namespace AvalonStudio
 
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
-            StatusBar.PlatformString = Platform.OSDescription;
+            StatusBar.PlatformString = Platform.OSDescription + " " + Platform.AvalonRID;
 
             ProcessCancellationToken = new CancellationTokenSource();
 
