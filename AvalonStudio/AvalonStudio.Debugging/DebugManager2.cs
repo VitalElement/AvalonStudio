@@ -115,9 +115,12 @@
         {
             _session.Exit();
 
-            DebugSessionEnded?.Invoke(this, new EventArgs());
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                DebugSessionEnded?.Invoke(this, new EventArgs());
 
-            _shell.CurrentPerspective = Perspective.Editor;
+                _shell.CurrentPerspective = Perspective.Editor;
+            });
 
             if (_session != null)
             {
