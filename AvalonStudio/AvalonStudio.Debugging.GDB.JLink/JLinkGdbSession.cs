@@ -1,6 +1,8 @@
 ﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
+using AvalonStudio.Repositories;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
@@ -84,6 +86,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
         {
             var result = true;
             var settings = GetSettings(_project);
+
+            PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", new AvalonConsoleNuGetLogger(console)).Wait();
 
             console.Clear();
             console.WriteLine("[JLink] - Starting GDB Server...");
