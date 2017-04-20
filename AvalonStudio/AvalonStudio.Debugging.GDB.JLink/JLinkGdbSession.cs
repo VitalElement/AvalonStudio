@@ -158,6 +158,12 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 Thread.Sleep(10);
             }
 
+            TargetExited += (sender, e) =>
+            {
+                jlinkProcess?.Kill();
+                jlinkProcess = null;
+            };
+
             if (result)
             {
                 base.OnRun(startInfo);

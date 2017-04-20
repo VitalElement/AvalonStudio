@@ -113,6 +113,8 @@
 
         private void OnEndSession()
         {
+            _session.Exit();
+
             DebugSessionEnded?.Invoke(this, new EventArgs());
 
             _shell.CurrentPerspective = Perspective.Editor;
