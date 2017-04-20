@@ -88,7 +88,11 @@ namespace AvalonStudio.Debugging
                 else
                 {
                     Children?.Clear();
-                    Children?.Add(DummyChild);
+
+                    if (Model.HasChildren)
+                    {
+                        Children?.Add(DummyChild);
+                    }
                 }
 
                 this.RaiseAndSetIfChanged(ref isExpanded, value);
@@ -180,7 +184,7 @@ namespace AvalonStudio.Debugging
                 }
             }
 
-            if (IsExpanded)
+            if (IsExpanded && Model.HasChildren)
             {
                 if (newValue.Value != null)
                 {
@@ -196,6 +200,10 @@ namespace AvalonStudio.Debugging
                 {
                     Children.Clear();
                 }
+            }
+            else if(IsExpanded && !Model.HasChildren)
+            {
+                IsExpanded = false;
             }
             
             HasChanged = hasChanged;
