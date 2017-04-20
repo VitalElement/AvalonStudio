@@ -29,7 +29,7 @@ namespace AvalonStudio.Debugging
         public ObjectValueViewModel(WatchListViewModel watchList, ObjectValue model)
             : base(model)
         {
-            if(model == null)
+            if (model == null)
             {
                 throw new ArgumentNullException(nameof(model));
             }

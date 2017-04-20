@@ -76,7 +76,7 @@ namespace AvalonStudio.Debugging
         {
             Frames.Clear();
 
-            for(int i = 0; i < e.Backtrace.FrameCount; i++)
+            for (int i = 0; i < e.Backtrace.FrameCount; i++)
             {
                 var frame = e.Backtrace.GetFrame(i);
 
@@ -87,6 +87,6 @@ namespace AvalonStudio.Debugging
         public void Clear()
         {
             Frames.Clear();
-        }       
+        }
     }
 }
