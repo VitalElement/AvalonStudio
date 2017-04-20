@@ -1,4 +1,5 @@
-﻿using NuGet.Common;
+﻿using AvalonStudio.Utils;
+using NuGet.Common;
 
 namespace AvalonStudio.Repositories
 {
@@ -21,5 +22,33 @@ namespace AvalonStudio.Repositories
         public void LogInformationSummary(string data) => $"Infosummary: {data}".Dump();
 
         public void LogErrorSummary(string data) => $"LogErrorSummary: {data }".Dump();
+    }
+
+    public class AvalonConsoleNuGetLogger : ILogger
+    {
+        private IConsole _console;
+
+        public AvalonConsoleNuGetLogger(IConsole console)
+        {
+            _console = console;
+        }
+
+        public void LogDebug(string data) => _console.Write(data);
+
+        public void LogVerbose(string data) => _console.Write(data);
+
+        public void LogInformation(string data) => _console.Write(data);
+
+        public void LogMinimal(string data) => _console.Write(data);
+
+        public void LogWarning(string data) => _console.Write(data);
+
+        public void LogError(string data) => _console.Write(data);
+
+        public void LogSummary(string data) => _console.Write(data);
+
+        public void LogInformationSummary(string data) => _console.Write(data);
+
+        public void LogErrorSummary(string data) => _console.Write(data);
     }
 }
