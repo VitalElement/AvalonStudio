@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging.Win32\Mono.Debugging.Win32.NetCore2.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
   </ItemGroup>
 
 </Project>
