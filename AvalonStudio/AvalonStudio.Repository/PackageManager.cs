@@ -23,7 +23,7 @@ namespace AvalonStudio.Packages
 {
     public class PackageManager
     {
-        private ILogger _logger;
+        private ILogger _logger;        
 
         public PackageManager(ILogger logger = null)
         {
@@ -80,7 +80,7 @@ namespace AvalonStudio.Packages
                     INuGetProjectContext projectContext = new ProjectContext(_logger);
                     var sourceRepositories = new List<SourceRepository>();
                     sourceRepositories.Add(new SourceRepository(new NuGet.Configuration.PackageSource(DefaultPackageSource), providers));
-
+                    
                     await packageManager.InstallPackageAsync(packageManager.PackagesFolderNuGetProject,
                         identity, resolutionContext, projectContext, sourceRepositories,
                         Array.Empty<SourceRepository>(),  // This is a list of secondary source respositories, probably empty
@@ -175,12 +175,42 @@ namespace AvalonStudio.Packages
             return await searchResource.SearchAsync(packageName, new SearchFilter(true), 0, 10, _logger, CancellationToken.None);
         }
 
-        public IEnumerable<PackageIdentity> ListInstalledPackages()
+        public static IEnumerable<PackageIdentity> ListInstalledPackages()
         {
             using (var installedPackageCache = GetCache())
             {
                 return installedPackageCache.GetInstalledPackagesAndDependencies();
             }
+        }
+
+        public static string GetPackageDirectory (PackageIdentity identity)
+        {
+            string result = string.Empty;
+
+            using (var installedPackageCache = GetCache())
+            {
+                var project = new AvalonStudioExtensionsFolderProject(new NuGet.PhysicalFileSystem(Platform.ReposDirectory), GetFramework(), installedPackageCache, Platform.ReposDirectory);
+
+                result = project.GetInstalledPath(identity);
+            }
+
+            return result;
+        }
+
+        public static string GetPackageDirectory (string genericPackageId)
+        {
+            var result = string.Empty;
+
+            var packageIds = ListInstalledPackages().Where(s => s.Id.StartsWith(genericPackageId));
+
+            var latest = packageIds.OrderByDescending(id => id.Version).FirstOrDefault();
+
+            if(latest != null)
+            {
+                result = GetPackageDirectory(latest);
+            }
+
+            return result;
         }
 
         private async Task<NuGetVersion> GetLatestMatchingVersion(string packageId, NuGetFramework currentFramework, VersionRange versionRange, SourceRepository sourceRepository, ILogger logger)
