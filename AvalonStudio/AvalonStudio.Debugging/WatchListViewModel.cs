@@ -116,7 +116,7 @@ namespace AvalonStudio.Debugging
                 {
                     var currentVm = Children.FirstOrDefault(c => c.Model.Name == currentVar.Name);
 
-                    currentVm.ApplyChange(variable);
+                    currentVm?.ApplyChange(variable);
                 }
             }
 

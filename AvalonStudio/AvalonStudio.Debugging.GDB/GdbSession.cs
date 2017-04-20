@@ -221,8 +221,6 @@ namespace AvalonStudio.Debugging.GDB
 				console = null;
 			}*/
 
-            sin.WriteLine("-gdb-exit");
-
             closeTokenSource?.Cancel();
 
             if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
@@ -274,7 +272,6 @@ namespace AvalonStudio.Debugging.GDB
                 InternalStop();
                 sin.WriteLine("-gdb-exit");
                 closeTokenSource?.Cancel();
-                proc.Kill();
                 TargetEventArgs args = new TargetEventArgs(TargetEventType.TargetExited);
                 OnTargetEvent(args);
             }
