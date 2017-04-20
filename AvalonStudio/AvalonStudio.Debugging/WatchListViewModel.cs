@@ -161,15 +161,18 @@ namespace AvalonStudio.Debugging
         {
             bool result = false;
 
-            if (DebugManager.SessionActive && !DebugManager.Session.IsRunning && DebugManager.Session.IsConnected && !_expressions.Contains(expression))
+            if (!string.IsNullOrEmpty(expression))
             {
-                _expressions.Add(expression);
+                if (DebugManager.SessionActive && !DebugManager.Session.IsRunning && DebugManager.Session.IsConnected && !_expressions.Contains(expression))
+                {
+                    _expressions.Add(expression);
 
-                var watch = _currentFrame.GetExpressionValue(expression, false);
+                    var watch = _currentFrame.GetExpressionValue(expression, false);
 
-                InvalidateObjects(watch);
+                    InvalidateObjects(watch);
 
-                return true;
+                    return true;
+                }
             }
 
             return result;
