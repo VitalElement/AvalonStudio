@@ -197,16 +197,13 @@ namespace AvalonStudio.Debugging
                     Children.Clear();
                 }
             }
+            
+            HasChanged = hasChanged;
 
-            Dispatcher.UIThread.InvokeTaskAsync(() =>
-                {
-                    HasChanged = hasChanged;
-
-                    if (hasChanged)
-                    {
-                        Invalidate();
-                    }
-                }).Wait();
+            if (hasChanged)
+            {
+                Invalidate();
+            }
 
             return result;
         }

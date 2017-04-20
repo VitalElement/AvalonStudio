@@ -247,7 +247,10 @@
                     }
                 }
 
-                TargetStopped?.Invoke(this, e);
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    TargetStopped?.Invoke(this, e);
+                });
             }
         }
 

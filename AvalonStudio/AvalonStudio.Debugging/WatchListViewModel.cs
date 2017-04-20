@@ -131,18 +131,12 @@ namespace AvalonStudio.Debugging
         {
             var newWatch = new ObjectValueViewModel(this, model);
 
-            Dispatcher.UIThread.InvokeTaskAsync(() =>
-            {
-                Children.Add(newWatch);
-            }).Wait();
+            Children.Add(newWatch);
         }
 
         public void Remove(ObjectValue value)
         {
-            Dispatcher.UIThread.InvokeTaskAsync(() =>
-            {
-                Children.Remove(Children.FirstOrDefault(c => c.Model.Name == value.Name));
-            }).Wait();
+            Children.Remove(Children.FirstOrDefault(c => c.Model.Name == value.Name));
         }
 
         private void ApplyChange(ObjectValue change)
@@ -158,10 +152,7 @@ namespace AvalonStudio.Debugging
 
         public virtual void Clear()
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Children.Clear();
-            });
+            Children.Clear();
 
             watches.Clear();
         }
@@ -176,7 +167,7 @@ namespace AvalonStudio.Debugging
 
                 var watch = _currentFrame.GetExpressionValue(expression, false);
 
-                Task.Run(() => { InvalidateObjects(watch); });
+                InvalidateObjects(watch);
 
                 return true;
             }
