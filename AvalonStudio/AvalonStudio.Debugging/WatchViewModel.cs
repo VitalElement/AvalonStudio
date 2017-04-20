@@ -31,6 +31,11 @@ namespace AvalonStudio.Debugging
         {
             this.watchList = watchList;
 
+            model.ValueChanged += (sender, e) =>
+            {
+                this.RaisePropertyChanged(nameof(Value));
+            };
+
             DeleteCommand = ReactiveCommand.Create();
 
             if (model.HasChildren)
@@ -111,7 +116,15 @@ namespace AvalonStudio.Debugging
 
         public string Value
         {
-            get { return Model?.Value; }
+            get
+            {
+                if (Model.IsEvaluating)
+                {
+                    return "Evaluating...";
+                }
+
+                return Model?.Value;
+            }
         }
 
         public IBrush Background
@@ -170,17 +183,20 @@ namespace AvalonStudio.Debugging
             bool hasChanged = Model.Value != newValue?.Value;
             bool didHaveChildren = Model.HasChildren;
 
-            Model = newValue;
-
-            if (Model != null)
+            if ((object)Model != (object)newValue)
             {
-                if (Model.HasChildren && !didHaveChildren)
+                Model = newValue;
+
+                if (Model != null)
                 {
-                    hasChanged = true;
+                    if (Model.HasChildren && !didHaveChildren)
+                    {
+                        hasChanged = true;
 
-                    Children = new ObservableCollection<ObjectValueViewModel>();
+                        Children = new ObservableCollection<ObjectValueViewModel>();
 
-                    Children.Add(DummyChild);
+                        Children.Add(DummyChild);
+                    }
                 }
             }
 
@@ -201,11 +217,11 @@ namespace AvalonStudio.Debugging
                     Children.Clear();
                 }
             }
-            else if(IsExpanded && !Model.HasChildren)
+            else if (IsExpanded && !Model.HasChildren)
             {
                 IsExpanded = false;
             }
-            
+
             HasChanged = hasChanged;
 
             if (hasChanged)
