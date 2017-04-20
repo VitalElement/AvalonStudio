@@ -1,9 +1,11 @@
 namespace AvalonStudio.Toolchains.Clang
 {
     using AvalonStudio.Extensibility.Templating;
+    using AvalonStudio.Packages;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.Standard;
+    using AvalonStudio.Repositories;
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
     using CommandLineTools;
@@ -23,7 +25,7 @@ namespace AvalonStudio.Toolchains.Clang
 
     public class ClangToolchain : GCCToolchain
     {
-        public override string BinDirectory => Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "bin");
+        public override string BinDirectory => Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content", "bin");
         public override string Prefix => string.Empty;
         public override string CCName => "clang";
         public override string CCPPName => "clang++";
@@ -61,6 +63,13 @@ namespace AvalonStudio.Toolchains.Clang
         private string GetLinkerScriptLocation(IStandardProject project)
         {
             return Path.Combine(project.CurrentDirectory, "link.ld");
+        }
+
+        public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
+        {
+            PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", new AvalonConsoleNuGetLogger(console)).Wait();
+
+            return base.Compile(console, superProject, project, file, outputFile);
         }
 
         public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
