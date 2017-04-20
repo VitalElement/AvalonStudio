@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Debugging.DotNetCore
 {
+    using AvalonStudio.CommandLineTools;
     using AvalonStudio.Extensibility;
     using AvalonStudio.GlobalSettings;
     using AvalonStudio.Platforms;
@@ -20,12 +21,50 @@
             IoC.RegisterConstant<DotNetCoreDebugger>(this);
         }
 
+        private static string ResolveShimVersion()
+        {
+            var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
+
+            bool inHostSection = false;
+
+            string result = string.Empty;
+
+            var exitCode = PlatformSupport.ExecuteShellCommand(settings.DotNetPath, "--info", (s, e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                {
+                    if (inHostSection)
+                    {
+                        if (e.Data.Trim().StartsWith("Version"))
+                        {
+                            var parts = e.Data.Split(':');
+
+                            if (parts.Length >= 2)
+                            {
+                                result = parts[1].Trim();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (e.Data.Trim().StartsWith("Microsoft .NET Core Shared Framework Host"))
+                        {
+                            inHostSection = true;
+                        }
+                    }
+                }
+            }, (s, e) => { }, false, "", false);
+
+            return result;
+        }
+
         public DebuggerSession CreateSession(IProject project)
         {
             var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
 
-            // TODO resolve correct paths.
-            var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", "2.0.0-preview1-002021-00", "dbgshim" + Platform.DLLExtension);
+            var coreAppVersion = ResolveShimVersion();
+
+            var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", coreAppVersion, "dbgshim" + Platform.DLLExtension);
 
             var result = new CoreClrDebuggerSession(System.IO.Path.GetInvalidPathChars(), dbgShimPath);
 
