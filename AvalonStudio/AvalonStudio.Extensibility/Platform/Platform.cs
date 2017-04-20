@@ -74,6 +74,50 @@ namespace AvalonStudio.Platforms
         internal const string LIBC = "libc";
         private const string LIB = "MonoPosixHelper";
 
+        public static string AvalonRID
+        {
+            get
+            {
+                string result = "UnknownRid";
+
+                switch (Platform.PlatformIdentifier)
+                {
+                    case PlatformID.Win32NT:
+                        result = "win-";
+                        break;
+
+                    case PlatformID.MacOSX:
+                        result = "osx-";
+                        break;
+
+                    case PlatformID.Unix:
+                        result = "ubuntu-";
+                        break;
+                }
+
+                switch (Platform.OSArchitecture)
+                {
+                    case Architecture.X64:
+                        result += "x64";
+                        break;
+
+                    case Architecture.X86:
+                        result += "x86";
+                        break;
+
+                    case Architecture.Arm:
+                        result += "ARM";
+                        break;
+
+                    case Architecture.Arm64:
+                        result += "ARM64";
+                        break;
+                }
+
+                return result;
+            }
+        }
+
         private const string UserDataDir = ".as";
 
         public static string ExecutionPath => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
