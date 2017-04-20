@@ -11,8 +11,8 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
     {
         public RecentProjectViewModel(string name, string location)
         {
-            this._name = name;
-            this._location = location;
+            _name = name;
+            _location = location;
 
             ClickCommand = ReactiveCommand.Create();
 
@@ -20,9 +20,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             {
                 var shell = IoC.Get<IShell>();
 
-                var path = Path.Combine(location, name + ".asln");
-
-                shell.OpenSolutionAsync(path);
+                shell.OpenSolutionAsync(_location);
             });
         }
 
