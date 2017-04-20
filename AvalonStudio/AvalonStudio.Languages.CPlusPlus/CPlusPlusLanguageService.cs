@@ -490,7 +490,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);
                 }
-                catch (Exception)
+                catch (AccessViolationException e)
                 {
                 }
             });
