@@ -170,8 +170,8 @@ namespace AvalonStudio.Controls
 
                 Model.TextDocument = null;
             }));
-            
-            AddWatchCommand = ReactiveCommand.Create(this.WhenAny(x=>x.WordAtCaret, (word) => !string.IsNullOrEmpty(word.Value)));
+
+            AddWatchCommand = ReactiveCommand.Create(this.WhenAny(x => x.WordAtCaret, (word) => !string.IsNullOrEmpty(word.Value)));
             disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(WordAtCaret); }));
 
             tabCharacter = "    ";
@@ -602,16 +602,12 @@ namespace AvalonStudio.Controls
                 {
                     var debugManager = IoC.Get<IDebugManager2>();
 
-                    if (debugManager.LastStackFrame != null)
-                    {
-                        var newToolTip = new DebugHoverProbeViewModel();
-                        newToolTip.SetCurrentFrame(debugManager.LastStackFrame);
+                    var newToolTip = new DebugHoverProbeViewModel();
 
-                        bool result = newToolTip.AddWatch(expression);
+                    bool result = newToolTip.AddWatch(expression);
 
-                        ToolTip = newToolTip;
-                        return result;
-                    }
+                    ToolTip = newToolTip;
+                    return result;
                 }
             }
 

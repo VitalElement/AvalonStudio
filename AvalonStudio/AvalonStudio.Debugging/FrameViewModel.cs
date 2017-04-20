@@ -1,47 +1,35 @@
 using AvalonStudio.MVVM;
+using Mono.Debugging.Client;
+using System.IO;
 
 namespace AvalonStudio.Debugging
 {
-    public class FrameViewModel : ViewModel
+    public class FrameViewModel : ViewModel<StackFrame>
     {
         private readonly IDebugManager2 _debugManager;
 
-        public FrameViewModel(IDebugManager2 debugManager)
+        public FrameViewModel(IDebugManager2 debugManager, StackFrame frame) : base(frame)
         {
             _debugManager = debugManager;
         }
 
-        public string Function
-        {
-            get { return "Fn()"; }
-        }
+        public string Function => Path.GetFileName(Model.FullModuleName) + "!" + Model.FullStackframeText;
 
         public string Address
         {
-            get { return string.Format("0x{0:X}", 0); }
+            get { return string.Format("0x{0:X}", Model.Address); }
         }
 
         public int Line
         {
-            get { return 1; }
+            get { return Model.SourceLocation.Line; }
         }
 
         public string File
         {
             get
             {
-                /*if (Model.FullFileName != null)
-				{
-					var filePath = Path.GetDirectoryName(Model.FullFileName);
-
-					var file = Path.GetFileName(Model.FullFileName);
-
-					var relativePath = filePath.MakeRelativePath(_debugManager.Project.CurrentDirectory);
-
-					return Path.Combine(relativePath, file);
-				}*/
-
-                return string.Empty;
+                return Model.SourceLocation.FileName;
             }
         }
     }

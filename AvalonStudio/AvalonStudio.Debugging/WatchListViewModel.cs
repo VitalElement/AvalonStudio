@@ -17,7 +17,6 @@ namespace AvalonStudio.Debugging
 
         private readonly List<ObjectValue> watches;
         private List<string> _expressions;
-        private StackFrame _currentFrame;
 
         private ObservableCollection<ObjectValueViewModel> children;
         public List<ObjectValueViewModel> LastChangedRegisters { get; set; }
@@ -33,11 +32,6 @@ namespace AvalonStudio.Debugging
             _expressions = new List<string>();
 
             Activation(); // for when we create the part outside of composition.
-        }
-
-        public void SetCurrentFrame(StackFrame frame)
-        {
-            _currentFrame = frame;
         }
 
         public ObservableCollection<ObjectValueViewModel> Children
@@ -62,7 +56,7 @@ namespace AvalonStudio.Debugging
 
             if (DebugManager != null)
             {
-                DebugManager.TargetStopped += _debugManager_TargetStopped;
+                DebugManager.FrameChanged += DebugManager_FrameChanged;
                 DebugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
                 DebugManager.DebugSessionEnded += (sender, e) =>
@@ -73,11 +67,9 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        private void _debugManager_TargetStopped(object sender, TargetEventArgs e)
+        private void DebugManager_FrameChanged(object sender, System.EventArgs e)
         {
-            _currentFrame = e.Backtrace.GetFrame(0);
-
-            var expressions = _currentFrame.GetExpressionValues(_expressions.ToArray(), false);
+            var expressions = DebugManager.SelectedFrame.GetExpressionValues(_expressions.ToArray(), false);
 
             InvalidateObjects(expressions);
         }
@@ -167,7 +159,7 @@ namespace AvalonStudio.Debugging
                 {
                     _expressions.Add(expression);
 
-                    var watch = _currentFrame.GetExpressionValue(expression, false);
+                    var watch = DebugManager.SelectedFrame.GetExpressionValue(expression, false);
 
                     InvalidateObjects(watch);
 

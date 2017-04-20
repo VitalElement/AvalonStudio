@@ -15,7 +15,8 @@
     public class DebugManager2 : IDebugManager2, IExtension
     {
         private DebuggerSession _session;
-        private StackFrame _lastStackFrame;
+        private StackFrame _currentStackFrame;
+
         private IShell _shell;
         private IConsole _console;
         private IEditor _lastDocument;
@@ -25,6 +26,8 @@
         public event EventHandler DebugSessionEnded;
 
         public event EventHandler<TargetEventArgs> TargetStopped;
+
+        public event EventHandler FrameChanged;
 
         public DebugManager2()
         {
@@ -39,6 +42,25 @@
             {
                 SaveBreakpoints();
             };
+        }
+
+        public void SetFrame (StackFrame frame)
+        {
+            _currentStackFrame = frame;
+
+            FrameChanged?.Invoke(this, new EventArgs());
+        }
+
+        public StackFrame SelectedFrame
+        {
+            get
+            {
+                return _currentStackFrame;
+            }
+            set
+            {
+                SetFrame(value);
+            }
         }
 
         private bool _loadingBreakpoints;
@@ -132,7 +154,6 @@
 
             _session?.Dispose();
             _session = null;
-            _lastStackFrame = null;
             _lastDocument?.ClearDebugHighlight();
             _lastDocument = null;
 
@@ -198,8 +219,6 @@
             DebugSessionStarted?.Invoke(this, new EventArgs());
         }
 
-        public StackFrame LastStackFrame => _lastStackFrame;
-
         private void _session_TargetStarted(object sender, EventArgs e)
         {
             if (_lastDocument != null)
@@ -218,7 +237,8 @@
         {
             if (e.Backtrace != null && e.Backtrace.FrameCount > 0)
             {
-                var currentFrame = _lastStackFrame = e.Backtrace.GetFrame(0);
+                var currentFrame = e.Backtrace.GetFrame(0);
+
                 var sourceLocation = currentFrame.SourceLocation;
 
                 if (sourceLocation.FileName != null)
@@ -253,6 +273,7 @@
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     TargetStopped?.Invoke(this, e);
+                    SetFrame(currentFrame);
                 });
             }
         }

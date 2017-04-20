@@ -9,9 +9,11 @@
 
         event EventHandler DebugSessionEnded;
 
+        event EventHandler FrameChanged;
+
         event EventHandler<TargetEventArgs> TargetStopped;
 
-        StackFrame LastStackFrame { get; }
+        StackFrame SelectedFrame { get; set; }
 
         DebuggerSession Session { get; }
 

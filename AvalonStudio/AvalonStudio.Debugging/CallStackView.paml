@@ -5,7 +5,7 @@
       <ListBox.DataTemplates>
         <DataTemplate DataType="vm:FrameViewModel">
           <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Background}">
-            <TextBlock Text="{Binding Function}" Width="250" />
+            <TextBlock Text="{Binding Function}" Width="350" />
             <TextBlock Text="{Binding Line}" />
             <TextBlock Text="{Binding Address}" />
             <TextBlock Text="{Binding File}" />
