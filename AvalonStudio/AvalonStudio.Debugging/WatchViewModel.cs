@@ -123,12 +123,19 @@ namespace AvalonStudio.Debugging
         {
             get
             {
-                if (Model.IsEvaluating)
+                if (Model != null)
                 {
-                    return "Evaluating...";
-                }
+                    if (Model.IsEvaluating)
+                    {
+                        return "Evaluating...";
+                    }
 
-                return Model?.Value;
+                    return Model.Value;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -209,11 +216,13 @@ namespace AvalonStudio.Debugging
             {
                 if (newValue.Value != null)
                 {
+                    var newChildren = newValue.GetAllChildren();
+                    
                     for (int i = 0; i < Children.Count; i++)
                     {
                         if (Children[i].Model != null)
                         {
-                            Children[i].ApplyChange(newValue.GetChild(Children[i].Model.Name));
+                            Children[i].ApplyChange(newChildren[i]);
                         }
                     }
                 }
