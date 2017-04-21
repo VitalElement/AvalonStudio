@@ -44,18 +44,21 @@ namespace AvalonStudio.Packages
             {
                 try
                 {
-                    XDocument packagesDocument = XDocument.Load(fullPath);
-                    if (packagesDocument.Root == null)
+                    lock (saveLock)
                     {
-                        Trace.TraceWarning("No root element in packages file");
-                    }
-                    else if (packagesDocument.Root.Name != CachedPackage.PackagesElementName)
-                    {
-                        Trace.TraceWarning($@"Packages file root element should be named ""{CachedPackage.PackagesElementName}"" but is actually named ""{packagesDocument.Root.Name}""");
-                    }
-                    else
-                    {
-                        return packagesDocument.Root.Elements(CachedPackage.PackageElementName).Select(x => new CachedPackage(x)).ToArray();
+                        XDocument packagesDocument = XDocument.Load(fullPath);
+                        if (packagesDocument.Root == null)
+                        {
+                            Trace.TraceWarning("No root element in packages file");
+                        }
+                        else if (packagesDocument.Root.Name != CachedPackage.PackagesElementName)
+                        {
+                            Trace.TraceWarning($@"Packages file root element should be named ""{CachedPackage.PackagesElementName}"" but is actually named ""{packagesDocument.Root.Name}""");
+                        }
+                        else
+                        {
+                            return packagesDocument.Root.Elements(CachedPackage.PackageElementName).Select(x => new CachedPackage(x)).ToArray();
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -132,15 +135,20 @@ namespace AvalonStudio.Packages
             return EmptyDisposable.Instance;
         }
 
+        private static object saveLock = new object();
+
         public void Dispose()
         {
-            new XDocument(
-                new XElement(CachedPackage.PackagesElementName,
-                    _installedPackages.Select(x => (object)x.Element).ToArray())).Save(_cacheFilePath);
+            lock (saveLock)
+            {
+                new XDocument(
+                    new XElement(CachedPackage.PackagesElementName,
+                        _installedPackages.Select(x => (object)x.Element).ToArray())).Save(_cacheFilePath);
 
-            new XDocument(
-                new XElement(CachedPackage.PackagesElementName,
-                    _installedPackages.Select(x => (object)x.Element).ToArray())).Save(_installedFilePath);
+                new XDocument(
+                    new XElement(CachedPackage.PackagesElementName,
+                        _installedPackages.Select(x => (object)x.Element).ToArray())).Save(_installedFilePath);
+            }
         }
 
         private class CachedPackageEntry : IDisposable
