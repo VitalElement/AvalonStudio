@@ -441,7 +441,7 @@ namespace AvalonStudio.Platforms
 
         public static string NormalizePath(this string path)
         {
-            string result = path.ToPlatformPath();
+            string result = path.Replace("\\\\", "\\").ToPlatformPath();
 
             if (!string.IsNullOrEmpty(result))
             {

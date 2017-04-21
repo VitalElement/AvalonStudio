@@ -244,7 +244,7 @@
 
                 if (sourceLocation.FileName != null)
                 {
-                    var normalizedPath = sourceLocation.FileName.Replace("\\\\", "\\").NormalizePath();
+                    var normalizedPath = sourceLocation.FileName.NormalizePath();
 
                     ISourceFile file = null;
 
