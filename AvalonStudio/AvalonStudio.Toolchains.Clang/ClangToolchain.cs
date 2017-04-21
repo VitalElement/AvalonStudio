@@ -5,7 +5,6 @@ namespace AvalonStudio.Toolchains.Clang
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.Standard;
-    using AvalonStudio.Repositories;
     using AvalonStudio.Toolchains.GCC;
     using AvalonStudio.Utils;
     using CommandLineTools;
@@ -25,7 +24,8 @@ namespace AvalonStudio.Toolchains.Clang
 
     public class ClangToolchain : GCCToolchain
     {
-        public override string BinDirectory => Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content", "bin");
+        public static string ContentDirectory => Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content");
+        public override string BinDirectory => Path.Combine(ContentDirectory, "bin");
         public override string Prefix => string.Empty;
         public override string CCName => "clang";
         public override string CCPPName => "clang++";
@@ -65,24 +65,17 @@ namespace AvalonStudio.Toolchains.Clang
             return Path.Combine(project.CurrentDirectory, "link.ld");
         }
 
-        public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
-        {
-            PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", new AvalonConsoleNuGetLogger(console)).Wait();
-
-            return base.Compile(console, superProject, project, file, outputFile);
-        }
-
         public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
         {
             return new List<string>
             {
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1", "arm-none-eabi"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include", "c++", "5.4.1", "backward"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "lib", "gcc", "arm-none-eabi", "5.4.1", "include-fixed"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.Clang", "arm-none-eabi", "include")
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "5.4.1"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "5.4.1", "arm-none-eabi"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "5.4.1", "backward"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include"),
+                Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "5.4.1", "include"),
+                Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "5.4.1", "include-fixed"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include")
             };
         }
 
@@ -497,6 +490,11 @@ namespace AvalonStudio.Toolchains.Clang
             }
 
             return true;
+        }
+
+        public async override Task InstallAsync(IConsole console)
+        {
+            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", console);
         }
     }
 }

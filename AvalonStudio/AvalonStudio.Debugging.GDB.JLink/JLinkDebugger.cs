@@ -5,6 +5,9 @@ using AvalonStudio.Toolchains.GCC;
 using Mono.Debugging.Client;
 using System;
 using System.IO;
+using AvalonStudio.Utils;
+using System.Threading.Tasks;
+using AvalonStudio.Packages;
 
 namespace AvalonStudio.Debugging.GDB.JLink
 {
@@ -72,6 +75,11 @@ namespace AvalonStudio.Debugging.GDB.JLink
         public object GetSettingsControl(IProject project)
         {
             return new JLinkSettingsFormViewModel(project);
+        }
+
+        public async Task InstallAsync(IConsole console)
+        {
+            await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", console);
         }
     }
 }

@@ -87,8 +87,6 @@ namespace AvalonStudio.Debugging.GDB.JLink
             var result = true;
             var settings = GetSettings(_project);
 
-            PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", new AvalonConsoleNuGetLogger(console)).Wait();
-
             console.Clear();
             console.WriteLine("[JLink] - Starting GDB Server...");
             // TODO allow people to select the device.

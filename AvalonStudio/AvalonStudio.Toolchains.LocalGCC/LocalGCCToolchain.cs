@@ -1,3 +1,4 @@
+using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -329,6 +330,11 @@ namespace AvalonStudio.Toolchains.LocalGCC
             }
 
             return result;
+        }
+
+        public async override Task InstallAsync(IConsole console)
+        {
+            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.LocalGCC", console);
         }
     }
 }
