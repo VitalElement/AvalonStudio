@@ -13,7 +13,7 @@ namespace AvalonStudio.Debugging
         Natural
     }
 
-    public interface IDebugger2 : IExtension
+    public interface IDebugger2 : IExtension, IInstallable
     {
         DebuggerSession CreateSession(IProject project);
 
