@@ -9,6 +9,9 @@
     using Mono.Debugging.Client;
     using Mono.Debugging.Win32;
     using System.IO;
+    using AvalonStudio.Utils;
+    using System;
+    using System.Threading.Tasks;
 
     public class DotNetCoreDebugger : IDebugger2
     {
@@ -101,6 +104,11 @@
         public object GetSettingsControl(IProject project)
         {
             return null;
+        }
+
+        public Task InstallAsync(IConsole console)
+        {
+            return Task.FromResult(0);
         }
     }
 }
