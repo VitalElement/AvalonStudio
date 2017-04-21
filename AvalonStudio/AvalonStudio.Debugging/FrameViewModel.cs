@@ -13,7 +13,20 @@ namespace AvalonStudio.Debugging
             _debugManager = debugManager;
         }
 
-        public string Function => Path.GetFileName(Model.FullModuleName) + "!" + Model.FullStackframeText;
+        public string Function
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Model.FullModuleName))
+                {
+                    return Path.GetFileName(Model.FullModuleName) + "!" + Model.FullStackframeText;
+                }
+                else
+                {
+                    return Model.FullStackframeText;
+                }
+            }
+        }
 
         public string Address
         {
