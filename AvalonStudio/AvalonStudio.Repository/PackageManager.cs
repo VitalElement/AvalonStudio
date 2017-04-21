@@ -48,22 +48,29 @@ namespace AvalonStudio.Packages
             return new InstalledPackagesCache(Path.Combine(Platform.ReposDirectory, "cachedPackages.xml"), Path.Combine(Platform.ReposDirectory, "installedPackages.xml"), false);
         }
 
-        public static async Task EnsurePackage(string packageId, ILogger console)
+        public static async Task EnsurePackage(string packageId, IConsole console)
+        {
+            await EnsurePackage(packageId, new AvalonConsoleNuGetLogger(console));
+        }
+
+        private static async Task EnsurePackage(string packageId, ILogger console)
         {
             if(GetPackageDirectory(packageId)== string.Empty)
             {
                 console.LogInformation($"Package: {packageId} will be installed.");
 
-                var packages = await FindPackages(packageId + "-" + Platform.AvalonRID);
+                var packages = await FindPackages(packageId + "." + Platform.AvalonRID);
 
                 var package = packages.FirstOrDefault();
 
-                if(package == null)
+                if (package == null)
                 {
                     console.LogInformation($"Unable to find package: {packageId}");
                 }
-
-                await InstallPackage(package.Identity.Id, package.Identity.Version.ToNormalizedString(), console);
+                else
+                {
+                    await InstallPackage(package.Identity.Id, package.Identity.Version.ToNormalizedString(), console);
+                }
             }
         }
 
