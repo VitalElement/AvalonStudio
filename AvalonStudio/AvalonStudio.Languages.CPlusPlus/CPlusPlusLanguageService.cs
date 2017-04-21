@@ -139,68 +139,71 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
-                var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(),
-                    CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
-                completionResults.Sort();
-
-                result.Contexts = (CompletionContext)completionResults.Contexts;
-
-                foreach (var codeCompletion in completionResults.Results)
+                if (translationUnit != null)
                 {
-                    var typedText = string.Empty;
+                    var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(),
+                        CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
+                    completionResults.Sort();
 
-                    var hint = string.Empty;
+                    result.Contexts = (CompletionContext)completionResults.Contexts;
 
-                    foreach (var chunk in codeCompletion.CompletionString.Chunks)
+                    foreach (var codeCompletion in completionResults.Results)
                     {
-                        if (chunk.Kind == CompletionChunkKind.TypedText)
+                        var typedText = string.Empty;
+
+                        var hint = string.Empty;
+
+                        foreach (var chunk in codeCompletion.CompletionString.Chunks)
                         {
-                            typedText = chunk.Text;
+                            if (chunk.Kind == CompletionChunkKind.TypedText)
+                            {
+                                typedText = chunk.Text;
+                            }
+
+                            hint += chunk.Text;
+
+                            switch (chunk.Kind)
+                            {
+                                case CompletionChunkKind.LeftParen:
+                                case CompletionChunkKind.LeftAngle:
+                                case CompletionChunkKind.LeftBrace:
+                                case CompletionChunkKind.LeftBracket:
+                                case CompletionChunkKind.RightAngle:
+                                case CompletionChunkKind.RightBrace:
+                                case CompletionChunkKind.RightBracket:
+                                case CompletionChunkKind.RightParen:
+                                case CompletionChunkKind.Placeholder:
+                                case CompletionChunkKind.Comma:
+                                    break;
+
+                                default:
+                                    hint += " ";
+                                    break;
+                            }
                         }
 
-                        hint += chunk.Text;
-
-                        switch (chunk.Kind)
+                        if (filter == string.Empty || typedText.StartsWith(filter))
                         {
-                            case CompletionChunkKind.LeftParen:
-                            case CompletionChunkKind.LeftAngle:
-                            case CompletionChunkKind.LeftBrace:
-                            case CompletionChunkKind.LeftBracket:
-                            case CompletionChunkKind.RightAngle:
-                            case CompletionChunkKind.RightBrace:
-                            case CompletionChunkKind.RightBracket:
-                            case CompletionChunkKind.RightParen:
-                            case CompletionChunkKind.Placeholder:
-                            case CompletionChunkKind.Comma:
-                                break;
+                            var completion = new CodeCompletionData
+                            {
+                                Suggestion = typedText,
+                                Priority = codeCompletion.CompletionString.Priority,
+                                Kind = FromClangKind(codeCompletion.CursorKind),
+                                Hint = hint,
+                                BriefComment = codeCompletion.CompletionString.BriefComment
+                            };
 
-                            default:
-                                hint += " ";
-                                break;
+                            result.Completions.Add(completion);
+
+                            if (completion.Kind == CodeCompletionKind.OverloadCandidate)
+                            {
+                                Console.WriteLine("TODO Implement overload candidate.");
+                            }
                         }
                     }
 
-                    if (filter == string.Empty || typedText.StartsWith(filter))
-                    {
-                        var completion = new CodeCompletionData
-                        {
-                            Suggestion = typedText,
-                            Priority = codeCompletion.CompletionString.Priority,
-                            Kind = FromClangKind(codeCompletion.CursorKind),
-                            Hint = hint,
-                            BriefComment = codeCompletion.CompletionString.BriefComment
-                        };
-
-                        result.Completions.Add(completion);
-
-                        if (completion.Kind == CodeCompletionKind.OverloadCandidate)
-                        {
-                            Console.WriteLine("TODO Implement overload candidate.");
-                        }
-                    }
+                    completionResults.Dispose();
                 }
-
-                completionResults.Dispose();
             });
 
             return result;
@@ -479,16 +482,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
-                    if (file != null && translationUnit != null)
+                    if (translationUnit != null)
                     {
-                        ScanTokens(translationUnit, result.SyntaxHighlightingData);
+                        if (file != null && translationUnit != null)
+                        {
+                            ScanTokens(translationUnit, result.SyntaxHighlightingData);
 
-                        GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);
+                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);
+                        }
+
+                        dataAssociation.TextMarkerService.Clear();
+
+                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);
                     }
-
-                    dataAssociation.TextMarkerService.Clear();
-
-                    GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);
                 }
                 catch (AccessViolationException e)
                 {
@@ -671,11 +677,14 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     var translationUnit = GetAndParseTranslationUnit(file, new List<ClangUnsavedFile>());
 
-                    var cursors = FindFunctions(translationUnit.GetCursor(), name);
-
-                    foreach (var cursor in cursors)
+                    if (translationUnit != null)
                     {
-                        results.Add(SymbolFromClangCursor(cursor));
+                        var cursors = FindFunctions(translationUnit.GetCursor(), name);
+
+                        foreach (var cursor in cursors)
+                        {
+                            results.Add(SymbolFromClangCursor(cursor));
+                        }
                     }
                 });
             }
@@ -842,10 +851,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             CPlusPlusDataAssociation result = null;
 
-            if (!dataAssociations.TryGetValue(sourceFile, out result))
-            {
-                throw new Exception("Tried to parse file that has not been registered with the language service.");
-            }
+            dataAssociations.TryGetValue(sourceFile, out result);
 
             return result;
         }
@@ -854,15 +860,19 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             var dataAssociation = GetAssociatedData(sourceFile);
 
-            if (dataAssociation.TranslationUnit == null)
+            if (dataAssociation != null)
             {
-                dataAssociation.TranslationUnit = GenerateTranslationUnit(sourceFile, unsavedFiles);
+                if (dataAssociation.TranslationUnit == null)
+                {
+                    dataAssociation.TranslationUnit = GenerateTranslationUnit(sourceFile, unsavedFiles);
+                }
+
+                // Always do a reparse, as a workaround for some issues in libclang 3.7.1
+                dataAssociation.TranslationUnit.Reparse(unsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
+
+                return dataAssociation.TranslationUnit;
             }
-
-            // Always do a reparse, as a workaround for some issues in libclang 3.7.1
-            dataAssociation.TranslationUnit.Reparse(unsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
-
-            return dataAssociation.TranslationUnit;
+            return null;
         }
 
         private void OpenBracket(TextEditor.TextEditor editor, TextDocument document, string text)
