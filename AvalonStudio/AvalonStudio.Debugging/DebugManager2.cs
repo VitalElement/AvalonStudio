@@ -195,6 +195,8 @@
                 return;
             }
 
+            await project.Debugger2.InstallAsync(IoC.Get<IConsole>());
+
             _session = project.Debugger2.CreateSession(project);
 
             _session.Breakpoints = Breakpoints;
