@@ -33,22 +33,22 @@ namespace AvalonStudio.Repositories
             _console = console;
         }
 
-        public void LogDebug(string data) => _console.Write(data);
+        public void LogDebug(string data) => _console.WriteLine(data);
 
-        public void LogVerbose(string data) => _console.Write(data);
+        public void LogVerbose(string data) => _console.WriteLine(data);
 
-        public void LogInformation(string data) => _console.Write(data);
+        public void LogInformation(string data) => _console.WriteLine(data);
 
-        public void LogMinimal(string data) => _console.Write(data);
+        public void LogMinimal(string data) => _console.WriteLine(data);
 
-        public void LogWarning(string data) => _console.Write(data);
+        public void LogWarning(string data) => _console.WriteLine(data);
 
-        public void LogError(string data) => _console.Write(data);
+        public void LogError(string data) => _console.WriteLine(data);
 
-        public void LogSummary(string data) => _console.Write(data);
+        public void LogSummary(string data) => _console.WriteLine(data);
 
-        public void LogInformationSummary(string data) => _console.Write(data);
+        public void LogInformationSummary(string data) => _console.WriteLine(data);
 
-        public void LogErrorSummary(string data) => _console.Write(data);
+        public void LogErrorSummary(string data) => _console.WriteLine(data);
     }
 }
