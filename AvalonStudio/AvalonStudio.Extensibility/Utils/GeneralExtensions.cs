@@ -2,11 +2,19 @@ using Avalonia;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Utils
 {
     public static class GeneralExtensions
     {
+        public static void Forget(this Task task)
+        {
+            task.ContinueWith(
+                t => { Console.WriteLine(t.Exception); },
+                TaskContinuationOptions.OnlyOnFaulted);
+        }
+
         public static bool IsFileLocked(this FileInfo file)
         {
             try
