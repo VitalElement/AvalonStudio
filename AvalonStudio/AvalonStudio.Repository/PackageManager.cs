@@ -24,7 +24,7 @@ namespace AvalonStudio.Packages
 {
     public class PackageManager
     {
-        private ILogger _logger;        
+        private ILogger _logger;
 
         public PackageManager(ILogger logger = null)
         {
@@ -55,7 +55,7 @@ namespace AvalonStudio.Packages
 
         private static async Task EnsurePackage(string packageId, ILogger console)
         {
-            if(GetPackageDirectory(packageId)== string.Empty)
+            if (GetPackageDirectory(packageId) == string.Empty)
             {
                 console.LogInformation($"Package: {packageId} will be installed.");
 
@@ -112,7 +112,7 @@ namespace AvalonStudio.Packages
                     INuGetProjectContext projectContext = new ProjectContext(logger);
                     var sourceRepositories = new List<SourceRepository>();
                     sourceRepositories.Add(new SourceRepository(new NuGet.Configuration.PackageSource(DefaultPackageSource), providers));
-                    
+
                     await packageManager.InstallPackageAsync(packageManager.PackagesFolderNuGetProject,
                         identity, resolutionContext, projectContext, sourceRepositories,
                         Array.Empty<SourceRepository>(),  // This is a list of secondary source respositories, probably empty
@@ -127,7 +127,7 @@ namespace AvalonStudio.Packages
 
         public static async Task UninstallPackage(string packageId, string version, ILogger logger = null)
         {
-            if(logger == null)
+            if (logger == null)
             {
                 logger = new ConsoleNuGetLogger();
             }
@@ -199,7 +199,7 @@ namespace AvalonStudio.Packages
 
         public static async Task<IEnumerable<IPackageSearchMetadata>> FindPackages(string packageName, ILogger logger = null)
         {
-            if(logger == null)
+            if (logger == null)
             {
                 logger = new ConsoleNuGetLogger();
             }
@@ -225,7 +225,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        public static string GetPackageDirectory (PackageIdentity identity)
+        public static string GetPackageDirectory(PackageIdentity identity)
         {
             string result = string.Empty;
 
@@ -239,7 +239,7 @@ namespace AvalonStudio.Packages
             return result;
         }
 
-        public static string GetPackageDirectory (string genericPackageId)
+        public static string GetPackageDirectory(string genericPackageId)
         {
             var result = string.Empty;
 
@@ -247,7 +247,7 @@ namespace AvalonStudio.Packages
 
             var latest = packageIds.OrderByDescending(id => id.Version).FirstOrDefault();
 
-            if(latest != null)
+            if (latest != null)
             {
                 result = GetPackageDirectory(latest);
             }

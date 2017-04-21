@@ -214,7 +214,7 @@ namespace AvalonStudio.Controls
         {
             var packages = await _packageManager.ListPackages(100);
 
-            foreach (var package in packages.Where(p=>p.Title.EndsWith(Platform.AvalonRID)))
+            foreach (var package in packages.Where(p => p.Title.EndsWith(Platform.AvalonRID)))
             {
                 availablePackages.Add(package);
             }
