@@ -62,14 +62,14 @@
             return responseReceived.Task;
         }
 
-        public Task<Process> StartAsync(string projectDir)
+        public async Task<Process> StartAsync(string projectDir)
         {
             var startInfo = new ProcessStartInfo();            
 
             startInfo.FileName = Binary;
             startInfo.Arguments = $"-p {port} -s {projectDir}";
 
-            PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", new AvalonConsoleNuGetLogger(IoC.Get<IConsole>())).Wait();
+            await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
 
             //// Hide console window
             //startInfo.UseShellExecute = false;
@@ -79,7 +79,7 @@
             //startInfo.CreateNoWindow = true;
             TaskCompletionSource<Process> processStartedCompletionSource = new TaskCompletionSource<Process>();
 
-            Task.Factory.StartNew(async () =>
+            Task.Run(async () =>
             {
                 process = Process.Start(startInfo);
 
@@ -98,9 +98,9 @@
                 processStartedCompletionSource.SetResult(process);
 
                 process.WaitForExit();
-            });
+            }).Forget();
 
-            return processStartedCompletionSource.Task;
+            return await processStartedCompletionSource.Task;
         }
     }
 }
