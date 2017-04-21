@@ -436,7 +436,10 @@ namespace AvalonStudio.Controls
 
         public void GotoPosition(int line, int column)
         {
-            Dispatcher.UIThread.InvokeAsync(() => { CaretIndex = TextDocument.GetOffset(line, column); });
+            if (textDocument != null)
+            {
+                Dispatcher.UIThread.InvokeAsync(() => { CaretIndex = TextDocument.GetOffset(line, column); });
+            }
         }
 
         public void GotoOffset(int offset)
