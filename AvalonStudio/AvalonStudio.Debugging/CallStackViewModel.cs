@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System.Collections.ObjectModel;
@@ -38,8 +39,13 @@ namespace AvalonStudio.Debugging
                     var shell = IoC.Get<IShell>();
 
                     _debugManager.SelectedFrame = selectedFrame.Model;
+                    
+                    var file = shell?.CurrentSolution?.FindFile(selectedFrame.Model.SourceLocation.FileName.NormalizePath());
 
-                    shell?.OpenDocument(shell?.CurrentSolution?.FindFile(selectedFrame.Model.SourceLocation.FileName), selectedFrame.Line, -1, -1, true, true);
+                    if (file != null)
+                    {
+                        shell?.OpenDocument(file, selectedFrame.Line, -1, -1, false, true);
+                    }
                 }
 
                 this.RaisePropertyChanged(nameof(SelectedFrame));
