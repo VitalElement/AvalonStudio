@@ -175,7 +175,6 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref selectedInstalledPackage, value); }
         }
 
-
         public ReactiveCommand<object> InstallCommand { get; }
         public ReactiveCommand<object> UninstallCommand { get; }
         public override ReactiveCommand<object> OKCommand { get; protected set; }
