@@ -271,6 +271,13 @@
                     }
                 }
 
+                if(e.BreakEvent is WatchPoint)
+                {
+                    var wp = e.BreakEvent as WatchPoint;
+
+                    _console.WriteLine($"Hit Watch Point {wp.Expression}");
+                }
+
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     TargetStopped?.Invoke(this, e);
