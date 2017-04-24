@@ -62,7 +62,7 @@ namespace AvalonStudio.Debugging.GDB
         private const int BreakEventUpdateNotifyDelay = 500;
 
         private bool internalStop;
-        private bool logGdb = false;
+        private bool logGdb = true;
         private bool asyncMode;
 
         private object syncLock = new object();
