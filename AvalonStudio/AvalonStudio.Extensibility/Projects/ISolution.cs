@@ -6,6 +6,8 @@ namespace AvalonStudio.Projects
     {
         string Name { get; }
 
+        string Location { get; }
+
         IProject StartupProject { get; set; }
 
         ObservableCollection<IProject> Projects { get; }

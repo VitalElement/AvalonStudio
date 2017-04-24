@@ -36,6 +36,8 @@ namespace AvalonStudio.Toolchains.Standard
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
         {
+            await InstallAsync(console);
+
             if (!ValidateToolchainExecutables(console))
             {
                 return false;
@@ -549,5 +551,7 @@ namespace AvalonStudio.Toolchains.Standard
         public abstract Task<bool> PreBuild(IConsole console, IProject project);
 
         public abstract Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult);
+
+        public abstract Task InstallAsync(IConsole console);
     }
 }

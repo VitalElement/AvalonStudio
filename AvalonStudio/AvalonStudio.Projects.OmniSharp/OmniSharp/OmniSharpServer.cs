@@ -1,17 +1,23 @@
 ﻿namespace AvalonStudio.Languages.CSharp.OmniSharp
 {
+    using AvalonStudio.Extensibility;
+    using AvalonStudio.Packages;
     using AvalonStudio.Platforms;
+    using AvalonStudio.Repositories;
+    using AvalonStudio.Utils;
     using Extensibility.Languages.CompletionAssistance;
     using RestSharp;
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class OmniSharpServer
     {
-        private static readonly string BaseDir = Path.Combine(Platform.ReposDirectory, "AvalonStudio.Languages.CSharp", "OmniSharp");
+        private static readonly string BaseDir = PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp");
         private static readonly string Binary = Path.Combine(BaseDir, $"OmniSharp{Platform.ExecutableExtension}");
         private Process process;
         private RestClient client;
@@ -56,11 +62,14 @@
             return responseReceived.Task;
         }
 
-        public Task<Process> StartAsync(string projectDir)
+        public async Task<Process> StartAsync(string projectDir)
         {
-            var startInfo = new ProcessStartInfo();
+            var startInfo = new ProcessStartInfo();            
+
             startInfo.FileName = Binary;
             startInfo.Arguments = $"-p {port} -s {projectDir}";
+
+            await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
 
             //// Hide console window
             //startInfo.UseShellExecute = false;
@@ -70,7 +79,7 @@
             //startInfo.CreateNoWindow = true;
             TaskCompletionSource<Process> processStartedCompletionSource = new TaskCompletionSource<Process>();
 
-            Task.Factory.StartNew(async () =>
+            Task.Run(async () =>
             {
                 process = Process.Start(startInfo);
 
@@ -89,9 +98,9 @@
                 processStartedCompletionSource.SetResult(process);
 
                 process.WaitForExit();
-            });
+            }).Forget();
 
-            return processStartedCompletionSource.Task;
+            return await processStartedCompletionSource.Task;
         }
     }
 }

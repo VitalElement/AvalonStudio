@@ -1,4 +1,6 @@
+using AvalonStudio.Utils;
 using System;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Extensibility.Plugin
 {
@@ -8,6 +10,11 @@ namespace AvalonStudio.Extensibility.Plugin
         void BeforeActivation();
 
         void Activation();
+    }
+
+    public interface IInstallable
+    {
+        Task InstallAsync(IConsole console);
     }
 
     //[InheritedExport(typeof (IPlugin))]

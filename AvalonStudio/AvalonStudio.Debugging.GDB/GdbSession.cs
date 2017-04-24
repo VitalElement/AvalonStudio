@@ -316,13 +316,10 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
-        protected override BreakEventInfo OnInsertBreakEvent(BreakEvent be)
+        private BreakEventInfo OnInsertBreakPoint(BreakEvent be)
         {
-            Breakpoint bp = be as Breakpoint;
-            if (bp == null)
-                throw new NotSupportedException();
-
-            BreakEventInfo bi = new BreakEventInfo();
+            var bi = new BreakEventInfo();
+            var bp = be as Breakpoint;
 
             lock (gdbLock)
             {
@@ -400,6 +397,84 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     InternalResume(dres);
                 }
+            }
+        }
+
+        private BreakEventInfo OnInsertWatchPoint(BreakEvent be)
+        {
+            var bi = new BreakEventInfo();
+            var wp = be as WatchPoint;
+
+            lock (gdbLock)
+            {
+                bool dres = InternalStop();
+                try
+                {
+                    string errorMsg = string.Empty;
+                    GdbCommandResult res = null;
+
+                    try
+                    {
+                        if (wp.TriggerOnRead && wp.TriggerOnWrite)
+                        {
+                            res = RunCommand("-break-watch", wp.Expression, "-a");
+                        }
+                        else if (wp.TriggerOnRead && !wp.TriggerOnWrite)
+                        {
+                            res = RunCommand("-break-watch", wp.Expression, "-r");
+                        }
+                        else
+                        {
+                            res = RunCommand("-break-watch", wp.Expression);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        errorMsg = ex.Message;
+                    }
+
+                    if (res == null || res.Status != CommandStatus.Done)
+                    {
+                        bi.SetStatus(BreakEventStatus.Invalid, errorMsg);
+                        return bi;
+                    }
+
+                    int bh = res.GetObject("wpt").GetInt("number");
+
+                    if (!be.Enabled)
+                    {
+                        RunCommand("-break-disable", bh.ToString());
+                    }
+
+                    breakpoints[bh] = bi;
+                    bi.Handle = bh;
+                    bi.SetStatus(BreakEventStatus.Bound, null);
+                    return bi;
+                }
+                finally
+                {
+                    InternalResume(dres);
+                }
+            }
+        }
+
+        protected override BreakEventInfo OnInsertBreakEvent(BreakEvent be)
+        {
+            if (be is Breakpoint)
+            {
+                return OnInsertBreakPoint(be as Breakpoint);
+            }
+            else if (be is WatchPoint)
+            {
+                return OnInsertWatchPoint(be as WatchPoint);
+            }
+            else
+            {
+                var bi = new BreakEventInfo();
+
+                bi.SetStatus(BreakEventStatus.NotBound, "BreakEvent type not supported.");
+
+                return bi;
             }
         }
 

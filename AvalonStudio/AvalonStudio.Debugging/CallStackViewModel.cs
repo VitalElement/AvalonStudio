@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System.Collections.ObjectModel;
@@ -37,7 +38,14 @@ namespace AvalonStudio.Debugging
                 {
                     var shell = IoC.Get<IShell>();
 
-                    //shell?.OpenDocument(shell?.CurrentSolution?.FindFile(selectedFrame.Model.FullFileName), selectedFrame.Model.Line, -1, -1, true, true);
+                    _debugManager.SelectedFrame = selectedFrame.Model;
+                    
+                    var file = shell?.CurrentSolution?.FindFile(selectedFrame.Model.SourceLocation.FileName.NormalizePath());
+
+                    if (file != null)
+                    {
+                        shell?.OpenDocument(file, selectedFrame.Line, -1, -1, false, true);
+                    }
                 }
 
                 this.RaisePropertyChanged(nameof(SelectedFrame));
@@ -59,6 +67,8 @@ namespace AvalonStudio.Debugging
         {
             _debugManager = IoC.Get<IDebugManager2>();
 
+            _debugManager.TargetStopped += _debugManager_TargetStopped;
+
             _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
             _debugManager.DebugSessionEnded += (sender, e) =>
@@ -68,22 +78,21 @@ namespace AvalonStudio.Debugging
             };
         }
 
-        public void Clear()
+        private void _debugManager_TargetStopped(object sender, Mono.Debugging.Client.TargetEventArgs e)
         {
-            //Frames.Clear();
+            Frames.Clear();
+
+            for (int i = 0; i < e.Backtrace.FrameCount; i++)
+            {
+                var frame = e.Backtrace.GetFrame(i);
+
+                Frames.Add(new FrameViewModel(_debugManager, frame));
+            }
         }
 
-        /*public void Update(List<Frame> frames)
-		{
-			if (frames != null)
-			{
-				Frames.Clear();
-
-				foreach (var frame in frames)
-				{
-					Frames.Add(new FrameViewModel(_debugManager, frame));
-				}
-			}
-		}*/
+        public void Clear()
+        {
+            Frames.Clear();
+        }
     }
 }

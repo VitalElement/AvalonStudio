@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains
 {
-    public interface IToolChain : IPlugin
+    public interface IToolChain : IPlugin, IInstallable
     {
         IEnumerable<string> GetToolchainIncludes(ISourceFile file);
 

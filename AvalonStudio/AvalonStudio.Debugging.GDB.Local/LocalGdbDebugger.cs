@@ -9,6 +9,8 @@
     using Mono.Debugging.Client;
     using System;
     using System.IO;
+    using AvalonStudio.Utils;
+    using System.Threading.Tasks;
 
     public class LocalGdbDebugger : IDebugger2
     {
@@ -59,6 +61,11 @@
         public object GetSettingsControl(IProject project)
         {
             return null;
+        }
+
+        public Task InstallAsync(IConsole console)
+        {
+            return Task.FromResult(0);
         }
     }
 }

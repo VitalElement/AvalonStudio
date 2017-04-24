@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.MVVM;
 using AvalonStudio.Packages;
+using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using NuGet.Common;
 using NuGet.Protocol.Core.Types;
@@ -30,7 +31,7 @@ namespace AvalonStudio.Controls
 
         private void InvalidateInstalledPackages()
         {
-            InstalledPackages = new ObservableCollection<PackageIdentityViewModel>(_packageManager.ListInstalledPackages().Select(pr => new PackageIdentityViewModel(pr)));
+            InstalledPackages = new ObservableCollection<PackageIdentityViewModel>(PackageManager.ListInstalledPackages().Select(pr => new PackageIdentityViewModel(pr)));
         }
 
         public PackageManagerDialogViewModel()
@@ -50,7 +51,7 @@ namespace AvalonStudio.Controls
             InstallCommand = ReactiveCommand.Create();
             InstallCommand.Subscribe(async _ =>
             {
-                await _packageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
+                await PackageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
 
                 InvalidateInstalledPackages();
             });
@@ -58,9 +59,12 @@ namespace AvalonStudio.Controls
             UninstallCommand = ReactiveCommand.Create();
             UninstallCommand.Subscribe(async _ =>
             {
-                await _packageManager.UninstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToNormalizedString());
+                if (SelectedInstalledPackage != null)
+                {
+                    await PackageManager.UninstallPackage(SelectedInstalledPackage.Model.Id, SelectedInstalledPackage.Model.Version.ToNormalizedString());
 
-                InvalidateInstalledPackages();
+                    InvalidateInstalledPackages();
+                }
             });
 
             OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.EnableInterface));
@@ -163,6 +167,14 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref installedPackages, value); }
         }
 
+        private PackageIdentityViewModel selectedInstalledPackage;
+
+        public PackageIdentityViewModel SelectedInstalledPackage
+        {
+            get { return selectedInstalledPackage; }
+            set { this.RaiseAndSetIfChanged(ref selectedInstalledPackage, value); }
+        }
+
         public ReactiveCommand<object> InstallCommand { get; }
         public ReactiveCommand<object> UninstallCommand { get; }
         public override ReactiveCommand<object> OKCommand { get; protected set; }
@@ -201,7 +213,7 @@ namespace AvalonStudio.Controls
         {
             var packages = await _packageManager.ListPackages(100);
 
-            foreach (var package in packages)
+            foreach (var package in packages.Where(p => p.Title.EndsWith(Platform.AvalonRID)))
             {
                 availablePackages.Add(package);
             }

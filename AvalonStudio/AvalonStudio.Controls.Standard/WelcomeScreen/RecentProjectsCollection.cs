@@ -42,11 +42,18 @@
 
         public static void Deserialize()
         {
-            try
+            if (File.Exists(_savePath))
             {
-                _recentProjects = SerializedObject.Deserialize<List<RecentProject>>(_savePath);
+                try
+                {
+                    _recentProjects = SerializedObject.Deserialize<List<RecentProject>>(_savePath);
+                }
+                catch (Exception)
+                {
+                    _recentProjects = new List<RecentProject>();
+                }
             }
-            catch (Exception)
+            else
             {
                 _recentProjects = new List<RecentProject>();
             }

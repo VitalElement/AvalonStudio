@@ -29,7 +29,17 @@ namespace AvalonStudio.Debugging
         public ObjectValueViewModel(WatchListViewModel watchList, ObjectValue model)
             : base(model)
         {
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
             this.watchList = watchList;
+
+            model.ValueChanged += (sender, e) =>
+            {
+                this.RaisePropertyChanged(nameof(Value));
+            };
 
             DeleteCommand = ReactiveCommand.Create();
 
@@ -40,6 +50,12 @@ namespace AvalonStudio.Debugging
             }
 
             DeleteCommand.Subscribe(_ => { IoC.Get<IWatchList>().Remove(Model); });
+
+            AddWatchPointCommand = ReactiveCommand.Create();
+            AddWatchPointCommand.Subscribe(o =>
+            {
+                IoC.Get<IDebugManager2>().Breakpoints.Add(new WatchPoint(Model.Name));
+            });
 
             DisplayFormatCommand = ReactiveCommand.Create();
             DisplayFormatCommand.Subscribe(s =>
@@ -88,7 +104,11 @@ namespace AvalonStudio.Debugging
                 else
                 {
                     Children?.Clear();
-                    Children?.Add(DummyChild);
+
+                    if (Model.HasChildren)
+                    {
+                        Children?.Add(DummyChild);
+                    }
                 }
 
                 this.RaiseAndSetIfChanged(ref isExpanded, value);
@@ -105,9 +125,26 @@ namespace AvalonStudio.Debugging
 
         public ReactiveCommand<object> DisplayFormatCommand { get; }
 
+        public ReactiveCommand<object> AddWatchPointCommand { get; }
+
         public string Value
         {
-            get { return Model?.Value; }
+            get
+            {
+                if (Model != null)
+                {
+                    if (Model.IsEvaluating)
+                    {
+                        return "Evaluating...";
+                    }
+
+                    return Model.Value;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
         public IBrush Background
@@ -166,29 +203,34 @@ namespace AvalonStudio.Debugging
             bool hasChanged = Model.Value != newValue?.Value;
             bool didHaveChildren = Model.HasChildren;
 
-            Model = newValue;
-
-            if (Model != null)
+            if ((object)Model != (object)newValue)
             {
-                if (Model.HasChildren && !didHaveChildren)
+                Model = newValue;
+
+                if (Model != null)
                 {
-                    hasChanged = true;
+                    if (Model.HasChildren && !didHaveChildren)
+                    {
+                        hasChanged = true;
 
-                    Children = new ObservableCollection<ObjectValueViewModel>();
+                        Children = new ObservableCollection<ObjectValueViewModel>();
 
-                    Children.Add(DummyChild);
+                        Children.Add(DummyChild);
+                    }
                 }
             }
 
-            if (IsExpanded)
+            if (IsExpanded && Model.HasChildren)
             {
                 if (newValue.Value != null)
                 {
+                    var newChildren = newValue.GetAllChildren();
+                    
                     for (int i = 0; i < Children.Count; i++)
                     {
                         if (Children[i].Model != null)
                         {
-                            Children[i].ApplyChange(newValue.GetChild(Children[i].Model.Name));
+                            Children[i].ApplyChange(newChildren[i]);
                         }
                     }
                 }
@@ -197,16 +239,17 @@ namespace AvalonStudio.Debugging
                     Children.Clear();
                 }
             }
+            else if (IsExpanded && !Model.HasChildren)
+            {
+                IsExpanded = false;
+            }
 
-            Dispatcher.UIThread.InvokeTaskAsync(() =>
-                {
-                    HasChanged = hasChanged;
+            HasChanged = hasChanged;
 
-                    if (hasChanged)
-                    {
-                        Invalidate();
-                    }
-                }).Wait();
+            if (hasChanged)
+            {
+                Invalidate();
+            }
 
             return result;
         }

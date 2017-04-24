@@ -30,6 +30,10 @@ namespace AvalonStudio.Projects.OmniSharp
 
         private async Task LoadSolution(string path)
         {
+            Location = path;
+
+            Name = Path.GetFileNameWithoutExtension(path);
+
             await server.StartAsync(Path.GetDirectoryName(path));
 
             var workspace = await server.SendRequest(new WorkspaceInformationRequest() { ExcludeSourceFiles = false });
@@ -64,6 +68,8 @@ namespace AvalonStudio.Projects.OmniSharp
         public ObservableCollection<IProject> Projects { get; set; }
 
         public IProject StartupProject { get; set; }
+
+        public string Location { get; private set; }
 
         public ISourceFile FindFile(string file)
         {

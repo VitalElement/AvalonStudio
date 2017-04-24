@@ -1,5 +1,6 @@
 namespace AvalonStudio.Toolchains.STM32
 {
+    using AvalonStudio.Packages;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.Standard;
@@ -491,6 +492,11 @@ namespace AvalonStudio.Toolchains.STM32
             }
 
             return true;
+        }
+
+        public async override Task InstallAsync(IConsole console)
+        {
+            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.STM32", console);
         }
     }
 }

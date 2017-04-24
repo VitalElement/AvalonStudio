@@ -3,7 +3,7 @@
     <OutputType>library</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RuntimeFrameworkVersion>2.0.0-preview1-001978-00</RuntimeFrameworkVersion>
-    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net40</PackageTargetFallback>
+    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net45</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx" />
@@ -12,6 +12,7 @@
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.GCC\AvalonStudio.Toolchains.GCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj" />
   </ItemGroup>
