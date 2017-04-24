@@ -318,88 +318,150 @@ namespace AvalonStudio.Debugging.GDB
 
         protected override BreakEventInfo OnInsertBreakEvent(BreakEvent be)
         {
-            Breakpoint bp = be as Breakpoint;
-            if (bp == null)
-                throw new NotSupportedException();
+            var bi = new BreakEventInfo();
 
-            BreakEventInfo bi = new BreakEventInfo();
-
-            lock (gdbLock)
+            if (be is Breakpoint)
             {
-                bool dres = InternalStop();
-                try
+                Breakpoint bp = be as Breakpoint;
+
+                lock (gdbLock)
                 {
-                    string extraCmd = string.Empty;
-                    if (bp.HitCount > 0)
+                    bool dres = InternalStop();
+                    try
                     {
-                        extraCmd += "-i " + bp.HitCount;
-                        breakpointsWithHitCount.Add(bi);
-                    }
-                    if (!string.IsNullOrEmpty(bp.ConditionExpression))
-                    {
-                        if (!bp.BreakIfConditionChanges)
-                            extraCmd += " -c " + bp.ConditionExpression;
-                    }
-
-                    GdbCommandResult res = null;
-                    string errorMsg = null;
-
-                    if (bp is FunctionBreakpoint)
-                    {
-                        try
+                        string extraCmd = string.Empty;
+                        if (bp.HitCount > 0)
                         {
-                            res = RunCommand("-break-insert", extraCmd.Trim(), ((FunctionBreakpoint)bp).FunctionName);
+                            extraCmd += "-i " + bp.HitCount;
+                            breakpointsWithHitCount.Add(bi);
                         }
-                        catch (Exception ex)
+                        if (!string.IsNullOrEmpty(bp.ConditionExpression))
                         {
-                            errorMsg = ex.Message;
-                        }
-                    }
-                    else
-                    {
-                        // Breakpoint locations must be double-quoted if files contain spaces.
-                        // For example: -break-insert "\"C:/Documents and Settings/foo.c\":17"
-                        RunCommand("-environment-directory", Escape(Path.GetDirectoryName(bp.FileName).ToAvalonPath()));
-
-                        try
-                        {
-                            res = RunCommand("-break-insert", extraCmd.Trim(), Escape(Escape(bp.FileName.ToAvalonPath()) + ":" + bp.Line));
-                        }
-                        catch (Exception ex)
-                        {
-                            errorMsg = ex.Message;
+                            if (!bp.BreakIfConditionChanges)
+                                extraCmd += " -c " + bp.ConditionExpression;
                         }
 
-                        if (res == null)
+                        GdbCommandResult res = null;
+                        string errorMsg = null;
+
+                        if (bp is FunctionBreakpoint)
                         {
                             try
                             {
-                                res = RunCommand("-break-insert", extraCmd.Trim(), Escape(Escape(Path.GetFileName(bp.FileName)) + ":" + bp.Line));
+                                res = RunCommand("-break-insert", extraCmd.Trim(), ((FunctionBreakpoint)bp).FunctionName);
                             }
-                            catch
+                            catch (Exception ex)
                             {
-                                // Ignore
+                                errorMsg = ex.Message;
                             }
                         }
-                    }
+                        else
+                        {
+                            // Breakpoint locations must be double-quoted if files contain spaces.
+                            // For example: -break-insert "\"C:/Documents and Settings/foo.c\":17"
+                            RunCommand("-environment-directory", Escape(Path.GetDirectoryName(bp.FileName).ToAvalonPath()));
 
-                    if (res == null || res.Status != CommandStatus.Done)
-                    {
-                        bi.SetStatus(BreakEventStatus.Invalid, errorMsg);
+                            try
+                            {
+                                res = RunCommand("-break-insert", extraCmd.Trim(), Escape(Escape(bp.FileName.ToAvalonPath()) + ":" + bp.Line));
+                            }
+                            catch (Exception ex)
+                            {
+                                errorMsg = ex.Message;
+                            }
+
+                            if (res == null)
+                            {
+                                try
+                                {
+                                    res = RunCommand("-break-insert", extraCmd.Trim(), Escape(Escape(Path.GetFileName(bp.FileName)) + ":" + bp.Line));
+                                }
+                                catch
+                                {
+                                    // Ignore
+                                }
+                            }
+                        }
+
+                        if (res == null || res.Status != CommandStatus.Done)
+                        {
+                            bi.SetStatus(BreakEventStatus.Invalid, errorMsg);
+                            return bi;
+                        }
+                        int bh = res.GetObject("bkpt").GetInt("number");
+                        if (!be.Enabled)
+                            RunCommand("-break-disable", bh.ToString());
+                        breakpoints[bh] = bi;
+                        bi.Handle = bh;
+                        bi.SetStatus(BreakEventStatus.Bound, null);
                         return bi;
                     }
-                    int bh = res.GetObject("bkpt").GetInt("number");
-                    if (!be.Enabled)
-                        RunCommand("-break-disable", bh.ToString());
-                    breakpoints[bh] = bi;
-                    bi.Handle = bh;
-                    bi.SetStatus(BreakEventStatus.Bound, null);
-                    return bi;
+                    finally
+                    {
+                        InternalResume(dres);
+                    }
                 }
-                finally
+            }
+            else if (be is WatchPoint)
+            {
+                var wp = be as WatchPoint;
+
+                lock (gdbLock)
                 {
-                    InternalResume(dres);
+                    bool dres = InternalStop();
+                    try
+                    {
+                        string errorMsg = string.Empty;
+                        GdbCommandResult res = null;
+
+                        try
+                        {
+                            if (wp.TriggerOnRead && wp.TriggerOnWrite)
+                            {
+                                res = RunCommand("-break-watch", wp.Expression, "-a");
+                            }
+                            else if (wp.TriggerOnRead && !wp.TriggerOnWrite)
+                            {
+                                res = RunCommand("-break-watch", wp.Expression, "-r");
+                            }
+                            else
+                            {
+                                res = RunCommand("-break-watch", wp.Expression);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            errorMsg = ex.Message;
+                        }
+
+                        if (res == null || res.Status != CommandStatus.Done)
+                        {
+                            bi.SetStatus(BreakEventStatus.Invalid, errorMsg);
+                            return bi;
+                        }
+
+                        int bh = res.GetObject("wpt").GetInt("number");
+
+                        if (!be.Enabled)
+                        {
+                            RunCommand("-break-disable", bh.ToString());
+                        }
+
+                        breakpoints[bh] = bi;
+                        bi.Handle = bh;
+                        bi.SetStatus(BreakEventStatus.Bound, null);
+                        return bi;
+                    }
+                    finally
+                    {
+                        InternalResume(dres);
+                    }
                 }
+            }
+            else
+            {
+                bi.SetStatus(BreakEventStatus.NotBound, "BreakEvent type not supported.");
+                return bi;
             }
         }
 

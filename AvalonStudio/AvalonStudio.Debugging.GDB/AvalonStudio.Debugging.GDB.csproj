@@ -7,6 +7,7 @@
     <OutputTypeEx>library</OutputTypeEx>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.GCC\AvalonStudio.Toolchains.GCC.csproj" />
   </ItemGroup>
