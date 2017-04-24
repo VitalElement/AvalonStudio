@@ -51,6 +51,12 @@ namespace AvalonStudio.Debugging
 
             DeleteCommand.Subscribe(_ => { IoC.Get<IWatchList>().Remove(Model); });
 
+            AddWatchPointCommand = ReactiveCommand.Create();
+            AddWatchPointCommand.Subscribe(o =>
+            {
+                IoC.Get<IDebugManager2>().Breakpoints.Add(new WatchPoint(Model.Name));
+            });
+
             DisplayFormatCommand = ReactiveCommand.Create();
             DisplayFormatCommand.Subscribe(s =>
             {
@@ -118,6 +124,8 @@ namespace AvalonStudio.Debugging
         public ReactiveCommand<object> DeleteCommand { get; }
 
         public ReactiveCommand<object> DisplayFormatCommand { get; }
+
+        public ReactiveCommand<object> AddWatchPointCommand { get; }
 
         public string Value
         {
