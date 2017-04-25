@@ -84,6 +84,7 @@ namespace AvalonStudio.Projects
 
         public string Name { get; set; }
 
+        [JsonIgnore]
         public string Location { get; private set; }
 
         public static IProject LoadProjectFile(ISolution solution, string fileName)
