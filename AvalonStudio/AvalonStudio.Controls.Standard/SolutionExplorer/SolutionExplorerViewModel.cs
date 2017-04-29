@@ -156,7 +156,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             dlg.InitialFileName = string.Empty;
             dlg.InitialDirectory = Platform.ProjectDirectory;
-            var result = await dlg.ShowAsync();
+            var result = await dlg.ShowAsync(IoC.Get<Window>());
 
             if (result != null)
             {

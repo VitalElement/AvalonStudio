@@ -64,21 +64,28 @@
         {
             var result = new StandardProjectFolder(path);
 
-            var folders = Directory.GetDirectories(path);
-
-            if (folders.Count() > 0)
+            try
             {
-                foreach (var folder in folders.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath())))
+                var folders = Directory.GetDirectories(path);
+
+                if (folders.Count() > 0)
                 {
-                    result.Items.InsertSorted(GetSubFolders(project, result, folder));
+                    foreach (var folder in folders.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath())))
+                    {
+                        result.Items.InsertSorted(GetSubFolders(project, result, folder));
+                    }
                 }
+
+                PopulateFiles(project, result);
+
+                project.Folders.InsertSorted(result);
+                result.Parent = parent;
+                result.Project = project;
             }
+            catch (Exception)
+            {
 
-            PopulateFiles(project, result);
-
-            project.Folders.InsertSorted(result);
-            result.Parent = parent;
-            result.Project = project;
+            }
 
             return result;
         }

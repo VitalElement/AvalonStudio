@@ -11,20 +11,10 @@ namespace AvalonStudio
     {
         private static void Main(string[] args)
         {
-            /*AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
-			{
-				var message = (e.ExceptionObject as Exception)?.Message;
-
-				if (message != null)
-				{
-					Console.WriteLine(message);
-				}
-			};*/
-
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
-            }
+            }            
 
             var builder = AppBuilder.Configure<App>();
 
@@ -46,13 +36,7 @@ namespace AvalonStudio
                 builder.UsePlatformDetect();
             }
 
-            builder.SetupWithoutStarting();
-
-            var splash = new BootScreen();
-
-            splash.Show();
-
-            builder.Instance.Run(splash);
+            builder.Start<BootScreen>();            
         }
 
         public override void Initialize()

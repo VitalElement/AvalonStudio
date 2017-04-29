@@ -17,8 +17,8 @@
 
     public class OmniSharpServer
     {
-        private static readonly string BaseDir = PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp");
-        private static readonly string Binary = Path.Combine(BaseDir, $"OmniSharp{Platform.ExecutableExtension}");
+        private static string BaseDir => PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp");
+        private static string Binary => Path.Combine(BaseDir, "content", $"OmniSharp{Platform.ExecutableExtension}");
         private Process process;
         private RestClient client;
         private int port;

@@ -91,7 +91,7 @@ namespace AvalonStudio.Platforms
                         break;
 
                     case PlatformID.Unix:
-                        result = "ubuntu-";
+                        result = "ubuntu16-";
                         break;
                 }
 

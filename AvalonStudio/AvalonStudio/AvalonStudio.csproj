@@ -78,7 +78,7 @@
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SkiaSharp" Version="1.56.2" />
+    <PackageReference Include="SkiaSharp" Version="1.56.1-beta" />
     <PackageReference Include="Avalonia" Version="0.4.1-build2959-alpha" />
     <PackageReference Include="Avalonia.Gtk3" Version="0.4.1-build2959-alpha" />
     <PackageReference Include="Avalonia.Skia.Desktop" Version="0.4.1-build2959-alpha" />
