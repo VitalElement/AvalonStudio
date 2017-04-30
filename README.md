@@ -1,5 +1,5 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/vitalelement/avalonstudio/badge)](https://www.codefactor.io/repository/github/vitalelement/avalonstudio)
-[![Build status](https://ci.appveyor.com/api/projects/status/l2k85kekoby4tb4j/branch/master?svg=true)](https://ci.appveyor.com/project/danwalmsley/avalonstudio)
+[![Build status](https://ci.appveyor.com/api/projects/status/l2k85kekoby4tb4j/branch/master?svg=true)](https://ci.appveyor.com/project/danwalmsley/avalonstudio/branch/master)
 [![Build Status](https://travis-ci.org/VitalElement/AvalonStudio.svg?branch=master)](https://travis-ci.org/VitalElement/AvalonStudio)
 [![Gitter](https://badges.gitter.im/VitalElement/AvalonStudio.svg)](https://gitter.im/VitalElement/AvalonStudio?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
