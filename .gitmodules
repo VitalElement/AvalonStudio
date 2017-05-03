@@ -1,6 +1,3 @@
-[submodule "nclang"]
-	path = nclang
-	url = https://github.com/VitalElement/nclang.git
 [submodule "TSBridge"]
 	path = TSBridge
 	url = https://github.com/0xFireball/TSBridge.git
