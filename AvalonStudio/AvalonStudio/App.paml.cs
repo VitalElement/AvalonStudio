@@ -31,10 +31,15 @@ namespace AvalonStudio
                     builder.UseGtk3();
                 }
             }
-            else
+            else if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
                 builder.UsePlatformDetect();
             }
+            else
+            {
+                builder.UseGtk3().UseSkia();
+            }
+
 
             builder.Start<BootScreen>();            
         }
