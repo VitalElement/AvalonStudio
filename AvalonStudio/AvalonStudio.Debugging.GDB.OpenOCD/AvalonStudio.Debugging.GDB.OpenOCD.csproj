@@ -1,10 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
-    <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
-    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net45</PackageTargetFallback>
-    <OutputTypeEx>library</OutputTypeEx>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net45</PackageTargetFallback>    
   </PropertyGroup>
   <ItemGroup>
     <None Remove="OpenOCDSettingsFormView.xaml" />

@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
-    <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net45</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>

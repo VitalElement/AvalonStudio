@@ -88,9 +88,10 @@
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Microsoft.NETCore.Runtime.CoreCLR" Version="2.0.0-preview1-25207-02" />
     <PackageReference Include="Microsoft.NETCore.DotNetHostPolicy" Version="2.0.0-preview1-001915-00" />
+    <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build94-alpha" />
+    <PackageReference Include="NETStandard.Library" Version="2.0.0-preview2-25303-01" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DockNC\src\Mabiavalon.DockNC\Mabiavalon.DockNC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.Local\AvalonStudio.Debugging.GDB.Local.csproj" />

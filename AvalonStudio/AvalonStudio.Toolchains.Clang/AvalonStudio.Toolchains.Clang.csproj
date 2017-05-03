@@ -1,9 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <OutputType>library</OutputType>
-    <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
-    <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
-    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net45</PackageTargetFallback>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx" />
