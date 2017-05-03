@@ -1080,7 +1080,7 @@ namespace AvalonStudio.TextEditor
 
             switch (e.Key)
             {
-                case Key.OemPlus:
+                case Avalonia.Input.Key.OemPlus:
                     if (modifiers == InputModifiers.Control)
                     {
                         if (TextView.FontSize < 60)
@@ -1090,7 +1090,7 @@ namespace AvalonStudio.TextEditor
                     }
                     break;
 
-                case Key.OemMinus:
+                case Avalonia.Input.Key.OemMinus:
                     if (modifiers == InputModifiers.Control)
                     {
                         if (TextView.FontSize > 1)
@@ -1100,94 +1100,94 @@ namespace AvalonStudio.TextEditor
                     }
                     break;
 
-                case Key.A:
+                case Avalonia.Input.Key.A:
                     if (modifiers == InputModifiers.Control)
                     {
                         SelectAll();
                     }
                     break;
 
-                case Key.C:
+                case Avalonia.Input.Key.C:
                     if (modifiers == InputModifiers.Control)
                     {
                         Copy();
                     }
                     break;
 
-                case Key.V:
+                case Avalonia.Input.Key.V:
                     if (modifiers == InputModifiers.Control)
                     {
                         Paste();
                     }
                     break;
 
-                case Key.X:
+                case Avalonia.Input.Key.X:
                     if (modifiers == InputModifiers.Control)
                     {
                         Cut();
                     }
                     break;
 
-                case Key.Y:
+                case Avalonia.Input.Key.Y:
                     if (modifiers == InputModifiers.Control)
                     {
                         Redo();
                     }
                     break;
 
-                case Key.Z:
+                case Avalonia.Input.Key.Z:
                     if (modifiers == InputModifiers.Control)
                     {
                         Undo();
                     }
                     break;
 
-                case Key.Left:
+                case Avalonia.Input.Key.Left:
                     MoveHorizontal(-1, modifiers);
                     movement = true;
                     break;
 
-                case Key.Right:
+                case Avalonia.Input.Key.Right:
                     MoveHorizontal(1, modifiers);
                     movement = true;
                     break;
 
-                case Key.Up:
+                case Avalonia.Input.Key.Up:
                     MoveVertical(-1, modifiers);
                     movement = true;
                     break;
 
-                case Key.Down:
+                case Avalonia.Input.Key.Down:
                     MoveVertical(1, modifiers);
                     movement = true;
                     break;
 
-                case Key.Home:
+                case Avalonia.Input.Key.Home:
                     MoveHome(modifiers);
                     movement = true;
                     break;
 
-                case Key.End:
+                case Avalonia.Input.Key.End:
                     MoveEnd(modifiers);
                     movement = true;
                     break;
 
-                case Key.Back:
+                case Avalonia.Input.Key.Back:
                     OnBackKey();
                     break;
 
-                case Key.Delete:
+                case Avalonia.Input.Key.Delete:
                     OnDeleteKey(caretIndex);
                     break;
 
-                case Key.Enter:
+                case Avalonia.Input.Key.Enter:
                     if (AcceptsReturn)
                     {
                         HandleTextInput("\r\n");
                     }
                     break;
 
-                case Key.Tab:
+                case Avalonia.Input.Key.Tab:
                     if (AcceptsTab)
                     {
                         e.Handled = true;
@@ -1202,11 +1202,11 @@ namespace AvalonStudio.TextEditor
 
                     break;
 
-                case Key.PageUp:
+                case Avalonia.Input.Key.PageUp:
                     TextView.PageUp();
                     break;
 
-                case Key.PageDown:
+                case Avalonia.Input.Key.PageDown:
                     TextView.PageDown();
                     break;
             }
