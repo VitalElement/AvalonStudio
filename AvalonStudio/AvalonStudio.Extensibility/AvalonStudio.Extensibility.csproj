@@ -28,6 +28,7 @@
     <PackageReference Include="RazorLight" Version="1.0.0-rc2" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.NetCore2.csproj" />
