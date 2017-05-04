@@ -46,23 +46,26 @@ namespace AvalonStudio.TextEditor
 
                     for (var i = 0; i < textInfo.NumLines && i + firstLine <= textView.TextDocument.LineCount && i + firstLine <= lastLine; i++)
                     {
-                        using (
-                            var formattedText = new FormattedText((i + firstLine).ToString(), "Consolas", textView.FontSize, FontStyle.Normal,
-                                TextAlignment.Right, FontWeight.Normal)
-                            { Constraint = new Size(Width, Bounds.Height) })
+
+                        var formattedText = new FormattedText()
                         {
-                            IBrush textColor = foreground;
+                            Text = (i + firstLine).ToString(),
+                            Typeface = new Typeface("Consolas", textView.FontSize),
+                            TextAlignment = TextAlignment.Right,
+                            Constraint = new Size(Width, Bounds.Height)
+                        };
+                        
+                        IBrush textColor = foreground;
 
-                            if (currentLine != null)
+                        if (currentLine != null)
+                        {
+                            if ((i + firstLine) == currentLine.LineNumber)
                             {
-                                if ((i + firstLine) == currentLine.LineNumber)
-                                {
-                                    textColor = currentLineForeground;
-                                }
+                                textColor = currentLineForeground;
                             }
-
-                            context.DrawText(textColor, new Point(-8, textInfo.LineHeight * i), formattedText);
                         }
+
+                        context.DrawText(textColor, new Point(-8, textInfo.LineHeight * i), formattedText);                        
                     }
                 }
             }
