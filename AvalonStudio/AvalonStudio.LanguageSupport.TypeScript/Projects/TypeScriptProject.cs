@@ -117,7 +117,7 @@ Program.main();
         public override string CurrentDirectory => Path.GetDirectoryName(Location) + Platform.DirectorySeperator;
 
         [JsonIgnore]
-        public override IDebugger2 Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override IDebugger Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic DebugSettings { get; set; }

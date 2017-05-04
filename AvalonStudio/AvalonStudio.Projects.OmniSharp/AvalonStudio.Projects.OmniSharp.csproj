@@ -9,11 +9,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RestSharp.NetCore" Version="105.2.4-rc4-24214-01" />
-    <PackageReference Include="VitalElement.Debugging" Version="0.2.0-build4-alpha" />
-    <PackageReference Include="VitalElement.Debugging.Win32" Version="0.2.0-build4-alpha" />
+    <PackageReference Include="VitalElement.Debugging" Version="0.2.0-build7-alpha" />
+    <PackageReference Include="VitalElement.Debugging.Win32" Version="0.2.0-build7-alpha" />
   </ItemGroup>
 
   <ItemGroup>    
+    <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />    
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
   </ItemGroup>
