@@ -916,7 +916,8 @@ namespace AvalonStudio.TextEditor
             }
         }
 
-        protected override void OnPointerReleased(PointerEventArgs e)
+
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
         {
             if (e.Device.Captured == TextView)
             {

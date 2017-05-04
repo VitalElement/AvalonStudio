@@ -326,7 +326,7 @@ namespace AvalonStudio
 
         public IEnumerable<IToolChain> ToolChains => _toolChains;
 
-        public IEnumerable<IDebugger2> Debugger2s => _debugger2s;
+        public IEnumerable<IDebugger> Debugger2s => _debugger2s;
 
         public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 
