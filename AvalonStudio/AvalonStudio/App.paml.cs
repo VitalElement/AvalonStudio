@@ -39,8 +39,7 @@ namespace AvalonStudio
             {
                 builder.UseGtk3().UseSkia();
             }
-
-
+            
             builder.Start<BootScreen>();            
         }
 

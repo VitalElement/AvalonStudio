@@ -84,7 +84,6 @@
             }
             catch (Exception)
             {
-
             }
 
             return result;

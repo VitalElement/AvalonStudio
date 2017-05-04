@@ -12,7 +12,6 @@ namespace AvalonStudio.Debugging
         private IDebugger2 _debugger;
         private IDebugManager2 _debugManager;
         
-
         private bool enabled;
 
         private ulong selectedIndex;

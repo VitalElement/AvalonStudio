@@ -44,7 +44,7 @@
             };
         }
 
-        public void SetFrame (StackFrame frame)
+        public void SetFrame(StackFrame frame)
         {
             _currentStackFrame = frame;
 
@@ -134,7 +134,7 @@
         }
 
         private void OnEndSession()
-        {            
+        {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 DebugSessionEnded?.Invoke(this, new EventArgs());
@@ -152,7 +152,7 @@
                 _session.Dispose();
                 _session = null;
             }
-            
+
             _lastDocument?.ClearDebugHighlight();
             _lastDocument = null;
 
@@ -273,7 +273,7 @@
                     }
                 }
 
-                if(e.BreakEvent is WatchPoint)
+                if (e.BreakEvent is WatchPoint)
                 {
                     var wp = e.BreakEvent as WatchPoint;
 

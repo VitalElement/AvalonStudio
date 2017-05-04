@@ -6,7 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TSBridge.AvalonStudio\TSBridge\TSBridge\TSBridge.csproj" />
+    <PackageReference Include="TSBridge" Version="1.0.0" />
+  </ItemGroup>
+      
+  <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
   </ItemGroup>

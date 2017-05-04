@@ -905,21 +905,21 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     case "breakpoint-hit":
                         type = TargetEventType.TargetHitBreakpoint;
-                        var bpNumber = ev.GetInt("bkptno");
-                        if (!CheckBreakpoint(bpNumber))
+                        var breakPointNumber = ev.GetInt("bkptno");
+                        if (!CheckBreakpoint(breakPointNumber))
                         {
                             RunCommand("-exec-continue");
                             return;
                         }
 
-                        breakEvent = breakpoints[bpNumber].BreakEvent;
+                        breakEvent = breakpoints[breakPointNumber].BreakEvent;
                         break;
 
                     case "watchpoint-trigger":
                         type = TargetEventType.TargetHitBreakpoint;
 
-                        var wpNumber = ev.GetObject("wpt").GetInt("number");
-                        breakEvent = breakpoints[wpNumber].BreakEvent;
+                        var watchPointNumber = ev.GetObject("wpt").GetInt("number");
+                        breakEvent = breakpoints[watchPointNumber].BreakEvent;
                         break;
 
                     case "signal-received":

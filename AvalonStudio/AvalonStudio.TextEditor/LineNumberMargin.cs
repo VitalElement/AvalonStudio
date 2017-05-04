@@ -46,7 +46,6 @@ namespace AvalonStudio.TextEditor
 
                     for (var i = 0; i < textInfo.NumLines && i + firstLine <= textView.TextDocument.LineCount && i + firstLine <= lastLine; i++)
                     {
-
                         var formattedText = new FormattedText()
                         {
                             Text = (i + firstLine).ToString(),

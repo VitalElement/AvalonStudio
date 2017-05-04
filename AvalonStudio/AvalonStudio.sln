@@ -74,8 +74,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LanguageSupport", "Language
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.LanguageSupport.TypeScript", "AvalonStudio.LanguageSupport.TypeScript\AvalonStudio.LanguageSupport.TypeScript.csproj", "{539DD527-4375-4EE6-8C52-71F2E39E5EB8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSBridge", "..\TSBridge.AvalonStudio\TSBridge\TSBridge\TSBridge.csproj", "{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -488,22 +486,6 @@ Global
 		{539DD527-4375-4EE6-8C52-71F2E39E5EB8}.Release|x64.Build.0 = Release|Any CPU
 		{539DD527-4375-4EE6-8C52-71F2E39E5EB8}.Release|x86.ActiveCfg = Release|Any CPU
 		{539DD527-4375-4EE6-8C52-71F2E39E5EB8}.Release|x86.Build.0 = Release|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Debug|ARM.Build.0 = Debug|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Debug|x64.Build.0 = Debug|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Debug|x86.Build.0 = Debug|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Release|Any CPU.Build.0 = Release|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Release|ARM.ActiveCfg = Release|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Release|ARM.Build.0 = Release|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Release|x64.ActiveCfg = Release|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Release|x64.Build.0 = Release|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Release|x86.ActiveCfg = Release|Any CPU
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -533,7 +515,6 @@ Global
 		{EF895FF9-DB35-48FA-96B1-374D831DACB0} = {0DACCA4D-C93E-45AC-8206-FF2E5C0BC587}
 		{AFBCFA51-8ADE-410F-AD9A-B5FE998262D6} = {1EF2A059-2DC9-4C46-A28B-67C20A77BCE4}
 		{539DD527-4375-4EE6-8C52-71F2E39E5EB8} = {18772A88-E9AC-4B84-8838-1DD3205F17A0}
-		{92A0DDEE-FC64-4D9B-93E8-65F83190BD07} = {528C3D32-4210-4109-AE60-B965C6BED1C3}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = AvalonStudio\AvalonStudio.csproj

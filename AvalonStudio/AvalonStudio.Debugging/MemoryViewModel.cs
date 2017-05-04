@@ -185,14 +185,6 @@
             set { this.RaiseAndSetIfChanged(ref selectedIndex, value); }
         }
 
-        //private AsyncVirtualizingCollection<MemoryBytesViewModel> memoryData;
-
-        //public AsyncVirtualizingCollection<MemoryBytesViewModel> MemoryData
-        //{
-        //    get { return memoryData; }
-        //    set { this.RaiseAndSetIfChanged(ref memoryData, value); }
-        //}
-
         public override Location DefaultLocation
         {
             get
