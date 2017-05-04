@@ -140,9 +140,18 @@ Task("Restore-NetCore")
     .IsDependentOn("Clean")
     .Does(() =>
 {
+    var settings = new DotNetCoreRestoreSettings{
+
+    };
+
+    if(isRunningOnUnix)
+    {
+        settings.InferRuntimes = new[] {"ubuntu.14.04-x64" }
+    }
+
     foreach (var project in netCoreProjects)
     {
-        DotNetCoreRestore(project.Path);
+        DotNetCoreRestore(project.Path, settings);
     }
 });
 
@@ -161,11 +170,12 @@ Task("Build-NetCore")
         if(isRunningOnUnix)
         {
             settings.Framework = "net462";
+            settings.Runtime - "ubuntu.14.04-x64";
 
             settings.EnvironmentVariables = new Dictionary<string, string>
             {
                 {
-                    "TargetFrameworks", "net462;"
+                    "TargetFrameworks", "net462"
                 },
                 {
                     "FrameworkPathOverride", "/usr/lib/mono/4.5/"
