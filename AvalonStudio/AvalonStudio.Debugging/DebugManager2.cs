@@ -195,13 +195,15 @@
                 return;
             }
 
-            await project.Debugger2.InstallAsync(IoC.Get<IConsole>());
+            var debugger2 = project.Debugger2 as IDebugger2;
 
-            _session = project.Debugger2.CreateSession(project);
+            await debugger2.InstallAsync(IoC.Get<IConsole>());
+
+            _session = debugger2.CreateSession(project);
 
             _session.Breakpoints = Breakpoints;
 
-            _session.Run(project.Debugger2.GetDebuggerStartInfo(project), project.Debugger2.GetDebuggerSessionOptions(project));
+            _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
 
             _session.TargetStopped += _session_TargetStopped;
 

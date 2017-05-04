@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);netstandard1.6;netstandard1.3</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
@@ -8,10 +9,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RestSharp.NetCore" Version="105.2.4-rc4-24214-01" />
+    <PackageReference Include="VitalElement.Debugging" Version="0.2.0-build4-alpha" />
+    <PackageReference Include="VitalElement.Debugging.Win32" Version="0.2.0-build4-alpha" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\debugger-libs\Mono.Debugging.Win32\Mono.Debugging.Win32.NetCore2.csproj" />
+  <ItemGroup>    
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
   </ItemGroup>
