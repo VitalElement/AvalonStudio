@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>    
-    <PackageTargetFallback>$(PackageTargetFallback);net46</PackageTargetFallback>
+    <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
+    <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx" />
@@ -23,16 +23,14 @@
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
-    <PackageReference Include="RazorLight" Version="1.0.0-rc2" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+    <PackageReference Include="RazorLight" Version="1.1.0" /> 
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj">
-      <Private>true</Private>
-    </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
