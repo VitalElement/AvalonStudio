@@ -1,7 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup Condition=" '$(OS)' == 'Unix' ">
+    <TargetFramework >net462</TargetFramework>    
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(OS)' != 'Unix' ">
+    <TargetFramework >netcoreapp2.0</TargetFramework>    
+  </PropertyGroup>
+
   <PropertyGroup>
-    <OutputType>exe</OutputType>
-    <TargetFrameworks>$(TargetFrameworks);netcoreapp2.0</TargetFrameworks>
+    <OutputType>exe</OutputType>        
     <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
     <OutputTypeEx>exe</OutputTypeEx>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
