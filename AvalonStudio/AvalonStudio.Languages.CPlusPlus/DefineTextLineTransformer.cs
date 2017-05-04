@@ -25,7 +25,7 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
 
                 var firstEndOffset = line.RenderedText.Text.IndexOf(" ", startIndex);
 
-                line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, firstEndOffset - startIndex);
+               // line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, firstEndOffset - startIndex);
 
                 //var lastWordOffset = firstEndOffset != -1 ? line.RenderedText.Text.LastIndexOf(" ", firstEndOffset) + 1 : -1;
 

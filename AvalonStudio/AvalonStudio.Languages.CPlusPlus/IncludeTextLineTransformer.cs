@@ -21,8 +21,8 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
             {
                 var startIndex = line.RenderedText.Text.IndexOf("#include");
 
-                line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 8);
-                line.RenderedText.SetForegroundBrush(brush, startIndex + 9, line.RenderedText.Text.Length - startIndex);
+                //line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 8);
+                //line.RenderedText.SetForegroundBrush(brush, startIndex + 9, line.RenderedText.Text.Length - startIndex);
             }
         }
     }
