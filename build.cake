@@ -136,6 +136,14 @@ Information("IsNuGetRelease: " + isNuGetRelease);
 Task("Clean")
 .Does(()=>{
     CleanDirectories(buildDirs);
+
+    if(isRunningOnUnix)
+    {
+        Information("Converting ProjectFile to net462");
+
+        ReplaceTextInFiles("**/AvalonStudio.csproj", "<TargetFramework>netcoreapp2.0</TargetFramework>", "<TargetFramework>net462</TargetFramework>");
+        ReplaceTextInFiles("**/AvalonStudioBuild.csproj", "<TargetFramework>netcoreapp2.0</TargetFramework>", "<TargetFramework>net462</TargetFramework>");
+    }
 });
 
 Task("Restore-NetCore")
@@ -161,9 +169,7 @@ Task("Build-NetCore")
         };
 
         if(isRunningOnUnix)
-        {
-            ReplaceTextInFiles("AvalonStudio.csproj", "<TargetFramework>netcoreapp2.0</TargetFramework>", "<TargetFramework>net462</TargetFramework>");
-
+        {            
             settings.Framework = "net462";            
 
             settings.EnvironmentVariables = new Dictionary<string, string>
