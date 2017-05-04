@@ -2,6 +2,8 @@
 // ADDINS
 /////////////////////////////////////////////////////////////////////
 
+#addin "Cake.FileHelpers"
+
 //////////////////////////////////////////////////////////////////////
 // TOOLS
 //////////////////////////////////////////////////////////////////////
@@ -140,18 +142,9 @@ Task("Restore-NetCore")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    var settings = new DotNetCoreRestoreSettings{
-
-    };
-
-    if(isRunningOnUnix)
-    {
-        settings.InferRuntimes = new[] {"ubuntu.14.04-x64" }
-    }
-
     foreach (var project in netCoreProjects)
     {
-        DotNetCoreRestore(project.Path, settings);
+        DotNetCoreRestore(project.Path);
     }
 });
 
@@ -169,8 +162,9 @@ Task("Build-NetCore")
 
         if(isRunningOnUnix)
         {
-            settings.Framework = "net462";
-            settings.Runtime - "ubuntu.14.04-x64";
+            ReplaceTextInFiles("AvalonStudio.csproj", "<TargetFramework>netcoreapp2.0</TargetFramework>", "<TargetFramework>net462</TargetFramework>");
+
+            settings.Framework = "net462";            
 
             settings.EnvironmentVariables = new Dictionary<string, string>
             {
