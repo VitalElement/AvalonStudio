@@ -165,7 +165,9 @@ Task("Build-NetCore")
             settings.EnvironmentVariables = new Dictionary<string, string>
             {
                 {
-                    "TargetFrameworks", "net462;",
+                    "TargetFrameworks", "net462;"
+                },
+                {
                     "FrameworkPathOverride", "/usr/lib/mono/4.5/"
                 }
             };
