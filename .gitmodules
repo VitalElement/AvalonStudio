@@ -4,9 +4,6 @@
 [submodule "TSBridge.AvalonStudio"]
 	path = TSBridge.AvalonStudio
 	url = https://github.com/IridiumIon/TSBridge.AvalonStudio.git
-[submodule "DockNC"]
-	path = DockNC
-	url = https://github.com/Mabiavalon/DockNC.git
 [submodule "debugger-libs"]
 	path = debugger-libs
 	url = https://github.com/danwalmsley/debugger-libs.git
