@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>exe</OutputType>
-    <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);netcoreapp2.0</TargetFrameworks>
     <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
     <OutputTypeEx>exe</OutputTypeEx>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
