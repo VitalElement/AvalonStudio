@@ -8,7 +8,7 @@
             "name": ".NET Core Launch (console)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            //"preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceRoot}/AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.0/AvalonStudio.dll",
             "args": [],

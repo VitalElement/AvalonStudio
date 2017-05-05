@@ -36,7 +36,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        private const string DefaultPackageSource = "https://www.myget.org/F/avalonstudio/api/v3/index.json";
+        private const string DefaultPackageSource = "https://www.myget.org/F/astemp/api/v3/index.json";
 
         public static NuGetFramework GetFramework()
         {

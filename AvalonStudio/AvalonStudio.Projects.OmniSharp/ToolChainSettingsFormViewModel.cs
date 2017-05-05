@@ -25,7 +25,7 @@ namespace AvalonStudio.Projects.OmniSharp
             BrowseCommand.Subscribe(async _ =>
             {
                 var ofd = new OpenFileDialog();
-                ofd.Filters.Add(new FileDialogFilter { Name = "Dotnet Executable", Extensions = new List<string> { Platform.ExecutableExtension.Substring(1) } });
+                //ofd.Filters.Add(new FileDialogFilter { Name = "Dotnet Executable", Extensions = new List<string> { Platform.ExecutableExtension.Substring(1) } });
                 ofd.AllowMultiple = false;
                 ofd.Title = "Select Dotnet Executable (dotnet)";
 
