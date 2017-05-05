@@ -16,6 +16,11 @@ namespace AvalonStudio.GlobalSettings
             }
         }
 
+        public static void SetSettings<T> (T value) where T: new()
+        {
+            Settings.Instance.SetSettings<T>(value);
+        }
+
         public static T ProvisionSettings<T>() where T : new()
         {
             return Settings.Instance.ProvisionSettings<T>();
