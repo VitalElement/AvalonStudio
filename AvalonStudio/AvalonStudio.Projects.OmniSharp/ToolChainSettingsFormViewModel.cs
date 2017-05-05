@@ -37,7 +37,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
                     _settings.DotNetPath = DotNetPath;
 
-                    _settings.Save();
+                    SettingsBase.SetSettings(_settings);
                 }
             });
         }

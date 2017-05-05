@@ -74,7 +74,7 @@
                 dbgShimName = "lib" + dbgShimName;
             }
 
-            var dbgShimPath = Path.Combine("/home/dan/dotnet", "shared", "Microsoft.NETCore.App", coreAppVersion, dbgShimName + Platform.DLLExtension);
+            var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", coreAppVersion, dbgShimName + Platform.DLLExtension);
 
             var result = new CoreClrDebuggerSession(System.IO.Path.GetInvalidPathChars(), dbgShimPath);
 
