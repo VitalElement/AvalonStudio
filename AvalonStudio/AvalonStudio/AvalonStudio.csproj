@@ -4,6 +4,7 @@
     <OutputType>exe</OutputType>        
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
     <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);netstandard2.0;net462</PackageTargetFallback>
     <OutputTypeEx>exe</OutputTypeEx>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <PreserveCompilationContext>true</PreserveCompilationContext>
@@ -89,7 +90,8 @@
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Microsoft.NETCore.Runtime.CoreCLR" Version="2.0.0-preview1-25207-02" />
     <PackageReference Include="Microsoft.NETCore.DotNetHostPolicy" Version="2.0.0-preview1-001915-00" />
-    <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build94-alpha" />    
+    <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build94-alpha" />
+    <PackageReference Include="VitalElement.Debugging" Version="0.2.0-build9-alpha" />    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />

@@ -2,7 +2,11 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
     <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);netstandard2.0;net462</PackageTargetFallback>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="VitalElement.Debugging" Version="0.2.0-build9-alpha" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB\AvalonStudio.Debugging.GDB.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
