@@ -103,7 +103,7 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             if (line.DocumentLine.LineNumber == Line)
             {
-                //line.RenderedText.SetForegroundBrush(Brushes.Black, StartColumn - 1, EndColumn - StartColumn);
+                line.RenderedText.SetTextStyle(StartColumn - 1, EndColumn - StartColumn, Brushes.Black);
             }
         }
     }

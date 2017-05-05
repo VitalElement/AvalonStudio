@@ -69,7 +69,7 @@ namespace AvalonStudio.Languages
                     formattedOffset = transform.StartOffset - line.Offset;
                 }
 
-                //line.RenderedText.SetForegroundBrush(transform.Foreground, formattedOffset, transform.Length);
+                line.RenderedText.SetTextStyle(formattedOffset, transform.Length, transform.Foreground);
             }
         }
 

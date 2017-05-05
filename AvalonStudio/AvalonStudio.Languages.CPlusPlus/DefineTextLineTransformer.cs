@@ -24,15 +24,15 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
                 var startIndex = line.RenderedText.Text.IndexOf("#");
 
                 var firstEndOffset = line.RenderedText.Text.IndexOf(" ", startIndex);
+                
+                line.RenderedText.SetTextStyle(startIndex, firstEndOffset - startIndex, pragmaBrush);
 
-               // line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, firstEndOffset - startIndex);
+                var lastWordOffset = firstEndOffset != -1 ? line.RenderedText.Text.LastIndexOf(" ", firstEndOffset) + 1 : -1;
 
-                //var lastWordOffset = firstEndOffset != -1 ? line.RenderedText.Text.LastIndexOf(" ", firstEndOffset) + 1 : -1;
-
-                //if (lastWordOffset != -1)
-                //{
-                //    line.RenderedText.SetForegroundBrush(brush, lastWordOffset, line.RenderedText.Text.Length - lastWordOffset);
-                //}
+                if (lastWordOffset != -1)
+                {
+                    line.RenderedText.SetTextStyle(lastWordOffset, line.RenderedText.Text.Length - lastWordOffset, brush);
+                }
             }
         }
     }

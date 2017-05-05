@@ -23,14 +23,14 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
                 {
                     var startIndex = line.RenderedText.Text.IndexOf("#pragma mark");
 
-                    //line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 12);
-                    //line.RenderedText.SetForegroundBrush(brush, startIndex + 12, line.RenderedText.Text.Length - 12);
+                    line.RenderedText.SetTextStyle(startIndex, 12, pragmaBrush);
+                    line.RenderedText.SetTextStyle(startIndex + 12, line.RenderedText.Text.Length - 12, brush);
                 }
                 else if (line.RenderedText.Text.Contains("#pragma"))
                 {
                     var startIndex = line.RenderedText.Text.IndexOf("#pragma");
 
-                    //line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 7);
+                    line.RenderedText.SetTextStyle(startIndex, 7, pragmaBrush);
                 }
             }
         }
