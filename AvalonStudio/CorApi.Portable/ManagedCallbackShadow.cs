@@ -10,7 +10,7 @@ namespace SharpDX
         private static readonly ManagedCallback2Vtbl Vtbl = new ManagedCallback2Vtbl();
         public class ManagedCallback2Vtbl : ComObjectVtbl
         {
-            public ManagedCallback2Vtbl() : base(123 /* count methods there */)
+            public ManagedCallback2Vtbl() : base(8 /* count methods there */)
             {
                 AddMethod(new OnFunctionRemapOpportunityCallback(OnFunctionRemapOpportunity));
                 AddMethod(new OnCreateConnectionCallback(OnCreateConnection));
