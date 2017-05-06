@@ -1,11 +1,10 @@
 ﻿using System;
-using CoreDebugger;
 using SharpDX;
 using SharpDX.Mathematics.Interop;
 
 namespace CorApi.Portable
 {
-    public class ManagedCallbackImpl : CoreDebugger.ManagedCallback, ManagedCallback2
+    public class ManagedCallbackImpl : ManagedCallback, ManagedCallback2
     {
         public IntPtr GetNewIntPtr() => CppObject.ToCallbackPtr<ManagedCallback>(this);
 

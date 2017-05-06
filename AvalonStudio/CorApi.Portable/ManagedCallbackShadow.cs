@@ -1,11 +1,11 @@
-using CoreDebugger;
+using CorApi.Portable;
+using SharpDX;
 using System;
 using System.Runtime.InteropServices;
 
-namespace SharpDX
+namespace CorDebug
 {
-
-    class ManagedCallback2Shadow : SharpDX.ComObjectShadow
+    class ManagedCallback2Shadow : ComObjectShadow
     {
         private static readonly ManagedCallback2Vtbl Vtbl = new ManagedCallback2Vtbl();
         public class ManagedCallback2Vtbl : ComObjectVtbl
@@ -35,10 +35,10 @@ namespace SharpDX
             private delegate void OnDestroyConnectionCallback(IntPtr thisPtr, IntPtr processRef, int dwConnectionId);
 
             [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-            private delegate void OnExceptionCallback(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr frameRef, int nOffset, CoreDebugger.CorDebugExceptionCallbackType dwEventType, int dwFlags);
+            private delegate void OnExceptionCallback(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr frameRef, int nOffset, CorDebugExceptionCallbackType dwEventType, int dwFlags);
 
             [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-            private delegate void OnExceptionUnwindCallback(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, CoreDebugger.CorDebugExceptionUnwindCallbackType dwEventType, int dwFlags);
+            private delegate void OnExceptionUnwindCallback(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, CorDebugExceptionUnwindCallbackType dwEventType, int dwFlags);
 
             [UnmanagedFunctionPointer(CallingConvention.StdCall)]
             private delegate void OnFunctionRemapCompleteCallback(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr functionRef);
@@ -49,56 +49,56 @@ namespace SharpDX
             private static void OnFunctionRemapOpportunity(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr oldFunctionRef, IntPtr newFunctionRef, int oldILOffset)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback2)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnFunctionRemapOpportunity(new AppDomain(appDomainRef), new Thread(threadRef), new Function(oldFunctionRef), new Function(newFunctionRef), oldILOffset);
             }
 
             private static void OnCreateConnection(IntPtr thisPtr, IntPtr processRef, int dwConnectionId, string connNameRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback2)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnCreateConnection(new Process(processRef), dwConnectionId, connNameRef);
             }
 
             private static void OnChangeConnection(IntPtr thisPtr, IntPtr processRef, int dwConnectionId)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback2)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnChangeConnection(new Process(processRef), dwConnectionId);
             }
 
             private static void OnDestroyConnection(IntPtr thisPtr, IntPtr processRef, int dwConnectionId)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback2)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnDestroyConnection(new Process(processRef), dwConnectionId);
             }
 
-            private static void OnException(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr frameRef, int nOffset, CoreDebugger.CorDebugExceptionCallbackType dwEventType, int dwFlags)
+            private static void OnException(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr frameRef, int nOffset, CorDebugExceptionCallbackType dwEventType, int dwFlags)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback2)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnException(new AppDomain(appDomainRef), new Thread(threadRef), new Frame(frameRef), nOffset, dwEventType, dwFlags);
             }
 
-            private static void OnExceptionUnwind(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, CoreDebugger.CorDebugExceptionUnwindCallbackType dwEventType, int dwFlags)
+            private static void OnExceptionUnwind(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, CorDebugExceptionUnwindCallbackType dwEventType, int dwFlags)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback2)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnExceptionUnwind(new AppDomain(appDomainRef), new Thread(threadRef), dwEventType, dwFlags);
             }
 
             private static void OnFunctionRemapComplete(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr functionRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback2)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnFunctionRemapComplete(new AppDomain(appDomainRef), new Thread(threadRef), new Function(functionRef));
             }
 
             private static void OnMDANotification(IntPtr thisPtr, IntPtr controllerRef, IntPtr threadRef, IntPtr mDARef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback2)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnMDANotification(new Controller(controllerRef), new Thread(threadRef), new MDA(mDARef));
             }
         }
@@ -226,9 +226,9 @@ namespace SharpDX
             private static void OnBreakpoint(IntPtr thisPtr, IntPtr pAppDomain, IntPtr pThread, IntPtr pBreakpoint)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 var appDomain = new AppDomain(pAppDomain);
-                var thread = new CoreDebugger.Thread(pThread);
+                var thread = new Thread(pThread);
                 var breakpoint = new Breakpoint(pBreakpoint);
                 callback.OnBreakpoint(appDomain, thread, breakpoint);
             }
@@ -236,9 +236,9 @@ namespace SharpDX
             private static void OnStepComplete(IntPtr thisPtr, IntPtr pAppDomain, IntPtr pThread, IntPtr pStepper, int kReason)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 var appDomain = new AppDomain(pAppDomain);
-                var thread = new CoreDebugger.Thread(pThread);
+                var thread = new Thread(pThread);
                 var stepper = new Stepper(pStepper);
                 callback.OnStepComplete(appDomain, thread, stepper, (CorDebugStepReason)kReason);
             }
@@ -246,7 +246,7 @@ namespace SharpDX
             private static void OnBreak(IntPtr thisPtr, IntPtr appDomainRef, IntPtr thread)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 var appDomain = new AppDomain(appDomainRef);
                 var threadManaged = new Thread(thread);
                 callback.OnBreak(appDomain, threadManaged);
@@ -255,16 +255,16 @@ namespace SharpDX
             private static void OnException(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, int unhandled)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 var appDomain = new AppDomain(appDomainRef);
                 var threadManaged = new Thread(threadRef);
-                callback.OnException(appDomain, threadManaged, new Mathematics.Interop.RawBool(unhandled > 0));
+                callback.OnException(appDomain, threadManaged, new SharpDX.Mathematics.Interop.RawBool(unhandled > 0));
             }
 
             private static void OnEvalComplete(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr evalRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 var appDomain = new AppDomain(appDomainRef);
                 var threadManaged = new Thread(threadRef);
                 callback.OnEvalComplete(appDomain, threadManaged, new Eval(evalRef));
@@ -273,7 +273,7 @@ namespace SharpDX
             private static void OnEvalException(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr evalRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 var appDomain = new AppDomain(appDomainRef);
                 var threadManaged = new Thread(threadRef);
                 callback.OnEvalException(appDomain, threadManaged, new Eval(evalRef));
@@ -282,140 +282,140 @@ namespace SharpDX
             private static void OnCreateProcessW(IntPtr thisPtr, IntPtr processRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnCreateProcessW(new Process(processRef));
             }
 
             private static void OnExitProcess(IntPtr thisPtr, IntPtr processRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnExitProcess(new Process(processRef));
             }
 
             private static void OnCreateThread(IntPtr thisPtr, IntPtr appDomainRef, IntPtr thread)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnCreateThread(new AppDomain(appDomainRef), new Thread(thread));
             }
 
             private static void OnExitThread(IntPtr thisPtr, IntPtr appDomainRef, IntPtr thread)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnExitThread(new AppDomain(appDomainRef), new Thread(thread));
             }
 
             private static void OnLoadModule(IntPtr thisPtr, IntPtr appDomainRef, IntPtr moduleRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnLoadModule(new AppDomain(appDomainRef), new Module(moduleRef));
             }
 
             private static void OnUnloadModule(IntPtr thisPtr, IntPtr appDomainRef, IntPtr moduleRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnUnloadModule(new AppDomain(appDomainRef), new Module(moduleRef));
             }
 
             private static void OnLoadClass(IntPtr thisPtr, IntPtr appDomainRef, IntPtr c)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnLoadClass(new AppDomain(appDomainRef), new Class(c));
             }
 
             private static void OnUnloadClass(IntPtr thisPtr, IntPtr appDomainRef, IntPtr c)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnUnloadClass(new AppDomain(appDomainRef), new Class(c));
             }
 
             private static void OnDebuggerError(IntPtr thisPtr, IntPtr processRef, SharpDX.Result errorHR, int errorCode)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnDebuggerError(new Process(processRef), errorHR, errorCode);
             }
 
             private static void OnLogMessage(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, int lLevel, string logSwitchNameRef, string messageRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnLogMessage(new AppDomain(appDomainRef), new Thread(threadRef), lLevel, logSwitchNameRef, messageRef);
             }
 
             private static void OnLogSwitch(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, int lLevel, int ulReason, string logSwitchNameRef, string parentNameRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnLogSwitch(new AppDomain(appDomainRef), new Thread(threadRef), lLevel, ulReason, logSwitchNameRef, parentNameRef);
             } // string here?
 
             private static void OnCreateAppDomain(IntPtr thisPtr, IntPtr processRef, IntPtr appDomainRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnCreateAppDomain(new Process(processRef), new AppDomain(appDomainRef));
             }
 
             private static void OnExitAppDomain(IntPtr thisPtr, IntPtr processRef, IntPtr appDomainRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnExitAppDomain(new Process(processRef), new AppDomain(appDomainRef));
             }
 
             private static void OnLoadAssembly(IntPtr thisPtr, IntPtr appDomainRef, IntPtr assemblyRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnLoadAssembly(new AppDomain(appDomainRef), new Assembly(assemblyRef));
             }
 
             private static void OnUnloadAssembly(IntPtr thisPtr, IntPtr appDomainRef, IntPtr assemblyRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnUnloadAssembly(new AppDomain(appDomainRef), new Assembly(assemblyRef));
             }
 
             private static void OnControlCTrap(IntPtr thisPtr, IntPtr processRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnControlCTrap(new Process(processRef));
             }
 
             private static void OnNameChange(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnNameChange(new AppDomain(appDomainRef), new Thread(threadRef));
             }
 
             private static void OnUpdateModuleSymbols_(IntPtr thisPtr, IntPtr appDomainRef, IntPtr moduleRef, System.IntPtr symbolStreamRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnUpdateModuleSymbols_(new AppDomain(appDomainRef), new Module(moduleRef), symbolStreamRef);
             }
 
             private static void OnEditAndContinueRemap(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr functionRef, int fAccurate)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
-                callback.OnEditAndContinueRemap(new AppDomain(appDomainRef), new Thread(threadRef), new Function(functionRef), new Mathematics.Interop.RawBool(fAccurate > 0));
+                var callback = (ManagedCallbackImpl)shadow.Callback;
+                callback.OnEditAndContinueRemap(new AppDomain(appDomainRef), new Thread(threadRef), new Function(functionRef), new SharpDX.Mathematics.Interop.RawBool(fAccurate > 0));
             } // todo raw bool = int?
 
             private static void OnBreakpointSetError(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr breakpointRef, int dwError)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
-                var callback = (ManagedCallback)shadow.Callback;
+                var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnBreakpointSetError(new AppDomain(appDomainRef), new Thread(threadRef), new Breakpoint(breakpointRef), dwError);
             }
         }
