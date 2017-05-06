@@ -28,7 +28,7 @@ namespace SharpDX
     /// The ShadowContainer is the main container used internally to keep references to all native COM/C++ callbacks.
     /// It is stored in the property <see cref="ICallbackable.Shadow"/>.
     /// </summary>
-    internal class ShadowContainer : DisposeBase
+    public  class ShadowContainer : DisposeBase
     {
         private readonly Dictionary<Guid, CppObjectShadow> guidToShadow = new Dictionary<Guid, CppObjectShadow>();
 
@@ -131,7 +131,7 @@ namespace SharpDX
                     countGuids++;
             }
 
-            guidPtr = Marshal.AllocHGlobal(Utilities.SizeOf<Guid>() * countGuids);
+            guidPtr = Marshal.AllocHGlobal(16 * countGuids);
             Guids = new IntPtr[countGuids];
             int i = 0;
             unsafe

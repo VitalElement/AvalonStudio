@@ -26,7 +26,7 @@ namespace SharpDX
     /// Shadow attribute used to associate a COM callbackable interface to its Shadow implementation.
     /// </summary>
     [AttributeUsage(AttributeTargets.Interface)]
-    internal class ShadowAttribute : Attribute
+    public class ShadowAttribute : Attribute
     {
         private Type type;
 

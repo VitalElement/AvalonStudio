@@ -28,6 +28,7 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
+using SharpDX;
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -6603,7 +6604,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebug::SetManagedHandler']/*"/>	
         /// <unmanaged>HRESULT ICorDebug::SetManagedHandler([In] ICorDebugManagedCallback* pCallback)</unmanaged>	
         /// <unmanaged-short>ICorDebug::SetManagedHandler</unmanaged-short>	
-        internal void SetManagedHandler_(System.IntPtr callbackRef)
+        public void SetManagedHandler_(System.IntPtr callbackRef)
         {
             unsafe
             {
@@ -6737,6 +6738,7 @@ namespace CoreDebugger
     /// <unmanaged>ICorDebugManagedCallback</unmanaged>	
     /// <unmanaged-short>ICorDebugManagedCallback</unmanaged-short>	
     [Guid("3d6f5f60-7538-11d3-8d5b-00104b35e7ef")]
+    [Shadow(typeof(ManagedCallbackShadow))]
     public partial interface ManagedCallback : SharpDX.ICallbackable
     {
         /// <summary>	
@@ -6958,7 +6960,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback::ExitAppDomain']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback::ExitAppDomain([In] ICorDebugProcess* pProcess,[In] ICorDebugAppDomain* pAppDomain)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback::ExitAppDomain</unmanaged-short>	
-        /* public void OnExitAppDomain(CoreDebugger.Process processRef, CoreDebugger.AppDomain appDomainRef) */
+        void OnExitAppDomain(CoreDebugger.Process processRef, CoreDebugger.AppDomain appDomainRef);
 
         /// <summary>	
         /// No documentation.	
@@ -6969,7 +6971,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback::LoadAssembly']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback::LoadAssembly([In] ICorDebugAppDomain* pAppDomain,[In] ICorDebugAssembly* pAssembly)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback::LoadAssembly</unmanaged-short>	
-        /* public void OnLoadAssembly(CoreDebugger.AppDomain appDomainRef, CoreDebugger.Assembly assemblyRef) */
+        void OnLoadAssembly(CoreDebugger.AppDomain appDomainRef, CoreDebugger.Assembly assemblyRef);
 
         /// <summary>	
         /// No documentation.	
@@ -6990,7 +6992,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback::ControlCTrap']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback::ControlCTrap([In] ICorDebugProcess* pProcess)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback::ControlCTrap</unmanaged-short>	
-        /* public void OnControlCTrap(CoreDebugger.Process processRef) */
+        void OnControlCTrap(CoreDebugger.Process processRef);
 
         /// <summary>	
         /// No documentation.	
@@ -7048,6 +7050,7 @@ namespace CoreDebugger
     /// <unmanaged>ICorDebugManagedCallback2</unmanaged>	
     /// <unmanaged-short>ICorDebugManagedCallback2</unmanaged-short>	
     [Guid("250E5EEA-DB5C-4C76-B6F3-8C46F12E3203")]
+    [Shadow(typeof(ManagedCallback2Shadow))]
     public partial interface ManagedCallback2 : SharpDX.ICallbackable
     {
 
@@ -7064,8 +7067,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback2::FunctionRemapOpportunity']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback2::FunctionRemapOpportunity([In] ICorDebugAppDomain* pAppDomain,[In] ICorDebugThread* pThread,[In] ICorDebugFunction* pOldFunction,[In] ICorDebugFunction* pNewFunction,[In] unsigned int oldILOffset)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback2::FunctionRemapOpportunity</unmanaged-short>	
-        /* public void OnFunctionRemapOpportunity(CoreDebugger.AppDomain appDomainRef, CoreDebugger.Thread threadRef, CoreDebugger.Function oldFunctionRef, CoreDebugger.Function newFunctionRef, int oldILOffset) */
-
+        void OnFunctionRemapOpportunity(CoreDebugger.AppDomain appDomainRef, CoreDebugger.Thread threadRef, CoreDebugger.Function oldFunctionRef, CoreDebugger.Function newFunctionRef, int oldILOffset) ;
         /// <summary>	
         /// No documentation.	
         /// </summary>	
@@ -7076,7 +7078,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback2::CreateConnection']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback2::CreateConnection([In] ICorDebugProcess* pProcess,[In] unsigned int dwConnectionId,[In] wchar_t* pConnName)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback2::CreateConnection</unmanaged-short>	
-        /* public void OnCreateConnection(CoreDebugger.Process processRef, int dwConnectionId, string connNameRef) */
+        void OnCreateConnection(CoreDebugger.Process processRef, int dwConnectionId, string connNameRef) ;
 
         /// <summary>	
         /// No documentation.	
@@ -7087,7 +7089,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback2::ChangeConnection']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback2::ChangeConnection([In] ICorDebugProcess* pProcess,[In] unsigned int dwConnectionId)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback2::ChangeConnection</unmanaged-short>	
-        /* public void OnChangeConnection(CoreDebugger.Process processRef, int dwConnectionId) */
+        void OnChangeConnection(CoreDebugger.Process processRef, int dwConnectionId) ;
 
         /// <summary>	
         /// No documentation.	
@@ -7098,7 +7100,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback2::DestroyConnection']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback2::DestroyConnection([In] ICorDebugProcess* pProcess,[In] unsigned int dwConnectionId)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback2::DestroyConnection</unmanaged-short>	
-        /* public void OnDestroyConnection(CoreDebugger.Process processRef, int dwConnectionId) */
+        void OnDestroyConnection(CoreDebugger.Process processRef, int dwConnectionId) ;
 
         /// <summary>	
         /// No documentation.	
@@ -7113,7 +7115,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback2::Exception']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback2::Exception([In] ICorDebugAppDomain* pAppDomain,[In] ICorDebugThread* pThread,[In] ICorDebugFrame* pFrame,[In] unsigned int nOffset,[In] CorDebugExceptionCallbackType dwEventType,[In] unsigned int dwFlags)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback2::Exception</unmanaged-short>	
-        /* public void OnException(CoreDebugger.AppDomain appDomainRef, CoreDebugger.Thread threadRef, CoreDebugger.Frame frameRef, int nOffset, CoreDebugger.CorDebugExceptionCallbackType dwEventType, int dwFlags) */
+        void OnException(CoreDebugger.AppDomain appDomainRef, CoreDebugger.Thread threadRef, CoreDebugger.Frame frameRef, int nOffset, CoreDebugger.CorDebugExceptionCallbackType dwEventType, int dwFlags) ;
 
         /// <summary>	
         /// No documentation.	
@@ -7126,7 +7128,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback2::ExceptionUnwind']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback2::ExceptionUnwind([In] ICorDebugAppDomain* pAppDomain,[In] ICorDebugThread* pThread,[In] CorDebugExceptionUnwindCallbackType dwEventType,[In] unsigned int dwFlags)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback2::ExceptionUnwind</unmanaged-short>	
-        /* public void OnExceptionUnwind(CoreDebugger.AppDomain appDomainRef, CoreDebugger.Thread threadRef, CoreDebugger.CorDebugExceptionUnwindCallbackType dwEventType, int dwFlags) */
+        void OnExceptionUnwind(CoreDebugger.AppDomain appDomainRef, CoreDebugger.Thread threadRef, CoreDebugger.CorDebugExceptionUnwindCallbackType dwEventType, int dwFlags) ;
 
         /// <summary>	
         /// No documentation.	
@@ -7138,7 +7140,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback2::FunctionRemapComplete']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback2::FunctionRemapComplete([In] ICorDebugAppDomain* pAppDomain,[In] ICorDebugThread* pThread,[In] ICorDebugFunction* pFunction)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback2::FunctionRemapComplete</unmanaged-short>	
-        /* public void OnFunctionRemapComplete(CoreDebugger.AppDomain appDomainRef, CoreDebugger.Thread threadRef, CoreDebugger.Function functionRef) */
+        void OnFunctionRemapComplete(CoreDebugger.AppDomain appDomainRef, CoreDebugger.Thread threadRef, CoreDebugger.Function functionRef) ;
 
         /// <summary>	
         /// No documentation.	
@@ -7150,7 +7152,7 @@ namespace CoreDebugger
         /// <include file='.\..\Documentation\CodeComments.xml' path="/comments/comment[@id='ICorDebugManagedCallback2::MDANotification']/*"/>	
         /// <unmanaged>HRESULT ICorDebugManagedCallback2::MDANotification([In] ICorDebugController* pController,[In] ICorDebugThread* pThread,[In] ICorDebugMDA* pMDA)</unmanaged>	
         /// <unmanaged-short>ICorDebugManagedCallback2::MDANotification</unmanaged-short>	
-        /* public void OnMDANotification(CoreDebugger.Controller controllerRef, CoreDebugger.Thread threadRef, CoreDebugger.MDA mDARef) */
+        void OnMDANotification(CoreDebugger.Controller controllerRef, CoreDebugger.Thread threadRef, CoreDebugger.MDA mDARef);
     }
     /// <summary>	
     /// No documentation.	
