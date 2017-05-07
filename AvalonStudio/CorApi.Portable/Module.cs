@@ -25,6 +25,23 @@ namespace CorApi.Portable
                 }
             }
         }
+
+        public void SetJMCStatus(bool justMyCode, int[] tokensRef)
+        {
+            QueryInterface<Module2>().SetJMCStatus(justMyCode, tokensRef.Length, tokensRef);
+        }
+
+        public CorDebugJITCompilerFlags JITCompilerFlags
+        {
+            get
+            {
+                return QueryInterface<Module2>().GetJITCompilerFlags();
+            }
+            set
+            {
+                QueryInterface<Module2>().SetJITCompilerFlags(value);
+            }
+        }
     }
 }
 

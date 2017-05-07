@@ -1226,40 +1226,73 @@ namespace CorApi.Portable
         OnExceptionInCallback,
     }
 
+    public delegate void DebugEventHandler<in TArgs>(Object sender, TArgs args) where TArgs : EventArgs;
+
     public partial class Process
     {
-        public delegate void DebugEventHandler<in TArgs>(Object sender, TArgs args) where TArgs : EventArgs;
+        public int Id
+        {
+            get
+            {
+                GetID(out int result);
 
-        public event DebugEventHandler<BreakpointEventArgs> OnBreakpoint = delegate { };
-        public event DebugEventHandler<BreakpointEventArgs> OnBreakpointSetError = delegate { };
-        public event DebugEventHandler<StepCompleteEventArgs> OnStepComplete = delegate { };
-        public event DebugEventHandler<ThreadEventArgs> OnBreak = delegate { };
-        public event DebugEventHandler<ExceptionEventArgs> OnException = delegate { };
-        public event DebugEventHandler<EvalEventArgs> OnEvalComplete = delegate { };
-        public event DebugEventHandler<EvalEventArgs> OnEvalException = delegate { };
-        public event DebugEventHandler<ProcessEventArgs> OnCreateProcess = delegate { };
-        public event DebugEventHandler<ProcessEventArgs> OnProcessExit = delegate { };
-        public event DebugEventHandler<ThreadEventArgs> OnCreateThread = delegate { };
-        public event DebugEventHandler<ThreadEventArgs> OnThreadExit = delegate { };
-        public event DebugEventHandler<ModuleEventArgs> OnModuleLoad = delegate { };
-        public event DebugEventHandler<ModuleEventArgs> OnModuleUnload = delegate { };
-        public event DebugEventHandler<ClassEventArgs> OnClassLoad = delegate { };
-        public event DebugEventHandler<ClassEventArgs> OnClassUnload = delegate { };
-        public event DebugEventHandler<DebuggerErrorEventArgs> OnDebuggerError = delegate { };
-        public event DebugEventHandler<MDAEventArgs> OnMDANotification = delegate { };
-        public event DebugEventHandler<LogMessageEventArgs> OnLogMessage = delegate { };
-        public event DebugEventHandler<LogSwitchEventArgs> OnLogSwitch = delegate { };
-        public event DebugEventHandler<AppDomainEventArgs> OnCreateAppDomain = delegate { };
-        public event DebugEventHandler<AppDomainEventArgs> OnAppDomainExit = delegate { };
-        public event DebugEventHandler<AssemblyEventArgs> OnAssemblyLoad = delegate { };
-        public event DebugEventHandler<AssemblyEventArgs> OnAssemblyUnload = delegate { };
-        public event DebugEventHandler<ProcessEventArgs> OnControlCTrap = delegate { };
-        public event DebugEventHandler<ThreadEventArgs> OnNameChange = delegate { };
-        public event DebugEventHandler<UpdateModuleSymbolsEventArgs> OnUpdateModuleSymbols = delegate { };
-        public event DebugEventHandler<FunctionRemapOpportunityEventArgs> OnFunctionRemapOpportunity = delegate { };
-        public event DebugEventHandler<FunctionRemapCompleteEventArgs> OnFunctionRemapComplete = delegate { };
-        public event DebugEventHandler<Exception2EventArgs> OnException2 = delegate { };
-        public event DebugEventHandler<ExceptionUnwind2EventArgs> OnExceptionUnwind2 = delegate { };
-        public event DebugEventHandler<ExceptionInCallbackEventArgs> OnExceptionInCallback = delegate { };
+                return result;
+            }
+        }
+
+        public bool HasQueuedCallbacks(Thread thread)
+        {
+            var result = new SharpDX.Mathematics.Interop.RawBool();
+            HasQueuedCallbacks(thread, out result);
+            return result;
+        }
+
+        public CorDebugJITCompilerFlags DesiredNGENCompilerFlags
+        {
+            get
+            {
+                CorDebugJITCompilerFlags flags;
+
+                QueryInterface<Process2>().GetDesiredNGENCompilerFlags(out flags);
+
+                return flags;
+            }
+            set
+            {
+                QueryInterface<Process2>().SetDesiredNGENCompilerFlags(value);
+            }
+        }
+
+        public event DebugEventHandler<BreakpointEventArgs> OnBreakpoint;
+        public event DebugEventHandler<BreakpointEventArgs> OnBreakpointSetError;
+        public event DebugEventHandler<StepCompleteEventArgs> OnStepComplete;
+        public event DebugEventHandler<ThreadEventArgs> OnBreak;
+        public event DebugEventHandler<ExceptionEventArgs> OnException;
+        public event DebugEventHandler<EvalEventArgs> OnEvalComplete;
+        public event DebugEventHandler<EvalEventArgs> OnEvalException;
+        public event DebugEventHandler<ProcessEventArgs> OnCreateProcess;
+        public event DebugEventHandler<ProcessEventArgs> OnProcessExit;
+        public event DebugEventHandler<ThreadEventArgs> OnCreateThread;
+        public event DebugEventHandler<ThreadEventArgs> OnThreadExit;
+        public event DebugEventHandler<ModuleEventArgs> OnModuleLoad;
+        public event DebugEventHandler<ModuleEventArgs> OnModuleUnload;
+        public event DebugEventHandler<ClassEventArgs> OnClassLoad;
+        public event DebugEventHandler<ClassEventArgs> OnClassUnload;
+        public event DebugEventHandler<DebuggerErrorEventArgs> OnDebuggerError;
+        public event DebugEventHandler<MDAEventArgs> OnMDANotification;
+        public event DebugEventHandler<LogMessageEventArgs> OnLogMessage;
+        public event DebugEventHandler<LogSwitchEventArgs> OnLogSwitch;
+        public event DebugEventHandler<AppDomainEventArgs> OnCreateAppDomain;
+        public event DebugEventHandler<AppDomainEventArgs> OnAppDomainExit;
+        public event DebugEventHandler<AssemblyEventArgs> OnAssemblyLoad;
+        public event DebugEventHandler<AssemblyEventArgs> OnAssemblyUnload;
+        public event DebugEventHandler<ProcessEventArgs> OnControlCTrap;
+        public event DebugEventHandler<ThreadEventArgs> OnNameChange;
+        public event DebugEventHandler<UpdateModuleSymbolsEventArgs> OnUpdateModuleSymbols;
+        public event DebugEventHandler<FunctionRemapOpportunityEventArgs> OnFunctionRemapOpportunity;
+        public event DebugEventHandler<FunctionRemapCompleteEventArgs> OnFunctionRemapComplete;
+        public event DebugEventHandler<Exception2EventArgs> OnException2;
+        public event DebugEventHandler<ExceptionUnwind2EventArgs> OnExceptionUnwind2;
+        public event DebugEventHandler<ExceptionInCallbackEventArgs> OnExceptionInCallback;
     }
 }

@@ -1,0 +1,37 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+
+namespace CorApi.Portable
+{
+    public partial class Thread
+    {
+        public int Id
+        {
+            get
+            {
+                GetID(out int result);
+
+                return result;
+            }
+        }
+
+        public Stepper CreateStepper()
+        {
+            CreateStepper(out Stepper result);
+
+            return result;
+        }
+
+        public IEnumerable Chains
+        {
+            get
+            {
+                ChainEnum echains = null;
+                EnumerateChains(out echains);
+
+                return new ChainEnumerator(echains);
+            }
+        }
+    }
+}

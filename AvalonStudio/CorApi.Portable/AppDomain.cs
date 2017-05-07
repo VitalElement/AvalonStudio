@@ -28,5 +28,15 @@ namespace CorApi.Portable
                 }
             }
         }
+
+        public int Id
+        {
+            get
+            {
+                GetID(out int result);
+
+                return result;
+            }
+        }
     }
 }
