@@ -95,6 +95,13 @@ namespace CorApi.Portable
             }
         }
 
+        public Value GetStaticFieldValue(int fieldToken, Frame frame)
+        {
+            Value dv = null;
+            GetStaticFieldValue(fieldToken, frame, out dv);
+            return dv;
+        }
+
         public CorElementType CorType
         {
             get
