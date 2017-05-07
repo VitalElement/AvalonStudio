@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace CorApi.Portable
@@ -25,6 +26,44 @@ namespace CorApi.Portable
             }
         }
 
+        public void GetIP(out int offset, out CorDebugMappingResult mappingResult)
+        {
+            ILFrame ilframe = GetILFrame();
+            if (ilframe == null)
+            {
+                offset = 0;
+                mappingResult = CorDebugMappingResult.MappingNoInformation;
+            }
+            else
+                ilframe.GetIP(out offset, out mappingResult);
+        }
+
+        public void SetIP(int offset)
+        {
+            var ilframe = GetILFrame();
+            if (ilframe == null)
+                throw new Exception("Cannot set an IP on non-il frame");
+            ilframe.SetIP(offset);
+        }
+
+        public bool CanSetIP(int offset)
+        {
+            var ilframe = GetILFrame();
+            if (ilframe == null)
+                return false;
+
+            try
+            {
+                ilframe.CanSetIP(offset);
+                return true;
+            }
+            catch (SharpDX.SharpDXException e)
+            {
+                return false;
+            }
+        }
+
+
         private ILFrame GetILFrame()
         {
             if (!m_ilFrameCached)
@@ -42,7 +81,7 @@ namespace CorApi.Portable
             {
                 m_iFrameCached = true;
 
-                m_iFrame = QueryInterface<InternalFrame>();
+                m_iFrame = QueryInterfaceOrNull<InternalFrame>();
             }
             return m_iFrame;
         }
@@ -61,6 +100,29 @@ namespace CorApi.Portable
 
                 return CorFrameType.NativeFrame;
             }
+        }
+
+        public CorDebugInternalFrameType InternalFrameType
+        {
+            get
+            {
+                InternalFrame iframe = GetInternalFrame();
+                CorDebugInternalFrameType ft;
+
+                if (iframe == null)
+                    throw new Exception("Cannot get frame type on non-internal frame");
+
+                iframe.GetFrameType(out ft);
+                return ft;
+            }
+        }
+
+
+        public void GetNativeIP(out int offset)
+        {
+            var nativeFrame = QueryInterfaceOrNull<NativeFrame>();
+            Debug.Assert(nativeFrame != null);
+            nativeFrame.GetIP(out offset);
         }
     }
 }

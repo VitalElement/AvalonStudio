@@ -33,5 +33,16 @@ namespace CorApi.Portable
                 return new ChainEnumerator(echains);
             }
         }
+
+        /** Get the runtime thread object. */
+        public Value ThreadVariable
+        {
+            get
+            {
+                Value v = null;
+                GetObjectW(out v);
+                return v;
+            }
+        }
     }
 }

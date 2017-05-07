@@ -195,7 +195,6 @@ namespace CorApi.Portable
         }
     }
 
-
     /**
      * Arguments for events dealing with threads.
      */

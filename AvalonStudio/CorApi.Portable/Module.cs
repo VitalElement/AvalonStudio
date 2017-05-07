@@ -35,11 +35,11 @@ namespace CorApi.Portable
         {
             get
             {
-                return QueryInterface<Module2>().GetJITCompilerFlags();
+                return QueryInterface<Module2>().JITCompilerFlags;
             }
             set
             {
-                QueryInterface<Module2>().SetJITCompilerFlags(value);
+                QueryInterface<Module2>().JITCompilerFlags = value;
             }
         }
     }
