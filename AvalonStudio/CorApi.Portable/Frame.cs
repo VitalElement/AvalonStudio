@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -123,6 +124,83 @@ namespace CorApi.Portable
             var nativeFrame = QueryInterfaceOrNull<NativeFrame>();
             Debug.Assert(nativeFrame != null);
             nativeFrame.GetIP(out offset);
+        }
+
+        public Value GetArgument(int index)
+        {
+            var ilframe = GetILFrame();
+            if (ilframe == null)
+                return null;
+
+
+            Value value;
+            ilframe.GetArgument(index, out value);
+            return value;
+        }
+
+        public int GetArgumentCount()
+        {
+            var ilframe = GetILFrame();
+            if (ilframe == null)
+                return -1;
+
+            ValueEnum ve;
+            ilframe.EnumerateArguments(out ve);
+            int count;
+            ve.GetCount(out count);
+            return count;
+        }
+
+        public int GetLocalVariablesCount()
+        {
+            var ilframe = GetILFrame();
+            if (ilframe == null)
+                return -1;
+
+            ValueEnum ve;
+            ilframe.EnumerateLocalVariables(out ve);
+            int count;
+            ve.GetCount(out count);
+            return count;
+        }
+
+        public Value GetLocalVariable(int index)
+        {
+            var ilframe = GetILFrame();
+            if (ilframe == null)
+                return null;
+
+            Value value;
+            try
+            {
+                ilframe.GetLocalVariable((int)index, out value);
+            }
+            catch (SharpDX.SharpDXException e)
+            {
+                // If you are stopped in the Prolog, the variable may not be available.
+                // CORDBG_E_IL_VAR_NOT_AVAILABLE is returned after dubugee triggers StackOverflowException
+                if (e.HResult == 0x1304) //cordbg_e_il_var_not_available //TODO Generate error codes in mapping.xaml.
+                {
+                    return null;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return value;
+        }
+
+        public IEnumerable TypeParameters
+        {
+            get
+            {
+                TypeEnum icdte = null;
+                ILFrame ilf = GetILFrame();
+
+                ilf.QueryInterface<ILFrame2>().EnumerateTypeParameters(out icdte);
+                return new TypeEnumerator(icdte);        // icdte can be null, is handled by enumerator
+            }
         }
     }
 }

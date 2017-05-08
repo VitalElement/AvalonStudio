@@ -17,5 +17,10 @@ namespace CorApi.Portable
                 return new ThreadEnumerator(ethreads);
             }
         }
+
+        public void Continue(bool outOfBand)
+        {
+            ContinueImpl(outOfBand);
+        }
     }
 }

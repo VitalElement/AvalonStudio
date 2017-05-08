@@ -1,7 +1,9 @@
 ﻿using CorApi.Portable.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using System.Threading;
 
 namespace CorApi.Portable
 {
@@ -1239,6 +1241,42 @@ namespace CorApi.Portable
             }
         }
 
+        private ManualResetEvent m_callbackAttachedEvent = new ManualResetEvent(false);
+
+        private Dictionary<ManagedCallbackType, DebugEventHandler<CorEventArgs>> m_callbacksArray;
+
+
+        public void DispatchEvent(ManagedCallbackType callback, CorEventArgs e)
+        {
+            try
+            {
+                if (m_callbackAttachedEvent != null)
+                    m_callbackAttachedEvent.WaitOne(); // waits till callbacks are enabled
+                var d = m_callbacksArray[callback];
+                d(this, e);
+            }
+            catch (Exception ex)
+            {
+                var e2 = new ExceptionInCallbackEventArgs(e.Controller, ex);
+                Debug.Assert(false, "Exception in callback: " + ex.ToString());
+                try
+                {
+                    // we need to dispatch the exceptin in callback error, but we cannot
+                    // use DispatchEvent since throwing exception in ExceptionInCallback
+                    // would lead to infinite recursion.
+                    Debug.Assert(m_callbackAttachedEvent == null);
+                    var d = m_callbacksArray[ManagedCallbackType.OnExceptionInCallback];
+                    d(this, e2);
+                }
+                catch (Exception ex2)
+                {
+                    Debug.Assert(false, "Exception in Exception notification callback: " + ex2.ToString());
+                    // ignore it -- there is nothing we can do.
+                }
+                e.Continue = e2.Continue;
+            }
+        }
+
         public bool HasQueuedCallbacks(Thread thread)
         {
             var result = new SharpDX.Mathematics.Interop.RawBool();
@@ -1260,6 +1298,23 @@ namespace CorApi.Portable
             {
                 QueryInterface<Process2>().SetDesiredNGENCompilerFlags(value);
             }
+        }
+
+        public void Continue(bool outOfBand)
+        {
+            if (!outOfBand &&                               // OOB event can arrive anytime (we just ignore them).
+                (m_callbackAttachedEvent != null))
+            {
+                // first special call to "Continue" -- this fake continue will start delivering
+                // callbacks.
+                Debug.Assert(!outOfBand);
+                ManualResetEvent ev = m_callbackAttachedEvent;
+                // we set the m_callbackAttachedEvent to null first to prevent races.
+                m_callbackAttachedEvent = null;
+                ev.Set();
+            }
+            else
+                base.ContinueImpl(outOfBand);
         }
 
         public event DebugEventHandler<BreakpointEventArgs> OnBreakpoint;

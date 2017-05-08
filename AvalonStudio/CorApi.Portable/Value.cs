@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace CorApi.Portable
@@ -30,6 +31,22 @@ namespace CorApi.Portable
         {
             return QueryInterfaceOrNull<HeapValue>();
         }
+
+        public BoxValue CastToBoxValue()
+        {
+            return QueryInterfaceOrNull<BoxValue>();
+        }
+
+        public GenericValue CastToGenericValue()
+        {
+            return QueryInterfaceOrNull<GenericValue>();
+        }
+
+        public ArrayValue CastToArrayValue()
+        {
+            return QueryInterfaceOrNull<ArrayValue>();
+        }
+
 
         public Type ExactType
         {
