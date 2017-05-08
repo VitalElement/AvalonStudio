@@ -20,7 +20,7 @@ namespace CorApi.Portable
 
             Type pType = null;
 
-            QueryInterface<Class2>().GetParameterizedType((int)elementType, length, types, out pType);
+            QueryInterface<Class2>().GetParameterizedType(elementType, length, types, out pType);
 
             return pType;
         }

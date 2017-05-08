@@ -283,14 +283,14 @@ namespace CorDebug
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
-                callback.OnCreateProcessW(new Process(processRef));
+                callback.OnCreateProcessW(Process.GetCorProcess(processRef));
             }
 
             private static void OnExitProcess(IntPtr thisPtr, IntPtr processRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
-                callback.OnExitProcess(new Process(processRef));
+                callback.OnExitProcess(Process.GetCorProcess(processRef));
             }
 
             private static void OnCreateThread(IntPtr thisPtr, IntPtr appDomainRef, IntPtr thread)
@@ -339,7 +339,7 @@ namespace CorDebug
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
-                callback.OnDebuggerError(new Process(processRef), errorHR, errorCode);
+                callback.OnDebuggerError(Process.GetCorProcess(processRef), errorHR, errorCode);
             }
 
             private static void OnLogMessage(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, int lLevel, string logSwitchNameRef, string messageRef)
@@ -360,14 +360,14 @@ namespace CorDebug
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
-                callback.OnCreateAppDomain(new Process(processRef), new AppDomain(appDomainRef));
+                callback.OnCreateAppDomain(Process.GetCorProcess(processRef), new AppDomain(appDomainRef));
             }
 
             private static void OnExitAppDomain(IntPtr thisPtr, IntPtr processRef, IntPtr appDomainRef)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
-                callback.OnExitAppDomain(new Process(processRef), new AppDomain(appDomainRef));
+                callback.OnExitAppDomain(Process.GetCorProcess(processRef), new AppDomain(appDomainRef));
             }
 
             private static void OnLoadAssembly(IntPtr thisPtr, IntPtr appDomainRef, IntPtr assemblyRef)
@@ -388,7 +388,7 @@ namespace CorDebug
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
-                callback.OnControlCTrap(new Process(processRef));
+                callback.OnControlCTrap(Process.GetCorProcess(processRef));
             }
 
             private static void OnNameChange(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef)

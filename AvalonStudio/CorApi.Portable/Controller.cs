@@ -18,7 +18,7 @@ namespace CorApi.Portable
             }
         }
 
-        public void Continue(bool outOfBand)
+        public virtual void Continue(bool outOfBand)
         {
             ContinueImpl(outOfBand);
         }

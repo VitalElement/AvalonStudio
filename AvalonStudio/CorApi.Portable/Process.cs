@@ -1229,7 +1229,7 @@ namespace CorApi.Portable
 
     public delegate void DebugEventHandler<in TArgs>(Object sender, TArgs args) where TArgs : EventArgs;
 
-    public partial class Process
+    public partial class Process : IDisposable
     {
         public int Id
         {
@@ -1241,17 +1241,73 @@ namespace CorApi.Portable
             }
         }
 
+        public new void Dispose()
+        {
+            // Release event handlers. The event handlers are strong references and may keep
+            // other high-level objects (such as things in the MdbgEngine layer) alive.
+            m_callbacksArray = null;
+
+            // Remove ourselves from instances hash.
+            lock (m_instances)
+            {
+                m_instances.Remove(NativePointer);
+            }
+
+            base.Dispose();
+        }
+
         private ManualResetEvent m_callbackAttachedEvent = new ManualResetEvent(false);
 
         private Dictionary<ManagedCallbackType, DebugEventHandler<CorEventArgs>> m_callbacksArray;
 
+        private bool isWaiting = false;
+
+        private void InitCallbacks()
+        {
+            m_callbacksArray = new Dictionary<ManagedCallbackType, DebugEventHandler<CorEventArgs>> {
+                {ManagedCallbackType.OnBreakpoint, (sender, args) => OnBreakpoint (sender, (BreakpointEventArgs) args)},
+                {ManagedCallbackType.OnStepComplete, (sender, args) => OnStepComplete (sender, (StepCompleteEventArgs) args)},
+                {ManagedCallbackType.OnBreak, (sender, args) => OnBreak (sender, (ThreadEventArgs) args)},
+                {ManagedCallbackType.OnException, (sender, args) => OnException (sender, (ExceptionEventArgs) args)},
+                {ManagedCallbackType.OnEvalComplete, (sender, args) => OnEvalComplete (sender, (EvalEventArgs) args)},
+                {ManagedCallbackType.OnEvalException, (sender, args) => OnEvalException (sender, (EvalEventArgs) args)},
+                {ManagedCallbackType.OnCreateProcess, (sender, args) => OnCreateProcess (sender, (ProcessEventArgs) args)},
+                {ManagedCallbackType.OnProcessExit, (sender, args) => OnProcessExit (sender, (ProcessEventArgs) args)},
+                {ManagedCallbackType.OnCreateThread, (sender, args) => OnCreateThread (sender, (ThreadEventArgs) args)},
+                {ManagedCallbackType.OnThreadExit, (sender, args) => OnThreadExit (sender, (ThreadEventArgs) args)},
+                {ManagedCallbackType.OnModuleLoad, (sender, args) => OnModuleLoad (sender, (ModuleEventArgs) args)},
+                {ManagedCallbackType.OnModuleUnload, (sender, args) => OnModuleUnload (sender, (ModuleEventArgs) args)},
+                {ManagedCallbackType.OnClassLoad, (sender, args) => OnClassLoad (sender, (ClassEventArgs) args)},
+                {ManagedCallbackType.OnClassUnload, (sender, args) => OnClassUnload (sender, (ClassEventArgs) args)},
+                {ManagedCallbackType.OnDebuggerError, (sender, args) => OnDebuggerError (sender, (DebuggerErrorEventArgs) args)},
+                {ManagedCallbackType.OnLogMessage, (sender, args) => OnLogMessage (sender, (LogMessageEventArgs) args)},
+                {ManagedCallbackType.OnLogSwitch, (sender, args) => OnLogSwitch (sender, (LogSwitchEventArgs) args)},
+                {ManagedCallbackType.OnCreateAppDomain, (sender, args) => OnCreateAppDomain (sender, (AppDomainEventArgs) args)},
+                {ManagedCallbackType.OnAppDomainExit, (sender, args) => OnAppDomainExit (sender, (AppDomainEventArgs) args)},
+                {ManagedCallbackType.OnAssemblyLoad, (sender, args) => OnAssemblyLoad (sender, (AssemblyEventArgs) args)},
+                {ManagedCallbackType.OnAssemblyUnload, (sender, args) => OnAssemblyUnload (sender, (AssemblyEventArgs) args)},
+                {ManagedCallbackType.OnControlCTrap, (sender, args) => OnControlCTrap (sender, (ProcessEventArgs) args)},
+                {ManagedCallbackType.OnNameChange, (sender, args) => OnNameChange (sender, (ThreadEventArgs) args)},
+                {ManagedCallbackType.OnUpdateModuleSymbols, (sender, args) => OnUpdateModuleSymbols (sender, (UpdateModuleSymbolsEventArgs) args)},
+                {ManagedCallbackType.OnFunctionRemapOpportunity, (sender, args) => OnFunctionRemapOpportunity (sender, (FunctionRemapOpportunityEventArgs) args)},
+                {ManagedCallbackType.OnFunctionRemapComplete, (sender, args) => OnFunctionRemapComplete (sender, (FunctionRemapCompleteEventArgs) args)},
+                {ManagedCallbackType.OnBreakpointSetError, (sender, args) => OnBreakpointSetError (sender, (BreakpointEventArgs) args)},
+                {ManagedCallbackType.OnException2, (sender, args) => OnException2 (sender, (Exception2EventArgs) args)},
+                {ManagedCallbackType.OnExceptionUnwind2, (sender, args) => OnExceptionUnwind2 (sender, (ExceptionUnwind2EventArgs) args)},
+                {ManagedCallbackType.OnMDANotification, (sender, args) => OnMDANotification (sender, (MDAEventArgs) args)},
+                {ManagedCallbackType.OnExceptionInCallback, (sender, args) => OnExceptionInCallback (sender, (ExceptionInCallbackEventArgs) args)},
+            };
+        }
 
         public void DispatchEvent(ManagedCallbackType callback, CorEventArgs e)
         {
             try
             {
                 if (m_callbackAttachedEvent != null)
+                {
+                    isWaiting = true;
                     m_callbackAttachedEvent.WaitOne(); // waits till callbacks are enabled
+                }
                 var d = m_callbacksArray[callback];
                 d(this, e);
             }
@@ -1300,7 +1356,7 @@ namespace CorApi.Portable
             }
         }
 
-        public void Continue(bool outOfBand)
+        public override void Continue(bool outOfBand)
         {
             if (!outOfBand &&                               // OOB event can arrive anytime (we just ignore them).
                 (m_callbackAttachedEvent != null))
@@ -1315,6 +1371,26 @@ namespace CorApi.Portable
             }
             else
                 base.ContinueImpl(outOfBand);
+        }
+
+        private static Dictionary<IntPtr, Process> m_instances = new Dictionary<IntPtr, Process>();
+
+        
+        public static Process GetCorProcess(IntPtr native)
+        {
+            lock (m_instances)
+            {
+                if (!m_instances.ContainsKey(native))
+                {
+                    var p = new Process(native);
+                    m_instances.Add(native, p);
+
+                    p.InitCallbacks();
+                    return p;
+                }
+                return m_instances[native];
+                
+            }
         }
 
         public event DebugEventHandler<BreakpointEventArgs> OnBreakpoint;

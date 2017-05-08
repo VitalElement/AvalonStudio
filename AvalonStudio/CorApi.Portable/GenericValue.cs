@@ -16,7 +16,7 @@ namespace CorApi.Portable
         {
             switch (type)
             {
-                case CorElementType.ELEMENT_TYPE_BOOLEAN:
+                case CorElementType.ElementTypeBoolean:
                     byte bValue = 4; // just initialize to avoid compiler warnings
                     unsafe
                     {
@@ -25,7 +25,7 @@ namespace CorApi.Portable
                     }
                     return (object)(bValue != 0);
 
-                case CorElementType.ELEMENT_TYPE_CHAR:
+                case CorElementType.ElementTypeChar:
                     char cValue = 'a'; // initialize to avoid compiler warnings
                     unsafe
                     {
@@ -34,7 +34,7 @@ namespace CorApi.Portable
                     }
                     return (object)cValue;
 
-                case CorElementType.ELEMENT_TYPE_I1:
+                case CorElementType.ElementTypeI1:
                     SByte i1Value = 4;
                     unsafe
                     {
@@ -43,7 +43,7 @@ namespace CorApi.Portable
                     }
                     return (object)i1Value;
 
-                case CorElementType.ELEMENT_TYPE_U1:
+                case CorElementType.ElementTypeU1:
                     Byte u1Value = 4;
                     unsafe
                     {
@@ -52,7 +52,7 @@ namespace CorApi.Portable
                     }
                     return (object)u1Value;
 
-                case CorElementType.ELEMENT_TYPE_I2:
+                case CorElementType.ElementTypeI2:
                     Int16 i2Value = 4;
                     unsafe
                     {
@@ -61,7 +61,7 @@ namespace CorApi.Portable
                     }
                     return (object)i2Value;
 
-                case CorElementType.ELEMENT_TYPE_U2:
+                case CorElementType.ElementTypeU2:
                     UInt16 u2Value = 4;
                     unsafe
                     {
@@ -70,7 +70,7 @@ namespace CorApi.Portable
                     }
                     return (object)u2Value;
 
-                case CorElementType.ELEMENT_TYPE_I:
+                case CorElementType.ElementTypeI:
                     IntPtr ipValue = IntPtr.Zero;
                     unsafe
                     {
@@ -79,7 +79,7 @@ namespace CorApi.Portable
                     }
                     return (object)ipValue;
 
-                case CorElementType.ELEMENT_TYPE_U:
+                case CorElementType.ElementTypeU:
                     UIntPtr uipValue = UIntPtr.Zero;
                     unsafe
                     {
@@ -88,7 +88,7 @@ namespace CorApi.Portable
                     }
                     return (object)uipValue;
 
-                case CorElementType.ELEMENT_TYPE_I4:
+                case CorElementType.ElementTypeI4:
                     Int32 i4Value = 4;
                     unsafe
                     {
@@ -97,7 +97,7 @@ namespace CorApi.Portable
                     }
                     return (object)i4Value;
 
-                case CorElementType.ELEMENT_TYPE_U4:
+                case CorElementType.ElementTypeU4:
                     UInt32 u4Value = 4;
                     unsafe
                     {
@@ -106,7 +106,7 @@ namespace CorApi.Portable
                     }
                     return (object)u4Value;
 
-                case CorElementType.ELEMENT_TYPE_I8:
+                case CorElementType.ElementTypeI8:
                     Int64 i8Value = 4;
                     unsafe
                     {
@@ -115,7 +115,7 @@ namespace CorApi.Portable
                     }
                     return (object)i8Value;
 
-                case CorElementType.ELEMENT_TYPE_U8:
+                case CorElementType.ElementTypeU8:
                     UInt64 u8Value = 4;
                     unsafe
                     {
@@ -124,7 +124,7 @@ namespace CorApi.Portable
                     }
                     return (object)u8Value;
 
-                case CorElementType.ELEMENT_TYPE_R4:
+                case CorElementType.ElementTypeR4:
                     Single r4Value = 4;
                     unsafe
                     {
@@ -133,7 +133,7 @@ namespace CorApi.Portable
                     }
                     return (object)r4Value;
 
-                case CorElementType.ELEMENT_TYPE_R8:
+                case CorElementType.ElementTypeR8:
                     Double r8Value = 4;
                     unsafe
                     {
@@ -143,7 +143,7 @@ namespace CorApi.Portable
                     return (object)r8Value;
 
 
-                case CorElementType.ELEMENT_TYPE_VALUETYPE:
+                case CorElementType.ElementTypeValuetype:
                     byte[] buffer = new byte[this.Size];
                     unsafe
                     {
@@ -181,7 +181,7 @@ namespace CorApi.Portable
             {
                 switch ((CorElementType)this.Type)
                 {
-                    case CorElementType.ELEMENT_TYPE_BOOLEAN:
+                    case CorElementType.ElementTypeBoolean:
                         bool v = Convert.ToBoolean(value);
                         unsafe
                         {
@@ -189,7 +189,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_I1:
+                    case CorElementType.ElementTypeI1:
                         SByte sbv = Convert.ToSByte(value);
                         unsafe
                         {
@@ -197,7 +197,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_U1:
+                    case CorElementType.ElementTypeU1:
                         Byte bv = Convert.ToByte(value);
                         unsafe
                         {
@@ -205,7 +205,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_CHAR:
+                    case CorElementType.ElementTypeChar:
                         Char cv = Convert.ToChar(value);
                         unsafe
                         {
@@ -213,7 +213,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_I2:
+                    case CorElementType.ElementTypeI2:
                         Int16 i16v = Convert.ToInt16(value);
                         unsafe
                         {
@@ -221,7 +221,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_U2:
+                    case CorElementType.ElementTypeU2:
                         UInt16 u16v = Convert.ToUInt16(value);
                         unsafe
                         {
@@ -229,7 +229,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_I4:
+                    case CorElementType.ElementTypeI4:
                         Int32 i32v = Convert.ToInt32(value);
                         unsafe
                         {
@@ -237,7 +237,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_U4:
+                    case CorElementType.ElementTypeU4:
                         UInt32 u32v = Convert.ToUInt32(value);
                         unsafe
                         {
@@ -245,7 +245,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_I:
+                    case CorElementType.ElementTypeI:
                         Int64 ip64v = Convert.ToInt64(value);
                         IntPtr ipv = new IntPtr(ip64v);
                         unsafe
@@ -254,7 +254,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_U:
+                    case CorElementType.ElementTypeU:
                         UInt64 ipu64v = Convert.ToUInt64(value);
                         UIntPtr uipv = new UIntPtr(ipu64v);
                         unsafe
@@ -263,7 +263,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_I8:
+                    case CorElementType.ElementTypeI8:
                         Int64 i64v = Convert.ToInt64(value);
                         unsafe
                         {
@@ -271,7 +271,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_U8:
+                    case CorElementType.ElementTypeU8:
                         UInt64 u64v = Convert.ToUInt64(value);
                         unsafe
                         {
@@ -279,7 +279,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_R4:
+                    case CorElementType.ElementTypeR4:
                         Single sv = Convert.ToSingle(value);
                         unsafe
                         {
@@ -287,7 +287,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_R8:
+                    case CorElementType.ElementTypeR8:
                         Double dv = Convert.ToDouble(value);
                         unsafe
                         {
@@ -295,7 +295,7 @@ namespace CorApi.Portable
                         }
                         break;
 
-                    case CorElementType.ELEMENT_TYPE_VALUETYPE:
+                    case CorElementType.ElementTypeValuetype:
                         byte[] bav = (byte[])value;
                         unsafe
                         {

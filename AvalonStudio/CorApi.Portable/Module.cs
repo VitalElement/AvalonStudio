@@ -42,6 +42,16 @@ namespace CorApi.Portable
                 QueryInterface<Module2>().JITCompilerFlags = value;
             }
         }
+
+        public Process Process
+        {
+            get
+            {
+                Process proc = null;
+                GetProcess(out proc);
+                return Portable.Process.GetCorProcess(proc.NativePointer);
+            }
+        }
     }
 }
 

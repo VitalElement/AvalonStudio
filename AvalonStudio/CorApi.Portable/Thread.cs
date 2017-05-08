@@ -44,5 +44,16 @@ namespace CorApi.Portable
                 return v;
             }
         }
+
+        public Process Process
+        {
+            get
+            {
+                Process p = null;
+                GetProcess(out p);
+                return Process.GetCorProcess(p.NativePointer);
+            }
+        }
+
     }
 }

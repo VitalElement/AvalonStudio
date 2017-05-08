@@ -141,30 +141,28 @@ namespace CorApi.Portable
         // Get process from controller 
         static private Process GetProcessFromController(Controller pController)
         {
-            throw new NotImplementedException();
+            Process p;
 
-            /*Process p;
             var p2 = pController.QueryInterface<Process>();
             if (p2 != null)
             {
-                p = Process.GetCorProcess(p2);
+                p = Process.GetCorProcess(p2.NativePointer);
             }
             else
             {
-                ICorDebugAppDomain a2 = (ICorDebugAppDomain)pController;
-                p = new CorAppDomain(a2).Process;
+                var a2 = pController.QueryInterfaceOrNull<AppDomain>();
+                p = a2.Process;
             }
-            return p;*/
+            return p;
         }
 
         public void OnMDANotification(Controller controllerRef, Thread threadRef, MDA mDARef)
         {
-            throw new NotImplementedException();
-            /*string szName = mDARef.Name;
+            string szName = mDARef.Name;
             CorDebugMDAFlags f = mDARef.Flags;
-            Process p = GetProcessFromController(pController);
+            Process p = GetProcessFromController(controllerRef);
 
-            _handleEvent(ManagedCallbackType.OnMDANotification, new MDAEventArgs(controllerRef, threadRef, ))*/
+            _handleEvent(ManagedCallbackType.OnMDANotification, new MDAEventArgs(mDARef, threadRef, p));
         }
 
         public void OnControlCTrap(Process processRef)
