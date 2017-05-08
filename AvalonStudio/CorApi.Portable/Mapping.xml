@@ -801,6 +801,30 @@
     <map param="IMetaDataImport::GetParamProps::pdwCPlusTypeFlag" attribute="out" />
     <map param="IMetaDataImport::GetParamProps::ppValue" attribute="out" />
     <map param="IMetaDataImport::GetParamProps::pcchValue" attribute="out" />
+    <map param="IMetaDataImport::CountEnum::pulCount" attribute="out" />
+    <map param="IMetaDataImport::GetScopeProps::pchName" attribute="out" />
+    <map param="IMetaDataImport::GetScopeProps::pmvid" attribute="out optional"  />
+    <map param="IMetaDataImport::GetTypeRefProps::ptkResolutionScope" attribute="out" />
+    <map param="IMetaDataImport::GetTypeRefProps::szName" attribute="out" />
+    <map param="IMetaDataImport::GetTypeRefProps::pchName" attribute="out" />
+    <map param="IMetaDataImport::GetUserString::szString" attribute="out"/>
+    <map param="IMetaDataImport::GetUserString::pchString" attribute="out" />
+    <map param="IMetaDataImport::FindTypeDefByName::ptd" attribute="out"/>
+    <map param="IMetaDataImport::GetTypeDefProps::szTypeDef" attribute="out" />
+    <map param="IMetaDataImport::GetTypeDefProps::pchTypeDef" attribute="out" />
+    <map param="IMetaDataImport::GetTypeDefProps::pdwTypeDefFlags" attribute="out" />
+    <map param="IMetaDataImport::GetTypeDefProps::ptkExtends" attribute="out" />
+    <map param="IMetaDataImport::GetMemberRefProps::ptk" attribute="out" />
+    <map param="IMetaDataImport::GetMemberRefProps::szMember" attribute="out" />
+    <map param="IMetaDataImport::GetMemberRefProps::pchMember" attribute="out" />
+    <map param="IMetaDataImport::GetMemberRefProps::ppvSigBlob" attribute="out" type="void" />
+    <map param="IMetaDataImport::GetMemberRefProps::pbSig" attribute="out" />
+    <map param="IMetaDataImport::EnumParams::phEnum" attribute="out" />
+    <map param="IMetaDataImport::EnumParams::rParams" attribute="out" />
+    <map param="IMetaDataImport::EnumParams::pcTokens" attribute="out" />
+    <map param="IMetaDataImport2::EnumGenericParams::phEnum" attribute="out" />
+    <map param="IMetaDataImport2::EnumGenericParams::rGenericParams" attribute="out buffer" />
+    <map param="IMetaDataImport2::EnumGenericParams::pcGenericParams" attribute="out" />
 
     <context-clear/>
     <context-clear/>
