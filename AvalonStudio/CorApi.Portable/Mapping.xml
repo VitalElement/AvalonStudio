@@ -472,6 +472,7 @@
     <short name="IUNKNOWN">IUnknown</short>
     <short name="UINT32">UInt32</short>
     <short name="UINT64">UInt64</short>
+    <short name="ULONG">UInt64</short>
   </naming>
 
   <!-- SharpDX global types -->
@@ -551,6 +552,8 @@
     <bind from="float" to="System.Single" />
     <bind from="double" to="System.Double" />
     <bind from="bool" to="System.Boolean" />
+    <bind from="unsigned long " to="System.UInt64" />
+    <bind from="long" to="System.Int64" />
 
     <!-- SharpDX bindings -->
     <bind from="SHARPDX_USHORT" to="System.UInt16" />
@@ -820,11 +823,64 @@
     <map param="IMetaDataImport::GetMemberRefProps::ppvSigBlob" attribute="out" type="void" />
     <map param="IMetaDataImport::GetMemberRefProps::pbSig" attribute="out" />
     <map param="IMetaDataImport::EnumParams::phEnum" attribute="out" />
-    <map param="IMetaDataImport::EnumParams::rParams" attribute="out" />
+    <map param="IMetaDataImport::EnumParams::rParams" attribute="out buffer" />
     <map param="IMetaDataImport::EnumParams::pcTokens" attribute="out" />
     <map param="IMetaDataImport2::EnumGenericParams::phEnum" attribute="out" />
     <map param="IMetaDataImport2::EnumGenericParams::rGenericParams" attribute="out buffer" />
     <map param="IMetaDataImport2::EnumGenericParams::pcGenericParams" attribute="out" />
+    <map param="IMetaDataImport2::GetGenericParamProps::pulParamSeq" attribute="out" />
+    <map param="IMetaDataImport2::GetGenericParamProps::pdwParamFlags" attribute="out" />
+    <map param="IMetaDataImport2::GetGenericParamProps::reserved" attribute="out" />
+    <map param="IMetaDataImport2::GetGenericParamProps::wzname" attribute="out" />
+    <map param="IMetaDataImport2::GetGenericParamProps::pchName" attribute="out" />
+    <map param="IMetaDataImport2::GetGenericParamProps::ptOwner" attribute="out" />
+    <map param="IMetaDataImport::GetNestedClassProps::ptdEnclosingClass" attribute="out" />
+    <map param="IMetaDataImport::EnumTypeDefs::phEnum" attribute="out" /> <!-- TODO This is in and out??? i.e. ref -->
+    <map param="IMetaDataImport::EnumTypeDefs::rgTypeDefs" attribute="out buffer" />
+    <map param="IMetaDataImport::EnumTypeDefs::pcTypeDefs" attribute="out" />
+    <map param="IMetaDataImport::EnumFields::phEnum" attribute="out" />
+    <map param="IMetaDataImport::EnumFields::rFields" attribute="out buffer" />
+    <map param="IMetaDataImport::EnumFields::pcTokens" attribute="out" />
+    <map param="IMetaDataImport::GetFieldProps::pClass" attribute="out" />
+    <map param="IMetaDataImport::GetFieldProps::szField" attribute="out" />
+    <map param="IMetaDataImport::GetFieldProps::pchField" attribute="out" />
+    <map param="IMetaDataImport::GetFieldProps::pdwAttr" attribute="out" />
+    <map param="IMetaDataImport::GetFieldProps::ppvSigBlob" attribute="out" type="void" />
+    <map param="IMetaDataImport::GetFieldProps::pcbSigBlob" attribute="out" />
+    <map param="IMetaDataImport::GetFieldProps::pdwCPlusTypeFlag" attribute="out" />
+    <map param="IMetaDataImport::GetFieldProps::ppValue" attribute="out" />
+    <map param="IMetaDataImport::GetFieldProps::pcchValue" attribute="out" />
+    <map param="IMetaDataImport::EnumProperties::phEnum" attribute="out" />
+    <map param="IMetaDataImport::EnumProperties::rProperties" attribute="out buffer" />
+    <map param="IMetaDataImport::EnumProperties::pcProperties" attribute="out" />
+    <map param="IMetaDataImport::EnumInterfaceImpls::phEnum" attribute="out" />
+    <map param="IMetaDataImport::EnumInterfaceImpls::rImpls" attribute="out buffer" />
+    <map param="IMetaDataImport::EnumInterfaceImpls::pcImpls" attribute="out" />
+    <map param="IMetaDataImport::GetInterfaceImplProps::pClass" attribute="out" />
+    <map param="IMetaDataImport::GetInterfaceImplProps::ptkIface" attribute="out" />
+    <map param="IMetaDataImport::EnumMethods::phEnum" attribute="out" />
+    <map param="IMetaDataImport::EnumMethods::rMethods" attribute="out buffer" />
+    <map param="IMetaDataImport::EnumMethods::pcTokens" attribute="out" />
+    <map param="IMetaDataImport::EnumTypeDefs::phEnum" attribute="out" />
+    <map param="IMetaDataImport::EnumTypeDefs::rTypeDefs" attribute="out buffer" />
+    <map param="IMetaDataImport::EnumTypeDefs::pcTypeDefs" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::pClass" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::szProperty" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::pchProperty" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::pdwPropFlags" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::ppvSig" attribute="out" type="void" />
+    <map param="IMetaDataImport::GetPropertyProps::pbSig" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::pdwCPlusTypeFlag" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::ppDefaultValue" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::pcchDefaultValue" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::pmdSetter" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::pmdGetter" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::rmdOtherMethod" attribute="out buffer" />
+    <map param="IMetaDataImport::GetPropertyProps::pcOtherMethod" attribute="out" />
+
+
+    
+
 
     <context-clear/>
     <context-clear/>
