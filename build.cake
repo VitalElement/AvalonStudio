@@ -150,6 +150,7 @@ Task("Restore-NetCore")
 
 Task("Build-NetCore")
     .IsDependentOn("Restore-NetCore")
+    .WithCriteria(()=>IsRunningOnAppVeyor())
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -190,7 +191,7 @@ Task("Run-Net-Core-Unit-Tests")
 
 Task("Publish-NetCore")
     .IsDependentOn("Restore-NetCore")    
-    .WithCriteria(()=>isMainRepo && isMasterBranch && isRunningOnAppVeyor)
+    .WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor) || isLocalBuild))
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
