@@ -69,12 +69,12 @@ namespace AvalonStudio.Toolchains.Clang
         {
             return new List<string>
             {
-                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "5.4.1"),
-                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "5.4.1", "arm-none-eabi"),
-                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "5.4.1", "backward"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "6.3.1"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "6.3.1", "arm-none-eabi"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "6.3.1", "backward"),
                 Path.Combine(ContentDirectory, "arm-none-eabi", "include"),
-                Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "5.4.1", "include"),
-                Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "5.4.1", "include-fixed"),
+                Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "6.3.1", "include"),
+                Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "6.3.1", "include-fixed"),
                 Path.Combine(ContentDirectory, "arm-none-eabi", "include")
             };
         }
