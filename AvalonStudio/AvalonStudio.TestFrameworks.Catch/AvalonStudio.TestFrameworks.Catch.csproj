@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Debugging.GDB.Local\AvalonStudio.Debugging.GDB.Local.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj" />
