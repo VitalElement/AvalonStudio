@@ -731,15 +731,15 @@
     <map param="ICorDebugModule2::SetJMCStatus::pTokens" attribute="in buffer"/>
     <map param="ICorDebugModule2::GetJITCompilerFlags::pdwFlags" attribute="out" type="CorDebugJITCompilerFlags" />
     <map param="ICorDebugModule2::SetJITCompilerFlags::dwFlags" type="CorDebugJITCompilerFlags" />
-    <map param="ICorDebugThreadEnum::Next::threads" attribute="in buffer" />
+    <map param="ICorDebugThreadEnum::Next::threads" attribute="out buffer" />
     <map param="ICorDebugThreadEnum::Next::pceltFetched" attribute="out" />
-    <map param="ICorDebugChainEnum::Next::chains" attribute="in buffer" />
+    <map param="ICorDebugChainEnum::Next::chains" attribute="out buffer" />
     <map param="ICorDebugChainEnum::Next::pceltFetched" attribute="out" />
-    <map param="ICorDebugFrameEnum::Next::frames" attribute="in buffer" />
+    <map param="ICorDebugFrameEnum::Next::frames" attribute="out buffer" />
     <map param="ICorDebugFrameEnum::Next::pceltFetched" attribute="out" /> <!-- TODO is in buffer correct might be out buffer. -->
-    <map param="ICorDebugTypeEnum::Next::values" attribute="in buffer" />
+    <map param="ICorDebugTypeEnum::Next::values" attribute="out buffer" />
     <map param="ICorDebugTypeEnum::Next::pceltFetched" attribute="out" />
-    <map param="ICorDebugProcessEnum::Next::processes" attribute="in buffer" />
+    <map param="ICorDebugProcessEnum::Next::processes" attribute="out buffer" />
     <map param="ICorDebugProcessEnum::Next::pceltFetched" attribute="out" />
     <map param="ICorDebugFunction::GetToken::pMethodDef" attribute="out" />
     <map param="ICorDebugNativeFrame::GetIP::pnOffset" attribute="out" />
