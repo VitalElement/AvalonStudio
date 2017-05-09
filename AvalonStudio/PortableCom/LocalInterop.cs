@@ -44,113 +44,18 @@ namespace CorDebug
 
     internal partial class LocalInterop
     {
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,void* arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,long arg0,int arg1,void* arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,long arg0,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,long arg1,void* arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,long arg0,long arg1,int arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe void Callivoid(void* thisObject,void* arg0,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,int arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,void* arg2,int arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,void* arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,void* arg3,void* arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,int arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,void* arg2,void* arg3,int arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,int arg2,void* arg3,int arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,int arg3,void* arg4,void* arg5,void* arg6,void* arg7,void* arg8,void* arg9,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,int arg3,void* arg4,void* arg5,void* arg6,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,int arg3,void* arg4,void* arg5,void* arg6,void* arg7,void* arg8,void* arg9,void* arg10,int arg11,void* arg12,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,void* arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,int arg3,void* arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,void* arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,int arg3,void* arg4,void* arg5,void* arg6,void* arg7,void* arg8,void* arg9,void* arg10,void* arg11,void* arg12,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,int arg3,void* arg4,void* arg5,void* arg6,void* arg7,void* arg8,void* arg9,void* arg10,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,int arg3,void* arg4,void* arg5,void* arg6,void* arg7,void* arg8,void* arg9,void* arg10,void* arg11,void* arg12,void* arg13,int arg14,void* arg15,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,void* arg3,int arg4,void* arg5,void* arg6,void* arg7,void* arg8,void* arg9,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe SharpDX.Mathematics.Interop.RawBool CalliSharpDXMathematicsInteropRawBool(void* thisObject,int arg0,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,int arg2,void* arg3,void* arg4,int arg5,void* arg6,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,void* arg2,void* arg3,void* arg4,int arg5,int arg6,void* arg7,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,int arg2,int arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,int arg2,int arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,int arg3,void* arg4,void* arg5,int arg6,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,void* arg3,void* arg4,void* arg5,int arg6,int arg7,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,int arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,int arg2,int arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,void* arg3,void* arg4,int arg5,void* arg6,void* arg7,void* arg8,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,void* arg3,void* arg4,void* arg5,void* arg6,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* arg2,void* arg3,int arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,int arg2,void* arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,void* arg3,int arg4,int arg5,int arg6,void* arg7,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,int arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,int arg2,void* arg3,int arg4,void* arg5,void* arg6,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,int arg2,void* arg3,int arg4,void* arg5,int arg6,void* arg7,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,int arg3,int arg4,int arg5,int arg6,void* arg7,void* arg8,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,void* arg2,int arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,void* arg2,int arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,int arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,int arg2,int arg3,int arg4,int arg5,void* arg6,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,void* arg3,int arg4,int arg5,void* arg6,int arg7,void* arg8,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,void* arg3,int arg4,int arg5,void* arg6,int arg7,int arg8,int arg9,void* arg10,void* arg11,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,void* arg2,int arg3,int arg4,void* arg5,int arg6,void* arg7,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,int arg2,void* arg3,int arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,int arg2,void* arg3,int arg4,int arg5,int arg6,void* arg7,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,int arg3,void* arg4,int arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,int arg2,void* arg3,void* arg4,int arg5,void* arg6,void* arg7,void* arg8,int arg9,void* arg10,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,void* arg2,int arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,int arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint66(void* thisObject,SharpDX.Result arg0,int arg1,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,int arg2,void* arg3,int arg4,void* arg5,void* arg6,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,void* arg3,void* arg4,void* arg5,int arg6,void* arg7,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* arg2,void* arg3,void* arg4,int arg5,void* arg6,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* arg2,void* arg3,void* arg4,void* arg5,int arg6,void* arg7,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,void* arg2,void* arg3,void* arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,void* arg2,void* arg3,void* arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,long arg0,void* arg1,int arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,void* arg2,int arg3,void* arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,int arg2,void* arg3,int arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,void* arg1,int arg2,void* arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,void* arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,long arg0,void* arg1,void* arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,long arg0,int arg1,void* arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,long arg0,void* arg1,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,int arg1,int arg2,void* arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,long arg0,void* arg1,int arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,int arg2,int arg3,void* arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* arg2,int arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint86(void* thisObject,void* arg0,void* arg1,SharpDX.Mathematics.Interop.RawBool arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint87(void* thisObject,void* arg0,SharpDX.Result arg1,int arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,int arg2,void* arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,int arg2,int arg3,void* arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint90(void* thisObject,void* arg0,void* arg1,void* arg2,SharpDX.Mathematics.Interop.RawBool arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* arg2,void* arg3,int arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* arg2,int arg3,int arg4,int arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,int arg2,int arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint94(void* thisObject,int arg0,SharpDX.Mathematics.Interop.RawBool arg1,void* arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint95(void* thisObject,int arg0,SharpDX.Mathematics.Interop.RawBool arg1,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint96(void* thisObject,void* arg0,int arg1,SharpDX.Mathematics.Interop.RawBool arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint97(void* thisObject,SharpDX.Mathematics.Interop.RawBool arg0,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint98(void* thisObject,void* arg0,SharpDX.Mathematics.Interop.RawBool arg1,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint99(void* thisObject,SharpDX.Mathematics.Interop.RawBool arg0,void* arg1,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,void* arg0,int arg1,int arg2,int arg3,int arg4,void* arg5,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint103(void* thisObject,SharpDX.Mathematics.Interop.RawBool arg0,void* arg1,int arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,int arg0,long arg1,int arg2,void* arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint(void* thisObject,long arg0,int arg1,int arg2,void* arg3,void* arg4,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint106(void* thisObject,SharpDX.Mathematics.Interop.RawBool arg0,SharpDX.Mathematics.Interop.RawBool arg1,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint107(void* thisObject,SharpDX.Mathematics.Interop.RawBool arg0,int arg1,void* arg2,void* methodPtr) { throw new NotImplementedException(); }
-        public static unsafe int Calliint108(void* thisObject,SharpDX.Mathematics.Interop.RawBool arg0,int arg1,void* arg2,void* arg3,void* methodPtr) { throw new NotImplementedException(); }
+        private unsafe delegate int voidDelegate(void* thisPtr);
+        private unsafe delegate int arg2Delegate(void* thisPtr, void* arg0, void* arg1);
+
+        public static unsafe int Calliint(void* thisObject,void* methodPtr)
+        {
+            return Marshal.GetDelegateForFunctionPointer<voidDelegate>((IntPtr)methodPtr)(thisObject);
+        }
+
+        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* methodPtr)
+        {
+            return Marshal.GetDelegateForFunctionPointer<arg2Delegate>((IntPtr)methodPtr)(thisObject, arg0, arg1);
+        }
     }
 }
 #endif
