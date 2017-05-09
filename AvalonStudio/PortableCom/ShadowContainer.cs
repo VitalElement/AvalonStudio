@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using CorApi.Portable;
 
 namespace SharpDX
 {

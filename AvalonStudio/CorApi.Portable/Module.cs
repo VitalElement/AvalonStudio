@@ -28,7 +28,14 @@ namespace CorApi.Portable
 
         public void SetJMCStatus(bool justMyCode, int[] tokensRef)
         {
-            QueryInterface<Module2>().SetJMCStatus(justMyCode, tokensRef.Length, tokensRef);
+            var length = 0;
+
+            if(tokensRef!= null)
+            {
+                length = tokensRef.Length;
+            }
+
+            QueryInterface<Module2>().SetJMCStatus(justMyCode, length, tokensRef);
         }
 
         public CorDebugJITCompilerFlags JITCompilerFlags

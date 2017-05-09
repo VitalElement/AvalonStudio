@@ -22,6 +22,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using SharpDX.Mathematics.Interop;
+using CorApi.Portable;
 
 namespace SharpDX.Win32
 {

@@ -20,6 +20,7 @@
 using System;
 using System.Runtime.InteropServices;
 using SharpDX.Diagnostics;
+using CorApi.Portable;
 
 namespace SharpDX
 {

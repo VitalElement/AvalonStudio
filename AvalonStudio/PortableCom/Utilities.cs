@@ -33,8 +33,9 @@ using System.Reflection;
 using System.Linq;
 using System.Linq.Expressions;
 using SharpDX.Mathematics.Interop;
+using SharpDX;
 
-namespace SharpDX
+namespace CorApi.Portable
 {
 
     /// <summary>
