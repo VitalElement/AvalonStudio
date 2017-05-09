@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.4.1-build3075-alpha" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.MiniShell\AvalonStudio.MiniShell.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
