@@ -36,7 +36,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        private const string DefaultPackageSource = "https://www.myget.org/F/astemp/api/v3/index.json";
+        private const string DefaultPackageSource = "http://nuget.mabiavalon.com/api/v2/";
 
         public static NuGetFramework GetFramework()
         {
@@ -170,7 +170,7 @@ namespace AvalonStudio.Packages
 
             var packageMetadataResource = await sourceRepository.GetResourceAsync<PackageMetadataResource>();
 
-            var prov = new V3FeedListResourceProvider();
+            var prov = new V2FeedListResourceProvider();
             var feed = await prov.TryCreate(sourceRepository, CancellationToken.None);
             var lister = (V2FeedListResource)feed.Item2;
 
