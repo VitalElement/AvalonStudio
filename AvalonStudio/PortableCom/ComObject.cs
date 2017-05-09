@@ -18,9 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Runtime.InteropServices;
 using SharpDX.Diagnostics;
 using CorApi.Portable;
+using PortableCom;
 
 namespace SharpDX
 {
@@ -36,16 +36,7 @@ namespace SharpDX
         public ComObject(IntPtr pointer) : base(pointer)
         {
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ComObject"/> class from a IUnknown object.
-        /// </summary>
-        /// <param name="iunknowObject">Reference to a IUnknown object</param>
-        public ComObject(object iunknowObject)
-        {
-            NativePointer = Marshal.GetIUnknownForObject(iunknowObject);
-        }
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="ComObject"/> class.
         /// </summary>
@@ -140,23 +131,6 @@ namespace SharpDX
         /// Queries a managed object for a particular COM interface support (This method is a shortcut to <see cref="QueryInterface"/>)
         /// </summary>
         ///<typeparam name="T">The type of the COM interface to query</typeparam>
-        /// <param name="comObject">The managed COM object.</param>
-        ///<returns>An instance of the queried interface</returns>
-        /// <msdn-id>ms682521</msdn-id>
-        /// <unmanaged>IUnknown::QueryInterface</unmanaged>	
-        /// <unmanaged-short>IUnknown::QueryInterface</unmanaged-short>
-        public static T As<T>(object comObject) where T : ComObject
-        {
-            using (var tempObject = new ComObject(Marshal.GetIUnknownForObject(comObject)))
-            {
-                return tempObject.QueryInterface<T>();
-            }
-        }
-
-        /// <summary>
-        /// Queries a managed object for a particular COM interface support (This method is a shortcut to <see cref="QueryInterface"/>)
-        /// </summary>
-        ///<typeparam name="T">The type of the COM interface to query</typeparam>
         /// <param name="iunknownPtr">The managed COM object.</param>
         ///<returns>An instance of the queried interface</returns>
         /// <msdn-id>ms682521</msdn-id>
@@ -182,23 +156,6 @@ namespace SharpDX
         /// Queries a managed object for a particular COM interface support.
         /// </summary>
         ///<typeparam name="T">The type of the COM interface to query</typeparam>
-        /// <param name="comObject">The managed COM object.</param>
-        ///<returns>An instance of the queried interface</returns>
-        /// <msdn-id>ms682521</msdn-id>
-        /// <unmanaged>IUnknown::QueryInterface</unmanaged>	
-        /// <unmanaged-short>IUnknown::QueryInterface</unmanaged-short>
-        public static T QueryInterface<T>(object comObject) where T : ComObject
-        {
-            using (var tempObject = new ComObject(Marshal.GetIUnknownForObject(comObject)))
-            {
-                return tempObject.QueryInterface<T>();
-            }
-        }
-
-        /// <summary>
-        /// Queries a managed object for a particular COM interface support.
-        /// </summary>
-        ///<typeparam name="T">The type of the COM interface to query</typeparam>
         /// <param name="comPointer">A pointer to a COM object.</param>
         ///<returns>An instance of the queried interface</returns>
         /// <msdn-id>ms682521</msdn-id>
@@ -213,7 +170,7 @@ namespace SharpDX
 
             var guid = Utilities.GetGuidFromType(typeof(T));
             IntPtr pointerT;
-            var result = (Result)Marshal.QueryInterface(comPointer, ref guid, out pointerT);
+            var result = (Result)PortableMarshal.QueryInterface(comPointer, ref guid, out pointerT);
             return (result.Failure) ? null : FromPointerUnsafe<T>(pointerT);
         }
 
@@ -256,19 +213,19 @@ namespace SharpDX
 
         Result IUnknown.QueryInterface(ref Guid guid, out IntPtr comObject)
         {
-            return Marshal.QueryInterface(NativePointer, ref guid, out comObject);              
+            return PortableMarshal.QueryInterface(NativePointer, ref guid, out comObject);              
         }
 
         int IUnknown.AddReference()
         {
             if (NativePointer == IntPtr.Zero) throw new InvalidOperationException("COM Object pointer is null");
-            return Marshal.AddRef(NativePointer);            
+            return PortableMarshal.AddRef(NativePointer);            
         }
 
         int IUnknown.Release()
         {
             if (NativePointer == IntPtr.Zero) throw new InvalidOperationException("COM Object pointer is null");
-            return Marshal.Release(NativePointer);
+            return PortableMarshal.Release(NativePointer);
         }
 
         /// <summary>

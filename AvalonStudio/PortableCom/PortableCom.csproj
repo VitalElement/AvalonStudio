@@ -6,10 +6,17 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <Target Name="PatchAssembly" AfterTargets="AfterBuild">
+    <Exec Command="&quot;$(MSBuildProjectDirectory)\..\patchtool\SharpCli.exe&quot; &quot;$(TargetPath)&quot;" Condition=" '$(OS)' == 'Windows_NT' " />
+    <Exec Command="mono &quot;$(MSBuildProjectDirectory)/../patchtool/SharpCli.exe&quot; &quot;$(TargetPath)&quot;" Condition=" '$(OS)' != 'Windows_NT' " />
+  </Target>
 
 </Project>
