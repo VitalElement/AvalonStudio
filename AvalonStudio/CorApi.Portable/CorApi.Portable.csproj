@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <Target Name="PatchAssembly" AfterTargets="AfterBuild">
-    <Exec Command="&quot;$(SolutionDir)patchtool\SharpCli.exe&quot; &quot;$(TargetPath)&quot;" />
+    <Exec Command="&quot;$(MSBuildProjectDirectory)\..\patchtool\SharpCli.exe&quot; &quot;$(TargetPath)&quot;" Condition=" '$(OS)' == 'Windows_NT' " />
+    <Exec Command="mono &quot;$(MSBuildProjectDirectory)/../patchtool/SharpCli.exe&quot; &quot;$(TargetPath)&quot;" Condition=" '$(OS)' != 'Windows_NT' " />
   </Target>
 
 </Project>
