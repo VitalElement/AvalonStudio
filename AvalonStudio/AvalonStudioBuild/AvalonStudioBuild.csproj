@@ -7,12 +7,8 @@
     <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net40;net45</PackageTargetFallback>
     <AssemblyName>avalon</AssemblyName>
     <PreserveCompilationContext>true</PreserveCompilationContext>
-    <RuntimeIdentifiers>win7-x64;ubuntu.14.04-x64;debian.8-x64;osx.10.12-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win7-x64;ubuntu.16.10-x64;debian.8-x64;osx.10.12-x64</RuntimeIdentifiers>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build3075-alpha" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
