@@ -1265,37 +1265,37 @@ namespace CorApi.Portable
         private void InitCallbacks()
         {
             m_callbacksArray = new Dictionary<ManagedCallbackType, DebugEventHandler<CorEventArgs>> {
-                {ManagedCallbackType.OnBreakpoint, (sender, args) => OnBreakpoint (sender, (BreakpointEventArgs) args)},
-                {ManagedCallbackType.OnStepComplete, (sender, args) => OnStepComplete (sender, (StepCompleteEventArgs) args)},
-                {ManagedCallbackType.OnBreak, (sender, args) => OnBreak (sender, (ThreadEventArgs) args)},
-                {ManagedCallbackType.OnException, (sender, args) => OnException (sender, (ExceptionEventArgs) args)},
-                {ManagedCallbackType.OnEvalComplete, (sender, args) => OnEvalComplete (sender, (EvalEventArgs) args)},
-                {ManagedCallbackType.OnEvalException, (sender, args) => OnEvalException (sender, (EvalEventArgs) args)},
-                {ManagedCallbackType.OnCreateProcess, (sender, args) => OnCreateProcess (sender, (ProcessEventArgs) args)},
-                {ManagedCallbackType.OnProcessExit, (sender, args) => OnProcessExit (sender, (ProcessEventArgs) args)},
-                {ManagedCallbackType.OnCreateThread, (sender, args) => OnCreateThread (sender, (ThreadEventArgs) args)},
-                {ManagedCallbackType.OnThreadExit, (sender, args) => OnThreadExit (sender, (ThreadEventArgs) args)},
-                {ManagedCallbackType.OnModuleLoad, (sender, args) => OnModuleLoad (sender, (ModuleEventArgs) args)},
-                {ManagedCallbackType.OnModuleUnload, (sender, args) => OnModuleUnload (sender, (ModuleEventArgs) args)},
-                {ManagedCallbackType.OnClassLoad, (sender, args) => OnClassLoad (sender, (ClassEventArgs) args)},
-                {ManagedCallbackType.OnClassUnload, (sender, args) => OnClassUnload (sender, (ClassEventArgs) args)},
-                {ManagedCallbackType.OnDebuggerError, (sender, args) => OnDebuggerError (sender, (DebuggerErrorEventArgs) args)},
-                {ManagedCallbackType.OnLogMessage, (sender, args) => OnLogMessage (sender, (LogMessageEventArgs) args)},
-                {ManagedCallbackType.OnLogSwitch, (sender, args) => OnLogSwitch (sender, (LogSwitchEventArgs) args)},
-                {ManagedCallbackType.OnCreateAppDomain, (sender, args) => OnCreateAppDomain (sender, (AppDomainEventArgs) args)},
-                {ManagedCallbackType.OnAppDomainExit, (sender, args) => OnAppDomainExit (sender, (AppDomainEventArgs) args)},
-                {ManagedCallbackType.OnAssemblyLoad, (sender, args) => OnAssemblyLoad (sender, (AssemblyEventArgs) args)},
-                {ManagedCallbackType.OnAssemblyUnload, (sender, args) => OnAssemblyUnload (sender, (AssemblyEventArgs) args)},
-                {ManagedCallbackType.OnControlCTrap, (sender, args) => OnControlCTrap (sender, (ProcessEventArgs) args)},
-                {ManagedCallbackType.OnNameChange, (sender, args) => OnNameChange (sender, (ThreadEventArgs) args)},
-                {ManagedCallbackType.OnUpdateModuleSymbols, (sender, args) => OnUpdateModuleSymbols (sender, (UpdateModuleSymbolsEventArgs) args)},
-                {ManagedCallbackType.OnFunctionRemapOpportunity, (sender, args) => OnFunctionRemapOpportunity (sender, (FunctionRemapOpportunityEventArgs) args)},
-                {ManagedCallbackType.OnFunctionRemapComplete, (sender, args) => OnFunctionRemapComplete (sender, (FunctionRemapCompleteEventArgs) args)},
-                {ManagedCallbackType.OnBreakpointSetError, (sender, args) => OnBreakpointSetError (sender, (BreakpointEventArgs) args)},
-                {ManagedCallbackType.OnException2, (sender, args) => OnException2 (sender, (Exception2EventArgs) args)},
-                {ManagedCallbackType.OnExceptionUnwind2, (sender, args) => OnExceptionUnwind2 (sender, (ExceptionUnwind2EventArgs) args)},
-                {ManagedCallbackType.OnMDANotification, (sender, args) => OnMDANotification (sender, (MDAEventArgs) args)},
-                {ManagedCallbackType.OnExceptionInCallback, (sender, args) => OnExceptionInCallback (sender, (ExceptionInCallbackEventArgs) args)},
+                { ManagedCallbackType.OnBreakpoint, (sender, args) => OnBreakpoint (sender, (BreakpointEventArgs) args) },
+                { ManagedCallbackType.OnStepComplete, (sender, args) => OnStepComplete (sender, (StepCompleteEventArgs) args) },
+                { ManagedCallbackType.OnBreak, (sender, args) => OnBreak (sender, (ThreadEventArgs) args) },
+                { ManagedCallbackType.OnException, (sender, args) => OnException (sender, (ExceptionEventArgs) args) },
+                { ManagedCallbackType.OnEvalComplete, (sender, args) => OnEvalComplete (sender, (EvalEventArgs) args) },
+                { ManagedCallbackType.OnEvalException, (sender, args) => OnEvalException (sender, (EvalEventArgs) args) },
+                { ManagedCallbackType.OnCreateProcess, (sender, args) => OnCreateProcess (sender, (ProcessEventArgs) args) },
+                { ManagedCallbackType.OnProcessExit, (sender, args) => OnProcessExit (sender, (ProcessEventArgs) args) },
+                { ManagedCallbackType.OnCreateThread, (sender, args) => OnCreateThread (sender, (ThreadEventArgs) args) },
+                { ManagedCallbackType.OnThreadExit, (sender, args) => OnThreadExit (sender, (ThreadEventArgs) args) },
+                { ManagedCallbackType.OnModuleLoad, (sender, args) => OnModuleLoad (sender, (ModuleEventArgs) args) },
+                { ManagedCallbackType.OnModuleUnload, (sender, args) => OnModuleUnload (sender, (ModuleEventArgs) args) },
+                { ManagedCallbackType.OnClassLoad, (sender, args) => OnClassLoad (sender, (ClassEventArgs) args) },
+                { ManagedCallbackType.OnClassUnload, (sender, args) => OnClassUnload (sender, (ClassEventArgs) args) },
+                { ManagedCallbackType.OnDebuggerError, (sender, args) => OnDebuggerError (sender, (DebuggerErrorEventArgs) args) },
+                { ManagedCallbackType.OnLogMessage, (sender, args) => OnLogMessage (sender, (LogMessageEventArgs) args) },
+                { ManagedCallbackType.OnLogSwitch, (sender, args) => OnLogSwitch (sender, (LogSwitchEventArgs) args) },
+                { ManagedCallbackType.OnCreateAppDomain, (sender, args) => OnCreateAppDomain (sender, (AppDomainEventArgs) args) },
+                { ManagedCallbackType.OnAppDomainExit, (sender, args) => OnAppDomainExit (sender, (AppDomainEventArgs) args) },
+                { ManagedCallbackType.OnAssemblyLoad, (sender, args) => OnAssemblyLoad (sender, (AssemblyEventArgs) args) },
+                { ManagedCallbackType.OnAssemblyUnload, (sender, args) => OnAssemblyUnload (sender, (AssemblyEventArgs) args) },
+                { ManagedCallbackType.OnControlCTrap, (sender, args) => OnControlCTrap (sender, (ProcessEventArgs) args) },
+                { ManagedCallbackType.OnNameChange, (sender, args) => OnNameChange (sender, (ThreadEventArgs) args) },
+                { ManagedCallbackType.OnUpdateModuleSymbols, (sender, args) => OnUpdateModuleSymbols (sender, (UpdateModuleSymbolsEventArgs) args) },
+                { ManagedCallbackType.OnFunctionRemapOpportunity, (sender, args) => OnFunctionRemapOpportunity (sender, (FunctionRemapOpportunityEventArgs) args) },
+                { ManagedCallbackType.OnFunctionRemapComplete, (sender, args) => OnFunctionRemapComplete (sender, (FunctionRemapCompleteEventArgs) args) },
+                { ManagedCallbackType.OnBreakpointSetError, (sender, args) => OnBreakpointSetError (sender, (BreakpointEventArgs) args) },
+                { ManagedCallbackType.OnException2, (sender, args) => OnException2 (sender, (Exception2EventArgs) args) },
+                { ManagedCallbackType.OnExceptionUnwind2, (sender, args) => OnExceptionUnwind2 (sender, (ExceptionUnwind2EventArgs) args) },
+                { ManagedCallbackType.OnMDANotification, (sender, args) => OnMDANotification (sender, (MDAEventArgs) args) },
+                { ManagedCallbackType.OnExceptionInCallback, (sender, args) => OnExceptionInCallback (sender, (ExceptionInCallbackEventArgs) args) },
             };
         }
 
@@ -1375,7 +1375,7 @@ namespace CorApi.Portable
 
         private static Dictionary<IntPtr, Process> m_instances = new Dictionary<IntPtr, Process>();
 
-        
+
         public static Process GetCorProcess(IntPtr native)
         {
             lock (m_instances)
@@ -1389,7 +1389,7 @@ namespace CorApi.Portable
                     return p;
                 }
                 return m_instances[native];
-                
+
             }
         }
 
