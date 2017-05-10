@@ -34,6 +34,8 @@ using System.Security;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Emit;
 #if true
 namespace CorDebug
 {
@@ -44,17 +46,58 @@ namespace CorDebug
 
     internal partial class LocalInterop
     {
+        static T CreateCaller<T>()
+        {
+            var sig = typeof(T).GetTypeInfo().GetMethod("Invoke");
+            var prms = sig.GetParameters().Select(p => p.ParameterType).ToArray();
+
+
+            var dm = new System.Reflection.Emit.DynamicMethod("Caller", sig.ReturnType, prms, typeof(LocalInterop).GetTypeInfo().Assembly.ManifestModule);
+            var gen = dm.GetILGenerator();
+            for (var c = 1; c < prms.Length; c++)
+                gen.Emit(OpCodes.Ldarg, c);
+            gen.Emit(OpCodes.Ldarg_0);
+            gen.EmitCalli(OpCodes.Calli, CallingConventions.Standard, sig.ReturnType, prms.Skip(1).ToArray(), null);
+
+            gen.Emit(OpCodes.Ret);
+            return (T)(object)dm.CreateDelegate(typeof(T));
+        }
+
+        static class Calli<TRet, TArg1>
+        {
+            public delegate TRet Call(IntPtr pointer, TArg1 arg1);
+            public static readonly Call Invoke = CreateCaller<Call>();
+        }
+
+        static class Calli<TRet, TArg1, TArg2>
+        {
+            public delegate TRet Call(IntPtr pointer, TArg1 arg1, TArg2 arg2);
+            public static readonly Call Invoke = CreateCaller<Call>();
+        }
+
+        static class Calli<TRet, TArg1, TArg2, TArg3>
+        {
+            public delegate TRet Call(IntPtr pointer, TArg1 arg1, TArg2 arg2, TArg3 arg3);
+            public static readonly Call Invoke = CreateCaller<Call>();
+        }
+
+        static class Calli<TRet, TArg1, TArg2, TArg3, TArg4>
+        {
+            public delegate TRet Call(IntPtr pointer, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4);
+            public static readonly Call Invoke = CreateCaller<Call>();
+        }
+
         private unsafe delegate int voidDelegate(void* thisPtr);
         private unsafe delegate int arg2Delegate(void* thisPtr, void* arg0, void* arg1);
 
-        public static unsafe int Calliint(void* thisObject,void* methodPtr)
+        public static unsafe int Calliint(void* thisObject, void* methodPtr)
         {
-            return Marshal.GetDelegateForFunctionPointer<voidDelegate>((IntPtr)methodPtr)(thisObject);
+            return Calli<int, IntPtr>.Invoke((IntPtr)methodPtr, (IntPtr)thisObject);
         }
 
-        public static unsafe int Calliint(void* thisObject,void* arg0,void* arg1,void* methodPtr)
+        public static unsafe int Calliint(void* thisObject, void* arg0, void* arg1, void* methodPtr)
         {
-            return Marshal.GetDelegateForFunctionPointer<arg2Delegate>((IntPtr)methodPtr)(thisObject, arg0, arg1);
+            return Calli<int, IntPtr, IntPtr, IntPtr>.Invoke((IntPtr)methodPtr, (IntPtr)thisObject, (IntPtr)arg0, (IntPtr)arg1);
         }
     }
 }
