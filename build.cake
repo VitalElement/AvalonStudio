@@ -123,7 +123,7 @@ public NuGetPackSettings GetPackSettings(string rid)
         {
             new NuSpecContent { Source = "**", Target = "content/" },
         },
-        BasePath = Directory("artifacts/" + rid + "/"),
+        BasePath = Directory("artifacts/zip/AvalonStudioBuild-" + rid + "/"),
         OutputDirectory = nugetRoot
     };
 
