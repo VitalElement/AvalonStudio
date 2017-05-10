@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.1
+VisualStudioVersion = 15.0.26507.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio", "AvalonStudio\AvalonStudio.csproj", "{8E501956-B9A6-430E-86AC-350ED94B44E4}"
 EndProject
@@ -87,6 +87,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortableCom", "PortableCom\PortableCom.csproj", "{7E4091DD-2F03-4B1C-9E63-E431C4E63226}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
@@ -629,6 +632,9 @@ Global
 		{119763CF-AEA4-44EB-997A-B1A2B1E93564} = {5F514911-0404-4D14-B69A-458BA643F5C7}
 		{FC39EF57-BC1B-4250-A0CC-BEC9D7C61D05} = {5F514911-0404-4D14-B69A-458BA643F5C7}
 		{7E4091DD-2F03-4B1C-9E63-E431C4E63226} = {5F514911-0404-4D14-B69A-458BA643F5C7}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = AvalonStudio\AvalonStudio.csproj
