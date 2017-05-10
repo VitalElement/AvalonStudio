@@ -243,7 +243,7 @@ Task("Build-Docker-Image")
     .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor)
     .Does(()=>
 {
-    var dockerContextPath = zipRootDir.Combine("AvalonStudioBuild-ubuntu.14.04-x64");
+    var dockerContextPath = zipRootDir.Combine("AvalonStudioBuild-ubuntu.16.10-x64");
     CopyFile("./AvalonStudio/AvalonStudioBuild/Dockerfile", dockerContextPath.CombineWithFilePath("Dockerfile"));
     DockerBuild(new DockerBuildSettings
     {
