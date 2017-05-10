@@ -22,6 +22,17 @@ namespace AvalonStudio.Platforms
     {
         public delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
 
+        [DllImport("libc")]
+        private static extern void chmod(string file, int mode);
+
+        public static void Chmod(string file, int mode)
+        {
+            if(PlatformIdentifier != PlatformID.Win32NT)
+            {
+                chmod(file, mode);
+            }
+        }
+
         public enum CtrlTypes : uint
         {
             CTRL_C_EVENT = 0,
