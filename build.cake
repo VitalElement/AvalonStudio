@@ -243,13 +243,12 @@ Task("Build-Docker-Image")
     .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor)
     .Does(()=>
 {
-    DockerPull("vitalelement/avalonbuild");
-
     var dockerContextPath = zipRootDir.Combine("AvalonStudioBuild-ubuntu.14.04-x64");
     CopyFile("./AvalonStudio/AvalonStudioBuild/Dockerfile", dockerContextPath.CombineWithFilePath("Dockerfile"));
     DockerBuild(new DockerBuildSettings
     {
-        Tag = new string[] { "vitalelement/avalonbuild:latest" }
+        Tag = new string[] { "vitalelement/avalonbuild:latest" },
+        Pull = true,
     },
     dockerContextPath.ToString());
 });
@@ -270,7 +269,7 @@ Task("Default")
     .IsDependentOn("Build-NetCore")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
-    .IsDependentOn("Zip-NetCore");
+    .IsDependentOn("Zip-NetCore")
     .IsDependentOn("Build-Docker-Image")
     .IsDependentOn("Publish-Docker-Image");
 
