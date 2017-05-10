@@ -4,6 +4,7 @@
 
 #addin "Cake.FileHelpers"
 #addin "Cake.Docker"
+#addin "nuget:?package=NuGet.Core&version=2.12.0"
 
 //////////////////////////////////////////////////////////////////////
 // TOOLS
@@ -79,6 +80,7 @@ var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC
 
 var artifactsDir = (DirectoryPath)Directory("./artifacts");
 var zipRootDir = artifactsDir.Combine("zip");
+var nugetRoot = artifactsDir.Combine("nuget");
 
 var fileZipSuffix = ".zip";
 
@@ -97,6 +99,36 @@ var netCoreProjects = netCoreApps.Select(name =>
         Framework = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='TargetFrameworks']/text()").Split(';').First(),
         Runtimes = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='RuntimeIdentifiers']/text()").Split(';')
     }).ToList();
+///////////////////////////////////////////////////////////////////////////////
+// NUGET NUSPECS
+///////////////////////////////////////////////////////////////////////////////
+
+public NuGetPackSettings GetPackSettings(string rid)
+{
+    var nuspecNuGetBehaviors = new NuGetPackSettings()
+    {
+        Id = "VitalElement.AvalonBuild." + rid,
+        Version = version,
+        Authors = new [] { "VitalElement" },
+        Owners = new [] { "Dan Walmsley (dan at walms.co.uk)" },
+        LicenseUrl = new Uri("http://opensource.org/licenses/MIT"),
+        ProjectUrl = new Uri("https://github.com/VitalElement/AvalonStudio/"),
+        RequireLicenseAcceptance = false,
+        Symbols = false,
+        NoPackageAnalysis = true,
+        Description = "Command Line build tools for AvalonStudio.",
+        Copyright = "Copyright 2017",
+        Tags = new [] { "AvalonStudio", "AvalonBuild" },
+        Files = new []
+        {
+            new NuSpecContent { Source = "**", Target = "content/" },
+        },
+        BasePath = Directory("artifacts/" + rid + "/"),
+        OutputDirectory = nugetRoot
+    };
+
+    return nuspecNuGetBehaviors;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // INFORMATION
@@ -130,12 +162,19 @@ Information("IsReleasable: " + isReleasable);
 Information("IsMyGetRelease: " + isMyGetRelease);
 Information("IsNuGetRelease: " + isNuGetRelease);
 
+var avalonBuildRIDs = new List<string>
+{
+    "win7-x64",
+    "ubuntu.14.04-x64"
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 // TASKS
 /////////////////////////////////////////////////////////////////////////////// 
 
 Task("Clean")
 .Does(()=>{
+    CleanDirectory(nugetRoot);
     CleanDirectories(buildDirs);
 });
 
@@ -239,8 +278,49 @@ Task("Zip-NetCore")
     }    
 });
 
+Task("Generate-NuGetPackages")
+.IsDependentOn("Publish-NetCore")
+.WithCriteria(()=>((isMainRepo /*&& isMasterBranch*/ && isRunningOnAppVeyor) || isLocalBuild))
+.Does(()=>{
+    foreach(var rid in avalonBuildRIDs)
+    {
+        NuGetPack(GetPackSettings(rid));
+    }
+});
+
+Task("Publish-AppVeyorNuget")
+    .IsDependentOn("Generate-NuGetPackages")        
+    .WithCriteria(()=>(isMainRepo && isMasterBranch && isRunningOnAppVeyor))   
+    .Does(() =>
+{
+    var apiKey = EnvironmentVariable("NUGET_API_KEY");
+    if(string.IsNullOrEmpty(apiKey)) 
+    {
+        throw new InvalidOperationException("Could not resolve MyGet API key.");
+    }
+
+    var apiUrl = EnvironmentVariable("NUGET_API_URL");
+    if(string.IsNullOrEmpty(apiUrl)) 
+    {
+        throw new InvalidOperationException("Could not resolve MyGet API url.");
+    }
+
+    foreach(var rid in avalonBuildRIDs)
+    {
+        var nuspec = GetPackSettings(rid);
+        var settings  = nuspec.OutputDirectory.CombineWithFilePath(string.Concat(nuspec.Id, ".", nuspec.Version, ".nupkg"));
+
+        NuGetPush(settings, new NuGetPushSettings
+        {
+            Source = apiUrl,
+            ApiKey = apiKey
+        });
+    }
+});
+
 Task("Build-Docker-Image")
-    .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor)
+    .IsDependentOn("Publish-NetCore")
+    .WithCriteria(()=>(isMasterBranch && isRunningOnAppVeyor) || isLocalBuild)
     .Does(()=>
 {
     var dockerContextPath = zipRootDir.Combine("AvalonStudioBuild-ubuntu.16.10-x64");
@@ -270,6 +350,8 @@ Task("Default")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Zip-NetCore")
+    .IsDependentOn("Generate-NuGetPackages")
+    .IsDependentOn("Publish-AppVeyorNuget")
     .IsDependentOn("Build-Docker-Image")
     .IsDependentOn("Publish-Docker-Image");
 

@@ -17,8 +17,8 @@ namespace AvalonStudio
 {
     internal class Program
     {
-        private const string version = "1.0.2.0";
-        private const string releaseName = "Dark Matter";
+        private const string version = "1.2.0.0";
+        private const string releaseName = "Gravity Waves";
 
         private static readonly ProgramConsole console = new ProgramConsole();
 
