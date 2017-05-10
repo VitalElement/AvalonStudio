@@ -1,16 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>library</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <RuntimeFrameworkVersion>2.0.0-preview1-001978-00</RuntimeFrameworkVersion>
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net45</PackageTargetFallback>
   </PropertyGroup>  
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build2959-alpha" />
+    <PackageReference Include="Avalonia" Version="0.4.1-build3075-alpha" />
     <PackageReference Include="AvalonStudio.Languages.CPlusPlus.LibClang" Version="4.0.0.2" />
+    <PackageReference Include="VitalElement.NClang" Version="0.9.0-build15-alpha" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\nclang\NClang\NClang.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj" />

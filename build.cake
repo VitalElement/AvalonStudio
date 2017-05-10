@@ -1,9 +1,79 @@
+/////////////////////////////////////////////////////////////////////
+// ADDINS
+/////////////////////////////////////////////////////////////////////
+
+#addin "Cake.FileHelpers"
+#addin "Cake.Docker"
+
+//////////////////////////////////////////////////////////////////////
+// TOOLS
+//////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// USINGS
+///////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+// ARGUMENTS
+//////////////////////////////////////////////////////////////////////
 
 var target = Argument("target", "Default");
 var platform = Argument("platform", "AnyCPU");
 var configuration = Argument("configuration", "Release");
 
-var version = "dev-0.20";
+///////////////////////////////////////////////////////////////////////////////
+// CONFIGURATION
+///////////////////////////////////////////////////////////////////////////////
+
+var MainRepo = "VitalElement/AvalonStudio";
+var MasterBranch = "master";
+var ReleasePlatform = "Any CPU";
+var ReleaseConfiguration = "Release";
+
+///////////////////////////////////////////////////////////////////////////////
+// PARAMETERS
+///////////////////////////////////////////////////////////////////////////////
+
+var isPlatformAnyCPU = StringComparer.OrdinalIgnoreCase.Equals(platform, "Any CPU");
+var isPlatformX86 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x86");
+var isPlatformX64 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x64");
+var isLocalBuild = BuildSystem.IsLocalBuild;
+var isRunningOnUnix = IsRunningOnUnix();
+var isRunningOnWindows = IsRunningOnWindows();
+var isRunningOnAppVeyor = BuildSystem.AppVeyor.IsRunningOnAppVeyor;
+var isPullRequest = BuildSystem.AppVeyor.Environment.PullRequest.IsPullRequest;
+var isMainRepo = StringComparer.OrdinalIgnoreCase.Equals(MainRepo, BuildSystem.AppVeyor.Environment.Repository.Name);
+var isMasterBranch = StringComparer.OrdinalIgnoreCase.Equals(MasterBranch, BuildSystem.AppVeyor.Environment.Repository.Branch);
+var isTagged = BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag 
+               && !string.IsNullOrWhiteSpace(BuildSystem.AppVeyor.Environment.Repository.Tag.Name);
+var isReleasable = StringComparer.OrdinalIgnoreCase.Equals(ReleasePlatform, platform) 
+                   && StringComparer.OrdinalIgnoreCase.Equals(ReleaseConfiguration, configuration);
+var isMyGetRelease = !isTagged && isReleasable;
+var isNuGetRelease = isTagged && isReleasable;
+
+///////////////////////////////////////////////////////////////////////////////
+// VERSION
+///////////////////////////////////////////////////////////////////////////////
+
+var version = "0.2.0";
+
+if (isRunningOnAppVeyor)
+{
+    if (isTagged)
+    {
+        // Use Tag Name as version
+        version = BuildSystem.AppVeyor.Environment.Repository.Tag.Name;
+    }
+    else
+    {
+        // Use AssemblyVersion with Build as version
+        version += "-build" + EnvironmentVariable("APPVEYOR_BUILD_NUMBER") + "-alpha";
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// DIRECTORIES
+///////////////////////////////////////////////////////////////////////////////
 
 var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\bin\HostX86\x86\editbin.exe";
 
@@ -24,39 +94,45 @@ var netCoreProjects = netCoreApps.Select(name =>
     new {
         Path = string.Format("{0}/{1}", netCoreAppsRoot, name),
         Name = name,
-        Framework = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='TargetFramework']/text()"),
+        Framework = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='TargetFrameworks']/text()").Split(';').First(),
         Runtimes = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='RuntimeIdentifiers']/text()").Split(';')
     }).ToList();
 
-if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
+///////////////////////////////////////////////////////////////////////////////
+// INFORMATION
+///////////////////////////////////////////////////////////////////////////////
+
+Information("Building version {0} of AvaloniaEdit ({1}, {2}, {3}) using version {4} of Cake.", 
+    version,
+    platform,
+    configuration,
+    target,
+    typeof(ICakeContext).Assembly.GetName().Version.ToString());
+
+if (isRunningOnAppVeyor)
 {
-    if (BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag && !string.IsNullOrWhiteSpace(BuildSystem.AppVeyor.Environment.Repository.Tag.Name))
-        version = BuildSystem.AppVeyor.Environment.Repository.Tag.Name;
-    else
-        version += "-build" + EnvironmentVariable("APPVEYOR_BUILD_NUMBER");
+    Information("Repository Name: " + BuildSystem.AppVeyor.Environment.Repository.Name);
+    Information("Repository Branch: " + BuildSystem.AppVeyor.Environment.Repository.Branch);
 }
 
-var MainRepo = "VitalElement/AvalonStudio";
-var MasterBranch = "master";
-var ReleasePlatform = "Any CPU";
-var ReleaseConfiguration = "Release";
+Information("Target: " + target);
+Information("Platform: " + platform);
+Information("Configuration: " + configuration);
+Information("IsLocalBuild: " + isLocalBuild);
+Information("IsRunningOnUnix: " + isRunningOnUnix);
+Information("IsRunningOnWindows: " + isRunningOnWindows);
+Information("IsRunningOnAppVeyor: " + isRunningOnAppVeyor);
+Information("IsPullRequest: " + isPullRequest);
+Information("IsMainRepo: " + isMainRepo);
+Information("IsMasterBranch: " + isMasterBranch);
+Information("IsTagged: " + isTagged);
+Information("IsReleasable: " + isReleasable);
+Information("IsMyGetRelease: " + isMyGetRelease);
+Information("IsNuGetRelease: " + isNuGetRelease);
 
-var isPlatformAnyCPU = StringComparer.OrdinalIgnoreCase.Equals(platform, "Any CPU");
-var isPlatformX86 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x86");
-var isPlatformX64 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x64");
-var isLocalBuild = BuildSystem.IsLocalBuild;
-var isRunningOnUnix = IsRunningOnUnix();
-var isRunningOnWindows = IsRunningOnWindows();
-var isRunningOnAppVeyor = BuildSystem.AppVeyor.IsRunningOnAppVeyor;
-var isPullRequest = BuildSystem.AppVeyor.Environment.PullRequest.IsPullRequest;
-var isMainRepo = StringComparer.OrdinalIgnoreCase.Equals(MainRepo, BuildSystem.AppVeyor.Environment.Repository.Name);
-var isMasterBranch = StringComparer.OrdinalIgnoreCase.Equals(MasterBranch, BuildSystem.AppVeyor.Environment.Repository.Branch);
-var isTagged = BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag 
-               && !string.IsNullOrWhiteSpace(BuildSystem.AppVeyor.Environment.Repository.Tag.Name);
-var isReleasable = StringComparer.OrdinalIgnoreCase.Equals(ReleasePlatform, platform) 
-                   && StringComparer.OrdinalIgnoreCase.Equals(ReleaseConfiguration, configuration);
-var isMyGetRelease = !isTagged && isReleasable;
-var isNuGetRelease = isTagged && isReleasable;
+///////////////////////////////////////////////////////////////////////////////
+// TASKS
+/////////////////////////////////////////////////////////////////////////////// 
 
 Task("Clean")
 .Does(()=>{
@@ -75,14 +151,18 @@ Task("Restore-NetCore")
 
 Task("Build-NetCore")
     .IsDependentOn("Restore-NetCore")
+    .WithCriteria(()=>isRunningOnAppVeyor || isLocalBuild)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
     {
         Information("Building: {0}", project.Name);
-        DotNetCoreBuild(project.Path, new DotNetCoreBuildSettings {
+
+        var settings = new DotNetCoreBuildSettings {
             Configuration = configuration
-        });
+        };
+
+        DotNetCoreBuild(project.Path, settings);
     }
 });
 
@@ -111,8 +191,8 @@ Task("Run-Net-Core-Unit-Tests")
 
 
 Task("Publish-NetCore")
-    .IsDependentOn("Restore-NetCore")
-    .WithCriteria(()=>isMainRepo && isMasterBranch)
+    .IsDependentOn("Restore-NetCore")    
+    .WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor) || isLocalBuild))
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -159,11 +239,38 @@ Task("Zip-NetCore")
     }    
 });
 
+Task("Build-Docker-Image")
+    .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor)
+    .Does(()=>
+{
+    var dockerContextPath = zipRootDir.Combine("AvalonStudioBuild-ubuntu.14.04-x64");
+    CopyFile("./AvalonStudio/AvalonStudioBuild/Dockerfile", dockerContextPath.CombineWithFilePath("Dockerfile"));
+    DockerBuild(new DockerBuildSettings
+    {
+        Tag = new string[] { "vitalelement/avalonbuild:latest" },
+        Pull = true,
+    },
+    dockerContextPath.ToString());
+});
+
+Task("Publish-Docker-Image")
+    .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor)
+    .Does(()=>
+{
+    DockerLogin( EnvironmentVariable("DOCKER_USER_NAME"),  EnvironmentVariable("DOCKER_PASSWORD"), "https://hub.docker.com");
+    Information("Logged In");
+    DockerPush("vitalelement/avalonbuild");
+
+    Information("Push");
+});
+
 Task("Default")
     .IsDependentOn("Restore-NetCore")
     .IsDependentOn("Build-NetCore")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
-    .IsDependentOn("Zip-NetCore");
+    .IsDependentOn("Zip-NetCore")
+    .IsDependentOn("Build-Docker-Image")
+    .IsDependentOn("Publish-Docker-Image");
 
 RunTarget(target);

@@ -17,7 +17,7 @@
         {
             get
             {
-                return new List<string> { "sln" };
+                return new List<string> { "sln", "csproj" };
             }
         }
 

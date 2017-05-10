@@ -1,6 +1,7 @@
 using Avalonia;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 
 namespace AvalonStudio.MVVM
@@ -10,18 +11,14 @@ namespace AvalonStudio.MVVM
         public static string GetDescription<T>(this T enumerationValue)
             where T : struct
         {
-            Type type = enumerationValue.GetType();
-            if (!type.IsEnum)
-            {
-                throw new ArgumentException("EnumerationValue must be of Enum type", "enumerationValue");
-            }
+            Type type = enumerationValue.GetType();            
 
             //Tries to find a DescriptionAttribute for a potential friendly name
             //for the enum
             MemberInfo[] memberInfo = type.GetMember(enumerationValue.ToString());
             if (memberInfo != null && memberInfo.Length > 0)
             {
-                object[] attrs = memberInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+                var attrs = memberInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false).ToArray();
 
                 if (attrs != null && attrs.Length > 0)
                 {

@@ -11,7 +11,6 @@ before_build:
 
 build_script:
 - cmd: dotnet --info
-- ps: path c:\dotnet
 - ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
 - ps: .\build.ps1

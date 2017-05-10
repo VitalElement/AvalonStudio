@@ -895,6 +895,8 @@ namespace AvalonStudio.Debugging.GDB
 
             CleanTempVariableObjects();
 
+            BreakEvent breakEvent = null;
+
             TargetEventType type = TargetEventType.TargetStopped;
 
             if (!string.IsNullOrEmpty(ev.Reason))
@@ -903,11 +905,21 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     case "breakpoint-hit":
                         type = TargetEventType.TargetHitBreakpoint;
-                        if (!CheckBreakpoint(ev.GetInt("bkptno")))
+                        var breakPointNumber = ev.GetInt("bkptno");
+                        if (!CheckBreakpoint(breakPointNumber))
                         {
                             RunCommand("-exec-continue");
                             return;
                         }
+
+                        breakEvent = breakpoints[breakPointNumber].BreakEvent;
+                        break;
+
+                    case "watchpoint-trigger":
+                        type = TargetEventType.TargetHitBreakpoint;
+
+                        var watchPointNumber = ev.GetObject("wpt").GetInt("number");
+                        breakEvent = breakpoints[watchPointNumber].BreakEvent;
                         break;
 
                     case "signal-received":
@@ -930,10 +942,10 @@ namespace AvalonStudio.Debugging.GDB
             }
 
             ResultData curFrame = ev.GetObject("frame");
-            FireTargetEvent(type, curFrame);
+            FireTargetEvent(type, curFrame, breakEvent);
         }
 
-        private void FireTargetEvent(TargetEventType type, ResultData curFrame)
+        private void FireTargetEvent(TargetEventType type, ResultData curFrame, BreakEvent breakEvent = null)
         {
             UpdateHitCountData();
 
@@ -947,6 +959,7 @@ namespace AvalonStudio.Debugging.GDB
                 GdbBacktrace bt = new GdbBacktrace(this, activeThread, fcount, curFrame);
                 args.Backtrace = new Backtrace(bt);
                 args.Thread = GetThread(activeThread);
+                args.BreakEvent = breakEvent;
             }
             OnTargetEvent(args);
         }

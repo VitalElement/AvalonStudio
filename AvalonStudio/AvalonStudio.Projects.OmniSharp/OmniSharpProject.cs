@@ -49,7 +49,7 @@ namespace AvalonStudio.Projects.OmniSharp
             get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
         }
 
-        public override IDebugger2 Debugger2
+        public override IDebugger Debugger2
         {
             get
             {

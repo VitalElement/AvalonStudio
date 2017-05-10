@@ -24,8 +24,7 @@ namespace AvalonStudio.TextEditor.Document
     {
         #region Thread ownership
 
-        private readonly object lockObject = new object();
-        private Thread owner = Thread.CurrentThread;
+        private readonly object lockObject = new object();        
 
         /// <summary>
         ///     Verifies that the current thread is the documents owner thread.
@@ -40,35 +39,10 @@ namespace AvalonStudio.TextEditor.Document
         /// </remarks>
         public void VerifyAccess()
         {
-            if (Thread.CurrentThread != owner)
-                throw new InvalidOperationException("TextDocument can be accessed only from the thread that owns it.");
+            
         }
 
-        /// <summary>
-        ///     Transfers ownership of the document to another thread. This method can be used to load
-        ///     a file into a TextDocument on a background thread and then transfer ownership to the UI thread
-        ///     for displaying the document.
-        /// </summary>
-        /// <remarks>
-        ///     <inheritdoc cref="VerifyAccess" />
-        ///     <para>
-        ///         The owner can be set to null, which means that no thread can access the document. But, if the document
-        ///         has no owner thread, any thread may take ownership by calling <see cref="SetOwnerThread" />.
-        ///     </para>
-        /// </remarks>
-        public void SetOwnerThread(Thread newOwner)
-        {
-            // We need to lock here to ensure that in the null owner case,
-            // only one thread succeeds in taking ownership.
-            lock (lockObject)
-            {
-                if (owner != null)
-                {
-                    VerifyAccess();
-                }
-                owner = newOwner;
-            }
-        }
+        
 
         #endregion Thread ownership
 

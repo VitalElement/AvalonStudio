@@ -44,7 +44,7 @@
             };
         }
 
-        public void SetFrame (StackFrame frame)
+        public void SetFrame(StackFrame frame)
         {
             _currentStackFrame = frame;
 
@@ -134,7 +134,7 @@
         }
 
         private void OnEndSession()
-        {            
+        {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 DebugSessionEnded?.Invoke(this, new EventArgs());
@@ -152,7 +152,7 @@
                 _session.Dispose();
                 _session = null;
             }
-            
+
             _lastDocument?.ClearDebugHighlight();
             _lastDocument = null;
 
@@ -195,13 +195,15 @@
                 return;
             }
 
-            await project.Debugger2.InstallAsync(IoC.Get<IConsole>());
+            var debugger2 = project.Debugger2 as IDebugger2;
 
-            _session = project.Debugger2.CreateSession(project);
+            await debugger2.InstallAsync(IoC.Get<IConsole>());
+
+            _session = debugger2.CreateSession(project);
 
             _session.Breakpoints = Breakpoints;
 
-            _session.Run(project.Debugger2.GetDebuggerStartInfo(project), project.Debugger2.GetDebuggerSessionOptions(project));
+            _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
 
             _session.TargetStopped += _session_TargetStopped;
 
@@ -269,6 +271,13 @@
                     {
                         _console.WriteLine("Unable to find file: " + normalizedPath);
                     }
+                }
+
+                if (e.BreakEvent is WatchPoint)
+                {
+                    var wp = e.BreakEvent as WatchPoint;
+
+                    _console.WriteLine($"Hit Watch Point {wp.Expression}");
                 }
 
                 Dispatcher.UIThread.InvokeAsync(() =>

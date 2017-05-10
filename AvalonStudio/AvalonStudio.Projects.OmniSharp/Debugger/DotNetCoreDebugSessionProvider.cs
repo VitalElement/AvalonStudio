@@ -67,7 +67,14 @@
 
             var coreAppVersion = ResolveShimVersion();
 
-            var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", coreAppVersion, "dbgshim" + Platform.DLLExtension);
+            string dbgShimName = "dbgshim";
+
+            if(Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
+            {
+                dbgShimName = "lib" + dbgShimName;
+            }
+
+            var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", coreAppVersion, dbgShimName + Platform.DLLExtension);
 
             var result = new CoreClrDebuggerSession(System.IO.Path.GetInvalidPathChars(), dbgShimPath);
 

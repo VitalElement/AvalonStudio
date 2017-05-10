@@ -1,10 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <RuntimeFrameworkVersion>2.0.0-preview1-001978-00</RuntimeFrameworkVersion>
-    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net45</PackageTargetFallback>
-    <OutputTypeEx>library</OutputTypeEx>
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <RuntimeFrameworkVersion>2.0.0-preview2-002093-00</RuntimeFrameworkVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net40;net45</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="STM32ProjectSetupModalDialogView.xaml" />
@@ -13,7 +11,7 @@
     <EmbeddedResource Include="STM32ProjectSetupModalDialogView.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build2959-alpha" />
+    <PackageReference Include="Avalonia" Version="0.4.1-build3075-alpha" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />

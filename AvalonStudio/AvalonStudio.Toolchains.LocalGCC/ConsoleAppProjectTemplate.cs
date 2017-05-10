@@ -1,11 +1,10 @@
-using AvalonStudio.Debuggers.GDB.Local;
-using AvalonStudio.Extensibility;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
-using AvalonStudio.Shell;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Shell;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
@@ -33,7 +32,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
             project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
 
-            project.Debugger2 = shell.Debugger2s.FirstOrDefault(db => db is LocalGdbDebugger);
+            project.Debugger2 = shell.Debugger2s.FirstOrDefault(db => db.GetType().FullName == "AvalonStudio.Debuggers.GDB.Local.LocalGdbDebugger");
 
             var code = new StringBuilder();
 

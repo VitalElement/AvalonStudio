@@ -75,13 +75,19 @@ namespace AvalonStudio.Debugging.GDB
                 return frames.ToArray();
 
             session.SelectThread(threadId);
+
             GdbCommandResult res = session.RunCommand("-stack-list-frames", firstIndex.ToString(), lastIndex.ToString());
-            ResultData stack = res.GetObject("stack");
-            for (int n = 0; n < stack.Count; n++)
+
+            if (res.Status == CommandStatus.Done)
             {
-                ResultData frd = stack.GetObject(n);
-                frames.Add(CreateFrame(frd.GetObject("frame")));
+                ResultData stack = res.GetObject("stack");
+                for (int n = 0; n < stack.Count; n++)
+                {
+                    ResultData frd = stack.GetObject(n);
+                    frames.Add(CreateFrame(frd.GetObject("frame")));
+                }
             }
+
             return frames.ToArray();
         }
 

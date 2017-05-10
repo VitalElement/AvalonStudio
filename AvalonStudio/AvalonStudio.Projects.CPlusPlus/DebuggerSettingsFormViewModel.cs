@@ -9,15 +9,15 @@ namespace AvalonStudio.Projects.CPlusPlus
 {
     public class DebuggerSettingsFormViewModel : HeaderedViewModel<CPlusPlusProject>
     {
-        private List<IDebugger2> debuggers;
+        private List<IDebugger> debuggers;
 
         private object debugSettingsControl;
 
-        private IDebugger2 selectedDebugger;
+        private IDebugger selectedDebugger;
 
         public DebuggerSettingsFormViewModel(CPlusPlusProject project) : base("Debugger", project)
         {
-            debuggers = new List<IDebugger2>(IoC.Get<IShell>().Debugger2s);
+            debuggers = new List<IDebugger>(IoC.Get<IShell>().Debugger2s);
             selectedDebugger = project.Debugger2;
         }
 
@@ -27,13 +27,13 @@ namespace AvalonStudio.Projects.CPlusPlus
             set { this.RaiseAndSetIfChanged(ref debugSettingsControl, value); }
         }
 
-        public List<IDebugger2> Debuggers
+        public List<IDebugger> Debuggers
         {
             get { return debuggers; }
             set { this.RaiseAndSetIfChanged(ref debuggers, value); }
         }
 
-        public IDebugger2 SelectedDebugger
+        public IDebugger SelectedDebugger
         {
             get
             {

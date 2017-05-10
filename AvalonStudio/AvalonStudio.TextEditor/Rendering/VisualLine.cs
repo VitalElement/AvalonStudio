@@ -25,8 +25,7 @@ namespace AvalonStudio.TextEditor.Rendering
         }
 
         ~VisualLine()
-        {
-            RenderedText?.Dispose();
+        {            
             RenderedText = null;
             DocumentLine = null;
         }

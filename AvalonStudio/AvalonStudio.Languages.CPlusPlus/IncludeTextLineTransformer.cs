@@ -20,9 +20,9 @@ namespace AvalonStudio.Languages.CPlusPlus.Rendering
             if (line.RenderedText.Text.Contains("#include") && !line.RenderedText.Text.Trim().StartsWith("//"))
             {
                 var startIndex = line.RenderedText.Text.IndexOf("#include");
-
-                line.RenderedText.SetForegroundBrush(pragmaBrush, startIndex, 8);
-                line.RenderedText.SetForegroundBrush(brush, startIndex + 9, line.RenderedText.Text.Length - startIndex);
+                
+                line.RenderedText.SetTextStyle(startIndex, 8, pragmaBrush);
+                line.RenderedText.SetTextStyle(startIndex + 9, line.RenderedText.Text.Length - startIndex, brush);
             }
         }
     }

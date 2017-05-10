@@ -3,8 +3,7 @@
     using Avalonia.Threading;
     using Extensibility;
     using Extensibility.Plugin;
-    using MVVM;
-    using MVVM.DataVirtualization;
+    using MVVM;    
     using ReactiveUI;
     using System;
     using System.Linq;
@@ -17,53 +16,10 @@
 
         public MemoryViewModel()
         {
-            dataProvider = new MemoryViewDataProvider(Columns);
-
-            integerSizeOptions = new MutuallyExclusiveEnumerationCollection<MemoryViewDataProvider.IntegerSize>(MemoryViewDataProvider.IntegerSize.U8, (v) =>
-            {
-                var address = currentAddress;
-
-                dataProvider.IntegerDisplaySize = v;
-                MemoryData = new AsyncVirtualizingCollection<MemoryBytesViewModel>(dataProvider, 40, 60000);
-
-                SetAddress(address);
-                this.RaisePropertyChanged(nameof(ValueColumnWidth));
-            });
-
             Address = "0";
             IsVisible = false;
         }
-
-        private MutuallyExclusiveEnumerationCollection<MemoryViewDataProvider.IntegerSize> integerSizeOptions;
-
-        public MutuallyExclusiveEnumerationCollection<MemoryViewDataProvider.IntegerSize> IntegerSizeOptions
-        {
-            get { return integerSizeOptions; }
-            set { this.RaiseAndSetIfChanged(ref integerSizeOptions, value); }
-        }
-
-        public double ValueColumnWidth
-        {
-            get
-            {
-                if (dataProvider.IntegerDisplaySize == MemoryViewDataProvider.IntegerSize.NoData)
-                {
-                    return 0;
-                }
-
-                double fontSpace = 6.5;
-                // number of bytes * 2 * font space...
-                var byteSpace = (Columns * 2) * fontSpace;
-
-                var spaces = Columns / ((int)dataProvider.IntegerDisplaySize);
-
-                return byteSpace + (spaces * fontSpace) + 5;
-                //return (fontSpace * 2) + 5;
-                // number of spaces * font space...
-            }
-        }
-
-        private MemoryViewDataProvider dataProvider;
+        
         private IDebugger2 debugger;
 
         public void SetDebugger(IDebugger2 debugger)
@@ -80,7 +36,7 @@
 
             this.debugger = debugger;
 
-            dataProvider.SetDebugger(debugger);
+           // dataProvider.SetDebugger(debugger);
         }
 
         private bool enabled;
@@ -126,36 +82,6 @@
 
         public new async void Invalidate()
         {
-            if (MemoryData == null)
-            {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    MemoryData = new AsyncVirtualizingCollection<MemoryBytesViewModel>(dataProvider, 15, 500);
-                });
-            }
-            else
-            {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    MemoryData.CleanPagesAround((ulong)selectedIndex);
-                });
-
-                var pages = memoryData.Pages.ToList();
-
-                if (debugger != null)
-                {
-                    foreach (var page in pages)
-                    {
-                        foreach (var item in page.Value.Items)
-                        {
-                            if (item.Data != null)
-                            {
-                                await item.Data.InvalidateAsync(debugger);
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         public void BeforeActivation()
@@ -184,14 +110,6 @@
         {
             get { return selectedIndex; }
             set { this.RaiseAndSetIfChanged(ref selectedIndex, value); }
-        }
-
-        private AsyncVirtualizingCollection<MemoryBytesViewModel> memoryData;
-
-        public AsyncVirtualizingCollection<MemoryBytesViewModel> MemoryData
-        {
-            get { return memoryData; }
-            set { this.RaiseAndSetIfChanged(ref memoryData, value); }
         }
 
         public override Location DefaultLocation

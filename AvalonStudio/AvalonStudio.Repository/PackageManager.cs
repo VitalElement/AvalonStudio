@@ -36,7 +36,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        private const string DefaultPackageSource = "https://www.myget.org/F/avalonstudio/api/v3/index.json";
+        private const string DefaultPackageSource = "http://nuget.mabiavalon.com/api/v2/";
 
         public static NuGetFramework GetFramework()
         {
@@ -48,12 +48,12 @@ namespace AvalonStudio.Packages
             return new InstalledPackagesCache(Path.Combine(Platform.ReposDirectory, "cachedPackages.xml"), Path.Combine(Platform.ReposDirectory, "installedPackages.xml"), false);
         }
 
-        public static async Task EnsurePackage(string packageId, IConsole console)
+        public static async Task EnsurePackage(string packageId, IConsole console, int chmodFileMode = 755)
         {
-            await EnsurePackage(packageId, new AvalonConsoleNuGetLogger(console));
+            await EnsurePackage(packageId, new AvalonConsoleNuGetLogger(console), chmodFileMode);
         }
 
-        private static async Task EnsurePackage(string packageId, ILogger console)
+        private static async Task EnsurePackage(string packageId, ILogger console, int chmodFileMode = 755)
         {
             if (GetPackageDirectory(packageId) == string.Empty)
             {
@@ -69,12 +69,12 @@ namespace AvalonStudio.Packages
                 }
                 else
                 {
-                    await InstallPackage(package.Identity.Id, package.Identity.Version.ToNormalizedString(), console);
+                    await InstallPackage(package.Identity.Id, package.Identity.Version.ToNormalizedString(), console, chmodFileMode);
                 }
             }
         }
 
-        public static async Task InstallPackage(string packageId, string version, ILogger logger = null)
+        public static async Task InstallPackage(string packageId, string version, ILogger logger = null, int chmodFileMode = 755)
         {
             if (logger == null)
             {
@@ -88,7 +88,7 @@ namespace AvalonStudio.Packages
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
             providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
 
-            var settings = (NuGet.Configuration.Settings)NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
+            var settings = NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
 
             ISourceRepositoryProvider sourceRepositoryProvider = new SourceRepositoryProvider(settings, providers);  // See part 2
 
@@ -117,6 +117,18 @@ namespace AvalonStudio.Packages
                         identity, resolutionContext, projectContext, sourceRepositories,
                         Array.Empty<SourceRepository>(),  // This is a list of secondary source respositories, probably empty
                         CancellationToken.None);
+
+                    if(Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
+                    {
+                        var packageDir = GetPackageDirectory(identity);
+
+                        var files = Directory.EnumerateFiles(packageDir, "*.*", SearchOption.AllDirectories);
+
+                        foreach(var file in files)
+                        {
+                            Platform.Chmod(file, chmodFileMode);
+                        }
+                    }
                 }
                 else
                 {
@@ -139,7 +151,7 @@ namespace AvalonStudio.Packages
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
             providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
 
-            var settings = (NuGet.Configuration.Settings)NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
+            var settings = NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
 
             ISourceRepositoryProvider sourceRepositoryProvider = new SourceRepositoryProvider(settings, providers);  // See part 2
 
@@ -170,7 +182,7 @@ namespace AvalonStudio.Packages
 
             var packageMetadataResource = await sourceRepository.GetResourceAsync<PackageMetadataResource>();
 
-            var prov = new V3FeedListResourceProvider();
+            var prov = new V2FeedListResourceProvider();
             var feed = await prov.TryCreate(sourceRepository, CancellationToken.None);
             var lister = (V2FeedListResource)feed.Item2;
 

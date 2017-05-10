@@ -333,7 +333,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
         [JsonIgnore]
-        public override IDebugger2 Debugger2
+        public override IDebugger Debugger2
         {
             get
             {
