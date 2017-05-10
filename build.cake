@@ -151,7 +151,7 @@ Task("Restore-NetCore")
 
 Task("Build-NetCore")
     .IsDependentOn("Restore-NetCore")
-    .WithCriteria(()=>isRunningOnAppVeyor)
+    .WithCriteria(()=>isRunningOnAppVeyor || isLocalBuild)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
