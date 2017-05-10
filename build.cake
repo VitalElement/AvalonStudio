@@ -351,8 +351,6 @@ Task("Default")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Zip-NetCore")
     .IsDependentOn("Generate-NuGetPackages")
-    .IsDependentOn("Publish-AppVeyorNuget")
-    .IsDependentOn("Build-Docker-Image")
-    .IsDependentOn("Publish-Docker-Image");
+    .IsDependentOn("Publish-AppVeyorNuget");
 
 RunTarget(target);
