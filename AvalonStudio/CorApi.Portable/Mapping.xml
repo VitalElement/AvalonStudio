@@ -876,7 +876,8 @@
     <map param="IMetaDataImport::GetPropertyProps::pmdSetter" attribute="out" />
     <map param="IMetaDataImport::GetPropertyProps::pmdGetter" attribute="out" />
     <map param="IMetaDataImport::GetPropertyProps::rmdOtherMethod" attribute="out buffer" />
-    <map param="IMetaDataImport::GetPropertyProps::pcOtherMethod" attribute="out" />
+    <map param="IMetaDataImport::GetPropertyProps::pcOtherMethod" attribute="out" />    
+    <map param="ICorDebugType::GetBase::pBase" attribute="out" />
 
 
     
