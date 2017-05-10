@@ -3,6 +3,7 @@
 /////////////////////////////////////////////////////////////////////
 
 #addin "Cake.FileHelpers"
+#addin "Cake.Docker"
 
 //////////////////////////////////////////////////////////////////////
 // TOOLS
@@ -238,11 +239,39 @@ Task("Zip-NetCore")
     }    
 });
 
+Task("Build-Docker-Image")
+    .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor)
+    .Does(()=>
+{
+    DockerPull("vitalelement/avalonbuild");
+
+    var dockerContextPath = zipRootDir.Combine("AvalonStudioBuild-ubuntu.14.04-x64");
+    CopyFile("./AvalonStudio/AvalonStudioBuild/Dockerfile", dockerContextPath.CombineWithFilePath("Dockerfile"));
+    DockerBuild(new DockerBuildSettings
+    {
+        Tag = new string[] { "vitalelement/avalonbuild:latest" }
+    },
+    dockerContextPath.ToString());
+});
+
+Task("Publish-Docker-Image")
+    .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor)
+    .Does(()=>
+{
+    DockerLogin( EnvironmentVariable("DOCKER_USER_NAME"),  EnvironmentVariable("DOCKER_PASSWORD"), "https://hub.docker.com");
+    Information("Logged In");
+    DockerPush("vitalelement/avalonbuild");
+
+    Information("Push");
+});
+
 Task("Default")
     .IsDependentOn("Restore-NetCore")
     .IsDependentOn("Build-NetCore")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Zip-NetCore");
+    .IsDependentOn("Build-Docker-Image")
+    .IsDependentOn("Publish-Docker-Image");
 
 RunTarget(target);
