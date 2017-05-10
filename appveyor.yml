@@ -5,7 +5,9 @@ install:
   - cmd: 7z x dotnet-dev-win-x64.latest.zip -oc:\dotnet
 
 before_build:
-- cmd: git submodule update --init --recursive  
+- cmd: git submodule update --init --recursive
+- cmd: path c:\dotnet
+- cmd: dotnet --info  
 
 build_script:
 - cmd: dotnet --info
