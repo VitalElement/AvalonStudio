@@ -19,6 +19,7 @@ test: off
 
 artifacts:
 - path: artifacts/zip/*.zip
+- path: artifacts/nuget/*.nupkg
 - path: latest-version-badge.svg
 
 deploy:
