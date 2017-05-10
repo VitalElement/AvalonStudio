@@ -64,13 +64,12 @@
 
         public async Task<Process> StartAsync(string projectDir)
         {
-            var startInfo = new ProcessStartInfo();            
-
-            startInfo.FileName = Binary;
-            startInfo.Arguments = $"-p {port} -s {projectDir}";
-
             await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
 
+            var startInfo = new ProcessStartInfo();
+            startInfo.FileName = Binary;
+            startInfo.Arguments = $"-p {port} -s {projectDir}";
+            
             //// Hide console window
             //startInfo.UseShellExecute = false;
             //startInfo.RedirectStandardOutput = true;
