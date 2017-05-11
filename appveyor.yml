@@ -15,13 +15,6 @@ build_script:
 - ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
 - ps: .\build.ps1
-- ps: cd .\artifacts\zip\AvalonStudioBuild-ubuntu.14.04-x64\
-- ps: cp ..\..\..\AvalonStudio\AvalonStudioBuild\Dockerfile .\
-- ps: docker build -t vitalelement/avalonbuild  .
-
-deploy_script:
-- docker login -u="$env:DOCKER_USER" -p="$env:DOCKER_PASS"
-- docker push vitalelement/avalonbuild
 
 test: off
 
