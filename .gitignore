@@ -10,6 +10,7 @@ tools
 .vs
 tools/
 artifacts/
+.avalon/
 
 # Build results
 [Dd]ebug/

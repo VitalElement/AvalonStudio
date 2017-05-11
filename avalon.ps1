@@ -85,7 +85,7 @@ if (!$PSScriptRoot) {
     $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
 }
 
-$TOOLS_DIR = Join-Path $PSScriptRoot "avalon"
+$TOOLS_DIR = Join-Path $PSScriptRoot ".avalon"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
 $AVALON_EXE = Join-Path $TOOLS_DIR "VitalElement.AvalonBuild.win7-x64/content/avalon.exe"
 $NUGET_URL = "https://dist.nuget.org/win-x86-commandline/v4.0.0-rc4/nuget.exe"
