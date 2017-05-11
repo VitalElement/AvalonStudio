@@ -255,7 +255,7 @@ namespace AvalonStudio.Packages
         {
             var result = string.Empty;
 
-            var packageIds = ListInstalledPackages().Where(s => s.Id.StartsWith(genericPackageId));
+            var packageIds = ListInstalledPackages().Where(s => s.Id.StartsWith(genericPackageId + "." + Platform.AvalonRID));
 
             var latest = packageIds.OrderByDescending(id => id.Version).FirstOrDefault();
 

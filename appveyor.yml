@@ -1,8 +1,9 @@
 version: 0.2.0.{build}
 os: Visual Studio 2017
 install:
-  - if not exist dotnet-dev-win-x64.latest.zip appveyor DownloadFile https://dotnetcli.blob.core.windows.net/dotnet/Sdk/master/dotnet-dev-win-x64.latest.zip -FileName "dotnet-dev-win-x64.latest.zip"  
-  - cmd: 7z x dotnet-dev-win-x64.latest.zip -oc:\dotnet
+  - if not exist dotnet-dev-win-x64.latest.zip appveyor DownloadFile https://download.microsoft.com/download/0/6/5/0656B047-5F2F-4281-A851-F30776F8616D/dotnet-dev-win-x64.2.0.0-preview1-005977.zip -FileName "dotnet-dev-win-x64.2.0.0-preview1-005977.zip"  
+  - cmd: 7z x dotnet-dev-win-x64.2.0.0-preview1-005977.zip -oc:\dotnet
+  - docker version
 
 before_build:
 - cmd: git submodule update --init --recursive
@@ -14,6 +15,13 @@ build_script:
 - ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
 - ps: .\build.ps1
+- ps: cd .\artifacts\zip\AvalonStudioBuild-ubuntu.14.04-x64\
+- ps: cp ..\..\..\AvalonStudio\AvalonStudioBuild\Dockerfile .\
+- ps: docker build -t vitalelement/avalonbuild  .
+
+deploy_script:
+- docker login -u="$env:DOCKER_USER" -p="$env:DOCKER_PASS"
+- docker push vitalelement/avalonbuild
 
 test: off
 
