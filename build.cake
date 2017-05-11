@@ -103,7 +103,7 @@ var netCoreProjects = netCoreApps.Select(name =>
 // NUGET NUSPECS
 ///////////////////////////////////////////////////////////////////////////////
 
-public NuGetPackSettings GetPackSettings(string rid)
+public NuGetPackSettings GetPackSettings(string rid, string version, string nugetRoot)
 {
     var nuspecNuGetBehaviors = new NuGetPackSettings()
     {
@@ -284,7 +284,7 @@ Task("Generate-NuGetPackages")
 .Does(()=>{
     foreach(var rid in avalonBuildRIDs)
     {
-        NuGetPack(GetPackSettings(rid));
+        NuGetPack(GetPackSettings(rid, version, nugetRoot.ToString()));
     }
 });
 
@@ -307,7 +307,7 @@ Task("Publish-AppVeyorNuget")
 
     foreach(var rid in avalonBuildRIDs)
     {
-        var nuspec = GetPackSettings(rid);
+        var nuspec = GetPackSettings(rid, version, nugetRoot.ToString());
         var settings  = nuspec.OutputDirectory.CombineWithFilePath(string.Concat(nuspec.Id, ".", nuspec.Version, ".nupkg"));
 
         NuGetPush(settings, new NuGetPushSettings
