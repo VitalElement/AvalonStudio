@@ -1335,10 +1335,10 @@ namespace CorApi.Portable {
         /// <unmanaged-short>CorExceptionFlag Flags</unmanaged-short>	
         public CorApi.Portable.CorExceptionFlag  Flags { 
             get { 
-                return (CorApi.Portable.CorExceptionFlag)((_Flags >> 0)  &  65535);
+                return (CorApi.Portable.CorExceptionFlag)(((int)_Flags >> 0)  &  65535);
             }
             set { 
-                _Flags = (CorApi.Portable.CorExceptionFlag)((_Flags & ~( 65535 << 0)) | ( (value & 65535) << 0));
+                _Flags = (CorApi.Portable.CorExceptionFlag)(((int)_Flags & ~( 65535 << 0)) | ( ((int)value & 65535) << 0));
             }
         }
         [FieldOffset(0)]
@@ -1484,7 +1484,7 @@ namespace CorApi.Portable {
         internal unsafe void __MarshalFrom(ref __Native @ref)
         {            
             this.SectFat = @ref.SectFat;
-            fixed (void* __to = &this.Clauses[0]) fixed (void* __from = &@ref.Clauses) SharpDX.Utilities.CopyMemory((IntPtr) __to, (IntPtr) __from, 1*sizeof ( CorApi.Portable.ImageCorIlmethodSectEhClauseFat));
+            fixed (void* __to = &this.Clauses[0]) fixed (void* __from = &@ref.Clauses) Utilities.CopyMemory((IntPtr) __to, (IntPtr) __from, 1*sizeof ( CorApi.Portable.ImageCorIlmethodSectEhClauseFat));
         }
     }
     
@@ -1546,7 +1546,7 @@ namespace CorApi.Portable {
         {            
             this.SectSmall = @ref.SectSmall;
             this.Reserved = @ref.Reserved;
-            fixed (void* __to = &this.Clauses[0]) fixed (void* __from = &@ref.Clauses) SharpDX.Utilities.CopyMemory((IntPtr) __to, (IntPtr) __from, 1*sizeof ( CorApi.Portable.ImageCorIlmethodSectEhClauseSmall));
+            fixed (void* __to = &this.Clauses[0]) fixed (void* __from = &@ref.Clauses) Utilities.CopyMemory((IntPtr) __to, (IntPtr) __from, 1*sizeof ( CorApi.Portable.ImageCorIlmethodSectEhClauseSmall));
         }
     }
     
