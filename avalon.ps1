@@ -101,7 +101,7 @@ if ((Test-Path $PSScriptRoot) -and !(Test-Path $TOOLS_DIR)) {
 # Make sure that packages.config exist.
 if (!(Test-Path $PACKAGES_CONFIG)) {
     Write-Verbose -Message "Downloading packages.config..."
-    try { (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/VitalElement/AvalonStudio/master/packages.config", $PACKAGES_CONFIG) } catch {
+    try { (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/VitalElement/AvalonStudio/master/AvalonBuild/packages.config", $PACKAGES_CONFIG) } catch {
         Throw "Could not download packages.config."
     }
 }
