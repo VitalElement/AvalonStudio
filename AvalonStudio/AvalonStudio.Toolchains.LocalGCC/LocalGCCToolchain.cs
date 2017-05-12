@@ -335,7 +335,10 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public async override Task InstallAsync(IConsole console, IProject project)
         {
-            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.LocalGCC", (project as CPlusPlusProject).ToolchainVersion,  console);
+            if(Platforms.Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+            {
+                await PackageManager.EnsurePackage("AvalonStudio.Toolchains.LocalGCC", (project as CPlusPlusProject).ToolchainVersion,  console);
+            }
         }
     }
 }
