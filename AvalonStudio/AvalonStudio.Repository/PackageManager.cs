@@ -48,12 +48,12 @@ namespace AvalonStudio.Packages
             return new InstalledPackagesCache(Path.Combine(Platform.ReposDirectory, "cachedPackages.xml"), Path.Combine(Platform.ReposDirectory, "installedPackages.xml"), false);
         }
 
-        public static async Task EnsurePackage(string packageId, IConsole console, int chmodFileMode = 755)
+        public static async Task EnsurePackage(string packageId, IConsole console, int chmodFileMode = 0x700)
         {
             await EnsurePackage(packageId, new AvalonConsoleNuGetLogger(console), chmodFileMode);
         }
 
-        private static async Task EnsurePackage(string packageId, ILogger console, int chmodFileMode = 755)
+        private static async Task EnsurePackage(string packageId, ILogger console, int chmodFileMode = 0x700)
         {
             if (GetPackageDirectory(packageId) == string.Empty)
             {
@@ -74,7 +74,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        public static async Task InstallPackage(string packageId, string version, ILogger logger = null, int chmodFileMode = 755)
+        public static async Task InstallPackage(string packageId, string version, ILogger logger = null, int chmodFileMode = 0x700)
         {
             if (logger == null)
             {
@@ -125,8 +125,8 @@ namespace AvalonStudio.Packages
                         var files = Directory.EnumerateFiles(packageDir, "*.*", SearchOption.AllDirectories);
 
                         foreach(var file in files)
-                        {
-                            Platform.Chmod(file, chmodFileMode);
+                        {                            
+                            Platform.Chmod(file, chmodFileMode);                            
                         }
                     }
                 }
