@@ -48,14 +48,14 @@ namespace AvalonStudio.Packages
             return new InstalledPackagesCache(Path.Combine(Platform.ReposDirectory, "cachedPackages.xml"), Path.Combine(Platform.ReposDirectory, "installedPackages.xml"), false);
         }
 
-        public static async Task EnsurePackage(string packageId, IConsole console, int chmodFileMode = 0x700)
+        public static async Task EnsurePackage(string packageId, string packageVersion, IConsole console, int chmodFileMode = 0x700)
         {
-            await EnsurePackage(packageId, new AvalonConsoleNuGetLogger(console), chmodFileMode);
+            await EnsurePackage(packageId, packageVersion, new AvalonConsoleNuGetLogger(console), chmodFileMode);
         }
 
-        private static async Task EnsurePackage(string packageId, ILogger console, int chmodFileMode = 0x700)
+        private static async Task EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = 0x700)
         {
-            if (GetPackageDirectory(packageId) == string.Empty)
+            if (GetPackageDirectory(packageId, packageVersion) == string.Empty)
             {
                 console.LogInformation($"Package: {packageId} will be installed.");
 
@@ -69,7 +69,23 @@ namespace AvalonStudio.Packages
                 }
                 else
                 {
-                    await InstallPackage(package.Identity.Id, package.Identity.Version.ToNormalizedString(), console, chmodFileMode);
+                    string installVesion = package.Identity.Version.ToNormalizedString();
+
+                    if (!string.IsNullOrEmpty(packageVersion))
+                    {
+                        var versions = await package.GetVersionsAsync();
+                        var matchingVersion = versions.FirstOrDefault(v => v.Version.ToNormalizedString() == packageVersion);
+
+                        if(matchingVersion == null)
+                        {
+                            console.LogInformation($"Unable to find package: {packageId} with version: {packageVersion}");
+                            return;
+                        }
+
+                        installVesion = matchingVersion.Version.ToNormalizedString();
+                    }
+
+                    await InstallPackage(package.Identity.Id, installVesion, console, chmodFileMode);
                 }
             }
         }
@@ -118,15 +134,15 @@ namespace AvalonStudio.Packages
                         Array.Empty<SourceRepository>(),  // This is a list of secondary source respositories, probably empty
                         CancellationToken.None);
 
-                    if(Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
+                    if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
                     {
                         var packageDir = GetPackageDirectory(identity);
 
                         var files = Directory.EnumerateFiles(packageDir, "*.*", SearchOption.AllDirectories);
 
-                        foreach(var file in files)
-                        {                            
-                            Platform.Chmod(file, chmodFileMode);                            
+                        foreach (var file in files)
+                        {
+                            Platform.Chmod(file, chmodFileMode);
                         }
                     }
                 }
@@ -251,11 +267,23 @@ namespace AvalonStudio.Packages
             return result;
         }
 
-        public static string GetPackageDirectory(string genericPackageId)
+        public static string GetPackageDirectory(string genericPackageId, string version = null)
         {
             var result = string.Empty;
 
-            var packageIds = ListInstalledPackages().Where(s => s.Id.StartsWith(genericPackageId + "." + Platform.AvalonRID));
+            var expectedFolder = genericPackageId + "." + Platform.AvalonRID;
+
+            IEnumerable<PackageIdentity> packageIds;
+
+            if (string.IsNullOrEmpty(version))
+            {
+                packageIds = ListInstalledPackages().Where(s => s.Id.StartsWith(expectedFolder));
+            }
+            else
+            {
+                packageIds = ListInstalledPackages().Where(s => s.Id.StartsWith(expectedFolder));
+                packageIds = packageIds.Where(s => s.Version.ToNormalizedString() == version);
+            }
 
             var latest = packageIds.OrderByDescending(id => id.Version).FirstOrDefault();
 
