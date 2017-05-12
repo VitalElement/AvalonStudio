@@ -25,7 +25,7 @@ namespace AvalonStudio.Packages
     public class PackageManager
     {
         private ILogger _logger;
-
+        private const int DefaultFilePermissions = 0x755;
         public PackageManager(ILogger logger = null)
         {
             _logger = logger;
@@ -48,17 +48,17 @@ namespace AvalonStudio.Packages
             return new InstalledPackagesCache(Path.Combine(Platform.ReposDirectory, "cachedPackages.xml"), Path.Combine(Platform.ReposDirectory, "installedPackages.xml"), false);
         }
 
-        public static async Task EnsurePackage(string packageId, string packageVersion, IConsole console, int chmodFileMode = 0x700)
+        public static async Task EnsurePackage(string packageId, string packageVersion, IConsole console, int chmodFileMode = DefaultFilePermissions)
         {
             await EnsurePackage(packageId, packageVersion, new AvalonConsoleNuGetLogger(console), chmodFileMode);
         }
 
-        public static async Task EnsurePackage(string packageId, IConsole console, int chmodFileMode = 0x700)
+        public static async Task EnsurePackage(string packageId, IConsole console, int chmodFileMode = DefaultFilePermissions)
         {
             await EnsurePackage(packageId, null, new AvalonConsoleNuGetLogger(console), chmodFileMode);
         }
 
-        private static async Task EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = 0x700)
+        private static async Task EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = DefaultFilePermissions)
         {
             if (GetPackageDirectory(packageId, packageVersion) == string.Empty)
             {
@@ -95,7 +95,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        public static async Task InstallPackage(string packageId, string version, ILogger logger = null, int chmodFileMode = 0x700)
+        public static async Task InstallPackage(string packageId, string version, ILogger logger = null, int chmodFileMode = DefaultFilePermissions)
         {
             if (logger == null)
             {
