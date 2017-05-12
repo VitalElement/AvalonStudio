@@ -16,6 +16,11 @@ namespace AvalonStudio.Projects
                 var rootIndex = (IDictionary<string, object>)project.ToolchainSettings;
                 var root = project.ToolchainSettings;
 
+                if(!rootIndex.ContainsKey(typeof(T).FullName))
+                {
+                    return project.ProvisionSettings<T>();
+                }
+
                 if (rootIndex[typeof(T).FullName] is ExpandoObject)
                 {
                     result = (rootIndex[typeof(T).FullName] as ExpandoObject).GetConcreteType<T>();
