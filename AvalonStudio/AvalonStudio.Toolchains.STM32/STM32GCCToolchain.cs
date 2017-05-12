@@ -12,6 +12,7 @@ namespace AvalonStudio.Toolchains.STM32
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
+    using AvalonStudio.Projects.CPlusPlus;
 
     public class STM32GCCToolchain : GCCToolchain
     {
@@ -409,7 +410,7 @@ namespace AvalonStudio.Toolchains.STM32
         {
             var result = false;
 
-            if (project is IStandardProject)
+            if (project is CPlusPlusProject)
             {
                 result = true;
             }
@@ -499,9 +500,9 @@ namespace AvalonStudio.Toolchains.STM32
             return true;
         }
 
-        public async override Task InstallAsync(IConsole console)
+        public async override Task InstallAsync(IConsole console, IProject project)
         {
-            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", console);
+            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console);
         }
     }
 }

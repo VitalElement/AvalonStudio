@@ -407,13 +407,13 @@ namespace AvalonStudio.Controls
         {
             get
             {
-                switch (Platform.OSDescription)
+                switch (Platform.PlatformIdentifier)
                 {
-                    case "Unix":
-                        return "Inconsolata";
+                    case Platforms.PlatformID.Win32NT:
+                        return "Consolas";
 
                     default:
-                        return "Consolas";
+                        return "Inconsolata";
                 }
             }
         }
