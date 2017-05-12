@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using AvalonStudio.Projects.CPlusPlus;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
@@ -324,7 +325,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
         {
             var result = false;
 
-            if (project is IStandardProject)
+            if (project is CPlusPlusProject)
             {
                 result = true;
             }
@@ -332,9 +333,9 @@ namespace AvalonStudio.Toolchains.LocalGCC
             return result;
         }
 
-        public async override Task InstallAsync(IConsole console)
+        public async override Task InstallAsync(IConsole console, IProject project)
         {
-            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.LocalGCC", console);
+            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.LocalGCC", (project as CPlusPlusProject).ToolchainVersion,  console);
         }
     }
 }
