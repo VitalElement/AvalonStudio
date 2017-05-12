@@ -36,7 +36,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
         {
             get
             {
-                if (Platform.OSDescription == "Unix")
+                if(Platforms.Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
                 {
                     return string.Empty;
                 }
