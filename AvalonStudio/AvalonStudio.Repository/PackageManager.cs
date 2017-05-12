@@ -53,6 +53,11 @@ namespace AvalonStudio.Packages
             await EnsurePackage(packageId, packageVersion, new AvalonConsoleNuGetLogger(console), chmodFileMode);
         }
 
+        public static async Task EnsurePackage(string packageId, IConsole console, int chmodFileMode = 0x700)
+        {
+            await EnsurePackage(packageId, null, new AvalonConsoleNuGetLogger(console), chmodFileMode);
+        }
+
         private static async Task EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = 0x700)
         {
             if (GetPackageDirectory(packageId, packageVersion) == string.Empty)
