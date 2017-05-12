@@ -14,6 +14,7 @@ namespace AvalonStudio.Toolchains.Clang
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using AvalonStudio.Projects.CPlusPlus;
 
     public enum AssemblyFormat
     {
@@ -409,7 +410,7 @@ namespace AvalonStudio.Toolchains.Clang
         {
             var result = false;
 
-            if (project is IStandardProject)
+            if (project is CPlusPlusProject)
             {
                 result = true;
             }
@@ -492,9 +493,9 @@ namespace AvalonStudio.Toolchains.Clang
             return true;
         }
 
-        public async override Task InstallAsync(IConsole console)
+        public async override Task InstallAsync(IConsole console, IProject project)
         {
-            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", console);
+            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console);
         }
     }
 }
