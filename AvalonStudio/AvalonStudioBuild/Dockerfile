@@ -15,6 +15,13 @@ RUN apt-get update
 
 RUN apt-get install -y mono-complete mono-devel
 
+RUN echo "deb http://ftp.us.debian.org/debian unstable main contrib non-free" > /etc/apt/sources.list.d/unstable.list
+RUN apt-get update
+RUN apt-get install -y -t unstable g++-6
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-6
+RUN update-alternatives --config gcc
+
 RUN yes | certmgr -ssl https://go.microsoft.com
 RUN yes | certmgr -ssl -m https://nugetgallery.blob.core.windows.net
 RUN yes | certmgr -ssl -m https://nuget.org
