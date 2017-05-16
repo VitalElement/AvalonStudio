@@ -2,12 +2,13 @@
 {
     using Avalonia.Input;
     using Avalonia.Threading;
+    using AvaloniaEdit.Document;
+    using AvalonStudio.Editor;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Extensibility.Threading;
     using AvalonStudio.Languages;
     using AvalonStudio.Languages.ViewModels;
     using AvalonStudio.Projects;
-    using AvalonStudio.TextEditor.Document;
     using AvalonStudio.Utils;
     using System;
     using System.Collections.Generic;
@@ -21,7 +22,7 @@
         private readonly ISourceFile file;
         private readonly IIntellisenseControl intellisenseControl;
         private readonly ICompletionAssistant completionAssistant;
-        private TextEditor.TextEditor editor;
+        private AvaloniaEdit.TextEditor editor;
         private bool isProcessingKey;
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
@@ -57,7 +58,7 @@
             return languageService.IntellisenseCompleteCharacters.Contains(currentChar);
         }
 
-        public IntellisenseManager(TextEditor.TextEditor editor, IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, ILanguageService languageService, ISourceFile file)
+        public IntellisenseManager(AvaloniaEdit.TextEditor editor, IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, ILanguageService languageService, ISourceFile file)
         {
             intellisenseJobRunner = new JobRunner();
 
@@ -126,7 +127,7 @@
                     }
                     else
                     {
-                        intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editor.TextDocument, caretIndex, TextUtilities.LogicalDirection.Backward, TextUtilities.CaretPositioningMode.WordStart);
+                        intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editor.Document, caretIndex, LogicalDirection.Backward, CaretPositioningMode.WordStart);
                     }
                 }
                 else
@@ -146,7 +147,7 @@
             {
                 if (editor != null)
                 {
-                    intellisenseStartedAt = editor.CaretIndex;
+                    intellisenseStartedAt = editor.CaretOffset;
                 }
 
                 intellisenseControl.SelectedCompletion = noSelectedCompletion;
@@ -160,7 +161,7 @@
             {
                 Dispatcher.UIThread.InvokeTaskAsync(() =>
                 {
-                    currentFilter = editor.TextDocument.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
+                    currentFilter = editor.Document.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
                 }).Wait();
             }
             else
@@ -237,7 +238,7 @@
 
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
-                caretIndex = editor.CaretIndex;
+                caretIndex = editor.CaretOffset;
             }).Wait();
 
             var result = false;
@@ -257,19 +258,19 @@
 
                     Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {
-                        editor.TextDocument.BeginUpdate();
+                        editor.Document.BeginUpdate();
 
                         if (caretIndex - intellisenseStartedAt - offset >= 0 && intellisenseControl.SelectedCompletion != null)
                         {
-                            editor.TextDocument.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
+                            editor.Document.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
                                     intellisenseControl.SelectedCompletion.Title);
 
                             caretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
 
-                            editor.CaretIndex = caretIndex;
+                            editor.CaretOffset = caretIndex;
                         }
 
-                        editor.TextDocument.EndUpdate();
+                        editor.Document.EndUpdate();
                     }).Wait();
 
                     CloseIntellisense();
@@ -338,7 +339,7 @@
 
                                     Dispatcher.UIThread.InvokeTaskAsync(() =>
                                     {
-                                        curChar = editor.TextDocument.GetCharAt(offset++);
+                                        curChar = editor.Document.GetCharAt(offset++);
                                     }).Wait();
 
                                     switch (curChar)
@@ -372,7 +373,7 @@
 
                             Dispatcher.UIThread.InvokeTaskAsync(() =>
                             {
-                                behindBehindCaretChar = editor.TextDocument.GetCharAt(caretIndex - 2);
+                                behindBehindCaretChar = editor.Document.GetCharAt(caretIndex - 2);
                             }).Wait();
 
                             if (behindBehindCaretChar.IsWhiteSpace() && behindBehindCaretChar != '\0')

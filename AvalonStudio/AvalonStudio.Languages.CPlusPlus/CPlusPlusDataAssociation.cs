@@ -1,9 +1,10 @@
 ﻿namespace AvalonStudio.Languages.CPlusPlus
 {
     using Avalonia.Input;
+    using AvaloniaEdit.Document;
+    using AvaloniaEdit.Rendering;
+    using AvalonStudio.Extensibility.Editor;
     using AvalonStudio.Languages.CPlusPlus.Rendering;
-    using AvalonStudio.TextEditor.Document;
-    using AvalonStudio.TextEditor.Rendering;
     using NClang;
     using System;
     using System.Collections.Generic;
@@ -13,7 +14,7 @@
         public CPlusPlusDataAssociation(TextDocument textDocument)
         {
             BackgroundRenderers = new List<IBackgroundRenderer>();
-            DocumentLineTransformers = new List<IDocumentLineTransformer>();
+            DocumentLineTransformers = new List<IVisualLineTransformer>();
 
             TextColorizer = new TextColoringTransformer(textDocument);
             TextMarkerService = new TextMarkerService(textDocument);
@@ -31,7 +32,7 @@
         public TextColoringTransformer TextColorizer { get; }
         public TextMarkerService TextMarkerService { get; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
-        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }
+        public List<IVisualLineTransformer> DocumentLineTransformers { get; }
         public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
     }

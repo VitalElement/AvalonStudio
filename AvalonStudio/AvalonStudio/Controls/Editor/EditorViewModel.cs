@@ -3,8 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
+using AvalonStudio.Editor;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Languages;
@@ -12,8 +15,6 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
-using AvalonStudio.TextEditor;
-using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using ReactiveUI;
@@ -35,8 +36,7 @@ namespace AvalonStudio.Controls
 
         private readonly List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
 
-        private readonly List<IDocumentLineTransformer> languageServiceDocumentLineTransformers =
-            new List<IDocumentLineTransformer>();
+        private readonly List<IVisualLineTransformer> languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
 
         private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;
 
@@ -103,13 +103,13 @@ namespace AvalonStudio.Controls
 
             if (Model.Editor != null)
             {
-                if (Model.Editor.SelectionStart < Model.Editor.SelectionEnd)
+                if (Model.Editor.SelectionStart < (Model.Editor.SelectionStart + Model.Editor.SelectionLength))
                 {
-                    result = new TextSegment { StartOffset = Model.Editor.SelectionStart, EndOffset = Model.Editor.SelectionEnd };
+                    result = new TextSegment { StartOffset = Model.Editor.SelectionStart, EndOffset = (Model.Editor.SelectionStart + Model.Editor.SelectionLength) };
                 }
                 else
                 {
-                    result = new TextSegment { StartOffset = Model.Editor.SelectionEnd, EndOffset = Model.Editor.SelectionStart };
+                    result = new TextSegment { StartOffset = (Model.Editor.SelectionStart + Model.Editor.SelectionLength), EndOffset = Model.Editor.SelectionStart };
                 }
             }
 
@@ -121,7 +121,7 @@ namespace AvalonStudio.Controls
             if (Model.Editor != null)
             {
                 Model.Editor.SelectionStart = segment.StartOffset;
-                Model.Editor.SelectionEnd = segment.EndOffset;
+                Model.Editor.SelectionLength = segment.EndOffset - segment.StartOffset;
             }
         }
 
@@ -152,7 +152,8 @@ namespace AvalonStudio.Controls
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
-                Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
+                
+                //Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
                 Save();
                 Model.ShutdownBackgroundWorkers();
                 Model.UnRegisterLanguageService();
@@ -179,7 +180,7 @@ namespace AvalonStudio.Controls
             model.DocumentLoaded += (sender, e) =>
             {
                 model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
-                Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
+               // Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
 
                 foreach (var bgRenderer in languageServiceBackgroundRenderers)
                 {
@@ -238,7 +239,7 @@ namespace AvalonStudio.Controls
                         }
                     };
 
-                    Model.Editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
+                    //Model.Editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
 
                     disposables.Add(Model.Editor.AddHandler(InputElement.KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel));
                     disposables.Add(Model.Editor.AddHandler(InputElement.KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel));
@@ -280,7 +281,7 @@ namespace AvalonStudio.Controls
 
             intellisense = new IntellisenseViewModel(model, this);
 
-            documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
+            documentLineTransformers = new ObservableCollection<IVisualLineTransformer>();
 
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
             backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
@@ -293,7 +294,7 @@ namespace AvalonStudio.Controls
             backgroundRenderers.Add(wordAtCaretHighlighter);
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
 
-            margins = new ObservableCollection<TextViewMargin>();
+            //margins = new ObservableCollection<TextViewMargin>();
 
             Dock = Dock.Right;
         }
@@ -345,21 +346,21 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref backgroundRenderers, value); }
         }
 
-        private ObservableCollection<IDocumentLineTransformer> documentLineTransformers;
+        private ObservableCollection<IVisualLineTransformer> documentLineTransformers;
 
-        public ObservableCollection<IDocumentLineTransformer> DocumentLineTransformers
+        public ObservableCollection<IVisualLineTransformer> DocumentLineTransformers
         {
             get { return documentLineTransformers; }
             set { this.RaiseAndSetIfChanged(ref documentLineTransformers, value); }
         }
 
-        private ObservableCollection<TextViewMargin> margins;
+       /* private ObservableCollection<TextViewMargin> margins;
 
         public ObservableCollection<TextViewMargin> Margins
         {
             get { return margins; }
             set { this.RaiseAndSetIfChanged(ref margins, value); }
-        }
+        }*/
 
         private string wordAtCaret;
 
@@ -526,21 +527,21 @@ namespace AvalonStudio.Controls
 
                 var charClass = TextUtilities.GetCharacterClass(currentChar);
 
-                if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ' &&
-                    TextUtilities.GetCharacterClass(prevChar) != TextUtilities.CharacterClass.LineTerminator)
+                if (charClass != CharacterClass.LineTerminator && prevChar != ' ' &&
+                    TextUtilities.GetCharacterClass(prevChar) != CharacterClass.LineTerminator)
                 {
-                    start = TextUtilities.GetNextCaretPosition(TextDocument, offset, TextUtilities.LogicalDirection.Backward,
-                        TextUtilities.CaretPositioningMode.WordStart);
+                    start = TextUtilities.GetNextCaretPosition(TextDocument, offset, LogicalDirection.Backward,
+                        CaretPositioningMode.WordStart);
                 }
 
-                var end = TextUtilities.GetNextCaretPosition(TextDocument, start, TextUtilities.LogicalDirection.Forward,
-                    TextUtilities.CaretPositioningMode.WordBorder);
+                var end = TextUtilities.GetNextCaretPosition(TextDocument, start, LogicalDirection.Forward,
+                    CaretPositioningMode.WordBorder);
 
                 if (start != -1 && end != -1)
                 {
                     var word = TextDocument.GetText(start, end - start).Trim();
 
-                    if (TextUtilities.IsSymbol(word))
+                    if (word.IsSymbol())
                     {
                         result = word;
                     }

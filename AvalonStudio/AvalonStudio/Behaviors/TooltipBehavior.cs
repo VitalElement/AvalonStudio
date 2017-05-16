@@ -70,7 +70,7 @@ namespace AvalonStudio.Behaviors
             {
                 if (AssociatedObject != null && popup.PlacementTarget == null)
                 {
-                    popup.PlacementTarget = AssociatedObject as TextEditor.TextEditor;
+                    popup.PlacementTarget = AssociatedObject as AvaloniaEdit.TextEditor;
                     popup.Child = new Grid
                     {
                         Children = new Avalonia.Controls.Controls { o.NewValue as Control },

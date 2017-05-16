@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Media;
+using AvaloniaEdit.Rendering;
 using System;
 
 namespace AvalonStudio.TextEditor.Rendering
@@ -13,11 +14,13 @@ namespace AvalonStudio.TextEditor.Rendering
             selectedLineBg = Brush.Parse("#FF0E0E0E");
         }
 
+        public KnownLayer Layer => KnownLayer.Background;
+
         public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            if (textView.SelectionStart == textView.SelectionEnd && textView.CaretIndex != -1 &&
+            /*if (textView.SelectionStart == textView.SelectionEnd && textView.CaretIndex != -1 &&
                 textView.CaretIndex <= textView.TextDocument.TextLength)
             {
                 var currentLine = textView.TextDocument.GetLineByOffset(textView.CaretIndex);
@@ -29,7 +32,7 @@ namespace AvalonStudio.TextEditor.Rendering
                     var drawRect = new Rect(rect.TopLeft.X, rect.TopLeft.Y, textView.Bounds.Width, rect.Height);
                     drawingContext.FillRectangle(selectedLineBg, drawRect);
                 }
-            }
+            }*/
         }
 
         public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)

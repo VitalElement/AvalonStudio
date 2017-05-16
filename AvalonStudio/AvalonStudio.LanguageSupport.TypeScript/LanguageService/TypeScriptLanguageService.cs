@@ -1,10 +1,10 @@
-﻿using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+﻿using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Rendering;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Languages;
 using AvalonStudio.LanguageSupport.TypeScript.Projects;
 using AvalonStudio.Projects;
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.TextEditor.Indentation;
-using AvalonStudio.TextEditor.Rendering;
 using IridiumJS.Runtime;
 using Newtonsoft.Json;
 using System;
@@ -166,7 +166,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         {
             var result = caret;
 
-            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+          /*  var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
 
             textDocument.BeginUpdate();
 
@@ -180,7 +180,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
             }
 
-            textDocument.EndUpdate();
+            textDocument.EndUpdate();*/
 
             return result;
         }
@@ -198,7 +198,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return associatedData.BackgroundRenderers;
         }
 
-        public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
+        public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
         {
             var associatedData = GetAssociatedData(file);
 
@@ -218,7 +218,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         }
 
         public void RegisterSourceFile(IIntellisenseControl intellisenseControl,
-            ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file,
+            ICompletionAssistant completionAssistant, AvaloniaEdit.TextEditor editor, ISourceFile file,
             TextDocument textDocument)
         {
             _typeScriptContext = _typeScriptContext ?? ((TypeScriptProject)file.Project).TypeScriptContext;
@@ -474,7 +474,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         {
             var result = caret;
 
-            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+          /*  var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
 
             textDocument.BeginUpdate();
 
@@ -493,7 +493,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
             }
 
-            textDocument.EndUpdate();
+            textDocument.EndUpdate();*/
 
             return result;
         }
@@ -510,7 +510,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return result;
         }
 
-        public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
+        public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
         {
             _typeScriptContext.RemoveFile(file.FilePath);
             dataAssociations.Remove(file);

@@ -1,5 +1,6 @@
 using Avalonia.Media;
-using AvalonStudio.TextEditor.Document;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
 using System;
 
 namespace AvalonStudio.TextEditor.Rendering
@@ -13,11 +14,13 @@ namespace AvalonStudio.TextEditor.Rendering
             selectionBrush = Brush.Parse("#AA569CD6");
         }
 
+        public KnownLayer Layer => KnownLayer.Background;
+
         public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            if (textView.SelectionStart != textView.SelectionEnd && textView.SelectionEnd >= 0 && textView.SelectionStart >= 0)
+            /*if (textView.SelectionStart != textView.SelectionEnd && textView.SelectionEnd >= 0 && textView.SelectionStart >= 0)
             {
                 TextSegment selection;
 
@@ -36,7 +39,7 @@ namespace AvalonStudio.TextEditor.Rendering
                 {
                     drawingContext.FillRectangle(selectionBrush, rect);
                 }
-            }
+            }*/
         }
 
         public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)

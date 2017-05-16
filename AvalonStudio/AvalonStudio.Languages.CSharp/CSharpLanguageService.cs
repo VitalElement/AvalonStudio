@@ -2,6 +2,9 @@
 {
     using Avalonia.Input;
     using Avalonia.Interactivity;
+    using AvaloniaEdit.Document;
+    using AvaloniaEdit.Indentation;
+    using AvaloniaEdit.Rendering;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
@@ -12,10 +15,6 @@
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
-    using TextEditor;
-    using TextEditor.Document;
-    using TextEditor.Indentation;
-    using TextEditor.Rendering;
 
     public class CSharpLanguageService : ILanguageService
     {
@@ -24,7 +23,7 @@
 
         public CSharpLanguageService()
         {
-            IndentationStrategy = new CSharpIndentationStrategy();
+            //IndentationStrategy = new CSharpIndentationStrategy();
         }
 
         public Type BaseTemplateType
@@ -182,7 +181,7 @@
             return associatedData.BackgroundRenderers;
         }
 
-        public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
+        public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
         {
             var associatedData = GetAssociatedData(file);
 
@@ -201,7 +200,7 @@
             //throw new NotImplementedException();
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor editor, ISourceFile file, TextDocument textDocument)
+        public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument)
         {
             CSharpDataAssociation association = null;
 
@@ -217,13 +216,13 @@
 
             association.KeyUpHandler = (sender, e) =>
             {
-                if (editor.TextDocument == textDocument)
+                if (editor.Document == textDocument)
                 {
                     switch (e.Key)
                     {
                         case Key.Return:
                             {
-                                editor.Indent(IndentationStrategy);
+                                IndentationStrategy.IndentLines(editor.Document, 1, editor.Document.LineCount - 1);
                             }
                             break;
                     }
@@ -322,7 +321,7 @@
             throw new NotImplementedException();
         }
 
-        public void UnregisterSourceFile(TextEditor editor, ISourceFile file)
+        public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
         {
             var association = GetAssociatedData(file);
 

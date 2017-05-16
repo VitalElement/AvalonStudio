@@ -389,8 +389,8 @@ namespace AvalonStudio
                 await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                 {
                     newEditor = new EditorViewModel(new EditorModel());
-                    newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager2>().Breakpoints));
-                    newEditor.Margins.Add(new LineNumberMargin());
+                    /*newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager2>().Breakpoints));
+                    newEditor.Margins.Add(new LineNumberMargin());*/
 
                     await Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {

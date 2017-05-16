@@ -1,11 +1,11 @@
 using Avalonia.Threading;
+using AvaloniaEdit.Document;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
-using AvalonStudio.TextEditor.Document;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
@@ -59,7 +59,7 @@ namespace AvalonStudio.Controls
             //});
         }
 
-        public TextEditor.TextEditor Editor { get; set; }
+        public AvaloniaEdit.TextEditor Editor { get; set; }
 
         public ISourceFile ProjectFile { get; private set; }
 

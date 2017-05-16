@@ -9,7 +9,7 @@ namespace AvalonStudio.Controls
     public class EditorView : UserControl
     {
         private readonly CompositeDisposable disposables;
-        private TextEditor.TextEditor editor;
+        private AvaloniaEdit.TextEditor editor;
         private EditorViewModel editorViewModel;
 
         public EditorView()
@@ -25,10 +25,10 @@ namespace AvalonStudio.Controls
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            editor = this.Find<TextEditor.TextEditor>("editor");
+            editor = this.Find<AvaloniaEdit.TextEditor>("editor");
 
-            editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
-            editor.EditorScrolled += Editor_EditorScrolled;
+            //editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
+            //editor.EditorScrolled += Editor_EditorScrolled;
 
             editorViewModel = DataContext as EditorViewModel;
 
@@ -51,8 +51,8 @@ namespace AvalonStudio.Controls
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            editor.EditorScrolled -= Editor_EditorScrolled;
-            editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
+           // editor.EditorScrolled -= Editor_EditorScrolled;
+            //editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
 
             editor = null;
             editorViewModel = null;

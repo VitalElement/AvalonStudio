@@ -1,5 +1,5 @@
 using Avalonia.Media;
-using AvalonStudio.TextEditor.Document;
+using AvaloniaEdit.Rendering;
 using System;
 using System.Linq;
 
@@ -33,11 +33,13 @@ namespace AvalonStudio.TextEditor.Rendering
             }
         }
 
+        public KnownLayer Layer => KnownLayer.Background;
+
         public event EventHandler<EventArgs> DataChanged;
 
         public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
         {
-            if (!string.IsNullOrEmpty(SelectedWord) && line.RenderedText.Text.Contains(SelectedWord))
+            /*if (!string.IsNullOrEmpty(SelectedWord) && line.RenderedText.Text.Contains(SelectedWord))
             {
                 var startIndex = 0;
 
@@ -60,7 +62,7 @@ namespace AvalonStudio.TextEditor.Rendering
                         startIndex += SelectedWord.Length;
                     }
                 }
-            }
+            }*/
         }
 
         public void Draw(TextView textView, DrawingContext drawingContext)

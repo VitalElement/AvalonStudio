@@ -1,15 +1,18 @@
 using Avalonia;
 using Avalonia.Media;
-using AvalonStudio.TextEditor.Document;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AvalonStudio.TextEditor.Rendering
+namespace AvalonStudio.Extensibility.Editor
 {
     public class TextMarkerService : IBackgroundRenderer
     {
         private readonly TextSegmentCollection<TextMarker> markers;
+
+        public KnownLayer Layer => KnownLayer.Background;
 
         public TextMarkerService(TextDocument document)
         {
@@ -29,42 +32,42 @@ namespace AvalonStudio.TextEditor.Rendering
                 return;
             }
 
-            var markersInLine = markers.FindOverlappingSegments(line);
+            /* var markersInLine = markers.FindOverlappingSegments(line);
 
-            foreach (var marker in markersInLine)
-            {
-                if (marker.EndOffset < textView.TextDocument.TextLength)
-                {
-                    foreach (var r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
-                    {
-                        var startPoint = r.BottomLeft;
-                        var endPoint = r.BottomRight;
+             foreach (var marker in markersInLine)
+             {
+                 if (marker.EndOffset < textView.Document.TextLength)
+                 {
+                     foreach (var r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
+                     {
+                         var startPoint = r.BottomLeft;
+                         var endPoint = r.BottomRight;
 
-                        var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
+                         var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
 
-                        const double offset = 2.5;
+                         const double offset = 2.5;
 
-                        var count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
+                         var count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
 
-                        var geometry = new StreamGeometry();
+                         var geometry = new StreamGeometry();
 
-                        using (var ctx = geometry.Open())
-                        {
-                            ctx.BeginFigure(startPoint, false);
+                         using (var ctx = geometry.Open())
+                         {
+                             ctx.BeginFigure(startPoint, false);
 
-                            foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
-                            {
-                                ctx.LineTo(point);
-                            }
+                             foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+                             {
+                                 ctx.LineTo(point);
+                             }
 
-                            ctx.EndFigure(false);
-                        }
+                             ctx.EndFigure(false);
+                         }
 
-                        drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
-                        break;
-                    }
-                }
-            }
+                         drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
+                         break;
+                     }
+                 }
+             }*/
         }
 
         private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)

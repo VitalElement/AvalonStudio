@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Media;
-using AvalonStudio.TextEditor.Document;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
 using System;
 
 namespace AvalonStudio.TextEditor.Rendering
@@ -66,13 +67,15 @@ namespace AvalonStudio.TextEditor.Rendering
             }
         }
 
+        public KnownLayer Layer => KnownLayer.Background;
+
         public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            if (_line > 0 && _line < textView.TextDocument.LineCount)
+            if (_line > 0 && _line < textView.Document.LineCount)
             {
-                var currentLine = textView.TextDocument.GetLineByNumber(_line);
+                var currentLine = textView.Document.GetLineByNumber(_line);
 
                 var segment = new TextSegment();
                 segment.StartOffset = currentLine.Offset;
@@ -80,31 +83,31 @@ namespace AvalonStudio.TextEditor.Rendering
 
                 if (_startColumn != -1 && _endColumn != -1)
                 {
-                    segment.StartOffset = textView.TextDocument.GetOffset(_line, _startColumn);
-                    segment.EndOffset = textView.TextDocument.GetOffset(_line, _endColumn);
+                    segment.StartOffset = textView.Document.GetOffset(_line, _startColumn);
+                    segment.EndOffset = textView.Document.GetOffset(_line, _endColumn);
                 }
                 else
                 {
-                    _startColumn = textView.TextDocument.GetLocation(segment.StartOffset).Column;
-                    _endColumn = textView.TextDocument.GetLocation(segment.EndOffset).Column;
+                    _startColumn = textView.Document.GetLocation(segment.StartOffset).Column;
+                    _endColumn = textView.Document.GetLocation(segment.EndOffset).Column;
                 }
 
-                var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, segment);
+               /* var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, segment);
 
                 foreach (var rect in rects)
                 {
                     var drawRect = new Rect(rect.TopLeft.X - 1, rect.TopLeft.Y - 1, rect.Width + 2, rect.Height + 2);
                     drawingContext.FillRectangle(selectedLineBg, drawRect);
-                }
+                }*/
             }
         }
 
         public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
         {
-            if (line.DocumentLine.LineNumber == Line)
+           /* if (line.DocumentLine.LineNumber == Line)
             {
                 line.RenderedText.SetTextStyle(StartColumn - 1, EndColumn - StartColumn, Brushes.Black);
-            }
+            }*/
         }
     }
 }

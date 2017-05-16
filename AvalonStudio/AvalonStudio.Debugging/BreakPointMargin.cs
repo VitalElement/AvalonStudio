@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace AvalonStudio.TextEditor
 {
-    public class BreakPointMargin : TextViewMargin
+   /* public class BreakPointMargin : TextViewMargin
     {
         private readonly BreakpointStore _manager;
 
@@ -118,5 +118,5 @@ namespace AvalonStudio.TextEditor
         {
             InvalidateVisual();
         }
-    }
+    }*/
 }

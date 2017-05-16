@@ -5,8 +5,8 @@
     <StyleInclude Source="resm:AvalonStudio.Themes.Accents.DarkAccent.xaml?assembly=AvalonStudio"/>
     <StyleInclude Source="resm:AvalonStudio.Controls.MetroWindowTheme.paml?assembly=AvalonStudio" />
     <StyleInclude Source="resm:AvalonStudio.Extensibility.Controls.ControlTheme.paml?assembly=AvalonStudio.Extensibility" />
-    <StyleInclude Source="resm:AvalonStudio.TextEditor.TextEditor.paml?assembly=AvalonStudio.TextEditor" />
     <StyleInclude Source="resm:AvalonStudio.Styles.GlobalStyles.xaml?assembly=AvalonStudio" />
     <StyleInclude Source="resm:Mabiavalon.DockNC.Themes.Controls.paml?assembly=Mabiavalon.DockNC" />
+    <StyleInclude Source="resm:AvaloniaEdit.AvaloniaEdit.xaml?assembly=AvaloniaEdit" />
   </Application.Styles>
 </Application>
