@@ -4,7 +4,7 @@
         Foreground="#FFE4E4E4" Title="">
 
     <StackPanel>
-        <TextBlock Text="AvalonStudio" FontSize="40" />
+        <TextBlock Text="AvalonStudio" FontSize="50" TextAlignment="Center" />
     </StackPanel>
     
 </avalon:MetroWindow>
