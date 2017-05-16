@@ -1,0 +1,10 @@
+﻿<avalon:MetroWindow xmlns="https://github.com/avaloniaui"
+        xmlns:avalon="clr-namespace:AvalonStudio.Extensibility.Controls;assembly=AvalonStudio.Extensibility"
+        Width="500" Height="300" BorderThickness="1" BorderBrush="#FF004C8A" FontFamily="Segoe UI" FontWeight="Light"
+        Foreground="#FFE4E4E4" Title="">
+
+    <StackPanel>
+        <TextBlock Text="AvalonStudio" FontSize="40" />
+    </StackPanel>
+    
+</avalon:MetroWindow>
