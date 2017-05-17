@@ -400,7 +400,7 @@ namespace AvalonStudio
 
                     DocumentTabs.SelectedDocument = newEditor;
 
-                   // await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
+                   await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
 
                     selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
                 });
