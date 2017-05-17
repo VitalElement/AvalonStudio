@@ -12,10 +12,10 @@
     <Grid>
       <DockPanel>
         <editor:CodeEditor Name="editor" DockPanel.Dock="Top"
-                                TextBlock.FontFamily="{Binding FontFamily}" TextBlock.FontSize="13"
+                                TextBlock.FontFamily="{Binding FontFamily}" TextBlock.FontSize="14"
                                 Foreground="#DCDCDC" BorderThickness="0" TextBlock.FontWeight="ExtraLight"
-                               Document="{Binding TextDocument}"
-                                VerticalAlignment="Stretch" Background="#0c0c0c">
+                                Document="{Binding TextDocument}" Margin="5 0"
+                                VerticalAlignment="Stretch" Background="#1e1e1e">
 
           <!-- <te:TextEditor.ContextMenu>
                     <ContextMenu>
