@@ -1,35 +1,25 @@
 using Avalonia.Media;
+using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
-using System;
-using System.Collections.Generic;
+using AvalonStudio.CodeEditor;
 
 namespace AvalonStudio.Languages.CPlusPlus.Rendering
 {
-    internal class IncludeTextLineTransformer : IVisualLineTransformer
+    internal class IncludeTextLineTransformer : GenericLineTransformer
     {
         private readonly IBrush brush = Brush.Parse("#D69D85");
         private readonly IBrush pragmaBrush = Brush.Parse("#9B9B9B");
 
-#pragma warning disable 67
-
-        public event EventHandler<EventArgs> DataChanged;
-
-        public void Transform(ITextRunConstructionContext context, IList<VisualLineElement> elements)
+        protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            throw new NotImplementedException();
-        }
-
-#pragma warning restore 67
-
-        public void TransformLine(TextView textView, VisualLine line)
-        {
-            /*if (line.RenderedText.Text.Contains("#include") && !line.RenderedText.Text.Trim().StartsWith("//"))
+            var text = context.Document.GetText(line);
+            if (text.Contains("#include") && !text.Trim().StartsWith("//"))
             {
-                var startIndex = line.RenderedText.Text.IndexOf("#include");
-                
-                line.RenderedText.SetTextStyle(startIndex, 8, pragmaBrush);
-                line.RenderedText.SetTextStyle(startIndex + 9, line.RenderedText.Text.Length - startIndex, brush);
-            }*/
+                var startIndex = text.IndexOf("#include");
+
+                SetTextStyle(line, startIndex, 8, pragmaBrush);
+                SetTextStyle(line, startIndex + 8, text.Length - (startIndex + 8), brush);
+            }
         }
     }
 }

@@ -23,22 +23,6 @@ namespace AvalonStudio.Controls
         {
         }
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            editor = this.Find<AvaloniaEdit.TextEditor>("editor");
-
-            //editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
-            //editor.EditorScrolled += Editor_EditorScrolled;
-
-            editorViewModel = DataContext as EditorViewModel;
-
-            if (editorViewModel != null && editor != null)
-            {
-                editorViewModel.Model.Editor = editor;
-                editor.Focus();
-            }
-        }
-
         private void Editor_EditorScrolled(object sender, EventArgs e)
         {
             editorViewModel.Intellisense.IsVisible = false;

@@ -364,7 +364,7 @@ namespace AvalonStudio
 
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
         {
-            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.Model.ProjectFile?.FilePath == file.FilePath);
+            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
 
             var selectedDocumentTCS = new TaskCompletionSource<IDocumentTabViewModel>();
 
@@ -388,7 +388,7 @@ namespace AvalonStudio
 
                 await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                 {
-                    newEditor = new EditorViewModel(new EditorModel());
+                    newEditor = new EditorViewModel();
                     /*newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager2>().Breakpoints));
                     newEditor.Margins.Add(new LineNumberMargin());*/
 
@@ -400,7 +400,7 @@ namespace AvalonStudio
 
                     DocumentTabs.SelectedDocument = newEditor;
 
-                    await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
+                   // await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
 
                     selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
                 });
@@ -423,7 +423,7 @@ namespace AvalonStudio
 
                 if (selectLine || debugHighlight)
                 {
-                    Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).Model.ScrollToLine(line));
+                   // Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).ScrollToLine(line));
                     (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
                 }
             }
@@ -433,7 +433,7 @@ namespace AvalonStudio
 
         public IEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(d => d.Model.ProjectFile?.FilePath == path);
+            return DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(d => d.ProjectFile?.FilePath == path);
         }
 
         public void Save()
@@ -650,7 +650,7 @@ namespace AvalonStudio
 
             foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
             {
-                if (document.Model.CodeAnalysisResults != null)
+                /*if (document.Model.CodeAnalysisResults != null)
                 {
                     foreach (var diagnostic in document.Model.CodeAnalysisResults.Diagnostics)
                     {
@@ -662,7 +662,7 @@ namespace AvalonStudio
                             allErrors.Add(error);
                         }
                     }
-                }
+                }*/
             }
 
             foreach (var error in ErrorList.Errors)
@@ -702,7 +702,7 @@ namespace AvalonStudio
         {
             foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
             {
-                document.Model.ShutdownBackgroundWorkers();
+               // document.Model.ShutdownBackgroundWorkers();
             }
         }
 

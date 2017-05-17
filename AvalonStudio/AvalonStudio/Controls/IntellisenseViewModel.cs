@@ -12,7 +12,7 @@ namespace AvalonStudio.Controls
     public class IntellisenseViewModel : ViewModel, IIntellisenseControl, IDisposable
     {
         private IList<CompletionDataViewModel> completionData;
-        private EditorModel editor;
+        private CodeEditor.CodeEditor editor;
         private EditorViewModel editorViewModel;
 
         private bool isVisible;
@@ -21,7 +21,7 @@ namespace AvalonStudio.Controls
 
         private CompletionDataViewModel selectedCompletion;
 
-        public IntellisenseViewModel(EditorModel editor, EditorViewModel viewModel)
+        public IntellisenseViewModel(CodeEditor.CodeEditor editor, EditorViewModel viewModel)
         {
             completionData = new List<CompletionDataViewModel>();
             completionAssistant = new CompletionAssistantViewModel(this);

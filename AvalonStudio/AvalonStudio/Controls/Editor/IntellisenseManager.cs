@@ -391,7 +391,7 @@
                                 }).Wait();
                             }
 
-                            var signatureHelpTask = languageService.SignatureHelp(file, EditorModel.UnsavedFiles.FirstOrDefault(), EditorModel.UnsavedFiles.ToList(), line, column, caretIndex, currentWord);
+                            var signatureHelpTask = languageService.SignatureHelp(file, CodeEditor.CodeEditor.UnsavedFiles.FirstOrDefault(), CodeEditor.CodeEditor.UnsavedFiles.ToList(), line, column, caretIndex, currentWord);
                             signatureHelpTask.Wait();
 
                             var signatureHelp = signatureHelpTask.Result;
@@ -419,7 +419,7 @@
 
                         if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
                         {
-                            SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
+                            SetCursor(caretIndex, line, column, CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                         }
 
                         if (IsTriggerChar(currentChar, intellisenseControl.IsVisible) || IsLanguageSpecificTriggerChar(currentChar))
@@ -435,7 +435,7 @@
                             else
                             {
                                 CloseIntellisense();
-                                SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
+                                SetCursor(caretIndex, line, column, CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                             }
 
                             isProcessingKey = intellisenseControl.IsVisible;
@@ -558,12 +558,12 @@
                     {
                         CloseIntellisense();
 
-                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
+                        SetCursor(caretIndex, line, column, CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                     }
 
                     if (e.Key == Key.Enter)
                     {
-                        SetCursor(caretIndex, line, column, EditorModel.UnsavedFiles.ToList(), false);
+                        SetCursor(caretIndex, line, column, CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                     }
                 });
             }
