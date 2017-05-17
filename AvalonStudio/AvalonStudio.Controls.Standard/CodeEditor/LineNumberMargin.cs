@@ -1,16 +1,16 @@
-﻿using System;
-using System.Globalization;
-using Avalonia;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Rendering;
-using AvaloniaEdit.Utils;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Media;
+using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
+using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Utils;
+using System;
+using System.Globalization;
 
-namespace AvalonStudio.CodeEditor
+namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     /// <summary>
     /// Margin showing line numbers.

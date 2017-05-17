@@ -1,27 +1,27 @@
 ﻿using Avalonia;
+using Avalonia.Threading;
+using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
-using System.Collections.ObjectModel;
-using System;
-using System.Collections.Specialized;
-using System.Reactive.Subjects;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
+using AvalonStudio.Languages;
+using AvalonStudio.Projects;
+using AvalonStudio.Shell;
+using AvalonStudio.Utils;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Reactive.Linq;
-using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-using AvalonStudio.Languages;
-using System.Collections.Generic;
-using AvalonStudio.Projects;
-using AvaloniaEdit.Document;
-using Avalonia.Threading;
-using System.Linq;
-using AvalonStudio.Utils;
-using AvalonStudio.Shell;
 
-namespace AvalonStudio.CodeEditor
+namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class CodeEditor : AvaloniaEdit.TextEditor
     {
@@ -64,7 +64,7 @@ namespace AvalonStudio.CodeEditor
 
         public ILanguageService LanguageService { get; set; }
 
-   
+
         public CodeEditor()
         {
             _codeAnalysisRunner = new JobRunner();
@@ -81,14 +81,14 @@ namespace AvalonStudio.CodeEditor
 
             DocumentLineTransformersProperty.Changed.Subscribe(s =>
             {
-                if(s.OldValue != null)
+                if (s.OldValue != null)
                 {
                     var list = s.OldValue as ObservableCollection<IVisualLineTransformer>;
 
                     list.CollectionChanged -= List_CollectionChanged;
                 }
 
-                if(s.NewValue != null)
+                if (s.NewValue != null)
                 {
                     var list = s.NewValue as ObservableCollection<IVisualLineTransformer>;
 
@@ -148,8 +148,8 @@ namespace AvalonStudio.CodeEditor
 
         public void SetSelection(TextSegment segment)
         {
-             SelectionStart = segment.StartOffset;
-             SelectionLength = segment.EndOffset - segment.StartOffset;
+            SelectionStart = segment.StartOffset;
+            SelectionLength = segment.EndOffset - segment.StartOffset;
         }
 
         public void Comment()
@@ -209,21 +209,21 @@ namespace AvalonStudio.CodeEditor
 
         public void Save()
         {
-           /* if (ProjectFile != null && Document != null && IsDirty)
-            {
-                System.IO.File.WriteAllText(ProjectFile.Location, TextDocument.Text);
-                IsDirty = false;
+            /* if (ProjectFile != null && Document != null && IsDirty)
+             {
+                 System.IO.File.WriteAllText(ProjectFile.Location, TextDocument.Text);
+                 IsDirty = false;
 
-                lock (UnsavedFiles)
-                {
-                    var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+                 lock (UnsavedFiles)
+                 {
+                     var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
 
-                    if (unsavedFile != null)
-                    {
-                        UnsavedFiles.Remove(unsavedFile);
-                    }
-                }
-            }*/
+                     if (unsavedFile != null)
+                     {
+                         UnsavedFiles.Remove(unsavedFile);
+                     }
+                 }
+             }*/
         }
 
         public void OnTextChanged(object param)
@@ -245,10 +245,11 @@ namespace AvalonStudio.CodeEditor
                     // TODO allow interruption.
                     var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, unsavedFiles, () => false);
 
-                    Dispatcher.UIThread.InvokeAsync(() => {
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
                         Diagnostics = result.Diagnostics;
 
-                        ShellViewModel.Instance.InvalidateErrors();
+                        _shell.InvalidateErrors();
 
                         TextArea.TextView.Redraw();
                     });
@@ -266,7 +267,7 @@ namespace AvalonStudio.CodeEditor
 
             if (LanguageService != null)
             {
-                ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
+                //_shell.Instance.StatusBar.Language = LanguageService.Title;
 
                 LanguageService.RegisterSourceFile(intellisenseControl, completionAssistant, this, SourceFile, Document);
 
@@ -279,7 +280,7 @@ namespace AvalonStudio.CodeEditor
 
                 _languageServiceDocumentLineTransformers.AddRange(LanguageService.GetDocumentLineTransformers(SourceFile));
 
-                foreach(var transformer in _languageServiceDocumentLineTransformers)
+                foreach (var transformer in _languageServiceDocumentLineTransformers)
                 {
                     TextArea.TextView.LineTransformers.Add(transformer);
                 }
@@ -287,7 +288,7 @@ namespace AvalonStudio.CodeEditor
             else
             {
                 LanguageService = null;
-                ShellViewModel.Instance.StatusBar.Language = "Text";
+                //ShellViewModel.Instance.StatusBar.Language = "Text";
             }
 
             //IsDirty = false;
@@ -303,14 +304,14 @@ namespace AvalonStudio.CodeEditor
 
         public void UnRegisterLanguageService()
         {
-            foreach(var backgroundRenderer in  _languageServiceBackgroundRenderers)
+            foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
             {
                 TextArea.TextView.BackgroundRenderers.Remove(backgroundRenderer);
             }
 
             _languageServiceBackgroundRenderers.Clear();
 
-            foreach(var transformer in _languageServiceDocumentLineTransformers)
+            foreach (var transformer in _languageServiceDocumentLineTransformers)
             {
                 TextArea.TextView.LineTransformers.Remove(transformer);
             }
@@ -369,10 +370,10 @@ namespace AvalonStudio.CodeEditor
 
         private void List_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            switch(e.Action)
+            switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    foreach(var transformer in e.NewItems)
+                    foreach (var transformer in e.NewItems)
                     {
                         TextArea.TextView.LineTransformers.Add(transformer as IVisualLineTransformer);
                     }
@@ -387,6 +388,16 @@ namespace AvalonStudio.CodeEditor
 
             }
         }
+
+        public static readonly StyledProperty<int> CaretOffsetProperty =
+            AvaloniaProperty.Register<CodeEditor, int>(nameof(EditorCaretOffset));
+
+        public int EditorCaretOffset
+        {
+            get { return GetValue(CaretOffsetProperty); }
+            set { SetValue(CaretOffsetProperty, value); }
+        }
+
 
         public static readonly StyledProperty<ObservableCollection<IVisualLineTransformer>> DocumentLineTransformersProperty =
             AvaloniaProperty.Register<CodeEditor, ObservableCollection<IVisualLineTransformer>>(nameof(DocumentLineTransformers), new ObservableCollection<IVisualLineTransformer>());

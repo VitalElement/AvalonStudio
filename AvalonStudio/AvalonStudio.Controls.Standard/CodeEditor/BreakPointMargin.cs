@@ -1,16 +1,13 @@
-﻿using AvaloniaEdit.Editing;
+﻿using Avalonia;
+using Avalonia.Input;
+using Avalonia.Media;
+using AvaloniaEdit.Editing;
+using AvalonStudio.Platforms;
 using Mono.Debugging.Client;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Avalonia.Media;
-using Avalonia.Input;
-using Avalonia;
-using Avalonia.Controls;
 using System.Linq;
-using AvalonStudio.Platforms;
 
-namespace AvalonStudio.CodeEditor
+namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class BreakPointMargin : AbstractMargin
     {
@@ -64,7 +61,7 @@ namespace AvalonStudio.CodeEditor
             var textView = TextView;
 
             var offset = _editor.GetOffsetFromPoint(e.GetPosition(this));
-            
+
             if (offset != -1)
             {
                 previewLine = textView.Document.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.

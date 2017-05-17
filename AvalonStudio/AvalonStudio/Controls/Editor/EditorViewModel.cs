@@ -308,7 +308,7 @@ namespace AvalonStudio.Controls
             if (intellisenseManager != null)
             {
                 var location = TextDocument.GetLocation(caretIndex);
-                intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, CodeEditor.CodeEditor.UnsavedFiles.ToList());
+                intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList());
             }
         }
 

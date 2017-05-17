@@ -62,6 +62,8 @@ namespace AvalonStudio.Shell
 
         void InvalidateCodeAnalysis();
 
+        void InvalidateErrors();
+
         void Build(IProject project);
 
         void Clean(IProject project);

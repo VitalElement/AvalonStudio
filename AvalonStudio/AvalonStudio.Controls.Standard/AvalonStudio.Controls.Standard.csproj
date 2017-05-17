@@ -11,6 +11,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutScreen\AboutDialogView.paml" />
+    <EmbeddedResource Include="CodeEditor\CodeEditor.xaml" />
     <EmbeddedResource Include="Console\ConsoleView.paml" />
     <EmbeddedResource Include="ErrorList\ErrorListView.paml" />
     <EmbeddedResource Include="SolutionExplorer\NewItemDialogView.paml" />
@@ -24,6 +25,8 @@
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
   </ItemGroup>
 </Project>
