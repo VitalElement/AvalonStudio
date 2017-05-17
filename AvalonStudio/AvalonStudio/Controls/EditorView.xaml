@@ -17,7 +17,7 @@
                                 SourceFile="{Binding SourceFile}" Margin="5 0"
                                 BackgroundRenderers="{Binding BackgroundRenderers}" 
                                 DocumentLineTransformers="{Binding DocumentLineTransformers}"
-                                VerticalAlignment="Stretch" Background="#1e1e1e">
+                                VerticalAlignment="Stretch" Background="#1e1e1e" Diagnostics="{Binding Diagnostics}">
 
           <!-- <te:TextEditor.ContextMenu>
                     <ContextMenu>

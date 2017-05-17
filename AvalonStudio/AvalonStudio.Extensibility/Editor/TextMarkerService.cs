@@ -23,51 +23,59 @@ namespace AvalonStudio.Extensibility.Editor
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-        }
-
-        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
-        {
             if (markers == null)
             {
                 return;
             }
 
-            /* var markersInLine = markers.FindOverlappingSegments(line);
+            var visualLines = textView.VisualLines;
+            if (visualLines.Count == 0)
+            {
+                return;
+            }
 
-             foreach (var marker in markersInLine)
-             {
-                 if (marker.EndOffset < textView.Document.TextLength)
-                 {
-                     foreach (var r in VisualLineGeometryBuilder.GetRectsForSegment(textView, marker))
-                     {
-                         var startPoint = r.BottomLeft;
-                         var endPoint = r.BottomRight;
+            int viewStart = visualLines.First().FirstDocumentLine.Offset;
+            int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
 
-                         var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
+            foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart))
+            {
+                if (marker.EndOffset < textView.Document.TextLength)
+                {
+                    foreach (var r in BackgroundGeometryBuilder.GetRectsForSegment(textView, marker))
+                    {
+                        var startPoint = r.BottomLeft;
+                        var endPoint = r.BottomRight;
 
-                         const double offset = 2.5;
+                        var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
 
-                         var count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
+                        const double offset = 2.5;
 
-                         var geometry = new StreamGeometry();
+                        var count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
 
-                         using (var ctx = geometry.Open())
-                         {
-                             ctx.BeginFigure(startPoint, false);
+                        var geometry = new StreamGeometry();
 
-                             foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
-                             {
-                                 ctx.LineTo(point);
-                             }
+                        using (var ctx = geometry.Open())
+                        {
+                            ctx.BeginFigure(startPoint, false);
 
-                             ctx.EndFigure(false);
-                         }
+                            foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+                            {
+                                ctx.LineTo(point);
+                            }
 
-                         drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
-                         break;
-                     }
-                 }
-             }*/
+                            ctx.EndFigure(false);
+                        }
+
+                        drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
+        {
+           
         }
 
         private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)

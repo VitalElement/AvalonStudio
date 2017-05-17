@@ -62,22 +62,9 @@ namespace AvalonStudio.CodeEditor
             _analysisTriggerEvents.OnNext(true);
         }
 
-        public CodeAnalysisResults CodeAnalysisResults
-        {
-            get
-            {
-                return _codeAnalysisResults;
-            }
-            set
-            {
-                _codeAnalysisResults = value;
-
-                CodeAnalysisCompleted?.Invoke(this, new EventArgs());
-            }
-        }
-
         public ILanguageService LanguageService { get; set; }
 
+   
         public CodeEditor()
         {
             _codeAnalysisRunner = new JobRunner();
@@ -259,6 +246,10 @@ namespace AvalonStudio.CodeEditor
                     var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, unsavedFiles, () => false);
 
                     Dispatcher.UIThread.InvokeAsync(() => {
+                        Diagnostics = result.Diagnostics;
+
+                        ShellViewModel.Instance.InvalidateErrors();
+
                         TextArea.TextView.Redraw();
                     });
                 }
@@ -414,6 +405,16 @@ namespace AvalonStudio.CodeEditor
             get { return GetValue(BackgroundRenderersProperty); }
             set { SetValue(BackgroundRenderersProperty, value); }
         }
+
+        public static readonly StyledProperty<TextSegmentCollection<Diagnostic>> DiagnosticsProperty =
+            AvaloniaProperty.Register<CodeEditor, TextSegmentCollection<Diagnostic>>(nameof(Diagnostics), null, false, Avalonia.Data.BindingMode.TwoWay);
+
+        public TextSegmentCollection<Diagnostic> Diagnostics
+        {
+            get { return GetValue(DiagnosticsProperty); }
+            set { SetValue(DiagnosticsProperty, value); }
+        }
+
 
         public static readonly AvaloniaProperty<ISourceFile> SourceFileProperty =
             AvaloniaProperty.Register<CodeEditor, ISourceFile>(nameof(SourceFile));

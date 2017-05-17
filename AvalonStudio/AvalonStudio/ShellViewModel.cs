@@ -650,9 +650,9 @@ namespace AvalonStudio
 
             foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
             {
-                /*if (document.Model.CodeAnalysisResults != null)
+                if (document.Diagnostics != null)
                 {
-                    foreach (var diagnostic in document.Model.CodeAnalysisResults.Diagnostics)
+                    foreach (var diagnostic in document.Diagnostics)
                     {
                         var error = new ErrorViewModel(diagnostic);
                         var matching = allErrors.FirstOrDefault(err => err.IsEqual(error));
@@ -662,7 +662,7 @@ namespace AvalonStudio
                             allErrors.Add(error);
                         }
                     }
-                }*/
+                }
             }
 
             foreach (var error in ErrorList.Errors)

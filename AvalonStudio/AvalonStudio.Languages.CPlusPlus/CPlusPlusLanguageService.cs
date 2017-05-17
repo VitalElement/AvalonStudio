@@ -492,9 +492,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                             GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);
                         }
 
-                        //dataAssociation.TextMarkerService.Clear();
+                        dataAssociation.TextMarkerService.Clear();
 
-                      //  GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);
+                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);
                     }
                 }
                 catch (Exception e)
