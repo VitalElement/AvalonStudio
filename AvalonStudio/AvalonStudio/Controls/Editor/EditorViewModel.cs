@@ -10,6 +10,7 @@ using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Languages;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
@@ -42,7 +43,7 @@ namespace AvalonStudio.Controls
 
         private IntellisenseManager intellisenseManager;
 
-        public ISourceFile ProjectFile => throw new NotImplementedException();
+        public ISourceFile ProjectFile { get; set; }
 
         public void Comment()
         {
@@ -108,6 +109,11 @@ namespace AvalonStudio.Controls
             }*/
 
             return result;
+        }
+
+        public void OpenFile(ISourceFile file, IIntellisenseControl intellisense, ICompletionAssistant completionAssistant)
+        {
+            SourceFile = file;
         }
 
         public void SetSelection(TextSegment segment)
@@ -273,7 +279,7 @@ namespace AvalonStudio.Controls
                 IsDirty = model.IsDirty;
             };*/
 
-            //intellisense = new IntellisenseViewModel(model, this);
+            intellisense = new IntellisenseViewModel(this);
 
             documentLineTransformers = new ObservableCollection<IVisualLineTransformer>();
 
@@ -428,6 +434,15 @@ namespace AvalonStudio.Controls
             get { return textDocument; }
             set { this.RaiseAndSetIfChanged(ref textDocument, value); }
         }
+
+        private ISourceFile _sourceFile;
+
+        public ISourceFile SourceFile
+        {
+            get { return _sourceFile; }
+            set { this.RaiseAndSetIfChanged(ref _sourceFile, value); }
+        }
+
 
         public void GotoPosition(int line, int column)
         {

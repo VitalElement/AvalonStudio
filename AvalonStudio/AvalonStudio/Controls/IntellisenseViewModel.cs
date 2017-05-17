@@ -12,7 +12,6 @@ namespace AvalonStudio.Controls
     public class IntellisenseViewModel : ViewModel, IIntellisenseControl, IDisposable
     {
         private IList<CompletionDataViewModel> completionData;
-        private CodeEditor.CodeEditor editor;
         private EditorViewModel editorViewModel;
 
         private bool isVisible;
@@ -21,12 +20,11 @@ namespace AvalonStudio.Controls
 
         private CompletionDataViewModel selectedCompletion;
 
-        public IntellisenseViewModel(CodeEditor.CodeEditor editor, EditorViewModel viewModel)
+        public IntellisenseViewModel(EditorViewModel viewModel)
         {
             completionData = new List<CompletionDataViewModel>();
             completionAssistant = new CompletionAssistantViewModel(this);
             editorViewModel = viewModel;
-            this.editor = editor;
             isVisible = false;
         }
 
@@ -46,13 +44,13 @@ namespace AvalonStudio.Controls
 
         public void Dispose()
         {
-            editor = null;
             editorViewModel = null;
         }
 
         public async Task<CodeCompletionResults> DoCompletionRequestAsync(int index, int line, int column)
         {
-            return await editor.DoCompletionRequestAsync(index, line, column);
+            return null;
+            //return await Model.DoCompletionRequestAsync(index, line, column);
         }
 
         public CompletionDataViewModel SelectedCompletion

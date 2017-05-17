@@ -40,7 +40,9 @@ namespace AvalonStudio.CodeEditor
             }
         }
 
-        public ISourceFile ProjectFile { get; private set; }
+        private readonly List<IBackgroundRenderer> _languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
+
+        private readonly List<IVisualLineTransformer> _languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
 
         public bool IsDirty { get; set; }
 
@@ -107,15 +109,99 @@ namespace AvalonStudio.CodeEditor
                 }
             });
 
-            _analysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(500))
+            _analysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance)
             .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });
+
+            SourceFileProperty.Changed.Subscribe(s =>
+            {
+                var file = s.NewValue as ISourceFile;
+
+                if (System.IO.File.Exists(file.Location))
+                {
+                    using (var fs = System.IO.File.OpenText(file.Location))
+                    {
+                        Document = new TextDocument(fs.ReadToEnd())
+                        {
+                            FileName = file.Location
+                        };
+                    }
+                }
+
+                RegisterLanguageService(null, null);
+            });
         }
 
         protected override void OnTextChanged(EventArgs e)
         {
             base.OnTextChanged(e);
 
+            TriggerCodeAnalysis();
+        }
 
+        protected override void OnDocumentChanged(EventArgs e)
+        {
+            base.OnDocumentChanged(e);
+        }
+
+        public TextSegment GetSelection()
+        {
+            TextSegment result = null;
+
+            if (SelectionStart < (SelectionStart + SelectionLength))
+            {
+                result = new TextSegment { StartOffset = SelectionStart, EndOffset = (SelectionStart + SelectionLength) };
+            }
+            else
+            {
+                result = new TextSegment { StartOffset = (SelectionStart + SelectionLength), EndOffset = SelectionStart };
+            }
+
+            return result;
+        }
+
+        public void SetSelection(TextSegment segment)
+        {
+             SelectionStart = segment.StartOffset;
+             SelectionLength = segment.EndOffset - segment.StartOffset;
+        }
+
+        public void Comment()
+        {
+            if (LanguageService != null)
+            {
+                if (SelectionLength > 0)
+                {
+                    var selection = GetSelection();
+                    var anchors = new TextSegmentCollection<TextSegment>(Document);
+                    anchors.Add(selection);
+
+                    CaretOffset = LanguageService.Comment(Document, selection, CaretOffset);
+
+                    SetSelection(selection);
+                }
+
+                Focus();
+            }
+        }
+
+        public void UnComment()
+        {
+            /*if (Model?.LanguageService != null)
+            {
+                var selection = GetSelection();
+
+                if (selection != null)
+                {
+                    var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
+                    anchors.Add(selection);
+
+                    CaretIndex = Model.LanguageService.UnComment(TextDocument, selection, CaretIndex);
+
+                    SetSelection(selection);
+                }
+
+                Model.Focus();
+            }*/
         }
 
         private void StartBackgroundWorkers()
@@ -132,28 +218,6 @@ namespace AvalonStudio.CodeEditor
         public void ShutdownBackgroundWorkers()
         {
             _cancellationSource?.Cancel();
-        }
-
-        public void OpenFile(ISourceFile file, IIntellisenseControl intellisense,
-            ICompletionAssistant completionAssistant)
-        {
-            if (ProjectFile != file)
-            {
-                if (System.IO.File.Exists(file.Location))
-                {
-                    using (var fs = System.IO.File.OpenText(file.Location))
-                    {
-                        Document = new TextDocument(fs.ReadToEnd());
-                        Document.FileName = file.Location;
-                    }
-
-                    ProjectFile = file;
-
-                    RegisterLanguageService(intellisense, completionAssistant);
-
-                   // DocumentLoaded?.Invoke(this, new EventArgs());
-                }
-            }
         }
 
         public void Save()
@@ -182,27 +246,21 @@ namespace AvalonStudio.CodeEditor
             TriggerCodeAnalysis();
         }
 
-
-        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int index, int line, int column)
-        {
-            CodeCompletionResults results = null;
-
-            var completions = await LanguageService.CodeCompleteAtAsync(ProjectFile, index, line, column, UnsavedFiles.ToList());
-            results = completions;
-
-            return results;
-        }
-
         private async Task<bool> DoCodeAnalysisAsync()
         {
+            var sourceFile = SourceFile;
+            var unsavedFiles = UnsavedFiles.ToList();
+
             await _codeAnalysisRunner.InvokeAsync(async () =>
             {
                 if (LanguageService != null)
                 {
                     // TODO allow interruption.
-                    var result = await LanguageService.RunCodeAnalysisAsync(ProjectFile, UnsavedFiles.ToList(), () => false);
+                    var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, unsavedFiles, () => false);
 
-                    Dispatcher.UIThread.InvokeAsync(() => { TextArea.TextView.Redraw(); });
+                    Dispatcher.UIThread.InvokeAsync(() => {
+                        TextArea.TextView.Redraw();
+                    });
                 }
             });
 
@@ -213,13 +271,27 @@ namespace AvalonStudio.CodeEditor
         {
             UnRegisterLanguageService();
 
-            LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.CanHandle(ProjectFile));
+            LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.CanHandle(SourceFile));
 
             if (LanguageService != null)
             {
                 ShellViewModel.Instance.StatusBar.Language = LanguageService.Title;
 
-                LanguageService.RegisterSourceFile(intellisenseControl, completionAssistant, this, ProjectFile, Document);
+                LanguageService.RegisterSourceFile(intellisenseControl, completionAssistant, this, SourceFile, Document);
+
+                _languageServiceBackgroundRenderers.AddRange(LanguageService.GetBackgroundRenderers(SourceFile));
+
+                foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
+                {
+                    TextArea.TextView.BackgroundRenderers.Add(backgroundRenderer);
+                }
+
+                _languageServiceDocumentLineTransformers.AddRange(LanguageService.GetDocumentLineTransformers(SourceFile));
+
+                foreach(var transformer in _languageServiceDocumentLineTransformers)
+                {
+                    TextArea.TextView.LineTransformers.Add(transformer);
+                }
             }
             else
             {
@@ -240,13 +312,30 @@ namespace AvalonStudio.CodeEditor
 
         public void UnRegisterLanguageService()
         {
+            foreach(var backgroundRenderer in  _languageServiceBackgroundRenderers)
+            {
+                TextArea.TextView.BackgroundRenderers.Remove(backgroundRenderer);
+            }
+
+            _languageServiceBackgroundRenderers.Clear();
+
+            foreach(var transformer in _languageServiceDocumentLineTransformers)
+            {
+                TextArea.TextView.LineTransformers.Remove(transformer);
+            }
+
+            _languageServiceDocumentLineTransformers.Clear();
+
             ShutdownBackgroundWorkers();
 
             UnsavedFile unsavedFile = null;
 
             lock (UnsavedFiles)
             {
-                unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+                if (SourceFile != null)
+                {
+                    unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
+                }
             }
 
             if (unsavedFile != null)
@@ -257,9 +346,9 @@ namespace AvalonStudio.CodeEditor
                 }
             }
 
-            if (LanguageService != null && ProjectFile != null)
+            if (LanguageService != null && SourceFile != null)
             {
-                LanguageService.UnregisterSourceFile(this, ProjectFile);
+                LanguageService.UnregisterSourceFile(this, SourceFile);
             }
 
             Document.TextChanged -= TextDocument_TextChanged;
@@ -271,27 +360,21 @@ namespace AvalonStudio.CodeEditor
 
             lock (UnsavedFiles)
             {
-                unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+                unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
             }
 
             if (unsavedFile == null)
             {
                 lock (UnsavedFiles)
                 {
-                    UnsavedFiles.InsertSorted(new UnsavedFile(ProjectFile.Location, Document.Text));
+                    UnsavedFiles.InsertSorted(new UnsavedFile(SourceFile.Location, Document.Text));
                 }
             }
             else
             {
                 unsavedFile.Contents = Document.Text;
             }
-
-            //IsDirty = true;
-
-           // TextChanged?.Invoke(this, new EventArgs());
         }
-
-
 
         private void List_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -330,6 +413,15 @@ namespace AvalonStudio.CodeEditor
         {
             get { return GetValue(BackgroundRenderersProperty); }
             set { SetValue(BackgroundRenderersProperty, value); }
+        }
+
+        public static readonly AvaloniaProperty<ISourceFile> SourceFileProperty =
+            AvaloniaProperty.Register<CodeEditor, ISourceFile>(nameof(SourceFile));
+
+        public ISourceFile SourceFile
+        {
+            get { return GetValue(SourceFileProperty); }
+            set { SetValue(SourceFileProperty, value); }
         }
 
         public int GetOffsetFromPoint(Point point)

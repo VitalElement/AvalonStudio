@@ -14,7 +14,7 @@
         <editor:CodeEditor Name="editor" DockPanel.Dock="Top"
                                 TextBlock.FontFamily="{Binding FontFamily}" TextBlock.FontSize="14"
                                 Foreground="#DCDCDC" BorderThickness="0" TextBlock.FontWeight="ExtraLight"
-                                Document="{Binding TextDocument}" Margin="5 0"
+                                SourceFile="{Binding SourceFile}" Margin="5 0"
                                 BackgroundRenderers="{Binding BackgroundRenderers}" 
                                 DocumentLineTransformers="{Binding DocumentLineTransformers}"
                                 VerticalAlignment="Stretch" Background="#1e1e1e">
