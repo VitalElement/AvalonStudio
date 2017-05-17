@@ -29,7 +29,7 @@ namespace AvalonStudio.GlobalSettings
 
         private static string GlobalSettingsFile => Path.Combine(Platform.SettingsDirectory, "GlobalSettings.json");
 
-        public static Settings Instance { get; private set; }
+        public static Settings Instance { get; set; }
 
         static Settings()
         {
@@ -69,6 +69,13 @@ namespace AvalonStudio.GlobalSettings
             }
 
             return result;
+        }
+
+        public void SetSettings<T>(T value)
+        {
+            _rootIndex[typeof(T).FullName] = value;
+
+            Save();
         }
 
         public T ProvisionSettings<T>() where T : new()

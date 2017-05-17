@@ -69,6 +69,8 @@ namespace AvalonStudio.Projects.CPlusPlus
         [JsonProperty(PropertyName = "Toolchain")]
         public string ToolchainReference { get; set; }
 
+        public string ToolchainVersion {get; set;}
+
         [JsonProperty(PropertyName = "Debugger")]
         public string DebuggerReference { get; set; }
 
@@ -336,7 +338,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
         [JsonIgnore]
-        public override IDebugger2 Debugger2
+        public override IDebugger Debugger2
         {
             get
             {

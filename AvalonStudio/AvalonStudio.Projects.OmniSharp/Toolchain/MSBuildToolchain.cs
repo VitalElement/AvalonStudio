@@ -99,6 +99,11 @@
             return new List<string>();
         }
 
+        public Task InstallAsync(IConsole console)
+        {
+            return Task.FromResult(0);
+        }
+
         public void ProvisionSettings(IProject project)
         {
         }

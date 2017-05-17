@@ -9,6 +9,12 @@ namespace AvalonStudio.Extensibility.Threading
     {
         private readonly AutoResetEvent _event = new AutoResetEvent(false);
         private readonly Queue<Job> _queue = new Queue<Job>();
+        private readonly Thread _mainThread = Thread.CurrentThread;
+
+        /// <summary>
+        /// The thread that the job runner was created on.
+        /// </summary>
+        public Thread MainThread => _mainThread;
 
         public void RunLoop(CancellationToken cancellationToken)
         {

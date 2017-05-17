@@ -84,6 +84,9 @@ namespace AvalonStudio.Projects
 
         public string Name { get; set; }
 
+        [JsonIgnore]
+        public string Location { get; private set; }
+
         public static IProject LoadProjectFile(ISolution solution, string fileName)
         {
             var shell = IoC.Get<IShell>();
@@ -130,6 +133,7 @@ namespace AvalonStudio.Projects
         {
             var solution = SerializedObject.Deserialize<Solution>(fileName);
 
+            solution.Location = fileName.NormalizePath().ToPlatformPath();
             solution.CurrentDirectory = (Path.GetDirectoryName(fileName) + Platform.DirectorySeperator).ToPlatformPath();
 
             Console.WriteLine("Solution directory is " + solution.CurrentDirectory);

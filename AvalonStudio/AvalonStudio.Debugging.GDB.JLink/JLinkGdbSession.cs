@@ -1,6 +1,8 @@
 ﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
+using AvalonStudio.Repositories;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
@@ -18,21 +20,6 @@ namespace AvalonStudio.Debugging.GDB.JLink
         private IProject _project;
         private Process jlinkProcess;
         public bool DebugMode { get; set; }
-
-        public static string BaseDirectory
-        {
-            get
-            {
-                if (Platform.OSDescription == "Unix")
-                {
-                    return string.Empty;
-                }
-                else
-                {
-                    return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Debugging.JLink\\").ToPlatformPath();
-                }
-            }
-        }
 
         public static JLinkSettings GetSettings(IProject project)
         {
@@ -90,11 +77,11 @@ namespace AvalonStudio.Debugging.GDB.JLink
             // TODO allow people to select the device.
             var jlinkStartInfo = new ProcessStartInfo();
             jlinkStartInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed {2} -noir", settings.TargetDevice, Enum.GetName(typeof(JlinkInterfaceType), settings.Interface), settings.SpeedkHz);
-            jlinkStartInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServerCL" + Platform.ExecutableExtension);
+            jlinkStartInfo.FileName = Path.Combine(JLinkDebugger.BaseDirectory, "JLinkGDBServerCL" + Platform.ExecutableExtension);
 
             if (Platform.OSDescription == "Unix")
             {
-                jlinkStartInfo.FileName = Path.Combine(BaseDirectory, "JLinkGDBServer" + Platform.ExecutableExtension);
+                jlinkStartInfo.FileName = Path.Combine(JLinkDebugger.BaseDirectory, "JLinkGDBServer" + Platform.ExecutableExtension);
             }
 
             if (Path.IsPathRooted(jlinkStartInfo.FileName) && !System.IO.File.Exists(jlinkStartInfo.FileName))

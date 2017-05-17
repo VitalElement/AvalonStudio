@@ -181,7 +181,7 @@
                 var newProject = new RecentProject
                 {
                     Name = e.NewValue.Name,
-                    Path = e.NewValue.CurrentDirectory
+                    Path = e.NewValue.Location
                 };
 
                 if (RecentProjectsCollection.RecentProjects == null)

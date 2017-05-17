@@ -22,6 +22,17 @@ namespace AvalonStudio.Platforms
     {
         public delegate bool ConsoleCtrlDelegate(CtrlTypes CtrlType);
 
+        [DllImport("libc")]
+        private static extern void chmod(string file, int mode);
+
+        public static void Chmod(string file, int mode)
+        {
+            if(PlatformIdentifier != PlatformID.Win32NT)
+            {
+                chmod(file, mode);
+            }
+        }
+
         public enum CtrlTypes : uint
         {
             CTRL_C_EVENT = 0,
@@ -73,6 +84,50 @@ namespace AvalonStudio.Platforms
 
         internal const string LIBC = "libc";
         private const string LIB = "MonoPosixHelper";
+
+        public static string AvalonRID
+        {
+            get
+            {
+                string result = "UnknownRid";
+
+                switch (Platform.PlatformIdentifier)
+                {
+                    case PlatformID.Win32NT:
+                        result = "win-";
+                        break;
+
+                    case PlatformID.MacOSX:
+                        result = "osx-";
+                        break;
+
+                    case PlatformID.Unix:
+                        result = "ubuntu-";
+                        break;
+                }
+
+                switch (Platform.OSArchitecture)
+                {
+                    case Architecture.X64:
+                        result += "x64";
+                        break;
+
+                    case Architecture.X86:
+                        result += "x86";
+                        break;
+
+                    case Architecture.Arm:
+                        result += "ARM";
+                        break;
+
+                    case Architecture.Arm64:
+                        result += "ARM64";
+                        break;
+                }
+
+                return result;
+            }
+        }
 
         private const string UserDataDir = ".as";
 
@@ -397,7 +452,7 @@ namespace AvalonStudio.Platforms
 
         public static string NormalizePath(this string path)
         {
-            string result = path.ToPlatformPath();
+            string result = path?.Replace("\\\\", "\\").ToPlatformPath();
 
             if (!string.IsNullOrEmpty(result))
             {

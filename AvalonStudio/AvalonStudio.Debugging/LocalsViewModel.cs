@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
+using Mono.Debugging.Client;
 
 namespace AvalonStudio.Debugging
 {
@@ -25,7 +26,7 @@ namespace AvalonStudio.Debugging
 
             if (DebugManager != null)
             {
-                DebugManager.TargetStopped += _debugManager_TargetStopped;
+                DebugManager.FrameChanged += DebugManager_FrameChanged;
 
                 DebugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
@@ -37,16 +38,16 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        private void _debugManager_TargetStopped(object sender, Mono.Debugging.Client.TargetEventArgs e)
+        private void Update (StackFrame stackFrame)
         {
-            if (e.IsStopEvent)
-            {
-                var currentFrame = e.Backtrace.GetFrame(0);
+            var locals = stackFrame.GetAllLocals();
 
-                var locals = currentFrame.GetAllLocals();
+            InvalidateObjects(locals);
+        }
 
-                InvalidateObjects(locals);
-            }
+        private void DebugManager_FrameChanged(object sender, System.EventArgs e)
+        {
+            Update(DebugManager.SelectedFrame);
         }
     }
 }

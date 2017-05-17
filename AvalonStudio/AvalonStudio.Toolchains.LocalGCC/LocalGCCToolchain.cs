@@ -1,3 +1,4 @@
+using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -8,11 +9,28 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using AvalonStudio.Projects.CPlusPlus;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
     public class LocalGCCToolchain : GCCToolchain
     {
+        public static string ContentDirectory
+        {
+            get
+            {
+                if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.GCC"), "content");
+                }
+            }
+        }
+        public override string BinDirectory => Path.Combine(ContentDirectory, "bin");
+
         public override async Task<bool> PreBuild(IConsole console, IProject project)
         {
             return true;
@@ -23,38 +41,18 @@ namespace AvalonStudio.Toolchains.LocalGCC
             return true;
         }
 
-        private string BaseDirectory
-        {
-            get { return Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.LocalGCC"); }
-        }
-
         public override string Prefix => string.Empty;
-
-        public override string BinDirectory
-        {
-            get
-            {
-                if (Platform.OSDescription == "Unix")
-                {
-                    return string.Empty;
-                }
-                else
-                {
-                    return Path.Combine(BaseDirectory, "bin");
-                }
-            }
-        }
 
         public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
         {
             return new List<string>
             {
-                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include"),
-                Path.Combine(BaseDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include-fixed"),
-                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include"),
-                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++"),
-                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32"),
-                Path.Combine(BaseDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32", "backward")
+                Path.Combine(ContentDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include"),
+                Path.Combine(ContentDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include-fixed"),
+                Path.Combine(ContentDirectory, "x86_64-w64-mingw32", "include"),
+                Path.Combine(ContentDirectory, "x86_64-w64-mingw32", "include", "c++"),
+                Path.Combine(ContentDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32"),
+                Path.Combine(ContentDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32", "backward")
             };
         }
 
@@ -323,12 +321,20 @@ namespace AvalonStudio.Toolchains.LocalGCC
         {
             var result = false;
 
-            if (project is IStandardProject)
+            if (project is CPlusPlusProject)
             {
                 result = true;
             }
 
             return result;
+        }
+
+        public async override Task InstallAsync(IConsole console, IProject project)
+        {
+            if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+            {
+                await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion,  console);
+            }
         }
     }
 }

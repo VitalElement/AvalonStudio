@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AvalonStudio.Extensibility;
 
 namespace AvalonStudio.Debugging.GDB.OpenOCD
 {
@@ -38,7 +39,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Interface Config File";
 
-                var result = await ofd.ShowAsync();
+                var result = await ofd.ShowAsync(IoC.Get<Window>());
 
                 if (result != null && !string.IsNullOrEmpty(result.First()))
                 {
@@ -55,7 +56,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Target Config File";
 
-                var result = await ofd.ShowAsync();
+                var result = await ofd.ShowAsync(IoC.Get<Window>());
 
                 if (result != null && !string.IsNullOrEmpty(result.First()))
                 {

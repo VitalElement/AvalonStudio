@@ -36,6 +36,8 @@ namespace AvalonStudio.Toolchains.Standard
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
         {
+            await InstallAsync(console, project);
+
             if (!ValidateToolchainExecutables(console))
             {
                 return false;
@@ -292,7 +294,7 @@ namespace AvalonStudio.Toolchains.Standard
             var link = false;
             foreach (var objectFile in compileResult.ObjectLocations)
             {
-                if (System.IO.File.GetLastWriteTime(objectFile) > System.IO.File.GetLastWriteTime(executable))
+                if (!System.IO.File.Exists(executable) || (System.IO.File.GetLastWriteTime(objectFile) > System.IO.File.GetLastWriteTime(executable)))
                 {
                     link = true;
                     break;
@@ -303,7 +305,7 @@ namespace AvalonStudio.Toolchains.Standard
             {
                 foreach (var library in compileResult.LibraryLocations)
                 {
-                    if (System.IO.File.GetLastWriteTime(library) > System.IO.File.GetLastWriteTime(executable))
+                    if (!System.IO.File.Exists(executable) || (System.IO.File.GetLastWriteTime(library) > System.IO.File.GetLastWriteTime(executable)))
                     {
                         link = true;
                         break;
@@ -549,5 +551,12 @@ namespace AvalonStudio.Toolchains.Standard
         public abstract Task<bool> PreBuild(IConsole console, IProject project);
 
         public abstract Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult);
+        
+        public abstract Task InstallAsync(IConsole console, IProject project);
+
+        public Task InstallAsync(IConsole console)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

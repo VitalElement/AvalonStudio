@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
   <PropertyGroup>
-    <OutputType>exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <RuntimeFrameworkVersion>2.0.0-preview1-001978-00</RuntimeFrameworkVersion>
+    <OutputType>exe</OutputType>        
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <PackageTargetFallback>$(PackageTargetFallback);netstandard2.0;net462</PackageTargetFallback>
     <OutputTypeEx>exe</OutputTypeEx>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <PreserveCompilationContext>true</PreserveCompilationContext>
@@ -78,19 +79,18 @@
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SkiaSharp" Version="1.56.2" />
-    <PackageReference Include="Avalonia" Version="0.4.1-build2959-alpha" />
-    <PackageReference Include="Avalonia.Gtk3" Version="0.4.1-build2959-alpha" />
-    <PackageReference Include="Avalonia.Skia.Desktop" Version="0.4.1-build2959-alpha" />
-    <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.56.1.3" />
-    <PackageReference Include="Avalonia.Win32" Version="0.4.1-build2959-alpha" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.4.1-build391-alpha" />
+    <PackageReference Include="Avalonia" Version="0.4.1-build3098-alpha" />
+    <PackageReference Include="Avalonia.Direct2D1" Version="0.4.1-build3098-alpha" />
+    <PackageReference Include="Avalonia.Gtk3" Version="0.4.1-build3098-alpha" />
+    <PackageReference Include="Avalonia.Skia.Desktop" Version="0.4.1-build3098-alpha" />
+    <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
+    <PackageReference Include="Avalonia.Win32" Version="0.4.1-build3098-alpha" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.4.1-build399-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
-    <PackageReference Include="Microsoft.NETCore.Runtime.CoreCLR" Version="2.0.0-preview1-25207-02" />
-    <PackageReference Include="Microsoft.NETCore.DotNetHostPolicy" Version="2.0.0-preview1-001915-00" />
+    <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build94-alpha" />    
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DockNC\src\Mabiavalon.DockNC\Mabiavalon.DockNC.csproj" />
+    <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.Local\AvalonStudio.Debugging.GDB.Local.csproj" />
@@ -107,5 +107,6 @@
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
+    <ProjectReference Include="..\PortableCom\PortableCom.csproj" />
   </ItemGroup>
 </Project>

@@ -1,45 +1,39 @@
+/////////////////////////////////////////////////////////////////////
+// ADDINS
+/////////////////////////////////////////////////////////////////////
+
+#addin "Cake.FileHelpers"
+#addin "Cake.Docker"
+#addin "nuget:?package=NuGet.Core&version=2.12.0"
+
+//////////////////////////////////////////////////////////////////////
+// TOOLS
+//////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// USINGS
+///////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+// ARGUMENTS
+//////////////////////////////////////////////////////////////////////
 
 var target = Argument("target", "Default");
 var platform = Argument("platform", "AnyCPU");
 var configuration = Argument("configuration", "Release");
 
-var version = "dev-0.20";
-
-var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\bin\HostX86\x86\editbin.exe";
-
-var artifactsDir = (DirectoryPath)Directory("./artifacts");
-var zipRootDir = artifactsDir.Combine("zip");
-
-var fileZipSuffix = ".zip";
-
-var buildDirs = GetDirectories("./AvalonStudio/AvalonStudio/**/bin/**") + 
-    GetDirectories("./AvalonStudio/AvalonStudio/**/obj/**") + 
-    GetDirectories("./AvalonStudio/AvalonStudioBuild/**/bin/**") + 
-    GetDirectories("./AvalonStudio/AvalonStudioBuild/**/obj/**") +
-    GetDirectories("./artifacts/**/zip/**");
-
-var netCoreAppsRoot= "./AvalonStudio";
-var netCoreApps = new string[] { "AvalonStudio", "AvalonStudioBuild" };
-var netCoreProjects = netCoreApps.Select(name => 
-    new {
-        Path = string.Format("{0}/{1}", netCoreAppsRoot, name),
-        Name = name,
-        Framework = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='TargetFramework']/text()"),
-        Runtimes = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='RuntimeIdentifiers']/text()").Split(';')
-    }).ToList();
-
-if (BuildSystem.AppVeyor.IsRunningOnAppVeyor)
-{
-    if (BuildSystem.AppVeyor.Environment.Repository.Tag.IsTag && !string.IsNullOrWhiteSpace(BuildSystem.AppVeyor.Environment.Repository.Tag.Name))
-        version = BuildSystem.AppVeyor.Environment.Repository.Tag.Name;
-    else
-        version += "-build" + EnvironmentVariable("APPVEYOR_BUILD_NUMBER");
-}
+///////////////////////////////////////////////////////////////////////////////
+// CONFIGURATION
+///////////////////////////////////////////////////////////////////////////////
 
 var MainRepo = "VitalElement/AvalonStudio";
 var MasterBranch = "master";
 var ReleasePlatform = "Any CPU";
 var ReleaseConfiguration = "Release";
+
+///////////////////////////////////////////////////////////////////////////////
+// PARAMETERS
+///////////////////////////////////////////////////////////////////////////////
 
 var isPlatformAnyCPU = StringComparer.OrdinalIgnoreCase.Equals(platform, "Any CPU");
 var isPlatformX86 = StringComparer.OrdinalIgnoreCase.Equals(platform, "x86");
@@ -58,8 +52,129 @@ var isReleasable = StringComparer.OrdinalIgnoreCase.Equals(ReleasePlatform, plat
 var isMyGetRelease = !isTagged && isReleasable;
 var isNuGetRelease = isTagged && isReleasable;
 
+///////////////////////////////////////////////////////////////////////////////
+// VERSION
+///////////////////////////////////////////////////////////////////////////////
+
+var version = "0.2.0";
+
+if (isRunningOnAppVeyor)
+{
+    if (isTagged)
+    {
+        // Use Tag Name as version
+        version = BuildSystem.AppVeyor.Environment.Repository.Tag.Name;
+    }
+    else
+    {
+        // Use AssemblyVersion with Build as version
+        version += "-build" + EnvironmentVariable("APPVEYOR_BUILD_NUMBER") + "-alpha";
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// DIRECTORIES
+///////////////////////////////////////////////////////////////////////////////
+
+var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\bin\HostX86\x86\editbin.exe";
+
+var artifactsDir = (DirectoryPath)Directory("./artifacts");
+var zipRootDir = artifactsDir.Combine("zip");
+var nugetRoot = artifactsDir.Combine("nuget");
+
+var fileZipSuffix = ".zip";
+
+var buildDirs = GetDirectories("./AvalonStudio/AvalonStudio/**/bin/**") + 
+    GetDirectories("./AvalonStudio/AvalonStudio/**/obj/**") + 
+    GetDirectories("./AvalonStudio/AvalonStudioBuild/**/bin/**") + 
+    GetDirectories("./AvalonStudio/AvalonStudioBuild/**/obj/**") +
+    GetDirectories("./artifacts/**/zip/**");
+
+var netCoreAppsRoot= "./AvalonStudio";
+var netCoreApps = new string[] { "AvalonStudio", "AvalonStudioBuild" };
+var netCoreProjects = netCoreApps.Select(name => 
+    new {
+        Path = string.Format("{0}/{1}", netCoreAppsRoot, name),
+        Name = name,
+        Framework = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='TargetFrameworks']/text()").Split(';').First(),
+        Runtimes = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='RuntimeIdentifiers']/text()").Split(';')
+    }).ToList();
+///////////////////////////////////////////////////////////////////////////////
+// NUGET NUSPECS
+///////////////////////////////////////////////////////////////////////////////
+
+public NuGetPackSettings GetPackSettings(string rid, string version, string nugetRoot)
+{
+    var nuspecNuGetBehaviors = new NuGetPackSettings()
+    {
+        Id = "VitalElement.AvalonBuild." + rid,
+        Version = version,
+        Authors = new [] { "VitalElement" },
+        Owners = new [] { "Dan Walmsley (dan at walms.co.uk)" },
+        LicenseUrl = new Uri("http://opensource.org/licenses/MIT"),
+        ProjectUrl = new Uri("https://github.com/VitalElement/AvalonStudio/"),
+        RequireLicenseAcceptance = false,
+        Symbols = false,
+        NoPackageAnalysis = true,
+        Description = "Command Line build tools for AvalonStudio.",
+        Copyright = "Copyright 2017",
+        Tags = new [] { "AvalonStudio", "AvalonBuild" },
+        Files = new []
+        {
+            new NuSpecContent { Source = "**", Target = "content/" },
+        },
+        BasePath = Directory("artifacts/zip/AvalonStudioBuild-" + rid + "/"),
+        OutputDirectory = nugetRoot
+    };
+
+    return nuspecNuGetBehaviors;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// INFORMATION
+///////////////////////////////////////////////////////////////////////////////
+
+Information("Building version {0} of AvaloniaEdit ({1}, {2}, {3}) using version {4} of Cake.", 
+    version,
+    platform,
+    configuration,
+    target,
+    typeof(ICakeContext).Assembly.GetName().Version.ToString());
+
+if (isRunningOnAppVeyor)
+{
+    Information("Repository Name: " + BuildSystem.AppVeyor.Environment.Repository.Name);
+    Information("Repository Branch: " + BuildSystem.AppVeyor.Environment.Repository.Branch);
+}
+
+Information("Target: " + target);
+Information("Platform: " + platform);
+Information("Configuration: " + configuration);
+Information("IsLocalBuild: " + isLocalBuild);
+Information("IsRunningOnUnix: " + isRunningOnUnix);
+Information("IsRunningOnWindows: " + isRunningOnWindows);
+Information("IsRunningOnAppVeyor: " + isRunningOnAppVeyor);
+Information("IsPullRequest: " + isPullRequest);
+Information("IsMainRepo: " + isMainRepo);
+Information("IsMasterBranch: " + isMasterBranch);
+Information("IsTagged: " + isTagged);
+Information("IsReleasable: " + isReleasable);
+Information("IsMyGetRelease: " + isMyGetRelease);
+Information("IsNuGetRelease: " + isNuGetRelease);
+
+var avalonBuildRIDs = new List<string>
+{
+    "win7-x64",
+    "ubuntu.14.04-x64"
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// TASKS
+/////////////////////////////////////////////////////////////////////////////// 
+
 Task("Clean")
 .Does(()=>{
+    CleanDirectory(nugetRoot);
     CleanDirectories(buildDirs);
 });
 
@@ -75,14 +190,18 @@ Task("Restore-NetCore")
 
 Task("Build-NetCore")
     .IsDependentOn("Restore-NetCore")
+    .WithCriteria(()=>isRunningOnAppVeyor || isLocalBuild)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
     {
         Information("Building: {0}", project.Name);
-        DotNetCoreBuild(project.Path, new DotNetCoreBuildSettings {
+
+        var settings = new DotNetCoreBuildSettings {
             Configuration = configuration
-        });
+        };
+
+        DotNetCoreBuild(project.Path, settings);
     }
 });
 
@@ -111,8 +230,8 @@ Task("Run-Net-Core-Unit-Tests")
 
 
 Task("Publish-NetCore")
-    .IsDependentOn("Restore-NetCore")
-    .WithCriteria(()=>isMainRepo && isMasterBranch)
+    .IsDependentOn("Restore-NetCore")    
+    .WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor) || isLocalBuild))
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -159,11 +278,79 @@ Task("Zip-NetCore")
     }    
 });
 
+Task("Generate-NuGetPackages")
+.IsDependentOn("Publish-NetCore")
+.WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor) || isLocalBuild))
+.Does(()=>{
+    foreach(var rid in avalonBuildRIDs)
+    {
+        NuGetPack(GetPackSettings(rid, version, nugetRoot.ToString()));
+    }
+});
+
+Task("Publish-AppVeyorNuget")
+    .IsDependentOn("Generate-NuGetPackages")        
+    .WithCriteria(()=>(isMainRepo && isMasterBranch && isRunningOnAppVeyor))   
+    .Does(() =>
+{
+    var apiKey = EnvironmentVariable("NUGET_API_KEY");
+    if(string.IsNullOrEmpty(apiKey)) 
+    {
+        throw new InvalidOperationException("Could not resolve MyGet API key.");
+    }
+
+    var apiUrl = EnvironmentVariable("NUGET_API_URL");
+    if(string.IsNullOrEmpty(apiUrl)) 
+    {
+        throw new InvalidOperationException("Could not resolve MyGet API url.");
+    }
+
+    foreach(var rid in avalonBuildRIDs)
+    {
+        var nuspec = GetPackSettings(rid, version, nugetRoot.ToString());
+        var settings  = nuspec.OutputDirectory.CombineWithFilePath(string.Concat(nuspec.Id, ".", nuspec.Version, ".nupkg"));
+
+        NuGetPush(settings, new NuGetPushSettings
+        {
+            Source = apiUrl,
+            ApiKey = apiKey
+        });
+    }
+});
+
+Task("Build-Docker-Image")
+    .IsDependentOn("Publish-NetCore")
+    .WithCriteria(()=>(isMasterBranch && isRunningOnAppVeyor) || isLocalBuild)
+    .Does(()=>
+{
+    var dockerContextPath = zipRootDir.Combine("AvalonStudioBuild-ubuntu.16.10-x64");
+    CopyFile("./AvalonStudio/AvalonStudioBuild/Dockerfile", dockerContextPath.CombineWithFilePath("Dockerfile"));
+    DockerBuild(new DockerBuildSettings
+    {
+        Tag = new string[] { "vitalelement/avalonbuild:latest" },
+        Pull = true,
+    },
+    dockerContextPath.ToString());
+});
+
+Task("Publish-Docker-Image")
+    .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor)
+    .Does(()=>
+{
+    DockerLogin( EnvironmentVariable("DOCKER_USER_NAME"),  EnvironmentVariable("DOCKER_PASSWORD"), "https://hub.docker.com");
+    Information("Logged In");
+    DockerPush("vitalelement/avalonbuild");
+
+    Information("Push");
+});
+
 Task("Default")
     .IsDependentOn("Restore-NetCore")
     .IsDependentOn("Build-NetCore")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
-    .IsDependentOn("Zip-NetCore");
+    .IsDependentOn("Zip-NetCore")
+    .IsDependentOn("Generate-NuGetPackages")
+    .IsDependentOn("Publish-AppVeyorNuget");
 
 RunTarget(target);

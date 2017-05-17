@@ -42,7 +42,7 @@ namespace AvalonStudio.Shell
 
         IEnumerable<IToolChain> ToolChains { get; }
 
-        IEnumerable<IDebugger2> Debugger2s { get; }
+        IEnumerable<IDebugger> Debugger2s { get; }
 
         IEnumerable<ITestFramework> TestFrameworks { get; }
 

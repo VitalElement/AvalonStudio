@@ -86,7 +86,7 @@ namespace AvalonStudio.Controls
             base.OnPointerPressed(e);
         }
 
-        protected override void OnPointerReleased(PointerEventArgs e)
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
         {
             mouseDown = false;
             base.OnPointerReleased(e);

@@ -1,5 +1,6 @@
 FROM ubuntu:xenial
-ADD /AvalonBuild /opt/AvalonBuild
+
+ADD / /opt/AvalonBuild
 
 # Install mono
 RUN apt-get update \
@@ -14,19 +15,9 @@ RUN echo "deb http://download.mono-project.com/repo/debian wheezy main" > /etc/a
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install Git    
-RUN apt-get update && apt-get install -y git libcurl3 lib32z1 lib32ncurses5
-
-# Install Built Tools
-RUN ls /opt/
-RUN ls /opt/AvalonBuild
+RUN apt-get update && apt-get install -y git libcurl3 lib32z1 lib32ncurses5 libunwind8 libunwind8-dev gettext libicu-dev liblttng-ust-dev libcurl4-openssl-dev libssl-dev uuid-dev unzip
 
 # Install avalon command
-RUN echo "#!/bin/sh" > /usr/bin/avalon
-RUN echo "LD_LIBRARY_PATH=/opt/AvalonBuild/NativeBinaries/linux/amd64 /usr/bin/mono /opt/AvalonBuild/avalon.exe \$*" >> /usr/bin/avalon
-RUN chmod +x /usr/bin/avalon
-RUN mv /opt/AvalonBuild/NativeBinaries /opt/AvalonBuild/libNativeBinaries
+RUN ln -s /opt/AvalonBuild/avalon /usr/bin/
 
-# Test avalon command
-RUN avalon version
-RUN avalon install-package AvalonStudio.Toolchains.STM32 Linux-Slow-v0.04-5.4.1
-RUN avalon install-package AvalonStudio.Toolchains.Clang Linux-Slow-v3.8.1
+

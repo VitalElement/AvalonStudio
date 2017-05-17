@@ -47,7 +47,7 @@ namespace AvalonStudio
         private List<ISolutionType> _solutionTypes;
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
-        private List<IDebugger2> _debugger2s;
+        private List<IDebugger> _debugger2s;
         private List<ITestFramework> _testFrameworks;
         private List<ICodeTemplate> _codeTemplates;
         private List<MenuBarDefinition> _menuBarDefinitions;
@@ -75,7 +75,7 @@ namespace AvalonStudio
         {
             _languageServices = new List<ILanguageService>();
             _projectTemplates = new List<IProjectTemplate>();
-            _debugger2s = new List<IDebugger2>();
+            _debugger2s = new List<IDebugger>();
             _codeTemplates = new List<ICodeTemplate>();
             _projectTypes = new List<IProjectType>();
             _solutionTypes = new List<ISolutionType>();
@@ -236,7 +236,7 @@ namespace AvalonStudio
 
             StatusBar.LineNumber = 1;
             StatusBar.Column = 1;
-            StatusBar.PlatformString = Platform.OSDescription;
+            StatusBar.PlatformString = Platform.OSDescription + " " + Platform.AvalonRID;
 
             ProcessCancellationToken = new CancellationTokenSource();
 
@@ -326,7 +326,7 @@ namespace AvalonStudio
 
         public IEnumerable<IToolChain> ToolChains => _toolChains;
 
-        public IEnumerable<IDebugger2> Debugger2s => _debugger2s;
+        public IEnumerable<IDebugger> Debugger2s => _debugger2s;
 
         public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 

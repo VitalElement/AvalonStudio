@@ -12,6 +12,7 @@ namespace AvalonStudio.Toolchains.GCC
     using System.Linq;
     using System.Windows.Input;
     using Utils;
+    using AvalonStudio.Extensibility;
 
     public class LinkerSettingsFormViewModel : HeaderedViewModel<IProject>
     {
@@ -423,7 +424,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             ofd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await ofd.ShowAsync();
+            var result = await ofd.ShowAsync(IoC.Get<Window>());
 
             if (result != null && !string.IsNullOrEmpty(result.First()))
             {
@@ -441,7 +442,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             ofd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await ofd.ShowAsync();
+            var result = await ofd.ShowAsync(IoC.Get<Window>());
 
             if (result != null && !string.IsNullOrEmpty(result.First()))
             {

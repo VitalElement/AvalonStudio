@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Debugging.DotNetCore
 {
+    using AvalonStudio.CommandLineTools;
     using AvalonStudio.Extensibility;
     using AvalonStudio.GlobalSettings;
     using AvalonStudio.Platforms;
@@ -8,6 +9,9 @@
     using Mono.Debugging.Client;
     using Mono.Debugging.Win32;
     using System.IO;
+    using AvalonStudio.Utils;
+    using System;
+    using System.Threading.Tasks;
 
     public class DotNetCoreDebugger : IDebugger2
     {
@@ -20,11 +24,57 @@
             IoC.RegisterConstant<DotNetCoreDebugger>(this);
         }
 
+        private static string ResolveShimVersion()
+        {
+            var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
+
+            bool inHostSection = false;
+
+            string result = string.Empty;
+
+            var exitCode = PlatformSupport.ExecuteShellCommand(settings.DotNetPath, "--info", (s, e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                {
+                    if (inHostSection)
+                    {
+                        if (e.Data.Trim().StartsWith("Version"))
+                        {
+                            var parts = e.Data.Split(':');
+
+                            if (parts.Length >= 2)
+                            {
+                                result = parts[1].Trim();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (e.Data.Trim().StartsWith("Microsoft .NET Core Shared Framework Host"))
+                        {
+                            inHostSection = true;
+                        }
+                    }
+                }
+            }, (s, e) => { }, false, "", false);
+
+            return result;
+        }
+
         public DebuggerSession CreateSession(IProject project)
         {
             var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
 
-            var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", "2.0.0-preview1-002021-00", "dbgshim" + Platform.DLLExtension);
+            var coreAppVersion = ResolveShimVersion();
+
+            string dbgShimName = "dbgshim";
+
+            if(Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
+            {
+                dbgShimName = "lib" + dbgShimName;
+            }
+
+            var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", coreAppVersion, dbgShimName + Platform.DLLExtension);
 
             var result = new CoreClrDebuggerSession(System.IO.Path.GetInvalidPathChars(), dbgShimPath);
 
@@ -61,6 +111,11 @@
         public object GetSettingsControl(IProject project)
         {
             return null;
+        }
+
+        public Task InstallAsync(IConsole console)
+        {
+            return Task.FromResult(0);
         }
     }
 }

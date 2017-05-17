@@ -15,6 +15,7 @@
             <Grid.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="Delete" Command="{Binding DeleteCommand}"/>
+                <MenuItem Header="Add WatchPoint" Command="{Binding AddWatchPointCommand}" />
                 <MenuItem Header="Display as">
                   <MenuItem Header="Hexadecimal" Command="{Binding DisplayFormatCommand}" CommandParameter="hex" />
                   <MenuItem Header="Decimal" Command="{Binding DisplayFormatCommand}" CommandParameter="dec" />

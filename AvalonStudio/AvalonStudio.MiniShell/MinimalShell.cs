@@ -26,7 +26,7 @@ namespace AvalonStudio.Shell
         private List<ISolutionType> _solutionTypes;
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
-        private List<IDebugger2> _debugger2s;
+        private List<IDebugger> _debugger2s;
         private List<ITestFramework> _testFrameworks;
 
         [ImportingConstructor]
@@ -91,7 +91,7 @@ namespace AvalonStudio.Shell
 
         public IEnumerable<IToolChain> ToolChains => _toolChains;
 
-        public IEnumerable<IDebugger2> Debugger2s => _debugger2s;
+        public IEnumerable<IDebugger> Debugger2s => _debugger2s;
 
         public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 

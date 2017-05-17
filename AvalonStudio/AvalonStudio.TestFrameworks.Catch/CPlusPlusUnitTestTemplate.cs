@@ -1,4 +1,3 @@
-using AvalonStudio.Debuggers.GDB.Local;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Git;
 using AvalonStudio.Extensibility.Templating;
@@ -88,7 +87,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             await SourceFile.Create(project, "UnitTest1.cpp", Template.Engine.Parse("CatchUnitTest.template", new { }));
 
             project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
-            project.Debugger2 = shell.Debugger2s.FirstOrDefault(d => d is LocalGdbDebugger);
+            project.Debugger2 = shell.Debugger2s.FirstOrDefault(db => db.GetType().FullName == "AvalonStudio.Debuggers.GDB.Local.LocalGdbDebugger");
             project.TestFramework = shell.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);
 
             var settings = project.GetSettings<GccToolchainSettings>();

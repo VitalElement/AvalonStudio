@@ -1,5 +1,6 @@
 namespace AvalonStudio.Toolchains.STM32
 {
+    using AvalonStudio.Packages;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.Standard;
@@ -11,10 +12,12 @@ namespace AvalonStudio.Toolchains.STM32
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
+    using AvalonStudio.Projects.CPlusPlus;
 
     public class STM32GCCToolchain : GCCToolchain
     {
-        public override string BinDirectory => Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "bin");
+        public static string ContentDirectory => Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content");
+        public override string BinDirectory => Path.Combine(ContentDirectory, "bin");
 
         public string LinkerScript { get; set; }
 
@@ -34,9 +37,13 @@ namespace AvalonStudio.Toolchains.STM32
         {
             return new List<string>
             {
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "lib", "gcc", "arm-none-eabi", "5.4.1", "include"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "lib", "gcc", "arm-none-eabi", "5.4.1", "include-fixed"),
-                Path.Combine(Platform.ReposDirectory, "AvalonStudio.Toolchains.STM32", "arm-none-eabi", "include")
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "6.3.1"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "6.3.1", "arm-none-eabi"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "6.3.1", "backward"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include"),
+                Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "6.3.1", "include"),
+                Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "6.3.1", "include-fixed"),
+                Path.Combine(ContentDirectory, "arm-none-eabi", "include")
             };
         }
 
@@ -403,7 +410,7 @@ namespace AvalonStudio.Toolchains.STM32
         {
             var result = false;
 
-            if (project is IStandardProject)
+            if (project is CPlusPlusProject)
             {
                 result = true;
             }
@@ -491,6 +498,11 @@ namespace AvalonStudio.Toolchains.STM32
             }
 
             return true;
+        }
+
+        public async override Task InstallAsync(IConsole console, IProject project)
+        {
+            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console);
         }
     }
 }

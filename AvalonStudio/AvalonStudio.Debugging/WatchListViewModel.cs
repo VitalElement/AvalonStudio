@@ -17,7 +17,6 @@ namespace AvalonStudio.Debugging
 
         private readonly List<ObjectValue> watches;
         private List<string> _expressions;
-        private StackFrame _currentFrame;
 
         private ObservableCollection<ObjectValueViewModel> children;
         public List<ObjectValueViewModel> LastChangedRegisters { get; set; }
@@ -33,11 +32,6 @@ namespace AvalonStudio.Debugging
             _expressions = new List<string>();
 
             Activation(); // for when we create the part outside of composition.
-        }
-
-        public void SetCurrentFrame(StackFrame frame)
-        {
-            _currentFrame = frame;
         }
 
         public ObservableCollection<ObjectValueViewModel> Children
@@ -62,7 +56,7 @@ namespace AvalonStudio.Debugging
 
             if (DebugManager != null)
             {
-                DebugManager.TargetStopped += _debugManager_TargetStopped;
+                DebugManager.FrameChanged += DebugManager_FrameChanged;
                 DebugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
                 DebugManager.DebugSessionEnded += (sender, e) =>
@@ -73,11 +67,9 @@ namespace AvalonStudio.Debugging
             }
         }
 
-        private void _debugManager_TargetStopped(object sender, TargetEventArgs e)
+        private void DebugManager_FrameChanged(object sender, System.EventArgs e)
         {
-            _currentFrame = e.Backtrace.GetFrame(0);
-
-            var expressions = _currentFrame.GetExpressionValues(_expressions.ToArray(), false);
+            var expressions = DebugManager.SelectedFrame.GetExpressionValues(_expressions.ToArray(), false);
 
             InvalidateObjects(expressions);
         }
@@ -131,18 +123,12 @@ namespace AvalonStudio.Debugging
         {
             var newWatch = new ObjectValueViewModel(this, model);
 
-            Dispatcher.UIThread.InvokeTaskAsync(() =>
-            {
-                Children.Add(newWatch);
-            }).Wait();
+            Children.Add(newWatch);
         }
 
         public void Remove(ObjectValue value)
         {
-            Dispatcher.UIThread.InvokeTaskAsync(() =>
-            {
-                Children.Remove(Children.FirstOrDefault(c => c.Model.Name == value.Name));
-            }).Wait();
+            Children.Remove(Children.FirstOrDefault(c => c.Model.Name == value.Name));
         }
 
         private void ApplyChange(ObjectValue change)
@@ -158,10 +144,7 @@ namespace AvalonStudio.Debugging
 
         public virtual void Clear()
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Children.Clear();
-            });
+            Children.Clear();
 
             watches.Clear();
         }
@@ -170,15 +153,18 @@ namespace AvalonStudio.Debugging
         {
             bool result = false;
 
-            if (DebugManager.SessionActive && !DebugManager.Session.IsRunning && DebugManager.Session.IsConnected && !_expressions.Contains(expression))
+            if (!string.IsNullOrEmpty(expression))
             {
-                _expressions.Add(expression);
+                if (DebugManager.SessionActive && !DebugManager.Session.IsRunning && DebugManager.Session.IsConnected && !_expressions.Contains(expression))
+                {
+                    _expressions.Add(expression);
 
-                var watch = _currentFrame.GetExpressionValue(expression, false);
+                    var watch = DebugManager.SelectedFrame.GetExpressionValue(expression, false);
 
-                Task.Run(() => { InvalidateObjects(watch); });
+                    InvalidateObjects(watch);
 
-                return true;
+                    return true;
+                }
             }
 
             return result;

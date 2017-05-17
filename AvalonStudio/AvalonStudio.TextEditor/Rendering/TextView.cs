@@ -285,12 +285,7 @@ namespace AvalonStudio.TextEditor.Rendering
         }
 
         ~TextView()
-        {
-            foreach (var visualLine in VisualLines)
-            {
-                visualLine.RenderedText?.Dispose();
-            }
-
+        {            
             VisualLines.Clear();
         }
 
@@ -661,12 +656,13 @@ namespace AvalonStudio.TextEditor.Rendering
 
         public void GenerateTextProperties()
         {
-            using (
-                var formattedText = new FormattedText("x", FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left,
-                    FontWeight.Normal))
+            var formattedText = new FormattedText
             {
-                CharSize = formattedText.Measure();
-            }
+                Text = "x",
+                Typeface = new Typeface(FontFamily, FontSize)
+            };
+
+            CharSize = formattedText.Measure();            
         }
 
         private void RenderBackground(DrawingContext context)
@@ -750,9 +746,12 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             if (!line.DocumentLine.IsDeleted)
             {
-                var formattedText = new FormattedText(TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length),
-                    FontFamily, FontSize, FontStyle.Normal, TextAlignment.Left, FontWeight.Normal);
-
+                var formattedText = new FormattedText
+                {
+                    Text = TextDocument.GetText(line.DocumentLine.Offset, line.DocumentLine.Length),
+                    Typeface = new Typeface(FontFamily, FontSize)
+                };
+                    
                 line.RenderedText = formattedText;
 
                 foreach (var lineTransformer in DocumentLineTransformers)

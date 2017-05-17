@@ -17,7 +17,7 @@ namespace AvalonStudio.Projects
         ObservableCollection<IProject> References { get; }
 
         IToolChain ToolChain { get; set; }
-        IDebugger2 Debugger2 { get; set; }
+        IDebugger Debugger2 { get; set; }
 
         ITestFramework TestFramework { get; set; }
 

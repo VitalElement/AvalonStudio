@@ -2,7 +2,6 @@ using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
-using AvalonStudio.MVVM.DataVirtualization;
 using ReactiveUI;
 using System.Threading.Tasks;
 
@@ -12,11 +11,7 @@ namespace AvalonStudio.Debugging
     {
         private IDebugger2 _debugger;
         private IDebugManager2 _debugManager;
-
-        private readonly DisassemblyDataProvider dataProvider;
-
-        private AsyncVirtualizingCollection<InstructionLine> disassemblyData;
-
+        
         private bool enabled;
 
         private ulong selectedIndex;
@@ -25,8 +20,7 @@ namespace AvalonStudio.Debugging
         {
             Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
 
-            Title = "Disassembly";
-            dataProvider = new DisassemblyDataProvider();
+            Title = "Disassembly";            
         }
 
         public bool Enabled
@@ -39,12 +33,6 @@ namespace AvalonStudio.Debugging
         {
             get { return selectedIndex; }
             set { this.RaiseAndSetIfChanged(ref selectedIndex, value); }
-        }
-
-        public AsyncVirtualizingCollection<InstructionLine> DisassemblyData
-        {
-            get { return disassemblyData; }
-            set { this.RaiseAndSetIfChanged(ref disassemblyData, value); }
         }
 
         public override Location DefaultLocation
@@ -70,24 +58,24 @@ namespace AvalonStudio.Debugging
 
         public void SetAddress(ulong currentAddress)
         {
-            if (DisassemblyData == null)
-            {
-                DisassemblyData = new AsyncVirtualizingCollection<InstructionLine>(dataProvider, 100, 6000);
+            //if (DisassemblyData == null)
+            //{
+            //    DisassemblyData = new AsyncVirtualizingCollection<InstructionLine>(dataProvider, 100, 6000);
 
-                Task.Factory.StartNew(async () =>
-                {
-                    await Task.Delay(50);
+            //    Task.Factory.StartNew(async () =>
+            //    {
+            //        await Task.Delay(50);
 
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        SelectedIndex = currentAddress;
-                    });
-                });
-            }
-            else
-            {
-                SelectedIndex = currentAddress;
-            }
+            //        Dispatcher.UIThread.InvokeAsync(() =>
+            //        {
+            //            SelectedIndex = currentAddress;
+            //        });
+            //    });
+            //}
+            //else
+            //{
+            //    SelectedIndex = currentAddress;
+            //}
         }
     }
 }
