@@ -50,6 +50,7 @@
   <ItemGroup>
     <EmbeddedResource Include="App.paml" />
     <EmbeddedResource Include="BootScreen.paml" />
+    <EmbeddedResource Include="CodeEditor\CodeEditor.xaml" />
     <EmbeddedResource Include="Controls\CompletionAssistantView.paml" />
     <EmbeddedResource Include="Controls\DebugHoverProbeView.paml" />
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />

@@ -1,0 +1,30 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:local="clr-namespace:AvalonStudio.CodeEditor;assembly=AvalonStudio"
+        xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:Editing="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit">
+    <Style Selector="local|CodeEditor">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                    <ScrollViewer Focusable="False"
+                                  Name="PART_ScrollViewer"
+                                  VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}"
+                                  HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}"
+                                  VerticalContentAlignment="Top"
+                                  HorizontalContentAlignment="Left"
+                                  Padding="{TemplateBinding Padding}" />
+                </Border>
+                <!--<ControlTemplate.Triggers>
+                        <Trigger Property="WordWrap"
+                                 Value="True">
+                            <Setter TargetName="PART_ScrollViewer"
+                                    Property="HorizontalScrollBarVisibility"
+                                    Value="Disabled" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>-->
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>
