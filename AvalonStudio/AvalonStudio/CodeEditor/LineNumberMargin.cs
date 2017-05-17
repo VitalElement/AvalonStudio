@@ -1,0 +1,257 @@
+﻿using System;
+using System.Globalization;
+using Avalonia;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Utils;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Media;
+using AvaloniaEdit.Editing;
+
+namespace AvalonStudio.CodeEditor
+{
+    /// <summary>
+    /// Margin showing line numbers.
+    /// </summary>
+    public class LineNumberMargin : AbstractMargin
+    {
+        private TextArea _textArea;
+        private CodeEditor _editor;
+
+        public LineNumberMargin(CodeEditor editor)
+        {
+            _editor = editor;
+            Foreground = Brush.Parse("#2691AF");
+            SelectedLineForeground = Brush.Parse("#2691AF");
+        }
+
+        /// <summary>
+        /// The typeface used for rendering the line number margin.
+        /// This field is calculated in MeasureOverride() based on the FontFamily etc. properties.
+        /// </summary>
+        protected string Typeface;
+
+        /// <summary>
+        /// The font size used for rendering the line number margin.
+        /// This field is calculated in MeasureOverride() based on the FontFamily etc. properties.
+        /// </summary>
+        protected double EmSize;
+
+        public IBrush Foreground { get; set; }
+        public IBrush SelectedLineForeground { get; set; }
+
+        /// <inheritdoc/>
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            Typeface = GetValue(TextBlock.FontFamilyProperty);
+            EmSize = GetValue(TextBlock.FontSizeProperty);
+
+            var text = TextFormatterFactory.CreateFormattedText(
+                this,
+                new string('9', MaxLineNumberLength),
+                Typeface,
+                EmSize,
+                GetValue(TemplatedControl.ForegroundProperty)
+            );
+            return new Size(text.Measure().Width, 0);
+        }
+
+        /// <inheritdoc/>
+        public override void Render(DrawingContext drawingContext)
+        {
+            var textView = TextView;
+            var renderSize = Bounds.Size;
+            if (textView != null && textView.VisualLinesValid)
+            {
+                int currentLine = -1;
+
+                if (_editor.SelectionLength == 0 && _editor.CaretOffset >= 0 && _editor.CaretOffset <= _editor.Document.TextLength)
+                {
+                    currentLine = _editor.Document.GetLineByOffset(_editor.CaretOffset).LineNumber;
+                }
+
+                foreach (var line in textView.VisualLines)
+                {
+                    var lineNumber = line.FirstDocumentLine.LineNumber;
+
+                    var foreground = lineNumber != currentLine ? Foreground : SelectedLineForeground;
+
+                    var text = TextFormatterFactory.CreateFormattedText(
+                        this,
+                        lineNumber.ToString(CultureInfo.CurrentCulture),
+                        Typeface, EmSize, foreground
+                    );
+
+                    var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
+                    drawingContext.DrawText(foreground, new Point(renderSize.Width - text.Measure().Width, y - textView.VerticalOffset),
+                        text);
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void OnTextViewChanged(TextView oldTextView, TextView newTextView)
+        {
+            if (oldTextView != null)
+            {
+                oldTextView.VisualLinesChanged -= TextViewVisualLinesChanged;
+            }
+            base.OnTextViewChanged(oldTextView, newTextView);
+            if (newTextView != null)
+            {
+                newTextView.VisualLinesChanged += TextViewVisualLinesChanged;
+
+                // find the text area belonging to the new text view
+                _textArea = newTextView.GetService(typeof(TextArea)) as TextArea;
+            }
+            else
+            {
+                _textArea = null;
+            }
+            InvalidateVisual();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnDocumentChanged(TextDocument oldDocument, TextDocument newDocument)
+        {
+            if (oldDocument != null)
+            {
+                TextDocumentWeakEventManager.LineCountChanged.RemoveHandler(oldDocument, OnDocumentLineCountChanged);
+            }
+            base.OnDocumentChanged(oldDocument, newDocument);
+            if (newDocument != null)
+            {
+                TextDocumentWeakEventManager.LineCountChanged.AddHandler(newDocument, OnDocumentLineCountChanged);
+            }
+            OnDocumentLineCountChanged();
+        }
+
+        private void OnDocumentLineCountChanged(object sender, EventArgs e)
+        {
+            OnDocumentLineCountChanged();
+        }
+
+        /// <summary>
+        /// Maximum length of a line number, in characters
+        /// </summary>
+        protected int MaxLineNumberLength = 1;
+
+        private void OnDocumentLineCountChanged()
+        {
+            var documentLineCount = Document?.LineCount ?? 1;
+            var newLength = documentLineCount.ToString(CultureInfo.CurrentCulture).Length;
+
+            // The margin looks too small when there is only one digit, so always reserve space for
+            // at least two digits
+            if (newLength < 2)
+                newLength = 2;
+
+            if (newLength != MaxLineNumberLength)
+            {
+                MaxLineNumberLength = newLength;
+                InvalidateMeasure();
+            }
+        }
+
+        private void TextViewVisualLinesChanged(object sender, EventArgs e)
+        {
+            InvalidateVisual();
+        }
+
+        private AnchorSegment _selectionStart;
+        private bool _selecting;
+
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
+        {
+            base.OnPointerPressed(e);
+
+            if (!e.Handled && e.MouseButton == MouseButton.Left && TextView != null && _textArea != null)
+            {
+                e.Handled = true;
+                _textArea.Focus();
+
+                var currentSeg = GetTextLineSegment(e);
+                if (currentSeg == SimpleSegment.Invalid)
+                    return;
+                _textArea.Caret.Offset = currentSeg.Offset + currentSeg.Length;
+                e.Device.Capture(this);
+                if (e.Device.Captured == this)
+                {
+                    _selecting = true;
+                    _selectionStart = new AnchorSegment(Document, currentSeg.Offset, currentSeg.Length);
+                    if (e.InputModifiers.HasFlag(InputModifiers.Shift))
+                    {
+                        if (_textArea.Selection is SimpleSelection simpleSelection)
+                            _selectionStart = new AnchorSegment(Document, simpleSelection.SurroundingSegment);
+                    }
+                    _textArea.Selection = Selection.Create(_textArea, _selectionStart);
+                    if (e.InputModifiers.HasFlag(InputModifiers.Shift))
+                    {
+                        ExtendSelection(currentSeg);
+                    }
+                    _textArea.Caret.BringCaretToView(5.0);
+                }
+            }
+        }
+
+        private SimpleSegment GetTextLineSegment(PointerEventArgs e)
+        {
+            var pos = e.GetPosition(TextView);
+            pos = new Point(0, pos.Y.CoerceValue(0, TextView.Bounds.Height) + TextView.VerticalOffset);
+            var vl = TextView.GetVisualLineFromVisualTop(pos.Y);
+            if (vl == null)
+                return SimpleSegment.Invalid;
+            var tl = vl.GetTextLineByVisualYPosition(pos.Y);
+            var visualStartColumn = vl.GetTextLineVisualStartColumn(tl);
+            var visualEndColumn = visualStartColumn + tl.Length;
+            var relStart = vl.FirstDocumentLine.Offset;
+            var startOffset = vl.GetRelativeOffset(visualStartColumn) + relStart;
+            var endOffset = vl.GetRelativeOffset(visualEndColumn) + relStart;
+            if (endOffset == vl.LastDocumentLine.Offset + vl.LastDocumentLine.Length)
+                endOffset += vl.LastDocumentLine.DelimiterLength;
+            return new SimpleSegment(startOffset, endOffset - startOffset);
+        }
+
+        private void ExtendSelection(SimpleSegment currentSeg)
+        {
+            if (currentSeg.Offset < _selectionStart.Offset)
+            {
+                _textArea.Caret.Offset = currentSeg.Offset;
+                _textArea.Selection = Selection.Create(_textArea, currentSeg.Offset, _selectionStart.Offset + _selectionStart.Length);
+            }
+            else
+            {
+                _textArea.Caret.Offset = currentSeg.Offset + currentSeg.Length;
+                _textArea.Selection = Selection.Create(_textArea, _selectionStart.Offset, currentSeg.Offset + currentSeg.Length);
+            }
+        }
+
+        protected override void OnPointerMoved(PointerEventArgs e)
+        {
+            if (_selecting && _textArea != null && TextView != null)
+            {
+                e.Handled = true;
+                var currentSeg = GetTextLineSegment(e);
+                if (currentSeg == SimpleSegment.Invalid)
+                    return;
+                ExtendSelection(currentSeg);
+                _textArea.Caret.BringCaretToView(5.0);
+            }
+            base.OnPointerMoved(e);
+        }
+
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
+        {
+            if (_selecting)
+            {
+                _selecting = false;
+                _selectionStart = null;
+                e.Device.Capture(null);
+                e.Handled = true;
+            }
+            base.OnPointerReleased(e);
+        }
+    }
+}
