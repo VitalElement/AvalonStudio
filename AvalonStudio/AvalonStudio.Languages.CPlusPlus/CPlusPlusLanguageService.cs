@@ -553,7 +553,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     {
                         case Key.Return:
                             {
-                                IndentationStrategy.IndentLines(editor.Document, 1, editor.Document.LineCount - 1);
+                                IndentationStrategy?.IndentLines(editor.Document, 1, editor.Document.LineCount - 1);
                             }
                             break;
                     }
