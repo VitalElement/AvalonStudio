@@ -11,8 +11,10 @@
     <Border BorderBrush="#3E3E42" BorderThickness="1">
         <Grid>
             <AvalonEdit:TextEditor Name="editor"
-                     TextBlock.FontFamily="{Binding FontFamily}" TextBlock.FontSize="13" Foreground="#DCDCDC" BorderThickness="0" TextBlock.FontWeight="ExtraLight"
-                     VerticalAlignment="Stretch" Background="#0c0c0c" Height="400">
+                                    TextBlock.FontFamily="{Binding FontFamily}" TextBlock.FontSize="13"
+                                    Foreground="#DCDCDC" BorderThickness="0" TextBlock.FontWeight="ExtraLight"
+                                   Document="{Binding TextDocument}"
+                                    VerticalAlignment="Stretch" Background="#0c0c0c" Height="400">
 
               <!-- <te:TextEditor.ContextMenu>
                     <ContextMenu>
