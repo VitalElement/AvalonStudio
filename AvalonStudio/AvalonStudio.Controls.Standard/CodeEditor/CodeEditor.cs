@@ -101,20 +101,23 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             SourceFileProperty.Changed.Subscribe(s =>
             {
-                var file = s.NewValue as ISourceFile;
-
-                if (System.IO.File.Exists(file.Location))
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    using (var fs = System.IO.File.OpenText(file.Location))
-                    {
-                        Document = new TextDocument(fs.ReadToEnd())
-                        {
-                            FileName = file.Location
-                        };
-                    }
-                }
+                    var file = s.NewValue as ISourceFile;
 
-                RegisterLanguageService(null, null);
+                    if (System.IO.File.Exists(file.Location))
+                    {
+                        using (var fs = System.IO.File.OpenText(file.Location))
+                        {
+                            Document = new TextDocument(fs.ReadToEnd())
+                            {
+                                FileName = file.Location
+                            };
+                        }
+                    }
+
+                    RegisterLanguageService(file, null, null);
+                });
             });
         }
 
@@ -259,26 +262,26 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return true;
         }
 
-        public void RegisterLanguageService(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant)
+        private void RegisterLanguageService(ISourceFile sourceFile, IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant)
         {
             UnRegisterLanguageService();
 
-            LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.CanHandle(SourceFile));
+            LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.CanHandle(sourceFile));
 
             if (LanguageService != null)
             {
                 //_shell.Instance.StatusBar.Language = LanguageService.Title;
 
-                LanguageService.RegisterSourceFile(intellisenseControl, completionAssistant, this, SourceFile, Document);
+                LanguageService.RegisterSourceFile(intellisenseControl, completionAssistant, this, sourceFile, Document);
 
-                _languageServiceBackgroundRenderers.AddRange(LanguageService.GetBackgroundRenderers(SourceFile));
+                _languageServiceBackgroundRenderers.AddRange(LanguageService.GetBackgroundRenderers(sourceFile));
 
                 foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
                 {
                     TextArea.TextView.BackgroundRenderers.Add(backgroundRenderer);
                 }
 
-                _languageServiceDocumentLineTransformers.AddRange(LanguageService.GetDocumentLineTransformers(SourceFile));
+                _languageServiceDocumentLineTransformers.AddRange(LanguageService.GetDocumentLineTransformers(sourceFile));
 
                 foreach (var transformer in _languageServiceDocumentLineTransformers)
                 {
@@ -302,7 +305,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             DoCodeAnalysisAsync().GetAwaiter();
         }
 
-        public void UnRegisterLanguageService()
+        private void UnRegisterLanguageService()
         {
             foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
             {
