@@ -10,6 +10,7 @@ using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
+using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var lineNumberMargin = new LineNumberMargin(this) { Margin = new Thickness(0, 0, 10, 0) };
 
             TextArea.LeftMargins.Add(lineNumberMargin);
+
+            TextArea.TextView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer(this));
+
+            TextArea.TextView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
 
             DocumentLineTransformersProperty.Changed.Subscribe(s =>
             {
