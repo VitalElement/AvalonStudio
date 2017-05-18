@@ -287,17 +287,11 @@ namespace AvalonStudio.Controls
             documentLineTransformers = new ObservableCollection<IVisualLineTransformer>();
 
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
-            backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
-
-            DebugLineHighlighter = new SelectedDebugLineBackgroundRenderer();
-            backgroundRenderers.Add(DebugLineHighlighter);
 
             backgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
             wordAtCaretHighlighter = new SelectedWordBackgroundRenderer();
             backgroundRenderers.Add(wordAtCaretHighlighter);
             backgroundRenderers.Add(new SelectionBackgroundRenderer());
-
-            //margins = new ObservableCollection<TextViewMargin>();
 
             Dock = Dock.Right;
         }
