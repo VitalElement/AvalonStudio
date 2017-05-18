@@ -15,6 +15,11 @@ namespace AvalonStudio.CodeEditor
 
         protected void SetTextStyle(DocumentLine line, int startIndex, int length, IBrush foreground)
         {
+            if ((line.Offset + length) > line.EndOffset)
+            {
+                length = (line.EndOffset - startIndex) - line.Offset;
+            }
+
             ChangeLinePart(line.Offset + startIndex, line.Offset + startIndex + length, e => e.TextRunProperties.ForegroundBrush = foreground);
         }
     }
