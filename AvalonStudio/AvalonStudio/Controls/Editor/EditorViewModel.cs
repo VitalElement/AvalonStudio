@@ -40,9 +40,7 @@ namespace AvalonStudio.Controls
 
         private readonly List<IVisualLineTransformer> languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
 
-        private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;
-
-        private IntellisenseManager intellisenseManager;
+        private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;        
 
         public ISourceFile ProjectFile { get; set; }
 
@@ -160,10 +158,7 @@ namespace AvalonStudio.Controls
                 //Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
                // Save();
                // Model.ShutdownBackgroundWorkers();
-               // Model.UnRegisterLanguageService();
-
-                intellisenseManager?.Dispose();
-                intellisenseManager = null;
+               // Model.UnRegisterLanguageService();                
 
                // Diagnostics?.Clear();
 
@@ -301,15 +296,6 @@ namespace AvalonStudio.Controls
         }
         
         public ICodeEditor Editor { get; set; }
-
-        private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
-        {
-            if (intellisenseManager != null)
-            {
-                var location = TextDocument.GetLocation(caretIndex);
-                intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList());
-            }
-        }
 
         private void ProjectFile_FileModifiedExternally(object sender, EventArgs e)
         {

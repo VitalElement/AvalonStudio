@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
-    public class IntellisenseViewModel : ViewModel, IIntellisenseControl, IDisposable
+    public class IntellisenseViewModel : ViewModel, IDisposable
     {
         private IList<CompletionDataViewModel> completionData;
         private EditorViewModel editorViewModel;

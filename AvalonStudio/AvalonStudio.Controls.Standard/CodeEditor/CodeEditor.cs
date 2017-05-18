@@ -21,10 +21,14 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using AvalonStudio.Languages.ViewModels;
+using Avalonia.Input;
+using AvaloniaEdit.CodeCompletion;
+using Avalonia.LogicalTree;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
-    public class CodeEditor : AvaloniaEdit.TextEditor
+    public class CodeEditor : AvaloniaEdit.TextEditor, IIntellisenseControl, ICompletionAssistant
     {
         private static List<UnsavedFile> _unsavedFiles;
 
@@ -44,6 +48,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private readonly List<IBackgroundRenderer> _languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
 
         private readonly List<IVisualLineTransformer> _languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
+
+        private IntellisenseManager _intellisenseManager;
+
+        private CompletionWindow _completionWindow;
 
         public bool IsDirty { get; set; }
 
@@ -119,6 +127,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 RegisterLanguageService(file, null, null);
             });
+
+            TextArea.Caret.PositionChanged += (sender, e) =>
+            {
+                if (_intellisenseManager != null)
+                {
+                    var location = Document.GetLocation(CaretOffset);
+                    _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList());
+                }
+            };
+
+            TextArea.TextEntered += (sender, e) => _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
         }
 
         protected override void OnTextChanged(EventArgs e)
@@ -287,6 +306,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     TextArea.TextView.LineTransformers.Add(transformer);
                 }
+
+                 _intellisenseManager = new IntellisenseManager(this, this, this, LanguageService, sourceFile);
             }
             else
             {
@@ -368,6 +389,27 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
+        protected override void OnTextInput(TextInputEventArgs e)
+        {
+            base.OnTextInput(e);
+
+            _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            _intellisenseManager?.OnKeyDown(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+        }
+
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            base.OnKeyUp(e);
+
+            _intellisenseManager?.OnKeyUp(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+        }
+
         private void List_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
@@ -443,6 +485,104 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var offset = position != null ? Document.GetOffset(position.Value.Location) : -1;
 
             return offset;
+        }        
+
+        IList<CodeCompletionData> IIntellisenseControl.CompletionData
+        {
+            get
+            {
+                return _completionWindow.CompletionList.CompletionData.Cast<CodeCompletionData>().ToList();
+            }
+            set
+            {
+                if (_completionWindow == null)
+                {
+                    _completionWindow = new CompletionWindow(TextArea);
+                }
+
+                _completionWindow.CompletionList.CompletionData.Clear();
+
+                if(value != null)
+                {
+                    foreach(var completion in value)
+                    {
+                        _completionWindow.CompletionList.CompletionData.Add(completion);
+                    }
+                }
+            }
+        }
+
+        CodeCompletionData IIntellisenseControl.SelectedCompletion
+        {
+            get
+            {
+                return _completionWindow.CompletionList.SelectedItem as CodeCompletionData;
+            }
+            set
+            {                
+                _completionWindow.CompletionList.SelectedItem = value;
+            }
+        }
+
+        bool _intellisenseVisible;
+        bool IIntellisenseControl.IsVisible
+        {
+            get
+            {
+                return _intellisenseVisible;
+            }
+
+            set
+            {
+                _intellisenseVisible = value;
+
+                if (value)
+                {                       
+                    var data = _completionWindow.CompletionList.CompletionData;
+
+                    _completionWindow.Show();
+                }
+            }
+        }        
+
+        async Task<CodeCompletionResults>IIntellisenseControl.DoCompletionRequestAsync(int index, int line, int column)
+        {
+            return await LanguageService?.CodeCompleteAtAsync(SourceFile, index, line, column, CodeEditor.UnsavedFiles);
+        }
+
+        SignatureHelp ICompletionAssistant.CurrentSignatureHelp => null;
+
+        bool ICompletionAssistant.IsVisible { get; set; }
+
+
+        void ICompletionAssistant.PushMethod(SignatureHelp methodInfo)
+        {
+            
+        }
+
+        void ICompletionAssistant.PopMethod()
+        {
+            
+        }
+
+        void ICompletionAssistant.SetParameterIndex(int index)
+        {
+            
+        }
+
+        void ICompletionAssistant.IncrementSignatureIndex()
+        {
+            
+        }
+
+        void ICompletionAssistant.DecrementSignatureIndex()
+        {
+            
+        }
+
+        void ICompletionAssistant.Close()
+        {
+            
         }
     }
 }

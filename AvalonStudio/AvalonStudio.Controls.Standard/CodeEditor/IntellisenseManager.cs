@@ -2,8 +2,7 @@
 {
     using Avalonia.Input;
     using Avalonia.Threading;
-    using AvaloniaEdit.Document;
-    using AvalonStudio.Editor;
+    using AvaloniaEdit.Document;    
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Extensibility.Threading;
     using AvalonStudio.Languages;
@@ -26,8 +25,8 @@
         private bool isProcessingKey;
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
-        private readonly CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
-        private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
+        private readonly CodeCompletionData noSelectedCompletion = new CodeCompletionData();
+        private readonly List<CodeCompletionData> unfilteredCompletions = new List<CodeCompletionData>();
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
 
@@ -91,7 +90,7 @@
                 CloseIntellisense();
             });
 
-            completionAssistant.Close();
+            completionAssistant?.Close();
         }
 
         private void SetCompletionData(CodeCompletionResults completionData)
@@ -100,13 +99,13 @@
 
             foreach (var result in completionData.Completions)
             {
-                CompletionDataViewModel currentCompletion = null;
+                CodeCompletionData currentCompletion = null;
 
-                currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
+                currentCompletion = unfilteredCompletions.BinarySearch(c => c.Text, result.Suggestion);
 
                 if (currentCompletion == null)
                 {
-                    unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
+                    unfilteredCompletions.Add(result);
                 }
                 else
                 {
@@ -169,22 +168,22 @@
                 currentFilter = string.Empty;
             }
 
-            CompletionDataViewModel suggestion = null;
+            CodeCompletionData suggestion = null;
 
-            var filteredResults = unfilteredCompletions as IEnumerable<CompletionDataViewModel>;
+            var filteredResults = unfilteredCompletions as IEnumerable<CodeCompletionData>;
 
             if (currentFilter != string.Empty)
             {
-                filteredResults = unfilteredCompletions.Where(c => c != null && c.Title.ToLower().Contains(currentFilter.ToLower()));
+                filteredResults = unfilteredCompletions.Where(c => c != null && c.Text.ToLower().Contains(currentFilter.ToLower()));
 
-                IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
+                IEnumerable<CodeCompletionData> newSelectedCompletions = null;
 
                 // try find exact match case sensitive
-                newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
+                newSelectedCompletions = filteredResults.Where(s => s.Text.StartsWith(currentFilter));
 
                 if (newSelectedCompletions.Count() == 0)
                 {
-                    newSelectedCompletions = filteredResults.Where(s => s.Title.ToLower().StartsWith(currentFilter.ToLower()));
+                    newSelectedCompletions = filteredResults.Where(s => s.Text.ToLower().StartsWith(currentFilter.ToLower()));
                     // try find non-case sensitve match
                 }
 
@@ -206,7 +205,7 @@
 
             if (filteredResults?.Count() > 0)
             {
-                if (filteredResults?.Count() == 1 && filteredResults.First().Title == currentFilter)
+                if (filteredResults?.Count() == 1 && filteredResults.First().Text == currentFilter)
                 {
                     CloseIntellisense();
                 }
@@ -263,9 +262,9 @@
                         if (caretIndex - intellisenseStartedAt - offset >= 0 && intellisenseControl.SelectedCompletion != null)
                         {
                             editor.Document.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
-                                    intellisenseControl.SelectedCompletion.Title);
+                                    intellisenseControl.SelectedCompletion.Text);
 
-                            caretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
+                            caretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Text.Length + offset;
 
                             editor.CaretOffset = caretIndex;
                         }
@@ -309,7 +308,7 @@
 
         public void OnTextInput(TextInputEventArgs e, int caretIndex, int line, int column)
         {
-            if (e.Source == editor)
+            if (e.Source == editor.TextArea)
             {
                 intellisenseJobRunner.InvokeAsync(() =>
                 {
@@ -365,7 +364,7 @@
                             }
                         }
 
-                        if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
+                       /* if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
                         {
                             string currentWord = string.Empty;
 
@@ -410,7 +409,7 @@
                             {
                                 completionAssistant.PopMethod();
                             }).Wait();
-                        }
+                        }*/
 
                         if (IsCompletionChar(currentChar))
                         {
@@ -447,7 +446,7 @@
 
         public void OnKeyDown(KeyEventArgs e, int caretIndex, int line, int column)
         {
-            if (e.Source == editor)
+            if (e.Source == editor.TextArea)
             {
                 capturedOnKeyDown = e.Key;
 
@@ -548,7 +547,7 @@
 
         public void OnKeyUp(KeyEventArgs e, int caretIndex, int line, int column)
         {
-            if (e.Source == editor)
+            if (e.Source == editor.TextArea)
             {
                 intellisenseJobRunner.InvokeAsync(() =>
                 {

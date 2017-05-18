@@ -6,8 +6,8 @@ namespace AvalonStudio.Languages
 {
     public interface IIntellisenseControl
     {
-        IList<CompletionDataViewModel> CompletionData { get; set; }
-        CompletionDataViewModel SelectedCompletion { get; set; }
+        IList<CodeCompletionData> CompletionData { get; set; }
+        CodeCompletionData SelectedCompletion { get; set; }
         bool IsVisible { get; set; }
 
         Task<CodeCompletionResults> DoCompletionRequestAsync(int index, int line, int column);
