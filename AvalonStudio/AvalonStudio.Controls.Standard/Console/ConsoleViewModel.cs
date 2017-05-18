@@ -26,8 +26,6 @@ namespace AvalonStudio.Controls.Standard.Console
             Title = "Console";
             document = new TextDocument();
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
-            backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
-            backgroundRenderers.Add(new SelectionBackgroundRenderer());
         }
 
         private TextDocument document;
