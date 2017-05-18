@@ -99,25 +99,20 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _analysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance)
             .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });
 
-            SourceFileProperty.Changed.Subscribe(s =>
+            this.GetObservable(SourceFileProperty).OfType<ISourceFile>().Subscribe(file =>
             {
-                Dispatcher.UIThread.InvokeAsync(() =>
+                if (System.IO.File.Exists(file.Location))
                 {
-                    var file = s.NewValue as ISourceFile;
-
-                    if (System.IO.File.Exists(file.Location))
+                    using (var fs = System.IO.File.OpenText(file.Location))
                     {
-                        using (var fs = System.IO.File.OpenText(file.Location))
+                        Document = new TextDocument(fs.ReadToEnd())
                         {
-                            Document = new TextDocument(fs.ReadToEnd())
-                            {
-                                FileName = file.Location
-                            };
-                        }
+                            FileName = file.Location
+                        };
                     }
+                }
 
-                    RegisterLanguageService(file, null, null);
-                });
+                RegisterLanguageService(file, null, null);
             });
         }
 
@@ -305,7 +300,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             DoCodeAnalysisAsync().GetAwaiter();
         }
 
-        private void UnRegisterLanguageService()
+        public void UnRegisterLanguageService()
         {
             foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
             {
@@ -327,10 +322,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             lock (UnsavedFiles)
             {
-                if (SourceFile != null)
-                {
-                    unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
-                }
+                unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
             }
 
             if (unsavedFile != null)
@@ -341,7 +333,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             }
 
-            if (LanguageService != null && SourceFile != null)
+            if (LanguageService != null)
             {
                 LanguageService.UnregisterSourceFile(this, SourceFile);
             }
@@ -447,6 +439,5 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             return offset;
         }
-
     }
 }

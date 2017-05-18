@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
+using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
@@ -152,6 +153,8 @@ namespace AvalonStudio.Controls
 
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
+                Editor?.Close();
+
                // Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
                 
                 //Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
@@ -302,6 +305,8 @@ namespace AvalonStudio.Controls
         ~EditorViewModel()
         {
         }
+        
+        public ICodeEditor Editor { get; set; }
 
         private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
         {
