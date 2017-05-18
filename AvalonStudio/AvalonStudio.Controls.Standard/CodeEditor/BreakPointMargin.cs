@@ -30,27 +30,30 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public override void Render(DrawingContext context)
         {
-            var firstLine = TextView.VisualLines.FirstOrDefault();
-            var height = firstLine.Height;
-            Width = height;
-            var textView = TextView;
-
             context.FillRectangle(Brush.Parse("#333333"), Bounds);
 
-            foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(textView.Document.FileName)))
+            if (TextView.VisualLines.Count > 0)
             {
-                context.FillRectangle(Brush.Parse("#FF3737"),
-                    new Rect((Bounds.Size.Width / 4) - 2,
-                        (height * (breakPoint.Line - textView.VisualLines.First().FirstDocumentLine.LineNumber)) + (Bounds.Size.Width / 4),
-                        Bounds.Size.Width / 1.5, height / 1.5), (float)height);
-            }
+                var firstLine = TextView.VisualLines.FirstOrDefault();
+                var height = firstLine.Height;
+                Width = height;
+                var textView = TextView;
 
-            if (previewPointVisible)
-            {
-                context.FillRectangle(Brush.Parse("#E67466"),
-                    new Rect((Bounds.Size.Width / 4) - 2,
-                        (height * (previewLine - textView.VisualLines.First().FirstDocumentLine.LineNumber)) + (Bounds.Size.Width / 4),
-                        Bounds.Size.Width / 1.5, height / 1.5), (float)height);
+                foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(textView.Document.FileName)))
+                {
+                    context.FillRectangle(Brush.Parse("#FF3737"),
+                        new Rect((Bounds.Size.Width / 4) - 2,
+                            (height * (breakPoint.Line - textView.VisualLines.First().FirstDocumentLine.LineNumber)) + (Bounds.Size.Width / 4),
+                            Bounds.Size.Width / 1.5, height / 1.5), (float)height);
+                }
+
+                if (previewPointVisible)
+                {
+                    context.FillRectangle(Brush.Parse("#E67466"),
+                        new Rect((Bounds.Size.Width / 4) - 2,
+                            (height * (previewLine - textView.VisualLines.First().FirstDocumentLine.LineNumber)) + (Bounds.Size.Width / 4),
+                            Bounds.Size.Width / 1.5, height / 1.5), (float)height);
+                }
             }
         }
 
@@ -104,7 +107,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            return new Size(100, 0);
+            if(TextView != null)
+            {
+                return new Size(TextView.DefaultLineHeight, 0);
+            }
+
+            return new Size(0, 0);
         }
 
         protected override void OnPointerLeave(PointerEventArgs e)
