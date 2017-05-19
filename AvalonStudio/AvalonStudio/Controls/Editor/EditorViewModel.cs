@@ -32,8 +32,6 @@ namespace AvalonStudio.Controls
 {
     public class EditorViewModel : DocumentTabViewModel, IEditor
     {
-        public SelectedDebugLineBackgroundRenderer DebugLineHighlighter { get; set; }
-
         private readonly CompositeDisposable disposables;
 
         private readonly List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
@@ -43,6 +41,11 @@ namespace AvalonStudio.Controls
         private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;        
 
         public ISourceFile ProjectFile { get; set; }
+
+        public void SetDebugHighlight(int line, int startColumn, int endColumn)
+        {
+
+        }
 
         public void Comment()
         {
@@ -113,6 +116,7 @@ namespace AvalonStudio.Controls
         public void OpenFile(ISourceFile file, IIntellisenseControl intellisense, ICompletionAssistant completionAssistant)
         {
             SourceFile = file;
+            Title = Path.GetFileName(file.Location);
         }
 
         public void SetSelection(TextSegment segment)
@@ -131,7 +135,7 @@ namespace AvalonStudio.Controls
 
         public void ClearDebugHighlight()
         {
-            throw new NotImplementedException();
+            
         }
 
         public void GotoOffset(int offset)
@@ -295,7 +299,7 @@ namespace AvalonStudio.Controls
         {
         }
         
-        public ICodeEditor Editor { get; set; }
+        public IEditor Editor { get; set; }
 
         private void ProjectFile_FileModifiedExternally(object sender, EventArgs e)
         {
@@ -680,13 +684,18 @@ namespace AvalonStudio.Controls
 
             FormatAll();
 
-            //Model.Save();
+            Editor.Save();
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ignoreFileModifiedEvents = false;
                 IsDirty = false;
             });
+        }
+
+        public void Close()
+        {
+            Editor?.Close();
         }
 
         #endregion Public Methods

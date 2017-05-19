@@ -33,7 +33,6 @@
         public TextMarkerService TextMarkerService { get; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
         public List<IVisualLineTransformer> DocumentLineTransformers { get; }
-        public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
     }
 }

@@ -6,6 +6,10 @@ namespace AvalonStudio.Documents
     {
         ISourceFile ProjectFile { get; }
 
+        void Close();
+
+        void Save();
+
         void Comment();
 
         void UnComment();
@@ -13,6 +17,8 @@ namespace AvalonStudio.Documents
         void Undo();
 
         void Redo();
+
+        void SetDebugHighlight(int line, int startColumn, int endColumn);
 
         void ClearDebugHighlight();
 

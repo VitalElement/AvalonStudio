@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Indentation.CSharp;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
@@ -35,7 +36,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public CPlusPlusLanguageService()
         {
-            //IndentationStrategy =  new CppIndentationStrategy();
             clangAccessJobRunner = new JobRunner();
 
             Task.Factory.StartNew(() => { clangAccessJobRunner.RunLoop(new CancellationToken()); });
@@ -56,7 +56,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             get { return typeof(BlankCPlusPlusLanguageTemplate); }
         }
 
-        public IIndentationStrategy IndentationStrategy { get; }
+        public IIndentationStrategy IndentationStrategy { get; private set; }
 
         public IEnumerable<char> IntellisenseTriggerCharacters => new[]
         {
@@ -542,28 +542,16 @@ namespace AvalonStudio.Languages.CPlusPlus
                 throw new Exception("Source file already registered with language service.");
             }
 
+            IndentationStrategy = new CSharpIndentationStrategy(editor.Options);
+
             association = new CPlusPlusDataAssociation(doc);
             dataAssociations.Add(file, association);
-
-            association.KeyUpHandler = (sender, e) =>
-            {
-                if (editor.Document == doc)
-                {
-                    switch (e.Key)
-                    {
-                        case Key.Return:
-                            {
-                                IndentationStrategy?.IndentLines(editor.Document, 1, editor.Document.LineCount - 1);
-                            }
-                            break;
-                    }
-                }
-            };
-
+            
             association.TextInputHandler = (sender, e) =>
             {
                 if (editor.Document == doc)
                 {
+                    editor.BeginChange();
                     OpenBracket(editor, editor.Document, e.Text);
                     CloseBracket(editor, editor.Document, e.Text);
 
@@ -593,12 +581,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                             }
                             break;
                     }
+
+                    editor.EndChange();
                 }
             };
 
-            editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, RoutingStrategies.Tunnel);
-
-            editor.TextInput += association.TextInputHandler;
+            editor.TextArea.TextEntered += association.TextInputHandler;
         }
 
         public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
@@ -618,8 +606,6 @@ namespace AvalonStudio.Languages.CPlusPlus
         public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
         {
             var association = GetAssociatedData(file);
-
-            editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
 
             editor.TextInput -= association.TextInputHandler;
 
@@ -891,6 +877,8 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     document.Insert(editor.CaretOffset, text[0].GetCloseBracketChar().ToString());
                 }
+
+                editor.CaretOffset--;
             }
         }
 
@@ -898,9 +886,23 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             if (text[0].IsCloseBracketChar() && editor.CaretOffset < document.TextLength && editor.CaretOffset > 0)
             {
-                if (document.GetCharAt(editor.CaretOffset) == text[0])
+                var offset = editor.CaretOffset;
+
+                while (offset < document.TextLength)
                 {
-                    document.Replace(editor.CaretOffset - 1, 1, string.Empty);
+                    var currentChar = document.GetCharAt(offset);
+                    
+                    if (currentChar == text[0])
+                    {
+                        document.Replace(offset, 1, string.Empty);
+                        break;
+                    }
+                    else if(!currentChar.IsWhiteSpace())
+                    {
+                        break;
+                    }
+
+                    offset++;
                 }
             }
         }

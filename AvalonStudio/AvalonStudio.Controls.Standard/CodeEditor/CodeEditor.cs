@@ -25,6 +25,7 @@ using AvalonStudio.Languages.ViewModels;
 using Avalonia.Input;
 using AvaloniaEdit.CodeCompletion;
 using Avalonia.LogicalTree;
+using AvaloniaEdit.Indentation.CSharp;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -53,7 +54,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private CompletionWindow _completionWindow;
 
-        public bool IsDirty { get; set; }
+        private bool _isLoaded = false;
+        
 
         private readonly IShell _shell;
         private Subject<bool> _analysisTriggerEvents = new Subject<bool>();
@@ -92,6 +94,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             TextArea.TextView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
 
+            Options = new AvaloniaEdit.TextEditorOptions
+            {
+                ConvertTabsToSpaces = true,
+                IndentationSize = 4
+            };
+
             DocumentLineTransformersProperty.Changed.Subscribe(s =>
             {
                 if (s.OldValue != null)
@@ -125,6 +133,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     }
                 }
 
+                _isLoaded = true;
+
                 RegisterLanguageService(file, null, null);
             });
 
@@ -144,12 +154,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             base.OnTextChanged(e);
 
-            TriggerCodeAnalysis();
-        }
+            if (_isLoaded)
+            {
+                IsDirty = true;
 
-        protected override void OnDocumentChanged(EventArgs e)
-        {
-            base.OnDocumentChanged(e);
+                TriggerCodeAnalysis();
+            }
         }
 
         public TextSegment GetSelection()
@@ -231,28 +241,21 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void Save()
         {
-            /* if (ProjectFile != null && Document != null && IsDirty)
-             {
-                 System.IO.File.WriteAllText(ProjectFile.Location, TextDocument.Text);
-                 IsDirty = false;
+            if (SourceFile != null && Document != null && IsDirty)
+            {
+                System.IO.File.WriteAllText(SourceFile.Location, Document.Text);
+                IsDirty = false;
 
-                 lock (UnsavedFiles)
-                 {
-                     var unsavedFile = UnsavedFiles.BinarySearch(ProjectFile.Location);
+                lock (UnsavedFiles)
+                {
+                    var unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
 
-                     if (unsavedFile != null)
-                     {
-                         UnsavedFiles.Remove(unsavedFile);
-                     }
-                 }
-             }*/
-        }
-
-        public void OnTextChanged(object param)
-        {
-            IsDirty = true;
-
-            TriggerCodeAnalysis();
+                    if (unsavedFile != null)
+                    {
+                        UnsavedFiles.Remove(unsavedFile);
+                    }
+                }
+            }
         }
 
         private async Task<bool> DoCodeAnalysisAsync()
@@ -308,6 +311,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
 
                  _intellisenseManager = new IntellisenseManager(this, this, this, LanguageService, sourceFile);
+
+                TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
             }
             else
             {
@@ -460,7 +465,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         public static readonly StyledProperty<TextSegmentCollection<Diagnostic>> DiagnosticsProperty =
-            AvaloniaProperty.Register<CodeEditor, TextSegmentCollection<Diagnostic>>(nameof(Diagnostics), null, false, Avalonia.Data.BindingMode.TwoWay);
+            AvaloniaProperty.Register<CodeEditor, TextSegmentCollection<Diagnostic>>(nameof(Diagnostics), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
         public TextSegmentCollection<Diagnostic> Diagnostics
         {
@@ -476,6 +481,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get { return GetValue(SourceFileProperty); }
             set { SetValue(SourceFileProperty, value); }
+        }
+
+        public static readonly StyledProperty<bool> IsDirtyProperty =
+            AvaloniaProperty.Register<CodeEditor, bool>(nameof(IsDirty), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
+
+        public bool IsDirty
+        {
+            get { return GetValue(IsDirtyProperty); }
+            set { SetValue(IsDirtyProperty, value); }
         }
 
         public int GetOffsetFromPoint(Point point)
@@ -519,8 +533,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 return _completionWindow.CompletionList.SelectedItem as CodeCompletionData;
             }
             set
-            {                
-                _completionWindow.CompletionList.SelectedItem = value;
+            {
+                if (_completionWindow != null)
+                {
+                    _completionWindow.CompletionList.SelectedItem = value;
+                }
             }
         }
 
