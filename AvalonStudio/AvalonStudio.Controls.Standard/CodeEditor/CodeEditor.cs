@@ -29,6 +29,7 @@ using AvaloniaEdit.Indentation.CSharp;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using AvaloniaEdit;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -151,9 +152,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), true);
                 }
 
-                var visualLocation = TextArea.TextView.GetVisualPosition(TextArea.Caret.Position, VisualYPosition.LineBottom);
-                var visualLocationTop = TextArea.TextView.GetVisualPosition(TextArea.Caret.Position, VisualYPosition.LineTop);
+                var prevLocation = new TextViewPosition(Document.GetLocation(CaretOffset - 1));
 
+                var visualLocation = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineBottom);
+                var visualLocationTop = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineTop);
 
                 var position = visualLocation - TextArea.TextView.ScrollOffset;
                 position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
