@@ -108,6 +108,7 @@ namespace AvalonStudio.Controls
 
         public void OpenFile(ISourceFile file)
         {
+            ProjectFile = file;
             SourceFile = file;
             Title = Path.GetFileName(file.Location);
         }
