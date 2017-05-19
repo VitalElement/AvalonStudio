@@ -69,9 +69,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private Subject<bool> _analysisTriggerEvents = new Subject<bool>();
         private readonly JobRunner _codeAnalysisRunner;
         private CancellationTokenSource _cancellationSource;
-        private CodeAnalysisResults _codeAnalysisResults;
-
-        public event EventHandler<EventArgs> CodeAnalysisCompleted;
 
         /// <summary>
         ///     Write lock must be held before calling this.
