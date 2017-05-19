@@ -136,8 +136,6 @@ namespace AvalonStudio.Projects
             solution.Location = fileName.NormalizePath().ToPlatformPath();
             solution.CurrentDirectory = (Path.GetDirectoryName(fileName) + Platform.DirectorySeperator).ToPlatformPath();
 
-            Console.WriteLine("Solution directory is " + solution.CurrentDirectory);
-
             foreach (var projectReference in solution.ProjectReferences)
             {
                 var proj = LoadProject(solution, projectReference);
