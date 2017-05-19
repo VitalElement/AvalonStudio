@@ -367,7 +367,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 foreach (var transformer in _languageServiceDocumentLineTransformers)
                 {
-                    TextArea.TextView.LineTransformers.Add(transformer);
+                    TextArea.TextView.LineTransformers.Insert(0, transformer);
                 }
 
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
@@ -553,11 +553,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
             _selectedDebugLineBackgroundRenderer.SetLocation(line, startColumn, endColumn);
+
+            TextArea.TextView.Redraw();
         }
 
         public void ClearDebugHighlight()
         {
             _selectedDebugLineBackgroundRenderer.SetLocation(-1);
+
+            TextArea.TextView.Redraw();
         }
     }
 }

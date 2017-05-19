@@ -38,8 +38,6 @@ namespace AvalonStudio.TextEditor.Rendering
             set
             {
                 _line = value;
-
-                DataChanged?.Invoke(this, new EventArgs());
             }
         }
 
@@ -52,7 +50,6 @@ namespace AvalonStudio.TextEditor.Rendering
             set
             {
                 _startColumn = value;
-                DataChanged?.Invoke(this, new EventArgs());
             }
         }
 
@@ -65,13 +62,10 @@ namespace AvalonStudio.TextEditor.Rendering
             set
             {
                 _endColumn = value;
-                DataChanged?.Invoke(this, new EventArgs());
             }
         }
 
-        public KnownLayer Layer => KnownLayer.Background;
-
-        public event EventHandler<EventArgs> DataChanged;
+        public KnownLayer Layer => KnownLayer.Background;        
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
