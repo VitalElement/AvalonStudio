@@ -303,7 +303,6 @@
 
         public void OnTextInput(TextInputEventArgs e, int caretIndex, int line, int column)
         {
-            Console.WriteLine("TextInput");
             if (e.Source == editor.TextArea)
             {
                 intellisenseJobRunner.InvokeAsync(() =>
@@ -440,7 +439,6 @@
 
         public void OnKeyDown(KeyEventArgs e, int caretIndex, int line, int column)
         {
-            Console.WriteLine("KeyDown");
             if (e.Source == editor.TextArea)
             {
                 capturedOnKeyDown = e.Key;
@@ -542,7 +540,6 @@
 
         public void OnKeyUp(KeyEventArgs e, int caretIndex, int line, int column)
         {
-            Console.WriteLine("KeyUp");
             if (e.Source == editor.TextArea)
             {
                 intellisenseJobRunner.InvokeAsync(() =>
