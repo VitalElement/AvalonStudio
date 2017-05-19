@@ -1,5 +1,6 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/avaloniaui"
-                      xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+                      xmlns:Controls="clr-namespace:AvalonStudio.Extensibility.Controls;assembly=AvalonStudio.Extensibility"
+                      xmlns:local="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
                       xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"
@@ -53,7 +54,7 @@
       <Grid RowDefinitions="Auto, Auto">
         <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="5 4 0 0"  Foreground="White" />
 
-        <Controls:ToolBar DataContext="{Binding ToolBar}" Grid.Row="1" Margin="15 4 0 4" />
+        <local:ToolBar DataContext="{Binding ToolBar}" Grid.Row="1" Margin="15 4 0 4" />
       </Grid>
     </Grid>
 
@@ -65,14 +66,14 @@
               <docking:Branch.FirstItem>
                 <docking:Branch Orientation="Horizontal" FirstItemLength="0.2*" SecondItemLength="0.8*">
                   <docking:Branch.FirstItem>
-                    <Controls:TabControlView DataContext="{Binding LeftTabs}" IsVisible="{Binding IsVisible}" />
+                    <local:TabControlView DataContext="{Binding LeftTabs}" IsVisible="{Binding IsVisible}" />
                   </docking:Branch.FirstItem>
                   <docking:Branch.SecondItem>
                     <docking:Branch Orientation="Vertical" FirstItemLength="0.7*" SecondItemLength="0.3*">
                       <docking:Branch.FirstItem>
                         <docking:Branch Orientation="Vertical" FirstItemLength="0.3*" SecondItemLength="0.7*">
                           <docking:Branch.FirstItem>
-                            <Controls:TabControlView DataContext="{Binding MiddleTopTabs}" IsVisible="{Binding IsVisible}" />
+                            <local:TabControlView DataContext="{Binding MiddleTopTabs}" IsVisible="{Binding IsVisible}" />
                           </docking:Branch.FirstItem>
                           <docking:Branch.SecondItem>
                             <Controls:DocumentTabControl DataContext="{Binding DocumentTabs}"  />
@@ -82,10 +83,10 @@
                       <docking:Branch.SecondItem>
                         <docking:Branch Orientation="Horizontal" FirstItemLength="0.6*" SecondItemLength="0.4*">
                           <docking:Branch.FirstItem>
-                            <Controls:TabControlView DataContext="{Binding BottomTabs}" IsVisible="{Binding IsVisible}" />
+                            <local:TabControlView DataContext="{Binding BottomTabs}" IsVisible="{Binding IsVisible}" />
                           </docking:Branch.FirstItem>
                           <docking:Branch.SecondItem>
-                            <Controls:TabControlView DataContext="{Binding BottomRightTabs}" IsVisible="{Binding IsVisible}" />
+                            <local:TabControlView DataContext="{Binding BottomRightTabs}" IsVisible="{Binding IsVisible}" />
                           </docking:Branch.SecondItem>
                         </docking:Branch>
                       </docking:Branch.SecondItem>
@@ -96,15 +97,15 @@
               <docking:Branch.SecondItem>
                 <docking:Branch Orientation="Vertical" FirstItemLength="0.3*" SecondItemLength="0.7*">
                   <docking:Branch.FirstItem>
-                    <Controls:TabControlView DataContext="{Binding RightTopTabs}" IsVisible="{Binding IsVisible}" />
+                    <local:TabControlView DataContext="{Binding RightTopTabs}" IsVisible="{Binding IsVisible}" />
                   </docking:Branch.FirstItem>
                   <docking:Branch.SecondItem>
                     <docking:Branch Orientation="Vertical" FirstItemLength="0.5*" SecondItemLength="0.5*">
                       <docking:Branch.FirstItem>
-                        <Controls:TabControlView DataContext="{Binding RightMiddleTabs}" IsVisible="{Binding IsVisible}" />
+                        <local:TabControlView DataContext="{Binding RightMiddleTabs}" IsVisible="{Binding IsVisible}" />
                       </docking:Branch.FirstItem>
                       <docking:Branch.SecondItem>
-                        <Controls:TabControlView DataContext="{Binding RightBottomTabs}" IsVisible="{Binding IsVisible}" />
+                        <local:TabControlView DataContext="{Binding RightBottomTabs}" IsVisible="{Binding IsVisible}" />
                       </docking:Branch.SecondItem>
                     </docking:Branch>
                   </docking:Branch.SecondItem>
@@ -113,16 +114,16 @@
             </docking:Branch>
           </docking:Branch.FirstItem>
           <docking:Branch.SecondItem>
-            <Controls:TabControlView DataContext="{Binding RightTabs}" IsVisible="{Binding IsVisible}" />
+            <local:TabControlView DataContext="{Binding RightTabs}" IsVisible="{Binding IsVisible}" />
           </docking:Branch.SecondItem>
         </docking:Branch>
       </dock:DockControl>
     </Grid>
 
     <Grid Grid.Row="2" Grid.ColumnSpan="5">
-      <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
+      <local:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
-    <Controls:ModalDialog Grid.RowSpan="3" Grid.ColumnSpan="5" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
+    <local:ModalDialog Grid.RowSpan="3" Grid.ColumnSpan="5" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
   </Grid>
 </Controls:MetroWindow>

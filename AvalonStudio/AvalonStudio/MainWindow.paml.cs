@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Controls;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Controls;
 
 namespace AvalonStudio
 {

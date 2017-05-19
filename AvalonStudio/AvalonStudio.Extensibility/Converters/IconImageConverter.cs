@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Converters
+﻿namespace AvalonStudio.Extensibility.Converters
 {
     using Avalonia.Controls;
     using Avalonia.Markup;

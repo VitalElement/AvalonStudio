@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6</TargetFrameworks>
     
   </PropertyGroup>
   <ItemGroup>
@@ -14,6 +14,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\ControlTheme.paml" />
+    <EmbeddedResource Include="Controls\MetroWindow.paml" />
+    <EmbeddedResource Include="Controls\MetroWindowControlsTheme.paml" />
+    <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
     <EmbeddedResource Include="Controls\ToolControl.paml" />
     <EmbeddedResource Include="Controls\ViewModelViewHost.xaml" />
     <EmbeddedResource Include="MainMenu\ViewModels\MainMenuView.paml" />
@@ -25,6 +28,7 @@
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem.Watcher" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
     <PackageReference Include="RazorLight" Version="1.1.0" /> 
   </ItemGroup>

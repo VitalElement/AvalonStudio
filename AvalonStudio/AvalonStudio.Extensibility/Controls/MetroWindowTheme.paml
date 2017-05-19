@@ -1,0 +1,3 @@
+﻿<Styles xmlns="https://github.com/avaloniaui">
+  <StyleInclude Source="resm:AvalonStudio.Extensibility.Controls.MetroWindow.paml?assembly=AvalonStudio.Extensibility" />
+</Styles>

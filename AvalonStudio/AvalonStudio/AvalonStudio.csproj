@@ -26,9 +26,6 @@
     <None Remove="Controls\ErrorProbeView.paml" />
     <None Remove="Controls\Intellisense.xaml" />
     <None Remove="Controls\MainMenu.paml" />
-    <None Remove="Controls\MetroWindow.paml" />
-    <None Remove="Controls\MetroWindowControlsTheme.paml" />
-    <None Remove="Controls\MetroWindowTheme.paml" />
     <None Remove="Controls\ModalDialog.paml" />
     <None Remove="Controls\NewItemDialogView.paml" />
     <None Remove="Controls\PackageManagerDialogView.paml" />
@@ -57,9 +54,6 @@
     <EmbeddedResource Include="Controls\ErrorProbeView.paml" />
     <EmbeddedResource Include="Controls\Intellisense.xaml" />
     <EmbeddedResource Include="Controls\MainMenu.paml" />
-    <EmbeddedResource Include="Controls\MetroWindow.paml" />
-    <EmbeddedResource Include="Controls\MetroWindowControlsTheme.paml" />
-    <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
     <EmbeddedResource Include="Controls\ModalDialog.paml" />
     <EmbeddedResource Include="Controls\NewItemDialogView.paml" />
     <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />

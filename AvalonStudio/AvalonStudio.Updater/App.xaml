@@ -1,0 +1,9 @@
+﻿<Application xmlns="https://github.com/avaloniaui">
+  <Application.Styles>
+    <StyleInclude Source="resm:Avalonia.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.Themes.Default"/>
+    <StyleInclude Source="resm:Avalonia.Themes.Default.Accents.BaseLight.xaml?assembly=Avalonia.Themes.Default"/>
+    <StyleInclude Source="resm:AvalonStudio.Extensibility.Controls.ControlTheme.paml?assembly=AvalonStudio.Extensibility" />
+    <StyleInclude Source="resm:AvalonStudio.Updater.Themes.BaseDark.xaml?assembly=AvalonStudio.Updater"/>
+    <StyleInclude Source="resm:AvalonStudio.Updater.Themes.Accents.DarkAccent.xaml?assembly=AvalonStudio.Updater"/>
+  </Application.Styles>
+</Application>
