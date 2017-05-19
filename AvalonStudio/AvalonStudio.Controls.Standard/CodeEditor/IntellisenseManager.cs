@@ -23,7 +23,7 @@
         private readonly IIntellisenseControl intellisenseControl;
         private readonly ICompletionAssistant completionAssistant;
         private AvaloniaEdit.TextEditor editor;
-        
+
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
         private readonly CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
@@ -141,7 +141,7 @@
 
         private void CloseIntellisense()
         {
-             currentFilter = string.Empty;
+            currentFilter = string.Empty;
 
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
@@ -294,7 +294,7 @@
 
             if (invokeOnRunner)
             {
-              intellisenseJobRunner.InvokeAsync(action);
+                intellisenseJobRunner.InvokeAsync(action);
             }
             else
             {
@@ -433,8 +433,6 @@
                                 CloseIntellisense();
                                 SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                             }
-
-                            
                         }
                     }
                 });

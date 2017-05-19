@@ -28,6 +28,7 @@ using Avalonia.LogicalTree;
 using AvaloniaEdit.Indentation.CSharp;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -61,10 +62,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private CompletionAssistantView _completionAssistantControl;
         private CompletionAssistantViewModel _completionAssistant;
 
-        private CompletionWindow _completionWindow;
-
         private bool _isLoaded = false;
-        
+
 
         private readonly IShell _shell;
         private Subject<bool> _analysisTriggerEvents = new Subject<bool>();
@@ -158,10 +157,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 var visualLocation = TextArea.TextView.GetVisualPosition(TextArea.Caret.Position, VisualYPosition.LineBottom);
                 var visualLocationTop = TextArea.TextView.GetVisualPosition(TextArea.Caret.Position, VisualYPosition.LineTop);
 
-                
+
                 var position = visualLocation - TextArea.TextView.ScrollOffset;
                 position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
-                
+
                 _intellisenseControl.SetLocation(position);
                 _completionAssistantControl.SetLocation(position);
             };
@@ -171,6 +170,33 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _intellisense = new IntellisenseViewModel();
 
             _completionAssistant = new CompletionAssistantViewModel(_intellisense);
+
+            EventHandler<KeyEventArgs> tunneledKeyUpHandler = (send, ee) =>
+            {
+                if (CaretOffset > 0)
+                {
+                    _intellisenseManager.OnKeyUp(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+                }
+            };
+
+            EventHandler<KeyEventArgs> tunneledKeyDownHandler = (send, ee) =>
+            {
+                if (CaretOffset > 0)
+                {
+                    _intellisenseManager.OnKeyDown(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+                }
+            };
+
+            EventHandler<TextInputEventArgs> tunneledTextInputHandler = (send, ee) =>
+            {
+                if (CaretOffset > 0)
+                {
+                    _intellisenseManager.OnTextInput(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+                }
+            };
+
+            AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel);
+            AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel);
         }
 
         protected override void OnTextChanged(EventArgs e)
@@ -431,27 +457,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _completionAssistantControl.DataContext = _completionAssistant;
         }
 
-        protected override void OnTextInput(TextInputEventArgs e)
-        {
-            base.OnTextInput(e);
-
-            _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            _intellisenseManager?.OnKeyDown(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
-
-            base.OnKeyDown(e);
-        }
-
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
-            _intellisenseManager?.OnKeyUp(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
-
-            base.OnKeyUp(e);
-        }
-
         private void List_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
@@ -536,6 +541,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var offset = position != null ? Document.GetOffset(position.Value.Location) : -1;
 
             return offset;
-        }       
+        }
     }
 }
