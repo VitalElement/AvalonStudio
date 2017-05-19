@@ -216,7 +216,6 @@
 
                     Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {
-                        intellisenseControl.CompletionData = null;
                         intellisenseControl.CompletionData = list;
                         intellisenseControl.SelectedCompletion = suggestion;
                         intellisenseControl.IsVisible = true;
