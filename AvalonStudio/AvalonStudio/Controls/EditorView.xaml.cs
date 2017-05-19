@@ -95,12 +95,12 @@ namespace AvalonStudio.Controls
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
-            
+            _editor.SetDebugHighlight(line, startColumn, endColumn);
         }
 
         public void ClearDebugHighlight()
         {
-            
+            _editor.ClearDebugHighlight();
         }
 
         public void GotoOffset(int offset)

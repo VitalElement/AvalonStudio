@@ -37,7 +37,7 @@ namespace AvalonStudio.Controls
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
-
+            Editor?.SetDebugHighlight(line, startColumn, endColumn);
         }
 
         public void Comment()
@@ -128,7 +128,7 @@ namespace AvalonStudio.Controls
 
         public void ClearDebugHighlight()
         {
-
+            Editor?.ClearDebugHighlight();
         }
 
         public void GotoOffset(int offset)

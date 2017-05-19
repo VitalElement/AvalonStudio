@@ -30,6 +30,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using AvaloniaEdit;
+using Avalonia.Media;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -62,6 +63,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private CompletionAssistantView _completionAssistantControl;
         private CompletionAssistantViewModel _completionAssistant;
+
+        private SelectedDebugLineBackgroundRenderer _selectedDebugLineBackgroundRenderer;
 
         private bool _isLoaded = false;
 
@@ -99,6 +102,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             TextArea.TextView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer(this));
 
             TextArea.TextView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
+
+            _selectedDebugLineBackgroundRenderer = new SelectedDebugLineBackgroundRenderer();
+            TextArea.TextView.BackgroundRenderers.Add(_selectedDebugLineBackgroundRenderer);
+            TextArea.TextView.LineTransformers.Add(_selectedDebugLineBackgroundRenderer);
+
+            TextArea.SelectionBrush = Brush.Parse("#AA569CD6");
 
             Options = new AvaloniaEdit.TextEditorOptions
             {
@@ -152,16 +161,19 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), true);
                 }
 
-                var prevLocation = new TextViewPosition(Document.GetLocation(CaretOffset - 1));
+                if (CaretOffset > 0)
+                {
+                    var prevLocation = new TextViewPosition(Document.GetLocation(CaretOffset - 1));
 
-                var visualLocation = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineBottom);
-                var visualLocationTop = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineTop);
+                    var visualLocation = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineBottom);
+                    var visualLocationTop = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineTop);
 
-                var position = visualLocation - TextArea.TextView.ScrollOffset;
-                position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+                    var position = visualLocation - TextArea.TextView.ScrollOffset;
+                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
 
-                _intellisenseControl.SetLocation(position);
-                _completionAssistantControl.SetLocation(position);
+                    _intellisenseControl.SetLocation(position);
+                    _completionAssistantControl.SetLocation(position);
+                }
             };
 
             TextArea.TextEntered += (sender, e) => _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
@@ -536,6 +548,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var offset = position != null ? Document.GetOffset(position.Value.Location) : -1;
 
             return offset;
+        }
+
+        public void SetDebugHighlight(int line, int startColumn, int endColumn)
+        {
+            _selectedDebugLineBackgroundRenderer.SetLocation(line, startColumn, endColumn);
+        }
+
+        public void ClearDebugHighlight()
+        {
+            _selectedDebugLineBackgroundRenderer.SetLocation(-1);
         }
     }
 }

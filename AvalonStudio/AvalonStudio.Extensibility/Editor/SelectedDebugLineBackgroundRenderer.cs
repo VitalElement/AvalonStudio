@@ -2,11 +2,13 @@ using Avalonia;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
+using AvalonStudio.CodeEditor;
 using System;
+using System.Collections.Generic;
 
 namespace AvalonStudio.TextEditor.Rendering
 {
-    public class SelectedDebugLineBackgroundRenderer : IBackgroundRenderer
+    public class SelectedDebugLineBackgroundRenderer : GenericLineTransformer, IBackgroundRenderer
     {
         private int _line;
         private readonly IBrush selectedLineBg;
@@ -92,22 +94,22 @@ namespace AvalonStudio.TextEditor.Rendering
                     _endColumn = textView.Document.GetLocation(segment.EndOffset).Column;
                 }
 
-               /* var rects = VisualLineGeometryBuilder.GetRectsForSegment(textView, segment);
+                var rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, segment);
 
                 foreach (var rect in rects)
                 {
                     var drawRect = new Rect(rect.TopLeft.X - 1, rect.TopLeft.Y - 1, rect.Width + 2, rect.Height + 2);
                     drawingContext.FillRectangle(selectedLineBg, drawRect);
-                }*/
+                }
             }
         }
 
-        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
+        protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-           /* if (line.DocumentLine.LineNumber == Line)
+            if(line.LineNumber == Line)
             {
-                line.RenderedText.SetTextStyle(StartColumn - 1, EndColumn - StartColumn, Brushes.Black);
-            }*/
+                SetTextStyle(line, StartColumn - 1, EndColumn - StartColumn, Brushes.Black);
+            }
         }
     }
 }
