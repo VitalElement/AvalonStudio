@@ -82,12 +82,12 @@ namespace AvalonStudio.Controls
 
         public void Undo()
         {
-            //TextDocument?.UndoStack.Undo();
+            Editor?.Undo();
         }
 
         public void Redo()
         {
-            // TextDocument.UndoStack.Redo();
+            Editor?.Redo();
         }
 
         public TextSegment GetSelection()
