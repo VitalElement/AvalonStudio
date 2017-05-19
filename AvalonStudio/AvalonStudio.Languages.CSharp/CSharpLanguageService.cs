@@ -4,10 +4,12 @@
     using Avalonia.Interactivity;
     using AvaloniaEdit.Document;
     using AvaloniaEdit.Indentation;
+    using AvaloniaEdit.Indentation.CSharp;
     using AvaloniaEdit.Rendering;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
+    using AvalonStudio.Utils;
     using Projects.OmniSharp;
     using System;
     using System.Collections.Generic;
@@ -23,7 +25,6 @@
 
         public CSharpLanguageService()
         {
-            //IndentationStrategy = new CSharpIndentationStrategy();
         }
 
         public Type BaseTemplateType
@@ -51,7 +52,7 @@
 
         public IIndentationStrategy IndentationStrategy
         {
-            get;
+            get; private set;
         }
 
         public string Title
@@ -200,7 +201,52 @@
             //throw new NotImplementedException();
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument)
+        private void OpenBracket(AvaloniaEdit.TextEditor editor, TextDocument document, string text)
+        {
+            if (text[0].IsOpenBracketChar() && editor.CaretOffset <= document.TextLength && editor.CaretOffset > 0)
+            {
+                var nextChar = ' ';
+
+                if (editor.CaretOffset != document.TextLength)
+                {
+                    document.GetCharAt(editor.CaretOffset);
+                }
+
+                if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
+                {
+                    document.Insert(editor.CaretOffset, text[0].GetCloseBracketChar().ToString());
+                }
+
+                editor.CaretOffset--;
+            }
+        }
+
+        private void CloseBracket(AvaloniaEdit.TextEditor editor, TextDocument document, string text)
+        {
+            if (text[0].IsCloseBracketChar() && editor.CaretOffset < document.TextLength && editor.CaretOffset > 0)
+            {
+                var offset = editor.CaretOffset;
+
+                while (offset < document.TextLength)
+                {
+                    var currentChar = document.GetCharAt(offset);
+
+                    if (currentChar == text[0])
+                    {
+                        document.Replace(offset, 1, string.Empty);
+                        break;
+                    }
+                    else if (!currentChar.IsWhiteSpace())
+                    {
+                        break;
+                    }
+
+                    offset++;
+                }
+            }
+        }
+
+        public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CSharpDataAssociation association = null;
 
@@ -209,27 +255,53 @@
                 throw new Exception("Source file already registered with language service.");
             }
 
-            association = new CSharpDataAssociation(textDocument);
+            IndentationStrategy = new CSharpIndentationStrategy(editor.Options);
+
+            association = new CSharpDataAssociation(doc);
             association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.
 
             dataAssociations.Add(file, association);
 
-            association.KeyUpHandler = (sender, e) =>
+            association.TextInputHandler = (sender, e) =>
             {
-                if (editor.Document == textDocument)
+                if (editor.Document == doc)
                 {
-                    switch (e.Key)
+                    editor.BeginChange();
+                    OpenBracket(editor, editor.Document, e.Text);
+                    CloseBracket(editor, editor.Document, e.Text);
+
+                    switch (e.Text)
                     {
-                        case Key.Return:
+                        case "}":
+                        case ";":
+                            editor.CaretOffset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+                            break;
+
+                        case "{":
+                            var lineCount = editor.Document.LineCount;
+                            var offset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+
+                            // suggests clang format didnt do anything, so we can assume not moving to new line.
+                            if (lineCount != editor.Document.LineCount)
                             {
-                                IndentationStrategy.IndentLines(editor.Document, 1, editor.Document.LineCount - 1);
+                                if (offset <= editor.Document.TextLength)
+                                {
+                                    var newLine = editor.Document.GetLineByOffset(offset);
+                                    editor.CaretOffset = newLine.PreviousLine.EndOffset;
+                                }
+                            }
+                            else
+                            {
+                                editor.CaretOffset = offset;
                             }
                             break;
                     }
+
+                    editor.EndChange();
                 }
             };
 
-            editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, RoutingStrategies.Tunnel);
+            editor.TextArea.TextEntered += association.TextInputHandler;
         }
 
         private CSharpDataAssociation GetAssociatedData(ISourceFile sourceFile)
@@ -325,7 +397,7 @@
         {
             var association = GetAssociatedData(file);
 
-            editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
+            editor.TextInput -= association.TextInputHandler;
 
             association.Solution = null;
             dataAssociations.Remove(file);
