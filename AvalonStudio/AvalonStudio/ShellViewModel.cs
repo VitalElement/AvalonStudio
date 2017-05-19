@@ -414,11 +414,11 @@ namespace AvalonStudio
 
             await selectedDocumentTCS.Task;
 
-            if (DocumentTabs.SelectedDocument is EditorViewModel)
+            if (DocumentTabs.SelectedDocument is IEditor)
             {
                 if (debugHighlight)
                 {
-                    (DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.SetLocation(line, startColumn, endColumn);
+                    (DocumentTabs.SelectedDocument as IEditor).SetDebugHighlight(line, startColumn, endColumn);
                 }
 
                 if (selectLine || debugHighlight)
