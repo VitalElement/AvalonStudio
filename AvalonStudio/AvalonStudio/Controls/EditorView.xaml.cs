@@ -85,12 +85,12 @@ namespace AvalonStudio.Controls
 
         public void Undo()
         {
-            throw new NotImplementedException();
+            _editor.Document.UndoStack.Undo();
         }
 
         public void Redo()
         {
-            throw new NotImplementedException();
+            _editor.Document.UndoStack.Redo();
         }
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
