@@ -532,8 +532,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAssistant completionAssistant,
-            AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
+        public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CPlusPlusDataAssociation association = null;
 

@@ -7,12 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls.Standard.CodeEditor
 {
-    public class IntellisenseViewModel : ViewModel, IDisposable
+    public class IntellisenseViewModel : ViewModel, IIntellisenseControl, IDisposable
     {
         private IList<CompletionDataViewModel> completionData;
-        private EditorViewModel editorViewModel;
 
         private bool isVisible;
 
@@ -20,11 +19,10 @@ namespace AvalonStudio.Controls
 
         private CompletionDataViewModel selectedCompletion;
 
-        public IntellisenseViewModel(EditorViewModel viewModel)
+        public IntellisenseViewModel()
         {
             completionData = new List<CompletionDataViewModel>();
             completionAssistant = new CompletionAssistantViewModel(this);
-            editorViewModel = viewModel;
             isVisible = false;
         }
 
@@ -44,7 +42,6 @@ namespace AvalonStudio.Controls
 
         public void Dispose()
         {
-            editorViewModel = null;
         }
 
         public async Task<CodeCompletionResults> DoCompletionRequestAsync(int index, int line, int column)

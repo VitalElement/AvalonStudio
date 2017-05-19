@@ -30,7 +30,7 @@ namespace AvalonStudio.Languages.ViewModels
             }
         }
 
-        public string Title
+        public string Text
         {
             get { return Model.Suggestion; }
         }

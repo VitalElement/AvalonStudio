@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.MVVM;

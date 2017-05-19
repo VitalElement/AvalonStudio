@@ -3,7 +3,7 @@ using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class ParameterViewModel : ViewModel<Parameter>
     {

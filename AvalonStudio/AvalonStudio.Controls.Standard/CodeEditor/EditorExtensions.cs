@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AvaloniaEdit;
-using AvaloniaEdit.Document;
+﻿using AvaloniaEdit.Document;
 
-namespace AvalonStudio.Editor
+namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public static class EditorExtensions
     {

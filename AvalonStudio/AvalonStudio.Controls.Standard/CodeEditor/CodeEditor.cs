@@ -26,10 +26,12 @@ using Avalonia.Input;
 using AvaloniaEdit.CodeCompletion;
 using Avalonia.LogicalTree;
 using AvaloniaEdit.Indentation.CSharp;
+using Avalonia.Controls.Primitives;
+using Avalonia.Controls;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
-    public class CodeEditor : AvaloniaEdit.TextEditor, IIntellisenseControl, ICompletionAssistant
+    public class CodeEditor : AvaloniaEdit.TextEditor
     {
         private static List<UnsavedFile> _unsavedFiles;
 
@@ -50,7 +52,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private readonly List<IVisualLineTransformer> _languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
 
+        public IntellisenseViewModel Intellisense => _intellisense;
+
         private IntellisenseManager _intellisenseManager;
+        private Intellisense _intellisenseControl;
+        private IntellisenseViewModel _intellisense;
+        private CompletionAssistantViewModel _completionAssistant;
 
         private CompletionWindow _completionWindow;
 
@@ -135,7 +142,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 _isLoaded = true;
 
-                RegisterLanguageService(file, null, null);
+                RegisterLanguageService(file);
             });
 
             TextArea.Caret.PositionChanged += (sender, e) =>
@@ -143,11 +150,24 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 if (_intellisenseManager != null)
                 {
                     var location = Document.GetLocation(CaretOffset);
-                    _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList());
+                    _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), true);
                 }
+
+                var visualLocation = TextArea.TextView.GetVisualPosition(TextArea.Caret.Position, VisualYPosition.LineBottom);
+                var visualLocationTop = TextArea.TextView.GetVisualPosition(TextArea.Caret.Position, VisualYPosition.LineTop);
+
+                
+                var position = visualLocation - TextArea.TextView.ScrollOffset;
+                position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+                
+                _intellisenseControl.SetLocation(position);
             };
 
             TextArea.TextEntered += (sender, e) => _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+
+            _intellisense = new IntellisenseViewModel();
+
+            _completionAssistant = new CompletionAssistantViewModel(_intellisense);
         }
 
         protected override void OnTextChanged(EventArgs e)
@@ -284,7 +304,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return true;
         }
 
-        private void RegisterLanguageService(ISourceFile sourceFile, IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant)
+        private void RegisterLanguageService(ISourceFile sourceFile)
         {
             UnRegisterLanguageService();
 
@@ -294,7 +314,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 //_shell.Instance.StatusBar.Language = LanguageService.Title;
 
-                LanguageService.RegisterSourceFile(intellisenseControl, completionAssistant, this, sourceFile, Document);
+                LanguageService.RegisterSourceFile(this, sourceFile, Document);
 
                 _languageServiceBackgroundRenderers.AddRange(LanguageService.GetBackgroundRenderers(sourceFile));
 
@@ -310,7 +330,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     TextArea.TextView.LineTransformers.Add(transformer);
                 }
 
-                 _intellisenseManager = new IntellisenseManager(this, this, this, LanguageService, sourceFile);
+                _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
                 TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
             }
@@ -394,6 +414,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
+        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        {
+            base.OnTemplateApplied(e);
+
+            _intellisenseControl = e.NameScope.Find<Intellisense>("PART_Intellisense");
+
+            _intellisenseControl.PlacementTarget = TextArea;
+            _intellisenseControl.DataContext = _intellisense;
+        }
+
         protected override void OnTextInput(TextInputEventArgs e)
         {
             base.OnTextInput(e);
@@ -403,16 +433,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            base.OnKeyDown(e);
-
             _intellisenseManager?.OnKeyDown(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+
+            base.OnKeyDown(e);
         }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            base.OnKeyUp(e);
-
             _intellisenseManager?.OnKeyUp(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+
+            base.OnKeyUp(e);
         }
 
         private void List_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -499,107 +529,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var offset = position != null ? Document.GetOffset(position.Value.Location) : -1;
 
             return offset;
-        }        
-
-        IList<CodeCompletionData> IIntellisenseControl.CompletionData
-        {
-            get
-            {
-                return _completionWindow.CompletionList.CompletionData.Cast<CodeCompletionData>().ToList();
-            }
-            set
-            {
-                if (_completionWindow == null)
-                {
-                    _completionWindow = new CompletionWindow(TextArea);
-                }
-
-                _completionWindow.CompletionList.CompletionData.Clear();
-
-                if(value != null)
-                {
-                    foreach(var completion in value)
-                    {
-                        _completionWindow.CompletionList.CompletionData.Add(completion);
-                    }
-                }
-            }
-        }
-
-        CodeCompletionData IIntellisenseControl.SelectedCompletion
-        {
-            get
-            {
-                return _completionWindow.CompletionList.SelectedItem as CodeCompletionData;
-            }
-            set
-            {
-                if (_completionWindow != null)
-                {
-                    _completionWindow.CompletionList.SelectedItem = value;
-                }
-            }
-        }
-
-        bool _intellisenseVisible;
-        bool IIntellisenseControl.IsVisible
-        {
-            get
-            {
-                return _intellisenseVisible;
-            }
-
-            set
-            {
-                _intellisenseVisible = value;
-
-                if (value)
-                {                       
-                    var data = _completionWindow.CompletionList.CompletionData;
-
-                    _completionWindow.Show();
-                }
-            }
-        }        
-
-        async Task<CodeCompletionResults>IIntellisenseControl.DoCompletionRequestAsync(int index, int line, int column)
-        {
-            return await LanguageService?.CodeCompleteAtAsync(SourceFile, index, line, column, CodeEditor.UnsavedFiles);
-        }
-
-        SignatureHelp ICompletionAssistant.CurrentSignatureHelp => null;
-
-        bool ICompletionAssistant.IsVisible { get; set; }
-
-
-        void ICompletionAssistant.PushMethod(SignatureHelp methodInfo)
-        {
-            
-        }
-
-        void ICompletionAssistant.PopMethod()
-        {
-            
-        }
-
-        void ICompletionAssistant.SetParameterIndex(int index)
-        {
-            
-        }
-
-        void ICompletionAssistant.IncrementSignatureIndex()
-        {
-            
-        }
-
-        void ICompletionAssistant.DecrementSignatureIndex()
-        {
-            
-        }
-
-        void ICompletionAssistant.Close()
-        {
-            
-        }
+        }       
     }
 }

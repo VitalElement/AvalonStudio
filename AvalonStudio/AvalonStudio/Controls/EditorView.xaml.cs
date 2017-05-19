@@ -39,12 +39,12 @@ namespace AvalonStudio.Controls
 
         private void Editor_EditorScrolled(object sender, EventArgs e)
         {
-            editorViewModel.Intellisense.IsVisible = false;
+           // editorViewModel.Intellisense.IsVisible = false;
         }
 
         private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
         {
-            editorViewModel.Intellisense.IsVisible = false;
+            //editorViewModel.Intellisense.IsVisible = false;
         }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)

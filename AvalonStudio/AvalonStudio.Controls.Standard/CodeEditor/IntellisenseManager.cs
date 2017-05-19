@@ -2,7 +2,8 @@
 {
     using Avalonia.Input;
     using Avalonia.Threading;
-    using AvaloniaEdit.Document;    
+    using AvaloniaEdit.Document;
+    using AvalonStudio.Controls.Standard.CodeEditor;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Extensibility.Threading;
     using AvalonStudio.Languages;
@@ -22,11 +23,11 @@
         private readonly IIntellisenseControl intellisenseControl;
         private readonly ICompletionAssistant completionAssistant;
         private AvaloniaEdit.TextEditor editor;
-        private bool isProcessingKey;
+        
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
-        private readonly CodeCompletionData noSelectedCompletion = new CodeCompletionData();
-        private readonly List<CodeCompletionData> unfilteredCompletions = new List<CodeCompletionData>();
+        private readonly CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
+        private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
 
@@ -99,13 +100,13 @@
 
             foreach (var result in completionData.Completions)
             {
-                CodeCompletionData currentCompletion = null;
+                CompletionDataViewModel currentCompletion = null;
 
                 currentCompletion = unfilteredCompletions.BinarySearch(c => c.Text, result.Suggestion);
 
                 if (currentCompletion == null)
                 {
-                    unfilteredCompletions.Add(result);
+                    unfilteredCompletions.Add(new CompletionDataViewModel(result));
                 }
                 else
                 {
@@ -140,7 +141,7 @@
 
         private void CloseIntellisense()
         {
-            currentFilter = string.Empty;
+             currentFilter = string.Empty;
 
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
@@ -156,7 +157,7 @@
 
         private void UpdateFilter(int caretIndex)
         {
-            if (caretIndex > intellisenseStartedAt)
+            if (caretIndex > intellisenseStartedAt && intellisenseStartedAt > 0)
             {
                 Dispatcher.UIThread.InvokeTaskAsync(() =>
                 {
@@ -168,15 +169,15 @@
                 currentFilter = string.Empty;
             }
 
-            CodeCompletionData suggestion = null;
+            CompletionDataViewModel suggestion = null;
 
-            var filteredResults = unfilteredCompletions as IEnumerable<CodeCompletionData>;
+            var filteredResults = unfilteredCompletions as IEnumerable<CompletionDataViewModel>;
 
             if (currentFilter != string.Empty)
             {
                 filteredResults = unfilteredCompletions.Where(c => c != null && c.Text.ToLower().Contains(currentFilter.ToLower()));
 
-                IEnumerable<CodeCompletionData> newSelectedCompletions = null;
+                IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
                 // try find exact match case sensitive
                 newSelectedCompletions = filteredResults.Where(s => s.Text.StartsWith(currentFilter));
@@ -283,13 +284,8 @@
         {
             var action = new Action(() =>
             {
-                if (!isProcessingKey)
+                if (!intellisenseControl.IsVisible)
                 {
-                    if (intellisenseControl.IsVisible)
-                    {
-                        CloseIntellisense();
-                    }
-
                     var codeCompleteTask = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
                     codeCompleteTask.Wait();
                     SetCompletionData(codeCompleteTask.Result);
@@ -298,7 +294,7 @@
 
             if (invokeOnRunner)
             {
-                intellisenseJobRunner.InvokeAsync(action);
+              intellisenseJobRunner.InvokeAsync(action);
             }
             else
             {
@@ -308,6 +304,7 @@
 
         public void OnTextInput(TextInputEventArgs e, int caretIndex, int line, int column)
         {
+            Console.WriteLine("TextInput");
             if (e.Source == editor.TextArea)
             {
                 intellisenseJobRunner.InvokeAsync(() =>
@@ -364,7 +361,7 @@
                             }
                         }
 
-                       /* if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
+                        if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
                         {
                             string currentWord = string.Empty;
 
@@ -409,7 +406,7 @@
                             {
                                 completionAssistant.PopMethod();
                             }).Wait();
-                        }*/
+                        }
 
                         if (IsCompletionChar(currentChar))
                         {
@@ -437,7 +434,7 @@
                                 SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                             }
 
-                            isProcessingKey = intellisenseControl.IsVisible;
+                            
                         }
                     }
                 });
@@ -446,6 +443,7 @@
 
         public void OnKeyDown(KeyEventArgs e, int caretIndex, int line, int column)
         {
+            Console.WriteLine("KeyDown");
             if (e.Source == editor.TextArea)
             {
                 capturedOnKeyDown = e.Key;
@@ -547,12 +545,11 @@
 
         public void OnKeyUp(KeyEventArgs e, int caretIndex, int line, int column)
         {
+            Console.WriteLine("KeyUp");
             if (e.Source == editor.TextArea)
             {
                 intellisenseJobRunner.InvokeAsync(() =>
                 {
-                    isProcessingKey = false;
-
                     if (intellisenseControl.IsVisible && caretIndex < intellisenseStartedAt)
                     {
                         CloseIntellisense();

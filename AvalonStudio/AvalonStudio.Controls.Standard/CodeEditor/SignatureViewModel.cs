@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     using Avalonia.Media;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;

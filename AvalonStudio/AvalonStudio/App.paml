@@ -9,5 +9,6 @@
     <StyleInclude Source="resm:Mabiavalon.DockNC.Themes.Controls.paml?assembly=Mabiavalon.DockNC" />
     <StyleInclude Source="resm:AvaloniaEdit.AvaloniaEdit.xaml?assembly=AvaloniaEdit" />
     <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.CodeEditor.xaml?assembly=AvalonStudio.Controls.Standard" />
+    <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.Intellisense.xaml?assembly=AvalonStudio.Controls.Standard" />
   </Application.Styles>
 </Application>

@@ -1,30 +1,22 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Controls.Standard.CodeEditor;
-using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
-using AvalonStudio.Editor;
-using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Languages;
-using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TextEditor.Rendering;
-using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
 
@@ -38,7 +30,7 @@ namespace AvalonStudio.Controls
 
         private readonly List<IVisualLineTransformer> languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
 
-        private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;        
+        private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;
 
         public ISourceFile ProjectFile { get; set; }
 
@@ -94,7 +86,7 @@ namespace AvalonStudio.Controls
 
         public void Redo()
         {
-           // TextDocument.UndoStack.Redo();
+            // TextDocument.UndoStack.Redo();
         }
 
         public TextSegment GetSelection()
@@ -113,7 +105,7 @@ namespace AvalonStudio.Controls
             return result;
         }
 
-        public void OpenFile(ISourceFile file, IIntellisenseControl intellisense, ICompletionAssistant completionAssistant)
+        public void OpenFile(ISourceFile file)
         {
             SourceFile = file;
             Title = Path.GetFileName(file.Location);
@@ -121,8 +113,8 @@ namespace AvalonStudio.Controls
 
         public void SetSelection(TextSegment segment)
         {
-               /* Model.SelectionStart = segment.StartOffset;
-                Model.SelectionLength = segment.EndOffset - segment.StartOffset;*/
+            /* Model.SelectionStart = segment.StartOffset;
+             Model.SelectionLength = segment.EndOffset - segment.StartOffset;*/
         }
 
         private void FormatAll()
@@ -135,7 +127,7 @@ namespace AvalonStudio.Controls
 
         public void ClearDebugHighlight()
         {
-            
+
         }
 
         public void GotoOffset(int offset)
@@ -148,30 +140,30 @@ namespace AvalonStudio.Controls
         public EditorViewModel()
         {
             disposables = new CompositeDisposable();
-           // highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
+            // highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
 
-           // SaveCommand = ReactiveCommand.Create();
+            // SaveCommand = ReactiveCommand.Create();
             ///disposables.Add(SaveCommand.Subscribe(param => Save()));
 
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Editor?.Close();
 
-               // Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
-                
-                //Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
-               // Save();
-               // Model.ShutdownBackgroundWorkers();
-               // Model.UnRegisterLanguageService();                
+                // Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
 
-               // Diagnostics?.Clear();
+                //Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
+                // Save();
+                // Model.ShutdownBackgroundWorkers();
+                // Model.UnRegisterLanguageService();                
+
+                // Diagnostics?.Clear();
 
                 ShellViewModel.Instance.InvalidateErrors();
-                
+
                 //Intellisense.Dispose();
                 disposables.Dispose();
 
-               // Model.Document = null;
+                // Model.Document = null;
             }));
 
             //AddWatchCommand = ReactiveCommand.Create(this.WhenAny(x => x.WordAtCaret, (word) => !string.IsNullOrEmpty(word.Value)));
@@ -281,8 +273,6 @@ namespace AvalonStudio.Controls
                 IsDirty = model.IsDirty;
             };*/
 
-            intellisense = new IntellisenseViewModel(this);
-
             documentLineTransformers = new ObservableCollection<IVisualLineTransformer>();
 
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
@@ -298,7 +288,7 @@ namespace AvalonStudio.Controls
         ~EditorViewModel()
         {
         }
-        
+
         public IEditor Editor { get; set; }
 
         private void ProjectFile_FileModifiedExternally(object sender, EventArgs e)
@@ -343,13 +333,13 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref documentLineTransformers, value); }
         }
 
-       /* private ObservableCollection<TextViewMargin> margins;
+        /* private ObservableCollection<TextViewMargin> margins;
 
-        public ObservableCollection<TextViewMargin> Margins
-        {
-            get { return margins; }
-            set { this.RaiseAndSetIfChanged(ref margins, value); }
-        }*/
+         public ObservableCollection<TextViewMargin> Margins
+         {
+             get { return margins; }
+             set { this.RaiseAndSetIfChanged(ref margins, value); }
+         }*/
 
         private string wordAtCaret;
 
@@ -385,11 +375,6 @@ namespace AvalonStudio.Controls
             set
             {
                 this.RaiseAndSetIfChanged(ref caretLocation, value);
-
-                if (!Intellisense.IsVisible)
-                {
-                    Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
-                }
             }
         }
 
@@ -406,14 +391,6 @@ namespace AvalonStudio.Controls
                         return "Inconsolata";
                 }
             }
-        }
-
-        private IntellisenseViewModel intellisense;
-
-        public IntellisenseViewModel Intellisense
-        {
-            get { return intellisense; }
-            set { this.RaiseAndSetIfChanged(ref intellisense, value); }
         }
 
         private TextDocument textDocument;
@@ -571,47 +548,47 @@ namespace AvalonStudio.Controls
                 }*/
             }
 
-           /* if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor && Model.LanguageService != null)
-            {
-                var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, CodeEditor.CodeEditor.UnsavedFiles.ToList(), offset);
+            /* if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor && Model.LanguageService != null)
+             {
+                 var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, CodeEditor.CodeEditor.UnsavedFiles.ToList(), offset);
 
-                if (symbol != null)
-                {
-                    switch (symbol.Kind)
-                    {
-                        case CursorKind.CompoundStatement:
-                        case CursorKind.NoDeclarationFound:
-                        case CursorKind.NotImplemented:
-                        case CursorKind.FirstDeclaration:
-                        case CursorKind.InitListExpression:
-                        case CursorKind.IntegerLiteral:
-                        case CursorKind.ReturnStatement:
-                            break;
+                 if (symbol != null)
+                 {
+                     switch (symbol.Kind)
+                     {
+                         case CursorKind.CompoundStatement:
+                         case CursorKind.NoDeclarationFound:
+                         case CursorKind.NotImplemented:
+                         case CursorKind.FirstDeclaration:
+                         case CursorKind.InitListExpression:
+                         case CursorKind.IntegerLiteral:
+                         case CursorKind.ReturnStatement:
+                             break;
 
-                        default:
+                         default:
 
-                            ToolTip = new SymbolViewModel(symbol);
-                            return true;
-                    }
-                }
-            }
+                             ToolTip = new SymbolViewModel(symbol);
+                             return true;
+                     }
+                 }
+             }
 
-            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
-            {
-                var expression = GetWordAtOffset(offset);
+             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
+             {
+                 var expression = GetWordAtOffset(offset);
 
-                if (expression != string.Empty)
-                {
-                    var debugManager = IoC.Get<IDebugManager2>();
+                 if (expression != string.Empty)
+                 {
+                     var debugManager = IoC.Get<IDebugManager2>();
 
-                    var newToolTip = new DebugHoverProbeViewModel();
+                     var newToolTip = new DebugHoverProbeViewModel();
 
-                    bool result = newToolTip.AddWatch(expression);
+                     bool result = newToolTip.AddWatch(expression);
 
-                    ToolTip = newToolTip;
-                    return result;
-                }
-            }*/
+                     ToolTip = newToolTip;
+                     return result;
+                 }
+             }*/
 
             return false;
         }
@@ -671,7 +648,7 @@ namespace AvalonStudio.Controls
         // todo this menu item and command should be injected via debugging module.
         public ReactiveCommand<object> AddWatchCommand { get; }
 
-       
+
         #endregion Commands
 
         #region Public Methods

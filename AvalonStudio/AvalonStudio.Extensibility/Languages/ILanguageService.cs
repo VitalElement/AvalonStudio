@@ -37,7 +37,7 @@ namespace AvalonStudio.Languages
 
         IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-        void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);
+        void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);
 
         void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file);
 

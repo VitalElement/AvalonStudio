@@ -246,7 +246,7 @@
             }
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
+        public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CSharpDataAssociation association = null;
 

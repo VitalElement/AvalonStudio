@@ -217,8 +217,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return Task.FromResult(new List<Symbol>());
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisenseControl,
-            ICompletionAssistant completionAssistant, AvaloniaEdit.TextEditor editor, ISourceFile file,
+        public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file,
             TextDocument textDocument)
         {
             _typeScriptContext = _typeScriptContext ?? ((TypeScriptProject)file.Project).TypeScriptContext;
