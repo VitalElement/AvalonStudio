@@ -6,6 +6,8 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Panel>
+          
+          <local:CompletionAssistantView Name="PART_CompletionAssistant" />
           <local:Intellisense Name="PART_Intellisense" />
           <Border Background="{TemplateBinding Background}"
                   BorderBrush="{TemplateBinding BorderBrush}"

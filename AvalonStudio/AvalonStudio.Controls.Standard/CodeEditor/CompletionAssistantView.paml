@@ -1,5 +1,0 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"  xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" IsVisible="{Binding IsVisible}">
-  <Grid>
-    <local:SignatureHelpView DataContext="{Binding CurrentMethod}" />
-  </Grid>
-</UserControl>

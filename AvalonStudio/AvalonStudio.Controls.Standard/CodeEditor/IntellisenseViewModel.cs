@@ -58,7 +58,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void InvalidateIsOpen()
         {
-            if (IsVisible || CompletionAssistant.IsVisible)
+           if (IsVisible || CompletionAssistant.IsVisible)
             {
                 IsOpen = true;
             }

@@ -1,0 +1,13 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
+         xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility">
+  <Style Selector="local|CompletionAssistantView">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="false" Name="PART_Popup">
+          <local:SignatureHelpView DataContext="{Binding CurrentMethod}" />
+        </Popup>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

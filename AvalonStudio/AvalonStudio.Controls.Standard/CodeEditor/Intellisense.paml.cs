@@ -12,13 +12,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private readonly CompositeDisposable disposables;
         private Popup _popup;
 
-        private Control _placementTarget;
-
-        public Control PlacementTarget
-        {
-            get { return _placementTarget; }
-            set { _placementTarget = value; }
-        }
+        public Control PlacementTarget { get; set; }
 
 
         public Intellisense()

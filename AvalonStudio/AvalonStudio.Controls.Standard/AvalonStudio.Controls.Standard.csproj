@@ -12,7 +12,7 @@
   <ItemGroup>
     <EmbeddedResource Include="AboutScreen\AboutDialogView.paml" />
     <EmbeddedResource Include="CodeEditor\CodeEditor.xaml" />
-    <EmbeddedResource Include="CodeEditor\CompletionAssistantView.paml" />
+    <EmbeddedResource Include="CodeEditor\CompletionAssistantView.xaml" />
     <EmbeddedResource Include="CodeEditor\Intellisense.xaml" />
     <EmbeddedResource Include="CodeEditor\SignatureHelpView.paml" />
     <EmbeddedResource Include="CodeEditor\SignatureView.xaml" />

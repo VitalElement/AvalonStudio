@@ -57,6 +57,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private IntellisenseManager _intellisenseManager;
         private Intellisense _intellisenseControl;
         private IntellisenseViewModel _intellisense;
+
+        private CompletionAssistantView _completionAssistantControl;
         private CompletionAssistantViewModel _completionAssistant;
 
         private CompletionWindow _completionWindow;
@@ -161,6 +163,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
                 
                 _intellisenseControl.SetLocation(position);
+                _completionAssistantControl.SetLocation(position);
             };
 
             TextArea.TextEntered += (sender, e) => _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
@@ -419,9 +422,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             base.OnTemplateApplied(e);
 
             _intellisenseControl = e.NameScope.Find<Intellisense>("PART_Intellisense");
+            _completionAssistantControl = e.NameScope.Find<CompletionAssistantView>("PART_CompletionAssistant");
 
             _intellisenseControl.PlacementTarget = TextArea;
             _intellisenseControl.DataContext = _intellisense;
+
+            _completionAssistantControl.PlacementTarget = TextArea;
+            _completionAssistantControl.DataContext = _completionAssistant;
         }
 
         protected override void OnTextInput(TextInputEventArgs e)
