@@ -102,11 +102,11 @@
             {
                 CompletionDataViewModel currentCompletion = null;
 
-                currentCompletion = unfilteredCompletions.BinarySearch(c => c.Text, result.Suggestion);
+                currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
 
                 if (currentCompletion == null)
                 {
-                    unfilteredCompletions.Add(new CompletionDataViewModel(result));
+                    unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
                 }
                 else
                 {
@@ -175,16 +175,16 @@
 
             if (currentFilter != string.Empty)
             {
-                filteredResults = unfilteredCompletions.Where(c => c != null && c.Text.ToLower().Contains(currentFilter.ToLower()));
+                filteredResults = unfilteredCompletions.Where(c => c != null && c.Title.ToLower().Contains(currentFilter.ToLower()));
 
                 IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
                 // try find exact match case sensitive
-                newSelectedCompletions = filteredResults.Where(s => s.Text.StartsWith(currentFilter));
+                newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
 
                 if (newSelectedCompletions.Count() == 0)
                 {
-                    newSelectedCompletions = filteredResults.Where(s => s.Text.ToLower().StartsWith(currentFilter.ToLower()));
+                    newSelectedCompletions = filteredResults.Where(s => s.Title.ToLower().StartsWith(currentFilter.ToLower()));
                     // try find non-case sensitve match
                 }
 
@@ -206,7 +206,7 @@
 
             if (filteredResults?.Count() > 0)
             {
-                if (filteredResults?.Count() == 1 && filteredResults.First().Text == currentFilter)
+                if (filteredResults?.Count() == 1 && filteredResults.First().Title == currentFilter)
                 {
                     CloseIntellisense();
                 }
@@ -263,9 +263,9 @@
                         if (caretIndex - intellisenseStartedAt - offset >= 0 && intellisenseControl.SelectedCompletion != null)
                         {
                             editor.Document.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
-                                    intellisenseControl.SelectedCompletion.Text);
+                                    intellisenseControl.SelectedCompletion.Title);
 
-                            caretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Text.Length + offset;
+                            caretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
 
                             editor.CaretOffset = caretIndex;
                         }
