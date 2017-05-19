@@ -105,7 +105,13 @@ namespace AvalonStudio.Controls
 
         public void GotoOffset(int offset)
         {
-            throw new NotImplementedException();
+            _editor.CaretOffset = offset;
+        }
+
+        public void GotoPosition(int line, int column)
+        {
+            _editor.TextArea.Caret.Line = line;
+            _editor.TextArea.Caret.Column = column;
         }
     }
 }
