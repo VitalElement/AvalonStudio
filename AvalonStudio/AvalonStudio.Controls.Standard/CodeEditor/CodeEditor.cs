@@ -369,13 +369,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 //ShellViewModel.Instance.StatusBar.Language = "Text";
             }
 
-            //IsDirty = false;
-
             StartBackgroundWorkers();
 
             Document.TextChanged += TextDocument_TextChanged;
-
-            //OnBeforeTextChanged(null);
 
             DoCodeAnalysisAsync().GetAwaiter();
         }

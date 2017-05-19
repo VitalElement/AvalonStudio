@@ -5,6 +5,7 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Documents;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
@@ -140,30 +141,13 @@ namespace AvalonStudio.Controls
         public EditorViewModel()
         {
             disposables = new CompositeDisposable();
-            // highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
-
-            // SaveCommand = ReactiveCommand.Create();
-            ///disposables.Add(SaveCommand.Subscribe(param => Save()));
 
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
                 Editor?.Close();
 
-                // Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
-
-                //Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
-                // Save();
-                // Model.ShutdownBackgroundWorkers();
-                // Model.UnRegisterLanguageService();                
-
-                // Diagnostics?.Clear();
-
-                ShellViewModel.Instance.InvalidateErrors();
-
-                //Intellisense.Dispose();
+                 IoC.Get<IShell>().InvalidateErrors();
                 disposables.Dispose();
-
-                // Model.Document = null;
             }));
 
             //AddWatchCommand = ReactiveCommand.Create(this.WhenAny(x => x.WordAtCaret, (word) => !string.IsNullOrEmpty(word.Value)));
@@ -291,20 +275,6 @@ namespace AvalonStudio.Controls
 
         public IEditor Editor { get; set; }
 
-        private void ProjectFile_FileModifiedExternally(object sender, EventArgs e)
-        {
-            if (!ignoreFileModifiedEvents && TextDocument != null)
-            {
-                /*if (!new FileInfo(Model.ProjectFile.Location).IsFileLocked())
-                {
-                    using (var fs = System.IO.File.OpenText(Model.ProjectFile.Location))
-                    {
-                        TextDocument.Text = fs.ReadToEnd();
-                    }
-                }*/
-            }
-        }
-
         #endregion Constructors
 
         #region Properties
@@ -332,14 +302,6 @@ namespace AvalonStudio.Controls
             get { return documentLineTransformers; }
             set { this.RaiseAndSetIfChanged(ref documentLineTransformers, value); }
         }
-
-        /* private ObservableCollection<TextViewMargin> margins;
-
-         public ObservableCollection<TextViewMargin> Margins
-         {
-             get { return margins; }
-             set { this.RaiseAndSetIfChanged(ref margins, value); }
-         }*/
 
         private string wordAtCaret;
 
