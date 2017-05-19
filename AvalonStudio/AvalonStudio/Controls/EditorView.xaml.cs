@@ -5,14 +5,18 @@ using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia.LogicalTree;
+using AvalonStudio.Documents;
+using AvalonStudio.Projects;
 
 namespace AvalonStudio.Controls
 {
-    public class EditorView : UserControl, ICodeEditor
+    public class EditorView : UserControl, IEditor
     {
         private readonly CompositeDisposable disposables;
         private EditorViewModel editorViewModel;
         private Standard.CodeEditor.CodeEditor _editor;
+
+        public ISourceFile ProjectFile => throw new NotImplementedException();
 
         public EditorView()
         {
@@ -62,6 +66,46 @@ namespace AvalonStudio.Controls
             _editor.UnRegisterLanguageService();
 
             // TODO dispose disposables.
+        }
+
+        public void Save()
+        {
+            _editor.Save();
+        }
+
+        public void Comment()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UnComment()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Undo()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Redo()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetDebugHighlight(int line, int startColumn, int endColumn)
+        {
+            
+        }
+
+        public void ClearDebugHighlight()
+        {
+            
+        }
+
+        public void GotoOffset(int offset)
+        {
+            throw new NotImplementedException();
         }
     }
 }
