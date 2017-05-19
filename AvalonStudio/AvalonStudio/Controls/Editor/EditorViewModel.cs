@@ -42,42 +42,12 @@ namespace AvalonStudio.Controls
 
         public void Comment()
         {
-            /*if (Model?.LanguageService != null)
-            {
-                var selection = GetSelection();
-
-                if (selection != null)
-                {
-                    var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
-                    anchors.Add(selection);
-
-                    CaretIndex = Model.LanguageService.Comment(TextDocument, selection, CaretIndex);
-
-                    SetSelection(selection);
-                }
-
-                Model.Focus();
-            }*/
+            Editor?.Comment();
         }
 
         public void UnComment()
         {
-            /*if (Model?.LanguageService != null)
-            {
-                var selection = GetSelection();
-
-                if (selection != null)
-                {
-                    var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
-                    anchors.Add(selection);
-
-                    CaretIndex = Model.LanguageService.UnComment(TextDocument, selection, CaretIndex);
-
-                    SetSelection(selection);
-                }
-
-                Model.Focus();
-            }*/
+            Editor?.UnComment();
         }
 
         public void Undo()
@@ -89,34 +59,13 @@ namespace AvalonStudio.Controls
         {
             Editor?.Redo();
         }
-
-        public TextSegment GetSelection()
-        {
-            TextSegment result = null;
-
-            /*if (Model.SelectionStart < (Model.SelectionStart + Model.SelectionLength))
-            {
-                result = new TextSegment { StartOffset = Model.SelectionStart, EndOffset = (Model.SelectionStart + Model.SelectionLength) };
-            }
-            else
-            {
-                result = new TextSegment { StartOffset = (Model.SelectionStart + Model.SelectionLength), EndOffset = Model.SelectionStart };
-            }*/
-
-            return result;
-        }
+       
 
         public void OpenFile(ISourceFile file)
         {
             ProjectFile = file;
             SourceFile = file;
             Title = Path.GetFileName(file.Location);
-        }
-
-        public void SetSelection(TextSegment segment)
-        {
-            /* Model.SelectionStart = segment.StartOffset;
-             Model.SelectionLength = segment.EndOffset - segment.StartOffset;*/
         }
 
         private void FormatAll()
@@ -147,7 +96,7 @@ namespace AvalonStudio.Controls
             {
                 Editor?.Close();
 
-                 IoC.Get<IShell>().InvalidateErrors();
+                IoC.Get<IShell>().InvalidateErrors();
                 disposables.Dispose();
             }));
 

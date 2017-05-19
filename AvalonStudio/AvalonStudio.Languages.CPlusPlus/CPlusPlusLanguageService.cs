@@ -5,6 +5,7 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvaloniaEdit.Rendering;
+using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
@@ -682,7 +683,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             var result = caret;
 
-           /* var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+            var lines = textDocument.GetLinesForSegmentInDocument(segment);
 
             textDocument.BeginUpdate();
 
@@ -696,7 +697,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
             }
 
-            textDocument.EndUpdate();*/
+            textDocument.EndUpdate();
 
             return result;
         }
@@ -705,7 +706,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             var result = caret;
 
-            /*var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+            var lines = textDocument.GetLinesForSegmentInDocument(segment);
 
             textDocument.BeginUpdate();
 
@@ -724,7 +725,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
             }
 
-            textDocument.EndUpdate();*/
+            textDocument.EndUpdate();
 
             return result;
         }

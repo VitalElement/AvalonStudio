@@ -75,12 +75,12 @@ namespace AvalonStudio.Controls
 
         public void Comment()
         {
-            throw new NotImplementedException();
+            _editor.CommentSelection();
         }
 
         public void UnComment()
         {
-            throw new NotImplementedException();
+            _editor.UncommentSelection();
         }
 
         public void Undo()

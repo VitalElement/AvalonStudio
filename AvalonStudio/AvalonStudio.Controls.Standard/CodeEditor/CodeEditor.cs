@@ -222,6 +222,51 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
+        public void CommentSelection()
+        {
+            if (LanguageService != null)
+            {
+                var selection = GetSelection();
+
+                if (selection != null)
+                {
+                    var anchors = new TextSegmentCollection<TextSegment>(Document);
+                    anchors.Add(selection);
+
+                    CaretOffset = LanguageService.Comment(Document, selection, CaretOffset);
+
+                    SetSelection(selection);
+                }
+
+                Focus();
+            }
+        }
+
+        public void UncommentSelection()
+        {
+            if (LanguageService != null)
+            {
+                var selection = GetSelection();
+
+                if (selection != null)
+                {
+                    var anchors = new TextSegmentCollection<TextSegment>(Document);
+                    anchors.Add(selection);
+
+                    CaretOffset = LanguageService.UnComment(Document, selection, CaretOffset);
+
+                    SetSelection(selection);
+                }
+
+                Focus();
+            }
+        }
+
+        public void FormatAll()
+        {
+
+        }
+
         public TextSegment GetSelection()
         {
             TextSegment result = null;
@@ -242,45 +287,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             SelectionStart = segment.StartOffset;
             SelectionLength = segment.EndOffset - segment.StartOffset;
-        }
-
-        public void Comment()
-        {
-            if (LanguageService != null)
-            {
-                if (SelectionLength > 0)
-                {
-                    var selection = GetSelection();
-                    var anchors = new TextSegmentCollection<TextSegment>(Document);
-                    anchors.Add(selection);
-
-                    CaretOffset = LanguageService.Comment(Document, selection, CaretOffset);
-
-                    SetSelection(selection);
-                }
-
-                Focus();
-            }
-        }
-
-        public void UnComment()
-        {
-            /*if (Model?.LanguageService != null)
-            {
-                var selection = GetSelection();
-
-                if (selection != null)
-                {
-                    var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
-                    anchors.Add(selection);
-
-                    CaretIndex = Model.LanguageService.UnComment(TextDocument, selection, CaretIndex);
-
-                    SetSelection(selection);
-                }
-
-                Model.Focus();
-            }*/
         }
 
         private void StartBackgroundWorkers()
