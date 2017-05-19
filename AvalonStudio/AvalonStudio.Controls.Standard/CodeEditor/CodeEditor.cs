@@ -172,7 +172,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (CaretOffset > 0)
                 {
-                    _intellisenseManager.OnKeyUp(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+                    _intellisenseManager?.OnKeyUp(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
                 }
             };
 
@@ -180,7 +180,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (CaretOffset > 0)
                 {
-                    _intellisenseManager.OnKeyDown(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+                    _intellisenseManager?.OnKeyDown(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
                 }
             };
 
@@ -188,7 +188,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (CaretOffset > 0)
                 {
-                    _intellisenseManager.OnTextInput(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+                    _intellisenseManager?.OnTextInput(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
                 }
             };
 
