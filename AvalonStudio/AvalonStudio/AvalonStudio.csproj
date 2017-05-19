@@ -24,7 +24,6 @@
     <None Remove="Controls\DocumentTabControl.paml" />
     <None Remove="Controls\EditorView.xaml" />
     <None Remove="Controls\ErrorProbeView.paml" />
-    <None Remove="Controls\Intellisense.xaml" />
     <None Remove="Controls\MainMenu.paml" />
     <None Remove="Controls\MetroWindow.paml" />
     <None Remove="Controls\MetroWindowControlsTheme.paml" />
@@ -55,7 +54,6 @@
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
     <EmbeddedResource Include="Controls\EditorView.xaml" />
     <EmbeddedResource Include="Controls\ErrorProbeView.paml" />
-    <EmbeddedResource Include="Controls\Intellisense.xaml" />
     <EmbeddedResource Include="Controls\MainMenu.paml" />
     <EmbeddedResource Include="Controls\MetroWindow.paml" />
     <EmbeddedResource Include="Controls\MetroWindowControlsTheme.paml" />

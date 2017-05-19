@@ -12,6 +12,7 @@
   <ItemGroup>
     <EmbeddedResource Include="AboutScreen\AboutDialogView.paml" />
     <EmbeddedResource Include="CodeEditor\CodeEditor.xaml" />
+    <EmbeddedResource Include="CodeEditor\Intellisense.xaml" />
     <EmbeddedResource Include="Console\ConsoleView.paml" />
     <EmbeddedResource Include="ErrorList\ErrorListView.paml" />
     <EmbeddedResource Include="SolutionExplorer\NewItemDialogView.paml" />

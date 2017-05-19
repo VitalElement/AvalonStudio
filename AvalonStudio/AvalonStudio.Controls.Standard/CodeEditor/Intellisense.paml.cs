@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using System.Reactive.Disposables;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class Intellisense : UserControl
     {
