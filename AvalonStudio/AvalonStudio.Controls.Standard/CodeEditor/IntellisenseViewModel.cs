@@ -44,12 +44,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
         }
 
-        public async Task<CodeCompletionResults> DoCompletionRequestAsync(int index, int line, int column)
-        {
-            return null;
-            //return await Model.DoCompletionRequestAsync(index, line, column);
-        }
-
         public CompletionDataViewModel SelectedCompletion
         {
             get { return selectedCompletion; }
