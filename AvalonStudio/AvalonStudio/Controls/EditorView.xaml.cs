@@ -13,7 +13,7 @@ namespace AvalonStudio.Controls
     public class EditorView : UserControl, IEditor
     {
         private readonly CompositeDisposable disposables;
-        private EditorViewModel editorViewModel;
+        
         private Standard.CodeEditor.CodeEditor _editor;
 
         public ISourceFile ProjectFile => throw new NotImplementedException();
@@ -51,7 +51,6 @@ namespace AvalonStudio.Controls
         {
            // editor.EditorScrolled -= Editor_EditorScrolled;
             //editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
-            editorViewModel = null;
 
             disposables.Dispose();
         }
@@ -112,6 +111,11 @@ namespace AvalonStudio.Controls
         {
             _editor.TextArea.Caret.Line = line;
             _editor.TextArea.Caret.Column = column;
+        }
+
+        public void FormatAll()
+        {
+            _editor.FormatAll();
         }
     }
 }

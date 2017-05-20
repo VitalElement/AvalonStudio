@@ -292,10 +292,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void FormatAll()
         {
-            /*if (Model?.LanguageService != null && TextDocument != null)
+            if (LanguageService != null)
             {
-                CaretIndex = Model.LanguageService.Format(TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
-            }*/
+                CaretOffset = LanguageService.Format(Document, 0, (uint)Document.TextLength, CaretOffset);
+
+                Focus();
+            }
         }
 
         public void SetSelection(TextSegment segment)

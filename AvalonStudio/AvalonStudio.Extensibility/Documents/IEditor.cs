@@ -25,5 +25,7 @@ namespace AvalonStudio.Documents
         void GotoOffset(int offset);
 
         void GotoPosition(int line, int column);
+
+        void FormatAll();
     }
 }

@@ -68,12 +68,9 @@ namespace AvalonStudio.Controls
             Title = Path.GetFileName(file.Location);
         }
 
-        private void FormatAll()
+        public void FormatAll()
         {
-            /*if (Model?.LanguageService != null && TextDocument != null)
-            {
-                CaretIndex = Model.LanguageService.Format(TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
-            }*/
+            Editor?.FormatAll();
         }
 
         public void ClearDebugHighlight()
