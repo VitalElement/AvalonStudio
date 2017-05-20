@@ -150,6 +150,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 _isLoaded = true;
 
+                TextArea.TextView.Redraw();
+
                 RegisterLanguageService(file);
             });
 
@@ -357,9 +359,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     {
                         Diagnostics = result.Diagnostics;
 
-                        _shell.InvalidateErrors();
-
                         TextArea.TextView.Redraw();
+
+                        _shell.InvalidateErrors();
                     });
                 }
             });
