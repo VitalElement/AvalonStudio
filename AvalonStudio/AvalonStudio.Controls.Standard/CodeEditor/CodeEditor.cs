@@ -222,52 +222,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
-        public void CommentSelection()
-        {
-            if (LanguageService != null)
-            {
-                var selection = GetSelection();
-
-                if (selection != null)
-                {
-                    var anchors = new TextSegmentCollection<TextSegment>(Document);
-                    anchors.Add(selection);
-
-                    CaretOffset = LanguageService.Comment(Document, selection, CaretOffset);
-
-                    SetSelection(selection);
-                }
-
-                Focus();
-            }
-        }
-
-        public void UncommentSelection()
-        {
-            if (LanguageService != null)
-            {
-                var selection = GetSelection();
-
-                if (selection != null)
-                {
-                    var anchors = new TextSegmentCollection<TextSegment>(Document);
-                    anchors.Add(selection);
-
-                    CaretOffset = LanguageService.UnComment(Document, selection, CaretOffset);
-
-                    SetSelection(selection);
-                }
-
-                Focus();
-            }
-        }
-
-        public void FormatAll()
-        {
-
-        }
-
-        public TextSegment GetSelection()
+        public TextSegment GetSelectionSegment()
         {
             TextSegment result = null;
 
@@ -283,10 +238,70 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return result;
         }
 
+        private void ModifySelectedLines(Action<int, int> action)
+        {
+            var selection = TextArea.Selection;
+
+            var startLine = Document.GetLineByOffset(CaretOffset).LineNumber;
+            var endLine = startLine;
+
+            if (selection.Length > 0)
+            {
+                startLine = selection.StartPosition.Line;
+                endLine = selection.EndPosition.Line;
+            }
+
+            var selectionSegment = GetSelectionSegment();
+            var caretSegment = new TextSegment() { StartOffset = CaretOffset, EndOffset = CaretOffset };
+
+            var anchors = new TextSegmentCollection<TextSegment>(Document);
+
+            anchors.Add(selectionSegment);
+            anchors.Add(caretSegment);
+
+            action(startLine, endLine);
+
+            SetSelection(selectionSegment);
+
+            CaretOffset = caretSegment.StartOffset;
+
+            Focus();
+        }
+
+        public void CommentSelection()
+        {
+            if (LanguageService != null)
+            {
+                ModifySelectedLines((start, end) =>
+                {
+                    LanguageService.Comment(Document, start, end, CaretOffset);
+                });
+            }
+        }
+
+        public void UncommentSelection()
+        {
+            if (LanguageService != null)
+            {
+                ModifySelectedLines((start, end) =>
+                {
+                    LanguageService.UnComment(Document, start, end, CaretOffset);
+                });
+            }
+        }
+
+        public void FormatAll()
+        {
+            /*if (Model?.LanguageService != null && TextDocument != null)
+            {
+                CaretIndex = Model.LanguageService.Format(TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
+            }*/
+        }
+
         public void SetSelection(TextSegment segment)
         {
             SelectionStart = segment.StartOffset;
-            SelectionLength = segment.EndOffset - segment.StartOffset;
+            SelectionLength = segment.Length;
         }
 
         private void StartBackgroundWorkers()

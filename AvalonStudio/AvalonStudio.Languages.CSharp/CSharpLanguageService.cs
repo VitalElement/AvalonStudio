@@ -165,11 +165,6 @@
             return result;
         }
 
-        public int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
-        {
-            throw new NotImplementedException();
-        }
-
         public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
             return cursor;
@@ -388,9 +383,56 @@
             return result;
         }
 
-        public int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
+        public int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
-            throw new NotImplementedException();
+            var result = caret;
+
+            textDocument.BeginUpdate();
+
+            for (int line = firstLine; line <= endLine; line++)
+            {
+                textDocument.Insert(textDocument.GetLineByNumber(line).Offset, "//");
+            }
+
+            if (format)
+            {
+                var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
+                var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
+                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+            }
+
+            textDocument.EndUpdate();
+
+            return result;
+        }
+
+        public int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        {
+            var result = caret;
+
+            textDocument.BeginUpdate();
+
+            for (int line = firstLine; line <= endLine; line++)
+            {
+                var docLine = textDocument.GetLineByNumber(firstLine);
+                var index = textDocument.GetText(docLine).IndexOf("//");
+
+                if (index >= 0)
+                {
+                    textDocument.Replace(docLine.Offset + index, 2, string.Empty);
+                }
+            }
+
+            if (format)
+            {
+                var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
+                var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
+                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+            }
+
+            textDocument.EndUpdate();
+
+            return result;
         }
 
         public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)

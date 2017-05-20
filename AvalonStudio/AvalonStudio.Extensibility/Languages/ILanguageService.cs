@@ -45,9 +45,9 @@ namespace AvalonStudio.Languages
 
         int Format(TextDocument textDocument, uint offset, uint length, int cursor);
 
-        int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
+        int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
 
-        int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
+        int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
 
         Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
 
