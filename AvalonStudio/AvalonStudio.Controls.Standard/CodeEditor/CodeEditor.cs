@@ -1,11 +1,16 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Threading;
+using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
@@ -21,16 +26,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using AvalonStudio.Languages.ViewModels;
-using Avalonia.Input;
-using AvaloniaEdit.CodeCompletion;
-using Avalonia.LogicalTree;
-using AvaloniaEdit.Indentation.CSharp;
-using Avalonia.Controls.Primitives;
-using Avalonia.Controls;
-using Avalonia.Interactivity;
-using AvaloniaEdit;
-using Avalonia.Media;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -66,6 +61,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private SelectedDebugLineBackgroundRenderer _selectedDebugLineBackgroundRenderer;
 
+        public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
+
         private bool _isLoaded = false;
 
 
@@ -73,6 +70,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private Subject<bool> _analysisTriggerEvents = new Subject<bool>();
         private readonly JobRunner _codeAnalysisRunner;
         private CancellationTokenSource _cancellationSource;
+        private TooltipView _toolTip;
 
         /// <summary>
         ///     Write lock must be held before calling this.
@@ -222,6 +220,44 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 TriggerCodeAnalysis();
             }
+        }
+
+        public async Task<Symbol> GetSymbolAsync(int offset)
+        {
+            if(LanguageService != null)
+            {
+                return await LanguageService.GetSymbolAsync(SourceFile, UnsavedFiles, offset);
+            }
+
+            return null;
+        }
+
+        public async Task<object> UpdateToolTipAsync()
+        {
+            var position = GetPositionFromPoint(MouseDevice.Instance.GetPosition(this));
+
+            if (position.HasValue)
+            {
+                var offset = Document.GetOffset(position.Value.Location);
+
+                var matching = Diagnostics.FindSegmentsContaining(offset).FirstOrDefault();
+
+                if (matching != null)
+                {
+                    return new ErrorProbeViewModel(matching);
+                }
+
+                var tooltipRequestEventArgs = new TooltipDataRequestEventArgs();
+
+                RequestTooltipContent?.Invoke(this, tooltipRequestEventArgs);
+
+                if (tooltipRequestEventArgs.GetViewModelAsyncTask != null)
+                {
+                    return await tooltipRequestEventArgs.GetViewModelAsyncTask(offset);
+                }
+            }
+
+            return null;
         }
 
         public TextSegment GetSelectionSegment()
@@ -478,6 +514,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             base.OnTemplateApplied(e);
+
+            _toolTip = e.NameScope.Find<TooltipView>("PART_Tooltip");
+            _toolTip.AttachEditor(this);
 
             _intellisenseControl = e.NameScope.Find<Intellisense>("PART_Intellisense");
             _completionAssistantControl = e.NameScope.Find<CompletionAssistantView>("PART_CompletionAssistant");

@@ -1,3 +1,4 @@
+using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using ReactiveUI;

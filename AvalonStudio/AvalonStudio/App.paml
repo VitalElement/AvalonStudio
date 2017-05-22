@@ -11,5 +11,6 @@
     <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.CodeEditor.xaml?assembly=AvalonStudio.Controls.Standard" />
     <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.Intellisense.xaml?assembly=AvalonStudio.Controls.Standard" />
     <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.CompletionAssistantView.xaml?assembly=AvalonStudio.Controls.Standard" />
+    <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.TooltipView.xaml?assembly=AvalonStudio.Controls.Standard" />
   </Application.Styles>
 </Application>

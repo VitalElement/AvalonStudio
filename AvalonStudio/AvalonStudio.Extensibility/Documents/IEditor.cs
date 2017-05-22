@@ -1,4 +1,6 @@
+using AvalonStudio.Languages;
 using AvalonStudio.Projects;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Documents
 {
@@ -27,5 +29,7 @@ namespace AvalonStudio.Documents
         void GotoPosition(int line, int column);
 
         void FormatAll();
+
+        Task<Symbol> GetSymbolAsync(int offset);
     }
 }

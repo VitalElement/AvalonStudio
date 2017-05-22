@@ -7,6 +7,8 @@ using System.Reactive.Linq;
 using Avalonia.LogicalTree;
 using AvalonStudio.Documents;
 using AvalonStudio.Projects;
+using System.Threading.Tasks;
+using AvalonStudio.Languages;
 
 namespace AvalonStudio.Controls
 {
@@ -24,7 +26,7 @@ namespace AvalonStudio.Controls
 
             disposables = new CompositeDisposable();
 
-            disposables.Add(this.GetObservable(DataContextProperty).OfType<EditorViewModel>().Subscribe(vm => vm.Editor = this));
+            disposables.Add(this.GetObservable(DataContextProperty).OfType<EditorViewModel>().Subscribe(vm => vm.AttachEditor(this)));
         }
 
         ~EditorView()
@@ -35,6 +37,18 @@ namespace AvalonStudio.Controls
         protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
             _editor = this.FindControl<Standard.CodeEditor.CodeEditor>("editor");
+
+            _editor.RequestTooltipContent += _editor_RequestTooltipContent;
+        }
+
+        private void _editor_RequestTooltipContent(object sender, Standard.TooltipDataRequestEventArgs e)
+        {
+            if(DataContext != null)
+            {
+                var editorVm = DataContext as EditorViewModel;
+
+                e.GetViewModelAsyncTask = editorVm.UpdateToolTipAsync;
+            }
         }
 
         private void Editor_EditorScrolled(object sender, EventArgs e)
@@ -116,6 +130,11 @@ namespace AvalonStudio.Controls
         public void FormatAll()
         {
             _editor.FormatAll();
+        }
+
+        public async Task<Symbol> GetSymbolAsync(int offset)
+        {
+            return await _editor.GetSymbolAsync(offset);
         }
     }
 }

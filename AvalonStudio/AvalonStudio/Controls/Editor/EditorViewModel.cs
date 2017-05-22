@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Controls.Standard.CodeEditor;
+using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Languages;
@@ -37,27 +38,27 @@ namespace AvalonStudio.Controls
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
-            Editor?.SetDebugHighlight(line, startColumn, endColumn);
+            _editor?.SetDebugHighlight(line, startColumn, endColumn);
         }
 
         public void Comment()
         {
-            Editor?.Comment();
+            _editor?.Comment();
         }
 
         public void UnComment()
         {
-            Editor?.UnComment();
+            _editor?.UnComment();
         }
 
         public void Undo()
         {
-            Editor?.Undo();
+            _editor?.Undo();
         }
 
         public void Redo()
         {
-            Editor?.Redo();
+            _editor?.Redo();
         }
        
 
@@ -70,17 +71,17 @@ namespace AvalonStudio.Controls
 
         public void FormatAll()
         {
-            Editor?.FormatAll();
+            _editor?.FormatAll();
         }
 
         public void ClearDebugHighlight()
         {
-            Editor?.ClearDebugHighlight();
+            _editor?.ClearDebugHighlight();
         }
 
         public void GotoOffset(int offset)
         {
-            throw new NotImplementedException();
+            _editor?.GotoOffset(offset);
         }
 
         #region Constructors
@@ -91,7 +92,7 @@ namespace AvalonStudio.Controls
 
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
-                Editor?.Close();
+                _editor?.Close();
 
                 IoC.Get<IShell>().InvalidateErrors();
                 disposables.Dispose();
@@ -220,7 +221,12 @@ namespace AvalonStudio.Controls
         {
         }
 
-        public IEditor Editor { get; set; }
+        public void AttachEditor(IEditor editor)
+        {
+            _editor = editor;
+        }
+
+        private IEditor _editor;
 
         #endregion Constructors
 
@@ -321,7 +327,7 @@ namespace AvalonStudio.Controls
 
         public void GotoPosition(int line, int column)
         {
-            Editor?.GotoPosition(line, column);
+            _editor?.GotoPosition(line, column);
         }
 
         /*public void GotoOffset(int offset)
@@ -432,31 +438,11 @@ namespace AvalonStudio.Controls
             return result;
         }
 
-        private object toolTip;
-
-        public object ToolTip
+        public async Task<object> UpdateToolTipAsync(int offset)
         {
-            get { return toolTip; }
-            set { this.RaiseAndSetIfChanged(ref toolTip, value); }
-        }
-
-        public async Task<bool> UpdateToolTipAsync(int offset)
-        {
-            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
-            {
-                /*var matching = Model.CodeAnalysisResults?.Diagnostics.FindSegmentsContaining(offset).FirstOrDefault();
-
-                if (matching != null)
-                {
-                    ToolTip = new ErrorProbeViewModel(matching);
-
-                    return true;
-                }*/
-            }
-
-            /* if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor && Model.LanguageService != null)
+             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
              {
-                 var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, CodeEditor.CodeEditor.UnsavedFiles.ToList(), offset);
+                 var symbol = await _editor?.GetSymbolAsync(offset);
 
                  if (symbol != null)
                  {
@@ -469,12 +455,12 @@ namespace AvalonStudio.Controls
                          case CursorKind.InitListExpression:
                          case CursorKind.IntegerLiteral:
                          case CursorKind.ReturnStatement:
-                             break;
+                         case CursorKind.WhileStatement:
+                         case CursorKind.BinaryOperator:
+                            return null;
 
                          default:
-
-                             ToolTip = new SymbolViewModel(symbol);
-                             return true;
+                             return new SymbolViewModel(symbol);
                      }
                  }
              }
@@ -491,12 +477,11 @@ namespace AvalonStudio.Controls
 
                      bool result = newToolTip.AddWatch(expression);
 
-                     ToolTip = newToolTip;
-                     return result;
+                    return newToolTip;
                  }
-             }*/
+             }
 
-            return false;
+            return null;
         }
 
         private IndexEntry selectedIndexEntry;
@@ -567,7 +552,7 @@ namespace AvalonStudio.Controls
 
             FormatAll();
 
-            Editor.Save();
+            _editor.Save();
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -578,7 +563,12 @@ namespace AvalonStudio.Controls
 
         public void Close()
         {
-            Editor?.Close();
+            _editor?.Close();
+        }
+
+        public async Task<Symbol> GetSymbolAsync(int offset)
+        {
+            return await _editor?.GetSymbolAsync(offset);
         }
 
         #endregion Public Methods

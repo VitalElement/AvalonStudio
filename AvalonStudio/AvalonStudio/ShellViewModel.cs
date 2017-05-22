@@ -424,23 +424,23 @@ namespace AvalonStudio
                 if (selectLine || debugHighlight)
                 {
                    // Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).ScrollToLine(line));
-                    (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                    (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
                 }
             }
 
-            return DocumentTabs.SelectedDocument as EditorViewModel;
+            return DocumentTabs.SelectedDocument as IEditor;
         }
 
         public IEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(d => d.ProjectFile?.FilePath == path);
+            return DocumentTabs.Documents.OfType<IEditor>().FirstOrDefault(d => d.ProjectFile?.FilePath == path);
         }
 
         public void Save()
         {
-            if (SelectedDocument is EditorViewModel)
+            if (SelectedDocument is IEditor)
             {
-                (SelectedDocument as EditorViewModel).Save();
+                (SelectedDocument as IEditor).Save();
             }
         }
 

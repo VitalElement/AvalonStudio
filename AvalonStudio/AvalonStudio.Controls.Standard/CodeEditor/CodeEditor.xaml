@@ -6,7 +6,7 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Panel>
-          
+          <local:TooltipView Name="PART_Tooltip" />
           <local:CompletionAssistantView Name="PART_CompletionAssistant" />
           <local:Intellisense Name="PART_Intellisense" />
           <Border Background="{TemplateBinding Background}"

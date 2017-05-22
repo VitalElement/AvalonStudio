@@ -1,7 +1,7 @@
 ﻿using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class ErrorProbeViewModel : ViewModel<Diagnostic>
     {

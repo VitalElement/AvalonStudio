@@ -22,7 +22,6 @@
     <None Remove="Controls\DebugHoverProbeView.paml" />
     <None Remove="Controls\DocumentTabControl.paml" />
     <None Remove="Controls\EditorView.xaml" />
-    <None Remove="Controls\ErrorProbeView.paml" />
     <None Remove="Controls\MainMenu.paml" />
     <None Remove="Controls\MetroWindow.paml" />
     <None Remove="Controls\MetroWindowControlsTheme.paml" />
@@ -32,7 +31,6 @@
     <None Remove="Controls\PackageManagerDialogView.paml" />
     <None Remove="Controls\SplashScreen.paml" />
     <None Remove="Controls\StatusBar.paml" />
-    <None Remove="Controls\SymbolView.xaml" />
     <None Remove="Controls\TabControlView.paml" />
     <None Remove="Controls\ToolBar.paml" />
     <None Remove="icon.ico" />
@@ -49,7 +47,6 @@
     <EmbeddedResource Include="Controls\DebugHoverProbeView.paml" />
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
     <EmbeddedResource Include="Controls\EditorView.xaml" />
-    <EmbeddedResource Include="Controls\ErrorProbeView.paml" />
     <EmbeddedResource Include="Controls\MainMenu.paml" />
     <EmbeddedResource Include="Controls\MetroWindow.paml" />
     <EmbeddedResource Include="Controls\MetroWindowControlsTheme.paml" />
