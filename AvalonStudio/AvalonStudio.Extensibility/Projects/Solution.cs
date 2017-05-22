@@ -82,7 +82,8 @@ namespace AvalonStudio.Projects
         [JsonIgnore]
         public IProject StartupProject { get; set; }
 
-        public string Name { get; set; }
+        [JsonIgnore]
+        public string Name => Path.GetFileNameWithoutExtension(Location);
 
         [JsonIgnore]
         public string Location { get; private set; }
@@ -152,8 +153,6 @@ namespace AvalonStudio.Projects
                 project.ResolveReferences();
             }
 
-            solution.Name = Path.GetFileNameWithoutExtension(fileName);
-
             solution.StartupProject = solution.Projects.SingleOrDefault(p => p.Name == solution.StartupItem);
 
             return solution;
@@ -175,8 +174,9 @@ namespace AvalonStudio.Projects
         {
             var result = new Solution();
 
-            result.Name = name;
             result.CurrentDirectory = location + Platform.DirectorySeperator;
+
+            result.Location = Path.Combine(result.CurrentDirectory, name + "." + Extension);
 
             if (save)
             {
