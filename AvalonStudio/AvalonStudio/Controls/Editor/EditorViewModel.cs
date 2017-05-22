@@ -50,7 +50,6 @@ namespace AvalonStudio.Controls
         {
             _editor?.Redo();
         }
-       
 
         public void OpenFile(ISourceFile file)
         {
@@ -90,7 +89,7 @@ namespace AvalonStudio.Controls
 
             AddWatchCommand = ReactiveCommand.Create();
             disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); }));
-            
+
             Dock = Dock.Right;
         }
 
@@ -168,11 +167,6 @@ namespace AvalonStudio.Controls
             _editor?.GotoPosition(line, column);
         }
 
-        /*public void GotoOffset(int offset)
-        {
-            Dispatcher.UIThread.InvokeAsync(() => { CaretIndex = offset; });
-        }*/
-
         public IndexEntry GetSelectIndexEntryByOffset(int offset)
         {
             IndexEntry selectedEntry = null;
@@ -202,82 +196,48 @@ namespace AvalonStudio.Controls
             return selectedEntry;
         }
 
-        private int caretIndex;
-
-        public int CaretIndex
-        {
-            get
-            {
-                return caretIndex;
-            }
-            set
-            {
-                /*if (TextDocument != null && value > TextDocument.TextLength)
-                {
-                    value = TextDocument.TextLength - 1;
-                }
-
-                bool hasChanged = value != caretIndex;*/
-
-                this.RaiseAndSetIfChanged(ref caretIndex, value);
-               /* ShellViewModel.Instance.StatusBar.Offset = value;
-
-                if (value >= 0 && TextDocument != null)
-                {
-                    var location = TextDocument.GetLocation(value);
-                    ShellViewModel.Instance.StatusBar.LineNumber = location.Line;
-                    ShellViewModel.Instance.StatusBar.Column = location.Column;
-                }
-
-                selectedIndexEntry = GetSelectIndexEntryByOffset(value);
-                this.RaisePropertyChanged(nameof(SelectedIndexEntry));*/
-            }
-        }
-
-        
-
         public async Task<object> UpdateToolTipAsync(int offset)
         {
-             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
-             {
-                 var symbol = await _editor?.GetSymbolAsync(offset);
+            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
+            {
+                var symbol = await _editor?.GetSymbolAsync(offset);
 
-                 if (symbol != null)
-                 {
-                     switch (symbol.Kind)
-                     {
-                         case CursorKind.CompoundStatement:
-                         case CursorKind.NoDeclarationFound:
-                         case CursorKind.NotImplemented:
-                         case CursorKind.FirstDeclaration:
-                         case CursorKind.InitListExpression:
-                         case CursorKind.IntegerLiteral:
-                         case CursorKind.ReturnStatement:
-                         case CursorKind.WhileStatement:
-                         case CursorKind.BinaryOperator:
+                if (symbol != null)
+                {
+                    switch (symbol.Kind)
+                    {
+                        case CursorKind.CompoundStatement:
+                        case CursorKind.NoDeclarationFound:
+                        case CursorKind.NotImplemented:
+                        case CursorKind.FirstDeclaration:
+                        case CursorKind.InitListExpression:
+                        case CursorKind.IntegerLiteral:
+                        case CursorKind.ReturnStatement:
+                        case CursorKind.WhileStatement:
+                        case CursorKind.BinaryOperator:
                             return null;
 
-                         default:
-                             return new SymbolViewModel(symbol);
-                     }
-                 }
-             }
+                        default:
+                            return new SymbolViewModel(symbol);
+                    }
+                }
+            }
 
-             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
-             {
-                 var expression = _editor?.GetWordAtOffset(offset);
+            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
+            {
+                var expression = _editor?.GetWordAtOffset(offset);
 
-                 if (expression != string.Empty)
-                 {
-                     var debugManager = IoC.Get<IDebugManager2>();
+                if (expression != string.Empty)
+                {
+                    var debugManager = IoC.Get<IDebugManager2>();
 
-                     var newToolTip = new DebugHoverProbeViewModel();
+                    var newToolTip = new DebugHoverProbeViewModel();
 
-                     bool result = newToolTip.AddWatch(expression);
+                    bool result = newToolTip.AddWatch(expression);
 
                     return newToolTip;
-                 }
-             }
+                }
+            }
 
             return null;
         }
@@ -337,7 +297,61 @@ namespace AvalonStudio.Controls
         // todo this menu item and command should be injected via debugging module.
         public ReactiveCommand<object> AddWatchCommand { get; }
 
-        public int CaretOffset => _editor.CaretOffset;
+        private int _caretOffset;
+
+        public int CaretOffset
+        {
+            get { return _caretOffset; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _caretOffset, value);
+                ShellViewModel.Instance.StatusBar.Offset = value;
+
+                /*selectedIndexEntry = GetSelectIndexEntryByOffset(value);
+                this.RaisePropertyChanged(nameof(SelectedIndexEntry));*/
+            }
+        }
+
+        private int _line;
+
+        public int Line
+        {
+            get { return _line; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _line, value);
+
+                ShellViewModel.Instance.StatusBar.LineNumber = value;
+            }
+        }
+
+        private int _column;
+
+        public int Column
+        {
+            get { return _column; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _column, value);
+
+                ShellViewModel.Instance.StatusBar.Column = value;
+            }
+        }
+
+
+        private string _languageServiceName;
+
+        public string LanguageServiceName
+        {
+            get { return _languageServiceName; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _languageServiceName, value);
+
+                ShellViewModel.Instance.StatusBar.Language = value;
+            }
+        }
+
 
 
         #endregion Commands

@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -180,6 +181,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     _completionAssistantControl.SetLocation(position);
 
                     _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
+
+                    Line = TextArea.Caret.Line;
+                    Column = TextArea.Caret.Column;
+                    EditorCaretOffset = TextArea.Caret.Offset;
                 }
             };
 
@@ -231,7 +236,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public async Task<Symbol> GetSymbolAsync(int offset)
         {
-            if(LanguageService != null)
+            if (LanguageService != null)
             {
                 return await LanguageService.GetSymbolAsync(SourceFile, UnsavedFiles, offset);
             }
@@ -241,7 +246,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public async Task<object> UpdateToolTipAsync()
         {
-            if(VisualRoot == null)
+            if (VisualRoot == null)
             {
                 return null;
             }
@@ -425,7 +430,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             if (LanguageService != null)
             {
-                //_shell.Instance.StatusBar.Language = LanguageService.Title;
+                LanguageServiceName = LanguageService.Title;
 
                 LanguageService.RegisterSourceFile(this, sourceFile, Document);
 
@@ -450,7 +455,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             else
             {
                 LanguageService = null;
-                //ShellViewModel.Instance.StatusBar.Language = "Text";
+                LanguageServiceName = "Plain Text";
             }
 
             StartBackgroundWorkers();
@@ -562,12 +567,39 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         public static readonly StyledProperty<int> CaretOffsetProperty =
-            AvaloniaProperty.Register<CodeEditor, int>(nameof(EditorCaretOffset));
+            AvaloniaProperty.Register<CodeEditor, int>(nameof(EditorCaretOffset), defaultBindingMode: BindingMode.TwoWay);
 
         public int EditorCaretOffset
         {
             get { return GetValue(CaretOffsetProperty); }
             set { SetValue(CaretOffsetProperty, value); }
+        }
+
+        public static readonly StyledProperty<int> LineProperty =
+            AvaloniaProperty.Register<CodeEditor, int>(nameof(Line), defaultBindingMode: BindingMode.TwoWay);
+
+        public int Line
+        {
+            get { return GetValue(LineProperty); }
+            set { SetValue(LineProperty, value); }
+        }
+
+        public static readonly StyledProperty<int> ColumnProperty =
+            AvaloniaProperty.Register<CodeEditor, int>(nameof(Column), defaultBindingMode: BindingMode.TwoWay);
+
+        public int Column
+        {
+            get { return GetValue(ColumnProperty); }
+            set { SetValue(ColumnProperty, value); }
+        }
+
+        public static readonly StyledProperty<string> LanguageServiceNameProperty =
+            AvaloniaProperty.Register<CodeEditor, string>(nameof(LanguageServiceName), defaultBindingMode: BindingMode.TwoWay);
+
+        public string LanguageServiceName
+        {
+            get { return GetValue(LanguageServiceNameProperty); }
+            set { SetValue(LanguageServiceNameProperty, value); }
         }
 
 
@@ -670,14 +702,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
-            if(startColumn == -1 && endColumn == -1)
+            if (startColumn == -1 && endColumn == -1)
             {
                 var docLine = Document.GetLineByNumber(line);
 
                 var leading = TextUtilities.GetLeadingWhitespace(Document, docLine);
 
                 var trailing = TextUtilities.GetTrailingWhitespace(Document, docLine);
-                
+
                 startColumn = Document.GetLocation(leading.EndOffset).Column;
                 endColumn = Document.GetLocation(trailing.Offset).Column;
             }
