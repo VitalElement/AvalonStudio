@@ -631,17 +631,7 @@ namespace AvalonStudio
         {
             Environment.Exit(1);
         }
-
-        public void OnKeyDown(KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.F6:
-                    Build();
-                    break;
-            }
-        }
-
+        
         public void InvalidateErrors()
         {
             var allErrors = new List<ErrorViewModel>();
