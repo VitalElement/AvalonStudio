@@ -240,7 +240,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 var offset = Document.GetOffset(position.Value.Location);
 
-                var matching = Diagnostics.FindSegmentsContaining(offset).FirstOrDefault();
+                var matching = Diagnostics?.FindSegmentsContaining(offset).FirstOrDefault();
 
                 if (matching != null)
                 {
@@ -614,8 +614,62 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return offset;
         }
 
+        public string GetWordAtOffset(int offset)
+        {
+            var result = string.Empty;
+
+            if (offset >= 0 && Document.TextLength > offset)
+            {
+                var start = offset;
+
+                var currentChar = Document.GetCharAt(offset);
+                var prevChar = '\0';
+
+                if (offset > 0)
+                {
+                    prevChar = Document.GetCharAt(offset - 1);
+                }
+
+                var charClass = TextUtilities.GetCharacterClass(currentChar);
+
+                if (charClass != CharacterClass.LineTerminator && prevChar != ' ' &&
+                    TextUtilities.GetCharacterClass(prevChar) != CharacterClass.LineTerminator)
+                {
+                    start = TextUtilities.GetNextCaretPosition(Document, offset, LogicalDirection.Backward,
+                        CaretPositioningMode.WordStart);
+                }
+
+                var end = TextUtilities.GetNextCaretPosition(Document, start, LogicalDirection.Forward,
+                    CaretPositioningMode.WordBorder);
+
+                if (start != -1 && end != -1)
+                {
+                    var word = Document.GetText(start, end - start).Trim();
+
+                    if (word.IsSymbol())
+                    {
+                        result = word;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
+            if(startColumn == -1 && endColumn == -1)
+            {
+                var docLine = Document.GetLineByNumber(line);
+
+                var leading = TextUtilities.GetLeadingWhitespace(Document, docLine);
+
+                var trailing = TextUtilities.GetTrailingWhitespace(Document, docLine);
+                
+                startColumn = Document.GetLocation(leading.EndOffset).Column;
+                endColumn = Document.GetLocation(trailing.Offset).Column;
+            }
+
             _selectedDebugLineBackgroundRenderer.SetLocation(line, startColumn, endColumn);
 
             TextArea.TextView.Redraw();

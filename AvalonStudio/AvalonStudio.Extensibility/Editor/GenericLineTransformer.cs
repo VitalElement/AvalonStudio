@@ -15,12 +15,19 @@ namespace AvalonStudio.CodeEditor
 
         protected void SetTextStyle(DocumentLine line, int startIndex, int length, IBrush foreground)
         {
-            if ((line.Offset + startIndex + length) > line.EndOffset)
+            if (startIndex >= 0 && length > 0)
             {
-                length = (line.EndOffset - startIndex) - line.Offset - startIndex;
-            }
+                if ((line.Offset + startIndex + length) > line.EndOffset)
+                {
+                    length = (line.EndOffset - startIndex) - line.Offset - startIndex;
+                }
 
-            ChangeLinePart(line.Offset + startIndex, line.Offset + startIndex + length, e => e.TextRunProperties.ForegroundBrush = foreground);
+                ChangeLinePart(line.Offset + startIndex, line.Offset + startIndex + length, e => e.TextRunProperties.ForegroundBrush = foreground);
+            }
+            else
+            {
+                ChangeLinePart(line.Offset, line.EndOffset, e => e.TextRunProperties.ForegroundBrush = foreground);
+            }
         }
     }
 }

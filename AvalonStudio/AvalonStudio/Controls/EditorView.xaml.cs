@@ -119,6 +119,7 @@ namespace AvalonStudio.Controls
         public void GotoOffset(int offset)
         {
             _editor.CaretOffset = offset;
+            _editor.Focus();
         }
 
         public void GotoPosition(int line, int column)
@@ -135,6 +136,11 @@ namespace AvalonStudio.Controls
         public async Task<Symbol> GetSymbolAsync(int offset)
         {
             return await _editor.GetSymbolAsync(offset);
+        }
+
+        public string GetWordAtOffset(int offset)
+        {
+            return _editor.GetWordAtOffset(offset);
         }
     }
 }

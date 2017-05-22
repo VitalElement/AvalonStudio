@@ -140,6 +140,9 @@
                 DebugSessionEnded?.Invoke(this, new EventArgs());
 
                 _shell.CurrentPerspective = Perspective.Editor;
+
+                _lastDocument?.ClearDebugHighlight();
+                _lastDocument = null;
             });
 
             if (_session != null)
@@ -152,9 +155,6 @@
                 _session.Dispose();
                 _session = null;
             }
-
-            _lastDocument?.ClearDebugHighlight();
-            _lastDocument = null;
 
             // This will save breakpoints that were moved to be closer to actual sequence points.
             Breakpoints.Save();

@@ -5,7 +5,7 @@
   <Style Selector="local|TooltipView">
     <Setter Property="Template">
       <ControlTemplate>
-        <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="false" Name="PART_Popup" DataContext="">
+        <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="True" Name="PART_Popup" DataContext="">
           <cont:ViewModelViewHost Name="PART_ViewHost" />
         </Popup>
       </ControlTemplate>

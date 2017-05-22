@@ -31,5 +31,7 @@ namespace AvalonStudio.Documents
         void FormatAll();
 
         Task<Symbol> GetSymbolAsync(int offset);
+
+        string GetWordAtOffset(int offset);
     }
 }

@@ -308,14 +308,6 @@ namespace AvalonStudio.Controls
             }
         }
 
-        private TextDocument textDocument;
-
-        public TextDocument TextDocument
-        {
-            get { return textDocument; }
-            set { this.RaiseAndSetIfChanged(ref textDocument, value); }
-        }
-
         private ISourceFile _sourceFile;
 
         public ISourceFile SourceFile
@@ -374,15 +366,15 @@ namespace AvalonStudio.Controls
             }
             set
             {
-                if (TextDocument != null && value > TextDocument.TextLength)
+                /*if (TextDocument != null && value > TextDocument.TextLength)
                 {
                     value = TextDocument.TextLength - 1;
                 }
 
-                bool hasChanged = value != caretIndex;
+                bool hasChanged = value != caretIndex;*/
 
                 this.RaiseAndSetIfChanged(ref caretIndex, value);
-                ShellViewModel.Instance.StatusBar.Offset = value;
+               /* ShellViewModel.Instance.StatusBar.Offset = value;
 
                 if (value >= 0 && TextDocument != null)
                 {
@@ -392,51 +384,11 @@ namespace AvalonStudio.Controls
                 }
 
                 selectedIndexEntry = GetSelectIndexEntryByOffset(value);
-                this.RaisePropertyChanged(nameof(SelectedIndexEntry));
+                this.RaisePropertyChanged(nameof(SelectedIndexEntry));*/
             }
         }
 
-        private string GetWordAtOffset(int offset)
-        {
-            var result = string.Empty;
-
-            if (offset >= 0 && TextDocument.TextLength > offset)
-            {
-                var start = offset;
-
-                var currentChar = TextDocument.GetCharAt(offset);
-                var prevChar = '\0';
-
-                if (offset > 0)
-                {
-                    prevChar = TextDocument.GetCharAt(offset - 1);
-                }
-
-                var charClass = TextUtilities.GetCharacterClass(currentChar);
-
-                if (charClass != CharacterClass.LineTerminator && prevChar != ' ' &&
-                    TextUtilities.GetCharacterClass(prevChar) != CharacterClass.LineTerminator)
-                {
-                    start = TextUtilities.GetNextCaretPosition(TextDocument, offset, LogicalDirection.Backward,
-                        CaretPositioningMode.WordStart);
-                }
-
-                var end = TextUtilities.GetNextCaretPosition(TextDocument, start, LogicalDirection.Forward,
-                    CaretPositioningMode.WordBorder);
-
-                if (start != -1 && end != -1)
-                {
-                    var word = TextDocument.GetText(start, end - start).Trim();
-
-                    if (word.IsSymbol())
-                    {
-                        result = word;
-                    }
-                }
-            }
-
-            return result;
-        }
+        
 
         public async Task<object> UpdateToolTipAsync(int offset)
         {
@@ -467,7 +419,7 @@ namespace AvalonStudio.Controls
 
              if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
              {
-                 var expression = GetWordAtOffset(offset);
+                 var expression = _editor?.GetWordAtOffset(offset);
 
                  if (expression != string.Empty)
                  {
@@ -569,6 +521,11 @@ namespace AvalonStudio.Controls
         public async Task<Symbol> GetSymbolAsync(int offset)
         {
             return await _editor?.GetSymbolAsync(offset);
+        }
+
+        public string GetWordAtOffset(int offset)
+        {
+            return _editor?.GetWordAtOffset(offset);
         }
 
         #endregion Public Methods

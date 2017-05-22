@@ -42,20 +42,23 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _timer.Stop();
 
-            var dataContext = await OnBeforePopupOpen();
+            if (_editor.Document != null)
+            {
+                var dataContext = await OnBeforePopupOpen();
 
-            if(dataContext != null)
-            {
-                if (_editor.IsPointerOver)
+                if (dataContext != null)
                 {
-                     _viewHost.DataContext = dataContext;
-                    _lastPoint = MouseDevice.Instance.GetPosition(_editor);
-                    _popup.Open();
+                    if (_editor.IsPointerOver)
+                    {
+                        _viewHost.DataContext = dataContext;
+                        _lastPoint = MouseDevice.Instance.GetPosition(_editor);
+                        _popup.Open();
+                    }
                 }
-            }
-            else
-            {
-                DataContext = null;
+                else
+                {
+                    DataContext = null;
+                }
             }
         }
 
@@ -65,7 +68,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 var distance = e.GetPosition(_editor).DistanceTo(_lastPoint);
 
-                if (distance > 14)
+                if (distance > 25 && !_popup.PopupRoot.IsPointerOver)
                 {
                     _popup.Close();
                 }
@@ -112,8 +115,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _popup.PlacementMode = PlacementMode.Pointer;
 
-            _popup.HorizontalOffset = 10;
-            _popup.VerticalOffset = 10;
+            _popup.HorizontalOffset = 0;
+            _popup.VerticalOffset = 0;
         }
 
         
