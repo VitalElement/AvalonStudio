@@ -33,5 +33,7 @@ namespace AvalonStudio.Documents
         Task<Symbol> GetSymbolAsync(int offset);
 
         string GetWordAtOffset(int offset);
+
+        int CaretOffset { get; }
     }
 }

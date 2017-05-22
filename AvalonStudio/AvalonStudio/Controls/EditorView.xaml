@@ -10,43 +10,29 @@
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid>
       <DockPanel>
-        <editor:CodeEditor Name="editor" DockPanel.Dock="Top"
+        <DropDown DockPanel.Dock="Top" Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">
+          <DropDown.DataTemplates>
+            <DataTemplate>
+              <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
+            </DataTemplate>
+          </DropDown.DataTemplates>
+        </DropDown>
+
+        <editor:CodeEditor Name="editor"
                                 TextBlock.FontFamily="{Binding FontFamily}" TextBlock.FontSize="14"
                                 Foreground="#DCDCDC" BorderThickness="0" TextBlock.FontWeight="ExtraLight"
                                 SourceFile="{Binding SourceFile}" Margin="0"
-                                BackgroundRenderers="{Binding BackgroundRenderers}" 
+                                BackgroundRenderers="{Binding BackgroundRenderers}"
                                 DocumentLineTransformers="{Binding DocumentLineTransformers}"
                                 IsDirty="{Binding IsDirty}"
                                 VerticalAlignment="Stretch" Background="#1e1e1e" Diagnostics="{Binding Diagnostics}">
 
-          <!-- <te:TextEditor.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Add Watch" Command="{Binding AddWatchCommand}" />
-                    </ContextMenu>
-                </te:TextEditor.ContextMenu>
+          <editor:CodeEditor.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="Add Watch" Command="{Binding AddWatchCommand}" />
+            </ContextMenu>
+          </editor:CodeEditor.ContextMenu>
 
-                <i:Interaction.Behaviors>
-                    <behaviours:EditorToolTipBehavior>
-                        <Border BorderBrush="#3E3E42" BorderThickness="1">
-                            <econt:ViewModelViewHost DataContext="{Binding ToolTip}" />
-                        </Border>
-                    </behaviours:EditorToolTipBehavior>
-                </i:Interaction.Behaviors>
-
-                <te:TextEditor.Header>
-                    <DropDown Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">
-                        <DropDown.DataTemplates>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
-                            </DataTemplate>
-                        </DropDown.DataTemplates>
-                    </DropDown>
-                </te:TextEditor.Header>
-
-                <te:TextEditor.Content>
-                    <cont:Intellisense DataContext="{Binding Intellisense}" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" Margin="{Binding Position}" />
-                </te:TextEditor.Content>-->
         </editor:CodeEditor>
       </DockPanel>
     </Grid>

@@ -20,6 +20,8 @@ namespace AvalonStudio.Controls
 
         public ISourceFile ProjectFile => throw new NotImplementedException();
 
+        public int CaretOffset => _editor.CaretOffset;
+
         public EditorView()
         {
             InitializeComponent();

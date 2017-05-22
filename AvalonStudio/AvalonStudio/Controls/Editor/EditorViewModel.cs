@@ -2,8 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using AvaloniaEdit.Document;
-using AvaloniaEdit.Rendering;
-using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
@@ -13,10 +11,8 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
-using AvalonStudio.TextEditor.Rendering;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive.Disposables;
@@ -27,12 +23,6 @@ namespace AvalonStudio.Controls
     public class EditorViewModel : DocumentTabViewModel, IEditor
     {
         private readonly CompositeDisposable disposables;
-
-        private readonly List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
-
-        private readonly List<IVisualLineTransformer> languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
-
-        private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;
 
         public ISourceFile ProjectFile { get; set; }
 
@@ -98,122 +88,9 @@ namespace AvalonStudio.Controls
                 disposables.Dispose();
             }));
 
-            //AddWatchCommand = ReactiveCommand.Create(this.WhenAny(x => x.WordAtCaret, (word) => !string.IsNullOrEmpty(word.Value)));
-            //disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(WordAtCaret); }));
-
-            //tabCharacter = "    ";
-
-            /*model.DocumentChanged += (sender, e) =>
-            {
-                model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
-               // Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
-
-                foreach (var bgRenderer in languageServiceBackgroundRenderers)
-                {
-                    BackgroundRenderers.Remove(bgRenderer);
-                }
-
-                languageServiceBackgroundRenderers.Clear();
-
-                foreach (var transformer in languageServiceDocumentLineTransformers)
-                {
-                    DocumentLineTransformers.Remove(transformer);
-                }
-
-                languageServiceDocumentLineTransformers.Clear();
-
-                if (model.LanguageService != null)
-                {
-                    languageServiceBackgroundRenderers.AddRange(model.LanguageService.GetBackgroundRenderers(model.ProjectFile));
-
-                    foreach (var bgRenderer in languageServiceBackgroundRenderers)
-                    {
-                        BackgroundRenderers.Add(bgRenderer);
-                    }
-
-                    languageServiceDocumentLineTransformers.AddRange(
-                        model.LanguageService.GetDocumentLineTransformers(model.ProjectFile));
-
-                    foreach (var textTransformer in languageServiceDocumentLineTransformers)
-                    {
-                        DocumentLineTransformers.Add(textTransformer);
-                    }
-
-                    intellisenseManager = new IntellisenseManager(Model, Intellisense, Intellisense.CompletionAssistant, model.LanguageService, model.ProjectFile);
-
-                    EventHandler<KeyEventArgs> tunneledKeyUpHandler = (send, ee) =>
-                    {
-                        if (caretIndex > 0)
-                        {
-                            intellisenseManager.OnKeyUp(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
-                        }
-                    };
-
-                    EventHandler<KeyEventArgs> tunneledKeyDownHandler = (send, ee) =>
-                    {
-                        if (caretIndex > 0)
-                        {
-                            intellisenseManager.OnKeyDown(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
-                        }
-                    };
-
-                    EventHandler<TextInputEventArgs> tunneledTextInputHandler = (send, ee) =>
-                    {
-                        if (caretIndex > 0)
-                        {
-                            intellisenseManager.OnTextInput(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
-                        }
-                    };
-
-                    //Model.Editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
-
-                    disposables.Add(Model.AddHandler(InputElement.KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel));
-                    disposables.Add(Model.AddHandler(InputElement.KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel));
-                    disposables.Add(Model.AddHandler(InputElement.TextInputEvent, tunneledTextInputHandler, RoutingStrategies.Bubble));
-                }
-
-                model.CodeAnalysisCompleted += (s, ee) =>
-                {
-                    Diagnostics = model.CodeAnalysisResults.Diagnostics;
-
-                    HighlightingData =
-                        new ObservableCollection<OffsetSyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
-
-                    IndexItems = new ObservableCollection<IndexEntry>(model.CodeAnalysisResults.IndexItems);
-                    selectedIndexEntry = IndexItems.FirstOrDefault();
-                    this.RaisePropertyChanged(nameof(SelectedIndexEntry));
-
-                    ShellViewModel.Instance.InvalidateErrors();
-                };
-
-                model.ProjectFile.FileModifiedExternally += ProjectFile_FileModifiedExternally;
-
-                TextDocument = model.Document;
-
-                Title = Model.ProjectFile.Name;
-            };
-
-            model.TextChanged += (sender, e) =>
-            {
-                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
-                {
-                    Dock = Dock.Left;
-
-                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
-                }
-
-                IsDirty = model.IsDirty;
-            };*/
-
-            documentLineTransformers = new ObservableCollection<IVisualLineTransformer>();
-
-            backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
-
-            backgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
-            wordAtCaretHighlighter = new SelectedWordBackgroundRenderer();
-            backgroundRenderers.Add(wordAtCaretHighlighter);
-            backgroundRenderers.Add(new SelectionBackgroundRenderer());
-
+            AddWatchCommand = ReactiveCommand.Create();
+            disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); }));
+            
             Dock = Dock.Right;
         }
 
@@ -238,37 +115,6 @@ namespace AvalonStudio.Controls
         {
             get { return tabCharacter; }
             set { this.RaiseAndSetIfChanged(ref tabCharacter, value); }
-        }
-
-        private ObservableCollection<IBackgroundRenderer> backgroundRenderers;
-
-        public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
-        {
-            get { return backgroundRenderers; }
-            set { this.RaiseAndSetIfChanged(ref backgroundRenderers, value); }
-        }
-
-        private ObservableCollection<IVisualLineTransformer> documentLineTransformers;
-
-        public ObservableCollection<IVisualLineTransformer> DocumentLineTransformers
-        {
-            get { return documentLineTransformers; }
-            set { this.RaiseAndSetIfChanged(ref documentLineTransformers, value); }
-        }
-
-        private string wordAtCaret;
-
-        public string WordAtCaret
-        {
-            get
-            {
-                return wordAtCaret;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref wordAtCaret, value);
-                wordAtCaretHighlighter.SelectedWord = value;
-            }
         }
 
         private double lineHeight;
@@ -490,6 +336,8 @@ namespace AvalonStudio.Controls
 
         // todo this menu item and command should be injected via debugging module.
         public ReactiveCommand<object> AddWatchCommand { get; }
+
+        public int CaretOffset => _editor.CaretOffset;
 
 
         #endregion Commands

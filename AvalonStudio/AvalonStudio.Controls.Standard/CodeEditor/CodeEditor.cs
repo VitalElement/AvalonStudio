@@ -61,6 +61,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private SelectedDebugLineBackgroundRenderer _selectedDebugLineBackgroundRenderer;
 
+        private SelectedWordBackgroundRenderer _selectedWordBackgroundRenderer;
+
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
         private bool _isLoaded = false;
@@ -96,6 +98,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var lineNumberMargin = new LineNumberMargin(this) { Margin = new Thickness(0, 0, 10, 0) };
 
             TextArea.LeftMargins.Add(lineNumberMargin);
+
+            _selectedWordBackgroundRenderer = new SelectedWordBackgroundRenderer();
+            TextArea.TextView.BackgroundRenderers.Add(_selectedWordBackgroundRenderer);
 
             TextArea.TextView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer(this));
 
@@ -173,6 +178,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     _intellisenseControl.SetLocation(position);
                     _completionAssistantControl.SetLocation(position);
+
+                    _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
                 }
             };
 
