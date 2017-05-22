@@ -22,7 +22,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public JLinkSettingsFormViewModel(IProject model) : base(model)
         {
-            settings = model.GetSettings<JLinkSettings>();
+            settings = model.GetToolchainSettings<JLinkSettings>();
 
             interfaceSelectedIndex = (int)settings.Interface;
             interfaceType = settings.Interface;
@@ -199,7 +199,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
                     settings.SpeedkHz = 12000;
                 }
 
-                Model.SetSettings(settings);
+                Model.SetDebuggerSettings(settings);
                 Model.Save();
             }
         }

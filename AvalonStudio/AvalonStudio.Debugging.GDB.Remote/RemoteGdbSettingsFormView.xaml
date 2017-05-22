@@ -1,0 +1,7 @@
+<UserControl xmlns="https://github.com/avaloniaui">
+  <StackPanel Width="500">
+    <TextBox UseFloatingWatermark="true" Watermark="Port" Text="{Binding Port}" />
+
+    <TextBox UseFloatingWatermark="true" Watermark="GDB Init Commands" Text="{Binding InitCommands}" AcceptsReturn="True" Height="400" />
+  </StackPanel>
+</UserControl>

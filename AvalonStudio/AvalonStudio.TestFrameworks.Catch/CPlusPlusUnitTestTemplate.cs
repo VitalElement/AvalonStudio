@@ -90,7 +90,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             project.Debugger2 = shell.Debugger2s.FirstOrDefault(db => db.GetType().FullName == "AvalonStudio.Debuggers.GDB.Local.LocalGdbDebugger");
             project.TestFramework = shell.TestFrameworks.FirstOrDefault(d => d is CatchTestFramework);
 
-            var settings = project.GetSettings<GccToolchainSettings>();
+            var settings = project.GetToolchainSettings<GccToolchainSettings>();
             settings.CompileSettings.Exceptions = true;
             settings.CompileSettings.Rtti = true;
             settings.CompileSettings.Optimization = OptimizationLevel.Debug;

@@ -54,7 +54,7 @@ namespace AvalonStudio.Toolchains.GCC
 
         public LinkerSettingsFormViewModel(IProject project) : base("Linker", project)
         {
-            settings = project.GetSettings<GccToolchainSettings>().LinkSettings;
+            settings = project.GetToolchainSettings<GccToolchainSettings>().LinkSettings;
 
             if (settings == null)
             {
@@ -410,10 +410,10 @@ namespace AvalonStudio.Toolchains.GCC
             settings.MiscLinkerArguments = miscOptions;
             settings.Library = (LibraryType)librarySelectedIndex;
 
-            var currentSettings = Model.GetSettings<GccToolchainSettings>();
+            var currentSettings = Model.GetToolchainSettings<GccToolchainSettings>();
             currentSettings.LinkSettings = settings;
 
-            Model.SetSettings(currentSettings);
+            Model.SetToolchainSettings(currentSettings);
 
             Model.Save();
         }

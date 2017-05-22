@@ -82,7 +82,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         private void GenerateLinkerScript(IStandardProject project)
         {
-            var settings = project.GetSettings<GccToolchainSettings>().LinkSettings;
+            var settings = project.GetToolchainSettings<GccToolchainSettings>().LinkSettings;
 
             var linkerScript = GetLinkerScriptLocation(project);
 
@@ -101,7 +101,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
         {
-            var settings = superProject.GetSettings<GccToolchainSettings>();
+            var settings = superProject.GetToolchainSettings<GccToolchainSettings>();
             string result = string.Empty;
 
             // TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
@@ -129,7 +129,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
         {
-            var settings = project.GetSettings<GccToolchainSettings>();
+            var settings = project.GetToolchainSettings<GccToolchainSettings>();
 
             if (superProject != null && settings.LinkSettings.UseMemoryLayout && project.Type != ProjectType.StaticLibrary)
             {
@@ -192,7 +192,7 @@ namespace AvalonStudio.Toolchains.Clang
         {
             var result = string.Empty;
 
-            var settings = superProject.GetSettings<GccToolchainSettings>();
+            var settings = superProject.GetToolchainSettings<GccToolchainSettings>();
 
             result += "-Wall -c -fshort-enums ";
 

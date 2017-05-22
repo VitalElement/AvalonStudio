@@ -21,29 +21,6 @@ namespace AvalonStudio.Debugging.GDB.JLink
         private Process jlinkProcess;
         public bool DebugMode { get; set; }
 
-        public static JLinkSettings GetSettings(IProject project)
-        {
-            JLinkSettings result = null;
-
-            try
-            {
-                if (project.DebugSettings.JLinkSettings is ExpandoObject)
-                {
-                    result = (project.DebugSettings.JLinkSettings as ExpandoObject).GetConcreteType<JLinkSettings>();
-                }
-                else
-                {
-                    result = project.DebugSettings.JLinkSettings;
-                }
-            }
-            catch (Exception)
-            {
-                result = project.DebugSettings.JLinkSettings = new JLinkSettings();
-            }
-
-            return result;
-        }
-
         public JLinkGdbSession(IProject project, string gdbExecutable) : base(gdbExecutable, "-exec-continue")
         {
             this._project = project;
@@ -70,7 +47,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
         protected override void OnRun(DebuggerStartInfo startInfo)
         {
             var result = true;
-            var settings = GetSettings(_project);
+            var settings = _project.GetDebuggerSettings<JLinkSettings>();
 
             console.Clear();
             console.WriteLine("[JLink] - Starting GDB Server...");
