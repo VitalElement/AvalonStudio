@@ -22,7 +22,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public JLinkSettingsFormViewModel(IProject model) : base(model)
         {
-            settings = model.GetToolchainSettings<JLinkSettings>();
+            settings = model.GetDebuggerSettings<JLinkSettings>();
 
             interfaceSelectedIndex = (int)settings.Interface;
             interfaceType = settings.Interface;

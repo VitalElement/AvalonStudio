@@ -26,7 +26,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 
         public OpenOCDSettingsFormViewModel(IProject model) : base(model)
         {
-            settings = model.GetToolchainSettings<OpenOCDSettings>();
+            settings = model.GetDebuggerSettings<OpenOCDSettings>();
             interfaceConfigFile = settings.InterfaceConfigFile;
             targetConfigFile = settings.TargetConfigFile;
 

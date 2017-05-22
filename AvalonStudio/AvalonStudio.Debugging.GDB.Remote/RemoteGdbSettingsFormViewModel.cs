@@ -17,7 +17,7 @@ namespace AvalonStudio.Debugging.GDB.Remote
 
         public RemoteGdbSettingsFormViewModel(IProject model) : base(model)
         {
-            settings = model.GetToolchainSettings<RemoteGdbSettings>();
+            settings = model.GetDebuggerSettings<RemoteGdbSettings>();
 
             _port = settings.Port;
             _initCommands = settings.GDBInitCommands;
