@@ -234,6 +234,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public async Task<object> UpdateToolTipAsync()
         {
+            if(VisualRoot == null)
+            {
+                return null;
+            }
+
             var position = GetPositionFromPoint(MouseDevice.Instance.GetPosition(this));
 
             if (position.HasValue)
