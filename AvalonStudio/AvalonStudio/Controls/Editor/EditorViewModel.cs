@@ -1,8 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Threading;
+using AvaloniaEdit.Document;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
@@ -12,288 +11,84 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
-using AvalonStudio.TextEditor;
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.TextEditor.Rendering;
-using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
-    public class EditorViewModel : DocumentTabViewModel<EditorModel>, IEditor
+    public class EditorViewModel : DocumentTabViewModel, IEditor
     {
-        public SelectedDebugLineBackgroundRenderer DebugLineHighlighter { get; set; }
-
         private readonly CompositeDisposable disposables;
 
-        private readonly List<IBackgroundRenderer> languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
+        public ISourceFile ProjectFile { get; set; }
 
-        private readonly List<IDocumentLineTransformer> languageServiceDocumentLineTransformers =
-            new List<IDocumentLineTransformer>();
-
-        private readonly SelectedWordBackgroundRenderer wordAtCaretHighlighter;
-
-        private IntellisenseManager intellisenseManager;
-
-        public TextLocation CaretTextLocation
+        public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
-            get { return TextDocument.GetLocation(caretIndex); }
+            _editor?.SetDebugHighlight(line, startColumn, endColumn);
         }
 
         public void Comment()
         {
-            if (Model?.LanguageService != null && Model.Editor != null)
-            {
-                var selection = GetSelection();
-
-                if (selection != null)
-                {
-                    var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
-                    anchors.Add(selection);
-
-                    CaretIndex = Model.LanguageService.Comment(TextDocument, selection, CaretIndex);
-
-                    SetSelection(selection);
-                }
-
-                Model.Editor.Focus();
-            }
+            _editor?.Comment();
         }
 
         public void UnComment()
         {
-            if (Model?.LanguageService != null && Model.Editor != null)
-            {
-                var selection = GetSelection();
-
-                if (selection != null)
-                {
-                    var anchors = new TextSegmentCollection<TextSegment>(TextDocument);
-                    anchors.Add(selection);
-
-                    CaretIndex = Model.LanguageService.UnComment(TextDocument, selection, CaretIndex);
-
-                    SetSelection(selection);
-                }
-
-                Model.Editor.Focus();
-            }
+            _editor?.UnComment();
         }
 
         public void Undo()
         {
-            TextDocument?.UndoStack.Undo();
+            _editor?.Undo();
         }
 
         public void Redo()
         {
-            TextDocument.UndoStack.Redo();
+            _editor?.Redo();
         }
 
-        public TextSegment GetSelection()
+        public void OpenFile(ISourceFile file)
         {
-            TextSegment result = null;
-
-            if (Model.Editor != null)
-            {
-                if (Model.Editor.SelectionStart < Model.Editor.SelectionEnd)
-                {
-                    result = new TextSegment { StartOffset = Model.Editor.SelectionStart, EndOffset = Model.Editor.SelectionEnd };
-                }
-                else
-                {
-                    result = new TextSegment { StartOffset = Model.Editor.SelectionEnd, EndOffset = Model.Editor.SelectionStart };
-                }
-            }
-
-            return result;
+            ProjectFile = file;
+            SourceFile = file;
+            Title = Path.GetFileName(file.Location);
         }
 
-        public void SetSelection(TextSegment segment)
+        public void FormatAll()
         {
-            if (Model.Editor != null)
-            {
-                Model.Editor.SelectionStart = segment.StartOffset;
-                Model.Editor.SelectionEnd = segment.EndOffset;
-            }
+            _editor?.FormatAll();
         }
 
-        private void FormatAll()
+        public void ClearDebugHighlight()
         {
-            if (Model?.LanguageService != null && TextDocument != null)
-            {
-                CaretIndex = Model.LanguageService.Format(TextDocument, 0, (uint)TextDocument.TextLength, CaretIndex);
-            }
+            _editor?.ClearDebugHighlight();
+        }
+
+        public void GotoOffset(int offset)
+        {
+            _editor?.GotoOffset(offset);
         }
 
         #region Constructors
 
-        public EditorViewModel(EditorModel model) : base(model)
+        public EditorViewModel()
         {
             disposables = new CompositeDisposable();
-            highlightingData = new ObservableCollection<OffsetSyntaxHighlightingData>();
-
-            BeforeTextChangedCommand = ReactiveCommand.Create();
-            disposables.Add(BeforeTextChangedCommand.Subscribe(model.OnBeforeTextChanged));
-
-            TextChangedCommand = ReactiveCommand.Create();
-            disposables.Add(TextChangedCommand.Subscribe(model.OnTextChanged));
-
-            SaveCommand = ReactiveCommand.Create();
-            disposables.Add(SaveCommand.Subscribe(param => Save()));
 
             disposables.Add(CloseCommand.Subscribe(_ =>
             {
-                Model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
-                Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
-                Save();
-                Model.ShutdownBackgroundWorkers();
-                Model.UnRegisterLanguageService();
+                _editor?.Close();
 
-                intellisenseManager?.Dispose();
-                intellisenseManager = null;
-
-                Diagnostics?.Clear();
-
-                ShellViewModel.Instance.InvalidateErrors();
-
-                Model.Dispose();
-                Intellisense.Dispose();
+                IoC.Get<IShell>().InvalidateErrors();
                 disposables.Dispose();
-
-                Model.TextDocument = null;
             }));
 
-            AddWatchCommand = ReactiveCommand.Create(this.WhenAny(x => x.WordAtCaret, (word) => !string.IsNullOrEmpty(word.Value)));
-            disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(WordAtCaret); }));
-
-            tabCharacter = "    ";
-
-            model.DocumentLoaded += (sender, e) =>
-            {
-                model.ProjectFile.FileModifiedExternally -= ProjectFile_FileModifiedExternally;
-                Model.Editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
-
-                foreach (var bgRenderer in languageServiceBackgroundRenderers)
-                {
-                    BackgroundRenderers.Remove(bgRenderer);
-                }
-
-                languageServiceBackgroundRenderers.Clear();
-
-                foreach (var transformer in languageServiceDocumentLineTransformers)
-                {
-                    DocumentLineTransformers.Remove(transformer);
-                }
-
-                languageServiceDocumentLineTransformers.Clear();
-
-                if (model.LanguageService != null)
-                {
-                    languageServiceBackgroundRenderers.AddRange(model.LanguageService.GetBackgroundRenderers(model.ProjectFile));
-
-                    foreach (var bgRenderer in languageServiceBackgroundRenderers)
-                    {
-                        BackgroundRenderers.Add(bgRenderer);
-                    }
-
-                    languageServiceDocumentLineTransformers.AddRange(
-                        model.LanguageService.GetDocumentLineTransformers(model.ProjectFile));
-
-                    foreach (var textTransformer in languageServiceDocumentLineTransformers)
-                    {
-                        DocumentLineTransformers.Add(textTransformer);
-                    }
-
-                    intellisenseManager = new IntellisenseManager(Model.Editor, Intellisense, Intellisense.CompletionAssistant, model.LanguageService, model.ProjectFile);
-
-                    EventHandler<KeyEventArgs> tunneledKeyUpHandler = (send, ee) =>
-                    {
-                        if (caretIndex > 0)
-                        {
-                            intellisenseManager.OnKeyUp(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
-                        }
-                    };
-
-                    EventHandler<KeyEventArgs> tunneledKeyDownHandler = (send, ee) =>
-                    {
-                        if (caretIndex > 0)
-                        {
-                            intellisenseManager.OnKeyDown(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
-                        }
-                    };
-
-                    EventHandler<TextInputEventArgs> tunneledTextInputHandler = (send, ee) =>
-                    {
-                        if (caretIndex > 0)
-                        {
-                            intellisenseManager.OnTextInput(ee, CaretIndex, CaretTextLocation.Line, CaretTextLocation.Column);
-                        }
-                    };
-
-                    Model.Editor.CaretChangedByPointerClick += Editor_CaretChangedByPointerClick;
-
-                    disposables.Add(Model.Editor.AddHandler(InputElement.KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel));
-                    disposables.Add(Model.Editor.AddHandler(InputElement.KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel));
-                    disposables.Add(Model.Editor.AddHandler(InputElement.TextInputEvent, tunneledTextInputHandler, RoutingStrategies.Bubble));
-                }
-
-                model.CodeAnalysisCompleted += (s, ee) =>
-                {
-                    Diagnostics = model.CodeAnalysisResults.Diagnostics;
-
-                    HighlightingData =
-                        new ObservableCollection<OffsetSyntaxHighlightingData>(model.CodeAnalysisResults.SyntaxHighlightingData);
-
-                    IndexItems = new ObservableCollection<IndexEntry>(model.CodeAnalysisResults.IndexItems);
-                    selectedIndexEntry = IndexItems.FirstOrDefault();
-                    this.RaisePropertyChanged(nameof(SelectedIndexEntry));
-
-                    ShellViewModel.Instance.InvalidateErrors();
-                };
-
-                model.ProjectFile.FileModifiedExternally += ProjectFile_FileModifiedExternally;
-
-                TextDocument = model.TextDocument;
-
-                Title = Model.ProjectFile.Name;
-            };
-
-            model.TextChanged += (sender, e) =>
-            {
-                if (ShellViewModel.Instance.DocumentTabs.TemporaryDocument == this)
-                {
-                    Dock = Dock.Left;
-
-                    ShellViewModel.Instance.DocumentTabs.TemporaryDocument = null;
-                }
-
-                IsDirty = model.IsDirty;
-            };
-
-            intellisense = new IntellisenseViewModel(model, this);
-
-            documentLineTransformers = new ObservableCollection<IDocumentLineTransformer>();
-
-            backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
-            backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
-
-            DebugLineHighlighter = new SelectedDebugLineBackgroundRenderer();
-            backgroundRenderers.Add(DebugLineHighlighter);
-
-            backgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
-            wordAtCaretHighlighter = new SelectedWordBackgroundRenderer();
-            backgroundRenderers.Add(wordAtCaretHighlighter);
-            backgroundRenderers.Add(new SelectionBackgroundRenderer());
-
-            margins = new ObservableCollection<TextViewMargin>();
+            AddWatchCommand = ReactiveCommand.Create();
+            disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); }));
 
             Dock = Dock.Right;
         }
@@ -302,28 +97,12 @@ namespace AvalonStudio.Controls
         {
         }
 
-        private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
+        public void AttachEditor(IEditor editor)
         {
-            if (intellisenseManager != null)
-            {
-                var location = TextDocument.GetLocation(caretIndex);
-                intellisenseManager.SetCursor(caretIndex, location.Line, location.Column, EditorModel.UnsavedFiles.ToList());
-            }
+            _editor = editor;
         }
 
-        private void ProjectFile_FileModifiedExternally(object sender, EventArgs e)
-        {
-            if (!ignoreFileModifiedEvents && TextDocument != null)
-            {
-                if (!new FileInfo(Model.ProjectFile.Location).IsFileLocked())
-                {
-                    using (var fs = System.IO.File.OpenText(Model.ProjectFile.Location))
-                    {
-                        TextDocument.Text = fs.ReadToEnd();
-                    }
-                }
-            }
-        }
+        private IEditor _editor;
 
         #endregion Constructors
 
@@ -335,45 +114,6 @@ namespace AvalonStudio.Controls
         {
             get { return tabCharacter; }
             set { this.RaiseAndSetIfChanged(ref tabCharacter, value); }
-        }
-
-        private ObservableCollection<IBackgroundRenderer> backgroundRenderers;
-
-        public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
-        {
-            get { return backgroundRenderers; }
-            set { this.RaiseAndSetIfChanged(ref backgroundRenderers, value); }
-        }
-
-        private ObservableCollection<IDocumentLineTransformer> documentLineTransformers;
-
-        public ObservableCollection<IDocumentLineTransformer> DocumentLineTransformers
-        {
-            get { return documentLineTransformers; }
-            set { this.RaiseAndSetIfChanged(ref documentLineTransformers, value); }
-        }
-
-        private ObservableCollection<TextViewMargin> margins;
-
-        public ObservableCollection<TextViewMargin> Margins
-        {
-            get { return margins; }
-            set { this.RaiseAndSetIfChanged(ref margins, value); }
-        }
-
-        private string wordAtCaret;
-
-        public string WordAtCaret
-        {
-            get
-            {
-                return wordAtCaret;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref wordAtCaret, value);
-                wordAtCaretHighlighter.SelectedWord = value;
-            }
         }
 
         private double lineHeight;
@@ -395,11 +135,6 @@ namespace AvalonStudio.Controls
             set
             {
                 this.RaiseAndSetIfChanged(ref caretLocation, value);
-
-                if (!Intellisense.IsVisible)
-                {
-                    Intellisense.Position = new Thickness(caretLocation.X, caretLocation.Y, 0, 0);
-                }
             }
         }
 
@@ -418,33 +153,18 @@ namespace AvalonStudio.Controls
             }
         }
 
-        private IntellisenseViewModel intellisense;
+        private ISourceFile _sourceFile;
 
-        public IntellisenseViewModel Intellisense
+        public ISourceFile SourceFile
         {
-            get { return intellisense; }
-            set { this.RaiseAndSetIfChanged(ref intellisense, value); }
+            get { return _sourceFile; }
+            set { this.RaiseAndSetIfChanged(ref _sourceFile, value); }
         }
 
-        private TextDocument textDocument;
-
-        public TextDocument TextDocument
-        {
-            get { return textDocument; }
-            set { this.RaiseAndSetIfChanged(ref textDocument, value); }
-        }
 
         public void GotoPosition(int line, int column)
         {
-            if (textDocument != null)
-            {
-                Dispatcher.UIThread.InvokeAsync(() => { CaretIndex = TextDocument.GetOffset(line, column); });
-            }
-        }
-
-        public void GotoOffset(int offset)
-        {
-            Dispatcher.UIThread.InvokeAsync(() => { CaretIndex = offset; });
+            _editor?.GotoPosition(line, column);
         }
 
         public IndexEntry GetSelectIndexEntryByOffset(int offset)
@@ -476,105 +196,11 @@ namespace AvalonStudio.Controls
             return selectedEntry;
         }
 
-        private int caretIndex;
-
-        public int CaretIndex
-        {
-            get
-            {
-                return caretIndex;
-            }
-            set
-            {
-                if (TextDocument != null && value > TextDocument.TextLength)
-                {
-                    value = TextDocument.TextLength - 1;
-                }
-
-                bool hasChanged = value != caretIndex;
-
-                this.RaiseAndSetIfChanged(ref caretIndex, value);
-                ShellViewModel.Instance.StatusBar.Offset = value;
-
-                if (value >= 0 && TextDocument != null)
-                {
-                    var location = TextDocument.GetLocation(value);
-                    ShellViewModel.Instance.StatusBar.LineNumber = location.Line;
-                    ShellViewModel.Instance.StatusBar.Column = location.Column;
-                }
-
-                selectedIndexEntry = GetSelectIndexEntryByOffset(value);
-                this.RaisePropertyChanged(nameof(SelectedIndexEntry));
-            }
-        }
-
-        private string GetWordAtOffset(int offset)
-        {
-            var result = string.Empty;
-
-            if (offset >= 0 && TextDocument.TextLength > offset)
-            {
-                var start = offset;
-
-                var currentChar = TextDocument.GetCharAt(offset);
-                var prevChar = '\0';
-
-                if (offset > 0)
-                {
-                    prevChar = TextDocument.GetCharAt(offset - 1);
-                }
-
-                var charClass = TextUtilities.GetCharacterClass(currentChar);
-
-                if (charClass != TextUtilities.CharacterClass.LineTerminator && prevChar != ' ' &&
-                    TextUtilities.GetCharacterClass(prevChar) != TextUtilities.CharacterClass.LineTerminator)
-                {
-                    start = TextUtilities.GetNextCaretPosition(TextDocument, offset, TextUtilities.LogicalDirection.Backward,
-                        TextUtilities.CaretPositioningMode.WordStart);
-                }
-
-                var end = TextUtilities.GetNextCaretPosition(TextDocument, start, TextUtilities.LogicalDirection.Forward,
-                    TextUtilities.CaretPositioningMode.WordBorder);
-
-                if (start != -1 && end != -1)
-                {
-                    var word = TextDocument.GetText(start, end - start).Trim();
-
-                    if (TextUtilities.IsSymbol(word))
-                    {
-                        result = word;
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        private object toolTip;
-
-        public object ToolTip
-        {
-            get { return toolTip; }
-            set { this.RaiseAndSetIfChanged(ref toolTip, value); }
-        }
-
-        public async Task<bool> UpdateToolTipAsync(int offset)
+        public async Task<object> UpdateToolTipAsync(int offset)
         {
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
             {
-                var matching = Model.CodeAnalysisResults?.Diagnostics.FindSegmentsContaining(offset).FirstOrDefault();
-
-                if (matching != null)
-                {
-                    ToolTip = new ErrorProbeViewModel(matching);
-
-                    return true;
-                }
-            }
-
-            if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor && Model.LanguageService != null)
-            {
-                var symbol = await Model.LanguageService.GetSymbolAsync(Model.ProjectFile, EditorModel.UnsavedFiles.ToList(), offset);
+                var symbol = await _editor?.GetSymbolAsync(offset);
 
                 if (symbol != null)
                 {
@@ -587,19 +213,19 @@ namespace AvalonStudio.Controls
                         case CursorKind.InitListExpression:
                         case CursorKind.IntegerLiteral:
                         case CursorKind.ReturnStatement:
-                            break;
+                        case CursorKind.WhileStatement:
+                        case CursorKind.BinaryOperator:
+                            return null;
 
                         default:
-
-                            ToolTip = new SymbolViewModel(symbol);
-                            return true;
+                            return new SymbolViewModel(symbol);
                     }
                 }
             }
 
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Debug)
             {
-                var expression = GetWordAtOffset(offset);
+                var expression = _editor?.GetWordAtOffset(offset);
 
                 if (expression != string.Empty)
                 {
@@ -609,12 +235,11 @@ namespace AvalonStudio.Controls
 
                     bool result = newToolTip.AddWatch(expression);
 
-                    ToolTip = newToolTip;
-                    return result;
+                    return newToolTip;
                 }
             }
 
-            return false;
+            return null;
         }
 
         private IndexEntry selectedIndexEntry;
@@ -672,10 +297,62 @@ namespace AvalonStudio.Controls
         // todo this menu item and command should be injected via debugging module.
         public ReactiveCommand<object> AddWatchCommand { get; }
 
-        public ISourceFile ProjectFile
+        private int _caretOffset;
+
+        public int CaretOffset
         {
-            get { return Model.ProjectFile; }
+            get { return _caretOffset; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _caretOffset, value);
+                ShellViewModel.Instance.StatusBar.Offset = value;
+
+                /*selectedIndexEntry = GetSelectIndexEntryByOffset(value);
+                this.RaisePropertyChanged(nameof(SelectedIndexEntry));*/
+            }
         }
+
+        private int _line;
+
+        public int Line
+        {
+            get { return _line; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _line, value);
+
+                ShellViewModel.Instance.StatusBar.LineNumber = value;
+            }
+        }
+
+        private int _column;
+
+        public int Column
+        {
+            get { return _column; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _column, value);
+
+                ShellViewModel.Instance.StatusBar.Column = value;
+            }
+        }
+
+
+        private string _languageServiceName;
+
+        public string LanguageServiceName
+        {
+            get { return _languageServiceName; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _languageServiceName, value);
+
+                ShellViewModel.Instance.StatusBar.Language = value;
+            }
+        }
+
+
 
         #endregion Commands
 
@@ -689,7 +366,7 @@ namespace AvalonStudio.Controls
 
             FormatAll();
 
-            Model.Save();
+            _editor.Save();
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -698,9 +375,19 @@ namespace AvalonStudio.Controls
             });
         }
 
-        public void ClearDebugHighlight()
+        public void Close()
         {
-            DebugLineHighlighter.SetLocation(-1);
+            _editor?.Close();
+        }
+
+        public async Task<Symbol> GetSymbolAsync(int offset)
+        {
+            return await _editor?.GetSymbolAsync(offset);
+        }
+
+        public string GetWordAtOffset(int offset)
+        {
+            return _editor?.GetWordAtOffset(offset);
         }
 
         #endregion Public Methods

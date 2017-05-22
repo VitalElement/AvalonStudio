@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Extensibility.Plugin
 {
-    //[InheritedExport(typeof (IExtension))]
     public interface IExtension
     {
         void BeforeActivation();
@@ -16,8 +15,7 @@ namespace AvalonStudio.Extensibility.Plugin
     {
         Task InstallAsync(IConsole console);
     }
-
-    //[InheritedExport(typeof (IPlugin))]
+    
     public interface IPlugin : IExtension
     {
         string Name { get; }

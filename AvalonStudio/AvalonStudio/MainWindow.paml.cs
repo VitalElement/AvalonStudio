@@ -22,11 +22,6 @@ namespace AvalonStudio
             this.AttachDevTools();
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            (DataContext as ShellViewModel)?.OnKeyDown(e);
-        }
-
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);

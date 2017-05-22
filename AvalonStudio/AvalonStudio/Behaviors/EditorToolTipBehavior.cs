@@ -7,12 +7,12 @@ namespace AvalonStudio.Behaviors
 {
     public class EditorToolTipBehavior : TooltipBehavior
     {
-        private TextEditor.TextEditor editor;
+        private AvaloniaEdit.TextEditor editor;
         private EditorViewModel editorVm;
 
         protected override void OnAttached()
         {
-            editor = AssociatedObject as TextEditor.TextEditor;
+            editor = AssociatedObject as AvaloniaEdit.TextEditor;
 
             if (editor != null)
             {
@@ -47,7 +47,7 @@ namespace AvalonStudio.Behaviors
 
             if (editorVm != null)
             {
-                result = await editorVm.UpdateToolTipAsync(editor.TextView.GetOffsetFromPoint(MouseDevice.Instance.GetPosition(editor.TextView.TextSurface)));
+               /* result = await editorVm.UpdateToolTipAsync(editor.TextArea.TextView.GetOffsetFromPoint(MouseDevice.Instance.GetPosition(editor.TextView.TextSurface)));*/
             }
 
             return result;

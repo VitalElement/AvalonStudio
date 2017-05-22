@@ -10,6 +10,7 @@
     using AvalonStudio.Utils;
     using Mono.Debugging.Client;
     using System;
+    using System.Threading.Tasks;
     using System.Xml;
 
     public class DebugManager2 : IDebugManager2, IExtension
@@ -140,6 +141,9 @@
                 DebugSessionEnded?.Invoke(this, new EventArgs());
 
                 _shell.CurrentPerspective = Perspective.Editor;
+
+                _lastDocument?.ClearDebugHighlight();
+                _lastDocument = null;
             });
 
             if (_session != null)
@@ -152,9 +156,6 @@
                 _session.Dispose();
                 _session = null;
             }
-
-            _lastDocument?.ClearDebugHighlight();
-            _lastDocument = null;
 
             // This will save breakpoints that were moved to be closer to actual sequence points.
             Breakpoints.Save();
@@ -182,7 +183,9 @@
                 return;
             }
 
-            if (!await project.ToolChain.Build(_console, project))
+            var success = await await Task.Factory.StartNew(async ()=> { return await project.ToolChain.Build(_console, project); });
+
+            if (!success)
             {
                 OnEndSession();
                 return;

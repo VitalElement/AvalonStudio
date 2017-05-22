@@ -1,5 +1,5 @@
 using AvalonStudio.Projects;
-using AvalonStudio.TextEditor.Document;
+using AvaloniaEdit.Document;
 
 namespace AvalonStudio.Languages
 {

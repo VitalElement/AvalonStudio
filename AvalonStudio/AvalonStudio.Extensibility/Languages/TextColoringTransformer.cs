@@ -1,12 +1,14 @@
 ﻿using Avalonia.Media;
 using Avalonia.Threading;
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.TextEditor.Rendering;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
+using AvalonStudio.CodeEditor;
+using AvalonStudio.Extensibility.Editor;
 using System;
 
 namespace AvalonStudio.Languages
 {
-    public class TextColoringTransformer : IDocumentLineTransformer
+    public class TextColoringTransformer : GenericLineTransformer
     {
         private readonly TextDocument document;
 
@@ -54,9 +56,7 @@ namespace AvalonStudio.Languages
 
         public IBrush EnumTypeNameBrush { get; set; }
 
-        public event EventHandler<EventArgs> DataChanged;
-
-        public void TransformLine(TextView textView, VisualLine line)
+        protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
             var transformsInLine = TextTransformations.FindOverlappingSegments(line);
 
@@ -69,7 +69,7 @@ namespace AvalonStudio.Languages
                     formattedOffset = transform.StartOffset - line.Offset;
                 }
 
-                line.RenderedText.SetTextStyle(formattedOffset, transform.Length, transform.Foreground);
+                SetTextStyle(line, formattedOffset, transform.Length, transform.Foreground);
             }
         }
 
@@ -107,11 +107,6 @@ namespace AvalonStudio.Languages
                 }
 
                 TextTransformations = transformations;
-
-                if (DataChanged != null)
-                {
-                    DataChanged(this, new EventArgs());
-                }
             });
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -24,8 +25,15 @@ namespace AvalonStudio.Extensibility.Utils
             {
                 if (IsCandidateCompilationLibrary(library))
                 {
-                    var assembly = Assembly.Load(new AssemblyName(library.Name));
-                    assemblies.Add(assembly);
+                    try
+                    {
+                        var assembly = Assembly.Load(new AssemblyName(library.Name));
+                        assemblies.Add(assembly);
+                    }
+                    catch(Exception)
+                    {
+
+                    }
                 }
             }
 
@@ -35,6 +43,7 @@ namespace AvalonStudio.Extensibility.Utils
         private static bool IsCandidateCompilationLibrary(Library compilationLibrary)
         {
             return compilationLibrary.Name.ToLower() == "avalonStudio"
+                || compilationLibrary.Name.ToLower().StartsWith("avalonstudio")
                 || compilationLibrary.Dependencies.Any(d => d.Name.ToLower().StartsWith("avalonstudio"));
         }
     }

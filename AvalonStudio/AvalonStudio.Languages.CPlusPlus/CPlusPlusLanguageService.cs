@@ -1,15 +1,17 @@
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Indentation.CSharp;
+using AvaloniaEdit.Rendering;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.TextEditor.Indentation;
-using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using NClang;
 using System;
@@ -34,7 +36,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public CPlusPlusLanguageService()
         {
-            IndentationStrategy = new CppIndentationStrategy();
             clangAccessJobRunner = new JobRunner();
 
             Task.Factory.StartNew(() => { clangAccessJobRunner.RunLoop(new CancellationToken()); });
@@ -55,7 +56,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             get { return typeof(BlankCPlusPlusLanguageTemplate); }
         }
 
-        public IIndentationStrategy IndentationStrategy { get; }
+        public IIndentationStrategy IndentationStrategy { get; private set; }
 
         public IEnumerable<char> IntellisenseTriggerCharacters => new[]
         {
@@ -531,8 +532,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisense, ICompletionAssistant completionAssistant,
-            TextEditor.TextEditor editor, ISourceFile file, TextDocument doc)
+        public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
         {
             CPlusPlusDataAssociation association = null;
 
@@ -541,66 +541,54 @@ namespace AvalonStudio.Languages.CPlusPlus
                 throw new Exception("Source file already registered with language service.");
             }
 
+            IndentationStrategy = new CSharpIndentationStrategy(editor.Options);
+
             association = new CPlusPlusDataAssociation(doc);
             dataAssociations.Add(file, association);
-
-            association.KeyUpHandler = (sender, e) =>
-            {
-                if (editor.TextDocument == doc)
-                {
-                    switch (e.Key)
-                    {
-                        case Key.Return:
-                            {
-                                editor.Indent(IndentationStrategy);
-                            }
-                            break;
-                    }
-                }
-            };
-
+            
             association.TextInputHandler = (sender, e) =>
             {
-                if (editor.TextDocument == doc)
+                if (editor.Document == doc)
                 {
-                    OpenBracket(editor, editor.TextDocument, e.Text);
-                    CloseBracket(editor, editor.TextDocument, e.Text);
+                    editor.BeginChange();
+                    OpenBracket(editor, editor.Document, e.Text);
+                    CloseBracket(editor, editor.Document, e.Text);
 
                     switch (e.Text)
                     {
                         case "}":
                         case ";":
-                            editor.CaretIndex = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+                            editor.CaretOffset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
                             break;
 
                         case "{":
-                            var lineCount = editor.TextDocument.LineCount;
-                            var offset = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+                            var lineCount = editor.Document.LineCount;
+                            var offset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
 
                             // suggests clang format didnt do anything, so we can assume not moving to new line.
-                            if (lineCount != editor.TextDocument.LineCount)
+                            if (lineCount != editor.Document.LineCount)
                             {
-                                if (offset <= editor.TextDocument.TextLength)
+                                if (offset <= editor.Document.TextLength)
                                 {
-                                    var newLine = editor.TextDocument.GetLineByOffset(offset);
-                                    editor.CaretIndex = newLine.PreviousLine.EndOffset;
+                                    var newLine = editor.Document.GetLineByOffset(offset);
+                                    editor.CaretOffset = newLine.PreviousLine.EndOffset;
                                 }
                             }
                             else
                             {
-                                editor.CaretIndex = offset;
+                                editor.CaretOffset = offset;
                             }
                             break;
                     }
+
+                    editor.EndChange();
                 }
             };
 
-            editor.AddHandler(InputElement.KeyUpEvent, association.KeyUpHandler, RoutingStrategies.Tunnel);
-
-            editor.TextInput += association.TextInputHandler;
+            editor.TextArea.TextEntered += association.TextInputHandler;
         }
 
-        public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
+        public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
         {
             var associatedData = GetAssociatedData(file);
 
@@ -614,11 +602,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             return associatedData.BackgroundRenderers;
         }
 
-        public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
+        public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
         {
             var association = GetAssociatedData(file);
-
-            editor.RemoveHandler(InputElement.KeyUpEvent, association.KeyUpHandler);
 
             editor.TextInput -= association.TextInputHandler;
 
@@ -692,53 +678,54 @@ namespace AvalonStudio.Languages.CPlusPlus
             return results;
         }
 
-        public int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
+        public int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
-            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
-
             textDocument.BeginUpdate();
 
-            foreach (var line in lines)
+            for(int line = firstLine; line <= endLine; line++)
             {
-                textDocument.Insert(line.Offset, "//");
-            }
-
-            if (format)
-            {
-                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
+                textDocument.Insert(textDocument.GetLineByNumber(line).Offset, "//");
             }
 
             textDocument.EndUpdate();
+
+            if (format)
+            {
+                var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
+                var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
+                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+            }
 
             return result;
         }
 
-        public int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
+        public int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
-            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
-
             textDocument.BeginUpdate();
 
-            foreach (var line in lines)
+            for (int line = firstLine; line <= endLine; line++)
             {
-                var index = textDocument.GetText(line).IndexOf("//");
+                var docLine = textDocument.GetLineByNumber(line);
+                var index = textDocument.GetText(docLine).IndexOf("//");
 
                 if (index >= 0)
                 {
-                    textDocument.Replace(line.Offset + index, 2, string.Empty);
+                    textDocument.Replace(docLine.Offset + index, 2, string.Empty);
                 }
             }
 
+            textDocument.EndUpdate();
+
             if (format)
             {
-                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
+                var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
+                var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
+                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
-
-            textDocument.EndUpdate();
 
             return result;
         }
@@ -875,31 +862,47 @@ namespace AvalonStudio.Languages.CPlusPlus
             return null;
         }
 
-        private void OpenBracket(TextEditor.TextEditor editor, TextDocument document, string text)
+        private void OpenBracket(AvaloniaEdit.TextEditor editor, TextDocument document, string text)
         {
-            if (text[0].IsOpenBracketChar() && editor.CaretIndex <= document.TextLength && editor.CaretIndex > 0)
+            if (text[0].IsOpenBracketChar() && editor.CaretOffset <= document.TextLength && editor.CaretOffset > 0)
             {
                 var nextChar = ' ';
 
-                if (editor.CaretIndex != document.TextLength)
+                if (editor.CaretOffset != document.TextLength)
                 {
-                    document.GetCharAt(editor.CaretIndex);
+                    document.GetCharAt(editor.CaretOffset);
                 }
 
                 if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
                 {
-                    document.Insert(editor.CaretIndex, text[0].GetCloseBracketChar().ToString());
+                    document.Insert(editor.CaretOffset, text[0].GetCloseBracketChar().ToString());
                 }
+
+                editor.CaretOffset--;
             }
         }
 
-        private void CloseBracket(TextEditor.TextEditor editor, TextDocument document, string text)
+        private void CloseBracket(AvaloniaEdit.TextEditor editor, TextDocument document, string text)
         {
-            if (text[0].IsCloseBracketChar() && editor.CaretIndex < document.TextLength && editor.CaretIndex > 0)
+            if (text[0].IsCloseBracketChar() && editor.CaretOffset < document.TextLength && editor.CaretOffset > 0)
             {
-                if (document.GetCharAt(editor.CaretIndex) == text[0])
+                var offset = editor.CaretOffset;
+
+                while (offset < document.TextLength)
                 {
-                    document.Replace(editor.CaretIndex - 1, 1, string.Empty);
+                    var currentChar = document.GetCharAt(offset);
+                    
+                    if (currentChar == text[0])
+                    {
+                        document.Replace(offset, 1, string.Empty);
+                        break;
+                    }
+                    else if(!currentChar.IsWhiteSpace())
+                    {
+                        break;
+                    }
+
+                    offset++;
                 }
             }
         }

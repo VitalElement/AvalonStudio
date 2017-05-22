@@ -221,5 +221,10 @@ namespace AvalonStudio.Shell
         {
             throw new NotImplementedException();
         }
+
+        public void InvalidateErrors()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

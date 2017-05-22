@@ -364,7 +364,7 @@ namespace AvalonStudio
 
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
         {
-            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.Model.ProjectFile?.FilePath == file.FilePath);
+            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
 
             var selectedDocumentTCS = new TaskCompletionSource<IDocumentTabViewModel>();
 
@@ -388,9 +388,9 @@ namespace AvalonStudio
 
                 await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                 {
-                    newEditor = new EditorViewModel(new EditorModel());
-                    newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager2>().Breakpoints));
-                    newEditor.Margins.Add(new LineNumberMargin());
+                    newEditor = new EditorViewModel();
+                    /*newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager2>().Breakpoints));
+                    newEditor.Margins.Add(new LineNumberMargin());*/
 
                     await Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {
@@ -400,7 +400,7 @@ namespace AvalonStudio
 
                     DocumentTabs.SelectedDocument = newEditor;
 
-                    await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.Model.OpenFile(file, newEditor.Intellisense, newEditor.Intellisense.CompletionAssistant); });
+                   await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.OpenFile(file); });
 
                     selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
                 });
@@ -414,33 +414,33 @@ namespace AvalonStudio
 
             await selectedDocumentTCS.Task;
 
-            if (DocumentTabs.SelectedDocument is EditorViewModel)
+            if (DocumentTabs.SelectedDocument is IEditor)
             {
                 if (debugHighlight)
                 {
-                    (DocumentTabs.SelectedDocument as EditorViewModel).DebugLineHighlighter.SetLocation(line, startColumn, endColumn);
+                    (DocumentTabs.SelectedDocument as IEditor).SetDebugHighlight(line, startColumn, endColumn);
                 }
 
                 if (selectLine || debugHighlight)
                 {
-                    Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).Model.ScrollToLine(line));
-                    (DocumentTabs.SelectedDocument as EditorViewModel).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                   // Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).ScrollToLine(line));
+                    (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
                 }
             }
 
-            return DocumentTabs.SelectedDocument as EditorViewModel;
+            return DocumentTabs.SelectedDocument as IEditor;
         }
 
         public IEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(d => d.Model.ProjectFile?.FilePath == path);
+            return DocumentTabs.Documents.OfType<IEditor>().FirstOrDefault(d => d.ProjectFile?.FilePath == path);
         }
 
         public void Save()
         {
-            if (SelectedDocument is EditorViewModel)
+            if (SelectedDocument is IEditor)
             {
-                (SelectedDocument as EditorViewModel).Save();
+                (SelectedDocument as IEditor).Save();
             }
         }
 
@@ -631,17 +631,7 @@ namespace AvalonStudio
         {
             Environment.Exit(1);
         }
-
-        public void OnKeyDown(KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.F6:
-                    Build();
-                    break;
-            }
-        }
-
+        
         public void InvalidateErrors()
         {
             var allErrors = new List<ErrorViewModel>();
@@ -650,9 +640,9 @@ namespace AvalonStudio
 
             foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
             {
-                if (document.Model.CodeAnalysisResults != null)
+                if (document.Diagnostics != null)
                 {
-                    foreach (var diagnostic in document.Model.CodeAnalysisResults.Diagnostics)
+                    foreach (var diagnostic in document.Diagnostics)
                     {
                         var error = new ErrorViewModel(diagnostic);
                         var matching = allErrors.FirstOrDefault(err => err.IsEqual(error));
@@ -702,7 +692,7 @@ namespace AvalonStudio
         {
             foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
             {
-                document.Model.ShutdownBackgroundWorkers();
+               // document.Model.ShutdownBackgroundWorkers();
             }
         }
 

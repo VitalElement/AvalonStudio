@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Media;
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.TextEditor.Rendering;
+using AvaloniaEdit.Rendering;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
@@ -12,6 +11,8 @@ namespace AvalonStudio.Languages.CPlusPlus
     {
         private readonly IBrush bracketHighlightBrush = Brush.Parse("#123e70");
 
+        public KnownLayer Layer => KnownLayer.Background;
+
 #pragma warning disable 67
 
         public event EventHandler<EventArgs> DataChanged;
@@ -20,7 +21,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            if (textView.CaretIndex != -1)
+            /*if (textView.CaretIndex != -1)
             {
                 var caretChar = '\0';
                 var behindCaretChar = '\0';
@@ -60,7 +61,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         VisualLineGeometryBuilder.GetRectsForSegment(textView,
                             new TextSegment { StartOffset = openOffset, EndOffset = openOffset + 1 }));
                 }
-            }
+            }*/
         }
 
         public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)

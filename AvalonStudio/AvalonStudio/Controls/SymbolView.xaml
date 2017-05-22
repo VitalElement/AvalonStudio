@@ -1,5 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" FontFamily="Verdana" FontSize="12" Foreground="#D4D4D4">
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
+             FontFamily="Verdana" FontSize="12" Foreground="#D4D4D4">
     <Grid Background="{StyleResource ThemeControlDarkBrush}">
         <Grid Margin="5">
             <Grid>
@@ -20,7 +22,7 @@
                                 </ItemsPanelTemplate>
                             </ListBox.ItemsPanel>
                             <ListBox.DataTemplates>
-                                <DataTemplate DataType="cont:ParameterSymbolViewModel">
+                                <DataTemplate DataType="vm:ParameterSymbolViewModel">
                                     <StackPanel Orientation="Horizontal" Margin="0 0 0 0" TextBlock.FontWeight="{Binding FontWeight}" >
                                         <TextBlock Margin="0" Text="{Binding BuiltInTypeDescription}"
                                                    Foreground="#FF569CD6" />

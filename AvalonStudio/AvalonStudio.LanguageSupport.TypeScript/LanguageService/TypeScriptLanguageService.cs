@@ -1,10 +1,10 @@
-﻿using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+﻿using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Rendering;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Languages;
 using AvalonStudio.LanguageSupport.TypeScript.Projects;
 using AvalonStudio.Projects;
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.TextEditor.Indentation;
-using AvalonStudio.TextEditor.Rendering;
 using IridiumJS.Runtime;
 using Newtonsoft.Json;
 using System;
@@ -161,30 +161,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
         }
 
-        public int Comment(TextDocument textDocument, ISegment segment,
-            int caret = -1, bool format = true)
-        {
-            var result = caret;
-
-            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
-
-            textDocument.BeginUpdate();
-
-            foreach (var line in lines)
-            {
-                textDocument.Insert(line.Offset, "//");
-            }
-
-            if (format)
-            {
-                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
-            }
-
-            textDocument.EndUpdate();
-
-            return result;
-        }
-
         public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
         {
             //STUB!
@@ -198,7 +174,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return associatedData.BackgroundRenderers;
         }
 
-        public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
+        public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
         {
             var associatedData = GetAssociatedData(file);
 
@@ -217,8 +193,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return Task.FromResult(new List<Symbol>());
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisenseControl,
-            ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file,
+        public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file,
             TextDocument textDocument)
         {
             _typeScriptContext = _typeScriptContext ?? ((TypeScriptProject)file.Project).TypeScriptContext;
@@ -469,28 +444,51 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return Task.FromResult<SignatureHelp>(null);
         }
 
-        public int UnComment(TextDocument textDocument, ISegment segment,
-            int caret = -1, bool format = true)
+        public int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
-            var lines = VisualLineGeometryBuilder.GetLinesForSegmentInDocument(textDocument, segment);
+            textDocument.BeginUpdate();
+
+            for (int line = firstLine; line <= endLine; line++)
+            {
+                textDocument.Insert(textDocument.GetLineByNumber(line).Offset, "//");
+            }
+
+            if (format)
+            {
+                var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
+                var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
+                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+            }
+
+            textDocument.EndUpdate();
+
+            return result;
+        }
+
+        public int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        {
+            var result = caret;
 
             textDocument.BeginUpdate();
 
-            foreach (var line in lines)
+            for (int line = firstLine; line <= endLine; line++)
             {
-                var index = textDocument.GetText(line).IndexOf("//", StringComparison.Ordinal);
+                var docLine = textDocument.GetLineByNumber(firstLine);
+                var index = textDocument.GetText(docLine).IndexOf("//");
 
                 if (index >= 0)
                 {
-                    textDocument.Replace(line.Offset + index, 2, string.Empty);
+                    textDocument.Replace(docLine.Offset + index, 2, string.Empty);
                 }
             }
 
             if (format)
             {
-                result = Format(textDocument, (uint)segment.Offset, (uint)segment.Length, caret);
+                var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
+                var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
+                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();
@@ -510,7 +508,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return result;
         }
 
-        public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
+        public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
         {
             _typeScriptContext.RemoveFile(file.FilePath);
             dataAssociations.Remove(file);

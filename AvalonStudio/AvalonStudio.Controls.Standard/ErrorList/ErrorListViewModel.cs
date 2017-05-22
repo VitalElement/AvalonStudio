@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
@@ -33,7 +34,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
                 if (value != null)
                 {
-                    Task.Run(async () =>
+                    Dispatcher.UIThread.InvokeAsync(async () =>
                     {
                         var document = await shell.OpenDocument(shell.CurrentSolution.FindFile(value.Model.File), value.Line);
 
