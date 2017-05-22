@@ -10,6 +10,7 @@
     using AvalonStudio.Utils;
     using Mono.Debugging.Client;
     using System;
+    using System.Threading.Tasks;
     using System.Xml;
 
     public class DebugManager2 : IDebugManager2, IExtension
@@ -182,7 +183,9 @@
                 return;
             }
 
-            if (!await project.ToolChain.Build(_console, project))
+            var success = await await Task.Factory.StartNew(async ()=> { return await project.ToolChain.Build(_console, project); });
+
+            if (!success)
             {
                 OnEndSession();
                 return;
