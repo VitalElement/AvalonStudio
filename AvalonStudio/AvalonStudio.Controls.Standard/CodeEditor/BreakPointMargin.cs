@@ -41,18 +41,28 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(textView.Document.FileName)))
                 {
-                    context.FillRectangle(Brush.Parse("#FF3737"),
+                    var visualLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == breakPoint.Line);
+
+                    if (visualLine != null)
+                    {
+                        context.FillRectangle(Brush.Parse("#FF3737"),
                         new Rect((Bounds.Size.Width / 4),
-                            (height * (breakPoint.Line - textView.VisualLines.First().FirstDocumentLine.LineNumber)) + (Bounds.Size.Width / 4),
+                             visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], AvaloniaEdit.Rendering.VisualYPosition.LineTop) + (Bounds.Size.Width / 4) - TextView.VerticalOffset,
                             Bounds.Size.Width / 1.5, height / 1.5), (float)height);
+                    }
                 }
 
                 if (previewPointVisible)
                 {
-                    context.FillRectangle(Brush.Parse("#E67466"),
-                        new Rect((Bounds.Size.Width / 4),
-                            (height * (previewLine - textView.VisualLines.First().FirstDocumentLine.LineNumber)) + (Bounds.Size.Width / 4),
-                            Bounds.Size.Width / 1.5, height / 1.5), (float)height);
+                    var visualLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == previewLine);
+
+                    if (visualLine != null)
+                    {
+                        context.FillRectangle(Brush.Parse("#E67466"),
+                            new Rect((Bounds.Size.Width / 4),
+                                visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], AvaloniaEdit.Rendering.VisualYPosition.LineTop) + (Bounds.Size.Width / 4) - TextView.VerticalOffset,
+                                Bounds.Size.Width / 1.5, height / 1.5), (float)height);
+                    }
                 }
             }
         }
