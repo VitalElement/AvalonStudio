@@ -138,7 +138,7 @@ namespace AvalonStudio.Debugging.GDB.Remote
         {
             var settings = _project.GetDebuggerSettings<RemoteGdbSettings>();
 
-            bool result = RunCommand("-target-select", "extended-remote", $":{settings.Port}").Status == CommandStatus.Done;
+            bool result = RunCommand("-target-select", "extended-remote", $"{settings.Host}:{settings.Port}").Status == CommandStatus.Done;
 
             if (result)
             {

@@ -19,6 +19,7 @@ namespace AvalonStudio.Debugging.GDB.Remote
             _postInitCommandArgs = settings.PostInitCommandArgs;
             _preInitCommandArgs = settings.PreInitCommandArgs;
             _gdbExitCommands = settings.GDBExitCommands;
+            _host = settings.Host;
         }
 
         private void Save()
@@ -30,6 +31,7 @@ namespace AvalonStudio.Debugging.GDB.Remote
             settings.PreInitCommandArgs = _preInitCommandArgs;
             settings.PostInitCommandArgs = _postInitCommandArgs;
             settings.GDBExitCommands = _gdbExitCommands;
+            settings.Host = _host;
 
             Model.SetDebuggerSettings(settings);
             Model.Save();
@@ -45,6 +47,19 @@ namespace AvalonStudio.Debugging.GDB.Remote
                 Save();
             }
         }
+
+        private string _host;
+
+        public string Host
+        {
+            get { return _host; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _host, value);
+                Save();
+            }
+        }
+
 
         private string _initCommands;
 

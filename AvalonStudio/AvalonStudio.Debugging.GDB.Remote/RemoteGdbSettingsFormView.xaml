@@ -1,5 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui">
   <StackPanel Gap="4">
+    <TextBox UseFloatingWatermark="true" Watermark="Host" Text="{Binding Host}" />
+    
     <TextBox UseFloatingWatermark="true" Watermark="Port" Text="{Binding Port}" />
 
     <TextBox UseFloatingWatermark="true" Watermark="Run Server Command" Text="{Binding PreInitCommand}" />
