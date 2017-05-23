@@ -779,7 +779,12 @@ namespace AvalonStudio.Debugging.GDB
 
             if (asyncMode)
             {
-                RunCommand("-exec-interrupt");
+                lock (eventLock)
+                {
+                    sin.WriteLine("-exec-interrupt");
+                 
+                    Monitor.Wait(eventLock);
+                }
             }
             else
             {
