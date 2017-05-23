@@ -1,7 +1,17 @@
 <UserControl xmlns="https://github.com/avaloniaui">
-  <StackPanel Width="500">
+  <StackPanel Gap="4">
     <TextBox UseFloatingWatermark="true" Watermark="Port" Text="{Binding Port}" />
 
-    <TextBox UseFloatingWatermark="true" Watermark="GDB Init Commands" Text="{Binding InitCommands}" AcceptsReturn="True" Height="400" />
+    <TextBox UseFloatingWatermark="true" Watermark="Run Server Command" Text="{Binding PreInitCommand}" />
+
+    <TextBox UseFloatingWatermark="true" Watermark="Run Server Command Arguments" Text="{Binding PreInitCommandArgs}" />
+    
+    <TextBox UseFloatingWatermark="true" Watermark="GDB Init Commands" Text="{Binding InitCommands}" AcceptsReturn="True" Height="200" />
+
+    <TextBox UseFloatingWatermark="true" Watermark="Post Init Command" Text="{Binding PostInitCommand}" />
+
+    <TextBox UseFloatingWatermark="true" Watermark="Post Init Command Arguments" Text="{Binding PostInitCommandArgs}" />
+
+    <TextBox UseFloatingWatermark="true" Watermark="On Exit GDB Commands" Text="{Binding GDBExitCommands}" />
   </StackPanel>
 </UserControl>

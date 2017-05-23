@@ -159,6 +159,7 @@ namespace AvalonStudio.Debugging.GDB
                 ThreadPool.QueueUserWorkItem(delegate
                 {
                     RunCommand(_runCommand);
+                    running = true;
                 });
             }
         }
@@ -768,6 +769,22 @@ namespace AvalonStudio.Debugging.GDB
 
                     return lastResult;
                 }
+            }
+        }
+
+        protected bool InsideStop()
+        {
+            lock(gdbLock)
+            {
+                return InternalStop();
+            }
+        }
+
+        protected void InsideResume(bool resume)
+        {
+            lock(gdbLock)
+            {
+                InternalResume(resume);
             }
         }
 
