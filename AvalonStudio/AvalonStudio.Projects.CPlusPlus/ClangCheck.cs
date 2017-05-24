@@ -15,9 +15,31 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using YamlDotNet.RepresentationModel;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
+    public class ClangTidyReplacement
+    {
+        public string FilePath { get; set; }
+        public int  Offset { get; set; }
+        public int Length { get; set; }
+        public string ReplacementText { get; set; }
+    }
+
+    public class ClangTidyDiagnostic
+    {
+        public string DiagnosticName { get; set; }
+        public List<ClangTidyReplacement> Replacements { get; set; }
+    }
+
+    public class FixItList
+    {
+        public string MainSourceFile { get; set; }
+        public List<ClangTidyDiagnostic> Diagnostics { get; set; }
+    }
+
     public class ClangCheck
     {
         private static string ContentDirectory => Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content");
@@ -38,6 +60,8 @@ namespace AvalonStudio.Projects.CPlusPlus
                 {
                     errorList.RemoveDiagnostic(error);
                 }
+
+                errorList.ClearFixits(d => d.Source == DiagnosticSource.StaticAnalysis);
             });
 
             Diagnostic previous = null;
@@ -139,23 +163,28 @@ namespace AvalonStudio.Projects.CPlusPlus
                         using (var fileStream = System.IO.File.OpenText(Platform.GetCodeAnalysisFile(file)))
                         {
                             var yaml = new YamlStream();
-                            yaml.Load(fileStream);
 
-                            // Examine the stream
-                            var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+                            var deserializer = new DeserializerBuilder()
+                                        .Build();
 
-                            if (mapping.Children["Diagnostics"] is YamlSequenceNode diagnostics)
+
+                            var fixits = deserializer.Deserialize<FixItList>(fileStream);
+
+                            foreach(var diag in fixits.Diagnostics)
                             {
-                                foreach (var diagnostic in diagnostics.Children)
+                                foreach(var replacement in diag.Replacements)
                                 {
-                                    var name = diagnostic["DiagnosticName"];
-
-                                    var replacements = diagnostic["Replacements"];
-
-                                    foreach (var replacement in ((YamlSequenceNode)replacements).Children)
+                                    var fixit = new FixIt
                                     {
+                                        Project = project,
+                                        File = file,
+                                        Length = replacement.Length,
+                                        StartOffset = replacement.Offset,
+                                        ReplacementText = replacement.ReplacementText,
+                                        Source = DiagnosticSource.StaticAnalysis
+                                    };
 
-                                    }
+                                    errorList.AddFixIt(fixit);
                                 }
                             }
                         }
