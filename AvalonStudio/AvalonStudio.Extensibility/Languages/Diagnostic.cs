@@ -43,6 +43,6 @@ namespace AvalonStudio.Languages
 
     public class FixIt : Diagnostic
     {
-
+        public string ReplacementText { get; set; }
     }
 }
