@@ -31,10 +31,14 @@ namespace AvalonStudio.Projects.CPlusPlus
             var errorList = IoC.Get<IErrorList>();
             var shell = IoC.Get<IShell>();
 
-            foreach (var error in errorList.Errors.Where(e => e.Model.Source == DiagnosticSource.StaticAnalysis))
+            await Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
-                errorList.RemoveDiagnostic(error);
-            }
+                var toRemove = errorList.Errors.Where(e => e.Model.Source == DiagnosticSource.StaticAnalysis).ToList();
+                foreach (var error in toRemove)
+                {
+                    errorList.RemoveDiagnostic(error);
+                }
+            });
 
             Diagnostic previous = null;
 
