@@ -21,7 +21,7 @@ using System.Runtime.CompilerServices;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    public class CPlusPlusProject : FileSystemProject, IStandardProject
+    public class CPlusPlusProject : FileSystemProject, IStandardProject, IAnalysisProject
     {
         public const string ProjectExtension = "acproj";
 
@@ -619,6 +619,39 @@ namespace AvalonStudio.Projects.CPlusPlus
         public override int CompareTo(IProjectItem other)
         {
             return Name.CompareTo(other.Name);
+        }
+
+        public void VisitSourceFiles(Action<IStandardProject, IStandardProject, ISourceFile> visitor)
+        {
+            List<string> visited = new List<String>();
+
+            VisitSourceFilesImpl(visited, this, visitor);   
+        }
+
+        private void VisitSourceFilesImpl(List<String> visited, IStandardProject mainProject, Action<IStandardProject, IStandardProject, ISourceFile> visitor)
+        {
+            var references = References.OfType<CPlusPlusProject>();
+            foreach (var reference in references)
+            {
+                reference.VisitSourceFilesImpl(visited, mainProject, visitor);
+            }
+
+            foreach (var file in SourceFiles)
+            {
+                var current = visited.BinarySearch<string, string>(file.Location);
+
+                if(current == null)
+                {
+                    visited.InsertSorted(file.Location);
+
+                    visitor(mainProject, this, file);
+                }
+            }
+        }
+
+        public void Analyze(IConsole console)
+        {
+            ClangCheck.RunAsync(console, this).Wait();
         }
     }
 }

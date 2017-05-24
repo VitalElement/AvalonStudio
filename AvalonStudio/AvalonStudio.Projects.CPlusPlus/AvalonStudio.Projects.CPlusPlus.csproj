@@ -27,6 +27,8 @@
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Private>true</Private>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Toolchains.GCC\AvalonStudio.Toolchains.GCC.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Templates\CppClass.template">

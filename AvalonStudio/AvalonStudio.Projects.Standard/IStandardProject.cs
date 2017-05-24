@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 
 namespace AvalonStudio.Projects.Standard
@@ -55,5 +56,7 @@ namespace AvalonStudio.Projects.Standard
         IList<string> GetReferencedDefines();
 
         IList<string> GetGlobalDefines();
+
+        void VisitSourceFiles(Action<IStandardProject, IStandardProject, ISourceFile> visitor);
     }
 }
