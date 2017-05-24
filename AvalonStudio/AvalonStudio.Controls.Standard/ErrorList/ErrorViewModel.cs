@@ -1,7 +1,10 @@
 using Avalonia.Media;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
@@ -11,6 +14,8 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         {
             offset = model.StartOffset;
         }
+
+        public IEnumerable<ErrorViewModel> Children => Model.Children.Select(d => new ErrorViewModel(d));
 
         public string File
         {
