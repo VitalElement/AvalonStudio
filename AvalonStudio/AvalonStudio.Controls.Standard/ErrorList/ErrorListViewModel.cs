@@ -12,6 +12,7 @@ using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System;
 
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
@@ -30,6 +31,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         {
             Title = "Error List";
             errors = new ObservableCollection<ErrorViewModel>();
+            _fixits = new ObservableCollection<ErrorViewModel>();
             _markerServices = new Dictionary<string, TextMarkerService>();
             _errorsLinkedToFiles = new Dictionary<string, List<Diagnostic>>();
             _textSegmentCollection = new TextSegmentCollection<Diagnostic>();
@@ -197,6 +199,16 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         public ReadOnlyCollection<Diagnostic> FindDiagnosticsAtOffset(int offset)
         {
             return _textSegmentCollection.FindSegmentsContaining(offset);
+        }
+
+        void IErrorList.AddFixIt(FixIt fixit)
+        {
+            FixIts.Add(new ErrorViewModel(fixit));
+        }
+
+        void IErrorList.ClearFixits(Predicate<Diagnostic> predicate)
+        {
+            FixIts.RemoveMatching(vm => predicate(vm.Model));
         }
     }
 }
