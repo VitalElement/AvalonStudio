@@ -122,7 +122,7 @@ namespace AvalonStudio.Extensibility.Editor
 
             if(diagnostic.Length == 0)
             {
-                diagnostic.Length = _document.GetLineByNumber(diagnostic.Line).Length;
+                diagnostic.Length = _document.GetLineByNumber(diagnostic.Line).EndOffset - diagnostic.StartOffset;
             }
 
             var m = new TextMarker(diagnostic.StartOffset, diagnostic.Length);
