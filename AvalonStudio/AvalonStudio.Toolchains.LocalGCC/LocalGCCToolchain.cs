@@ -88,7 +88,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
         {
-            var settings = project.GetSettings<GccToolchainSettings>();
+            var settings = project.GetToolchainSettings<GccToolchainSettings>();
 
             var result = string.Empty;
 
@@ -128,7 +128,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
         {
             var result = string.Empty;
 
-            var settings = superProject.GetSettings<GccToolchainSettings>();
+            var settings = superProject.GetToolchainSettings<GccToolchainSettings>();
 
             result += "-Wall -c ";
 

@@ -174,7 +174,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             if (project.Type == ProjectType.Executable)
             {
-                var settings = project.GetSettings<GccToolchainSettings>();
+                var settings = project.GetToolchainSettings<GccToolchainSettings>();
 
                 foreach (var libraryPath in settings.LinkSettings.LinkedLibraries)
                 {
