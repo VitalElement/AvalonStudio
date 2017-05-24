@@ -170,21 +170,24 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                             var fixits = deserializer.Deserialize<FixItList>(fileStream);
 
-                            foreach(var diag in fixits.Diagnostics)
+                            if (fixits.Diagnostics != null)
                             {
-                                foreach(var replacement in diag.Replacements)
+                                foreach (var diag in fixits.Diagnostics)
                                 {
-                                    var fixit = new FixIt
+                                    foreach (var replacement in diag.Replacements)
                                     {
-                                        Project = project,
-                                        File = file,
-                                        Length = replacement.Length,
-                                        StartOffset = replacement.Offset,
-                                        ReplacementText = replacement.ReplacementText,
-                                        Source = DiagnosticSource.StaticAnalysis
-                                    };
+                                        var fixit = new FixIt
+                                        {
+                                            Project = project,
+                                            File = file,
+                                            Length = replacement.Length,
+                                            StartOffset = replacement.Offset,
+                                            ReplacementText = replacement.ReplacementText,
+                                            Source = DiagnosticSource.StaticAnalysis
+                                        };
 
-                                    errorList.AddFixIt(fixit);
+                                        errorList.AddFixIt(fixit);
+                                    }
                                 }
                             }
                         }
