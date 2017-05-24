@@ -41,6 +41,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             });
 
             Diagnostic previous = null;
+            int noteIndex = 1;
 
             mainProject.VisitSourceFiles((masterProject, project, file) =>
             {
@@ -51,7 +52,7 @@ namespace AvalonStudio.Projects.CPlusPlus
                     console.WriteLine($"Running analysis on: {file.Location}");
 
                     var args = GetCompilerArguments(masterProject, project, file);
-                    PlatformSupport.ExecuteShellCommand(ClangCheckCommand, $"{file.Location} -checks=* -export-fixes={Platform.GetCodeAnalysisFile(file)}  -- {args}", (s, e) =>
+                    PlatformSupport.ExecuteShellCommand(ClangCheckCommand, $"{file.Location} -checks=* -export-fixes={Platform.GetCodeAnalysisFile(file)}  -- {args} -D__STDC__", (s, e) =>
                     {
                         console.WriteLine(e.Data);
 
@@ -104,6 +105,8 @@ namespace AvalonStudio.Projects.CPlusPlus
                                         if (diagnostic.Level == DiagnosticLevel.Note && previous != null)
                                         {
                                             previous.Children.Add(diagnostic);
+                                            diagnostic.Spelling = $"({noteIndex}) {diagnostic.Spelling}";
+                                            noteIndex++;
                                         }
                                         else
                                         {
@@ -113,6 +116,8 @@ namespace AvalonStudio.Projects.CPlusPlus
                                             });
 
                                             previous = diagnostic;
+
+                                            noteIndex = 1;
                                         }
                                     }
                                 }
