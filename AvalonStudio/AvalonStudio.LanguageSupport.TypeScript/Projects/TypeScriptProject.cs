@@ -92,6 +92,7 @@ Program.main();
             References = new ObservableCollection<IProject>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
+            Settings = new ExpandoObject();
             Project = this;
 
             var tsContext = new TypeScriptContext();
@@ -121,6 +122,9 @@ Program.main();
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic DebugSettings { get; set; }
+
+        [JsonConverter(typeof(ExpandoObjectConverter))]
+        public override dynamic Settings { get; set; }
 
         public override List<string> ExcludedFiles { get; set; }
 

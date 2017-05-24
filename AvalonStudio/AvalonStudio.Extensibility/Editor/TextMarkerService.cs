@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
+using AvalonStudio.Languages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +12,17 @@ namespace AvalonStudio.Extensibility.Editor
     public class TextMarkerService : IBackgroundRenderer
     {
         private readonly TextSegmentCollection<TextMarker> markers;
+        private readonly Dictionary<Diagnostic, TextMarker> _markerLinks;
+        private readonly TextDocument _document;
 
-        public KnownLayer Layer => KnownLayer.Background;
+        public KnownLayer Layer => KnownLayer.Caret;
 
         public TextMarkerService(TextDocument document)
         {
+            _document = document;
             markers = new TextSegmentCollection<TextMarker>(document);
+            _markerLinks = new Dictionary<Diagnostic, TextMarker>();
         }
-
-        public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
@@ -73,11 +76,6 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
-        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
-        {
-           
-        }
-
         private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
         {
             for (var i = 0; i < count; i++)
@@ -97,20 +95,48 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
-        public void Create(int offset, int length, string message, Color markerColor)
+        public void Create(Diagnostic diagnostic)
         {
-            var m = new TextMarker(offset, length);
+            Color markerColor;
+
+            switch (diagnostic.Level)
+            {
+                case DiagnosticLevel.Error:
+                case DiagnosticLevel.Fatal:
+                    markerColor = Color.FromRgb(253, 45, 45);
+                    break;
+
+                case DiagnosticLevel.Warning:
+                    markerColor = Color.FromRgb(255, 207, 40);
+                    break;
+
+                default:
+                    markerColor = Color.FromRgb(27, 161, 226);
+                    break;
+            }
+
+            if(diagnostic.StartOffset == 0)
+            {
+                diagnostic.StartOffset = _document.GetOffset(diagnostic.Line, diagnostic.Column);
+            }
+
+            if(diagnostic.Length == 0)
+            {
+                diagnostic.Length = _document.GetLineByNumber(diagnostic.Line).Length;
+            }
+
+            var m = new TextMarker(diagnostic.StartOffset, diagnostic.Length);
             markers.Add(m);
             m.MarkerColor = markerColor;
-            m.ToolTip = message;
+            m.ToolTip = diagnostic.Spelling;
+
+            _markerLinks.Add(diagnostic, m);
         }
 
-        public void Update()
+        public void Remove(Diagnostic diagnostic)
         {
-            if (DataChanged != null)
-            {
-                DataChanged(this, new EventArgs());
-            }
+            markers.Remove(_markerLinks[diagnostic]);
+            _markerLinks.Remove(diagnostic);
         }
 
         public IEnumerable<TextMarker> GetMarkersAtOffset(int offset)

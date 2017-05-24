@@ -14,7 +14,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         public string File
         {
-            get { return Path.GetFileName(Model.File); }
+            get { return Path.GetFileName(Model.File.Location); }
         }
 
         public string Spelling

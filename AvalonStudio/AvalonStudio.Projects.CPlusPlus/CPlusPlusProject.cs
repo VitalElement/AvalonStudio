@@ -54,6 +54,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             BuiltinLibraries = new List<string>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
+            Settings = new ExpandoObject();
             Project = this;
         }
 
@@ -380,6 +381,7 @@ namespace AvalonStudio.Projects.CPlusPlus
                 result.Add(new ReferenceSettingsFormViewModel(this));
                 result.Add(new ToolchainSettingsFormViewModel(this));
                 result.Add(new DebuggerSettingsFormViewModel(this));
+                result.Add(new CodeAnalysisSettingsFormViewModel(this));
 
                 return result;
             }
@@ -390,6 +392,9 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic DebugSettings { get; set; }
+
+        [JsonConverter(typeof(ExpandoObjectConverter))]
+        public override dynamic Settings { get; set; }
 
         [JsonIgnore]
         public override string Extension

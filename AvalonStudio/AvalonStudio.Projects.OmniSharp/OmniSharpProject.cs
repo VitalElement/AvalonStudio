@@ -33,6 +33,7 @@ namespace AvalonStudio.Projects.OmniSharp
             References = new ObservableCollection<IProject>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
+            Settings = new ExpandoObject();
             Project = this;
         }
 
@@ -65,6 +66,8 @@ namespace AvalonStudio.Projects.OmniSharp
         }
 
         public override dynamic DebugSettings { get; set; }
+
+        public override dynamic Settings { get; set; }
 
         public override string Executable { get; set; }
 

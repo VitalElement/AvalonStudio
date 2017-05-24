@@ -1,13 +1,20 @@
-﻿using AvalonStudio.CommandLineTools;
+﻿using Avalonia.Threading;
+using AvalonStudio.CommandLineTools;
+using AvalonStudio.Controls.Standard.ErrorList;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Languages;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects.Standard;
+using AvalonStudio.Shell;
 using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using YamlDotNet.RepresentationModel;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
@@ -21,22 +28,131 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", console);
 
+            var errorList = IoC.Get<IErrorList>();
+            var shell = IoC.Get<IShell>();
+
+            foreach (var error in errorList.Errors.Where(e => e.Model.Source == DiagnosticSource.StaticAnalysis))
+            {
+                errorList.RemoveDiagnostic(error);
+            }
+
+            Diagnostic previous = null;
+
             mainProject.VisitSourceFiles((masterProject, project, file) =>
             {
-                if(SupportsFile(file) && !file.Location.Contains("STM32F4xx_HAL_Driver") && !file.Location.Contains("STM32F4Cube"))
+                var settings = project.GetGenericSettings<CodeAnalysisSettings>();
+
+                if (SupportsFile(file) && settings.Enabled)
                 {
                     console.WriteLine($"Running analysis on: {file.Location}");
 
                     var args = GetCompilerArguments(masterProject, project, file);
-                    PlatformSupport.ExecuteShellCommand(ClangCheckCommand, $"{file.Location} -checks=* -- {args}", (s, e) => console.WriteLine(e.Data), (s, e) =>
+                    PlatformSupport.ExecuteShellCommand(ClangCheckCommand, $"{file.Location} -checks=* -export-fixes={Platform.GetCodeAnalysisFile(file)}  -- {args}", (s, e) =>
                     {
+                        console.WriteLine(e.Data);
+
                         if (e.Data != null)
                         {
-                            console.WriteLine();
-                            console.WriteLine(e.Data);
+                            try
+                            {
+                                var parts = e.Data.Replace(":\\", ";\\").Split(':', System.StringSplitOptions.RemoveEmptyEntries);
+
+                                if (parts.Length == 5)
+                                {
+                                    var diagnostic = new Diagnostic
+                                    {
+                                        Project = project,
+                                        File = shell.CurrentSolution.FindFile(parts[0].Replace(";\\", ":\\")),
+                                        Line = Convert.ToInt32(parts[1]),
+                                        Column = Convert.ToInt32(parts[2]),
+                                        Spelling = parts[4],
+                                        Source = DiagnosticSource.StaticAnalysis
+                                    };
+
+                                    if (diagnostic.File != null)
+                                    {
+                                        switch (parts[3].Trim())
+                                        {
+                                            case "warning":
+                                                diagnostic.Level = DiagnosticLevel.Warning;
+                                                break;
+
+                                            case "error":
+                                                diagnostic.Level = DiagnosticLevel.Error;
+                                                break;
+
+                                            case "note":
+                                                diagnostic.Level = DiagnosticLevel.Note;
+                                                break;
+
+                                            case "fatal":
+                                                diagnostic.Level = DiagnosticLevel.Fatal;
+                                                break;
+
+                                            case "ignored":
+                                                diagnostic.Level = DiagnosticLevel.Ignored;
+                                                break;
+
+                                            default:
+                                                throw new NotImplementedException();
+                                        }
+
+                                        if (diagnostic.Level == DiagnosticLevel.Note && previous != null)
+                                        {
+                                            previous.Children.Add(diagnostic);
+                                        }
+                                        else
+                                        {
+                                            Dispatcher.UIThread.InvokeAsync(() =>
+                                            {
+                                                errorList.AddDiagnostic(new ErrorViewModel(diagnostic));
+                                            });
+
+                                            previous = diagnostic;
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+
+                            }
                         }
+
+                    }, (s, e) =>
+                    {
+
                     },
                     false, file.CurrentDirectory, false);
+
+                    if (System.IO.File.Exists(Platform.GetCodeAnalysisFile(file)))
+                    {
+                        using (var fileStream = System.IO.File.OpenText(Platform.GetCodeAnalysisFile(file)))
+                        {
+                            var yaml = new YamlStream();
+                            yaml.Load(fileStream);
+
+                            // Examine the stream
+                            var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+
+                            if (mapping.Children["Diagnostics"] is YamlSequenceNode diagnostics)
+                            {
+                                foreach (var diagnostic in diagnostics.Children)
+                                {
+                                    var name = diagnostic["DiagnosticName"];
+
+                                    var replacements = diagnostic["Replacements"];
+
+                                    foreach (var replacement in ((YamlSequenceNode)replacements).Children)
+                                    {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
                 }
             });
         }

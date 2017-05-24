@@ -1,3 +1,5 @@
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using System.Threading.Tasks;
@@ -7,6 +9,10 @@ namespace AvalonStudio.Documents
     public interface IEditor
     {
         ISourceFile ProjectFile { get; }
+
+        void InstallBackgroundRenderer(IBackgroundRenderer backgroundRenderer);
+
+        void InstallVisualLineTransformer(IVisualLineTransformer transformer);
 
         void Close();
 
@@ -35,5 +41,7 @@ namespace AvalonStudio.Documents
         string GetWordAtOffset(int offset);
 
         int CaretOffset { get; }
+
+        TextDocument GetDocument();
     }
 }

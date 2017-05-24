@@ -39,6 +39,8 @@ namespace AvalonStudio.Projects
 
         dynamic DebugSettings { get; }
 
+        dynamic Settings { get; }
+
         void AddReference(IProject project);
 
         void RemoveReference(IProject project);

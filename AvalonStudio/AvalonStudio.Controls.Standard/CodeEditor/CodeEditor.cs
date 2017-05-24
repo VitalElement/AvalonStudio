@@ -257,13 +257,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 var offset = Document.GetOffset(position.Value.Location);
 
-                var matching = Diagnostics?.FindSegmentsContaining(offset).FirstOrDefault();
-
-                if (matching != null)
-                {
-                    return new ErrorProbeViewModel(matching);
-                }
-
                 var tooltipRequestEventArgs = new TooltipDataRequestEventArgs();
 
                 RequestTooltipContent?.Invoke(this, tooltipRequestEventArgs);
@@ -621,10 +614,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set { SetValue(BackgroundRenderersProperty, value); }
         }
 
-        public static readonly StyledProperty<TextSegmentCollection<Diagnostic>> DiagnosticsProperty =
-            AvaloniaProperty.Register<CodeEditor, TextSegmentCollection<Diagnostic>>(nameof(Diagnostics), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
+        public static readonly StyledProperty<List<Diagnostic>> DiagnosticsProperty =
+            AvaloniaProperty.Register<CodeEditor, List<Diagnostic>>(nameof(Diagnostics), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
-        public TextSegmentCollection<Diagnostic> Diagnostics
+        public List<Diagnostic> Diagnostics
         {
             get { return GetValue(DiagnosticsProperty); }
             set { SetValue(DiagnosticsProperty, value); }

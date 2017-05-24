@@ -247,6 +247,10 @@ namespace AvalonStudio
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
 
+        public event EventHandler<FileOpenedEventArgs> FileOpened;
+
+        public event EventHandler<FileOpenedEventArgs> FileClosed;
+
         public IMenu MainMenu { get; }
 
         public bool DebugVisible
@@ -362,11 +366,22 @@ namespace AvalonStudio
             }
         }
 
+        public void CloseDocument(ISourceFile file)
+        {
+            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
+
+            RemoveDocument(currentTab);
+
+            FileClosed?.Invoke(this, new FileOpenedEventArgs { File = file });
+        }
+
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
         {
             var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
 
             var selectedDocumentTCS = new TaskCompletionSource<IDocumentTabViewModel>();
+
+            bool created = false;
 
             if (currentTab == null)
             {
@@ -402,6 +417,8 @@ namespace AvalonStudio
 
                    await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.OpenFile(file); });
 
+                    created = true;
+
                     selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
                 });
             }
@@ -426,6 +443,11 @@ namespace AvalonStudio
                    // Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).ScrollToLine(line));
                     (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
                 }
+            }
+
+            if (created)
+            {
+                FileOpened?.Invoke(this, new FileOpenedEventArgs { Editor = (DocumentTabs.SelectedDocument as IEditor), File = file });
             }
 
             return DocumentTabs.SelectedDocument as IEditor;
@@ -657,18 +679,21 @@ namespace AvalonStudio
 
             foreach (var error in ErrorList.Errors)
             {
-                var matching = allErrors.SingleOrDefault(err => err.IsEqual(error));
-
-                if (matching == null)
+                if (error.Model.Source == DiagnosticSource.Intellisense)
                 {
-                    toRemove.Add(error);
+                    var matching = allErrors.SingleOrDefault(err => err.IsEqual(error));
+
+                    if (matching == null)
+                    {
+                        toRemove.Add(error);
+                    }
                 }
             }
 
             foreach (var error in toRemove)
             {
                 hasChanged = true;
-                ErrorList.Errors.Remove(error);
+                ErrorList.RemoveDiagnostic(error);
             }
 
             foreach (var error in allErrors)
@@ -678,7 +703,7 @@ namespace AvalonStudio
                 if (matching == null)
                 {
                     hasChanged = true;
-                    ErrorList.Errors.Add(error);
+                    ErrorList.AddDiagnostic(error);
                 }
             }
 
