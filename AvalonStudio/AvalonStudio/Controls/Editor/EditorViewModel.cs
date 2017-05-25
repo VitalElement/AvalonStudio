@@ -227,6 +227,8 @@ namespace AvalonStudio.Controls
                         case CursorKind.ReturnStatement:
                         case CursorKind.WhileStatement:
                         case CursorKind.BinaryOperator:
+                        case CursorKind.BreakStatement:
+                        case CursorKind.DefaultStatement:
                             return null;
 
                         default:
