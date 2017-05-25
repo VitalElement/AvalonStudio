@@ -18,11 +18,22 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 {
     public class ErrorListViewModel : ToolViewModel, IExtension, IErrorList
     {
+        class FileAssociation
+        {
+            public FileAssociation()
+            {
+                Diagnostics = new TextSegmentCollection<Diagnostic>();
+            }
+
+            public TextSegmentCollection<Diagnostic> Diagnostics { get; set; }
+            public TextMarkerService TextMarkerService { get; set; }
+        }
+
         private ObservableCollection<ErrorViewModel> errors;
-        private Dictionary<string, List<Diagnostic>> _errorsLinkedToFiles;
         private ObservableCollection<ErrorViewModel> _fixits;
-        private Dictionary<string, TextMarkerService> _markerServices;
-        private TextSegmentCollection<Diagnostic> _textSegmentCollection;
+
+        private Dictionary<string, FileAssociation> _fileAssociations;
+        
 
         private ErrorViewModel selectedError;
         private IShell shell;
@@ -32,9 +43,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             Title = "Error List";
             errors = new ObservableCollection<ErrorViewModel>();
             _fixits = new ObservableCollection<ErrorViewModel>();
-            _markerServices = new Dictionary<string, TextMarkerService>();
-            _errorsLinkedToFiles = new Dictionary<string, List<Diagnostic>>();
-            _textSegmentCollection = new TextSegmentCollection<Diagnostic>();
+            _fileAssociations = new Dictionary<string, FileAssociation>();
         }
 
         public ErrorViewModel SelectedError
@@ -83,21 +92,15 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         private void AddDiagnostic(Diagnostic diagnostic)
         {
-            _textSegmentCollection.Add(diagnostic);
-
-            if (!_errorsLinkedToFiles.ContainsKey(diagnostic.File.Location))
+            if(!_fileAssociations.ContainsKey(diagnostic.File.Location))
             {
-                _errorsLinkedToFiles.Add(diagnostic.File.Location, new List<Diagnostic>());
+                _fileAssociations.Add(diagnostic.File.Location, new FileAssociation());
             }
 
-            _errorsLinkedToFiles[diagnostic.File.Location].Add(diagnostic);
+            var fileAssociation = _fileAssociations[diagnostic.File.Location];
 
-            if (_markerServices.ContainsKey(diagnostic.File.Location))
-            {
-                var markerService = _markerServices[diagnostic.File.Location];
-
-                markerService.Create(diagnostic);
-            }
+            fileAssociation.Diagnostics.Add(diagnostic);
+            fileAssociation.TextMarkerService?.Create(diagnostic);
 
             foreach(var child in diagnostic.Children)
             {
@@ -114,18 +117,10 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         private void RemoveDiagnostic(Diagnostic diagnostic)
         {
-            _textSegmentCollection.Remove(diagnostic);
-
-            if (_errorsLinkedToFiles.ContainsKey(diagnostic.File.Location))
-            {
-                _errorsLinkedToFiles[diagnostic.File.Location].Remove(diagnostic);
-            }
-
-            if (_markerServices.ContainsKey(diagnostic.File.Location))
-            {
-                _markerServices[diagnostic.File.Location].Remove(diagnostic);
-            }
-
+            var fileAssociation = _fileAssociations[diagnostic.File.Location];
+            fileAssociation?.TextMarkerService?.Remove(diagnostic);
+            fileAssociation?.Diagnostics.Remove(diagnostic);
+            
             foreach (var child in diagnostic.Children)
             {
                 RemoveDiagnostic(child);
@@ -162,33 +157,29 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         }
 
         private void Shell_FileClosed(object sender, FileOpenedEventArgs e)
-        {            
-            _markerServices.Remove(e.File.Location);
+        {
+            var fileAssociation = _fileAssociations[e.File.Location];
+
+            fileAssociation.TextMarkerService = null;
         }
 
         private void Shell_FileOpened(object sender, FileOpenedEventArgs e)
         {
-            TextMarkerService currentService;
-
-            if (!_markerServices.ContainsKey(e.File.Location))
+            if (!_fileAssociations.ContainsKey(e.File.Location))
             {
-                _markerServices.Add(e.File.Location, new TextMarkerService(e.Editor.GetDocument()));
-
-                currentService = _markerServices[e.File.Location];
-
-                if (!_errorsLinkedToFiles.ContainsKey(e.File.Location))
-                {
-                    _errorsLinkedToFiles.Add(e.File.Location, new List<Diagnostic>());
-                }
-            }
-            else
-            {
-                currentService = _markerServices[e.File.Location];
+                _fileAssociations.Add(e.File.Location, new FileAssociation());
             }
 
-            var errorLinks = _errorsLinkedToFiles[e.File.Location];
+            var fileAssociation = _fileAssociations[e.File.Location];
 
-            foreach (var error in errorLinks)
+            if(fileAssociation.TextMarkerService == null)
+            {
+                fileAssociation.TextMarkerService = new TextMarkerService(e.Editor.GetDocument());
+            }
+
+            var currentService = fileAssociation.TextMarkerService;
+            
+            foreach (var error in fileAssociation.Diagnostics)
             {
                 currentService.Create(error);
             }
@@ -196,9 +187,11 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             e.Editor.InstallBackgroundRenderer(currentService);
         }
 
-        public ReadOnlyCollection<Diagnostic> FindDiagnosticsAtOffset(int offset)
+        public ReadOnlyCollection<Diagnostic> FindDiagnosticsAtOffset(ISourceFile file, int offset)
         {
-            return _textSegmentCollection.FindSegmentsContaining(offset);
+            var fileAssociation = _fileAssociations[file.Location];
+
+            return fileAssociation.Diagnostics.FindSegmentsContaining(offset);
         }
 
         void IErrorList.AddFixIt(FixIt fixit)

@@ -84,7 +84,7 @@ namespace AvalonStudio.Projects.CPlusPlus
                         {
                             try
                             {
-                                var parts = e.Data.Replace(":\\", ";\\").Split(':', System.StringSplitOptions.RemoveEmptyEntries);
+                                var parts = e.Data.Replace(":\\", ";\\").Replace("::",";;").Split(':', System.StringSplitOptions.RemoveEmptyEntries);
 
                                 if (parts.Length == 5)
                                 {
@@ -94,7 +94,7 @@ namespace AvalonStudio.Projects.CPlusPlus
                                         File = shell.CurrentSolution.FindFile(parts[0].Replace(";\\", ":\\")),
                                         Line = Convert.ToInt32(parts[1]),
                                         Column = Convert.ToInt32(parts[2]),
-                                        Spelling = parts[4],
+                                        Spelling = parts[4].Replace(";;", "::"),
                                         Source = DiagnosticSource.StaticAnalysis
                                     };
 

@@ -205,7 +205,7 @@ namespace AvalonStudio.Controls
         {
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
             {
-                var matching = IoC.Get<IErrorList>().FindDiagnosticsAtOffset(offset).FirstOrDefault();
+                var matching = IoC.Get<IErrorList>().FindDiagnosticsAtOffset(ProjectFile, offset).FirstOrDefault();
 
                 if (matching != null)
                 {
