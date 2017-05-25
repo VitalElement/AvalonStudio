@@ -165,47 +165,45 @@ namespace AvalonStudio.Projects.CPlusPlus
                     },
                     false, file.CurrentDirectory, false);
 
-                    if (System.IO.File.Exists(Platform.GetCodeAnalysisFile(file)))
-                    {
-                        using (var fileStream = System.IO.File.OpenText(Platform.GetCodeAnalysisFile(file)))
-                        {
-                            var yaml = new YamlStream();
+                    //if (System.IO.File.Exists(Platform.GetCodeAnalysisFile(file)))
+                    //{
+                    //    using (var fileStream = System.IO.File.OpenText(Platform.GetCodeAnalysisFile(file)))
+                    //    {
+                    //        var yaml = new YamlStream();
 
-                            var deserializer = new DeserializerBuilder()
-                                        .Build();
+                    //        var deserializer = new DeserializerBuilder()
+                    //                    .Build();
 
 
-                            var fixits = deserializer.Deserialize<FixItList>(fileStream);
+                    //        var fixits = deserializer.Deserialize<FixItList>(fileStream);
 
-                            if (fixits.Diagnostics != null)
-                            {
-                                foreach (var diag in fixits.Diagnostics)
-                                {
-                                    var fixit = new FixIt
-                                    {
-                                        File = file
-                                    };
+                    //        if (fixits.Diagnostics != null)
+                    //        {
+                    //            foreach (var diag in fixits.Diagnostics)
+                    //            {
+                    //                var fixit = new FixIt
+                    //                {
+                    //                    File = file
+                    //                };
                                     
-                                    foreach (var replacement in diag.Replacements)
-                                    {
-                                        fixit.AddReplacement(new Replacement
-                                        {
-                                            Project = project,
-                                            File = shell.CurrentSolution.FindFile(replacement.FilePath),
-                                            Length = replacement.Length,
-                                            StartOffset = replacement.Offset,
-                                            ReplacementText = replacement.ReplacementText,
-                                            Source = DiagnosticSource.StaticAnalysis
-                                        });
-                                    }
+                    //                foreach (var replacement in diag.Replacements)
+                    //                {
+                    //                    fixit.AddReplacement(new Replacement
+                    //                    {
+                    //                        Project = project,
+                    //                        File = shell.CurrentSolution.FindFile(replacement.FilePath),
+                    //                        Length = replacement.Length,
+                    //                        StartOffset = replacement.Offset,
+                    //                        ReplacementText = replacement.ReplacementText,
+                    //                        Source = DiagnosticSource.StaticAnalysis
+                    //                    });
+                    //                }
 
-                                    errorList.AddFixIt(fixit);
-                                }
-                            }
-                        }
-                    }
-
-
+                    //                errorList.AddFixIt(fixit);
+                    //            }
+                    //        }
+                    //    }
+                    //}
                 }
             });
         }
