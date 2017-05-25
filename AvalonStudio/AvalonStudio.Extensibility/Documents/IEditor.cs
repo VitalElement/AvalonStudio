@@ -1,4 +1,6 @@
+using Avalonia;
 using AvaloniaEdit.Document;
+using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
@@ -13,6 +15,8 @@ namespace AvalonStudio.Documents
         void InstallBackgroundRenderer(IBackgroundRenderer backgroundRenderer);
 
         void InstallVisualLineTransformer(IVisualLineTransformer transformer);
+
+        void InstallMargin(AbstractMargin margin);
 
         void Close();
 
@@ -29,6 +33,8 @@ namespace AvalonStudio.Documents
         void SetDebugHighlight(int line, int startColumn, int endColumn);
 
         void ClearDebugHighlight();
+
+        int GetOffsetFromPoint(Point point);
 
         void GotoOffset(int offset);
 

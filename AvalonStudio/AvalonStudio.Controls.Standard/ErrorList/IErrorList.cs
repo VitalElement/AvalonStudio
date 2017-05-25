@@ -1,3 +1,4 @@
+using AvaloniaEdit.Document;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using System;
@@ -14,12 +15,14 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         void AddFixIt(FixIt fixit);
 
+        void RemoveFixIt(FixIt fixit);
+
         void ClearFixits(Predicate<Diagnostic> predicate);
 
-        ReadOnlyCollection<Diagnostic> FindDiagnosticsAtOffset(ISourceFile file, int offset);
+        IEnumerable<Diagnostic> FindDiagnosticsAtOffset(ISourceFile file, int offset);
+
+        TextSegmentCollection<FixIt> GetFixits(ISourceFile file);
         
         IReadOnlyCollection<ErrorViewModel> Errors { get; }
-
-        IReadOnlyCollection<ErrorViewModel> FixIts { get; }
     }
 }

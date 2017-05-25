@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System;
+using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
@@ -22,18 +23,20 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         {
             public FileAssociation()
             {
-                Diagnostics = new TextSegmentCollection<Diagnostic>();
+                Diagnostics = new List<Diagnostic>();
+                FixIts = new TextSegmentCollection<FixIt>();
+                Replacements = new TextSegmentCollection<Replacement>();
             }
 
-            public TextSegmentCollection<Diagnostic> Diagnostics { get; set; }
+            public List<Diagnostic> Diagnostics { get; set; }
+            public TextSegmentCollection<FixIt> FixIts { get; set; }
+            public TextSegmentCollection<Replacement> Replacements { get; set; }
             public TextMarkerService TextMarkerService { get; set; }
         }
 
         private ObservableCollection<ErrorViewModel> errors;
-        private ObservableCollection<ErrorViewModel> _fixits;
 
         private Dictionary<string, FileAssociation> _fileAssociations;
-        
 
         private ErrorViewModel selectedError;
         private IShell shell;
@@ -42,7 +45,6 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         {
             Title = "Error List";
             errors = new ObservableCollection<ErrorViewModel>();
-            _fixits = new ObservableCollection<ErrorViewModel>();
             _fileAssociations = new Dictionary<string, FileAssociation>();
         }
 
@@ -92,9 +94,12 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         private void AddDiagnostic(Diagnostic diagnostic)
         {
-            if(!_fileAssociations.ContainsKey(diagnostic.File.Location))
+            lock (_fileAssociations)
             {
-                _fileAssociations.Add(diagnostic.File.Location, new FileAssociation());
+                if (!_fileAssociations.ContainsKey(diagnostic.File.Location))
+                {
+                    _fileAssociations.Add(diagnostic.File.Location, new FileAssociation());
+                }
             }
 
             var fileAssociation = _fileAssociations[diagnostic.File.Location];
@@ -102,7 +107,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             fileAssociation.Diagnostics.Add(diagnostic);
             fileAssociation.TextMarkerService?.Create(diagnostic);
 
-            foreach(var child in diagnostic.Children)
+            foreach (var child in diagnostic.Children)
             {
                 AddDiagnostic(child);
             }
@@ -120,11 +125,62 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             var fileAssociation = _fileAssociations[diagnostic.File.Location];
             fileAssociation?.TextMarkerService?.Remove(diagnostic);
             fileAssociation?.Diagnostics.Remove(diagnostic);
-            
+
             foreach (var child in diagnostic.Children)
             {
                 RemoveDiagnostic(child);
             }
+        }
+
+        void IErrorList.AddFixIt(FixIt fixit)
+        {
+            lock (_fileAssociations)
+            {
+                if (!_fileAssociations.ContainsKey(fixit.File.Location))
+                {
+                    _fileAssociations.Add(fixit.File.Location, new FileAssociation());
+                }
+            }
+
+            var fileAssociation = _fileAssociations[fixit.File.Location];
+
+            fileAssociation.FixIts.Add(fixit);
+
+            foreach(var replacement in fixit.Replacements)
+            {
+                fileAssociation.Replacements.Add(replacement);
+            }
+        }
+
+        void IErrorList.RemoveFixIt(FixIt fixit)
+        {
+            var fileAssociation = _fileAssociations[fixit.File.Location];
+
+            fileAssociation.FixIts.Remove(fixit);
+
+            foreach(var replacement in fixit.Replacements)
+            {
+                fileAssociation.Replacements.Remove(replacement);
+            }
+
+            var diagnostics = fileAssociation.TextMarkerService.FindDiagnosticsAtOffset(fixit.StartOffset, true);
+
+            foreach (var diagnostic in diagnostics)
+            {
+                RemoveDiagnostic(Errors.FirstOrDefault(e => e.Model == diagnostic));
+            }
+        }
+
+        void IErrorList.ClearFixits(Predicate<Diagnostic> predicate)
+        {
+            // FixIts.RemoveMatching(vm => predicate(vm));
+        }
+
+        public TextSegmentCollection<FixIt> GetFixits(ISourceFile file)
+        {
+            var fileAssociation = _fileAssociations[file.Location];
+
+            return fileAssociation.FixIts;
         }
 
         public ObservableCollection<ErrorViewModel> Errors
@@ -133,15 +189,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             set { this.RaiseAndSetIfChanged(ref errors, value); }
         }
 
-        public ObservableCollection<ErrorViewModel> FixIts
-        {
-            get { return _fixits; }
-            set { this.RaiseAndSetIfChanged(ref _fixits, value); }
-        }
-
         IReadOnlyCollection<ErrorViewModel> IErrorList.Errors => Errors;
-
-        IReadOnlyCollection<ErrorViewModel> IErrorList.FixIts => FixIts;
 
         public void BeforeActivation()
         {
@@ -165,43 +213,48 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         private void Shell_FileOpened(object sender, FileOpenedEventArgs e)
         {
-            if (!_fileAssociations.ContainsKey(e.File.Location))
+            lock (_fileAssociations)
             {
-                _fileAssociations.Add(e.File.Location, new FileAssociation());
+                if (!_fileAssociations.ContainsKey(e.File.Location))
+                {
+                    _fileAssociations.Add(e.File.Location, new FileAssociation());
+                }
             }
 
             var fileAssociation = _fileAssociations[e.File.Location];
 
-            if(fileAssociation.TextMarkerService == null)
+            if (fileAssociation.TextMarkerService == null)
             {
                 fileAssociation.TextMarkerService = new TextMarkerService(e.Editor.GetDocument());
             }
 
             var currentService = fileAssociation.TextMarkerService;
-            
+
             foreach (var error in fileAssociation.Diagnostics)
             {
                 currentService.Create(error);
             }
 
             e.Editor.InstallBackgroundRenderer(currentService);
+
+            e.Editor.InstallMargin(new QuickActionsMargin(e.Editor, this, e.File));
+
+            var document = e.Editor.GetDocument();
+
+            TextDocumentWeakEventManager.Changed.AddHandler(document, OnDocumentChanged);
         }
 
-        public ReadOnlyCollection<Diagnostic> FindDiagnosticsAtOffset(ISourceFile file, int offset)
+        private void OnDocumentChanged(object sender, DocumentChangeEventArgs e)
         {
-            var fileAssociation = _fileAssociations[file.Location];
+            var fileAssociation = _fileAssociations[(sender as TextDocument).FileName];
 
-            return fileAssociation.Diagnostics.FindSegmentsContaining(offset);
+            fileAssociation.FixIts.UpdateOffsets(e);
+            fileAssociation.Replacements.UpdateOffsets(e);
         }
 
-        void IErrorList.AddFixIt(FixIt fixit)
+        public IEnumerable<Diagnostic> FindDiagnosticsAtOffset(ISourceFile file, int offset)
         {
-            FixIts.Add(new ErrorViewModel(fixit));
-        }
-
-        void IErrorList.ClearFixits(Predicate<Diagnostic> predicate)
-        {
-            FixIts.RemoveMatching(vm => predicate(vm.Model));
+            return _fileAssociations[file.Location]?.TextMarkerService?.FindDiagnosticsAtOffset(offset);
         }
     }
 }

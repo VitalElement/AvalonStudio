@@ -76,7 +76,14 @@ namespace AvalonStudio.Projects.CPlusPlus
                     console.WriteLine($"Running analysis on: {file.Location}");
 
                     var args = GetCompilerArguments(masterProject, project, file);
-                    PlatformSupport.ExecuteShellCommand(ClangCheckCommand, $"{file.Location} -checks=* -export-fixes={Platform.GetCodeAnalysisFile(file)}  -- {args} -D__STDC__", (s, e) =>
+
+                    string disabledChecks = "";
+                    if(file.Extension == ".c")
+                    {
+                        disabledChecks += ",-misc-unused-parameters";
+                    }
+
+                    PlatformSupport.ExecuteShellCommand(ClangCheckCommand, $"-checks=-*,clang-analyzer-* {file.Location} -- {args} -D__STDC__", (s, e) =>
                     {
                         console.WriteLine(e.Data);
 
@@ -174,20 +181,25 @@ namespace AvalonStudio.Projects.CPlusPlus
                             {
                                 foreach (var diag in fixits.Diagnostics)
                                 {
+                                    var fixit = new FixIt
+                                    {
+                                        File = file
+                                    };
+                                    
                                     foreach (var replacement in diag.Replacements)
                                     {
-                                        var fixit = new FixIt
+                                        fixit.AddReplacement(new Replacement
                                         {
                                             Project = project,
-                                            File = file,
+                                            File = shell.CurrentSolution.FindFile(replacement.FilePath),
                                             Length = replacement.Length,
                                             StartOffset = replacement.Offset,
                                             ReplacementText = replacement.ReplacementText,
                                             Source = DiagnosticSource.StaticAnalysis
-                                        };
-
-                                        errorList.AddFixIt(fixit);
+                                        });
                                     }
+
+                                    errorList.AddFixIt(fixit);
                                 }
                             }
                         }

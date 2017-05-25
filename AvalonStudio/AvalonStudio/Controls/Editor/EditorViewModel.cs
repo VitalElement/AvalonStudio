@@ -22,6 +22,7 @@ using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Controls.Standard.ErrorList;
 using System.Linq;
 using System.Collections.Generic;
+using AvaloniaEdit.Editing;
 
 namespace AvalonStudio.Controls
 {
@@ -419,6 +420,16 @@ namespace AvalonStudio.Controls
         public TextDocument GetDocument()
         {
             return _editor.GetDocument();
+        }
+
+        public void InstallMargin(AbstractMargin margin)
+        {
+            _editor.InstallMargin(margin);
+        }
+
+        public int GetOffsetFromPoint(Point point)
+        {
+            return _editor.GetOffsetFromPoint(point);
         }
 
         #endregion Public Methods

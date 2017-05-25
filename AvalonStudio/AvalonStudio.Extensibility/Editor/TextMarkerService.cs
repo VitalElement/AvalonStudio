@@ -5,6 +5,7 @@ using AvaloniaEdit.Rendering;
 using AvalonStudio.Languages;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace AvalonStudio.Extensibility.Editor
@@ -122,10 +123,16 @@ namespace AvalonStudio.Extensibility.Editor
 
             if(diagnostic.Length == 0)
             {
-                diagnostic.Length = _document.GetLineByNumber(diagnostic.Line).EndOffset - diagnostic.StartOffset;
+                var maxLength = _document.GetLineByNumber(diagnostic.Line).EndOffset - diagnostic.StartOffset;
+                diagnostic.Length = 3;
+
+                if(diagnostic.Length > maxLength)
+                {
+                    diagnostic.Length = maxLength;
+                }
             }
 
-            var m = new TextMarker(diagnostic.StartOffset, diagnostic.Length);
+            var m = new TextMarker(diagnostic, diagnostic.StartOffset, diagnostic.Length);
             markers.Add(m);
             m.MarkerColor = markerColor;
             m.ToolTip = diagnostic.Spelling;
@@ -146,15 +153,36 @@ namespace AvalonStudio.Extensibility.Editor
 
         public sealed class TextMarker : TextSegment
         {
-            public TextMarker(int startOffset, int length)
+            public TextMarker(object owner, int startOffset, int length)
             {
                 StartOffset = startOffset;
                 Length = length;
+                Owner = owner;
             }
 
             public Color? BackgroundColor { get; set; }
             public Color MarkerColor { get; set; }
             public string ToolTip { get; set; }
+            public object Owner { get; }
+        }
+
+        public IEnumerable<Diagnostic> FindDiagnosticsAtOffset(int offset, bool offsetIsLineOffset = false)
+        {
+            if (offsetIsLineOffset)
+            {
+                var line = _document.GetLineByOffset(offset);
+
+                return markers.FindOverlappingSegments(line).Select(m => (m.Owner as Diagnostic));
+            }
+            else
+            {
+                return markers.FindSegmentsContaining(offset).Select(m => (m.Owner as Diagnostic));
+            }
+        }
+
+        public IEnumerable<Diagnostic> FindOverlappingDiagnostics (int offset, int length)
+        {
+            return markers.FindOverlappingSegments(offset, length).Select(m => (m.Owner as Diagnostic));
         }
     }
 }

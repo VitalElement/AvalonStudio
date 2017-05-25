@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using AvalonStudio.Languages;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Document;
+using AvaloniaEdit.Editing;
 
 namespace AvalonStudio.Controls
 {
@@ -161,6 +162,16 @@ namespace AvalonStudio.Controls
         public TextDocument GetDocument()
         {
             return _editor.Document;
+        }
+
+        public void InstallMargin(AbstractMargin margin)
+        {
+            _editor.TextArea.LeftMargins.Add(margin);
+        }
+
+        public int GetOffsetFromPoint(Point point)
+        {
+            return _editor.GetOffsetFromPoint(point);
         }
     }
 }

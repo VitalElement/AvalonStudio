@@ -641,7 +641,9 @@ namespace AvalonStudio.Projects.CPlusPlus
                 reference.VisitSourceFilesImpl(visited, mainProject, visitor);
             }
 
-            foreach (var file in SourceFiles)
+            var sourceFiles = SourceFiles.ToList();
+
+            foreach (var file in sourceFiles)
             {
                 var current = visited.BinarySearch<string, string>(file.Location);
 

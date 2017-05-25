@@ -1,6 +1,9 @@
 using AvalonStudio.Projects;
 using AvaloniaEdit.Document;
 using System.Collections.Generic;
+using AvalonStudio.Shell;
+using AvalonStudio.Extensibility;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages
 {
@@ -41,7 +44,7 @@ namespace AvalonStudio.Languages
         public List<Diagnostic> Children { get; set; }
     }
 
-    public class FixIt : Diagnostic
+    public class Replacement : Diagnostic
     {
         public string ReplacementText { get; set; }
     }
