@@ -121,9 +121,17 @@ namespace AvalonStudio.Extensibility.Editor
                 diagnostic.StartOffset = _document.GetOffset(diagnostic.Line, diagnostic.Column);
             }
 
-            if(diagnostic.Length == 0)
+            if(diagnostic.Length == 0 && _document.TextLength >= diagnostic.StartOffset)
             {
-                var maxLength = _document.GetLineByNumber(diagnostic.Line).EndOffset - diagnostic.StartOffset;
+                var line = _document.GetLineByOffset(diagnostic.StartOffset);
+                var endOffset = line.EndOffset;
+                var maxLength = endOffset - diagnostic.StartOffset;
+
+                if(maxLength <= 0)
+                {
+                    maxLength = 1;
+                }
+
                 diagnostic.Length = 3;
 
                 if(diagnostic.Length > maxLength)

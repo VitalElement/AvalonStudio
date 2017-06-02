@@ -69,7 +69,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            if (_line > 0 && _line < textView.Document.LineCount)
+            if (_line > 0 && _line <= textView.Document.LineCount)
             {
                 var currentLine = textView.Document.GetLineByNumber(_line);
 
