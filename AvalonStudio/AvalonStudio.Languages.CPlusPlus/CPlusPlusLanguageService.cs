@@ -1139,9 +1139,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             foreach (var unsavedFile in unsavedFiles)
             {
-                if (Platform.CompareFilePath(unsavedFile.FileName, buffer.FileName) != 0)
+                if (unsavedFile != null)
                 {
-                    clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+                    if (Platform.CompareFilePath(unsavedFile.FileName, buffer.FileName) != 0)
+                    {
+                        clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+                    }
                 }
             }
 
