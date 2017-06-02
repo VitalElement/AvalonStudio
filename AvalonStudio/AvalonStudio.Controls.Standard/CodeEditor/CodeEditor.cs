@@ -478,25 +478,28 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             UnsavedFile unsavedFile = null;
 
-            lock (UnsavedFiles)
-            {
-                unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
-            }
-
-            if (unsavedFile != null)
+            if (SourceFile != null)
             {
                 lock (UnsavedFiles)
                 {
-                    UnsavedFiles.Remove(unsavedFile);
+                    unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
                 }
-            }
 
-            if (LanguageService != null)
-            {
-                LanguageService.UnregisterSourceFile(this, SourceFile);
-            }
+                if (unsavedFile != null)
+                {
+                    lock (UnsavedFiles)
+                    {
+                        UnsavedFiles.Remove(unsavedFile);
+                    }
+                }
 
-            Document.TextChanged -= TextDocument_TextChanged;
+                if (LanguageService != null)
+                {
+                    LanguageService.UnregisterSourceFile(this, SourceFile);
+                }
+
+                Document.TextChanged -= TextDocument_TextChanged;
+            }
         }
 
         private void TextDocument_TextChanged(object sender, EventArgs e)
@@ -695,7 +698,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
-            if (startColumn == -1 && endColumn == -1)
+            if (startColumn == -1 && endColumn == -1 && line <= Document.LineCount)
             {
                 var docLine = Document.GetLineByNumber(line);
 
