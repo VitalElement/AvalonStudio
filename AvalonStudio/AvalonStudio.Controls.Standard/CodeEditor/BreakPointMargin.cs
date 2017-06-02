@@ -32,7 +32,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             context.FillRectangle(Brush.Parse("#333333"), Bounds);
 
-            if (TextView.VisualLines.Count > 0)
+            if (TextView.VisualLinesValid && TextView.VisualLines.Count > 0)
             {
                 var firstLine = TextView.VisualLines.FirstOrDefault();
                 var height = firstLine.Height;
