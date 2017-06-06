@@ -377,80 +377,87 @@ namespace AvalonStudio
 
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
         {
-            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile.CompareTo(file.FilePath) == 0);
-
-            var selectedDocumentTCS = new TaskCompletionSource<IDocumentTabViewModel>();
-
-            bool created = false;
-
-            if (currentTab == null)
+            try
             {
-                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile.CompareTo(file.FilePath) == 0);
+
+                var selectedDocumentTCS = new TaskCompletionSource<IDocumentTabViewModel>();
+
+                bool created = false;
+
+                if (currentTab == null)
                 {
-                    if (DocumentTabs.TemporaryDocument != null)
+                    await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                     {
-                        var documentToClose = DocumentTabs.TemporaryDocument;
+                        if (DocumentTabs.TemporaryDocument != null)
+                        {
+                            var documentToClose = DocumentTabs.TemporaryDocument;
 
-                        DocumentTabs.TemporaryDocument = null;
+                            DocumentTabs.TemporaryDocument = null;
 
-                        await documentToClose.CloseCommand.ExecuteAsyncTask(null);
+                            await documentToClose.CloseCommand.ExecuteAsyncTask(null);
 
-                        SelectedDocument = null;
-                    }
-                });
+                            SelectedDocument = null;
+                        }
+                    });
 
-                EditorViewModel newEditor = null;
+                    EditorViewModel newEditor = null;
 
-                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
-                {
-                    newEditor = new EditorViewModel();
+                    await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                    {
+                        newEditor = new EditorViewModel();
                     /*newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager2>().Breakpoints));
                     newEditor.Margins.Add(new LineNumberMargin());*/
 
-                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
-                    {
-                        DocumentTabs.Documents.Add(newEditor);
-                        DocumentTabs.TemporaryDocument = newEditor;
+                        await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                        {
+                            DocumentTabs.Documents.Add(newEditor);
+                            DocumentTabs.TemporaryDocument = newEditor;
+                        });
+
+                        DocumentTabs.SelectedDocument = newEditor;
+
+                        await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.OpenFile(file); });
+
+                        created = true;
+
+                        selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
                     });
-
-                    DocumentTabs.SelectedDocument = newEditor;
-
-                   await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.OpenFile(file); });
-
-                    created = true;
+                }
+                else
+                {
+                    await Dispatcher.UIThread.InvokeTaskAsync(() => { DocumentTabs.SelectedDocument = currentTab; });
 
                     selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
-                });
-            }
-            else
-            {
-                await Dispatcher.UIThread.InvokeTaskAsync(() => { DocumentTabs.SelectedDocument = currentTab; });
-
-                selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
-            }
-
-            await selectedDocumentTCS.Task;
-
-            if (DocumentTabs.SelectedDocument is IEditor)
-            {
-                if (debugHighlight)
-                {
-                    (DocumentTabs.SelectedDocument as IEditor).SetDebugHighlight(line, startColumn, endColumn);
                 }
 
-                if (selectLine || debugHighlight)
+                await selectedDocumentTCS.Task;
+
+                if (DocumentTabs.SelectedDocument is IEditor)
                 {
-                   // Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).ScrollToLine(line));
-                    (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                    if (debugHighlight)
+                    {
+                        (DocumentTabs.SelectedDocument as IEditor).SetDebugHighlight(line, startColumn, endColumn);
+                    }
+
+                    if (selectLine || debugHighlight)
+                    {
+                        // Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).ScrollToLine(line));
+                        (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                    }
                 }
-            }
 
-            if (created)
+                if (created)
+                {
+                    FileOpened?.Invoke(this, new FileOpenedEventArgs { Editor = (DocumentTabs.SelectedDocument as IEditor), File = file });
+                }
+
+                return DocumentTabs.SelectedDocument as IEditor;
+            }
+            catch (Exception e)
             {
-                FileOpened?.Invoke(this, new FileOpenedEventArgs { Editor = (DocumentTabs.SelectedDocument as IEditor), File = file });
+                return null;
             }
-
-            return DocumentTabs.SelectedDocument as IEditor;
         }
 
         public IEditor GetDocument(string path)

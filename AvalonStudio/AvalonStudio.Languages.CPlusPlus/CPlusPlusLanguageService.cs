@@ -620,19 +620,23 @@ namespace AvalonStudio.Languages.CPlusPlus
             await clangAccessJobRunner.InvokeAsync(() =>
             {
                 var tu = associatedData.TranslationUnit;
-                var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.FilePath), offset));
 
-                switch (cursor.Kind)
+                if (tu != null)
                 {
-                    case NClang.CursorKind.MemberReferenceExpression:
-                    case NClang.CursorKind.DeclarationReferenceExpression:
-                    case NClang.CursorKind.CallExpression:
-                    case NClang.CursorKind.TypeReference:
-                        cursor = cursor.Referenced;
-                        break;
-                }
+                    var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.FilePath), offset));
 
-                result = SymbolFromClangCursor(cursor);
+                    switch (cursor.Kind)
+                    {
+                        case NClang.CursorKind.MemberReferenceExpression:
+                        case NClang.CursorKind.DeclarationReferenceExpression:
+                        case NClang.CursorKind.CallExpression:
+                        case NClang.CursorKind.TypeReference:
+                            cursor = cursor.Referenced;
+                            break;
+                    }
+
+                    result = SymbolFromClangCursor(cursor);
+                }
             });
 
             return result;
