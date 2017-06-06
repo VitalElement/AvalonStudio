@@ -50,9 +50,9 @@ namespace AvalonStudio.Toolchains
 
                     if (!string.IsNullOrEmpty(line))
                     {
-                        if (!line.EndsWith(":") && !line.EndsWith(": \\"))
+                        if (line.EndsWith(":"))
                         {
-                            result.Add(line.Replace(" \\", string.Empty).Trim());
+                            result.Add(line.Remove(line.Length - 1).Replace(" \\", string.Empty).Trim());
                         }
                     }
                 }
