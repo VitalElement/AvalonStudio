@@ -9,6 +9,7 @@ namespace AvalonStudio.Extensibility.Utils
     public class AppDomain
     {
         public static AppDomain CurrentDomain { get; private set; }
+        private static Assembly[] s_assemblies;
 
         static AppDomain()
         {
@@ -17,27 +18,32 @@ namespace AvalonStudio.Extensibility.Utils
 
         public Assembly[] GetAssemblies()
         {
-            var assemblies = new List<Assembly>();
-
-            var compileDependencies = DependencyContext.Default.CompileLibraries;
-
-            foreach (var library in compileDependencies)
+            if (s_assemblies == null)
             {
-                if (IsCandidateCompilationLibrary(library))
-                {
-                    try
-                    {
-                        var assembly = Assembly.Load(new AssemblyName(library.Name));
-                        assemblies.Add(assembly);
-                    }
-                    catch(Exception)
-                    {
+                var assemblies = new List<Assembly>();
 
+                var compileDependencies = DependencyContext.Default.CompileLibraries;
+
+                foreach (var library in compileDependencies)
+                {
+                    if (IsCandidateCompilationLibrary(library))
+                    {
+                        try
+                        {
+                            var assembly = Assembly.Load(new AssemblyName(library.Name));
+                            assemblies.Add(assembly);
+                        }
+                        catch (Exception)
+                        {
+
+                        }
                     }
                 }
+
+                s_assemblies = assemblies.ToArray();
             }
 
-            return assemblies.ToArray();
+            return s_assemblies;
         }
 
         private static bool IsCandidateCompilationLibrary(Library compilationLibrary)
