@@ -48,24 +48,27 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         {
             context.FillRectangle(Brush.Parse("#333333"), Bounds);
 
-            if (TextView.VisualLines.Count > 0)
+            if (TextView.VisualLinesValid)
             {
-                var firstLine = TextView.VisualLines.FirstOrDefault();
-                var height = firstLine.Height;
-                Width = height;
-                var textView = TextView;
-
-                foreach (var visualLine in TextView.VisualLines)
+                if (TextView.VisualLines.Count > 0)
                 {
-                    var fixits = _errorList.GetFixits(_file);
+                    var firstLine = TextView.VisualLines.FirstOrDefault();
+                    var height = firstLine.Height;
+                    Width = height;
+                    var textView = TextView;
 
-                    var match = fixits.FindOverlappingSegments(visualLine.FirstDocumentLine).FirstOrDefault();
-
-                    if (match != null)
+                    foreach (var visualLine in TextView.VisualLines)
                     {
-                        context.DrawImage(_bulbIcon, 1, new Rect(0, 0, _bulbIcon.PixelWidth, _bulbIcon.PixelHeight), new Rect(-5,
-                                visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], AvaloniaEdit.Rendering.VisualYPosition.LineTop) - TextView.VerticalOffset,
-                               Bounds.Width, height));
+                        var fixits = _errorList.GetFixits(_file);
+
+                        var match = fixits.FindOverlappingSegments(visualLine.FirstDocumentLine).FirstOrDefault();
+
+                        if (match != null)
+                        {
+                            context.DrawImage(_bulbIcon, 1, new Rect(0, 0, _bulbIcon.PixelWidth, _bulbIcon.PixelHeight), new Rect(-5,
+                                    visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], AvaloniaEdit.Rendering.VisualYPosition.LineTop) - TextView.VerticalOffset,
+                                   Bounds.Width, height));
+                        }
                     }
                 }
             }
