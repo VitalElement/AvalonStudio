@@ -5,9 +5,11 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,6 +38,25 @@ namespace AvalonStudio.Toolchains.Standard
 
         public abstract bool ValidateToolchainExecutables(IConsole console);
 
+        private string ExpandEnvironmentVariables(IDictionary environmentVars, string input)
+        {
+            var regex = @"\$\(([^)]+)\)";
+
+            input = Regex.Replace(input, regex, match =>
+            {
+                var result = match.Value;
+
+                if (environmentVars.Contains(match.Groups[1].Value))
+                {
+                    result = match.Result(environmentVars[match.Groups[1].Value] as string);
+                }
+
+                return result;
+            });
+
+            return input;
+        }
+
         private bool ExecuteCommands(IConsole console, IProject project, IList<string> commands)
         {
             bool result = true;
@@ -59,6 +80,25 @@ namespace AvalonStudio.Toolchains.Standard
 
         private int ExecuteCommand(IConsole console, IProject project, string command, string args)
         {
+            var environment = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User);
+            environment.Add("TargetPath", project.Executable);
+            environment.Add("OutDir", Path.GetDirectoryName(project.Executable));
+            environment.Add("ProjectName", project.Name);
+            environment.Add("ProjectPath", project.Location);
+            environment.Add("ProjectFilName", Path.GetFileName(project.Location));
+            environment.Add("TargetExt", Path.GetExtension(project.Executable));
+            environment.Add("TargetFileName", Path.GetFileName(project.Executable));
+            environment.Add("DevEnvDir", project.ToolChain.BinDirectory);
+            environment.Add("TargetDir", Path.GetDirectoryName(project.Executable));
+            environment.Add("ProjectDir", Path.GetDirectoryName(project.Location));
+            environment.Add("SolutionFileName", Path.GetFileName(project.Solution.Location));
+            environment.Add("SolutionPath", project.Solution.Location);
+            environment.Add("SolutionDir", Path.GetDirectoryName(project.Solution.Location));
+            environment.Add("SolutionName", project.Solution.Name);
+
+            command = ExpandEnvironmentVariables(environment, command);
+            args = ExpandEnvironmentVariables(environment, args);
+
             console.WriteLine($"[CMD] {command} {args}");
 
             var exitCode = PlatformSupport.ExecuteShellCommand(command, args, (s, e) =>
