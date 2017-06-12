@@ -25,18 +25,32 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         public string PreBuildCommands
         {
-            get { return _preBuildCommands; }
-            set { this.RaiseAndSetIfChanged(ref _preBuildCommands, value); Save(); }
+            get
+            {
+                return _preBuildCommands;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _preBuildCommands, value);
+                Save();
+            }
         }
 
         private string _postBuildCommands;
 
         public string PostBuildCommands
         {
-            get { return _postBuildCommands; }
-            set { this.RaiseAndSetIfChanged(ref _postBuildCommands, value); Save(); }
+            get
+            {
+                return _postBuildCommands;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _postBuildCommands, value);
+                Save();
+            }
         }
-        
+
         public void Save()
         {
             _settings.PreBuildCommands = PreBuildCommands;

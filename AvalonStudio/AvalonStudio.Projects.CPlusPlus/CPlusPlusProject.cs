@@ -70,7 +70,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         [JsonProperty(PropertyName = "Toolchain")]
         public string ToolchainReference { get; set; }
 
-        public string ToolchainVersion {get; set;}
+        public string ToolchainVersion { get; set; }
 
         [JsonProperty(PropertyName = "Debugger")]
         public string DebuggerReference { get; set; }
@@ -419,7 +419,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 var result = new List<string>();
 
-                if(!string.IsNullOrEmpty(settings.PreBuildCommands))
+                if (!string.IsNullOrEmpty(settings.PreBuildCommands))
                 {
                     result.AddRange(settings.PreBuildCommands.Split(Environment.NewLine));
                 }

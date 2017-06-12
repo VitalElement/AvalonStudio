@@ -55,8 +55,9 @@ namespace AvalonStudio.Projects.Standard
         IList<string> GetReferencedDefines();
 
         IList<string> GetGlobalDefines();
-        IList<string> PreBuildCommands { get; }
-        IList<string> PostBuildCommands { get; }
 
+        IList<string> PreBuildCommands { get; }
+
+        IList<string> PostBuildCommands { get; }
     }
 }

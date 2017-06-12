@@ -4,7 +4,6 @@
     {
         public BuildEventsSettings()
         {
-
         }
 
         public string PreBuildCommands { get; set; }
