@@ -69,7 +69,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         [JsonProperty(PropertyName = "Toolchain")]
         public string ToolchainReference { get; set; }
 
-        public string ToolchainVersion {get; set;}
+        public string ToolchainVersion { get; set; }
 
         [JsonProperty(PropertyName = "Debugger")]
         public string DebuggerReference { get; set; }
@@ -140,7 +140,7 @@ namespace AvalonStudio.Projects.CPlusPlus
                 }
                 else
                 {
-                    Console.WriteLine("Implement placeholder reference here.");
+                    AddReference(new UnresolvedReference(Solution, Path.Combine(Solution.Location, reference.Name)));
                 }
             }
         }
@@ -153,7 +153,10 @@ namespace AvalonStudio.Projects.CPlusPlus
             {
                 var standardReference = reference as CPlusPlusProject;
 
-                result.AddRange(standardReference.GenerateReferencedIncludes());
+                if (standardReference != null)
+                {
+                    result.AddRange(standardReference.GenerateReferencedIncludes());
+                }
             }
 
             return result;
@@ -167,7 +170,10 @@ namespace AvalonStudio.Projects.CPlusPlus
             {
                 var standardReference = reference as CPlusPlusProject;
 
-                result.AddRange(standardReference.GenerateReferencedDefines());
+                if (standardReference != null)
+                {
+                    result.AddRange(standardReference.GenerateReferencedDefines());
+                }
             }
 
             return result;
@@ -181,7 +187,10 @@ namespace AvalonStudio.Projects.CPlusPlus
             {
                 var standardReference = reference as CPlusPlusProject;
 
-                result.AddRange(standardReference.GetGlobalIncludes());
+                if (standardReference != null)
+                {
+                    result.AddRange(standardReference.GetGlobalIncludes());
+                }
             }
 
             foreach (var include in Includes.Where(i => i.Global))
@@ -200,7 +209,10 @@ namespace AvalonStudio.Projects.CPlusPlus
             {
                 var standardReference = reference as CPlusPlusProject;
 
-                result.AddRange(standardReference.GetGlobalDefines());
+                if (standardReference != null)
+                {
+                    result.AddRange(standardReference.GetGlobalDefines());
+                }
             }
 
             foreach (var define in Defines.Where(i => i.Global))
@@ -468,13 +480,10 @@ namespace AvalonStudio.Projects.CPlusPlus
             {
                 var loadedReference = reference as CPlusPlusProject;
 
-                if (loadedReference == null)
+                if (loadedReference != null)
                 {
-                    // What to do in this situation?
-                    throw new NotImplementedException();
+                    result.AddRange(loadedReference.GenerateReferencedIncludes());
                 }
-
-                result.AddRange(loadedReference.GenerateReferencedIncludes());
             }
 
             foreach (var includePath in Includes.Where(i => i.Exported && !i.Global))
@@ -500,13 +509,10 @@ namespace AvalonStudio.Projects.CPlusPlus
             {
                 var loadedReference = reference as CPlusPlusProject;
 
-                if (loadedReference == null)
+                if (loadedReference != null)
                 {
-                    // What to do in this situation?
-                    throw new NotImplementedException();
+                    result.AddRange(loadedReference.GenerateReferencedDefines());
                 }
-
-                result.AddRange(loadedReference.GenerateReferencedDefines());
             }
 
             foreach (var define in Defines.Where(i => i.Exported && !i.Global))
