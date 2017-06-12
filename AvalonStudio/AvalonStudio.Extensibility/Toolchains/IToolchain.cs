@@ -17,5 +17,7 @@ namespace AvalonStudio.Toolchains
         IList<object> GetConfigurationPages(IProject project);
 
         bool CanHandle(IProject project);
+
+        string BinDirectory { get; }
     }
 }
