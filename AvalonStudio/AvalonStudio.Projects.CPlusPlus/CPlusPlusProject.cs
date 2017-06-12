@@ -410,6 +410,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         public override bool Hidden { get; set; }
 
+        [JsonIgnore]
         public IList<string> PreBuildCommands
         {
             get
@@ -427,6 +428,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             }
         }
 
+        [JsonIgnore]
         public IList<string> PostBuildCommands
         {
             get
