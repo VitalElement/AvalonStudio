@@ -280,7 +280,7 @@ Task("Zip-NetCore")
 
 Task("Generate-NuGetPackages")
 .IsDependentOn("Publish-NetCore")
-.WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor) || isLocalBuild))
+.WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor && !isPullRequest) || isLocalBuild))
 .Does(()=>{
     foreach(var rid in avalonBuildRIDs)
     {
