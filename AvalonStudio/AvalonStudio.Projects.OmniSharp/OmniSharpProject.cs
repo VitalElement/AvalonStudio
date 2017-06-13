@@ -69,8 +69,6 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override dynamic DebugSettings { get; set; }
 
-        public override dynamic Settings { get; set; }
-
         public override string Executable { get; set; }
 
         public override string Extension
