@@ -4,7 +4,7 @@
 
 #addin "Cake.FileHelpers"
 #addin "Cake.Docker"
-#addin "nuget:?package=NuGet.Core&version=2.12.0"
+#addin "nuget:?package=NuGet.Core&version=2.14.0"
 
 //////////////////////////////////////////////////////////////////////
 // TOOLS
