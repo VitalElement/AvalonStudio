@@ -320,24 +320,28 @@ Task("Publish-AppVeyorNuget")
 
 Task("Build-Docker-Image")
     .IsDependentOn("Publish-NetCore")
-    .WithCriteria(()=>(isMasterBranch && isRunningOnAppVeyor) || isLocalBuild)
+    .WithCriteria(()=>(isMasterBranch && !isRunningOnAppVeyor) || isLocalBuild)
     .Does(()=>
 {
-    var dockerContextPath = zipRootDir.Combine("AvalonStudioBuild-ubuntu.16.10-x64");
+    CreateDirectory("/docker");
+
+    var dockerContextPath = "/docker";
+
     CopyFile("./AvalonStudio/AvalonStudioBuild/Dockerfile", dockerContextPath.CombineWithFilePath("Dockerfile"));
+
     DockerBuild(new DockerBuildSettings
     {
         Tag = new string[] { "vitalelement/avalonbuild:latest" },
-        Pull = true,
     },
+
     dockerContextPath.ToString());
 });
 
 Task("Publish-Docker-Image")
-    .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor)
+    .WithCriteria(()=>isMasterBranch && !isRunningOnAppVeyo)
     .Does(()=>
 {
-    DockerLogin( EnvironmentVariable("DOCKER_USER_NAME"),  EnvironmentVariable("DOCKER_PASSWORD"), "https://hub.docker.com");
+    DockerLogin(EnvironmentVariable("DOCKER_USER_NAME"),  EnvironmentVariable("DOCKER_PASSWORD"), "https://hub.docker.com");
     Information("Logged In");
     DockerPush("vitalelement/avalonbuild");
 
@@ -351,6 +355,7 @@ Task("Default")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Zip-NetCore")
     .IsDependentOn("Generate-NuGetPackages")
-    .IsDependentOn("Publish-AppVeyorNuget");
+    .IsDependentOn("Publish-AppVeyorNuget")
+    .IsDependentOn("Build-Docker-Image");
 
 RunTarget(target);

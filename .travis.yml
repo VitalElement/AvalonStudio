@@ -4,6 +4,9 @@ os:
   - linux
 dist: trusty
 
+services:
+  - docker
+
 script:
   - ./install-latest-dotnet.sh
   - ./build.sh --configuration "Release"
