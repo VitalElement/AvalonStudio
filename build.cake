@@ -231,7 +231,7 @@ Task("Run-Net-Core-Unit-Tests")
 
 Task("Publish-NetCore")
     .IsDependentOn("Restore-NetCore")    
-    .WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor) || isLocalBuild))
+    .WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor  && !isPullRequest) || isLocalBuild))
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -263,7 +263,7 @@ Task("Publish-NetCore")
 
 Task("Zip-NetCore")
     .IsDependentOn("Publish-NetCore")
-    .WithCriteria(()=>isMainRepo && isMasterBranch)
+    .WithCriteria(()=>isMainRepo && isMasterBranch  && !isPullRequest)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -290,7 +290,7 @@ Task("Generate-NuGetPackages")
 
 Task("Publish-AppVeyorNuget")
     .IsDependentOn("Generate-NuGetPackages")        
-    .WithCriteria(()=>(isMainRepo && isMasterBranch && isRunningOnAppVeyor))   
+    .WithCriteria(()=>(isMainRepo && isMasterBranch && isRunningOnAppVeyor && !isPullRequest))   
     .Does(() =>
 {
     var apiKey = EnvironmentVariable("NUGET_API_KEY");
@@ -320,7 +320,7 @@ Task("Publish-AppVeyorNuget")
 
 Task("Build-Docker-Image")
     .IsDependentOn("Publish-NetCore")
-    .WithCriteria(()=>(isMasterBranch && isRunningOnAppVeyor) || isLocalBuild)
+    .WithCriteria(()=>(isMasterBranch && isRunningOnAppVeyor && !isPullRequest) || isLocalBuild)
     .Does(()=>
 {
     var dockerContextPath = zipRootDir.Combine("AvalonStudioBuild-ubuntu.16.10-x64");
@@ -334,7 +334,7 @@ Task("Build-Docker-Image")
 });
 
 Task("Publish-Docker-Image")
-    .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor)
+    .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor && !isPullRequest)
     .Does(()=>
 {
     DockerLogin( EnvironmentVariable("DOCKER_USER_NAME"),  EnvironmentVariable("DOCKER_PASSWORD"), "https://hub.docker.com");
