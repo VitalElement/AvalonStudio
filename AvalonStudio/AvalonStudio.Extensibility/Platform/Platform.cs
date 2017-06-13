@@ -30,7 +30,7 @@ namespace AvalonStudio.Platforms
 
         public static void Chmod(string file, int mode)
         {
-            if(PlatformIdentifier != PlatformID.Win32NT)
+            if (PlatformIdentifier != PlatformID.Win32NT)
             {
                 chmod(file, mode);
             }
@@ -132,7 +132,7 @@ namespace AvalonStudio.Platforms
             }
         }
 
-        public static IDictionary EnvironmentVariables=>Environment.GetEnvironmentVariables();
+        public static IDictionary EnvironmentVariables => Environment.GetEnvironmentVariables();
 
         private const string UserDataDir = ".as";
 

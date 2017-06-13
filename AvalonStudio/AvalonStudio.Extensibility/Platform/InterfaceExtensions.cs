@@ -9,7 +9,7 @@ namespace AvalonStudio.Extensibility.Platform
     {
         public static IDictionary AppendRange(this IDictionary dictionary, IDictionary appendData)
         {
-            foreach(var key in appendData.Keys)
+            foreach (var key in appendData.Keys)
             {
                 if (!dictionary.Contains(key))
                 {
