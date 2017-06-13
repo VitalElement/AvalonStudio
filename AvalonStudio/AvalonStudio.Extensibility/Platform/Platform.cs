@@ -1,8 +1,11 @@
 using AvalonStudio.Projects;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace AvalonStudio.Platforms
@@ -128,6 +131,8 @@ namespace AvalonStudio.Platforms
                 return result;
             }
         }
+
+        public static IDictionary EnvironmentVariables=>Environment.GetEnvironmentVariables();
 
         private const string UserDataDir = ".as";
 

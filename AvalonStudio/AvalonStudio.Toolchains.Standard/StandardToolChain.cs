@@ -1,5 +1,6 @@
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Platform;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -61,21 +62,7 @@ namespace AvalonStudio.Toolchains.Standard
 
         private int ExecuteCommand(IConsole console, IProject project, string command, string args)
         {
-            var environment = Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User);
-            environment.Add("TargetPath", project.Executable);
-            environment.Add("OutDir", Path.GetDirectoryName(project.Executable) + "/");
-            environment.Add("ProjectName", project.Name);
-            environment.Add("ProjectPath", project.Location);
-            environment.Add("ProjectFilName", Path.GetFileName(project.Location));
-            environment.Add("TargetExt", Path.GetExtension(project.Executable));
-            environment.Add("TargetFileName", Path.GetFileName(project.Executable));
-            environment.Add("DevEnvDir", project.ToolChain.BinDirectory);
-            environment.Add("TargetDir", Path.GetDirectoryName(project.Executable) + "/");
-            environment.Add("ProjectDir", Path.GetDirectoryName(project.Location) + "/");
-            environment.Add("SolutionFileName", Path.GetFileName(project.Solution.Location));
-            environment.Add("SolutionPath", project.Solution.Location);
-            environment.Add("SolutionDir", Path.GetDirectoryName(project.Solution.Location) + "/");
-            environment.Add("SolutionName", project.Solution.Name);
+            var environment = project.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
 
             command = command.ExpandVariables(environment);
             args = args.ExpandVariables(environment);
