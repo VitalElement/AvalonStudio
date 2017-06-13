@@ -527,6 +527,7 @@ namespace AvalonStudio.Toolchains.Standard
                                 {
                                     var dependencies = new List<string>();
 
+                                    dependencies.Add(file.Location);
                                     dependencies.AddRange(ProjectExtensions.GetDependencies(dependencyFile));
 
                                     foreach (var dependency in dependencies)

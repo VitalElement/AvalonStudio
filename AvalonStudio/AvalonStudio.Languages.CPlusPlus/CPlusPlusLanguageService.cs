@@ -154,51 +154,54 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         var hint = string.Empty;
 
-                        foreach (var chunk in codeCompletion.CompletionString.Chunks)
+                        if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available || codeCompletion.CompletionString.Availability == AvailabilityKind.Deprecated)
                         {
-                            if (chunk.Kind == CompletionChunkKind.TypedText)
+                            foreach (var chunk in codeCompletion.CompletionString.Chunks)
                             {
-                                typedText = chunk.Text;
+                                if (chunk.Kind == CompletionChunkKind.TypedText)
+                                {
+                                    typedText = chunk.Text;
+                                }
+
+                                hint += chunk.Text;
+
+                                switch (chunk.Kind)
+                                {
+                                    case CompletionChunkKind.LeftParen:
+                                    case CompletionChunkKind.LeftAngle:
+                                    case CompletionChunkKind.LeftBrace:
+                                    case CompletionChunkKind.LeftBracket:
+                                    case CompletionChunkKind.RightAngle:
+                                    case CompletionChunkKind.RightBrace:
+                                    case CompletionChunkKind.RightBracket:
+                                    case CompletionChunkKind.RightParen:
+                                    case CompletionChunkKind.Placeholder:
+                                    case CompletionChunkKind.Comma:
+                                        break;
+
+                                    default:
+                                        hint += " ";
+                                        break;
+                                }
                             }
 
-                            hint += chunk.Text;
-
-                            switch (chunk.Kind)
+                            if (filter == string.Empty || typedText.StartsWith(filter))
                             {
-                                case CompletionChunkKind.LeftParen:
-                                case CompletionChunkKind.LeftAngle:
-                                case CompletionChunkKind.LeftBrace:
-                                case CompletionChunkKind.LeftBracket:
-                                case CompletionChunkKind.RightAngle:
-                                case CompletionChunkKind.RightBrace:
-                                case CompletionChunkKind.RightBracket:
-                                case CompletionChunkKind.RightParen:
-                                case CompletionChunkKind.Placeholder:
-                                case CompletionChunkKind.Comma:
-                                    break;
+                                var completion = new CodeCompletionData
+                                {
+                                    Suggestion = typedText,
+                                    Priority = codeCompletion.CompletionString.Priority,
+                                    Kind = FromClangKind(codeCompletion.CursorKind),
+                                    Hint = hint,
+                                    BriefComment = codeCompletion.CompletionString.BriefComment
+                                };
 
-                                default:
-                                    hint += " ";
-                                    break;
-                            }
-                        }
+                                result.Completions.Add(completion);
 
-                        if (filter == string.Empty || typedText.StartsWith(filter))
-                        {
-                            var completion = new CodeCompletionData
-                            {
-                                Suggestion = typedText,
-                                Priority = codeCompletion.CompletionString.Priority,
-                                Kind = FromClangKind(codeCompletion.CursorKind),
-                                Hint = hint,
-                                BriefComment = codeCompletion.CompletionString.BriefComment
-                            };
-
-                            result.Completions.Add(completion);
-
-                            if (completion.Kind == CodeCompletionKind.OverloadCandidate)
-                            {
-                                Console.WriteLine("TODO Implement overload candidate.");
+                                if (completion.Kind == CodeCompletionKind.OverloadCandidate)
+                                {
+                                    Console.WriteLine("TODO Implement overload candidate.");
+                                }
                             }
                         }
                     }
@@ -608,7 +611,13 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             editor.TextInput -= association.TextInputHandler;
 
-            association.TranslationUnit?.Dispose();
+            var tu = association.TranslationUnit;
+
+            clangAccessJobRunner.InvokeAsync(() =>
+            {
+                tu?.Dispose();
+            });
+
             dataAssociations.Remove(file);
         }
 
