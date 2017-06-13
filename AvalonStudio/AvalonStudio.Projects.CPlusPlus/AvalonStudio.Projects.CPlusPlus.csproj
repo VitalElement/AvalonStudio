@@ -10,6 +10,10 @@
     <Compile Remove="CPlusPlusClassTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="BuildEventsSettingsFormView.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BuildEventsSettingsFormView.xaml" />
     <EmbeddedResource Include="ClassTemplateSettingsView.paml" />
     <EmbeddedResource Include="ComponentSettingsForm.paml" />
     <EmbeddedResource Include="CodeAnalysisSettingsFormView.paml" />

@@ -58,5 +58,9 @@ namespace AvalonStudio.Projects.Standard
         IList<string> GetGlobalDefines();
 
         void VisitSourceFiles(Action<IStandardProject, IStandardProject, ISourceFile> visitor);
+
+        IList<string> PreBuildCommands { get; }
+
+        IList<string> PostBuildCommands { get; }
     }
 }

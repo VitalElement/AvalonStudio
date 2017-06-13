@@ -12,8 +12,6 @@ namespace AvalonStudio.Toolchains.GCC
     {
         public virtual string GDBExecutable => "gdb";
 
-        public abstract string BinDirectory { get; }
-
         public abstract string GetBaseLibraryArguments(IStandardProject superProject);
 
         public virtual string Prefix => string.Empty;

@@ -37,6 +37,8 @@ namespace AvalonStudio.Projects
 
         dynamic ToolchainSettings { get; }
 
+        dynamic Settings { get; }
+
         dynamic DebugSettings { get; }
 
         dynamic Settings { get; }
