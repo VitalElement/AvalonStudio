@@ -167,7 +167,13 @@ namespace AvalonStudio.Toolchains.Standard
                                 if (postBuildCommands.Count > 0)
                                 {
                                     console.WriteLine("Post-Build Commands:");
-                                    ExecuteCommands(console, project, postBuildCommands);
+                                    bool succeess = ExecuteCommands(console, project, postBuildCommands);
+
+                                    if(!succeess)
+                                    {
+                                        result = false;
+                                        break;
+                                    }
                                 }
                             }
 
