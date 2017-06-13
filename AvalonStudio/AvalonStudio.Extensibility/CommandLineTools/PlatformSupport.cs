@@ -70,7 +70,7 @@ namespace AvalonStudio.CommandLineTools
                 {
                     if (extraPath != null)
                     {
-                        shellProc.StartInfo.Environment["PATH"] += $";{extraPath}";
+                        shellProc.StartInfo.Environment["PATH"] += $"{Platform.PathSeperator}{extraPath}";
                     }
                 }
 
