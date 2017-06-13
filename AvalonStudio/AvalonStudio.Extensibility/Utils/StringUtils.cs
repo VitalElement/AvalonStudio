@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,6 +8,31 @@ namespace AvalonStudio.Extensibility
 {
     public static class Ext
     {
+        /// <summary>
+        /// Expands variables in a string that fit the format '$(VarName)'.
+        /// </summary>
+        /// <param name="input">The input string to expand.</param>
+        /// <param name="environmentVars">A dictionary containing variables to expand.</param>
+        /// <returns>The expanded string.</returns>
+        public static string ExpandVariables(this string input, IDictionary environmentVars)
+        {
+            var regex = @"\$\(([^)]+)\)";
+
+            input = Regex.Replace(input, regex, match =>
+            {
+                var result = match.Value;
+
+                if (environmentVars.Contains(match.Groups[1].Value))
+                {
+                    result = match.Result(environmentVars[match.Groups[1].Value] as string);
+                }
+
+                return result;
+            });
+
+            return input;
+        }
+
         public static string StripHTML(this string html)
         {
             Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);

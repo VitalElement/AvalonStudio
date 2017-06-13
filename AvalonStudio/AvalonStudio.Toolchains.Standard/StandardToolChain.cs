@@ -38,25 +38,6 @@ namespace AvalonStudio.Toolchains.Standard
 
         public abstract bool ValidateToolchainExecutables(IConsole console);
 
-        private string ExpandEnvironmentVariables(IDictionary environmentVars, string input)
-        {
-            var regex = @"\$\(([^)]+)\)";
-
-            input = Regex.Replace(input, regex, match =>
-            {
-                var result = match.Value;
-
-                if (environmentVars.Contains(match.Groups[1].Value))
-                {
-                    result = match.Result(environmentVars[match.Groups[1].Value] as string);
-                }
-
-                return result;
-            });
-
-            return input;
-        }
-
         private bool ExecuteCommands(IConsole console, IProject project, IList<string> commands)
         {
             bool result = true;
@@ -96,8 +77,8 @@ namespace AvalonStudio.Toolchains.Standard
             environment.Add("SolutionDir", Path.GetDirectoryName(project.Solution.Location) + "/");
             environment.Add("SolutionName", project.Solution.Name);
 
-            command = ExpandEnvironmentVariables(environment, command);
-            args = ExpandEnvironmentVariables(environment, args);
+            command = command.ExpandVariables(environment);
+            args = args.ExpandVariables(environment);
 
             console.WriteLine($"[CMD] {command} {args}");
 
