@@ -87,5 +87,20 @@ namespace AvalonStudio.Projects
         {
             SetSettings<T>(project, value, () => project.DebugSettings);
         }
+
+        private static T ProvisionGenericSettings<T>(this IProject project) where T : new()
+        {
+            return ProvisionSettings<T>(project, () => project.Settings);
+        }
+
+        public static T GetGenericSettings<T>(this IProject project) where T : new()
+        {
+            return GetSettings<T>(project, () => project.Settings);
+        }
+
+        public static void SetGenericSettings<T>(this IProject project, T value)
+        {
+            SetSettings<T>(project, value, () => project.Settings);
+        }
     }
 }

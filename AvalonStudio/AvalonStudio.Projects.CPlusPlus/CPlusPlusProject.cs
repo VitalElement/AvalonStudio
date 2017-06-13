@@ -54,6 +54,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             BuiltinLibraries = new List<string>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
+            Settings = new ExpandoObject();
             Project = this;
         }
 
@@ -389,6 +390,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 result.Add(new TypeSettingsFormViewModel(this));
                 result.Add(new IncludePathSettingsFormViewModel(this));
+                result.Add(new BuildEventsSettingsFormViewModel(this));
                 result.Add(new ReferenceSettingsFormViewModel(this));
                 result.Add(new ToolchainSettingsFormViewModel(this));
                 result.Add(new DebuggerSettingsFormViewModel(this));
@@ -403,6 +405,9 @@ namespace AvalonStudio.Projects.CPlusPlus
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic DebugSettings { get; set; }
 
+        [JsonConverter(typeof(ExpandoObjectConverter))]
+        public override dynamic Settings { get; set; }
+
         [JsonIgnore]
         public override string Extension
         {
@@ -416,6 +421,42 @@ namespace AvalonStudio.Projects.CPlusPlus
         public override IProjectFolder Parent { get; set; }
 
         public override bool Hidden { get; set; }
+
+        [JsonIgnore]
+        public IList<string> PreBuildCommands
+        {
+            get
+            {
+                var settings = this.GetGenericSettings<BuildEventsSettings>();
+
+                var result = new List<string>();
+
+                if (!string.IsNullOrEmpty(settings.PreBuildCommands))
+                {
+                    result.AddRange(settings.PreBuildCommands.Split(Environment.NewLine));
+                }
+
+                return result;
+            }
+        }
+
+        [JsonIgnore]
+        public IList<string> PostBuildCommands
+        {
+            get
+            {
+                var settings = this.GetGenericSettings<BuildEventsSettings>();
+
+                var result = new List<string>();
+
+                if (!string.IsNullOrEmpty(settings.PostBuildCommands))
+                {
+                    result.AddRange(settings.PostBuildCommands.Split(Environment.NewLine));
+                }
+
+                return result;
+            }
+        }
 
         public static string GenerateProjectFileName(string name)
         {

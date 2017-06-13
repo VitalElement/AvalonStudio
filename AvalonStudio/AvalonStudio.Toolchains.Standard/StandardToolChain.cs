@@ -1,11 +1,16 @@
+using AvalonStudio.CommandLineTools;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Platform;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,6 +39,50 @@ namespace AvalonStudio.Toolchains.Standard
 
         public abstract bool ValidateToolchainExecutables(IConsole console);
 
+        private bool ExecuteCommands(IConsole console, IProject project, IList<string> commands)
+        {
+            bool result = true;
+
+            foreach (var command in commands)
+            {
+                var commandParts = command.Split(' ');
+
+                var cmd = commandParts[0];
+                var args = command.Remove(0, cmd.Length).Trim();
+
+                if (ExecuteCommand(console, project, cmd.ToPlatformPath(), args.ToPlatformPath()) != 0)
+                {
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        private int ExecuteCommand(IConsole console, IProject project, string command, string args)
+        {
+            var environment = project.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
+
+            command = command.ExpandVariables(environment);
+            args = args.ExpandVariables(environment);
+
+            console.WriteLine($"[CMD] {command} {args}");
+
+            var exitCode = PlatformSupport.ExecuteShellCommand(command, args, (s, e) =>
+            {
+                console.WriteLine(e.Data);
+            }, (s, ee) =>
+            {
+                if (ee.Data != null)
+                {
+                    console.WriteLine(ee.Data);
+                }
+            }, false, project.CurrentDirectory, true, project.ToolChain?.BinDirectory);
+
+            return exitCode;
+        }
+
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
         {
             await InstallAsync(console, project);
@@ -45,7 +94,17 @@ namespace AvalonStudio.Toolchains.Standard
 
             console.Clear();
 
-            var result = await PreBuild(console, project);
+            var preBuildCommands = (project as IStandardProject).PreBuildCommands;
+            var postBuildCommands = (project as IStandardProject).PostBuildCommands;
+
+            bool result = true;
+
+            if (preBuildCommands.Count > 0)
+            {
+                console.WriteLine("Pre-Build Commands:");
+
+                result = ExecuteCommands(console, project, preBuildCommands);
+            }
 
             console.WriteLine("Starting Build...");
 
@@ -99,12 +158,22 @@ namespace AvalonStudio.Toolchains.Standard
                             }
                             else
                             {
-                                // if (linkedReferences.Count > 0)
+                                linkedReferences.ObjectLocations = compiledProject.ObjectLocations;
+                                linkedReferences.NumberOfObjectsCompiled = compiledProject.NumberOfObjectsCompiled;
+                                var linkResult = Link(console, project as IStandardProject, linkedReferences, linkedReferences, label);
+
+                                console.WriteLine();
+
+                                if (postBuildCommands.Count > 0)
                                 {
-                                    linkedReferences.ObjectLocations = compiledProject.ObjectLocations;
-                                    linkedReferences.NumberOfObjectsCompiled = compiledProject.NumberOfObjectsCompiled;
-                                    var linkResult = Link(console, project as IStandardProject, linkedReferences, linkedReferences, label);
-                                    result = await PostBuild(console, project, linkResult);
+                                    console.WriteLine("Post-Build Commands:");
+                                    bool succeess = ExecuteCommands(console, project, postBuildCommands);
+
+                                    if(!succeess)
+                                    {
+                                        result = false;
+                                        break;
+                                    }
                                 }
                             }
 
@@ -197,6 +266,8 @@ namespace AvalonStudio.Toolchains.Standard
         public abstract IEnumerable<string> GetToolchainIncludes(ISourceFile file);
 
         public abstract bool SupportsFile(ISourceFile file);
+
+        public abstract string BinDirectory { get; }
 
         private void ClearBuildFlags(IStandardProject project)
         {
@@ -549,10 +620,6 @@ namespace AvalonStudio.Toolchains.Standard
             }
         }
 
-        public abstract Task<bool> PreBuild(IConsole console, IProject project);
-
-        public abstract Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult);
-        
         public abstract Task InstallAsync(IConsole console, IProject project);
 
         public Task InstallAsync(IConsole console)

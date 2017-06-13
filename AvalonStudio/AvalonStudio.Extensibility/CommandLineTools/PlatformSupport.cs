@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.CommandLineTools
 {
@@ -67,7 +68,10 @@ namespace AvalonStudio.CommandLineTools
             {
                 foreach (var extraPath in extraPaths)
                 {
-                    shellProc.StartInfo.Environment["PATH"] += $";{extraPath}";
+                    if (extraPath != null)
+                    {
+                        shellProc.StartInfo.Environment["PATH"] += $";{extraPath}";
+                    }
                 }
 
                 if (executeInShell)

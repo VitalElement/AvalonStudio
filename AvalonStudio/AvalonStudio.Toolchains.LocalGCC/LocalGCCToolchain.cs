@@ -31,16 +31,6 @@ namespace AvalonStudio.Toolchains.LocalGCC
         }
         public override string BinDirectory => Path.Combine(ContentDirectory, "bin");
 
-        public override async Task<bool> PreBuild(IConsole console, IProject project)
-        {
-            return true;
-        }
-
-        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
-        {
-            return true;
-        }
-
         public override string Prefix => string.Empty;
 
         public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
