@@ -52,6 +52,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             switch (file.Extension.ToLower())
             {
+                case ".d":
                 case ".cpp":
                 case ".c":
                 case ".s":
@@ -62,7 +63,7 @@ namespace AvalonStudio.Toolchains.GCC
             return result;
         }
 
-        private bool CheckFile(IConsole console, string file)
+        protected bool CheckFile(IConsole console, string file)
         {
             bool result = true;
 
