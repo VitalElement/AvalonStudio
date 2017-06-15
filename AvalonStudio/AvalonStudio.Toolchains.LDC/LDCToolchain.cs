@@ -11,6 +11,7 @@ using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.CommandLineTools;
 using System.IO;
 using AvalonStudio.Packages;
+using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Toolchains.LDC
 {
@@ -21,6 +22,8 @@ namespace AvalonStudio.Toolchains.LDC
 
         public override string CCName => "ldc2";
 
+        public override string SizePrefix => LDPrefix;
+
         public override string LDPrefix => "arm-none-eabi-";
 
         public override string ExecutableExtension => ".elf";
@@ -29,7 +32,9 @@ namespace AvalonStudio.Toolchains.LDC
 
         public override Version Version => new Version();
 
-        public override string Description => "LLVM Based D Toolchain";        
+        public override string Description => "LLVM Based D Toolchain";
+
+        public override string GDBExecutable => Path.Combine(BinDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension);        
 
         public override bool ValidateToolchainExecutables(IConsole console)
         {
@@ -124,7 +129,53 @@ namespace AvalonStudio.Toolchains.LDC
 
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
         {
-            return string.Empty;
+            var settings = project.GetToolchainSettings<GccToolchainSettings>();
+
+            var result = string.Empty;
+
+            result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);
+
+            switch (settings.CompileSettings.Fpu)
+            {
+                case FPUSupport.Soft:
+                    result += " -mfpu=fpv4-sp-d16 -mfloat-abi=softfp ";
+                    break;
+
+                case FPUSupport.Hard:
+                    result += " -mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
+                    break;
+            }
+
+            if (settings.LinkSettings.NotUseStandardStartupFiles)
+            {
+                result += "-nostartfiles ";
+            }
+
+            if (settings.LinkSettings.DiscardUnusedSections)
+            {
+                result += "-Wl,--gc-sections ";
+            }
+
+            switch (settings.CompileSettings.Optimization)
+            {
+                case OptimizationLevel.None:
+                    result += " -O0";
+                    break;
+
+                case OptimizationLevel.Level1:
+                    result += " -O1";
+                    break;
+
+                case OptimizationLevel.Level2:
+                    result += " -O2";
+                    break;
+
+                case OptimizationLevel.Level3:
+                    result += " -O3";
+                    break;
+            }
+
+            return result;
         }
 
         public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
