@@ -16,10 +16,12 @@ namespace AvalonStudio.Toolchains.LDC
 {
     public class LDCToolchain : GCCToolchain
     {
-        public static string ContentDirectory => Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content");
+        public static string ContentDirectory => Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.LDC"), "content");
         public override string BinDirectory => Path.Combine(ContentDirectory, "bin");
 
         public override string CCName => "ldc2";
+
+        public override string LDPrefix => "arm-none-eabi-";
 
         public override string ExecutableExtension => ".elf";
 
@@ -130,9 +132,9 @@ namespace AvalonStudio.Toolchains.LDC
             return new List<string>();
         }
 
-        public override Task InstallAsync(IConsole console, IProject project)
+        public override async Task InstallAsync(IConsole console, IProject project)
         {
-            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console);
+            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.LDC", (project as CPlusPlusProject).ToolchainVersion, console);
         }
 
         public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)

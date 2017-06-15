@@ -220,7 +220,7 @@ namespace AvalonStudio.Toolchains.GCC
                 }
             }, false, project.Solution.CurrentDirectory, false);
 
-            //console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
+            console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
 
             if (result.ExitCode == 0)
             {
