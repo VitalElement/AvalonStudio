@@ -51,6 +51,33 @@ namespace AvalonStudio.CommandLineTools
             };
         }
 
+        public static void LaunchShell(string workingDirectory, params string[] paths)
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                WorkingDirectory = workingDirectory,
+            };
+
+            foreach (var extraPath in paths)
+            {
+                if (extraPath != null)
+                {
+                    startInfo.Environment["PATH"] += $"{Platform.PathSeperator}{extraPath}";
+                }
+            }
+
+            if (executorType == ShellExecutorType.Windows)
+            {
+                startInfo.FileName = ResolveFullExecutablePath("cmd.exe");
+            }
+            else //Unix
+            {
+                startInfo.FileName = "sh";
+            }
+
+            Process.Start(startInfo);
+        }
+
         public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>
             outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,
             string workingDirectory = "", bool executeInShell = true, params string[] extraPaths)
