@@ -100,7 +100,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             DevConsoleCommand = ReactiveCommand.Create();
             DevConsoleCommand.Subscribe(_ => 
             {
-                PlatformSupport.LaunchShell(Model.CurrentDirectory, Model.ToolChain?.BinDirectory);
+                PlatformSupport.LaunchShell(Model.CurrentDirectory, Model.ToolChain?.BinDirectory, Model.Debugger2?.BinDirectory);
             });
         }
 
