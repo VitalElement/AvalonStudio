@@ -45,6 +45,20 @@ namespace AvalonStudio.Toolchains.LDC
             return result;
         }
 
+        public override bool SupportsFile(ISourceFile file)
+        {
+            var result = false;
+
+            switch (file.Extension.ToLower())
+            {
+                case ".d":
+                    result = true;
+                    break;
+            }
+
+            return result;
+        }
+
         public override bool CanHandle(IProject project)
         {
             return project is CPlusPlusProject;
