@@ -48,6 +48,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
                     console.WriteLine(RunCommand("-target-download").Status.ToString());
                 }
 
+                RunCommand("monitor", "reset");
+
                 console.WriteLine("[JLink] - Connected.");
             }
         }
