@@ -52,7 +52,6 @@ namespace AvalonStudio.Toolchains.GCC
 
             switch (file.Extension.ToLower())
             {
-                case ".d":
                 case ".cpp":
                 case ".c":
                 case ".s":
