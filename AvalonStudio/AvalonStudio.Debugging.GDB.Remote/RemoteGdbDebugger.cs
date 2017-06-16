@@ -12,6 +12,8 @@ namespace AvalonStudio.Debugging.GDB.Remote
 {
     class RemoteGdbDebugger : IDebugger2
     {
+        public string BinDirectory => null;
+
         public void Activation()
         {
             
