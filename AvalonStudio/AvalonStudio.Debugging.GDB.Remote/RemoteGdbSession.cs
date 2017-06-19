@@ -150,7 +150,9 @@ namespace AvalonStudio.Debugging.GDB.Remote
 
             if (result)
             {
-                var commands = settings.GDBInitCommands?.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+                var environment = _project.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
+
+                var commands = settings.GDBInitCommands?.ExpandVariables(environment).Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
 
                 foreach(var command in commands)
                 {
