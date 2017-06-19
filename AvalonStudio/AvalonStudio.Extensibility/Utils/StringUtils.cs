@@ -16,19 +16,22 @@ namespace AvalonStudio.Extensibility
         /// <returns>The expanded string.</returns>
         public static string ExpandVariables(this string input, IDictionary environmentVars)
         {
-            var regex = @"\$\(([^)]+)\)";
-
-            input = Regex.Replace(input, regex, match =>
+            if (!string.IsNullOrEmpty(input))
             {
-                var result = match.Value;
+                var regex = @"\$\(([^)]+)\)";
 
-                if (environmentVars.Contains(match.Groups[1].Value))
+                input = Regex.Replace(input, regex, match =>
                 {
-                    result = match.Result(environmentVars[match.Groups[1].Value] as string);
-                }
+                    var result = match.Value;
 
-                return result;
-            });
+                    if (environmentVars.Contains(match.Groups[1].Value))
+                    {
+                        result = match.Result(environmentVars[match.Groups[1].Value] as string);
+                    }
+
+                    return result;
+                });
+            }
 
             return input;
         }
