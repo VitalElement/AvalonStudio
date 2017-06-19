@@ -24,9 +24,13 @@ namespace AvalonStudio.Extensibility
                 {
                     var result = match.Value;
 
-                    if (environmentVars.Contains(match.Groups[1].Value))
+                    if (environmentVars.Contains(match.Groups[1].Value) && environmentVars[match.Groups[1].Value] != null)
                     {
                         result = match.Result(environmentVars[match.Groups[1].Value] as string);
+                    }
+                    else
+                    {
+                        result = string.Empty;
                     }
 
                     return result;
