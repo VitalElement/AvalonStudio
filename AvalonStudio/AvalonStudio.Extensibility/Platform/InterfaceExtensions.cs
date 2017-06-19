@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-namespace AvalonStudio.Extensibility.Platform
+namespace AvalonStudio.Platforms
 {
     public static class InterfaceExtensions
     {

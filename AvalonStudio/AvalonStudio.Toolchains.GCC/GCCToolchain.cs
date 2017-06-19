@@ -1,6 +1,5 @@
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Platform;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;

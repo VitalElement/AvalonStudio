@@ -1,15 +1,11 @@
 ﻿using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Platform;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB.Remote
