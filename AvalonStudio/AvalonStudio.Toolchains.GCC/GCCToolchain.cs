@@ -1,4 +1,5 @@
 using AvalonStudio.CommandLineTools;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -104,7 +105,8 @@ namespace AvalonStudio.Toolchains.GCC
                 fileArguments = "-x assembler-with-cpp";
             }
 
-            var arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile);
+            var environment = superProject.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
+            var arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile).ExpandVariables(environment);
 
             result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) =>
             {
@@ -207,7 +209,8 @@ namespace AvalonStudio.Toolchains.GCC
             }
             else
             {
-                arguments = string.Format("{0} {1} -o{2} {3} {4} -Wl,--start-group {5} {6} -Wl,--end-group", GetLinkerArguments(superProject, project), linkerScripts, executable, objectArguments, libraryPaths, linkedLibraries, libs);
+                var environment = superProject.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
+                arguments = string.Format("{0} {1} -o{2} {3} {4} -Wl,--start-group {5} {6} -Wl,--end-group", GetLinkerArguments(superProject, project).ExpandVariables(environment), linkerScripts, executable, objectArguments, libraryPaths, linkedLibraries, libs);
             }
 
             result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => { },
