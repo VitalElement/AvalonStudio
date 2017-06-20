@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-namespace AvalonStudio.Extensibility.Platform
+namespace AvalonStudio.Platforms
 {
     public static class InterfaceExtensions
     {
@@ -31,7 +31,7 @@ namespace AvalonStudio.Extensibility.Platform
                 { "ProjectFilName", Path.GetFileName(project.Location) },
                 { "TargetExt", Path.GetExtension(project.Executable) },
                 { "TargetFileName", Path.GetFileName(project.Executable) },
-                { "DevEnvDir", project.ToolChain.BinDirectory + "/"  },
+                { "DevEnvDir", project.ToolChain?.BinDirectory + "/"  },
                 { "TargetDir", Path.GetDirectoryName(project.Executable) + "/" },
                 { "ProjectDir", Path.GetDirectoryName(project.Location) + "/" },
                 { "SolutionFileName", Path.GetFileName(project.Solution.Location) },
