@@ -14,7 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Projects.DUB\AvalonStudio.Projects.DUB.csproj" />
     <ProjectReference Include="D_Parser\DParser2\DParser2.csproj" />
   </ItemGroup>
 

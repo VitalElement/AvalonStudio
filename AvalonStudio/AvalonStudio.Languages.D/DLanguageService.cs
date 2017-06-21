@@ -9,15 +9,11 @@ using System.Threading.Tasks;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Projects;
-using AvalonStudio.Projects.DUB;
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.TextEditor.Indentation;
 using AvalonStudio.TextEditor.Rendering;
 using D_Parser.Dom;
 using D_Parser.Dom.Expressions;
 using D_Parser.Parser;
 using Avalonia.Input;
-using AvalonStudio.Languages.Highlighting;
 using AvalonStudio.Platforms;
 using D_Parser.Completion;
 using D_Parser.Resolver;
@@ -25,10 +21,13 @@ using D_Parser.Misc;
 using Avalonia.Interactivity;
 using AvalonStudio.Utils;
 using D_Parser.Refactoring;
+using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Document;
+using AvalonStudio.Projects.DUB;
+using AvaloniaEdit.Indentation;
 
 namespace AvalonStudio.Languages.D
 {
-
     class DCompletionDataGenerator : ICompletionDataGenerator
     {
         public void Add(INode Node)
@@ -121,7 +120,7 @@ namespace AvalonStudio.Languages.D
             get;
         }
 
-        public async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ISourceFile sourceFile, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
         {
             var codeCompletionGenerator = new DCompletionDataGenerator();
 
@@ -134,7 +133,7 @@ namespace AvalonStudio.Languages.D
                 CodeCompletion.GenerateCompletionData(associatedData.EditorContext, codeCompletionGenerator, 'p');
             });
 
-            return new List<CodeCompletionData>();
+            return new CodeCompletionResults();
         }
 
         private DModule GetAndParseModule(ISourceFile file, List<UnsavedFile> unsavedFiles, Action<DToken> OnVisitToken = null)
@@ -170,10 +169,10 @@ namespace AvalonStudio.Languages.D
                         continue;
                     }
 
-                    OnVisitToken(myLexer.CurrentToken);                    
+                    OnVisitToken(myLexer.CurrentToken);
 
                     myLexer.NextToken();
-                }                
+                }
             }
 
             reader?.Close();
@@ -194,7 +193,7 @@ namespace AvalonStudio.Languages.D
                     return HighlightType.PreProcessor;
 
                 default:
-                    return HighlightType.Keyword;                   
+                    return HighlightType.Keyword;
 
             }
         }
@@ -212,18 +211,18 @@ namespace AvalonStudio.Languages.D
                 var ast = GetAndParseModule(file, unsavedFiles, token =>
                 {
                     if ((token.Kind >= DTokens.Align && token.Kind <= DTokens.__gshared) || token.Kind == DTokens.Alias)
-                    {                                                
+                    {
                         highlightingVisitor.Highlights.Add(new LineColumnSyntaxHighlightingData(token.Location.Line, token.Location.Column, token.EndLocation.Line, token.EndLocation.Column, DTokenToHighlightType(token.Kind)));
-                    }                    
+                    }
                 });
 
-                associatedData.EditorContext.SyntaxTree = ast;                                
+                associatedData.EditorContext.SyntaxTree = ast;
 
                 ast.Accept(highlightingVisitor);
 
                 result.SyntaxHighlightingData = highlightingVisitor.Highlights;
 
-                var highlights = highlightingVisitor.Highlights;                         
+                var highlights = highlightingVisitor.Highlights;
 
                 var locationsToHighlight = TypeReferenceFinder.Scan(associatedData.EditorContext, new CancellationToken()); // Are you sure about that? Could this only be finding references in the edited text? Try breakpointing right when application starts
 
@@ -247,7 +246,7 @@ namespace AvalonStudio.Languages.D
 
                                 if (n.NameLocation.IsEmpty)
                                 {
-                                    continue;                                    
+                                    continue;
                                 }
 
                                 ident = n.Name;
@@ -296,7 +295,7 @@ namespace AvalonStudio.Languages.D
 
                             if (startColumn != 0 && endColumn != 0 && startLine != 0 && endLine != 0)
                             {
-                                highlights.Add(new LineColumnSyntaxHighlightingData(startLine, startColumn, endLine, endColumn, GetHighlightType(ident, kv.Value)));
+                                highlights.Add(new LineColumnSyntaxHighlightingData(startLine, startColumn, endLine, endColumn,  GetHighlightType(ident, kv.Value)));
                             }
                         }
                     }
@@ -310,7 +309,7 @@ namespace AvalonStudio.Languages.D
             return result;
         }
 
-        public static HighlightType GetHighlightType(string ident, byte type) 
+        public static HighlightType GetHighlightType(string ident, byte type)
         {
             switch (type)
             {
@@ -347,7 +346,7 @@ namespace AvalonStudio.Languages.D
                 case DTokens.Import:
                     return HighlightType.PreProcessor;
 
-                case (byte)TypeReferenceKind.Variable:                     
+                case (byte)TypeReferenceKind.Variable:
                     return HighlightType.Identifier;
 
                 default:
@@ -372,7 +371,7 @@ namespace AvalonStudio.Languages.D
             }
         }
 
-        public IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file)
+        public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
         {
             var associatedData = GetAssociatedData(file);
 
@@ -386,8 +385,7 @@ namespace AvalonStudio.Languages.D
             return associatedData.BackgroundRenderers;
         }
 
-        public void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant,
-            TextEditor.TextEditor editor, ISourceFile file, TextDocument doc)
+        public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument)
         {
             DDataAssociation association = null;
 
@@ -396,7 +394,7 @@ namespace AvalonStudio.Languages.D
                 throw new Exception("Source file already registered with language service.");
             }
 
-            association = new DDataAssociation(doc);
+            association = new DDataAssociation(textDocument);
 
             association.EditorContext.ParseCache = (file.Project as DUBProject).ParseCache;
 
@@ -404,31 +402,27 @@ namespace AvalonStudio.Languages.D
 
             association.KeyUpHandler = (sender, e) =>
             {
-                if (editor.TextDocument == doc)
+                if (editor.Document == textDocument)
                 {
                     switch (e.Key)
                     {
                         case Key.Return:
                             {
-                                if (editor.CaretIndex >= 0 && editor.CaretIndex < editor.TextDocument.TextLength)
+                                if (editor.CaretOffset >= 0 && editor.CaretOffset < editor.Document.TextLength)
                                 {
-                                    if (editor.TextDocument.GetCharAt(editor.CaretIndex) == '}')
+                                    if (editor.Document.GetCharAt(editor.CaretOffset) == '}')
                                     {
-                                        editor.TextDocument.Insert(editor.CaretIndex, Environment.NewLine);
-                                        editor.CaretIndex--;
+                                        editor.Document.Insert(editor.CaretOffset, Environment.NewLine);
+                                        editor.CaretOffset--;
 
-                                        var currentLine = editor.TextDocument.GetLineByOffset(editor.CaretIndex);
+                                        var currentLine = editor.Document.GetLineByOffset(editor.CaretOffset);
 
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine, editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine.NextLine,
-                                            editor.CaretIndex);
-                                        editor.CaretIndex = IndentationStrategy.IndentLine(editor.TextDocument, currentLine.NextLine, editor.CaretIndex);
+                                        IndentationStrategy.IndentLine(editor.Document, currentLine);
+                                        IndentationStrategy.IndentLine(editor.Document, currentLine.NextLine.NextLine);
+                                        IndentationStrategy.IndentLine(editor.Document, currentLine.NextLine);
                                     }
 
-                                    var newCaret = IndentationStrategy.IndentLine(editor.TextDocument,
-                                        editor.TextDocument.GetLineByOffset(editor.CaretIndex), editor.CaretIndex);
-
-                                    editor.CaretIndex = newCaret;
+                                    IndentationStrategy.IndentLine(editor.Document, editor.Document.GetLineByOffset(editor.CaretOffset));
                                 }
                             }
                             break;
@@ -438,34 +432,34 @@ namespace AvalonStudio.Languages.D
 
             association.TextInputHandler = (sender, e) =>
             {
-                if (editor.TextDocument == doc)
+                if (editor.Document == textDocument)
                 {
-                    OpenBracket(editor, editor.TextDocument, e.Text);
-                    CloseBracket(editor, editor.TextDocument, e.Text);
+                    OpenBracket(editor, editor.Document, e.Text);
+                    CloseBracket(editor, editor.Document, e.Text);
 
                     switch (e.Text)
                     {
                         case "}":
                         case ";":
-                            editor.CaretIndex = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+                            editor.CaretOffset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
                             break;
 
                         case "{":
-                            var lineCount = editor.TextDocument.LineCount;
-                            var offset = Format(editor.TextDocument, 0, (uint)editor.TextDocument.TextLength, editor.CaretIndex);
+                            var lineCount = editor.Document.LineCount;
+                            var offset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
 
                             // suggests clang format didnt do anything, so we can assume not moving to new line.
-                            if (lineCount != editor.TextDocument.LineCount)
+                            if (lineCount != editor.Document.LineCount)
                             {
-                                if (offset <= editor.TextDocument.TextLength)
+                                if (offset <= editor.Document.TextLength)
                                 {
-                                    var newLine = editor.TextDocument.GetLineByOffset(offset);
-                                    editor.CaretIndex = newLine.PreviousLine.EndOffset;
+                                    var newLine = editor.Document.GetLineByOffset(offset);
+                                    editor.CaretOffset = newLine.PreviousLine.EndOffset;
                                 }
                             }
                             else
                             {
-                                editor.CaretIndex = offset;
+                                editor.CaretOffset = offset;
                             }
                             break;
                     }
@@ -478,36 +472,36 @@ namespace AvalonStudio.Languages.D
             editor.TextInput += association.TextInputHandler;
         }
 
-        private void OpenBracket(TextEditor.TextEditor editor, TextDocument document, string text)
+        private void OpenBracket(AvaloniaEdit.TextEditor editor, TextDocument document, string text)
         {
-            if (text[0].IsOpenBracketChar() && editor.CaretIndex <= document.TextLength && editor.CaretIndex > 0)
+            if (text[0].IsOpenBracketChar() && editor.CaretOffset <= document.TextLength && editor.CaretOffset > 0)
             {
                 var nextChar = ' ';
 
-                if (editor.CaretIndex != document.TextLength)
+                if (editor.CaretOffset != document.TextLength)
                 {
-                    document.GetCharAt(editor.CaretIndex);
+                    document.GetCharAt(editor.CaretOffset);
                 }
 
                 if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
                 {
-                    document.Insert(editor.CaretIndex, text[0].GetCloseBracketChar().ToString());
+                    document.Insert(editor.CaretOffset, text[0].GetCloseBracketChar().ToString());
                 }
             }
         }
 
-        private void CloseBracket(TextEditor.TextEditor editor, TextDocument document, string text)
+        private void CloseBracket(AvaloniaEdit.TextEditor editor, TextDocument document, string text)
         {
-            if (text[0].IsCloseBracketChar() && editor.CaretIndex < document.TextLength && editor.CaretIndex > 0)
+            if (text[0].IsCloseBracketChar() && editor.CaretOffset < document.TextLength && editor.CaretOffset > 0)
             {
-                if (document.GetCharAt(editor.CaretIndex) == text[0])
+                if (document.GetCharAt(editor.CaretOffset) == text[0])
                 {
-                    document.Replace(editor.CaretIndex - 1, 1, string.Empty);
+                    document.Replace(editor.CaretOffset - 1, 1, string.Empty);
                 }
             }
         }
 
-        public void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file)
+        public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
         {
             var association = GetAssociatedData(file);
 
@@ -543,12 +537,12 @@ namespace AvalonStudio.Languages.D
             return cursor;
         }
 
-        public int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
+        public int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             throw new NotImplementedException();
         }
 
-        public int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true)
+        public int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             throw new NotImplementedException();
         }
@@ -580,6 +574,16 @@ namespace AvalonStudio.Languages.D
 
             return result;
         }
+
+        public void BeforeActivation()
+        {
+
+        }
+
+        public void Activation()
+        {
+
+        }
     }
 
     internal class DDataAssociation
@@ -587,13 +591,9 @@ namespace AvalonStudio.Languages.D
         public DDataAssociation(TextDocument textDocument)
         {
             BackgroundRenderers = new List<IBackgroundRenderer>();
-            DocumentLineTransformers = new List<IDocumentLineTransformer>();
+            DocumentLineTransformers = new List<IVisualLineTransformer>();
 
             TextColorizer = new TextColoringTransformer(textDocument);
-            TextMarkerService = new TextMarkerService(textDocument);
-
-
-            BackgroundRenderers.Add(TextMarkerService);
 
             DocumentLineTransformers.Add(TextColorizer);
 
@@ -603,9 +603,8 @@ namespace AvalonStudio.Languages.D
 
         public EditorData EditorContext { get; }
         public TextColoringTransformer TextColorizer { get; }
-        public TextMarkerService TextMarkerService { get; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
-        public List<IDocumentLineTransformer> DocumentLineTransformers { get; }        
+        public List<IVisualLineTransformer> DocumentLineTransformers { get; }
         public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
         public EventHandler<KeyEventArgs> KeyDownHandler { get; set; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
