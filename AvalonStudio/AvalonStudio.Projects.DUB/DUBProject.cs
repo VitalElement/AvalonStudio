@@ -93,9 +93,10 @@ namespace AvalonStudio.Projects.DUB
             get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
         }
 
-        public override IDebugger Debugger { get; set; }
+        public override IDebugger Debugger2 { get; set; }
         public override dynamic ToolchainSettings { get; set; }
-        public override dynamic DebugSettings { get; set; }
+        public override dynamic DebugSettings { get; set; }        
+        public override dynamic Settings { get; set; }
 
         public override void AddReference(IProject project)
         {

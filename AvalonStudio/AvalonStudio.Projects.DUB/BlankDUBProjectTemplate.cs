@@ -13,6 +13,16 @@ namespace AvalonStudio.Projects.DUB
         public string DefaultProjectName { get { return "EmptyProject"; } }
         public string Description { get { return "Creates an empty DUB project."; } }
 
+        public void Activation()
+        {
+            
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
         public Task<IProject> Generate(ISolution solution, string name)
         {
             throw new NotImplementedException();

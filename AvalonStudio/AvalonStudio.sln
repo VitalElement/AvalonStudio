@@ -90,6 +90,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Languages.D", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DParser2", "AvalonStudio.Languages.D\D_Parser\DParser2\DParser2.csproj", "{7E934D8E-C9C4-45C0-8489-1ECF6B4D8974}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Projects.DUB", "AvalonStudio.Projects.DUB\AvalonStudio.Projects.DUB.csproj", "{B75E9A63-3562-4303-8E08-04AA65468007}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -646,6 +648,22 @@ Global
 		{7E934D8E-C9C4-45C0-8489-1ECF6B4D8974}.Release|x64.Build.0 = Release|Any CPU
 		{7E934D8E-C9C4-45C0-8489-1ECF6B4D8974}.Release|x86.ActiveCfg = Release|Any CPU
 		{7E934D8E-C9C4-45C0-8489-1ECF6B4D8974}.Release|x86.Build.0 = Release|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Debug|ARM.Build.0 = Debug|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Debug|x64.Build.0 = Debug|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Debug|x86.Build.0 = Debug|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|ARM.ActiveCfg = Release|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|ARM.Build.0 = Release|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|x64.ActiveCfg = Release|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|x64.Build.0 = Release|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|x86.ActiveCfg = Release|Any CPU
+		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -683,6 +701,7 @@ Global
 		{0A89B721-30C0-48A2-A3AD-74CD89B99A01} = {5F514911-0404-4D14-B69A-458BA643F5C7}
 		{0223CC2A-900B-4EE8-B13E-FD7B7ABAE7CF} = {528C3D32-4210-4109-AE60-B965C6BED1C3}
 		{7E934D8E-C9C4-45C0-8489-1ECF6B4D8974} = {528C3D32-4210-4109-AE60-B965C6BED1C3}
+		{B75E9A63-3562-4303-8E08-04AA65468007} = {2DC36CEA-5C75-4389-B370-9AEDA400F540}
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
