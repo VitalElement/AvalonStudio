@@ -641,9 +641,17 @@ namespace AvalonStudio.Languages.CPlusPlus
             Symbol result = null;
             var associatedData = GetAssociatedData(file);
 
+            var clangUnsavedFiles = new List<ClangUnsavedFile>();
+
+            foreach (var unsavedFile in unsavedFiles)
+            {
+                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+            }
+
             await clangAccessJobRunner.InvokeAsync(() =>
             {
-                var tu = associatedData.TranslationUnit;
+                var tu = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+
                 var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.FilePath), offset));
 
                 switch (cursor.Kind)
@@ -668,9 +676,16 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             if (name != string.Empty)
             {
+                var clangUnsavedFiles = new List<ClangUnsavedFile>();
+
+                foreach (var unsavedFile in unsavedFiles)
+                {
+                    clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+                }
+
                 await clangAccessJobRunner.InvokeAsync(() =>
                 {
-                    var translationUnit = GetAndParseTranslationUnit(file, new List<ClangUnsavedFile>());
+                    var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
 
                     if (translationUnit != null)
                     {
