@@ -24,19 +24,19 @@ namespace AvalonStudio.Platforms
         {
             var environment = new Dictionary<string, string>
             {
-                { "TargetPath", project.Executable },
-                { "OutDir", Path.GetDirectoryName(project.Executable) + "/" },
+                { "TargetPath", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath() },
+                { "OutDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Executable) + "/").ToPlatformPath() },
                 { "ProjectName", project.Name },
-                { "ProjectPath", project.Location },
-                { "ProjectFilName", Path.GetFileName(project.Location) },
+                { "ProjectPath", Path.Combine(project.CurrentDirectory, project.Location).ToPlatformPath() },
+                { "ProjectFileName", Path.GetFileName(project.Location) },
                 { "TargetExt", Path.GetExtension(project.Executable) },
                 { "TargetFileName", Path.GetFileName(project.Executable) },
-                { "DevEnvDir", project.ToolChain?.BinDirectory + "/"  },
-                { "TargetDir", Path.GetDirectoryName(project.Executable) + "/" },
-                { "ProjectDir", Path.GetDirectoryName(project.Location) + "/" },
+                { "DevEnvDir", project.ToolChain?.BinDirectory + "/".ToPlatformPath()  },
+                { "TargetDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Executable) + "/").ToPlatformPath() },
+                { "ProjectDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Location) + "/").ToPlatformPath() },
                 { "SolutionFileName", Path.GetFileName(project.Solution.Location) },
-                { "SolutionPath", project.Solution.Location },
-                { "SolutionDir", Path.GetDirectoryName(project.Solution.Location) + "/" },
+                { "SolutionPath", project.Solution.Location.ToPlatformPath() },
+                { "SolutionDir", Path.GetDirectoryName(project.Solution.Location) + "/".ToPlatformPath() },
                 { "SolutionName", project.Solution.Name }
             };
 
