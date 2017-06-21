@@ -268,7 +268,7 @@
 
                     if (file != null)
                     {
-                        Dispatcher.UIThread.InvokeAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true); });
+                        Dispatcher.UIThread.InvokeTaskAsync(async () => { _lastDocument = await _shell.OpenDocument(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true); }).Wait();
                     }
                     else
                     {
