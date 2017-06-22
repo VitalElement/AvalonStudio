@@ -423,7 +423,14 @@ namespace AvalonStudio.Toolchains.Standard
         {
             if (project.Type == ProjectType.Executable && superProject != project)
             {
-                await Build(console, project);
+                if(project.ToolChain == null)
+                {
+                    terminateBuild = true;
+
+                    console.WriteLine($"Project: {project.Name} does not have a toolchain set.");
+                }
+
+                await project.ToolChain?.Build(console, project);
             }
             else
             {
