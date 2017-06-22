@@ -524,8 +524,7 @@ namespace AvalonStudio.Toolchains.Standard
                                     {
                                         numLocalTasks++;
                                         numTasks++;
-                                        console.OverWrite(string.Format("[CC {0}/{1}]    [{2}]    {3}", ++buildCount, fileCount, project.Name,
-                                            Path.GetFileName(file.Location)));
+                                        console.OverWrite(string.Format("[CC {0}/{1}]    [{2}]    {3}", ++buildCount, fileCount, project.Name, file.Name));
                                     }
 
                                     new Thread(() =>
