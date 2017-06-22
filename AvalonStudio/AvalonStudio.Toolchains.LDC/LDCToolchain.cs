@@ -12,6 +12,7 @@ using AvalonStudio.CommandLineTools;
 using System.IO;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
+using System.Linq;
 
 namespace AvalonStudio.Toolchains.LDC
 {
@@ -25,6 +26,8 @@ namespace AvalonStudio.Toolchains.LDC
         public override string SizePrefix => LDPrefix;
 
         public override string LDPrefix => "arm-none-eabi-";
+
+        public override string ARPrefix => LDPrefix;
 
         public override string ExecutableExtension => ".elf";
 
@@ -76,6 +79,19 @@ namespace AvalonStudio.Toolchains.LDC
             var settings = superProject.GetToolchainSettings<GccToolchainSettings>();
 
             result += "-c ";
+
+            // Referenced includes
+            var referencedIncludes = project.GetReferencedIncludes();
+
+            referencedIncludes.Select(s => result += $"-I\"{ Path.Combine(project.CurrentDirectory, s)}\" ").ToList();
+
+            // global includes
+            var globalIncludes = superProject.GetGlobalIncludes();
+
+            globalIncludes.Select(s => result += $"-I\"{s}\" ").ToList();
+
+            // includes
+            project.Includes.Select(s => result += $"-I\"{ Path.Combine(project.CurrentDirectory, s.Value)}\" ").ToList();
 
             switch (settings.CompileSettings.Optimization)
             {
@@ -210,7 +226,7 @@ namespace AvalonStudio.Toolchains.LDC
 
             var fileArguments = string.Empty;
 
-            var arguments = string.Format("{0} {1} {2} -of{3}", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile);
+            var arguments = string.Format("{0} {1} {2} -od {3}", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, project.Location.MakeRelativePath(Path.GetDirectoryName(outputFile)), Path.GetFileName(outputFile));
 
             result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) =>
             {
@@ -220,9 +236,9 @@ namespace AvalonStudio.Toolchains.LDC
                     console.WriteLine(e.Data);
                 }
             },
-            false, file.CurrentDirectory, false);
+            false, project.CurrentDirectory, false);
 
-            // console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
+             //console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
 
             return result;
         }
