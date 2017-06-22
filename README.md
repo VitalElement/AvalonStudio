@@ -47,7 +47,7 @@ sudo ./dependencies.sh
 
 #### Windows
 
-- Open the solution in Visual Studio 2015
+- Open the solution in Visual Studio 2017 (15.3 or above)
 - Restore NuGet packages (don't forget to add the following package feeds:)
   - `Avalonia`: <https://www.myget.org/F/avalonia-ci/api/v2>
   - `XamlBehaviors`: <https://www.myget.org/F/xamlbehaviors-nightly/api/v2>
