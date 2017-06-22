@@ -1,4 +1,5 @@
 using Avalonia;
+using AvalonStudio.Platforms;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -178,7 +179,12 @@ namespace AvalonStudio.Utils
         public static string MakeRelativePath(this string fromPath, string toPath)
         {
             if (string.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
-            if (string.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
+            if (string.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");            
+
+            if(fromPath.CompareFilePath(toPath) == 0)
+            {
+                return string.Empty;
+            }
 
             var fromUri = new Uri(fromPath);
             var toUri = new Uri(toPath);
