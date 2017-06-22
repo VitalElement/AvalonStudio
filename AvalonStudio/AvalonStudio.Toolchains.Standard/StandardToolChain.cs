@@ -490,9 +490,15 @@ namespace AvalonStudio.Toolchains.Standard
 
                             if (SupportsFile(file))
                             {
-                                var outputName = Path.GetFileNameWithoutExtension(file.Location) + ".o";
-                                var dependencyFile = Path.Combine(objDirectory, Path.GetFileNameWithoutExtension(file.Location) + ".d");
-                                var objectFile = Path.Combine(objDirectory, outputName);
+                                var outputName = Path.ChangeExtension(file.Name, ".o");
+                                var dependencyFile = Path.Combine(objDirectory, Path.ChangeExtension(file.Location, ".dep"));
+                                var objectPath = Path.Combine(objDirectory, project.CurrentDirectory.MakeRelativePath(file.CurrentDirectory));
+                                var objectFile = Path.Combine(objectPath, outputName);
+
+                                if(!Directory.Exists(objectPath))
+                                {
+                                    Directory.CreateDirectory(objectPath);
+                                }
 
                                 var dependencyChanged = false;
 
