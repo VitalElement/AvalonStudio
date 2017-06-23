@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.Standard
@@ -318,11 +317,11 @@ namespace AvalonStudio.Toolchains.Standard
 
         private async Task WaitForCompileJobs()
         {
-            await Task.Factory.StartNew(() =>
+            await Task.Factory.StartNew(async () =>
             {
                 while (numTasks > 0)
                 {
-                    Thread.Sleep(10);
+                    await Task.Delay(10);
                 }
             });
         }
@@ -522,13 +521,17 @@ namespace AvalonStudio.Toolchains.Standard
 
                                     lock (resultLock)
                                     {
+                                        if (terminateBuild)
+                                        {
+                                            break;
+                                        }
+
                                         numLocalTasks++;
                                         numTasks++;
-                                        console.OverWrite(string.Format("[CC {0}/{1}]    [{2}]    {3}", ++buildCount, fileCount, project.Name,
-                                            Path.GetFileName(file.Location)));
+                                        console.OverWrite(string.Format("[CC {0}/{1}]    [{2}]    {3}", ++buildCount, fileCount, project.Name, Path.GetFileName(file.Location)));
                                     }
 
-                                    new Thread(() =>
+                                    Task.Run(() =>
                                     {
                                         var compileResult = Compile(console, superProject, project, file, objectFile);
 
@@ -548,7 +551,7 @@ namespace AvalonStudio.Toolchains.Standard
                                             numTasks--;
                                             numLocalTasks--;
                                         }
-                                    }).Start();
+                                    }).GetAwaiter();
                                 }
                                 else
                                 {
