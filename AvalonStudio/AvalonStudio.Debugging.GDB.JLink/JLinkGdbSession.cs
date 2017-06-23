@@ -35,10 +35,19 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
             if (result)
             {
+                var settings = _project.GetDebuggerSettings<JLinkSettings>();
+                
                 RunCommand("monitor", "halt");
-                RunCommand("monitor", "reset");
 
-                console.WriteLine(RunCommand("-target-download").Status.ToString());
+                if (settings.Reset)
+                {
+                    RunCommand("monitor", "reset");
+                }
+
+                if (settings.Download)
+                {
+                    console.WriteLine(RunCommand("-target-download").Status.ToString());
+                }
 
                 console.WriteLine("[JLink] - Connected.");
             }
