@@ -12,9 +12,19 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
     public class JLinkSettings
     {
+        public JLinkSettings()
+        {
+            Download = true;
+            Reset = true;
+        }
+
         public JlinkInterfaceType Interface { get; set; }
         public string TargetDevice { get; set; }
         public string DeviceKey { get; set; }
         public int SpeedkHz { get; set; }
+
+        public bool Download { get; set; }
+
+        public bool Reset { get; set; }
     }
 }
