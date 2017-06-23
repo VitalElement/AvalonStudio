@@ -251,7 +251,10 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public bool Download
         {
-            get { return _download; }
+            get
+            {
+                return _download;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref _download, value);
@@ -263,15 +266,16 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public bool Reset
         {
-            get { return _reset; }
+            get
+            {
+                return _reset;
+            }
             set
             {
                 this.RaiseAndSetIfChanged(ref _reset, value);
                 Save();
             }
         }
-
-
 
         private async Task FilterListAsync()
         {
