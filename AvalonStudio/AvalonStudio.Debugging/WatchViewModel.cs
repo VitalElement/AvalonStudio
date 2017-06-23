@@ -226,7 +226,7 @@ namespace AvalonStudio.Debugging
                 {
                     var newChildren = newValue.GetAllChildren();
                     
-                    for (int i = 0; i < Children.Count; i++)
+                    for (int i = 0; i < Children.Count && i < newChildren.Length; i++)
                     {
                         if (Children[i].Model != null)
                         {

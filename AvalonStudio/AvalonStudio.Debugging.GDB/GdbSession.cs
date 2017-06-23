@@ -159,6 +159,7 @@ namespace AvalonStudio.Debugging.GDB
                 ThreadPool.QueueUserWorkItem(delegate
                 {
                     RunCommand(_runCommand);
+                    running = true;
                 });
             }
         }
@@ -771,6 +772,22 @@ namespace AvalonStudio.Debugging.GDB
             }
         }
 
+        protected bool InsideStop()
+        {
+            lock(gdbLock)
+            {
+                return InternalStop();
+            }
+        }
+
+        protected void InsideResume(bool resume)
+        {
+            lock(gdbLock)
+            {
+                InternalResume(resume);
+            }
+        }
+
         private bool InternalStop()
         {
             if (!running)
@@ -779,7 +796,12 @@ namespace AvalonStudio.Debugging.GDB
 
             if (asyncMode)
             {
-                RunCommand("-exec-interrupt");
+                lock (eventLock)
+                {
+                    sin.WriteLine("-exec-interrupt");
+                 
+                    Monitor.Wait(eventLock);
+                }
             }
             else
             {

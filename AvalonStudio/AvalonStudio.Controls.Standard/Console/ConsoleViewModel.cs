@@ -1,9 +1,10 @@
 using Avalonia.Threading;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
-using AvalonStudio.TextEditor.Document;
 using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using ReactiveUI;
@@ -25,8 +26,6 @@ namespace AvalonStudio.Controls.Standard.Console
             Title = "Console";
             document = new TextDocument();
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
-            backgroundRenderers.Add(new SelectedLineBackgroundRenderer());
-            backgroundRenderers.Add(new SelectionBackgroundRenderer());
         }
 
         private TextDocument document;

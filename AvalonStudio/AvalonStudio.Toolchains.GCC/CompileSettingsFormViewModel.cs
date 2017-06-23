@@ -48,7 +48,7 @@ namespace AvalonStudio.Toolchains.GCC
 
         public CompileSettingsFormViewModel(IProject project) : base("Compiler", project)
         {
-            settings = project.GetSettings<GccToolchainSettings>().CompileSettings;
+            settings = project.GetToolchainSettings<GccToolchainSettings>().CompileSettings;
 
             defines = new ObservableCollection<string>(settings.Defines);
             includePaths = new ObservableCollection<string>(settings.Includes);
@@ -412,10 +412,10 @@ namespace AvalonStudio.Toolchains.GCC
             settings.Exceptions = exceptions;
             settings.Rtti = rtti;
 
-            var currentSettings = Model.GetSettings<GccToolchainSettings>();
+            var currentSettings = Model.GetToolchainSettings<GccToolchainSettings>();
             currentSettings.CompileSettings = settings;
 
-            Model.SetSettings(currentSettings);
+            Model.SetToolchainSettings(currentSettings);
 
             Model.Save();
         }

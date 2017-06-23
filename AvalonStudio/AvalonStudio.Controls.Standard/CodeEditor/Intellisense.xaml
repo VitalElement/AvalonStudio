@@ -1,0 +1,12 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard">
+  <Style Selector="local|Intellisense">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" StaysOpen="false" Name="PART_Popup">
+          <local:IntellisenseUserControl />
+        </Popup>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

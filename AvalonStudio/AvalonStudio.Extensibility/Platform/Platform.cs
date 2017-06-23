@@ -1,8 +1,11 @@
 using AvalonStudio.Projects;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace AvalonStudio.Platforms
@@ -27,7 +30,7 @@ namespace AvalonStudio.Platforms
 
         public static void Chmod(string file, int mode)
         {
-            if(PlatformIdentifier != PlatformID.Win32NT)
+            if (PlatformIdentifier != PlatformID.Win32NT)
             {
                 chmod(file, mode);
             }
@@ -129,6 +132,8 @@ namespace AvalonStudio.Platforms
             }
         }
 
+        public static IDictionary EnvironmentVariables => Environment.GetEnvironmentVariables();
+
         private const string UserDataDir = ".as";
 
         public static string ExecutionPath => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
@@ -176,6 +181,29 @@ namespace AvalonStudio.Platforms
 
                     case PlatformID.Win32NT:
                         return ".dll";
+
+                    default:
+                        throw new NotImplementedException("Not implemented for your platform.");
+                }
+            }
+        }
+
+        public static string PathSeperator
+        {
+            get
+            {
+                switch (Platform.PlatformIdentifier)
+                {
+                    case PlatformID.Unix:
+                    case PlatformID.MacOSX:
+                        {
+                            return ":";
+                        }
+
+                    case PlatformID.Win32NT:
+                        {
+                            return ";";
+                        }
 
                     default:
                         throw new NotImplementedException("Not implemented for your platform.");

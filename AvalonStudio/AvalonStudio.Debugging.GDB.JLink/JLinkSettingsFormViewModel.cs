@@ -22,10 +22,12 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public JLinkSettingsFormViewModel(IProject model) : base(model)
         {
-            settings = model.GetSettings<JLinkSettings>();
+            settings = model.GetDebuggerSettings<JLinkSettings>();
 
             interfaceSelectedIndex = (int)settings.Interface;
             interfaceType = settings.Interface;
+            _download = settings.Download;
+            _reset = settings.Reset;
 
             speedSelectedIndex = SpeedOptions.IndexOf(settings.SpeedkHz.ToString());
 
@@ -189,6 +191,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 settings.Interface = (JlinkInterfaceType)interfaceSelectedIndex;
                 settings.DeviceKey = selectedDevice?.Device;
                 settings.TargetDevice = selectedDevice?.Device.Split(' ')[0].Trim();
+                settings.Download = _download;
+                settings.Reset = _reset;
 
                 if (!string.IsNullOrEmpty(speed))
                 {
@@ -199,7 +203,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
                     settings.SpeedkHz = 12000;
                 }
 
-                Model.SetSettings(settings);
+                Model.SetDebuggerSettings(settings);
                 Model.Save();
             }
         }
@@ -240,6 +244,36 @@ namespace AvalonStudio.Debugging.GDB.JLink
             {
                 this.RaiseAndSetIfChanged(ref filter, value);
                 Task.Run(FilterListAsync);
+            }
+        }
+
+        private bool _download;
+
+        public bool Download
+        {
+            get
+            {
+                return _download;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _download, value);
+                Save();
+            }
+        }
+
+        private bool _reset;
+
+        public bool Reset
+        {
+            get
+            {
+                return _reset;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _reset, value);
+                Save();
             }
         }
 

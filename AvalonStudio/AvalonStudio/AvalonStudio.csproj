@@ -19,12 +19,9 @@
   <ItemGroup>
     <None Remove="App.paml" />
     <None Remove="BootScreen.paml" />
-    <None Remove="Controls\CompletionAssistantView.paml" />
     <None Remove="Controls\DebugHoverProbeView.paml" />
     <None Remove="Controls\DocumentTabControl.paml" />
     <None Remove="Controls\EditorView.xaml" />
-    <None Remove="Controls\ErrorProbeView.paml" />
-    <None Remove="Controls\Intellisense.xaml" />
     <None Remove="Controls\MainMenu.paml" />
     <None Remove="Controls\MetroWindow.paml" />
     <None Remove="Controls\MetroWindowControlsTheme.paml" />
@@ -32,11 +29,8 @@
     <None Remove="Controls\ModalDialog.paml" />
     <None Remove="Controls\NewItemDialogView.paml" />
     <None Remove="Controls\PackageManagerDialogView.paml" />
-    <None Remove="Controls\SignatureHelpView.paml" />
-    <None Remove="Controls\SignatureView.xaml" />
     <None Remove="Controls\SplashScreen.paml" />
     <None Remove="Controls\StatusBar.paml" />
-    <None Remove="Controls\SymbolView.xaml" />
     <None Remove="Controls\TabControlView.paml" />
     <None Remove="Controls\ToolBar.paml" />
     <None Remove="icon.ico" />
@@ -50,12 +44,9 @@
   <ItemGroup>
     <EmbeddedResource Include="App.paml" />
     <EmbeddedResource Include="BootScreen.paml" />
-    <EmbeddedResource Include="Controls\CompletionAssistantView.paml" />
     <EmbeddedResource Include="Controls\DebugHoverProbeView.paml" />
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
     <EmbeddedResource Include="Controls\EditorView.xaml" />
-    <EmbeddedResource Include="Controls\ErrorProbeView.paml" />
-    <EmbeddedResource Include="Controls\Intellisense.xaml" />
     <EmbeddedResource Include="Controls\MainMenu.paml" />
     <EmbeddedResource Include="Controls\MetroWindow.paml" />
     <EmbeddedResource Include="Controls\MetroWindowControlsTheme.paml" />
@@ -63,8 +54,6 @@
     <EmbeddedResource Include="Controls\ModalDialog.paml" />
     <EmbeddedResource Include="Controls\NewItemDialogView.paml" />
     <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />
-    <EmbeddedResource Include="Controls\SignatureHelpView.paml" />
-    <EmbeddedResource Include="Controls\SignatureView.xaml" />
     <EmbeddedResource Include="Controls\SplashScreen.paml" />
     <EmbeddedResource Include="Controls\StatusBar.paml" />
     <EmbeddedResource Include="Controls\SymbolView.xaml" />
@@ -79,13 +68,13 @@
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build3098-alpha" />
-    <PackageReference Include="Avalonia.Direct2D1" Version="0.4.1-build3098-alpha" />
-    <PackageReference Include="Avalonia.Gtk3" Version="0.4.1-build3098-alpha" />
-    <PackageReference Include="Avalonia.Skia.Desktop" Version="0.4.1-build3098-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.0" />
+    <PackageReference Include="Avalonia.Direct2D1" Version="0.5.0" />
+    <PackageReference Include="Avalonia.Gtk3" Version="0.5.0" />
+    <PackageReference Include="Avalonia.Skia.Desktop" Version="0.5.0" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
-    <PackageReference Include="Avalonia.Win32" Version="0.4.1-build3098-alpha" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.4.1-build399-alpha" />
+    <PackageReference Include="Avalonia.Win32" Version="0.5.0" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.0" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build94-alpha" />    
   </ItemGroup>
@@ -95,9 +84,9 @@
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.Local\AvalonStudio.Debugging.GDB.Local.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.OpenOCD\AvalonStudio.Debugging.GDB.OpenOCD.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Debugging.GDB.Remote\AvalonStudio.Debugging.GDB.Remote.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB\AvalonStudio.Debugging.GDB.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Languages.CSharp\AvalonStudio.Languages.CSharp.csproj" />
     <ProjectReference Include="..\AvalonStudio.LanguageSupport.TypeScript\AvalonStudio.LanguageSupport.TypeScript.csproj" />

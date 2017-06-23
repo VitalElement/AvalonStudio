@@ -334,6 +334,8 @@
 
         public abstract dynamic DebugSettings { get; set; }
 
+        public abstract dynamic Settings { get; set; }
+
         public abstract string Executable { get; set; }
 
         public abstract string Extension { get; }

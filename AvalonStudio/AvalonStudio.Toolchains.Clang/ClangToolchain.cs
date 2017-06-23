@@ -82,7 +82,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         private void GenerateLinkerScript(IStandardProject project)
         {
-            var settings = project.GetSettings<GccToolchainSettings>().LinkSettings;
+            var settings = project.GetToolchainSettings<GccToolchainSettings>().LinkSettings;
 
             var linkerScript = GetLinkerScriptLocation(project);
 
@@ -101,7 +101,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
         {
-            var settings = superProject.GetSettings<GccToolchainSettings>();
+            var settings = superProject.GetToolchainSettings<GccToolchainSettings>();
             string result = string.Empty;
 
             // TODO linked libraries won't make it in on nano... Please fix -L directory placement in compile string.
@@ -129,7 +129,7 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
         {
-            var settings = project.GetSettings<GccToolchainSettings>();
+            var settings = project.GetToolchainSettings<GccToolchainSettings>();
 
             if (superProject != null && settings.LinkSettings.UseMemoryLayout && project.Type != ProjectType.StaticLibrary)
             {
@@ -192,7 +192,7 @@ namespace AvalonStudio.Toolchains.Clang
         {
             var result = string.Empty;
 
-            var settings = superProject.GetSettings<GccToolchainSettings>();
+            var settings = superProject.GetToolchainSettings<GccToolchainSettings>();
 
             result += "-Wall -c -fshort-enums ";
 
@@ -416,81 +416,6 @@ namespace AvalonStudio.Toolchains.Clang
             }
 
             return result;
-        }
-
-        public async Task<ProcessResult> ObjCopy(IConsole console, IProject project, LinkResult linkResult, AssemblyFormat format)
-        {
-            var result = new ProcessResult();
-
-            var commandName = Path.Combine(BinDirectory, $"{SizePrefix}objcopy" + Platform.ExecutableExtension);
-
-            if (PlatformSupport.CheckExecutableAvailability(commandName, BinDirectory))
-            {
-                string formatArg = "binary";
-
-                switch (format)
-                {
-                    case AssemblyFormat.Binary:
-                        formatArg = "binary";
-                        break;
-
-                    case AssemblyFormat.IntelHex:
-                        formatArg = "ihex";
-                        break;
-                }
-
-                string outputExtension = ".bin";
-
-                switch (format)
-                {
-                    case AssemblyFormat.Binary:
-                        outputExtension = ".bin";
-                        break;
-
-                    case AssemblyFormat.IntelHex:
-                        outputExtension = ".hex";
-                        break;
-
-                    case AssemblyFormat.Elf32:
-                        outputExtension = ".elf";
-                        break;
-                }
-
-                var arguments = $"-O {formatArg} {linkResult.Executable} {Path.GetDirectoryName(linkResult.Executable)}{Platform.DirectorySeperator}{Path.GetFileNameWithoutExtension(linkResult.Executable)}{outputExtension}";
-
-                console.WriteLine($"Converting to {format.ToString()}");
-
-                result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) => console.WriteLine(e.Data), false, string.Empty, false);
-            }
-            else
-            {
-                console.WriteLine("Unable to find tool (" + commandName + ") check project compiler settings.");
-                result.ExitCode = -1;
-            }
-
-            return result;
-        }
-
-        public override async Task<bool> PreBuild(IConsole console, IProject project)
-        {
-            return true;
-        }
-
-        public override async Task<bool> PostBuild(IConsole console, IProject project, LinkResult linkResult)
-        {
-            if ((project is IStandardProject) && (project as IStandardProject).Type == ProjectType.Executable)
-            {
-                var result = await ObjCopy(console, project, linkResult, AssemblyFormat.Binary);
-
-                if (result.ExitCode == 0)
-                {
-                    result = await ObjCopy(console, project, linkResult, AssemblyFormat.IntelHex);
-                }
-
-                return result.ExitCode == 0;
-            }
-
-            return true;
         }
 
         public async override Task InstallAsync(IConsole console, IProject project)

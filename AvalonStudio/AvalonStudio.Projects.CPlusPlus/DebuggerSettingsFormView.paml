@@ -58,6 +58,8 @@
         </Grid>
       </Panel>
 
-      <Controls:ViewModelViewHost Grid.Row="2" Grid.ColumnSpan="3" DataContext="{Binding DebugSettingsControl}" />
+      <ScrollViewer Grid.Row="2" Grid.ColumnSpan="3">
+        <Controls:ViewModelViewHost DataContext="{Binding DebugSettingsControl}" />  
+      </ScrollViewer>
     </Grid>
   </UserControl>

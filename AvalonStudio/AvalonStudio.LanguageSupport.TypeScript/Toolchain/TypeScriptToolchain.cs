@@ -22,6 +22,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
 
         public Version Version => new Version(0, 1, 1, 2);
 
+        public string BinDirectory => null;
+
         public void Activation()
         {
             //throw new NotImplementedException();

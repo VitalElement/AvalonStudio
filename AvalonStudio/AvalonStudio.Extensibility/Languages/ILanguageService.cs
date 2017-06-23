@@ -1,9 +1,9 @@
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Projects;
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.TextEditor.Indentation;
-using AvalonStudio.TextEditor.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -33,13 +33,13 @@ namespace AvalonStudio.Languages
 
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
-        IList<IDocumentLineTransformer> GetDocumentLineTransformers(ISourceFile file);
+        IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file);
 
         IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
-        void RegisterSourceFile(IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, TextEditor.TextEditor editor, ISourceFile file, TextDocument textDocument);
+        void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);
 
-        void UnregisterSourceFile(TextEditor.TextEditor editor, ISourceFile file);
+        void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file);
 
         bool CanHandle(ISourceFile file);
 
@@ -47,9 +47,9 @@ namespace AvalonStudio.Languages
 
         int Format(TextDocument textDocument, uint offset, uint length, int cursor);
 
-        int Comment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
+        int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
 
-        int UnComment(TextDocument textDocument, ISegment segment, int caret = -1, bool format = true);
+        int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
 
         Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
 

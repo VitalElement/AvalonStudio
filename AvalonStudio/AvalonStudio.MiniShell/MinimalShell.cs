@@ -29,6 +29,9 @@ namespace AvalonStudio.Shell
         private List<IDebugger> _debugger2s;
         private List<ITestFramework> _testFrameworks;
 
+        public event EventHandler<FileOpenedEventArgs> FileOpened;
+        public event EventHandler<FileOpenedEventArgs> FileClosed;
+
         [ImportingConstructor]
         public MinimalShell([ImportMany] IEnumerable<IExtension> extensions)
         {
@@ -218,6 +221,16 @@ namespace AvalonStudio.Shell
         }
 
         public Task CloseSolutionAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InvalidateErrors()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CloseDocument(ISourceFile file)
         {
             throw new NotImplementedException();
         }

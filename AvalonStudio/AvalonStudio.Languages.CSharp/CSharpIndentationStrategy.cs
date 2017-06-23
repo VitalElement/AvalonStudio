@@ -1,6 +1,6 @@
-using AvalonStudio.TextEditor.Document;
-using AvalonStudio.TextEditor.Indentation;
-using AvalonStudio.TextEditor.Indentation.CSharp;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Indentation.CSharp;
 using System;
 
 namespace AvalonStudio.Languages.CSharp
@@ -8,7 +8,7 @@ namespace AvalonStudio.Languages.CSharp
     /// <summary>
     ///     Smart indentation for C#.
     /// </summary>
-    public class CSharpIndentationStrategy : DefaultIndentationStrategy
+    /*public class CSharpIndentationStrategy : DefaultIndentationStrategy
     {
         /// <summary>
         ///     Creates a new CSharpIndentationStrategy and initializes the settings using the text editor options.
@@ -86,5 +86,5 @@ namespace AvalonStudio.Languages.CSharp
         {
             return Indent(new TextDocumentAccessor(document, beginLine, endLine), true, caretIndex);
         }
-    }
+    }*/
 }

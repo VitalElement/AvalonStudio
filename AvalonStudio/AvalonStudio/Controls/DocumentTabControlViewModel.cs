@@ -71,8 +71,8 @@ namespace AvalonStudio.Controls
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         var vm = value as EditorViewModel;
-                        vm.Model.Editor?.Focus();
-                        vm.Model.TriggerCodeAnalysis();
+                      //  vm.Focus();
+                       // vm.TriggerCodeAnalysis();
                     });
                 }
 

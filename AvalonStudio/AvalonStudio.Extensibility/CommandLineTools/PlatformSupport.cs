@@ -67,7 +67,10 @@ namespace AvalonStudio.CommandLineTools
             {
                 foreach (var extraPath in extraPaths)
                 {
-                    shellProc.StartInfo.Environment["PATH"] += $";{extraPath}";
+                    if (extraPath != null)
+                    {
+                        shellProc.StartInfo.Environment["PATH"] += $"{Platform.PathSeperator}{extraPath}";
+                    }
                 }
 
                 if (executeInShell)

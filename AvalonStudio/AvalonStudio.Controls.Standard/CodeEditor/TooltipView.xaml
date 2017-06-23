@@ -1,0 +1,14 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
+         xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility"
+          xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+  <Style Selector="local|TooltipView">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="True" Name="PART_Popup" DataContext="">
+          <cont:ViewModelViewHost Name="PART_ViewHost" />
+        </Popup>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

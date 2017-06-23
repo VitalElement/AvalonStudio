@@ -11,6 +11,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutScreen\AboutDialogView.paml" />
+    <EmbeddedResource Include="CodeEditor\CodeEditor.xaml" />
+    <EmbeddedResource Include="CodeEditor\ErrorProbeView.paml" />
+    <EmbeddedResource Include="CodeEditor\TooltipView.xaml" />
+    <EmbeddedResource Include="CodeEditor\CompletionAssistantView.xaml" />
+    <EmbeddedResource Include="CodeEditor\Intellisense.xaml" />
+    <EmbeddedResource Include="CodeEditor\SignatureHelpView.paml" />
+    <EmbeddedResource Include="CodeEditor\IntellisenseUserControl.xaml" />
+    <EmbeddedResource Include="CodeEditor\SignatureView.xaml" />
     <EmbeddedResource Include="Console\ConsoleView.paml" />
     <EmbeddedResource Include="ErrorList\ErrorListView.paml" />
     <EmbeddedResource Include="SolutionExplorer\NewItemDialogView.paml" />
@@ -20,10 +28,12 @@
     <EmbeddedResource Include="WelcomeScreen\WelcomeScreenView.paml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build3098-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.0" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
   </ItemGroup>
 </Project>

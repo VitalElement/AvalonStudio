@@ -33,7 +33,7 @@ namespace AvalonStudio
             }
             else if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
-                builder.UsePlatformDetect();
+                builder.UsePlatformDetect().UseSkia();
             }
             else
             {

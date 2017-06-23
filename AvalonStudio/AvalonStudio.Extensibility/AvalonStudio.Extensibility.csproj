@@ -19,7 +19,7 @@
     <EmbeddedResource Include="MainMenu\ViewModels\MainMenuView.paml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.4.1-build3098-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.0" />
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
@@ -29,9 +29,9 @@
     <PackageReference Include="RazorLight" Version="1.1.0" /> 
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.TextEditor\AvalonStudio.TextEditor.csproj" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />
   </ItemGroup>
 </Project>
