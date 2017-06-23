@@ -10,6 +10,16 @@
                 <TextBlock Text="Speed (kHz)" />
                 <DropDown Items="{Binding SpeedOptions}" SelectedIndex="{Binding SpeedSelectedIndex, Mode=TwoWay}" />
             </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Gap="5">
+                <TextBlock Text="Download" />
+                <CheckBox IsChecked="{Binding Download}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Gap="5">
+                <TextBlock Text="Reset" />
+                <CheckBox IsChecked="{Binding Reset}" />
+            </StackPanel>
         </StackPanel>
 
         <StackPanel Width="500">
