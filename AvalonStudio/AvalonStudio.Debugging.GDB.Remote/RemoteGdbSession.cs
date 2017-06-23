@@ -5,10 +5,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB.Remote
@@ -30,24 +27,31 @@ namespace AvalonStudio.Debugging.GDB.Remote
         protected override void OnRun(DebuggerStartInfo startInfo)
         {            
             var settings = _project.GetDebuggerSettings<RemoteGdbSettings>();
+            var environment = _project.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
 
             console.Clear();
 
-            if (!string.IsNullOrEmpty(settings.PreInitCommand?.Trim()))
+            var preInitCommand = settings.PreInitCommand?.Trim().ExpandVariables(environment);
+            var preInitCommandArguments = settings.PreInitCommandArgs.Trim().ExpandVariables(environment);
+            var postInitCommand = settings.PostInitCommand?.Trim().ExpandVariables(environment);
+            var postInitCommandArguments = settings.PostInitCommandArgs.Trim().ExpandVariables(environment);
+            
+            if (!string.IsNullOrEmpty(preInitCommand))
             {
                 console.WriteLine("[Remote GDB] - Starting GDB Server...");
+                
+                var gdbServerStartInfo = new ProcessStartInfo
+                {
+                    Arguments = preInitCommandArguments,
+                    FileName = preInitCommand,
+                    WorkingDirectory = _project.CurrentDirectory,
 
-
-                var gdbServerStartInfo = new ProcessStartInfo();
-                gdbServerStartInfo.Arguments = settings.PreInitCommandArgs;
-                gdbServerStartInfo.FileName = settings.PreInitCommand;
-                gdbServerStartInfo.WorkingDirectory = _project.CurrentDirectory;
-
-                // Hide console window
-                gdbServerStartInfo.RedirectStandardOutput = true;
-                gdbServerStartInfo.RedirectStandardError = true;
-                gdbServerStartInfo.UseShellExecute = false;
-                gdbServerStartInfo.CreateNoWindow = true;
+                    // Hide console window
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
 
                 Task.Run(() =>
                 {
@@ -94,11 +98,11 @@ namespace AvalonStudio.Debugging.GDB.Remote
             {
                 await Task.Delay(250);
 
-                if (!string.IsNullOrEmpty(settings.PostInitCommand?.Trim()))
+                if (!string.IsNullOrEmpty(postInitCommand))
                 {
                     var console = IoC.Get<IConsole>();
 
-                    var exitCode = PlatformSupport.ExecuteShellCommand(settings.PostInitCommand, settings.PostInitCommandArgs, (s, e) =>
+                    var exitCode = PlatformSupport.ExecuteShellCommand(postInitCommand, postInitCommandArguments, (s, e) =>
                     {
                         console.WriteLine(e.Data);
                     }, (s, ee) =>
@@ -142,7 +146,9 @@ namespace AvalonStudio.Debugging.GDB.Remote
 
             if (result)
             {
-                var commands = settings.GDBInitCommands?.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+                var environment = _project.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
+
+                var commands = settings.GDBInitCommands?.ExpandVariables(environment).Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
 
                 foreach(var command in commands)
                 {

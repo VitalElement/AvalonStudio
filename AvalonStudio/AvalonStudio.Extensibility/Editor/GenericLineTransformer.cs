@@ -22,7 +22,13 @@ namespace AvalonStudio.CodeEditor
                     length = (line.EndOffset - startIndex) - line.Offset - startIndex;
                 }
 
-                ChangeLinePart(line.Offset + startIndex, line.Offset + startIndex + length, e => e.TextRunProperties.ForegroundBrush = foreground);
+                int startOffset = line.Offset + startIndex;
+                int endoffset = line.Offset + startIndex + length;
+
+                if (startOffset < CurrentContext.Document.TextLength && endoffset < CurrentContext.Document.TextLength)
+                {
+                    ChangeLinePart(startOffset, endoffset, e => e.TextRunProperties.ForegroundBrush = foreground);
+                }
             }
             else
             {

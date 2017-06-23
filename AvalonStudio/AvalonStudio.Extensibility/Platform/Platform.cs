@@ -191,6 +191,29 @@ namespace AvalonStudio.Platforms
             }
         }
 
+        public static string PathSeperator
+        {
+            get
+            {
+                switch (Platform.PlatformIdentifier)
+                {
+                    case PlatformID.Unix:
+                    case PlatformID.MacOSX:
+                        {
+                            return ":";
+                        }
+
+                    case PlatformID.Win32NT:
+                        {
+                            return ";";
+                        }
+
+                    default:
+                        throw new NotImplementedException("Not implemented for your platform.");
+                }
+            }
+        }
+
         public static string ExecutableExtension
         {
             get
