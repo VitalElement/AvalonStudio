@@ -1,10 +1,16 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility" xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <cont:ToolControl Title="Disassembly">
-    <editor:CodeEditor Grid.Row="1" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}" TextBlock.FontFamily="Consolas" 
-                       TextBlock.FontSize="13" TextBlock.FontWeight="100" Document="{Binding Document}" 
+    <DockPanel>
+      <StackPanel Orientation="Horizontal" Gap="4" DockPanel.Dock="Top">
+        <TextBlock Text="Mixed Mode" />
+        <CheckBox IsChecked="{Binding MixedMode}" />
+      </StackPanel>
+      <editor:CodeEditor Grid.Row="1" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}" TextBlock.FontFamily="Consolas"
+                       TextBlock.FontSize="13" TextBlock.FontWeight="100" Document="{Binding Document}"
                        EditorCaretOffset="{Binding CaretIndex, Mode=TwoWay}" BackgroundRenderers="{Binding BackgroundRenderers}"
                        DocumentLineTransformers="{Binding LineTransformers}"
-                       LineNumbersVisible="false" ShowBreakpoints="false" IsReadOnly="true" HighlightSelectedLine="false" HighlightSelectedWord="false" />    
+                       LineNumbersVisible="false" ShowBreakpoints="false" IsReadOnly="true" HighlightSelectedLine="false" HighlightSelectedWord="false" />
+    </DockPanel>
   </cont:ToolControl>
 </UserControl>
