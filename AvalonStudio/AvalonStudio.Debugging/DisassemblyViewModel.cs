@@ -4,24 +4,20 @@ using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
+using AvalonStudio.TextEditor.Rendering;
 using Mono.Debugging.Client;
 using ReactiveUI;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using Avalonia.Media;
-using System.Collections.ObjectModel;
-using AvalonStudio.TextEditor.Rendering;
-using System.Reactive.Linq;
 using System;
-using System.Reactive;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Reactive.Linq;
+using System.Text;
 
 namespace AvalonStudio.Debugging
 {
-    public class DisassemblyViewModel : ToolViewModel, IExtension, IVisualLineTransformer
+    public class DisassemblyViewModel : ToolViewModel, IExtension
     {
-        private IDebugger2 _debugger;
         private IDebugManager2 _debugManager;
 
         List<AssemblyLine> cachedLines = new List<AssemblyLine>();
@@ -29,7 +25,6 @@ namespace AvalonStudio.Debugging
         DebuggerSession session;
         private int _caretIndex;
         private bool _mixedMode;
-        bool autoRefill;
         int firstLine;
         int lastLine;
         TextDocument document;
@@ -129,6 +124,10 @@ namespace AvalonStudio.Debugging
             get { return Location.RightTop; }
         }
 
+        public void BeforeActivation()
+        {
+        }
+
         public void Activation()
         {
             _debugManager = IoC.Get<IDebugManager2>();
@@ -156,7 +155,6 @@ namespace AvalonStudio.Debugging
         {
             if (_debugManager.Session != null && !_debugManager.Session.IsRunning)
             {
-                autoRefill = false;
                 /*if (currentDebugLineMarker != null)
                 {
                     editor.RemoveMarker(currentDebugLineMarker);
@@ -255,7 +253,6 @@ namespace AvalonStudio.Debugging
                 if (sf.Address >= cachedLines[0].Address && sf.Address <= cachedLines[cachedLines.Count - 1].Address)
                 {
                     // The same address range can be reused
-                    autoRefill = true;
                     UpdateCurrentLineMarker(true);
                     return;
                 }
@@ -271,8 +268,6 @@ namespace AvalonStudio.Debugging
 
             document.Text = string.Empty;
             InsertLines(0, firstLine, lastLine, out firstLine, out lastLine);
-
-            autoRefill = true;
 
             UpdateCurrentLineMarker(true);
         }
@@ -336,12 +331,6 @@ namespace AvalonStudio.Debugging
 
         void UpdateCurrentLineMarker(bool moveCaret)
         {
-            /*if (currentDebugLineMarker != null)
-            {
-                editor.RemoveMarker(currentDebugLineMarker);
-                currentDebugLineMarker = null;
-            }*/
-
             StackFrame sf = _debugManager.SelectedFrame;
             int line;
             if (addressLines.TryGetValue(GetAddrId(sf.Address, sf.AddressSpace), out line))
@@ -349,8 +338,7 @@ namespace AvalonStudio.Debugging
                 var docLine = document.GetLineByNumber(line);
 
                 _selectedLineMarker.SetLocation(docLine.LineNumber);
-                /*currentDebugLineMarker = TextMarkerFactory.CreateCurrentDebugLineTextMarker(editor, docLine.Offset, docLine.Length);
-                editor.AddMarker(line, currentDebugLineMarker);*/
+
                 if (moveCaret)
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
@@ -358,43 +346,6 @@ namespace AvalonStudio.Debugging
                         CaretIndex = docLine.Offset;
                     });
                 }
-            }
-        }
-
-
-        public void BeforeActivation()
-        {
-        }
-
-        public void SetAddress(ulong currentAddress)
-        {
-            //if (DisassemblyData == null)
-            //{
-            //    DisassemblyData = new AsyncVirtualizingCollection<InstructionLine>(dataProvider, 100, 6000);
-
-            //    Task.Factory.StartNew(async () =>
-            //    {
-            //        await Task.Delay(50);
-
-            //        Dispatcher.UIThread.InvokeAsync(() =>
-            //        {
-            //            SelectedIndex = currentAddress;
-            //        });
-            //    });
-            //}
-            //else
-            //{
-            //    SelectedIndex = currentAddress;
-            //}
-        }
-
-        public void Transform(ITextRunConstructionContext context, IList<VisualLineElement> elements)
-        {
-            if(!addressLines.ContainsValue(context.VisualLine.FirstDocumentLine.LineNumber))
-            {
-                // Source line.
-
-                
             }
         }
     }
