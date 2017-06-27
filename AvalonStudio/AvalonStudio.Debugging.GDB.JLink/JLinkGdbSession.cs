@@ -48,7 +48,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
                 if (settings.Download)
                 {
-                    supressNextStopEvent = true;
+                    SuppressNextEvent = true;
                     console.WriteLine(RunCommand("-target-download").Status.ToString());
                 }
 

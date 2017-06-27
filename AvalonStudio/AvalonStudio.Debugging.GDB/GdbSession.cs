@@ -71,7 +71,7 @@ namespace AvalonStudio.Debugging.GDB
 
         private string _gdbExecutable;
         private string _runCommand;
-        protected bool supressNextStopEvent = false;
+        private bool _suppressNextEvent = false;
 
         public GdbSession(string gdbExecutable, string runCommand = "-exec-run")
         {
@@ -163,6 +163,12 @@ namespace AvalonStudio.Debugging.GDB
                     RunCommand(_runCommand);
                 });
             }
+        }
+
+        protected bool SuppressNextEvent
+        {
+            get { return _suppressNextEvent; }
+            set { _suppressNextEvent = value; }
         }
 
         protected override void OnAttachToProcess(long processId)
@@ -899,9 +905,9 @@ namespace AvalonStudio.Debugging.GDB
                         }
                     }
 
-                    if (supressNextStopEvent)
+                    if (_suppressNextEvent)
                     {
-                        supressNextStopEvent = false;
+                        _suppressNextEvent = false;
                     }
                     else
                     {
