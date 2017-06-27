@@ -135,6 +135,5 @@ namespace AvalonStudio.Debugging
             get { return _enabled; }
             set { this.RaiseAndSetIfChanged(ref _enabled, value); }
         }
-
     }
 }
