@@ -703,7 +703,7 @@ namespace AvalonStudio.Debugging.GDB
 
             string indexParams = string.Empty;
 
-            for(int i = 0; i < indexes.Count; i++)
+            for (int i = 0; i < indexes.Count; i++)
             {
                 indexParams += indexes.GetValue(i) + " ";
             }
@@ -733,7 +733,7 @@ namespace AvalonStudio.Debugging.GDB
 
             var regNames = data.GetObject("register-names");
 
-            for(int n = 0; n < regNames.Count; n++)
+            for (int n = 0; n < regNames.Count; n++)
             {
                 result.Add(new Register() { Name = regNames.GetValue(n), Index = n });
             }
@@ -776,7 +776,7 @@ namespace AvalonStudio.Debugging.GDB
                 if (data.Status == CommandStatus.Done)
                 {
                     ResultData asm_insns = data.GetObject("asm_insns");
-                    
+
                     for (int n = 0; n < asm_insns.Count; n++)
                     {
                         ResultData src_and_asm_line = asm_insns.GetObject(n).GetObject("src_and_asm_line");

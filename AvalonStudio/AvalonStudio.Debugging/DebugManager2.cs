@@ -187,7 +187,7 @@
                 return;
             }
 
-            var success = await await Task.Factory.StartNew(async ()=> { return await project.ToolChain.Build(_console, project); });
+            var success = await await Task.Factory.StartNew(async () => { return await project.ToolChain.Build(_console, project); });
 
             if (!success)
             {
