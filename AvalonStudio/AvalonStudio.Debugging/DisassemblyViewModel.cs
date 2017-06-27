@@ -100,7 +100,6 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref _lineTransformers, value); }
         }
 
-
         public TextDocument Document
         {
             get { return visibleDocument; }

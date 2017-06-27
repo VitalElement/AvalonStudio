@@ -20,7 +20,7 @@ namespace AvalonStudio.Debugging
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            if(_addressLines.ContainsValue(line.LineNumber))
+            if (_addressLines.ContainsValue(line.LineNumber))
             {
                 // assembly line
                 var lineText = context.Document.GetText(line);
