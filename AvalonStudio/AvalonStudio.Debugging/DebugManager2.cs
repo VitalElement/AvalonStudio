@@ -283,11 +283,11 @@
                     _console.WriteLine($"Hit Watch Point {wp.Expression}");
                 }
 
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.InvokeTaskAsync(() =>
                 {
                     TargetStopped?.Invoke(this, e);
                     SetFrame(currentFrame);
-                });
+                }).Wait();
             }
         }
 
