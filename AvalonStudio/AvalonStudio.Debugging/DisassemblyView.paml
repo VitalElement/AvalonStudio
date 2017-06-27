@@ -4,6 +4,7 @@
     <editor:CodeEditor Grid.Row="1" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}" TextBlock.FontFamily="Consolas" 
                        TextBlock.FontSize="13" TextBlock.FontWeight="100" Document="{Binding Document}" 
                        EditorCaretOffset="{Binding CaretIndex, Mode=TwoWay}" BackgroundRenderers="{Binding BackgroundRenderers}"
+                       DocumentLineTransformers="{Binding LineTransformers}"
                        LineNumbersVisible="false" ShowBreakpoints="false" IsReadOnly="true" HighlightSelectedLine="false" HighlightSelectedWord="false" />    
   </cont:ToolControl>
 </UserControl>
