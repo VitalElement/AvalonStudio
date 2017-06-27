@@ -38,7 +38,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB
 {
-    public class GdbSession : DebuggerSession
+    public class GdbSession : ExtendedDebuggerSession
     {
         private IConsole _console;
         private Process proc;
@@ -693,6 +693,68 @@ namespace AvalonStudio.Debugging.GDB
             return new Backtrace(bt);
         }
 
+        protected override Dictionary<int, string> OnGetRegisterChanges()
+        {
+            var result = new Dictionary<int, string>();
+
+            var data = RunCommand("-data-list-changed-registers");
+
+            var indexes = data.GetObject("changed-registers");
+
+            string indexParams = string.Empty;
+
+            for (int i = 0; i < indexes.Count; i++)
+            {
+                indexParams += indexes.GetValue(i) + " ";
+            }
+
+            var values = RunCommand("-data-list-register-values", "x", indexParams);
+
+            var regValues = values.GetObject("register-values");
+
+            for (int n = 0; n < regValues.Count; n++)
+            {
+                var valueObj = regValues.GetObject(n);
+
+                var index = valueObj.GetInt("number");
+                var value = valueObj.GetValue("value");
+
+                result.Add(index, value);
+            }
+
+            return result;
+        }
+
+        protected override List<Register> OnGetRegisters()
+        {
+            var result = new List<Register>();
+
+            var data = RunCommand("-data-list-register-names");
+
+            var regNames = data.GetObject("register-names");
+
+            for (int n = 0; n < regNames.Count; n++)
+            {
+                result.Add(new Register() { Name = regNames.GetValue(n), Index = n });
+            }
+
+            data = RunCommand("-data-list-register-values", "x");
+
+            var regValues = data.GetObject("register-values");
+
+            for (int n = 0; n < regValues.Count; n++)
+            {
+                var valueObj = regValues.GetObject(n);
+
+                var index = valueObj.GetInt("number");
+                var value = valueObj.GetValue("value");
+
+                result[index].Value = value;
+            }
+
+            return result;
+        }
+
         protected override AssemblyLine[] OnDisassembleFile(string file)
         {
             List<AssemblyLine> lines = new List<AssemblyLine>();
@@ -714,7 +776,7 @@ namespace AvalonStudio.Debugging.GDB
                 if (data.Status == CommandStatus.Done)
                 {
                     ResultData asm_insns = data.GetObject("asm_insns");
-                    
+
                     for (int n = 0; n < asm_insns.Count; n++)
                     {
                         ResultData src_and_asm_line = asm_insns.GetObject(n).GetObject("src_and_asm_line");

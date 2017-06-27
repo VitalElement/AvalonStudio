@@ -3,9 +3,11 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.Debugging
 {
@@ -14,6 +16,8 @@ namespace AvalonStudio.Debugging
         private IDebugManager2 _debugManager;
 
         private double columnWidth;
+
+        private bool _enabled;
 
         private bool firstStopInSession;
 
@@ -46,13 +50,37 @@ namespace AvalonStudio.Debugging
         {
             _debugManager = IoC.Get<IDebugManager2>();
 
-            _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+            _debugManager.DebugSessionStarted += (sender, e) =>
+            {
+                if (_debugManager.ExtendedSession != null)
+                {
+                    IsVisible = true;
+
+                    var regs = _debugManager.ExtendedSession.GetRegisters();
+
+                    SetRegisters(regs);
+                }
+            };
 
             _debugManager.DebugSessionEnded += (sender, e) =>
             {
                 IsVisible = false;
                 Clear();
             };
+
+            _debugManager.FrameChanged += (sender, e) =>
+             {
+                 Enabled = true;
+
+                 var changes = _debugManager.ExtendedSession.GetRegisterChanges();
+
+                 UpdateRegisters(changes);
+             };
+
+            var started = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStarted));
+            var stopped = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStopped));
+
+            started.SelectMany(_ => Observable.Amb(Observable.Timer(TimeSpan.FromMilliseconds(250)).Select(o => true), stopped.Take(1).Select(o => false))).Where(timeout => timeout == true).Subscribe(s => Enabled = false);
         }
 
         private void SetRegisters(List<Register> registers)
@@ -68,24 +96,6 @@ namespace AvalonStudio.Debugging
 
                 ColumnWidth = 0;
                 ColumnWidth = double.NaN;
-            }
-        }
-
-        public new async void Invalidate()
-        {
-            if (firstStopInSession)
-            {
-                firstStopInSession = false;
-
-                List<Register> registers = null;
-
-                SetRegisters(registers);
-            }
-            else
-            {
-                Dictionary<int, string> changedRegisters = null;
-
-                Dispatcher.UIThread.InvokeAsync(() => { UpdateRegisters(changedRegisters); });
             }
         }
 
@@ -118,6 +128,12 @@ namespace AvalonStudio.Debugging
 
             ColumnWidth = 0;
             ColumnWidth = double.NaN;
+        }
+
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set { this.RaiseAndSetIfChanged(ref _enabled, value); }
         }
     }
 }

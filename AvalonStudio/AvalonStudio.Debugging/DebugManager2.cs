@@ -116,6 +116,8 @@
 
         public DebuggerSession Session => _session;
 
+        public ExtendedDebuggerSession ExtendedSession => _session as ExtendedDebuggerSession;
+
         public BreakpointStore Breakpoints { get; set; }
 
         public bool SessionActive => _session != null;
@@ -185,7 +187,7 @@
                 return;
             }
 
-            var success = await await Task.Factory.StartNew(async ()=> { return await project.ToolChain.Build(_console, project); });
+            var success = await await Task.Factory.StartNew(async () => { return await project.ToolChain.Build(_console, project); });
 
             if (!success)
             {
