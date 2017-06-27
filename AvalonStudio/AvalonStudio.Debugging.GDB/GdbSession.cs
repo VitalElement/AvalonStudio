@@ -684,7 +684,7 @@ namespace AvalonStudio.Debugging.GDB
             int cline = 1;
             do
             {
-                ResultData data = null;
+                GdbCommandResult data = null;
                 try
                 {
                     data = RunCommand("-data-disassemble", "-f", file, "-l", cline.ToString(), "--", "1");
@@ -693,23 +693,31 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     break;
                 }
-                ResultData asm_insns = data.GetObject("asm_insns");
+
                 int newLine = cline;
-                for (int n = 0; n < asm_insns.Count; n++)
+
+                if (data.Status == CommandStatus.Done)
                 {
-                    ResultData src_and_asm_line = asm_insns.GetObject(n).GetObject("src_and_asm_line");
-                    newLine = src_and_asm_line.GetInt("line");
-                    ResultData line_asm_insn = src_and_asm_line.GetObject("line_asm_insn");
-                    for (int i = 0; i < line_asm_insn.Count; i++)
+                    ResultData asm_insns = data.GetObject("asm_insns");
+                    
+                    for (int n = 0; n < asm_insns.Count; n++)
                     {
-                        ResultData asm = line_asm_insn.GetObject(i);
-                        long addr = long.Parse(asm.GetValue("address").Substring(2), NumberStyles.HexNumber);
-                        string code = asm.GetValue("inst");
-                        lines.Add(new AssemblyLine(addr, code, newLine));
+                        ResultData src_and_asm_line = asm_insns.GetObject(n).GetObject("src_and_asm_line");
+                        newLine = src_and_asm_line.GetInt("line");
+                        ResultData line_asm_insn = src_and_asm_line.GetObject("line_asm_insn");
+                        for (int i = 0; i < line_asm_insn.Count; i++)
+                        {
+                            ResultData asm = line_asm_insn.GetObject(i);
+                            long addr = long.Parse(asm.GetValue("address").Substring(2), NumberStyles.HexNumber);
+                            string code = asm.GetValue("inst");
+                            lines.Add(new AssemblyLine(addr, code, newLine));
+                        }
                     }
                 }
+
                 if (newLine <= cline)
                     break;
+
                 cline = newLine + 1;
             }
             while (true);
