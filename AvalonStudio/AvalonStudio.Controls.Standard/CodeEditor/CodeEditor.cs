@@ -169,7 +169,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             });
 
-            _selectedDebugLineBackgroundRenderer = new SelectedDebugLineBackgroundRenderer();
+           _selectedDebugLineBackgroundRenderer = new SelectedDebugLineBackgroundRenderer();
             TextArea.TextView.BackgroundRenderers.Add(_selectedDebugLineBackgroundRenderer);
             TextArea.TextView.LineTransformers.Add(_selectedDebugLineBackgroundRenderer);
 
@@ -180,34 +180,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 ConvertTabsToSpaces = true,
                 IndentationSize = 4
             };
-
-            DocumentLineTransformersProperty.Changed.Subscribe(s =>
-            {
-                if (s.Sender == this)
-                {
-                    if (s.OldValue != null)
-                    {
-                        var list = s.OldValue as ObservableCollection<IVisualLineTransformer>;
-
-                        list.CollectionChanged -= List_CollectionChanged;
-                    }
-
-                    if (s.NewValue != null)
-                    {
-                        var list = s.NewValue as ObservableCollection<IVisualLineTransformer>;
-
-                        list.CollectionChanged += List_CollectionChanged;
-                    }
-                }
-            });
-
-            this.GetObservable(CaretOffsetProperty).Subscribe(s =>
-            {
-                if (Document?.TextLength > s)
-                {
-                    CaretOffset = s;
-                }
-            });
 
             BackgroundRenderersProperty.Changed.Subscribe(s =>
             {
@@ -228,6 +200,36 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             TextArea.TextView.BackgroundRenderers.Add(renderer);
                         }
                     }
+                }
+            });
+
+            DocumentLineTransformersProperty.Changed.Subscribe(s =>
+            {
+                if (s.Sender == this)
+                {
+                    if (s.OldValue != null)
+                    {
+                        foreach (var renderer in (ObservableCollection<IVisualLineTransformer>)s.OldValue)
+                        {
+                            TextArea.TextView.LineTransformers.Remove(renderer);
+                        }
+                    }
+
+                    if (s.NewValue != null)
+                    {
+                        foreach (var renderer in (ObservableCollection<IVisualLineTransformer>)s.NewValue)
+                        {
+                            TextArea.TextView.LineTransformers.Add(renderer);
+                        }
+                    }
+                }
+            });
+
+            this.GetObservable(CaretOffsetProperty).Subscribe(s =>
+            {
+                if (Document?.TextLength > s)
+                {
+                    CaretOffset = s;
                 }
             });
 
