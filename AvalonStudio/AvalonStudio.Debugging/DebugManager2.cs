@@ -28,6 +28,8 @@
 
         public event EventHandler<TargetEventArgs> TargetStopped;
 
+        public event EventHandler<EventArgs> TargetStarted;
+
         public event EventHandler FrameChanged;
 
         public DebugManager2()
@@ -232,6 +234,8 @@
                 _lastDocument.ClearDebugHighlight();
                 _lastDocument = null;
             }
+
+            TargetStarted?.Invoke(this, e);
         }
 
         private void _session_TargetExited(object sender, TargetEventArgs e)
