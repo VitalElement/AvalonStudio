@@ -348,7 +348,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 return null;
             }
 
-            var position = GetPositionFromPoint(MouseDevice.Instance.GetPosition(this));
+            var mouseDevice = (VisualRoot as IInputRoot)?.MouseDevice;
+            var position = GetPositionFromPoint(mouseDevice.GetPosition(this));
 
             if (position.HasValue)
             {
