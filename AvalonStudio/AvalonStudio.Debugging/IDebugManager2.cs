@@ -13,6 +13,8 @@
 
         event EventHandler<TargetEventArgs> TargetStopped;
 
+        event EventHandler<EventArgs> TargetStarted;
+
         StackFrame SelectedFrame { get; set; }
 
         DebuggerSession Session { get; }

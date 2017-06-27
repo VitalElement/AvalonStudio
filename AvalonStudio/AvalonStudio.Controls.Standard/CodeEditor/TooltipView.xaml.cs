@@ -51,7 +51,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     if (_editor.IsPointerOver)
                     {
                         _viewHost.DataContext = dataContext;
-                        _lastPoint = MouseDevice.Instance.GetPosition(_editor);
+                        var mouseDevice = (VisualRoot as IInputRoot)?.MouseDevice;
+                        _lastPoint = mouseDevice.GetPosition(_editor);
                         _popup.Open();
                     }
                 }

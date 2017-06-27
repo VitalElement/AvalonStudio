@@ -35,8 +35,10 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
             if (result)
             {
+                InsideStop();
+
                 var settings = _project.GetDebuggerSettings<JLinkSettings>();
-                
+
                 RunCommand("monitor", "halt");
 
                 if (settings.Reset)
@@ -46,6 +48,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
                 if (settings.Download)
                 {
+                    SuppressNextEvent = true;
                     console.WriteLine(RunCommand("-target-download").Status.ToString());
                 }
 

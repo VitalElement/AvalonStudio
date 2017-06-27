@@ -64,6 +64,7 @@ namespace AvalonStudio.Debugging.GDB
         private bool internalStop;
         private bool logGdb = false;
         private bool asyncMode;
+        private bool _detectAsync;
 
         private object syncLock = new object();
         private object eventLock = new object();
@@ -71,12 +72,14 @@ namespace AvalonStudio.Debugging.GDB
 
         private string _gdbExecutable;
         private string _runCommand;
+        private bool _suppressNextEvent = false;
 
-        public GdbSession(string gdbExecutable, string runCommand = "-exec-run")
+        public GdbSession(string gdbExecutable, string runCommand = "-exec-run", bool detectAsync = true)
         {
             _gdbExecutable = gdbExecutable;
             _console = IoC.Get<IConsole>();
             _runCommand = runCommand;
+            _detectAsync = detectAsync;
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)
@@ -118,7 +121,14 @@ namespace AvalonStudio.Debugging.GDB
 
                 currentProcessName = startInfo.Command + " " + startInfo.Arguments;
 
-                asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
+                if (_detectAsync)
+                {
+                    asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
+                }
+                else
+                {
+                    asyncMode = false;
+                }
 
                 if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
                 {
@@ -158,10 +168,16 @@ namespace AvalonStudio.Debugging.GDB
 
                 ThreadPool.QueueUserWorkItem(delegate
                 {
-                    RunCommand(_runCommand);
                     running = true;
+                    RunCommand(_runCommand);
                 });
             }
+        }
+
+        protected bool SuppressNextEvent
+        {
+            get { return _suppressNextEvent; }
+            set { _suppressNextEvent = value; }
         }
 
         protected override void OnAttachToProcess(long processId)
@@ -683,7 +699,7 @@ namespace AvalonStudio.Debugging.GDB
             int cline = 1;
             do
             {
-                ResultData data = null;
+                GdbCommandResult data = null;
                 try
                 {
                     data = RunCommand("-data-disassemble", "-f", file, "-l", cline.ToString(), "--", "1");
@@ -692,23 +708,31 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     break;
                 }
-                ResultData asm_insns = data.GetObject("asm_insns");
+
                 int newLine = cline;
-                for (int n = 0; n < asm_insns.Count; n++)
+
+                if (data.Status == CommandStatus.Done)
                 {
-                    ResultData src_and_asm_line = asm_insns.GetObject(n).GetObject("src_and_asm_line");
-                    newLine = src_and_asm_line.GetInt("line");
-                    ResultData line_asm_insn = src_and_asm_line.GetObject("line_asm_insn");
-                    for (int i = 0; i < line_asm_insn.Count; i++)
+                    ResultData asm_insns = data.GetObject("asm_insns");
+                    
+                    for (int n = 0; n < asm_insns.Count; n++)
                     {
-                        ResultData asm = line_asm_insn.GetObject(i);
-                        long addr = long.Parse(asm.GetValue("address").Substring(2), NumberStyles.HexNumber);
-                        string code = asm.GetValue("inst");
-                        lines.Add(new AssemblyLine(addr, code, newLine));
+                        ResultData src_and_asm_line = asm_insns.GetObject(n).GetObject("src_and_asm_line");
+                        newLine = src_and_asm_line.GetInt("line");
+                        ResultData line_asm_insn = src_and_asm_line.GetObject("line_asm_insn");
+                        for (int i = 0; i < line_asm_insn.Count; i++)
+                        {
+                            ResultData asm = line_asm_insn.GetObject(i);
+                            long addr = long.Parse(asm.GetValue("address").Substring(2), NumberStyles.HexNumber);
+                            string code = asm.GetValue("inst");
+                            lines.Add(new AssemblyLine(addr, code, newLine));
+                        }
                     }
                 }
+
                 if (newLine <= cline)
                     break;
+
                 cline = newLine + 1;
             }
             while (true);
@@ -774,7 +798,7 @@ namespace AvalonStudio.Debugging.GDB
 
         protected bool InsideStop()
         {
-            lock(gdbLock)
+            lock (gdbLock)
             {
                 return InternalStop();
             }
@@ -782,7 +806,7 @@ namespace AvalonStudio.Debugging.GDB
 
         protected void InsideResume(bool resume)
         {
-            lock(gdbLock)
+            lock (gdbLock)
             {
                 InternalResume(resume);
             }
@@ -799,7 +823,7 @@ namespace AvalonStudio.Debugging.GDB
                 lock (eventLock)
                 {
                     sin.WriteLine("-exec-interrupt");
-                 
+
                     Monitor.Wait(eventLock);
                 }
             }
@@ -890,19 +914,26 @@ namespace AvalonStudio.Debugging.GDB
                         }
                     }
 
-                    if (ev != null)
+                    if (_suppressNextEvent)
                     {
-                        ThreadPool.QueueUserWorkItem(delegate
+                        _suppressNextEvent = false;
+                    }
+                    else
+                    {
+                        if (ev != null)
                         {
-                            try
+                            ThreadPool.QueueUserWorkItem(delegate
                             {
-                                HandleEvent(ev);
-                            }
-                            catch (Exception ex)
-                            {
-                                _console.WriteLine(ex.ToString());
-                            }
-                        });
+                                try
+                                {
+                                    HandleEvent(ev);
+                                }
+                                catch (Exception ex)
+                                {
+                                    _console.WriteLine(ex.ToString());
+                                }
+                            });
+                        }
                     }
                     break;
             }
