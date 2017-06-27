@@ -855,15 +855,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
 
             _selectedDebugLineBackgroundRenderer.SetLocation(line, startColumn, endColumn);
-
-            TextArea.TextView.Redraw();
         }
 
         public void ClearDebugHighlight()
         {
             _selectedDebugLineBackgroundRenderer.SetLocation(-1);
-
-            TextArea.TextView.Redraw();
         }
     }
 }

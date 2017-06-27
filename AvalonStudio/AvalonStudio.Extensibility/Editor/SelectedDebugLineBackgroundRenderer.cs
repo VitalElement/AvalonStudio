@@ -14,6 +14,7 @@ namespace AvalonStudio.TextEditor.Rendering
         private readonly IBrush selectedLineBg;
         private int _startColumn;
         private int _endColumn;
+        private TextView _owner;
 
         public SelectedDebugLineBackgroundRenderer()
         {
@@ -27,6 +28,7 @@ namespace AvalonStudio.TextEditor.Rendering
             _line = line;
             _startColumn = startColumn;
             _endColumn = endColumn;
+            _owner?.Redraw();
         }
 
         public int Line
@@ -34,10 +36,6 @@ namespace AvalonStudio.TextEditor.Rendering
             get
             {
                 return _line;
-            }
-            set
-            {
-                _line = value;
             }
         }
 
@@ -47,10 +45,6 @@ namespace AvalonStudio.TextEditor.Rendering
             {
                 return _startColumn;
             }
-            set
-            {
-                _startColumn = value;
-            }
         }
 
         public int EndColumn
@@ -59,16 +53,14 @@ namespace AvalonStudio.TextEditor.Rendering
             {
                 return _endColumn;
             }
-            set
-            {
-                _endColumn = value;
-            }
         }
 
         public KnownLayer Layer => KnownLayer.Background;        
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
+            _owner = textView;
+
             if (_line > 0 && _line < textView.Document.LineCount)
             {
                 var currentLine = textView.Document.GetLineByNumber(_line);
