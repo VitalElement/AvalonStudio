@@ -64,6 +64,7 @@ namespace AvalonStudio.Debugging.GDB
         private bool internalStop;
         private bool logGdb = false;
         private bool asyncMode;
+        private bool _detectAsync;
 
         private object syncLock = new object();
         private object eventLock = new object();
@@ -73,11 +74,12 @@ namespace AvalonStudio.Debugging.GDB
         private string _runCommand;
         private bool _suppressNextEvent = false;
 
-        public GdbSession(string gdbExecutable, string runCommand = "-exec-run")
+        public GdbSession(string gdbExecutable, string runCommand = "-exec-run", bool detectAsync = true)
         {
             _gdbExecutable = gdbExecutable;
             _console = IoC.Get<IConsole>();
             _runCommand = runCommand;
+            _detectAsync = detectAsync;
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)
@@ -119,7 +121,14 @@ namespace AvalonStudio.Debugging.GDB
 
                 currentProcessName = startInfo.Command + " " + startInfo.Arguments;
 
-                asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
+                if (_detectAsync)
+                {
+                    asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
+                }
+                else
+                {
+                    asyncMode = false;
+                }
 
                 if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
                 {
