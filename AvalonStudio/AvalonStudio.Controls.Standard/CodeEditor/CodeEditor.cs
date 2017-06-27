@@ -233,8 +233,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             });
 
-            _analysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance)
-            .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });
+            /*_analysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance)
+            .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });*/
+
+            _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).Subscribe(async _ =>
+            {
+                await DoCodeAnalysisAsync();
+            });
 
             this.GetObservable(SourceFileProperty).OfType<ISourceFile>().Subscribe(file =>
             {
