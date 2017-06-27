@@ -116,7 +116,7 @@ namespace AvalonStudio.Debugging
 
             _debugManager.TargetStopped += (sender, e) =>
             {
-                
+
             };
 
             _debugManager.FrameChanged += (sender, e) =>
@@ -148,7 +148,7 @@ namespace AvalonStudio.Debugging
                 return;
             }
 
-            
+
             var sf = _debugManager.SelectedFrame;
             /*if (!string.IsNullOrWhiteSpace(sf.SourceLocation.FileName) && sf.SourceLocation.Line != -1 && sf.SourceLocation.FileHash != null)
             {
@@ -166,7 +166,7 @@ namespace AvalonStudio.Debugging
             /*if (!string.IsNullOrEmpty(sf.SourceLocation.FileName) && File.Exists(sf.SourceLocation.FileName))
                 FillWithSource();
             else*/
-                Fill();
+            Fill();
         }
 
         public void Fill()
@@ -192,7 +192,7 @@ namespace AvalonStudio.Debugging
 
             firstLine = -150;
             lastLine = 150;
-            
+
             editor.Text = string.Empty;
             InsertLines(0, firstLine, lastLine, out firstLine, out lastLine);
 

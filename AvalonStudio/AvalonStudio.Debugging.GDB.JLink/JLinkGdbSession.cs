@@ -36,7 +36,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
             if (result)
             {
                 var settings = _project.GetDebuggerSettings<JLinkSettings>();
-                
+
                 RunCommand("monitor", "halt");
 
                 if (settings.Reset)

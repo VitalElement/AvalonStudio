@@ -155,7 +155,7 @@ namespace AvalonStudio.Debugging.GDB
 
                 RunCommand("-enable-pretty-printing");
 
-                OnStarted();                
+                OnStarted();
 
                 ThreadPool.QueueUserWorkItem(delegate
                 {
@@ -775,7 +775,7 @@ namespace AvalonStudio.Debugging.GDB
 
         protected bool InsideStop()
         {
-            lock(gdbLock)
+            lock (gdbLock)
             {
                 return InternalStop();
             }
@@ -783,7 +783,7 @@ namespace AvalonStudio.Debugging.GDB
 
         protected void InsideResume(bool resume)
         {
-            lock(gdbLock)
+            lock (gdbLock)
             {
                 InternalResume(resume);
             }
@@ -800,7 +800,7 @@ namespace AvalonStudio.Debugging.GDB
                 lock (eventLock)
                 {
                     sin.WriteLine("-exec-interrupt");
-                 
+
                     Monitor.Wait(eventLock);
                 }
             }

@@ -111,7 +111,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             this.GetObservable(LineNumbersVisibleProperty).Subscribe(s =>
             {
-                if(s)
+                if (s)
                 {
                     TextArea.LeftMargins.Add(_lineNumberMargin);
                 }
@@ -135,7 +135,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             this.GetObservable(HighlightSelectedWordProperty).Subscribe(s =>
             {
-                if(s)
+                if (s)
                 {
                     TextArea.TextView.BackgroundRenderers.Add(_selectedWordBackgroundRenderer);
                 }
@@ -159,7 +159,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             this.GetObservable(ShowColumnLimitProperty).Subscribe(s =>
             {
-                if(s)
+                if (s)
                 {
                     TextArea.TextView.BackgroundRenderers.Add(_columnLimitBackgroundRenderer);
                 }
@@ -169,7 +169,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             });
 
-           _selectedDebugLineBackgroundRenderer = new SelectedDebugLineBackgroundRenderer();
+            _selectedDebugLineBackgroundRenderer = new SelectedDebugLineBackgroundRenderer();
             TextArea.TextView.BackgroundRenderers.Add(_selectedDebugLineBackgroundRenderer);
             TextArea.TextView.LineTransformers.Add(_selectedDebugLineBackgroundRenderer);
 
@@ -686,7 +686,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public bool LineNumbersVisible
         {
-            get { return GetValue(LineNumbersVisibleProperty);}
+            get { return GetValue(LineNumbersVisibleProperty); }
             set { SetValue(LineNumbersVisibleProperty, value); }
         }
 

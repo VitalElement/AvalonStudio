@@ -55,7 +55,7 @@ namespace AvalonStudio.TextEditor.Rendering
             }
         }
 
-        public KnownLayer Layer => KnownLayer.Background;        
+        public KnownLayer Layer => KnownLayer.Background;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
@@ -92,7 +92,7 @@ namespace AvalonStudio.TextEditor.Rendering
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            if(line.LineNumber == Line)
+            if (line.LineNumber == Line)
             {
                 SetTextStyle(line, StartColumn - 1, EndColumn - StartColumn, Brushes.Black);
             }
