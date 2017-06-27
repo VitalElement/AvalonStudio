@@ -29,7 +29,7 @@ namespace AvalonStudio.Debugging
         bool autoRefill;
         int firstLine;
         int lastLine;
-        TextDocument editor;
+        TextDocument document;
 
         SelectedDebugLineBackgroundRenderer _selectedLineMarker;
 
@@ -47,7 +47,7 @@ namespace AvalonStudio.Debugging
 
             Title = "Disassembly";
 
-            editor = new TextDocument();
+            document = new TextDocument();
 
             _backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
             _lineTransformers = new ObservableCollection<IVisualLineTransformer>();
@@ -58,12 +58,19 @@ namespace AvalonStudio.Debugging
             _lineTransformers.Add(_selectedLineMarker);
 
             _mixedMode = false;
-        }        
+        }
 
         public bool MixedMode
         {
-            get { return _mixedMode; }
-            set { this.RaiseAndSetIfChanged(ref _mixedMode, value); Update(); }
+            get
+            {
+                return _mixedMode;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _mixedMode, value);
+                Update();
+            }
         }
 
         public int CaretIndex
@@ -91,8 +98,8 @@ namespace AvalonStudio.Debugging
 
         public TextDocument Document
         {
-            get { return editor; }
-            set { this.RaiseAndSetIfChanged(ref editor, value); }
+            get { return document; }
+            set { this.RaiseAndSetIfChanged(ref document, value); }
         }
 
         public bool Enabled
@@ -123,15 +130,9 @@ namespace AvalonStudio.Debugging
                 IsVisible = false;
             };
 
-            _debugManager.TargetStopped += (sender, e) =>
-            {
-
-            };
-
             _debugManager.FrameChanged += (sender, e) =>
             {
-                
-                    Update();
+                Update();
             };
         }
 
@@ -156,7 +157,6 @@ namespace AvalonStudio.Debugging
                     sw.Sensitive = false;*/
                     return;
                 }
-
 
                 var sf = _debugManager.SelectedFrame;
                 /*if (!string.IsNullOrWhiteSpace(sf.SourceLocation.FileName) && sf.SourceLocation.Line != -1 && sf.SourceLocation.FileHash != null)
@@ -200,7 +200,7 @@ namespace AvalonStudio.Debugging
                 }
                 currentFile = sf.SourceLocation.FileName;
                 addressLines.Clear();
-                editor.Text = string.Empty;
+                document.Text = string.Empty;
                 using (var sr = new StreamReader(sf.SourceLocation.FileName))
                 {
                     string line;
@@ -219,7 +219,7 @@ namespace AvalonStudio.Debugging
                         }
                         sourceLine++;
                     }
-                    editor.Text = sb.ToString();
+                    document.Text = sb.ToString();
                     /*foreach (int li in asmLineNums)
                         editor.AddMarker(li, asmMarker);*/
                 }
@@ -246,7 +246,6 @@ namespace AvalonStudio.Debugging
             }
 
             // New address view
-
             cachedLinesAddrSpace = sf.AddressSpace;
             cachedLines.Clear();
             addressLines.Clear();
@@ -254,7 +253,7 @@ namespace AvalonStudio.Debugging
             firstLine = -150;
             lastLine = 150;
 
-            editor.Text = string.Empty;
+            document.Text = string.Empty;
             InsertLines(0, firstLine, lastLine, out firstLine, out lastLine);
 
             autoRefill = true;
@@ -289,7 +288,7 @@ namespace AvalonStudio.Debugging
             lines.RemoveRange(j + 1, lines.Count - j - 1);
 
             int lineCount = 0;
-            int editorLine = editor.GetLineByOffset(offset).LineNumber;
+            int editorLine = document.GetLineByOffset(offset).LineNumber;
 
             foreach (AssemblyLine li in lines)
             {
@@ -299,9 +298,7 @@ namespace AvalonStudio.Debugging
                 lineCount++;
             }
 
-            //editor.IsReadOnly = false;
-            editor.Insert(offset, sb.ToString());
-            //editor.IsReadOnly = true;
+            document.Insert(offset, sb.ToString());
 
             if (offset == 0)
                 this.cachedLines.InsertRange(0, lines);
@@ -333,7 +330,7 @@ namespace AvalonStudio.Debugging
             int line;
             if (addressLines.TryGetValue(GetAddrId(sf.Address, sf.AddressSpace), out line))
             {
-                var docLine = editor.GetLineByNumber(line);
+                var docLine = document.GetLineByNumber(line);
 
                 _selectedLineMarker.SetLocation(docLine.LineNumber);
                 /*currentDebugLineMarker = TextMarkerFactory.CreateCurrentDebugLineTextMarker(editor, docLine.Offset, docLine.Length);
