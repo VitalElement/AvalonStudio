@@ -64,6 +64,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private SelectedWordBackgroundRenderer _selectedWordBackgroundRenderer;
 
+        private ColumnLimitBackgroundRenderer _columnLimitBackgroundRenderer;
+
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
         private bool _isLoaded = false;
@@ -74,6 +76,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private readonly JobRunner _codeAnalysisRunner;
         private CancellationTokenSource _cancellationSource;
         private TooltipView _toolTip;
+        private LineNumberMargin _lineNumberMargin;
+        private BreakPointMargin _breakpointMargin;
+        private SelectedLineBackgroundRenderer _selectedLineBackgroundRenderer;
 
         /// <summary>
         ///     Write lock must be held before calling this.
@@ -92,20 +97,77 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _shell = IoC.Get<IShell>();
 
-            var breakpointMargin = new BreakPointMargin(this, IoC.Get<IDebugManager2>().Breakpoints);
+            _lineNumberMargin = new LineNumberMargin(this);
 
-            TextArea.LeftMargins.Add(breakpointMargin);
+            _breakpointMargin = new BreakPointMargin(this, IoC.Get<IDebugManager2>().Breakpoints);
 
-            var lineNumberMargin = new LineNumberMargin(this) { Margin = new Thickness(0, 0, 10, 0) };
-
-            TextArea.LeftMargins.Add(lineNumberMargin);
+            _selectedLineBackgroundRenderer = new SelectedLineBackgroundRenderer(this);
 
             _selectedWordBackgroundRenderer = new SelectedWordBackgroundRenderer();
-            TextArea.TextView.BackgroundRenderers.Add(_selectedWordBackgroundRenderer);
 
-            TextArea.TextView.BackgroundRenderers.Add(new SelectedLineBackgroundRenderer(this));
+            _columnLimitBackgroundRenderer = new ColumnLimitBackgroundRenderer();
 
-            TextArea.TextView.BackgroundRenderers.Add(new ColumnLimitBackgroundRenderer());
+            TextArea.TextView.Margin = new Thickness(10, 0, 0, 0);
+
+            this.GetObservable(LineNumbersVisibleProperty).Subscribe(s =>
+            {
+                if(s)
+                {
+                    TextArea.LeftMargins.Add(_lineNumberMargin);
+                }
+                else
+                {
+                    TextArea.LeftMargins.Remove(_lineNumberMargin);
+                }
+            });
+
+            this.GetObservable(ShowBreakpointsProperty).Subscribe(s =>
+            {
+                if (s)
+                {
+                    TextArea.LeftMargins.Insert(0, _breakpointMargin);
+                }
+                else
+                {
+                    TextArea.LeftMargins.Remove(_breakpointMargin);
+                }
+            });
+
+            this.GetObservable(HighlightSelectedWordProperty).Subscribe(s =>
+            {
+                if(s)
+                {
+                    TextArea.TextView.BackgroundRenderers.Add(_selectedWordBackgroundRenderer);
+                }
+                else
+                {
+                    TextArea.TextView.BackgroundRenderers.Remove(_selectedWordBackgroundRenderer);
+                }
+            });
+
+            this.GetObservable(HighlightSelectedLineProperty).Subscribe(s =>
+            {
+                if (s)
+                {
+                    TextArea.TextView.BackgroundRenderers.Add(_selectedLineBackgroundRenderer);
+                }
+                else
+                {
+                    TextArea.TextView.BackgroundRenderers.Remove(_selectedLineBackgroundRenderer);
+                }
+            });
+
+            this.GetObservable(ShowColumnLimitProperty).Subscribe(s =>
+            {
+                if(s)
+                {
+                    TextArea.TextView.BackgroundRenderers.Add(_columnLimitBackgroundRenderer);
+                }
+                else
+                {
+                    TextArea.TextView.BackgroundRenderers.Remove(_columnLimitBackgroundRenderer);
+                }
+            });
 
             _selectedDebugLineBackgroundRenderer = new SelectedDebugLineBackgroundRenderer();
             TextArea.TextView.BackgroundRenderers.Add(_selectedDebugLineBackgroundRenderer);
@@ -121,18 +183,51 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             DocumentLineTransformersProperty.Changed.Subscribe(s =>
             {
-                if (s.OldValue != null)
+                if (s.Sender == this)
                 {
-                    var list = s.OldValue as ObservableCollection<IVisualLineTransformer>;
+                    if (s.OldValue != null)
+                    {
+                        var list = s.OldValue as ObservableCollection<IVisualLineTransformer>;
 
-                    list.CollectionChanged -= List_CollectionChanged;
+                        list.CollectionChanged -= List_CollectionChanged;
+                    }
+
+                    if (s.NewValue != null)
+                    {
+                        var list = s.NewValue as ObservableCollection<IVisualLineTransformer>;
+
+                        list.CollectionChanged += List_CollectionChanged;
+                    }
                 }
+            });
 
-                if (s.NewValue != null)
+            this.GetObservable(CaretOffsetProperty).Subscribe(s =>
+            {
+                if (Document?.TextLength > s)
                 {
-                    var list = s.NewValue as ObservableCollection<IVisualLineTransformer>;
+                    CaretOffset = s;
+                }
+            });
 
-                    list.CollectionChanged += List_CollectionChanged;
+            BackgroundRenderersProperty.Changed.Subscribe(s =>
+            {
+                if (s.Sender == this)
+                {
+                    if (s.OldValue != null)
+                    {
+                        foreach (var renderer in (ObservableCollection<IBackgroundRenderer>)s.OldValue)
+                        {
+                            TextArea.TextView.BackgroundRenderers.Remove(renderer);
+                        }
+                    }
+
+                    if (s.NewValue != null)
+                    {
+                        foreach (var renderer in (ObservableCollection<IBackgroundRenderer>)s.NewValue)
+                        {
+                            TextArea.TextView.BackgroundRenderers.Add(renderer);
+                        }
+                    }
                 }
             });
 
@@ -575,6 +670,51 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set { SetValue(CaretOffsetProperty, value); }
         }
 
+        public static readonly StyledProperty<bool> ShowBreakpointsProperty =
+            AvaloniaProperty.Register<CodeEditor, bool>(nameof(ShowBreakpoints), true);
+
+        public bool ShowBreakpoints
+        {
+            get { return GetValue(ShowBreakpointsProperty); }
+            set { SetValue(ShowBreakpointsProperty, value); }
+        }
+
+        public static readonly StyledProperty<bool> LineNumbersVisibleProperty =
+            AvaloniaProperty.Register<CodeEditor, bool>(nameof(LineNumbersVisible), true);
+
+        public bool LineNumbersVisible
+        {
+            get { return GetValue(LineNumbersVisibleProperty);}
+            set { SetValue(LineNumbersVisibleProperty, value); }
+        }
+
+        public static readonly StyledProperty<bool> HighlightSelectedLineProperty =
+            AvaloniaProperty.Register<CodeEditor, bool>(nameof(HighlightSelectedLine), true);
+
+        public bool HighlightSelectedLine
+        {
+            get { return GetValue(HighlightSelectedLineProperty); }
+            set { SetValue(HighlightSelectedLineProperty, value); }
+        }
+
+        public static readonly StyledProperty<bool> HighlightSelectedWordProperty =
+            AvaloniaProperty.Register<CodeEditor, bool>(nameof(HighlightSelectedWord), true);
+
+        public bool HighlightSelectedWord
+        {
+            get { return GetValue(HighlightSelectedWordProperty); }
+            set { SetValue(HighlightSelectedWordProperty, value); }
+        }
+
+        public static readonly StyledProperty<bool> ShowColumnLimitProperty =
+            AvaloniaProperty.Register<CodeEditor, bool>(nameof(ShowColumnLimit), false);
+
+        public bool ShowColumnLimit
+        {
+            get { return GetValue(ShowColumnLimitProperty); }
+            set { SetValue(ShowColumnLimitProperty, value); }
+        }
+
         public static readonly StyledProperty<int> LineProperty =
             AvaloniaProperty.Register<CodeEditor, int>(nameof(Line), defaultBindingMode: BindingMode.TwoWay);
 
@@ -613,7 +753,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         public static readonly StyledProperty<ObservableCollection<IBackgroundRenderer>> BackgroundRenderersProperty =
-            AvaloniaProperty.Register<CodeEditor, ObservableCollection<IBackgroundRenderer>>(nameof(BackgroundRenderers), new ObservableCollection<IBackgroundRenderer>());
+            AvaloniaProperty.Register<CodeEditor, ObservableCollection<IBackgroundRenderer>>(nameof(BackgroundRenderers), new ObservableCollection<IBackgroundRenderer>(), defaultBindingMode: BindingMode.TwoWay);
 
         public ObservableCollection<IBackgroundRenderer> BackgroundRenderers
         {
