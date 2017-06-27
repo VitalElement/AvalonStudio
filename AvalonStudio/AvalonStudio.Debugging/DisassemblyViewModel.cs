@@ -19,7 +19,7 @@ using System.Reactive;
 
 namespace AvalonStudio.Debugging
 {
-    public class DisassemblyViewModel : ToolViewModel, IExtension
+    public class DisassemblyViewModel : ToolViewModel, IExtension, IVisualLineTransformer
     {
         private IDebugger2 _debugger;
         private IDebugManager2 _debugManager;
@@ -64,6 +64,7 @@ namespace AvalonStudio.Debugging
             _selectedLineMarker = new SelectedDebugLineBackgroundRenderer();
             _backgroundRenderers.Add(_selectedLineMarker);
 
+            _lineTransformers.Add(new DisassemblyViewTextColorizer(addressLines));
             _lineTransformers.Add(_selectedLineMarker);
 
             _mixedMode = false;
@@ -385,6 +386,16 @@ namespace AvalonStudio.Debugging
             //{
             //    SelectedIndex = currentAddress;
             //}
+        }
+
+        public void Transform(ITextRunConstructionContext context, IList<VisualLineElement> elements)
+        {
+            if(!addressLines.ContainsValue(context.VisualLine.FirstDocumentLine.LineNumber))
+            {
+                // Source line.
+
+                
+            }
         }
     }
 }
