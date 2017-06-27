@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 using Avalonia.Media;
 using System.Collections.ObjectModel;
 using AvalonStudio.TextEditor.Rendering;
+using System.Reactive.Linq;
+using System;
+using System.Reactive;
 
 namespace AvalonStudio.Debugging
 {
@@ -30,6 +33,8 @@ namespace AvalonStudio.Debugging
         int firstLine;
         int lastLine;
         TextDocument document;
+        TextDocument runModeDocument;
+        TextDocument visibleDocument;
 
         SelectedDebugLineBackgroundRenderer _selectedLineMarker;
 
@@ -48,6 +53,10 @@ namespace AvalonStudio.Debugging
             Title = "Disassembly";
 
             document = new TextDocument();
+            runModeDocument = new TextDocument
+            {
+                Text = "Disassembly cannot be displayed in run mode."
+            };
 
             _backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
             _lineTransformers = new ObservableCollection<IVisualLineTransformer>();
@@ -98,8 +107,8 @@ namespace AvalonStudio.Debugging
 
         public TextDocument Document
         {
-            get { return document; }
-            set { this.RaiseAndSetIfChanged(ref document, value); }
+            get { return visibleDocument; }
+            set { this.RaiseAndSetIfChanged(ref visibleDocument, value); }
         }
 
         public bool Enabled
@@ -132,8 +141,15 @@ namespace AvalonStudio.Debugging
 
             _debugManager.FrameChanged += (sender, e) =>
             {
+                Document = document;
                 Update();
             };
+
+            var started = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStarted));
+            var stopped = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStopped));
+
+            started.SelectMany(_ => Observable.Amb(Observable.Timer(TimeSpan.FromMilliseconds(250)).Select(o => true), stopped.Take(1).Select(o => false))).Where(timeout => timeout == true).Subscribe(s =>
+                 Document = runModeDocument);
         }
 
         public void Update()
