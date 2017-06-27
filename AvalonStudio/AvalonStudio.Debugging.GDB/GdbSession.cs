@@ -71,6 +71,7 @@ namespace AvalonStudio.Debugging.GDB
 
         private string _gdbExecutable;
         private string _runCommand;
+        protected bool supressNextStopEvent = false;
 
         public GdbSession(string gdbExecutable, string runCommand = "-exec-run")
         {
@@ -154,12 +155,12 @@ namespace AvalonStudio.Debugging.GDB
 
                 RunCommand("-enable-pretty-printing");
 
-                OnStarted();
+                OnStarted();                
 
                 ThreadPool.QueueUserWorkItem(delegate
                 {
-                    RunCommand(_runCommand);
                     running = true;
+                    RunCommand(_runCommand);
                 });
             }
         }
@@ -890,19 +891,26 @@ namespace AvalonStudio.Debugging.GDB
                         }
                     }
 
-                    if (ev != null)
+                    if (supressNextStopEvent)
                     {
-                        ThreadPool.QueueUserWorkItem(delegate
+                        supressNextStopEvent = false;
+                    }
+                    else
+                    {
+                        if (ev != null)
                         {
-                            try
+                            ThreadPool.QueueUserWorkItem(delegate
                             {
-                                HandleEvent(ev);
-                            }
-                            catch (Exception ex)
-                            {
-                                _console.WriteLine(ex.ToString());
-                            }
-                        });
+                                try
+                                {
+                                    HandleEvent(ev);
+                                }
+                                catch (Exception ex)
+                                {
+                                    _console.WriteLine(ex.ToString());
+                                }
+                            });
+                        }
                     }
                     break;
             }
