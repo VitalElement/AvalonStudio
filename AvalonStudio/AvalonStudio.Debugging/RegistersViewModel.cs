@@ -87,25 +87,7 @@ namespace AvalonStudio.Debugging
                 ColumnWidth = double.NaN;
             }
         }
-
-        public new async void Invalidate()
-        {
-            if (firstStopInSession)
-            {
-                firstStopInSession = false;
-
-                List<Register> registers = null;
-
-                SetRegisters(registers);
-            }
-            else
-            {
-                Dictionary<int, string> changedRegisters = null;
-
-                Dispatcher.UIThread.InvokeAsync(() => { UpdateRegisters(changedRegisters); });
-            }
-        }
-
+        
         public void Clear()
         {
             Model = new ObservableCollection<RegisterViewModel>();
