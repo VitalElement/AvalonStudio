@@ -23,6 +23,9 @@ namespace AvalonStudio.Debugging
 
         List<AssemblyLine> cachedLines = new List<AssemblyLine>();
         Dictionary<string, int> addressLines = new Dictionary<string, int>();
+        DebuggerSession session;
+        private int _caretIndex;
+        private bool _mixedMode;
         bool autoRefill;
         int firstLine;
         int lastLine;
@@ -53,9 +56,15 @@ namespace AvalonStudio.Debugging
             _backgroundRenderers.Add(_selectedLineMarker);
 
             _lineTransformers.Add(_selectedLineMarker);
-        }
 
-        private int _caretIndex;
+            _mixedMode = false;
+        }        
+
+        public bool MixedMode
+        {
+            get { return _mixedMode; }
+            set { this.RaiseAndSetIfChanged(ref _mixedMode, value); Update(); }
+        }
 
         public int CaretIndex
         {
@@ -121,52 +130,104 @@ namespace AvalonStudio.Debugging
 
             _debugManager.FrameChanged += (sender, e) =>
             {
-                if (!_debugManager.Session.IsRunning)
-                {
+                
                     Update();
-                }
             };
         }
 
         public void Update()
         {
-            autoRefill = false;
-            /*if (currentDebugLineMarker != null)
+            if (_debugManager.Session != null && !_debugManager.Session.IsRunning)
             {
-                editor.RemoveMarker(currentDebugLineMarker);
-                currentDebugLineMarker = null;
-            }*/
-
-            if (_debugManager.SelectedFrame == null)
-            {
-                /*if (messageOverlayContent != null)
+                autoRefill = false;
+                /*if (currentDebugLineMarker != null)
                 {
-                    editor.RemoveOverlay(messageOverlayContent);
-                    messageOverlayContent = null;
+                    editor.RemoveMarker(currentDebugLineMarker);
+                    currentDebugLineMarker = null;
+                }*/
+
+                if (_debugManager.SelectedFrame == null)
+                {
+                    /*if (messageOverlayContent != null)
+                    {
+                        editor.RemoveOverlay(messageOverlayContent);
+                        messageOverlayContent = null;
+                    }
+                    sw.Sensitive = false;*/
+                    return;
                 }
-                sw.Sensitive = false;*/
+
+
+                var sf = _debugManager.SelectedFrame;
+                /*if (!string.IsNullOrWhiteSpace(sf.SourceLocation.FileName) && sf.SourceLocation.Line != -1 && sf.SourceLocation.FileHash != null)
+                {
+                    ShowLoadSourceFile(sf);
+                }
+                else
+                {
+                    if (messageOverlayContent != null)
+                    {
+                        editor.RemoveOverlay(messageOverlayContent);
+                        messageOverlayContent = null;
+                    }
+                }*/
+
+                if (!string.IsNullOrEmpty(sf.SourceLocation.FileName) && File.Exists(sf.SourceLocation.FileName) && MixedMode)
+                {
+                    FillWithSource();
+                }
+                else
+                {
+                    Fill();
+                }
+            }
+        }
+
+        public void FillWithSource()
+        {
+            cachedLines.Clear();
+
+            StackFrame sf = _debugManager.SelectedFrame;
+            session = sf.DebuggerSession;
+            if (currentFile != sf.SourceLocation.FileName)
+            {
+                AssemblyLine[] asmLines = sf.DebuggerSession.DisassembleFile(sf.SourceLocation.FileName);
+                if (asmLines == null)
+                {
+                    // Mixed disassemble not supported
+                    Fill();
+                    return;
+                }
+                currentFile = sf.SourceLocation.FileName;
+                addressLines.Clear();
+                editor.Text = string.Empty;
+                using (var sr = new StreamReader(sf.SourceLocation.FileName))
+                {
+                    string line;
+                    int sourceLine = 1;
+                    int na = 0;
+                    int editorLine = 1;
+                    var sb = new StringBuilder();
+                    var asmLineNums = new List<int>();
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        InsertSourceLine(sb, editorLine++, line);
+                        while (na < asmLines.Length && asmLines[na].SourceLine == sourceLine)
+                        {
+                            asmLineNums.Add(editorLine);
+                            InsertAssemblerLine(sb, editorLine++, asmLines[na++]);
+                        }
+                        sourceLine++;
+                    }
+                    editor.Text = sb.ToString();
+                    /*foreach (int li in asmLineNums)
+                        editor.AddMarker(li, asmMarker);*/
+                }
+            }
+            int aline;
+            if (!addressLines.TryGetValue(GetAddrId(sf.Address, sf.AddressSpace), out aline))
                 return;
-            }
-
-
-            var sf = _debugManager.SelectedFrame;
-            /*if (!string.IsNullOrWhiteSpace(sf.SourceLocation.FileName) && sf.SourceLocation.Line != -1 && sf.SourceLocation.FileHash != null)
-            {
-                ShowLoadSourceFile(sf);
-            }
-            else
-            {
-                if (messageOverlayContent != null)
-                {
-                    editor.RemoveOverlay(messageOverlayContent);
-                    messageOverlayContent = null;
-                }
-            }*/
-
-            /*if (!string.IsNullOrEmpty(sf.SourceLocation.FileName) && File.Exists(sf.SourceLocation.FileName))
-                FillWithSource();
-            else*/
-            Fill();
+            UpdateCurrentLineMarker(true);
         }
 
         public void Fill()
@@ -199,6 +260,11 @@ namespace AvalonStudio.Debugging
             autoRefill = true;
 
             UpdateCurrentLineMarker(true);
+        }
+
+        void InsertSourceLine(StringBuilder sb, int line, string text)
+        {
+            sb.Append(text).Append('\n');
         }
 
         int InsertLines(int offset, int start, int end, out int newStart, out int newEnd)
@@ -274,7 +340,10 @@ namespace AvalonStudio.Debugging
                 editor.AddMarker(line, currentDebugLineMarker);*/
                 if (moveCaret)
                 {
-                    CaretIndex = docLine.Offset;
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        CaretIndex = docLine.Offset;
+                    });
                 }
             }
         }
