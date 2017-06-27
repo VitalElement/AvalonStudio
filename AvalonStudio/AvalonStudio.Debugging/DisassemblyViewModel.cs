@@ -172,7 +172,7 @@ namespace AvalonStudio.Debugging
                     }
                 }*/
 
-                if (!string.IsNullOrEmpty(sf.SourceLocation.FileName) && File.Exists(sf.SourceLocation.FileName) && MixedMode)
+                if (sf.SourceLocation.Line >= 0 && !string.IsNullOrEmpty(sf.SourceLocation.FileName) && File.Exists(sf.SourceLocation.FileName) && MixedMode)
                 {
                     FillWithSource();
                 }
