@@ -46,13 +46,30 @@ namespace AvalonStudio.Debugging
         {
             _debugManager = IoC.Get<IDebugManager2>();
 
-            _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+            _debugManager.DebugSessionStarted += (sender, e) =>
+            {
+                if (_debugManager.ExtendedSession != null)
+                {
+                    IsVisible = true;
+
+                    var regs = _debugManager.ExtendedSession.GetRegisters();
+
+                    SetRegisters(regs);
+                }
+            };
 
             _debugManager.DebugSessionEnded += (sender, e) =>
             {
                 IsVisible = false;
                 Clear();
             };
+
+            _debugManager.FrameChanged += (sender, e) =>
+             {
+                 var changes = _debugManager.ExtendedSession.GetRegisterChanges();
+
+                 UpdateRegisters(changes);
+             };
         }
 
         private void SetRegisters(List<Register> registers)
