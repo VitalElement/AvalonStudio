@@ -116,6 +116,8 @@
 
         public DebuggerSession Session => _session;
 
+        public ExtendedDebuggerSession ExtendedSession => _session as ExtendedDebuggerSession;
+
         public BreakpointStore Breakpoints { get; set; }
 
         public bool SessionActive => _session != null;

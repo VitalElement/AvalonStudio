@@ -19,6 +19,8 @@
 
         DebuggerSession Session { get; }
 
+        ExtendedDebuggerSession ExtendedSession { get; }
+
         BreakpointStore Breakpoints { get; set; }
 
         void Start();
