@@ -27,7 +27,7 @@
         {
             if (project.ToolChain is GCCToolchain)
             {
-                return new GdbSession((project.ToolChain as GCCToolchain).GDBExecutable);
+                return new GdbSession((project.ToolChain as GCCToolchain).GDBExecutable, detectAsync: false);
             }
 
             throw new Exception("No toolchain");

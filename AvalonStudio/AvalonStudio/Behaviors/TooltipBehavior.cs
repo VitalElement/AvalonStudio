@@ -8,6 +8,7 @@ namespace AvalonStudio.Behaviors
     using Avalonia.Media;
     using Avalonia.Metadata;
     using Avalonia.Threading;
+    using Avalonia.VisualTree;
     using Avalonia.Xaml.Interactivity;
     using AvalonStudio.Utils;
     using System;
@@ -168,7 +169,8 @@ namespace AvalonStudio.Behaviors
             {
                 if (AssociatedObject.IsPointerOver)
                 {
-                    lastPoint = MouseDevice.Instance.GetPosition(AssociatedObject);
+                    var mouseDevice = (popup.PopupRoot.GetVisualRoot() as IInputRoot)?.MouseDevice;
+                    lastPoint = mouseDevice.GetPosition(AssociatedObject);
                     popup.Open();
                 }
             }
