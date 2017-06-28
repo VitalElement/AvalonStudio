@@ -131,13 +131,16 @@ namespace AvalonStudio.Debugging
         {
             _debugManager = IoC.Get<IDebugManager2>();
 
-            _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+            _debugManager.DebugSessionStarted += (sender, e) => { Document = runModeDocument; IsVisible = true; };
 
             _debugManager.DebugSessionEnded += (sender, e) =>
             {
-                IsVisible = false;
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    IsVisible = false;
 
-                Clear();
+                    Clear();
+                });
             };
 
             _debugManager.FrameChanged += (sender, e) =>
@@ -149,7 +152,10 @@ namespace AvalonStudio.Debugging
             var started = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStarted));
             var stopped = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStopped));
 
-            started.SelectMany(_ => Observable.Amb(Observable.Timer(TimeSpan.FromMilliseconds(250)).Select(o => true), stopped.Take(1).Select(o => false))).Where(timeout => timeout == true).Subscribe(s => Document = runModeDocument);
+            started.SelectMany(_ => Observable.Amb(Observable.Timer(TimeSpan.FromMilliseconds(250)).Select(o => true), stopped.Take(1).Select(o => false))).Where(timeout => timeout == true).Subscribe(s => 
+            {
+                Document = runModeDocument;
+            });
         }
 
         public void Update()
@@ -206,7 +212,7 @@ namespace AvalonStudio.Debugging
             firstLine = -150;
             lastLine = 150;
 
-            document.Text = string.Empty;
+            Document = null;
         }
 
         public void FillWithSource()
@@ -250,9 +256,9 @@ namespace AvalonStudio.Debugging
                         editor.AddMarker(li, asmMarker);*/
                 }
             }
-            int aline;
+           /* int aline;
             if (!addressLines.TryGetValue(GetAddrId(sf.Address, sf.AddressSpace), out aline))
-                return;
+                return;*/
             UpdateCurrentLineMarker(true);
         }
 
@@ -332,18 +338,25 @@ namespace AvalonStudio.Debugging
 
         void InsertAssemblerLine(StringBuilder sb, int line, AssemblyLine asm)
         {
-            var opcodeParts = asm.Code.Split("\\t");
-            sb.AppendFormat("{0:x8}   {1}", asm.Address, opcodeParts[0]);
-
-            if(opcodeParts.Length > 1)
+            if (asm.Code.Contains("\\t"))
             {
-                var extraSpaces = 4 - opcodeParts[0].Length;
+                var opcodeParts = asm.Code.Split("\\t");
+                sb.AppendFormat("{0:x8}   {1}", asm.Address, opcodeParts[0]);
 
-                sb.Append(' ', 4 + extraSpaces);
+                if (opcodeParts.Length > 1)
+                {
+                    var extraSpaces = 8 - opcodeParts[0].Length;
 
-                sb.Append(opcodeParts[1]);
+                    sb.Append(' ', 4 + extraSpaces);
 
-                sb.Append("\n");
+                    sb.Append(opcodeParts[1]);
+
+                    sb.Append("\n");
+                }
+            }
+            else
+            {
+                sb.AppendFormat("{0:x8}   {1}\n", asm.Address, asm.Code);
             }
 
             addressLines[GetAddrId(asm.Address, asm.AddressSpace)] = line;
