@@ -157,6 +157,8 @@
                 _session.Exit();
                 _session.TargetStopped -= _session_TargetStopped;
                 _session.TargetHitBreakpoint -= _session_TargetStopped;
+                _session.TargetSignaled -= _session_TargetStopped;
+                _session.TargetInterrupted -= _session_TargetStopped;
                 _session.TargetExited -= _session_TargetExited;
                 _session.TargetStarted -= _session_TargetStarted;
                 _session.TargetReady -= _session_TargetReady;
@@ -216,17 +218,11 @@
             _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
 
             _session.TargetStopped += _session_TargetStopped;
-
             _session.TargetHitBreakpoint += _session_TargetStopped;
-
             _session.TargetSignaled += _session_TargetStopped;
-
             _session.TargetInterrupted += _session_TargetStopped;
-
             _session.TargetExited += _session_TargetExited;
-
             _session.TargetStarted += _session_TargetStarted;
-
             _session.TargetReady += _session_TargetReady;
 
             _shell.CurrentPerspective = Perspective.Debug;
