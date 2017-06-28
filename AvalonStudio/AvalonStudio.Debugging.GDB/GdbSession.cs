@@ -786,7 +786,7 @@ namespace AvalonStudio.Debugging.GDB
                         {
                             ResultData asm = line_asm_insn.GetObject(i);
                             long addr = long.Parse(asm.GetValue("address").Substring(2), NumberStyles.HexNumber);
-                            string code = asm.GetValue("inst").Replace("\\t", "    ");
+                            string code = asm.GetValue("inst");
                             lines.Add(new AssemblyLine(addr, code, newLine));
                         }
                     }
