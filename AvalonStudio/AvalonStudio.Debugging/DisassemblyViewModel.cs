@@ -332,7 +332,20 @@ namespace AvalonStudio.Debugging
 
         void InsertAssemblerLine(StringBuilder sb, int line, AssemblyLine asm)
         {
-            sb.AppendFormat("{0:x8}   {1}\n", asm.Address, asm.Code);
+            var opcodeParts = asm.Code.Split("\\t");
+            sb.AppendFormat("{0:x8}   {1}", asm.Address, opcodeParts[0]);
+
+            if(opcodeParts.Length > 1)
+            {
+                var extraSpaces = 4 - opcodeParts[0].Length;
+
+                sb.Append(' ', 4 + extraSpaces);
+
+                sb.Append(opcodeParts[1]);
+
+                sb.Append("\n");
+            }
+
             addressLines[GetAddrId(asm.Address, asm.AddressSpace)] = line;
         }
 
