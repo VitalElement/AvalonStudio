@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -72,14 +73,21 @@ namespace AvalonStudio.Debugging.GDB
 
         private string _gdbExecutable;
         private string _runCommand;
-        private bool _suppressNextEvent = false;
+        private bool _suppressEvents = false;
+        private bool _waitForStopBeforeRunning;
 
-        public GdbSession(string gdbExecutable, string runCommand = "-exec-run", bool detectAsync = true)
+        /// <summary>
+		/// Raised when the debugging session is paused
+		/// </summary>
+		private event EventHandler<TargetEventArgs> TargetStoppedWhenSuppressed;
+
+        public GdbSession(string gdbExecutable, string runCommand = "-exec-run", bool detectAsync = true, bool waitForStopBeforeRunning = false)
         {
             _gdbExecutable = gdbExecutable;
             _console = IoC.Get<IConsole>();
             _runCommand = runCommand;
             _detectAsync = detectAsync;
+            _waitForStopBeforeRunning = waitForStopBeforeRunning;
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)
@@ -166,18 +174,26 @@ namespace AvalonStudio.Debugging.GDB
 
                 OnStarted();
 
-                ThreadPool.QueueUserWorkItem(delegate
+                if (_waitForStopBeforeRunning)
+                {
+                    _suppressEvents = true;
+
+                    var catchFirstStop = Observable.FromEventPattern(this, nameof(TargetStoppedWhenSuppressed)).Take(1).Subscribe(s =>
+                    {
+                        ThreadPool.QueueUserWorkItem(delegate
+                        {
+                            _suppressEvents = false;
+                            running = true;
+                            RunCommand(_runCommand);
+                        });
+                    });
+                }
+                else
                 {
                     running = true;
                     RunCommand(_runCommand);
-                });
+                }
             }
-        }
-
-        protected bool SuppressNextEvent
-        {
-            get { return _suppressNextEvent; }
-            set { _suppressNextEvent = value; }
         }
 
         protected override void OnAttachToProcess(long processId)
@@ -731,25 +747,31 @@ namespace AvalonStudio.Debugging.GDB
 
             var data = RunCommand("-data-list-register-names");
 
-            var regNames = data.GetObject("register-names");
-
-            for (int n = 0; n < regNames.Count; n++)
+            if (data.Status == CommandStatus.Done)
             {
-                result.Add(new Register() { Name = regNames.GetValue(n), Index = n });
-            }
+                var regNames = data.GetObject("register-names");
 
-            data = RunCommand("-data-list-register-values", "x");
+                for (int n = 0; n < regNames.Count; n++)
+                {
+                    result.Add(new Register() { Name = regNames.GetValue(n), Index = n });
+                }
 
-            var regValues = data.GetObject("register-values");
+                data = RunCommand("-data-list-register-values", "x");
 
-            for (int n = 0; n < regValues.Count; n++)
-            {
-                var valueObj = regValues.GetObject(n);
+                if (data.Status == CommandStatus.Done)
+                {
+                    var regValues = data.GetObject("register-values");
 
-                var index = valueObj.GetInt("number");
-                var value = valueObj.GetValue("value");
+                    for (int n = 0; n < regValues.Count; n++)
+                    {
+                        var valueObj = regValues.GetObject(n);
 
-                result[index].Value = value;
+                        var index = valueObj.GetInt("number");
+                        var value = valueObj.GetValue("value");
+
+                        result[index].Value = value;
+                    }
+                }
             }
 
             return result;
@@ -975,27 +997,20 @@ namespace AvalonStudio.Debugging.GDB
                             }
                         }
                     }
-
-                    if (_suppressNextEvent)
+                    
+                    if (ev != null)
                     {
-                        _suppressNextEvent = false;
-                    }
-                    else
-                    {
-                        if (ev != null)
+                        ThreadPool.QueueUserWorkItem(delegate
                         {
-                            ThreadPool.QueueUserWorkItem(delegate
+                            try
                             {
-                                try
-                                {
-                                    HandleEvent(ev);
-                                }
-                                catch (Exception ex)
-                                {
-                                    _console.WriteLine(ex.ToString());
-                                }
-                            });
-                        }
+                                HandleEvent(ev);
+                            }
+                            catch (Exception ex)
+                            {
+                                _console.WriteLine(ex.ToString());
+                            }
+                        });
                     }
                     break;
             }
@@ -1076,7 +1091,16 @@ namespace AvalonStudio.Debugging.GDB
                 args.Thread = GetThread(activeThread);
                 args.BreakEvent = breakEvent;
             }
-            OnTargetEvent(args);
+
+            if (_suppressEvents && type == TargetEventType.TargetStopped)
+            {
+                args.IsStopEvent = true;
+                TargetStoppedWhenSuppressed?.Invoke(this, args);
+            }
+            else
+            {
+                OnTargetEvent(args);
+            }
         }
 
         internal void RegisterTempVariableObject(string id, ObjectValue var)
