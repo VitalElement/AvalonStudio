@@ -61,31 +61,34 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             _owner = textView;
 
-            if (_line > 0 && _line < textView.Document.LineCount)
+            if (textView.VisualLinesValid)
             {
-                var currentLine = textView.Document.GetLineByNumber(_line);
-
-                var segment = new TextSegment();
-                segment.StartOffset = currentLine.Offset;
-                segment.EndOffset = currentLine.EndOffset;
-
-                if (_startColumn != -1 && _endColumn != -1)
+                if (_line > 0 && _line < textView.Document.LineCount)
                 {
-                    segment.StartOffset = textView.Document.GetOffset(_line, _startColumn);
-                    segment.EndOffset = textView.Document.GetOffset(_line, _endColumn);
-                }
-                else
-                {
-                    _startColumn = textView.Document.GetLocation(segment.StartOffset).Column;
-                    _endColumn = textView.Document.GetLocation(segment.EndOffset).Column;
-                }
+                    var currentLine = textView.Document.GetLineByNumber(_line);
 
-                var rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, segment);
+                    var segment = new TextSegment();
+                    segment.StartOffset = currentLine.Offset;
+                    segment.EndOffset = currentLine.EndOffset;
 
-                foreach (var rect in rects)
-                {
-                    var drawRect = new Rect(rect.TopLeft.X - 1, rect.TopLeft.Y - 1, rect.Width + 2, rect.Height + 2);
-                    drawingContext.FillRectangle(selectedLineBg, drawRect);
+                    if (_startColumn != -1 && _endColumn != -1)
+                    {
+                        segment.StartOffset = textView.Document.GetOffset(_line, _startColumn);
+                        segment.EndOffset = textView.Document.GetOffset(_line, _endColumn);
+                    }
+                    else
+                    {
+                        _startColumn = textView.Document.GetLocation(segment.StartOffset).Column;
+                        _endColumn = textView.Document.GetLocation(segment.EndOffset).Column;
+                    }
+
+                    var rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, segment);
+
+                    foreach (var rect in rects)
+                    {
+                        var drawRect = new Rect(rect.TopLeft.X - 1, rect.TopLeft.Y - 1, rect.Width + 2, rect.Height + 2);
+                        drawingContext.FillRectangle(selectedLineBg, drawRect);
+                    }
                 }
             }
         }
