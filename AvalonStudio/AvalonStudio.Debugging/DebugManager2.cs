@@ -16,6 +16,7 @@
     public class DebugManager2 : IDebugManager2, IExtension
     {
         private DebuggerSession _session;
+        private object _sessionLock = new object();
         private StackFrame _currentStackFrame;
 
         private IShell _shell;
@@ -152,18 +153,21 @@
                 _lastDocument = null;
             });
 
-            if (_session != null)
+            lock (_sessionLock)
             {
-                _session.Exit();
-                _session.TargetStopped -= _session_TargetStopped;
-                _session.TargetHitBreakpoint -= _session_TargetStopped;
-                _session.TargetSignaled -= _session_TargetStopped;
-                _session.TargetInterrupted -= _session_TargetStopped;
-                _session.TargetExited -= _session_TargetExited;
-                _session.TargetStarted -= _session_TargetStarted;
-                _session.TargetReady -= _session_TargetReady;
-                _session.Dispose();
-                _session = null;
+                if (_session != null)
+                {
+                    _session.Exit();
+                    _session.TargetStopped -= _session_TargetStopped;
+                    _session.TargetHitBreakpoint -= _session_TargetStopped;
+                    _session.TargetSignaled -= _session_TargetStopped;
+                    _session.TargetInterrupted -= _session_TargetStopped;
+                    _session.TargetExited -= _session_TargetExited;
+                    _session.TargetStarted -= _session_TargetStarted;
+                    _session.TargetReady -= _session_TargetReady;
+                    _session.Dispose();
+                    _session = null;
+                }
             }
 
             // This will save breakpoints that were moved to be closer to actual sequence points.
