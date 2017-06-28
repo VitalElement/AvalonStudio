@@ -50,7 +50,9 @@ namespace AvalonStudio.Debugging
         {
             _debugManager = IoC.Get<IDebugManager2>();
 
-            _debugManager.DebugSessionStarted += (sender, e) =>
+            _debugManager.DebugSessionStarted += (sender, e) => { Enabled = false; };
+
+            _debugManager.TargetReady += (sender, e) =>
             {
                 if (_debugManager.ExtendedSession != null)
                 {
@@ -58,7 +60,10 @@ namespace AvalonStudio.Debugging
 
                     var regs = _debugManager.ExtendedSession.GetRegisters();
 
-                    SetRegisters(regs);
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        SetRegisters(regs);
+                    });
                 }
             };
 
@@ -102,6 +107,7 @@ namespace AvalonStudio.Debugging
         public void Clear()
         {
             Model = new ObservableCollection<RegisterViewModel>();
+            Enabled = false;
         }
 
         private void UpdateRegisters(Dictionary<int, string> updatedValues)

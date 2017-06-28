@@ -1,13 +1,10 @@
 ﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
-using AvalonStudio.Repositories;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
 using System.Diagnostics;
-using System.Dynamic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +18,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
         private Process jlinkProcess;
         public bool DebugMode { get; set; }
 
-        public JLinkGdbSession(IProject project, string gdbExecutable) : base(gdbExecutable, "-exec-continue")
+        public JLinkGdbSession(IProject project, string gdbExecutable) : base(gdbExecutable, "-exec-continue", waitForStopBeforeRunning: true)
         {
             this._project = project;
             console = IoC.Get<IConsole>();
@@ -48,7 +45,6 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
                 if (settings.Download)
                 {
-                    SuppressNextEvent = true;
                     console.WriteLine(RunCommand("-target-download").Status.ToString());
                 }
 

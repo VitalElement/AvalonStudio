@@ -61,8 +61,6 @@ namespace AvalonStudio.Debugging
 
             _lineTransformers.Add(new DisassemblyViewTextColorizer(addressLines));
             _lineTransformers.Add(_selectedLineMarker);
-
-            _mixedMode = true;
         }
 
         public bool MixedMode
@@ -131,11 +129,16 @@ namespace AvalonStudio.Debugging
         {
             _debugManager = IoC.Get<IDebugManager2>();
 
-            _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+            _debugManager.DebugSessionStarted += (sender, e) => { Document = runModeDocument; IsVisible = true; };
 
             _debugManager.DebugSessionEnded += (sender, e) =>
             {
-                IsVisible = false;
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    IsVisible = false;
+
+                    Clear();
+                });
             };
 
             _debugManager.FrameChanged += (sender, e) =>
@@ -147,7 +150,10 @@ namespace AvalonStudio.Debugging
             var started = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStarted));
             var stopped = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStopped));
 
-            started.SelectMany(_ => Observable.Amb(Observable.Timer(TimeSpan.FromMilliseconds(250)).Select(o => true), stopped.Take(1).Select(o => false))).Where(timeout => timeout == true).Subscribe(s => Document = runModeDocument);
+            started.SelectMany(_ => Observable.Amb(Observable.Timer(TimeSpan.FromMilliseconds(250)).Select(o => true), stopped.Take(1).Select(o => false))).Where(timeout => timeout == true).Subscribe(s =>
+            {
+                Document = runModeDocument;
+            });
         }
 
         public void Update()
@@ -196,6 +202,14 @@ namespace AvalonStudio.Debugging
             }
         }
 
+        public void Clear()
+        {
+            cachedLines.Clear();
+            addressLines.Clear();
+
+            Document = null;
+        }
+
         public void FillWithSource()
         {
             cachedLines.Clear();
@@ -237,9 +251,10 @@ namespace AvalonStudio.Debugging
                         editor.AddMarker(li, asmMarker);*/
                 }
             }
-            int aline;
-            if (!addressLines.TryGetValue(GetAddrId(sf.Address, sf.AddressSpace), out aline))
+
+            if (!addressLines.TryGetValue(GetAddrId(sf.Address, sf.AddressSpace), out int aline))
                 return;
+
             UpdateCurrentLineMarker(true);
         }
 
@@ -319,7 +334,27 @@ namespace AvalonStudio.Debugging
 
         void InsertAssemblerLine(StringBuilder sb, int line, AssemblyLine asm)
         {
-            sb.AppendFormat("{0:x8}   {1}\n", asm.Address, asm.Code);
+            if (asm.Code.Contains("\\t"))
+            {
+                var opcodeParts = asm.Code.Split("\\t");
+                sb.AppendFormat("{0:x8}   {1}", asm.Address, opcodeParts[0]);
+
+                if (opcodeParts.Length > 1)
+                {
+                    var extraSpaces = 8 - opcodeParts[0].Length;
+
+                    sb.Append(' ', 4 + extraSpaces);
+
+                    sb.Append(opcodeParts[1]);
+
+                    sb.Append("\n");
+                }
+            }
+            else
+            {
+                sb.AppendFormat("{0:x8}   {1}\n", asm.Address, asm.Code);
+            }
+
             addressLines[GetAddrId(asm.Address, asm.AddressSpace)] = line;
         }
 
