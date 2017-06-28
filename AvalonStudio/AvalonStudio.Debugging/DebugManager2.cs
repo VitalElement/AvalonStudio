@@ -159,6 +159,7 @@
                 _session.TargetHitBreakpoint -= _session_TargetStopped;
                 _session.TargetExited -= _session_TargetExited;
                 _session.TargetStarted -= _session_TargetStarted;
+                _session.TargetReady -= _session_TargetReady;
                 _session.Dispose();
                 _session = null;
             }
@@ -226,9 +227,16 @@
 
             _session.TargetStarted += _session_TargetStarted;
 
+            _session.TargetReady += _session_TargetReady;
+
             _shell.CurrentPerspective = Perspective.Debug;
 
             DebugSessionStarted?.Invoke(this, new EventArgs());
+        }
+
+        private void _session_TargetReady(object sender, TargetEventArgs e)
+        {
+            TargetReady?.Invoke(this, e);
         }
 
         private void _session_TargetStarted(object sender, EventArgs e)
