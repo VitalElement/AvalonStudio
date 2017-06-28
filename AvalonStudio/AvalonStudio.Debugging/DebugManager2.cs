@@ -26,6 +26,8 @@
 
         public event EventHandler DebugSessionEnded;
 
+        public event EventHandler<TargetEventArgs> TargetReady;
+
         public event EventHandler<TargetEventArgs> TargetStopped;
 
         public event EventHandler<EventArgs> TargetStarted;

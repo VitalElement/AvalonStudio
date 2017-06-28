@@ -11,6 +11,8 @@
 
         event EventHandler FrameChanged;
 
+        event EventHandler<TargetEventArgs> TargetReady;
+
         event EventHandler<TargetEventArgs> TargetStopped;
 
         event EventHandler<EventArgs> TargetStarted;

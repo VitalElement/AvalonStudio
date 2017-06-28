@@ -50,7 +50,7 @@ namespace AvalonStudio.Debugging
         {
             _debugManager = IoC.Get<IDebugManager2>();
 
-            _debugManager.DebugSessionStarted += (sender, e) =>
+            _debugManager.TargetReady += (sender, e) =>
             {
                 if (_debugManager.ExtendedSession != null)
                 {
@@ -58,7 +58,10 @@ namespace AvalonStudio.Debugging
 
                     var regs = _debugManager.ExtendedSession.GetRegisters();
 
-                    SetRegisters(regs);
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        SetRegisters(regs);
+                    });
                 }
             };
 
