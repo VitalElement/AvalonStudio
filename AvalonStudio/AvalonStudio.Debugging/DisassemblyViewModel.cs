@@ -136,6 +136,8 @@ namespace AvalonStudio.Debugging
             _debugManager.DebugSessionEnded += (sender, e) =>
             {
                 IsVisible = false;
+
+                Clear();
             };
 
             _debugManager.FrameChanged += (sender, e) =>
@@ -194,6 +196,17 @@ namespace AvalonStudio.Debugging
                     Fill();
                 }
             }
+        }
+
+        public void Clear()
+        {
+            cachedLines.Clear();
+            addressLines.Clear();
+
+            firstLine = -150;
+            lastLine = 150;
+
+            document.Text = string.Empty;
         }
 
         public void FillWithSource()
