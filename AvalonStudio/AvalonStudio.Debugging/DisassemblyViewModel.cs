@@ -61,8 +61,6 @@ namespace AvalonStudio.Debugging
 
             _lineTransformers.Add(new DisassemblyViewTextColorizer(addressLines));
             _lineTransformers.Add(_selectedLineMarker);
-
-            _mixedMode = true;
         }
 
         public bool MixedMode
