@@ -207,9 +207,6 @@ namespace AvalonStudio.Debugging
             cachedLines.Clear();
             addressLines.Clear();
 
-            firstLine = -150;
-            lastLine = 150;
-
             Document = null;
         }
 
