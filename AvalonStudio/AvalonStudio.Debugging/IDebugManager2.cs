@@ -11,11 +11,17 @@
 
         event EventHandler FrameChanged;
 
+        event EventHandler<TargetEventArgs> TargetReady;
+
         event EventHandler<TargetEventArgs> TargetStopped;
+
+        event EventHandler<EventArgs> TargetStarted;
 
         StackFrame SelectedFrame { get; set; }
 
         DebuggerSession Session { get; }
+
+        ExtendedDebuggerSession ExtendedSession { get; }
 
         BreakpointStore Breakpoints { get; set; }
 

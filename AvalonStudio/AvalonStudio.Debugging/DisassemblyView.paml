@@ -1,19 +1,16 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility"
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility" xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
-  <cont:ToolControl Title="Disassembly">    
-    <ListBox Name="disassemblyList" FontFamily="Inconsolata" FontSize="14" FontWeight="Light" IsHitTestVisible="false" IsEnabled="{Binding Enabled}" BorderThickness="0" Items="{Binding DisassemblyData}" SelectedIndex="{Binding SelectedIndex}" Background="{StyleResource ThemeControlDarkBrush}">
-      <ListBox.DataTemplates>
-        <DataTemplate>
-          <Grid IsVisible="{Binding Data.Visible}">
-            <TextBlock Text="Loading..." IsVisible="{Binding IsLoading}"/>
-            <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Data.Background}">
-              <TextBlock Text="{Binding Data.FormattedAddress}" Width="90" Foreground="#FF007ACC" />
-              <TextBlock Text="{Binding Data.Instruction}" Foreground="#4EC9B0" MaxWidth="100" />
-              <TextBlock Text="{Binding Data.Symbol}" Foreground="#D0B848FF" MaxWidth="100" />
-            </StackPanel>
-          </Grid>
-        </DataTemplate>
-      </ListBox.DataTemplates>
-    </ListBox>    
+  <cont:ToolControl Title="Disassembly">
+    <DockPanel>
+      <StackPanel Margin="5 0 0 0" Orientation="Horizontal" Gap="4" DockPanel.Dock="Top">
+        <TextBlock Text="Mixed Mode" />
+        <CheckBox IsChecked="{Binding MixedMode}" />
+      </StackPanel>
+      <editor:CodeEditor Grid.Row="1" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}" TextBlock.FontFamily="Consolas"
+                       TextBlock.FontSize="13" TextBlock.FontWeight="100" TextBlock.Foreground="#D4D4D4" Document="{Binding Document}"
+                       EditorCaretOffset="{Binding CaretIndex, Mode=TwoWay}" BackgroundRenderers="{Binding BackgroundRenderers}"
+                       DocumentLineTransformers="{Binding LineTransformers}"
+                       LineNumbersVisible="false" ShowBreakpoints="false" IsReadOnly="true" HighlightSelectedLine="false" HighlightSelectedWord="false" />
+    </DockPanel>
   </cont:ToolControl>
 </UserControl>
