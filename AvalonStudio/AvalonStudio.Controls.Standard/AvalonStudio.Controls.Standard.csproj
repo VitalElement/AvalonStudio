@@ -32,7 +32,7 @@
     <EmbeddedResource Include="WelcomeScreen\WelcomeScreenView.paml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.0" />
+    <PackageReference Include="Avalonia" Version="0.5.1-build3323-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
   </ItemGroup>
   <ItemGroup>

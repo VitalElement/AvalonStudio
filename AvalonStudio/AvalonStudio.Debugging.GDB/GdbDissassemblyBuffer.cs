@@ -41,12 +41,16 @@ namespace AvalonStudio.Debugging.GDB
 
         public override AssemblyLine[] GetLines(long startAddr, long endAddr)
         {
-            try
+            GdbCommandResult data = null;
+
+            data = session.RunCommand("-data-disassemble", "-s", startAddr.ToString(), "-e", endAddr.ToString(), "--", "0");
+
+            if (data.Status == CommandStatus.Done)
             {
-                ResultData data = session.RunCommand("-data-disassemble", "-s", startAddr.ToString(), "-e", endAddr.ToString(), "--", "0");
                 ResultData ins = data.GetObject("asm_insns");
 
                 AssemblyLine[] alines = new AssemblyLine[ins.Count];
+
                 for (int n = 0; n < ins.Count; n++)
                 {
                     ResultData aline = ins.GetObject(n);
@@ -54,11 +58,19 @@ namespace AvalonStudio.Debugging.GDB
                     AssemblyLine line = new AssemblyLine(addr, aline.GetValue("inst"));
                     alines[n] = line;
                 }
+
                 return alines;
             }
-            catch
+            else
             {
-                return new AssemblyLine[0];
+                long range = endAddr - startAddr;
+                AssemblyLine[] badlines = new AssemblyLine[range];
+                for (int n = 0; n < range; n++)
+                {
+                    badlines[n] = new AssemblyLine(startAddr + n, "Unable to read data.");
+                }
+
+                return badlines;
             }
         }
     }

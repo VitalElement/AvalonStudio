@@ -32,13 +32,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB
 {
-    public class GdbSession : DebuggerSession
+    public class GdbSession : ExtendedDebuggerSession
     {
         private IConsole _console;
         private Process proc;
@@ -64,6 +65,7 @@ namespace AvalonStudio.Debugging.GDB
         private bool internalStop;
         private bool logGdb = false;
         private bool asyncMode;
+        private bool _detectAsync;
 
         private object syncLock = new object();
         private object eventLock = new object();
@@ -71,12 +73,21 @@ namespace AvalonStudio.Debugging.GDB
 
         private string _gdbExecutable;
         private string _runCommand;
+        private bool _suppressEvents = false;
+        private bool _waitForStopBeforeRunning;
 
-        public GdbSession(string gdbExecutable, string runCommand = "-exec-run")
+        /// <summary>
+		/// Raised when the debugging session is paused
+		/// </summary>
+		private event EventHandler<TargetEventArgs> TargetStoppedWhenSuppressed;
+
+        public GdbSession(string gdbExecutable, string runCommand = "-exec-run", bool detectAsync = true, bool waitForStopBeforeRunning = false)
         {
             _gdbExecutable = gdbExecutable;
             _console = IoC.Get<IConsole>();
             _runCommand = runCommand;
+            _detectAsync = detectAsync;
+            _waitForStopBeforeRunning = waitForStopBeforeRunning;
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)
@@ -118,7 +129,14 @@ namespace AvalonStudio.Debugging.GDB
 
                 currentProcessName = startInfo.Command + " " + startInfo.Arguments;
 
-                asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
+                if (_detectAsync)
+                {
+                    asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
+                }
+                else
+                {
+                    asyncMode = false;
+                }
 
                 if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
                 {
@@ -156,11 +174,25 @@ namespace AvalonStudio.Debugging.GDB
 
                 OnStarted();
 
-                ThreadPool.QueueUserWorkItem(delegate
+                if (_waitForStopBeforeRunning)
                 {
-                    RunCommand(_runCommand);
+                    _suppressEvents = true;
+
+                    var catchFirstStop = Observable.FromEventPattern(this, nameof(TargetStoppedWhenSuppressed)).Take(1).Subscribe(s =>
+                    {
+                        ThreadPool.QueueUserWorkItem(delegate
+                        {
+                            _suppressEvents = false;
+                            running = true;
+                            RunCommand(_runCommand);
+                        });
+                    });
+                }
+                else
+                {
                     running = true;
-                });
+                    RunCommand(_runCommand);
+                }
             }
         }
 
@@ -676,13 +708,81 @@ namespace AvalonStudio.Debugging.GDB
             return new Backtrace(bt);
         }
 
+        protected override Dictionary<int, string> OnGetRegisterChanges()
+        {
+            var result = new Dictionary<int, string>();
+
+            var data = RunCommand("-data-list-changed-registers");
+
+            var indexes = data.GetObject("changed-registers");
+
+            string indexParams = string.Empty;
+
+            for (int i = 0; i < indexes.Count; i++)
+            {
+                indexParams += indexes.GetValue(i) + " ";
+            }
+
+            var values = RunCommand("-data-list-register-values", "x", indexParams);
+
+            var regValues = values.GetObject("register-values");
+
+            for (int n = 0; n < regValues.Count; n++)
+            {
+                var valueObj = regValues.GetObject(n);
+
+                var index = valueObj.GetInt("number");
+                var value = valueObj.GetValue("value");
+
+                result.Add(index, value);
+            }
+
+            return result;
+        }
+
+        protected override List<Register> OnGetRegisters()
+        {
+            var result = new List<Register>();
+
+            var data = RunCommand("-data-list-register-names");
+
+            if (data.Status == CommandStatus.Done)
+            {
+                var regNames = data.GetObject("register-names");
+
+                for (int n = 0; n < regNames.Count; n++)
+                {
+                    result.Add(new Register() { Name = regNames.GetValue(n), Index = n });
+                }
+
+                data = RunCommand("-data-list-register-values", "x");
+
+                if (data.Status == CommandStatus.Done)
+                {
+                    var regValues = data.GetObject("register-values");
+
+                    for (int n = 0; n < regValues.Count; n++)
+                    {
+                        var valueObj = regValues.GetObject(n);
+
+                        var index = valueObj.GetInt("number");
+                        var value = valueObj.GetValue("value");
+
+                        result[index].Value = value;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         protected override AssemblyLine[] OnDisassembleFile(string file)
         {
             List<AssemblyLine> lines = new List<AssemblyLine>();
             int cline = 1;
             do
             {
-                ResultData data = null;
+                GdbCommandResult data = null;
                 try
                 {
                     data = RunCommand("-data-disassemble", "-f", file, "-l", cline.ToString(), "--", "1");
@@ -691,23 +791,31 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     break;
                 }
-                ResultData asm_insns = data.GetObject("asm_insns");
+
                 int newLine = cline;
-                for (int n = 0; n < asm_insns.Count; n++)
+
+                if (data.Status == CommandStatus.Done)
                 {
-                    ResultData src_and_asm_line = asm_insns.GetObject(n).GetObject("src_and_asm_line");
-                    newLine = src_and_asm_line.GetInt("line");
-                    ResultData line_asm_insn = src_and_asm_line.GetObject("line_asm_insn");
-                    for (int i = 0; i < line_asm_insn.Count; i++)
+                    ResultData asm_insns = data.GetObject("asm_insns");
+
+                    for (int n = 0; n < asm_insns.Count; n++)
                     {
-                        ResultData asm = line_asm_insn.GetObject(i);
-                        long addr = long.Parse(asm.GetValue("address").Substring(2), NumberStyles.HexNumber);
-                        string code = asm.GetValue("inst");
-                        lines.Add(new AssemblyLine(addr, code, newLine));
+                        ResultData src_and_asm_line = asm_insns.GetObject(n).GetObject("src_and_asm_line");
+                        newLine = src_and_asm_line.GetInt("line");
+                        ResultData line_asm_insn = src_and_asm_line.GetObject("line_asm_insn");
+                        for (int i = 0; i < line_asm_insn.Count; i++)
+                        {
+                            ResultData asm = line_asm_insn.GetObject(i);
+                            long addr = long.Parse(asm.GetValue("address").Substring(2), NumberStyles.HexNumber);
+                            string code = asm.GetValue("inst");
+                            lines.Add(new AssemblyLine(addr, code, newLine));
+                        }
                     }
                 }
+
                 if (newLine <= cline)
                     break;
+
                 cline = newLine + 1;
             }
             while (true);
@@ -773,7 +881,7 @@ namespace AvalonStudio.Debugging.GDB
 
         protected bool InsideStop()
         {
-            lock(gdbLock)
+            lock (gdbLock)
             {
                 return InternalStop();
             }
@@ -781,7 +889,7 @@ namespace AvalonStudio.Debugging.GDB
 
         protected void InsideResume(bool resume)
         {
-            lock(gdbLock)
+            lock (gdbLock)
             {
                 InternalResume(resume);
             }
@@ -798,7 +906,7 @@ namespace AvalonStudio.Debugging.GDB
                 lock (eventLock)
                 {
                     sin.WriteLine("-exec-interrupt");
-                 
+
                     Monitor.Wait(eventLock);
                 }
             }
@@ -888,7 +996,7 @@ namespace AvalonStudio.Debugging.GDB
                             }
                         }
                     }
-
+                    
                     if (ev != null)
                     {
                         ThreadPool.QueueUserWorkItem(delegate
@@ -982,7 +1090,16 @@ namespace AvalonStudio.Debugging.GDB
                 args.Thread = GetThread(activeThread);
                 args.BreakEvent = breakEvent;
             }
-            OnTargetEvent(args);
+
+            if (_suppressEvents && type == TargetEventType.TargetStopped)
+            {
+                args.IsStopEvent = true;
+                TargetStoppedWhenSuppressed?.Invoke(this, args);
+            }
+            else
+            {
+                OnTargetEvent(args);
+            }
         }
 
         internal void RegisterTempVariableObject(string id, ObjectValue var)
