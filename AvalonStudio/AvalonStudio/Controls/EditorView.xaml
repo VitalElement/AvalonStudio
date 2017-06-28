@@ -28,7 +28,7 @@
                                 SourceFile="{Binding SourceFile}" Margin="0"
                                 BackgroundRenderers="{Binding BackgroundRenderers}"
                                 DocumentLineTransformers="{Binding DocumentLineTransformers}"
-                                IsDirty="{Binding IsDirty}"
+                                IsDirty="{Binding IsDirty}" ShowColumnLimit="true"
                                 VerticalAlignment="Stretch" Background="#1e1e1e" Diagnostics="{Binding Diagnostics}">
 
           <editor:CodeEditor.ContextMenu>
