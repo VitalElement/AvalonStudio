@@ -19,7 +19,7 @@
     <EmbeddedResource Include="MainMenu\ViewModels\MainMenuView.paml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.1-build3323-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.1-build3330-alpha" />
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
     <PackageReference Include="System.Composition" Version="1.0.31" />

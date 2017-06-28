@@ -23,7 +23,7 @@
     <EmbeddedResource Include="WatchListView.paml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.1-build3323-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.1-build3330-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
   </ItemGroup>
