@@ -115,9 +115,12 @@ namespace AvalonStudio.Debugging.GDB
                 if (str[pos] == '\\')
                 {
                     pos++;
+                    
+                    sb.Append("\\");
                     if (pos >= str.Length)
                         break;
                 }
+
                 sb.Append(str[pos]);
                 pos++;
             }
