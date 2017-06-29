@@ -13,7 +13,7 @@
               <Grid Grid.Row="0" Grid.RowSpan="5" Margin="-4 0" Grid.Column="1" RowDefinitions="Auto * Auto" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                 <Grid Grid.Row="1" Margin="-4" Grid.Column="0" Grid.ColumnSpan="5" Background="{TemplateBinding Background}">
                   <Grid Margin="0 0" RowDefinitions="Auto, *">
-                    <Grid ColumnDefinitions="Auto,*,Auto" Name="titlebar" Margin="4 0">
+                    <Grid ColumnDefinitions="Auto,*,Auto" Name="titlebar" Margin="4 0" Background="Transparent">
                       <Grid Margin="0">
                         <StackPanel Orientation="Horizontal" Gap="10">
                           <Image Source="{TemplateBinding Icon, Converter={Static convert:IconImageConverter.Converter}}" Name="icon" Height="20" Width="20" />
