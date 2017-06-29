@@ -2,14 +2,16 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
     
-    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net40;net45</PackageTargetFallback>    
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
+    <PackageReference Include="NuGet.Client" Version="4.0.0" />
     <PackageReference Include="NuGet.PackageManagement" Version="4.0.0" />
     <PackageReference Include="NuGet.Packaging" Version="4.0.0" />
+    <PackageReference Include="NuGet.ProjectManagement" Version="4.0.0" />
     <PackageReference Include="NuGet.Protocol.Core.v2" Version="4.0.0-rtm-2265" />
     <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.0.0" />
+    <PackageReference Include="NuGet.Resolver" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />

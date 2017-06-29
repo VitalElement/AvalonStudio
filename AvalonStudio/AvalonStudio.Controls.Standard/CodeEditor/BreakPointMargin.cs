@@ -30,38 +30,41 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public override void Render(DrawingContext context)
         {
-            context.FillRectangle(Brush.Parse("#333333"), Bounds);
-
-            if (TextView.VisualLines.Count > 0)
+            if (TextView.VisualLinesValid)
             {
-                var firstLine = TextView.VisualLines.FirstOrDefault();
-                var height = firstLine.Height;
-                Width = height;
-                var textView = TextView;
+                context.FillRectangle(Brush.Parse("#333333"), Bounds);
 
-                foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(textView.Document.FileName)))
+                if (TextView.VisualLines.Count > 0)
                 {
-                    var visualLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == breakPoint.Line);
+                    var firstLine = TextView.VisualLines.FirstOrDefault();
+                    var height = firstLine.Height;
+                    Width = height;
+                    var textView = TextView;
 
-                    if (visualLine != null)
+                    foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(textView.Document.FileName)))
                     {
-                        context.FillRectangle(Brush.Parse("#FF3737"),
-                        new Rect((Bounds.Size.Width / 4),
-                             visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], AvaloniaEdit.Rendering.VisualYPosition.LineTop) + (Bounds.Size.Width / 4) - TextView.VerticalOffset,
-                            Bounds.Size.Width / 1.5, height / 1.5), (float)height);
-                    }
-                }
+                        var visualLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == breakPoint.Line);
 
-                if (previewPointVisible)
-                {
-                    var visualLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == previewLine);
-
-                    if (visualLine != null)
-                    {
-                        context.FillRectangle(Brush.Parse("#E67466"),
+                        if (visualLine != null)
+                        {
+                            context.FillRectangle(Brush.Parse("#FF3737"),
                             new Rect((Bounds.Size.Width / 4),
-                                visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], AvaloniaEdit.Rendering.VisualYPosition.LineTop) + (Bounds.Size.Width / 4) - TextView.VerticalOffset,
+                                 visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], AvaloniaEdit.Rendering.VisualYPosition.LineTop) + (Bounds.Size.Width / 4) - TextView.VerticalOffset,
                                 Bounds.Size.Width / 1.5, height / 1.5), (float)height);
+                        }
+                    }
+
+                    if (previewPointVisible)
+                    {
+                        var visualLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == previewLine);
+
+                        if (visualLine != null)
+                        {
+                            context.FillRectangle(Brush.Parse("#E67466"),
+                                new Rect((Bounds.Size.Width / 4),
+                                    visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], AvaloniaEdit.Rendering.VisualYPosition.LineTop) + (Bounds.Size.Width / 4) - TextView.VerticalOffset,
+                                    Bounds.Size.Width / 1.5, height / 1.5), (float)height);
+                        }
                     }
                 }
             }

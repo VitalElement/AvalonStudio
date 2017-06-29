@@ -9,8 +9,7 @@
           <local:TooltipView Name="PART_Tooltip" />
           <local:CompletionAssistantView Name="PART_CompletionAssistant" />
           <local:Intellisense Name="PART_Intellisense" />
-          <Border Background="{TemplateBinding Background}"
-                  BorderBrush="{TemplateBinding BorderBrush}"
+          <Border BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}">
             
               <ScrollViewer Focusable="False"
@@ -20,7 +19,7 @@
                           VerticalContentAlignment="Top"
                           HorizontalContentAlignment="Left"
                           Padding="{TemplateBinding Padding}">
-              </ScrollViewer>
+                        </ScrollViewer>
           </Border>
         </Panel>
       </ControlTemplate>
