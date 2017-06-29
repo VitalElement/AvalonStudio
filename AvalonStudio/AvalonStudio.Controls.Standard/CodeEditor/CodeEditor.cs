@@ -157,7 +157,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (s)
                 {
-                    TextArea.TextView.BackgroundRenderers.Add(_selectedLineBackgroundRenderer);
+                    TextArea.TextView.BackgroundRenderers.Insert(0, _selectedLineBackgroundRenderer);
                 }
                 else
                 {
