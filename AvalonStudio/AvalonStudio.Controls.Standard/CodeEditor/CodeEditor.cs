@@ -115,6 +115,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             TextArea.TextView.LineTransformers.Add(_selectedDebugLineBackgroundRenderer);
 
             TextArea.SelectionBrush = Brush.Parse("#AA569CD6");
+            TextArea.SelectionCornerRadius = 0;
 
             this.GetObservable(LineNumbersVisibleProperty).Subscribe(s =>
             {
