@@ -167,7 +167,7 @@ namespace AvalonStudio.Toolchains.Standard
                                     console.WriteLine("Post-Build Commands:");
                                     bool succeess = ExecuteCommands(console, project, postBuildCommands);
 
-                                    if(!succeess)
+                                    if (!succeess)
                                     {
                                         result = false;
                                         break;
@@ -422,7 +422,7 @@ namespace AvalonStudio.Toolchains.Standard
         {
             if (project.Type == ProjectType.Executable && superProject != project)
             {
-                if(project.ToolChain == null)
+                if (project.ToolChain == null)
                 {
                     terminateBuild = true;
 
@@ -501,7 +501,7 @@ namespace AvalonStudio.Toolchains.Standard
                                 var objectPath = Path.Combine(objDirectory, project.CurrentDirectory.MakeRelativePath(file.CurrentDirectory));
                                 var objectFile = Path.Combine(objectPath, outputName);
 
-                                if(!Directory.Exists(objectPath))
+                                if (!Directory.Exists(objectPath))
                                 {
                                     Directory.CreateDirectory(objectPath);
                                 }
