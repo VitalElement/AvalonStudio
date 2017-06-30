@@ -45,8 +45,6 @@ namespace AvalonStudio.Platforms
                     { "TargetName", Path.GetFileNameWithoutExtension(project.Executable) },
                     { "TargetPath", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath() },
                     { "OutDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Executable) + "/").ToPlatformPath() },
-                    { "TargetExt", Path.GetExtension(project.Executable) },
-                    { "TargetFileName", Path.GetFileName(project.Executable) },
                     { "TargetDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Executable) + "/").ToPlatformPath() }
                 });
             }
