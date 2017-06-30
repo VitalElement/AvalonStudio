@@ -317,11 +317,11 @@ namespace AvalonStudio.Toolchains.Standard
 
         private async Task WaitForCompileJobs()
         {
-            await Task.Factory.StartNew(async () =>
+            await Task.Factory.StartNew(() =>
             {
                 while (numTasks > 0)
                 {
-                    await Task.Delay(10);
+                    Task.Delay(10).Wait();
                 }
             });
         }
