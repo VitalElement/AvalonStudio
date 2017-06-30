@@ -167,7 +167,7 @@ namespace AvalonStudio.Toolchains.Standard
                                     console.WriteLine("Post-Build Commands:");
                                     bool succeess = ExecuteCommands(console, project, postBuildCommands);
 
-                                    if(!succeess)
+                                    if (!succeess)
                                     {
                                         result = false;
                                         break;
@@ -422,7 +422,14 @@ namespace AvalonStudio.Toolchains.Standard
         {
             if (project.Type == ProjectType.Executable && superProject != project)
             {
-                await Build(console, project);
+                if (project.ToolChain == null)
+                {
+                    terminateBuild = true;
+
+                    console.WriteLine($"Project: {project.Name} does not have a toolchain set.");
+                }
+
+                await project.ToolChain?.Build(console, project);
             }
             else
             {
@@ -489,9 +496,15 @@ namespace AvalonStudio.Toolchains.Standard
 
                             if (SupportsFile(file))
                             {
-                                var outputName = Path.GetFileNameWithoutExtension(file.Location) + ".o";
-                                var dependencyFile = Path.Combine(objDirectory, Path.GetFileNameWithoutExtension(file.Location) + ".d");
-                                var objectFile = Path.Combine(objDirectory, outputName);
+                                var outputName = Path.ChangeExtension(file.Name, ".o");
+                                var dependencyFile = Path.Combine(objDirectory, Path.ChangeExtension(file.Name, ".d"));
+                                var objectPath = Path.Combine(objDirectory, project.CurrentDirectory.MakeRelativePath(file.CurrentDirectory));
+                                var objectFile = Path.Combine(objectPath, outputName);
+
+                                if (!Directory.Exists(objectPath))
+                                {
+                                    Directory.CreateDirectory(objectPath);
+                                }
 
                                 var dependencyChanged = false;
 
@@ -528,7 +541,8 @@ namespace AvalonStudio.Toolchains.Standard
 
                                         numLocalTasks++;
                                         numTasks++;
-                                        console.OverWrite(string.Format("[CC {0}/{1}]    [{2}]    {3}", ++buildCount, fileCount, project.Name, Path.GetFileName(file.Location)));
+
+                                        console.OverWrite(string.Format("[CC {0}/{1}]    [{2}]    {3}", ++buildCount, fileCount, project.Name, file.Name));
                                     }
 
                                     Task.Run(() =>
