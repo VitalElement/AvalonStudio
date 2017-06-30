@@ -194,9 +194,9 @@ namespace AvalonStudio.Utils
         public static string MakeRelativePath(this string fromPath, string toPath)
         {
             if (string.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
-            if (string.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");            
+            if (string.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
 
-            if(fromPath.CompareFilePath(toPath) == 0)
+            if (fromPath.CompareFilePath(toPath) == 0)
             {
                 return string.Empty;
             }
