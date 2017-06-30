@@ -28,6 +28,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
             }
         }
 
+        public string BinDirectory => BaseDirectory;
+
         public void Activation()
         {
         }
