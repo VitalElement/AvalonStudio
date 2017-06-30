@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Projects;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -39,6 +40,9 @@ namespace AvalonStudio.Platforms
             {
                 environment.AppendRange(new Dictionary<string, string>
                 {
+                    { "TargetExt", Path.GetExtension(project.Executable) },
+                    { "TargetFileName", Path.GetFileName(project.Executable) },
+                    { "TargetName", Path.GetFileNameWithoutExtension(project.Executable) },
                     { "TargetPath", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath() },
                     { "OutDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Executable) + "/").ToPlatformPath() },
                     { "TargetExt", Path.GetExtension(project.Executable) },

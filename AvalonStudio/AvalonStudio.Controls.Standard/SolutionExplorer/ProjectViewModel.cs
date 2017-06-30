@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
@@ -95,6 +96,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 Model.Solution.RemoveProject(Model);
                 Model.Solution.Save();
             });
+
+            DevConsoleCommand = ReactiveCommand.Create();
+            DevConsoleCommand.Subscribe(_ => 
+            {
+                PlatformSupport.LaunchShell(Model.CurrentDirectory, Model.ToolChain?.BinDirectory, Model.Debugger2?.BinDirectory);
+            });
         }
 
         public bool IsExpanded { get; set; }
@@ -114,6 +121,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand<object> SetProjectCommand { get; }
         public ReactiveCommand<object> OpenInExplorerCommand { get; }
         public ReactiveCommand<object> NewItemCommand { get; }
+
+        public ReactiveCommand<object> DevConsoleCommand { get; }
 
         public bool Visibility
         {
