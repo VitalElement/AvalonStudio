@@ -3,13 +3,11 @@
   <PropertyGroup>
     <OutputType>exe</OutputType>        
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
-    <PackageTargetFallback>$(PackageTargetFallback);netstandard2.0;net462</PackageTargetFallback>
     <OutputTypeEx>exe</OutputTypeEx>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <RuntimeIdentifiers>win7-x64;ubuntu.14.04-x64;debian.8-x64;osx.10.12-x64</RuntimeIdentifiers>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <PackageTargetFallback>$(PackageTargetFallback);netstandard1.3;net40;net45</PackageTargetFallback>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
@@ -68,12 +66,12 @@
     <EmbeddedResource Include="Themes\BaseDark.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.1-build3323-alpha" />
-    <PackageReference Include="Avalonia.Direct2D1" Version="0.5.1-build3323-alpha" />
-    <PackageReference Include="Avalonia.Gtk3" Version="0.5.1-build3323-alpha" />
-    <PackageReference Include="Avalonia.Skia.Desktop" Version="0.5.1-build3323-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.1-build3330-alpha" />
+    <PackageReference Include="Avalonia.Direct2D1" Version="0.5.1-build3330-alpha" />
+    <PackageReference Include="Avalonia.Gtk3" Version="0.5.1-build3330-alpha" />
+    <PackageReference Include="Avalonia.Skia.Desktop" Version="0.5.1-build3330-alpha" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
-    <PackageReference Include="Avalonia.Win32" Version="0.5.1-build3323-alpha" />
+    <PackageReference Include="Avalonia.Win32" Version="0.5.1-build3330-alpha" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.0" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build94-alpha" />    

@@ -48,6 +48,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
                     console.WriteLine(RunCommand("-target-download").Status.ToString());
                 }
 
+                RunCommand("monitor", "reset");
+
                 console.WriteLine("[JLink] - Connected.");
             }
         }
@@ -61,7 +63,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
             console.WriteLine("[JLink] - Starting GDB Server...");
             // TODO allow people to select the device.
             var jlinkStartInfo = new ProcessStartInfo();
-            jlinkStartInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed {2} -noir", settings.TargetDevice, Enum.GetName(typeof(JlinkInterfaceType), settings.Interface), settings.SpeedkHz);
+            jlinkStartInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed {2}", settings.TargetDevice, Enum.GetName(typeof(JlinkInterfaceType), settings.Interface), settings.SpeedkHz);
             jlinkStartInfo.FileName = Path.Combine(JLinkDebugger.BaseDirectory, "JLinkGDBServerCL" + Platform.ExecutableExtension);
 
             if (Platform.OSDescription == "Unix")

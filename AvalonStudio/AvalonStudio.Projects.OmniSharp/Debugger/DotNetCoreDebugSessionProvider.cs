@@ -15,6 +15,8 @@
 
     public class DotNetCoreDebugger : IDebugger2
     {
+        public string BinDirectory => Path.GetDirectoryName(SettingsBase.GetSettings<DotNetToolchainSettings>().DotNetPath);
+
         public void Activation()
         {
         }
