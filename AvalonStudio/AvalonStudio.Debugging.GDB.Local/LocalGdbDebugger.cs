@@ -14,6 +14,8 @@
 
     public class LocalGdbDebugger : IDebugger2
     {
+        public string BinDirectory => null;
+
         public void Activation()
         {
         }
