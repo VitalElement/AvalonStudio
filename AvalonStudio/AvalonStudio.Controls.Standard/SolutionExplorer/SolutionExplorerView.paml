@@ -45,6 +45,7 @@
                 <MenuItem Header="Analyse" Command="{Binding AnalyseCommand}" />
                 <MenuItem Header="Set as Default Project" Command="{Binding SetProjectCommand}" />
                 <MenuItem Header="Manage References" />
+                <MenuItem Header="Open Developer Console" Command="{Binding DevConsoleCommand}" />
                 <Separator />
                 <MenuItem Header="Add">
                   <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />

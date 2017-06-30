@@ -3,4 +3,4 @@
 	url = https://github.com/VitalElement/AvalonStudio.DebuggerLibs.git
 [submodule "AvaloniaEdit"]
 	path = AvaloniaEdit
-	url = https://github.com/AvaloniaUI/AvaloniaEdit
+	url = https://github.com/danwalmsley/AvaloniaEdit

@@ -1104,26 +1104,32 @@ namespace AvalonStudio.Debugging.GDB
 
         internal void RegisterTempVariableObject(string id, ObjectValue var)
         {
-            tempVariableObjects.Add(id, new WeakReference<ObjectValue>(var));
+            lock (tempVariableObjects)
+            {
+                tempVariableObjects.Add(id, new WeakReference<ObjectValue>(var));
+            }
         }
 
         private void CleanTempVariableObjects()
         {
-            List<string> keysToRemove = new List<string>();
-
-            foreach (var item in tempVariableObjects)
+            lock (tempVariableObjects)
             {
-                if (!item.Value.TryGetTarget(out ObjectValue result))
+                List<string> keysToRemove = new List<string>();
+
+                foreach (var item in tempVariableObjects)
                 {
-                    RunCommand("-var-delete", item.Key);
+                    if (!item.Value.TryGetTarget(out ObjectValue result))
+                    {
+                        RunCommand("-var-delete", item.Key);
 
-                    keysToRemove.Add(item.Key);
+                        keysToRemove.Add(item.Key);
+                    }
                 }
-            }
 
-            foreach (var key in keysToRemove)
-            {
-                tempVariableObjects.Remove(key);
+                foreach (var key in keysToRemove)
+                {
+                    tempVariableObjects.Remove(key);
+                }
             }
         }
     }

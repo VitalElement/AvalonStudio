@@ -107,7 +107,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _columnLimitBackgroundRenderer = new ColumnLimitBackgroundRenderer();
 
+            _selectedDebugLineBackgroundRenderer = new SelectedDebugLineBackgroundRenderer();
+
             TextArea.TextView.Margin = new Thickness(10, 0, 0, 0);
+
+            TextArea.TextView.BackgroundRenderers.Add(_selectedDebugLineBackgroundRenderer);
+            TextArea.TextView.LineTransformers.Add(_selectedDebugLineBackgroundRenderer);
+
+            TextArea.SelectionBrush = Brush.Parse("#AA569CD6");
+            TextArea.SelectionCornerRadius = 0;
 
             this.GetObservable(LineNumbersVisibleProperty).Subscribe(s =>
             {
@@ -149,7 +157,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (s)
                 {
-                    TextArea.TextView.BackgroundRenderers.Add(_selectedLineBackgroundRenderer);
+                    TextArea.TextView.BackgroundRenderers.Insert(0, _selectedLineBackgroundRenderer);
                 }
                 else
                 {
@@ -168,12 +176,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     TextArea.TextView.BackgroundRenderers.Remove(_columnLimitBackgroundRenderer);
                 }
             });
-
-            _selectedDebugLineBackgroundRenderer = new SelectedDebugLineBackgroundRenderer();
-            TextArea.TextView.BackgroundRenderers.Add(_selectedDebugLineBackgroundRenderer);
-            TextArea.TextView.LineTransformers.Add(_selectedDebugLineBackgroundRenderer);
-
-            TextArea.SelectionBrush = Brush.Parse("#AA569CD6");
 
             Options = new AvaloniaEdit.TextEditorOptions
             {

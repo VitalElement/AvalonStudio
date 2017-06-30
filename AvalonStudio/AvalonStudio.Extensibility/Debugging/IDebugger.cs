@@ -9,5 +9,7 @@
     public interface IDebugger : IExtension, IInstallable
     {
         object GetSettingsControl(IProject project);
+
+        string BinDirectory { get; }
     }
 }

@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
@@ -98,6 +99,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 Model.Solution.Save();
             });
 
+
             AnalyseCommand = ReactiveCommand.Create();
             AnalyseCommand.Subscribe(_ =>
             {
@@ -110,6 +112,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                         project.Analyze(IoC.Get<IConsole>());
                     });
                 }
+            });
+            
+            DevConsoleCommand = ReactiveCommand.Create();
+            DevConsoleCommand.Subscribe(_ => 
+            {
+                PlatformSupport.LaunchShell(Model.CurrentDirectory, Model.ToolChain?.BinDirectory, Model.Debugger2?.BinDirectory);
             });
         }
 
@@ -131,6 +139,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand<object> OpenInExplorerCommand { get; }
         public ReactiveCommand<object> NewItemCommand { get; }
         public ReactiveCommand<object> AnalyseCommand { get; }
+
+        public ReactiveCommand<object> DevConsoleCommand { get; }
 
         public bool Visibility
         {

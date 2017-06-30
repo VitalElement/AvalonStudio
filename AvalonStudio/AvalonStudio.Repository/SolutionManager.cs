@@ -60,7 +60,7 @@ namespace AvalonStudio.Packages
         {
             using (var installedPackageCache = PackageManager.GetCache())
             {
-                yield return new AvalonStudioExtensionsFolderProject(new NuGet.PhysicalFileSystem(Platform.ReposDirectory), PackageManager.GetFramework(), installedPackageCache, Platform.ReposDirectory);
+                yield return new AvalonStudioExtensionsFolderProject(PackageManager.GetFramework(), installedPackageCache, Platform.ReposDirectory);
             }
         }
 
