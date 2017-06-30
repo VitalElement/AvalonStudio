@@ -287,7 +287,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             if (this != superProject)
             {
-                outputDirectory = Path.Combine(outputDirectory, Name);
+                outputDirectory = Path.Combine(outputDirectory, "referenced", Name);
             }
 
             return outputDirectory;

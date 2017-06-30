@@ -25,22 +25,29 @@ namespace AvalonStudio.Platforms
         {
             var environment = new Dictionary<string, string>
             {
-                { "TargetPath", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath() },
-                { "OutDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Executable) + "/").ToPlatformPath() },
                 { "ProjectName", project.Name },
                 { "ProjectPath", Path.Combine(project.CurrentDirectory, project.Location).ToPlatformPath() },
                 { "ProjectFileName", Path.GetFileName(project.Location) },
-                { "TargetExt", Path.GetExtension(project.Executable) },
-                { "TargetFileName", Path.GetFileName(project.Executable) },
-                { "TargetName", Path.GetFileNameWithoutExtension(project.Executable) },
                 { "DevEnvDir", project.ToolChain?.BinDirectory + "/".ToPlatformPath()  },
-                { "TargetDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Executable) + "/").ToPlatformPath() },
                 { "ProjectDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Location) + "/").ToPlatformPath() },
                 { "SolutionFileName", Path.GetFileName(project.Solution.Location) },
                 { "SolutionPath", project.Solution.Location.ToPlatformPath() },
                 { "SolutionDir", Path.GetDirectoryName(project.Solution.Location) + "/".ToPlatformPath() },
                 { "SolutionName", project.Solution.Name }
             };
+
+            if (project.Executable != null)
+            {
+                environment.AppendRange(new Dictionary<string, string>
+                {
+                    { "TargetExt", Path.GetExtension(project.Executable) },
+                    { "TargetFileName", Path.GetFileName(project.Executable) },
+                    { "TargetName", Path.GetFileNameWithoutExtension(project.Executable) },
+                    { "TargetPath", Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath() },
+                    { "OutDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Executable) + "/").ToPlatformPath() },
+                    { "TargetDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Executable) + "/").ToPlatformPath() }
+                });
+            }
 
             return environment;
         }
