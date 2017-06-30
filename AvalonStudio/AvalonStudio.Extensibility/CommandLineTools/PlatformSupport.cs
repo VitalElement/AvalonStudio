@@ -68,6 +68,7 @@ namespace AvalonStudio.CommandLineTools
             if (executorType == ShellExecutorType.Windows)
             {
                 startInfo.FileName = ResolveFullExecutablePath("cmd.exe");
+                startInfo.Arguments = $"/c start {startInfo.FileName}";
             }
             else //Unix
             {

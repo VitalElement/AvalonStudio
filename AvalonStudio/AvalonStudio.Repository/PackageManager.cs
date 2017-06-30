@@ -115,7 +115,7 @@ namespace AvalonStudio.Packages
 
             using (var installedPackageCache = GetCache())
             {
-                var project = new AvalonStudioExtensionsFolderProject(new NuGet.PhysicalFileSystem(Platform.ReposDirectory), GetFramework(), installedPackageCache, Platform.ReposDirectory);
+                var project = new AvalonStudioExtensionsFolderProject(GetFramework(), installedPackageCache, Platform.ReposDirectory);
 
                 if (!project.PackageExists(identity))
                 {
@@ -178,7 +178,7 @@ namespace AvalonStudio.Packages
 
             using (var installedPackageCache = GetCache())
             {
-                var project = new AvalonStudioExtensionsFolderProject(new NuGet.PhysicalFileSystem(Platform.ReposDirectory), GetFramework(), installedPackageCache, Platform.ReposDirectory);
+                var project = new AvalonStudioExtensionsFolderProject(GetFramework(), installedPackageCache, Platform.ReposDirectory);
 
                 var packageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, new SolutionManager(), new DeleteOnRestartManager())
                 {
@@ -264,7 +264,7 @@ namespace AvalonStudio.Packages
 
             using (var installedPackageCache = GetCache())
             {
-                var project = new AvalonStudioExtensionsFolderProject(new NuGet.PhysicalFileSystem(Platform.ReposDirectory), GetFramework(), installedPackageCache, Platform.ReposDirectory);
+                var project = new AvalonStudioExtensionsFolderProject(GetFramework(), installedPackageCache, Platform.ReposDirectory);
 
                 result = project.GetInstalledPath(identity);
             }

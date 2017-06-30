@@ -44,11 +44,18 @@ namespace AvalonStudio.TextEditor.Rendering
                                     {
                                         StartOffset = startIndex + line.StartOffset,
                                         EndOffset = startIndex + line.StartOffset + SelectedWord.Length
-                                    }).First();
+                                    }).FirstOrDefault();
 
-                            drawingContext.FillRectangle(highlightBrush, rect);
+                            if (rect != null)
+                            {
+                                drawingContext.FillRectangle(highlightBrush, rect);
 
-                            startIndex += SelectedWord.Length;
+                                startIndex += SelectedWord.Length;
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
                     }
                 }

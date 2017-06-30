@@ -15,15 +15,12 @@ namespace AvalonStudio.Packages
     // This primarily exists to intercept package installations and store their paths
     internal class AvalonStudioExtensionsFolderProject : FolderNuGetProject
     {
-        private readonly IFileSystem _fileSystem;
-
         private readonly NuGetFramework _currentFramework;
         private readonly InstalledPackagesCache _installedPackages;
 
-        public AvalonStudioExtensionsFolderProject(IFileSystem fileSystem, NuGetFramework currentFramework, InstalledPackagesCache installedPackages, string root)
+        public AvalonStudioExtensionsFolderProject(NuGetFramework currentFramework, InstalledPackagesCache installedPackages, string root)
             : base(root)
         {
-            _fileSystem = fileSystem;
             _currentFramework = currentFramework;
             _installedPackages = installedPackages;
         }

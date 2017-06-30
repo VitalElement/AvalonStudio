@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Projects;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -31,6 +32,7 @@ namespace AvalonStudio.Platforms
                 { "ProjectFileName", Path.GetFileName(project.Location) },
                 { "TargetExt", Path.GetExtension(project.Executable) },
                 { "TargetFileName", Path.GetFileName(project.Executable) },
+                { "TargetName", Path.GetFileNameWithoutExtension(project.Executable) },
                 { "DevEnvDir", project.ToolChain?.BinDirectory + "/".ToPlatformPath()  },
                 { "TargetDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Executable) + "/").ToPlatformPath() },
                 { "ProjectDir", Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(project.Location) + "/").ToPlatformPath() },
