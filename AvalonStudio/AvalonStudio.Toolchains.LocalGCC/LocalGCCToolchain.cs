@@ -29,7 +29,21 @@ namespace AvalonStudio.Toolchains.LocalGCC
                 }
             }
         }
-        public override string BinDirectory => Path.Combine(ContentDirectory, "bin");
+
+        public override string BinDirectory 
+        {
+            get
+            {
+                if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return Path.Combine(ContentDirectory, "bin");
+                }
+            }
+        }
 
         public override string Prefix => string.Empty;
 
@@ -67,7 +81,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
             get { return "GCC based toolchain PC."; }
         }
 
-        public override string ExecutableExtension => ".exe";
+        public override string ExecutableExtension => Platform.ExecutableExtension;
 
         public override string StaticLibraryExtension => ".a";
 
