@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -358,7 +359,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             fbd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await fbd.ShowAsync();
+            var result = await fbd.ShowAsync(IoC.Get<Window>());
 
             if (result != string.Empty)
             {
