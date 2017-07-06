@@ -23,7 +23,7 @@ namespace AvalonStudio.Toolchains.GCC
         public List<string> LinkedLibraries { get; set; }
         public List<string> LinkerScripts { get; set; }
 
-        public List<string> SystemLibraries {get;set;}
+        public List<string> SystemLibraries { get; set; }
 
         public bool UseMemoryLayout { get; set; }
         public bool DiscardUnusedSections { get; set; }
