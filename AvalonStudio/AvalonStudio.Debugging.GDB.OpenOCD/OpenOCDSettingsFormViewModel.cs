@@ -34,7 +34,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
             BrowseInterfaceConfigFileCommand.Subscribe(async _ =>
             {
                 var ofd = new OpenFileDialog();
-                ofd.InitialDirectory = Path.Combine(BaseDirectory, "scripts", "interface");
+                ofd.InitialFileName = Path.Combine(BaseDirectory, "scripts", "interface");
                 ofd.Filters.Add(new FileDialogFilter { Name = "OpenOCD Config File", Extensions = new List<string> { "cfg" } });
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Interface Config File";
@@ -51,7 +51,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
             BrowseTargetConfigFileCommand.Subscribe(async _ =>
             {
                 var ofd = new OpenFileDialog();
-                ofd.InitialDirectory = Path.Combine(BaseDirectory, "scripts", "target");
+                ofd.InitialFileName = Path.Combine(BaseDirectory, "scripts", "target");
                 ofd.Filters.Add(new FileDialogFilter { Name = "OpenOCD Config File", Extensions = new List<string> { "cfg" } });
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Target Config File";
