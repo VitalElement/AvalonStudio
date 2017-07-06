@@ -155,8 +155,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 });
             }
 
-            dlg.InitialFileName = string.Empty;
-            dlg.InitialDirectory = Platform.ProjectDirectory;
+            dlg.InitialFileName = Platform.ProjectDirectory;
+            
             var result = await dlg.ShowAsync();
 
             if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
