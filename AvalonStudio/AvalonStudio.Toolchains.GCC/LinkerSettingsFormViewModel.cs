@@ -421,10 +421,11 @@ namespace AvalonStudio.Toolchains.GCC
         private async void AddLinkedLibrary(object param)
         {
             var ofd = new OpenFileDialog();
+            ofd.Title = "Add Linked Library";
 
             ofd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await ofd.ShowAsync(IoC.Get<Window>());
+            var result = await ofd.ShowAsync();
 
             if (result != null && !string.IsNullOrEmpty(result.First()))
             {
@@ -442,7 +443,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             ofd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await ofd.ShowAsync(IoC.Get<Window>());
+            var result = await ofd.ShowAsync();
 
             if (result != null && !string.IsNullOrEmpty(result.First()))
             {

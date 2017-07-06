@@ -39,7 +39,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Interface Config File";
 
-                var result = await ofd.ShowAsync(IoC.Get<Window>());
+                var result = await ofd.ShowAsync();
 
                 if (result != null && !string.IsNullOrEmpty(result.First()))
                 {
@@ -56,7 +56,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Target Config File";
 
-                var result = await ofd.ShowAsync(IoC.Get<Window>());
+                var result = await ofd.ShowAsync();
 
                 if (result != null && !string.IsNullOrEmpty(result.First()))
                 {

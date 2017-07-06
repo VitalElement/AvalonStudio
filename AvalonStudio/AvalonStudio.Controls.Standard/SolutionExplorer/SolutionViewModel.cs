@@ -51,7 +51,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 dlg.InitialDirectory = Model.CurrentDirectory;
                 dlg.AllowMultiple = false;
 
-                var result = await dlg.ShowAsync(IoC.Get<Window>());
+                var result = await dlg.ShowAsync();
 
                 if (result != null && result.Length == 1)
                 {

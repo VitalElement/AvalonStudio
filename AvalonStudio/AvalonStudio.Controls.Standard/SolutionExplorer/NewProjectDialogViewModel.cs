@@ -52,7 +52,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 var ofd = new OpenFolderDialog();
                 ofd.InitialDirectory = location;
 
-                var result = await ofd.ShowAsync(IoC.Get<Window>());
+                var result = await ofd.ShowAsync();
 
                 if (result != string.Empty)
                 {

@@ -136,7 +136,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             fbd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await fbd.ShowAsync(IoC.Get<Window>());
+            var result = await fbd.ShowAsync();
 
             if (result != string.Empty)
             {

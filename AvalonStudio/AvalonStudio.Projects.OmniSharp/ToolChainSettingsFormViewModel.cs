@@ -29,7 +29,7 @@ namespace AvalonStudio.Projects.OmniSharp
                 ofd.AllowMultiple = false;
                 ofd.Title = "Select Dotnet Executable (dotnet)";
 
-                var result = await ofd.ShowAsync(IoC.Get<Window>());
+                var result = await ofd.ShowAsync();
 
                 if (result != null && !string.IsNullOrEmpty(result.First()))
                 {
