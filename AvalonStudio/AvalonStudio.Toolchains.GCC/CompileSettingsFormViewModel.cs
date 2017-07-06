@@ -361,7 +361,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             var result = await fbd.ShowAsync();
 
-            if (result != string.Empty)
+            if (!string.IsNullOrEmpty(result))
             {
                 var newInclude = Model.CurrentDirectory.MakeRelativePath(result);
 

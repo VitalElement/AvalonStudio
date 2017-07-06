@@ -31,7 +31,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
                 var result = await ofd.ShowAsync();
 
-                if (result != null && !string.IsNullOrEmpty(result.First()))
+                if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
                     DotNetPath = result.First();
 

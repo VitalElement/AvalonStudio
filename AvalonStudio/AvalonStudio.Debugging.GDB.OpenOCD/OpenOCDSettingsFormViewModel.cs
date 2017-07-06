@@ -41,7 +41,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 
                 var result = await ofd.ShowAsync();
 
-                if (result != null && !string.IsNullOrEmpty(result.First()))
+                if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
                     InterfaceConfigFile = BaseDirectory.MakeRelativePath(result.First());
                 }
@@ -58,7 +58,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
 
                 var result = await ofd.ShowAsync();
 
-                if (result != null && !string.IsNullOrEmpty(result.First()))
+                if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
                     TargetConfigFile = BaseDirectory.MakeRelativePath(result.First());
                 }

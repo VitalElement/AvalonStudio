@@ -427,7 +427,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             var result = await ofd.ShowAsync();
 
-            if (result != null && !string.IsNullOrEmpty(result.First()))
+            if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
                 string newInclude = Model.CurrentDirectory.MakeRelativePath(result.First()).ToAvalonPath();
 
@@ -445,7 +445,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             var result = await ofd.ShowAsync();
 
-            if (result != null && !string.IsNullOrEmpty(result.First()))
+            if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
                 string newInclude = Model.CurrentDirectory.MakeRelativePath(result.First()).ToAvalonPath();
 
