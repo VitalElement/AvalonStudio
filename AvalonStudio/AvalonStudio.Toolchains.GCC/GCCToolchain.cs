@@ -172,10 +172,10 @@ namespace AvalonStudio.Toolchains.GCC
 
             var linkerScripts = string.Empty;
 
+            var settings = project.GetToolchainSettings<GccToolchainSettings>();
+
             if (project.Type == ProjectType.Executable)
             {
-                var settings = project.GetToolchainSettings<GccToolchainSettings>();
-
                 foreach (var libraryPath in settings.LinkSettings.LinkedLibraries)
                 {
                     libraryPaths += $"-Wl,--library-path={Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(libraryPath)).ToPlatformPath()} ";
@@ -185,21 +185,23 @@ namespace AvalonStudio.Toolchains.GCC
                     linkedLibraries += string.Format($"-Wl,--library=:{libName} ");
                 }
 
-                if (project.Type == ProjectType.Executable)
+                foreach (var script in settings.LinkSettings.LinkerScripts)
                 {
-                    foreach (var script in settings.LinkSettings.LinkerScripts)
-                    {
-                        linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
-                    }
+                    linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
                 }
             }
 
             foreach (var lib in project.BuiltinLibraries)
             {
-                linkedLibraries += string.Format("-l{0} ", lib);
+                linkedLibraries += $"-l{lib} ";
             }
 
             linkedLibraries += GetBaseLibraryArguments(superProject);
+
+            foreach(var lib in settings.LinkSettings.SystemLibraries)
+            {
+                linkedLibraries += $"-l{lib} ";
+            }
 
             string arguments = string.Empty;
 

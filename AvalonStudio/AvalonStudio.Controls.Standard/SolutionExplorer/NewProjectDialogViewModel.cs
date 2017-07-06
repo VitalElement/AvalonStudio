@@ -54,7 +54,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 var result = await ofd.ShowAsync();
 
-                if (result != string.Empty)
+                if (!string.IsNullOrEmpty(result))
                 {
                     Location = result;
                 }

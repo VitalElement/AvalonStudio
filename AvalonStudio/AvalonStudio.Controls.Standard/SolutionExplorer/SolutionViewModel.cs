@@ -6,6 +6,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -51,9 +52,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 dlg.InitialDirectory = Model.CurrentDirectory;
                 dlg.AllowMultiple = false;
 
-                var result = await dlg.ShowAsync(IoC.Get<Window>());
+                var result = await dlg.ShowAsync();
 
-                if (result != null && result.Length == 1)
+                if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
                     var proj = Solution.LoadProjectFile(model, result[0]);
 
