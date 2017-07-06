@@ -65,12 +65,10 @@ namespace AvalonStudio.Toolchains.GCC
             rtti = settings.Rtti;
             exceptions = settings.Exceptions;
 
-            AddDefineCommand = ReactiveCommand.Create();
-            // new RoutingCommand(AddDefine, (o) => DefineText != string.Empty && DefineText != null && !Defines.Contains(DefineText));
+            AddDefineCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.DefineText, define => !string.IsNullOrEmpty(define) && !Defines.Contains(define)));
             AddDefineCommand.Subscribe(AddDefine);
 
-            RemoveDefineCommand = ReactiveCommand.Create();
-            // new RoutingCommand(RemoveDefine, (o) => SelectedDefine != string.Empty && SelectedDefine != null);
+            RemoveDefineCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SelectedDefine, selected => !string.IsNullOrEmpty(selected)));
             RemoveDefineCommand.Subscribe(RemoveDefine);
 
             AddIncludePathCommand = ReactiveCommand.Create();
@@ -100,7 +98,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                clanguageStandardSelectedIndex = value;
+                this.RaiseAndSetIfChanged(ref clanguageStandardSelectedIndex, value);
                 UpdateCompileString();
             }
         }
@@ -118,7 +116,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                cppLanguageStandardSelectedIndex = value;
+                this.RaiseAndSetIfChanged(ref cppLanguageStandardSelectedIndex, value);
                 UpdateCompileString();
             }
         }
@@ -136,7 +134,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                fpuSelectedIndex = value;
+                this.RaiseAndSetIfChanged(ref fpuSelectedIndex, value);
 
                 UpdateCompileString();
             }
@@ -155,8 +153,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                optimizationPreferenceSelectedIndex = value;
-                //OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref optimizationPreferenceSelectedIndex, value);
                 UpdateCompileString();
             }
         }
@@ -171,8 +168,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                optimizationLevelSelectedIndex = value;
-                //OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref optimizationLevelSelectedIndex, value);
                 UpdateCompileString();
             }
         }
@@ -185,8 +181,8 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                cppSupport = value;
-                //OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref cppSupport, value);
+
                 if (value)
                 {
                     Defines.Add("SUPPORT_CPLUSPLUS");
@@ -208,8 +204,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                debugSymbols = value;
-                //OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref debugSymbols, value);
                 UpdateCompileString();
             }
         }
@@ -222,8 +217,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                rtti = value;
-                //OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref rtti, value);
                 UpdateCompileString();
             }
         }
@@ -236,8 +230,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                exceptions = value;
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref exceptions, value);
                 UpdateCompileString();
             }
         }
@@ -250,8 +243,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                miscOptions = value;
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref miscOptions, value);
                 UpdateCompileString();
             }
         }
@@ -270,8 +262,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                defineText = value;
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref defineText, value);
             }
         }
 
@@ -283,8 +274,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                defines = value;
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref defines, value);
                 UpdateCompileString();
             }
         }
@@ -297,8 +287,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                includePaths = value;
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref includePaths, value);
             }
         }
 
@@ -310,8 +299,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                selectedInclude = value;
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref selectedInclude, value);
             }
         }
 
@@ -323,9 +311,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
             set
             {
-                selectedDefine = value;
-                DefineText = value;
-                OnPropertyChanged();
+                this.RaiseAndSetIfChanged(ref selectedDefine, value);
             }
         }
 
@@ -419,10 +405,6 @@ namespace AvalonStudio.Toolchains.GCC
             Model.SetToolchainSettings(currentSettings);
 
             Model.Save();
-        }
-
-        private void OnPropertyChanged()
-        {
         }
     }
 }
