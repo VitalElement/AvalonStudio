@@ -58,9 +58,25 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IIndentationStrategy IndentationStrategy { get; private set; }
 
+        public bool CanTriggerIntellisense(char currentChar, char previousChar)
+        {
+            bool result = false;
+
+            if(IntellisenseTriggerCharacters.Contains(currentChar))
+            {
+                result = true;
+            }
+            else if(currentChar == ':' && previousChar == ':')
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
         public IEnumerable<char> IntellisenseTriggerCharacters => new[]
         {
-            '.', '>', ':'
+            '.', '>'
         };
 
         public IEnumerable<char> IntellisenseSearchCharacters => new[]

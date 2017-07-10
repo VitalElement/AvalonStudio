@@ -31,11 +31,11 @@
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
 
-        private bool IsTriggerChar(char currentChar, bool isVisible)
+        private bool IsTriggerChar(char currentChar, char previousChar, bool isVisible)
         {
             bool result = false;
 
-            if ((char.IsLetter(currentChar) || (isVisible && char.IsLetterOrDigit(currentChar))) || languageService.IntellisenseTriggerCharacters.Contains(currentChar))
+            if ((char.IsLetter(currentChar) || (isVisible && char.IsLetterOrDigit(currentChar))) || languageService.CanTriggerIntellisense(currentChar, previousChar))
             {
                 result = true;
             }
@@ -43,9 +43,9 @@
             return result;
         }
 
-        private bool IsLanguageSpecificTriggerChar(char currentChar)
+        private bool IsLanguageSpecificTriggerChar(char currentChar, char previousChar)
         {
-            return languageService.IntellisenseTriggerCharacters.Contains(currentChar);
+            return languageService.CanTriggerIntellisense(currentChar, previousChar);
         }
 
         private bool IsSearchChar(char currentChar)
@@ -115,13 +115,13 @@
             }
         }
 
-        private void OpenIntellisense(char currentChar, int caretIndex)
+        private void OpenIntellisense(char currentChar, char previousChar, int caretIndex)
         {
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
                 if (caretIndex > 1)
                 {
-                    if (IsLanguageSpecificTriggerChar(currentChar))
+                    if (IsLanguageSpecificTriggerChar(currentChar, previousChar))
                     {
                         intellisenseStartedAt = caretIndex;
                     }
@@ -310,6 +310,7 @@
                     if (e.Text.Length == 1)
                     {
                         char currentChar = e.Text[0];
+                        char previousChar = '\0';
 
                         if (completionAssistant.IsVisible)
                         {
@@ -416,11 +417,16 @@
                             SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                         }
 
-                        if (IsTriggerChar(currentChar, intellisenseControl.IsVisible) || IsLanguageSpecificTriggerChar(currentChar))
+                        Dispatcher.UIThread.InvokeTaskAsync(() =>
+                        {
+                            previousChar = editor.Document.GetCharAt(caretIndex - 2);
+                        }).Wait();
+
+                        if (IsTriggerChar(currentChar, previousChar, intellisenseControl.IsVisible))
                         {
                             if (!intellisenseControl.IsVisible)
                             {
-                                OpenIntellisense(currentChar, caretIndex);
+                                OpenIntellisense(currentChar, previousChar, caretIndex);
                             }
                             else if (caretIndex > intellisenseStartedAt)
                             {
@@ -544,7 +550,7 @@
             {
                 intellisenseJobRunner.InvokeAsync(() =>
                 {
-                    if (!_justOpened && intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift)
+                    if (!_justOpened && intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
                     { 
                         CloseIntellisense();
 
