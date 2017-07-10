@@ -281,23 +281,23 @@
 
         public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles, bool invokeOnRunner = true)
         {
-            var action = new Action(() =>
+            if (!intellisenseControl.IsVisible)
             {
-                if (!intellisenseControl.IsVisible)
+                var action = new Action(() =>
                 {
                     var codeCompleteTask = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
                     codeCompleteTask.Wait();
                     SetCompletionData(codeCompleteTask.Result);
-                }
-            });
+                });
 
-            if (invokeOnRunner)
-            {
-                intellisenseJobRunner.InvokeAsync(action);
-            }
-            else
-            {
-                action();
+                if (invokeOnRunner)
+                {
+                    intellisenseJobRunner.InvokeAsync(action);
+                }
+                else
+                {
+                    action();
+                }
             }
         }
 
