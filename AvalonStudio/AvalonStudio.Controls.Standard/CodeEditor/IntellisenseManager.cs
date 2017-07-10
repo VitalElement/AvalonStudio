@@ -24,6 +24,7 @@
         private readonly ICompletionAssistant completionAssistant;
         private AvaloniaEdit.TextEditor editor;
 
+        private bool _justOpened;
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
         private readonly CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
@@ -117,6 +118,7 @@
 
         private void OpenIntellisense(char currentChar, int caretIndex)
         {
+            _justOpened = true;
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
                 if (caretIndex > 1)
@@ -544,12 +546,14 @@
             {
                 intellisenseJobRunner.InvokeAsync(() =>
                 {
-                    if (intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt)
+                    if (!_justOpened && intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt)
                     {
                         CloseIntellisense();
 
                         SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                     }
+
+                    _justOpened = false;
 
                     if (e.Key == Key.Enter)
                     {
