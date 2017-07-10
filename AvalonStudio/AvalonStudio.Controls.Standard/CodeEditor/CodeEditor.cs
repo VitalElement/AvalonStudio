@@ -93,7 +93,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public CodeEditor()
         {
-            _codeAnalysisRunner = new JobRunner();
+            _codeAnalysisRunner = new JobRunner(1);
 
             _shell = IoC.Get<IShell>();
 
