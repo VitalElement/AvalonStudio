@@ -544,8 +544,8 @@
             {
                 intellisenseJobRunner.InvokeAsync(() =>
                 {
-                    if (intellisenseControl.IsVisible && caretIndex < intellisenseStartedAt)
-                    {
+                    if (!_justOpened && intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift)
+                    { 
                         CloseIntellisense();
 
                         SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
