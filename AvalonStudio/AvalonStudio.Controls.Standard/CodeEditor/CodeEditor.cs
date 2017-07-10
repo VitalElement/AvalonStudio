@@ -70,7 +70,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private bool _isLoaded = false;
 
-
+        private bool _textEntering;
         private readonly IShell _shell;
         private Subject<bool> _analysisTriggerEvents = new Subject<bool>();
         private readonly JobRunner _codeAnalysisRunner;
@@ -263,10 +263,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 RegisterLanguageService(file);
             });
 
+            TextArea.TextEntering += (sender, e) =>
+            {
+                _textEntering = true;
+            };
+
             TextArea.Caret.PositionChanged += (sender, e) =>
             {
-                if (_intellisenseManager != null)
-                {
+                if (_intellisenseManager != null && !_textEntering && TextArea.Selection.IsEmpty)
+                {                   
                     var location = Document.GetLocation(CaretOffset);
                     _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), true);
                 }
@@ -292,7 +297,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             };
 
-            TextArea.TextEntered += (sender, e) => _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+            TextArea.TextEntered += (sender, e) =>
+            {
+                _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+                _textEntering = false;
+            };
 
             _intellisense = new IntellisenseViewModel();
 
