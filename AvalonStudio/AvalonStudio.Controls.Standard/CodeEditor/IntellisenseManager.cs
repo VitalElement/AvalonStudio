@@ -550,7 +550,7 @@
             {
                 intellisenseJobRunner.InvokeAsync(() =>
                 {
-                    if (!_justOpened && intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
+                    if (intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
                     { 
                         CloseIntellisense();
 
