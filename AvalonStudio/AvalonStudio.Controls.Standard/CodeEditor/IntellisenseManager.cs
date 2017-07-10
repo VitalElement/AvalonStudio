@@ -24,6 +24,7 @@
         private readonly ICompletionAssistant completionAssistant;
         private AvaloniaEdit.TextEditor editor;
 
+        private bool _justOpened;
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
         private readonly CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
@@ -117,6 +118,7 @@
 
         private void OpenIntellisense(char currentChar, char previousChar, int caretIndex)
         {
+            _justOpened = true;
             Dispatcher.UIThread.InvokeTaskAsync(() =>
             {
                 if (caretIndex > 1)
@@ -281,23 +283,23 @@
 
         public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles, bool invokeOnRunner = true)
         {
-            var action = new Action(() =>
+            if (!intellisenseControl.IsVisible)
             {
-                if (!intellisenseControl.IsVisible)
+                var action = new Action(() =>
                 {
                     var codeCompleteTask = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
                     codeCompleteTask.Wait();
                     SetCompletionData(codeCompleteTask.Result);
-                }
-            });
+                });
 
-            if (invokeOnRunner)
-            {
-                intellisenseJobRunner.InvokeAsync(action);
-            }
-            else
-            {
-                action();
+                if (invokeOnRunner)
+                {
+                    intellisenseJobRunner.InvokeAsync(action);
+                }
+                else
+                {
+                    action();
+                }
             }
         }
 
@@ -550,12 +552,14 @@
             {
                 intellisenseJobRunner.InvokeAsync(() =>
                 {
-                    if (intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
+                    if (!_justOpened && intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
                     { 
                         CloseIntellisense();
 
                         SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                     }
+
+                    _justOpened = false;
 
                     if (e.Key == Key.Enter)
                     {
