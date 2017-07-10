@@ -62,11 +62,11 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             bool result = false;
 
-            if(IntellisenseTriggerCharacters.Contains(currentChar))
+            if (IntellisenseTriggerCharacters.Contains(currentChar))
             {
                 result = true;
             }
-            else if(currentChar == ':' && previousChar == ':')
+            else if (currentChar == ':' && previousChar == ':')
             {
                 result = true;
             }
@@ -564,7 +564,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             association = new CPlusPlusDataAssociation(doc);
             dataAssociations.Add(file, association);
-            
+
             association.TextInputHandler = (sender, e) =>
             {
                 if (editor.Document == doc)
@@ -724,7 +724,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             textDocument.BeginUpdate();
 
-            for(int line = firstLine; line <= endLine; line++)
+            for (int line = firstLine; line <= endLine; line++)
             {
                 textDocument.Insert(textDocument.GetLineByNumber(line).Offset, "//");
             }
@@ -931,13 +931,13 @@ namespace AvalonStudio.Languages.CPlusPlus
                 while (offset < document.TextLength)
                 {
                     var currentChar = document.GetCharAt(offset);
-                    
+
                     if (currentChar == text[0])
                     {
                         document.Replace(offset, 1, string.Empty);
                         break;
                     }
-                    else if(!currentChar.IsWhiteSpace())
+                    else if (!currentChar.IsWhiteSpace())
                     {
                         break;
                     }
