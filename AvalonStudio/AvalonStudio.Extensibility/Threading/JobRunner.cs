@@ -108,7 +108,7 @@ namespace AvalonStudio.Extensibility.Threading
             {
                 needWake = _queue.Count == 0;
 
-                if(_maxQueueSize > 0 && _queue.Count == _maxQueueSize)
+                if (_maxQueueSize > 0 && _queue.Count == _maxQueueSize)
                 {
                     _queue.Dequeue();
                 }
