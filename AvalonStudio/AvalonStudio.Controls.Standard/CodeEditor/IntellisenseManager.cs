@@ -544,7 +544,7 @@
             {
                 intellisenseJobRunner.InvokeAsync(() =>
                 {
-                    if (intellisenseControl.IsVisible && caretIndex < intellisenseStartedAt)
+                    if (intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt)
                     {
                         CloseIntellisense();
 
