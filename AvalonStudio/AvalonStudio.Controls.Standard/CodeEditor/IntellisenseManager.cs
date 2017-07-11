@@ -66,7 +66,7 @@
             intellisenseQueryRunner = new JobRunner(1);
 
             Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(new CancellationToken()); });
-            Task.Factory.StartNew(()=>{ intellisenseQueryRunner.RunLoop(new CancellationToken()); });
+            Task.Factory.StartNew(() => { intellisenseQueryRunner.RunLoop(new CancellationToken()); });
 
             this.intellisenseControl = intellisenseControl;
             this.completionAssistant = completionAssistant;
@@ -290,7 +290,7 @@
             {
                 intellisenseQueryRunner.InvokeAsync(() =>
                 {
-                    if(invokeOnRunner)
+                    if (invokeOnRunner)
                     {
                         intellisenseJobRunner.InvokeAsync(async () =>
                         {
@@ -560,7 +560,7 @@
                 intellisenseJobRunner.InvokeAsync(() =>
                 {
                     if (!_justOpened && intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
-                    { 
+                    {
                         CloseIntellisense();
 
                         SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
