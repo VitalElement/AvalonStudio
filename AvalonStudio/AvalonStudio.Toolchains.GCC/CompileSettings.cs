@@ -32,7 +32,10 @@ namespace AvalonStudio.Toolchains.GCC
         Cpp03,
         Cpp11,
         Cpp14,
-        Cpp17
+        Cpp17,
+        Gnu11,
+        Gnu14
+
     }
 
     public enum CLanguageStandard
