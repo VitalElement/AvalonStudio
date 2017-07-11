@@ -17,7 +17,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
         {
             get
             {
-                if (Platform.OSDescription == "Unix")
+                if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix)
                 {
                     return string.Empty;
                 }
@@ -81,7 +81,10 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public async Task InstallAsync(IConsole console)
         {
-            await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", console);
+            if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix)
+            {
+                await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", console);
+            }
         }
     }
 }
