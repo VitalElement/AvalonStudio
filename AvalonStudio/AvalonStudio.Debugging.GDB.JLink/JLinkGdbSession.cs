@@ -61,15 +61,17 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
             console.Clear();
             console.WriteLine("[JLink] - Starting GDB Server...");
-            // TODO allow people to select the device.
+
+            string processName = "JLinkGDBServer";
+
+            if (Platform.PlatformIdentifier != Platforms.PlatformID.Unix)
+            {
+                processName += "CL";
+            }
+
             var jlinkStartInfo = new ProcessStartInfo();
             jlinkStartInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed {2}", settings.TargetDevice, Enum.GetName(typeof(JlinkInterfaceType), settings.Interface), settings.SpeedkHz);
-            jlinkStartInfo.FileName = Path.Combine(JLinkDebugger.BaseDirectory, "JLinkGDBServerCL" + Platform.ExecutableExtension);
-
-            if (Platform.OSDescription == "Unix")
-            {
-                jlinkStartInfo.FileName = Path.Combine(JLinkDebugger.BaseDirectory, "JLinkGDBServer" + Platform.ExecutableExtension);
-            }
+            jlinkStartInfo.FileName = Path.Combine(JLinkDebugger.BaseDirectory, processName + Platform.ExecutableExtension);
 
             if (Path.IsPathRooted(jlinkStartInfo.FileName) && !System.IO.File.Exists(jlinkStartInfo.FileName))
             {
@@ -83,7 +85,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
             jlinkStartInfo.UseShellExecute = false;
             jlinkStartInfo.CreateNoWindow = true;
 
-            var processes = Process.GetProcessesByName("JLinkGDBServerCL");
+            var processes = Process.GetProcessesByName(processName);
 
             foreach (var process in processes)
             {
