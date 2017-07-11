@@ -31,6 +31,7 @@
         private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
+        private readonly JobRunner intellisenseQueryRunner;
 
         private bool IsTriggerChar(char currentChar, char previousChar, bool isVisible)
         {
@@ -62,8 +63,10 @@
         public IntellisenseManager(AvaloniaEdit.TextEditor editor, IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, ILanguageService languageService, ISourceFile file)
         {
             intellisenseJobRunner = new JobRunner();
+            intellisenseQueryRunner = new JobRunner(1);
 
             Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(new CancellationToken()); });
+            Task.Factory.StartNew(() => { intellisenseQueryRunner.RunLoop(new CancellationToken()); });
 
             this.intellisenseControl = intellisenseControl;
             this.completionAssistant = completionAssistant;
@@ -285,21 +288,25 @@
         {
             if (!intellisenseControl.IsVisible)
             {
-                var action = new Action(() =>
+                intellisenseQueryRunner.InvokeAsync(() =>
                 {
-                    var codeCompleteTask = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
-                    codeCompleteTask.Wait();
-                    SetCompletionData(codeCompleteTask.Result);
+                    if (invokeOnRunner)
+                    {
+                        intellisenseJobRunner.InvokeAsync(async () =>
+                        {
+                            var result = await languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
+                            SetCompletionData(result);
+                        }).GetAwaiter();
+                    }
+                    else
+                    {
+                        intellisenseJobRunner.InvokeAsync(async () =>
+                        {
+                            var result = await languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
+                            SetCompletionData(result);
+                        }).Wait();
+                    }
                 });
-
-                if (invokeOnRunner)
-                {
-                    intellisenseJobRunner.InvokeAsync(action);
-                }
-                else
-                {
-                    action();
-                }
             }
         }
 
@@ -553,7 +560,7 @@
                 intellisenseJobRunner.InvokeAsync(() =>
                 {
                     if (!_justOpened && intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
-                    { 
+                    {
                         CloseIntellisense();
 
                         SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
