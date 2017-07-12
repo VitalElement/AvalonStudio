@@ -296,19 +296,16 @@ namespace AvalonStudio.Toolchains.STM32
                         result += "-O3 ";
                     }
                     break;
-            }
 
-            switch (settings.CompileSettings.OptimizationPreference)
-            {
-                case OptimizationPreference.Size:
+                case OptimizationLevel.Size:
                     {
                         result += "-Os ";
                     }
                     break;
 
-                case OptimizationPreference.Speed:
+                case OptimizationLevel.Speed:
                     {
-                        result += "-Ofast ";
+                        result += "Ofast ";
                     }
                     break;
             }

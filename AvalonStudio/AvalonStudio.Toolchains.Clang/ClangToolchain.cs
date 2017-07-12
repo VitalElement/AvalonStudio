@@ -312,7 +312,7 @@ namespace AvalonStudio.Toolchains.Clang
 
                 case OptimizationLevel.Debug:
                     {
-                        result += "-O2 ";
+                        result += "-O0 ";
                     }
                     break;
 
@@ -333,23 +333,20 @@ namespace AvalonStudio.Toolchains.Clang
                         result += "-O3 ";
                     }
                     break;
-            }
 
-            switch (settings.CompileSettings.OptimizationPreference)
-            {
-                case OptimizationPreference.Size:
+                case OptimizationLevel.Size:
                     {
                         result += "-Os ";
                     }
                     break;
 
-                case OptimizationPreference.Speed:
+                case OptimizationLevel.Speed:
                     {
                         result += "-Ofast ";
                     }
                     break;
             }
-
+            
             result += settings.CompileSettings.CustomFlags + " ";
 
             // Referenced includes

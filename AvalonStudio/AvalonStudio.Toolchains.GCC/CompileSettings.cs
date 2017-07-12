@@ -9,11 +9,6 @@ namespace AvalonStudio.Toolchains.GCC
         Level1,
         Level2,
         Level3,
-    }
-
-    public enum OptimizationPreference
-    {
-        None,
         Speed,
         Size
     }
@@ -63,8 +58,7 @@ namespace AvalonStudio.Toolchains.GCC
 
         public CLanguageStandard CLanguageStandard { get; set; }
         public CppLanguageStandard CppLanguageStandard { get; set; }
-        public OptimizationLevel Optimization { get; set; }
-        public OptimizationPreference OptimizationPreference { get; set; }
+        public OptimizationLevel Optimization { get; set; }        
         public FPUSupport Fpu { get; set; }
     }
 }
