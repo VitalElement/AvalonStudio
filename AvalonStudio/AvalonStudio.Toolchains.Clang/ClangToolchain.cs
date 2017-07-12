@@ -236,6 +236,16 @@ namespace AvalonStudio.Toolchains.Clang
                     default:
                         break;
                 }
+
+                if (!settings.CompileSettings.Rtti)
+                {
+                    result += "-fno-rtti ";
+                }
+
+                if (!settings.CompileSettings.Exceptions)
+                {
+                    result += "-fno-exceptions ";
+                }
             }
 
             if (file == null || file.Extension == ".c")
@@ -265,24 +275,7 @@ namespace AvalonStudio.Toolchains.Clang
                 case FPUSupport.Hard:
                     result += "-mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
                     break;
-            }
-
-            // TODO remove dependency on file?
-            if (file != null)
-            {
-                if (file.Extension == ".cpp")
-                {
-                    if (!settings.CompileSettings.Rtti)
-                    {
-                        result += "-fno-rtti ";
-                    }
-
-                    if (!settings.CompileSettings.Exceptions)
-                    {
-                        result += "-fno-exceptions ";
-                    }
-                }
-            }
+            }            
 
             switch (settings.CompileSettings.Fpu)
             {
