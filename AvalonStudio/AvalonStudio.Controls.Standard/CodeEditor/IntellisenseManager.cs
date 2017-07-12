@@ -344,46 +344,6 @@
                         }
                     }
 
-                    if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
-                    {
-                        string currentWord = string.Empty;
-
-                        char behindBehindCaretChar = '\0';
-
-                        behindBehindCaretChar = editor.Document.GetCharAt(caretIndex - 2);
-
-                        if (behindBehindCaretChar.IsWhiteSpace() && behindBehindCaretChar != '\0')
-                        {
-                            currentWord = editor.GetPreviousWordAtIndex(caretIndex - 1);
-                        }
-                        else
-                        {
-                            currentWord = editor.GetWordAtIndex(caretIndex - 1);
-                        }
-
-                        Dispatcher.UIThread.InvokeAsync(async () =>
-                        {
-                            SignatureHelp signatureHelp = null;
-
-                            await intellisenseJobRunner.InvokeAsync(() =>
-                            {
-                                var task = languageService.SignatureHelp(file, Standard.CodeEditor.CodeEditor.UnsavedFiles.FirstOrDefault(), Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), line, column, caretIndex, currentWord);
-                                task.Wait();
-
-                                signatureHelp = task.Result;
-                            });
-
-                            if (signatureHelp != null)
-                            {
-                                completionAssistant.PushMethod(signatureHelp);
-                            }
-                        });
-                    }
-                    else if (currentChar == ')')
-                    {
-                        completionAssistant.PopMethod();
-                    }
-
                     if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
                     {
                         SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
@@ -407,6 +367,46 @@
                             SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                         }
                     }
+
+                    Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
+                        {
+                            string currentWord = string.Empty;
+
+                            char behindBehindCaretChar = '\0';
+
+                            behindBehindCaretChar = editor.Document.GetCharAt(caretIndex - 2);
+
+                            if (behindBehindCaretChar.IsWhiteSpace() && behindBehindCaretChar != '\0')
+                            {
+                                currentWord = editor.GetPreviousWordAtIndex(caretIndex - 1);
+                            }
+                            else
+                            {
+                                currentWord = editor.GetWordAtIndex(caretIndex - 1);
+                            }
+
+                            SignatureHelp signatureHelp = null;
+
+                            await intellisenseJobRunner.InvokeAsync(() =>
+                            {
+                                var task = languageService.SignatureHelp(file, Standard.CodeEditor.CodeEditor.UnsavedFiles.FirstOrDefault(), Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), line, column, caretIndex, currentWord);
+                                task.Wait();
+
+                                signatureHelp = task.Result;
+                            });
+
+                            if (signatureHelp != null)
+                            {
+                                completionAssistant.PushMethod(signatureHelp);
+                            }
+                        }
+                        else if (currentChar == ')')
+                        {
+                            completionAssistant.PopMethod();
+                        }
+                    });
                 }
             }
         }
