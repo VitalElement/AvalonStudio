@@ -39,6 +39,12 @@ namespace AvalonStudio.Toolchains.GCC
         private ObservableCollection<string> linkedLibraries;
         private ObservableCollection<string> linkerScripts;
 
+        private ObservableCollection<string> systemLibraries;
+
+        private string selectedSystemLibrary;
+
+        private string systemLibraryText;
+
         private string linkerArguments;
 
         private string miscOptions;
@@ -66,6 +72,7 @@ namespace AvalonStudio.Toolchains.GCC
             notUseStandardStartup = settings.NotUseStandardStartupFiles;
             linkedLibraries = new ObservableCollection<string>(settings.LinkedLibraries);
             linkerScripts = new ObservableCollection<string>(settings.LinkerScripts);
+            systemLibraries = new ObservableCollection<string>(settings.SystemLibraries);
             inRom1Start = string.Format("0x{0:X8}", settings.InRom1Start);
             inRom1Size = string.Format("0x{0:X8}", settings.InRom1Size);
             inRom2Start = string.Format("0x{0:X8}", settings.InRom2Start);
@@ -90,6 +97,21 @@ namespace AvalonStudio.Toolchains.GCC
             RemoveLinkedLibraryCommand = ReactiveCommand.Create();
             RemoveLinkedLibraryCommand.Subscribe(RemoveLinkedLibrary);
 
+            AddSystemLibraryCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SystemLibraryText, lib => !string.IsNullOrEmpty(lib) && !SystemLibraries.Contains(lib) && lib.All(s => !char.IsWhiteSpace(s))));
+            AddSystemLibraryCommand.Subscribe(_ =>
+            {
+                SystemLibraries.Add(SystemLibraryText);
+                SystemLibraryText = string.Empty;
+                UpdateLinkerString();
+            });
+
+            RemoveSystemLibraryCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SelectedSystemLibrary, selected => !string.IsNullOrEmpty(selected)));
+            RemoveSystemLibraryCommand.Subscribe(_ =>
+            {
+                SystemLibraries.Remove(SelectedSystemLibrary);
+                UpdateLinkerString();
+            });
+
             UpdateLinkerString();
         }
 
@@ -97,8 +119,29 @@ namespace AvalonStudio.Toolchains.GCC
         public ReactiveCommand<object> RemoveLinkerScriptCommand { get; private set; }
         public ReactiveCommand<object> AddLinkedLibraryCommand { get; private set; }
         public ReactiveCommand<object> RemoveLinkedLibraryCommand { get; private set; }
+        public ReactiveCommand<object> AddSystemLibraryCommand { get; }
+        public ReactiveCommand<object> RemoveSystemLibraryCommand { get; }
+
         public ICommand BrowseScatterFileCommand { get; private set; }
         public ICommand EditScatterFileCommand { get; private set; }
+
+        public string SystemLibraryText
+        {
+            get { return systemLibraryText; }
+            set { this.RaiseAndSetIfChanged(ref systemLibraryText, value); }
+        }
+
+        public ObservableCollection<string> SystemLibraries
+        {
+            get { return systemLibraries; }
+            set { this.RaiseAndSetIfChanged(ref systemLibraries, value); }
+        }
+
+        public string SelectedSystemLibrary
+        {
+            get { return selectedSystemLibrary; }
+            set { this.RaiseAndSetIfChanged(ref selectedSystemLibrary, value); }
+        }
 
         public int MemoryAreasVisible
         {
@@ -398,6 +441,7 @@ namespace AvalonStudio.Toolchains.GCC
             settings.NotUseStandardStartupFiles = notUseStandardStartup;
             settings.LinkedLibraries = linkedLibraries.ToList();
             settings.LinkerScripts = LinkerScripts.ToList();
+            settings.SystemLibraries = SystemLibraries.ToList();
             settings.InRom1Start = Convert.ToUInt32(inRom1Start, 16);
             settings.InRom1Size = Convert.ToUInt32(inRom1Size, 16);
             settings.InRom2Start = Convert.ToUInt32(inRom2Start, 16);
@@ -421,12 +465,13 @@ namespace AvalonStudio.Toolchains.GCC
         private async void AddLinkedLibrary(object param)
         {
             var ofd = new OpenFileDialog();
+            ofd.Title = "Add Linked Library";
 
-            ofd.InitialDirectory = Model.CurrentDirectory;
+            ofd.InitialFileName = Model.CurrentDirectory;
 
-            var result = await ofd.ShowAsync(IoC.Get<Window>());
+            var result = await ofd.ShowAsync();
 
-            if (result != null && !string.IsNullOrEmpty(result.First()))
+            if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
                 string newInclude = Model.CurrentDirectory.MakeRelativePath(result.First()).ToAvalonPath();
 
@@ -440,11 +485,11 @@ namespace AvalonStudio.Toolchains.GCC
         {
             var ofd = new OpenFileDialog();
 
-            ofd.InitialDirectory = Model.CurrentDirectory;
+            ofd.InitialFileName = Model.LocationDirectory;
 
-            var result = await ofd.ShowAsync(IoC.Get<Window>());
+            var result = await ofd.ShowAsync();
 
-            if (result != null && !string.IsNullOrEmpty(result.First()))
+            if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
                 string newInclude = Model.CurrentDirectory.MakeRelativePath(result.First()).ToAvalonPath();
 

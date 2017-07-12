@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects.Standard;
@@ -137,7 +138,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             var result = await fbd.ShowAsync();
 
-            if (result != string.Empty)
+            if (!string.IsNullOrEmpty(result))
             {
                 var newInclude = Model.CurrentDirectory.MakeRelativePath(result).ToAvalonPath();
 

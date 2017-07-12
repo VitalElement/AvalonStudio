@@ -37,6 +37,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _popup.PlacementTarget = PlacementTarget;
             _popup.PlacementMode = PlacementMode.Right;
+            _popup.StaysOpen = true;
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)

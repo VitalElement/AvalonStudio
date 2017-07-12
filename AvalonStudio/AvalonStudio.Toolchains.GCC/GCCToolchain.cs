@@ -67,7 +67,7 @@ namespace AvalonStudio.Toolchains.GCC
         {
             bool result = true;
 
-            if (Platform.OSDescription != "Unix" && !PlatformSupport.CheckExecutableAvailability(file))
+            if (Platform.PlatformIdentifier != PlatformID.Unix && !PlatformSupport.CheckExecutableAvailability(file))
             {
                 console.WriteLine("Unable to find tool (" + file + ") Please check project toolchain settings.");
                 result = false;
@@ -185,18 +185,20 @@ namespace AvalonStudio.Toolchains.GCC
                     linkedLibraries += string.Format($"-Wl,--library=:{libName} ");
                 }
 
-                if (project.Type == ProjectType.Executable)
+                foreach (var script in settings.LinkSettings.LinkerScripts)
                 {
-                    foreach (var script in settings.LinkSettings.LinkerScripts)
-                    {
-                        linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
-                    }
+                    linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
+                }
+
+                foreach(var lib in settings.LinkSettings.SystemLibraries)
+                {
+                    linkedLibraries += $"-l{lib} ";
                 }
             }
 
             foreach (var lib in project.BuiltinLibraries)
             {
-                linkedLibraries += string.Format("-l{0} ", lib);
+                linkedLibraries += $"-l{lib} ";
             }
 
             linkedLibraries += GetBaseLibraryArguments(superProject);
