@@ -277,13 +277,14 @@
                     }
                     else
                     {
-                        intellisenseJobRunner.InvokeAsync(async () =>
+                        intellisenseJobRunner.InvokeAsync(() =>
                         {
-                            var result = await languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
-                            SetCompletionData(result);
+                            var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
+                            task.Wait();
+                            SetCompletionData(task.Result);
                         }).Wait();
                     }
-                });
+                }).Wait();
             }
         }
 
