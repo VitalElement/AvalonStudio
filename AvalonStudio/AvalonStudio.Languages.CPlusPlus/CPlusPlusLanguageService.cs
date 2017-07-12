@@ -86,7 +86,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IEnumerable<char> IntellisenseCompleteCharacters => new[]
         {
-            '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
+            ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
