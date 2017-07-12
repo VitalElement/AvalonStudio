@@ -253,10 +253,10 @@
                     }
 
                     editor.Document.EndUpdate();
-
-                    CloseIntellisense();
                 }
             }
+
+            CloseIntellisense();
 
             return result;
         }
