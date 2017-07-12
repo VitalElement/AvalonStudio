@@ -10,6 +10,12 @@ namespace AvalonStudio.Extensibility.Threading
         private readonly AutoResetEvent _event = new AutoResetEvent(false);
         private readonly Queue<Job> _queue = new Queue<Job>();
         private readonly Thread _mainThread = Thread.CurrentThread;
+        private int _maxQueueSize;
+
+        public JobRunner(int maxQueueSize = -1)
+        {
+            _maxQueueSize = maxQueueSize;
+        }
 
         /// <summary>
         /// The thread that the job runner was created on.
@@ -101,6 +107,12 @@ namespace AvalonStudio.Extensibility.Threading
             lock (_queue)
             {
                 needWake = _queue.Count == 0;
+
+                if (_maxQueueSize > 0 && _queue.Count == _maxQueueSize)
+                {
+                    _queue.Dequeue();
+                }
+
                 _queue.Enqueue(job);
             }
 
