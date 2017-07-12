@@ -225,6 +225,14 @@ namespace AvalonStudio.Toolchains.Clang
                         result += "-std=c++17 ";
                         break;
 
+                    case CppLanguageStandard.Gnu11:
+                        result += "-std=gnu++11 ";
+                        break;
+
+                    case CppLanguageStandard.Gnu14:
+                        result += "-std=gnu++14 ";
+                        break;
+
                     default:
                         break;
                 }

@@ -27,7 +27,7 @@ namespace AvalonStudio.Languages
 
         Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "");
 
-        IEnumerable<char> IntellisenseTriggerCharacters { get; }
+        bool CanTriggerIntellisense(char currentChar, char previousChar);
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
 

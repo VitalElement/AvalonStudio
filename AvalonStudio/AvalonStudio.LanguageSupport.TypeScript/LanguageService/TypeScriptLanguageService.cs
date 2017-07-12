@@ -33,6 +33,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public Type BaseTemplateType => typeof(BlankTypeScriptProjectTemplate);
 
+        public bool CanTriggerIntellisense(char currentChar, char previousChar)
+        {
+            return IntellisenseTriggerCharacters.Contains(currentChar);
+        }
+
         public IEnumerable<char> IntellisenseTriggerCharacters
         {
             get { return new[] { '.', '>', ':' }; }
