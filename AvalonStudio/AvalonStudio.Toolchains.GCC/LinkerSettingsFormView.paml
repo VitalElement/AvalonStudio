@@ -7,7 +7,7 @@
     </Grid.Styles>
     
     <Grid.RowDefinitions>
-      <RowDefinition Height="150"/>
+      <RowDefinition Height="250"/>
       <RowDefinition Height="100"/>
       <RowDefinition Height="80" />
       <RowDefinition Height="80"/>
@@ -37,18 +37,35 @@
     </Panel>
 
     <Panel Grid.Column="1">
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition/>
-          <ColumnDefinition Width="100"/>
-        </Grid.ColumnDefinitions>
-        <ListBox Items="{Binding LinkedLibraries}" SelectedItem="{Binding SelectedLinkedLibrary}"/>
+      <StackPanel Gap="4">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="100"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Gap="2">
+            <TextBox UseFloatingWatermark="true" Watermark="System Libraries: i.e. stdc, stdc++, usb-1.0, pthread" Text="{Binding SystemLibraryText}" />
+            <ListBox Items="{Binding SystemLibraries}" SelectedItem="{Binding SelectedSystemLibrary}" Height="120" />
+          </StackPanel>
 
-        <StackPanel Grid.Column="1" Margin="5 0 0 0">
-          <Button Content="Add" Command="{Binding AddLinkedLibraryCommand}" />
-          <Button Margin="0 5 0 0" Content="Remove" Command="{Binding RemoveLinkedLibraryCommand}" />
-        </StackPanel>
-      </Grid>
+          <StackPanel Grid.Column="1" Margin="5 0 0 0">
+            <Button Content="Add" Command="{Binding AddSystemLibraryCommand}" />
+            <Button Margin="0 5 0 0" Content="Remove" Command="{Binding RemoveSystemLibraryCommand}" />
+          </StackPanel>
+        </Grid>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="100"/>
+          </Grid.ColumnDefinitions>
+          <ListBox Items="{Binding LinkedLibraries}" SelectedItem="{Binding SelectedLinkedLibrary}"/>
+
+          <StackPanel Grid.Column="1" Margin="5 0 0 0">
+            <Button Content="Add" Command="{Binding AddLinkedLibraryCommand}" />
+            <Button Margin="0 5 0 0" Content="Remove" Command="{Binding RemoveLinkedLibraryCommand}" />
+          </StackPanel>
+        </Grid>
+      </StackPanel>
     </Panel>
 
     <Panel Grid.Row="1" Grid.ColumnSpan="2">

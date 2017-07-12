@@ -343,6 +343,11 @@ namespace AvalonStudio.Debugging
                 {
                     var extraSpaces = 8 - opcodeParts[0].Length;
 
+                    if (extraSpaces < 0)
+                    {
+                        extraSpaces = 4;
+                    }
+
                     sb.Append(' ', 4 + extraSpaces);
 
                     sb.Append(opcodeParts[1]);

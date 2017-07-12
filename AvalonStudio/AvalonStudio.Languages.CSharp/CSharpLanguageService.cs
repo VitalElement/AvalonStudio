@@ -35,6 +35,11 @@
             }
         }
 
+        public bool CanTriggerIntellisense(char currentChar, char previousChar)
+        {
+            return IntellisenseSearchCharacters.Contains(currentChar);
+        }
+
         public IEnumerable<char> IntellisenseTriggerCharacters => new[]
         {
             '.', '>', ':'

@@ -34,14 +34,14 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
             BrowseInterfaceConfigFileCommand.Subscribe(async _ =>
             {
                 var ofd = new OpenFileDialog();
-                ofd.InitialDirectory = Path.Combine(BaseDirectory, "scripts", "interface");
+                ofd.InitialFileName = Path.Combine(BaseDirectory, "scripts", "interface");
                 ofd.Filters.Add(new FileDialogFilter { Name = "OpenOCD Config File", Extensions = new List<string> { "cfg" } });
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Interface Config File";
 
-                var result = await ofd.ShowAsync(IoC.Get<Window>());
+                var result = await ofd.ShowAsync();
 
-                if (result != null && !string.IsNullOrEmpty(result.First()))
+                if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
                     InterfaceConfigFile = BaseDirectory.MakeRelativePath(result.First());
                 }
@@ -51,14 +51,14 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
             BrowseTargetConfigFileCommand.Subscribe(async _ =>
             {
                 var ofd = new OpenFileDialog();
-                ofd.InitialDirectory = Path.Combine(BaseDirectory, "scripts", "target");
+                ofd.InitialFileName = Path.Combine(BaseDirectory, "scripts", "target");
                 ofd.Filters.Add(new FileDialogFilter { Name = "OpenOCD Config File", Extensions = new List<string> { "cfg" } });
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Target Config File";
 
-                var result = await ofd.ShowAsync(IoC.Get<Window>());
+                var result = await ofd.ShowAsync();
 
-                if (result != null && !string.IsNullOrEmpty(result.First()))
+                if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
                     TargetConfigFile = BaseDirectory.MakeRelativePath(result.First());
                 }

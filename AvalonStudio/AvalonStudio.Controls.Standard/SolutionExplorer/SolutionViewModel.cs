@@ -6,6 +6,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -47,13 +48,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
 
                 dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = extensions });
-                dlg.InitialFileName = string.Empty;
-                dlg.InitialDirectory = Model.CurrentDirectory;
+                dlg.InitialFileName =  Model.CurrentDirectory;
                 dlg.AllowMultiple = false;
 
-                var result = await dlg.ShowAsync(IoC.Get<Window>());
+                var result = await dlg.ShowAsync();
 
-                if (result != null && result.Length == 1)
+                if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
                     var proj = Solution.LoadProjectFile(model, result[0]);
 

@@ -9,6 +9,7 @@ using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -154,11 +155,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 });
             }
 
-            dlg.InitialFileName = string.Empty;
-            dlg.InitialDirectory = Platform.ProjectDirectory;
-            var result = await dlg.ShowAsync(IoC.Get<Window>());
+            dlg.InitialFileName = Platform.ProjectDirectory;
+            
+            var result = await dlg.ShowAsync();
 
-            if (result != null)
+            if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
                 await shell.OpenSolutionAsync(result[0]);
             }

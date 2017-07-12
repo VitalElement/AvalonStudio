@@ -134,9 +134,14 @@
         {
             Invoke(() =>
             {
-                RemoveFile(e.OldFullPath);
+                // Workaround for https://github.com/dotnet/corefx/issues/21934 if we are on unix we need to check if the
+                // file exists becuase the notification filters dont work.
+                if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT || System.IO.File.Exists(e.FullPath))
+                {
+                    RemoveFile(e.OldFullPath);
 
-                AddFile(e.FullPath);
+                    AddFile(e.FullPath);
+                }
             });
         }
 
@@ -144,7 +149,12 @@
         {
             Invoke(() =>
             {
-                AddFile(e.FullPath);
+                // Workaround for https://github.com/dotnet/corefx/issues/21934 if we are on unix we need to check if the
+                // file exists becuase the notification filters dont work.
+                if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT || System.IO.File.Exists(e.FullPath))
+                {
+                    AddFile(e.FullPath);
+                }
             });
         }
 
@@ -168,9 +178,14 @@
         {
             Invoke(() =>
             {
-                RemoveFolder(e.OldFullPath);
+                // Workaround for https://github.com/dotnet/corefx/issues/21934 if we are on unix we need to check if the
+                // file exists becuase the notification filters dont work.
+                if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT || System.IO.Directory.Exists(e.FullPath))
+                {
+                    RemoveFolder(e.OldFullPath);
 
-                AddFolder(e.FullPath);
+                    AddFolder(e.FullPath);
+                }
             });
         }
 
@@ -178,7 +193,12 @@
         {
             Invoke(() =>
             {
-                AddFolder(e.FullPath);
+                // Workaround for https://github.com/dotnet/corefx/issues/21934 if we are on unix we need to check if the
+                // file exists becuase the notification filters dont work.
+                if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT || System.IO.Directory.Exists(e.FullPath))
+                {
+                    AddFolder(e.FullPath);
+                }
             });
         }
 
