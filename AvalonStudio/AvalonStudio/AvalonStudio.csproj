@@ -74,7 +74,7 @@
     <PackageReference Include="Avalonia.Win32" Version="0.5.1-build3417-alpha" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.0" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
-    <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build94-alpha" />    
+    <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build98-alpha" />    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
