@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive.Linq;
 using System.Text;
+using System.Linq;
 
 namespace AvalonStudio.Debugging
 {
@@ -218,7 +219,7 @@ namespace AvalonStudio.Debugging
             session = sf.DebuggerSession;
             if (currentFile != sf.SourceLocation.FileName)
             {
-                AssemblyLine[] asmLines = sf.DebuggerSession.DisassembleFile(sf.SourceLocation.FileName);
+                AssemblyLine[] asmLines = sf.DebuggerSession.DisassembleFile(sf.SourceLocation.FileName).OrderBy(inst=>inst.SourceLine).ThenBy(inst=>inst.Address).ToArray();
                 if (asmLines == null)
                 {
                     // Mixed disassemble not supported
