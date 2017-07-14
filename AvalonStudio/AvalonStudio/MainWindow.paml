@@ -1,5 +1,6 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/avaloniaui"
                       xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+                      xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
                       xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"
@@ -75,7 +76,7 @@
                             <Controls:TabControlView DataContext="{Binding MiddleTopTabs}" IsVisible="{Binding IsVisible}" />
                           </docking:Branch.FirstItem>
                           <docking:Branch.SecondItem>
-                            <Controls:DocumentTabControl DataContext="{Binding DocumentTabs}"  />
+                            <cont:DocumentTabControl DataContext="{Binding DocumentTabs}"  />
                           </docking:Branch.SecondItem>
                         </docking:Branch>
                       </docking:Branch.FirstItem>
