@@ -195,7 +195,7 @@ namespace AvalonStudio.Debugging
             session = sf.DebuggerSession;
             if (currentFile != sf.SourceLocation.FileName)
             {
-                AssemblyLine[] asmLines = sf.DebuggerSession.DisassembleFile(sf.SourceLocation.FileName).OrderBy(inst=>inst.SourceLine).ThenBy(inst=>inst.Address).ToArray();
+                AssemblyLine[] asmLines = sf.DebuggerSession.DisassembleFile(sf.SourceLocation.FileName).OrderBy(inst => inst.SourceLine).ThenBy(inst => inst.Address).ToArray();
                 if (asmLines == null)
                 {
                     Fill();
