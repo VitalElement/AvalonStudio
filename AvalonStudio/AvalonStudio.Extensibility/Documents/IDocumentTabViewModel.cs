@@ -11,6 +11,8 @@ namespace AvalonStudio.Controls
 
         ReactiveCommand<object> CloseCommand { get; }
 
+        bool IsTemporary { get; set; }
+
         Dock Dock { get; set; }
     }
 }

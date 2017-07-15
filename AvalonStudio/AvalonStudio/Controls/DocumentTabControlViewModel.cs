@@ -1,5 +1,6 @@
 using Avalonia.Media;
 using Avalonia.Threading;
+using AvalonStudio.Documents;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
@@ -65,14 +66,13 @@ namespace AvalonStudio.Controls
 
                 this.RaisePropertyChanged(nameof(SelectedDocument));
 
-                if (value is EditorViewModel)
+                if (value is IEditor editor)
                 {
                     // Dispatcher invoke is hack to make sure the Editor propery has been generated.
                     Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        var vm = value as EditorViewModel;
-                      //  vm.Focus();
-                       // vm.TriggerCodeAnalysis();
+                    {                        
+                        editor.Focus();
+                        editor.TriggerCodeAnalysis();
                     });
                 }
 

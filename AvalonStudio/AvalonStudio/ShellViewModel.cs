@@ -580,7 +580,12 @@ namespace AvalonStudio
             {
                 if (DocumentTabs != null)
                 {
-                    DocumentTabs.SelectedDocument = value;
+                    if (DocumentTabs.TemporaryDocument == value && !value.IsTemporary)
+                    {
+                        DocumentTabs.TemporaryDocument = null;
+                    }
+
+                    DocumentTabs.SelectedDocument = value;                    
                 }
             }
         }

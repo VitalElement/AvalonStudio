@@ -8,6 +8,11 @@
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Top">
                         <TabStrip Name="strip"  Items="{TemplateBinding Items}"  SelectedIndex="{TemplateBinding SelectedIndex, Mode=TwoWay}" ItemTemplate="{TemplateBinding HeaderTemplate}">
+                            <TabStrip.Styles>
+                                <Style Selector="TabStripItem">
+                                    <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
+                                </Style>
+                            </TabStrip.Styles>
                             <TabStrip.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <DockPanel  LastChildFill="false" />

@@ -64,5 +64,19 @@ namespace AvalonStudio.Controls
                 this.RaisePropertyChanged(nameof(Title));
             }
         }
+
+        private bool _isTemporary;
+
+        public bool IsTemporary
+        {
+            get
+            {
+                return _isTemporary;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isTemporary, value);
+            }
+        }
     }
 }

@@ -31,6 +31,16 @@ namespace AvalonStudio.Controls
             _editor?.SetDebugHighlight(line, startColumn, endColumn);
         }
 
+        public void Focus()
+        {
+            _editor?.Focus();
+        }
+
+        public void TriggerCodeAnalysis()
+        {
+            _editor.TriggerCodeAnalysis();
+        }
+
         public void Comment()
         {
             _editor?.Comment();
