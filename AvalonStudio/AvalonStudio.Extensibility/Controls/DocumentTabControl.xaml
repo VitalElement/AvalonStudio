@@ -18,7 +18,7 @@
                         <ContentControl Content="{TemplateBinding HeaderSeperatorContent}" />
                     </StackPanel>
 
-                    <Carousel Name="PART_Carousel"  Items="{TemplateBinding Items}" SelectedIndex="{TemplateBinding Path=SelectedIndex}" IsVirtualized="false" />
+                    <Carousel Name="PART_Carousel"  Items="{TemplateBinding Items}" SelectedIndex="{TemplateBinding Path=SelectedIndex}" IsVirtualized="false" ItemTemplate="{TemplateBinding ItemTemplate}" />
                 </DockPanel>
             </ControlTemplate>
         </Setter>

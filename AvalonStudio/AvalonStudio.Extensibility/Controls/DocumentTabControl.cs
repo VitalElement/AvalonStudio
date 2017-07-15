@@ -41,7 +41,7 @@ namespace AvalonStudio.Controls
         {
             get { return GetValue(HeaderTemplateProperty); }
             set { SetValue(HeaderTemplateProperty, value); }
-        }
+        }        
 
         protected override void ItemsChanged(AvaloniaPropertyChangedEventArgs e)
         {            
@@ -79,7 +79,7 @@ namespace AvalonStudio.Controls
             var carousel = e.NameScope.Find<Carousel>("PART_Carousel");
 
             if(carousel != null)
-            {
+            {               
                 carousel.MemberSelector = ContentSelector;
             }
         }

@@ -1,81 +1,68 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
-  <DockPanel>
-    <StackPanel DockPanel.Dock="Top">
-      <TabStrip Name="strip"  Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}">
-        <TabStrip.ItemsPanel>
-          <ItemsPanelTemplate>
-            <DockPanel  LastChildFill="false" />
-          </ItemsPanelTemplate>  
-        </TabStrip.ItemsPanel>
-        
-        <TabStrip.Styles>
-          <Style Selector="TabStripItem">
-            <Setter Property="Height" Value="20" />
-            <Setter Property="Background" Value="#2D2D30" />
-            <Setter Property="BorderBrush" Value="#3E3E42" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Margin" Value="0 0 0 -1" />
-            <Setter Property="Padding" Value="4 0 4 0" />
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
-          </Style>
-          <Style Selector="TabStripItem:pointerover">
-            <Setter Property="Background" Value="#1c97ea" />
-          </Style>
-          <Style Selector="TabStripItem:selected">
-            <Setter Property="Background" Value="#007ACC" />
-          </Style>
-        </TabStrip.Styles>
+  <UserControl.Styles>
+    <Style Selector="cont|DocumentTabControl.documentTabControl /template/ TabStripItem">
+      <Setter Property="Height" Value="20" />
+      <Setter Property="Background" Value="{StyleResource ThemeBackgroundBrush}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Margin" Value="0 0 0 -1" />
+      <Setter Property="Padding" Value="4 0 4 0" />
+    </Style>
+    <Style Selector="cont|DocumentTabControl.documentTabControl /template/ TabStripItem:pointerover">
+      <Setter Property="Background" Value="{StyleResource ApplicationAccentBrushLight}" />
+      <Setter Property="Foreground" Value="{StyleResource ApplicationAccentForegroundBrush}" />
+    </Style>
+    <Style Selector="cont|DocumentTabControl.documentTabControl /template/ TabStripItem:selected">
+      <Setter Property="Background" Value="{StyleResource ApplicationAccentBrush}" />
+      <Setter Property="Foreground" Value="{StyleResource ApplicationAccentForegroundBrush}" />
+    </Style>
+  </UserControl.Styles>
+  <cont:DocumentTabControl Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}" Classes="documentTabControl">
+    <cont:DocumentTabControl.HeaderTemplate>
+      <DataTemplate>
+        <StackPanel Orientation="Horizontal" Gap="2">
+          <Button Height="14" Width="14" Command="{Binding CloseCommand}">
+            <Button.Styles>
+              <Style Selector="Button">
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="Background" Value="Transparent" />
+              </Style>
+              <Style Selector="Button:pointerover">
+                <Setter Property="Background" Value="#1c97ea" />
+              </Style>
+            </Button.Styles>
+            <Path Margin="2" Stretch="Uniform" UseLayoutRounding="False" Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="WhiteSmoke" />
+          </Button>
 
-        <TabStrip.ItemTemplate>
-          <DataTemplate>
-            <StackPanel Orientation="Horizontal" Gap="2">
-              <Button Height="14" Width="14" Command="{Binding CloseCommand}">
-                <Button.Styles>
-                  <Style Selector="Button">
-                    <Setter Property="BorderThickness" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="0"/>
-                    <Setter Property="Background" Value="Transparent" />
-                  </Style>
-                  <Style Selector="Button:pointerover">
-                    <Setter Property="Background" Value="#1c97ea" />
-                  </Style>
-                </Button.Styles>
-                <Path Margin="2" Stretch="Uniform" UseLayoutRounding="False" Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="WhiteSmoke" />
-              </Button>
-              
-              <Button Height="14" Width="14">
-                <Button.Styles>
-                  <Style Selector="Button">
-                    <Setter Property="BorderThickness" Value="0"/>
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="0"/>
-                    <Setter Property="Background" Value="Transparent" />
-                  </Style>
+          <Button Height="14" Width="14">
+            <Button.Styles>
+              <Style Selector="Button">
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="Background" Value="Transparent" />
+              </Style>
 
-                  <Style Selector="Button:pointerover">
-                    <Setter Property="Background" Value="#1c97ea" />
-                  </Style>
-                </Button.Styles>
-                <Path Margin="2" Stretch="Uniform" UseLayoutRounding="False" Data="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" Fill="WhiteSmoke" />
-              </Button>
-              <TextBlock Text="{Binding Title}" Foreground="WhiteSmoke" Margin="2"/>              
-            </StackPanel>
-          </DataTemplate>
-        </TabStrip.ItemTemplate>
-      </TabStrip>
-      <Grid Background="#007ACC" Height="2" />
-    </StackPanel>
-
-    <Carousel Items="{Binding #strip.Items}" SelectedIndex="{Binding #strip.SelectedIndex}" IsVirtualized="false">
-      <Carousel.ItemTemplate>
-        <DataTemplate>
-          <cont:ViewModelViewHost IsVisible ="{Binding IsVisible}" />
-        </DataTemplate>
-      </Carousel.ItemTemplate>    
-    </Carousel>
-  </DockPanel>
+              <Style Selector="Button:pointerover">
+                <Setter Property="Background" Value="#1c97ea" />
+              </Style>
+            </Button.Styles>
+            <Path Margin="2" Stretch="Uniform" UseLayoutRounding="False" Data="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" Fill="WhiteSmoke" />
+          </Button>
+          <TextBlock Text="{Binding Title}" Foreground="WhiteSmoke" Margin="2" FontSize="12"/>
+        </StackPanel>
+      </DataTemplate>
+    </cont:DocumentTabControl.HeaderTemplate>
+    <cont:DocumentTabControl.HeaderSeperatorContent>
+      <Grid Background="{StyleResource ApplicationAccentBrush}" Height="2" />
+    </cont:DocumentTabControl.HeaderSeperatorContent>
+    <cont:DocumentTabControl.ItemTemplate>
+      <DataTemplate>
+        <cont:ViewModelViewHost IsVisible ="{Binding IsVisible}" />
+      </DataTemplate>
+    </cont:DocumentTabControl.ItemTemplate>
+  </cont:DocumentTabControl>
 </UserControl>
