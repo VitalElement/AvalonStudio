@@ -38,7 +38,7 @@ namespace AvalonStudio.Controls
 
         public void TriggerCodeAnalysis()
         {
-            _editor.TriggerCodeAnalysis();
+            _editor?.TriggerCodeAnalysis();
         }
 
         public void Comment()
