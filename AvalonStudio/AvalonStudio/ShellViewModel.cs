@@ -6,7 +6,6 @@ using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
-using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
 using AvalonStudio.Extensibility.Menus;
@@ -580,7 +579,7 @@ namespace AvalonStudio
             {
                 if (DocumentTabs != null)
                 {
-                    if (value == null || DocumentTabs.TemporaryDocument == value && !value.IsTemporary)
+                    if (value == null || (DocumentTabs.TemporaryDocument == value && !value.IsTemporary))
                     {
                         DocumentTabs.TemporaryDocument = null;
                     }
