@@ -397,67 +397,50 @@ namespace AvalonStudio
                 currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
             }
 
-            var selectedDocumentTCS = new TaskCompletionSource<IDocumentTabViewModel>();
-
             if (currentTab == null || restoreFromCache)
             {
-                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                if (DocumentTabs.TemporaryDocument != null)
                 {
-                    if (DocumentTabs.TemporaryDocument != null)
-                    {
-                        var documentToClose = DocumentTabs.TemporaryDocument;
+                    var documentToClose = DocumentTabs.TemporaryDocument;
 
-                        DocumentTabs.TemporaryDocument = null;
+                    DocumentTabs.TemporaryDocument = null;
 
-                        await documentToClose.CloseCommand.ExecuteAsyncTask(null);
-                        
-                        SelectedDocument = null;
-                    }
-                });
+                    await documentToClose.CloseCommand.ExecuteAsyncTask(null);
+
+                    SelectedDocument = null;
+                }
 
                 EditorViewModel newEditor = null;
 
-                await Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                if (restoreFromCache)
                 {
-                    if (restoreFromCache)
-                    {
-                        newEditor = currentTab;
-                    }
-                    else
-                    {
-                        newEditor = new EditorViewModel();
-                    }                    
+                    newEditor = currentTab;
+                }
+                else
+                {
+                    newEditor = new EditorViewModel();
+                }
 
-                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
-                    {
-                        if (restoreFromCache)
-                        {
-                            newEditor.IsVisible = true;
-                            DocumentTabs.CachedDocuments.Remove(currentTab);
-                        }
-                        else
-                        {
-                            DocumentTabs.Documents.Add(newEditor);
-                        }
+                if (restoreFromCache)
+                {
+                    newEditor.IsVisible = true;
+                    DocumentTabs.CachedDocuments.Remove(currentTab);
+                }
+                else
+                {
+                    DocumentTabs.Documents.Add(newEditor);
+                }
 
-                        DocumentTabs.TemporaryDocument = newEditor;
-                    });
+                newEditor.OpenFile(file);
 
-                    DocumentTabs.SelectedDocument = newEditor;
+                DocumentTabs.TemporaryDocument = newEditor;
 
-                    await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.OpenFile(file); });
-
-                    selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
-                });
+                DocumentTabs.SelectedDocument = newEditor;                
             }
             else
-            {                                
-                await Dispatcher.UIThread.InvokeTaskAsync(() => { DocumentTabs.SelectedDocument = currentTab; });
-
-                selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
-            }
-
-            await selectedDocumentTCS.Task;
+            {
+                DocumentTabs.SelectedDocument = currentTab;
+            }            
 
             if (DocumentTabs.SelectedDocument is IEditor)
             {

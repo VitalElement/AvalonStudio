@@ -260,9 +260,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     _isLoaded = true;
 
-                    TextArea.TextView.Redraw();
-
                     RegisterLanguageService(file.Item2);
+
+                    TextArea.TextView.Redraw();                    
                 }
             });
 

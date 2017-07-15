@@ -57,7 +57,7 @@ namespace AvalonStudio.Controls
 
                     // Selecting the document event though it already is, causes it to be removed from the temporary document cache.
                     editorVm.IsTemporary = false;
-                    shell.SelectedDocument = editorVm;
+                    shell.SelectedDocument = editorVm;                    
                 }
             });
         }
