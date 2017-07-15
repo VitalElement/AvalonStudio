@@ -91,7 +91,6 @@ namespace AvalonStudio.Controls
 
         public virtual void OnClose()
         {
-            
         }
     }
 }
