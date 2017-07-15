@@ -17,6 +17,8 @@ namespace AvalonStudio.Controls
             {
                 IoC.Get<IShell>().RemoveDocument(this);
             });
+
+            IsVisible = true;
         }
 
         private Dock dock;
@@ -77,6 +79,19 @@ namespace AvalonStudio.Controls
             {
                 this.RaiseAndSetIfChanged(ref _isTemporary, value);
             }
+        }
+
+        private bool _isHidden;
+
+        public bool IsVisible
+        {
+            get { return _isHidden; }
+            set { this.RaiseAndSetIfChanged(ref _isHidden, value); }
+        }
+
+        public virtual void OnClose()
+        {
+            
         }
     }
 }

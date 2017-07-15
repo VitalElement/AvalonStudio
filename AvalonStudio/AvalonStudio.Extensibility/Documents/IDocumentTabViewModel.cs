@@ -13,6 +13,10 @@ namespace AvalonStudio.Controls
 
         bool IsTemporary { get; set; }
 
+        bool IsVisible { get; set; }
+
         Dock Dock { get; set; }
+
+        void OnClose();
     }
 }

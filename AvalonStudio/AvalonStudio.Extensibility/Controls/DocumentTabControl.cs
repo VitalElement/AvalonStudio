@@ -38,7 +38,7 @@ namespace AvalonStudio.Controls
         {
             get { return GetValue(HeaderTemplateProperty); }
             set { SetValue(HeaderTemplateProperty, value); }
-        }
+        }        
 
         private void InvalidateSeperatorVisiblity()
         {

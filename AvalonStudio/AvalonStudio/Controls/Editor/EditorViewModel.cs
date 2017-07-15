@@ -90,11 +90,8 @@ namespace AvalonStudio.Controls
             disposables = new CompositeDisposable();
 
             disposables.Add(CloseCommand.Subscribe(_ =>
-            {
-                _editor?.Close();
-
-                IoC.Get<IShell>().InvalidateErrors();
-                disposables.Dispose();
+            {                
+                IoC.Get<IShell>().InvalidateErrors();                
             }));
 
             AddWatchCommand = ReactiveCommand.Create();
@@ -105,6 +102,12 @@ namespace AvalonStudio.Controls
 
         ~EditorViewModel()
         {
+        }
+
+        public override void OnClose()
+        {
+            _editor?.Close();
+            disposables.Dispose();
         }
 
         public void AttachEditor(IEditor editor)

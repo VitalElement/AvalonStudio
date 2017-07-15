@@ -4,6 +4,7 @@ using AvalonStudio.Documents;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -12,24 +13,22 @@ namespace AvalonStudio.Controls
 {
     public class DocumentTabControlViewModel : ViewModel
     {
-        private ObservableCollection<IDocumentTabViewModel> documents;        
+        private ObservableCollection<IDocumentTabViewModel> documents;
+        private List<IDocumentTabViewModel> cachedDocuments;
 
         private IDocumentTabViewModel selectedDocument;
 
         public DocumentTabControlViewModel()
         {
-            Documents = new ObservableCollection<IDocumentTabViewModel>();
-            Documents.CollectionChanged += (sender, e) =>
-            {
-                if (e.Action == NotifyCollectionChangedAction.Remove)
-                {
-                    Dispatcher.UIThread.InvokeAsync(async () =>
-                    {
-                        await Task.Delay(25);
-                        GC.Collect();
-                    });
-                }
-            };
+            CachedDocuments = new List<IDocumentTabViewModel>();
+
+            Documents = new ObservableCollection<IDocumentTabViewModel>();            
+        }
+
+        public List<IDocumentTabViewModel> CachedDocuments
+        {
+            get { return cachedDocuments; }
+            set { this.RaiseAndSetIfChanged(ref cachedDocuments, value); }
         }
 
         public ObservableCollection<IDocumentTabViewModel> Documents

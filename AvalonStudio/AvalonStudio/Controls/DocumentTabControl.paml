@@ -9,6 +9,7 @@
       <Setter Property="Margin" Value="0 0 0 -1" />
       <Setter Property="Padding" Value="4 0 4 0" />
       <Setter Property="Foreground" Value="{StyleResource ApplicationAccentForegroundBrush}" />
+      <Setter Property="IsVisible" Value="{Binding IsVisible}" />
     </Style>    
     <Style Selector="cont|DocumentTabControl /template/ TabStripItem:dockright:selected">
       <Setter Property="Background" Value="#68217A" />      

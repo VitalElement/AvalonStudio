@@ -293,7 +293,7 @@ namespace AvalonStudio
 
         public IEnumerable<KeyBinding> KeyBindings => _keyBindings;
 
-        public DocumentTabControlViewModel DocumentTabs { get; }
+        public DocumentTabControlViewModel DocumentTabs { get; }        
 
         public TabControlViewModel LeftTabs { get; }
 
@@ -354,21 +354,52 @@ namespace AvalonStudio
 
             DocumentTabs.SelectedDocument = newSelectedTab;
 
-            DocumentTabs.Documents.Remove(document);
+            document.IsVisible = false;
 
             if (DocumentTabs.TemporaryDocument == document)
             {
                 DocumentTabs.TemporaryDocument = null;
             }
+
+            if (DocumentTabs.CachedDocuments.Count == 5)
+            {
+                DocumentTabs.Documents.Remove(document);
+
+                var toRemove = DocumentTabs.CachedDocuments[0];
+
+                DocumentTabs.CachedDocuments.Remove(toRemove);
+                DocumentTabs.Documents.Remove(toRemove);
+                toRemove.OnClose();
+
+                Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await Task.Delay(25);
+                    GC.Collect();
+                });
+            }
+
+            DocumentTabs.CachedDocuments.Add(document);            
         }
 
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
         {
-            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
+            bool restoreFromCache = false;            
+
+            var currentTab = DocumentTabs.CachedDocuments.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
+
+            if (currentTab != null)
+            {
+                restoreFromCache = true;
+            }
+
+            if (currentTab == null)
+            {
+                currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
+            }
 
             var selectedDocumentTCS = new TaskCompletionSource<IDocumentTabViewModel>();
 
-            if (currentTab == null)
+            if (currentTab == null || restoreFromCache)
             {
                 await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                 {
@@ -379,7 +410,7 @@ namespace AvalonStudio
                         DocumentTabs.TemporaryDocument = null;
 
                         await documentToClose.CloseCommand.ExecuteAsyncTask(null);
-
+                        
                         SelectedDocument = null;
                     }
                 });
@@ -388,13 +419,27 @@ namespace AvalonStudio
 
                 await Dispatcher.UIThread.InvokeTaskAsync(async () =>
                 {
-                    newEditor = new EditorViewModel();
-                    /*newEditor.Margins.Add(new BreakPointMargin(IoC.Get<IDebugManager2>().Breakpoints));
-                    newEditor.Margins.Add(new LineNumberMargin());*/
+                    if (restoreFromCache)
+                    {
+                        newEditor = currentTab;
+                    }
+                    else
+                    {
+                        newEditor = new EditorViewModel();
+                    }                    
 
                     await Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {
-                        DocumentTabs.Documents.Add(newEditor);
+                        if (restoreFromCache)
+                        {
+                            newEditor.IsVisible = true;
+                            DocumentTabs.CachedDocuments.Remove(currentTab);
+                        }
+                        else
+                        {
+                            DocumentTabs.Documents.Add(newEditor);
+                        }
+
                         DocumentTabs.TemporaryDocument = newEditor;
                     });
 
@@ -406,7 +451,7 @@ namespace AvalonStudio
                 });
             }
             else
-            {
+            {                                
                 await Dispatcher.UIThread.InvokeTaskAsync(() => { DocumentTabs.SelectedDocument = currentTab; });
 
                 selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
