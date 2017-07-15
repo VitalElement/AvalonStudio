@@ -68,12 +68,8 @@ namespace AvalonStudio.Controls
 
                 if (value is IEditor editor)
                 {
-                    // Dispatcher invoke is hack to make sure the Editor propery has been generated.
-                    
-                    {                        
-                        editor.Focus();
-                        editor.TriggerCodeAnalysis();
-                    }//);
+                    editor.Focus();
+                    editor.TriggerCodeAnalysis();
                 }
 
                 if (value == TemporaryDocument)
