@@ -11,11 +11,6 @@ namespace AvalonStudio.Controls
 {
     public class DocumentTabControl : SelectingItemsControl
     {
-        static DocumentTabControl()
-        {
-
-        }
-
         public DocumentTabControl()
         {
             SelectionMode = SelectionMode.AlwaysSelected;
@@ -41,10 +36,10 @@ namespace AvalonStudio.Controls
         {
             get { return GetValue(HeaderTemplateProperty); }
             set { SetValue(HeaderTemplateProperty, value); }
-        }        
+        }
 
         protected override void ItemsChanged(AvaloniaPropertyChangedEventArgs e)
-        {            
+        {
             base.ItemsChanged(e);
 
             if (Items.Count() > 0)
@@ -78,8 +73,8 @@ namespace AvalonStudio.Controls
 
             var carousel = e.NameScope.Find<Carousel>("PART_Carousel");
 
-            if(carousel != null)
-            {               
+            if (carousel != null)
+            {
                 carousel.MemberSelector = ContentSelector;
             }
         }
