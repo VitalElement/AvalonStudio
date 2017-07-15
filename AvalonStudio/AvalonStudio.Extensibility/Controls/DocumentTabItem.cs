@@ -10,6 +10,10 @@ namespace AvalonStudio.Controls
         static DocumentTabItem()
         {
             PseudoClass(IsFocusedProperty, o => o, ":focused");
+            PseudoClass(DockPanel.DockProperty, o => o == Dock.Right, ":dockright");
+            PseudoClass(DockPanel.DockProperty, o => o == Dock.Left, ":dockleft");
+            PseudoClass(DockPanel.DockProperty, o => o == Dock.Top, ":docktop");
+            PseudoClass(DockPanel.DockProperty, o => o == Dock.Bottom, ":dockbottom");
         }
 
         public static readonly AvaloniaProperty<string> TitleProprty =

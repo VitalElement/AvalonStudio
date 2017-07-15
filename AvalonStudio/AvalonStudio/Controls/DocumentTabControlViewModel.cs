@@ -12,19 +12,9 @@ namespace AvalonStudio.Controls
 {
     public class DocumentTabControlViewModel : ViewModel
     {
-        private ObservableCollection<IDocumentTabViewModel> documents;
-
-        private IBrush hoverTabBackgroundBrush;
+        private ObservableCollection<IDocumentTabViewModel> documents;        
 
         private IDocumentTabViewModel selectedDocument;
-
-        private IBrush tabBackgroundBrush;
-        private IBrush tabBrush;
-        private readonly IBrush tabHighlightBrush;
-
-        private readonly IBrush temporaryTabBrush;
-
-        private readonly IBrush temporaryTabHighlighBrush;
 
         public DocumentTabControlViewModel()
         {
@@ -40,12 +30,6 @@ namespace AvalonStudio.Controls
                     });
                 }
             };
-
-            tabBrush = Brush.Parse("#007ACC");
-            tabHighlightBrush = Brush.Parse("#1c97ea");
-
-            temporaryTabBrush = Brush.Parse("#68217A");
-            temporaryTabHighlighBrush = Brush.Parse("#B064AB");
         }
 
         public ObservableCollection<IDocumentTabViewModel> Documents
@@ -71,32 +55,9 @@ namespace AvalonStudio.Controls
                     editor.Focus();
                     editor.TriggerCodeAnalysis();
                 }
-
-                if (value == TemporaryDocument)
-                {
-                    TabBackgroundBrush = temporaryTabBrush;
-                    HoverTabBackgroundBrush = temporaryTabHighlighBrush;
-                }
-                else
-                {
-                    TabBackgroundBrush = tabBackgroundBrush;
-                    HoverTabBackgroundBrush = tabHighlightBrush;
-                }
             }
         }
 
         public EditorViewModel TemporaryDocument { get; set; }
-
-        public IBrush TabBackgroundBrush
-        {
-            get { return tabBackgroundBrush; }
-            set { this.RaiseAndSetIfChanged(ref tabBackgroundBrush, value); }
-        }
-
-        public IBrush HoverTabBackgroundBrush
-        {
-            get { return hoverTabBackgroundBrush; }
-            set { this.RaiseAndSetIfChanged(ref hoverTabBackgroundBrush, value); }
-        }
     }
 }

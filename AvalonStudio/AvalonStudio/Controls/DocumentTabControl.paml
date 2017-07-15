@@ -2,23 +2,28 @@
              xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <UserControl.Styles>
-    <Style Selector="cont|DocumentTabControl.documentTabControl /template/ TabStripItem">
+    <Style Selector="cont|DocumentTabControl /template/ TabStripItem">
       <Setter Property="Height" Value="20" />
       <Setter Property="Background" Value="{StyleResource ThemeBackgroundBrush}" />
       <Setter Property="BorderThickness" Value="0" />
       <Setter Property="Margin" Value="0 0 0 -1" />
       <Setter Property="Padding" Value="4 0 4 0" />
+      <Setter Property="Foreground" Value="{StyleResource ApplicationAccentForegroundBrush}" />
+    </Style>    
+    <Style Selector="cont|DocumentTabControl /template/ TabStripItem:dockright:selected">
+      <Setter Property="Background" Value="#68217A" />      
     </Style>
-    <Style Selector="cont|DocumentTabControl.documentTabControl /template/ TabStripItem:pointerover">
+    <Style Selector="cont|DocumentTabControl /template/ TabStripItem:dockright:pointerover">
+      <Setter Property="Background" Value="#B064AB" />      
+    </Style>    
+    <Style Selector="cont|DocumentTabControl /template/ TabStripItem:dockleft:selected">
+      <Setter Property="Background" Value="{StyleResource ApplicationAccentBrush}" />      
+    </Style>
+    <Style Selector="cont|DocumentTabControl /template/ TabStripItem:dockleft:pointerover">
       <Setter Property="Background" Value="{StyleResource ApplicationAccentBrushLight}" />
-      <Setter Property="Foreground" Value="{StyleResource ApplicationAccentForegroundBrush}" />
-    </Style>
-    <Style Selector="cont|DocumentTabControl.documentTabControl /template/ TabStripItem:selected">
-      <Setter Property="Background" Value="{StyleResource ApplicationAccentBrush}" />
-      <Setter Property="Foreground" Value="{StyleResource ApplicationAccentForegroundBrush}" />
     </Style>
   </UserControl.Styles>
-  <cont:DocumentTabControl Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}" Classes="documentTabControl">
+  <cont:DocumentTabControl Items="{Binding Documents}" SelectedItem="{Binding SelectedDocument, Mode=TwoWay}">
     <cont:DocumentTabControl.HeaderTemplate>
       <DataTemplate>
         <StackPanel Orientation="Horizontal" Gap="2">
