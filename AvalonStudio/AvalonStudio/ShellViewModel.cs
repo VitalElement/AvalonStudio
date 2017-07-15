@@ -293,7 +293,7 @@ namespace AvalonStudio
 
         public IEnumerable<KeyBinding> KeyBindings => _keyBindings;
 
-        public DocumentTabControlViewModel DocumentTabs { get; }        
+        public DocumentTabControlViewModel DocumentTabs { get; }
 
         public TabControlViewModel LeftTabs { get; }
 
@@ -342,19 +342,60 @@ namespace AvalonStudio
 
             if (DocumentTabs.SelectedDocument == document)
             {
-                if (DocumentTabs.SelectedDocument != DocumentTabs.Documents.Last())
+                var index = DocumentTabs.Documents.IndexOf(document);
+                var current = index;
+
+                bool foundTab = false;
+
+                while(!foundTab)
                 {
-                    newSelectedTab = DocumentTabs.Documents.SkipWhile(d => d == document || !d.IsVisible).FirstOrDefault();
+                    index++;
+
+                    if(index < DocumentTabs.Documents.Count)
+                    {
+                        if (DocumentTabs.Documents[index].IsVisible)
+                        {
+                            foundTab = true;
+                            newSelectedTab = DocumentTabs.Documents[index];
+                            break;
+                        }
+                    }            
+                    else
+                    {
+                        break;
+                    }
                 }
-                else
+
+                index = current;
+
+                while (!foundTab)
                 {
-                    newSelectedTab = DocumentTabs.Documents.Reverse().SkipWhile(d=>!d.IsVisible || d != DocumentTabs.Documents.Last()).FirstOrDefault();
+                    index--;
+
+                    if (index >= 0)
+                    {
+                        if (DocumentTabs.Documents[index].IsVisible)
+                        {
+                            foundTab = true;
+                            newSelectedTab = DocumentTabs.Documents[index];
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
 
             DocumentTabs.SelectedDocument = newSelectedTab;
 
             document.IsVisible = false;
+
+            if (document is EditorViewModel doc)
+            {
+                doc.Save();
+            }
 
             if (DocumentTabs.TemporaryDocument == document)
             {
@@ -378,12 +419,12 @@ namespace AvalonStudio
                 });
             }
 
-            DocumentTabs.CachedDocuments.Add(document);            
+            DocumentTabs.CachedDocuments.Add(document);
         }
 
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
         {
-            bool restoreFromCache = false;            
+            bool restoreFromCache = false;
 
             var currentTab = DocumentTabs.CachedDocuments.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
 
@@ -437,12 +478,12 @@ namespace AvalonStudio
 
                 DocumentTabs.TemporaryDocument = newEditor;
 
-                DocumentTabs.SelectedDocument = newEditor;                
+                DocumentTabs.SelectedDocument = newEditor;
             }
             else
             {
                 DocumentTabs.SelectedDocument = currentTab;
-            }            
+            }
 
             if (DocumentTabs.SelectedDocument is IEditor)
             {
