@@ -580,7 +580,7 @@ namespace AvalonStudio
             {
                 if (DocumentTabs != null)
                 {
-                    if (DocumentTabs.TemporaryDocument == value && !value.IsTemporary)
+                    if (value == null || DocumentTabs.TemporaryDocument == value && !value.IsTemporary)
                     {
                         DocumentTabs.TemporaryDocument = null;
                     }
