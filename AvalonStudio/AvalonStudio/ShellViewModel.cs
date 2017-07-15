@@ -344,11 +344,11 @@ namespace AvalonStudio
             {
                 if (DocumentTabs.SelectedDocument != DocumentTabs.Documents.Last())
                 {
-                    newSelectedTab = DocumentTabs.Documents.SkipWhile(d => d == document).FirstOrDefault();
+                    newSelectedTab = DocumentTabs.Documents.SkipWhile(d => d == document || !d.IsVisible).FirstOrDefault();
                 }
                 else
                 {
-                    newSelectedTab = DocumentTabs.Documents.Reverse().Skip(1).FirstOrDefault();
+                    newSelectedTab = DocumentTabs.Documents.Reverse().SkipWhile(d=>!d.IsVisible || d != DocumentTabs.Documents.Last()).FirstOrDefault();
                 }
             }
 
@@ -425,6 +425,8 @@ namespace AvalonStudio
                 {
                     newEditor.IsVisible = true;
                     DocumentTabs.CachedDocuments.Remove(currentTab);
+                    newEditor.IsTemporary = true;
+                    newEditor.Dock = Avalonia.Controls.Dock.Right;
                 }
                 else
                 {
