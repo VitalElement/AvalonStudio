@@ -400,7 +400,7 @@ namespace AvalonStudio
 
                     DocumentTabs.SelectedDocument = newEditor;
 
-                   await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.OpenFile(file); });
+                    await Dispatcher.UIThread.InvokeTaskAsync(() => { newEditor.OpenFile(file); });
 
                     selectedDocumentTCS.SetResult(DocumentTabs.SelectedDocument);
                 });
@@ -423,7 +423,7 @@ namespace AvalonStudio
 
                 if (selectLine || debugHighlight)
                 {
-                   // Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).ScrollToLine(line));
+                    // Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).ScrollToLine(line));
                     (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
                 }
             }
@@ -585,7 +585,7 @@ namespace AvalonStudio
                         DocumentTabs.TemporaryDocument = null;
                     }
 
-                    DocumentTabs.SelectedDocument = value;                    
+                    DocumentTabs.SelectedDocument = value;
                 }
             }
         }
@@ -636,7 +636,7 @@ namespace AvalonStudio
         {
             Environment.Exit(1);
         }
-        
+
         public void InvalidateErrors()
         {
             var allErrors = new List<ErrorViewModel>();
@@ -697,7 +697,7 @@ namespace AvalonStudio
         {
             foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
             {
-               // document.Model.ShutdownBackgroundWorkers();
+                // document.Model.ShutdownBackgroundWorkers();
             }
         }
 

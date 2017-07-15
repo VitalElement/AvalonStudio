@@ -18,7 +18,7 @@ namespace AvalonStudio.Controls
     public class EditorView : UserControl, IEditor
     {
         private readonly CompositeDisposable disposables;
-        
+
         private Standard.CodeEditor.CodeEditor _editor;
 
         private IShell shell;
@@ -64,7 +64,7 @@ namespace AvalonStudio.Controls
 
         private void _editor_RequestTooltipContent(object sender, Standard.TooltipDataRequestEventArgs e)
         {
-            if(DataContext != null)
+            if (DataContext != null)
             {
                 var editorVm = DataContext as EditorViewModel;
 
@@ -74,7 +74,7 @@ namespace AvalonStudio.Controls
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
-           // editor.EditorScrolled -= Editor_EditorScrolled;
+            // editor.EditorScrolled -= Editor_EditorScrolled;
             //editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
 
             disposables.Dispose();
