@@ -21,6 +21,8 @@ namespace AvalonStudio.Controls
         
         private Standard.CodeEditor.CodeEditor _editor;
 
+        private IShell shell;
+
         public ISourceFile ProjectFile => throw new NotImplementedException();
 
         public int CaretOffset => _editor.CaretOffset;
@@ -45,13 +47,17 @@ namespace AvalonStudio.Controls
 
             _editor.RequestTooltipContent += _editor_RequestTooltipContent;
 
+            shell = IoC.Get<IShell>();
+
             _editor.GetObservable(AvalonStudio.Controls.Standard.CodeEditor.CodeEditor.IsDirtyProperty).Subscribe(dirty =>
             {
                 if (dirty && DataContext is EditorViewModel editorVm)
                 {
                     editorVm.Dock = Dock.Left;
+
+                    // Selecting the document event though it already is, causes it to be removed from the temporary document cache.
                     editorVm.IsTemporary = false;
-                    IoC.Get<IShell>().SelectedDocument = editorVm;
+                    shell.SelectedDocument = editorVm;
                 }
             });
         }
