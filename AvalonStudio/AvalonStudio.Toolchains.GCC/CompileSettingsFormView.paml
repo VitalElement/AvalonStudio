@@ -31,10 +31,7 @@
                     <DropDown Items="{Binding FpuOptions}" SelectedIndex="{Binding FpuSelectedIndex, Mode=TwoWay}"/>
 
                     <TextBlock Text="Optimization Level" Margin="25 0 0 0"/>
-                    <DropDown Items="{Binding OptimizationLevelOptions}" SelectedIndex="{Binding OptimizationLevelSelectedIndex, Mode=TwoWay}"/>
-
-                    <TextBlock Text="Optimization Preference" Margin="25 0 0 0"/>
-                    <DropDown Items="{Binding OptimizationPreferenceOptions}" SelectedIndex="{Binding OptimizationPreferenceSelectedIndex, Mode=TwoWay}" />
+                    <DropDown Items="{Binding OptimizationLevelOptions}" SelectedIndex="{Binding OptimizationLevelSelectedIndex, Mode=TwoWay}"/>                    
                     
                     <CheckBox IsChecked="{Binding DebugSymbols, Mode=TwoWay}" Content="Debug Symbols" Margin="25 0 0 0"/>
                 </StackPanel>

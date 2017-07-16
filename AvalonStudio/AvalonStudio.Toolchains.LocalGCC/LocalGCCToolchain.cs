@@ -140,28 +140,74 @@ namespace AvalonStudio.Toolchains.LocalGCC
             {
                 result += "-g ";
             }
+            
+            // TODO make this an option.
+            result += "-ffunction-sections -fdata-sections ";
 
-            // TODO remove dependency on file?
-            if (file != null)
+            if (file == null || file.Extension == ".cpp")
             {
-                if (file.Extension == ".cpp")
+                switch (settings.CompileSettings.CppLanguageStandard)
                 {
-                    if (!settings.CompileSettings.Rtti)
-                    {
-                        result += "-fno-rtti ";
-                    }
+                    case CppLanguageStandard.Cpp98:
+                        result += "-std=c++98 ";
+                        break;
 
-                    if (!settings.CompileSettings.Exceptions)
-                    {
-                        result += "-fno-exceptions ";
-                    }
+                    case CppLanguageStandard.Cpp03:
+                        result += "-std=c++03 ";
+                        break;
 
-                    result += "-std=c++14 ";
+                    case CppLanguageStandard.Cpp11:
+                        result += "-std=c++11 ";
+                        break;
+
+                    case CppLanguageStandard.Cpp14:
+                        result += "-std=c++14 ";
+                        break;
+
+                    case CppLanguageStandard.Cpp17:
+                        result += "-std=c++17 ";
+                        break;
+
+                    case CppLanguageStandard.Gnu11:
+                        result += "-std=gnu++11 ";
+                        break;
+
+                    case CppLanguageStandard.Gnu14:
+                        result += "-std=gnu++14 ";
+                        break;
+
+                    default:
+                        break;
+                }
+
+                if (!settings.CompileSettings.Rtti)
+                {
+                    result += "-fno-rtti ";
+                }
+
+                if (!settings.CompileSettings.Exceptions)
+                {
+                    result += "-fno-exceptions ";
                 }
             }
 
-            // TODO make this an option.
-            result += "-ffunction-sections -fdata-sections ";
+            if (file == null || file.Extension == ".c")
+            {
+                switch (settings.CompileSettings.CLanguageStandard)
+                {
+                    case CLanguageStandard.C89:
+                        result += "-std=c89 ";
+                        break;
+
+                    case CLanguageStandard.C99:
+                        result += "-std=c99 ";
+                        break;
+
+                    case CLanguageStandard.C11:
+                        result += "-std=c11 ";
+                        break;
+                }
+            }
 
             switch (settings.CompileSettings.Optimization)
             {
@@ -194,22 +240,19 @@ namespace AvalonStudio.Toolchains.LocalGCC
                         result += "-O3 ";
                     }
                     break;
-            }
 
-            switch (settings.CompileSettings.OptimizationPreference)
-            {
-                case OptimizationPreference.Size:
+                case OptimizationLevel.Size:
                     {
                         result += "-Os ";
                     }
                     break;
 
-                case OptimizationPreference.Speed:
+                case OptimizationLevel.Speed:
                     {
-                        result += "-Ofast ";
+                        result += "Ofast ";
                     }
                     break;
-            }
+            }            
 
             result += settings.CompileSettings.CustomFlags + " ";
 

@@ -196,6 +196,14 @@ namespace AvalonStudio.Toolchains.STM32
                         result += "-std=c++17 ";
                         break;
 
+                    case CppLanguageStandard.Gnu11:
+                        result += "-std=gnu++11 ";
+                        break;
+
+                    case CppLanguageStandard.Gnu14:
+                        result += "-std=gnu++14 ";
+                        break;
+
                     default:
                         break;
                 }
@@ -296,19 +304,16 @@ namespace AvalonStudio.Toolchains.STM32
                         result += "-O3 ";
                     }
                     break;
-            }
 
-            switch (settings.CompileSettings.OptimizationPreference)
-            {
-                case OptimizationPreference.Size:
+                case OptimizationLevel.Size:
                     {
                         result += "-Os ";
                     }
                     break;
 
-                case OptimizationPreference.Speed:
+                case OptimizationLevel.Speed:
                     {
-                        result += "-Ofast ";
+                        result += "Ofast ";
                     }
                     break;
             }

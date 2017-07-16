@@ -9,7 +9,7 @@
     <EmbeddedResource Include="LinkerSettingsForm.paml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.1-build3397-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.1-build3417-alpha" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />

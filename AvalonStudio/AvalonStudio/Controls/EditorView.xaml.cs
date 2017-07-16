@@ -9,14 +9,19 @@ using AvalonStudio.Documents;
 using AvalonStudio.Projects;
 using System.Threading.Tasks;
 using AvalonStudio.Languages;
+using AvalonStudio.Shell;
+using AvalonStudio.Extensibility;
+using Avalonia.Input;
 
 namespace AvalonStudio.Controls
 {
     public class EditorView : UserControl, IEditor
     {
         private readonly CompositeDisposable disposables;
-        
+
         private Standard.CodeEditor.CodeEditor _editor;
+
+        private IShell shell;
 
         public ISourceFile ProjectFile => throw new NotImplementedException();
 
@@ -41,11 +46,25 @@ namespace AvalonStudio.Controls
             _editor = this.FindControl<Standard.CodeEditor.CodeEditor>("editor");
 
             _editor.RequestTooltipContent += _editor_RequestTooltipContent;
+
+            shell = IoC.Get<IShell>();
+
+            _editor.GetObservable(AvalonStudio.Controls.Standard.CodeEditor.CodeEditor.IsDirtyProperty).Subscribe(dirty =>
+            {
+                if (dirty && DataContext is EditorViewModel editorVm)
+                {
+                    editorVm.Dock = Dock.Left;
+
+                    // Selecting the document event though it already is, causes it to be removed from the temporary document cache.
+                    editorVm.IsTemporary = false;
+                    shell.SelectedDocument = editorVm;                    
+                }
+            });
         }
 
         private void _editor_RequestTooltipContent(object sender, Standard.TooltipDataRequestEventArgs e)
         {
-            if(DataContext != null)
+            if (DataContext != null)
             {
                 var editorVm = DataContext as EditorViewModel;
 
@@ -53,22 +72,22 @@ namespace AvalonStudio.Controls
             }
         }
 
-        private void Editor_EditorScrolled(object sender, EventArgs e)
-        {
-           // editorViewModel.Intellisense.IsVisible = false;
-        }
-
-        private void Editor_CaretChangedByPointerClick(object sender, EventArgs e)
-        {
-            //editorViewModel.Intellisense.IsVisible = false;
-        }
-
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
-           // editor.EditorScrolled -= Editor_EditorScrolled;
+            // editor.EditorScrolled -= Editor_EditorScrolled;
             //editor.CaretChangedByPointerClick -= Editor_CaretChangedByPointerClick;
 
             disposables.Dispose();
+        }
+
+        protected override void OnGotFocus(GotFocusEventArgs e)
+        {
+            _editor.Focus();
+        }
+
+        public void TriggerCodeAnalysis()
+        {
+            _editor.TriggerCodeAnalysis();
         }
 
         private void InitializeComponent()
