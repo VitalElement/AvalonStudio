@@ -324,6 +324,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (CaretOffset > 0)
                 {
+                    _intellisenseManager?.OnKeyDown(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+
                     if (ee.Key == Key.Tab && _currentSnippetContext == null)
                     {
                         var wordStart = Document.FindPrevWordStart(CaretOffset);
@@ -353,6 +355,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                         new SnippetTextElement{Text ="    }"}}
                                 };
 
+                                _intellisenseManager.CloseIntellisense();
+
                                 using (Document.RunUpdate())
                                 {
                                     Document.Remove(wordStart, CaretOffset - wordStart);
@@ -360,16 +364,27 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                     _currentSnippetContext = snippet.Insert(TextArea);
                                 }
 
-                                _currentSnippetContext.Deactivated += (sender, e) =>
-                                {                                    
-                                    _currentSnippetContext = null;
-                                    FormatAll();
-                                };
+                                IDisposable disposable = null;
+
+                                disposable = Observable.FromEventPattern(_currentSnippetContext, nameof(_currentSnippetContext.Deactivated)).Take(1).Subscribe(o=> 
+                                {
+                                    _currentSnippetContext = null;                                    
+                                    disposable.Dispose();
+
+                                    Dispatcher.UIThread.InvokeAsync(() =>
+                                    {
+                                        // need to do this or could end up inside an existing document update.
+                                        FormatAll();
+                                    });
+                                });                  
                             }
                         }
                     }
 
-                    _intellisenseManager?.OnKeyDown(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+                    if(_currentSnippetContext != null)
+                    {
+                        
+                    }
                 }
             };
 

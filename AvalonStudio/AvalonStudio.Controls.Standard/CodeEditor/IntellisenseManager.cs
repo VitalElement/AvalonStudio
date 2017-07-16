@@ -126,6 +126,10 @@
                 {
                     intellisenseStartedAt = caretIndex;
                 }
+                else if (currentChar.IsWhiteSpace())
+                {
+                    intellisenseStartedAt = caretIndex;
+                }
                 else
                 {
                     intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editor.Document, caretIndex, LogicalDirection.Backward, CaretPositioningMode.WordStart);
@@ -139,7 +143,7 @@
             UpdateFilter(caretIndex);
         }
 
-        private void CloseIntellisense()
+        public void CloseIntellisense()
         {
             currentFilter = string.Empty;
 
@@ -154,13 +158,11 @@
 
         private void UpdateFilter(int caretIndex)
         {
-            if (caretIndex > intellisenseStartedAt && intellisenseStartedAt > 0)
+            var wordStart = DocumentUtilities.FindPrevWordStart(editor.Document, caretIndex);
+
+            if (wordStart >= 0)
             {
-                currentFilter = editor.Document.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
-            }
-            else
-            {
-                currentFilter = string.Empty;
+                currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty);                
             }
 
             CompletionDataViewModel suggestion = null;
@@ -349,7 +351,10 @@
                         SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
                     }
 
-                    previousChar = editor.Document.GetCharAt(caretIndex - 2);
+                    if (caretIndex >= 2)
+                    {
+                        previousChar = editor.Document.GetCharAt(caretIndex - 2);
+                    }
 
                     if (IsTriggerChar(currentChar, previousChar, intellisenseControl.IsVisible))
                     {
@@ -490,10 +495,12 @@
                     if (completionAssistant.IsVisible)
                     {
                         completionAssistant.Close();
+                        e.Handled = true;
                     }
                     else if (intellisenseControl.IsVisible)
                     {
                         CloseIntellisense();
+                        e.Handled = true;
                     }
                 }
             }
