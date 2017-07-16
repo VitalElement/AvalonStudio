@@ -812,10 +812,31 @@ namespace AvalonStudio
 
             foreach (var document in documentsToClose)
             {
-                if (document is EditorViewModel && (document as EditorViewModel).ProjectFile.Project == project)
+                if (document is EditorViewModel evm && evm.ProjectFile.Project == project)
                 {
-                    await (document as EditorViewModel).CloseCommand.ExecuteAsyncTask();
+                    await evm.CloseCommand.ExecuteAsyncTask();
+
+                    evm.OnClose();
                 }
+            }
+
+            documentsToClose = DocumentTabs.CachedDocuments.ToList();
+
+            foreach (var document in documentsToClose)
+            {
+                if (document is EditorViewModel evm && evm.ProjectFile.Project == project)
+                {
+                    await evm.CloseCommand.ExecuteAsyncTask();
+
+                    evm.OnClose();
+                }
+            }
+
+            if(DocumentTabs.TemporaryDocument is EditorViewModel vm)
+            {
+                await vm.CloseCommand.ExecuteAsyncTask();
+
+                vm.OnClose();
             }
         }
     }
