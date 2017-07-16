@@ -334,6 +334,7 @@ namespace AvalonStudio
         {
             DocumentTabs.Documents.Add(document);
             DocumentTabs.SelectedDocument = document;
+            DocumentTabs.InvalidateSeperatorVisibility();
         }
 
         public void RemoveDocument(IDocumentTabViewModel document)
@@ -420,6 +421,8 @@ namespace AvalonStudio
             }
 
             DocumentTabs.CachedDocuments.Add(document);
+
+            DocumentTabs.InvalidateSeperatorVisibility();
         }
 
         public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
@@ -476,9 +479,7 @@ namespace AvalonStudio
 
                 newEditor.OpenFile(file);
 
-                DocumentTabs.TemporaryDocument = newEditor;
-
-                DocumentTabs.SelectedDocument = newEditor;
+                AddDocument(newEditor);
             }
             else
             {

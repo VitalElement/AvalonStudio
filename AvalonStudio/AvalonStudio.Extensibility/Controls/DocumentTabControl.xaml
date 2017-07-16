@@ -20,7 +20,7 @@
                             </TabStrip.ItemsPanel>
                         </TabStrip>
 
-                        <ContentControl Content="{TemplateBinding HeaderSeperatorContent}" Name="PART_Seperator" />
+                        <ContentControl Content="{TemplateBinding HeaderSeperatorContent}" IsVisible="{TemplateBinding HeaderSeperatorVisible}" />
                     </StackPanel>
 
                     <Carousel Name="PART_Carousel"  Items="{TemplateBinding Items}" SelectedIndex="{TemplateBinding Path=SelectedIndex}" IsVirtualized="false" ItemTemplate="{TemplateBinding ItemTemplate}" />

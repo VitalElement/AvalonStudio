@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
@@ -16,6 +17,7 @@ namespace AvalonStudio.Controls
         private ObservableCollection<IDocumentTabViewModel> documents;
         private List<IDocumentTabViewModel> cachedDocuments;
 
+        private bool _seperatorVisible;
         private IDocumentTabViewModel selectedDocument;
 
         public DocumentTabControlViewModel()
@@ -23,6 +25,24 @@ namespace AvalonStudio.Controls
             CachedDocuments = new List<IDocumentTabViewModel>();
 
             Documents = new ObservableCollection<IDocumentTabViewModel>();            
+        }        
+
+        public void InvalidateSeperatorVisibility()
+        {
+            if(Documents.Where(d=>d.IsVisible).Count() > 0)
+            {
+                SeperatorVisible = true;
+            }
+            else
+            {
+                SeperatorVisible = false;
+            }
+        }
+
+        public bool SeperatorVisible
+        {
+            get { return _seperatorVisible; }
+            set { this.RaiseAndSetIfChanged(ref _seperatorVisible, value); }
         }
 
         public List<IDocumentTabViewModel> CachedDocuments

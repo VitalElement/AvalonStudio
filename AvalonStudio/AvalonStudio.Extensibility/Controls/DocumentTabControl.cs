@@ -14,9 +14,7 @@ namespace AvalonStudio.Controls
         public DocumentTabControl()
         {
             SelectionMode = SelectionMode.AlwaysSelected;            
-        }
-
-        private ContentControl _seperator;
+        }        
 
         /// <summary>
         /// Defines an <see cref="IMemberSelector"/> that selects the content of a <see cref="TabItem"/>.
@@ -38,28 +36,11 @@ namespace AvalonStudio.Controls
         {
             get { return GetValue(HeaderTemplateProperty); }
             set { SetValue(HeaderTemplateProperty, value); }
-        }        
-
-        private void InvalidateSeperatorVisiblity()
-        {
-            if (_seperator != null)
-            {
-                if (Items.Count() == 0)
-                {
-                    _seperator.IsVisible = false;
-                }
-                else
-                {
-                    _seperator.IsVisible = true;
-                }
-            }
-        }
+        }                
 
         protected override void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             base.ItemsCollectionChanged(sender, e);
-
-            InvalidateSeperatorVisiblity();
         }
 
         protected override void ItemsChanged(AvaloniaPropertyChangedEventArgs e)
@@ -70,8 +51,6 @@ namespace AvalonStudio.Controls
             {                
                 SelectedIndex = 0;
             }
-
-            InvalidateSeperatorVisiblity();
         }
 
         /// <summary>
@@ -103,8 +82,6 @@ namespace AvalonStudio.Controls
             {
                 carousel.MemberSelector = ContentSelector;
             }
-
-            _seperator = e.NameScope.Find<ContentControl>("PART_Seperator");
         }
     }
 }

@@ -63,7 +63,7 @@
       </DataTemplate>
     </cont:DocumentTabControl.HeaderTemplate>
     <cont:DocumentTabControl.HeaderSeperatorContent>
-      <Grid Background="{StyleResource ApplicationAccentBrush}" Height="2" />
+      <Grid Background="{StyleResource ApplicationAccentBrush}" Height="2" IsVisible="{Binding SeperatorVisible}" />
     </cont:DocumentTabControl.HeaderSeperatorContent>
     <cont:DocumentTabControl.ItemTemplate>
       <DataTemplate>

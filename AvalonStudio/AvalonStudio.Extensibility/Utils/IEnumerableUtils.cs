@@ -36,6 +36,18 @@ namespace AvalonStudio.Utils
             }
         }
 
+        public static int Count(this IEnumerable items, Func<object, bool> predicate)
+        {
+            if (items != null)
+            {
+                return Enumerable.Count(items.Cast<object>(), predicate);                
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
         public static int IndexOf(this IEnumerable items, object item)
         {
             Contract.Requires<ArgumentNullException>(items != null);
