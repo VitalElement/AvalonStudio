@@ -19,7 +19,6 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
-using AvalonStudio.TextEditor;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using ReactiveUI;
@@ -334,6 +333,7 @@ namespace AvalonStudio
         {
             DocumentTabs.Documents.Add(document);
             DocumentTabs.SelectedDocument = document;
+
             DocumentTabs.InvalidateSeperatorVisibility();
         }
 
@@ -468,18 +468,18 @@ namespace AvalonStudio
                 if (restoreFromCache)
                 {
                     newEditor.IsVisible = true;
-                    DocumentTabs.CachedDocuments.Remove(currentTab);
-                    newEditor.IsTemporary = true;
+                    DocumentTabs.CachedDocuments.Remove(currentTab);                    
                     newEditor.Dock = Avalonia.Controls.Dock.Right;
+                    DocumentTabs.SelectedDocument = newEditor;
                 }
                 else
                 {
-                    DocumentTabs.Documents.Add(newEditor);
+                    newEditor.OpenFile(file);
+                    AddDocument(newEditor);
                 }
 
-                newEditor.OpenFile(file);
-
-                AddDocument(newEditor);
+                newEditor.IsTemporary = true;
+                DocumentTabs.TemporaryDocument = newEditor;
             }
             else
             {
