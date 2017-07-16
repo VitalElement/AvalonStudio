@@ -14,16 +14,13 @@ namespace AvalonStudio.Controls
 {
     public class DocumentTabControlViewModel : ViewModel
     {
-        private ObservableCollection<IDocumentTabViewModel> documents;
-        private List<IDocumentTabViewModel> cachedDocuments;
+        private ObservableCollection<IDocumentTabViewModel> documents;        
 
         private bool _seperatorVisible;
         private IDocumentTabViewModel selectedDocument;
 
         public DocumentTabControlViewModel()
         {
-            CachedDocuments = new List<IDocumentTabViewModel>();
-
             Documents = new ObservableCollection<IDocumentTabViewModel>();            
         }        
 
@@ -43,12 +40,6 @@ namespace AvalonStudio.Controls
         {
             get { return _seperatorVisible; }
             set { this.RaiseAndSetIfChanged(ref _seperatorVisible, value); }
-        }
-
-        public List<IDocumentTabViewModel> CachedDocuments
-        {
-            get { return cachedDocuments; }
-            set { this.RaiseAndSetIfChanged(ref cachedDocuments, value); }
         }
 
         public ObservableCollection<IDocumentTabViewModel> Documents
