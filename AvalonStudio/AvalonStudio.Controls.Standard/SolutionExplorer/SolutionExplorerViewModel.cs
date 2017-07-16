@@ -97,9 +97,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value is SourceFileViewModel)
                 {
-                    // might need wait here?
-                    Task.Factory.StartNew(
-                        async () => { await shell.OpenDocument((ISourceFile)(value as SourceFileViewModel).Model, 1); });
+                    shell.OpenDocument((ISourceFile)(value as SourceFileViewModel).Model, 1);
                 }
             }
         }

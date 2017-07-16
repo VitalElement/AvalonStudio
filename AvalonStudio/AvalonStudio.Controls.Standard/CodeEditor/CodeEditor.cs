@@ -243,24 +243,27 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 await DoCodeAnalysisAsync();
             });
 
-            this.GetObservable(SourceFileProperty).OfType<ISourceFile>().Subscribe(file =>
+            this.GetObservableWithHistory(SourceFileProperty).Subscribe((file) =>
             {
-                if (System.IO.File.Exists(file.Location))
+                if (file.Item1 != file.Item2)
                 {
-                    using (var fs = System.IO.File.OpenText(file.Location))
+                    if (System.IO.File.Exists(file.Item2.Location))
                     {
-                        Document = new TextDocument(fs.ReadToEnd())
+                        using (var fs = System.IO.File.OpenText(file.Item2.Location))
                         {
-                            FileName = file.Location
-                        };
+                            Document = new TextDocument(fs.ReadToEnd())
+                            {
+                                FileName = file.Item2.Location
+                            };
+                        }
                     }
+
+                    _isLoaded = true;
+
+                    RegisterLanguageService(file.Item2);
+
+                    TextArea.TextView.Redraw();                    
                 }
-
-                _isLoaded = true;
-
-                TextArea.TextView.Redraw();
-
-                RegisterLanguageService(file);
             });
 
             TextArea.TextEntering += (sender, e) =>

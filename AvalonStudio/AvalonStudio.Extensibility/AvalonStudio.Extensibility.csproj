@@ -8,18 +8,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Controls\ControlTheme.paml" />
+    <None Remove="Controls\DocumentTabControl.xaml" />
+    <None Remove="Controls\DocumentTabItem.xaml" />
     <None Remove="Controls\ToolControl.paml" />
     <None Remove="Controls\ViewModelViewHost.xaml" />
     <None Remove="MainMenu\ViewModels\MainMenuView.paml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\ControlTheme.paml" />
+    <EmbeddedResource Include="Controls\DocumentTabControl.xaml" />
+    <EmbeddedResource Include="Controls\DocumentTabItem.xaml" />
     <EmbeddedResource Include="Controls\ToolControl.paml" />
     <EmbeddedResource Include="Controls\ViewModelViewHost.xaml" />
     <EmbeddedResource Include="MainMenu\ViewModels\MainMenuView.paml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.1-build3397-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.1-build3417-alpha" />
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
