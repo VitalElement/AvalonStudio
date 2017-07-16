@@ -10,6 +10,7 @@ using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Threading;
@@ -262,7 +263,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     RegisterLanguageService(file.Item2);
 
-                    TextArea.TextView.Redraw();                    
+                    TextArea.TextView.Redraw();
                 }
             });
 
@@ -274,7 +275,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             TextArea.Caret.PositionChanged += (sender, e) =>
             {
                 if (_intellisenseManager != null && !_textEntering && TextArea.Selection.IsEmpty)
-                {                   
+                {
                     var location = Document.GetLocation(CaretOffset);
                     _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), true);
                 }
@@ -318,10 +319,41 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             };
 
+
             EventHandler<KeyEventArgs> tunneledKeyDownHandler = (send, ee) =>
             {
                 if (CaretOffset > 0)
                 {
+                    if (ee.Key == Key.Tab && _currentSnippetContext == null)
+                    {
+                        var loopCounter = new SnippetReplaceableTextElement { Text = "i" };
+                        Snippet snippet = new Snippet
+                        {
+                            Elements ={
+                            new SnippetTextElement{Text ="for(int "},
+                            new SnippetBoundElement{TargetElement = loopCounter},
+                            new SnippetTextElement{Text =" = "},
+                            new SnippetReplaceableTextElement{Text ="0"},
+                            new SnippetTextElement{Text ="; "},
+                            loopCounter,
+                            new SnippetTextElement{Text =" < "},
+                            new SnippetReplaceableTextElement{Text ="end"},
+                            new SnippetTextElement{Text ="; "},
+                            new SnippetBoundElement{TargetElement = loopCounter},
+                            new SnippetTextElement{Text ="++) { \t"},
+                            new SnippetCaretElement(),
+                            new SnippetTextElement{Text =" }"}
+}
+                        };
+
+                        _currentSnippetContext = snippet.Insert(TextArea);
+
+                        _currentSnippetContext.Deactivated += (sender, e) =>
+                        {
+                            _currentSnippetContext = null;
+                        };
+                    }
+
                     _intellisenseManager?.OnKeyDown(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
                 }
             };
@@ -337,6 +369,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel);
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel);
         }
+
+        private InsertionContext _currentSnippetContext;
 
         protected override void OnTextChanged(EventArgs e)
         {
