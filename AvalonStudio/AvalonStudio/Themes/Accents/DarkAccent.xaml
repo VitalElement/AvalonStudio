@@ -5,9 +5,14 @@
   <Style.Resources>
     <!--NOTE: This is a partial accent.-->
 
-    <!--Brushes-->
+    <!--Brushes-->       
+    <SolidColorBrush x:Key="ApplicationAccentBrush">#007ACC</SolidColorBrush>
+    <SolidColorBrush x:Key="ApplicationAccentBrushLight">#1C97EA</SolidColorBrush>
+    <SolidColorBrush x:Key="ApplicationAccentForegroundBrush">#F0F0F0</SolidColorBrush>
+    <SolidColorBrush x:Key="ApplicationBackgroundBrush">#EEEEF2</SolidColorBrush>
+    <SolidColorBrush x:Key="ApplicationBorderBrush">#CDCFDC</SolidColorBrush>
 
-    <!--The main accent color-->
+        <!--The main accent color-->
     <SolidColorBrush x:Key="AccentBaseColorBrush">#FFE51400</SolidColorBrush>
 
     <!--A neutral color (black or white) that should be used against a background of the base accent color-->
