@@ -348,11 +348,11 @@ namespace AvalonStudio
 
                 bool foundTab = false;
 
-                while(!foundTab)
+                while (!foundTab)
                 {
                     index++;
 
-                    if(index < DocumentTabs.Documents.Count)
+                    if (index < DocumentTabs.Documents.Count)
                     {
                         if (DocumentTabs.Documents[index].IsVisible)
                         {
@@ -360,7 +360,7 @@ namespace AvalonStudio
                             newSelectedTab = DocumentTabs.Documents[index];
                             break;
                         }
-                    }            
+                    }
                     else
                     {
                         break;
@@ -403,13 +403,10 @@ namespace AvalonStudio
                 DocumentTabs.TemporaryDocument = null;
             }
 
-            if (DocumentTabs.CachedDocuments.Count == 5)
+            if (DocumentTabs.Documents.OfType<EditorViewModel>().Where(d=>!d.IsVisible).Count() == 5)
             {
-                DocumentTabs.Documents.Remove(document);
-
-                var toRemove = DocumentTabs.CachedDocuments[0];
-
-                DocumentTabs.CachedDocuments.Remove(toRemove);
+                var toRemove = DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => !d.IsVisible).First();                
+                
                 DocumentTabs.Documents.Remove(toRemove);
                 toRemove.OnClose();
 
@@ -420,8 +417,6 @@ namespace AvalonStudio
                 });
             }
 
-            DocumentTabs.CachedDocuments.Add(document);
-
             DocumentTabs.InvalidateSeperatorVisibility();
         }
 
@@ -429,29 +424,20 @@ namespace AvalonStudio
         {
             bool restoreFromCache = false;
 
-            var currentTab = DocumentTabs.CachedDocuments.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
+            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
 
-            if (currentTab != null)
+            if (currentTab != null && !currentTab.IsVisible)
             {
                 restoreFromCache = true;
-            }
-
-            if (currentTab == null)
-            {
-                currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
-            }
+            }            
 
             if (currentTab == null || restoreFromCache)
             {
                 if (DocumentTabs.TemporaryDocument != null)
                 {
-                    var documentToClose = DocumentTabs.TemporaryDocument;
+                    var documentToClose = DocumentTabs.TemporaryDocument;                    
 
-                    DocumentTabs.TemporaryDocument = null;
-
-                    await documentToClose.CloseCommand.ExecuteAsyncTask(null);
-
-                    SelectedDocument = null;
+                    await documentToClose.CloseCommand.ExecuteAsyncTask(null);                    
                 }
 
                 EditorViewModel newEditor = null;
@@ -467,8 +453,7 @@ namespace AvalonStudio
 
                 if (restoreFromCache)
                 {
-                    newEditor.IsVisible = true;
-                    DocumentTabs.CachedDocuments.Remove(currentTab);                    
+                    newEditor.IsVisible = true;                    
                     newEditor.Dock = Avalonia.Controls.Dock.Right;
                     DocumentTabs.SelectedDocument = newEditor;
                 }
@@ -715,7 +700,7 @@ namespace AvalonStudio
             var toRemove = new List<ErrorViewModel>();
             var hasChanged = false;
 
-            foreach (var document in DocumentTabs.Documents.Where(d=>d.IsVisible).OfType<EditorViewModel>())
+            foreach (var document in DocumentTabs.Documents.Where(d => d.IsVisible).OfType<EditorViewModel>())
             {
                 if (document.Diagnostics != null)
                 {
@@ -818,25 +803,6 @@ namespace AvalonStudio
 
                     evm.OnClose();
                 }
-            }
-
-            documentsToClose = DocumentTabs.CachedDocuments.ToList();
-
-            foreach (var document in documentsToClose)
-            {
-                if (document is EditorViewModel evm && evm.ProjectFile.Project == project)
-                {
-                    await evm.CloseCommand.ExecuteAsyncTask();
-
-                    evm.OnClose();
-                }
-            }
-
-            if(DocumentTabs.TemporaryDocument is EditorViewModel vm)
-            {
-                await vm.CloseCommand.ExecuteAsyncTask();
-
-                vm.OnClose();
             }
         }
     }
