@@ -6,15 +6,21 @@ using System.Collections.Specialized;
 using System.Linq;
 using Avalonia.LogicalTree;
 using AvalonStudio.Utils;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Avalonia.VisualTree;
 
 namespace AvalonStudio.Controls
 {
     public class DocumentTabControl : SelectingItemsControl
     {
+        private List<object> _cacheItems;
+
         public DocumentTabControl()
         {
-            SelectionMode = SelectionMode.AlwaysSelected;            
-        }        
+            SelectionMode = SelectionMode.AlwaysSelected;
+            _cacheItems = new List<object>();
+        }
 
         /// <summary>
         /// Defines an <see cref="IMemberSelector"/> that selects the content of a <see cref="TabItem"/>.
@@ -36,11 +42,38 @@ namespace AvalonStudio.Controls
         {
             get { return GetValue(HeaderTemplateProperty); }
             set { SetValue(HeaderTemplateProperty, value); }
-        }                
+        }
+
+        public static readonly AvaloniaProperty<ObservableCollection<Visual>> VisibleItemsProperty = AvaloniaProperty.Register<DocumentTabControl, ObservableCollection<Visual>>(nameof(VisibleItems));
+
+        public ObservableCollection<Visual> VisibleItems
+        {
+            get { return GetValue(VisibleItemsProperty); }
+            set { SetValue(VisibleItemsProperty, value); }
+        }
+
+        public static readonly AvaloniaProperty<bool> CacheTabsProperty = AvaloniaProperty.Register<DocumentTabControl, bool>(nameof(CacheTabs), true);
+
+        public bool CacheTabs
+        {
+            get { return GetValue(CacheTabsProperty); }
+            set { SetValue(CacheTabsProperty, value); }
+        }
+
+        public static readonly AvaloniaProperty<uint> CacheSizeProperty = AvaloniaProperty.Register<DocumentTabControl, uint>(nameof(CacheSize), 5);
+
+        public uint CacheSize
+        {
+            get { return GetValue(CacheSizeProperty); }
+            set { SetValue(CacheSizeProperty, value); }
+        }
 
         protected override void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            base.ItemsCollectionChanged(sender, e);
+            switch(e.Action)
+            {
+
+            }
         }
 
         protected override void ItemsChanged(AvaloniaPropertyChangedEventArgs e)
@@ -48,7 +81,7 @@ namespace AvalonStudio.Controls
             base.ItemsChanged(e);
 
             if (Items.Count() > 0)
-            {                
+            {
                 SelectedIndex = 0;
             }
         }
