@@ -326,32 +326,47 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     if (ee.Key == Key.Tab && _currentSnippetContext == null)
                     {
-                        var loopCounter = new SnippetReplaceableTextElement { Text = "i" };
-                        Snippet snippet = new Snippet
-                        {
-                            Elements ={
-                            new SnippetTextElement{Text ="for(int "},
-                            new SnippetBoundElement{TargetElement = loopCounter},
-                            new SnippetTextElement{Text =" = "},
-                            new SnippetReplaceableTextElement{Text ="0"},
-                            new SnippetTextElement{Text ="; "},
-                            loopCounter,
-                            new SnippetTextElement{Text =" < "},
-                            new SnippetReplaceableTextElement{Text ="end"},
-                            new SnippetTextElement{Text ="; "},
-                            new SnippetBoundElement{TargetElement = loopCounter},
-                            new SnippetTextElement{Text ="++) { \t"},
-                            new SnippetCaretElement(),
-                            new SnippetTextElement{Text =" }"}
-}
-                        };
+                        var wordStart = Document.FindPrevWordStart(CaretOffset);
 
-                        _currentSnippetContext = snippet.Insert(TextArea);
-
-                        _currentSnippetContext.Deactivated += (sender, e) =>
+                        if (wordStart > 0)
                         {
-                            _currentSnippetContext = null;
-                        };
+                            string word = Document.GetText(wordStart, CaretOffset - wordStart);
+
+                            if (word == "propfull") // todo lookup snippets in snippet manager.
+                            {
+                                var loopCounter = new SnippetReplaceableTextElement { Text = "i" };
+                                Snippet snippet = new Snippet
+                                {
+                                    Elements ={
+                                        new SnippetTextElement{Text ="for(int "},
+                                        new SnippetBoundElement{TargetElement = loopCounter},
+                                        new SnippetTextElement{Text =" = "},
+                                        new SnippetReplaceableTextElement{Text ="0"},
+                                        new SnippetTextElement{Text ="; "},
+                                        loopCounter,
+                                        new SnippetTextElement{Text =" < "},
+                                        new SnippetReplaceableTextElement{Text ="end"},
+                                        new SnippetTextElement{Text ="; "},
+                                        new SnippetBoundElement{TargetElement = loopCounter},
+                                        new SnippetTextElement{Text ="++) {"},
+                                        new SnippetCaretElement(),
+                                        new SnippetTextElement{Text ="    }"}}
+                                };
+
+                                using (Document.RunUpdate())
+                                {
+                                    Document.Remove(wordStart, CaretOffset - wordStart);
+
+                                    _currentSnippetContext = snippet.Insert(TextArea);
+                                }
+
+                                _currentSnippetContext.Deactivated += (sender, e) =>
+                                {                                    
+                                    _currentSnippetContext = null;
+                                    FormatAll();
+                                };
+                            }
+                        }
                     }
 
                     _intellisenseManager?.OnKeyDown(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
