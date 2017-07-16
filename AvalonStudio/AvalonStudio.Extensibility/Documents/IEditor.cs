@@ -8,6 +8,10 @@ namespace AvalonStudio.Documents
     {
         ISourceFile ProjectFile { get; }
 
+        void Focus();
+
+        void TriggerCodeAnalysis();
+
         void Close();
 
         void Save();

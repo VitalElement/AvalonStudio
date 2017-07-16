@@ -78,8 +78,7 @@ namespace AvalonStudio.Controls.Standard.Console
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    data = Regex.Replace(data, @"[^\u0000-\u007F]+", string.Empty).Replace("t", "    ");
-                    Document.Insert(Document.TextLength, data);
+                    Document.Insert(Document.TextLength, data.Replace("\t", "    "));
                     ScrollToEnd();
                 });
             }
@@ -100,8 +99,7 @@ namespace AvalonStudio.Controls.Standard.Console
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    data = Regex.Replace(data, @"[^\u0000-\u007F]+", string.Empty).Replace("\t", "    ");
-                    Document.Insert(Document.TextLength, data + Environment.NewLine);
+                    Document.Insert(Document.TextLength, data.Replace("\t", "    ") + Environment.NewLine);
                     ScrollToEnd();
                 });
             }

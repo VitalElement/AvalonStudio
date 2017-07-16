@@ -56,8 +56,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             miscOptions = settings.CustomFlags;
 
-            optimizationLevelSelectedIndex = (int)settings.Optimization;
-            optimizationPreferenceSelectedIndex = (int)settings.OptimizationPreference;
+            optimizationLevelSelectedIndex = (int)settings.Optimization;            
             cppLanguageStandardSelectedIndex = (int)settings.CppLanguageStandard;
             clanguageStandardSelectedIndex = (int)settings.CLanguageStandard;
             fpuSelectedIndex = (int)settings.Fpu;
@@ -138,25 +137,7 @@ namespace AvalonStudio.Toolchains.GCC
 
                 UpdateCompileString();
             }
-        }
-
-        public string[] OptimizationPreferenceOptions
-        {
-            get { return Enum.GetNames(typeof(OptimizationPreference)); }
-        }
-
-        public int OptimizationPreferenceSelectedIndex
-        {
-            get
-            {
-                return optimizationPreferenceSelectedIndex;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref optimizationPreferenceSelectedIndex, value);
-                UpdateCompileString();
-            }
-        }
+        }        
 
         public string[] OptimizationLevelOptions => Enum.GetNames(typeof(OptimizationLevel));
 
@@ -392,8 +373,7 @@ namespace AvalonStudio.Toolchains.GCC
             //config.MiscCompilerArguments = miscOptions;
             //config.Defines = defines.ToList();
             settings.Includes = includePaths.ToList();
-            settings.Optimization = (OptimizationLevel)optimizationLevelSelectedIndex;
-            settings.OptimizationPreference = (OptimizationPreference)optimizationPreferenceSelectedIndex;
+            settings.Optimization = (OptimizationLevel)optimizationLevelSelectedIndex;            
             settings.Fpu = (FPUSupport)fpuSelectedIndex;
             settings.DebugInformation = debugSymbols;
             settings.Exceptions = exceptions;

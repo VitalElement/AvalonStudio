@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive.Linq;
 using System.Text;
+using System.Linq;
 
 namespace AvalonStudio.Debugging
 {
@@ -160,36 +161,12 @@ namespace AvalonStudio.Debugging
         {
             if (_debugManager.Session != null && !_debugManager.Session.IsRunning)
             {
-                /*if (currentDebugLineMarker != null)
-                {
-                    editor.RemoveMarker(currentDebugLineMarker);
-                    currentDebugLineMarker = null;
-                }*/
-
                 if (_debugManager.SelectedFrame == null)
                 {
-                    /*if (messageOverlayContent != null)
-                    {
-                        editor.RemoveOverlay(messageOverlayContent);
-                        messageOverlayContent = null;
-                    }
-                    sw.Sensitive = false;*/
                     return;
                 }
 
                 var sf = _debugManager.SelectedFrame;
-                /*if (!string.IsNullOrWhiteSpace(sf.SourceLocation.FileName) && sf.SourceLocation.Line != -1 && sf.SourceLocation.FileHash != null)
-                {
-                    ShowLoadSourceFile(sf);
-                }
-                else
-                {
-                    if (messageOverlayContent != null)
-                    {
-                        editor.RemoveOverlay(messageOverlayContent);
-                        messageOverlayContent = null;
-                    }
-                }*/
 
                 if (sf.SourceLocation.Line >= 0 && !string.IsNullOrEmpty(sf.SourceLocation.FileName) && File.Exists(sf.SourceLocation.FileName) && MixedMode)
                 {
@@ -218,10 +195,9 @@ namespace AvalonStudio.Debugging
             session = sf.DebuggerSession;
             if (currentFile != sf.SourceLocation.FileName)
             {
-                AssemblyLine[] asmLines = sf.DebuggerSession.DisassembleFile(sf.SourceLocation.FileName);
+                AssemblyLine[] asmLines = sf.DebuggerSession.DisassembleFile(sf.SourceLocation.FileName).OrderBy(inst => inst.SourceLine).ThenBy(inst => inst.Address).ToArray();
                 if (asmLines == null)
                 {
-                    // Mixed disassemble not supported
                     Fill();
                     return;
                 }
@@ -247,8 +223,6 @@ namespace AvalonStudio.Debugging
                         sourceLine++;
                     }
                     document.Text = sb.ToString();
-                    /*foreach (int li in asmLineNums)
-                        editor.AddMarker(li, asmMarker);*/
                 }
             }
 
