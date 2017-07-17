@@ -117,8 +117,6 @@
                     currentCompletion.Overloads++;
                 }
             }
-
-            // todo clear hidden?
         }
 
         private void OpenIntellisense(char currentChar, char previousChar, int caretIndex)
@@ -286,7 +284,7 @@
 
         public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles)
         {
-           if (!intellisenseControl.IsVisible)
+            if (!intellisenseControl.IsVisible)
             {
                 _requestingData = true;
                 intellisenseQueryRunner.InvokeAsync(() =>
