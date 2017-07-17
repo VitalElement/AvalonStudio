@@ -158,75 +158,87 @@
             intellisenseControl.IsVisible = false;
         }
 
-        private void UpdateFilter(int caretIndex)
+        private void UpdateFilter(int caretIndex, bool allowVisiblityChanges = true)
         {
-            if (caretIndex > intellisenseStartedAt && intellisenseStartedAt > 0)
+            if (!_requestingData)
             {
-                currentFilter = editor.Document.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
-            }
-            else
-            {
-                currentFilter = string.Empty;
-            }
-
-            CompletionDataViewModel suggestion = null;
-
-            var filteredResults = unfilteredCompletions as IEnumerable<CompletionDataViewModel>;
-
-            if (currentFilter != string.Empty)
-            {
-                filteredResults = unfilteredCompletions.Where(c => c != null && c.Title.ToLower().Contains(currentFilter.ToLower()));
-
-                IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
-
-                // try find exact match case sensitive
-                newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
-
-                if (newSelectedCompletions.Count() == 0)
+                if (caretIndex > intellisenseStartedAt && intellisenseStartedAt > 0)
                 {
-                    newSelectedCompletions = filteredResults.Where(s => s.Title.ToLower().StartsWith(currentFilter.ToLower()));
-                    // try find non-case sensitve match
+                    currentFilter = editor.Document.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
+                }
+                else
+                {
+                    currentFilter = string.Empty;
                 }
 
-                if (newSelectedCompletions.Count() == 0)
+                CompletionDataViewModel suggestion = null;
+
+                var filteredResults = unfilteredCompletions as IEnumerable<CompletionDataViewModel>;
+
+                if (currentFilter != string.Empty)
+                {
+                    filteredResults = unfilteredCompletions.Where(c => c != null && c.Title.ToLower().Contains(currentFilter.ToLower()));
+
+                    IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
+
+                    // try find exact match case sensitive
+                    newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
+
+                    if (newSelectedCompletions.Count() == 0)
+                    {
+                        newSelectedCompletions = filteredResults.Where(s => s.Title.ToLower().StartsWith(currentFilter.ToLower()));
+                        // try find non-case sensitve match
+                    }
+
+                    if (newSelectedCompletions.Count() == 0)
+                    {
+                        suggestion = noSelectedCompletion;
+                    }
+                    else
+                    {
+                        var newSelectedCompletion = newSelectedCompletions.FirstOrDefault();
+
+                        suggestion = newSelectedCompletion;
+                    }
+                }
+                else
                 {
                     suggestion = noSelectedCompletion;
                 }
-                else
+
+                if (filteredResults?.Count() > 0)
                 {
-                    var newSelectedCompletion = newSelectedCompletions.FirstOrDefault();
-
-                    suggestion = newSelectedCompletion;
-                }
-            }
-            else
-            {
-                suggestion = noSelectedCompletion;
-            }
-
-            if (filteredResults?.Count() > 0)
-            {
-                if (filteredResults?.Count() == 1 && filteredResults.First().Title == currentFilter)
-                {
-                    CloseIntellisense();
-                }
-                else
-                {
-                    var list = filteredResults.ToList();
-
-                    intellisenseControl.CompletionData = list;
-                    intellisenseControl.SelectedCompletion = suggestion;
-
-                    _hidden = false;
-                    if (!_requestingData)
+                    if (filteredResults?.Count() == 1 && filteredResults.First().Title == currentFilter)
                     {
-                        intellisenseControl.IsVisible = true;
+                        CloseIntellisense();
+                    }
+                    else
+                    {
+                        var list = filteredResults.ToList();
+
+                        intellisenseControl.SelectedCompletion = null;
+                        intellisenseControl.CompletionData = list;
+
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            intellisenseControl.SelectedCompletion = suggestion;
+                        });
+
+                        if (allowVisiblityChanges)
+                        {
+                            _hidden = false;
+
+                            if (!_requestingData && !_hidden)
+                            {
+                                intellisenseControl.IsVisible = true;
+                            }
+                        }
                     }
                 }
-            }
-            else
-            {
-                intellisenseControl.SelectedCompletion = noSelectedCompletion;
+                else
+                {
+                    intellisenseControl.SelectedCompletion = noSelectedCompletion;
+                }
             }
         }
 
@@ -274,7 +286,7 @@
 
         public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles, bool invokeOnRunner = true)
         {
-            if (!intellisenseControl.IsVisible)
+           if (!intellisenseControl.IsVisible)
             {
                 _requestingData = true;
                 intellisenseQueryRunner.InvokeAsync(() =>
@@ -300,6 +312,9 @@
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         _requestingData = false;
+
+                        UpdateFilter(editor.CaretOffset, false);
+
                         intellisenseControl.IsVisible = !_hidden;
                     });
                 });
