@@ -290,14 +290,19 @@
                 _requestingData = true;
                 intellisenseQueryRunner.InvokeAsync(() =>
                 {
-                    intellisenseJobRunner.InvokeAsync(async () =>
+                    CodeCompletionResults result = null;
+                    intellisenseJobRunner.InvokeAsync(() =>
                     {
-                        var result = await languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
-                        SetCompletionData(result);
+                        var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
+                        task.Wait();
+
+                        result = task.Result;
                     }).Wait();
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
+                        SetCompletionData(result);
+
                         _requestingData = false;
 
                         UpdateFilter(editor.CaretOffset, false);
