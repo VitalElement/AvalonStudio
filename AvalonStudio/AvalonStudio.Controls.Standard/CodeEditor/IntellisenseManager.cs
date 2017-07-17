@@ -24,6 +24,8 @@
         private readonly ICompletionAssistant completionAssistant;
         private AvaloniaEdit.TextEditor editor;
 
+        private bool _requestingData;
+        private bool _hidden; // i.e. can be technically open, but hidden awaiting completion data..
         private bool _justOpened;
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
@@ -75,6 +77,7 @@
             this.editor = editor;
 
             this.editor.LostFocus += Editor_LostFocus;
+            _hidden = true;
         }
 
         public void Dispose()
@@ -114,6 +117,8 @@
                     currentCompletion.Overloads++;
                 }
             }
+
+            // todo clear hidden?
         }
 
         private void OpenIntellisense(char currentChar, char previousChar, int caretIndex)
@@ -149,6 +154,7 @@
             }
 
             intellisenseControl.SelectedCompletion = noSelectedCompletion;
+            _hidden = true;
             intellisenseControl.IsVisible = false;
         }
 
@@ -210,7 +216,12 @@
 
                     intellisenseControl.CompletionData = list;
                     intellisenseControl.SelectedCompletion = suggestion;
-                    intellisenseControl.IsVisible = true;
+
+                    _hidden = false;
+                    if (!_requestingData)
+                    {
+                        intellisenseControl.IsVisible = true;
+                    }
                 }
             }
             else
@@ -265,6 +276,7 @@
         {
             if (!intellisenseControl.IsVisible)
             {
+                _requestingData = true;
                 intellisenseQueryRunner.InvokeAsync(() =>
                 {
                     if (invokeOnRunner)
@@ -273,7 +285,7 @@
                         {
                             var result = await languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
                             SetCompletionData(result);
-                        }).GetAwaiter();
+                        }).Wait();
                     }
                     else
                     {
@@ -284,7 +296,13 @@
                             SetCompletionData(task.Result);
                         }).Wait();
                     }
-                }).Wait();
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _requestingData = false;
+                        intellisenseControl.IsVisible = !_hidden;
+                    });
+                });
             }
         }
 
@@ -351,9 +369,9 @@
 
                     previousChar = editor.Document.GetCharAt(caretIndex - 2);
 
-                    if (IsTriggerChar(currentChar, previousChar, intellisenseControl.IsVisible))
+                    if (IsTriggerChar(currentChar, previousChar, !_hidden))
                     {
-                        if (!intellisenseControl.IsVisible)
+                        if (_hidden)
                         {
                             OpenIntellisense(currentChar, previousChar, caretIndex);
                         }
@@ -417,7 +435,7 @@
             {
                 capturedOnKeyDown = e.Key;
 
-                if (intellisenseControl.IsVisible)
+                if (!_hidden)
                 {
                     switch (capturedOnKeyDown)
                     {
@@ -491,7 +509,7 @@
                     {
                         completionAssistant.Close();
                     }
-                    else if (intellisenseControl.IsVisible)
+                    else if (!_hidden)
                     {
                         CloseIntellisense();
                     }
@@ -503,7 +521,7 @@
         {
             if (e.Source == editor.TextArea)
             {
-                if (!_justOpened && intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
+                if (!_justOpened && !_hidden && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
                 {
                     CloseIntellisense();
 
