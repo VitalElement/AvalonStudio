@@ -506,7 +506,7 @@ namespace AvalonStudio
 
         public void SaveAll()
         {
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>().Where(d=>d.IsDirty && d.IsVisible))
             {
                 document.Save();
             }
