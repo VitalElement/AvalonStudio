@@ -122,6 +122,7 @@
         private void OpenIntellisense(char currentChar, char previousChar, int caretIndex)
         {
             _justOpened = true;
+            _hidden = false;
 
             if (caretIndex > 1)
             {
