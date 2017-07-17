@@ -473,16 +473,19 @@ namespace AvalonStudio
 
             if (DocumentTabs.SelectedDocument is IEditor)
             {
-                if (debugHighlight)
+                // ensures that the document has been opened and created.
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    (DocumentTabs.SelectedDocument as IEditor).SetDebugHighlight(line, startColumn, endColumn);
-                }
+                    if (debugHighlight)
+                    {
+                        (DocumentTabs.SelectedDocument as IEditor).SetDebugHighlight(line, startColumn, endColumn);
+                    }
 
-                if (selectLine || debugHighlight)
-                {
-                    // Dispatcher.UIThread.InvokeAsync(() => (DocumentTabs.SelectedDocument as EditorViewModel).ScrollToLine(line));
-                    (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
-                }
+                    if (selectLine || debugHighlight)
+                    {
+                        (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                    }
+                });
             }
 
             return DocumentTabs.SelectedDocument as IEditor;
@@ -503,7 +506,7 @@ namespace AvalonStudio
 
         public void SaveAll()
         {
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>().Where(d=>d.IsDirty && d.IsVisible))
             {
                 document.Save();
             }

@@ -290,14 +290,19 @@
                 _requestingData = true;
                 intellisenseQueryRunner.InvokeAsync(() =>
                 {
-                    intellisenseJobRunner.InvokeAsync(async () =>
+                    CodeCompletionResults result = null;
+                    intellisenseJobRunner.InvokeAsync(() =>
                     {
-                        var result = await languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
-                        SetCompletionData(result);
+                        var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
+                        task.Wait();
+
+                        result = task.Result;
                     }).Wait();
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
+                        SetCompletionData(result);
+
                         _requestingData = false;
 
                         UpdateFilter(editor.CaretOffset, false);
@@ -369,7 +374,10 @@
                         SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
                     }
 
-                    previousChar = editor.Document.GetCharAt(caretIndex - 2);
+                    if (caretIndex >= 2)
+                    {
+                        previousChar = editor.Document.GetCharAt(caretIndex - 2);
+                    }
 
                     if (IsTriggerChar(currentChar, previousChar, !_hidden))
                     {
