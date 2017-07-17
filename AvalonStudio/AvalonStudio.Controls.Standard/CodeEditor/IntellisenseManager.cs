@@ -369,7 +369,10 @@
                         SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
                     }
 
-                    previousChar = editor.Document.GetCharAt(caretIndex - 2);
+                    if (caretIndex >= 2)
+                    {
+                        previousChar = editor.Document.GetCharAt(caretIndex - 2);
+                    }
 
                     if (IsTriggerChar(currentChar, previousChar, !_hidden))
                     {
