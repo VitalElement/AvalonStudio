@@ -284,30 +284,18 @@
             return result;
         }
 
-        public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles, bool invokeOnRunner = true)
+        public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles)
         {
            if (!intellisenseControl.IsVisible)
             {
                 _requestingData = true;
                 intellisenseQueryRunner.InvokeAsync(() =>
                 {
-                    if (invokeOnRunner)
+                    intellisenseJobRunner.InvokeAsync(async () =>
                     {
-                        intellisenseJobRunner.InvokeAsync(async () =>
-                        {
-                            var result = await languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
-                            SetCompletionData(result);
-                        }).Wait();
-                    }
-                    else
-                    {
-                        intellisenseJobRunner.InvokeAsync(() =>
-                        {
-                            var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
-                            task.Wait();
-                            SetCompletionData(task.Result);
-                        }).Wait();
-                    }
+                        var result = await languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
+                        SetCompletionData(result);
+                    }).Wait();
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -379,7 +367,7 @@
 
                     if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
                     {
-                        SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
+                        SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
                     }
 
                     previousChar = editor.Document.GetCharAt(caretIndex - 2);
@@ -397,7 +385,7 @@
                         else
                         {
                             CloseIntellisense();
-                            SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
+                            SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
                         }
                     }
 
@@ -540,15 +528,14 @@
                 {
                     CloseIntellisense();
 
-                    SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
+                    SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
+                }
+                else if (e.Key == Key.Enter)
+                {
+                    SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
                 }
 
                 _justOpened = false;
-
-                if (e.Key == Key.Enter)
-                {
-                    SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
-                }
             }
         }
     }

@@ -276,7 +276,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 if (_intellisenseManager != null && !_textEntering && TextArea.Selection.IsEmpty)
                 {                   
                     var location = Document.GetLocation(CaretOffset);
-                    _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), true);
+                    _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
                 }
 
                 if (CaretOffset > 0)
