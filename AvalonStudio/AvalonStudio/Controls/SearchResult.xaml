@@ -1,0 +1,6 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui">
+    <StackPanel>
+        <TextBlock Text="{Binding Title}" FontSize="14" />
+        <TextBlock Text="{Binding Location}" FontSize="10" />
+    </StackPanel>
+</UserControl>

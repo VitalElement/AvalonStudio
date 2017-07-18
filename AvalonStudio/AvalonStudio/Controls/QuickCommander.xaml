@@ -1,0 +1,14 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:control="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+    <Panel Name="PART_Container">
+        <StackPanel>
+            <TextBox Watermark="Quick Find" UseFloatingWatermark="true" Text="{Binding CommandQuery}" Name="PART_CommandBox" />
+            <ListBox Items="{Binding Results}" IsVisible="{Binding ResultsVisible}" Background="{StyleResource ThemeBackgroundBrush}" SelectedItem="{Binding SelectedResult}" MaxHeight="450">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <control:SearchResult />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+    </Panel>
+</UserControl>

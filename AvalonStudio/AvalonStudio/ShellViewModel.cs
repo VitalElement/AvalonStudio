@@ -67,6 +67,8 @@ namespace AvalonStudio
 
         private ModalDialogViewModelBase modalDialog;
 
+        private QuickCommanderViewModel _quickCommander;
+
         private ObservableCollection<object> tools;
 
         [ImportingConstructor]
@@ -119,6 +121,8 @@ namespace AvalonStudio
             MiddleTopTabs = new TabControlViewModel();
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
+
+            QuickCommander = new QuickCommanderViewModel();
 
             foreach (var extension in extensions)
             {
@@ -562,6 +566,11 @@ namespace AvalonStudio
             }
         }
 
+        public void ShowQuickCommander()
+        {
+            this._quickCommander.IsVisible = true;
+        }
+
         public ObservableCollection<object> Tools
         {
             get { return tools; }
@@ -605,6 +614,13 @@ namespace AvalonStudio
                 this.RaisePropertyChanged();
             }
         }
+
+        public QuickCommanderViewModel QuickCommander
+        {
+            get { return _quickCommander; }
+            set { this.RaiseAndSetIfChanged(ref _quickCommander, value); }
+        }
+
 
         public void InvalidateCodeAnalysis()
         {
