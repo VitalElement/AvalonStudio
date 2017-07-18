@@ -92,7 +92,8 @@ namespace AvalonStudio
             _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
             _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
 
-            IoC.RegisterConstant(this, typeof(IShell));
+            IoC.RegisterConstant<IShell>(this);
+            IoC.RegisterConstant(this);
 
             foreach (var extension in extensions)
             {
@@ -244,8 +245,6 @@ namespace AvalonStudio
             ProcessCancellationToken = new CancellationTokenSource();
 
             CurrentPerspective = Perspective.Editor;
-
-            IoC.RegisterConstant(this);
         }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
@@ -399,7 +398,7 @@ namespace AvalonStudio
 
             if (document is EditorViewModel doc)
             {
-                doc.Save();
+                doc.Save();                
             }
 
             if (DocumentTabs.TemporaryDocument == document)
