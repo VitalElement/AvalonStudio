@@ -124,7 +124,7 @@ namespace AvalonStudio.Controls
             if (e.InputModifiers == InputModifiers.Control)
             {
                 e.Handled = true;
-                var zoomLevel = (ZoomLevel + (e.Delta.Y * 10));
+                var zoomLevel = ZoomLevel + (e.Delta.Y * 10);
 
                 if (zoomLevel < 20)
                 {
@@ -208,7 +208,10 @@ namespace AvalonStudio.Controls
 
         public double FontSize
         {
-            get { return _fontSize; }
+            get
+            {
+                return _fontSize;
+            }
             set
             {
                 _fontSize = value;
@@ -218,7 +221,10 @@ namespace AvalonStudio.Controls
 
         public double ZoomLevel
         {
-            get { return _zoomLevel; }
+            get
+            {
+                return _zoomLevel;
+            }
             set
             {
                 _zoomLevel = value;
