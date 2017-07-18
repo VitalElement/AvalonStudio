@@ -604,15 +604,8 @@ namespace AvalonStudio
 
         public ModalDialogViewModelBase ModalDialog
         {
-            get
-            {
-                return modalDialog;
-            }
-            set
-            {
-                modalDialog = value;
-                this.RaisePropertyChanged();
-            }
+            get { return modalDialog; }
+            set { this.RaiseAndSetIfChanged(ref modalDialog, value); }
         }
 
         public QuickCommanderViewModel QuickCommander
