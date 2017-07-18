@@ -24,6 +24,8 @@
         private readonly ICompletionAssistant completionAssistant;
         private AvaloniaEdit.TextEditor editor;
 
+        private bool _requestingData;
+        private bool _hidden; // i.e. can be technically open, but hidden awaiting completion data..
         private bool _justOpened;
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
@@ -75,6 +77,7 @@
             this.editor = editor;
 
             this.editor.LostFocus += Editor_LostFocus;
+            _hidden = true;
         }
 
         public void Dispose()
@@ -119,6 +122,7 @@
         private void OpenIntellisense(char currentChar, char previousChar, int caretIndex)
         {
             _justOpened = true;
+            _hidden = false;
 
             if (caretIndex > 1)
             {
@@ -149,73 +153,91 @@
             }
 
             intellisenseControl.SelectedCompletion = noSelectedCompletion;
+            _hidden = true;
             intellisenseControl.IsVisible = false;
         }
 
-        private void UpdateFilter(int caretIndex)
+        private void UpdateFilter(int caretIndex, bool allowVisiblityChanges = true)
         {
-            if (caretIndex > intellisenseStartedAt && intellisenseStartedAt > 0)
+            if (!_requestingData)
             {
-                currentFilter = editor.Document.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
-            }
-            else
-            {
-                currentFilter = string.Empty;
-            }
-
-            CompletionDataViewModel suggestion = null;
-
-            var filteredResults = unfilteredCompletions as IEnumerable<CompletionDataViewModel>;
-
-            if (currentFilter != string.Empty)
-            {
-                filteredResults = unfilteredCompletions.Where(c => c != null && c.Title.ToLower().Contains(currentFilter.ToLower()));
-
-                IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
-
-                // try find exact match case sensitive
-                newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
-
-                if (newSelectedCompletions.Count() == 0)
+                if (caretIndex > intellisenseStartedAt && intellisenseStartedAt > 0)
                 {
-                    newSelectedCompletions = filteredResults.Where(s => s.Title.ToLower().StartsWith(currentFilter.ToLower()));
-                    // try find non-case sensitve match
+                    currentFilter = editor.Document.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
+                }
+                else
+                {
+                    currentFilter = string.Empty;
                 }
 
-                if (newSelectedCompletions.Count() == 0)
+                CompletionDataViewModel suggestion = null;
+
+                var filteredResults = unfilteredCompletions as IEnumerable<CompletionDataViewModel>;
+
+                if (currentFilter != string.Empty)
+                {
+                    filteredResults = unfilteredCompletions.Where(c => c != null && c.Title.ToLower().Contains(currentFilter.ToLower()));
+
+                    IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
+
+                    // try find exact match case sensitive
+                    newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
+
+                    if (newSelectedCompletions.Count() == 0)
+                    {
+                        newSelectedCompletions = filteredResults.Where(s => s.Title.ToLower().StartsWith(currentFilter.ToLower()));
+                        // try find non-case sensitve match
+                    }
+
+                    if (newSelectedCompletions.Count() == 0)
+                    {
+                        suggestion = noSelectedCompletion;
+                    }
+                    else
+                    {
+                        var newSelectedCompletion = newSelectedCompletions.FirstOrDefault();
+
+                        suggestion = newSelectedCompletion;
+                    }
+                }
+                else
                 {
                     suggestion = noSelectedCompletion;
                 }
+
+                if (filteredResults?.Count() > 0)
+                {
+                    if (filteredResults?.Count() == 1 && filteredResults.First().Title == currentFilter)
+                    {
+                        CloseIntellisense();
+                    }
+                    else
+                    {
+                        var list = filteredResults.ToList();
+
+                        intellisenseControl.SelectedCompletion = null;
+                        intellisenseControl.CompletionData = list;
+
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            intellisenseControl.SelectedCompletion = suggestion;
+                        });
+
+                        if (allowVisiblityChanges)
+                        {
+                            _hidden = false;
+
+                            if (!_requestingData && !_hidden)
+                            {
+                                intellisenseControl.IsVisible = true;
+                            }
+                        }
+                    }
+                }
                 else
                 {
-                    var newSelectedCompletion = newSelectedCompletions.FirstOrDefault();
-
-                    suggestion = newSelectedCompletion;
+                    intellisenseControl.SelectedCompletion = noSelectedCompletion;
                 }
-            }
-            else
-            {
-                suggestion = noSelectedCompletion;
-            }
-
-            if (filteredResults?.Count() > 0)
-            {
-                if (filteredResults?.Count() == 1 && filteredResults.First().Title == currentFilter)
-                {
-                    CloseIntellisense();
-                }
-                else
-                {
-                    var list = filteredResults.ToList();
-
-                    intellisenseControl.CompletionData = list;
-                    intellisenseControl.SelectedCompletion = suggestion;
-                    intellisenseControl.IsVisible = true;
-                }
-            }
-            else
-            {
-                intellisenseControl.SelectedCompletion = noSelectedCompletion;
             }
         }
 
@@ -261,30 +283,33 @@
             return result;
         }
 
-        public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles, bool invokeOnRunner = true)
+        public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles)
         {
             if (!intellisenseControl.IsVisible)
             {
+                _requestingData = true;
                 intellisenseQueryRunner.InvokeAsync(() =>
                 {
-                    if (invokeOnRunner)
+                    CodeCompletionResults result = null;
+                    intellisenseJobRunner.InvokeAsync(() =>
                     {
-                        intellisenseJobRunner.InvokeAsync(async () =>
-                        {
-                            var result = await languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
-                            SetCompletionData(result);
-                        }).GetAwaiter();
-                    }
-                    else
+                        var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
+                        task.Wait();
+
+                        result = task.Result;
+                    }).Wait();
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        intellisenseJobRunner.InvokeAsync(() =>
-                        {
-                            var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
-                            task.Wait();
-                            SetCompletionData(task.Result);
-                        }).Wait();
-                    }
-                }).Wait();
+                        SetCompletionData(result);
+
+                        _requestingData = false;
+
+                        UpdateFilter(editor.CaretOffset, false);
+
+                        intellisenseControl.IsVisible = !_hidden;
+                    });
+                });
             }
         }
 
@@ -346,14 +371,17 @@
 
                     if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
                     {
-                        SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
+                        SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
                     }
 
-                    previousChar = editor.Document.GetCharAt(caretIndex - 2);
-
-                    if (IsTriggerChar(currentChar, previousChar, intellisenseControl.IsVisible))
+                    if (caretIndex >= 2)
                     {
-                        if (!intellisenseControl.IsVisible)
+                        previousChar = editor.Document.GetCharAt(caretIndex - 2);
+                    }
+
+                    if (IsTriggerChar(currentChar, previousChar, !_hidden))
+                    {
+                        if (_hidden)
                         {
                             OpenIntellisense(currentChar, previousChar, caretIndex);
                         }
@@ -364,7 +392,7 @@
                         else
                         {
                             CloseIntellisense();
-                            SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
+                            SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
                         }
                     }
 
@@ -417,7 +445,7 @@
             {
                 capturedOnKeyDown = e.Key;
 
-                if (intellisenseControl.IsVisible)
+                if (!_hidden)
                 {
                     switch (capturedOnKeyDown)
                     {
@@ -491,7 +519,7 @@
                     {
                         completionAssistant.Close();
                     }
-                    else if (intellisenseControl.IsVisible)
+                    else if (!_hidden)
                     {
                         CloseIntellisense();
                     }
@@ -503,19 +531,18 @@
         {
             if (e.Source == editor.TextArea)
             {
-                if (!_justOpened && intellisenseControl.IsVisible && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
+                if (!_justOpened && !_hidden && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
                 {
                     CloseIntellisense();
 
-                    SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
+                    SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
+                }
+                else if (e.Key == Key.Enter)
+                {
+                    SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
                 }
 
                 _justOpened = false;
-
-                if (e.Key == Key.Enter)
-                {
-                    SetCursor(caretIndex, line, column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), false);
-                }
             }
         }
     }
