@@ -31,9 +31,10 @@ namespace AvalonStudio.Controls
         {
             InitializeComponent();
 
-            disposables = new CompositeDisposable();
-
-            disposables.Add(this.GetObservable(DataContextProperty).OfType<EditorViewModel>().Subscribe(vm => vm.AttachEditor(this)));
+            disposables = new CompositeDisposable
+            {
+                this.GetObservable(DataContextProperty).OfType<EditorViewModel>().Subscribe(vm => vm.AttachEditor(this))
+            };
         }
 
         ~EditorView()
