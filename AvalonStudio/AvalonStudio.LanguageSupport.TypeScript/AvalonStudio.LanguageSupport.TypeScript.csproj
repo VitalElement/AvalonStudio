@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TSBridge" Version="1.0.0" />
+    <PackageReference Include="TSBridge" Version="1.0.2" />
   </ItemGroup>
       
   <ItemGroup>
