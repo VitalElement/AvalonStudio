@@ -1,7 +1,19 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:control="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio">
+﻿<UserControl xmlns="https://github.com/avaloniaui" 
+             xmlns:control="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions.Custom"
+             xmlns:beh="clr-namespace:AvalonStudio.Behaviors;assembly=AvalonStudio" Name="PART_QuickCommander" IsVisible="{Binding IsVisible, Mode=TwoWay}">
+  <i:Interaction.Behaviors>
+    <beh:HideOnLostFocusBehavior AttachedControlName="PART_CommandBox" />
+  </i:Interaction.Behaviors>
     <Panel Name="PART_Container">
         <StackPanel>
-            <TextBox Watermark="Quick Find" UseFloatingWatermark="true" Text="{Binding CommandQuery}" Name="PART_CommandBox" />
+          <TextBox Watermark="Quick Find" UseFloatingWatermark="true" Text="{Binding CommandQuery}" Name="PART_CommandBox">
+            <i:Interaction.Behaviors>
+              <beh:FocusOnVisibleBehavior AttachedControlName="PART_QuickCommander" />
+              <iac:FocusOnAttachedToVisualTreeBehavior />
+            </i:Interaction.Behaviors>
+          </TextBox>
             <ListBox Items="{Binding Results}" IsVisible="{Binding ResultsVisible}" Background="{StyleResource ThemeBackgroundBrush}" SelectedItem="{Binding SelectedResult}" MaxHeight="450">
                 <ListBox.ItemTemplate>
                     <DataTemplate>

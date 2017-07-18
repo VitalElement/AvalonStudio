@@ -123,7 +123,7 @@
       <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
-    <Controls:QuickCommander Grid.RowSpan="3" Grid.ColumnSpan="5" Width="450" DataContext="{Binding QuickCommander}" IsVisible="{Binding IsVisible}" />
+    <Controls:QuickCommander Grid.RowSpan="3" Grid.ColumnSpan="5" Width="450" DataContext="{Binding QuickCommander}" />
     
     <Controls:ModalDialog Grid.RowSpan="3" Grid.ColumnSpan="5" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
   </Grid>
