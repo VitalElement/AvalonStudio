@@ -48,7 +48,16 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
 
                 dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = extensions });
-                dlg.InitialFileName =  Model.CurrentDirectory;
+
+                if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+                {
+                    dlg.InitialDirectory = Model.CurrentDirectory;
+                }
+                else
+                {
+                    dlg.InitialFileName = Model.CurrentDirectory;
+                }
+
                 dlg.AllowMultiple = false;
 
                 var result = await dlg.ShowAsync();
