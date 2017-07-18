@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvalonStudio.Debugging;
@@ -23,6 +24,10 @@ namespace AvalonStudio.Controls
     public class EditorViewModel : DocumentTabViewModel, IEditor
     {
         private readonly CompositeDisposable disposables;
+        private double _fontSize;
+        private double _zoomLevel;
+        private double _visualFontSize;
+        private ISourceFile _sourceFile;
 
         public ISourceFile ProjectFile { get; set; }
 
@@ -98,6 +103,10 @@ namespace AvalonStudio.Controls
             disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); }));
 
             Dock = Dock.Right;
+
+            _zoomLevel = 100;
+            _fontSize = 14;
+            _visualFontSize = 14;
         }
 
         ~EditorViewModel()
@@ -110,9 +119,29 @@ namespace AvalonStudio.Controls
             disposables.Dispose();
         }
 
+        public void OnPointerWheelChanged(PointerWheelEventArgs e)
+        {
+            if (e.InputModifiers == InputModifiers.Control)
+            {
+                e.Handled = true;
+                var zoomLevel = (ZoomLevel + (e.Delta.Y * 10));
+
+                if (zoomLevel < 20)
+                {
+                    zoomLevel = 20;
+                }
+                else if (zoomLevel > 400)
+                {
+                    zoomLevel = 400;
+                }
+
+                ZoomLevel = zoomLevel;
+            }
+        }
+
         public void AttachEditor(IEditor editor)
         {
-            _editor = editor;
+            _editor = editor;            
         }
 
         private IEditor _editor;
@@ -164,9 +193,38 @@ namespace AvalonStudio.Controls
                         return "Inconsolata";
                 }
             }
+        }        
+
+        public double VisualFontSize
+        {
+            get { return _visualFontSize; }
+            set { this.RaiseAndSetIfChanged(ref _visualFontSize, value); }
         }
 
-        private ISourceFile _sourceFile;
+        private void InvalidateVisualFontSize()
+        {
+            VisualFontSize = (ZoomLevel / 100) * FontSize;
+        }
+
+        public double FontSize
+        {
+            get { return _fontSize; }
+            set
+            {
+                _fontSize = value;
+                InvalidateVisualFontSize();
+            }
+        }
+
+        public double ZoomLevel
+        {
+            get { return _zoomLevel; }
+            set
+            {
+                _zoomLevel = value;
+                InvalidateVisualFontSize();
+            }
+        }
 
         public ISourceFile SourceFile
         {

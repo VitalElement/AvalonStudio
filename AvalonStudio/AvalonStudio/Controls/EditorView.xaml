@@ -19,8 +19,8 @@
         </DropDown>
 
         <editor:CodeEditor Name="editor"
-                                TextBlock.FontFamily="{Binding FontFamily}" TextBlock.FontSize="14"
-                                Foreground="#DCDCDC" BorderThickness="0" TextBlock.FontWeight="ExtraLight"
+                                FontFamily="{Binding FontFamily}" FontSize="{Binding VisualFontSize}"
+                                Foreground="#DCDCDC" BorderThickness="0" FontWeight="ExtraLight"
                                 EditorCaretOffset ="{Binding CaretOffset}"
                                 Line="{Binding Line}"
                                 Column="{Binding Column}"
