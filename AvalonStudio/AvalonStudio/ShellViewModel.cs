@@ -406,10 +406,10 @@ namespace AvalonStudio
                 DocumentTabs.TemporaryDocument = null;
             }
 
-            if (DocumentTabs.Documents.OfType<EditorViewModel>().Where(d=>!d.IsVisible).Count() == 5)
+            if (DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => !d.IsVisible).Count() == 5)
             {
-                var toRemove = DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => !d.IsVisible).First();                
-                
+                var toRemove = DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => !d.IsVisible).First();
+
                 DocumentTabs.Documents.Remove(toRemove);
                 toRemove.OnClose();
 
@@ -432,15 +432,15 @@ namespace AvalonStudio
             if (currentTab != null && !currentTab.IsVisible)
             {
                 restoreFromCache = true;
-            }            
+            }
 
             if (currentTab == null || restoreFromCache)
             {
                 if (DocumentTabs.TemporaryDocument != null)
                 {
-                    var documentToClose = DocumentTabs.TemporaryDocument;                    
+                    var documentToClose = DocumentTabs.TemporaryDocument;
 
-                    await documentToClose.CloseCommand.ExecuteAsyncTask(null);                    
+                    await documentToClose.CloseCommand.ExecuteAsyncTask(null);
                 }
 
                 EditorViewModel newEditor = null;
@@ -456,7 +456,7 @@ namespace AvalonStudio
 
                 if (restoreFromCache)
                 {
-                    newEditor.IsVisible = true;                    
+                    newEditor.IsVisible = true;
                     newEditor.Dock = Avalonia.Controls.Dock.Right;
                     DocumentTabs.SelectedDocument = newEditor;
                 }
@@ -509,7 +509,7 @@ namespace AvalonStudio
 
         public void SaveAll()
         {
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>().Where(d=>d.IsDirty && d.IsVisible))
+            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => d.IsDirty && d.IsVisible))
             {
                 document.Save();
             }
