@@ -108,10 +108,8 @@ namespace AvalonStudio.Controls
 
             Dock = Dock.Right;
 
-            _zoomLevel = _shell.GlobalZoomLevel;
-
             _fontSize = 14;
-            _visualFontSize = 14;
+            ZoomLevel = _shell.GlobalZoomLevel;
         }
 
         ~EditorViewModel()

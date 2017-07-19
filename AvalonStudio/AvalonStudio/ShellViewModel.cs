@@ -13,10 +13,12 @@ using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Extensibility.ToolBars.Models;
+using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
+using AvalonStudio.GlobalSettings;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
@@ -30,6 +32,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AvalonStudio.IdeSettings;
 
 namespace AvalonStudio
 {
@@ -239,8 +242,10 @@ namespace AvalonStudio
             ProcessCancellationToken = new CancellationTokenSource();
 
             CurrentPerspective = Perspective.Editor;
+            
+            var editorSettings = Settings.GetSettings<EditorSettings>();
 
-            _globalZoomLevel = 100;
+            _globalZoomLevel = editorSettings.GlobalZoomLevel;
 
             IoC.RegisterConstant(this);
 
@@ -254,7 +259,11 @@ namespace AvalonStudio
 
             this.WhenAnyValue(x => x.GlobalZoomLevel).Throttle(TimeSpan.FromSeconds(2)).Subscribe(zoomLevel =>
             {
-                // TODO save zoom level in global settings.
+                var settings = Settings.GetSettings<EditorSettings>();
+
+                settings.GlobalZoomLevel = zoomLevel;
+
+                Settings.SetSettings(settings);
             });
         }
 
