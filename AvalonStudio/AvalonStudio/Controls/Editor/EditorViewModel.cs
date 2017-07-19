@@ -144,7 +144,7 @@ namespace AvalonStudio.Controls
 
         public void AttachEditor(IEditor editor)
         {
-            _editor = editor;            
+            _editor = editor;
         }
 
         private IEditor _editor;
@@ -196,7 +196,7 @@ namespace AvalonStudio.Controls
                         return "Inconsolata";
                 }
             }
-        }        
+        }
 
         public double VisualFontSize
         {
@@ -449,8 +449,6 @@ namespace AvalonStudio.Controls
                 ShellViewModel.Instance.StatusBar.Language = value;
             }
         }
-
-
 
         #endregion Commands
 
