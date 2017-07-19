@@ -6,9 +6,11 @@
     <UserControl.KeyBindings>
         <KeyBinding Command="{Binding UpCommand}" CommandParameter="{Binding}" Gesture="Up"/>
         <KeyBinding Command="{Binding DownCommand}" CommandParameter="{Binding}" Gesture="Down"/>
+        <KeyBinding Command="{Binding EscapeCommand}" CommandParameter="{Binding}" Gesture="Escape"/>
+        <KeyBinding Command="{Binding EnterCommand}" CommandParameter="{Binding}" Gesture="Enter"/>
     </UserControl.KeyBindings>
     <i:Interaction.Behaviors>
-    <beh:HideOnLostFocusBehavior AttachedControlName="PART_CommandBox" />
+        <beh:HideOnLostFocusBehavior />
   </i:Interaction.Behaviors>
     <Panel Name="PART_Container">
         <StackPanel>
@@ -18,7 +20,7 @@
               <iac:FocusOnAttachedToVisualTreeBehavior />
             </i:Interaction.Behaviors>
           </TextBox>
-            <ListBox Items="{Binding Results}" IsVisible="{Binding ResultsVisible}" Background="{StyleResource ThemeBackgroundBrush}" SelectedItem="{Binding SelectedResult}" MaxHeight="450">
+            <ListBox Items="{Binding Results}" IsVisible="{Binding ResultsVisible}" Background="{StyleResource ThemeBackgroundBrush}" SelectedItem="{Binding SelectedResult}" SelectedIndex="{Binding SelectedIndex}"  MaxHeight="450">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <control:SearchResult />

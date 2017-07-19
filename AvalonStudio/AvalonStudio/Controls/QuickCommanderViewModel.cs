@@ -19,8 +19,9 @@ namespace AvalonStudio.Controls
         private bool _isFocused;
         private string _commandQuery;
         private ShellViewModel _shell;
-        private IEnumerable<SearchResultViewModel> _results;
+        private IList<SearchResultViewModel> _results;
         private SearchResultViewModel _selectedResult;
+        private int _selectedIndex;
 
         public QuickCommanderViewModel()
         {
@@ -30,19 +31,51 @@ namespace AvalonStudio.Controls
 
             this.WhenAnyValue(x => x.SelectedResult).OfType<SearchResultViewModel>().Subscribe(result =>
             {
-                Dispatcher.UIThread.InvokeAsync(async () => { await _shell.OpenDocument(result.Model, 1); });
+                Dispatcher.UIThread.InvokeAsync(async () => { await _shell.OpenDocument(result.Model, 1, focus: false); });
             });
+
+            this.WhenAnyValue(x => x.IsVisible).Subscribe(visible =>
+            {
+                if (!visible)
+                {
+                    CommandQuery = string.Empty;
+                    Results = null;
+                }
+            }); 
 
             UpCommand = ReactiveCommand.Create();
             UpCommand.Subscribe(_ =>
             {
-
+                if (Results?.Count > 0 && SelectedIndex > 0)
+                {
+                    SelectedIndex--;
+                }
             });
 
             DownCommand = ReactiveCommand.Create();
             DownCommand.Subscribe(_ =>
             {
+                if (Results?.Count > 0 && SelectedIndex < Results?.Count - 1)
+                {
+                    SelectedIndex++;
+                }
+            });
 
+            EnterCommand = ReactiveCommand.Create();
+            EnterCommand.Subscribe(_ =>
+            {
+                IsVisible = false;
+            });
+
+            EscapeCommand = ReactiveCommand.Create();
+            EscapeCommand.Subscribe(_ =>
+            {
+                if(_shell.DocumentTabs.TemporaryDocument?.SourceFile == SelectedResult.Model)
+                {
+                    _shell.RemoveDocument(_shell.DocumentTabs.TemporaryDocument);
+                }
+                
+                IsVisible = false;
             });
 
             _shell = IoC.Get<ShellViewModel>();
@@ -57,7 +90,7 @@ namespace AvalonStudio.Controls
 
             if (string.IsNullOrEmpty(query))
             {
-                Results = null;
+                Results = null;                
             }
             else
             {
@@ -69,6 +102,8 @@ namespace AvalonStudio.Controls
                 }
 
                 Results = results;
+
+                SelectedIndex = 0;
             }
         }
 
@@ -76,19 +111,23 @@ namespace AvalonStudio.Controls
 
         public ReactiveCommand<object> DownCommand { get; }
 
+        public ReactiveCommand<object> EscapeCommand { get; }
+
+        public ReactiveCommand<object> EnterCommand { get; }
+
         public SearchResultViewModel SelectedResult
         {
             get { return _selectedResult; }
             set { this.RaiseAndSetIfChanged(ref _selectedResult, value); }
         }
 
-        public IEnumerable<SearchResultViewModel> Results
+        public IList<SearchResultViewModel> Results
         {
             get { return _results; }
             set
             {
                 this.RaiseAndSetIfChanged(ref _results, value);
-                ResultsVisible = (value?.Count() > 0);
+                ResultsVisible = (value?.Count > 0);
             }
         }
 
@@ -101,19 +140,7 @@ namespace AvalonStudio.Controls
         public bool IsVisible
         {
             get { return _isVisible; }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _isVisible, value);
-
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    IsFocused = value;
-                });
-                if (value)
-                {
-                    //_instance?.Focus();
-                }
-            }
+            set { this.RaiseAndSetIfChanged(ref _isVisible, value); }     
         }
 
         public bool IsFocused
@@ -126,6 +153,19 @@ namespace AvalonStudio.Controls
         {
             get { return _commandQuery; }
             set { this.RaiseAndSetIfChanged(ref _commandQuery, value); }
+        }
+
+        public int SelectedIndex
+        {
+            get
+            {
+                return _selectedIndex;
+            }
+            set
+            {
+                _selectedIndex = value;
+                this.RaisePropertyChanged();
+            }
         }
 
         public void AttachControl(QuickCommander instance)
