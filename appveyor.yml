@@ -3,6 +3,7 @@ os: Visual Studio 2017
 hosts:
   api.nuget.org: 93.184.221.200
   nuget.org: 93.184.221.200
+  dist.nuget.org: 93.184.221.200
 install:
   - if not exist dotnet-sdk-2.0.0-preview2-006497-win-x64.zip appveyor DownloadFile https://download.microsoft.com/download/F/A/A/FAAE9280-F410-458E-8819-279C5A68EDCF/dotnet-sdk-2.0.0-preview2-006497-win-x64.zip -FileName "dotnet-sdk-2.0.0-preview2-006497-win-x64.zip"  
   - cmd: 7z x dotnet-sdk-2.0.0-preview2-006497-win-x64.zip -oc:\dotnet
