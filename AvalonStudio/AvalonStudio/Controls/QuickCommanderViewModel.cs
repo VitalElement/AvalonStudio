@@ -33,6 +33,18 @@ namespace AvalonStudio.Controls
                 Dispatcher.UIThread.InvokeAsync(async () => { await _shell.OpenDocument(result.Model, 1); });
             });
 
+            UpCommand = ReactiveCommand.Create();
+            UpCommand.Subscribe(_ =>
+            {
+
+            });
+
+            DownCommand = ReactiveCommand.Create();
+            DownCommand.Subscribe(_ =>
+            {
+
+            });
+
             _shell = IoC.Get<ShellViewModel>();
         }        
 
@@ -60,12 +72,15 @@ namespace AvalonStudio.Controls
             }
         }
 
+        public ReactiveCommand<object> UpCommand { get; }
+
+        public ReactiveCommand<object> DownCommand { get; }
+
         public SearchResultViewModel SelectedResult
         {
             get { return _selectedResult; }
             set { this.RaiseAndSetIfChanged(ref _selectedResult, value); }
         }
-
 
         public IEnumerable<SearchResultViewModel> Results
         {
