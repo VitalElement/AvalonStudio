@@ -8,6 +8,8 @@ using System.Text;
 using System.Linq;
 using AvalonStudio.Projects;
 using AvalonStudio.Utils;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
@@ -19,15 +21,16 @@ namespace AvalonStudio.Controls
         private bool _isFocused;
         private string _commandQuery;
         private ShellViewModel _shell;
-        private IList<SearchResultViewModel> _results;
+        private ObservableCollection<SearchResultViewModel> _results;
         private SearchResultViewModel _selectedResult;
         private int _selectedIndex;
 
         public QuickCommanderViewModel()
         {
             _isVisible = false;
+            _results = new ObservableCollection<SearchResultViewModel>();
 
-            this.WhenAnyValue(x => x.CommandQuery).Throttle(TimeSpan.FromMilliseconds(200)).Subscribe(query => ProcessQuery(query));
+            this.WhenAnyValue(x => x.CommandQuery).Throttle(TimeSpan.FromMilliseconds(200)).Subscribe(async query => await ProcessQuery(query));
 
             this.WhenAnyValue(x => x.SelectedResult).OfType<SearchResultViewModel>().Subscribe(result =>
             {
@@ -39,7 +42,7 @@ namespace AvalonStudio.Controls
                 if (!visible)
                 {
                     CommandQuery = string.Empty;
-                    Results = null;
+                    _results.Clear();
                 }
             }); 
 
@@ -70,7 +73,7 @@ namespace AvalonStudio.Controls
             EscapeCommand = ReactiveCommand.Create();
             EscapeCommand.Subscribe(_ =>
             {
-                if(_shell.DocumentTabs.TemporaryDocument?.SourceFile == SelectedResult.Model)
+                if(_shell.DocumentTabs.TemporaryDocument?.SourceFile == SelectedResult?.Model)
                 {
                     _shell.RemoveDocument(_shell.DocumentTabs.TemporaryDocument);
                 }
@@ -81,7 +84,7 @@ namespace AvalonStudio.Controls
             _shell = IoC.Get<ShellViewModel>();
         }        
 
-        private void ProcessQuery(string query)
+        private async Task ProcessQuery(string query)
         {
             if (_shell.CurrentSolution == null)
             {
@@ -90,18 +93,36 @@ namespace AvalonStudio.Controls
 
             if (string.IsNullOrEmpty(query))
             {
-                Results = null;                
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    ResultsVisible = false; 
+                    _results.Clear();
+                });
             }
             else
             {
-                var results = new List<SearchResultViewModel>();
-
-                foreach (var project in _shell.CurrentSolution.Projects)
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    results.AddRange(project.SourceFiles.Where(f => f.Project.Location.MakeRelativePath(f.Location).Contains(query)).Select(r => new SearchResultViewModel(r)));
-                }
+                    _results.Clear();
+                });
 
-                Results = results;
+                await Task.Run(() =>
+                {
+                    foreach (var project in _shell.CurrentSolution.Projects)
+                    {
+                        var newResults = project.SourceFiles.Where(f => f.Project.Location.MakeRelativePath(f.Location).Contains(query)).Select(r => new SearchResultViewModel(r));
+
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            foreach (var result in newResults)
+                            {
+                                _results.Add(result);
+                            }
+
+                            ResultsVisible = _results.Count > 0;
+                        });
+                    }
+                });
 
                 SelectedIndex = 0;
             }
@@ -121,13 +142,13 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref _selectedResult, value); }
         }
 
-        public IList<SearchResultViewModel> Results
+        public ObservableCollection<SearchResultViewModel> Results
         {
             get { return _results; }
             set
             {
                 this.RaiseAndSetIfChanged(ref _results, value);
-                ResultsVisible = (value?.Count > 0);
+                ResultsVisible = (value.Count > 0);
             }
         }
 
