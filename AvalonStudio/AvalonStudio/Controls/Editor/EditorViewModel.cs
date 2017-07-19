@@ -28,6 +28,7 @@ namespace AvalonStudio.Controls
         private double _zoomLevel;
         private double _visualFontSize;
         private ISourceFile _sourceFile;
+        private ShellViewModel _shell;
 
         public ISourceFile ProjectFile { get; set; }
 
@@ -92,19 +93,23 @@ namespace AvalonStudio.Controls
 
         public EditorViewModel()
         {
-            disposables = new CompositeDisposable();
+            _shell = IoC.Get<ShellViewModel>();
 
-            disposables.Add(CloseCommand.Subscribe(_ =>
-            {                
-                IoC.Get<IShell>().InvalidateErrors();                
-            }));
+            disposables = new CompositeDisposable
+            {
+                CloseCommand.Subscribe(_ =>
+                {
+                    _shell.InvalidateErrors();
+                })
+            };
 
             AddWatchCommand = ReactiveCommand.Create();
             disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); }));
 
             Dock = Dock.Right;
 
-            _zoomLevel = 100;
+            _zoomLevel = _shell.GlobalZoomLevel;
+
             _fontSize = 14;
             _visualFontSize = 14;
         }
@@ -214,8 +219,11 @@ namespace AvalonStudio.Controls
             }
             set
             {
-                _fontSize = value;
-                InvalidateVisualFontSize();
+                if (_fontSize != value)
+                {
+                    _fontSize = value;
+                    InvalidateVisualFontSize();
+                }
             }
         }
 
@@ -227,8 +235,12 @@ namespace AvalonStudio.Controls
             }
             set
             {
-                _zoomLevel = value;
-                InvalidateVisualFontSize();
+                if (value != _zoomLevel)
+                {
+                    _zoomLevel = value;
+                    _shell.GlobalZoomLevel = value;
+                    InvalidateVisualFontSize();
+                }
             }
         }
 
