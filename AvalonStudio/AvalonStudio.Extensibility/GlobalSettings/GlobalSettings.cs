@@ -8,7 +8,7 @@ using System.IO;
 
 namespace AvalonStudio.GlobalSettings
 {
-    internal class Settings
+    public class Settings
     {
         private dynamic _root = new ExpandoObject();
 
@@ -55,36 +55,24 @@ namespace AvalonStudio.GlobalSettings
             SerializedObject.Serialize(GlobalSettingsFile, this);
         }
 
-        public T GetSettings<T>()
+        private T GetSettingsImpl<T>() where T : new()
         {
-            T result = default(T);
-
-            if (_rootIndex[typeof(T).FullName] is ExpandoObject)
-            {
-                result = (_rootIndex[typeof(T).FullName] as ExpandoObject).GetConcreteType<T>();
-            }
-            else
-            {
-                result = (T)_rootIndex[typeof(T).FullName];
-            }
-
-            return result;
+            return SettingsSerializer.GetSettings<T>(() => Root, () => Save());
         }
 
-        public void SetSettings<T>(T value)
+        private void SetSettingsImpl<T>(T value) where T : new()
         {
-            _rootIndex[typeof(T).FullName] = value;
-
-            Save();
+            SettingsSerializer.SetSettings<T>(() => Root, () => Save(), value);
         }
 
-        public T ProvisionSettings<T>() where T : new()
+        public static T GetSettings<T>() where T : new()
         {
-            _rootIndex[typeof(T).FullName] = new T();
+            return Instance.GetSettingsImpl<T>();
+        }
 
-            Save();
-
-            return (T)_rootIndex[typeof(T).FullName];
+        public static void SetSettings<T>(T value) where T : new()
+        {
+            Instance.SetSettingsImpl(value);
         }
     }
 }

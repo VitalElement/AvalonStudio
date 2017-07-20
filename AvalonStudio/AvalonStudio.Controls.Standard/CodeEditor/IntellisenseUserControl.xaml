@@ -1,11 +1,11 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
               xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
               xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility">
-  <Grid Background="{StyleResource ThemeControlDarkBrush}">
+  <Grid Background="{StyleResource ThemeControlDarkBrush}"  TextBlock.FontFamily="Segoi UI" TextBlock.FontSize="14">
     <StackPanel Orientation="Horizontal" Gap="2" Background="Transparent" IsVisible="{Binding IsVisible}">
       <ListBox Items="{Binding CompletionData}" Background="{StyleResource ThemeControlMidBrush}"
        BorderBrush="#3e3e42" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="180"
-       FontFamily="Segoi UI" FontSize="14" Width="240" TextBlock.Foreground="#D4D4D4" >
+       Width="240" TextBlock.Foreground="#D4D4D4" >
         <ListBox.Styles>
           <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
             <Setter Property="Background" Value="#274452"/>

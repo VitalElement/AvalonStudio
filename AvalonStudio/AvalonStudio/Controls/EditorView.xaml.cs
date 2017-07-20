@@ -21,6 +21,8 @@ namespace AvalonStudio.Controls
 
         private Standard.CodeEditor.CodeEditor _editor;
 
+        private EditorViewModel _editorViewModel;
+
         private IShell shell;
 
         public ISourceFile ProjectFile => throw new NotImplementedException();
@@ -31,16 +33,19 @@ namespace AvalonStudio.Controls
         {
             InitializeComponent();
 
-            disposables = new CompositeDisposable
+            disposables = new CompositeDisposable();
+
+            disposables.Add(this.GetObservable(DataContextProperty).OfType<EditorViewModel>().Subscribe(vm =>
             {
-                this.GetObservable(DataContextProperty).OfType<EditorViewModel>().Subscribe(vm => vm.AttachEditor(this))
-            };
+                vm.AttachEditor(this);
+                _editorViewModel = vm;
+            }));
         }
 
         ~EditorView()
         {
             disposables.Dispose();
-        }
+        }        
 
         protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
@@ -61,6 +66,8 @@ namespace AvalonStudio.Controls
                     shell.SelectedDocument = editorVm;                    
                 }
             });
+
+            _editor.AddHandler(PointerWheelChangedEvent, (sender, ee) => { _editorViewModel?.OnPointerWheelChanged(ee); }, Avalonia.Interactivity.RoutingStrategies.Tunnel, handledEventsToo: true);
         }
 
         private void _editor_RequestTooltipContent(object sender, Standard.TooltipDataRequestEventArgs e)

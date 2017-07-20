@@ -9,7 +9,7 @@
     <EmbeddedResource Include="STM32ProjectSetupModalDialogView.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.1-build3466-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.1-build3495-alpha" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
