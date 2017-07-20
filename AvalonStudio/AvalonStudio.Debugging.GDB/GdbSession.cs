@@ -238,6 +238,7 @@ namespace AvalonStudio.Debugging.GDB
             proc.StartInfo.RedirectStandardInput = true;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.RedirectStandardError = true;
+            proc.StartInfo.CreateNoWindow = true;
             proc.Start();
 
             sout = proc.StandardOutput;
