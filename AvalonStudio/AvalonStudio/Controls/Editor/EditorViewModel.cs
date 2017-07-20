@@ -239,7 +239,7 @@ namespace AvalonStudio.Controls
                     _shell.GlobalZoomLevel = value;
                     InvalidateVisualFontSize();
 
-                    ZoomLevelText = $"{ZoomLevel} %";
+                    ZoomLevelText = $"{ZoomLevel:0} %";
                 }
             }
         }
