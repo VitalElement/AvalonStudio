@@ -769,11 +769,6 @@ namespace AvalonStudio
                     ErrorList.Errors.Add(error);
                 }
             }
-
-            if (hasChanged)
-            {
-                BottomTabs.SelectedTool = ErrorList;
-            }
         }
 
         public void Cleanup()
