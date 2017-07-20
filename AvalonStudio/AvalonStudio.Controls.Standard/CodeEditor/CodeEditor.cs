@@ -341,11 +341,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                 {
                                     Elements ={
                                         new SnippetTextElement{Text ="for(int "},
-                                        new SnippetBoundElement{TargetElement = loopCounter},
+                                        loopCounter,                                        
                                         new SnippetTextElement{Text =" = "},
                                         new SnippetReplaceableTextElement{Text ="0"},
                                         new SnippetTextElement{Text ="; "},
-                                        loopCounter,
+                                        new SnippetBoundElement{TargetElement = loopCounter},
                                         new SnippetTextElement{Text =" < "},
                                         new SnippetReplaceableTextElement{Text ="end"},
                                         new SnippetTextElement{Text ="; "},
