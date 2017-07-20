@@ -274,10 +274,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             TextArea.Caret.PositionChanged += (sender, e) =>
             {
-                if (_intellisenseManager != null && !_textEntering && TextArea.Selection.IsEmpty)
+                if (_intellisenseManager != null && !_textEntering)
                 {
-                    var location = Document.GetLocation(CaretOffset);
-                    _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
+                    if (TextArea.Selection.IsEmpty)
+                    {
+                        var location = Document.GetLocation(CaretOffset);
+                        _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
+                    }
+                    else if (_currentSnippetContext != null)
+                    {
+                        var offset = Document.GetOffset(TextArea.Selection.StartPosition.Location);
+                        _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());
+                    }
                 }
 
                 if (CaretOffset > 0)
