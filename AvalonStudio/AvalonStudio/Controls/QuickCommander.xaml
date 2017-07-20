@@ -12,9 +12,8 @@
     <i:Interaction.Behaviors>
         <beh:HideOnLostFocusBehavior />
   </i:Interaction.Behaviors>
-    <Panel Name="PART_Container">
-        <StackPanel>
-          <TextBox Watermark="Quick Find" UseFloatingWatermark="true" Text="{Binding CommandQuery}" Name="PART_CommandBox">
+        <DockPanel LastChildFill="True">
+          <TextBox Watermark="Quick Find" UseFloatingWatermark="true" Text="{Binding CommandQuery}" Name="PART_CommandBox" DockPanel.Dock="Top">
             <i:Interaction.Behaviors>
               <beh:FocusOnVisibleBehavior AttachedControlName="PART_QuickCommander" />
               <iac:FocusOnAttachedToVisualTreeBehavior />
@@ -27,6 +26,5 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </StackPanel>
-    </Panel>
+        </DockPanel>
 </UserControl>
