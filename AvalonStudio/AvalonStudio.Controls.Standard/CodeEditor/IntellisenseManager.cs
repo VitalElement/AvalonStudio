@@ -488,9 +488,9 @@
                             }
                             break;
 
+                        case Key.Tab:
                         case Key.Enter:
                             DoComplete(false);
-
                             e.Handled = true;
                             break;
                     }
