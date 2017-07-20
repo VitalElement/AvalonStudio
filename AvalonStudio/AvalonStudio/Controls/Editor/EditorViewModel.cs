@@ -127,7 +127,8 @@ namespace AvalonStudio.Controls
             if (e.InputModifiers == InputModifiers.Control)
             {
                 e.Handled = true;
-                var zoomLevel = ZoomLevel + (e.Delta.Y * 10);
+
+                var zoomLevel = ZoomLevel + (Math.Round(e.Delta.Y) * 5);
 
                 if (zoomLevel < 20)
                 {
