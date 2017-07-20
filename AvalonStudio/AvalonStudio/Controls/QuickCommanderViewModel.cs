@@ -126,7 +126,7 @@ namespace AvalonStudio.Controls
                     }
                 });
 
-                SelectedIndex = 0;
+                SelectedIndex = -1;
             }
         }
 
