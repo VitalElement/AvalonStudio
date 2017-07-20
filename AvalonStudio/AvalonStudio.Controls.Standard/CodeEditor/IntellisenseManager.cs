@@ -328,9 +328,12 @@
                     char currentChar = e.Text[0];
                     char previousChar = '\0';
 
-                    if (IsCompletionChar(currentChar))
+                    if(intellisenseControl.IsVisible)
                     {
-                        DoComplete(true);
+                        if (IsCompletionChar(currentChar))
+                        {
+                            DoComplete(true);
+                        }
                     }
 
                     if (completionAssistant.IsVisible)
