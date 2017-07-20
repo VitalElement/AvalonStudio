@@ -4,11 +4,13 @@
     using Avalonia.Threading;
     using AvaloniaEdit.Document;
     using AvalonStudio.Controls.Standard.CodeEditor;
+    using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Extensibility.Threading;
     using AvalonStudio.Languages;
     using AvalonStudio.Languages.ViewModels;
     using AvalonStudio.Projects;
+    using AvalonStudio.Shell;
     using AvalonStudio.Utils;
     using System;
     using System.Collections.Generic;
@@ -18,6 +20,8 @@
 
     internal class IntellisenseManager
     {
+        private IShell _shell;
+        private IConsole _console;
         private readonly ILanguageService languageService;
         private readonly ISourceFile file;
         private readonly IIntellisenseControl intellisenseControl;
@@ -78,6 +82,9 @@
 
             this.editor.LostFocus += Editor_LostFocus;
             _hidden = true;
+
+            _shell = IoC.Get<IShell>();
+            _console = IoC.Get<IConsole>();
         }
 
         public void Dispose()
@@ -121,6 +128,11 @@
 
         private void OpenIntellisense(char currentChar, char previousChar, int caretIndex)
         {
+            if (_shell.DebugMode)
+            {
+                _console.WriteLine("Open Intellisense");
+            }
+
             _justOpened = true;
             _hidden = false;
 
@@ -165,6 +177,11 @@
         {
             if (!_requestingData)
             {
+                if (_shell.DebugMode)
+                {
+                    _console.WriteLine("Filtering");
+                }
+
                 var wordStart = DocumentUtilities.FindPrevWordStart(editor.Document, caretIndex);
 
                 if (wordStart >= 0)
@@ -293,12 +310,22 @@
         {
             if (!intellisenseControl.IsVisible)
             {
+                if (_shell.DebugMode)
+                {
+                    _console.WriteLine("Set Cursor");
+                }
+
                 _requestingData = true;
                 intellisenseQueryRunner.InvokeAsync(() =>
                 {
                     CodeCompletionResults result = null;
                     intellisenseJobRunner.InvokeAsync(() =>
                     {
+                        if (_shell.DebugMode)
+                        {
+                            _console.WriteLine($"Query Language Service {index}, {line}, {column}");
+                        }
+
                         var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
                         task.Wait();
 
@@ -307,6 +334,11 @@
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
+                        if (_shell.DebugMode)
+                        {
+                            _console.WriteLine("Set Completion Data");
+                        }
+
                         SetCompletionData(result);
 
                         _requestingData = false;
