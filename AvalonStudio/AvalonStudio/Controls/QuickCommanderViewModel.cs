@@ -73,9 +73,12 @@ namespace AvalonStudio.Controls
             EscapeCommand = ReactiveCommand.Create();
             EscapeCommand.Subscribe(_ =>
             {
-                if(_shell.DocumentTabs.TemporaryDocument?.SourceFile == SelectedResult?.Model)
+                if (_shell.DocumentTabs.TemporaryDocument != null)
                 {
-                    _shell.RemoveDocument(_shell.DocumentTabs.TemporaryDocument);
+                    if (_shell.DocumentTabs.TemporaryDocument.SourceFile == SelectedResult?.Model)
+                    {
+                        _shell.RemoveDocument(_shell.DocumentTabs.TemporaryDocument);
+                    }
                 }
                 
                 IsVisible = false;
