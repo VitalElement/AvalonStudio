@@ -15,7 +15,7 @@
 
     public class DotNetCoreDebugger : IDebugger2
     {
-        public string BinDirectory => Path.GetDirectoryName(SettingsBase.GetSettings<DotNetToolchainSettings>().DotNetPath);
+        public string BinDirectory => Path.GetDirectoryName(Settings.GetSettings<DotNetToolchainSettings>().DotNetPath);
 
         public void Activation()
         {
@@ -28,7 +28,7 @@
 
         private static string ResolveShimVersion()
         {
-            var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
+            var settings = Settings.GetSettings<DotNetToolchainSettings>();
 
             bool inHostSection = false;
 
@@ -65,13 +65,13 @@
 
         public DebuggerSession CreateSession(IProject project)
         {
-            var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
+            var settings = Settings.GetSettings<DotNetToolchainSettings>();
 
             var coreAppVersion = ResolveShimVersion();
 
             string dbgShimName = "dbgshim";
 
-            if(Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
+            if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
             {
                 dbgShimName = "lib" + dbgShimName;
             }
