@@ -106,11 +106,13 @@ namespace AvalonStudio.Controls
                     _results.Clear();
                 });
 
+                query = query.ToLower();
+
                 await Task.Run(() =>
                 {
                     foreach (var project in _shell.CurrentSolution.Projects)
                     {
-                        var newResults = project.SourceFiles.Where(f => f.Project.Location.MakeRelativePath(f.Location).Contains(query)).Select(r => new SearchResultViewModel(r));
+                        var newResults = project.SourceFiles.Where(f => f.Project.Location.MakeRelativePath(f.Location).ToLower().Contains(query)).Select(r => new SearchResultViewModel(r));
 
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
