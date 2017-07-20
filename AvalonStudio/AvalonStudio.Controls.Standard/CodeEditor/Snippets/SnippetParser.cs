@@ -9,18 +9,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 {
     public class SnippetParser
     {
-        readonly static Regex pattern = new Regex(@"\$\{([^\}]*)\}", RegexOptions.CultureInvariant);
+        static readonly Regex pattern = new Regex(@"\$\{([^\}]*)\}", RegexOptions.CultureInvariant);
 
-        public static List<ISnippetElementProvider> SnippetElementProviders = new List<ISnippetElementProvider> { new DefaultSnippetElementProvider() };
-
-        private int myVar;
-
-        public int MyProperty
-        {
-            get { return myVar; }
-            set { myVar = value; }
-        }
-
+        public static List<ISnippetElementProvider> SnippetElementProviders { get; } = new List<ISnippetElementProvider> { new DefaultSnippetElementProvider() };        
 
         public static Snippet Parse(string snippetText)
         {
@@ -93,7 +84,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 
             if (replaceableElements.TryGetValue(val, out srte))
                 return new SnippetBoundElement { TargetElement = srte };
-            
+
             string result = GetValue(val);
             if (result != null)
                 return new SnippetTextElement { Text = result };
@@ -105,11 +96,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
         {
             if ("ClassName".Equals(propertyName, StringComparison.OrdinalIgnoreCase))
             {
-              //  var c = GetCurrentClass(editor);
-            //    if (c != null)
-              //      return c.Name;
+                // TODO implement a way to get the current class name!
             }
-            //return Core.StringParser.GetValue(propertyName);
+
+            // Todo implement a way to expand environment variables here...
 
             return propertyName;
         }

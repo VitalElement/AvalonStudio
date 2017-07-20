@@ -328,7 +328,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             };
 
-
             EventHandler<KeyEventArgs> tunneledKeyDownHandler = (send, ee) =>
             {
                 if (CaretOffset > 0)
@@ -345,7 +344,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                             if (word == "propfull") // todo lookup snippets in snippet manager.
                             {
-                                var loopCounter = new SnippetReplaceableTextElement { Text = "i" };                                
+                                var loopCounter = new SnippetReplaceableTextElement { Text = "i" };
 
                                 var snippet2 = SnippetParser.Parse("");
 
@@ -360,9 +359,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                                 IDisposable disposable = null;
 
-                                disposable = Observable.FromEventPattern(_currentSnippetContext, nameof(_currentSnippetContext.Deactivated)).Take(1).Subscribe(o=> 
+                                disposable = Observable.FromEventPattern(_currentSnippetContext, nameof(_currentSnippetContext.Deactivated)).Take(1).Subscribe(o =>
                                 {
-                                    _currentSnippetContext = null;                                    
+                                    _currentSnippetContext = null;
                                     disposable.Dispose();
 
                                     Dispatcher.UIThread.InvokeAsync(() =>
@@ -370,14 +369,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                         // need to do this or could end up inside an existing document update.
                                         FormatAll();
                                     });
-                                });                  
+                                });
                             }
                         }
-                    }
-
-                    if(_currentSnippetContext != null)
-                    {
-                        
                     }
                 }
             };
