@@ -186,7 +186,7 @@
 
                 if (wordStart >= 0)
                 {
-                    currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty);                
+                    currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty);
                 }
                 else
                 {
@@ -303,6 +303,9 @@
 
             CloseIntellisense();
 
+            var location = editor.Document.GetLocation(editor.CaretOffset);
+            SetCursor(editor.CaretOffset, location.Line, location.Column, CodeEditor.UnsavedFiles.ToList());
+
             return result;
         }
 
@@ -360,7 +363,7 @@
                     char currentChar = e.Text[0];
                     char previousChar = '\0';
 
-                    if(intellisenseControl.IsVisible)
+                    if (intellisenseControl.IsVisible)
                     {
                         if (IsCompletionChar(currentChar))
                         {
