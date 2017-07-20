@@ -11,6 +11,7 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
+using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Threading;
@@ -344,24 +345,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                             if (word == "propfull") // todo lookup snippets in snippet manager.
                             {
-                                var loopCounter = new SnippetReplaceableTextElement { Text = "i" };
-                                Snippet snippet = new Snippet
-                                {
-                                    Elements ={
-                                        new SnippetTextElement{Text ="for(int "},
-                                        loopCounter,                                        
-                                        new SnippetTextElement{Text =" = "},
-                                        new SnippetReplaceableTextElement{Text ="0"},
-                                        new SnippetTextElement{Text ="; "},
-                                        new SnippetBoundElement{TargetElement = loopCounter},
-                                        new SnippetTextElement{Text =" < "},
-                                        new SnippetReplaceableTextElement{Text ="end"},
-                                        new SnippetTextElement{Text ="; "},
-                                        new SnippetBoundElement{TargetElement = loopCounter},
-                                        new SnippetTextElement{Text ="++) {"},
-                                        new SnippetCaretElement(),
-                                        new SnippetTextElement{Text ="    }"}}
-                                };
+                                var loopCounter = new SnippetReplaceableTextElement { Text = "i" };                                
+
+                                var snippet2 = SnippetParser.Parse("");
 
                                 _intellisenseManager.CloseIntellisense();
 
@@ -369,7 +355,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                 {
                                     Document.Remove(wordStart, CaretOffset - wordStart);
 
-                                    _currentSnippetContext = snippet.Insert(TextArea);
+                                    _currentSnippetContext = snippet2.Insert(TextArea);
                                 }
 
                                 IDisposable disposable = null;
