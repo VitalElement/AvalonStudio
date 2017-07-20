@@ -367,6 +367,11 @@ namespace AvalonStudio
 
         public void RemoveDocument(IDocumentTabViewModel document)
         {
+            if(document == null)
+            {
+                return;
+            }
+
             IDocumentTabViewModel newSelectedTab = DocumentTabs.SelectedDocument;
 
             if (DocumentTabs.SelectedDocument == document)
