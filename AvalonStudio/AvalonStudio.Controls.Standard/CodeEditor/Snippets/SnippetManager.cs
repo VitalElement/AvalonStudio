@@ -2,9 +2,13 @@
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Languages;
+using AvalonStudio.Platforms;
+using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 {
@@ -18,9 +22,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
         {
             IoC.RegisterConstant(this);
 
-            // Todo parse snippets directory.
+            var snippetFolders = Directory.EnumerateDirectories(Platform.SnippetsFolder).Concat(Directory.EnumerateDirectories(Platform.InBuiltSnippetsFolder));
 
-            AddSnippet("cpp", new CodeSnippet { Name = "propfull", Description = "cpp property implementation", Snippet = "${type=int} ${ClassName}::get_${property=Property}()\n{\n\treturn ${ToFieldName(property)};\n}\n\nvoid ${ClassName}::set_${property}(${type} value)\n{\t${ToFieldName(property)} = value;${Caret}\n}" });
+            foreach(var folder in snippetFolders)
+            {
+                foreach (var file in Directory.EnumerateFiles(folder))
+                {
+                    var snippet = SerializedObject.Deserialize<CodeSnippet>(file);
+                    AddSnippet(Path.GetFileName(folder), snippet);
+                }
+            }
         }
 
         public void AddSnippet(string languageId, CodeSnippet snippet)
@@ -40,7 +51,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 
         public IDictionary<string, CodeSnippet> GetSnippets(ILanguageService languageService)
         {
-            return _snippets[languageService.LanguageId];
+            if (_snippets.ContainsKey(languageService.LanguageId))
+            {
+                return _snippets[languageService.LanguageId];
+            }
+            else
+            {
+                return new Dictionary<string, CodeSnippet>();
+            }
         }
     }
 }
