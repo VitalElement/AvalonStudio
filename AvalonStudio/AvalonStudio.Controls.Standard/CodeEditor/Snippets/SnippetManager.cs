@@ -24,7 +24,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 
             var snippetFolders = Directory.EnumerateDirectories(Platform.SnippetsFolder).Concat(Directory.EnumerateDirectories(Platform.InBuiltSnippetsFolder));
 
-            foreach(var folder in snippetFolders)
+            foreach (var folder in snippetFolders)
             {
                 foreach (var file in Directory.EnumerateFiles(folder))
                 {
