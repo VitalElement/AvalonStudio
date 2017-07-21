@@ -350,8 +350,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                             if (codeSnippet != null)
                             {
-                                var loopCounter = new SnippetReplaceableTextElement { Text = "i" };
-
                                 var snippet = SnippetParser.Parse(LanguageService, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column, codeSnippet.Snippet);
 
                                 _intellisenseManager.CloseIntellisense();
