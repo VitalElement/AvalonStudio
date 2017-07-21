@@ -53,6 +53,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private readonly List<IVisualLineTransformer> _languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
 
+        private SnippetManager _snippetManager;
+
         public IntellisenseViewModel Intellisense => _intellisense;
 
         private IntellisenseManager _intellisenseManager;
@@ -98,6 +100,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _codeAnalysisRunner = new JobRunner(1);
 
             _shell = IoC.Get<IShell>();
+
+            _snippetManager = IoC.Get<SnippetManager>();
 
             _lineNumberMargin = new LineNumberMargin(this);
 
@@ -334,7 +338,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     _intellisenseManager?.OnKeyDown(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
 
-                    if (ee.Key == Key.Tab && _currentSnippetContext == null)
+                    if (ee.Key == Key.Tab && _currentSnippetContext == null && LanguageService != null)
                     {
                         var wordStart = Document.FindPrevWordStart(CaretOffset);
 
@@ -342,11 +346,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         {
                             string word = Document.GetText(wordStart, CaretOffset - wordStart);
 
-                            if (word == "propfull") // todo lookup snippets in snippet manager.
+                            if(_snippetManager.GetSnippets(LanguageService).ContainsKey(word))
                             {
+                                var codeSnippet = _snippetManager.GetSnippets(LanguageService)[word];
+
                                 var loopCounter = new SnippetReplaceableTextElement { Text = "i" };
 
-                                var snippet2 = SnippetParser.Parse(LanguageService, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column, "${type=int} ${ClassName}::get_${property=Property}()\n{\n\treturn ${ToFieldName(property)};\n}\n\nvoid ${ClassName}::set_${property}(${type} value)\n{\t${ToFieldName(property)} = value;${Caret}\n}");
+                                var snippet = SnippetParser.Parse(LanguageService, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column, codeSnippet.Snippet);
 
                                 _intellisenseManager.CloseIntellisense();
 
@@ -354,7 +360,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                 {
                                     Document.Remove(wordStart, CaretOffset - wordStart);
 
-                                    _currentSnippetContext = snippet2.Insert(TextArea);
+                                    _currentSnippetContext = snippet.Insert(TextArea);
                                 }
 
                                 IDisposable disposable = null;
