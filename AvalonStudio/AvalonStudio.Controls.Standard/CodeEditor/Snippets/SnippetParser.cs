@@ -87,10 +87,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
             if (m.Success)
             {
                 Func<string, string> f = GetFunction(languageService, m.Groups[1].Value);
-                string innerVal = m.Groups[2].Value;
-
+                
                 if (f != null)
                 {
+                    string innerVal = m.Groups[2].Value;
+
                     if (replaceableElements.TryGetValue(innerVal, out srte))
                         return new FunctionBoundElement { TargetElement = srte, Function = f };
                     string result2 = GetValue(languageService, caret, line, column, innerVal);
@@ -150,7 +151,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
             return null;
         }
 
-        sealed class FunctionBoundElement : SnippetBoundElement
+        public sealed class FunctionBoundElement : SnippetBoundElement
         {
             internal Func<string, string> Function
             {
