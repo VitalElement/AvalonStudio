@@ -25,6 +25,7 @@
 
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
+using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
@@ -88,6 +89,8 @@ namespace AvalonStudio.Debugging.GDB
             _runCommand = runCommand;
             _detectAsync = detectAsync;
             _waitForStopBeforeRunning = waitForStopBeforeRunning;
+
+            logGdb = IoC.Get<IShell>().DebugMode;
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)

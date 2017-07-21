@@ -105,6 +105,10 @@ namespace AvalonStudio.Languages.ViewModels
                     result = new FieldCompletionDataViewModel(data);
                     break;
 
+                case CodeCompletionKind.Snippet:
+                    result = new SnippetCompletionDataViewModel(data);
+                    break;
+
                 default:
                     result = new DefaultCompletionDataViewModel(data);
                     break;
