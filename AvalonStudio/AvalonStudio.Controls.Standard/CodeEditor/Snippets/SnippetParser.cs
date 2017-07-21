@@ -11,6 +11,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
     public class SnippetParser
     {
         static readonly Regex pattern = new Regex(@"\$\{([^\}]*)\}", RegexOptions.CultureInvariant);
+        static readonly Regex functionPattern = new Regex(@"^([a-zA-Z]+)\(([^\)]*)\)$", RegexOptions.CultureInvariant);
 
         public static List<ISnippetElementProvider> SnippetElementProviders { get; } = new List<ISnippetElementProvider> { new DefaultSnippetElementProvider() };
 
@@ -57,8 +58,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
             return snippet;
         }
 
-        readonly static Regex functionPattern = new Regex(@"^([a-zA-Z]+)\(([^\)]*)\)$", RegexOptions.CultureInvariant);
-
         static SnippetElement CreateElementForValue(ILanguageService languageService, int caret, int line, int column, Dictionary<string, SnippetReplaceableTextElement> replaceableElements, string val, int offset, string snippetText)
         {
             SnippetReplaceableTextElement srte;
@@ -93,7 +92,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                 if (f != null)
                 {
                     if (replaceableElements.TryGetValue(innerVal, out srte))
-                        return new FunctionBoundElement { TargetElement = srte, function = f };
+                        return new FunctionBoundElement { TargetElement = srte, Function = f };
                     string result2 = GetValue(languageService, caret, line, column, innerVal);
                     if (result2 != null)
                         return new SnippetTextElement { Text = f(result2) };
@@ -153,7 +152,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 
         sealed class FunctionBoundElement : SnippetBoundElement
         {
-            internal Func<string, string> function;
+            internal Func<string, string> Function
+            {
+                set { function = value; }
+            }
+
+            private Func<string, string> function;
 
             public override string ConvertText(string input)
             {
