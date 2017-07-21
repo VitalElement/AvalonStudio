@@ -145,6 +145,15 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             var dlg = new OpenFileDialog();
             dlg.Title = "Open Solution";
 
+            if (Platform.PlatformIdentifier == PlatformID.Win32NT)
+            {
+                dlg.InitialDirectory = Platform.ProjectDirectory;
+            }
+            else
+            {
+                dlg.InitialFileName = Platform.ProjectDirectory;
+            }
+
             var allExtensions = new List<string>();
 
             foreach (var solutionType in shell.SolutionTypes)
@@ -166,8 +175,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     Extensions = solutionType.Extensions
                 });
             }
-
-            dlg.InitialFileName = Platform.ProjectDirectory;
             
             var result = await dlg.ShowAsync();
 

@@ -2,7 +2,7 @@
 {
     using AvalonStudio.GlobalSettings;
 
-    public class DotNetToolchainSettings : SettingsBase
+    public class DotNetToolchainSettings
     {
         public DotNetToolchainSettings()
         {

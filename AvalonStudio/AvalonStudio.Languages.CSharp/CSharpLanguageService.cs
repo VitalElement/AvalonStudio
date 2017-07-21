@@ -73,6 +73,12 @@
             return project is OmniSharpProject;
         }
 
+        public IDictionary<string, Func<string, string>> SnippetCodeGenerators => null;
+
+        public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => null;
+
+        public string LanguageId => "cs";
+
         public bool CanHandle(ISourceFile file)
         {
             var result = false;

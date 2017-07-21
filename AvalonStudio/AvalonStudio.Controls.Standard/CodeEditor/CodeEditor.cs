@@ -10,6 +10,8 @@ using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Snippets;
+using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Threading;
@@ -50,6 +52,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private readonly List<IBackgroundRenderer> _languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
 
         private readonly List<IVisualLineTransformer> _languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
+
+        private SnippetManager _snippetManager;
 
         public IntellisenseViewModel Intellisense => _intellisense;
 
@@ -96,6 +100,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _codeAnalysisRunner = new JobRunner(1);
 
             _shell = IoC.Get<IShell>();
+
+            _snippetManager = IoC.Get<SnippetManager>();
 
             _lineNumberMargin = new LineNumberMargin(this);
 
@@ -262,7 +268,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     RegisterLanguageService(file.Item2);
 
-                    TextArea.TextView.Redraw();                    
+                    TextArea.TextView.Redraw();
                 }
             });
 
@@ -273,10 +279,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             TextArea.Caret.PositionChanged += (sender, e) =>
             {
-                if (_intellisenseManager != null && !_textEntering && TextArea.Selection.IsEmpty)
-                {                   
-                    var location = Document.GetLocation(CaretOffset);
-                    _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), true);
+                if (_intellisenseManager != null && !_textEntering)
+                {
+                    if (TextArea.Selection.IsEmpty)
+                    {
+                        var location = Document.GetLocation(CaretOffset);
+                        _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
+                    }
+                    else if (_currentSnippetContext != null)
+                    {
+                        var offset = Document.GetOffset(TextArea.Selection.StartPosition.Location);
+                        _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());
+                    }
                 }
 
                 if (CaretOffset > 0)
@@ -323,6 +337,40 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 if (CaretOffset > 0)
                 {
                     _intellisenseManager?.OnKeyDown(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+
+                    if (ee.Key == Key.Tab && _currentSnippetContext == null && LanguageService != null)
+                    {
+                        var wordStart = Document.FindPrevWordStart(CaretOffset);
+
+                        if (wordStart > 0)
+                        {
+                            string word = Document.GetText(wordStart, CaretOffset - wordStart);
+
+                            var codeSnippet = _snippetManager.GetSnippet(LanguageService, SourceFile.Project?.Solution, SourceFile.Project, word);
+
+                            if (codeSnippet != null)
+                            {
+                                var snippet = SnippetParser.Parse(LanguageService, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column, codeSnippet.Snippet);
+
+                                _intellisenseManager.CloseIntellisense();
+
+                                using (Document.RunUpdate())
+                                {
+                                    Document.Remove(wordStart, CaretOffset - wordStart);
+
+                                    _currentSnippetContext = snippet.Insert(TextArea);
+                                }
+
+                                IDisposable disposable = null;
+
+                                disposable = Observable.FromEventPattern(_currentSnippetContext, nameof(_currentSnippetContext.Deactivated)).Take(1).Subscribe(o =>
+                                {
+                                    _currentSnippetContext = null;
+                                    disposable.Dispose();
+                                });
+                            }
+                        }
+                    }
                 }
             };
 
@@ -337,6 +385,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel);
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel);
         }
+
+        private InsertionContext _currentSnippetContext;
 
         protected override void OnTextChanged(EventArgs e)
         {
@@ -542,6 +592,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private void RegisterLanguageService(ISourceFile sourceFile)
         {
             UnRegisterLanguageService();
+
+            if (sourceFile.Project?.Solution != null)
+            {
+                _snippetManager.InitialiseSnippetsForSolution(sourceFile.Project.Solution);
+            }
+
+            if (sourceFile.Project != null)
+            {
+                _snippetManager.InitialiseSnippetsForProject(sourceFile.Project);
+            }
 
             LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.CanHandle(sourceFile));
 

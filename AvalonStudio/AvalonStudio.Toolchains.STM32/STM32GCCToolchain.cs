@@ -313,7 +313,7 @@ namespace AvalonStudio.Toolchains.STM32
 
                 case OptimizationLevel.Speed:
                     {
-                        result += "Ofast ";
+                        result += "-Ofast ";
                     }
                     break;
             }

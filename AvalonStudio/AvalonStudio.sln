@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26510.0
+VisualStudioVersion = 15.0.26711.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio", "AvalonStudio\AvalonStudio.csproj", "{8E501956-B9A6-430E-86AC-350ED94B44E4}"
 EndProject
@@ -85,6 +85,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaEdit", "..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj", "{17707F77-638A-448B-9189-3E2444E839AB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Debugging.GDB.Remote", "AvalonStudio.Debugging.GDB.Remote\AvalonStudio.Debugging.GDB.Remote.csproj", "{0A89B721-30C0-48A2-A3AD-74CD89B99A01}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Controls.Standard.Tests", "AvalonStudio.Controls.Standard.Tests\AvalonStudio.Controls.Standard.Tests.csproj", "{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -594,6 +596,22 @@ Global
 		{0A89B721-30C0-48A2-A3AD-74CD89B99A01}.Release|x64.Build.0 = Release|Any CPU
 		{0A89B721-30C0-48A2-A3AD-74CD89B99A01}.Release|x86.ActiveCfg = Release|Any CPU
 		{0A89B721-30C0-48A2-A3AD-74CD89B99A01}.Release|x86.Build.0 = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|ARM.Build.0 = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|ARM.ActiveCfg = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|ARM.Build.0 = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x64.Build.0 = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -628,6 +646,10 @@ Global
 		{FC39EF57-BC1B-4250-A0CC-BEC9D7C61D05} = {5F514911-0404-4D14-B69A-458BA643F5C7}
 		{7E4091DD-2F03-4B1C-9E63-E431C4E63226} = {5F514911-0404-4D14-B69A-458BA643F5C7}
 		{0A89B721-30C0-48A2-A3AD-74CD89B99A01} = {5F514911-0404-4D14-B69A-458BA643F5C7}
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4} = {1EF2A059-2DC9-4C46-A28B-67C20A77BCE4}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {54EEE82F-58D0-4EF3-990D-CBFA0C11A3D6}
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

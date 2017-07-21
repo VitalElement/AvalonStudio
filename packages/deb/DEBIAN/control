@@ -1,0 +1,9 @@
+Package: avalon-studio
+Version: {VERSION}
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: 
+Maintainer: James Walmsley <james@vitalelement.co.uk>
+Description: Super awesome cross-platform IDE.
+ Finally an IDE that works across platforms.
