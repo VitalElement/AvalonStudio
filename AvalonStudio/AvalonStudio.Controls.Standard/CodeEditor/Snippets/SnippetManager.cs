@@ -42,7 +42,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                 _solutionSnippets[solution] = new Dictionary<string, IDictionary<string, CodeSnippet>>();
             }
 
-            _solutionSnippets.Clear();
+            _solutionSnippets[solution].Clear();
 
             var snippetsDir = Platform.GetSolutionSnippetDirectory(solution);
 
@@ -68,7 +68,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                 _projectSnippets[project] = new Dictionary<string, IDictionary<string, CodeSnippet>>();
             }
 
-            _projectSnippets.Clear();
+            _projectSnippets[project].Clear();
 
             var snippetsDir = Platform.GetProjectSnippetDirectory(project);
 
