@@ -318,7 +318,12 @@
         {
             foreach (var snippet in _snippets)
             {
-                sortedResults.InsertSorted(new CodeCompletionData { Kind = CodeCompletionKind.Snippet, Suggestion = snippet.Name, BriefComment = snippet.Description });
+                var current = sortedResults.InsertSortedExclusive(new CodeCompletionData { Kind = CodeCompletionKind.Snippet, Suggestion = snippet.Name, BriefComment = snippet.Description });
+
+                if(current != null && current.Kind != CodeCompletionKind.Snippet)
+                {
+                    current.Kind = CodeCompletionKind.Snippet;
+                }
             }
         }
 
