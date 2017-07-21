@@ -4,6 +4,7 @@
     using Avalonia.Threading;
     using AvaloniaEdit.Document;
     using AvalonStudio.Controls.Standard.CodeEditor;
+    using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Extensibility.Threading;
@@ -27,6 +28,7 @@
         private readonly IIntellisenseControl intellisenseControl;
         private readonly ICompletionAssistant completionAssistant;
         private AvaloniaEdit.TextEditor editor;
+        private IList<CodeSnippet> _snippets;
 
         private bool _requestingData;
         private bool _hidden; // i.e. can be technically open, but hidden awaiting completion data..
@@ -85,6 +87,9 @@
 
             _shell = IoC.Get<IShell>();
             _console = IoC.Get<IConsole>();
+
+            var snippetManager = IoC.Get<SnippetManager>();
+            _snippets = snippetManager.GetSnippets(languageService).Values.ToList();
         }
 
         public void Dispose()
@@ -309,6 +314,14 @@
             return result;
         }
 
+        private void InsertSnippets (List<CodeCompletionData> sortedResults)
+        {
+            foreach (var snippet in _snippets)
+            {
+                sortedResults.InsertSorted(new CodeCompletionData { Kind = CodeCompletionKind.Snippet, Suggestion = snippet.Name, BriefComment = snippet.Description });
+            }
+        }
+
         public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles)
         {
             if (!intellisenseControl.IsVisible)
@@ -331,6 +344,8 @@
 
                         var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
                         task.Wait();
+
+                        InsertSnippets(task.Result.Completions);
 
                         result = task.Result;
                     }).Wait();
