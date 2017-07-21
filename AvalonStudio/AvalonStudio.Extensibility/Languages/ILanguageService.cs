@@ -25,6 +25,17 @@ namespace AvalonStudio.Languages
         /// </summary>
         Type BaseTemplateType { get; }
 
+        /// <summary>
+        /// Dictionary of functions for transforming snippet variables. Key is function name, the arugment is the string to transform.
+        /// i.e. (propertyName) => "_" + propertyName
+        /// </summary>
+        IDictionary<string, Func<string, string>> SnippetCodeGenerators { get; }
+
+        /// <summary>
+        /// Dictionary of dynamic varables that can be evaluated by snippets. i.e. ClassName, arguments are CaretIndex, Line, Column.
+        /// </summary>
+        IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables { get; }
+
         Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "");
 
         bool CanTriggerIntellisense(char currentChar, char previousChar);

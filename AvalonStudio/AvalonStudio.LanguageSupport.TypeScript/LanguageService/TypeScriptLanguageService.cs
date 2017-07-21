@@ -88,6 +88,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public string Title => "TypeScript";
 
+        public IDictionary<string, Func<string, string>> SnippetCodeGenerators => null;
+
+        public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => null;
+
         public bool CanHandle(ISourceFile file)
         {
             var result = false;
