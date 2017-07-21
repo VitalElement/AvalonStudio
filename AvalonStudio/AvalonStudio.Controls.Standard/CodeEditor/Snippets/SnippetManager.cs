@@ -29,8 +29,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
             {
                 foreach (var file in Directory.EnumerateFiles(folder))
                 {
-                    var snippet = SerializedObject.Deserialize<CodeSnippet>(file);
-                    AddSnippet(_snippets, Path.GetFileName(folder), snippet);
+                    try
+                    {
+                        var snippet = SerializedObject.Deserialize<CodeSnippet>(file);
+                        AddSnippet(_snippets, Path.GetFileName(folder), snippet);
+                    }
+                    catch (Exception e)
+                    {
+                        IoC.Get<IConsole>().WriteLine($"Error parsing snippet: {file}");
+                    }
                 }
             }
         }
@@ -40,22 +47,29 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
             if (!_solutionSnippets.ContainsKey(solution))
             {
                 _solutionSnippets[solution] = new Dictionary<string, IDictionary<string, CodeSnippet>>();
-            }
 
-            _solutionSnippets[solution].Clear();
+                _solutionSnippets[solution].Clear();
 
-            var snippetsDir = Platform.GetSolutionSnippetDirectory(solution);
+                var snippetsDir = Platform.GetSolutionSnippetDirectory(solution);
 
-            if (Directory.Exists(snippetsDir))
-            {
-                var snippetFolders = Directory.EnumerateDirectories(snippetsDir);
-
-                foreach (var folder in snippetFolders)
+                if (Directory.Exists(snippetsDir))
                 {
-                    foreach (var file in Directory.EnumerateFiles(folder))
+                    var snippetFolders = Directory.EnumerateDirectories(snippetsDir);
+
+                    foreach (var folder in snippetFolders)
                     {
-                        var snippet = SerializedObject.Deserialize<CodeSnippet>(file);
-                        AddSnippet(_solutionSnippets[solution], Path.GetFileName(folder), snippet);
+                        foreach (var file in Directory.EnumerateFiles(folder))
+                        {
+                            try
+                            {
+                                var snippet = SerializedObject.Deserialize<CodeSnippet>(file);
+                                AddSnippet(_solutionSnippets[solution], Path.GetFileName(folder), snippet);
+                            }
+                            catch (Exception e)
+                            {
+                                IoC.Get<IConsole>().WriteLine($"Error parsing snippet: {file}");
+                            }
+                        }
                     }
                 }
             }
@@ -66,23 +80,33 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
             if (!_projectSnippets.ContainsKey(project))
             {
                 _projectSnippets[project] = new Dictionary<string, IDictionary<string, CodeSnippet>>();
-            }
 
-            _projectSnippets[project].Clear();
+                var snippetsDir = Platform.GetProjectSnippetDirectory(project);
 
-            var snippetsDir = Platform.GetProjectSnippetDirectory(project);
-
-            if (Directory.Exists(snippetsDir))
-            {
-                var snippetFolders = Directory.EnumerateDirectories(snippetsDir);
-
-                foreach (var folder in snippetFolders)
+                if (Directory.Exists(snippetsDir))
                 {
-                    foreach (var file in Directory.EnumerateFiles(folder))
+                    var snippetFolders = Directory.EnumerateDirectories(snippetsDir);
+
+                    foreach (var folder in snippetFolders)
                     {
-                        var snippet = SerializedObject.Deserialize<CodeSnippet>(file);
-                        AddSnippet(_projectSnippets[project], Path.GetFileName(folder), snippet);
+                        foreach (var file in Directory.EnumerateFiles(folder))
+                        {
+                            try
+                            {
+                                var snippet = SerializedObject.Deserialize<CodeSnippet>(file);
+                                AddSnippet(_projectSnippets[project], Path.GetFileName(folder), snippet);
+                            }
+                            catch (Exception e)
+                            {
+                                IoC.Get<IConsole>().WriteLine($"Error parsing snippet: {file}");
+                            }
+                        }
                     }
+                }
+
+                foreach(var reference in project.References)
+                {
+                    InitialiseSnippetsForProject(reference);
                 }
             }
         }
