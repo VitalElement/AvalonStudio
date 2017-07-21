@@ -24,10 +24,11 @@ namespace AvalonStudio.Languages
         None,
         Macro,
         Variable,
-        OverloadCandidate
+        OverloadCandidate,
+        Snippet            
     }
 
-    public class CodeCompletionData : ICompletionData
+    public class CodeCompletionData : ICompletionData, IComparable<CodeCompletionData>
     {
         public uint Priority { get; set; }
         public string Suggestion { get; set; }
@@ -45,6 +46,11 @@ namespace AvalonStudio.Languages
         public object Description => BriefComment;
 
         double ICompletionData.Priority => (double)Priority;
+
+        public int CompareTo(CodeCompletionData other)
+        {
+            return Text.CompareTo(other.Text);
+        }
 
         public void Complete(TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs)
         {

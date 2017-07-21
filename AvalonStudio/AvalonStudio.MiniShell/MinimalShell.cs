@@ -84,6 +84,8 @@ namespace AvalonStudio.Shell
             remove { }
         }
 
+        public bool DebugMode { get; set; }
+
         public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
         public IEnumerable<IProjectType> ProjectTypes => _projectTypes;

@@ -265,7 +265,16 @@ namespace AvalonStudio
 
                 Settings.SetSettings(settings);
             });
+
+            EnableDebugModeCommand = ReactiveCommand.Create();
+
+            EnableDebugModeCommand.Subscribe(_ =>
+            {
+                DebugMode = !DebugMode;
+            });
         }
+
+        public ReactiveCommand<object> EnableDebugModeCommand { get; }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
 
@@ -769,11 +778,6 @@ namespace AvalonStudio
                     ErrorList.Errors.Add(error);
                 }
             }
-
-            if (hasChanged)
-            {
-                BottomTabs.SelectedTool = ErrorList;
-            }
         }
 
         public void Cleanup()
@@ -838,5 +842,6 @@ namespace AvalonStudio
             set { this.RaiseAndSetIfChanged(ref _globalZoomLevel, value); }
         }
 
+        public bool DebugMode { get; set; }
     }
 }
