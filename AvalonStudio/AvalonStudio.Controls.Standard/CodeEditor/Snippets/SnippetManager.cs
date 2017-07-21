@@ -23,9 +23,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
             AddSnippet("cpp", new CodeSnippet { Name = "propfull", Description = "cpp property implementation", Snippet = "${type=int} ${ClassName}::get_${property=Property}()\n{\n\treturn ${ToFieldName(property)};\n}\n\nvoid ${ClassName}::set_${property}(${type} value)\n{\t${ToFieldName(property)} = value;${Caret}\n}" });
         }
 
-        public void AddSnippet (string languageId, CodeSnippet snippet)
+        public void AddSnippet(string languageId, CodeSnippet snippet)
         {
-            if(!_snippets.ContainsKey(languageId))
+            if (!_snippets.ContainsKey(languageId))
             {
                 _snippets.Add(languageId, new Dictionary<string, CodeSnippet>());
             }

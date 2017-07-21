@@ -346,7 +346,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         {
                             string word = Document.GetText(wordStart, CaretOffset - wordStart);
 
-                            if(_snippetManager.GetSnippets(LanguageService).ContainsKey(word))
+                            if (_snippetManager.GetSnippets(LanguageService).ContainsKey(word))
                             {
                                 var codeSnippet = _snippetManager.GetSnippets(LanguageService)[word];
 
