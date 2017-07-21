@@ -16,6 +16,12 @@
     <None Update="Snippets\cpp\for.snippet">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Snippets\cpp\class.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\if.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Snippets\cpp\while.snippet">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
