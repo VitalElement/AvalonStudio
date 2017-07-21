@@ -369,12 +369,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                 {
                                     _currentSnippetContext = null;
                                     disposable.Dispose();
-
-                                    Dispatcher.UIThread.InvokeAsync(() =>
-                                    {
-                                        // need to do this or could end up inside an existing document update.
-                                        FormatAll();
-                                    });
                                 });
                             }
                         }
