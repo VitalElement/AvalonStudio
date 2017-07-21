@@ -31,38 +31,19 @@ git clone https://github.com/VitalElement/AvalonStudio --recursive
 cd AvalonStudio
 ```
 
-Then install dependencies.
-
-- Windows should work out-of-the box (assuming you have .NET installed)
-- `mono-complete` and some build compatibility scripts on Linux
-- [Download Mono for macOS](http://www.mono-project.com/download/#download-mac)
-
-
-A script for Linux users:
-```
-sudo ./dependencies.sh
-```
+### Install Dependencies
+Install Dotnet Core 2 Preview from: https://www.microsoft.com/net/core/preview
 
 ### Building the project
+These instructions are roughly the same for all platforms:
 
-#### Windows
+cd into the repo directory `/AvalonStudio/AvalonStudio`
 
-- Open the solution in Visual Studio 2017 (15.3 or above)
-- Restore NuGet packages (don't forget to add the following package feeds:)
-  - `Avalonia`: <https://www.myget.org/F/avalonia-ci/api/v2>
-  - `XamlBehaviors`: <https://www.myget.org/F/xamlbehaviors-nightly/api/v2>
-- Build the project for the `x86` platform (Skia doesn't work with AnyCPU)
-- You should get binaries in `AvalonStudio\AvalonStudio\bin\x86\`, select the subdirectory for the appropriate configuration
+`dotnet restore`
+`dotnet build`
 
-#### Linux/macOS
+### Running locally built binaries
 
-Kick of the build with
+cd to /AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.0/
+`dotnet ./AvalonStudio.dll`
 
-```
-sudo ./buildmono.sh
-```
-
-once build has completed.
-```
-cd AvalonStudio/bin/Release
-mono AvalonStudio.exe

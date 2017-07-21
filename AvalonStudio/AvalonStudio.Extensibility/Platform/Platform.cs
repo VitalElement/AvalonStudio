@@ -168,8 +168,6 @@ namespace AvalonStudio.Platforms
             }
         }
 
-        public static string TemplatesFolder => Path.Combine(ExecutionPath, "Templates");
-
         public static string DLLExtension
         {
             get
@@ -321,10 +319,26 @@ namespace AvalonStudio.Platforms
 
             return result;
         }
+      
+        public static string GetSolutionSnippetDirectory(ISolution solution)
+        {
+            return Path.Combine(solution.CurrentDirectory, "Snippets");
+        }
+
+        public static string GetProjectSnippetDirectory(IProject project)
+        {
+            return Path.Combine(project.CurrentDirectory, "Snippets");
+        }
 
         public static string ProjectDirectory => Path.Combine(BaseDirectory, "Projects");
 
         public static string SettingsDirectory => Path.Combine(BaseDirectory, "Settings");
+
+        public static string TemplatesFolder => Path.Combine(ExecutionPath, "Templates");
+
+        public static string InBuiltSnippetsFolder => Path.Combine(ExecutionPath, "Snippets");
+
+        public static string SnippetsFolder => Path.Combine(BaseDirectory, "Snippets");
 
         public static string CacheDirectory => Path.Combine(BaseDirectory, "Cache");
 
@@ -366,6 +380,16 @@ namespace AvalonStudio.Platforms
             if (!Directory.Exists(RepoCatalogDirectory))
             {
                 Directory.CreateDirectory(RepoCatalogDirectory);
+            }
+
+            if (!Directory.Exists(SnippetsFolder))
+            {
+                Directory.CreateDirectory(SnippetsFolder);
+            }
+
+            if (!Directory.Exists(InBuiltSnippetsFolder))
+            {
+                Directory.CreateDirectory(InBuiltSnippetsFolder);
             }
         }
 

@@ -183,6 +183,30 @@ namespace AvalonStudio.Utils
         }
 
         /// <summary>
+        ///     Inserts an element into the collection, keeping it sorted. The collection must be sorted
+        ///     already, i.e. populated only with this method. The template type for the collection must
+        ///     implement IComparable.
+        /// </summary>
+        /// <typeparam name="T">is the type of items in the collection.</typeparam>
+        /// <param name="myself">is "this" reference.</param>
+        /// <param name="item">is the item to insert.</param>
+        public static T InsertSortedExclusive<T>(this IList<T> myself, T item) where T : IComparable<T>
+        {
+            var index = myself.BinarySearchIndexOf(item);
+
+            if (index < 0)
+            {
+                myself.Insert(~index, item);
+            }
+            else
+            {
+                return myself[index];
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
         ///     Creates a relative path from one file or folder to another.
         /// </summary>
         /// <param name="fromPath">Contains the directory that defines the start of the relative path.</param>

@@ -17,6 +17,10 @@ namespace AvalonStudio.Documents
         void InstallVisualLineTransformer(IVisualLineTransformer transformer);
 
         void InstallMargin(AbstractMargin margin);
+      
+        void Focus();
+
+        void TriggerCodeAnalysis();
 
         void Close();
 

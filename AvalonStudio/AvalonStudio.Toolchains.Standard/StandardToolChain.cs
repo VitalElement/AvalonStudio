@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.Standard
@@ -103,7 +104,7 @@ namespace AvalonStudio.Toolchains.Standard
 
                 result = ExecuteCommands(console, project, preBuildCommands);
             }
-
+            
             console.WriteLine("Starting Build...");
 
             terminateBuild = !result;
@@ -321,7 +322,7 @@ namespace AvalonStudio.Toolchains.Standard
             {
                 while (numTasks > 0)
                 {
-                    Task.Delay(10).Wait();
+                    Thread.Sleep(10);
                 }
             });
         }
@@ -483,8 +484,7 @@ namespace AvalonStudio.Toolchains.Standard
                         results.Add(compileResults);
 
                         var tasks = new List<Task>();
-
-                        var numLocalTasks = 0;
+                        
                         var sourceFiles = project.SourceFiles.ToList();
 
                         foreach (var file in sourceFiles)
@@ -529,7 +529,7 @@ namespace AvalonStudio.Toolchains.Standard
                                 {
                                     while (numTasks >= Jobs)
                                     {
-                                        await Task.Delay(100);
+                                        Thread.Sleep(10);
                                     }
 
                                     lock (resultLock)
@@ -538,16 +538,14 @@ namespace AvalonStudio.Toolchains.Standard
                                         {
                                             break;
                                         }
-
-                                        numLocalTasks++;
+                                        
                                         numTasks++;
-
-                                        console.OverWrite(string.Format("[CC {0}/{1}]    [{2}]    {3}", ++buildCount, fileCount, project.Name, file.Name));
                                     }
 
                                     Task.Run(() =>
                                     {
-                                        var compileResult = Compile(console, superProject, project, file, objectFile);
+                                        var stringBuilderConsole = new StringBuilderConsole();
+                                        var compileResult = Compile(stringBuilderConsole, superProject, project, file, objectFile);
 
                                         lock (resultLock)
                                         {
@@ -563,7 +561,15 @@ namespace AvalonStudio.Toolchains.Standard
                                             }
 
                                             numTasks--;
-                                            numLocalTasks--;
+                                        }
+
+                                        console.OverWrite($"[CC {++buildCount}/{fileCount}]    [{project.Name}]    {file.Project.Location.MakeRelativePath(file.Location)}");
+
+                                        var output = stringBuilderConsole.GetOutput();
+
+                                        if (!string.IsNullOrEmpty(output))
+                                        {
+                                            console.WriteLine(output);
                                         }
                                     }).GetAwaiter();
                                 }

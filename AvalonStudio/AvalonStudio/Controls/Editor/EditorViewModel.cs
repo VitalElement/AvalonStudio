@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvalonStudio.Debugging;
@@ -29,12 +30,27 @@ namespace AvalonStudio.Controls
     public class EditorViewModel : DocumentTabViewModel, IEditor
     {
         private readonly CompositeDisposable disposables;
+        private double _fontSize;
+        private double _zoomLevel;
+        private double _visualFontSize;
+        private ISourceFile _sourceFile;
+        private ShellViewModel _shell;
 
         public ISourceFile ProjectFile { get; set; }
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
             _editor?.SetDebugHighlight(line, startColumn, endColumn);
+        }
+
+        public void Focus()
+        {
+            _editor?.Focus();
+        }
+
+        public void TriggerCodeAnalysis()
+        {
+            _editor?.TriggerCodeAnalysis();
         }
 
         public void Comment()
@@ -83,24 +99,55 @@ namespace AvalonStudio.Controls
 
         public EditorViewModel()
         {
-            disposables = new CompositeDisposable();
+            _shell = IoC.Get<ShellViewModel>();
 
-            disposables.Add(CloseCommand.Subscribe(_ =>
+            disposables = new CompositeDisposable
             {
-                Close();
-
-                IoC.Get<IShell>().InvalidateErrors();
-                disposables.Dispose();
+                CloseCommand.Subscribe(_ =>
+                {
+                    _shell.InvalidateErrors();
+                    disposables.Dispose();
+                }
             }));
 
             AddWatchCommand = ReactiveCommand.Create();
             disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); }));
 
             Dock = Dock.Right;
+
+            _fontSize = 14;
+            ZoomLevel = _shell.GlobalZoomLevel;
         }
 
         ~EditorViewModel()
         {
+        }
+
+        public override void OnClose()
+        {
+            _editor?.Close();
+            disposables.Dispose();
+        }
+
+        public void OnPointerWheelChanged(PointerWheelEventArgs e)
+        {
+            if (e.InputModifiers == InputModifiers.Control)
+            {
+                e.Handled = true;
+
+                var zoomLevel = ZoomLevel + (Math.Round(e.Delta.Y) * 5);
+
+                if (zoomLevel < 20)
+                {
+                    zoomLevel = 20;
+                }
+                else if (zoomLevel > 400)
+                {
+                    zoomLevel = 400;
+                }
+
+                ZoomLevel = zoomLevel;
+            }
         }
 
         public void AttachEditor(IEditor editor)
@@ -159,7 +206,60 @@ namespace AvalonStudio.Controls
             }
         }
 
-        private ISourceFile _sourceFile;
+        public double VisualFontSize
+        {
+            get { return _visualFontSize; }
+            set { this.RaiseAndSetIfChanged(ref _visualFontSize, value); }
+        }
+
+        private void InvalidateVisualFontSize()
+        {
+            VisualFontSize = (ZoomLevel / 100) * FontSize;
+        }
+
+        public double FontSize
+        {
+            get
+            {
+                return _fontSize;
+            }
+            set
+            {
+                if (_fontSize != value)
+                {
+                    _fontSize = value;
+                    InvalidateVisualFontSize();
+                }
+            }
+        }
+
+        public double ZoomLevel
+        {
+            get
+            {
+                return _zoomLevel;
+            }
+            set
+            {
+                if (value != _zoomLevel)
+                {
+                    _zoomLevel = value;
+                    _shell.GlobalZoomLevel = value;
+                    InvalidateVisualFontSize();
+
+                    ZoomLevelText = $"{ZoomLevel:0} %";
+                }
+            }
+        }
+
+        private string _zoomLevelText;
+
+        public string ZoomLevelText
+        {
+            get { return _zoomLevelText; }
+            set { this.RaiseAndSetIfChanged(ref _zoomLevelText, value); }
+        }
+
 
         public ISourceFile SourceFile
         {
@@ -366,8 +466,6 @@ namespace AvalonStudio.Controls
                 ShellViewModel.Instance.StatusBar.Language = value;
             }
         }
-
-
 
         #endregion Commands
 

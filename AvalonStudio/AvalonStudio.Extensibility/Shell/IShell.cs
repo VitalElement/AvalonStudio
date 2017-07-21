@@ -81,5 +81,7 @@ namespace AvalonStudio.Shell
         void SaveAll();
 
         IProject GetDefaultProject();
+
+        bool DebugMode { get; }
     }
 }

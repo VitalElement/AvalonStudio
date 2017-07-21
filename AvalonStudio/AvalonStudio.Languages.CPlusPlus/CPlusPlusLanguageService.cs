@@ -36,11 +36,30 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private readonly JobRunner clangAccessJobRunner;
 
+        private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
+        private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
+
         public CPlusPlusLanguageService()
         {
             clangAccessJobRunner = new JobRunner();
 
             Task.Factory.StartNew(() => { clangAccessJobRunner.RunLoop(new CancellationToken()); });
+
+            _snippetCodeGenerators = new Dictionary<string, Func<string, string>>();
+            _snippetDynamicVars = new Dictionary<string, Func<int, int, int, string>>();
+
+            _snippetCodeGenerators.Add("ToFieldName", (propertyName) =>
+            {
+                if (string.IsNullOrEmpty(propertyName))
+                    return propertyName;
+                string newName = Char.ToLower(propertyName[0]) + propertyName.Substring(1);
+                if (newName == propertyName)
+                    return "_" + newName;
+                else
+                    return newName;                
+            });
+
+            _snippetDynamicVars.Add("ClassName", (offset, line, column) => null);
         }
 
         public IProjectTemplate EmptyProjectTemplate
@@ -90,6 +109,12 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
+
+        public IDictionary<string, Func<string, string>> SnippetCodeGenerators => _snippetCodeGenerators;
+
+        public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;
+
+        public string LanguageId => "cpp";
 
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
@@ -652,8 +677,6 @@ namespace AvalonStudio.Languages.CPlusPlus
             await clangAccessJobRunner.InvokeAsync(() =>
             {
                 var tu = GetAndParseTranslationUnit(file, clangUnsavedFiles);
-
-                var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.FilePath), offset));
 
                 if (tu != null)
                 {

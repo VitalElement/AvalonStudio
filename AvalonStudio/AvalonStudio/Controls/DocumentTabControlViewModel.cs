@@ -1,50 +1,45 @@
 using Avalonia.Media;
 using Avalonia.Threading;
+using AvalonStudio.Documents;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
     public class DocumentTabControlViewModel : ViewModel
     {
-        private ObservableCollection<IDocumentTabViewModel> documents;
+        private ObservableCollection<IDocumentTabViewModel> documents;        
 
-        private IBrush hoverTabBackgroundBrush;
-
+        private bool _seperatorVisible;
         private IDocumentTabViewModel selectedDocument;
-
-        private IBrush tabBackgroundBrush;
-        private IBrush tabBrush;
-        private readonly IBrush tabHighlightBrush;
-
-        private readonly IBrush temporaryTabBrush;
-
-        private readonly IBrush temporaryTabHighlighBrush;
 
         public DocumentTabControlViewModel()
         {
-            Documents = new ObservableCollection<IDocumentTabViewModel>();
-            Documents.CollectionChanged += (sender, e) =>
+            Documents = new ObservableCollection<IDocumentTabViewModel>();            
+        }        
+
+        public void InvalidateSeperatorVisibility()
+        {
+            if(Documents.Where(d=>d.IsVisible).Count() > 0)
             {
-                if (e.Action == NotifyCollectionChangedAction.Remove)
-                {
-                    Dispatcher.UIThread.InvokeAsync(async () =>
-                    {
-                        await Task.Delay(25);
-                        GC.Collect();
-                    });
-                }
-            };
+                SeperatorVisible = true;
+            }
+            else
+            {
+                SeperatorVisible = false;
+            }
+        }
 
-            tabBrush = Brush.Parse("#007ACC");
-            tabHighlightBrush = Brush.Parse("#1c97ea");
-
-            temporaryTabBrush = Brush.Parse("#68217A");
-            temporaryTabHighlighBrush = Brush.Parse("#B064AB");
+        public bool SeperatorVisible
+        {
+            get { return _seperatorVisible; }
+            set { this.RaiseAndSetIfChanged(ref _seperatorVisible, value); }
         }
 
         public ObservableCollection<IDocumentTabViewModel> Documents
@@ -65,42 +60,14 @@ namespace AvalonStudio.Controls
 
                 this.RaisePropertyChanged(nameof(SelectedDocument));
 
-                if (value is EditorViewModel)
+                if (value is IEditor editor)
                 {
-                    // Dispatcher invoke is hack to make sure the Editor propery has been generated.
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        var vm = value as EditorViewModel;
-                      //  vm.Focus();
-                       // vm.TriggerCodeAnalysis();
-                    });
-                }
-
-                if (value == TemporaryDocument)
-                {
-                    TabBackgroundBrush = temporaryTabBrush;
-                    HoverTabBackgroundBrush = temporaryTabHighlighBrush;
-                }
-                else
-                {
-                    TabBackgroundBrush = tabBackgroundBrush;
-                    HoverTabBackgroundBrush = tabHighlightBrush;
+                    editor.Focus();
+                    editor.TriggerCodeAnalysis();
                 }
             }
         }
 
         public EditorViewModel TemporaryDocument { get; set; }
-
-        public IBrush TabBackgroundBrush
-        {
-            get { return tabBackgroundBrush; }
-            set { this.RaiseAndSetIfChanged(ref tabBackgroundBrush, value); }
-        }
-
-        public IBrush HoverTabBackgroundBrush
-        {
-            get { return hoverTabBackgroundBrush; }
-            set { this.RaiseAndSetIfChanged(ref hoverTabBackgroundBrush, value); }
-        }
     }
 }
