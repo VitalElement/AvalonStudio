@@ -301,6 +301,16 @@ namespace AvalonStudio.Platforms
             return Path.Combine(solution.CurrentDirectory, UserDataDir);
         }
 
+        public static string GetSolutionSnippetDirectory(ISolution solution)
+        {
+            return Path.Combine(solution.CurrentDirectory, "Snippets");
+        }
+
+        public static string GetProjectSnippetDirectory(IProject project)
+        {
+            return Path.Combine(project.CurrentDirectory, "Snippets");
+        }
+
         public static string ProjectDirectory => Path.Combine(BaseDirectory, "Projects");
 
         public static string SettingsDirectory => Path.Combine(BaseDirectory, "Settings");

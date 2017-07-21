@@ -89,7 +89,7 @@
             _console = IoC.Get<IConsole>();
 
             var snippetManager = IoC.Get<SnippetManager>();
-            _snippets = snippetManager.GetSnippets(languageService).Values.ToList();
+            _snippets = snippetManager.GetSnippets(languageService, file.Project?.Solution, file.Project);
         }
 
         public void Dispose()
