@@ -347,9 +347,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             string word = Document.GetText(wordStart, CaretOffset - wordStart);
 
                             var codeSnippet = _snippetManager.GetSnippet(LanguageService, SourceFile.Project?.Solution, SourceFile.Project, word);
-                            
-                            if(codeSnippet != null)
-                            { 
+
+                            if (codeSnippet != null)
+                            {
                                 var loopCounter = new SnippetReplaceableTextElement { Text = "i" };
 
                                 var snippet = SnippetParser.Parse(LanguageService, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column, codeSnippet.Snippet);
@@ -606,7 +606,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _snippetManager.InitialiseSnippetsForSolution(sourceFile.Project.Solution);
             }
 
-            if(sourceFile.Project != null)
+            if (sourceFile.Project != null)
             {
                 _snippetManager.InitialiseSnippetsForProject(sourceFile.Project);
             }
