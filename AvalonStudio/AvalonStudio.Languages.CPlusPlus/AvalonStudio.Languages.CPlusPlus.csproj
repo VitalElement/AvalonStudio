@@ -11,5 +11,10 @@
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Snippets\cpp\propfull.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>  
 </Project>
