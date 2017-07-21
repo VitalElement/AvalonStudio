@@ -30,7 +30,7 @@ namespace AvalonStudio.Controls
             _isVisible = false;
             _results = new ObservableCollection<SearchResultViewModel>();
 
-            this.WhenAnyValue(x => x.CommandQuery).Throttle(TimeSpan.FromMilliseconds(200)).Subscribe(async query => await ProcessQuery(query));
+            this.WhenAnyValue(x => x.CommandQuery).Throttle(TimeSpan.FromMilliseconds(165)).Subscribe(async query => await ProcessQuery(query));
 
             this.WhenAnyValue(x => x.SelectedResult).OfType<SearchResultViewModel>().Subscribe(result =>
             {
