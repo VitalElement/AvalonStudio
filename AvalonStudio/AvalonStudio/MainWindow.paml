@@ -47,7 +47,9 @@
       </Setter>
     </Style>
   </Controls:MetroWindow.Styles>
-
+  <Controls:MetroWindow.KeyBindings>
+    <KeyBinding Command="{Binding EnableDebugModeCommand}" CommandParameter="{Binding}" Gesture="CTRL+SHIFT+D"/>
+  </Controls:MetroWindow.KeyBindings>  
   <Grid RowDefinitions="Auto,*,25">
     <Grid Grid.ColumnSpan="5" Margin="0 0 0 0">
       <Grid RowDefinitions="Auto, Auto">

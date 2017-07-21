@@ -16,7 +16,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public ToolchainSettingsFormViewModel() : base("DotNet Core Location")
         {
-            _settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
+            _settings = Settings.GetSettings<DotNetToolchainSettings>();
 
             DotNetPath = _settings.DotNetPath;
 
@@ -37,7 +37,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
                     _settings.DotNetPath = DotNetPath;
 
-                    SettingsBase.SetSettings(_settings);
+                    Settings.SetSettings(_settings);
                 }
             });
         }

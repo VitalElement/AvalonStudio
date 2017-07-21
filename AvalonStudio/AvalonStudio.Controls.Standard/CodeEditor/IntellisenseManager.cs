@@ -4,11 +4,14 @@
     using Avalonia.Threading;
     using AvaloniaEdit.Document;
     using AvalonStudio.Controls.Standard.CodeEditor;
+    using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
+    using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Extensibility.Threading;
     using AvalonStudio.Languages;
     using AvalonStudio.Languages.ViewModels;
     using AvalonStudio.Projects;
+    using AvalonStudio.Shell;
     using AvalonStudio.Utils;
     using System;
     using System.Collections.Generic;
@@ -18,11 +21,14 @@
 
     internal class IntellisenseManager
     {
+        private IShell _shell;
+        private IConsole _console;
         private readonly ILanguageService languageService;
         private readonly ISourceFile file;
         private readonly IIntellisenseControl intellisenseControl;
         private readonly ICompletionAssistant completionAssistant;
         private AvaloniaEdit.TextEditor editor;
+        private IList<CodeSnippet> _snippets;
 
         private bool _requestingData;
         private bool _hidden; // i.e. can be technically open, but hidden awaiting completion data..
@@ -78,6 +84,12 @@
 
             this.editor.LostFocus += Editor_LostFocus;
             _hidden = true;
+
+            _shell = IoC.Get<IShell>();
+            _console = IoC.Get<IConsole>();
+
+            var snippetManager = IoC.Get<SnippetManager>();
+            _snippets = snippetManager.GetSnippets(languageService, file.Project?.Solution, file.Project);
         }
 
         public void Dispose()
@@ -121,12 +133,21 @@
 
         private void OpenIntellisense(char currentChar, char previousChar, int caretIndex)
         {
+            if (_shell.DebugMode)
+            {
+                _console.WriteLine("Open Intellisense");
+            }
+
             _justOpened = true;
             _hidden = false;
 
             if (caretIndex > 1)
             {
                 if (IsLanguageSpecificTriggerChar(currentChar, previousChar))
+                {
+                    intellisenseStartedAt = caretIndex;
+                }
+                else if (currentChar.IsWhiteSpace())
                 {
                     intellisenseStartedAt = caretIndex;
                 }
@@ -143,7 +164,7 @@
             UpdateFilter(caretIndex);
         }
 
-        private void CloseIntellisense()
+        public void CloseIntellisense()
         {
             currentFilter = string.Empty;
 
@@ -161,9 +182,16 @@
         {
             if (!_requestingData)
             {
-                if (caretIndex > intellisenseStartedAt && intellisenseStartedAt > 0)
+                if (_shell.DebugMode)
                 {
-                    currentFilter = editor.Document.GetText(intellisenseStartedAt, caretIndex - intellisenseStartedAt).Replace(".", string.Empty);
+                    _console.WriteLine("Filtering");
+                }
+
+                var wordStart = DocumentUtilities.FindPrevWordStart(editor.Document, caretIndex);
+
+                if (wordStart >= 0)
+                {
+                    currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty);
                 }
                 else
                 {
@@ -280,27 +308,60 @@
 
             CloseIntellisense();
 
+            var location = editor.Document.GetLocation(editor.CaretOffset);
+            SetCursor(editor.CaretOffset, location.Line, location.Column, CodeEditor.UnsavedFiles.ToList());
+
             return result;
+        }
+
+        private void InsertSnippets(List<CodeCompletionData> sortedResults)
+        {
+            foreach (var snippet in _snippets)
+            {
+                var current = sortedResults.InsertSortedExclusive(new CodeCompletionData { Kind = CodeCompletionKind.Snippet, Suggestion = snippet.Name, BriefComment = snippet.Description });
+
+                if (current != null && current.Kind != CodeCompletionKind.Snippet)
+                {
+                    current.Kind = CodeCompletionKind.Snippet;
+                }
+            }
         }
 
         public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles)
         {
             if (!intellisenseControl.IsVisible)
             {
+                if (_shell.DebugMode)
+                {
+                    _console.WriteLine("Set Cursor");
+                }
+
                 _requestingData = true;
                 intellisenseQueryRunner.InvokeAsync(() =>
                 {
                     CodeCompletionResults result = null;
                     intellisenseJobRunner.InvokeAsync(() =>
                     {
+                        if (_shell.DebugMode)
+                        {
+                            _console.WriteLine($"Query Language Service {index}, {line}, {column}");
+                        }
+
                         var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
                         task.Wait();
+
+                        InsertSnippets(task.Result.Completions);
 
                         result = task.Result;
                     }).Wait();
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
+                        if (_shell.DebugMode)
+                        {
+                            _console.WriteLine("Set Completion Data");
+                        }
+
                         SetCompletionData(result);
 
                         _requestingData = false;
@@ -322,9 +383,12 @@
                     char currentChar = e.Text[0];
                     char previousChar = '\0';
 
-                    if (IsCompletionChar(currentChar))
+                    if (intellisenseControl.IsVisible)
                     {
-                        DoComplete(true);
+                        if (IsCompletionChar(currentChar))
+                        {
+                            DoComplete(true);
+                        }
                     }
 
                     if (completionAssistant.IsVisible)
@@ -482,9 +546,9 @@
                             }
                             break;
 
+                        case Key.Tab:
                         case Key.Enter:
                             DoComplete(false);
-
                             e.Handled = true;
                             break;
                     }
@@ -518,10 +582,12 @@
                     if (completionAssistant.IsVisible)
                     {
                         completionAssistant.Close();
+                        e.Handled = true;
                     }
                     else if (!_hidden)
                     {
                         CloseIntellisense();
+                        e.Handled = true;
                     }
                 }
             }

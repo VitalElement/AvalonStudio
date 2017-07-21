@@ -13,10 +13,12 @@ using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Extensibility.ToolBars.Models;
+using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
+using AvalonStudio.GlobalSettings;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
@@ -27,8 +29,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Composition;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AvalonStudio.IdeSettings;
 
 namespace AvalonStudio
 {
@@ -36,11 +40,9 @@ namespace AvalonStudio
     public class ShellViewModel : ViewModel, IShell
     {
         public static ShellViewModel Instance { get; internal set; }
-
         private IToolBar _toolBar;
-
         private ToolBarDefinition _toolBarDefinition;
-
+        private double _globalZoomLevel;
         private List<ILanguageService> _languageServices;
         private List<IProjectTemplate> _projectTemplates;
         private List<ISolutionType> _solutionTypes;
@@ -240,9 +242,39 @@ namespace AvalonStudio
             ProcessCancellationToken = new CancellationTokenSource();
 
             CurrentPerspective = Perspective.Editor;
+            
+            var editorSettings = Settings.GetSettings<EditorSettings>();
+
+            _globalZoomLevel = editorSettings.GlobalZoomLevel;
 
             IoC.RegisterConstant(this);
+
+            this.WhenAnyValue(x => x.GlobalZoomLevel).Subscribe(zoomLevel=>
+            {
+                foreach(var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+                {
+                    document.ZoomLevel = zoomLevel;
+                }
+            });
+
+            this.WhenAnyValue(x => x.GlobalZoomLevel).Throttle(TimeSpan.FromSeconds(2)).Subscribe(zoomLevel =>
+            {
+                var settings = Settings.GetSettings<EditorSettings>();
+
+                settings.GlobalZoomLevel = zoomLevel;
+
+                Settings.SetSettings(settings);
+            });
+
+            EnableDebugModeCommand = ReactiveCommand.Create();
+
+            EnableDebugModeCommand.Subscribe(_ =>
+            {
+                DebugMode = !DebugMode;
+            });
         }
+
+        public ReactiveCommand<object> EnableDebugModeCommand { get; }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
 
@@ -746,11 +778,6 @@ namespace AvalonStudio
                     ErrorList.Errors.Add(error);
                 }
             }
-
-            if (hasChanged)
-            {
-                BottomTabs.SelectedTool = ErrorList;
-            }
         }
 
         public void Cleanup()
@@ -808,5 +835,13 @@ namespace AvalonStudio
                 }
             }
         }
+
+        public double GlobalZoomLevel
+        {
+            get { return _globalZoomLevel; }
+            set { this.RaiseAndSetIfChanged(ref _globalZoomLevel, value); }
+        }
+
+        public bool DebugMode { get; set; }
     }
 }
