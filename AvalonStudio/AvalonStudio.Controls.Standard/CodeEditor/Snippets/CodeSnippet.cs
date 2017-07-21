@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
+﻿namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 {
     public class CodeSnippet
     {
