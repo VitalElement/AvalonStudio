@@ -33,7 +33,7 @@
         {
             return await Task.Factory.StartNew(() =>
             {
-                var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
+                var settings = Settings.GetSettings<DotNetToolchainSettings>();
 
                 var exitCode = PlatformSupport.ExecuteShellCommand(settings.DotNetPath, "build", (s, e) =>
                 {
@@ -69,7 +69,7 @@
         {
             await Task.Factory.StartNew(() =>
             {
-                var settings = SettingsBase.GetSettings<DotNetToolchainSettings>();
+                var settings = Settings.GetSettings<DotNetToolchainSettings>();
 
                 if (string.IsNullOrEmpty(settings.DotNetPath))
                 {

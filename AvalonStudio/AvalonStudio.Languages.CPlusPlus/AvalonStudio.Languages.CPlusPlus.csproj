@@ -3,7 +3,7 @@
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>  
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.1-build3417-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.1-build3495-alpha" />
     <PackageReference Include="AvalonStudio.Languages.CPlusPlus.LibClang" Version="4.0.0.2" />
     <PackageReference Include="VitalElement.NClang" Version="0.9.0-build15-alpha" />
   </ItemGroup>
@@ -11,5 +11,22 @@
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Snippets\cpp\for.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\class.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\if.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\while.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\propfull.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>  
 </Project>

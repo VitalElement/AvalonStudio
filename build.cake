@@ -225,6 +225,7 @@ Task("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Clean")
     .Does(() => {
         RunCoreTest("./AvalonStudio/AvalonStudio.Extensibility.Tests", false);
+        RunCoreTest("./AvalonStudio/AvalonStudio.Controls.Standard.Tests", false);
     });
 
 
