@@ -130,7 +130,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 
         private Dictionary<ISolution, Dictionary<string, IDictionary<string, CodeSnippet>>> _solutionSnippets = new Dictionary<ISolution, Dictionary<string, IDictionary<string, CodeSnippet>>>();
 
-        public CodeSnippet GetSnippet(ILanguageService languageService, ISolution solution, IProject project, string word)
+        private CodeSnippet GetSnippetForProject(ILanguageService languageService, IProject project, string word)
         {
             if (_projectSnippets.ContainsKey(project) && _projectSnippets[project].ContainsKey(languageService.LanguageId))
             {
@@ -140,6 +140,28 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                 {
                     return projectSnippets[word];
                 }
+            }
+
+            foreach(var reference in project.References)
+            {
+                var result = GetSnippetForProject(languageService, reference, word);
+
+                if(result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        public CodeSnippet GetSnippet(ILanguageService languageService, ISolution solution, IProject project, string word)
+        {
+            var projectSnippetMatch = GetSnippetForProject(languageService, project, word);
+
+            if(projectSnippetMatch != null)
+            {
+                return projectSnippetMatch;
             }
 
             if (_solutionSnippets.ContainsKey(solution) && _solutionSnippets[solution].ContainsKey(languageService.LanguageId))
