@@ -346,7 +346,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             {
                                 var loopCounter = new SnippetReplaceableTextElement { Text = "i" };
 
-                                var snippet2 = SnippetParser.Parse("");
+                                var snippet2 = SnippetParser.Parse(LanguageService, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column, "${type=int} ${ClassName}::get_${property=Property}()\n{\n\treturn ${ToFieldName(property)};\n}\n\nvoid ${ClassName}::set_${property}(${type} value)\n{\t${ToFieldName(property)} = value;${Caret}\n}");
 
                                 _intellisenseManager.CloseIntellisense();
 
