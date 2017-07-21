@@ -12,16 +12,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
     {
         static readonly Regex pattern = new Regex(@"\$\{([^\}]*)\}", RegexOptions.CultureInvariant);
 
-        public static List<ISnippetElementProvider> SnippetElementProviders { get; } = new List<ISnippetElementProvider> { new DefaultSnippetElementProvider() };        
+        public static List<ISnippetElementProvider> SnippetElementProviders { get; } = new List<ISnippetElementProvider> { new DefaultSnippetElementProvider() };
 
-        public static Snippet Parse(ILanguageService languageService, string snippetText)
+        public static Snippet Parse(ILanguageService languageService, int caret, int line, int column, string snippetText)
         {
-            snippetText = "for (${type=int} ${counter=i} = ${initial=0}; ${counter} ${Caret}< ${end=end}; ${counter}++) {\n\t${Selection}\n}";
-
-            snippetText = "private ${type=int} ${field=myVar};\n\npublic ${type} ${property=MyProperty}\n{\n\tget { return ${field}; }\n\tset { ${field} = value; }${Caret}\n}";
-
-            snippetText = "${type=int} ${class=ClassName}::get_${property=Property}()\n{\n\treturn ${toFieldName(property)};\n}\n\nvoid ${class}::set_${property}(${type} value)\n{\t${toFieldName(property)} = value;\n}";
-
             if (snippetText == null)
                 throw new ArgumentNullException("text");
             var replaceableElements = new Dictionary<string, SnippetReplaceableTextElement>(StringComparer.OrdinalIgnoreCase);
@@ -46,7 +40,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                     pos = m.Index;
                 }
 
-                snippet.Elements.Add(CreateElementForValue(languageService, replaceableElements, m.Groups[1].Value, m.Index, snippetText));
+                snippet.Elements.Add(CreateElementForValue(languageService, caret, line, column, replaceableElements, m.Groups[1].Value, m.Index, snippetText));
 
                 pos = m.Index + m.Length;
             }
@@ -65,7 +59,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 
         readonly static Regex functionPattern = new Regex(@"^([a-zA-Z]+)\(([^\)]*)\)$", RegexOptions.CultureInvariant);
 
-        static SnippetElement CreateElementForValue(ILanguageService languageService, Dictionary<string, SnippetReplaceableTextElement> replaceableElements, string val, int offset, string snippetText)
+        static SnippetElement CreateElementForValue(ILanguageService languageService, int caret, int line, int column, Dictionary<string, SnippetReplaceableTextElement> replaceableElements, string val, int offset, string snippetText)
         {
             SnippetReplaceableTextElement srte;
             int equalsSign = val.IndexOf('=');
@@ -97,39 +91,49 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                 string innerVal = m.Groups[2].Value;
 
                 if (f != null)
-                {                    
+                {
                     if (replaceableElements.TryGetValue(innerVal, out srte))
                         return new FunctionBoundElement { TargetElement = srte, function = f };
-                    string result2 = GetValue(innerVal);
+                    string result2 = GetValue(languageService, caret, line, column, innerVal);
                     if (result2 != null)
                         return new SnippetTextElement { Text = f(result2) };
                     else
                         return new SnippetTextElement { Text = f(innerVal) };
                 }
-                else if (replaceableElements.TryGetValue(innerVal, out srte))
+                else if (replaceableElements.TryGetValue("_" + m.Groups[1].Value, out srte))
                 {
                     return new SnippetBoundElement { TargetElement = srte };
                 }
+                else
+                {
+                    return replaceableElements["_" + m.Groups[1].Value] = new SnippetReplaceableTextElement { Text = "_" + m.Groups[1].Value };
+                }
             }
 
-
-            string result = GetValue(val);
+            string result = GetValue(languageService, caret, line, column, val);
             if (result != null)
                 return new SnippetTextElement { Text = result };
+            else if (replaceableElements.TryGetValue(val, out srte))
+            {
+                return new SnippetBoundElement { TargetElement = srte };
+            }
             else
-                return new SnippetReplaceableTextElement { Text = val }; // ${unknown} -> replaceable element
+            {
+                return replaceableElements[val] = new SnippetReplaceableTextElement { Text = val }; // ${unknown} -> replaceable element
+            }
         }
 
-        static string GetValue(string propertyName)
+        static string GetValue(ILanguageService languageService, int offset, int line, int column, string propertyName)
         {
-            if ("ClassName".Equals(propertyName, StringComparison.OrdinalIgnoreCase))
+            // evaluate things like class name, function name, etc.
+            if (languageService != null && languageService.SnippetDynamicVariables != null && languageService.SnippetDynamicVariables.ContainsKey(propertyName))
             {
-                // TODO implement a way to get the current class name!
+                return languageService.SnippetDynamicVariables[propertyName](offset, line, column); //todo pass in line / column here..
             }
 
             // Todo implement a way to expand environment variables here...
 
-            return propertyName;
+            return null;
         }
 
         static Func<string, string> GetFunction(ILanguageService languageService, string name)
@@ -139,11 +143,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
             if ("toUpper".Equals(name, StringComparison.OrdinalIgnoreCase))
                 return s => s.ToUpper();
 
-            if(languageService != null && languageService.SnippetCodeGenerators.ContainsKey(name))
+            if (languageService != null && languageService.SnippetCodeGenerators != null && languageService.SnippetCodeGenerators.ContainsKey(name))
             {
                 return languageService.SnippetCodeGenerators[name];
             }
-            
+
             return null;
         }
 
