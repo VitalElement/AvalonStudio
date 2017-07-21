@@ -92,6 +92,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => null;
 
+        public string LanguageId => "ts";
+
         public bool CanHandle(ISourceFile file)
         {
             var result = false;

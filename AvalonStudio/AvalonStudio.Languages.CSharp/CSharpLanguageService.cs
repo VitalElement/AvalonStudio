@@ -72,6 +72,8 @@
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => null;
 
+        public string LanguageId => "cs";
+
         public bool CanHandle(ISourceFile file)
         {
             var result = false;

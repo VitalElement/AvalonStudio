@@ -112,6 +112,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;
 
+        public string LanguageId => "cpp";
+
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
             switch (kind)

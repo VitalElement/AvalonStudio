@@ -20,6 +20,11 @@ namespace AvalonStudio.Languages
         string Title { get; }
 
         /// <summary>
+        /// A file path compatible name for the language, i.e. cs, cpp, ts, css, go, vb, fsharp
+        /// </summary>
+        string LanguageId { get; }
+
+        /// <summary>
         ///     The base type that all Project templates for this language must inherit. This base class must implement
         ///     IProjectTemplate.
         /// </summary>
