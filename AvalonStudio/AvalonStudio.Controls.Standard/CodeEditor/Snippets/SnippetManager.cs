@@ -104,7 +104,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                     }
                 }
 
-                foreach(var reference in project.References)
+                foreach (var reference in project.References)
                 {
                     InitialiseSnippetsForProject(reference);
                 }
@@ -142,11 +142,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                 }
             }
 
-            foreach(var reference in project.References)
+            foreach (var reference in project.References)
             {
                 var result = GetSnippetForProject(languageService, reference, word);
 
-                if(result != null)
+                if (result != null)
                 {
                     return result;
                 }
@@ -159,7 +159,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
         {
             var projectSnippetMatch = GetSnippetForProject(languageService, project, word);
 
-            if(projectSnippetMatch != null)
+            if (projectSnippetMatch != null)
             {
                 return projectSnippetMatch;
             }
@@ -199,7 +199,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                 }
             }
 
-            foreach(var reference in project.References)
+            foreach (var reference in project.References)
             {
                 results.AddRange(GetSnippetsForProject(languageService, reference));
             }

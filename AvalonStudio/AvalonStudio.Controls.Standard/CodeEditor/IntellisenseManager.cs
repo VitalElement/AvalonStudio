@@ -314,13 +314,13 @@
             return result;
         }
 
-        private void InsertSnippets (List<CodeCompletionData> sortedResults)
+        private void InsertSnippets(List<CodeCompletionData> sortedResults)
         {
             foreach (var snippet in _snippets)
             {
                 var current = sortedResults.InsertSortedExclusive(new CodeCompletionData { Kind = CodeCompletionKind.Snippet, Suggestion = snippet.Name, BriefComment = snippet.Description });
 
-                if(current != null && current.Kind != CodeCompletionKind.Snippet)
+                if (current != null && current.Kind != CodeCompletionKind.Snippet)
                 {
                     current.Kind = CodeCompletionKind.Snippet;
                 }
