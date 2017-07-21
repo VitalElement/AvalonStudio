@@ -160,24 +160,38 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
             return null;
         }
 
+        private List<CodeSnippet> GetSnippetsForProject(ILanguageService languageService, IProject project)
+        {
+            var results = new List<CodeSnippet>();
+
+            if (_projectSnippets.ContainsKey(project) && _projectSnippets[project].ContainsKey(languageService.LanguageId))
+            {
+                foreach (var snippet in _projectSnippets[project][languageService.LanguageId].Values)
+                {
+                    var currentResult = results.BinarySearch<CodeSnippet, CodeSnippet>(snippet);
+
+                    if (currentResult == null)
+                    {
+                        results.Add(snippet);
+                    }
+                }
+            }
+
+            foreach(var reference in project.References)
+            {
+                results.AddRange(GetSnippetsForProject(languageService, reference));
+            }
+
+            return results;
+        }
+
         public List<CodeSnippet> GetSnippets(ILanguageService languageService, ISolution solution, IProject project)
         {
             var results = new List<CodeSnippet>();
 
             if (project != null)
             {
-                if (_projectSnippets.ContainsKey(project) && _projectSnippets[project].ContainsKey(languageService.LanguageId))
-                {
-                    foreach (var snippet in _projectSnippets[project][languageService.LanguageId].Values)
-                    {
-                        var currentResult = results.BinarySearch<CodeSnippet, CodeSnippet>(snippet);
-
-                        if (currentResult == null)
-                        {
-                            results.Add(snippet);
-                        }
-                    }
-                }
+                results.AddRange(GetSnippetsForProject(languageService, project));
             }
 
             if (solution != null)
