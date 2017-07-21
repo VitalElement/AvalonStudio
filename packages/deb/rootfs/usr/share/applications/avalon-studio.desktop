@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Avalon Studio
+Comment=A Torrent of Embedded Creativity
+GenericName=Development Environment
+Exec=/opt/vitalelement/avalonstudio/bin/AvalonStudio %U
+Icon=avalon-studio
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK;Development;Documentation;
+MimeType=text/plain;

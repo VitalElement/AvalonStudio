@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26608.5
+VisualStudioVersion = 15.0.26711.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio", "AvalonStudio\AvalonStudio.csproj", "{8E501956-B9A6-430E-86AC-350ED94B44E4}"
 EndProject
@@ -91,6 +91,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DParser2", "AvalonStudio.Languages.D\D_Parser\DParser2\DParser2.csproj", "{7E934D8E-C9C4-45C0-8489-1ECF6B4D8974}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Projects.DUB", "AvalonStudio.Projects.DUB\AvalonStudio.Projects.DUB.csproj", "{B75E9A63-3562-4303-8E08-04AA65468007}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Controls.Standard.Tests", "AvalonStudio.Controls.Standard.Tests\AvalonStudio.Controls.Standard.Tests.csproj", "{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -664,6 +665,22 @@ Global
 		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|x64.Build.0 = Release|Any CPU
 		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|x86.ActiveCfg = Release|Any CPU
 		{B75E9A63-3562-4303-8E08-04AA65468007}.Release|x86.Build.0 = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|ARM.Build.0 = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|ARM.ActiveCfg = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|ARM.Build.0 = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x64.Build.0 = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -702,6 +719,10 @@ Global
 		{0223CC2A-900B-4EE8-B13E-FD7B7ABAE7CF} = {528C3D32-4210-4109-AE60-B965C6BED1C3}
 		{7E934D8E-C9C4-45C0-8489-1ECF6B4D8974} = {528C3D32-4210-4109-AE60-B965C6BED1C3}
 		{B75E9A63-3562-4303-8E08-04AA65468007} = {2DC36CEA-5C75-4389-B370-9AEDA400F540}
+		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4} = {1EF2A059-2DC9-4C46-A28B-67C20A77BCE4}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {54EEE82F-58D0-4EF3-990D-CBFA0C11A3D6}
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

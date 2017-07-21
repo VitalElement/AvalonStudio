@@ -9,36 +9,39 @@
              Foreground="WhiteSmoke" Name="Editor">
   <Border BorderBrush="#3E3E42" BorderThickness="1">
     <Grid>
-      <DockPanel>
-        <DropDown DockPanel.Dock="Top" Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">
-          <DropDown.DataTemplates>
-            <DataTemplate>
-              <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
-            </DataTemplate>
-          </DropDown.DataTemplates>
-        </DropDown>
+        <DockPanel>
+          <DropDown DockPanel.Dock="Top" Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">
+            <DropDown.DataTemplates>
+              <DataTemplate>
+                <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
+              </DataTemplate>
+            </DropDown.DataTemplates>
+          </DropDown>
 
-        <editor:CodeEditor Name="editor"
-                                TextBlock.FontFamily="{Binding FontFamily}" TextBlock.FontSize="14"
-                                Foreground="#DCDCDC" BorderThickness="0" TextBlock.FontWeight="ExtraLight"
-                                EditorCaretOffset ="{Binding CaretOffset}"
-                                Line="{Binding Line}"
-                                Column="{Binding Column}"
-                                LanguageServiceName="{Binding LanguageServiceName}"
-                                SourceFile="{Binding SourceFile}" Margin="0"
-                                BackgroundRenderers="{Binding BackgroundRenderers}"
-                                DocumentLineTransformers="{Binding DocumentLineTransformers}"
-                                IsDirty="{Binding IsDirty}" ShowColumnLimit="true"
-                                VerticalAlignment="Stretch" Background="#1e1e1e" Diagnostics="{Binding Diagnostics}">
+          <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
+            <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
+          </Grid>
 
-          <editor:CodeEditor.ContextMenu>
-            <ContextMenu>
-              <MenuItem Header="Add Watch" Command="{Binding AddWatchCommand}" />
-            </ContextMenu>
-          </editor:CodeEditor.ContextMenu>
+          <editor:CodeEditor Name="editor"
+                                  FontFamily="{Binding FontFamily}" FontSize="{Binding VisualFontSize}"
+                                  Foreground="#DCDCDC" BorderThickness="0" FontWeight="ExtraLight"
+                                  EditorCaretOffset ="{Binding CaretOffset}"
+                                  Line="{Binding Line}"
+                                  Column="{Binding Column}"
+                                  LanguageServiceName="{Binding LanguageServiceName}"
+                                  SourceFile="{Binding SourceFile}" Margin="0"
+                                  BackgroundRenderers="{Binding BackgroundRenderers}"
+                                  DocumentLineTransformers="{Binding DocumentLineTransformers}"
+                                  IsDirty="{Binding IsDirty}" ShowColumnLimit="true"
+                                  VerticalAlignment="Stretch" Background="#1e1e1e" Diagnostics="{Binding Diagnostics}">
 
-        </editor:CodeEditor>
-      </DockPanel>
+            <editor:CodeEditor.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Add Watch" Command="{Binding AddWatchCommand}" />
+              </ContextMenu>
+            </editor:CodeEditor.ContextMenu>
+          </editor:CodeEditor>
+        </DockPanel>
     </Grid>
   </Border>
 </UserControl>
