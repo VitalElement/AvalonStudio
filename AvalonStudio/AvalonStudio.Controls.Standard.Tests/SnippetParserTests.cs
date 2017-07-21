@@ -195,8 +195,7 @@ namespace AvalonStudio.Controls.Standard.Tests
             Assert.IsType<SnippetCaretElement>(snippet.Elements[16]);
             AssertSnippetTextElement<SnippetTextElement>(snippet.Elements[17], "\n}");
         }
-
-
+        
         public static void AssertSnippetTextElement<T>(SnippetElement snippet, string text)
         {
             Assert.IsType<T>(snippet);
