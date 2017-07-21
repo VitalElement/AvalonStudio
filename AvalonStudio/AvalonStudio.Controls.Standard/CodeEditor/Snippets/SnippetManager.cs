@@ -42,6 +42,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                 _solutionSnippets[solution] = new Dictionary<string, IDictionary<string, CodeSnippet>>();
             }
 
+            _solutionSnippets.Clear();
+
             var snippetsDir = Platform.GetSolutionSnippetDirectory(solution);
 
             if (Directory.Exists(snippetsDir))
@@ -66,6 +68,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                 _projectSnippets[project] = new Dictionary<string, IDictionary<string, CodeSnippet>>();
             }
 
+            _projectSnippets.Clear();
+
             var snippetsDir = Platform.GetProjectSnippetDirectory(project);
 
             if (Directory.Exists(snippetsDir))
@@ -85,14 +89,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 
         private void AddSnippet(Dictionary<string, IDictionary<string, CodeSnippet>> dictionary, string languageId, CodeSnippet snippet)
         {
-            if (!_snippets.ContainsKey(languageId))
+            if (!dictionary.ContainsKey(languageId))
             {
-                _snippets.Add(languageId, new Dictionary<string, CodeSnippet>());
+                dictionary.Add(languageId, new Dictionary<string, CodeSnippet>());
             }
 
-            if (!_snippets[languageId].ContainsKey(snippet.Name))
+            if (!dictionary[languageId].ContainsKey(snippet.Name))
             {
-                _snippets[languageId][snippet.Name] = snippet;
+                dictionary[languageId][snippet.Name] = snippet;
             }
         }
 
