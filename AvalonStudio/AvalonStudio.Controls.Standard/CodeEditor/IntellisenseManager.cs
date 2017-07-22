@@ -92,6 +92,8 @@
             _snippets = snippetManager.GetSnippets(languageService, file.Project?.Solution, file.Project);
         }
 
+        public bool IncludeSnippets { get; set; } = true;
+
         public void Dispose()
         {
             editor.LostFocus -= Editor_LostFocus;
@@ -350,7 +352,10 @@
                         var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
                         task.Wait();
 
-                        InsertSnippets(task.Result.Completions);
+                        if (IncludeSnippets)
+                        {
+                            InsertSnippets(task.Result.Completions);
+                        }
 
                         result = task.Result;
                     }).Wait();
