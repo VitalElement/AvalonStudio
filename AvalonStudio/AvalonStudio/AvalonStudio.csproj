@@ -76,7 +76,8 @@
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
     <PackageReference Include="Avalonia.Win32" Version="0.5.1-build3495-alpha" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.0" />
-    <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.5.1-build433-alpha"  />
+    <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.5.1-build433-alpha" />
+    <PackageReference Include="FuzzyString.Standard" Version="1.1.1" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build103-alpha" />    
   </ItemGroup>
