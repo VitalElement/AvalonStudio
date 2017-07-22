@@ -461,15 +461,15 @@ namespace AvalonStudio
             if (currentTab != null && !currentTab.IsVisible)
             {
                 restoreFromCache = true;
-            }            
+            }
+
+            EditorViewModel documentToClose = null;
 
             if (currentTab == null || restoreFromCache)
             {
                 if (DocumentTabs.TemporaryDocument != null)
                 {
-                    var documentToClose = DocumentTabs.TemporaryDocument;                    
-
-                    await documentToClose.CloseCommand.ExecuteAsyncTask(null);                    
+                    documentToClose = DocumentTabs.TemporaryDocument;
                 }
 
                 EditorViewModel newEditor = null;
@@ -506,7 +506,7 @@ namespace AvalonStudio
             if (DocumentTabs.SelectedDocument is IEditor)
             {
                 // ensures that the document has been opened and created.
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     if (debugHighlight)
                     {
@@ -516,6 +516,11 @@ namespace AvalonStudio
                     if (selectLine || debugHighlight)
                     {
                         (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                    }
+
+                    if (documentToClose != null)
+                    {
+                        await documentToClose.CloseCommand.ExecuteAsyncTask(null);
                     }
                 });
             }
