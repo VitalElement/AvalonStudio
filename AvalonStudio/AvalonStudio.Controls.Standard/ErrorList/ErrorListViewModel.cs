@@ -34,15 +34,12 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
                 if (value != null)
                 {
-                    Dispatcher.UIThread.InvokeAsync(async () =>
-                    {
-                        var document = await shell.OpenDocument(shell.CurrentSolution.FindFile(value.Model.File), value.Line);
+                    var document = shell.OpenDocument(shell.CurrentSolution.FindFile(value.Model.File), value.Line);
 
-                        if (document != null)
-                        {
-                            document.GotoOffset(value.Model.StartOffset);
-                        }
-                    });
+                    if (document != null)
+                    {
+                        document.GotoOffset(value.Model.StartOffset);
+                    }
                 }
             }
         }

@@ -739,7 +739,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         TextArea.TextView.LineTransformers.Remove(transformer as IVisualLineTransformer);
                     }
                     break;
-
             }
         }
 

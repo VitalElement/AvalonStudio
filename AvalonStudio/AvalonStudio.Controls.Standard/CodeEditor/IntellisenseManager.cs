@@ -35,7 +35,7 @@
         private bool _justOpened;
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
-        private readonly CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
+        
         private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
@@ -173,7 +173,7 @@
                 intellisenseStartedAt = editor.CaretOffset;
             }
 
-            intellisenseControl.SelectedCompletion = noSelectedCompletion;
+            intellisenseControl.SelectedCompletion = null;
             _hidden = true;
             intellisenseControl.IsVisible = false;
         }
@@ -219,7 +219,7 @@
 
                     if (newSelectedCompletions.Count() == 0)
                     {
-                        suggestion = noSelectedCompletion;
+                        suggestion = null;
                     }
                     else
                     {
@@ -230,7 +230,7 @@
                 }
                 else
                 {
-                    suggestion = noSelectedCompletion;
+                    suggestion = null;
                 }
 
                 if (filteredResults?.Count() > 0)
@@ -264,7 +264,7 @@
                 }
                 else
                 {
-                    intellisenseControl.SelectedCompletion = noSelectedCompletion;
+                    intellisenseControl.SelectedCompletion = null;
                 }
             }
         }
@@ -277,7 +277,7 @@
 
             var result = false;
 
-            if (intellisenseControl.CompletionData.Count > 0 && intellisenseControl.SelectedCompletion != noSelectedCompletion && intellisenseControl.SelectedCompletion != null)
+            if (intellisenseControl.CompletionData.Count > 0 && intellisenseControl.SelectedCompletion != null && intellisenseControl.SelectedCompletion != null)
             {
                 result = true;
 

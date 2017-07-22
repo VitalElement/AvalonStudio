@@ -18,7 +18,6 @@ using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
-using AvalonStudio.GlobalSettings;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
@@ -452,7 +451,7 @@ namespace AvalonStudio
             DocumentTabs.InvalidateSeperatorVisibility();
         }
 
-        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
+        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
         {
             bool restoreFromCache = false;
 
@@ -461,15 +460,15 @@ namespace AvalonStudio
             if (currentTab != null && !currentTab.IsVisible)
             {
                 restoreFromCache = true;
-            }            
+            }
+
+            EditorViewModel documentToClose = null;
 
             if (currentTab == null || restoreFromCache)
             {
                 if (DocumentTabs.TemporaryDocument != null)
                 {
-                    var documentToClose = DocumentTabs.TemporaryDocument;                    
-
-                    await documentToClose.CloseCommand.ExecuteAsyncTask(null);                    
+                    documentToClose = DocumentTabs.TemporaryDocument;
                 }
 
                 EditorViewModel newEditor = null;
@@ -506,7 +505,7 @@ namespace AvalonStudio
             if (DocumentTabs.SelectedDocument is IEditor)
             {
                 // ensures that the document has been opened and created.
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     if (debugHighlight)
                     {
@@ -516,6 +515,11 @@ namespace AvalonStudio
                     if (selectLine || debugHighlight)
                     {
                         (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                    }
+
+                    if (documentToClose != null)
+                    {
+                        await documentToClose.CloseCommand.ExecuteAsyncTask(null);
                     }
                 });
             }
@@ -733,7 +737,6 @@ namespace AvalonStudio
         {
             var allErrors = new List<ErrorViewModel>();
             var toRemove = new List<ErrorViewModel>();
-            var hasChanged = false;
 
             foreach (var document in DocumentTabs.Documents.Where(d => d.IsVisible).OfType<EditorViewModel>())
             {
@@ -764,7 +767,6 @@ namespace AvalonStudio
 
             foreach (var error in toRemove)
             {
-                hasChanged = true;
                 ErrorList.Errors.Remove(error);
             }
 
@@ -774,17 +776,8 @@ namespace AvalonStudio
 
                 if (matching == null)
                 {
-                    hasChanged = true;
                     ErrorList.Errors.Add(error);
                 }
-            }
-        }
-
-        public void Cleanup()
-        {
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
-            {
-                // document.Model.ShutdownBackgroundWorkers();
             }
         }
 
