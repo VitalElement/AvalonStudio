@@ -18,7 +18,6 @@ using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
-using AvalonStudio.GlobalSettings;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
@@ -452,7 +451,7 @@ namespace AvalonStudio
             DocumentTabs.InvalidateSeperatorVisibility();
         }
 
-        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
+        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
         {
             bool restoreFromCache = false;
 
@@ -738,7 +737,6 @@ namespace AvalonStudio
         {
             var allErrors = new List<ErrorViewModel>();
             var toRemove = new List<ErrorViewModel>();
-            var hasChanged = false;
 
             foreach (var document in DocumentTabs.Documents.Where(d => d.IsVisible).OfType<EditorViewModel>())
             {
@@ -769,7 +767,6 @@ namespace AvalonStudio
 
             foreach (var error in toRemove)
             {
-                hasChanged = true;
                 ErrorList.Errors.Remove(error);
             }
 
@@ -779,17 +776,8 @@ namespace AvalonStudio
 
                 if (matching == null)
                 {
-                    hasChanged = true;
                     ErrorList.Errors.Add(error);
                 }
-            }
-        }
-
-        public void Cleanup()
-        {
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
-            {
-                // document.Model.ShutdownBackgroundWorkers();
             }
         }
 
