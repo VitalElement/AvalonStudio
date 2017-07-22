@@ -30,7 +30,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public override void Render(DrawingContext context)
         {
-            if (TextView.VisualLinesValid)
+            context.FillRectangle(Brush.Parse("#333333"), Bounds);
+
+            if (TextView.VisualLinesValid && TextView.VisualLines.Count > 0)
             {
                 context.FillRectangle(Brush.Parse("#333333"), Bounds);
 

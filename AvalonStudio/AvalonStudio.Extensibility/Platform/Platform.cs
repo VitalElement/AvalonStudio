@@ -1,4 +1,5 @@
 using AvalonStudio.Projects;
+using AvalonStudio.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -135,6 +136,8 @@ namespace AvalonStudio.Platforms
         public static IDictionary EnvironmentVariables => Environment.GetEnvironmentVariables();
 
         private const string UserDataDir = ".as";
+
+        private const string CodeAnalysisFolder = "CodeAnalysis";
 
         public static string ExecutionPath => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
@@ -301,6 +304,22 @@ namespace AvalonStudio.Platforms
             return Path.Combine(solution.CurrentDirectory, UserDataDir);
         }
 
+        public static string GetCodeAnalysisFile (ISourceFile file)
+        {
+            var pathRelativeToProject = file.Project.Solution.CurrentDirectory.MakeRelativePath(file.Location);
+
+            var userDataDir = GetUserDataDirectory(file.Project.Solution);
+
+            var result = Path.ChangeExtension(Path.Combine(userDataDir, CodeAnalysisFolder, pathRelativeToProject), "fixits");
+
+            if(!Directory.Exists(Path.GetDirectoryName(result)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(result));
+            }
+
+            return result;
+        }
+      
         public static string GetSolutionSnippetDirectory(ISolution solution)
         {
             return Path.Combine(solution.CurrentDirectory, "Snippets");

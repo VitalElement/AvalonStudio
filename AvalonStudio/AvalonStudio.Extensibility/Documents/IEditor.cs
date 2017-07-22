@@ -1,3 +1,7 @@
+using Avalonia;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Editing;
+using AvaloniaEdit.Rendering;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using System.Threading.Tasks;
@@ -8,6 +12,12 @@ namespace AvalonStudio.Documents
     {
         ISourceFile ProjectFile { get; }
 
+        void InstallBackgroundRenderer(IBackgroundRenderer backgroundRenderer);
+
+        void InstallVisualLineTransformer(IVisualLineTransformer transformer);
+
+        void InstallMargin(AbstractMargin margin);
+      
         void Focus();
 
         void TriggerCodeAnalysis();
@@ -28,6 +38,8 @@ namespace AvalonStudio.Documents
 
         void ClearDebugHighlight();
 
+        int GetOffsetFromPoint(Point point);
+
         void GotoOffset(int offset);
 
         void GotoPosition(int line, int column);
@@ -39,5 +51,7 @@ namespace AvalonStudio.Documents
         string GetWordAtOffset(int offset);
 
         int CaretOffset { get; }
+
+        TextDocument GetDocument();
     }
 }

@@ -96,7 +96,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value is SourceFileViewModel)
                 {
-                    shell.OpenDocument((ISourceFile)(value as SourceFileViewModel).Model, 1);
+                   shell.OpenDocument((ISourceFile)(value as SourceFileViewModel).Model, 1);
                 }
             }
         }

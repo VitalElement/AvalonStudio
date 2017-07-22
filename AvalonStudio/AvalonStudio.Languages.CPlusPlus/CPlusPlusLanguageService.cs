@@ -5,6 +5,7 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvaloniaEdit.Rendering;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
@@ -12,6 +13,7 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
+using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using NClang;
 using System;
@@ -456,8 +458,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             }, IntPtr.Zero);
         }
 
-        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result, TextMarkerService service)
+        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, List<Diagnostic> result, TextMarkerService service)
         {
+            var shell = IoC.Get<IShell>();
             foreach (var diagnostic in clangDiagnostics)
             {
                 if (diagnostic.Location.IsFromMainFile)
@@ -468,7 +471,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         StartOffset = diagnostic.Location.FileLocation.Offset,
                         Line = diagnostic.Location.FileLocation.Line,
                         Spelling = diagnostic.Spelling,
-                        File = diagnostic.Location.FileLocation.File.FileName,
+                        File = shell.CurrentSolution.FindFile(diagnostic.Location.FileLocation.File.FileName),
                         Level = (DiagnosticLevel)diagnostic.Severity
                     };
 
@@ -487,25 +490,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     result.Add(diag);
                     tokens.Dispose();
 
-                    Color markerColor;
-
-                    switch (diag.Level)
-                    {
-                        case DiagnosticLevel.Error:
-                        case DiagnosticLevel.Fatal:
-                            markerColor = Color.FromRgb(253, 45, 45);
-                            break;
-
-                        case DiagnosticLevel.Warning:
-                            markerColor = Color.FromRgb(255, 207, 40);
-                            break;
-
-                        default:
-                            markerColor = Color.FromRgb(0, 42, 74);
-                            break;
-                    }
-
-                    service.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
+                   // service.Create(diag.StartOffset, diag.Length, diag.Level, diag.Spelling);
                 }
             }
         }
@@ -1222,9 +1207,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             foreach (var unsavedFile in unsavedFiles)
             {
-                if (Platform.CompareFilePath(unsavedFile.FileName, buffer.FileName) != 0)
+                if (unsavedFile != null)
                 {
-                    clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+                    if (Platform.CompareFilePath(unsavedFile.FileName, buffer.FileName) != 0)
+                    {
+                        clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+                    }
                 }
             }
 

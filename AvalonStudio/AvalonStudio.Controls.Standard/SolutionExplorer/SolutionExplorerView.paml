@@ -42,6 +42,7 @@
                 <MenuItem Header="Build" Command="{Binding BuildCommand}" />
                 <MenuItem Header="Debug" Command="{Binding DebugCommand}"/>
                 <MenuItem Header="Clean" Command="{Binding CleanCommand}" />
+                <MenuItem Header="Analyse" Command="{Binding AnalyseCommand}" />
                 <MenuItem Header="Set as Default Project" Command="{Binding SetProjectCommand}" />
                 <MenuItem Header="Manage References" />
                 <MenuItem Header="Open Developer Console" Command="{Binding DevConsoleCommand}" />

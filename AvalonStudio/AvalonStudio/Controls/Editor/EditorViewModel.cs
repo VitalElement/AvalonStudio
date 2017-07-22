@@ -18,6 +18,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
+using AvaloniaEdit.Rendering;
+using AvalonStudio.Controls.Standard.CodeEditor;
+using AvalonStudio.Controls.Standard.ErrorList;
+using System.Linq;
+using System.Collections.Generic;
+using AvaloniaEdit.Editing;
 
 namespace AvalonStudio.Controls
 {
@@ -100,8 +106,9 @@ namespace AvalonStudio.Controls
                 CloseCommand.Subscribe(_ =>
                 {
                     _shell.InvalidateErrors();
-                })
-            };
+                    disposables.Dispose();
+                }
+            }));
 
             AddWatchCommand = ReactiveCommand.Create();
             disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); }));
@@ -299,6 +306,13 @@ namespace AvalonStudio.Controls
         {
             if (offset != -1 && ShellViewModel.Instance.CurrentPerspective == Perspective.Editor)
             {
+                var matching = IoC.Get<IErrorList>().FindDiagnosticsAtOffset(ProjectFile, offset).FirstOrDefault();
+
+                if (matching != null)
+                {
+                    return new ErrorProbeViewModel(matching);
+                }
+
                 var symbol = await _editor?.GetSymbolAsync(offset);
 
                 if (symbol != null)
@@ -314,6 +328,8 @@ namespace AvalonStudio.Controls
                         case CursorKind.ReturnStatement:
                         case CursorKind.WhileStatement:
                         case CursorKind.BinaryOperator:
+                        case CursorKind.BreakStatement:
+                        case CursorKind.DefaultStatement:
                             return null;
 
                         default:
@@ -377,9 +393,9 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref highlightingData, value); }
         }
 
-        private TextSegmentCollection<Diagnostic> diagnostics;
+        private List<Diagnostic> diagnostics;
 
-        public TextSegmentCollection<Diagnostic> Diagnostics
+        public List<Diagnostic> Diagnostics
         {
             get { return diagnostics; }
             set { this.RaiseAndSetIfChanged(ref diagnostics, value); }
@@ -475,6 +491,8 @@ namespace AvalonStudio.Controls
         public void Close()
         {
             _editor?.Close();
+
+            IoC.Get<IShell>().CloseDocument(ProjectFile);
         }
 
         public async Task<Symbol> GetSymbolAsync(int offset)
@@ -485,6 +503,31 @@ namespace AvalonStudio.Controls
         public string GetWordAtOffset(int offset)
         {
             return _editor?.GetWordAtOffset(offset);
+        }
+
+        public void InstallBackgroundRenderer(IBackgroundRenderer backgroundRenderer)
+        {
+            _editor.InstallBackgroundRenderer(backgroundRenderer);
+        }
+
+        public void InstallVisualLineTransformer(IVisualLineTransformer transformer)
+        {
+            _editor.InstallVisualLineTransformer(transformer);
+        }
+
+        public TextDocument GetDocument()
+        {
+            return _editor.GetDocument();
+        }
+
+        public void InstallMargin(AbstractMargin margin)
+        {
+            _editor.InstallMargin(margin);
+        }
+
+        public int GetOffsetFromPoint(Point point)
+        {
+            return _editor.GetOffsetFromPoint(point);
         }
 
         #endregion Public Methods

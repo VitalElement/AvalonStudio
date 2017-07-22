@@ -16,6 +16,7 @@
     <EmbeddedResource Include="BuildEventsSettingsFormView.xaml" />
     <EmbeddedResource Include="ClassTemplateSettingsView.paml" />
     <EmbeddedResource Include="ComponentSettingsForm.paml" />
+    <EmbeddedResource Include="CodeAnalysisSettingsFormView.paml" />
     <EmbeddedResource Include="DebuggerSettingsFormView.paml" />
     <EmbeddedResource Include="IncludePathSettingsFormView.paml" />
     <EmbeddedResource Include="ReferenceSettingsFormView.paml" />
@@ -24,13 +25,19 @@
     <EmbeddedResource Include="TypeSettingsFormView.paml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="YamlDotNet.NetCore" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj">
       <Private>true</Private>
     </ProjectReference>
+    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Toolchains.GCC\AvalonStudio.Toolchains.GCC.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Templates\CppClass.template">

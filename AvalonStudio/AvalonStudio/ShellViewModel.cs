@@ -278,6 +278,10 @@ namespace AvalonStudio
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
 
+        public event EventHandler<FileOpenedEventArgs> FileOpened;
+
+        public event EventHandler<FileOpenedEventArgs> FileClosed;
+
         public IMenu MainMenu { get; }
 
         public bool DebugVisible
@@ -452,7 +456,7 @@ namespace AvalonStudio
             DocumentTabs.InvalidateSeperatorVisibility();
         }
 
-        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
+        public void CloseDocument(ISourceFile file)
         {
             bool restoreFromCache = false;
 
@@ -471,7 +475,7 @@ namespace AvalonStudio
 
                     await documentToClose.CloseCommand.ExecuteAsyncTask(null);                    
                 }
-
+                
                 EditorViewModel newEditor = null;
 
                 if (restoreFromCache)
@@ -517,10 +521,14 @@ namespace AvalonStudio
                     {
                         (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
                     }
-                });
-            }
+                });            
 
-            return DocumentTabs.SelectedDocument as IEditor;
+                return DocumentTabs.SelectedDocument as IEditor;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public IEditor GetDocument(string path)
@@ -754,18 +762,21 @@ namespace AvalonStudio
 
             foreach (var error in ErrorList.Errors)
             {
-                var matching = allErrors.SingleOrDefault(err => err.IsEqual(error));
-
-                if (matching == null)
+                if (error.Model.Source == DiagnosticSource.Intellisense)
                 {
-                    toRemove.Add(error);
+                    var matching = allErrors.SingleOrDefault(err => err.IsEqual(error));
+
+                    if (matching == null)
+                    {
+                        toRemove.Add(error);
+                    }
                 }
             }
 
             foreach (var error in toRemove)
             {
                 hasChanged = true;
-                ErrorList.Errors.Remove(error);
+                ErrorList.RemoveDiagnostic(error);
             }
 
             foreach (var error in allErrors)
@@ -775,7 +786,7 @@ namespace AvalonStudio
                 if (matching == null)
                 {
                     hasChanged = true;
-                    ErrorList.Errors.Add(error);
+                    ErrorList.AddDiagnostic(error);
                 }
             }
         }

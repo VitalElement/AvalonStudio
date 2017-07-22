@@ -1,0 +1,8 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+  <StackPanel>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock Text="Enabled" />
+      <CheckBox IsChecked="{Binding Enabled}" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

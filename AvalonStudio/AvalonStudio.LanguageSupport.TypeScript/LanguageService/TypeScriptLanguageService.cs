@@ -242,7 +242,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 return new CodeAnalysisResults
                 {
-                    Diagnostics = new TextSegmentCollection<Diagnostic>
+                    Diagnostics = new List<Diagnostic>
                     {
                         new Diagnostic
                         {
@@ -250,7 +250,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                             Line = 1,
                             Spelling = "Code analysis language service call failed.",
                             StartOffset = 0,
-                            File = file.Name,
+                            File = file,
                             Level = DiagnosticLevel.Error,
                         }
                     }
@@ -333,7 +333,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 Line = 1,
                 Spelling = "Code analysis for TypeScript is experimental and unstable. Use with caution.",
                 StartOffset = 0,
-                File = file.Name,
+                File = file,
                 Level = DiagnosticLevel.Warning,
             });
 

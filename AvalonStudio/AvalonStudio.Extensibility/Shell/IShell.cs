@@ -22,6 +22,8 @@ namespace AvalonStudio.Shell
     public interface IShell
     {
         event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+        event EventHandler<FileOpenedEventArgs> FileOpened;
+        event EventHandler<FileOpenedEventArgs> FileClosed;
 
         Perspective CurrentPerspective { get; set; }
         ISolution CurrentSolution { get; set; }
@@ -49,6 +51,8 @@ namespace AvalonStudio.Shell
         IEditor GetDocument(string path);
 
         Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false);
+
+        void CloseDocument(ISourceFile file);
 
         Task CloseDocumentsForProjectAsync(IProject project);
 

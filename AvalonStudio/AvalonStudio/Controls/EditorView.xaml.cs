@@ -9,9 +9,13 @@ using AvalonStudio.Documents;
 using AvalonStudio.Projects;
 using System.Threading.Tasks;
 using AvalonStudio.Languages;
+using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Editing;
 using AvalonStudio.Shell;
 using AvalonStudio.Extensibility;
 using Avalonia.Input;
+
 
 namespace AvalonStudio.Controls
 {
@@ -155,6 +159,7 @@ namespace AvalonStudio.Controls
         {
             _editor.TextArea.Caret.Line = line;
             _editor.TextArea.Caret.Column = column;
+            _editor.Focus();
         }
 
         public void FormatAll()
@@ -170,6 +175,31 @@ namespace AvalonStudio.Controls
         public string GetWordAtOffset(int offset)
         {
             return _editor.GetWordAtOffset(offset);
+        }
+
+        public void InstallBackgroundRenderer(IBackgroundRenderer backgroundRenderer)
+        {
+            _editor.TextArea.TextView.BackgroundRenderers.Add(backgroundRenderer);
+        }
+
+        public void InstallVisualLineTransformer(IVisualLineTransformer transformer)
+        {
+            _editor.TextArea.TextView.LineTransformers.Add(transformer);
+        }
+
+        public TextDocument GetDocument()
+        {
+            return _editor.Document;
+        }
+
+        public void InstallMargin(AbstractMargin margin)
+        {
+            _editor.TextArea.LeftMargins.Add(margin);
+        }
+
+        public int GetOffsetFromPoint(Point point)
+        {
+            return _editor.GetOffsetFromPoint(point);
         }
     }
 }

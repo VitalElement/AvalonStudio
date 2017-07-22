@@ -5,9 +5,11 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
+using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -97,6 +99,21 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 Model.Solution.Save();
             });
 
+
+            AnalyseCommand = ReactiveCommand.Create();
+            AnalyseCommand.Subscribe(_ =>
+            {
+                if (model is IAnalysisProject)
+                {
+                    var project = model as IAnalysisProject;
+
+                    Task.Factory.StartNew(() =>
+                    {
+                        project.Analyze(IoC.Get<IConsole>());
+                    });
+                }
+            });
+            
             DevConsoleCommand = ReactiveCommand.Create();
             DevConsoleCommand.Subscribe(_ => 
             {
@@ -121,6 +138,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand<object> SetProjectCommand { get; }
         public ReactiveCommand<object> OpenInExplorerCommand { get; }
         public ReactiveCommand<object> NewItemCommand { get; }
+        public ReactiveCommand<object> AnalyseCommand { get; }
 
         public ReactiveCommand<object> DevConsoleCommand { get; }
 
