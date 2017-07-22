@@ -463,7 +463,10 @@ namespace AvalonStudio.Controls
             {
                 ignoreFileModifiedEvents = true;
 
-                FormatAll();
+                if (IsDirty)
+                {
+                    FormatAll();
+                }
 
                 _editor.Save();
 

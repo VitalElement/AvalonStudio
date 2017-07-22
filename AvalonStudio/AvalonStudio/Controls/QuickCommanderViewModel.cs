@@ -34,7 +34,7 @@ namespace AvalonStudio.Controls
 
             this.WhenAnyValue(x => x.SelectedResult).OfType<SearchResultViewModel>().Subscribe(result =>
             {
-                Dispatcher.UIThread.InvokeAsync(async () => { await _shell.OpenDocument(result.Model, 1, focus: false); });
+                Dispatcher.UIThread.InvokeAsync(() => { _shell.OpenDocument(result.Model, 1, focus: false); });
             });
 
             this.WhenAnyValue(x => x.IsVisible).Subscribe(visible =>

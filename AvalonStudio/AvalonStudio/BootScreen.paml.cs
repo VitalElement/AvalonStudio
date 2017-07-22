@@ -49,8 +49,6 @@ namespace AvalonStudio
             });
 
             main.Show();
-
-            ShellViewModel.Instance.Cleanup();
         }
     }
 }

@@ -56,9 +56,7 @@ namespace AvalonStudio.Controls
             }
             set
             {
-                selectedDocument = value;
-
-                this.RaisePropertyChanged(nameof(SelectedDocument));
+                this.RaiseAndSetIfChanged(ref selectedDocument, value);
 
                 if (value is IEditor editor)
                 {
