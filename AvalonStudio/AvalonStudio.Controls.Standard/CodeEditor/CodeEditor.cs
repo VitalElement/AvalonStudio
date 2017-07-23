@@ -283,7 +283,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     if (TextArea.Selection.IsEmpty)
                     {
-                        var location = Document.GetLocation(CaretOffset);
+                        var location = Document.GetLocation(CaretOffset);                        
                         _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
                     }
                     else if (_currentSnippetContext != null)
@@ -358,14 +358,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                 {
                                     Document.Remove(wordStart, CaretOffset - wordStart);
 
+                                    _intellisenseManager.IncludeSnippets = false;
                                     _currentSnippetContext = snippet.Insert(TextArea);
                                 }
 
                                 IDisposable disposable = null;
 
-                                disposable = Observable.FromEventPattern(_currentSnippetContext, nameof(_currentSnippetContext.Deactivated)).Take(1).Subscribe(o =>
-                                {
+                                disposable = Observable.FromEventPattern<SnippetEventArgs>(_currentSnippetContext, nameof(_currentSnippetContext.Deactivated)).Take(1).Subscribe(o =>
+                                {                                                              
                                     _currentSnippetContext = null;
+                                    _intellisenseManager.IncludeSnippets = true;
+
                                     disposable.Dispose();
                                 });
                             }
@@ -739,7 +742,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         TextArea.TextView.LineTransformers.Remove(transformer as IVisualLineTransformer);
                     }
                     break;
-
             }
         }
 
