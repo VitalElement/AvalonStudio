@@ -54,7 +54,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 if (newName == propertyName)
                     return "_" + newName;
                 else
-                    return newName;                
+                    return newName;
             });
 
             _snippetDynamicVars.Add("ClassName", (offset, line, column) => null);
@@ -166,7 +166,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         }
 
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile file, int index, int line, int column,
-            List<UnsavedFile> unsavedFiles, string filter)
+            List<UnsavedFile> unsavedFiles, char lastChar, string filter)
         {
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
@@ -188,6 +188,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                     completionResults.Sort();
 
                     result.Contexts = (CompletionContext)completionResults.Contexts;
+
+                    if (result.Contexts == CompletionContext.Unexposed && lastChar == ':')
+                    {
+                        result.Contexts = CompletionContext.AnyType; // special case Class::<- here static class member access. 
+                    }
 
                     foreach (var codeCompletion in completionResults.Results)
                     {
