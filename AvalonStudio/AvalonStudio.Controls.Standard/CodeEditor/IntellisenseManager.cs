@@ -200,7 +200,7 @@
                     _console.WriteLine("Filtering");
                 }
 
-                var wordStart = DocumentUtilities.FindPrevWordStart(editor.Document, caretIndex, true);
+                var wordStart = DocumentUtilities.FindPrevWordStart(editor.Document, caretIndex);
 
                 if (wordStart >= 0)
                 {
