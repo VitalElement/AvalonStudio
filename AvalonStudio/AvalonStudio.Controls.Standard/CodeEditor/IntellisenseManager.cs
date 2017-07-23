@@ -114,14 +114,12 @@
 
         private void SetCompletionData(CodeCompletionResults completionData)
         {
-            unfilteredCompletions.Clear();
-
             if (_shell.DebugMode)
             {
                 _console.WriteLine(completionData.Contexts.ToString());
             }
 
-            if (!completionData.Contexts.HasFlag(CompletionContext.NaturalLanguage) && completionData.Contexts != CompletionContext.Unexposed)
+            if (!completionData.Contexts.HasFlag(CompletionContext.NaturalLanguage) && (completionData.Contexts != CompletionContext.Unexposed || completionData.Contexts == CompletionContext.Unknown))
             {
                 if (IncludeSnippets)
                 {
@@ -202,11 +200,11 @@
                     _console.WriteLine("Filtering");
                 }
 
-                var wordStart = DocumentUtilities.FindPrevWordStart(editor.Document, caretIndex);
+                var wordStart = DocumentUtilities.FindPrevWordStart(editor.Document, caretIndex, true);
 
                 if (wordStart >= 0)
                 {
-                    currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty);
+                    currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty).Replace("->",string.Empty).Replace("::", string.Empty);
                 }
                 else
                 {
@@ -346,12 +344,22 @@
         {
             if (!intellisenseControl.IsVisible)
             {
+                unfilteredCompletions.Clear();
+
                 if (_shell.DebugMode)
                 {
                     _console.WriteLine("Set Cursor");
                 }
 
                 _requestingData = true;
+
+                char previousChar = '\0';
+
+                if (index >= 1)
+                {
+                    previousChar = editor.Document.GetCharAt(index - 1);
+                }
+
                 intellisenseQueryRunner.InvokeAsync(() =>
                 {
                     CodeCompletionResults result = null;
@@ -362,7 +370,7 @@
                             _console.WriteLine($"Query Language Service {index}, {line}, {column}");
                         }
 
-                        var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
+                        var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles, previousChar);
                         task.Wait();                        
 
                         result = task.Result;
