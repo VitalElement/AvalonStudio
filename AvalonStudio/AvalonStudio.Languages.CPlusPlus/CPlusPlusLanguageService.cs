@@ -54,7 +54,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 if (newName == propertyName)
                     return "_" + newName;
                 else
-                    return newName;                
+                    return newName;
             });
 
             _snippetDynamicVars.Add("ClassName", (offset, line, column) => null);
@@ -189,7 +189,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     result.Contexts = (CompletionContext)completionResults.Contexts;
 
-                    if(result.Contexts == CompletionContext.Unexposed && lastChar == ':')
+                    if (result.Contexts == CompletionContext.Unexposed && lastChar == ':')
                     {
                         result.Contexts = CompletionContext.AnyType; // special case Class::<- here static class member access. 
                     }

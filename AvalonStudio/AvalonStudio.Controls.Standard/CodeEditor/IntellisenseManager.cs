@@ -35,7 +35,7 @@
         private bool _justOpened;
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
-        
+
         private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
@@ -204,7 +204,7 @@
 
                 if (wordStart >= 0)
                 {
-                    currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty).Replace("->",string.Empty).Replace("::", string.Empty);
+                    currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty).Replace("->", string.Empty).Replace("::", string.Empty);
                 }
                 else
                 {
@@ -371,7 +371,7 @@
                         }
 
                         var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles, previousChar);
-                        task.Wait();                        
+                        task.Wait();
 
                         result = task.Result;
                     }).Wait();
@@ -385,7 +385,7 @@
 
                         SetCompletionData(result);
 
-                        _requestingData = false;                        
+                        _requestingData = false;
 
                         if (unfilteredCompletions.Count > 0)
                         {
