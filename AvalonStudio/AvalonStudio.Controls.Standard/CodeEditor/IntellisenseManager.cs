@@ -121,7 +121,7 @@
                 _console.WriteLine(completionData.Contexts.ToString());
             }
 
-            if (!completionData.Contexts.HasFlag(CompletionContext.NaturalLanguage))
+            if (!completionData.Contexts.HasFlag(CompletionContext.NaturalLanguage) && completionData.Contexts != CompletionContext.Unexposed)
             {
                 if (IncludeSnippets)
                 {
@@ -377,11 +377,17 @@
 
                         SetCompletionData(result);
 
-                        _requestingData = false;
+                        _requestingData = false;                        
 
-                        UpdateFilter(editor.CaretOffset, false);
-
-                        intellisenseControl.IsVisible = !_hidden;
+                        if (unfilteredCompletions.Count > 0)
+                        {
+                            UpdateFilter(editor.CaretOffset, false);
+                            intellisenseControl.IsVisible = !_hidden;
+                        }
+                        else
+                        {
+                            _hidden = true;
+                        }
                     });
                 });
             }
