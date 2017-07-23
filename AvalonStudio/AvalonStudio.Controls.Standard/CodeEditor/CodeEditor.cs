@@ -362,15 +362,23 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                     _currentSnippetContext = snippet.Insert(TextArea);
                                 }
 
-                                IDisposable disposable = null;
+                                if (_currentSnippetContext.ActiveElements.Count() > 0)
+                                {
+                                    IDisposable disposable = null;
 
-                                disposable = Observable.FromEventPattern<SnippetEventArgs>(_currentSnippetContext, nameof(_currentSnippetContext.Deactivated)).Take(1).Subscribe(o =>
-                                {                                                              
+                                    disposable = Observable.FromEventPattern<SnippetEventArgs>(_currentSnippetContext, nameof(_currentSnippetContext.Deactivated)).Take(1).Subscribe(o =>
+                                    {
+                                        _currentSnippetContext = null;
+                                        _intellisenseManager.IncludeSnippets = true;
+
+                                        disposable.Dispose();
+                                    });
+                                }
+                                else
+                                {
                                     _currentSnippetContext = null;
                                     _intellisenseManager.IncludeSnippets = true;
-
-                                    disposable.Dispose();
-                                });
+                                }
                             }
                         }
                     }
