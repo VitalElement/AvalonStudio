@@ -116,19 +116,32 @@
         {
             unfilteredCompletions.Clear();
 
-            foreach (var result in completionData.Completions)
+            if (_shell.DebugMode)
             {
-                CompletionDataViewModel currentCompletion = null;
+                _console.WriteLine(completionData.Contexts.ToString());
+            }
 
-                currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
-
-                if (currentCompletion == null)
+            if (!completionData.Contexts.HasFlag(CompletionContext.NaturalLanguage))
+            {
+                if (IncludeSnippets)
                 {
-                    unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
+                    InsertSnippets(completionData.Completions);
                 }
-                else
+
+                foreach (var result in completionData.Completions)
                 {
-                    currentCompletion.Overloads++;
+                    CompletionDataViewModel currentCompletion = null;
+
+                    currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
+
+                    if (currentCompletion == null)
+                    {
+                        unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
+                    }
+                    else
+                    {
+                        currentCompletion.Overloads++;
+                    }
                 }
             }
         }
@@ -350,12 +363,7 @@
                         }
 
                         var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
-                        task.Wait();
-
-                        if (IncludeSnippets)
-                        {
-                            InsertSnippets(task.Result.Completions);
-                        }
+                        task.Wait();                        
 
                         result = task.Result;
                     }).Wait();
