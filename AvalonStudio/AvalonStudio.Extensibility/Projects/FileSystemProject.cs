@@ -14,7 +14,7 @@
     using System.IO;
     using System.Linq;
 
-    public abstract class FileSystemProject : IProject
+    public abstract class FileSystemProject : IProject, IDisposable
     {
         private FileSystemWatcher fileSystemWatcher;
         private FileSystemWatcher folderSystemWatcher;
@@ -33,6 +33,10 @@
             {
                 uiDispatcher = Dispatcher.UIThread;
             }
+        }
+        ~FileSystemProject()
+        {
+            Dispose();
         }
 
         public static void PopulateFiles(FileSystemProject project, IProjectFolder folder)
@@ -415,6 +419,17 @@
         public abstract void Save();
 
         public abstract IProject Load(ISolution solution, string filePath);
+
+        public void Dispose()
+        {
+            folderSystemWatcher.Created -= FolderSystemWatcher_Created;
+            folderSystemWatcher.Renamed -= FolderSystemWatcher_Renamed;
+            folderSystemWatcher.Deleted -= FolderSystemWatcher_Deleted;
+            fileSystemWatcher.Changed -= FileSystemWatcher_Changed;
+            fileSystemWatcher.Created -= FileSystemWatcher_Created;
+            fileSystemWatcher.Renamed -= FileSystemWatcher_Renamed;
+            fileSystemWatcher.Deleted -= FileSystemWatcher_Deleted;
+        }
 
         #endregion IProject Implementation
     }
