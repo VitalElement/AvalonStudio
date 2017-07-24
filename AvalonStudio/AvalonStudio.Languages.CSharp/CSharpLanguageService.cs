@@ -53,7 +53,18 @@
 
         public bool CanTriggerIntellisense(char currentChar, char previousChar)
         {
-            return IntellisenseSearchCharacters.Contains(currentChar);
+            bool result = false;
+
+            if (IntellisenseTriggerCharacters.Contains(currentChar))
+            {
+                result = true;
+            }
+            else if (currentChar == ':' && previousChar == ':')
+            {
+                result = true;
+            }
+
+            return result;
         }
 
         public IEnumerable<char> IntellisenseTriggerCharacters => new[]
