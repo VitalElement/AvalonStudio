@@ -168,9 +168,10 @@
                     if (filter == string.Empty || completion.CompletionText.StartsWith(filter))
                     {
                         result.Completions.Add(newCompletion);
-                        result.Contexts = CompletionContext.Unknown;
                     }
                 }
+
+                result.Contexts = CompletionContext.AnyType;
             }
 
             return result;
