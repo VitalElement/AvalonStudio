@@ -273,7 +273,7 @@ Task("Zip-NetCore")
         {
             var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
 
-            Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix);
+            Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix));
         }
     }    
 });
