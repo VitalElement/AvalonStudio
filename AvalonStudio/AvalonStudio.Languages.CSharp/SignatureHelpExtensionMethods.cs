@@ -11,7 +11,7 @@ namespace AvalonStudio.Languages.CSharp
         {
             if (!string.IsNullOrEmpty(signature.Documentation))
             {
-                var fragments = signature.Documentation.Trim(); ;
+                var fragments = signature.Documentation.Trim();
                 var myRootedXml = "<root>" + fragments + "</root>";
                 var documentationXml = XDocument.Parse(myRootedXml);
 
