@@ -31,6 +31,7 @@ namespace AvalonStudio.Languages
 
             PunctuationBrush = Brush.Parse("#C8C8C8");
             UserTypeBrush = Brush.Parse("#4EC9B0");
+            StructNameBrush = Brush.Parse("#4EC9B0");
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
@@ -48,6 +49,8 @@ namespace AvalonStudio.Languages
         public IBrush LiteralBrush { get; set; }
 
         public IBrush UserTypeBrush { get; set; }
+
+        public IBrush StructNameBrush { get; set; }
 
         public IBrush CallExpressionBrush { get; set; }
 
@@ -113,14 +116,6 @@ namespace AvalonStudio.Languages
             });
         }
 
-        public void UpdateOffsets(DocumentChangeEventArgs e)
-        {
-            if (TextTransformations != null)
-            {
-                TextTransformations.UpdateOffsets(e);
-            }
-        }
-
         public IBrush GetBrush(HighlightType type)
         {
             IBrush result;
@@ -169,6 +164,10 @@ namespace AvalonStudio.Languages
 
                 case HighlightType.Operator:
                     result = OperatorBrush;
+                    break;
+
+                case HighlightType.StructName:
+                    result = StructNameBrush;
                     break;
 
                 default:
