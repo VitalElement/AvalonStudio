@@ -20,8 +20,8 @@ namespace AvalonStudio.Languages
 
             CommentBrush = Brush.Parse("#559A3F");
             CallExpressionBrush = Brush.Parse("#DCDCAA");
-            OperatorBrush = Brush.Parse("#DCFFAA");
-            IdentifierBrush = Brush.Parse("#C8C8C8");
+            OperatorBrush = Brush.Parse("#B4B4B4");
+            IdentifierBrush = Brush.Parse("#DCDCDC");
             KeywordBrush = Brush.Parse("#569CD6");
             LiteralBrush = Brush.Parse("#D69D85");
             NumericLiteralBrush = Brush.Parse("#B5CEA8");
