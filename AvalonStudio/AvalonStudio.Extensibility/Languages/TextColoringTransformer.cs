@@ -20,6 +20,7 @@ namespace AvalonStudio.Languages
 
             CommentBrush = Brush.Parse("#559A3F");
             CallExpressionBrush = Brush.Parse("#DCDCAA");
+            OperatorBrush = Brush.Parse("#DCFFAA");
             IdentifierBrush = Brush.Parse("#C8C8C8");
             KeywordBrush = Brush.Parse("#569CD6");
             LiteralBrush = Brush.Parse("#D69D85");
@@ -33,6 +34,8 @@ namespace AvalonStudio.Languages
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
+
+        public IBrush OperatorBrush { get; set; }
 
         public IBrush PunctuationBrush { get; set; }
 
@@ -162,6 +165,10 @@ namespace AvalonStudio.Languages
 
                 case HighlightType.EnumTypeName:
                     result = EnumTypeNameBrush;
+                    break;
+
+                case HighlightType.Operator:
+                    result = OperatorBrush;
                     break;
 
                 default:

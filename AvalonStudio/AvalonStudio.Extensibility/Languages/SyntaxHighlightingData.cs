@@ -19,6 +19,7 @@ namespace AvalonStudio.Languages
         InterfaceName,
         PreProcessor,
         PreProcessorText,
+        Operator,
     }
 
     public class SyntaxHighlightDataList : List<OffsetSyntaxHighlightingData>
