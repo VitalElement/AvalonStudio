@@ -584,13 +584,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             var sourceFile = SourceFile;
             var unsavedFiles = UnsavedFiles.ToList();
+            var document = Document;
 
             await _codeAnalysisRunner.InvokeAsync(async () =>
             {
                 if (LanguageService != null)
                 {
                     // TODO allow interruption.
-                    var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, unsavedFiles, () => false);
+                    var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, document, unsavedFiles, () => false);
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {

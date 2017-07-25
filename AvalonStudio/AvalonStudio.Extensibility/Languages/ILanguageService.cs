@@ -47,7 +47,7 @@ namespace AvalonStudio.Languages
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
 
-        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
+        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
         IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file);
 

@@ -515,7 +515,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument document, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();

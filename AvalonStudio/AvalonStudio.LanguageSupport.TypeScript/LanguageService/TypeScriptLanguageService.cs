@@ -221,7 +221,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             dataAssociations.Add(file, association);
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument document,
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
