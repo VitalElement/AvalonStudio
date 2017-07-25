@@ -59,7 +59,7 @@ namespace AvalonStudio.Languages
 
         bool CanHandle(ISourceFile file);
 
-        int Format(TextDocument textDocument, uint offset, uint length, int cursor);
+        int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor);
 
         int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
 

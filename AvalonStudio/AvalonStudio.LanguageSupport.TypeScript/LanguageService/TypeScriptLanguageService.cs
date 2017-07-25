@@ -172,7 +172,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
         }
 
-        public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
         {
             //STUB!
             return -1;
@@ -470,7 +470,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+               // result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();
@@ -499,7 +499,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+               // result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();

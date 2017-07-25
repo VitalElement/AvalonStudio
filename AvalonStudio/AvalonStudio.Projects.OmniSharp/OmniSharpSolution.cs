@@ -1,10 +1,12 @@
 ﻿using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Languages.CSharp.OmniSharp;
 using AvalonStudio.Utils;
+using RoslynPad.Roslyn;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.OmniSharp
@@ -20,6 +22,10 @@ namespace AvalonStudio.Projects.OmniSharp
             return result;
         }
 
+        public NuGetConfiguration NuGetConfiguration { get; }
+
+        public RoslynHost RoslynHost { get; private set; }
+
         private OmniSharpServer server;
 
         private OmniSharpSolution()
@@ -30,6 +36,13 @@ namespace AvalonStudio.Projects.OmniSharp
 
         private async Task LoadSolution(string path)
         {
+            RoslynHost = new RoslynHost(NuGetConfiguration, new Assembly[]
+            {
+                // TODO: xplat
+                /*Assembly.Load("RoslynPad.Roslyn.Windows"),
+                Assembly.Load("RoslynPad.Editor.Windows")*/
+            });
+
             Location = path;
 
             Name = Path.GetFileNameWithoutExtension(path);

@@ -527,7 +527,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (LanguageService != null)
             {
-                CaretOffset = LanguageService.Format(Document, 0, (uint)Document.TextLength, CaretOffset);
+                var caretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
+
+                // some language services manually set the caret themselves and return -1 to indicate this.
+                if(caretOffset >= 0)
+                {
+                    CaretOffset = caretOffset;
+                }
 
                 Focus();
             }

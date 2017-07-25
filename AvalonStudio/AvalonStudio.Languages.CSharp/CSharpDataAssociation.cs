@@ -6,13 +6,14 @@
     using AvalonStudio.Extensibility.Editor;
     using AvalonStudio.Languages;
     using CPlusPlus;
+    using Microsoft.CodeAnalysis;
     using Projects.OmniSharp;
     using System;
     using System.Collections.Generic;
 
     internal class CSharpDataAssociation
     {
-        public CSharpDataAssociation(TextDocument textDocument)
+        public CSharpDataAssociation(AvaloniaEdit.Document.TextDocument textDocument)
         {
             BackgroundRenderers = new List<IBackgroundRenderer>();
             DocumentLineTransformers = new List<IVisualLineTransformer>();
@@ -32,5 +33,7 @@
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
         public List<IVisualLineTransformer> DocumentLineTransformers { get; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
+
+        public DocumentId DocumentId { get; set; }
     }
 }

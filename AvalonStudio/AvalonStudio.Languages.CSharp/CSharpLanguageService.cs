@@ -10,7 +10,9 @@
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
     using AvalonStudio.Utils;
+    using Microsoft.CodeAnalysis.Formatting;
     using Projects.OmniSharp;
+    using RoslynPad.Editor.Windows;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -204,9 +206,16 @@
             return result;
         }
 
-        public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
         {
-            return cursor;
+            var dataAssociation = GetAssociatedData(file);
+
+            var document = dataAssociation.Solution.RoslynHost.GetDocument(dataAssociation.DocumentId);
+            var formattedDocument = Formatter.FormatAsync(document).GetAwaiter().GetResult();
+
+            dataAssociation.Solution.RoslynHost.UpdateDocument(formattedDocument);
+
+            return -1;
         }
 
         public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
@@ -294,6 +303,15 @@
             association = new CSharpDataAssociation(doc);
             association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.
 
+            var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
+           association.DocumentId =  association.Solution.RoslynHost.AddDocument(avaloniaEditTextContainer, file.Project.Solution.CurrentDirectory, (diagnostics) =>
+            {
+
+            }, (sourceText)=>
+            {
+                avaloniaEditTextContainer.UpdateText(sourceText);
+            });
+
             dataAssociations.Add(file, association);
 
             association.TextInputHandler = (sender, e) =>
@@ -308,26 +326,12 @@
                     {
                         case "}":
                         case ";":
-                            editor.CaretOffset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+                            Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
                             break;
 
                         case "{":
                             var lineCount = editor.Document.LineCount;
-                            var offset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
-
-                            // suggests clang format didnt do anything, so we can assume not moving to new line.
-                            if (lineCount != editor.Document.LineCount)
-                            {
-                                if (offset <= editor.Document.TextLength)
-                                {
-                                    var newLine = editor.Document.GetLineByOffset(offset);
-                                    editor.CaretOffset = newLine.PreviousLine.EndOffset;
-                                }
-                            }
-                            else
-                            {
-                                editor.CaretOffset = offset;
-                            }
+                            Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
                             break;
                     }
 
@@ -400,6 +404,8 @@
 
             var dataAssociation = GetAssociatedData(file);
 
+            var document = dataAssociation.Solution.RoslynHost.GetDocument(dataAssociation.DocumentId);
+
             var response = await dataAssociation.Solution.Server.Highlight(file.FilePath, unsavedFiles.FirstOrDefault()?.Contents);
 
             if (response != null)
@@ -437,7 +443,7 @@
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+               // result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();
@@ -466,7 +472,7 @@
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+               // result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();
@@ -488,7 +494,7 @@
         {
             SignatureHelp result = null;
 
-            var dataAssociation = GetAssociatedData(file);
+            /*var dataAssociation = GetAssociatedData(file);
 
             result = await dataAssociation.Solution.Server.SignatureHelp(file.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
 
@@ -497,7 +503,7 @@
                 result.NormalizeSignatureData();
 
                 result.Offset = offset;
-            }
+            }*/
 
             return result;
         }
