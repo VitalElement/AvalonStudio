@@ -1,5 +1,6 @@
 ﻿using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.CSharp
@@ -10,13 +11,16 @@ namespace AvalonStudio.Languages.CSharp
         {
             if (!string.IsNullOrEmpty(signature.Documentation))
             {
-                var documentationXml = XDocument.Parse(signature.Documentation);
-                var member = documentationXml.Element("member");
-                var description = member.Element("summary");
+                var fragments = signature.Documentation.Trim();
+                var myRootedXml = "<root>" + fragments + "</root>";
+                var documentationXml = XDocument.Parse(myRootedXml);
+
+                var root = documentationXml.Element("root");
+                var description = root.Element("summary");
 
                 signature.Description = description.Value;
 
-                var parametersXml = member.Elements("param");
+                var parametersXml = root.Elements("param");
 
                 foreach (var param in parametersXml)
                 {
@@ -25,6 +29,13 @@ namespace AvalonStudio.Languages.CSharp
                     var parameter = signature.Parameters.FirstOrDefault(p => p.Name == name.Value);
 
                     parameter.Documentation = param.Value;
+                }
+
+                var exceptions = root.Elements("exception");
+
+                foreach(var exception in exceptions)
+                {
+                    signature.Exceptions.Add(new SignatureException { Documentation = exception.Value, Type = exception.Attribute("cref").Value });
                 }
             }
         }
