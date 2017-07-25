@@ -2,17 +2,23 @@
 {
     using Avalonia.Input;
     using Avalonia.Interactivity;
+    using Avalonia.Media;
+    using Avalonia.Threading;
     using AvaloniaEdit.Document;
     using AvaloniaEdit.Indentation;
     using AvaloniaEdit.Indentation.CSharp;
     using AvaloniaEdit.Rendering;
+    using AvalonStudio.Extensibility.Editor;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
     using AvalonStudio.Utils;
+    using Microsoft.CodeAnalysis.Classification;
+    using Microsoft.CodeAnalysis.Completion;
     using Microsoft.CodeAnalysis.Formatting;
     using Projects.OmniSharp;
     using RoslynPad.Editor.Windows;
+    using RoslynPad.Roslyn.Diagnostics;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -24,6 +30,8 @@
     {
         private static readonly ConditionalWeakTable<ISourceFile, CSharpDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, CSharpDataAssociation>();
+
+        TaskCompletionSource<RoslynPad.Roslyn.Diagnostics.DiagnosticsUpdatedArgs> diagnosticsUpdatedSource;
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
@@ -173,13 +181,48 @@
             return CodeCompletionKind.None;
         }
 
+        private static CompletionTrigger GetCompletionTrigger(char? triggerChar)
+        {
+            return triggerChar != null
+                ? CompletionTrigger.CreateInsertionTrigger(triggerChar.Value)
+                : CompletionTrigger.Default;
+        }
+
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter)
         {
             var result = new CodeCompletionResults();
 
             var dataAssociation = GetAssociatedData(sourceFile);
 
-            var response = await dataAssociation.Solution.Server.AutoComplete(sourceFile.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
+            var document = dataAssociation.Solution.RoslynHost.GetDocument(dataAssociation.DocumentId);
+
+            var completionService = CompletionService.GetService(document);
+            var completionTrigger = GetCompletionTrigger(null);
+            var data = await completionService.GetCompletionsAsync(
+                document,
+                index,
+                completionTrigger
+                );
+
+            if(data != null)
+            {
+                foreach(var completion in data.Items)
+                {
+                    var newCompletion = new CodeCompletionData()
+                    {
+                        Suggestion = completion.DisplayText,
+                        Hint = completion.DisplayText,
+                        
+                    };
+
+                    result.Completions.Add(newCompletion);
+                }
+
+                result.Contexts = Languages.CompletionContext.AnyType;
+            }
+            
+
+            /*var response = await dataAssociation.Solution.Server.AutoComplete(sourceFile.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
 
             if (response != null)
             {
@@ -201,7 +244,7 @@
                 }
 
                 result.Contexts = CompletionContext.AnyType;
-            }
+            }*/
 
             return result;
         }
@@ -304,10 +347,14 @@
             association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.
 
             var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
-           association.DocumentId =  association.Solution.RoslynHost.AddDocument(avaloniaEditTextContainer, file.Project.Solution.CurrentDirectory, (diagnostics) =>
+            association.DocumentId = association.Solution.RoslynHost.AddDocument(avaloniaEditTextContainer, file.Project.Solution.CurrentDirectory, (diagnostics) =>
             {
+                if(diagnosticsUpdatedSource != null && !diagnosticsUpdatedSource.Task.IsCompleted)
+                {
+                    diagnosticsUpdatedSource.SetResult(diagnostics);
+                }
 
-            }, (sourceText)=>
+            }, (sourceText) =>
             {
                 avaloniaEditTextContainer.UpdateText(sourceText);
             });
@@ -398,32 +445,139 @@
             }
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        HighlightType FromRoslynType (string type)
+        {
+            var result = HighlightType.None;
+
+            switch(type)
+            {
+                case "keyword":
+                    result = HighlightType.Keyword;
+                    break;
+
+                case "identifier":
+                    result = HighlightType.Identifier;
+                    break;
+
+                case "punctuation":
+                    result = HighlightType.Punctuation;
+                    break;
+
+                case "class name":
+                    result = HighlightType.ClassName;
+                    break;
+
+                case "interface name":
+                    result = HighlightType.InterfaceName;
+                    break;
+
+                case "struct name":
+                    result = HighlightType.StructName;
+                    break;
+
+                case "number":
+                    result = HighlightType.NumericLiteral;
+                    break;
+
+                case "string":
+                    result = HighlightType.Literal;
+                    break;
+
+                case "operator":
+                    result = HighlightType.Operator;
+                    break;
+
+                case "xml doc comment - text":
+                case "xml doc comment - delimiter":
+                case "comment":
+                    result = HighlightType.Comment;
+                    break;
+
+                default:
+                    Console.WriteLine($"Dont understand {type}");
+                    break;
+            }
+
+            return result;
+        }
+
+        private Diagnostic FromRoslynDiagnostic (DiagnosticData diagnostic, TextMarkerService service, string fileName, IProject project)
+        {
+            var result = new Diagnostic
+            {
+                Spelling = diagnostic.Message,
+                Level = (DiagnosticLevel)diagnostic.Severity,
+                StartOffset = diagnostic.TextSpan.Start,
+                Length = diagnostic.TextSpan.Length,
+                File = fileName,
+                Project = project,
+            };
+
+            Color markerColor;
+
+            switch (result.Level)
+            {
+                case DiagnosticLevel.Error:
+                case DiagnosticLevel.Fatal:
+                    markerColor = Color.FromRgb(253, 45, 45);
+                    break;
+
+                case DiagnosticLevel.Warning:
+                    markerColor = Color.FromRgb(255, 207, 40);
+                    break;
+
+                default:
+                    markerColor = Color.FromRgb(0, 42, 74);
+                    break;
+            }
+
+            service.Create(result.StartOffset, result.Length, result.Spelling, markerColor);
+
+            return result;
+        }
+
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument,  List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
+
+            var textLength = 0;
+
+            await Dispatcher.UIThread.InvokeTaskAsync(() => { textLength = textDocument.TextLength; });
 
             var dataAssociation = GetAssociatedData(file);
 
             var document = dataAssociation.Solution.RoslynHost.GetDocument(dataAssociation.DocumentId);
 
-            var response = await dataAssociation.Solution.Server.Highlight(file.FilePath, unsavedFiles.FirstOrDefault()?.Contents);
-
-            if (response != null)
+            if(diagnosticsUpdatedSource == null)
             {
-                foreach (var highlight in response.Highlights)
-                {
-                    result.SyntaxHighlightingData.Add(new LineColumnSyntaxHighlightingData
-                    {
-                        StartLine = highlight.StartLine,
-                        EndLine = highlight.EndLine,
-                        StartColumn = highlight.StartColumn,
-                        EndColumn = highlight.EndColumn,
-                        Type = ToAvalonHighlightType(highlight.Kind)
-                    });
-                }
-
-                dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
+                diagnosticsUpdatedSource = new TaskCompletionSource<RoslynPad.Roslyn.Diagnostics.DiagnosticsUpdatedArgs>();
             }
+
+            var highlightData = await Classifier.GetClassifiedSpansAsync(document, new Microsoft.CodeAnalysis.Text.TextSpan(0, textLength));
+
+            foreach(var span in highlightData)
+            {
+                result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
+            }
+
+            if (diagnosticsUpdatedSource != null)
+            {
+                var results = await diagnosticsUpdatedSource.Task;
+
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    dataAssociation.TextMarkerService.Clear();
+
+                    foreach (var diagnostic in results.Diagnostics)
+                    {
+                        result.Diagnostics.Add(FromRoslynDiagnostic(diagnostic, dataAssociation.TextMarkerService, file.Location, file.Project));
+                    }
+                });
+
+                diagnosticsUpdatedSource = null;
+            }
+
+            dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
         }
