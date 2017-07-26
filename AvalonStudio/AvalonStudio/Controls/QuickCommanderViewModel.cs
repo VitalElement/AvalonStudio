@@ -10,6 +10,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using AvalonStudio.Extensibility.Utils;
 
 namespace AvalonStudio.Controls
 {
@@ -109,17 +110,29 @@ namespace AvalonStudio.Controls
                     _results.Clear();
                 });
 
-                query = query.ToLower();
-
-                await Task.Run(() =>
+                query = query.ToLower();                
+                
+                await Task.Run(async () =>
                 {
+                    var list = new List<SearchResultViewModel>();
+
                     foreach (var project in _shell.CurrentSolution.Projects)
                     {
-                        var newResults = project.SourceFiles.Where(f => f.Project.Location.MakeRelativePath(f.Location).ToLower().Contains(query)).Select(r => new SearchResultViewModel(r));
-
-                        Dispatcher.UIThread.InvokeAsync(() =>
+                        project.SourceFiles.Select(sf =>
                         {
-                            foreach (var result in newResults)
+                            var match = FuzzyMatch.fuzzy_match(query, sf.Project.Location.MakeRelativePath(sf.Location), out int score, out string format);
+
+                            return new Tuple<bool, int, string, ISourceFile>(match, score, format, sf);
+                        }).Where(tp => tp.Item1).Select(tp =>
+                        {
+                            list.InsertSorted(new SearchResultViewModel(tp.Item4) { Priority = tp.Item2 });
+                            return tp;
+                        }).ToList();
+                        
+
+                       await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                        {
+                            foreach (var result in list)
                             {
                                 _results.Add(result);
                             }

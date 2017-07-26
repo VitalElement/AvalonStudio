@@ -19,7 +19,7 @@ namespace AvalonStudio.Extensibility.Tests
             Assert.Equal(expected_matches, format);
         }
 
-        [Fact]
+        [Fact]        
         private void test_test_match_25()
         {
             runtest("test", "test", true, 25, "{t}{e}{s}{t}");
