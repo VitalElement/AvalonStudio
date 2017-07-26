@@ -2,26 +2,13 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Remove="CallStackView.paml" />
-    <None Remove="DisassemblyView.paml" />
-    <None Remove="LocalsView.paml" />
-    <None Remove="MemoryView.paml" />
-    <None Remove="RegistersView.xaml" />
-    <None Remove="VariableControlView.paml" />
-    <None Remove="WatchListView.paml" />
+    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="CallStackView.paml" />
-    <EmbeddedResource Include="DisassemblyView.paml" />
-    <EmbeddedResource Include="LocalsView.paml" />
-    <EmbeddedResource Include="MemoryView.paml" />
-    <EmbeddedResource Include="RegistersView.xaml" />
-    <EmbeddedResource Include="VariableControlView.paml" />
-    <EmbeddedResource Include="WatchListView.paml" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.1-build3495-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.1-build3554-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
   </ItemGroup>

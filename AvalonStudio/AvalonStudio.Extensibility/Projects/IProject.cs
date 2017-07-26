@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Projects
 {
-    public interface IProject : IProjectFolder, IComparable<IProject>
+    public interface IProject : IProjectFolder, IComparable<IProject>, IDisposable
     {
         ISolution Solution { get; }
 

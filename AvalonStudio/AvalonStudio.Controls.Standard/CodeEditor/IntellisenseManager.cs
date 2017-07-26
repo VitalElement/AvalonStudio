@@ -33,7 +33,6 @@
         private bool _requestingData;
         private bool _hidden; // i.e. can be technically open, but hidden awaiting completion data..
         private bool _justOpened;
-        private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
 
         private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
@@ -121,7 +120,7 @@
 
             if (!completionData.Contexts.HasFlag(CompletionContext.NaturalLanguage) && (completionData.Contexts != CompletionContext.Unexposed || completionData.Contexts == CompletionContext.Unknown))
             {
-                if (IncludeSnippets)
+                if (IncludeSnippets && !(completionData.Contexts.HasFlag(CompletionContext.ArrowMemberAccess) || completionData.Contexts.HasFlag(CompletionContext.DotMemberAccess)))
                 {
                     InsertSnippets(completionData.Completions);
                 }
@@ -146,32 +145,12 @@
 
         private void OpenIntellisense(char currentChar, char previousChar, int caretIndex)
         {
-            if (_shell.DebugMode)
-            {
-                _console.WriteLine("Open Intellisense");
-            }
-
             _justOpened = true;
             _hidden = false;
 
-            if (caretIndex > 1)
+            if (_shell.DebugMode)
             {
-                if (IsLanguageSpecificTriggerChar(currentChar, previousChar))
-                {
-                    intellisenseStartedAt = caretIndex;
-                }
-                else if (currentChar.IsWhiteSpace())
-                {
-                    intellisenseStartedAt = caretIndex;
-                }
-                else
-                {
-                    intellisenseStartedAt = TextUtilities.GetNextCaretPosition(editor.Document, caretIndex, LogicalDirection.Backward, CaretPositioningMode.WordStart);
-                }
-            }
-            else
-            {
-                intellisenseStartedAt = 1;
+                _console.WriteLine($"Open Intellisense {caretIndex}");
             }
 
             UpdateFilter(caretIndex);
@@ -181,18 +160,15 @@
         {
             currentFilter = string.Empty;
 
-            if (editor != null)
-            {
-                intellisenseStartedAt = editor.CaretOffset;
-            }
-
             intellisenseControl.SelectedCompletion = null;
             _hidden = true;
             intellisenseControl.IsVisible = false;
         }
 
-        private void UpdateFilter(int caretIndex, bool allowVisiblityChanges = true)
+        private bool UpdateFilter(int caretIndex, bool allowVisiblityChanges = true)
         {
+            bool result = false;
+
             if (!_requestingData)
             {
                 if (_shell.DebugMode)
@@ -200,15 +176,26 @@
                     _console.WriteLine("Filtering");
                 }
 
-                var wordStart = DocumentUtilities.FindPrevWordStart(editor.Document, caretIndex);
+                var wordStart = DocumentUtilities.FindPrevSymbolNameStart(editor.Document, caretIndex);
 
                 if (wordStart >= 0)
                 {
+                    result = true;
                     currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty).Replace("->", string.Empty).Replace("::", string.Empty);
+
+                    if(currentFilter.Any(s=>char.IsWhiteSpace(s)))
+                    {
+                        currentFilter = "";
+                    }
                 }
                 else
                 {
                     currentFilter = string.Empty;
+                }
+
+                if (_shell.DebugMode)
+                {
+                    _console.WriteLine($"Filter: {currentFilter}");
                 }
 
                 CompletionDataViewModel suggestion = null;
@@ -280,9 +267,11 @@
                     intellisenseControl.SelectedCompletion = null;
                 }
             }
+
+            return result;
         }
 
-        private bool DoComplete(bool includeLastChar)
+        private bool DoComplete(bool includeLastChar, int caretOffset = 0)
         {
             int caretIndex = -1;
 
@@ -294,29 +283,28 @@
             {
                 result = true;
 
-                if (intellisenseStartedAt <= caretIndex)
+                var offset = 0;
+
+                if (includeLastChar)
                 {
-                    var offset = 0;
-
-                    if (includeLastChar)
-                    {
-                        offset = 1;
-                    }
-
-                    editor.Document.BeginUpdate();
-
-                    if (caretIndex - intellisenseStartedAt - offset >= 0 && intellisenseControl.SelectedCompletion != null)
-                    {
-                        editor.Document.Replace(intellisenseStartedAt, caretIndex - intellisenseStartedAt - offset,
-                                intellisenseControl.SelectedCompletion.Title);
-
-                        caretIndex = intellisenseStartedAt + intellisenseControl.SelectedCompletion.Title.Length + offset;
-
-                        editor.CaretOffset = caretIndex;
-                    }
-
-                    editor.Document.EndUpdate();
+                    offset = 1;
                 }
+
+                editor.Document.BeginUpdate();
+
+                int wordStart = TextUtilities.GetNextCaretPosition(editor.Document, caretIndex + caretOffset, LogicalDirection.Backward, CaretPositioningMode.WordStart);
+
+                if (caretIndex - wordStart - offset >= 0 && intellisenseControl.SelectedCompletion != null)
+                {
+                    editor.Document.Replace(wordStart, caretIndex - wordStart - offset,
+                            intellisenseControl.SelectedCompletion.Title);
+
+                    caretIndex = wordStart + intellisenseControl.SelectedCompletion.Title.Length + offset;
+
+                    editor.CaretOffset = caretIndex;
+                }
+
+                editor.Document.EndUpdate();
             }
 
             CloseIntellisense();
@@ -399,6 +387,10 @@
                     });
                 });
             }
+            else
+            {
+                UpdateFilter(editor.CaretOffset, false);
+            }
         }
 
         public void OnTextInput(TextInputEventArgs e, int caretIndex, int line, int column)
@@ -414,7 +406,14 @@
                     {
                         if (IsCompletionChar(currentChar))
                         {
-                            DoComplete(true);
+                            if (currentChar.IsWhiteSpace())
+                            {
+                                DoComplete(true);
+                            }
+                            else
+                            {
+                                DoComplete(true, -1);
+                            }
                         }
                     }
 
@@ -476,14 +475,13 @@
                         {
                             OpenIntellisense(currentChar, previousChar, caretIndex);
                         }
-                        else if (caretIndex > intellisenseStartedAt)
-                        {
-                            UpdateFilter(caretIndex);
-                        }
                         else
                         {
-                            CloseIntellisense();
-                            SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
+                            if(!UpdateFilter(caretIndex))
+                            {
+                               // CloseIntellisense();
+                                SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
+                            }
                         }
                     }
 
@@ -567,10 +565,7 @@
                             break;
 
                         case Key.Back:
-                            if (caretIndex - 1 >= intellisenseStartedAt)
-                            {
-                                UpdateFilter(caretIndex - 1);
-                            }
+                            UpdateFilter(caretIndex - 1);
                             break;
 
                         case Key.Tab:
@@ -624,7 +619,7 @@
         {
             if (e.Source == editor.TextArea)
             {
-                if (!_justOpened && !_hidden && caretIndex <= intellisenseStartedAt && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
+                if (!_justOpened && !_hidden && currentFilter == "" && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
                 {
                     CloseIntellisense();
 
