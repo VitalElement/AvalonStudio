@@ -52,15 +52,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     {
                         _viewHost.DataContext = dataContext;
                         var mouseDevice = (VisualRoot as IInputRoot)?.MouseDevice;
-                        _lastPoint = mouseDevice.GetPosition(_editor.TextArea);
+                        _lastPoint = mouseDevice.GetPosition(_editor);
 
                         // adjust offset so popup is always a little bit below the line queried.
-                        var visualLine = _editor.TextArea.TextView.GetVisualLineFromVisualTop(_lastPoint.Y);
-                        var currentLine = visualLine.LastDocumentLine.LineNumber;
+                        var position = _editor.GetPositionFromPoint(_lastPoint);
+                        var currentLine = position.Value.Line;
+                        var visualLine = _editor.TextArea.TextView.GetVisualLine(currentLine);
 
-                        var delta = _lastPoint.Y - (currentLine * visualLine.Height);
+                        var translated = _editor.TranslatePoint(_lastPoint, _editor.TextArea.TextView);
+                        var delta = (translated.Y % visualLine.Height);
 
-                        _popup.VerticalOffset = ((visualLine.Height - delta) - visualLine.Height) + 1;
+                        _popup.VerticalOffset = (visualLine.Height - delta) + 1;
 
                         _popup.Open();
                     }
@@ -76,7 +78,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (_popup.IsOpen)
             {
-                var distance = e.GetPosition(_editor.TextArea).DistanceTo(_lastPoint);
+                var distance = e.GetPosition(_editor).DistanceTo(_lastPoint);
 
                 if (distance > 25 && !_popup.PopupRoot.IsPointerOver)
                 {
