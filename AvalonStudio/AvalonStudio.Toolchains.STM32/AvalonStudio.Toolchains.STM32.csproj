@@ -3,10 +3,7 @@
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="STM32ProjectSetupModalDialogView.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="STM32ProjectSetupModalDialogView.xaml" />
+    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.5.1-build3554-alpha" />

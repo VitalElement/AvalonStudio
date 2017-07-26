@@ -5,25 +5,7 @@
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="**\*.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="AboutScreen\AboutDialogView.paml" />
-    <EmbeddedResource Include="CodeEditor\CodeEditor.xaml" />
-    <EmbeddedResource Include="CodeEditor\ErrorProbeView.paml" />
-    <EmbeddedResource Include="CodeEditor\TooltipView.xaml" />
-    <EmbeddedResource Include="CodeEditor\CompletionAssistantView.xaml" />
-    <EmbeddedResource Include="CodeEditor\Intellisense.xaml" />
-    <EmbeddedResource Include="CodeEditor\SignatureHelpView.paml" />
-    <EmbeddedResource Include="CodeEditor\IntellisenseUserControl.xaml" />
-    <EmbeddedResource Include="CodeEditor\SignatureView.xaml" />
-    <EmbeddedResource Include="Console\ConsoleView.paml" />
-    <EmbeddedResource Include="ErrorList\ErrorListView.paml" />
-    <EmbeddedResource Include="SolutionExplorer\NewItemDialogView.paml" />
-    <EmbeddedResource Include="SolutionExplorer\NewProjectDialogView.paml" />
-    <EmbeddedResource Include="SolutionExplorer\ProjectConfigurationDialogView.paml" />
-    <EmbeddedResource Include="SolutionExplorer\SolutionExplorerView.paml" />
-    <EmbeddedResource Include="WelcomeScreen\WelcomeScreenView.paml" />
+    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.5.1-build3554-alpha" />

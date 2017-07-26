@@ -1,47 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  
+
   <PropertyGroup>
-    <OutputType>exe</OutputType>        
+    <OutputType>exe</OutputType>
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
     <OutputTypeEx>exe</OutputTypeEx>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <RuntimeIdentifiers>win7-x64;ubuntu.14.04-x64;debian.8-x64;osx.10.12-x64</RuntimeIdentifiers>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
-    <Compile Remove="Shell\Commands\NewFileCommandHandler.cs" />
-    <Compile Remove="Shell\Commands\NewFileCommandListDefinition.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="App.paml" />
-    <None Remove="Controls\DebugHoverProbeView.paml" />
-    <None Remove="Controls\DocumentTabControl.paml" />
-    <None Remove="Controls\EditorView.xaml" />
-    <None Remove="Controls\MainMenu.paml" />
-    <None Remove="Controls\MetroWindow.paml" />
-    <None Remove="Controls\MetroWindowControlsTheme.paml" />
-    <None Remove="Controls\MetroWindowTheme.paml" />
-    <None Remove="Controls\ModalDialog.paml" />
-    <None Remove="Controls\NewItemDialogView.paml" />
-    <None Remove="Controls\PackageManagerDialogView.paml" />
-    <None Remove="Controls\StatusBar.paml" />
-    <None Remove="Controls\TabControlView.paml" />
-    <None Remove="Controls\ToolBar.paml" />
-    <None Remove="icon.ico" />
-    <None Remove="icon.png" />
-    <None Remove="MainWindow.paml" />
-    <None Remove="Resources\grip_pattern.png" />
-    <None Remove="Styles\GlobalStyles.xaml" />
-    <None Remove="Themes\Accents\DarkAccent.xaml" />
-    <None Remove="Themes\BaseDark.xaml" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Controls\EditorView.xaml" />
+    <EmbeddedResource Include="Controls\SymbolView.xaml" />
+    <EmbeddedResource Include="Styles\GlobalStyles.xaml" />
+    <EmbeddedResource Include="Themes\Accents\DarkAccent.xaml" />
+    <EmbeddedResource Include="Themes\BaseDark.xaml" />
+    <EmbeddedResource Include="Assets\icon.ico" />
+    <EmbeddedResource Include="Assets\icon.png" />
     <EmbeddedResource Include="App.paml" />
     <EmbeddedResource Include="Controls\DebugHoverProbeView.paml" />
     <EmbeddedResource Include="Controls\DocumentTabControl.paml" />
-    <EmbeddedResource Include="Controls\EditorView.xaml" />
     <EmbeddedResource Include="Controls\MainMenu.paml" />
     <EmbeddedResource Include="Controls\MetroWindow.paml" />
     <EmbeddedResource Include="Controls\MetroWindowControlsTheme.paml" />
@@ -50,16 +29,9 @@
     <EmbeddedResource Include="Controls\NewItemDialogView.paml" />
     <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />
     <EmbeddedResource Include="Controls\StatusBar.paml" />
-    <EmbeddedResource Include="Controls\SymbolView.xaml" />
     <EmbeddedResource Include="Controls\TabControlView.paml" />
     <EmbeddedResource Include="Controls\ToolBar.paml" />
-    <EmbeddedResource Include="icon.ico" />
-    <EmbeddedResource Include="icon.png" />
     <EmbeddedResource Include="MainWindow.paml" />
-    <EmbeddedResource Include="Resources\grip_pattern.png" />
-    <EmbeddedResource Include="Styles\GlobalStyles.xaml" />
-    <EmbeddedResource Include="Themes\Accents\DarkAccent.xaml" />
-    <EmbeddedResource Include="Themes\BaseDark.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.5.1-build3554-alpha" />
@@ -70,7 +42,7 @@
     <PackageReference Include="Avalonia.Win32" Version="0.5.1-build3554-alpha" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.1-build442-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
-    <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build103-alpha" />    
+    <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build103-alpha" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
