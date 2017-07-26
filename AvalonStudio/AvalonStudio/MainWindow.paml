@@ -3,7 +3,7 @@
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
                       xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"
-                      Icon="resm:AvalonStudio.icon.ico?assembly=AvalonStudio"
+                      Icon="resm:AvalonStudio.Assets.icon.ico?assembly=AvalonStudio"
                       Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" FontFamily="Segoe UI" FontWeight="Light"
                       Foreground="#FFE4E4E4" WindowState="Maximized">
   <Controls:MetroWindow.TitleBarContent>

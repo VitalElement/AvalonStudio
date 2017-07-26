@@ -1,0 +1,5 @@
+{
+  "Name": "propav",
+  "Description": "Avalonia Property",
+  "Snippet": "public static readonly AvaloniaProperty<${type=int}> ${propertyName}Property =\n\tAvaloniaProperty.Register<${towner=Owner}, ${type}>(nameof(${propertyName}));\n\npublic ${type} ${propertyName}\n{\n\tget { return GetValue(${propertyName}Property); }\n\tset { SetValue(${propertyName}Property, value); }\n}\n${Caret}"
+}

@@ -79,6 +79,9 @@
             return Name.CompareTo(other.Name);
         }
 
+        public void Dispose()
+        { }
+
         public void ExcludeFile(ISourceFile file)
         {
             throw new NotImplementedException();
