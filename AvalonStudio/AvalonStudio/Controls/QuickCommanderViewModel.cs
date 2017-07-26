@@ -105,16 +105,11 @@ namespace AvalonStudio.Controls
             }
             else
             {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    _results.Clear();
-                });
-
                 query = query.ToLower();
 
                 var list = new List<SearchResultViewModel>();
 
-                await Task.Run(async () =>
+                await Task.Run(() =>
                 {
                     foreach (var project in _shell.CurrentSolution.Projects)
                     {
@@ -131,14 +126,19 @@ namespace AvalonStudio.Controls
                     }
                 });
 
-                foreach (var result in list)
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    _results.Add(result);
-                }
+                    _results.Clear();
 
-                ResultsVisible = _results.Count > 0;
+                    foreach (var result in list)
+                    {
+                        _results.Add(result);
+                    }
 
-                SelectedIndex = -1;
+                    ResultsVisible = _results.Count > 0;
+
+                    SelectedIndex = -1;
+                });
             }
         }
 
