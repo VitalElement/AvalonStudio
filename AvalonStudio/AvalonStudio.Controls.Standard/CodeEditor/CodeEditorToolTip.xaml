@@ -2,7 +2,7 @@
         xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
          xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility"
           xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
-  <Style Selector="local|TooltipView">
+  <Style Selector="local|CodeEditorToolTip">
     <Setter Property="Template">
       <ControlTemplate>
         <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="True" Name="PART_Popup" DataContext="">

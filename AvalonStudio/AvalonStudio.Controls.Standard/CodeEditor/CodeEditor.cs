@@ -79,7 +79,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private Subject<bool> _analysisTriggerEvents = new Subject<bool>();
         private readonly JobRunner _codeAnalysisRunner;
         private CancellationTokenSource _cancellationSource;
-        private TooltipView _toolTip;
+        private CodeEditorToolTip _toolTip;
         private LineNumberMargin _lineNumberMargin;
         private BreakPointMargin _breakpointMargin;
         private SelectedLineBackgroundRenderer _selectedLineBackgroundRenderer;
@@ -286,7 +286,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         var location = Document.GetLocation(CaretOffset);                        
                         _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
                     }
-                    else if (_currentSnippetContext != null)
+                    else
                     {
                         var offset = Document.GetOffset(TextArea.Selection.StartPosition.Location);
                         _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());
@@ -727,7 +727,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             base.OnTemplateApplied(e);
 
-            _toolTip = e.NameScope.Find<TooltipView>("PART_Tooltip");
+            _toolTip = e.NameScope.Find<CodeEditorToolTip>("PART_Tooltip");
             _toolTip.AttachEditor(this);
 
             _intellisenseControl = e.NameScope.Find<Intellisense>("PART_Intellisense");

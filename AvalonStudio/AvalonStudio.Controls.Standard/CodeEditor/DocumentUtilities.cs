@@ -95,6 +95,23 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
+        public static int FindPrevSymbolNameStart(this ITextSource textSource, int offset)
+        {
+            while(offset > 0)
+            {
+                var currentChar = textSource.GetCharAt(offset - 1);
+
+                if(!char.IsLetterOrDigit(currentChar) && currentChar != '_')
+                {
+                    break;
+                }
+
+                offset--;
+            }
+
+            return offset;
+        }
+
         /// <summary>
         /// Finds the first word start in the document before offset.
         /// </summary>

@@ -7,7 +7,7 @@
     <AssemblyName>Roslyn.Services.Editor.UnitTests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ToolchainSettingsFormView.xaml" />
+    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.3.1" />
