@@ -8,7 +8,7 @@
           <Grid RowDefinitions="25,*">
             <Grid Height="6"  Margin="0 0 10 0">
               <Grid.Background>
-                <ImageBrush Source="resm:AvalonStudio.Resources.grip_pattern.png?assembly=AvalonStudio" TileMode="FlipY" Stretch="Uniform"
+                <ImageBrush Source="resm:AvalonStudio.Extensibility.Assets.grip_pattern.png?assembly=AvalonStudio.Extensibility" TileMode="FlipY" Stretch="Uniform"
                                      AlignmentY="Center" SourceRect="0,0,4,3000" DestinationRect="0,0,4,3000" />
               </Grid.Background>
             </Grid>

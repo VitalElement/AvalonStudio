@@ -3,10 +3,7 @@
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="LinkerSettingsForm.paml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="LinkerSettingsForm.paml" />
+    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.5.1-build3554-alpha" />
