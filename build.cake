@@ -280,7 +280,7 @@ Task("Zip-NetCore")
 
 Task("Generate-NuGetPackages")
 .IsDependentOn("Publish-NetCore")
-.WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor && !isPullRequest) || isLocalBuild))
+.WithCriteria(()=>((isTagged && isMainRepo && isMasterBranch && isRunningOnAppVeyor && !isPullRequest) || isLocalBuild))
 .Does(()=>{
     foreach(var rid in avalonBuildRIDs)
     {
@@ -290,7 +290,7 @@ Task("Generate-NuGetPackages")
 
 Task("Publish-AppVeyorNuget")
     .IsDependentOn("Generate-NuGetPackages")        
-    .WithCriteria(()=>(isMainRepo && isMasterBranch && isRunningOnAppVeyor && !isPullRequest))   
+    .WithCriteria(()=>(isTagged && isMainRepo && isMasterBranch && isRunningOnAppVeyor && !isPullRequest))   
     .Does(() =>
 {
     var apiKey = EnvironmentVariable("NUGET_API_KEY");
