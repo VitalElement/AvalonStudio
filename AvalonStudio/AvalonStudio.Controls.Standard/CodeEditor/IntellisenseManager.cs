@@ -120,7 +120,7 @@
 
             if (!completionData.Contexts.HasFlag(CompletionContext.NaturalLanguage) && (completionData.Contexts != CompletionContext.Unexposed || completionData.Contexts == CompletionContext.Unknown))
             {
-                if (IncludeSnippets)
+                if (IncludeSnippets && !(completionData.Contexts.HasFlag(CompletionContext.ArrowMemberAccess) || completionData.Contexts.HasFlag(CompletionContext.DotMemberAccess)))
                 {
                     InsertSnippets(completionData.Completions);
                 }
