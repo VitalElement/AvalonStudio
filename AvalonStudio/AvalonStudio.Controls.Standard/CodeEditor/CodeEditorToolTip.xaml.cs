@@ -13,7 +13,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     public class CodeEditorToolTip : TemplatedControl
     {
         private Popup _popup;
-        
+
         private CodeEditor _editor;
         private Point _lastPoint;
         private readonly DispatcherTimer _timer;
@@ -59,7 +59,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         var currentLine = visualLine.LastDocumentLine.LineNumber;
 
                         var delta = _lastPoint.Y - (currentLine * visualLine.Height);
-                        
+
                         _popup.VerticalOffset = ((visualLine.Height - delta) - visualLine.Height) + 1;
 
                         _popup.Open();
@@ -118,7 +118,5 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _popup.HorizontalOffset = 0;
         }
-
-        
     }
 }
