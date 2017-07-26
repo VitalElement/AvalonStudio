@@ -110,12 +110,12 @@ namespace AvalonStudio.Controls
                     _results.Clear();
                 });
 
-                query = query.ToLower();                
-                
+                query = query.ToLower();
+
+                var list = new List<SearchResultViewModel>();
+
                 await Task.Run(async () =>
                 {
-                    var list = new List<SearchResultViewModel>();
-
                     foreach (var project in _shell.CurrentSolution.Projects)
                     {
                         project.SourceFiles.Select(sf =>
@@ -128,19 +128,15 @@ namespace AvalonStudio.Controls
                             list.InsertSorted(new SearchResultViewModel(tp.Item4) { Priority = tp.Item2 });
                             return tp;
                         }).ToList();
-                        
-
-                       await Dispatcher.UIThread.InvokeTaskAsync(() =>
-                        {
-                            foreach (var result in list)
-                            {
-                                _results.Add(result);
-                            }
-
-                            ResultsVisible = _results.Count > 0;
-                        });
                     }
                 });
+
+                foreach (var result in list)
+                {
+                    _results.Add(result);
+                }
+
+                ResultsVisible = _results.Count > 0;
 
                 SelectedIndex = -1;
             }
