@@ -55,14 +55,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         _lastPoint = mouseDevice.GetPosition(_editor);
 
                         // adjust offset so popup is always a little bit below the line queried.
-                        var position = _editor.GetPositionFromPoint(_lastPoint);
-                        var currentLine = position.Value.Line;
-                        var visualLine = _editor.TextArea.TextView.GetVisualLine(currentLine);
-
                         var translated = _editor.TranslatePoint(_lastPoint, _editor.TextArea.TextView);
-                        var delta = (translated.Y % visualLine.Height);
+                        var delta = (translated.Y % _editor.TextArea.TextView.DefaultLineHeight);
 
-                        _popup.VerticalOffset = (visualLine.Height - delta) + 1;
+                        _popup.VerticalOffset = (_editor.TextArea.TextView.DefaultLineHeight - delta) + 1;
 
                         _popup.Open();
                     }
