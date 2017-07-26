@@ -286,7 +286,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         var location = Document.GetLocation(CaretOffset);                        
                         _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
                     }
-                    else if (_currentSnippetContext != null)
+                    else
                     {
                         var offset = Document.GetOffset(TextArea.Selection.StartPosition.Location);
                         _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());

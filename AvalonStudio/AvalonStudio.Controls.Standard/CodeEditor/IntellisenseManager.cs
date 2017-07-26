@@ -120,7 +120,7 @@
 
             if (!completionData.Contexts.HasFlag(CompletionContext.NaturalLanguage) && (completionData.Contexts != CompletionContext.Unexposed || completionData.Contexts == CompletionContext.Unknown))
             {
-                if (IncludeSnippets)
+                if (IncludeSnippets && !(completionData.Contexts.HasFlag(CompletionContext.ArrowMemberAccess) || completionData.Contexts.HasFlag(CompletionContext.DotMemberAccess)))
                 {
                     InsertSnippets(completionData.Completions);
                 }
@@ -176,7 +176,7 @@
                     _console.WriteLine("Filtering");
                 }
 
-                var wordStart = DocumentUtilities.FindPrevWordStart(editor.Document, caretIndex);
+                var wordStart = DocumentUtilities.FindPrevSymbolNameStart(editor.Document, caretIndex);
 
                 if (wordStart >= 0)
                 {
@@ -191,6 +191,11 @@
                 else
                 {
                     currentFilter = string.Empty;
+                }
+
+                if (_shell.DebugMode)
+                {
+                    _console.WriteLine($"Filter: {currentFilter}");
                 }
 
                 CompletionDataViewModel suggestion = null;
@@ -266,7 +271,7 @@
             return result;
         }
 
-        private bool DoComplete(bool includeLastChar)
+        private bool DoComplete(bool includeLastChar, int caretOffset = 0)
         {
             int caretIndex = -1;
 
@@ -287,7 +292,7 @@
 
                 editor.Document.BeginUpdate();
 
-                int wordStart = TextUtilities.GetNextCaretPosition(editor.Document, caretIndex, LogicalDirection.Backward, CaretPositioningMode.WordStart);
+                int wordStart = TextUtilities.GetNextCaretPosition(editor.Document, caretIndex + caretOffset, LogicalDirection.Backward, CaretPositioningMode.WordStart);
 
                 if (caretIndex - wordStart - offset >= 0 && intellisenseControl.SelectedCompletion != null)
                 {
@@ -382,6 +387,10 @@
                     });
                 });
             }
+            else
+            {
+                UpdateFilter(editor.CaretOffset, false);
+            }
         }
 
         public void OnTextInput(TextInputEventArgs e, int caretIndex, int line, int column)
@@ -397,7 +406,14 @@
                     {
                         if (IsCompletionChar(currentChar))
                         {
-                            DoComplete(true);
+                            if (currentChar.IsWhiteSpace())
+                            {
+                                DoComplete(true);
+                            }
+                            else
+                            {
+                                DoComplete(true, -1);
+                            }
                         }
                     }
 
