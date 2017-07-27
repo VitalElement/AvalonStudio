@@ -4,6 +4,7 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,11 +16,14 @@ namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpProject : FileSystemProject
     {
-        public static OmniSharpProject Create(ISolution solution, string path, AvalonStudio.Languages.CSharp.OmniSharp.Project project)
+        public static OmniSharpProject Create(Project roslynProject, ISolution solution, string path)
         {
-            OmniSharpProject result = new OmniSharpProject();
-            result.Solution = solution;
-            result.Location = path;
+            OmniSharpProject result = new OmniSharpProject
+            {
+                Solution = solution,
+                Location = path,
+                RoslynProject = roslynProject
+            };
 
             result.LoadFiles();
 
@@ -35,7 +39,10 @@ namespace AvalonStudio.Projects.OmniSharp
             DebugSettings = new ExpandoObject();
             Settings = new ExpandoObject();
             Project = this;
+            
         }
+
+        public Project RoslynProject { get; set; }
 
         public override IList<object> ConfigurationPages
         {
@@ -47,7 +54,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override string CurrentDirectory
         {
-            get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
+            get { return Path.GetDirectoryName(Location) + Platforms.Platform.DirectorySeperator; }
         }
 
         public override IDebugger Debugger2

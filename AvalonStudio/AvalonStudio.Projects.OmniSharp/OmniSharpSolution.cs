@@ -1,11 +1,16 @@
-﻿using AvalonStudio.Extensibility.Utils;
+﻿using AsyncRpc;
+using AsyncRpc.Routing;
+using AsyncRpc.Transport.Tcp;
+using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Languages.CSharp.OmniSharp;
+using AvalonStudio.MSBuildHost;
 using AvalonStudio.Utils;
 using RoslynPad.Roslyn;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -43,18 +48,24 @@ namespace AvalonStudio.Projects.OmniSharp
                 Assembly.Load("RoslynPad.Editor.Windows")*/
             });
 
+            var roslynProject = await RoslynHost.Workspace.AddProject(path);
+
             Location = path;
 
             Name = Path.GetFileNameWithoutExtension(path);
 
-            await server.StartAsync(Path.GetDirectoryName(path));
+
+
+            AddProject(OmniSharpProject.Create(roslynProject, this, path));
+
+           /* await server.StartAsync(Path.GetDirectoryName(path));
 
             var workspace = await server.SendRequest(new WorkspaceInformationRequest() { ExcludeSourceFiles = false });
 
             foreach (var project in workspace.MsBuild.Projects)
             {
                 AddProject(OmniSharpProject.Create(this, project.Path, project));
-            }
+            }*/
 
             CurrentDirectory = Path.GetDirectoryName(path);
         }

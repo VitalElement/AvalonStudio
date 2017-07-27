@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26711.1
+VisualStudioVersion = 15.0.26724.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio", "AvalonStudio\AvalonStudio.csproj", "{8E501956-B9A6-430E-86AC-350ED94B44E4}"
 EndProject
@@ -88,10 +88,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Debugging.GDB.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Controls.Standard.Tests", "AvalonStudio.Controls.Standard.Tests\AvalonStudio.Controls.Standard.Tests.csproj", "{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.MSBuildHost", "..\AvalonStudio.MSBuildHost\AvalonStudio.MSBuildHost.csproj", "{E58BA359-FBE4-42D6-8575-072E613281F0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncRpc", "..\AvalonStudio.MSBuildHost\modules\AsyncRpc\AsyncRpc\AsyncRpc.csproj", "{D538D477-471C-422E-AB89-B3D4557ABFDA}"
+EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
@@ -631,6 +632,38 @@ Global
 		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x64.Build.0 = Release|Any CPU
 		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x86.ActiveCfg = Release|Any CPU
 		{CA68B708-6F68-421B-B1A7-F1AB7267C0F4}.Release|x86.Build.0 = Release|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Debug|ARM.Build.0 = Debug|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Debug|x64.Build.0 = Debug|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Debug|x86.Build.0 = Debug|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Release|ARM.ActiveCfg = Release|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Release|ARM.Build.0 = Release|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Release|x64.ActiveCfg = Release|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Release|x64.Build.0 = Release|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Release|x86.ActiveCfg = Release|Any CPU
+		{E58BA359-FBE4-42D6-8575-072E613281F0}.Release|x86.Build.0 = Release|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Debug|ARM.Build.0 = Debug|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Debug|x64.Build.0 = Debug|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Debug|x86.Build.0 = Debug|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Release|ARM.ActiveCfg = Release|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Release|ARM.Build.0 = Release|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Release|x64.ActiveCfg = Release|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Release|x64.Build.0 = Release|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Release|x86.ActiveCfg = Release|Any CPU
+		{D538D477-471C-422E-AB89-B3D4557ABFDA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -670,6 +703,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54EEE82F-58D0-4EF3-990D-CBFA0C11A3D6}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

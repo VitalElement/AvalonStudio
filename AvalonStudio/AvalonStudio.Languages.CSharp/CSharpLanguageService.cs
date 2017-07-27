@@ -347,7 +347,7 @@
             association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.
 
             var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
-            association.DocumentId = association.Solution.RoslynHost.AddDocument(avaloniaEditTextContainer, file.Project.Solution.CurrentDirectory, (diagnostics) =>
+            association.DocumentId = association.Solution.RoslynHost.AddDocument((file.Project as OmniSharpProject).RoslynProject, avaloniaEditTextContainer, file.Project.Solution.CurrentDirectory, (diagnostics) =>
             {
                 if(diagnosticsUpdatedSource != null && !diagnosticsUpdatedSource.Task.IsCompleted)
                 {

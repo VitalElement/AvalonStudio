@@ -65,6 +65,8 @@ namespace RoslynPad.Roslyn
 
         internal ImmutableArray<string> DefaultImports { get; }
 
+        public RoslynWorkspace Workspace { get; }
+
         #endregion
 
         #region Constructors
@@ -115,6 +117,8 @@ namespace RoslynPad.Roslyn
             DefaultImports = _defaultReferenceAssemblyTypes.Select(x => x.Namespace).Distinct().ToImmutableArray();
 
             GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
+
+            Workspace = new RoslynWorkspace(_host, nuGetConfiguration, this);
         }
 
         private ImmutableArray<MetadataReference> GetMetadataReferences(IEnumerable<string> additionalReferencedAssemblyLocations = null)
@@ -320,16 +324,14 @@ namespace RoslynPad.Roslyn
 
         public Document GetDocument(DocumentId documentId)
         {
-            return _workspaces.TryGetValue(documentId, out var workspace) 
-                ? workspace.CurrentSolution.GetDocument(documentId) 
-                : null;
+            return Workspace.CurrentSolution.GetDocument(documentId);
         }
 
-        public DocumentId AddDocument(SourceTextContainer sourceTextContainer, string workingDirectory, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated)
+        public DocumentId AddDocument(Project project, SourceTextContainer sourceTextContainer, string workingDirectory, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated)
         {
             if (sourceTextContainer == null) throw new ArgumentNullException(nameof(sourceTextContainer));
 
-            var workspace = new RoslynWorkspace(_host, _nuGetConfiguration, this);
+            var workspace = Workspace;
             if (onTextUpdated != null)
             {
                 workspace.ApplyingTextChange += (d, s) => onTextUpdated(s);
@@ -338,10 +340,10 @@ namespace RoslynPad.Roslyn
             DiagnosticProvider.Enable(workspace, DiagnosticProvider.Options.Semantic | DiagnosticProvider.Options.Syntax);
 
             var currentSolution = workspace.CurrentSolution;
-            var project = CreateSubmissionProject(currentSolution, CreateCompilationOptions(workspace, workingDirectory));
+            //var project = CreateSubmissionProject(currentSolution, CreateCompilationOptions(workspace, workingDirectory));
             var currentDocument = SetSubmissionDocument(workspace, sourceTextContainer, project);
 
-            _workspaces.TryAdd(currentDocument.Id, workspace);
+          //  _workspaces.TryAdd(currentDocument.Id, workspace);
 
             if (onDiagnosticsUpdated != null)
             {

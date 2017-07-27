@@ -12,6 +12,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
+using AsyncRpc;
+using AvalonStudio.MSBuildHost;
+using AsyncRpc.Transport.Tcp;
+using System.Net;
 
 namespace RoslynPad.Roslyn
 {
@@ -19,9 +23,11 @@ namespace RoslynPad.Roslyn
     {
         private readonly NuGetConfiguration _nuGetConfiguration;
         private readonly ConcurrentDictionary<string, DirectiveInfo> _referencesDirectives;
+        private IMsBuildHostService msBuildHostService;
 
         public RoslynHost RoslynHost { get; }
         public DocumentId OpenDocumentId { get; private set; }
+        
 
         internal RoslynWorkspace(HostServices host, NuGetConfiguration nuGetConfiguration, RoslynHost roslynHost)
             : base(host, WorkspaceKind.Host)
@@ -30,6 +36,25 @@ namespace RoslynPad.Roslyn
             _referencesDirectives = new ConcurrentDictionary<string, DirectiveInfo>();
 
             RoslynHost = roslynHost;
+
+            msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));
+        }
+
+        public async Task<Project> AddProject(string projectFile)
+        {            
+            var res = await msBuildHostService.GetVersion();
+
+            var refs = await msBuildHostService.GetReferences(projectFile);
+
+            var id = ProjectId.CreateNewId();
+            OnProjectAdded(ProjectInfo.Create(id, VersionStamp.Create(), Path.GetFileNameWithoutExtension(projectFile), "", LanguageNames.CSharp, projectFile));
+
+            foreach (var reference in refs.Data)
+            {
+                OnMetadataReferenceAdded(id, MetadataReference.CreateFromFile(reference));
+            }
+
+            return CurrentSolution.GetProject(id);
         }
 
         public new void SetCurrentSolution(Solution solution)
