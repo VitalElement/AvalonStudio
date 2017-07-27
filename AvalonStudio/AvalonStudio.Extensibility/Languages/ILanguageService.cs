@@ -49,6 +49,8 @@ namespace AvalonStudio.Languages
 
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
+        IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
+
         IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file);
 
         IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
