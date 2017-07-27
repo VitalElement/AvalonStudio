@@ -432,7 +432,11 @@ namespace AvalonStudio.Toolchains.Clang
 
         public async override Task InstallAsync(IConsole console, IProject project)
         {
-            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console);
+            if(!await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console))
+            {
+                // this ensures content directory is re-evaluated if we just installed the toolchain.
+                _contentDirectory = null;
+            }
         }
     }
 }
