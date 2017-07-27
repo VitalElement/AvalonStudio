@@ -266,6 +266,9 @@ namespace AvalonStudio.Toolchains.Standard
 
         public abstract bool SupportsFile(ISourceFile file);
 
+        /// <summary>
+        /// This may be called very often so should not require large amounts of processing.
+        /// </summary>
         public abstract string BinDirectory { get; }
 
         private void ClearBuildFlags(IStandardProject project)

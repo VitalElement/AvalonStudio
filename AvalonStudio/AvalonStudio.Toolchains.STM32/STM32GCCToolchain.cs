@@ -16,7 +16,20 @@ namespace AvalonStudio.Toolchains.STM32
 
     public class STM32GCCToolchain : GCCToolchain
     {
-        public static string ContentDirectory => Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content");
+        private static string _contentDirectory;
+
+        public static string ContentDirectory
+        {
+            get
+            {
+                if (_contentDirectory == null)
+                {
+                    _contentDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content");
+                }
+
+                return _contentDirectory;
+            }
+        }
         public override string BinDirectory => Path.Combine(ContentDirectory, "bin");
 
         public string LinkerScript { get; set; }
@@ -432,7 +445,11 @@ namespace AvalonStudio.Toolchains.STM32
 
         public async override Task InstallAsync(IConsole console, IProject project)
         {
-            await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console);
+            if(!await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console))
+            {
+                // this ensures content directory is re-evaluated if we just installed the toolchain.
+                _contentDirectory = null;
+            }
         }
     }
 }

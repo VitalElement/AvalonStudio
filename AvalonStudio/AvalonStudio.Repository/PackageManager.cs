@@ -48,17 +48,40 @@ namespace AvalonStudio.Packages
             return new InstalledPackagesCache(Path.Combine(Platform.ReposDirectory, "cachedPackages.xml"), Path.Combine(Platform.ReposDirectory, "installedPackages.xml"), false);
         }
 
-        public static async Task EnsurePackage(string packageId, string packageVersion, IConsole console, int chmodFileMode = DefaultFilePermissions)
+        /// <summary>
+        /// Ensures a package is installed and installs it isnt and is available.
+        /// </summary>
+        /// <param name="packageId">The package Id to install.</param>
+        /// <param name="packageVersion">The package version to insall.</param>
+        /// <param name="console">Console instance to log output to.</param>
+        /// <param name="chmodFileMode">file mode to chmod files without extensions (unix platform only)</param>
+        /// <returns>true if the package was already installed.</returns>
+        public static Task<bool> EnsurePackage(string packageId, string packageVersion, IConsole console, int chmodFileMode = DefaultFilePermissions)
         {
-            await EnsurePackage(packageId, packageVersion, new AvalonConsoleNuGetLogger(console), chmodFileMode);
+            return EnsurePackage(packageId, packageVersion, new AvalonConsoleNuGetLogger(console), chmodFileMode);
         }
 
-        public static async Task EnsurePackage(string packageId, IConsole console, int chmodFileMode = DefaultFilePermissions)
+        /// <summary>
+        /// Ensures a package is installed and installs it isnt and is available.
+        /// </summary>
+        /// <param name="packageId">The package Id to install.</param>
+        /// <param name="console">Console instance to log output to.</param>
+        /// <param name="chmodFileMode">file mode to chmod files without extensions (unix platform only)</param>
+        /// <returns>true if the package was already installed.</returns>
+        public static Task<bool> EnsurePackage(string packageId, IConsole console, int chmodFileMode = DefaultFilePermissions)
         {
-            await EnsurePackage(packageId, null, new AvalonConsoleNuGetLogger(console), chmodFileMode);
+            return EnsurePackage(packageId, null, new AvalonConsoleNuGetLogger(console), chmodFileMode);
         }
 
-        private static async Task EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = DefaultFilePermissions)
+        /// <summary>
+        /// Ensures a package is installed and installs it isnt and is available.
+        /// </summary>
+        /// <param name="packageId">The package Id to install.</param>
+        /// <param name="packageVersion">The package version to insall.</param>
+        /// <param name="console">Console instance to log output to.</param>
+        /// <param name="chmodFileMode">file mode to chmod files without extensions (unix platform only)</param>
+        /// <returns>true if the package was already installed.</returns>
+        private static async Task<bool> EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = DefaultFilePermissions)
         {
             if (GetPackageDirectory(packageId, packageVersion) == string.Empty)
             {
@@ -84,7 +107,7 @@ namespace AvalonStudio.Packages
                         if(matchingVersion == null)
                         {
                             console.LogInformation($"Unable to find package: {packageId} with version: {packageVersion}");
-                            return;
+                            return false;
                         }
 
                         installVesion = matchingVersion.Version.ToNormalizedString();
@@ -92,6 +115,12 @@ namespace AvalonStudio.Packages
 
                     await InstallPackage(package.Identity.Id, installVesion, console, chmodFileMode);
                 }
+
+                return false;
+            }
+            else
+            {
+                return true;
             }
         }
 
