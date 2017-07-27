@@ -44,14 +44,14 @@ namespace RoslynPad.Roslyn
         {            
             var res = await msBuildHostService.GetVersion();
 
-            var refs = await msBuildHostService.GetReferences(projectFile);
+            var refs = await msBuildHostService.GetTaskItem("ResolveAssemblyReferences", projectFile);
 
             var id = ProjectId.CreateNewId();
             OnProjectAdded(ProjectInfo.Create(id, VersionStamp.Create(), Path.GetFileNameWithoutExtension(projectFile), "", LanguageNames.CSharp, projectFile));
 
-            foreach (var reference in refs.Data)
+            foreach (var reference in refs.Data.Items)
             {
-                OnMetadataReferenceAdded(id, MetadataReference.CreateFromFile(reference));
+                OnMetadataReferenceAdded(id, MetadataReference.CreateFromFile(reference.ItemSpec));
             }
 
             return CurrentSolution.GetProject(id);
