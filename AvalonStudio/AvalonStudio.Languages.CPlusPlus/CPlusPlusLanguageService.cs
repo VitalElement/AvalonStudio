@@ -114,6 +114,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public string LanguageId => "cpp";
 
+        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => throw new NotImplementedException();
+
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
             switch (kind)

@@ -18,39 +18,18 @@ using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Shared.Utilities;
 using Microsoft.CodeAnalysis.Text;
 using RoslynPad.Roslyn.Diagnostics;
+using AvalonStudio.Shell;
+using AvalonStudio.Extensibility;
 
 namespace RoslynPad.Roslyn
 {
     public sealed class RoslynHost : IRoslynHost
     {
-        #region Fields
-
-        private static readonly ImmutableArray<Type> _defaultReferenceAssemblyTypes = new[] {
-            typeof(object),
-            typeof(Thread),
-            typeof(Task),
-            typeof(List<>),
-            typeof(Regex),
-            typeof(StringBuilder),
-            typeof(Uri),
-            typeof(Enumerable),
-            typeof(IEnumerable),
-            typeof(Path),
-            typeof(Assembly),
-        }.ToImmutableArray();
-
-        private static readonly ImmutableArray<Assembly> _defaultReferenceAssemblies =
-            _defaultReferenceAssemblyTypes.Select(x => x.Assembly).Distinct().Concat(new[]
-            {
-                Assembly.Load("System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"),
-                typeof(Microsoft.CSharp.RuntimeBinder.Binder).Assembly,
-            })
-            .ToImmutableArray();
+        #region Fields                
 
         internal static readonly ImmutableArray<string> PreprocessorSymbols = ImmutableArray.CreateRange(new[] { "__DEMO__", "__DEMO_EXPERIMENTAL__", "TRACE", "DEBUG" });
 
-        private readonly NuGetConfiguration _nuGetConfiguration;
-        private readonly ConcurrentDictionary<DocumentId, RoslynWorkspace> _workspaces;
+        private readonly NuGetConfiguration _nuGetConfiguration;        
         private readonly ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers;
         private readonly CSharpParseOptions _parseOptions;
         //private readonly DocumentationProviderServiceFactory.DocumentationProviderService _documentationProviderService;
@@ -76,8 +55,7 @@ namespace RoslynPad.Roslyn
             IEnumerable<string> additionalReferencedAssemblyLocations = null)
         {
             _nuGetConfiguration = nuGetConfiguration;
-
-            _workspaces = new ConcurrentDictionary<DocumentId, RoslynWorkspace>();
+            
             _diagnosticsUpdatedNotifiers = new ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>>();
             var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
 
@@ -110,37 +88,11 @@ namespace RoslynPad.Roslyn
             _parseOptions = new CSharpParseOptions(kind: SourceCodeKind.Regular, preprocessorSymbols: PreprocessorSymbols);
 
             (_referenceAssembliesPath, _documentationPath) = GetReferenceAssembliesPath();
-            //_documentationProviderService = new DocumentationProviderServiceFactory.DocumentationProviderService();
-
-            DefaultReferences = GetMetadataReferences(additionalReferencedAssemblyLocations);
-
-            DefaultImports = _defaultReferenceAssemblyTypes.Select(x => x.Namespace).Distinct().ToImmutableArray();
+            //_documentationProviderService = new DocumentationProviderServiceFactory.DocumentationProviderService();               
 
             GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
 
             Workspace = new RoslynWorkspace(_host, nuGetConfiguration, this);
-        }
-
-        private ImmutableArray<MetadataReference> GetMetadataReferences(IEnumerable<string> additionalReferencedAssemblyLocations = null)
-        {
-            // allow facade assemblies to take precedence
-            var dictionary = _defaultReferenceAssemblies
-                .Select(x => x.Location)
-                .Concat(additionalReferencedAssemblyLocations ?? Enumerable.Empty<string>())
-                .ToImmutableDictionary(Path.GetFileNameWithoutExtension)
-                .SetItems(TryGetFacadeAssemblies()
-                    .ToImmutableDictionary(Path.GetFileNameWithoutExtension));
-
-            var metadataReferences = dictionary.Values
-                .Select(CreateMetadataReference)
-                .ToImmutableArray();
-
-            return metadataReferences;
-        }
-
-        internal MetadataReference CreateMetadataReference(string location)
-        {
-            return MetadataReference.CreateFromFile(location, documentation: GetDocumentationProvider(location));
         }
 
         private void OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs)
@@ -148,7 +100,7 @@ namespace RoslynPad.Roslyn
             var documentId = diagnosticsUpdatedArgs?.DocumentId;
             if (documentId == null) return;
 
-            OnOpenedDocumentSyntaxChanged(GetDocument(documentId));
+            OnOpenedDocumentSyntaxChanged(GetDocument(documentId));            
 
             if (_diagnosticsUpdatedNotifiers.TryGetValue(documentId, out var notifier))
             {
@@ -158,10 +110,7 @@ namespace RoslynPad.Roslyn
 
         private async void OnOpenedDocumentSyntaxChanged(Document document)
         {
-            if (_workspaces.TryGetValue(document.Id, out var workspace))
-            {
-                await workspace.ProcessReferenceDirectives(document).ConfigureAwait(false);
-            }
+            await Workspace.ProcessReferenceDirectives(document).ConfigureAwait(false);            
         }
 
         public TService GetService<TService>()
@@ -180,11 +129,7 @@ namespace RoslynPad.Roslyn
 
         public bool HasReference(DocumentId documentId, string text)
         {
-            if (_workspaces.TryGetValue(documentId, out var workspace) && workspace.HasReference(text))
-            {
-                return true;
-            }
-            return _defaultReferenceAssemblies.Any(x => x.GetName().Name == text);
+            return Workspace.HasReference(text);      
         }
 
         private static MetadataReferenceResolver CreateMetadataReferenceResolver(Workspace workspace, string workingDirectory)
@@ -313,12 +258,8 @@ namespace RoslynPad.Roslyn
 
         public void CloseDocument(DocumentId documentId)
         {
-            if (_workspaces.TryGetValue(documentId, out var workspace))
-            {
-                DiagnosticProvider.Disable(workspace);
-                workspace.Dispose();
-                _workspaces.TryRemove(documentId, out workspace);
-            }
+            Workspace.CloseDocument(documentId);
+
             _diagnosticsUpdatedNotifiers.TryRemove(documentId, out _);
         }
 
@@ -335,9 +276,7 @@ namespace RoslynPad.Roslyn
             if (onTextUpdated != null)
             {
                 workspace.ApplyingTextChange += (d, s) => onTextUpdated(s);
-            }
-
-            DiagnosticProvider.Enable(workspace, DiagnosticProvider.Options.Semantic | DiagnosticProvider.Options.Syntax);
+            }            
 
             var currentSolution = workspace.CurrentSolution;
             //var project = CreateSubmissionProject(currentSolution, CreateCompilationOptions(workspace, workingDirectory));
@@ -355,22 +294,12 @@ namespace RoslynPad.Roslyn
 
         public void UpdateDocument(Document document)
         {
-            if (!_workspaces.TryGetValue(document.Id, out var workspace))
-            {
-                return;
-            }
-
-            workspace.TryApplyChanges(document.Project.Solution);
+            Workspace.TryApplyChanges(document.Project.Solution);
         }
 
         public ImmutableArray<string> GetReferencesDirectives(DocumentId documentId)
         {
-            if (_workspaces.TryGetValue(documentId, out var workspace))
-            {
-                return workspace.ReferencesDirectives;
-            }
-
-            return ImmutableArray<string>.Empty;
+            return Workspace.ReferencesDirectives;
         }
 
         private CSharpCompilationOptions CreateCompilationOptions(Workspace workspace, string workingDirectory)

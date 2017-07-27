@@ -200,7 +200,7 @@ namespace RoslynPad.Roslyn
             }
             if (File.Exists(name))
             {
-                return RoslynHost.CreateMetadataReference(name);
+                //return RoslynHost.CreateMetadataReference(name);
             }
             try
             {

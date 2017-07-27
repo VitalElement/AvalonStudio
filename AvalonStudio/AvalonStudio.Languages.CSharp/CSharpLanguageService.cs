@@ -8,6 +8,8 @@
     using AvaloniaEdit.Indentation;
     using AvaloniaEdit.Indentation.CSharp;
     using AvaloniaEdit.Rendering;
+    using AvalonStudio.Controls.Standard.ErrorList;
+    using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Editor;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
@@ -23,6 +25,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reactive.Subjects;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 
@@ -31,10 +34,13 @@
         private static readonly ConditionalWeakTable<ISourceFile, CSharpDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, CSharpDataAssociation>();
 
-        TaskCompletionSource<RoslynPad.Roslyn.Diagnostics.DiagnosticsUpdatedArgs> diagnosticsUpdatedSource;
+        private object _lastDiagnosticsLock = new object();
+        private DiagnosticsUpdatedArgs _lastDiagnostics;
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
+
+        private Subject<TextSegmentCollection<Diagnostic>> _diagnostics;
 
         public CSharpLanguageService()
         {
@@ -51,6 +57,8 @@
                 else
                     return newName;
             });
+
+            _diagnostics = new Subject<TextSegmentCollection<Diagnostic>>();
         }
 
         public Type BaseTemplateType
@@ -204,15 +212,15 @@
                 completionTrigger
                 );
 
-            if(data != null)
+            if (data != null)
             {
-                foreach(var completion in data.Items)
+                foreach (var completion in data.Items)
                 {
                     var newCompletion = new CodeCompletionData()
                     {
                         Suggestion = completion.DisplayText,
                         Hint = completion.DisplayText,
-                        
+
                     };
 
                     result.Completions.Add(newCompletion);
@@ -220,7 +228,7 @@
 
                 result.Contexts = Languages.CompletionContext.AnyType;
             }
-            
+
 
             /*var response = await dataAssociation.Solution.Server.AutoComplete(sourceFile.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
 
@@ -253,7 +261,7 @@
         {
             var dataAssociation = GetAssociatedData(file);
 
-            var document = dataAssociation.Solution.RoslynHost.GetDocument(dataAssociation.DocumentId);
+            var document = dataAssociation.Solution.RoslynHost.Workspace.CurrentSolution.GetDocument(dataAssociation.DocumentId);
             var formattedDocument = Formatter.FormatAsync(document).GetAwaiter().GetResult();
 
             dataAssociation.Solution.RoslynHost.UpdateDocument(formattedDocument);
@@ -348,12 +356,47 @@
 
             var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
             association.DocumentId = association.Solution.RoslynHost.AddDocument((file.Project as OmniSharpProject).RoslynProject, avaloniaEditTextContainer, file.Project.Solution.CurrentDirectory, (diagnostics) =>
-            {
-                if(diagnosticsUpdatedSource != null && !diagnosticsUpdatedSource.Task.IsCompleted)
+            {                
+                IoC.Get<IConsole>().WriteLine("Diags returned");
+
+                var dataAssociation = GetAssociatedData(file);
+
+                var results = new TextSegmentCollection<Diagnostic>();
+
+                foreach (var diagnostic in diagnostics.Diagnostics)
                 {
-                    diagnosticsUpdatedSource.SetResult(diagnostics);
+                    results.Add(FromRoslynDiagnostic(diagnostic, dataAssociation.TextMarkerService, file.Location, file.Project));
                 }
 
+                _diagnostics.OnNext(results);
+
+                dataAssociation.TextMarkerService.Clear();
+
+
+                Color markerColor;                
+
+                foreach (var diag in diagnostics.Diagnostics)
+                {
+                    switch ((DiagnosticLevel)diag.Severity)
+                    {
+                        case DiagnosticLevel.Error:
+                        case DiagnosticLevel.Fatal:
+                            markerColor = Color.FromRgb(253, 45, 45);
+                            break;
+
+                        case DiagnosticLevel.Warning:
+                            markerColor = Color.FromRgb(255, 207, 40);
+                            break;
+
+                        default:
+                            markerColor = Color.FromRgb(0, 42, 74);
+                            break;
+                    }
+
+                    dataAssociation.TextMarkerService.Create(diag.TextSpan.Start, diag.TextSpan.Length, diag.Message, markerColor);
+                }
+
+                                
             }, (sourceText) =>
             {
                 avaloniaEditTextContainer.UpdateText(sourceText);
@@ -445,11 +488,11 @@
             }
         }
 
-        HighlightType FromRoslynType (string type)
+        HighlightType FromRoslynType(string type)
         {
             var result = HighlightType.None;
 
-            switch(type)
+            switch (type)
             {
                 case "keyword":
                     result = HighlightType.Keyword;
@@ -501,7 +544,7 @@
             return result;
         }
 
-        private Diagnostic FromRoslynDiagnostic (DiagnosticData diagnostic, TextMarkerService service, string fileName, IProject project)
+        private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, TextMarkerService service, string fileName, IProject project)
         {
             var result = new Diagnostic
             {
@@ -536,8 +579,11 @@
             return result;
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument,  List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => _diagnostics;
+
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
+            IoC.Get<IConsole>().WriteLine("Running code analysis");
             var result = new CodeAnalysisResults();
 
             var textLength = 0;
@@ -548,35 +594,18 @@
 
             var document = dataAssociation.Solution.RoslynHost.GetDocument(dataAssociation.DocumentId);
 
-            if(diagnosticsUpdatedSource == null)
+            if(document == null)
             {
-                diagnosticsUpdatedSource = new TaskCompletionSource<RoslynPad.Roslyn.Diagnostics.DiagnosticsUpdatedArgs>();
+                return result;
             }
 
             var highlightData = await Classifier.GetClassifiedSpansAsync(document, new Microsoft.CodeAnalysis.Text.TextSpan(0, textLength));
 
-            foreach(var span in highlightData)
+            foreach (var span in highlightData)
             {
                 result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
             }
-
-            if (diagnosticsUpdatedSource != null)
-            {
-                var results = await diagnosticsUpdatedSource.Task;
-
-                await Dispatcher.UIThread.InvokeTaskAsync(() =>
-                {
-                    dataAssociation.TextMarkerService.Clear();
-
-                    foreach (var diagnostic in results.Diagnostics)
-                    {
-                        result.Diagnostics.Add(FromRoslynDiagnostic(diagnostic, dataAssociation.TextMarkerService, file.Location, file.Project));
-                    }
-                });
-
-                diagnosticsUpdatedSource = null;
-            }
-
+            
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
@@ -597,11 +626,13 @@
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-               // result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                // result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();
 
+
+            IoC.Get<IConsole>().WriteLine("code analysis done");
             return result;
         }
 
@@ -626,7 +657,7 @@
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-               // result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                // result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();
