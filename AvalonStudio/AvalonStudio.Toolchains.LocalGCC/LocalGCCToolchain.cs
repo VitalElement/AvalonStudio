@@ -15,6 +15,8 @@ namespace AvalonStudio.Toolchains.LocalGCC
 {
     public class LocalGCCToolchain : GCCToolchain
     {
+        private static string _contentDirectory;
+
         public static string ContentDirectory
         {
             get
@@ -25,7 +27,12 @@ namespace AvalonStudio.Toolchains.LocalGCC
                 }
                 else
                 {
-                    return Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.GCC"), "content");
+                    if(_contentDirectory == null)
+                    {
+                        _contentDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.GCC"), "content");
+                    }
+
+                    return _contentDirectory;
                 }
             }
         }
