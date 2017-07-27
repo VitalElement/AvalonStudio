@@ -4,3 +4,6 @@
 [submodule "AvaloniaEdit"]
 	path = AvaloniaEdit
 	url = https://github.com/danwalmsley/AvaloniaEdit
+[submodule "AvalonStudio.MSBuildHost"]
+	path = AvalonStudio.MSBuildHost
+	url = https://github.com/VitalElement/AvalonStudio.MSBuildHost.git
