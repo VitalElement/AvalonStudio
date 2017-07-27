@@ -94,7 +94,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public ILanguageService LanguageService { get; set; }
 
-
         public CodeEditor()
         {
             _codeAnalysisRunner = new JobRunner(1);
@@ -595,8 +594,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        Diagnostics = result.Diagnostics;
-
                         TextArea.TextView.Redraw();
 
                         _shell.InvalidateErrors();
@@ -646,6 +643,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
                 TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
+
+                LanguageService.Diagnostics.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
+                {
+                    Diagnostics = d;
+
+                    _shell.InvalidateErrors();
+                });
             }
             else
             {
