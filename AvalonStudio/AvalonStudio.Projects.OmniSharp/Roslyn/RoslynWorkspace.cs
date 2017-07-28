@@ -3,6 +3,7 @@
 using AsyncRpc;
 using AsyncRpc.Transport.Tcp;
 using AvalonStudio.MSBuildHost;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
@@ -27,7 +28,6 @@ namespace RoslynPad.Roslyn
     {
         private CompositionHost _compositionContext;
         private readonly NuGetConfiguration _nuGetConfiguration;
-        private readonly ConcurrentDictionary<string, DirectiveInfo> _referencesDirectives;
         private readonly Dictionary<DocumentId, AvalonEditTextContainer> _openDocumentTextLoaders;
 
         private readonly ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers;
@@ -40,8 +40,6 @@ namespace RoslynPad.Roslyn
             : base(host, WorkspaceKind.Host)
         {
             _nuGetConfiguration = nuGetConfiguration;
-
-            _referencesDirectives = new ConcurrentDictionary<string, DirectiveInfo>();
 
             msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));
 
@@ -71,21 +69,54 @@ namespace RoslynPad.Roslyn
             return _compositionContext.GetExport<TService>();
         }
 
-        public async Task<Project> AddProject(string projectFile)
+        public async Task<Tuple<Project, List<string>>> AddProject(string projectFile)
         {
             var res = await msBuildHostService.GetVersion();
 
-            var refs = await msBuildHostService.GetTaskItem("ResolveAssemblyReferences", projectFile);
+            var assemblyReferences = await msBuildHostService.GetTaskItem("ResolveAssemblyReferences", projectFile);
+            
+            var projectReferences = await msBuildHostService.GetProjectReferences(projectFile);
 
             var id = ProjectId.CreateNewId();
             OnProjectAdded(ProjectInfo.Create(id, VersionStamp.Create(), Path.GetFileNameWithoutExtension(projectFile), "", LanguageNames.CSharp, projectFile));
 
-            foreach (var reference in refs.Data.Items)
+            foreach (var reference in assemblyReferences.Data.Items)
             {
                 OnMetadataReferenceAdded(id, MetadataReference.CreateFromFile(reference.ItemSpec));
+
+                foreach(var item in reference.Metadatas)
+                {
+                    Console.WriteLine(item.Name, item.Value);
+                }
             }
 
-            return CurrentSolution.GetProject(id);
+            return new Tuple<Project, List<string>>(CurrentSolution.GetProject(id), projectReferences.Data);
+        }
+
+        public ProjectId GetProjectId(AvalonStudio.Projects.IProject project)
+        {
+            var projects  = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.Location)) == 0);
+
+            if(projects.Count() != 1)
+            {
+                throw new NotImplementedException();
+            }
+
+            return projects.First().Id;
+        }
+
+        public void ResolveReference(AvalonStudio.Projects.IProject project, string reference)
+        {
+            var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.LocationDirectory, reference)) == 0);
+
+            if(projects.Count() != 1)
+            {
+                throw new NotImplementedException();
+            }
+
+            var referencedProject = projects.First();
+
+            OnProjectReferenceAdded(GetProjectId(project), new ProjectReference(referencedProject.Id));
         }
 
         public DocumentId AddDocument(Project project, AvalonStudio.Projects.ISourceFile file)
@@ -189,8 +220,6 @@ namespace RoslynPad.Roslyn
             base.UnregisterText(textContainer);
         }
 
-        public ImmutableArray<string> ReferencesDirectives => _referencesDirectives.Select(x => x.Key).ToImmutableArray();
-
         private class DirectiveInfo
         {
             public MetadataReference MetadataReference { get; }
@@ -202,43 +231,6 @@ namespace RoslynPad.Roslyn
                 MetadataReference = metadataReference;
                 IsActive = true;
             }
-        }
-
-        private MetadataReference ResolveReference(string name)
-        {
-            if (_nuGetConfiguration != null)
-            {
-                name = _nuGetConfiguration.ResolveReference(name);
-            }
-            if (File.Exists(name))
-            {
-                //return RoslynHost.CreateMetadataReference(name);
-            }
-            try
-            {
-                // var assemblyName = GlobalAssemblyCache.Instance.ResolvePartialName(name);
-                /* if (assemblyName == null)
-                 {
-                     return null;
-                 }
-                 var assembly = Assembly.Load(assemblyName.ToString());*/
-                // return RoslynHost.CreateMetadataReference(assembly.Location);
-                throw new NotImplementedException();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public bool HasReference(string text)
-        {
-            DirectiveInfo info;
-            if (_referencesDirectives.TryGetValue(text, out info))
-            {
-                return info.IsActive;
-            }
-            return false;
         }
     }
 }

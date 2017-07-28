@@ -4,6 +4,7 @@ using AsyncRpc.Transport.Tcp;
 using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Languages.CSharp.OmniSharp;
 using AvalonStudio.MSBuildHost;
+using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using Microsoft.Build.Construction;
 using Microsoft.CodeAnalysis.Host.Mef;
@@ -81,18 +82,33 @@ namespace AvalonStudio.Projects.OmniSharp
                 {
                     var roslynProject = await Workspace.AddProject(project.AbsolutePath);
 
-                    var asProject = OmniSharpProject.Create(roslynProject, this, project.AbsolutePath);
+                    var asProject = OmniSharpProject.Create(roslynProject.Item1, this, project.AbsolutePath, roslynProject.Item2);
 
                     AddProject(asProject);
+                }
+
+                foreach(var project in Projects)
+                {
+                    var asProject = (project as OmniSharpProject);
+
+                    if(project.Location.Contains("Controls"))
+                    {
+
+                    }
 
                     asProject.LoadFiles();
+
+                    foreach (var unresolvedReference in asProject.UnresolvedReferences)
+                    {
+                         Workspace.ResolveReference(project, unresolvedReference);
+                    }
                 }
             }
             else if(Path.GetExtension(path) == ".csproj")
             {
                 var roslynProject = await Workspace.AddProject(path);
 
-                var asProject = OmniSharpProject.Create(roslynProject, this, path);
+                var asProject = OmniSharpProject.Create(roslynProject.Item1, this, path, roslynProject.Item2);
 
                 AddProject(asProject);
 

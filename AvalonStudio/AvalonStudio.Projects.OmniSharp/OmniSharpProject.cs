@@ -16,13 +16,14 @@ namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpProject : FileSystemProject
     {
-        public static OmniSharpProject Create(Project roslynProject, ISolution solution, string path)
+        public static OmniSharpProject Create(Project roslynProject, ISolution solution, string path, List<string> unresolvedReferences)
         {
             OmniSharpProject result = new OmniSharpProject
             {
                 Solution = solution,
                 Location = path,
-                RoslynProject = roslynProject
+                RoslynProject = roslynProject,
+                UnresolvedReferences = unresolvedReferences
             };
 
             return result;
@@ -38,6 +39,8 @@ namespace AvalonStudio.Projects.OmniSharp
             Settings = new ExpandoObject();
             Project = this;            
         }
+
+        public List<string> UnresolvedReferences { get; set; }
 
         public Project RoslynProject { get; set; }
 
