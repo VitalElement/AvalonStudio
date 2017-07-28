@@ -7,6 +7,7 @@ using AvalonStudio.MSBuildHost;
 using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis.Host.Mef;
 using RoslynPad.Roslyn;
+using RoslynPad.Roslyn.Diagnostics;
 using System;
 using System.Collections.ObjectModel;
 using System.Composition.Hosting;
@@ -54,6 +55,7 @@ namespace AvalonStudio.Projects.OmniSharp
                 Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.CSharp.dll")),
                 Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.Features.dll")),
                 Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.CSharp.Features.dll")),
+                typeof(DiagnosticsService).Assembly,
             };
 
             var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
@@ -68,7 +70,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
             _host = MefHostServices.Create(_compositionContext);
 
-            Workspace = new RoslynWorkspace(_host, NuGetConfiguration);
+            Workspace = new RoslynWorkspace(_host, NuGetConfiguration, _compositionContext);
 
             var roslynProject = await Workspace.AddProject(path);
 

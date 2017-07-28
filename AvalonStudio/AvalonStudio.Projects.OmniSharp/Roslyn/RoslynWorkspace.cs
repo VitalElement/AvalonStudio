@@ -6,42 +6,72 @@ using AvalonStudio.MSBuildHost;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
+using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
 using RoslynPad.Roslyn.Diagnostics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace RoslynPad.Roslyn
 {
     public sealed class RoslynWorkspace : Workspace
     {
+        private CompositionHost _compositionContext;
         private readonly NuGetConfiguration _nuGetConfiguration;
         private readonly ConcurrentDictionary<string, DirectiveInfo> _referencesDirectives;
         private readonly Dictionary<DocumentId, SourceTextContainer> _openDocumentTextLoaders;
+
+        private readonly ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers;
 
         private IMsBuildHostService msBuildHostService;
         public DocumentId OpenDocumentId { get; private set; }
 
 
-        internal RoslynWorkspace(HostServices host, NuGetConfiguration nuGetConfiguration)
+        internal RoslynWorkspace(HostServices host, NuGetConfiguration nuGetConfiguration, CompositionHost compositionContext)
             : base(host, WorkspaceKind.Host)
         {
             _nuGetConfiguration = nuGetConfiguration;
+
             _referencesDirectives = new ConcurrentDictionary<string, DirectiveInfo>();
 
             msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));
 
             _openDocumentTextLoaders = new Dictionary<DocumentId, SourceTextContainer>();
+            _diagnosticsUpdatedNotifiers = new ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>>();
+
+            _compositionContext = compositionContext;
+            GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
+
+            this.EnableDiagnostics(DiagnosticOptions.Semantic | DiagnosticOptions.Syntax);
+        }
+
+        private void OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs)
+        {
+            var documentId = diagnosticsUpdatedArgs?.DocumentId;
+
+            if (documentId == null) return;
+
+            if (_diagnosticsUpdatedNotifiers.TryGetValue(documentId, out var notifier))
+            {
+                notifier(diagnosticsUpdatedArgs);
+            }
+        }
+
+        public TService GetService<TService>()
+        {
+            return _compositionContext.GetExport<TService>();
         }
 
         public async Task<Project> AddProject(string projectFile)
-        {            
+        {
             var res = await msBuildHostService.GetVersion();
 
             var refs = await msBuildHostService.GetTaskItem("ResolveAssemblyReferences", projectFile);
@@ -58,14 +88,14 @@ namespace RoslynPad.Roslyn
         }
 
         public DocumentId AddDocument(Project project, AvalonStudio.Projects.ISourceFile file)
-        {   
+        {
             var id = DocumentId.CreateNewId(project.Id);
             OnDocumentAdded(DocumentInfo.Create(id, file.Name, filePath: file.FilePath, loader: new FileTextLoader(file.FilePath, System.Text.Encoding.UTF8)));
 
             return id;
         }
 
-        public DocumentId GetDocumentId (AvalonStudio.Projects.ISourceFile file)
+        public DocumentId GetDocumentId(AvalonStudio.Projects.ISourceFile file)
         {
             var ids = CurrentSolution.GetDocumentIdsWithFilePath(file.Location);
 
@@ -96,6 +126,7 @@ namespace RoslynPad.Roslyn
             OnDocumentOpened(documentId, textContainer);
             OnDocumentContextUpdated(documentId);
 
+            _diagnosticsUpdatedNotifiers[documentId] = onDiagnosticsUpdated;
             _openDocumentTextLoaders.Add(documentId, textContainer);
         }
 
@@ -103,6 +134,9 @@ namespace RoslynPad.Roslyn
         {
             var documentId = GetDocumentId(file);
             var textContainer = _openDocumentTextLoaders[documentId];
+
+            _openDocumentTextLoaders.Remove(documentId);
+            _diagnosticsUpdatedNotifiers.Remove(documentId, out Action<DiagnosticsUpdatedArgs> value);
 
             OnDocumentClosed(documentId, TextLoader.From(textContainer, VersionStamp.Default));
         }
