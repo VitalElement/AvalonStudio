@@ -5,6 +5,7 @@ using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Languages.CSharp.OmniSharp;
 using AvalonStudio.MSBuildHost;
 using AvalonStudio.Utils;
+using Microsoft.Build.Construction;
 using Microsoft.CodeAnalysis.Host.Mef;
 using RoslynPad.Roslyn;
 using RoslynPad.Roslyn.Diagnostics;
@@ -72,17 +73,37 @@ namespace AvalonStudio.Projects.OmniSharp
 
             Workspace = new RoslynWorkspace(_host, NuGetConfiguration, _compositionContext);
 
-            var roslynProject = await Workspace.AddProject(path);
+            if (Path.GetExtension(path) == ".sln")
+            {
+                var sln = SolutionFile.Parse(path);
+
+                foreach (var project in sln.ProjectsInOrder.Where(p => Path.GetExtension(p.AbsolutePath) == ".csproj"))
+                {
+                    var roslynProject = await Workspace.AddProject(project.AbsolutePath);
+
+                    var asProject = OmniSharpProject.Create(roslynProject, this, project.AbsolutePath);
+
+                    AddProject(asProject);
+
+                    asProject.LoadFiles();
+                }
+            }
+            else if(Path.GetExtension(path) == ".csproj")
+            {
+                var roslynProject = await Workspace.AddProject(path);
+
+                var asProject = OmniSharpProject.Create(roslynProject, this, path);
+
+                AddProject(asProject);
+
+                asProject.LoadFiles();
+            }
 
             Location = path;
 
             Name = Path.GetFileNameWithoutExtension(path);
 
-            var project = OmniSharpProject.Create(roslynProject, this, path);
-
-            AddProject(project);
-
-            project.LoadFiles();
+           
 
             CurrentDirectory = Path.GetDirectoryName(path);
         }
