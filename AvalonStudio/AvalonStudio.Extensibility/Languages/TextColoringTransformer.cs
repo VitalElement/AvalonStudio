@@ -124,6 +124,10 @@ namespace AvalonStudio.Languages
 
             switch (type)
             {
+                case HighlightType.DelegateName:
+                    result = DelegateNameBrush;
+                    break;
+
                 case HighlightType.Comment:
                     result = CommentBrush;
                     break;
