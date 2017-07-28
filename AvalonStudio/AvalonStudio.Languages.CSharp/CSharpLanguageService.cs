@@ -183,7 +183,7 @@
 
             var dataAssociation = GetAssociatedData(sourceFile);
 
-            var document = dataAssociation.Solution.RoslynHost.GetDocument(dataAssociation.DocumentId);
+            var document = dataAssociation.Solution.Workspace.GetDocument(sourceFile);
 
             var completionService = CompletionService.GetService(document);
             var completionTrigger = GetCompletionTrigger(null);
@@ -246,10 +246,10 @@
         {
             var dataAssociation = GetAssociatedData(file);
 
-            var document = dataAssociation.Solution.RoslynHost.Workspace.CurrentSolution.GetDocument(dataAssociation.DocumentId);
+            var document = dataAssociation.Solution.Workspace.GetDocument(file);
             var formattedDocument = Formatter.FormatAsync(document).GetAwaiter().GetResult();
 
-            dataAssociation.Solution.RoslynHost.UpdateDocument(formattedDocument);
+            dataAssociation.Solution.Workspace.TryApplyChanges(formattedDocument.Project.Solution);
 
             return -1;
         }
@@ -340,10 +340,8 @@
             association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.
 
             var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
-            association.DocumentId = association.Solution.RoslynHost.AddDocument((file.Project as OmniSharpProject).RoslynProject, avaloniaEditTextContainer, file.Project.Solution.CurrentDirectory, (diagnostics) =>
-            {                
-                IoC.Get<IConsole>().WriteLine("Diags returned");
-
+            association.Solution.Workspace.OpenDocument(file, avaloniaEditTextContainer, (diagnostics) =>
+            {   
                 var dataAssociation = GetAssociatedData(file);
 
                 var results = new TextSegmentCollection<Diagnostic>();
@@ -572,7 +570,6 @@
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            IoC.Get<IConsole>().WriteLine("Running code analysis");
             var result = new CodeAnalysisResults();
 
             var textLength = 0;
@@ -581,7 +578,7 @@
 
             var dataAssociation = GetAssociatedData(file);
 
-            var document = dataAssociation.Solution.RoslynHost.GetDocument(dataAssociation.DocumentId);
+            var document = dataAssociation.Solution.Workspace.GetDocument(file);
 
             if(document == null)
             {
@@ -619,9 +616,6 @@
             }
 
             textDocument.EndUpdate();
-
-
-            IoC.Get<IConsole>().WriteLine("code analysis done");
             return result;
         }
 
@@ -659,6 +653,8 @@
             var association = GetAssociatedData(file);
 
             editor.TextInput -= association.TextInputHandler;
+
+            association.Solution.Workspace.CloseDocument(file);
 
             association.Solution = null;
             dataAssociations.Remove(file);

@@ -25,8 +25,6 @@ namespace AvalonStudio.Projects.OmniSharp
                 RoslynProject = roslynProject
             };
 
-            result.LoadFiles();
-
             return result;
         }
 
@@ -38,8 +36,7 @@ namespace AvalonStudio.Projects.OmniSharp
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
             Settings = new ExpandoObject();
-            Project = this;
-            
+            Project = this;            
         }
 
         public Project RoslynProject { get; set; }

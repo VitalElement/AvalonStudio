@@ -5,9 +5,11 @@ using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Languages.CSharp.OmniSharp;
 using AvalonStudio.MSBuildHost;
 using AvalonStudio.Utils;
+using Microsoft.CodeAnalysis.Host.Mef;
 using RoslynPad.Roslyn;
 using System;
 using System.Collections.ObjectModel;
+using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -18,6 +20,9 @@ namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpSolution : ISolution
     {
+        private CompositionHost _compositionContext;
+        private MefHostServices _host;
+
         public static async Task<OmniSharpSolution> Create(string path)
         {
             OmniSharpSolution result = new OmniSharpSolution();
@@ -29,7 +34,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public NuGetConfiguration NuGetConfiguration { get; }
 
-        public RoslynHost RoslynHost { get; private set; }
+        public RoslynWorkspace Workspace { get; private set; }
 
         private OmniSharpServer server;
 
@@ -41,31 +46,41 @@ namespace AvalonStudio.Projects.OmniSharp
 
         private async Task LoadSolution(string path)
         {
-            RoslynHost = new RoslynHost(NuGetConfiguration, new Assembly[]
-            {
-                // TODO: xplat
-                /*Assembly.Load("RoslynPad.Roslyn.Windows"),
-                Assembly.Load("RoslynPad.Editor.Windows")*/
-            });
+            var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
 
-            var roslynProject = await RoslynHost.Workspace.AddProject(path);
+            var assemblies = new[]
+            {
+                Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.dll")),
+                Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.CSharp.dll")),
+                Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.Features.dll")),
+                Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.CSharp.Features.dll")),
+            };
+
+            var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
+                    .Distinct()
+                    .SelectMany(x => x.GetTypes())
+                    //.Concat(new[] { typeof(DocumentationProviderServiceFactory) })
+                    .ToArray();
+
+            _compositionContext = new ContainerConfiguration()
+                .WithParts(partTypes)
+                .CreateContainer();
+
+            _host = MefHostServices.Create(_compositionContext);
+
+            Workspace = new RoslynWorkspace(_host, NuGetConfiguration);
+
+            var roslynProject = await Workspace.AddProject(path);
 
             Location = path;
 
             Name = Path.GetFileNameWithoutExtension(path);
 
+            var project = OmniSharpProject.Create(roslynProject, this, path);
 
+            AddProject(project);
 
-            AddProject(OmniSharpProject.Create(roslynProject, this, path));
-
-           /* await server.StartAsync(Path.GetDirectoryName(path));
-
-            var workspace = await server.SendRequest(new WorkspaceInformationRequest() { ExcludeSourceFiles = false });
-
-            foreach (var project in workspace.MsBuild.Projects)
-            {
-                AddProject(OmniSharpProject.Create(this, project.Path, project));
-            }*/
+            project.LoadFiles();
 
             CurrentDirectory = Path.GetDirectoryName(path);
         }
@@ -80,7 +95,19 @@ namespace AvalonStudio.Projects.OmniSharp
             Projects.InsertSorted(project);
             currentProject = project;
 
+            project.FileAdded += Project_FileAdded;
+
             return currentProject;
+        }
+
+        private void Project_FileAdded(object sender, ISourceFile e)
+        {
+            switch (e.Extension)
+            {
+                case ".cs":
+                    Workspace.AddDocument((sender as OmniSharpProject).RoslynProject, e);
+                    break;
+            }
         }
 
         public OmniSharpServer Server => server;
@@ -114,7 +141,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public void RemoveProject(IProject project)
         {
-            throw new NotImplementedException();
+            project.FileAdded -= Project_FileAdded;
         }
 
         public void Save()

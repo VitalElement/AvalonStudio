@@ -1,21 +1,21 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using AsyncRpc;
+using AsyncRpc.Transport.Tcp;
+using AvalonStudio.MSBuildHost;
+using AvalonStudio.Projects.OmniSharp.Roslyn;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Host;
+using Microsoft.CodeAnalysis.Text;
+using RoslynPad.Roslyn.Diagnostics;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Host;
-using Microsoft.CodeAnalysis.Text;
-using Roslyn.Utilities;
-using AsyncRpc;
-using AvalonStudio.MSBuildHost;
-using AsyncRpc.Transport.Tcp;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace RoslynPad.Roslyn
 {
@@ -23,21 +23,21 @@ namespace RoslynPad.Roslyn
     {
         private readonly NuGetConfiguration _nuGetConfiguration;
         private readonly ConcurrentDictionary<string, DirectiveInfo> _referencesDirectives;
+        private readonly Dictionary<DocumentId, SourceTextContainer> _openDocumentTextLoaders;
+
         private IMsBuildHostService msBuildHostService;
-
-        public RoslynHost RoslynHost { get; }
         public DocumentId OpenDocumentId { get; private set; }
-        
 
-        internal RoslynWorkspace(HostServices host, NuGetConfiguration nuGetConfiguration, RoslynHost roslynHost)
+
+        internal RoslynWorkspace(HostServices host, NuGetConfiguration nuGetConfiguration)
             : base(host, WorkspaceKind.Host)
         {
             _nuGetConfiguration = nuGetConfiguration;
             _referencesDirectives = new ConcurrentDictionary<string, DirectiveInfo>();
 
-            RoslynHost = roslynHost;
-
             msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));
+
+            _openDocumentTextLoaders = new Dictionary<DocumentId, SourceTextContainer>();
         }
 
         public async Task<Project> AddProject(string projectFile)
@@ -55,6 +55,56 @@ namespace RoslynPad.Roslyn
             }
 
             return CurrentSolution.GetProject(id);
+        }
+
+        public DocumentId AddDocument(Project project, AvalonStudio.Projects.ISourceFile file)
+        {   
+            var id = DocumentId.CreateNewId(project.Id);
+            OnDocumentAdded(DocumentInfo.Create(id, file.Name, filePath: file.FilePath, loader: new FileTextLoader(file.FilePath, System.Text.Encoding.UTF8)));
+
+            return id;
+        }
+
+        public DocumentId GetDocumentId (AvalonStudio.Projects.ISourceFile file)
+        {
+            var ids = CurrentSolution.GetDocumentIdsWithFilePath(file.Location);
+
+            if (ids.Length != 1)
+            {
+                throw new NotImplementedException();
+            }
+
+            return ids.First();
+        }
+
+        public Document GetDocument(AvalonStudio.Projects.ISourceFile file)
+        {
+            var documentId = GetDocumentId(file);
+
+            return CurrentSolution.GetDocument(documentId);
+        }
+
+        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, SourceTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated)
+        {
+            var documentId = GetDocumentId(file);
+
+            if (onTextUpdated != null)
+            {
+                ApplyingTextChange += (d, s) => onTextUpdated(s);
+            }
+
+            OnDocumentOpened(documentId, textContainer);
+            OnDocumentContextUpdated(documentId);
+
+            _openDocumentTextLoaders.Add(documentId, textContainer);
+        }
+
+        public void CloseDocument(AvalonStudio.Projects.ISourceFile file)
+        {
+            var documentId = GetDocumentId(file);
+            var textContainer = _openDocumentTextLoaders[documentId];
+
+            OnDocumentClosed(documentId, TextLoader.From(textContainer, VersionStamp.Default));
         }
 
         public new void SetCurrentSolution(Solution solution)
@@ -75,13 +125,6 @@ namespace RoslynPad.Roslyn
                 default:
                     return false;
             }
-        }
-
-        public void OpenDocument(DocumentId documentId, SourceTextContainer textContainer)
-        {
-            OpenDocumentId = documentId;
-            OnDocumentOpened(documentId, textContainer);
-            OnDocumentContextUpdated(documentId);
         }
 
         public event Action<DocumentId, SourceText> ApplyingTextChange;
@@ -137,58 +180,6 @@ namespace RoslynPad.Roslyn
             {
                 MetadataReference = metadataReference;
                 IsActive = true;
-            }
-        }
-
-        internal async Task ProcessReferenceDirectives(Document document)
-        {
-            var project = document.Project;
-            var directives = ((CompilationUnitSyntax)await document.GetSyntaxRootAsync().ConfigureAwait(false))
-                .GetReferenceDirectives().Select(x => x.File.ValueText).ToImmutableHashSet();
-
-            var changed = false;
-            foreach (var referenceDirective in _referencesDirectives)
-            {
-                if (referenceDirective.Value.IsActive && !directives.Contains(referenceDirective.Key))
-                {
-                    referenceDirective.Value.IsActive = false;
-                    changed = true;
-                }
-            }
-
-            foreach (var directive in directives)
-            {
-                DirectiveInfo referenceDirective;
-                if (_referencesDirectives.TryGetValue(directive, out referenceDirective))
-                {
-                    if (!referenceDirective.IsActive)
-                    {
-                        referenceDirective.IsActive = true;
-                        changed = true;
-                    }
-                }
-                else
-                {
-                    if (_referencesDirectives.TryAdd(directive, new DirectiveInfo(ResolveReference(directive))))
-                    {
-                        changed = true;
-                    }
-                }
-            }
-            
-            if (!changed) return;
-
-            lock (_referencesDirectives)
-            {
-                var solution = project.Solution;
-                var references =
-                    _referencesDirectives.Where(x => x.Value.IsActive)
-                        .Select(x => x.Value.MetadataReference)
-                        .WhereNotNull();
-                var newSolution = solution.WithProjectMetadataReferences(project.Id,
-                    RoslynHost.DefaultReferences.Concat(references));
-
-                SetCurrentSolution(newSolution);
             }
         }
 

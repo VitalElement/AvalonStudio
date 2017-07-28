@@ -33,7 +33,5 @@
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
         public List<IVisualLineTransformer> DocumentLineTransformers { get; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
-
-        public DocumentId DocumentId { get; set; }
     }
 }
