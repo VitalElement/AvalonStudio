@@ -648,6 +648,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     Diagnostics = d;
 
+                    TextArea.TextView.Redraw();
+
                     _shell.InvalidateErrors();
                 });
             }
