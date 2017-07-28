@@ -28,7 +28,7 @@ namespace AvalonStudio.Languages
             EnumConstantBrush = Brush.Parse("#B5CEA8");
             EnumTypeNameBrush = Brush.Parse("#B5CEA8");
             InterfaceBrush = Brush.Parse("#B5CEA8");
-
+            DelegateNameBrush = Brush.Parse("#4EC9B0");
             PunctuationBrush = Brush.Parse("#C8C8C8");
             UserTypeBrush = Brush.Parse("#4EC9B0");
             StructNameBrush = Brush.Parse("#4EC9B0");
@@ -59,6 +59,8 @@ namespace AvalonStudio.Languages
         public IBrush EnumConstantBrush { get; set; }
 
         public IBrush InterfaceBrush { get; set; }
+
+        public IBrush DelegateNameBrush { get; set; }
 
         public IBrush EnumTypeNameBrush { get; set; }
 

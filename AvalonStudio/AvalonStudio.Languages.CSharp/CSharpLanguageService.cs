@@ -140,49 +140,30 @@
 
         private CodeCompletionKind FromOmniSharpKind(string kind)
         {
-            if (kind != null)
+            var roslynKind = (Microsoft.CodeAnalysis.SymbolKind)int.Parse(kind);
+
+            switch(roslynKind)
             {
-                switch (kind)
-                {
-                    case "Method":
-                        return CodeCompletionKind.Method;
+                case Microsoft.CodeAnalysis.SymbolKind.NamedType:
+                    return CodeCompletionKind.Class;
 
-                    case "Class":
-                        return CodeCompletionKind.Class;
+                case Microsoft.CodeAnalysis.SymbolKind.Parameter:
+                    return CodeCompletionKind.Parameter;
 
-                    case "Struct":
-                        return CodeCompletionKind.Struct;
+                case Microsoft.CodeAnalysis.SymbolKind.Property:
+                    return CodeCompletionKind.Property;
 
-                    case "Enum":
-                        return CodeCompletionKind.Enum;
+                case Microsoft.CodeAnalysis.SymbolKind.Method:
+                    return CodeCompletionKind.Method;
 
-                    case "Delegate":
-                        return CodeCompletionKind.Delegate;
+                case Microsoft.CodeAnalysis.SymbolKind.Event:
+                    return CodeCompletionKind.Event;
 
-                    case "Property":
-                        return CodeCompletionKind.Property;
+                case Microsoft.CodeAnalysis.SymbolKind.Namespace:
+                    return CodeCompletionKind.Namespace;
 
-                    case "Event":
-                        return CodeCompletionKind.Event;
-
-                    case "Interface":
-                        return CodeCompletionKind.Interface;
-
-                    case "Keyword":
-                        return CodeCompletionKind.Keyword;
-
-                    case "Namespace":
-                        return CodeCompletionKind.Namespace;
-
-                    case "Field":
-                        return CodeCompletionKind.Field;
-
-                    case "Parameter":
-                        return CodeCompletionKind.Parameter;
-
-                    case "Local":
-                        return CodeCompletionKind.Variable;
-                }
+                case Microsoft.CodeAnalysis.SymbolKind.Local:
+                    return CodeCompletionKind.Variable;
             }
 
             Console.WriteLine($"dont understand omnisharp: {kind}");
@@ -193,7 +174,7 @@
         {
             return triggerChar != null
                 ? CompletionTrigger.CreateInsertionTrigger(triggerChar.Value)
-                : CompletionTrigger.Default;
+                : CompletionTrigger.Invoke;
         }
 
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter)
@@ -219,9 +200,13 @@
                     var newCompletion = new CodeCompletionData()
                     {
                         Suggestion = completion.DisplayText,
-                        Hint = completion.DisplayText,
-
+                        Hint = completion.DisplayText
                     };
+
+                    if (completion.Properties.ContainsKey("SymbolKind"))
+                    {
+                        newCompletion.Kind = FromOmniSharpKind(completion.Properties["SymbolKind"]);
+                    }
 
                     result.Completions.Add(newCompletion);
                 }
@@ -534,6 +519,10 @@
                 case "xml doc comment - delimiter":
                 case "comment":
                     result = HighlightType.Comment;
+                    break;
+
+                case "delegate name":
+                    result = HighlightType.DelegateName;
                     break;
 
                 default:

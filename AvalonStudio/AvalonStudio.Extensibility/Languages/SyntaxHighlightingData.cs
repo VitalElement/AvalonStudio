@@ -17,6 +17,7 @@ namespace AvalonStudio.Languages
         EnumConstant,
         EnumTypeName,
         InterfaceName,
+        DelegateName,
         PreProcessor,
         PreProcessorText,
         Operator,

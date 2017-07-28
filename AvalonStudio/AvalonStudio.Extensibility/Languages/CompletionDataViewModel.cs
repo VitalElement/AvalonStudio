@@ -65,6 +65,10 @@ namespace AvalonStudio.Languages.ViewModels
                     result = new MethodCompletionDataViewModel(data);
                     break;
 
+                case CodeCompletionKind.Event:
+                    result = new EventCompletionDataViewModel(data);
+                    break;
+
                 case CodeCompletionKind.Macro:
                     result = new MacroCompletionDataViewModel(data);
                     break;
