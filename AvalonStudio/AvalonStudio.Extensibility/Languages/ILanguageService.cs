@@ -49,7 +49,7 @@ namespace AvalonStudio.Languages
 
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
-        IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
+        IObservable<TextSegmentCollection<Diagnostic>> ObserveDiagnostics(ISourceFile file);
 
         IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file);
 

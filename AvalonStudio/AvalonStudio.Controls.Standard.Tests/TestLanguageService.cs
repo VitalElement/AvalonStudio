@@ -4,6 +4,7 @@ using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Projects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AvaloniaEdit.Document;
 
 namespace AvalonStudio.Controls.Standard.Tests
 {
@@ -64,6 +65,11 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
+        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
+        {
+            throw new NotImplementedException();
+        }
+
         public IList<global::AvaloniaEdit.Rendering.IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
         {
             throw new NotImplementedException();
@@ -84,12 +90,22 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
+        public IObservable<TextSegmentCollection<Diagnostic>> ObserveDiagnostics(ISourceFile file)
+        {
+            throw new NotImplementedException();
+        }
+
         public void RegisterSourceFile(global::AvaloniaEdit.TextEditor editor, ISourceFile file, global::AvaloniaEdit.Document.TextDocument textDocument)
         {
             throw new NotImplementedException();
         }
 
         public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             throw new NotImplementedException();
         }

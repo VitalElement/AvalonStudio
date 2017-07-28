@@ -6,10 +6,10 @@
     using AvalonStudio.Extensibility.Editor;
     using AvalonStudio.Languages;
     using CPlusPlus;
-    using Microsoft.CodeAnalysis;
     using Projects.OmniSharp;
     using System;
     using System.Collections.Generic;
+    using System.Reactive.Subjects;
 
     internal class CSharpDataAssociation
     {
@@ -25,7 +25,11 @@
             BackgroundRenderers.Add(TextMarkerService);
 
             DocumentLineTransformers.Add(TextColorizer);
+
+            Diagnostics = new Subject<TextSegmentCollection<Languages.Diagnostic>>();
         }
+
+        public Subject<TextSegmentCollection<Diagnostic>> Diagnostics { get; set; }
 
         public OmniSharpSolution Solution { get; set; }
         public TextColoringTransformer TextColorizer { get; }

@@ -644,7 +644,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
 
-                LanguageService.Diagnostics.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
+                LanguageService.ObserveDiagnostics(sourceFile).ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
                 {
                     Diagnostics = d;
 

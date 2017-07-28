@@ -1,15 +1,11 @@
 ﻿namespace AvalonStudio.Languages.CSharp
 {
-    using Avalonia.Input;
-    using Avalonia.Interactivity;
     using Avalonia.Media;
     using Avalonia.Threading;
     using AvaloniaEdit.Document;
     using AvaloniaEdit.Indentation;
     using AvaloniaEdit.Indentation.CSharp;
     using AvaloniaEdit.Rendering;
-    using AvalonStudio.Controls.Standard.ErrorList;
-    using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Editor;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
@@ -25,7 +21,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Reactive.Subjects;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 
@@ -34,13 +29,8 @@
         private static readonly ConditionalWeakTable<ISourceFile, CSharpDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, CSharpDataAssociation>();
 
-        private object _lastDiagnosticsLock = new object();
-        private DiagnosticsUpdatedArgs _lastDiagnostics;
-
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
-
-        private Subject<TextSegmentCollection<Diagnostic>> _diagnostics;
 
         public CSharpLanguageService()
         {
@@ -57,8 +47,6 @@
                 else
                     return newName;
             });
-
-            _diagnostics = new Subject<TextSegmentCollection<Diagnostic>>();
         }
 
         public Type BaseTemplateType
@@ -142,7 +130,7 @@
         {
             var roslynKind = (Microsoft.CodeAnalysis.SymbolKind)int.Parse(kind);
 
-            switch(roslynKind)
+            switch (roslynKind)
             {
                 case Microsoft.CodeAnalysis.SymbolKind.NamedType:
                     return CodeCompletionKind.Class;
@@ -248,7 +236,7 @@
 
             var document = dataAssociation.Solution.Workspace.GetDocument(file);
             var formattedDocument = Formatter.FormatAsync(document).GetAwaiter().GetResult();
-            
+
             dataAssociation.Solution.Workspace.TryApplyChanges(formattedDocument.Project.Solution);
 
             return -1;
@@ -341,7 +329,7 @@
 
             var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
             association.Solution.Workspace.OpenDocument(file, avaloniaEditTextContainer, (diagnostics) =>
-            {   
+            {
                 var dataAssociation = GetAssociatedData(file);
 
                 var results = new TextSegmentCollection<Diagnostic>();
@@ -351,12 +339,12 @@
                     results.Add(FromRoslynDiagnostic(diagnostic, dataAssociation.TextMarkerService, file.Location, file.Project));
                 }
 
-                _diagnostics.OnNext(results);
+                dataAssociation.Diagnostics.OnNext(results);
 
                 dataAssociation.TextMarkerService.Clear();
 
 
-                Color markerColor;                
+                Color markerColor;
 
                 foreach (var diag in diagnostics.Diagnostics)
                 {
@@ -377,7 +365,7 @@
                     }
 
                     dataAssociation.TextMarkerService.Create(diag.TextSpan.Start, diag.TextSpan.Length, diag.Message, markerColor);
-                }             
+                }
             });
 
             dataAssociations.Add(file, association);
@@ -561,7 +549,10 @@
             return result;
         }
 
-        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => _diagnostics;
+        public IObservable<TextSegmentCollection<Diagnostic>> ObserveDiagnostics(ISourceFile file)
+        {
+            return GetAssociatedData(file).Diagnostics;
+        }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
@@ -575,7 +566,7 @@
 
             var document = dataAssociation.Solution.Workspace.GetDocument(file);
 
-            if(document == null)
+            if (document == null)
             {
                 return result;
             }
@@ -586,7 +577,7 @@
             {
                 result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
             }
-            
+
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;

@@ -94,8 +94,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public string LanguageId => "ts";
 
-        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => throw new NotImplementedException();
-
         public bool CanHandle(ISourceFile file)
         {
             var result = false;
@@ -538,6 +536,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public virtual void Activation()
         {
+        }
+
+        public IObservable<TextSegmentCollection<Diagnostic>> ObserveDiagnostics(ISourceFile file)
+        {
+            throw new NotImplementedException();
         }
     }
 }
