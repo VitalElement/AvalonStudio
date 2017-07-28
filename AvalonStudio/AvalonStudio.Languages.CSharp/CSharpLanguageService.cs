@@ -248,7 +248,7 @@
 
             var document = dataAssociation.Solution.Workspace.GetDocument(file);
             var formattedDocument = Formatter.FormatAsync(document).GetAwaiter().GetResult();
-
+            
             dataAssociation.Solution.Workspace.TryApplyChanges(formattedDocument.Project.Solution);
 
             return -1;
@@ -377,12 +377,7 @@
                     }
 
                     dataAssociation.TextMarkerService.Create(diag.TextSpan.Start, diag.TextSpan.Length, diag.Message, markerColor);
-                }
-
-                                
-            }, (sourceText) =>
-            {
-                avaloniaEditTextContainer.UpdateText(sourceText);
+                }             
             });
 
             dataAssociations.Add(file, association);

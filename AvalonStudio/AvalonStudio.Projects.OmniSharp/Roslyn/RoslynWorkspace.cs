@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
+using RoslynPad.Editor.Windows;
 using RoslynPad.Roslyn.Diagnostics;
 using System;
 using System.Collections.Concurrent;
@@ -27,7 +28,7 @@ namespace RoslynPad.Roslyn
         private CompositionHost _compositionContext;
         private readonly NuGetConfiguration _nuGetConfiguration;
         private readonly ConcurrentDictionary<string, DirectiveInfo> _referencesDirectives;
-        private readonly Dictionary<DocumentId, SourceTextContainer> _openDocumentTextLoaders;
+        private readonly Dictionary<DocumentId, AvalonEditTextContainer> _openDocumentTextLoaders;
 
         private readonly ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers;
 
@@ -44,7 +45,7 @@ namespace RoslynPad.Roslyn
 
             msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));
 
-            _openDocumentTextLoaders = new Dictionary<DocumentId, SourceTextContainer>();
+            _openDocumentTextLoaders = new Dictionary<DocumentId, AvalonEditTextContainer>();
             _diagnosticsUpdatedNotifiers = new ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>>();
 
             _compositionContext = compositionContext;
@@ -114,14 +115,9 @@ namespace RoslynPad.Roslyn
             return CurrentSolution.GetDocument(documentId);
         }
 
-        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, SourceTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated)
+        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated)
         {
             var documentId = GetDocumentId(file);
-
-            if (onTextUpdated != null)
-            {
-                ApplyingTextChange += (d, s) => onTextUpdated(s);
-            }
 
             OnDocumentOpened(documentId, textContainer);
             OnDocumentContextUpdated(documentId);
@@ -161,24 +157,15 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        public event Action<DocumentId, SourceText> ApplyingTextChange;
-
         protected override void Dispose(bool finalize)
         {
             base.Dispose(finalize);
-
-            ApplyingTextChange = null;
         }
 
         protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
         {
-            if (OpenDocumentId != document)
-            {
-                return;
-            }
-
-            ApplyingTextChange?.Invoke(document, newText);
-
+            _openDocumentTextLoaders[document].UpdateText(newText);
+            
             OnDocumentTextChanged(document, newText, PreservationMode.PreserveIdentity);
         }
 
