@@ -14,6 +14,7 @@ using AvaloniaEdit.Snippets;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
@@ -69,6 +70,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private SelectedWordBackgroundRenderer _selectedWordBackgroundRenderer;
 
         private ColumnLimitBackgroundRenderer _columnLimitBackgroundRenderer;
+
+        private TextMarkerService _diagnosticMarkers;
 
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
@@ -589,14 +592,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (LanguageService != null)
                 {
-                    // TODO allow interruption.
-                    var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, document, unsavedFiles, () => false);
+                    await LanguageService.RunCodeAnalysisAsync(sourceFile, document, unsavedFiles, () => false);
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         TextArea.TextView.Redraw();
-
-                        _shell.InvalidateErrors();
                     });
                 }
             });
@@ -644,9 +644,38 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
 
+                _diagnosticMarkers = new TextMarkerService(Document);
+
+                TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkers);
+
                 LanguageService.ObserveDiagnostics(sourceFile).ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
                 {
                     Diagnostics = d;
+
+                    _diagnosticMarkers.Clear();
+
+                    foreach (var diag in d)
+                    {
+                        Color markerColor;
+
+                        switch (diag.Level)
+                        {
+                            case DiagnosticLevel.Error:
+                            case DiagnosticLevel.Fatal:
+                                markerColor = Diagnostic.ErrorBrush;
+                                break;
+
+                            case DiagnosticLevel.Warning:
+                                markerColor = Diagnostic.WarningBrush;
+                                break;
+
+                            default:
+                                markerColor = Diagnostic.DefaultBrush;
+                                break;
+                        }
+
+                        _diagnosticMarkers.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
+                    }
 
                     TextArea.TextView.Redraw();
 

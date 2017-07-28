@@ -1,11 +1,9 @@
-using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvaloniaEdit.Rendering;
-using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Platforms;
@@ -461,8 +459,10 @@ namespace AvalonStudio.Languages.CPlusPlus
             }, IntPtr.Zero);
         }
 
-        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result, TextMarkerService service)
+        private TextSegmentCollection<Diagnostic> GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project)
         {
+            var result = new TextSegmentCollection<Diagnostic>();
+
             foreach (var diagnostic in clangDiagnostics)
             {
                 if (diagnostic.Location.IsFromMainFile)
@@ -491,28 +491,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     result.Add(diag);
                     tokens.Dispose();
-
-                    Color markerColor;
-
-                    switch (diag.Level)
-                    {
-                        case DiagnosticLevel.Error:
-                        case DiagnosticLevel.Fatal:
-                            markerColor = Color.FromRgb(253, 45, 45);
-                            break;
-
-                        case DiagnosticLevel.Warning:
-                            markerColor = Color.FromRgb(255, 207, 40);
-                            break;
-
-                        default:
-                            markerColor = Color.FromRgb(0, 42, 74);
-                            break;
-                    }
-
-                    service.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
                 }
             }
+
+            return result;
         }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument document, List<UnsavedFile> unsavedFiles,
@@ -540,10 +522,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                             GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);
                         }
+                        
+                        var diagnostics = GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project);
 
-                        dataAssociation.TextMarkerService.Clear();
-
-                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);
+                        dataAssociation.Diagnostics.OnNext(diagnostics);
                     }
                 }
                 catch (Exception e)
@@ -1259,7 +1241,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IObservable<TextSegmentCollection<Diagnostic>> ObserveDiagnostics(ISourceFile file)
         {
-            throw new NotImplementedException();
+            return GetAssociatedData(file).Diagnostics;
         }
     }
 }

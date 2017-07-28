@@ -240,9 +240,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
             catch (JavaScriptException)
             {
-                return new CodeAnalysisResults
-                {
-                    Diagnostics = new TextSegmentCollection<Diagnostic>
+                dataAssociation.Diagnostics.OnNext(new TextSegmentCollection<Diagnostic>
                     {
                         new Diagnostic
                         {
@@ -253,7 +251,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                             File = file.Name,
                             Level = DiagnosticLevel.Error,
                         }
-                    }
+                    });
+
+                return new CodeAnalysisResults
+                {
                 };
             }
             finally
@@ -305,16 +306,13 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 HighlightNode(rootStatement, result);
             }
 
-            // Clean up previous highlighting
-            dataAssociation.TextMarkerService.Clear();
-
             // Diagnostics
-
+            var diagnostics = new TextSegmentCollection<Diagnostic>(document);
             // Language service has diagnostics
             foreach (var diagnostic in syntaxTree.ParseDiagnostics)
             {
                 // Convert diagnostics
-                result.Diagnostics.Add(new Diagnostic
+                diagnostics.Add(new Diagnostic
                 {
                     Project = file.Project,
                     Line = GetLineNumber(currentFileConts, diagnostic.Start), // TODO
@@ -327,7 +325,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 });
             }
 
-            result.Diagnostics.Add(new Diagnostic
+            diagnostics.Add(new Diagnostic
             {
                 Project = file.Project,
                 Line = 1,
@@ -336,6 +334,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 File = file.Name,
                 Level = DiagnosticLevel.Warning,
             });
+
+            dataAssociation.Diagnostics.OnNext(diagnostics);
 
             dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
@@ -540,7 +540,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public IObservable<TextSegmentCollection<Diagnostic>> ObserveDiagnostics(ISourceFile file)
         {
-            throw new NotImplementedException();
+            return GetAssociatedData(file).Diagnostics;
         }
     }
 }

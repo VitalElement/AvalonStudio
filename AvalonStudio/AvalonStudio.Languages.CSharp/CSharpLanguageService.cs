@@ -336,36 +336,10 @@
 
                 foreach (var diagnostic in diagnostics.Diagnostics)
                 {
-                    results.Add(FromRoslynDiagnostic(diagnostic, dataAssociation.TextMarkerService, file.Location, file.Project));
+                    results.Add(FromRoslynDiagnostic(diagnostic, file.Location, file.Project));
                 }
 
                 dataAssociation.Diagnostics.OnNext(results);
-
-                dataAssociation.TextMarkerService.Clear();
-
-
-                Color markerColor;
-
-                foreach (var diag in diagnostics.Diagnostics)
-                {
-                    switch ((DiagnosticLevel)diag.Severity)
-                    {
-                        case DiagnosticLevel.Error:
-                        case DiagnosticLevel.Fatal:
-                            markerColor = Color.FromRgb(253, 45, 45);
-                            break;
-
-                        case DiagnosticLevel.Warning:
-                            markerColor = Color.FromRgb(255, 207, 40);
-                            break;
-
-                        default:
-                            markerColor = Color.FromRgb(0, 42, 74);
-                            break;
-                    }
-
-                    dataAssociation.TextMarkerService.Create(diag.TextSpan.Start, diag.TextSpan.Length, diag.Message, markerColor);
-                }
             });
 
             dataAssociations.Add(file, association);
@@ -514,7 +488,7 @@
             return result;
         }
 
-        private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, TextMarkerService service, string fileName, IProject project)
+        private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, string fileName, IProject project)
         {
             var result = new Diagnostic
             {
@@ -525,26 +499,6 @@
                 File = fileName,
                 Project = project,
             };
-
-            Color markerColor;
-
-            switch (result.Level)
-            {
-                case DiagnosticLevel.Error:
-                case DiagnosticLevel.Fatal:
-                    markerColor = Color.FromRgb(253, 45, 45);
-                    break;
-
-                case DiagnosticLevel.Warning:
-                    markerColor = Color.FromRgb(255, 207, 40);
-                    break;
-
-                default:
-                    markerColor = Color.FromRgb(0, 42, 74);
-                    break;
-            }
-
-            service.Create(result.StartOffset, result.Length, result.Spelling, markerColor);
 
             return result;
         }

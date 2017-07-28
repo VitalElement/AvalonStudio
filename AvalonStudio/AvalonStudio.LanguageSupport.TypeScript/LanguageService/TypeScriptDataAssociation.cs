@@ -5,6 +5,7 @@ using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Languages;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Subjects;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 {
@@ -17,17 +18,17 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             DocumentLineTransformers = new List<IVisualLineTransformer>();
 
             TextColorizer = new TextColoringTransformer(textDocument);
-            TextMarkerService = new TextMarkerService(textDocument);
 
             BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
-            BackgroundRenderers.Add(TextMarkerService);
 
             DocumentLineTransformers.Add(TextColorizer);
+
+            Diagnostics = new Subject<TextSegmentCollection<Diagnostic>>();
         }
 
+        public Subject<TextSegmentCollection<Diagnostic>> Diagnostics { get; set; }
         public TextDocument TextDocument { get; set; }
         public TextColoringTransformer TextColorizer { get; }
-        public TextMarkerService TextMarkerService { get; }
         public List<IBackgroundRenderer> BackgroundRenderers { get; }
         public List<IVisualLineTransformer> DocumentLineTransformers { get; }
         public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }

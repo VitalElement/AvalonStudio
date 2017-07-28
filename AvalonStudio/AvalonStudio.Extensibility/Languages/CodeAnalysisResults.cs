@@ -9,12 +9,10 @@ namespace AvalonStudio.Languages
         public CodeAnalysisResults()
         {
             SyntaxHighlightingData = new SyntaxHighlightDataList();
-            Diagnostics = new TextSegmentCollection<Diagnostic>();
             IndexItems = new List<IndexEntry>();
         }
 
         public SyntaxHighlightDataList SyntaxHighlightingData { get; set; }
-        public TextSegmentCollection<Diagnostic> Diagnostics { get; set; }
         public List<IndexEntry> IndexItems { get; set; }
     }
 }
