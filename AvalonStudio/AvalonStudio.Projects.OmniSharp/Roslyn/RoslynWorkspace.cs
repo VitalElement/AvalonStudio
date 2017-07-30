@@ -69,11 +69,20 @@ namespace RoslynPad.Roslyn
             return _compositionContext.GetExport<TService>();
         }
 
-        public async Task<Tuple<Project, List<string>>> AddProject(string projectFile)
+        public async Task<Tuple<Project, List<string>>> AddProject(string solutionDir, string projectFile)
         {
             var res = await msBuildHostService.GetVersion();
 
-            var assemblyReferences = await msBuildHostService.GetTaskItem("ResolveAssemblyReferences", projectFile);
+            var properties = new List<Property>();
+
+            properties.Add(new Property { Key = "DesignTimeBuild", Value = "true" });
+            properties.Add(new Property { Key = "BuildProjectReferences", Value = "false" });
+            properties.Add(new Property { Key = "_ResolveReferenceDependencies", Value = "true" });
+            properties.Add(new Property { Key = "SolutionDir", Value = solutionDir });
+            properties.Add(new Property { Key = "ProvideCommandLineInvocation", Value = "true" });
+            properties.Add(new Property { Key = "SkipCompilerExecution", Value = "true" });
+
+            var assemblyReferences = await msBuildHostService.GetTaskItem("ResolveAssemblyReferences", projectFile, properties);
             
             var projectReferences = await msBuildHostService.GetProjectReferences(projectFile);
 
