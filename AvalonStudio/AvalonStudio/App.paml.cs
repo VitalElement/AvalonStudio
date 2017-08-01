@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Platforms;
+using AvalonStudio.Repositories;
 using System;
 
 namespace AvalonStudio
@@ -39,8 +40,18 @@ namespace AvalonStudio
             {
                 builder.UseGtk3().UseSkia();
             }
-            
-            builder.Start<BootScreen>();            
+
+            builder.SetupWithoutStarting();
+
+            Platform.Initialise();
+
+            PackageSources.InitialisePackageSources();
+
+            var container = CompositionRoot.CreateContainer();
+
+            ShellViewModel.Instance = container.GetExport<ShellViewModel>();
+
+            builder.Start<MainWindow>();            
         }
 
         public override void Initialize()

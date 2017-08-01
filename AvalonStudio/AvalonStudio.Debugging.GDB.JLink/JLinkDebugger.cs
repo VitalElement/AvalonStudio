@@ -81,7 +81,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public async Task InstallAsync(IConsole console)
         {
-            if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix)
+            if (Platform.PlatformIdentifier != Platforms.PlatformID.Unix)
             {
                 await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", console);
             }

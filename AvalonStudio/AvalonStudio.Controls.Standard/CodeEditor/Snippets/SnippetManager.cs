@@ -77,7 +77,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 
         public void InitialiseSnippetsForProject(IProject project)
         {
-            if (!_projectSnippets.ContainsKey(project))
+            if (!_projectSnippets.ContainsKey(project) && !(project is UnresolvedReference))
             {
                 _projectSnippets[project] = new Dictionary<string, IDictionary<string, CodeSnippet>>();
 
@@ -132,24 +132,28 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 
         private CodeSnippet GetSnippetForProject(ILanguageService languageService, IProject project, string word)
         {
-            if (_projectSnippets.ContainsKey(project) && _projectSnippets[project].ContainsKey(languageService.LanguageId))
+            if (!(project is UnresolvedReference))
             {
-                var projectSnippets = _projectSnippets[project][languageService.LanguageId];
-
-                if (projectSnippets.ContainsKey(word))
+                if (_projectSnippets.ContainsKey(project) && _projectSnippets[project].ContainsKey(languageService.LanguageId))
                 {
-                    return projectSnippets[word];
+                    var projectSnippets = _projectSnippets[project][languageService.LanguageId];
+
+                    if (projectSnippets.ContainsKey(word))
+                    {
+                        return projectSnippets[word];
+                    }
                 }
-            }
 
-            foreach (var reference in project.References)
-            {
-                var result = GetSnippetForProject(languageService, reference, word);
-
-                if (result != null)
+                foreach (var reference in project.References)
                 {
-                    return result;
+                    var result = GetSnippetForProject(languageService, reference, word);
+
+                    if (result != null)
+                    {
+                        return result;
+                    }
                 }
+
             }
 
             return null;
@@ -186,22 +190,25 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
         {
             var results = new List<CodeSnippet>();
 
-            if (_projectSnippets.ContainsKey(project) && _projectSnippets[project].ContainsKey(languageService.LanguageId))
+            if (!(project is UnresolvedReference))
             {
-                foreach (var snippet in _projectSnippets[project][languageService.LanguageId].Values)
+                if (_projectSnippets.ContainsKey(project) && _projectSnippets[project].ContainsKey(languageService.LanguageId))
                 {
-                    var currentResult = results.BinarySearch<CodeSnippet, CodeSnippet>(snippet);
-
-                    if (currentResult == null)
+                    foreach (var snippet in _projectSnippets[project][languageService.LanguageId].Values)
                     {
-                        results.Add(snippet);
+                        var currentResult = results.BinarySearch<CodeSnippet, CodeSnippet>(snippet);
+
+                        if (currentResult == null)
+                        {
+                            results.Add(snippet);
+                        }
                     }
                 }
-            }
 
-            foreach (var reference in project.References)
-            {
-                results.AddRange(GetSnippetsForProject(languageService, reference));
+                foreach (var reference in project.References)
+                {
+                    results.AddRange(GetSnippetsForProject(languageService, reference));
+                }
             }
 
             return results;

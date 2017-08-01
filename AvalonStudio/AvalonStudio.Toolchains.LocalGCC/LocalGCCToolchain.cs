@@ -15,6 +15,8 @@ namespace AvalonStudio.Toolchains.LocalGCC
 {
     public class LocalGCCToolchain : GCCToolchain
     {
+        private static string _contentDirectory;
+
         public static string ContentDirectory
         {
             get
@@ -25,7 +27,12 @@ namespace AvalonStudio.Toolchains.LocalGCC
                 }
                 else
                 {
-                    return Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.GCC"), "content");
+                    if(_contentDirectory == null)
+                    {
+                        _contentDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.GCC"), "content");
+                    }
+
+                    return _contentDirectory;
                 }
             }
         }
@@ -380,7 +387,11 @@ namespace AvalonStudio.Toolchains.LocalGCC
         {
             if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
-                await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion,  console);
+                if(!await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion,  console))
+                {
+                    // this ensures content directory is re-evaluated if we just installed the toolchain.
+                    _contentDirectory = null;
+                }
             }
         }
     }

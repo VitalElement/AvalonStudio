@@ -128,7 +128,7 @@ namespace AvalonStudio.Controls
             {
                 e.Handled = true;
 
-                var zoomLevel = ZoomLevel + (Math.Round(e.Delta.Y) * 5);
+                var zoomLevel = ZoomLevel + (Math.Round(e.Delta.Y) * 10);
 
                 if (zoomLevel < 20)
                 {
