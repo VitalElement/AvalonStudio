@@ -49,7 +49,7 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, string filter = "")
+        public Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             throw new NotImplementedException();
         }

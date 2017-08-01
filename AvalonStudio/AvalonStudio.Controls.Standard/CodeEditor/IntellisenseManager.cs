@@ -35,7 +35,7 @@
         private bool _justOpened;
         private int intellisenseStartedAt;
         private string currentFilter = string.Empty;
-        private readonly CompletionDataViewModel noSelectedCompletion = new CompletionDataViewModel(null);
+
         private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
@@ -92,6 +92,8 @@
             _snippets = snippetManager.GetSnippets(languageService, file.Project?.Solution, file.Project);
         }
 
+        public bool IncludeSnippets { get; set; } = true;
+
         public void Dispose()
         {
             editor.LostFocus -= Editor_LostFocus;
@@ -112,21 +114,32 @@
 
         private void SetCompletionData(CodeCompletionResults completionData)
         {
-            unfilteredCompletions.Clear();
-
-            foreach (var result in completionData.Completions)
+            if (_shell.DebugMode)
             {
-                CompletionDataViewModel currentCompletion = null;
+                _console.WriteLine(completionData.Contexts.ToString());
+            }
 
-                currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
-
-                if (currentCompletion == null)
+            if (!completionData.Contexts.HasFlag(CompletionContext.NaturalLanguage) && (completionData.Contexts != CompletionContext.Unexposed || completionData.Contexts == CompletionContext.Unknown))
+            {
+                if (IncludeSnippets)
                 {
-                    unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
+                    InsertSnippets(completionData.Completions);
                 }
-                else
+
+                foreach (var result in completionData.Completions)
                 {
-                    currentCompletion.Overloads++;
+                    CompletionDataViewModel currentCompletion = null;
+
+                    currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
+
+                    if (currentCompletion == null)
+                    {
+                        unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
+                    }
+                    else
+                    {
+                        currentCompletion.Overloads++;
+                    }
                 }
             }
         }
@@ -173,7 +186,7 @@
                 intellisenseStartedAt = editor.CaretOffset;
             }
 
-            intellisenseControl.SelectedCompletion = noSelectedCompletion;
+            intellisenseControl.SelectedCompletion = null;
             _hidden = true;
             intellisenseControl.IsVisible = false;
         }
@@ -191,7 +204,7 @@
 
                 if (wordStart >= 0)
                 {
-                    currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty);
+                    currentFilter = editor.Document.GetText(wordStart, caretIndex - wordStart).Replace(".", string.Empty).Replace("->", string.Empty).Replace("::", string.Empty);
                 }
                 else
                 {
@@ -219,7 +232,7 @@
 
                     if (newSelectedCompletions.Count() == 0)
                     {
-                        suggestion = noSelectedCompletion;
+                        suggestion = null;
                     }
                     else
                     {
@@ -230,7 +243,7 @@
                 }
                 else
                 {
-                    suggestion = noSelectedCompletion;
+                    suggestion = null;
                 }
 
                 if (filteredResults?.Count() > 0)
@@ -264,7 +277,7 @@
                 }
                 else
                 {
-                    intellisenseControl.SelectedCompletion = noSelectedCompletion;
+                    intellisenseControl.SelectedCompletion = null;
                 }
             }
         }
@@ -277,7 +290,7 @@
 
             var result = false;
 
-            if (intellisenseControl.CompletionData.Count > 0 && intellisenseControl.SelectedCompletion != noSelectedCompletion && intellisenseControl.SelectedCompletion != null)
+            if (intellisenseControl.CompletionData.Count > 0 && intellisenseControl.SelectedCompletion != null && intellisenseControl.SelectedCompletion != null)
             {
                 result = true;
 
@@ -331,12 +344,22 @@
         {
             if (!intellisenseControl.IsVisible)
             {
+                unfilteredCompletions.Clear();
+
                 if (_shell.DebugMode)
                 {
                     _console.WriteLine("Set Cursor");
                 }
 
                 _requestingData = true;
+
+                char previousChar = '\0';
+
+                if (index >= 1)
+                {
+                    previousChar = editor.Document.GetCharAt(index - 1);
+                }
+
                 intellisenseQueryRunner.InvokeAsync(() =>
                 {
                     CodeCompletionResults result = null;
@@ -347,10 +370,8 @@
                             _console.WriteLine($"Query Language Service {index}, {line}, {column}");
                         }
 
-                        var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles);
+                        var task = languageService.CodeCompleteAtAsync(file, index, line, column, unsavedFiles, previousChar);
                         task.Wait();
-
-                        InsertSnippets(task.Result.Completions);
 
                         result = task.Result;
                     }).Wait();
@@ -366,9 +387,15 @@
 
                         _requestingData = false;
 
-                        UpdateFilter(editor.CaretOffset, false);
-
-                        intellisenseControl.IsVisible = !_hidden;
+                        if (unfilteredCompletions.Count > 0)
+                        {
+                            UpdateFilter(editor.CaretOffset, false);
+                            intellisenseControl.IsVisible = !_hidden;
+                        }
+                        else
+                        {
+                            _hidden = true;
+                        }
                     });
                 });
             }
