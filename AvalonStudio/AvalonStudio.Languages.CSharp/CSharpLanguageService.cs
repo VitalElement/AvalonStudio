@@ -440,12 +440,19 @@
 
                 case "xml doc comment - text":
                 case "xml doc comment - delimiter":
+                case "xml doc comment - name":
+                case "xml doc comment - attribute name":
+                case "xml doc comment - attribute quotes":
                 case "comment":
                     result = HighlightType.Comment;
                     break;
 
                 case "delegate name":
                     result = HighlightType.DelegateName;
+                    break;
+
+                case "excluded code":
+                    result = HighlightType.None;
                     break;
 
                 default:
