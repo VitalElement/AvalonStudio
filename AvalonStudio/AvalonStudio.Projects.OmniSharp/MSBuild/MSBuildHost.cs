@@ -28,7 +28,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
         {
             outputLines = new List<string>();
             errorLines = new List<string>();
-
+            
             hostProcess = PlatformSupport.LaunchShellCommand("dotnet", "\"C:\\Program Files\\dotnet\\sdk\\2.0.0-preview2-006497\\MSBuild.dll\" avalonstudio-intercept.csproj",
             (sender, e) =>
             {
@@ -78,27 +78,43 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 }
             }
 
-            var cscIndex = commandLine.IndexOf("csc.exe");
+            if (foundCommandLine)
+            {
+                var cscIndex = commandLine.IndexOf("csc.exe");
 
-            commandLine = commandLine.Substring(cscIndex + 7);
+                commandLine = commandLine.Substring(cscIndex + 7);
 
-            var commandLineParts = commandLine.Split(' ').Where(s => s.Length > 1 && s[0] == '/' && !s.StartsWith("/reference")).Select(s=>s.Substring(1));
+                var commandLineParts = commandLine.Split(' ').Where(s => s.Length > 1 && s[0] == '/' && !s.StartsWith("/reference")).Select(s => s.Substring(1));
 
-            var projectOptions = ParseArguments(commandLineParts);
+                var projectOptions = ParseArguments(commandLineParts);
 
-            var projectInfo = ProjectInfo.Create(
-                ProjectId.CreateNewId(),
-                VersionStamp.Create(),
-                name: Path.GetFileNameWithoutExtension(projectFile),
-                assemblyName: Path.GetFileNameWithoutExtension(projectOptions.outputFile),
-                language: LanguageNames.CSharp,
-                filePath: projectFile,
-                outputFilePath: projectOptions.outputFile,
-                compilationOptions: projectOptions.compilationOptions,
-                parseOptions: projectOptions.parseOptions,
-                metadataReferences: loadData.metaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly)));
+                var projectInfo = ProjectInfo.Create(
+                    ProjectId.CreateNewId(),
+                    VersionStamp.Create(),
+                    name: Path.GetFileNameWithoutExtension(projectFile),
+                    assemblyName: Path.GetFileNameWithoutExtension(projectOptions.outputFile),
+                    language: LanguageNames.CSharp,
+                    filePath: projectFile,
+                    outputFilePath: projectOptions.outputFile,
+                    compilationOptions: projectOptions.compilationOptions,
+                    parseOptions: projectOptions.parseOptions,
+                    metadataReferences: loadData.metaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly)));
 
-            return (projectInfo, loadData.projectReferences);
+                return (projectInfo, loadData.projectReferences);
+            }
+            else
+            {
+                var projectInfo = ProjectInfo.Create(
+                    ProjectId.CreateNewId(),
+                    VersionStamp.Create(),
+                    Path.GetFileNameWithoutExtension(projectFile), Path.GetFileNameWithoutExtension(projectFile),
+                    LanguageNames.CSharp,
+                    projectFile,
+                    metadataReferences: loadData.metaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly))
+                    );
+
+                return (projectInfo, loadData.projectReferences);
+            }
         }
 
         private static (string outputFile, CSharpCompilationOptions compilationOptions, CSharpParseOptions parseOptions) ParseArguments(IEnumerable<string> args)
@@ -108,6 +124,16 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             var compilationOptions = new CSharpCompilationOptions(OutputKind.ConsoleApplication);
             compilationOptions = compilationOptions.WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default);
             string outputFile = "";
+
+            var specificDiagnosticOptions = new Dictionary<string, ReportDiagnostic>()
+            {
+                // Ensure that specific warnings about assembly references are always suppressed.
+                { "CS1701", ReportDiagnostic.Suppress },
+                { "CS1702", ReportDiagnostic.Suppress },
+                { "CS1705", ReportDiagnostic.Suppress }
+            };
+
+            compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(specificDiagnosticOptions);
 
             var parseOptions = new CSharpParseOptions();
 
