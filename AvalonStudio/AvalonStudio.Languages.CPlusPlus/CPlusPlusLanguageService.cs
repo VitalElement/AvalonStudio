@@ -95,7 +95,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IEnumerable<char> IntellisenseTriggerCharacters => new[]
         {
-            '.', '>'
+            '.', '>', '#'
         };
 
         public IEnumerable<char> IntellisenseSearchCharacters => new[]

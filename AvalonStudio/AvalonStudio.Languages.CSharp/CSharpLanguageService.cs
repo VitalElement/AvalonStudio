@@ -23,8 +23,24 @@
         private static readonly ConditionalWeakTable<ISourceFile, CSharpDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, CSharpDataAssociation>();
 
+        private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
+        private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
+
         public CSharpLanguageService()
         {
+            _snippetCodeGenerators = new Dictionary<string, Func<string, string>>();
+            _snippetDynamicVars = new Dictionary<string, Func<int, int, int, string>>();
+
+            _snippetCodeGenerators.Add("ToFieldName", (propertyName) =>
+            {
+                if (string.IsNullOrEmpty(propertyName))
+                    return propertyName;
+                string newName = Char.ToLower(propertyName[0]) + propertyName.Substring(1);
+                if (newName == propertyName)
+                    return "_" + newName;
+                else
+                    return newName;
+            });
         }
 
         public Type BaseTemplateType
@@ -37,7 +53,18 @@
 
         public bool CanTriggerIntellisense(char currentChar, char previousChar)
         {
-            return IntellisenseSearchCharacters.Contains(currentChar);
+            bool result = false;
+
+            if (IntellisenseTriggerCharacters.Contains(currentChar))
+            {
+                result = true;
+            }
+            else if (currentChar == ':' && previousChar == ':')
+            {
+                result = true;
+            }
+
+            return result;
         }
 
         public IEnumerable<char> IntellisenseTriggerCharacters => new[]
@@ -72,10 +99,10 @@
         {
             return project is OmniSharpProject;
         }
+        
+        public IDictionary<string, Func<string, string>> SnippetCodeGenerators => _snippetCodeGenerators;
 
-        public IDictionary<string, Func<string, string>> SnippetCodeGenerators => null;
-
-        public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => null;
+        public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;
 
         public string LanguageId => "cs";
 
@@ -173,9 +200,10 @@
                     if (filter == string.Empty || completion.CompletionText.StartsWith(filter))
                     {
                         result.Completions.Add(newCompletion);
-                        result.Contexts = CompletionContext.Unknown;
                     }
                 }
+
+                result.Contexts = CompletionContext.AnyType;
             }
 
             return result;

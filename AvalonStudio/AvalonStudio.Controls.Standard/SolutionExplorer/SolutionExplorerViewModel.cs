@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -41,7 +42,19 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
             set
             {
-                Projects = new ObservableCollection<ProjectItemViewModel>();
+                if (model != null)
+                {
+                    foreach(var model in model.Projects)
+                    {
+                        model.Dispose();
+                    }
+
+                    model.Projects.Clear();
+                    GC.Collect();
+                }
+
+                SelectedProject = null;
+                
                 model = value;
 
                 if (Model != null)
@@ -80,8 +93,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
             set
             {
-                selectedProject = value;
-                this.RaisePropertyChanged();
+                this.RaiseAndSetIfChanged(ref selectedProject, value);
             }
         }
 
@@ -101,8 +113,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
             }
         }
-
-        public ObservableCollection<ProjectItemViewModel> Projects { get; set; }
 
         public override Location DefaultLocation
         {
@@ -145,7 +155,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             var dlg = new OpenFileDialog();
             dlg.Title = "Open Solution";
 
-            if (Platform.PlatformIdentifier == PlatformID.Win32NT)
+            if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
                 dlg.InitialDirectory = Platform.ProjectDirectory;
             }

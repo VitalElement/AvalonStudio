@@ -1,0 +1,5 @@
+{
+  "Name": "propfull",
+  "Description": "Property with setter and getter",
+  "Snippet": "private ${type} ${ToFieldName(property)};\n\npublic ${type=int} ${property=MyProperty}\n{\n\tget { return ${ToFieldName(property)}; }\n\tset { ${ToFieldName(property)} = value; }\n}\n${Caret}"
+}
