@@ -1,8 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
-    
   </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
     <PackageReference Include="NuGet.Client" Version="4.0.0" />

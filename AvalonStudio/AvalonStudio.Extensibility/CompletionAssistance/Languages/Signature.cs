@@ -7,6 +7,7 @@ namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
         public Signature()
         {
             Parameters = new List<Parameter>();
+            Exceptions = new List<SignatureException>();
         }
 
         public string Name { get; set; }
@@ -16,5 +17,6 @@ namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
         public string Documentation { get; set; }
         public string Description { get; set; }
         public List<Parameter> Parameters { get; set; }
+        public List<SignatureException> Exceptions { get; set; }
     }
 }

@@ -2,11 +2,16 @@
         xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
         xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
         xmlns:Editing="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit">
+
+  <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.Intellisense.xaml?assembly=AvalonStudio.Controls.Standard" />
+  <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.CompletionAssistantView.xaml?assembly=AvalonStudio.Controls.Standard" />
+  <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.CodeEditorToolTip.xaml?assembly=AvalonStudio.Controls.Standard" />
+  
   <Style Selector="local|CodeEditor">
     <Setter Property="Template">
       <ControlTemplate>
         <Panel>
-          <local:TooltipView Name="PART_Tooltip" />
+          <local:CodeEditorToolTip Name="PART_Tooltip" />
           <local:CompletionAssistantView Name="PART_CompletionAssistant" />
           <local:Intellisense Name="PART_Intellisense" />
           <Border BorderBrush="{TemplateBinding BorderBrush}"

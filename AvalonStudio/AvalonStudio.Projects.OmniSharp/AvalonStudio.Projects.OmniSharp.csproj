@@ -3,7 +3,7 @@
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ToolchainSettingsFormView.xaml" />
+    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RestSharp.NetCore" Version="105.2.4-rc4-24214-01" />
