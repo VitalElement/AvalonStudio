@@ -152,6 +152,9 @@
 
                 case Microsoft.CodeAnalysis.SymbolKind.Local:
                     return CodeCompletionKind.Variable;
+
+                case Microsoft.CodeAnalysis.SymbolKind.Field:
+                    return CodeCompletionKind.Field;
             }
 
             Console.WriteLine($"dont understand omnisharp: {kind}");
@@ -384,56 +387,18 @@
             return result;
         }
 
-        public HighlightType ToAvalonHighlightType(string omniSharpHighlightType)
-        {
-            switch (omniSharpHighlightType)
-            {
-                case "operator":
-                case "punctuation":
-                    return HighlightType.Punctuation;
-
-                case "identifier":
-                    return HighlightType.Identifier;
-
-                case "keyword":
-                    return HighlightType.Keyword;
-
-                case "class name":
-                    return HighlightType.ClassName;
-
-                case "struct name":
-                    return HighlightType.StructName;
-
-                case "comment":
-                    return HighlightType.Comment;
-
-                case "delegate name":
-                case "interface name":
-                case "enum name":
-                    return HighlightType.Identifier;
-
-                case "string":
-                case "number":
-                    return HighlightType.Literal;
-
-                case "preprocessor keyword":
-                    return HighlightType.PreProcessor;
-
-                case "preprocessor text":
-                    return HighlightType.PreProcessorText;
-
-                default:
-                    Console.WriteLine($"Dont understand omnisharp {omniSharpHighlightType}");
-                    return HighlightType.None;
-            }
-        }
-
         HighlightType FromRoslynType(string type)
         {
             var result = HighlightType.None;
 
             switch (type)
             {
+                case "preprocessor keyword":
+                    return HighlightType.PreProcessor;
+
+                case "preprocessor text":
+                    return HighlightType.PreProcessorText;
+
                 case "keyword":
                     result = HighlightType.Keyword;
                     break;
@@ -453,6 +418,9 @@
                 case "interface name":
                     result = HighlightType.InterfaceName;
                     break;
+
+                case "enum name":
+                    return HighlightType.EnumTypeName;
 
                 case "struct name":
                     result = HighlightType.StructName;
