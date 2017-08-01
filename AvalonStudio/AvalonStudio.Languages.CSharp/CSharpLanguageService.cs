@@ -190,7 +190,7 @@
                 {
                     var newCompletion = new CodeCompletionData()
                     {
-                        Suggestion = completion.DisplayText,
+                        Suggestion = completion.FilterText,
                         Hint = completion.DisplayText
                     };
 
