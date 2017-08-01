@@ -109,7 +109,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         }
 
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line,
-            int column, List<UnsavedFile> unsavedFiles, string filter = "")
+            int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter = "")
         {
             //Get position in text
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
