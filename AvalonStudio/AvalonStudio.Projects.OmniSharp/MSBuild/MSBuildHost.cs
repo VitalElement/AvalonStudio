@@ -164,7 +164,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
 
                         if (warnings.Count() > 0)
                         {
-                            compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(warnings.Select(s => new KeyValuePair<string, ReportDiagnostic>($"CS{s}", ReportDiagnostic.Suppress)));
+                            compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(warnings.Select(s => new KeyValuePair<string, ReportDiagnostic>(!s.StartsWith("CS") ? $"CS{s}" : s, ReportDiagnostic.Suppress)));
                         }
                         break;
 
