@@ -81,9 +81,12 @@ namespace AvalonStudio.Projects.OmniSharp
 
                 foreach (var project in sln.ProjectsInOrder.Where(p => Path.GetExtension(p.AbsolutePath) == ".csproj"))
                 {
-                    var roslynProject = await Workspace.AddProject(solutionDir, project.AbsolutePath);
+                    var loadData = await Workspace.AddProject(solutionDir, project.AbsolutePath);
+                    var roslynProject = loadData.project;
+                    var references = loadData.projectReferences;
 
-                    var asProject = OmniSharpProject.Create(roslynProject.Item1, this, project.AbsolutePath, roslynProject.Item2);
+
+                    var asProject = OmniSharpProject.Create(roslynProject, this, project.AbsolutePath, references);
 
                     AddProject(asProject);
                 }

@@ -2,10 +2,15 @@
 
 using AsyncRpc;
 using AsyncRpc.Transport.Tcp;
+using AvalonStudio.CommandLineTools;
+using AvalonStudio.Extensibility;
 using AvalonStudio.MSBuildHost;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects.OmniSharp.MSBuild;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
+using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
@@ -16,6 +21,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition.Hosting;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -29,19 +35,13 @@ namespace RoslynPad.Roslyn
         private CompositionHost _compositionContext;
         private readonly NuGetConfiguration _nuGetConfiguration;
         private readonly Dictionary<DocumentId, AvalonEditTextContainer> _openDocumentTextLoaders;
-
         private readonly ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers;
-
-        private IMsBuildHostService msBuildHostService;
-        public DocumentId OpenDocumentId { get; private set; }
-
+        private MSBuildHost buildHost;
 
         internal RoslynWorkspace(HostServices host, NuGetConfiguration nuGetConfiguration, CompositionHost compositionContext)
             : base(host, WorkspaceKind.Host)
         {
             _nuGetConfiguration = nuGetConfiguration;
-
-            msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));
 
             _openDocumentTextLoaders = new Dictionary<DocumentId, AvalonEditTextContainer>();
             _diagnosticsUpdatedNotifiers = new ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>>();
@@ -69,37 +69,20 @@ namespace RoslynPad.Roslyn
             return _compositionContext.GetExport<TService>();
         }
 
-        public async Task<Tuple<Project, List<string>>> AddProject(string solutionDir, string projectFile)
+        public async Task<(Project project, List<string> projectReferences)> AddProject(string solutionDir, string projectFile)
         {
-            var res = await msBuildHostService.GetVersion();
-
-            var properties = new List<Property>();
-
-            properties.Add(new Property { Key = "DesignTimeBuild", Value = "true" });
-            properties.Add(new Property { Key = "BuildProjectReferences", Value = "false" });
-            properties.Add(new Property { Key = "_ResolveReferenceDependencies", Value = "true" });
-            properties.Add(new Property { Key = "SolutionDir", Value = solutionDir });
-            properties.Add(new Property { Key = "ProvideCommandLineInvocation", Value = "true" });
-            properties.Add(new Property { Key = "SkipCompilerExecution", Value = "true" });
-
-            var assemblyReferences = await msBuildHostService.GetTaskItem("ResolveAssemblyReferences", projectFile, properties);
-            
-            var projectReferences = await msBuildHostService.GetProjectReferences(projectFile);
-
-            var id = ProjectId.CreateNewId();
-            OnProjectAdded(ProjectInfo.Create(id, VersionStamp.Create(), Path.GetFileNameWithoutExtension(projectFile), "", LanguageNames.CSharp, projectFile));
-
-            foreach (var reference in assemblyReferences.Data.Items)
+            if(buildHost == null)
             {
-                OnMetadataReferenceAdded(id, MetadataReference.CreateFromFile(reference.ItemSpec));
-
-                foreach(var item in reference.Metadatas)
-                {
-                    Console.WriteLine(item.Name, item.Value);
-                }
+                buildHost = new MSBuildHost();
             }
 
-            return new Tuple<Project, List<string>>(CurrentSolution.GetProject(id), projectReferences.Data);
+            await buildHost.Connect();
+
+            var loadData = await buildHost.LoadProject(solutionDir, projectFile);
+
+            OnProjectAdded(loadData.info);
+
+            return (CurrentSolution.GetProject(loadData.info.Id), loadData.projectReferences);
         }
 
         public ProjectId GetProjectId(AvalonStudio.Projects.IProject project)
