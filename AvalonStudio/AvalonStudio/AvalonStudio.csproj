@@ -23,6 +23,8 @@
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.1-build442-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build103-alpha" />
+    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Security.Principal" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AvalonStudio.MSBuildHost\AvalonStudio.MSBuildHost.csproj" />
