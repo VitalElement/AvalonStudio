@@ -71,7 +71,7 @@ namespace RoslynPad.Roslyn
 
         public async Task<(Project project, List<string> projectReferences)> AddProject(string solutionDir, string projectFile)
         {
-            if(buildHost == null)
+            if (buildHost == null)
             {
                 buildHost = new MSBuildHost();
                 await buildHost.Connect();
@@ -86,9 +86,9 @@ namespace RoslynPad.Roslyn
 
         public ProjectId GetProjectId(AvalonStudio.Projects.IProject project)
         {
-            var projects  = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.Location)) == 0);
+            var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.Location)) == 0);
 
-            if(projects.Count() != 1)
+            if (projects.Count() != 1)
             {
                 throw new NotImplementedException();
             }
@@ -96,18 +96,52 @@ namespace RoslynPad.Roslyn
             return projects.First().Id;
         }
 
+        public Project GetProject(AvalonStudio.Projects.IProject project)
+        {
+            var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.Location)) == 0);
+
+            if (projects.Count() != 1)
+            {
+                throw new NotImplementedException();
+            }
+
+            return projects.First();
+        }
+
+        private void ResolveChildReferences(Project project, Project reference)
+        {
+            foreach (var child in reference.AllProjectReferences)
+            {
+                if (!reference.AllProjectReferences.Contains(child))
+                {
+                    OnProjectReferenceAdded(project.Id, child);
+                }
+
+                ResolveChildReferences(project, CurrentSolution.GetProject(child.ProjectId));
+            }
+        }
+
         public void ResolveReference(AvalonStudio.Projects.IProject project, string reference)
         {
+            if(project.Location.Contains(".NetCore.csproj"))
+            {
+
+            }
+
             var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.LocationDirectory, reference)) == 0);
 
-            if(projects.Count() != 1)
+            if (projects.Count() != 1)
             {
                 throw new NotImplementedException();
             }
 
             var referencedProject = projects.First();
 
-            OnProjectReferenceAdded(GetProjectId(project), new ProjectReference(referencedProject.Id));
+            var proj = GetProject(project);
+
+            OnProjectReferenceAdded(proj.Id, new ProjectReference(referencedProject.Id));
+
+            ResolveChildReferences(proj, CurrentSolution.GetProject(referencedProject.Id));
         }
 
         public DocumentId AddDocument(Project project, AvalonStudio.Projects.ISourceFile file)
@@ -187,7 +221,7 @@ namespace RoslynPad.Roslyn
         protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
         {
             _openDocumentTextLoaders[document].UpdateText(newText);
-            
+
             OnDocumentTextChanged(document, newText, PreservationMode.PreserveIdentity);
         }
 
