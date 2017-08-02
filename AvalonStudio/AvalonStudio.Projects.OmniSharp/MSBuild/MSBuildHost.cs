@@ -34,9 +34,13 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             {
                 if(e.Data != null)
                 {
-                    System.Console.WriteLine(e.Data);
                     //IoC.Get<IConsole>().WriteLine(e.Data);
-                    outputLines.Add(e.Data);
+                    lock (outputLines)
+                    {
+                        outputLines.Add(e.Data);
+                    }
+
+                    System.Console.WriteLine(e.Data);
                 }
             },
             (sender, e) =>
@@ -55,27 +59,33 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
 
         public async Task<(ProjectInfo info, List<string> projectReferences)> LoadProject(string solutionDirectory, string projectFile)
         {
-            outputLines.Clear();
-            errorLines.Clear();
+            lock (outputLines)
+            {
+                outputLines.Clear();
+                errorLines.Clear();
+            }
 
             var loadData = await msBuildHostService.LoadProject(solutionDirectory, projectFile);
 
             string commandLine = "";
             bool foundCommandLine = false;
 
-            foreach(var line in outputLines)
+            lock (outputLines)
             {
-                if (!foundCommandLine)
+                foreach (var line in outputLines)
                 {
-                    if (line == "CoreCompile:")
+                    if (!foundCommandLine)
                     {
-                        foundCommandLine = true;
+                        if (line == "CoreCompile:")
+                        {
+                            foundCommandLine = true;
+                        }
                     }
-                }
-                else
-                {
-                    commandLine = line.Trim();
-                    break;
+                    else
+                    {
+                        commandLine = line.Trim();
+                        break;
+                    }
                 }
             }
 
