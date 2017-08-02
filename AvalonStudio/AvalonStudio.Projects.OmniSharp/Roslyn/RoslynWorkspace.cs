@@ -108,16 +108,20 @@ namespace RoslynPad.Roslyn
             return projects.First();
         }
 
-        private void ResolveChildReferences(Project project, Project reference)
-        {
-            foreach (var child in reference.AllProjectReferences)
+        private void ResolveChildReferences(ProjectId project, ProjectId reference)
+        {            
+            var refer = CurrentSolution.GetProject(reference);
+
+            foreach (var child in refer.AllProjectReferences)
             {
-                if (!reference.AllProjectReferences.Contains(child))
+                var proj = CurrentSolution.GetProject(project);
+
+                if (!proj.AllProjectReferences.Contains(child))
                 {
-                    OnProjectReferenceAdded(project.Id, child);
+                    OnProjectReferenceAdded(project, child);
                 }
 
-                ResolveChildReferences(project, CurrentSolution.GetProject(child.ProjectId));
+                ResolveChildReferences(project, child.ProjectId);
             }
         }
 
@@ -139,9 +143,14 @@ namespace RoslynPad.Roslyn
 
             var proj = GetProject(project);
 
-            OnProjectReferenceAdded(proj.Id, new ProjectReference(referencedProject.Id));
+            var newRef = new ProjectReference(referencedProject.Id);
 
-            ResolveChildReferences(proj, CurrentSolution.GetProject(referencedProject.Id));
+            if (!proj.AllProjectReferences.Contains(newRef))
+            {
+                OnProjectReferenceAdded(proj.Id, newRef);
+            }
+
+            ResolveChildReferences(proj.Id, referencedProject.Id);
         }
 
         public DocumentId AddDocument(Project project, AvalonStudio.Projects.ISourceFile file)
@@ -174,6 +183,8 @@ namespace RoslynPad.Roslyn
         public void OpenDocument(AvalonStudio.Projects.ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated)
         {
             var documentId = GetDocumentId(file);
+
+            var document = GetDocument(file);
 
             OnDocumentOpened(documentId, textContainer);
             OnDocumentContextUpdated(documentId);
