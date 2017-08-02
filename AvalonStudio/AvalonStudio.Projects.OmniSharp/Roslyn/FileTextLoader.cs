@@ -27,6 +27,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
 
         public override async Task<TextAndVersion> LoadTextAndVersionAsync(Workspace workspace, DocumentId documentId, CancellationToken cancellationToken)
         {
+            System.Console.WriteLine($"Roslyn is Loading file async {_path}");
             var fileInfo = new System.IO.FileInfo(_path);
             DateTime prevLastWriteTime = fileInfo.LastWriteTime;
 
@@ -57,6 +58,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
 
         internal override TextAndVersion LoadTextAndVersionSynchronously(Workspace workspace, DocumentId documentId, CancellationToken cancellationToken)
         {
+            System.Console.WriteLine($"Roslyn is Loading file sync {_path}");
             var fileInfo = new System.IO.FileInfo(_path);
             DateTime prevLastWriteTime = fileInfo.LastWriteTime;
 

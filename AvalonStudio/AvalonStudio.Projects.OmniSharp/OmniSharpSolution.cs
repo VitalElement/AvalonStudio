@@ -85,7 +85,6 @@ namespace AvalonStudio.Projects.OmniSharp
                     var roslynProject = loadData.project;
                     var references = loadData.projectReferences;
 
-
                     var asProject = OmniSharpProject.Create(roslynProject, this, project.AbsolutePath, references);
 
                     AddProject(asProject);
@@ -93,19 +92,14 @@ namespace AvalonStudio.Projects.OmniSharp
 
                 foreach(var project in Projects)
                 {
-                    var asProject = (project as OmniSharpProject);
-
-                    if(project.Location.Contains("Controls"))
-                    {
-
-                    }
-
-                    asProject.LoadFiles();
+                    var asProject = (project as OmniSharpProject);                    
 
                     foreach (var unresolvedReference in asProject.UnresolvedReferences)
                     {
                          Workspace.ResolveReference(project, unresolvedReference);
                     }
+
+                    asProject.LoadFiles();
                 }
             }
             else if(Path.GetExtension(path) == ".csproj")

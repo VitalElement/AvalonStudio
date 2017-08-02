@@ -74,9 +74,8 @@ namespace RoslynPad.Roslyn
             if(buildHost == null)
             {
                 buildHost = new MSBuildHost();
+                await buildHost.Connect();
             }
-
-            await buildHost.Connect();
 
             var loadData = await buildHost.LoadProject(solutionDir, projectFile);
 

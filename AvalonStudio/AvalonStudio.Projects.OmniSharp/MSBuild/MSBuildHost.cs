@@ -34,7 +34,8 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             {
                 if(e.Data != null)
                 {
-                    IoC.Get<IConsole>().WriteLine(e.Data);
+                    System.Console.WriteLine(e.Data);
+                    //IoC.Get<IConsole>().WriteLine(e.Data);
                     outputLines.Add(e.Data);
                 }
             },
@@ -42,7 +43,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             {
                 if (e.Data != null)
                 {
-                    IoC.Get<IConsole>().WriteLine(e.Data);
+                    //IoC.Get<IConsole>().WriteLine(e.Data);
                     errorLines.Add(e.Data);
                 }
             }, false, AvalonStudio.Platforms.Platform.ExecutionPath, false);
@@ -99,6 +100,11 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     compilationOptions: projectOptions.compilationOptions,
                     parseOptions: projectOptions.parseOptions,
                     metadataReferences: loadData.metaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly)));
+
+                if(projectFile.Contains("AvalonStudio.csproj"))
+                {
+
+                }
 
                 return (projectInfo, loadData.projectReferences);
             }
