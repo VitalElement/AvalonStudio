@@ -6,6 +6,67 @@ namespace AvalonStudio.Extensibility.Utils
 {
     public class FuzzyMatch
     {
+        static public (List<int>, int) FindSpecialCharacters(string str)
+        {
+            const string special_chars = ".-_";
+            int i;
+            char c;
+            int lastSegmentSpecialsIndex = 0;
+
+            List<int> specials = new List<int>();
+
+            bool lastWasLower = false;
+
+            for(i=0; i < str.Length; i++)
+            {
+                c = str[i];
+
+                if (c == '/' || c == '\\')
+                {
+                    specials.Add(i++);
+                    specials.Add(i);
+                    lastSegmentSpecialsIndex = specials.Count - 1;
+                    lastWasLower = false;
+                } else if (special_chars.IndexOf(c) >= 0)
+                {
+                    specials.Add(i);
+                    specials.Add(i++);
+                    lastWasLower = false;
+                } else if (Char.ToUpper(c) == c)
+                {
+                    if(lastWasLower)
+                    {
+                        specials.Add(i);
+                    }
+
+                    lastWasLower = false;
+                } else
+                {
+                    lastWasLower = true;
+                }
+            }
+
+            return (specials, lastSegmentSpecialsIndex);
+        }
+
+        static bool StringMatch(string str, string query = "", object special_data=null)
+        {
+            bool result = false;
+
+            if (query.Length == 0)
+            {
+                // Return a single result..
+            }
+
+            if(special_data != null)
+            {
+                special_data = FindSpecialCharacters(str);
+            }
+
+
+
+            return result;
+        }
 
         static public bool fuzzy_match(string pattern, string str, out int pa_score, out string pa_formatStr)
         {
