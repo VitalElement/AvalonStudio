@@ -20,7 +20,7 @@
     <PackageReference Include="Avalonia.Skia.Desktop" Version="0.5.1-build3595-alpha" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
     <PackageReference Include="Avalonia.Win32" Version="0.5.1-build3595-alpha" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.1-build442-alpha" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.1-build444-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build103-alpha" />
   </ItemGroup>
