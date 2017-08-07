@@ -91,7 +91,7 @@ namespace AvalonStudio.Controls
 
         private async Task ProcessQuery(string query)
         {
-            if (_shell.CurrentSolution == null)
+            if (_shell?.CurrentSolution == null)
             {
                 return;
             }
