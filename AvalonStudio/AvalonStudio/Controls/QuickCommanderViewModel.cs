@@ -11,6 +11,7 @@ using AvalonStudio.Utils;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using AvalonStudio.Extensibility.Utils;
+using Avalonia.Media;
 
 namespace AvalonStudio.Controls
 {
@@ -115,12 +116,30 @@ namespace AvalonStudio.Controls
                     {
                         project.SourceFiles.Select(sf =>
                         {
-                            var match = FuzzyMatch.fuzzy_match(query, sf.Project.Location.MakeRelativePath(sf.Location), out int score, out string format);
+                            //var match = FuzzyMatch.fuzzy_match(query, sf.Project.Location.MakeRelativePath(sf.Location), out int score, out string format);
+                            var match = FuzzyMatch.StringMatch(sf.Project.Location.MakeRelativePath(sf.Location), query, null);
+                            if(match != null)
+                            {
+                                return new Tuple<bool, int, string, ISourceFile, List<FuzzyMatch.Range>>(true, match.matchQuality, match.label, sf, match.stringRanges);
+                            }
 
-                            return new Tuple<bool, int, string, ISourceFile>(match, score, format, sf);
+                            return new Tuple<bool, int, string, ISourceFile, List<FuzzyMatch.Range>>(false, 0, "", sf, null);
                         }).Where(tp => tp.Item1).Select(tp =>
                         {
-                            list.InsertSorted(new SearchResultViewModel(tp.Item4) { Priority = tp.Item2 });
+                            List<Avalonia.Media.FormattedTextStyleSpan> list_spans = new List<FormattedTextStyleSpan>();
+                            int index_start = 0;
+                            foreach(var range in tp.Item5)
+                            {
+                                if(range.matched)
+                                {
+                                    Avalonia.Media.FormattedTextStyleSpan span = new FormattedTextStyleSpan(index_start+tp.Item4.Project.Name.Length+1, range.text.Length+1, Brushes.Red);
+                                    list_spans.Add(span);
+                                }
+
+                                index_start += range.text.Length;
+                            }
+
+                            list.InsertSorted(new SearchResultViewModel(tp.Item4) { Priority = tp.Item2, Spans = list_spans });
                             return tp;
                         }).ToList();
                     }

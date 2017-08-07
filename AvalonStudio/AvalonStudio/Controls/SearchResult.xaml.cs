@@ -5,6 +5,8 @@ using System;
 using Avalonia;
 using System.Reactive.Linq;
 using Avalonia.Controls.Primitives;
+using Avalonia.Media;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Controls
 {

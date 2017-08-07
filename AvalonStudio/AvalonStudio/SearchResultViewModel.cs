@@ -3,6 +3,8 @@ using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
+using Avalonia.Media;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Controls
 {
@@ -20,7 +22,7 @@ namespace AvalonStudio.Controls
 
         public int CompareTo(SearchResultViewModel other)
         {
-            var priorityCompare = other.Priority.CompareTo(Priority);
+            var priorityCompare = Priority.CompareTo(other.Priority); // need to bold the matched text.
 
             if(priorityCompare == 0)
             {
@@ -28,6 +30,14 @@ namespace AvalonStudio.Controls
             }
 
             return priorityCompare;
+        }
+
+        private List<FormattedTextStyleSpan> spans;
+
+        public List<FormattedTextStyleSpan> Spans
+        {
+            get { return spans; }
+            set { this.RaiseAndSetIfChanged(ref spans, value); }
         }
     }
 }
