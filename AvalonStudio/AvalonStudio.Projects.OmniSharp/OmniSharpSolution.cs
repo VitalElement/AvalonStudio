@@ -54,10 +54,10 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
 
-            var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp", "content"));
+            var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
             var dotnet = new DotNetCliService(Path.Combine(dotnetDirectory, "dotnet"));
 
-            var info = dotnet.GetInfo();
+            var dotnetInfo = dotnet.GetInfo();
 
             var currentDir = Platform.ExecutionPath;
 
@@ -82,7 +82,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
             _host = MefHostServices.Create(_compositionContext);
 
-            Workspace = new RoslynWorkspace(_host, NuGetConfiguration, _compositionContext);
+            Workspace = new RoslynWorkspace(_host, NuGetConfiguration, _compositionContext, dotnetInfo.BasePath);
 
             if (Path.GetExtension(path) == ".sln")
             {
