@@ -129,5 +129,104 @@ namespace AvalonStudio.Extensibility.Tests
             res = FuzzyMatch.StringMatch("src/search/QuickOpen.js", "qo");
 
         }
+
+        static bool goodRelativeOrdering(string query, List<string> testStrings)
+        {
+            var lastScore = int.MinValue;
+            var goodOrdering = true;
+
+            foreach(var str in testStrings)
+            {
+                var result = FuzzyMatch.StringMatch(str, query);
+
+                if(result.matchQuality < lastScore)
+                {
+                    goodOrdering = false;
+                }
+
+                lastScore = result.matchQuality;
+            }
+
+            return goodOrdering;
+        }
+
+        [Fact]
+        private void good_ordering_0()
+        {
+            Assert.Equal(true, goodRelativeOrdering("quick", new List<string>
+            {
+                "src/search/QuickOpen.js",
+                "test/spec/QuickOpen-test.js",
+                "samples/root/Getting Started/screenshots/brackets-quick-edit.png",
+                "src/extensions/default/QuickOpenCSS/main.js",
+            }));
+
+            Assert.Equal(true, goodRelativeOrdering("spec/live", new List<string>
+            {
+                    "test/spec/LiveDevelopment-test.js",
+                    "test/spec/LiveDevelopment-chrome-user-data/Default/VisitedLinks"
+            }));
+
+
+            Assert.Equal(true, goodRelativeOrdering("samples/index", new List<string>
+            {
+                    "samples/de/Erste Schritte/index.html",
+                    "src/thirdparty/CodeMirror2/mode/ntriples/index.html"
+             }));
+
+            Assert.Equal(true, goodRelativeOrdering("Commands", new List<string>
+            {        "src/command/Commands.js",
+                    "src/command/CommandManager.js"
+            }));
+
+
+
+            Assert.Equal(true, goodRelativeOrdering("extensions", new List<string>
+            {
+                    "src/utils/ExtensionLoader.js",
+                    "src/extensions/default/RecentProjects/styles.css"
+            }));
+
+
+            Assert.Equal(true, goodRelativeOrdering("EUtil", new List<string>
+            {
+                    "src/editor/EditorUtils.js",
+                    "src/utils/ExtensionUtils.js",
+                    "src/file/FileUtils.js"
+            }));
+
+            Assert.Equal(true, goodRelativeOrdering("ECH", new List<string>
+            {    
+                "EditorCommandHandlers",
+                    "EditorCommandHandlers-test",
+                    "SpecHelper"
+            }));
+
+            Assert.Equal(true, goodRelativeOrdering("DMan", new List<string>
+            {
+                "DocumentManager",
+                    "CommandManager"
+            }));
+
+            Assert.Equal(true, goodRelativeOrdering("sru", new List<string>
+            {
+                    "test/spec/SpecRunnerUtils.js",
+                    "test/SpecRunner.html"
+            }));
+
+            Assert.Equal(true, goodRelativeOrdering("jsutil", new List<string>
+            {
+                    "src/language/JSUtil.js",
+                    "src/language/JSLintUtils.js"
+            }));
+
+            Assert.Equal(true, goodRelativeOrdering("jsu", new List<string>
+            {
+                    "src/language/JSLintUtils.js",
+                    "src/language/JSUtil.js"
+            }));
+        }
+
+
     }
 }
