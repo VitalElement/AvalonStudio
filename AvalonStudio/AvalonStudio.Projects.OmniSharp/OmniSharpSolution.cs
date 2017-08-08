@@ -82,7 +82,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
             _host = MefHostServices.Create(_compositionContext);
 
-            Workspace = new RoslynWorkspace(_host, NuGetConfiguration, _compositionContext, dotnetInfo.BasePath);
+            Workspace = new RoslynWorkspace(_host, NuGetConfiguration, _compositionContext, Path.Combine(dotnetDirectory, "dotnet"), dotnetInfo.BasePath);
 
             if (Path.GetExtension(path) == ".sln")
             {

@@ -24,12 +24,12 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
         private List<string> outputLines;
         private List<string> errorLines;
 
-        public async Task Connect(string sdkPath)
+        public async Task Connect(string dotnetPath, string sdkPath)
         {
             outputLines = new List<string>();
-            errorLines = new List<string>();
+            errorLines = new List<string>();            
             
-            hostProcess = PlatformSupport.LaunchShellCommand("dotnet", $"\"${sdkPath}\\MSBuild.dll\" avalonstudio-intercept.csproj",
+            hostProcess = PlatformSupport.LaunchShellCommand(dotnetPath, $"\"${sdkPath}MSBuild.dll\" avalonstudio-intercept.csproj",
             (sender, e) =>
             {
                 if(e.Data != null)
@@ -48,6 +48,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 if (e.Data != null)
                 {
                     //IoC.Get<IConsole>().WriteLine(e.Data);
+                    Console.WriteLine(e.Data);
                     errorLines.Add(e.Data);
                 }
             }, false, AvalonStudio.Platforms.Platform.ExecutionPath, false);
