@@ -127,11 +127,6 @@ namespace RoslynPad.Roslyn
 
         public void ResolveReference(AvalonStudio.Projects.IProject project, string reference)
         {
-            if(project.Location.Contains(".NetCore.csproj"))
-            {
-
-            }
-
             var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.LocationDirectory, reference)) == 0);
 
             if (projects.Count() != 1)
