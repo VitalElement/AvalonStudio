@@ -24,12 +24,12 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
         private List<string> outputLines;
         private List<string> errorLines;
 
-        public async Task Connect()
+        public async Task Connect(string sdkPath)
         {
             outputLines = new List<string>();
             errorLines = new List<string>();
             
-            hostProcess = PlatformSupport.LaunchShellCommand("dotnet", "\"C:\\Program Files\\dotnet\\sdk\\2.0.0-preview2-006497\\MSBuild.dll\" avalonstudio-intercept.csproj",
+            hostProcess = PlatformSupport.LaunchShellCommand("dotnet", $"\"${sdkPath}\\MSBuild.dll\" avalonstudio-intercept.csproj",
             (sender, e) =>
             {
                 if(e.Data != null)

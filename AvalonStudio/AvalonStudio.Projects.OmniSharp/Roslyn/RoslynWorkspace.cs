@@ -37,10 +37,12 @@ namespace RoslynPad.Roslyn
         private readonly Dictionary<DocumentId, AvalonEditTextContainer> _openDocumentTextLoaders;
         private readonly ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers;
         private MSBuildHost buildHost;
+        private readonly string sdkPath;
 
-        internal RoslynWorkspace(HostServices host, NuGetConfiguration nuGetConfiguration, CompositionHost compositionContext)
+        internal RoslynWorkspace(HostServices host, NuGetConfiguration nuGetConfiguration, CompositionHost compositionContext, string sdkPath)
             : base(host, WorkspaceKind.Host)
         {
+            this.sdkPath = sdkPath;
             _nuGetConfiguration = nuGetConfiguration;
 
             _openDocumentTextLoaders = new Dictionary<DocumentId, AvalonEditTextContainer>();
@@ -74,7 +76,7 @@ namespace RoslynPad.Roslyn
             if (buildHost == null)
             {
                 buildHost = new MSBuildHost();
-                await buildHost.Connect();
+                await buildHost.Connect(sdkPath);
             }
 
             var loadData = await buildHost.LoadProject(solutionDir, projectFile);
