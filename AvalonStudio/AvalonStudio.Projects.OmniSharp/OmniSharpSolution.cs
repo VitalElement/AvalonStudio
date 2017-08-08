@@ -1,10 +1,13 @@
 ﻿using AsyncRpc;
 using AsyncRpc.Routing;
 using AsyncRpc.Transport.Tcp;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Languages.CSharp.OmniSharp;
 using AvalonStudio.MSBuildHost;
+using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects.OmniSharp.DotnetCli;
 using AvalonStudio.Utils;
 using Microsoft.Build.Construction;
 using Microsoft.CodeAnalysis.Host.Mef;
@@ -49,7 +52,14 @@ namespace AvalonStudio.Projects.OmniSharp
 
         private async Task LoadSolution(string path)
         {
-            var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
+            await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
+
+            var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp", "content"));
+            var dotnet = new DotNetCliService(Path.Combine(dotnetDirectory, "dotnet"));
+
+            var info = dotnet.GetInfo();
+
+            var currentDir = Platform.ExecutionPath;
 
             var assemblies = new[]
             {
