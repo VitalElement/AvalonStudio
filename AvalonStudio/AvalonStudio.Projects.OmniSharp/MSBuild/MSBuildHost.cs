@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
+using AvalonStudio.Shell;
 
 namespace AvalonStudio.Projects.OmniSharp.MSBuild
 {
@@ -26,32 +27,44 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
 
         public async Task Connect(string dotnetPath, string sdkPath)
         {
+            bool debugMode = IoC.Get<IShell>().DebugMode;
+
             outputLines = new List<string>();
             errorLines = new List<string>();            
             
-            hostProcess = PlatformSupport.LaunchShellCommand(dotnetPath, $"\"${sdkPath}MSBuild.dll\" avalonstudio-intercept.csproj",
+            hostProcess = PlatformSupport.LaunchShellCommand(dotnetPath, $"\"{sdkPath}MSBuild.dll\" avalonstudio-intercept.csproj",
             (sender, e) =>
             {
                 if(e.Data != null)
                 {
-                    //IoC.Get<IConsole>().WriteLine(e.Data);
                     lock (outputLines)
                     {
                         outputLines.Add(e.Data);
                     }
 
-                    System.Console.WriteLine(e.Data);
+                    if (debugMode)
+                    {
+                        IoC.Get<IConsole>().WriteLine(e.Data);
+                        System.Console.WriteLine(e.Data);
+                    }
                 }
             },
             (sender, e) =>
             {
                 if (e.Data != null)
                 {
-                    //IoC.Get<IConsole>().WriteLine(e.Data);
-                    Console.WriteLine(e.Data);
-                    errorLines.Add(e.Data);
+                    lock (errorLines)
+                    {
+                        errorLines.Add(e.Data);
+                    }
+
+                    if (debugMode)
+                    {
+                        IoC.Get<IConsole>().WriteLine(e.Data);
+                        System.Console.WriteLine(e.Data);
+                    }
                 }
-            }, false, AvalonStudio.Platforms.Platform.ExecutionPath, false);
+            }, false, Platforms.Platform.ExecutionPath, false);
 
             msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));
 
