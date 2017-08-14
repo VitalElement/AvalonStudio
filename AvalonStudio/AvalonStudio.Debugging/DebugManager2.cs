@@ -10,6 +10,7 @@
     using AvalonStudio.Utils;
     using Mono.Debugging.Client;
     using System;
+    using System.Reactive.Linq;
     using System.Threading.Tasks;
     using System.Xml;
 
@@ -125,6 +126,12 @@
 
         public bool SessionActive => _session != null;
 
+        public IObservable<bool> CanStart { get; private set; }
+
+        public IObservable<bool> CanPause { get; private set; }
+
+        public IObservable<bool> CanStop { get; private set; }
+
         public void Activation()
         {
             _shell = IoC.Get<IShell>();
@@ -134,6 +141,18 @@
             {
                 LoadBreakpoints();
             };
+
+            var started = Observable.FromEventPattern(this, nameof(TargetStarted)).Select(e => true);
+            var stopped = Observable.FromEventPattern(this, nameof(TargetStopped)).Select(e => false);
+            var solutionLoaded = Observable.FromEventPattern<SolutionChangedEventArgs>(_shell, nameof(_shell.SolutionChanged)).Select(s => s.EventArgs.NewValue != null).StartWith(false);
+
+            solutionLoaded.Subscribe(_=>LoadBreakpoints());
+
+            var isRunning = started.Merge(stopped);
+
+            CanStart = isRunning.Select(running => !running).Merge(solutionLoaded).StartWith(false);
+
+            CanPause = CanStart.Select(e=>!e).StartWith(false);
         }
 
         public void BeforeActivation()

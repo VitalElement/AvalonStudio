@@ -4,20 +4,22 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using ReactiveUI;
 using System;
+using System.Reactive.Linq;
 using System.Windows.Input;
 
 namespace AvalonStudio.Debugging.Commands
 {
     internal class PauseDebuggingCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> command;
+        private ReactiveCommand<object> command;
 
-        public PauseDebuggingCommandDefinition()
+        public override void Activation()
         {
-            command = ReactiveCommand.Create();
+            var manager = IoC.Get<IDebugManager2>();
+
+            command = ReactiveCommand.Create(manager.CanPause);
             command.Subscribe(_ =>
             {
-                var manager = IoC.Get<IDebugManager2>();
 
                 manager.Pause();
             });
