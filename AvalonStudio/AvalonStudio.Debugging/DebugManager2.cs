@@ -132,6 +132,8 @@
 
         public IObservable<bool> CanStop { get; private set; }
 
+        public IObservable<bool> CanStep { get; private set; }
+
         public void Activation()
         {
             _shell = IoC.Get<IShell>();
@@ -155,11 +157,15 @@
 
             var canStop = solutionLoaded.CombineLatest(sessionStarted.Merge(sessionEnded), (loaded, sessionActive) => loaded && SessionActive);
 
+            var canStep = canStop.CombineLatest(isRunning, (stop, running) => stop && !running);
+
             CanStart = canRun.StartWith(false);
 
             CanPause = canPause.StartWith(false);
 
             CanStop = canStop.StartWith(false);
+
+            CanStep = canStep.StartWith(false);
         }
 
         public void BeforeActivation()
