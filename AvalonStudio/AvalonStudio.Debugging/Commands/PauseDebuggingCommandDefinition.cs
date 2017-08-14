@@ -20,7 +20,6 @@ namespace AvalonStudio.Debugging.Commands
             command = ReactiveCommand.Create(manager.CanPause);
             command.Subscribe(_ =>
             {
-
                 manager.Pause();
             });
         }
