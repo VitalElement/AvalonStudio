@@ -137,22 +137,29 @@
             _shell = IoC.Get<IShell>();
             _console = IoC.Get<IConsole>();
 
-            _shell.SolutionChanged += (sender, e) =>
-            {
-                LoadBreakpoints();
-            };
-
             var started = Observable.FromEventPattern(this, nameof(TargetStarted)).Select(e => true);
             var stopped = Observable.FromEventPattern(this, nameof(TargetStopped)).Select(e => false);
-            var solutionLoaded = Observable.FromEventPattern<SolutionChangedEventArgs>(_shell, nameof(_shell.SolutionChanged)).Select(s => s.EventArgs.NewValue != null).StartWith(false);
+            var sessionStarted = Observable.FromEventPattern(this, nameof(DebugSessionStarted)).Select(e=>true);
+            var sessionEnded = Observable.FromEventPattern(this, nameof(DebugSessionEnded)).Select(e => false);
 
-            solutionLoaded.Subscribe(_=>LoadBreakpoints());
+            var isRunning = sessionStarted.Merge(sessionEnded).Merge(started).Merge(stopped).StartWith(false);
 
-            var isRunning = started.Merge(stopped);
+            var solutionLoaded = Observable.FromEventPattern<SolutionChangedEventArgs>(_shell, nameof(_shell.SolutionChanged)).Select(s =>
+            {
+                return s.EventArgs.NewValue != null;
+            }).StartWith(false);
 
-            CanStart = isRunning.Select(running => !running).Merge(solutionLoaded).StartWith(false);
+            var canRun = solutionLoaded.CombineLatest(isRunning, (loaded, running) => loaded && !running);
 
-            CanPause = CanStart.Select(e=>!e).StartWith(false);
+            var canPause = solutionLoaded.CombineLatest(isRunning, (loaded, running) => loaded && running);
+
+            var canStop = solutionLoaded.CombineLatest(sessionStarted.Merge(sessionEnded), (loaded, sessionActive) => loaded && SessionActive);
+
+            CanStart = canRun.StartWith(false);
+
+            CanPause = canPause.StartWith(false);
+
+            CanStop = canStop.StartWith(false);
         }
 
         public void BeforeActivation()
