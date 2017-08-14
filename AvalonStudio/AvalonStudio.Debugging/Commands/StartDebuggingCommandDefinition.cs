@@ -6,19 +6,20 @@ namespace AvalonStudio.Debugging.Commands
     using AvalonStudio.Extensibility.Commands;
     using ReactiveUI;
     using System;
+    using System.Reactive.Linq;
     using System.Windows.Input;
 
     internal class StartDebuggingCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> command;
+        private ReactiveCommand<object> command;
 
-        public StartDebuggingCommandDefinition()
+        public override void Activation()
         {
-            command = ReactiveCommand.Create();
+            var manager = IoC.Get<IDebugManager2>();
+
+            command = ReactiveCommand.Create(manager.CanStart);
             command.Subscribe(_ =>
             {
-                var manager = IoC.Get<IDebugManager2>();
-
                 if (!manager.SessionActive)
                 {
                     manager.Start();
