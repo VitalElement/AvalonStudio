@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace AvalonStudio
 {
@@ -383,6 +384,20 @@ namespace AvalonStudio
 
         private static int Main(string[] args)
         {
+            if(args.Length >= 1 && args[0] == "debug")
+            {
+                Console.WriteLine("Waiting for debugger to attach.");
+
+                while(!Debugger.IsAttached)
+                {
+                    Thread.Sleep(100);
+                }
+
+                Debugger.Break();
+
+                args = args.ToList().Skip(1).ToArray();
+            }
+
             Platform.Initialise();
 
             PackageSources.InitialisePackageSources();
