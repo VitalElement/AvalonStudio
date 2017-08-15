@@ -5,22 +5,23 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using ReactiveUI;
 using System;
+using System.Reactive.Linq;
 using System.Windows.Input;
 
 namespace AvalonStudio.Shell.Commands
 {
     public class BuildCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> _command;
+        private ReactiveCommand<object> _command;
 
-        public BuildCommandDefinition()
+        public override void Activation()
         {
-            _command = ReactiveCommand.Create();
+            var shell = IoC.Get<IShell>();
+
+            _command = ReactiveCommand.Create(shell.CanRunTask());
 
             _command.Subscribe(_ =>
             {
-                var shell = IoC.Get<IShell>();
-
                 shell.Build();
             });
         }

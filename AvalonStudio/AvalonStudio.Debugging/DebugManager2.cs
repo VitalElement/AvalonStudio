@@ -141,21 +141,21 @@
 
             var started = Observable.FromEventPattern(this, nameof(TargetStarted)).Select(e => true);
             var stopped = Observable.FromEventPattern(this, nameof(TargetStopped)).Select(e => false);
-            var sessionStarted = Observable.FromEventPattern(this, nameof(DebugSessionStarted)).Select(e=>true);
+            var sessionStarted = Observable.FromEventPattern(this, nameof(DebugSessionStarted)).Select(e => true);
             var sessionEnded = Observable.FromEventPattern(this, nameof(DebugSessionEnded)).Select(e => false);
 
-            var isRunning = sessionStarted.Merge(sessionEnded).Merge(started).Merge(stopped).StartWith(false);
+            var hasSession = sessionStarted.Merge(sessionEnded).StartWith(false);
 
-            var solutionLoaded = Observable.FromEventPattern<SolutionChangedEventArgs>(_shell, nameof(_shell.SolutionChanged)).Select(s =>
+            var isRunning = hasSession.Merge(started).Merge(stopped).StartWith(false);
+
+            var canRun = _shell.OnSolutionLoaded().CombineLatest(isRunning, hasSession, _shell.OnCurrentTaskChanged(), (loaded, running, session, hasTask) => 
             {
-                return s.EventArgs.NewValue != null;
-            }).StartWith(false);
+                return loaded && !running && (!hasTask || (hasTask && session));
+            });
 
-            var canRun = solutionLoaded.CombineLatest(isRunning, (loaded, running) => loaded && !running);
+            var canPause = _shell.OnSolutionLoaded().CombineLatest(isRunning, (loaded, running) => loaded && running);
 
-            var canPause = solutionLoaded.CombineLatest(isRunning, (loaded, running) => loaded && running);
-
-            var canStop = solutionLoaded.CombineLatest(sessionStarted.Merge(sessionEnded), (loaded, sessionActive) => loaded && SessionActive);
+            var canStop = _shell.OnSolutionLoaded().CombineLatest(sessionStarted.Merge(sessionEnded), (loaded, sessionActive) => loaded && SessionActive);
 
             var canStep = canStop.CombineLatest(isRunning, (stop, running) => stop && !running);
 
@@ -228,7 +228,9 @@
                 return;
             }
 
-            var success = await await Task.Factory.StartNew(async () => { return await project.ToolChain.Build(_console, project); });
+            bool success = false;
+
+            await _shell.TaskRunner.RunTask(()=> success = project.ToolChain.Build(_console, project).GetAwaiter().GetResult());
 
             if (!success)
             {
