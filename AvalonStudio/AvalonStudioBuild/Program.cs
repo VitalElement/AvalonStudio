@@ -148,7 +148,9 @@ namespace AvalonStudio
 
                 if (!test.Pass)
                 {
+                    console.WriteLine();
                     console.WriteLine(string.Format("Assertion = [{0}], File=[{1}], Line=[{2}]", test.Assertion, test.File, test.Line));
+                    console.WriteLine();
                 }
 
                 Console.ForegroundColor = ConsoleColor.White;
@@ -157,7 +159,6 @@ namespace AvalonStudio
                 if (!test.Pass)
                 {
                     result = 0;
-                    break;
                 }
             }
 
