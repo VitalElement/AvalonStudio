@@ -13,6 +13,7 @@
     using AvalonStudio.Utils;
     using Microsoft.CodeAnalysis.Classification;
     using Microsoft.CodeAnalysis.Completion;
+    using Microsoft.CodeAnalysis.FindSymbols;
     using Microsoft.CodeAnalysis.Formatting;
     using Projects.OmniSharp;
     using RoslynPad.Editor.Windows;
@@ -261,8 +262,26 @@
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
         {
-            return null;
-            //throw new NotImplementedException();
+            var dataAssociation = GetAssociatedData(file);
+
+            var document = dataAssociation.Solution.Workspace.GetDocument(file);
+
+            var semanticModel = await document.GetSemanticModelAsync();
+
+            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, offset, dataAssociation.Solution.Workspace);
+
+            Symbol result = null;
+
+            if (symbol != null)
+            {
+                result = new Symbol {
+                    Name = symbol.ToDisplayString(),
+                    TypeDescription = symbol.Kind == Microsoft.CodeAnalysis.SymbolKind.NamedType ? symbol.ToDisplayString() : symbol.ToMinimalDisplayString(semanticModel, offset),                    
+                    BriefComment = symbol.GetDocumentationCommentXml()
+                };
+            }
+
+            return result;
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
