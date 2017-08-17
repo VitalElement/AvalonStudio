@@ -25,6 +25,18 @@
     <None Update="Snippets\cpp\if.snippet">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Snippets\cpp\ipropfull.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\iroprop.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\ppropfull.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\proprop.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Snippets\cpp\while.snippet">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
