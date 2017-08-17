@@ -62,7 +62,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                 switch(accessReference)
                 {
                     case "&":
-                    case "*":
                         return "*";
 
                     default:
