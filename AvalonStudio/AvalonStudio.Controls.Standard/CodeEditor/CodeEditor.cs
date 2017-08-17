@@ -277,16 +277,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _textEntering = true;
             };
 
-            TextArea.Caret.PositionChanged += (sender, e) =>
+            Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
             {
                 if (_intellisenseManager != null && !_textEntering)
                 {
                     if (TextArea.Selection.IsEmpty)
                     {
-                        var location = Document.GetLocation(CaretOffset);                        
+                        var location = Document.GetLocation(CaretOffset);
                         _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
                     }
-                    else
+                    else if (_currentSnippetContext != null)
                     {
                         var offset = Document.GetOffset(TextArea.Selection.StartPosition.Location);
                         _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());
@@ -312,7 +312,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Column = TextArea.Caret.Column;
                     EditorCaretOffset = TextArea.Caret.Offset;
                 }
-            };
+            });
 
             TextArea.TextEntered += (sender, e) =>
             {
@@ -382,14 +382,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             }
                         }
                     }
-                }
-            };
-
-            EventHandler<TextInputEventArgs> tunneledTextInputHandler = (send, ee) =>
-            {
-                if (CaretOffset > 0)
-                {
-                    _intellisenseManager?.OnTextInput(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
                 }
             };
 
