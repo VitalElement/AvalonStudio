@@ -69,6 +69,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
+            _snippetCodeGenerators.Add("ToStorageReference", (accessReference) =>
+            {
+                switch (accessReference)
+                {
+                    case "&":
+                    case "*":
+                        return "*";
+
+                    default:
+                        return "";
+                }
+            });
+
             _snippetDynamicVars.Add("ClassName", (offset, line, column) => null);
         }
 
