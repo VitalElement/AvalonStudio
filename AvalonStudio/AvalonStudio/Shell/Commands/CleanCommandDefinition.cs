@@ -11,16 +11,16 @@ namespace AvalonStudio.Shell.Commands
 {
     public class CleanCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> _command;
+        private ReactiveCommand<object> _command;
 
-        public CleanCommandDefinition()
+        public override void Activation()
         {
-            _command = ReactiveCommand.Create();
+            var shell = IoC.Get<IShell>();
+
+            _command = ReactiveCommand.Create(shell.CanRunTask());
 
             _command.Subscribe(_ =>
             {
-                var shell = IoC.Get<IShell>();
-
                 shell.Clean();
             });
         }

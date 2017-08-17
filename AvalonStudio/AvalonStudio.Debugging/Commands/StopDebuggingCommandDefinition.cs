@@ -10,15 +10,15 @@ namespace AvalonStudio.Debugging.Commands
 {
     internal class StopDebuggingCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> command;
+        private ReactiveCommand<object> command;
 
-        public StopDebuggingCommandDefinition()
+        public override void Activation()
         {
-            command = ReactiveCommand.Create();
+            var manager = IoC.Get<IDebugManager2>();
+
+            command = ReactiveCommand.Create(manager.CanStop);
             command.Subscribe(_ =>
             {
-                var manager = IoC.Get<IDebugManager2>();
-
                 manager.Stop();
             });
         }
