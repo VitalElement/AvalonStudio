@@ -311,6 +311,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Line = TextArea.Caret.Line;
                     Column = TextArea.Caret.Column;
                     EditorCaretOffset = TextArea.Caret.Offset;
+
+                    TextArea.TextView.InvalidateLayer(KnownLayer.Background); 
                 }
             });
 
