@@ -24,7 +24,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             if (_popup != null && PlacementTarget != null && !_popup.IsOpen)
             {
                 _popup.HorizontalOffset = (-PlacementTarget.Bounds.Width) + p.X;
-                _popup.VerticalOffset = p.Y;
+                _popup.VerticalOffset = p.Y + 3;
             }
         }
 
@@ -43,6 +43,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _assistantPopup.PlacementTarget = _intellisense;
             _assistantPopup.PlacementMode = PlacementMode.Right;
             _assistantPopup.StaysOpen = true;
+            _assistantPopup.HorizontalOffset = 2;
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
