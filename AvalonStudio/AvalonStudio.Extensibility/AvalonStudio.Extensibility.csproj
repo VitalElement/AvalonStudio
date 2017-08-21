@@ -8,7 +8,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.2-build3643-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.2-build3677-alpha" />
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
