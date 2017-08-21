@@ -1,8 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Markup.Xaml;
-using AvaloniaEdit.Editing;
 using System.Reactive.Disposables;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
@@ -11,21 +9,22 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     {
         private readonly CompositeDisposable disposables;
         private Popup _popup;
+        private Popup _assistantPopup;
+        private Control _intellisense;
 
         public Control PlacementTarget { get; set; }
-
 
         public Intellisense()
         {
             disposables = new CompositeDisposable();
         }
 
-        public void SetLocation (Point p)
+        public void SetLocation(Point p)
         {
             if (_popup != null && PlacementTarget != null && !_popup.IsOpen)
             {
-               _popup.HorizontalOffset = (-PlacementTarget.Bounds.Width) + p.X;
-               _popup.VerticalOffset =  p.Y;
+                _popup.HorizontalOffset = (-PlacementTarget.Bounds.Width) + p.X;
+                _popup.VerticalOffset = p.Y;
             }
         }
 
@@ -34,10 +33,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             base.OnTemplateApplied(e);
 
             _popup = e.NameScope.Find<Popup>("PART_Popup");
+            _assistantPopup = e.NameScope.Find<Popup>("PART_PopupAssistant");
+            _intellisense = e.NameScope.Find<Control>("PART_Intellisense");
 
             _popup.PlacementTarget = PlacementTarget;
             _popup.PlacementMode = PlacementMode.Right;
             _popup.StaysOpen = true;
+
+            _assistantPopup.PlacementTarget = _intellisense;
+            _assistantPopup.PlacementMode = PlacementMode.Right;
+            _assistantPopup.StaysOpen = true;
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)

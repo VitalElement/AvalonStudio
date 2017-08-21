@@ -1,11 +1,28 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard">
   <Style Selector="local|Intellisense">
+    <Style.Resources>
+      <DrawingGroup x:Key="MethodPublic">
+        <GeometryDrawing Brush="Transparent" Geometry="F1M83.3436,31.9999L-0.000399999999999068,84.9209 -0.000399999999999068,171.0779 83.3436,223.9999 92.6556,223.9999 176.0016,171.0779 176.0016,84.9219 92.6556,31.9999z" />
+        <GeometryDrawing Brush="#FFB17FD7" Geometry="F1M144,153.4844L96,183.9684 96,138.9214 144,108.4374z M42.266,96.0004L88,66.9534 133.734,96.0004 88,125.0474z M80,183.9684L32,153.4844 32,108.4374 80,138.9214z M88,48.0004L16,93.7184 16,162.2814 88,208.0004 160,162.2814 160,93.7184z" />
+        <GeometryDrawing Brush="Transparent" Geometry="F1M133.7344,96L88.0004,125.047 42.2654,96 88.0004,66.953z" />
+        <GeometryDrawing Brush="Transparent" Geometry="F1M32,108.4375L80,138.9215 80,183.9685 32,153.4845z" />
+        <GeometryDrawing Brush="Transparent" Geometry="F1M96,183.9687L96,138.9217 144,108.4377 144,153.4847z" />
+      </DrawingGroup>
+    </Style.Resources>
+
     <Setter Property="Template">
       <ControlTemplate>
-        <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" StaysOpen="false" Name="PART_Popup">
-          <local:IntellisenseUserControl />
-        </Popup>
+        <Grid>
+          <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" Name="PART_Popup">
+            <local:IntellisenseUserControl Name="PART_Intellisense" />
+          </Popup>
+
+          <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" Name="PART_PopupAssistant">
+            <local:IntellisenseAssistantUserControl />
+          </Popup>
+        </Grid>
       </ControlTemplate>
     </Setter>
   </Style>
