@@ -32,7 +32,6 @@ namespace AvalonStudio.Shell.Commands
 
         public override DrawingGroup Icon => this.GetCommandIcon("Build");
 
-
         public override ICommand Command => _command;
 
         public override KeyGesture Gesture => KeyGesture.Parse("F6");
