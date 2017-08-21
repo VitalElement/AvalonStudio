@@ -2,6 +2,7 @@
   <Application.Styles>
     <StyleInclude Source="resm:Avalonia.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.Themes.Default"/>
     <StyleInclude Source="resm:AvalonStudio.Themes.BaseDark.xaml?assembly=AvalonStudio"/>
+    <StyleInclude Source="resm:AvalonStudio.Themes.Theme.xaml?assembly=AvalonStudio"/>
     <StyleInclude Source="resm:AvalonStudio.Themes.Accents.DarkAccent.xaml?assembly=AvalonStudio"/>
     <StyleInclude Source="resm:AvalonStudio.Controls.MetroWindowTheme.paml?assembly=AvalonStudio" />
     <StyleInclude Source="resm:AvalonStudio.Extensibility.Controls.ControlTheme.paml?assembly=AvalonStudio.Extensibility" />

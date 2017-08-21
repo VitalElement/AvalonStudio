@@ -149,13 +149,13 @@ namespace AvalonStudio.Languages.CPlusPlus
                 case NClang.CursorKind.Destructor:
                 case NClang.CursorKind.FunctionTemplate:
                 case NClang.CursorKind.ClassTemplate:
-                    return CodeCompletionKind.Method;
+                    return CodeCompletionKind.MethodPublic;
 
                 case NClang.CursorKind.ClassDeclaration:
-                    return CodeCompletionKind.Class;
+                    return CodeCompletionKind.ClassPublic;
 
                 case NClang.CursorKind.StructDeclaration:
-                    return CodeCompletionKind.Struct;
+                    return CodeCompletionKind.StructurePublic;
 
                 case NClang.CursorKind.MacroDefinition:
                     return CodeCompletionKind.Macro;
@@ -165,10 +165,10 @@ namespace AvalonStudio.Languages.CPlusPlus
                     return CodeCompletionKind.Keyword;
 
                 case NClang.CursorKind.EnumDeclaration:
-                    return CodeCompletionKind.Enum;
+                    return CodeCompletionKind.EnumPublic;
 
                 case NClang.CursorKind.EnumConstantDeclaration:
-                    return CodeCompletionKind.EnumConstant;
+                    return CodeCompletionKind.EnumMemberPublic;
 
                 case NClang.CursorKind.VarDeclaration:
                     return CodeCompletionKind.Variable;

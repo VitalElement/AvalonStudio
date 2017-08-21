@@ -127,28 +127,28 @@
                 switch (kind)
                 {
                     case "Method":
-                        return CodeCompletionKind.Method;
+                        return CodeCompletionKind.MethodPublic;
 
                     case "Class":
-                        return CodeCompletionKind.Class;
+                        return CodeCompletionKind.ClassPublic;
 
                     case "Struct":
-                        return CodeCompletionKind.Struct;
+                        return CodeCompletionKind.StructurePublic;
 
                     case "Enum":
-                        return CodeCompletionKind.Enum;
+                        return CodeCompletionKind.EnumPublic;
 
                     case "Delegate":
-                        return CodeCompletionKind.Delegate;
+                        return CodeCompletionKind.DelegatePublic;
 
                     case "Property":
-                        return CodeCompletionKind.Property;
+                        return CodeCompletionKind.PropertyPublic;
 
                     case "Event":
-                        return CodeCompletionKind.Event;
+                        return CodeCompletionKind.EventPublic;
 
                     case "Interface":
-                        return CodeCompletionKind.Interface;
+                        return CodeCompletionKind.InterfacePublic;
 
                     case "Keyword":
                         return CodeCompletionKind.Keyword;
