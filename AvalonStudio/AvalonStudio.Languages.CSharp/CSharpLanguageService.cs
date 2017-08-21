@@ -154,10 +154,10 @@
                         return CodeCompletionKind.Keyword;
 
                     case "Namespace":
-                        return CodeCompletionKind.Namespace;
+                        return CodeCompletionKind.NamespacePublic;
 
                     case "Field":
-                        return CodeCompletionKind.Field;
+                        return CodeCompletionKind.FieldPublic;
 
                     case "Parameter":
                         return CodeCompletionKind.Parameter;

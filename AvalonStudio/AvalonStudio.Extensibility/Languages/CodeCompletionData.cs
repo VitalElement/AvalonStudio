@@ -9,7 +9,10 @@ namespace AvalonStudio.Languages
     public enum CodeCompletionKind
     {
         Keyword,
-        Namespace,
+        NamespacePublic,
+        NamespaceProtected,
+        NamespacePrivate,
+        NamespaceInternal,
 
         DelegatePublic,
         DelegateProtected,
@@ -56,7 +59,11 @@ namespace AvalonStudio.Languages
         MethodPrivate,
         MethodInternal,
 
-        Field,
+        FieldPublic,
+        FieldProtected,
+        FieldPrivate,
+        FieldInternal,
+
         Parameter,
         None,
         Macro,

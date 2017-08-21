@@ -174,10 +174,10 @@ namespace AvalonStudio.Languages.CPlusPlus
                     return CodeCompletionKind.Variable;
 
                 case NClang.CursorKind.Namespace:
-                    return CodeCompletionKind.Namespace;
+                    return CodeCompletionKind.NamespacePublic;
 
                 case NClang.CursorKind.ParmDeclaration:
-                    return CodeCompletionKind.Field;
+                    return CodeCompletionKind.FieldPublic;
 
                 case NClang.CursorKind.FieldDeclaration:
                     return CodeCompletionKind.Parameter;

@@ -15,18 +15,26 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Completion
 
         private class CompletionIconService
         {
-            private readonly Dictionary<CodeCompletionKind, IBitmap> _cache = new Dictionary<CodeCompletionKind, IBitmap>();
+            private readonly Dictionary<CodeCompletionKind, DrawingGroup> _cache = new Dictionary<CodeCompletionKind, DrawingGroup>();
 
             public DrawingGroup GetCompletionKindImage(CodeCompletionKind icon)
             {
-                var resource = Application.Current.FindStyleResource(icon.ToString());
-
-                if(resource == AvaloniaProperty.UnsetValue)
+                if (!_cache.TryGetValue(icon, out var image))
                 {
-                    System.Console.WriteLine($"No intellisense icon provided for {icon}");
+                    var resource = Application.Current.FindStyleResource(icon.ToString());
+
+                    if (resource == AvaloniaProperty.UnsetValue)
+                    {
+                        System.Console.WriteLine($"No intellisense icon provided for {icon}");
+                    }
+                    else
+                    {
+                        image = resource as DrawingGroup;
+                        _cache.Add(icon, image);
+                    }
                 }
 
-                return resource as DrawingGroup;
+                return image;
             }
         }
     }

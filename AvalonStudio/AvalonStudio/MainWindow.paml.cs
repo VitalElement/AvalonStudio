@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Controls;
 using AvalonStudio.Extensibility;
@@ -19,9 +18,7 @@ namespace AvalonStudio
 
             KeyBindings.AddRange(IoC.Get<ShellViewModel>().KeyBindings);
 
-            this.AttachDevTools();
-
-            IoC.RegisterConstant<Window>(this);
+            this.AttachDevTools();   
         }
 
         private void InitializeComponent()

@@ -32,14 +32,8 @@
 
       <ItemsControl.DataTemplates>
         <DataTemplate DataType="mod:CommandToolBarItem">
-          <Button BorderThickness="0" Margin="0"  Height="18" Width="18" Command="{Binding Command}" ToolTip.Tip="{Binding ToolTip}" >
-            <Grid Height="12" Width="12">
-              <DrawingPresenter Drawing="{Binding Icon}"
-                              Width="18"
-                              Height="18"
-                              Stretch="Fill" />
-
-            </Grid>
+          <Button BorderThickness="0" Margin="0" Height="18" Width="18" Command="{Binding Command}" ToolTip.Tip="{Binding ToolTip}" >
+            <DrawingPresenter Drawing="{Binding Icon}" Width="16" Height="16" />
           </Button>
         </DataTemplate>
 
