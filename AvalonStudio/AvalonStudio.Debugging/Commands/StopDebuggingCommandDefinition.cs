@@ -23,7 +23,7 @@ namespace AvalonStudio.Debugging.Commands
             });
         }
 
-        public override Path IconPath
+        /*public override Path Icon
         {
             get
             {
@@ -35,7 +35,7 @@ namespace AvalonStudio.Debugging.Commands
                     Data = StreamGeometry.Parse("M18,18H6V6H18V18Z")
                 };
             }
-        }
+        }*/
 
         public override ICommand Command
         {

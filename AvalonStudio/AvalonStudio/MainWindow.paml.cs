@@ -20,6 +20,8 @@ namespace AvalonStudio
             KeyBindings.AddRange(IoC.Get<ShellViewModel>().KeyBindings);
 
             this.AttachDevTools();
+
+            IoC.RegisterConstant<Window>(this);
         }
 
         private void InitializeComponent()

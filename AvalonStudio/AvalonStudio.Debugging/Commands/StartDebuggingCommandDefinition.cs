@@ -46,7 +46,7 @@ namespace AvalonStudio.Debugging.Commands
             get { return "Starts a debug session."; }
         }
 
-        public override Avalonia.Controls.Shapes.Path IconPath
+       /* public override Avalonia.Controls.Shapes.Path Icon
         {
             get
             {
@@ -58,7 +58,7 @@ namespace AvalonStudio.Debugging.Commands
                     Data = StreamGeometry.Parse("M8,5.14V19.14L19,12.14L8,5.14Z")
                 };
             }
-        }
+        }*/
 
         public override KeyGesture Gesture => KeyGesture.Parse("F5");
     }
