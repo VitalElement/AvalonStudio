@@ -466,7 +466,7 @@ namespace AvalonStudio.Controls
                 FormatAll();
             }
 
-            _editor.Save();
+            _editor?.Save();
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
