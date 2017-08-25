@@ -14,7 +14,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     class ScopeLineBackgroundRenderer : IBackgroundRenderer
     {
-        public KnownLayer Layer => KnownLayer.Caret;
+        public KnownLayer Layer => KnownLayer.Background;
 
         private readonly IBrush brush = Brush.Parse("#717171");
         private readonly Pen _pen;

@@ -582,12 +582,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     // TODO allow interruption.
                     var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, unsavedFiles, () => false);
 
+                    _scopeLineBackgroundRenderer.ApplyIndex(result.IndexItems);
+
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        _scopeLineBackgroundRenderer.ApplyIndex(result.IndexItems);
-
                         Diagnostics = result.Diagnostics;
-
+                        
                         TextArea.TextView.Redraw();
 
                         _shell.InvalidateErrors();
