@@ -125,8 +125,7 @@ namespace AvalonStudio.Extensibility.Editor
                 Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
             }
         }
-
-
+        
         private void Create(int offset, int length, string message, Color markerColor)
         {
             var m = new TextMarker(offset, length);
