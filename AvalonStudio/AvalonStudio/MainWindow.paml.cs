@@ -11,14 +11,14 @@ namespace AvalonStudio
         public MainWindow()
         {
             IoC.RegisterConstant<Window>(this);
-            
+
             InitializeComponent();
 
             DataContext = ShellViewModel.Instance;
 
             KeyBindings.AddRange(IoC.Get<ShellViewModel>().KeyBindings);
 
-            this.AttachDevTools();   
+            this.AttachDevTools();
         }
 
         private void InitializeComponent()
