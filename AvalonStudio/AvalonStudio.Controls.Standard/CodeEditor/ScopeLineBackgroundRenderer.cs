@@ -65,22 +65,25 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 var endLine = textView.Document.GetLineByOffset(entry.EndOffset <= textView.Document.TextLength ? entry.EndOffset : textView.Document.TextLength);
 
-                var newEntry = new TextSegment() { StartOffset = start, EndOffset = endLine.EndOffset };
-
-                var rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, newEntry);
-                
-                var rect = GetRectForRange(rects);
-
-                if (!rect.IsEmpty)
+                if (endLine.EndOffset > start)
                 {
-                    var xPos = charSize.Width * (textView.Document.GetLocation(newEntry.StartOffset).Column - 1);
+                    var newEntry = new TextSegment() { StartOffset = start, EndOffset = endLine.EndOffset };
 
-                    rect = rect.WithX(xPos+ (charSize.Width / 2));
+                    var rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, newEntry);
 
-                    rect = rect.WithX(PixelSnapHelpers.PixelAlign(rect.X, pixelSize.Width));
-                    rect = rect.WithY(PixelSnapHelpers.PixelAlign(rect.Y, pixelSize.Height));
+                    var rect = GetRectForRange(rects);
 
-                    drawingContext.DrawLine(_pen, rect.TopLeft, rect.BottomLeft);
+                    if (!rect.IsEmpty)
+                    {
+                        var xPos = charSize.Width * (textView.Document.GetLocation(newEntry.StartOffset).Column - 1);
+
+                        rect = rect.WithX(xPos + (charSize.Width / 2));
+
+                        rect = rect.WithX(PixelSnapHelpers.PixelAlign(rect.X, pixelSize.Width));
+                        rect = rect.WithY(PixelSnapHelpers.PixelAlign(rect.Y, pixelSize.Height));
+
+                        drawingContext.DrawLine(_pen, rect.TopLeft, rect.BottomLeft);
+                    }
                 }
             }
         }
