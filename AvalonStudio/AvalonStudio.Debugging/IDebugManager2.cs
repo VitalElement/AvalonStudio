@@ -17,6 +17,14 @@
 
         event EventHandler<EventArgs> TargetStarted;
 
+        IObservable<bool> CanStart { get; }
+
+        IObservable<bool> CanPause { get; }
+
+        IObservable<bool> CanStop { get; }
+
+        IObservable<bool> CanStep { get; }
+
         StackFrame SelectedFrame { get; set; }
 
         DebuggerSession Session { get; }

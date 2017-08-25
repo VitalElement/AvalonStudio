@@ -19,10 +19,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     {
         private TextArea _textArea;
         private CodeEditor _editor;
+        private const int MinLineNumberWidth = 5;
+        private const int RightMarginChars = 2;
+        private double RightMarginSize = 0;
 
         public LineNumberMargin(CodeEditor editor)
         {
             _editor = editor;
+            _textArea = _editor.TextArea;
             Foreground = Brush.Parse("#2691AF");
             SelectedLineForeground = Brush.Parse("#2691AF");
         }
@@ -55,7 +59,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 EmSize,
                 GetValue(TemplatedControl.ForegroundProperty)
             );
-            return new Size(text.Measure().Width, 0);
+
+            var textRight = TextFormatterFactory.CreateFormattedText(
+                this,
+                new string('9', RightMarginChars),
+                Typeface,
+                EmSize,
+                GetValue(TemplatedControl.ForegroundProperty)
+            );
+
+            RightMarginSize = textRight.Measure().Width;
+
+            return new Size(text.Measure().Width + RightMarginSize, 0);
         }
 
         /// <inheritdoc/>
@@ -85,32 +100,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     );
 
                     var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                    drawingContext.DrawText(foreground, new Point(renderSize.Width - text.Measure().Width, y - textView.VerticalOffset),
+                    drawingContext.DrawText(foreground, new Point((renderSize.Width - RightMarginSize) - text.Measure().Width, y - textView.VerticalOffset),
                         text);
                 }
             }
-        }
-
-        /// <inheritdoc/>
-        protected override void OnTextViewChanged(TextView oldTextView, TextView newTextView)
-        {
-            if (oldTextView != null)
-            {
-                oldTextView.VisualLinesChanged -= TextViewVisualLinesChanged;
-            }
-            base.OnTextViewChanged(oldTextView, newTextView);
-            if (newTextView != null)
-            {
-                newTextView.VisualLinesChanged += TextViewVisualLinesChanged;
-
-                // find the text area belonging to the new text view
-                _textArea = newTextView.GetService(typeof(TextArea)) as TextArea;
-            }
-            else
-            {
-                _textArea = null;
-            }
-            InvalidateVisual();
         }
 
         /// <inheritdoc/>
@@ -136,28 +129,23 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// <summary>
         /// Maximum length of a line number, in characters
         /// </summary>
-        protected int MaxLineNumberLength = 1;
+        protected int MaxLineNumberLength = MinLineNumberWidth;
 
         private void OnDocumentLineCountChanged()
         {
             var documentLineCount = Document?.LineCount ?? 1;
             var newLength = documentLineCount.ToString(CultureInfo.CurrentCulture).Length;
 
-            // The margin looks too small when there is only one digit, so always reserve space for
-            // at least two digits
-            if (newLength < 2)
-                newLength = 2;
+            if (newLength < MinLineNumberWidth)
+            {
+                newLength = MinLineNumberWidth;
+            }
 
             if (newLength != MaxLineNumberLength)
             {
                 MaxLineNumberLength = newLength;
                 InvalidateMeasure();
             }
-        }
-
-        private void TextViewVisualLinesChanged(object sender, EventArgs e)
-        {
-            InvalidateVisual();
         }
 
         private AnchorSegment _selectionStart;

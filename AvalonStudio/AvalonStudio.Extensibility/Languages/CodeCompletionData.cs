@@ -9,23 +9,67 @@ namespace AvalonStudio.Languages
     public enum CodeCompletionKind
     {
         Keyword,
-        Namespace,
-        Delegate,
-        Interface,
-        Property,
-        Event,
-        Enum,
-        EnumConstant,
-        Struct,
-        Class,
-        Method,
-        Field,
+        NamespacePublic,
+        NamespaceProtected,
+        NamespacePrivate,
+        NamespaceInternal,
+
+        DelegatePublic,
+        DelegateProtected,
+        DelegatePrivate,
+        DelegateInternal,
+
+        InterfacePublic,
+        InterfaceProtected,
+        InterfacePrivate,
+        InterfaceInternal,
+
+        PropertyPublic,
+        PropertyProtected,
+        PropertyPrivate,
+        PropertyInternal,
+
+        EventPublic,
+        EventProtected,
+        EventPrivate,
+        EventInternal,
+
+        EnumPublic,
+        EnumProtected,
+        EnumPrivate,
+        EnumInternal,
+
+        EnumMemberPublic,
+        EnumMemberProtected,
+        EnumMemberPrivate,
+        EnumMemberInternal,
+
+        StructurePublic,
+        StructureProtected,
+        StructurePrivate,
+        StructureInternal,
+
+        ClassPublic,
+        ClassProtected,
+        ClassPrivate,
+        ClassInternal,
+
+        MethodPublic,
+        MethodProtected,
+        MethodPrivate,
+        MethodInternal,
+
+        FieldPublic,
+        FieldProtected,
+        FieldPrivate,
+        FieldInternal,
+
         Parameter,
         None,
         Macro,
         Variable,
         OverloadCandidate,
-        Snippet            
+        Snippet
     }
 
     public class CodeCompletionData : ICompletionData, IComparable<CodeCompletionData>
