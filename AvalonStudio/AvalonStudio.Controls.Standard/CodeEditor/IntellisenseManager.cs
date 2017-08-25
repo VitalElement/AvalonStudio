@@ -4,12 +4,12 @@
     using Avalonia.Threading;
     using AvaloniaEdit.Document;
     using AvalonStudio.Controls.Standard.CodeEditor;
+    using AvalonStudio.Controls.Standard.CodeEditor.Completion;
     using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Extensibility.Threading;
     using AvalonStudio.Languages;
-    using AvalonStudio.Languages.ViewModels;
     using AvalonStudio.Projects;
     using AvalonStudio.Shell;
     using AvalonStudio.Utils;
@@ -133,7 +133,7 @@
 
                     if (currentCompletion == null)
                     {
-                        unfilteredCompletions.Add(CompletionDataViewModel.Create(result));
+                        unfilteredCompletions.Add(new CompletionDataViewModel(result));
                     }
                     else
                     {

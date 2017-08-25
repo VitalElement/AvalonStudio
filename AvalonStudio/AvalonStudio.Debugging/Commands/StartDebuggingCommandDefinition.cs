@@ -6,19 +6,20 @@ namespace AvalonStudio.Debugging.Commands
     using AvalonStudio.Extensibility.Commands;
     using ReactiveUI;
     using System;
+    using System.Reactive.Linq;
     using System.Windows.Input;
 
     internal class StartDebuggingCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> command;
+        private ReactiveCommand<object> command;
 
-        public StartDebuggingCommandDefinition()
+        public override void Activation()
         {
-            command = ReactiveCommand.Create();
+            var manager = IoC.Get<IDebugManager2>();
+
+            command = ReactiveCommand.Create(manager.CanStart);
             command.Subscribe(_ =>
             {
-                var manager = IoC.Get<IDebugManager2>();
-
                 if (!manager.SessionActive)
                 {
                     manager.Start();
@@ -45,19 +46,7 @@ namespace AvalonStudio.Debugging.Commands
             get { return "Starts a debug session."; }
         }
 
-        public override Avalonia.Controls.Shapes.Path IconPath
-        {
-            get
-            {
-                return new Avalonia.Controls.Shapes.Path
-                {
-                    Fill = Brush.Parse("#FF8DD28A"),
-                    UseLayoutRounding = false,
-                    Stretch = Stretch.Uniform,
-                    Data = StreamGeometry.Parse("M8,5.14V19.14L19,12.14L8,5.14Z")
-                };
-            }
-        }
+        public override DrawingGroup Icon => this.GetCommandIcon("Run");
 
         public override KeyGesture Gesture => KeyGesture.Parse("F5");
     }
