@@ -314,7 +314,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Column = TextArea.Caret.Column;
                     EditorCaretOffset = TextArea.Caret.Offset;
 
-                    TextArea.TextView.InvalidateLayer(KnownLayer.Background); 
+                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
                 }
             });
 
@@ -587,7 +587,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         Diagnostics = result.Diagnostics;
-                        
+
                         TextArea.TextView.Redraw();
 
                         _shell.InvalidateErrors();
@@ -657,7 +657,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void UnRegisterLanguageService()
         {
-            if(_scopeLineBackgroundRenderer != null)
+            if (_scopeLineBackgroundRenderer != null)
             {
                 TextArea.TextView.BackgroundRenderers.Remove(_scopeLineBackgroundRenderer);
             }
