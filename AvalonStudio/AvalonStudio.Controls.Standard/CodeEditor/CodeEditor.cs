@@ -14,6 +14,7 @@ using AvaloniaEdit.Snippets;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
@@ -49,10 +50,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
-        private readonly List<IBackgroundRenderer> _languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
-
-        private readonly List<IVisualLineTransformer> _languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
-
         private SnippetManager _snippetManager;
 
         public IntellisenseViewModel Intellisense => _intellisense;
@@ -69,6 +66,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private SelectedWordBackgroundRenderer _selectedWordBackgroundRenderer;
 
         private ColumnLimitBackgroundRenderer _columnLimitBackgroundRenderer;
+
+        private TextMarkerService _diagnosticMarkersRenderer;
+
+        private TextColoringTransformer _textColorizer;
 
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
@@ -580,6 +581,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     // TODO allow interruption.
                     var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, unsavedFiles, () => false);
 
+                    _textColorizer.SetTransformations(result.SyntaxHighlightingData);
+
+                    _diagnosticMarkersRenderer.SetDiagnostics(result.Diagnostics);
+
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         Diagnostics = result.Diagnostics;
@@ -616,19 +621,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 LanguageService.RegisterSourceFile(this, sourceFile, Document);
 
-                _languageServiceBackgroundRenderers.AddRange(LanguageService.GetBackgroundRenderers(sourceFile));
+                _diagnosticMarkersRenderer = new TextMarkerService(Document);
+                _textColorizer = new TextColoringTransformer(Document);
 
-                foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
-                {
-                    TextArea.TextView.BackgroundRenderers.Add(backgroundRenderer);
-                }
-
-                _languageServiceDocumentLineTransformers.AddRange(LanguageService.GetDocumentLineTransformers(sourceFile));
-
-                foreach (var transformer in _languageServiceDocumentLineTransformers)
-                {
-                    TextArea.TextView.LineTransformers.Insert(0, transformer);
-                }
+                TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
+                TextArea.TextView.LineTransformers.Add(_textColorizer);
 
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
@@ -649,19 +646,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void UnRegisterLanguageService()
         {
-            foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
+            if(_textColorizer != null)
             {
-                TextArea.TextView.BackgroundRenderers.Remove(backgroundRenderer);
+                TextArea.TextView.LineTransformers.Remove(_textColorizer);
+                _textColorizer = null;
             }
 
-            _languageServiceBackgroundRenderers.Clear();
-
-            foreach (var transformer in _languageServiceDocumentLineTransformers)
+            if(_diagnosticMarkersRenderer != null)
             {
-                TextArea.TextView.LineTransformers.Remove(transformer);
+                TextArea.TextView.BackgroundRenderers.Remove(_diagnosticMarkersRenderer);
+                _diagnosticMarkersRenderer = null;
             }
-
-            _languageServiceDocumentLineTransformers.Clear();
 
             ShutdownBackgroundWorkers();
 
