@@ -6,6 +6,7 @@ using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Platforms;
@@ -460,8 +461,8 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             }
         }
-
-        private void GenerateHighlightData(ClangCursor cursor, SyntaxHighlightDataList highlightList)
+        
+        private void GenerateHighlightData(ClangCursor cursor, SyntaxHighlightDataList highlightList, List<IndexEntry> result)
         {
             cursor.VisitChildren((current, parent, ptr) =>
             {
@@ -472,6 +473,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                     if (highlight != null)
                     {
                         highlightList.Add(highlight);
+                    }
+
+                    if(current.Kind == NClang.CursorKind.CompoundStatement)
+                    {
+                        result.Add(new IndexEntry(current.Spelling, current.CursorExtent.Start.FileLocation.Offset,
+                            current.CursorExtent.End.FileLocation.Offset, (CursorKind)current.Kind));
                     }
 
                     return ChildVisitResult.Recurse;
@@ -563,7 +570,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         {
                             ScanTokens(translationUnit, result.SyntaxHighlightingData);
 
-                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);
+                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
                         }
 
                         dataAssociation.TextMarkerService.Clear();
