@@ -95,7 +95,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var first = rects.FirstOrDefault();
             var last = rects.LastOrDefault();
 
-            return first.WithHeight(last.Y - first.Y);
+            return first.WithHeight(last.Y - first.Y - first.Height).WithY(first.Y + first.Height);
         }
     }
 }
