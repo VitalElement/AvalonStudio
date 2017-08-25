@@ -278,7 +278,7 @@ namespace AvalonStudio.Controls
                 {
                     var entry = IndexItems[i];
 
-                    if (offset >= entry.Offset && offset < entry.EndOffset)
+                    if (offset >= entry.StartOffset && offset < entry.EndOffset)
                     {
                         selectedEntry = entry;
                         break;
@@ -354,7 +354,7 @@ namespace AvalonStudio.Controls
                 if (value != null && value != selectedIndexEntry)
                 {
                     selectedIndexEntry = value;
-                    GotoOffset(selectedIndexEntry.Offset);
+                    GotoOffset(selectedIndexEntry.StartOffset);
 
                     this.RaisePropertyChanged(nameof(SelectedIndexEntry));
                 }

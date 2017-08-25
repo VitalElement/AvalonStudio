@@ -4,6 +4,8 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvaloniaEdit.Rendering;
+using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Platforms;
@@ -57,7 +59,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             _snippetCodeGenerators.Add("Dereference", (accessReference) =>
             {
-                switch(accessReference)
+                switch (accessReference)
                 {
                     case "&":
                         return "*";
@@ -147,13 +149,13 @@ namespace AvalonStudio.Languages.CPlusPlus
                 case NClang.CursorKind.Destructor:
                 case NClang.CursorKind.FunctionTemplate:
                 case NClang.CursorKind.ClassTemplate:
-                    return CodeCompletionKind.Method;
+                    return CodeCompletionKind.MethodPublic;
 
                 case NClang.CursorKind.ClassDeclaration:
-                    return CodeCompletionKind.Class;
+                    return CodeCompletionKind.ClassPublic;
 
                 case NClang.CursorKind.StructDeclaration:
-                    return CodeCompletionKind.Struct;
+                    return CodeCompletionKind.StructurePublic;
 
                 case NClang.CursorKind.MacroDefinition:
                     return CodeCompletionKind.Macro;
@@ -163,19 +165,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                     return CodeCompletionKind.Keyword;
 
                 case NClang.CursorKind.EnumDeclaration:
-                    return CodeCompletionKind.Enum;
+                    return CodeCompletionKind.EnumPublic;
 
                 case NClang.CursorKind.EnumConstantDeclaration:
-                    return CodeCompletionKind.EnumConstant;
+                    return CodeCompletionKind.EnumMemberPublic;
 
                 case NClang.CursorKind.VarDeclaration:
                     return CodeCompletionKind.Variable;
 
                 case NClang.CursorKind.Namespace:
-                    return CodeCompletionKind.Namespace;
+                    return CodeCompletionKind.NamespacePublic;
 
                 case NClang.CursorKind.ParmDeclaration:
-                    return CodeCompletionKind.Field;
+                    return CodeCompletionKind.FieldPublic;
 
                 case NClang.CursorKind.FieldDeclaration:
                     return CodeCompletionKind.Parameter;
@@ -459,7 +461,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        private void GenerateHighlightData(ClangCursor cursor, SyntaxHighlightDataList highlightList)
+        private void GenerateHighlightData(ClangCursor cursor, SyntaxHighlightDataList highlightList, List<IndexEntry> result)
         {
             cursor.VisitChildren((current, parent, ptr) =>
             {
@@ -470,6 +472,16 @@ namespace AvalonStudio.Languages.CPlusPlus
                     if (highlight != null)
                     {
                         highlightList.Add(highlight);
+                    }
+
+                    switch(current.Kind)
+                    {
+                        case NClang.CursorKind.CompoundStatement:
+                        case NClang.CursorKind.ClassDeclaration:
+                        case NClang.CursorKind.Namespace:
+                            result.Add(new IndexEntry(current.Spelling, current.CursorExtent.Start.FileLocation.Offset,
+                            current.CursorExtent.End.FileLocation.Offset, (CursorKind)current.Kind));
+                            break;
                     }
 
                     return ChildVisitResult.Recurse;
@@ -545,7 +557,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         {
                             ScanTokens(translationUnit, result.SyntaxHighlightingData);
 
-                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);
+                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
                         }
                         
                         var diagnostics = GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project);

@@ -73,6 +73,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private TextMarkerService _diagnosticMarkers;
 
+        private ScopeLineBackgroundRenderer _scopeLineBackgroundRenderer;
+
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
         private bool _isLoaded = false;
@@ -314,7 +316,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Column = TextArea.Caret.Column;
                     EditorCaretOffset = TextArea.Caret.Offset;
 
-                    TextArea.TextView.InvalidateLayer(KnownLayer.Background); 
+                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
                 }
             });
 
@@ -586,7 +588,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (LanguageService != null)
                 {
-                    await LanguageService.RunCodeAnalysisAsync(sourceFile, document, unsavedFiles, () => false);
+                    var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, document, unsavedFiles, () => false);
+
+                    _scopeLineBackgroundRenderer.ApplyIndex(result.IndexItems);
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -619,6 +623,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 LanguageServiceName = LanguageService.Title;
 
                 LanguageService.RegisterSourceFile(this, sourceFile, Document);
+
+                _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
+
+                TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
 
                 _languageServiceBackgroundRenderers.AddRange(LanguageService.GetBackgroundRenderers(sourceFile));
 
@@ -691,6 +699,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void UnRegisterLanguageService()
         {
+            if (_scopeLineBackgroundRenderer != null)
+            {
+                TextArea.TextView.BackgroundRenderers.Remove(_scopeLineBackgroundRenderer);
+            }
+
             foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
             {
                 TextArea.TextView.BackgroundRenderers.Remove(backgroundRenderer);

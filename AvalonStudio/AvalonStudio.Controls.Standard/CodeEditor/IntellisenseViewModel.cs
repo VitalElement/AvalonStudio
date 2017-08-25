@@ -1,11 +1,9 @@
 using Avalonia;
-using AvalonStudio.Languages;
-using AvalonStudio.Languages.ViewModels;
+using AvalonStudio.Controls.Standard.CodeEditor.Completion;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {

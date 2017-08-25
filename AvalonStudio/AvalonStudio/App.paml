@@ -2,12 +2,15 @@
   <Application.Styles>
     <StyleInclude Source="resm:Avalonia.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.Themes.Default"/>
     <StyleInclude Source="resm:AvalonStudio.Themes.BaseDark.xaml?assembly=AvalonStudio"/>
+    <StyleInclude Source="resm:AvalonStudio.Themes.Theme.xaml?assembly=AvalonStudio"/>
     <StyleInclude Source="resm:AvalonStudio.Themes.Accents.DarkAccent.xaml?assembly=AvalonStudio"/>
+    <StyleInclude Source="resm:AvalonStudio.Icons.Icons.xaml?assembly=AvalonStudio"/>
     <StyleInclude Source="resm:AvalonStudio.Controls.MetroWindowTheme.paml?assembly=AvalonStudio" />
     <StyleInclude Source="resm:AvalonStudio.Extensibility.Controls.ControlTheme.paml?assembly=AvalonStudio.Extensibility" />
     <StyleInclude Source="resm:AvalonStudio.Styles.GlobalStyles.xaml?assembly=AvalonStudio" />
     <StyleInclude Source="resm:Mabiavalon.DockNC.Themes.Controls.paml?assembly=Mabiavalon.DockNC" />
     <StyleInclude Source="resm:AvaloniaEdit.AvaloniaEdit.xaml?assembly=AvaloniaEdit" />
     <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.CodeEditor.xaml?assembly=AvalonStudio.Controls.Standard" />
+    <StyleInclude Source="resm:AvalonStudio.Debugging.Icons.Icons.xaml?assembly=AvalonStudio.Debugging" />
   </Application.Styles>
 </Application>

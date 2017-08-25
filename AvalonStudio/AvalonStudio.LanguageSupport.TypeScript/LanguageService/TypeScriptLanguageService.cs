@@ -159,7 +159,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             switch (kind)
             {
                 case "class":
-                    return CodeCompletionKind.Class;
+                    return CodeCompletionKind.ClassPublic;
 
                 case "var":
                     return CodeCompletionKind.Variable;

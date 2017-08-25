@@ -134,28 +134,28 @@
             switch (roslynKind)
             {
                 case Microsoft.CodeAnalysis.SymbolKind.NamedType:
-                    return CodeCompletionKind.Class;
+                    return CodeCompletionKind.ClassPublic;
 
                 case Microsoft.CodeAnalysis.SymbolKind.Parameter:
                     return CodeCompletionKind.Parameter;
 
                 case Microsoft.CodeAnalysis.SymbolKind.Property:
-                    return CodeCompletionKind.Property;
+                    return CodeCompletionKind.PropertyPublic;
 
                 case Microsoft.CodeAnalysis.SymbolKind.Method:
-                    return CodeCompletionKind.Method;
+                    return CodeCompletionKind.MethodPublic;
 
                 case Microsoft.CodeAnalysis.SymbolKind.Event:
-                    return CodeCompletionKind.Event;
+                    return CodeCompletionKind.EventPublic;
 
                 case Microsoft.CodeAnalysis.SymbolKind.Namespace:
-                    return CodeCompletionKind.Namespace;
+                    return CodeCompletionKind.NamespacePublic;
 
                 case Microsoft.CodeAnalysis.SymbolKind.Local:
                     return CodeCompletionKind.Variable;
 
                 case Microsoft.CodeAnalysis.SymbolKind.Field:
-                    return CodeCompletionKind.Field;
+                    return CodeCompletionKind.FieldPublic;
             }
 
             Console.WriteLine($"dont understand omnisharp: {kind}");

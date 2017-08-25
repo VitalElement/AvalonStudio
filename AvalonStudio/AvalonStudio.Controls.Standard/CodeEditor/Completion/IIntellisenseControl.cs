@@ -1,8 +1,6 @@
-using AvalonStudio.Languages.ViewModels;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace AvalonStudio.Languages
+namespace AvalonStudio.Controls.Standard.CodeEditor.Completion
 {
     public interface IIntellisenseControl
     {

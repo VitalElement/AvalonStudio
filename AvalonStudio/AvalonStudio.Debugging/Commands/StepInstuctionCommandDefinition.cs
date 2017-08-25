@@ -26,21 +26,7 @@ namespace AvalonStudio.Debugging.Commands
                 manager.StepInstruction();
             });
         }
-
-        public override Path IconPath
-        {
-            get
-            {
-                return new Path
-                {
-                    Fill = Brush.Parse("#FF8DD28A"),
-                    UseLayoutRounding = false,
-                    Stretch = Stretch.Uniform,
-                    Data = StreamGeometry.Parse("M8,5.14V19.14L19,12.14L8,5.14Z")
-                };
-            }
-        }
-
+        
         public override ICommand Command
         {
             get { return command; }
