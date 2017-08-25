@@ -38,7 +38,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var typeface = textView.GetValue(TextBlock.FontFamilyProperty);
             var emSize = textView.GetValue(TextBlock.FontSizeProperty);
 
-            var text = TextFormatterFactory.CreateFormattedText(
+            var formattedText = TextFormatterFactory.CreateFormattedText(
                 textView,
                 "9",
                 typeface,
@@ -46,30 +46,56 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 Brushes.Black
             );
 
-            var charSize = text.Measure();
+            var charSize = formattedText.Measure();
             var pixelSize = PixelSnapHelpers.GetPixelSize(textView);
 
             foreach (var entry in markers)
             {
-                var rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, entry);
+                var startLine = textView.Document.GetLineByOffset(entry.StartOffset);
 
+                var start = entry.StartOffset;
+
+                var startChar = textView.Document.GetCharAt(startLine.Offset);
+
+                if (char.IsWhiteSpace(startChar))
+                {
+                    start = TextUtilities.GetNextCaretPosition(textView.Document, startLine.Offset, LogicalDirection.Forward,
+                            CaretPositioningMode.WordBorder);
+                }
+
+                var endLine = textView.Document.GetLineByOffset(entry.EndOffset);
+
+                var newEntry = new TextSegment() { StartOffset = start, EndOffset = endLine.EndOffset };
+
+                var rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, newEntry);
+                
                 var rect = GetRectForRange(rects);
 
-                rect = rect.WithX(rect.X + (charSize.Width / 2));
+                if (!rect.IsEmpty)
+                {
+                    var xPos = charSize.Width * (textView.Document.GetLocation(newEntry.StartOffset).Column - 1);
 
-                rect = rect.WithX(PixelSnapHelpers.PixelAlign(rect.X, pixelSize.Width));
-                rect = rect.WithY(PixelSnapHelpers.PixelAlign(rect.Y, pixelSize.Height));
+                    rect = rect.WithX(xPos+ (charSize.Width / 2));
 
-                drawingContext.DrawLine(_pen, rect.TopLeft, rect.BottomLeft);
+                    rect = rect.WithX(PixelSnapHelpers.PixelAlign(rect.X, pixelSize.Width));
+                    rect = rect.WithY(PixelSnapHelpers.PixelAlign(rect.Y, pixelSize.Height));
+
+                    drawingContext.DrawLine(_pen, rect.TopLeft, rect.BottomLeft);
+                }
             }
         }
 
         public Rect GetRectForRange(IEnumerable<Rect> rects)
         {
+            if (rects.Count()== 0)
+            {
+                return Rect.Empty;
+            }
+
             var first = rects.FirstOrDefault();
             var last = rects.LastOrDefault();
 
-            return first.WithHeight(last.Y - first.Y).WithY(first.Y + first.Height);
+            return first.WithHeight(last.Y - first.Y);
         }
     }
 }
