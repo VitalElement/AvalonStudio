@@ -61,12 +61,14 @@ namespace AvalonStudio.Projects.OmniSharp
 
             var currentDir = Platform.ExecutionPath;
 
+            var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+
             var assemblies = new[]
             {
-                Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.dll")),
-                Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.CSharp.dll")),
-                Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.Features.dll")),
-                Assembly.LoadFrom(Path.Combine(currentDir, "Roslyn", "Microsoft.CodeAnalysis.CSharp.Features.dll")),
+                loadedAssemblies.First(a=>a.FullName.StartsWith("Microsoft.CodeAnalysis")),
+                loadedAssemblies.First(a=>a.FullName.StartsWith("Microsoft.CodeAnalysis.CSharp")),
+                loadedAssemblies.First(a => a.FullName.StartsWith( "Microsoft.CodeAnalysis.Features")),
+                loadedAssemblies.First(a => a.FullName.StartsWith( "Microsoft.CodeAnalysis.CSharp.Features")),
                 typeof(DiagnosticsService).Assembly,
             };
 
