@@ -1,0 +1,15 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+              xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
+              xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility">
+  <Grid Background="{StyleResource ThemeControlDarkBrush}" TextBlock.FontFamily="Segoi UI" TextBlock.FontSize="14" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+    <Border BorderBrush="#4D4D50" BorderThickness="1">
+      <StackPanel Margin="4 0">
+        <StackPanel Gap="2" Orientation="Horizontal">
+          <TextBlock Text="{Binding SelectedCompletion.Hint}" />
+          <TextBlock Text="{Binding SelectedCompletion.OverloadText}" />
+        </StackPanel>
+        <TextBlock Text="{Binding SelectedCompletion.Comment}" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

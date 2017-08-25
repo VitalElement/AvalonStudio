@@ -71,6 +71,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private TextColoringTransformer _textColorizer;
 
+        private ScopeLineBackgroundRenderer _scopeLineBackgroundRenderer;
+
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
         private bool _isLoaded = false;
@@ -313,7 +315,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Column = TextArea.Caret.Column;
                     EditorCaretOffset = TextArea.Caret.Offset;
 
-                    TextArea.TextView.InvalidateLayer(KnownLayer.Background); 
+                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
                 }
             });
 
@@ -585,6 +587,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     _diagnosticMarkersRenderer.SetDiagnostics(result.Diagnostics);
 
+                    _scopeLineBackgroundRenderer.ApplyIndex(result.IndexItems);
+
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         Diagnostics = result.Diagnostics;
@@ -623,7 +627,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 _diagnosticMarkersRenderer = new TextMarkerService(Document);
                 _textColorizer = new TextColoringTransformer(Document);
+                _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
 
+                TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
                 TextArea.TextView.LineTransformers.Add(_textColorizer);
 
@@ -646,7 +652,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void UnRegisterLanguageService()
         {
-            if(_textColorizer != null)
+            if (_scopeLineBackgroundRenderer != null)
+            {
+                TextArea.TextView.BackgroundRenderers.Remove(_scopeLineBackgroundRenderer);
+            }
+
+            if(_textColorizer != null)   
             {
                 TextArea.TextView.LineTransformers.Remove(_textColorizer);
                 _textColorizer = null;
