@@ -23,19 +23,7 @@ namespace AvalonStudio.Debugging.Commands
             });
         }
 
-        public override Path IconPath
-        {
-            get
-            {
-                return new Path
-                {
-                    Fill = Brush.Parse("#FFF38B76"),
-                    UseLayoutRounding = false,
-                    Stretch = Stretch.Uniform,
-                    Data = StreamGeometry.Parse("M18,18H6V6H18V18Z")
-                };
-            }
-        }
+        public override DrawingGroup Icon => this.GetCommandIcon("Stop");
 
         public override ICommand Command
         {
