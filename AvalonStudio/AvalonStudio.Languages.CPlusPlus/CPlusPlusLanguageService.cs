@@ -60,7 +60,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             _snippetCodeGenerators.Add("Dereference", (accessReference) =>
             {
-                switch(accessReference)
+                switch (accessReference)
                 {
                     case "&":
                         return "*";
@@ -461,7 +461,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             }
         }
-        
+
         private void GenerateHighlightData(ClangCursor cursor, SyntaxHighlightDataList highlightList, List<IndexEntry> result)
         {
             cursor.VisitChildren((current, parent, ptr) =>
@@ -475,7 +475,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         highlightList.Add(highlight);
                     }
 
-                    if(current.Kind == NClang.CursorKind.CompoundStatement)
+                    if (current.Kind == NClang.CursorKind.CompoundStatement)
                     {
                         result.Add(new IndexEntry(current.Spelling, current.CursorExtent.Start.FileLocation.Offset,
                             current.CursorExtent.End.FileLocation.Offset, (CursorKind)current.Kind));
