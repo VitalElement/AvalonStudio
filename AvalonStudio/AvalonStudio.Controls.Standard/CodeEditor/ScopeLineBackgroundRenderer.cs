@@ -63,7 +63,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             CaretPositioningMode.WordBorder);
                 }
 
-                var endLine = textView.Document.GetLineByOffset(entry.EndOffset);
+                var endLine = textView.Document.GetLineByOffset(entry.EndOffset <= textView.Document.TextLength ? entry.EndOffset : textView.Document.TextLength);
 
                 var newEntry = new TextSegment() { StartOffset = start, EndOffset = endLine.EndOffset };
 
