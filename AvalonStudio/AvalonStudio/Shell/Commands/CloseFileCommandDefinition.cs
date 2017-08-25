@@ -13,9 +13,7 @@ namespace AvalonStudio.Shell.Commands
 
         public override string ToolTip => "Close ToolTip";
         public override ICommand Command => _command;
-
-        public override Path IconPath => null;
-
+        
         public override KeyGesture Gesture => null;
     }
 }

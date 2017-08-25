@@ -37,7 +37,10 @@ namespace AvalonStudio.Extensibility.Editor
             int viewStart = visualLines.First().FirstDocumentLine.Offset;
             int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
 
-            foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart))
+            int start = Math.Min(viewStart, viewEnd);
+            int end = Math.Max(viewStart, viewEnd);
+
+            foreach (TextMarker marker in markers.FindOverlappingSegments(start, end - start))
             {
                 if (marker.EndOffset < textView.Document.TextLength)
                 {
@@ -71,11 +74,6 @@ namespace AvalonStudio.Extensibility.Editor
                     }
                 }
             }
-        }
-
-        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
-        {
-           
         }
 
         private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)

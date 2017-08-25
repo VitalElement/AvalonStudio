@@ -29,15 +29,7 @@ namespace AvalonStudio.Shell.Commands
 
         public override string ToolTip => "UnComments the selcted code.";
 
-        public override Path IconPath
-            =>
-                new Path
-                {
-                    Fill = Brush.Parse("WhiteSmoke"),
-                    UseLayoutRounding = false,
-                    Stretch = Stretch.Uniform,
-                    Data = StreamGeometry.Parse("M3,3H21V5H3V3M9,7H21V9H9V7M3,11H21V13H3V11M9,15H21V17H9V15M3,19H21V21H3V19Z")
-                };
+        public override DrawingGroup Icon => this.GetCommandIcon("UncommentCode");
 
         public override ICommand Command => _command;
     }
