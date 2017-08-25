@@ -70,6 +70,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private ColumnLimitBackgroundRenderer _columnLimitBackgroundRenderer;
 
+        private ScopeLineBackgroundRenderer _scopeLineBackgroundRenderer;
+
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
         private bool _isLoaded = false;
@@ -582,6 +584,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
+                        _scopeLineBackgroundRenderer.ApplyIndex(result.IndexItems);
+
                         Diagnostics = result.Diagnostics;
 
                         TextArea.TextView.Redraw();
@@ -616,6 +620,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 LanguageService.RegisterSourceFile(this, sourceFile, Document);
 
+                _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
+
+                TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
+
                 _languageServiceBackgroundRenderers.AddRange(LanguageService.GetBackgroundRenderers(sourceFile));
 
                 foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
@@ -649,6 +657,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void UnRegisterLanguageService()
         {
+            if(_scopeLineBackgroundRenderer != null)
+            {
+                TextArea.TextView.BackgroundRenderers.Remove(_scopeLineBackgroundRenderer);
+            }
+
             foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
             {
                 TextArea.TextView.BackgroundRenderers.Remove(backgroundRenderer);
