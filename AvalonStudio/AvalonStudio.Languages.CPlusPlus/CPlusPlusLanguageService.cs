@@ -475,10 +475,14 @@ namespace AvalonStudio.Languages.CPlusPlus
                         highlightList.Add(highlight);
                     }
 
-                    if (current.Kind == NClang.CursorKind.CompoundStatement)
+                    switch(current.Kind)
                     {
-                        result.Add(new IndexEntry(current.Spelling, current.CursorExtent.Start.FileLocation.Offset,
+                        case NClang.CursorKind.CompoundStatement:
+                        case NClang.CursorKind.ClassDeclaration:
+                        case NClang.CursorKind.Namespace:
+                            result.Add(new IndexEntry(current.Spelling, current.CursorExtent.Start.FileLocation.Offset,
                             current.CursorExtent.End.FileLocation.Offset, (CursorKind)current.Kind));
+                            break;
                     }
 
                     return ChildVisitResult.Recurse;
