@@ -76,11 +76,6 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
-        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
-        {
-           
-        }
-
         private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
         {
             for (var i = 0; i < count; i++)
