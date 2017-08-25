@@ -1,3 +1,4 @@
+using Avalonia.Media;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using ReactiveUI;
@@ -14,9 +15,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             RemoveCommand = ReactiveCommand.Create();
             RemoveCommand.Subscribe(o => { model.Project.ExcludeFile(model); });
+
+            Icon = model.Extension.Replace(".","").ToDrawingGroup();
         }
 
         public new ReactiveCommand<object> OpenInExplorerCommand { get; }
         public ReactiveCommand<object> RemoveCommand { get; }
+        public DrawingGroup Icon { get; private set; }
     }
 }

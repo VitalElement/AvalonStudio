@@ -1,0 +1,33 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard">
+  <Style>
+    <Style.Resources>
+            <DrawingGroup x:Key="FileIconH">
+
+            </DrawingGroup>
+
+            <DrawingGroup x:Key="FileIconHPP">
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M15,7L13,7 13,5 7,5 7,3 3,3 3,5 1,5 1,9 3,9 3,11 9,11 9,13 13,13 13,11 15,11z" />
+                <GeometryDrawing Brush="#FF9B4E96" Geometry="F1M6,6L6,4 4,4 4,6 2,6 2,8 4,8 4,10 6,10 6,8 8,8 8,6z" />
+                <GeometryDrawing Brush="#FF9B4E96" Geometry="F1M14,8L12,8 12,6 10,6 10,8 8,8 8,10 10,10 10,12 12,12 12,10 14,10z" />
+            </DrawingGroup>
+
+            <DrawingGroup x:Key="FileIconC">
+
+            </DrawingGroup>
+
+            <DrawingGroup x:Key="FileIconCPP">
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M15,7L13,7 13,5 7,5 7,3 3,3 3,5 1,5 1,9 3,9 3,11 9,11 9,13 13,13 13,11 15,11z" />
+                <GeometryDrawing Brush="#FF9B4E96" Geometry="F1M6,6L6,4 4,4 4,6 2,6 2,8 4,8 4,10 6,10 6,8 8,8 8,6z" />
+                <GeometryDrawing Brush="#FF9B4E96" Geometry="F1M14,8L12,8 12,6 10,6 10,8 8,8 8,10 10,10 10,12 12,12 12,10 14,10z" />
+            </DrawingGroup>
+
+            <DrawingGroup x:Key="FileIconCS">
+
+            </DrawingGroup>
+        </Style.Resources>
+  </Style>
+</Styles>
