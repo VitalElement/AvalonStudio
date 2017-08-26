@@ -31,7 +31,8 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AvalonStudio.IdeSettings;
+using AvalonStudio.Controls.Standard.CodeEditor;
+using AvalonStudio.Extensibility.Editor;
 
 namespace AvalonStudio
 {
@@ -91,6 +92,24 @@ namespace AvalonStudio
             _toolBarDefinitions = new List<ToolBarDefinition>();
             _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
             _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
+
+            DefaultColorSchemeCommand = ReactiveCommand.Create();
+            DefaultColorSchemeCommand.Subscribe(_ =>
+            {
+                CurrentColorScheme = ColorScheme.Default;
+            });
+
+            SolarizedDarkColorSchemeCommand = ReactiveCommand.Create();
+            SolarizedDarkColorSchemeCommand.Subscribe(_ =>
+            {
+                CurrentColorScheme = ColorScheme.SolarizedDark;
+            });
+
+            SolarizedLightColorSchemeCommand = ReactiveCommand.Create();
+            SolarizedLightColorSchemeCommand.Subscribe(_ =>
+            {
+                CurrentColorScheme = ColorScheme.SolarizedLight;
+            });
 
             IoC.RegisterConstant(this, typeof(IShell));
 
@@ -659,6 +678,27 @@ namespace AvalonStudio
                 //TODO implement code analysis trigger.
             }
         }
+
+        private ColorScheme _currentColorScheme;
+
+        public ColorScheme CurrentColorScheme
+        {
+            get { return _currentColorScheme; }
+
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
+
+                foreach(var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+                {
+                    document.ColorScheme = value;
+                }
+            }
+        }
+
+        public ReactiveCommand<object> DefaultColorSchemeCommand { get; }
+        public ReactiveCommand<object> SolarizedDarkColorSchemeCommand { get; }
+        public ReactiveCommand<object> SolarizedLightColorSchemeCommand { get; }
 
         public ISolution CurrentSolution
         {
