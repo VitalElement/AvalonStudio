@@ -77,6 +77,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private bool _isLoaded = false;
 
+        private EditorSettings _settings;
+
         private bool _textEntering;
         private readonly IShell _shell;
         private Subject<bool> _analysisTriggerEvents = new Subject<bool>();
@@ -183,6 +185,22 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 else
                 {
                     TextArea.TextView.BackgroundRenderers.Remove(_columnLimitBackgroundRenderer);
+                }
+            });
+
+            this.GetObservable(ColorSchemeProperty).Subscribe(colorScheme =>
+            {
+                if (colorScheme != null)
+                {
+                    Background = colorScheme.Background;
+                    Foreground = colorScheme.Text;
+
+                    _lineNumberMargin.Background = colorScheme.BackgroundAccent;
+                    _textColorizer.ColorScheme = colorScheme;
+                    
+                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+
+                    TriggerCodeAnalysis();
                 }
             });
 
@@ -853,6 +871,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set { SetValue(BackgroundRenderersProperty, value); }
         }
 
+        public static readonly StyledProperty<ColorScheme> ColorSchemeProperty =
+            AvaloniaProperty.Register<CodeEditor, ColorScheme>(nameof(ColorScheme));
+
+        public ColorScheme ColorScheme
+        {
+            get => GetValue(ColorSchemeProperty);
+            set => SetValue(ColorSchemeProperty, value);
+        }
+
         public static readonly StyledProperty<TextSegmentCollection<Diagnostic>> DiagnosticsProperty =
             AvaloniaProperty.Register<CodeEditor, TextSegmentCollection<Diagnostic>>(nameof(Diagnostics), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
@@ -953,5 +980,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _selectedDebugLineBackgroundRenderer.SetLocation(-1);
         }
+
+        public EditorSettings Settings
+        {
+            get { return _settings; }
+            set { _settings = value; }
+        }
+
     }
 }
