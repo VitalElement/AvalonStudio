@@ -43,6 +43,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// </summary>
         protected double EmSize;
 
+        public IBrush Background { get; set; }
         public IBrush Foreground { get; set; }
         public IBrush SelectedLineForeground { get; set; }
 
