@@ -51,7 +51,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             set
             {
                 isExpanded = value;
-                this.RaisePropertyChanged(nameof(IsExpanded));
+                this.RaisePropertyChanged(nameof(Icon));
             }
         }
 
