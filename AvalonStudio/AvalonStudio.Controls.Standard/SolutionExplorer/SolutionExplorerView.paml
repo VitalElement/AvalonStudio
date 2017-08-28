@@ -61,10 +61,7 @@
                 <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
               </ContextMenu>
             </StackPanel.ContextMenu>
-            <Panel Width="15" Height="15" Background="#A08631c7" Margin="0 0 5 0">
-
-              <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
-            </Panel>
+            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
             <TextBlock Text="{Binding Title}" Height="15" FontWeight="{Binding FontWeight}" />
           </StackPanel>
         </TreeDataTemplate>
@@ -72,10 +69,7 @@
         <TreeDataTemplate DataType="ViewModels:ReferenceFolderViewModel" ItemsSource="{Binding References}">
           <Grid RowDefinitions="*,*">
             <StackPanel Orientation="Horizontal">
-              <Panel Width="15" Height="15" Background="#A0c4c4c4" Margin="0 0 5 0">
-
-                <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
-              </Panel>
+              <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
               <TextBlock Text="{Binding Title}" Height="15" />
             </StackPanel>
           </Grid>
@@ -84,10 +78,7 @@
         <TreeDataTemplate DataType="ViewModels:ReferenceViewModel">
           <Grid RowDefinitions="*,*">
             <StackPanel Orientation="Horizontal">
-              <Panel Width="15" Height="15" Background="#A0c4c4c4" Margin="0 0 5 0">
-
-                <!--<Image Source="Resources/Icons/Templarian/dark/appbar.minus.png" Opacity="0.5" />!-->
-              </Panel>
+              <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
               <TextBlock Text="{Binding Name}" Height="15" />
             </StackPanel>
           </Grid>
@@ -127,10 +118,7 @@
                 </MenuItem>
               </ContextMenu>
             </StackPanel.ContextMenu>
-            <Panel Width="15" Height="15" Background="#A0DBA769" Margin="0 0 5 0">
-
-
-            </Panel>
+            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
             <TextBlock Text="{Binding Title}" Height="15" />
           </StackPanel>
         </TreeDataTemplate>

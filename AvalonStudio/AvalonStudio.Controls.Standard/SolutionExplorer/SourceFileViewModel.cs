@@ -8,6 +8,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     public class SourceFileViewModel : ProjectItemViewModel<ISourceFile>
     {
+        private DrawingGroup _icon;
+
         public SourceFileViewModel(ISourceFile model) : base(model)
         {
             OpenInExplorerCommand = ReactiveCommand.Create();
@@ -16,11 +18,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             RemoveCommand = ReactiveCommand.Create();
             RemoveCommand.Subscribe(o => { model.Project.ExcludeFile(model); });
 
-            Icon = model.Extension.Replace(".","").ToDrawingGroup();
+            _icon = model.Extension.Replace(".","").ToFileIcon();
         }
 
         public new ReactiveCommand<object> OpenInExplorerCommand { get; }
         public ReactiveCommand<object> RemoveCommand { get; }
-        public DrawingGroup Icon { get; private set; }
+
+        public override DrawingGroup Icon => _icon;
     }
 }

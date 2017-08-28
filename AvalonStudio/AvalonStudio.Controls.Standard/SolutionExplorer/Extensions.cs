@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
+using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +12,28 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     {
         private static readonly CompletionIconService _service = new CompletionIconService();
 
-        public static DrawingGroup ToDrawingGroup(this string extension) => _service.GetCompletionKindImage("FileIcon" + extension.ToUpper());
+        public static DrawingGroup ToFileIcon(this string extension) => _service.GetCompletionKindImage("FileIcon" + extension.ToUpper());
+        public static DrawingGroup GetIcon(this string resourceName) => _service.GetCompletionKindImage(resourceName);
+
+        public static DrawingGroup GetIcon(this IProject project)
+        {
+            var name = project.GetType().ToString();
+
+            if (name.EndsWith("CPlusPlusProject"))
+            {
+                return "CPPIcon".GetIcon();
+            }
+            else if (name.EndsWith("OmnisharpProject"))
+            {
+                return "CSharpIcon".GetIcon();
+            }
+            else if (name.EndsWith("TypeScriptProject"))
+            {
+                return "TypeScriptIcon".GetIcon();
+            }
+
+            return null;
+        }
 
         private class CompletionIconService
         {

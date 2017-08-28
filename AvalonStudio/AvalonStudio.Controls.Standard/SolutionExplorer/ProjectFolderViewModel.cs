@@ -7,6 +7,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     using ReactiveUI;
     using System;
     using System.Collections.ObjectModel;
+    using Avalonia.Media;
 
     internal class ProjectFolderViewModel : ProjectItemViewModel<IProjectFolder>
     {
@@ -35,6 +36,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public ReactiveCommand<object> NewItemCommand { get; }
         public ReactiveCommand<object> RemoveCommand { get; }
+
+        public override DrawingGroup Icon => "FolderIcon".GetIcon();
 
         public static ProjectFolderViewModel Create(IProjectFolder model)
         {
