@@ -35,7 +35,7 @@
         </TreeDataTemplate>
 
         <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Items}">
-          <StackPanel Orientation="Horizontal" IsVisible="{Binding IsVisible}">
+          <StackPanel Orientation="Horizontal" IsVisible="{Binding IsVisible}" Gap="4">
             <StackPanel.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="Configure" Command="{Binding ConfigureCommand}"/>
@@ -68,7 +68,7 @@
 
         <TreeDataTemplate DataType="ViewModels:ReferenceFolderViewModel" ItemsSource="{Binding References}">
           <Grid RowDefinitions="*,*">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Gap="4">
               <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
               <TextBlock Text="{Binding Title}" Height="15" />
             </StackPanel>
@@ -77,7 +77,7 @@
 
         <TreeDataTemplate DataType="ViewModels:ReferenceViewModel">
           <Grid RowDefinitions="*,*">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Gap="4">
               <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
               <TextBlock Text="{Binding Name}" Height="15" />
             </StackPanel>
@@ -85,7 +85,7 @@
         </TreeDataTemplate>
 
         <TreeDataTemplate DataType="ViewModels:SourceFileViewModel">
-          <StackPanel Orientation="Horizontal">
+          <StackPanel Orientation="Horizontal" Gap="4">
             <StackPanel.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="Rename" />
@@ -100,7 +100,7 @@
         </TreeDataTemplate>
 
         <TreeDataTemplate DataType="ViewModels:ProjectFolderViewModel" ItemsSource="{Binding Items}">
-          <StackPanel Orientation="Horizontal">
+          <StackPanel Orientation="Horizontal" Gap="4">
             <StackPanel.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="Rename" />
