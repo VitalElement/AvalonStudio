@@ -47,6 +47,8 @@ namespace AvalonStudio.Projects
 
         ISourceFile FindFile(string path);
 
+        IReadOnlyList<ISourceFile> SourceFiles { get; }
+
         event EventHandler FileAdded;
 
         /// <summary>
