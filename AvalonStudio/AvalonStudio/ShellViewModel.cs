@@ -650,13 +650,6 @@ namespace AvalonStudio
             set { this.RaiseAndSetIfChanged(ref modalDialog, value); }
         }
 
-        public QuickCommanderViewModel QuickCommander
-        {
-            get { return _quickCommander; }
-            set { this.RaiseAndSetIfChanged(ref _quickCommander, value); }
-        }
-
-
         public void InvalidateCodeAnalysis()
         {
             foreach (var document in DocumentTabs.Documents)
