@@ -396,6 +396,11 @@ namespace AvalonStudio
 
         public void RemoveDocument(IDocumentTabViewModel document)
         {
+            if(document == null)
+            {
+                return;
+            }
+
             IDocumentTabViewModel newSelectedTab = DocumentTabs.SelectedDocument;
 
             if (DocumentTabs.SelectedDocument == document)
@@ -660,15 +665,8 @@ namespace AvalonStudio
 
         public ModalDialogViewModelBase ModalDialog
         {
-            get
-            {
-                return modalDialog;
-            }
-            set
-            {
-                modalDialog = value;
-                this.RaisePropertyChanged();
-            }
+            get { return modalDialog; }
+            set { this.RaiseAndSetIfChanged(ref modalDialog, value); }
         }
 
         public void InvalidateCodeAnalysis()
