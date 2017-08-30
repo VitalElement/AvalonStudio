@@ -76,31 +76,31 @@ namespace AvalonStudio.Extensibility.Editor
         [JsonProperty(PropertyName ="editor.keyword")]
         public IBrush Keyword { get; set; }
 
-        [JsonProperty]
+        [JsonProperty(PropertyName = "editor.literal")]
         public IBrush Literal { get; set; }
 
-        [JsonProperty]
+        [JsonProperty(PropertyName = "editor.identifier")]
         public IBrush Identifier { get; set; }
 
-        [JsonProperty]
+        [JsonProperty(PropertyName = "editor.callexpression")]
         public IBrush CallExpression { get; set; }
 
-        [JsonProperty]
+        [JsonProperty(PropertyName = "editor.numericliteral")]
         public IBrush NumericLiteral { get; set; }
 
-        [JsonProperty]
+        [JsonProperty(PropertyName = "editor.enumconst")]
         public IBrush EnumConstant { get; set; }
 
-        [JsonProperty]
+        [JsonProperty(PropertyName = "editor.enum")]
         public IBrush EnumType { get; set; }
 
-        [JsonProperty]
+        [JsonProperty(PropertyName = "editor.interface")]
         public IBrush InterfaceType { get; set; }
 
-        [JsonProperty]
+        [JsonProperty(PropertyName = "editor.punctuation")]
         public IBrush Punctuation { get; set; }
 
-        [JsonProperty]
+        [JsonProperty(PropertyName = "editor.type")]
         public IBrush Type { get; set; }
 
         public void Save(string fileName)
