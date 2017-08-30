@@ -69,6 +69,8 @@ namespace AvalonStudio
 
         private ModalDialogViewModelBase modalDialog;
 
+        private QuickCommanderViewModel _quickCommander;
+
         private ObservableCollection<object> tools;
 
         [ImportingConstructor]
@@ -92,7 +94,8 @@ namespace AvalonStudio
             _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
             _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
 
-            IoC.RegisterConstant(this, typeof(IShell));
+            IoC.RegisterConstant<IShell>(this);
+            IoC.RegisterConstant(this);
 
             foreach (var extension in extensions)
             {
@@ -121,6 +124,8 @@ namespace AvalonStudio
             MiddleTopTabs = new TabControlViewModel();
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
+
+            QuickCommander = new QuickCommanderViewModel();
 
             OnSolutionChanged = Observable.FromEventPattern<SolutionChangedEventArgs>(this, nameof(SolutionChanged)).Select(s => s.EventArgs.NewValue);
 
@@ -160,9 +165,9 @@ namespace AvalonStudio
                 menuItemDefinition.Activation();
             }
 
-            foreach (var menuItemDefinition in _menuItemGroupDefinitions)
+            foreach (var menuItemAsReadOnlyDefinition in _menuItemGroupDefinitions)
             {
-                menuItemDefinition.Activation();
+                menuItemAsReadOnlyDefinition.Activation();
             }
 
             foreach (var extension in _menuItemDefinitions)
@@ -377,6 +382,11 @@ namespace AvalonStudio
 
         public void RemoveDocument(IDocumentTabViewModel document)
         {
+            if(document == null)
+            {
+                return;
+            }
+
             IDocumentTabViewModel newSelectedTab = DocumentTabs.SelectedDocument;
 
             if (DocumentTabs.SelectedDocument == document)
@@ -458,7 +468,7 @@ namespace AvalonStudio
             DocumentTabs.InvalidateSeperatorVisibility();
         }
 
-        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
+        public async Task<IEditor> OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
         {
             bool restoreFromCache = false;
 
@@ -476,6 +486,8 @@ namespace AvalonStudio
                 if (DocumentTabs.TemporaryDocument != null)
                 {
                     documentToClose = DocumentTabs.TemporaryDocument;
+
+                    await documentToClose.CloseCommand.ExecuteAsyncTask(null);
                 }
 
                 EditorViewModel newEditor = null;
@@ -509,19 +521,24 @@ namespace AvalonStudio
                 DocumentTabs.SelectedDocument = currentTab;
             }
 
-            if (DocumentTabs.SelectedDocument is IEditor)
+            if (DocumentTabs.SelectedDocument is IEditor editor)
             {
                 // ensures that the document has been opened and created.
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     if (debugHighlight)
                     {
-                        (DocumentTabs.SelectedDocument as IEditor).SetDebugHighlight(line, startColumn, endColumn);
+                        editor.SetDebugHighlight(line, startColumn, endColumn);
                     }
 
                     if (selectLine || debugHighlight)
                     {
-                        (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                        editor.GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                    }
+
+                    if (focus)
+                    {
+                        editor.Focus();
                     }
 
                     if (documentToClose != null)
@@ -608,6 +625,11 @@ namespace AvalonStudio
             }
         }
 
+        public void ShowQuickCommander()
+        {
+            this._quickCommander.IsVisible = true;
+        }
+
         public ObservableCollection<object> Tools
         {
             get { return tools; }
@@ -641,16 +663,16 @@ namespace AvalonStudio
 
         public ModalDialogViewModelBase ModalDialog
         {
-            get
-            {
-                return modalDialog;
-            }
-            set
-            {
-                modalDialog = value;
-                this.RaisePropertyChanged();
-            }
+            get { return modalDialog; }
+            set { this.RaiseAndSetIfChanged(ref modalDialog, value); }
         }
+
+        public QuickCommanderViewModel QuickCommander
+        {
+            get { return _quickCommander; }
+            set { this.RaiseAndSetIfChanged(ref _quickCommander, value); }
+        }
+
 
         public void InvalidateCodeAnalysis()
         {

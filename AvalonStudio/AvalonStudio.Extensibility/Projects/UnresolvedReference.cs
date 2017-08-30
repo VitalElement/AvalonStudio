@@ -50,6 +50,8 @@
         public IProject Project { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IProjectFolder Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        public IReadOnlyList<ISourceFile> SourceFiles => throw new NotImplementedException();
+
         public event EventHandler FileAdded;
 
         public void AddReference(IProject project)

@@ -1,0 +1,12 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions.Custom"
+             xmlns:beh="clr-namespace:AvalonStudio.Behaviors;assembly=AvalonStudio">
+    <StackPanel Orientation="Horizontal" Gap="4">
+        <TextBlock Text="{Binding Priority}" FontSize="16"/>
+        <StackPanel>
+            <TextBlock Text="{Binding Title}" FontSize="14" />
+            <beh:FormattedTextBlock Name="LocationTextBlock" Text="{Binding Location}" FontSize="10" Spans="{Binding  Spans}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>
