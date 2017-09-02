@@ -1,6 +1,5 @@
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
-using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Projects;
@@ -48,10 +47,6 @@ namespace AvalonStudio.Languages
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
 
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
-
-        IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file);
-
-        IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
 
         void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);
 

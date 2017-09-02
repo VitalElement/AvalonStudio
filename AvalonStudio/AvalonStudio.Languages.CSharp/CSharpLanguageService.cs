@@ -214,20 +214,6 @@
             return cursor;
         }
 
-        public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
-        {
-            var associatedData = GetAssociatedData(file);
-
-            return associatedData.BackgroundRenderers;
-        }
-
-        public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
-        {
-            var associatedData = GetAssociatedData(file);
-
-            return associatedData.DocumentLineTransformers;
-        }
-
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
         {
             return null;
@@ -296,7 +282,7 @@
 
             IndentationStrategy = new CSharpIndentationStrategy(editor.Options);
 
-            association = new CSharpDataAssociation(doc);
+            association = new CSharpDataAssociation();
             association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.
 
             dataAssociations.Add(file, association);
@@ -420,8 +406,6 @@
                         Type = ToAvalonHighlightType(highlight.Kind)
                     });
                 }
-
-                dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
             }
 
             return result;
