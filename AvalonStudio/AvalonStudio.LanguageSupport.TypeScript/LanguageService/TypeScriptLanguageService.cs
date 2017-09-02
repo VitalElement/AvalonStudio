@@ -178,20 +178,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return -1;
         }
 
-        public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
-        {
-            var associatedData = GetAssociatedData(file);
-
-            return associatedData.BackgroundRenderers;
-        }
-
-        public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
-        {
-            var associatedData = GetAssociatedData(file);
-
-            return associatedData.DocumentLineTransformers;
-        }
-
         public Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
         {
             //STUB!
@@ -217,7 +203,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 throw new InvalidOperationException("Source file already registered with language service.");
             }
 
-            association = new TypeScriptDataAssociation(textDocument);
+            association = new TypeScriptDataAssociation();
             dataAssociations.Add(file, association);
         }
 
@@ -305,9 +291,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 HighlightNode(rootStatement, result);
             }
 
-            // Clean up previous highlighting
-            dataAssociation.TextMarkerService.Clear();
-
             // Diagnostics
 
             // Language service has diagnostics
@@ -336,8 +319,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 File = file.Name,
                 Level = DiagnosticLevel.Warning,
             });
-
-            dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
         }
