@@ -1,0 +1,5 @@
+﻿<Application xmlns="https://github.com/avaloniaui">
+  <Application.Styles>
+    <StyleInclude Source="resm:Avalonia.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.Themes.Default"/>    
+  </Application.Styles>
+</Application>
