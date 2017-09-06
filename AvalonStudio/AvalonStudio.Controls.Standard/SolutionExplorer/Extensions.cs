@@ -47,7 +47,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                     if (resource == AvaloniaProperty.UnsetValue)
                     {
-                        System.Console.WriteLine($"No intellisense icon provided for {extension}");
+                        //System.Console.WriteLine($"No intellisense icon provided for {extension}");
                     }
                     else
                     {
