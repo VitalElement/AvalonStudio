@@ -104,6 +104,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             });
         }
 
+        public DrawingGroup Icon => Model.GetIcon();
+
         public bool IsExpanded { get; set; }
 
         public string Title => Model.Name;

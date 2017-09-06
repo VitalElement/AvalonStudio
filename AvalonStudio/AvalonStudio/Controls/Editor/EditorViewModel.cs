@@ -459,20 +459,20 @@ namespace AvalonStudio.Controls
 
         public void Save()
         {
-            ignoreFileModifiedEvents = true;
-
             if (IsDirty)
             {
+                ignoreFileModifiedEvents = true;
+
                 FormatAll();
+
+                _editor?.Save();
+
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    ignoreFileModifiedEvents = false;
+                    IsDirty = false;
+                });
             }
-
-            _editor?.Save();
-
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                ignoreFileModifiedEvents = false;
-                IsDirty = false;
-            });
         }
 
         public void Close()
