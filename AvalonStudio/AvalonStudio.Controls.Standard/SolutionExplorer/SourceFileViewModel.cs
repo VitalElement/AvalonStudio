@@ -19,6 +19,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             RemoveCommand.Subscribe(o => { model.Project.ExcludeFile(model); });
 
             _icon = model.Extension.Replace(".","").ToFileIcon();
+
+            if(_icon == null)
+            {
+                _icon = "Txt".ToFileIcon();
+            }
         }
 
         public new ReactiveCommand<object> OpenInExplorerCommand { get; }
