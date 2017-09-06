@@ -1,3 +1,4 @@
+using Avalonia.Media;
 using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 
@@ -13,5 +14,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             get { return Model.Name; }
         }
+
+        public DrawingGroup Icon => "ReferenceIcon".GetIcon();
     }
 }
