@@ -1,3 +1,4 @@
+using Avalonia.Media;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using ReactiveUI;
@@ -7,6 +8,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     public class SourceFileViewModel : ProjectItemViewModel<ISourceFile>
     {
+        private DrawingGroup _icon;
+
         public SourceFileViewModel(ISourceFile model) : base(model)
         {
             OpenInExplorerCommand = ReactiveCommand.Create();
@@ -14,9 +17,18 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             RemoveCommand = ReactiveCommand.Create();
             RemoveCommand.Subscribe(o => { model.Project.ExcludeFile(model); });
+
+            _icon = model.Extension.Replace(".","").ToFileIcon();
+
+            if(_icon == null)
+            {
+                _icon = "Txt".ToFileIcon();
+            }
         }
 
         public new ReactiveCommand<object> OpenInExplorerCommand { get; }
         public ReactiveCommand<object> RemoveCommand { get; }
+
+        public override DrawingGroup Icon => _icon;
     }
 }

@@ -12,5 +12,6 @@
     <StyleInclude Source="resm:AvaloniaEdit.AvaloniaEdit.xaml?assembly=AvaloniaEdit" />
     <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.CodeEditor.xaml?assembly=AvalonStudio.Controls.Standard" />
     <StyleInclude Source="resm:AvalonStudio.Debugging.Icons.Icons.xaml?assembly=AvalonStudio.Debugging" />
+    <StyleInclude Source="resm:AvalonStudio.Controls.Standard.SolutionExplorer.Icons.Icons.xaml?assembly=AvalonStudio.Controls.Standard" />
   </Application.Styles>
 </Application>
