@@ -55,7 +55,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-
         public override DrawingGroup Icon => IsExpanded ? _folderOpenIcon : _folderIcon;
 
         public static ProjectFolderViewModel Create(IProjectFolder model)
