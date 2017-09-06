@@ -14,8 +14,8 @@
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.2-build3697-alpha" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.5.2-build3697-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.2-build3791-alpha" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.5.2-build3791-alpha" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.1-build446-alpha" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
