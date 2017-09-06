@@ -50,10 +50,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
-        private readonly List<IBackgroundRenderer> _languageServiceBackgroundRenderers = new List<IBackgroundRenderer>();
-
-        private readonly List<IVisualLineTransformer> _languageServiceDocumentLineTransformers = new List<IVisualLineTransformer>();
-
         private SnippetManager _snippetManager;
 
         public IntellisenseViewModel Intellisense => _intellisense;
@@ -71,7 +67,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private ColumnLimitBackgroundRenderer _columnLimitBackgroundRenderer;
 
-        private TextMarkerService _diagnosticMarkers;
+        private TextMarkerService _diagnosticMarkersRenderer;
+
+        private TextColoringTransformer _textColorizer;
 
         private ScopeLineBackgroundRenderer _scopeLineBackgroundRenderer;
 
@@ -590,7 +588,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, document, unsavedFiles, () => false);
 
-                    _scopeLineBackgroundRenderer.ApplyIndex(result.IndexItems);
+                    _textColorizer?.SetTransformations(result.SyntaxHighlightingData);
+
+                    _diagnosticMarkersRenderer?.SetDiagnostics(result.Diagnostics);
+
+                    _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -624,23 +626,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 LanguageService.RegisterSourceFile(this, sourceFile, Document);
 
+                _diagnosticMarkersRenderer = new TextMarkerService(Document);
+                _textColorizer = new TextColoringTransformer(Document);
                 _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
 
                 TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
-
-                _languageServiceBackgroundRenderers.AddRange(LanguageService.GetBackgroundRenderers(sourceFile));
-
-                foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
-                {
-                    TextArea.TextView.BackgroundRenderers.Add(backgroundRenderer);
-                }
-
-                _languageServiceDocumentLineTransformers.AddRange(LanguageService.GetDocumentLineTransformers(sourceFile));
-
-                foreach (var transformer in _languageServiceDocumentLineTransformers)
-                {
-                    TextArea.TextView.LineTransformers.Insert(0, transformer);
-                }
+                TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
+                TextArea.TextView.LineTransformers.Add(_textColorizer);
 
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
@@ -704,19 +696,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 TextArea.TextView.BackgroundRenderers.Remove(_scopeLineBackgroundRenderer);
             }
 
-            foreach (var backgroundRenderer in _languageServiceBackgroundRenderers)
+            if(_textColorizer != null)   
             {
-                TextArea.TextView.BackgroundRenderers.Remove(backgroundRenderer);
+                TextArea.TextView.LineTransformers.Remove(_textColorizer);
+                _textColorizer = null;
             }
 
-            _languageServiceBackgroundRenderers.Clear();
-
-            foreach (var transformer in _languageServiceDocumentLineTransformers)
+            if(_diagnosticMarkersRenderer != null)
             {
-                TextArea.TextView.LineTransformers.Remove(transformer);
+                TextArea.TextView.BackgroundRenderers.Remove(_diagnosticMarkersRenderer);
+                _diagnosticMarkersRenderer = null;
             }
-
-            _languageServiceDocumentLineTransformers.Clear();
 
             ShutdownBackgroundWorkers();
 

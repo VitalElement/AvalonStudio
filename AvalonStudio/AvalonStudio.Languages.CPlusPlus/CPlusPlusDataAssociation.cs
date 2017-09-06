@@ -12,26 +12,7 @@
 
     internal class CPlusPlusDataAssociation
     {
-        public CPlusPlusDataAssociation(TextDocument textDocument)
-        {
-            BackgroundRenderers = new List<IBackgroundRenderer>();
-            DocumentLineTransformers = new List<IVisualLineTransformer>();
-
-            TextColorizer = new TextColoringTransformer(textDocument);
-            BackgroundRenderers.Add(new BracketMatchingBackgroundRenderer());
-
-            DocumentLineTransformers.Add(TextColorizer);
-            DocumentLineTransformers.Add(new DefineTextLineTransformer());
-            DocumentLineTransformers.Add(new PragmaMarkTextLineTransformer());
-            DocumentLineTransformers.Add(new IncludeTextLineTransformer());
-            Diagnostics = new Subject<TextSegmentCollection<Diagnostic>>();
-        }
-
-        public Subject<TextSegmentCollection<Diagnostic>> Diagnostics { get; set; }
         public ClangTranslationUnit TranslationUnit { get; set; }
-        public TextColoringTransformer TextColorizer { get; }
-        public List<IBackgroundRenderer> BackgroundRenderers { get; }
-        public List<IVisualLineTransformer> DocumentLineTransformers { get; }
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
     }
 }

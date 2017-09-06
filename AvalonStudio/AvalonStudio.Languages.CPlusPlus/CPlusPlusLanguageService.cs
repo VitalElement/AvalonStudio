@@ -496,7 +496,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }, IntPtr.Zero);
         }
 
-        private TextSegmentCollection<Diagnostic> GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project)
+        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result)
         {
             var result = new TextSegmentCollection<Diagnostic>();
 
@@ -562,15 +562,13 @@ namespace AvalonStudio.Languages.CPlusPlus
                         
                         var diagnostics = GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project);
 
-                        dataAssociation.Diagnostics.OnNext(diagnostics);
+                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics);
                     }
                 }
                 catch (Exception e)
                 {
                 }
             });
-
-            dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
         }
@@ -602,16 +600,14 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
         {
-            CPlusPlusDataAssociation association = null;
-
-            if (dataAssociations.TryGetValue(file, out association))
+            if (dataAssociations.TryGetValue(file, out CPlusPlusDataAssociation association))
             {
                 throw new Exception("Source file already registered with language service.");
             }
 
             IndentationStrategy = new CSharpIndentationStrategy(editor.Options);
 
-            association = new CPlusPlusDataAssociation(doc);
+            association = new CPlusPlusDataAssociation();
             dataAssociations.Add(file, association);
 
             association.TextInputHandler = (sender, e) =>
@@ -654,20 +650,6 @@ namespace AvalonStudio.Languages.CPlusPlus
             };
 
             editor.TextArea.TextEntered += association.TextInputHandler;
-        }
-
-        public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
-        {
-            var associatedData = GetAssociatedData(file);
-
-            return associatedData.DocumentLineTransformers;
-        }
-
-        public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
-        {
-            var associatedData = GetAssociatedData(file);
-
-            return associatedData.BackgroundRenderers;
         }
 
         public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
