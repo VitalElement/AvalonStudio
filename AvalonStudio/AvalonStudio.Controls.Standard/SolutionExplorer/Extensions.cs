@@ -43,16 +43,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 if (!_cache.TryGetValue(extension, out var image))
                 {
-                    var resource = Application.Current.FindStyleResource(extension);
-
-                    if (resource == AvaloniaProperty.UnsetValue)
-                    {
-                        //System.Console.WriteLine($"No intellisense icon provided for {extension}");
-                    }
-                    else
+                    if (Application.Current.Resources.TryGetResource(extension, out object resource))
                     {
                         image = resource as DrawingGroup;
                         _cache.Add(extension, image);
+                    }
+                    else
+                    {
+                        //System.Console.WriteLine($"No intellisense icon provided for {extension}");
                     }
                 }
 
