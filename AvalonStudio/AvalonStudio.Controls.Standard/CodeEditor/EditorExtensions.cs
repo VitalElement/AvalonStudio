@@ -35,6 +35,23 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return result;
         }
 
+        public static int GetIntellisenseStartPosition(this ITextSource textSource, int offset)
+        {
+            while (true)
+            {
+                var currentChar = textSource.GetCharAt(offset - 1);
+
+                if (!char.IsLetterOrDigit(currentChar) || offset < 0)
+                {
+                    break;
+                }
+
+                offset--;
+            }
+
+            return offset;
+        }
+
         public static string GetWordAtIndex(this AvaloniaEdit.TextEditor editor, int index)
         {
             var result = string.Empty;
