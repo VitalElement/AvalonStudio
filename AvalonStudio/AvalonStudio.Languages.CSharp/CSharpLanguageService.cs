@@ -82,6 +82,11 @@
             '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
+        public IEnumerable<char> ValidIdentifierCharacters => new[]
+        {
+            '_'
+        };
+
         public IIndentationStrategy IndentationStrategy
         {
             get; private set;

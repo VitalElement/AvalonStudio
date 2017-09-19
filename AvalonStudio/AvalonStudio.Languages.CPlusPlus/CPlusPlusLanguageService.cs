@@ -134,6 +134,11 @@ namespace AvalonStudio.Languages.CPlusPlus
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
+        public IEnumerable<char> ValidIdentifierCharacters => new[]
+        {
+            '_'
+        };
+
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => _snippetCodeGenerators;
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;

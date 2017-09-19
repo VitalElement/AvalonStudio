@@ -292,7 +292,7 @@
 
                 editor.Document.BeginUpdate();
 
-                int wordStart = editor.Document.GetIntellisenseStartPosition(caretIndex + caretOffset);
+                int wordStart = editor.Document.GetIntellisenseStartPosition(caretIndex + caretOffset, languageService.ValidIdentifierCharacters);
 
                 if (caretIndex - wordStart - offset >= 0 && intellisenseControl.SelectedCompletion != null)
                 {

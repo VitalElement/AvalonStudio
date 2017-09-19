@@ -53,6 +53,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; }
         }
 
+        public IEnumerable<char> ValidIdentifierCharacters => new[]
+        {
+            '_'
+        };
+
         private SemaphoreSlim analysisThreadSemaphore = new SemaphoreSlim(1);
 
         // https://github.com/Microsoft/TypeScript/issues/2536

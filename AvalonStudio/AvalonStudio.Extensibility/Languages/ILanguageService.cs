@@ -45,6 +45,7 @@ namespace AvalonStudio.Languages
         bool CanTriggerIntellisense(char currentChar, char previousChar);
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
+        IEnumerable<char> ValidIdentifierCharacters { get; }
 
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 

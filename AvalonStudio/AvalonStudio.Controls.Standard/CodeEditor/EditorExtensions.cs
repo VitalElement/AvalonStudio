@@ -35,13 +35,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return result;
         }
 
-        public static int GetIntellisenseStartPosition(this ITextSource textSource, int offset)
+        public static int GetIntellisenseStartPosition(this ITextSource textSource, int offset, IEnumerable<char> validSymbolChars)
         {
             while (true)
             {
                 var currentChar = textSource.GetCharAt(offset - 1);
 
-                if (!char.IsLetterOrDigit(currentChar) || offset < 0)
+                if ((!char.IsLetterOrDigit(currentChar) && !validSymbolChars.Contains(currentChar)) || offset < 0)
                 {
                     break;
                 }

@@ -27,6 +27,8 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();
 
+        public IEnumerable<char> ValidIdentifierCharacters => throw new NotImplementedException();
+
         public string LanguageId => "cpp";
 
         public void Activation()
