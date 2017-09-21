@@ -19,7 +19,7 @@ namespace AvalonStudio.Debugging.Commands
         {
             var manager = IoC.Get<IDebugManager2>();
 
-            command = ReactiveCommand.Create(() => manager.StepInstruction(), manager.CanStep);;
+            command = ReactiveCommand.Create(manager.StepInstruction, manager.CanStep);
         }
         
         public override ICommand Command

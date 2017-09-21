@@ -43,8 +43,6 @@
             //LoadNewsFeed().GetAwaiter().GetResult();
             //LoadVideoFeed().GetAwaiter().GetResult();
             _solutionExplorer = IoC.Get<ISolutionExplorer>();
-
-           
         }
 
         public void BeforeActivation()

@@ -106,7 +106,7 @@ namespace AvalonStudio.Controls
         ~EditorViewModel()
         {
         }
-    
+
 
         public override void OnClose()
         {
@@ -429,8 +429,7 @@ namespace AvalonStudio.Controls
                 ShellViewModel.Instance.StatusBar.Column = value;
             }
         }
-
-
+        
         private string _languageServiceName;
 
         public string LanguageServiceName
