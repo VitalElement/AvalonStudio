@@ -43,7 +43,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 if (!_cache.TryGetValue(extension, out var image))
                 {
-                    var resource = Application.Current.FindStyleResource(extension);
+                    Application.Current.Styles.TryGetResource(extension, out object resource);
 
                     if (resource == AvaloniaProperty.UnsetValue)
                     {

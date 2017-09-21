@@ -95,16 +95,7 @@ namespace AvalonStudio.Controls
         {
             _shell = IoC.Get<ShellViewModel>();
 
-            disposables = new CompositeDisposable
-            {
-                CloseCommand.Subscribe(_ =>
-                {
-                    _shell.InvalidateErrors();
-                })
-            };
-
-            AddWatchCommand = ReactiveCommand.Create();
-            disposables.Add(AddWatchCommand.Subscribe(_ => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); }));
+            AddWatchCommand = ReactiveCommand.Create(() => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); });
 
             Dock = Dock.Right;
 
@@ -116,8 +107,10 @@ namespace AvalonStudio.Controls
         {
         }
 
+
         public override void OnClose()
         {
+            _shell.InvalidateErrors();
             _editor?.Close();
             disposables.Dispose();
         }
@@ -389,12 +382,12 @@ namespace AvalonStudio.Controls
 
         #region Commands
 
-        public ReactiveCommand<object> BeforeTextChangedCommand { get; }
-        public ReactiveCommand<object> TextChangedCommand { get; }
-        public ReactiveCommand<object> SaveCommand { get; }
+        public ReactiveCommand BeforeTextChangedCommand { get; }
+        public ReactiveCommand TextChangedCommand { get; }
+        public ReactiveCommand SaveCommand { get; }
 
         // todo this menu item and command should be injected via debugging module.
-        public ReactiveCommand<object> AddWatchCommand { get; }
+        public ReactiveCommand AddWatchCommand { get; }
 
         private int _caretOffset;
 
@@ -436,8 +429,7 @@ namespace AvalonStudio.Controls
                 ShellViewModel.Instance.StatusBar.Column = value;
             }
         }
-
-
+        
         private string _languageServiceName;
 
         public string LanguageServiceName

@@ -20,9 +20,7 @@
             _author = author;
             _title = title;
 
-            ClickCommand = ReactiveCommand.Create();
-
-            ClickCommand.Subscribe(_ =>
+            ClickCommand = ReactiveCommand.Create(() =>
             {
                 System.Diagnostics.Process.Start(url);
             });
@@ -52,6 +50,6 @@
             set { this.RaiseAndSetIfChanged(ref _content, value); }
         }
 
-        public ReactiveCommand<object> ClickCommand { get; }
+        public ReactiveCommand ClickCommand { get; }
     }
 }

@@ -9,13 +9,11 @@ namespace AvalonStudio.Shell.Commands
 {
     public class PackagesCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> _command;
+        private readonly ReactiveCommand _command;
 
         public PackagesCommandDefinition()
         {
-            _command = ReactiveCommand.Create();
-
-            _command.Subscribe(_ =>
+            _command = ReactiveCommand.Create(() =>
             {
                 var shell = IoC.Get<IShell>();
                 shell.ModalDialog = new PackageManagerDialogViewModel();

@@ -270,15 +270,13 @@ namespace AvalonStudio
                 Settings.SetSettings(settings);
             });
 
-            EnableDebugModeCommand = ReactiveCommand.Create();
-
-            EnableDebugModeCommand.Subscribe(_ =>
+            EnableDebugModeCommand = ReactiveCommand.Create(() =>
             {
                 DebugMode = !DebugMode;
             });            
         }
 
-        public ReactiveCommand<object> EnableDebugModeCommand { get; }
+        public ReactiveCommand EnableDebugModeCommand { get; }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
 
@@ -531,7 +529,7 @@ namespace AvalonStudio
 
                     if (documentToClose != null)
                     {
-                        await documentToClose.CloseCommand.ExecuteAsyncTask(null);
+                        //await documentToClose.CloseCommand.ExecuteAsyncTask(null);
                     }
                 });
             }
@@ -815,7 +813,7 @@ namespace AvalonStudio
             {
                 if (document is EditorViewModel)
                 {
-                    await (document as EditorViewModel).CloseCommand.ExecuteAsyncTask();
+                    //await (document as EditorViewModel).CloseCommand.ExecuteAsyncTask();
                 }
             }
 
@@ -830,7 +828,7 @@ namespace AvalonStudio
             {
                 if (document is EditorViewModel evm && evm.ProjectFile.Project == project)
                 {
-                    await evm.CloseCommand.ExecuteAsyncTask();
+                    //await evm.CloseCommand.ExecuteAsyncTask();
 
                     evm.OnClose();
                 }

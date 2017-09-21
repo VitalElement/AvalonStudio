@@ -7,6 +7,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     public class ProjectConfigurationDialogViewModel : DocumentTabViewModel
     {
         private bool executableOptionsVisibility;
+        private Action _onClose;
 
         public ProjectConfigurationDialogViewModel()
         {
@@ -19,10 +20,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             ConfigPages = new List<object>();
             ConfigPages.AddRange(project.ConfigurationPages);
 
-            CloseCommand.Subscribe(_ =>
-            {
-                onClose();
-            });
+            _onClose = onClose;
+        }
+
+        public override void OnClose()
+        {
+            base.OnClose();
+
+            _onClose?.Invoke();
         }
 
         public object CompileContent { get; set; }
