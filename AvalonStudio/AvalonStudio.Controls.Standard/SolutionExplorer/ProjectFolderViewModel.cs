@@ -24,15 +24,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             Items = new ObservableCollection<ProjectItemViewModel>();
             Items.BindCollections(model.Items, p => { return Create(p); }, (pivm, p) => pivm.Model == p);
 
-            NewItemCommand = ReactiveCommand.Create();
-            NewItemCommand.Subscribe(_ =>
+            NewItemCommand = ReactiveCommand.Create(() =>
             {
                 shell.ModalDialog = new NewItemDialogViewModel(model);
                 shell.ModalDialog.ShowDialog();
             });
 
-            RemoveCommand = ReactiveCommand.Create();
-            RemoveCommand.Subscribe(_ => { model.Project.ExcludeFolder(model); });
+            RemoveCommand = ReactiveCommand.Create(() => model.Project.ExcludeFolder(model));
 
             _folderIcon = "FolderIcon".GetIcon();
             _folderOpenIcon = "FolderOpenIcon".GetIcon();
@@ -40,8 +38,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public ObservableCollection<ProjectItemViewModel> Items { get; }
 
-        public ReactiveCommand<object> NewItemCommand { get; }
-        public ReactiveCommand<object> RemoveCommand { get; }
+        public ReactiveCommand NewItemCommand { get; }
+        public ReactiveCommand RemoveCommand { get; }
 
         private bool isExpanded;
 

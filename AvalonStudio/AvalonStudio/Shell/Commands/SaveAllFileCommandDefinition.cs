@@ -10,13 +10,11 @@ namespace AvalonStudio.Shell.Commands
 {
     public class SaveAllFileCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> _command;
+        private readonly ReactiveCommand _command;
 
         public SaveAllFileCommandDefinition()
         {
-            _command = ReactiveCommand.Create();
-
-            _command.Subscribe(_ =>
+            _command = ReactiveCommand.Create(() =>
             {
                 var shell = IoC.Get<IShell>();
 

@@ -18,6 +18,7 @@
         private ObservableCollection<RecentProjectViewModel> _recentProjects;
         private ObservableCollection<NewsFeedViewModel> _newsFeed;
         private ObservableCollection<VideoFeedViewModel> _videoFeed;
+        ISolutionExplorer _solutionExplorer;
 
         public WelcomeScreenViewModel()
         {
@@ -27,8 +28,8 @@
             _newsFeed = new ObservableCollection<NewsFeedViewModel>();
             _videoFeed = new ObservableCollection<VideoFeedViewModel>();
 
-            NewSolution = ReactiveCommand.Create();
-            OpenSolution = ReactiveCommand.Create();
+            NewSolution = ReactiveCommand.Create(() => _solutionExplorer?.NewSolution());
+            OpenSolution = ReactiveCommand.Create(() => _solutionExplorer?.OpenSolution());
 
             LoadRecentProjects();
         }
@@ -41,17 +42,9 @@
 
             //LoadNewsFeed().GetAwaiter().GetResult();
             //LoadVideoFeed().GetAwaiter().GetResult();
-            var solutionExplorer = IoC.Get<ISolutionExplorer>();
+            _solutionExplorer = IoC.Get<ISolutionExplorer>();
 
-            NewSolution.Subscribe(_ =>
-            {
-                solutionExplorer.NewSolution();
-            });
-
-            OpenSolution.Subscribe(_ =>
-            {
-                solutionExplorer.OpenSolution();
-            });
+           
         }
 
         public void BeforeActivation()
@@ -220,7 +213,7 @@
             set { this.RaiseAndSetIfChanged(ref _videoFeed, value); }
         }
 
-        public ReactiveCommand<object> NewSolution { get; }
-        public ReactiveCommand<object> OpenSolution { get; }
+        public ReactiveCommand NewSolution { get; }
+        public ReactiveCommand OpenSolution { get; }
     }
 }

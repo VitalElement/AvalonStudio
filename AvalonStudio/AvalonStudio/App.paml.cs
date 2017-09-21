@@ -41,6 +41,8 @@ namespace AvalonStudio
                 builder.UseGtk3().UseSkia();
             }
 
+            builder.UseReactiveUI();
+
             builder.SetupWithoutStarting();
 
             Platform.Initialise();

@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>exe</OutputType>
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
@@ -16,9 +15,10 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.5.2-build3869-alpha" />
     <PackageReference Include="Avalonia.Desktop" Version="0.5.2-build3869-alpha" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.5.2-build3869-alpha" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.2-build452-alpha" />
-    <PackageReference Include="reactiveui" Version="8.0.0-alpha0073" />
+    <PackageReference Include="reactiveui" Version="8.0.0-alpha0089" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build103-alpha" />
   </ItemGroup>

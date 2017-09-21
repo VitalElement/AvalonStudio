@@ -33,9 +33,7 @@ namespace AvalonStudio.Controls.ViewModels
 
             this.folder = folder;
 
-            OKCommand = ReactiveCommand.Create();
-
-            OKCommand.Subscribe(_ =>
+            OKCommand = ReactiveCommand.Create(() =>
             {
                 if (SelectedTemplate != null)
                 {
@@ -63,6 +61,6 @@ namespace AvalonStudio.Controls.ViewModels
             set { this.RaiseAndSetIfChanged(ref folder, value); }
         }
 
-        public override ReactiveCommand<object> OKCommand { get; protected set; }
+        public override ReactiveCommand OKCommand { get; protected set; }
     }
 }

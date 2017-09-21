@@ -14,17 +14,13 @@ namespace AvalonStudio.Debugging.Commands
 {
     internal class PauseDebuggingCommandDefinition : CommandDefinition
     {
-        private ReactiveCommand<object> command;
+        private ReactiveCommand command;
 
         public override void Activation()
         {
             var manager = IoC.Get<IDebugManager2>();
 
-            command = ReactiveCommand.Create(manager.CanPause);
-            command.Subscribe(_ =>
-            {
-                manager.Pause();
-            });
+            command = ReactiveCommand.Create(()=> manager.Pause(), manager.CanPause);
         }
 
         public override DrawingGroup Icon => this.GetCommandIcon("PauseDebugger");

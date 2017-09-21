@@ -18,9 +18,7 @@ namespace AvalonStudio.MVVM
                 Add(enumClass);
             }
 
-            Command = ReactiveCommand.Create();
-
-            Command.Subscribe((o) =>
+            Command = ReactiveCommand.Create<object>((o) =>
             {
                 T myEnum = (T)o;
 
@@ -40,6 +38,6 @@ namespace AvalonStudio.MVVM
             });
         }
 
-        public ReactiveCommand<object> Command { get; private set; }
+        public ReactiveCommand Command { get; private set; }
     }
 }

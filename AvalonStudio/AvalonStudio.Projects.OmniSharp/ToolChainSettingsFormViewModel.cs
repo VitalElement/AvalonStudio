@@ -20,9 +20,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
             DotNetPath = _settings.DotNetPath;
 
-            BrowseCommand = ReactiveCommand.Create();
-
-            BrowseCommand.Subscribe(async _ =>
+            BrowseCommand = ReactiveCommand.Create(async () =>
             {
                 var ofd = new OpenFileDialog();
                 //ofd.Filters.Add(new FileDialogFilter { Name = "Dotnet Executable", Extensions = new List<string> { Platform.ExecutableExtension.Substring(1) } });
@@ -42,7 +40,7 @@ namespace AvalonStudio.Projects.OmniSharp
             });
         }
 
-        public ReactiveCommand<object> BrowseCommand { get; }
+        public ReactiveCommand BrowseCommand { get; }
 
         private string dotnetPath;
 

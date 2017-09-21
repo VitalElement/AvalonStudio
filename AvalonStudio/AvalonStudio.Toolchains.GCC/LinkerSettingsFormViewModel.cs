@@ -85,42 +85,36 @@ namespace AvalonStudio.Toolchains.GCC
             miscOptions = settings.MiscLinkerArguments;
             librarySelectedIndex = (int)settings.Library;
 
-            AddLinkedLibraryCommand = ReactiveCommand.Create();
-            AddLinkedLibraryCommand.Subscribe(AddLinkedLibrary);
+            AddLinkedLibraryCommand = ReactiveCommand.Create(AddLinkedLibrary);
 
-            AddLinkerScriptCommand = ReactiveCommand.Create();
-            AddLinkerScriptCommand.Subscribe(AddLinkerScript);
+            AddLinkerScriptCommand = ReactiveCommand.Create(AddLinkerScript);
 
-            RemoveLinkerScriptCommand = ReactiveCommand.Create();
-            RemoveLinkerScriptCommand.Subscribe(RemoveLinkerScript);
+            RemoveLinkerScriptCommand = ReactiveCommand.Create(RemoveLinkerScript);
 
-            RemoveLinkedLibraryCommand = ReactiveCommand.Create();
-            RemoveLinkedLibraryCommand.Subscribe(RemoveLinkedLibrary);
+            RemoveLinkedLibraryCommand = ReactiveCommand.Create(RemoveLinkedLibrary);
 
-            AddSystemLibraryCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SystemLibraryText, lib => !string.IsNullOrEmpty(lib) && !SystemLibraries.Contains(lib) && lib.All(s => !char.IsWhiteSpace(s))));
-            AddSystemLibraryCommand.Subscribe(_ =>
+            AddSystemLibraryCommand = ReactiveCommand.Create(()=> 
             {
                 SystemLibraries.Add(SystemLibraryText);
                 SystemLibraryText = string.Empty;
                 UpdateLinkerString();
-            });
+            },this.WhenAnyValue(x => x.SystemLibraryText, lib => !string.IsNullOrEmpty(lib) && !SystemLibraries.Contains(lib) && lib.All(s => !char.IsWhiteSpace(s))));
 
-            RemoveSystemLibraryCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SelectedSystemLibrary, selected => !string.IsNullOrEmpty(selected)));
-            RemoveSystemLibraryCommand.Subscribe(_ =>
+            RemoveSystemLibraryCommand = ReactiveCommand.Create(()=>
             {
                 SystemLibraries.Remove(SelectedSystemLibrary);
                 UpdateLinkerString();
-            });
+            }, this.WhenAnyValue(x => x.SelectedSystemLibrary, selected => !string.IsNullOrEmpty(selected)));
 
             UpdateLinkerString();
         }
 
-        public ReactiveCommand<object> AddLinkerScriptCommand { get; private set; }
-        public ReactiveCommand<object> RemoveLinkerScriptCommand { get; private set; }
-        public ReactiveCommand<object> AddLinkedLibraryCommand { get; private set; }
-        public ReactiveCommand<object> RemoveLinkedLibraryCommand { get; private set; }
-        public ReactiveCommand<object> AddSystemLibraryCommand { get; }
-        public ReactiveCommand<object> RemoveSystemLibraryCommand { get; }
+        public ReactiveCommand AddLinkerScriptCommand { get; private set; }
+        public ReactiveCommand RemoveLinkerScriptCommand { get; private set; }
+        public ReactiveCommand AddLinkedLibraryCommand { get; private set; }
+        public ReactiveCommand RemoveLinkedLibraryCommand { get; private set; }
+        public ReactiveCommand AddSystemLibraryCommand { get; }
+        public ReactiveCommand RemoveSystemLibraryCommand { get; }
 
         public ICommand BrowseScatterFileCommand { get; private set; }
         public ICommand EditScatterFileCommand { get; private set; }
@@ -462,7 +456,7 @@ namespace AvalonStudio.Toolchains.GCC
             Model.Save();
         }
 
-        private async void AddLinkedLibrary(object param)
+        private async void AddLinkedLibrary()
         {
             var ofd = new OpenFileDialog();
             ofd.Title = "Add Linked Library";
@@ -481,7 +475,7 @@ namespace AvalonStudio.Toolchains.GCC
             }
         }
 
-        private async void AddLinkerScript(object param)
+        private async void AddLinkerScript()
         {
             var ofd = new OpenFileDialog();
 
@@ -499,13 +493,13 @@ namespace AvalonStudio.Toolchains.GCC
             }
         }
 
-        private void RemoveLinkerScript(object param)
+        private void RemoveLinkerScript()
         {
             LinkerScripts.Remove(SelectedLinkerScript);
             UpdateLinkerString();
         }
 
-        private void RemoveLinkedLibrary(object param)
+        private void RemoveLinkedLibrary()
         {
             LinkedLibraries.Remove(SelectedLinkedLibrary);
             UpdateLinkerString();

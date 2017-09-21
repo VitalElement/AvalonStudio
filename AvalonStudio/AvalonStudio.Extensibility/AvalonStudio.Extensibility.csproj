@@ -11,7 +11,7 @@
     <PackageReference Include="Avalonia" Version="0.5.2-build3869-alpha" />
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
-    <PackageReference Include="reactiveui" Version="8.0.0-alpha0073" />
+    <PackageReference Include="reactiveui" Version="8.0.0-alpha0089" />
     <PackageReference Include="System.Composition" Version="1.0.31" />
     <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />

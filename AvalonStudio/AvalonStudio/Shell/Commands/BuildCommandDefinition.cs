@@ -12,18 +12,13 @@ namespace AvalonStudio.Shell.Commands
 {
     public class BuildCommandDefinition : CommandDefinition
     {
-        private ReactiveCommand<object> _command;
+        private ReactiveCommand _command;
 
         public override void Activation()
         {
             var shell = IoC.Get<IShell>();
 
-            _command = ReactiveCommand.Create(shell.CanRunTask());
-
-            _command.Subscribe(_ =>
-            {
-                shell.Build();
-            });
+            _command = ReactiveCommand.Create(()=>shell.Build(), shell.CanRunTask());
         }
 
         public override string Text => "Build";

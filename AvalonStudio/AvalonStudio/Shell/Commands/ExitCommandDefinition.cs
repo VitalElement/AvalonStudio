@@ -10,13 +10,11 @@ namespace AvalonStudio.Shell.Commands
     {
         public override KeyGesture Gesture => KeyGesture.Parse("ALT+F4");
 
-        private readonly ReactiveCommand<object> _command;
+        private readonly ReactiveCommand _command;
 
         public ExitCommandDefinition()
         {
-            _command = ReactiveCommand.Create();
-
-            _command.Subscribe(_ => { Environment.Exit(0); });
+            _command = ReactiveCommand.Create(()=> Environment.Exit(0));
         }
 
         public override string Text => "Exit";

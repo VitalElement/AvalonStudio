@@ -41,7 +41,7 @@ namespace AvalonStudio.Debugging
                 this.RaisePropertyChanged(nameof(Value));
             };
 
-            DeleteCommand = ReactiveCommand.Create();
+            DeleteCommand = ReactiveCommand.Create(()=> IoC.Get<IWatchList>().Remove(Model));
 
             if (model.HasChildren)
             {
@@ -49,16 +49,12 @@ namespace AvalonStudio.Debugging
                 children.Add(DummyChild);
             }
 
-            DeleteCommand.Subscribe(_ => { IoC.Get<IWatchList>().Remove(Model); });
-
-            AddWatchPointCommand = ReactiveCommand.Create();
-            AddWatchPointCommand.Subscribe(o =>
+            AddWatchPointCommand = ReactiveCommand.Create(() =>
             {
                 IoC.Get<IDebugManager2>().Breakpoints.Add(new WatchPoint(Model.Name));
             });
 
-            DisplayFormatCommand = ReactiveCommand.Create();
-            DisplayFormatCommand.Subscribe(s =>
+            DisplayFormatCommand = ReactiveCommand.Create(() =>
             {
                 /*var format = s as string;
 
@@ -121,11 +117,11 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref children, value); }
         }
 
-        public ReactiveCommand<object> DeleteCommand { get; }
+        public ReactiveCommand DeleteCommand { get; }
 
-        public ReactiveCommand<object> DisplayFormatCommand { get; }
+        public ReactiveCommand DisplayFormatCommand { get; }
 
-        public ReactiveCommand<object> AddWatchPointCommand { get; }
+        public ReactiveCommand AddWatchPointCommand { get; }
 
         public string Value
         {

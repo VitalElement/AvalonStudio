@@ -21,14 +21,10 @@ namespace AvalonStudio.Debugging
             val = model.Value;
             Index = model.Index;
 
-            ShowInMemoryCommand = ReactiveCommand.Create();
-            ShowInMemoryCommand.Subscribe(_ =>
-            {
-                //WorkspaceViewModel.Instance.DebugManager.MemoryView.Address = Value;
-            });
+            ShowInMemoryCommand = ReactiveCommand.Create(() => { }); //WorkspaceViewModel.Instance.DebugManager.MemoryView.Address = Value;
         }
 
-        public ReactiveCommand<object> ShowInMemoryCommand { get; }
+        public ReactiveCommand ShowInMemoryCommand { get; }
 
         public IBrush Background
         {
