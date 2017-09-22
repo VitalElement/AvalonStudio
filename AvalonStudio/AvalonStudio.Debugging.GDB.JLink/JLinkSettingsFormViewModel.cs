@@ -288,7 +288,6 @@ namespace AvalonStudio.Debugging.GDB.JLink
             }
         }
 
-
         public bool Reset
         {
             get
