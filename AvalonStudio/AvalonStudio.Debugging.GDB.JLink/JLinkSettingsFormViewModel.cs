@@ -15,6 +15,10 @@ namespace AvalonStudio.Debugging.GDB.JLink
     {
         private int interfaceSelectedIndex;
         private int speedSelectedIndex;
+        private string filter = string.Empty;
+        private bool _download;
+        private bool _useRemote;
+        private bool _reset;
 
         private string speed;
         private JlinkInterfaceType interfaceType;
@@ -28,6 +32,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
             interfaceType = settings.Interface;
             _download = settings.Download;
             _reset = settings.Reset;
+            _useRemote = settings.UseRemote;
+            _ipAddress = settings.RemoteIPAddress;
 
             speedSelectedIndex = SpeedOptions.IndexOf(settings.SpeedkHz.ToString());
 
@@ -193,6 +199,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 settings.TargetDevice = selectedDevice?.Device.Split(' ')[0].Trim();
                 settings.Download = _download;
                 settings.Reset = _reset;
+                settings.UseRemote = _useRemote;
+                settings.RemoteIPAddress = _ipAddress;
 
                 if (!string.IsNullOrEmpty(speed))
                 {
@@ -231,9 +239,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 Save();
             }
         }
-
-        private string filter = string.Empty;
-
+        
         public string Filter
         {
             get
@@ -246,8 +252,6 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 Task.Run(FilterListAsync);
             }
         }
-
-        private bool _download;
 
         public bool Download
         {
@@ -262,7 +266,28 @@ namespace AvalonStudio.Debugging.GDB.JLink
             }
         }
 
-        private bool _reset;
+        public bool UseRemote
+        {
+            get { return _useRemote; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _useRemote, value);
+                Save();
+            }
+        }
+
+        private string _ipAddress;
+
+        public string IPAddress
+        {
+            get { return _ipAddress; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _ipAddress, value);
+                Save();
+            }
+        }
+
 
         public bool Reset
         {
