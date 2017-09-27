@@ -95,6 +95,11 @@
             }
         }
 
+        public bool CanHandle(IProject project)
+        {
+            return project is OmniSharpProject;
+        }
+        
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => _snippetCodeGenerators;
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;
@@ -488,10 +493,17 @@
 
         public void BeforeActivation()
         {
+
         }
 
         public void Activation()
         {
+
+        }
+
+        public Task AnalyseProjectAsync(IProject project)
+        {
+            return null;
         }
     }
 }

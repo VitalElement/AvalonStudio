@@ -54,6 +54,8 @@ namespace AvalonStudio.Languages
 
         bool CanHandle(ISourceFile file);
 
+        bool CanHandle(IProject project);
+
         int Format(TextDocument textDocument, uint offset, uint length, int cursor);
 
         int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
@@ -65,5 +67,6 @@ namespace AvalonStudio.Languages
         Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
 
         Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
-    }
+        Task AnalyseProjectAsync(IProject project);
+	}
 }

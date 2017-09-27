@@ -1,6 +1,7 @@
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using AvalonStudio.Extensibility;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
@@ -9,6 +10,7 @@ using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
+using AvalonStudio.Languages.CPlusPlus.ProjectDatabase;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
@@ -28,8 +30,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 {
     public class CPlusPlusLanguageService : ILanguageService
     {
-        private static readonly ClangIndex index = ClangService.CreateIndex();
-
         private static readonly ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
 
@@ -531,6 +531,155 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
+        private void VisitAllFiles(IProject project, Action<ISourceFile> fileAction)
+        {
+            foreach (var reference in project.References)
+            {
+                VisitAllFiles(reference, fileAction);
+            }
+
+            foreach (var sourceFile in project.Items.OfType<ISourceFile>())
+            {
+                fileAction(sourceFile);
+            }
+        }
+
+        public async Task AnalyseProjectAsync(IProject project)
+        {
+            var db = new BrowseDatabase(project.Solution);
+
+
+            await Task.Factory.StartNew(() =>
+            {
+                var superProject = project as CPlusPlusProject;
+
+                var console = IoC.Get<IConsole>();
+
+                VisitAllFiles(superProject, file =>
+                {
+                    if (CanHandle(file))
+                    {
+                        var uniqueSymbols = new Dictionary<string, SymbolReference>();
+                        var definitionsToAdd = new Dictionary<SymbolReference, ProjectDatabase.Symbol>();
+                        var symbolsToAdd = new List<ProjectDatabase.Symbol>();
+
+
+                        var existingFile = db.GetOrCreateSourceFile(file, out bool modified);
+                        
+                        if(modified)
+                        {
+                            console.WriteLine($"Analysing File: {file.Location}");
+
+                            clangAccessJobRunner.InvokeAsync(() =>
+                            {
+                                int attempts = 0;
+
+                                while (true)
+                                {
+                                    try
+                                    {
+                                        var tu = GenerateTranslationUnit(file, new List<ClangUnsavedFile>());
+
+                                        var indexAction = superProject.ClangIndex.CreateIndexAction();
+
+                                        var callbacks = new ClangIndexerCallbacks();
+
+                                        callbacks.PreprocessIncludedFile += (sender, e) =>
+                                        {
+                                            return null;
+                                        };
+
+                                        callbacks.IndexDeclaration += (sender, e) =>
+                                        {
+                                            if (e.Cursor.Location.IsInSystemHeader)
+                                            // TODO keep track of headers already indexed and make a quick decision on if we need
+                                            {
+                                                // to track these symbols.                                        
+                                            }
+                                            else
+                                            {
+                                                var usr = db.GetSymbolReference(e.EntityInfo.USR);
+                                                if (usr == null)
+
+                                                {
+                                                    if (!uniqueSymbols.TryGetValue(e.EntityInfo.USR, out SymbolReference reference))
+                                                    {
+                                                        usr = new SymbolReference() { Reference = e.EntityInfo.USR };
+                                                        uniqueSymbols.Add(e.EntityInfo.USR, usr);
+                                                    }
+                                                    else
+                                                    {
+                                                        usr = reference;
+                                                    }
+                                                }
+
+                                                var newSymbol = new ProjectDatabase.Symbol() { SymbolReference = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column };
+                                                symbolsToAdd.Add(newSymbol);
+
+                                                if (e.Cursor.IsDefinition && !definitionsToAdd.TryGetValue(usr, out ProjectDatabase.Symbol sym))
+                                                {
+                                                    definitionsToAdd.Add(usr, newSymbol);
+                                                }
+                                                else // TODO test for declaration.
+                                                {
+                                                    symbolsToAdd.Add(newSymbol);
+                                                }
+                                            }
+                                        };
+
+                                        callbacks.IndexEntityReference += (sender, e) =>
+                                        {
+                                            var usr = db.GetSymbolReference(e.Cursor.Referenced.UnifiedSymbolResolution);
+
+                                            if (usr == null)
+                                            {
+                                                uniqueSymbols.TryGetValue(e.Cursor.Referenced.UnifiedSymbolResolution, out usr);
+                                            }
+
+                                            if (usr != null)
+                                            {
+                                                var newSymbol = new ProjectDatabase.Symbol() { SymbolReference = usr, Line = e.Location.FileLocation.Line, Column = e.Location.FileLocation.Column };
+                                                symbolsToAdd.Add(newSymbol);
+                                            }
+                                        };
+                                        indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.IndexFunctionLocalSymbols, tu);
+
+
+                                        tu.Dispose();
+
+                                        db.AddSymbolReferences(uniqueSymbols.Values);
+                                        db.SaveChanges();
+
+                                        db.AddSymbols(symbolsToAdd);
+                                        db.SaveChanges();
+                                        foreach (var definitionLink in definitionsToAdd)
+
+                                        {
+                                            definitionLink.Key.Definition = definitionLink.Value;
+                                        }
+
+                                        db.SaveChanges();
+                                        break;
+                                    }
+                                    catch (ClangServiceException e)
+                                    {
+                                        attempts++;
+                                        if (attempts == 3)
+
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }).Wait();
+                        }
+                    }
+                });
+
+                console.WriteLine($"indexing completed.");
+            });
+        }
+
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
@@ -565,7 +714,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
+            var superProject = file.Project.Solution.StartupProject as CPlusPlusProject;
+
+            if (superProject.ClangIndex == null)
+            {
+                superProject.ClangIndex = ClangService.CreateIndex();
+            }
+						
             return result;
+        }
+
+        public bool CanHandle(IProject project)
+        {
+            return project is CPlusPlusProject;
         }
 
         public bool CanHandle(ISourceFile file)
@@ -823,7 +984,13 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var args = new List<string>();
 
-                var superProject = file.Project.Solution.StartupProject as IStandardProject;
+                var superProject = file.Project.Solution.StartupProject as CPlusPlusProject;
+
+                if (superProject.ClangIndex == null)
+                {
+                    superProject.ClangIndex = ClangService.CreateIndex();
+                }
+
                 var project = file.Project as IStandardProject;
 
                 var toolchainIncludes = superProject.ToolChain?.GetToolchainIncludes(file);
@@ -892,7 +1059,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     TranslationUnitFlags.CacheCompletionResults |
                     TranslationUnitFlags.Incomplete;
 
-                result = index.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), translationUnitFlags);
+                result = superProject.ClangIndex.ParseTranslationUnit(file.Location, args.ToArray(), unsavedFiles.ToArray(), translationUnitFlags);
             }
 
             if (result == null)

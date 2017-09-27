@@ -8,6 +8,7 @@ using AvalonStudio.Shell;
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
@@ -127,8 +128,21 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             shell = IoC.Get<IShell>();
 
-            shell.SolutionChanged += (sender, e) => { Model = shell.CurrentSolution; };
-        }
+            shell.SolutionChanged += async (sender, e) =>
+            {
+                Model = shell.CurrentSolution;
+
+                if (Model != null)
+                {
+                    var languageService = shell.LanguageServices.FirstOrDefault(o => o.CanHandle(Model.StartupProject));
+
+                    if (languageService != null)
+                    {
+                        await languageService.AnalyseProjectAsync(Model.StartupProject);
+                    }
+                }
+            };
+		}
 
         public void NewSolution()
         {
