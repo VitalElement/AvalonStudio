@@ -1,7 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Diagnostics;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
 using System;
@@ -51,7 +53,7 @@ namespace AvalonStudio
 
             var container = CompositionRoot.CreateContainer();
 
-            ShellViewModel.Instance = container.GetExport<ShellViewModel>();
+            ShellViewModel.Instance = container.GetExport<ShellViewModel>();            
 
             builder.Start<MainWindow>();            
         }
