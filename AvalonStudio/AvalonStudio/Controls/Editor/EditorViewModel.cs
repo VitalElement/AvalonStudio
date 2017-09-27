@@ -1,11 +1,14 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 using Avalonia.Threading;
 using AvaloniaEdit.Document;
+using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
@@ -95,6 +98,18 @@ namespace AvalonStudio.Controls
         {
             _shell = IoC.Get<ShellViewModel>();
 
+            var settings = GlobalSettings.Settings.GetSettings<EditorSettings>();
+
+            colorScheme = settings.ColorScheme;
+
+            disposables = new CompositeDisposable
+            {
+                CloseCommand.Subscribe(_ =>
+                {
+                    _shell.InvalidateErrors();
+                })
+            };
+
             AddWatchCommand = ReactiveCommand.Create(() => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); });
 
             Dock = Dock.Right;
@@ -146,6 +161,22 @@ namespace AvalonStudio.Controls
         #endregion Constructors
 
         #region Properties
+
+        private ColorScheme colorScheme;
+
+        public ColorScheme ColorScheme
+        {
+            get { return colorScheme; }
+            set { this.RaiseAndSetIfChanged(ref colorScheme, value); }
+        }
+
+        private IBrush background;
+
+        public IBrush Background
+        {
+            get { return background; }
+            set { this.RaiseAndSetIfChanged(ref background, value); }
+        }
 
         private string tabCharacter;
 

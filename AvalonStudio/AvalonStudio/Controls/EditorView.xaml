@@ -33,7 +33,7 @@
                                   BackgroundRenderers="{Binding BackgroundRenderers}"
                                   DocumentLineTransformers="{Binding DocumentLineTransformers}"
                                   IsDirty="{Binding IsDirty}" ShowColumnLimit="true"
-                                  VerticalAlignment="Stretch" Background="#1e1e1e" Diagnostics="{Binding Diagnostics}">
+                                  VerticalAlignment="Stretch" Background="{Binding Background}" Diagnostics="{Binding Diagnostics}" ColorScheme="{Binding ColorScheme}">
 
             <editor:CodeEditor.ContextMenu>
               <ContextMenu>
