@@ -4,3 +4,6 @@
 [submodule "AvaloniaEdit"]
 	path = AvaloniaEdit
 	url = https://github.com/danwalmsley/AvaloniaEdit
+[submodule "AvalonStudio/AvalonStudio.Languages.D/D_Parser"]
+	path = AvalonStudio/AvalonStudio.Languages.D/D_Parser
+	url = https://github.com/VitalElement/D_Parser
