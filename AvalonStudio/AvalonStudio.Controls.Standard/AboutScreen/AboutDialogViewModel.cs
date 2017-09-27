@@ -8,10 +8,9 @@ namespace AvalonStudio.Controls.Standard.AboutScreen
     {
         public AboutDialogViewModel() : base("About", true, false)
         {
-            OKCommand = ReactiveCommand.Create();
-            OKCommand.Subscribe(o => { Close(); });
+            OKCommand = ReactiveCommand.Create(()=>Close());
         }
 
-        public override ReactiveCommand<object> OKCommand { get; protected set; }
+        public override ReactiveCommand OKCommand { get; protected set; }
     }
 }

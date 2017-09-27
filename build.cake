@@ -3,7 +3,6 @@
 /////////////////////////////////////////////////////////////////////
 
 #addin "Cake.FileHelpers"
-#addin "Cake.Docker"
 #addin "nuget:?package=NuGet.Core&version=2.14.0"
 
 //////////////////////////////////////////////////////////////////////
@@ -316,32 +315,6 @@ Task("Publish-AppVeyorNuget")
             ApiKey = apiKey
         });
     }
-});
-
-Task("Build-Docker-Image")
-    .IsDependentOn("Publish-NetCore")
-    .WithCriteria(()=>(isMasterBranch && isRunningOnAppVeyor && !isPullRequest) || isLocalBuild)
-    .Does(()=>
-{
-    var dockerContextPath = zipRootDir.Combine("AvalonStudioBuild-ubuntu.16.10-x64");
-    CopyFile("./AvalonStudio/AvalonStudioBuild/Dockerfile", dockerContextPath.CombineWithFilePath("Dockerfile"));
-    DockerBuild(new DockerBuildSettings
-    {
-        Tag = new string[] { "vitalelement/avalonbuild:latest" },
-        Pull = true,
-    },
-    dockerContextPath.ToString());
-});
-
-Task("Publish-Docker-Image")
-    .WithCriteria(()=>isMasterBranch && isRunningOnAppVeyor && !isPullRequest)
-    .Does(()=>
-{
-    DockerLogin( EnvironmentVariable("DOCKER_USER_NAME"),  EnvironmentVariable("DOCKER_PASSWORD"), "https://hub.docker.com");
-    Information("Logged In");
-    DockerPush("vitalelement/avalonbuild");
-
-    Information("Push");
 });
 
 Task("Default")

@@ -106,10 +106,10 @@
 //            return false;
 //        }
 
-//        public ReactiveCommand<object> AddNewFolderCommand { get; private set; }
-//        public ReactiveCommand<object> AddNewProjectCommand { get; private set; }
-//        public ReactiveCommand<object> AddExistingProjectCommand { get; private set; }
-//        public ReactiveCommand<object> RemoveCommand { get; private set; }
+//        public ReactiveCommand AddNewFolderCommand { get; private set; }
+//        public ReactiveCommand AddNewProjectCommand { get; private set; }
+//        public ReactiveCommand AddExistingProjectCommand { get; private set; }
+//        public ReactiveCommand RemoveCommand { get; private set; }
 
 //        new public SolutionFolder Model
 //        {

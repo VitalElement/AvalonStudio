@@ -30,8 +30,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
             interfaceConfigFile = settings.InterfaceConfigFile;
             targetConfigFile = settings.TargetConfigFile;
 
-            BrowseInterfaceConfigFileCommand = ReactiveCommand.Create();
-            BrowseInterfaceConfigFileCommand.Subscribe(async _ =>
+            BrowseInterfaceConfigFileCommand = ReactiveCommand.Create(async () =>
             {
                 var ofd = new OpenFileDialog();
                 ofd.InitialFileName = Path.Combine(BaseDirectory, "scripts", "interface");
@@ -47,8 +46,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
                 }
             });
 
-            BrowseTargetConfigFileCommand = ReactiveCommand.Create();
-            BrowseTargetConfigFileCommand.Subscribe(async _ =>
+            BrowseTargetConfigFileCommand = ReactiveCommand.Create(async () =>
             {
                 var ofd = new OpenFileDialog();
                 ofd.InitialFileName = Path.Combine(BaseDirectory, "scripts", "target");
@@ -91,8 +89,8 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
             }
         }
 
-        public ReactiveCommand<object> BrowseInterfaceConfigFileCommand { get; }
-        public ReactiveCommand<object> BrowseTargetConfigFileCommand { get; }
+        public ReactiveCommand BrowseInterfaceConfigFileCommand { get; }
+        public ReactiveCommand BrowseTargetConfigFileCommand { get; }
 
         private void Save()
         {

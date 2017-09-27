@@ -1099,20 +1099,23 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                                 var paragraph = discussion.Element("Para");
 
-                                if (isVarArgs != null)
+                                if (paragraph != null)
                                 {
-                                    result.Arguments.Last().Comment = paragraph.Value;
-                                }
-                                else
-                                {
-                                    var inx = argument.Element("Index");
-
-                                    if (inx != null)
+                                    if (isVarArgs != null)
                                     {
-                                        // This happens when documentation for an argument was left in, but the argument no longer exists.
-                                        var index = int.Parse(inx.Value);
+                                        result.Arguments.Last().Comment = paragraph.Value;
+                                    }
+                                    else
+                                    {
+                                        var inx = argument.Element("Index");
 
-                                        result.Arguments[index].Comment = paragraph.Value;
+                                        if (inx != null)
+                                        {
+                                            // This happens when documentation for an argument was left in, but the argument no longer exists.
+                                            var index = int.Parse(inx.Value);
+
+                                            result.Arguments[index].Comment = paragraph.Value;
+                                        }
                                     }
                                 }
                             }

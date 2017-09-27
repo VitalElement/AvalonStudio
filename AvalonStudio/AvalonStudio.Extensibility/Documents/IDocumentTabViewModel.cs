@@ -9,7 +9,7 @@ namespace AvalonStudio.Controls
 
         string Title { get; set; }
 
-        ReactiveCommand<object> CloseCommand { get; }
+        ReactiveCommand CloseCommand { get; }
 
         bool IsTemporary { get; set; }
 

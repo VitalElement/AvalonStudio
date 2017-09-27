@@ -27,15 +27,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             Projects.BindCollections(model.Projects, p => { return ProjectViewModel.Create(this, p); },
                 (pvm, p) => pvm.Model == p);
 
-            NewProjectCommand = ReactiveCommand.Create();
-            NewProjectCommand.Subscribe(o =>
+            NewProjectCommand = ReactiveCommand.Create(() =>
             {
                 shell.ModalDialog = new NewProjectDialogViewModel(model);
                 shell.ModalDialog.ShowDialog();
             });
 
-            AddExistingProjectCommand = ReactiveCommand.Create();
-            AddExistingProjectCommand.Subscribe(async o =>
+            AddExistingProjectCommand = ReactiveCommand.Create(async () =>
             {
                 var dlg = new OpenFileDialog();
                 dlg.Title = "Open Project";
@@ -74,32 +72,26 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
             });
 
-            OpenInExplorerCommand = ReactiveCommand.Create();
-            OpenInExplorerCommand.Subscribe(o => { Platform.OpenFolderInExplorer(model.CurrentDirectory); });
+            OpenInExplorerCommand = ReactiveCommand.Create(() => { Platform.OpenFolderInExplorer(model.CurrentDirectory); });
 
-            ConfigurationCommand = ReactiveCommand.Create();
-            ConfigurationCommand.Subscribe(o =>
+            ConfigurationCommand = ReactiveCommand.Create(() =>
             {
                 //Workspace.Instance.ModalDialog = new SolutionConfigurationDialogViewModel(Workspace.Instance.SolutionExplorer.Model);
                 //Workspace.Instance.ModalDialog.ShowDialog();
             });
 
-            BuildSolutionCommand = ReactiveCommand.Create();
-            BuildSolutionCommand.Subscribe(o => { BuildSolution(); });
+            BuildSolutionCommand = ReactiveCommand.Create(() => BuildSolution());
 
-            CleanSolutionCommand = ReactiveCommand.Create();
-            CleanSolutionCommand.Subscribe(o => { CleanSolution(); });
+            CleanSolutionCommand = ReactiveCommand.Create(() => CleanSolution());
 
-            RebuildSolutionCommand = ReactiveCommand.Create();
-            RebuildSolutionCommand.Subscribe(o =>
+            RebuildSolutionCommand = ReactiveCommand.Create(() =>
             {
                 CleanSolution();
 
                 BuildSolution();
             });
 
-            RunAllTestsCommand = ReactiveCommand.Create();
-            RunAllTestsCommand.Subscribe(o => { RunTests(); });
+            RunAllTestsCommand = ReactiveCommand.Create(() => RunTests());
         }
 
         public bool IsExpanded { get; set; }
@@ -110,14 +102,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             set { this.RaiseAndSetIfChanged(ref projects, value); }
         }
 
-        public ReactiveCommand<object> ConfigurationCommand { get; }
-        public ReactiveCommand<object> CleanSolutionCommand { get; }
-        public ReactiveCommand<object> BuildSolutionCommand { get; }
-        public ReactiveCommand<object> RebuildSolutionCommand { get; }
-        public ReactiveCommand<object> RunAllTestsCommand { get; }
-        public ReactiveCommand<object> NewProjectCommand { get; }
-        public ReactiveCommand<object> AddExistingProjectCommand { get; }
-        public ReactiveCommand<object> OpenInExplorerCommand { get; }
+        public ReactiveCommand ConfigurationCommand { get; }
+        public ReactiveCommand CleanSolutionCommand { get; }
+        public ReactiveCommand BuildSolutionCommand { get; }
+        public ReactiveCommand RebuildSolutionCommand { get; }
+        public ReactiveCommand RunAllTestsCommand { get; }
+        public ReactiveCommand NewProjectCommand { get; }
+        public ReactiveCommand AddExistingProjectCommand { get; }
+        public ReactiveCommand OpenInExplorerCommand { get; }
 
         private void CleanSolution()
         {
