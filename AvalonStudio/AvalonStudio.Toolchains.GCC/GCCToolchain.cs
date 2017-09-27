@@ -63,7 +63,7 @@ namespace AvalonStudio.Toolchains.GCC
             return result;
         }
 
-        private bool CheckFile(IConsole console, string file)
+        protected bool CheckFile(IConsole console, string file)
         {
             bool result = true;
 
@@ -224,7 +224,7 @@ namespace AvalonStudio.Toolchains.GCC
                 }
             }, false, project.Solution.CurrentDirectory, false);
 
-            //console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
+            console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
 
             if (result.ExitCode == 0)
             {
