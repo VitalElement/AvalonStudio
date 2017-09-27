@@ -46,7 +46,7 @@ namespace AvalonStudio.Languages
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
 
-        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
+        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
         void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);
 
@@ -54,7 +54,7 @@ namespace AvalonStudio.Languages
 
         bool CanHandle(ISourceFile file);
 
-        int Format(TextDocument textDocument, uint offset, uint length, int cursor);
+        int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor);
 
         int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
 

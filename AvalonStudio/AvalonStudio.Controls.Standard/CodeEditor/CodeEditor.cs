@@ -97,7 +97,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public ILanguageService LanguageService { get; set; }
 
-
         public CodeEditor()
         {
             _codeAnalysisRunner = new JobRunner(1);
@@ -524,7 +523,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (LanguageService != null)
             {
-                CaretOffset = LanguageService.Format(Document, 0, (uint)Document.TextLength, CaretOffset);
+                var caretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
+
+                // some language services manually set the caret themselves and return -1 to indicate this.
+                if(caretOffset >= 0)
+                {
+                    CaretOffset = caretOffset;
+                }
 
                 Focus();
             }
@@ -575,13 +580,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             var sourceFile = SourceFile;
             var unsavedFiles = UnsavedFiles.ToList();
+            var document = Document;
 
             await _codeAnalysisRunner.InvokeAsync(async () =>
             {
                 if (LanguageService != null)
                 {
-                    // TODO allow interruption.
-                    var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, unsavedFiles, () => false);
+                    var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, document, unsavedFiles, () => false);
 
                     _textColorizer?.SetTransformations(result.SyntaxHighlightingData);
 
@@ -591,11 +596,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        Diagnostics = result.Diagnostics;
-
                         TextArea.TextView.Redraw();
-
-                        _shell.InvalidateErrors();
                     });
                 }
             });

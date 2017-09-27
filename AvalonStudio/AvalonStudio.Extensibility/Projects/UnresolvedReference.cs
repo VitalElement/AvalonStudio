@@ -52,6 +52,19 @@
 
         public event EventHandler FileAdded;
 
+        event EventHandler<ISourceFile> IProject.FileAdded
+        {
+            add
+            {
+                throw new NotImplementedException();
+            }
+
+            remove
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public void AddReference(IProject project)
         {
             throw new NotImplementedException();

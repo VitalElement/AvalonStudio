@@ -1,19 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>    
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <InternalsAssemblyNames>Microsoft.CodeAnalysis.Features;Microsoft.CodeAnalysis.Workspaces</InternalsAssemblyNames>
+  </PropertyGroup>
+  
   <ItemGroup>
+    <PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.2.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build" Version="15.3.0-preview-000388-01" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="2.3.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="2.3.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.3.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="2.3.1" />
     <PackageReference Include="RestSharp.NetCore" Version="105.2.4-rc4-24214-01" />
   </ItemGroup>
 
-  <ItemGroup>    
-    <ProjectReference Include="..\..\debugger-libs\Mono.Debugging.Win32\Mono.Debugging.Win32.csproj" />    
-    <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />    
+  <ItemGroup>
+    <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />
+    <ProjectReference Include="..\..\AvalonStudio.MSBuildHost\AvalonStudio.MSBuildHost.csproj">
+      <Private>true</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\AvalonStudio.MSBuildHost\modules\AsyncRpc\AsyncRpc\AsyncRpc.csproj" />
+    <ProjectReference Include="..\..\debugger-libs\Mono.Debugging.Win32\Mono.Debugging.Win32.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Roslyn\Editor\" />
   </ItemGroup>
 
 </Project>

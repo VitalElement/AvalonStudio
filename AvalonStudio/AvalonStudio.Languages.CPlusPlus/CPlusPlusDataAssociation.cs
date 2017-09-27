@@ -8,11 +8,11 @@
     using NClang;
     using System;
     using System.Collections.Generic;
+    using System.Reactive.Subjects;
 
     internal class CPlusPlusDataAssociation
     {
         public ClangTranslationUnit TranslationUnit { get; set; }
-
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
     }
 }

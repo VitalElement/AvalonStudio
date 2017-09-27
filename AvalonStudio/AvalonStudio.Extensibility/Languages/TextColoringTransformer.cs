@@ -20,19 +20,23 @@ namespace AvalonStudio.Languages
 
             CommentBrush = Brush.Parse("#559A3F");
             CallExpressionBrush = Brush.Parse("#DCDCAA");
-            IdentifierBrush = Brush.Parse("#C8C8C8");
+            OperatorBrush = Brush.Parse("#B4B4B4");
+            IdentifierBrush = Brush.Parse("#DCDCDC");
             KeywordBrush = Brush.Parse("#569CD6");
             LiteralBrush = Brush.Parse("#D69D85");
             NumericLiteralBrush = Brush.Parse("#B5CEA8");
             EnumConstantBrush = Brush.Parse("#B5CEA8");
             EnumTypeNameBrush = Brush.Parse("#B5CEA8");
             InterfaceBrush = Brush.Parse("#B5CEA8");
-
+            DelegateNameBrush = Brush.Parse("#4EC9B0");
             PunctuationBrush = Brush.Parse("#C8C8C8");
             UserTypeBrush = Brush.Parse("#4EC9B0");
+            StructNameBrush = Brush.Parse("#4EC9B0");
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
+
+        public IBrush OperatorBrush { get; set; }
 
         public IBrush PunctuationBrush { get; set; }
 
@@ -46,6 +50,8 @@ namespace AvalonStudio.Languages
 
         public IBrush UserTypeBrush { get; set; }
 
+        public IBrush StructNameBrush { get; set; }
+
         public IBrush CallExpressionBrush { get; set; }
 
         public IBrush CommentBrush { get; set; }
@@ -53,6 +59,8 @@ namespace AvalonStudio.Languages
         public IBrush EnumConstantBrush { get; set; }
 
         public IBrush InterfaceBrush { get; set; }
+
+        public IBrush DelegateNameBrush { get; set; }
 
         public IBrush EnumTypeNameBrush { get; set; }
 
@@ -110,20 +118,16 @@ namespace AvalonStudio.Languages
             });
         }
 
-        public void UpdateOffsets(DocumentChangeEventArgs e)
-        {
-            if (TextTransformations != null)
-            {
-                TextTransformations.UpdateOffsets(e);
-            }
-        }
-
         public IBrush GetBrush(HighlightType type)
         {
             IBrush result;
 
             switch (type)
             {
+                case HighlightType.DelegateName:
+                    result = DelegateNameBrush;
+                    break;
+
                 case HighlightType.Comment:
                     result = CommentBrush;
                     break;
@@ -162,6 +166,14 @@ namespace AvalonStudio.Languages
 
                 case HighlightType.EnumTypeName:
                     result = EnumTypeNameBrush;
+                    break;
+
+                case HighlightType.Operator:
+                    result = OperatorBrush;
+                    break;
+
+                case HighlightType.StructName:
+                    result = StructNameBrush;
                     break;
 
                 default:

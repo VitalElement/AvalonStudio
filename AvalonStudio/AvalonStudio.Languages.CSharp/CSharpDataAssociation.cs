@@ -9,6 +9,7 @@
     using Projects.OmniSharp;
     using System;
     using System.Collections.Generic;
+    using System.Reactive.Subjects;
 
     internal class CSharpDataAssociation
     {
