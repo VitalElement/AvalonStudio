@@ -11,13 +11,11 @@ namespace AvalonStudio.Shell.Commands
 {
     public class CommentCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> _command;
+        private readonly ReactiveCommand _command;
 
         public CommentCommandDefinition()
         {
-            _command = ReactiveCommand.Create();
-
-            _command.Subscribe(_ =>
+            _command = ReactiveCommand.Create(() =>
             {
                 var shell = IoC.Get<IShell>();
 

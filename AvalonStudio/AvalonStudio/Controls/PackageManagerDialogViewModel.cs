@@ -48,16 +48,14 @@ namespace AvalonStudio.Controls
                 await DownloadCatalog();
             });
 
-            InstallCommand = ReactiveCommand.Create();
-            InstallCommand.Subscribe(async _ =>
+            InstallCommand = ReactiveCommand.Create(async () =>
             {
                 await PackageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
 
                 InvalidateInstalledPackages();
             });
 
-            UninstallCommand = ReactiveCommand.Create();
-            UninstallCommand.Subscribe(async _ =>
+            UninstallCommand = ReactiveCommand.Create(async () =>
             {
                 if (SelectedInstalledPackage != null)
                 {
@@ -67,13 +65,12 @@ namespace AvalonStudio.Controls
                 }
             });
 
-            OKCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.EnableInterface));
-
-            OKCommand.Subscribe(_ =>
+            OKCommand = ReactiveCommand.Create(()=>
             {
                 ShellViewModel.Instance.InvalidateCodeAnalysis();
                 Close();
-            });
+            },
+            this.WhenAnyValue(x => x.EnableInterface));
 
             EnableInterface = true;
         }
@@ -175,9 +172,9 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref selectedInstalledPackage, value); }
         }
 
-        public ReactiveCommand<object> InstallCommand { get; }
-        public ReactiveCommand<object> UninstallCommand { get; }
-        public override ReactiveCommand<object> OKCommand { get; protected set; }
+        public ReactiveCommand InstallCommand { get; }
+        public ReactiveCommand UninstallCommand { get; }
+        public override ReactiveCommand OKCommand { get; protected set; }
 
         public void WriteLine(string data)
         {

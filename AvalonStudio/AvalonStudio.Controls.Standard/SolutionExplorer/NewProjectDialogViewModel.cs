@@ -46,11 +46,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             SelectedLanguage = Languages.FirstOrDefault();
             SelectedTemplate = ProjectTemplates.FirstOrDefault();
 
-            BrowseLocationCommand = ReactiveCommand.Create();
-            BrowseLocationCommand.Subscribe(async o =>
+            BrowseLocationCommand = ReactiveCommand.Create(async () =>
             {
-                var ofd = new OpenFolderDialog();
-                ofd.InitialDirectory = location;
+                var ofd = new OpenFolderDialog
+                {
+                    InitialDirectory = location
+                };
 
                 var result = await ofd.ShowAsync();
 
@@ -60,8 +61,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
             });
 
-            OKCommand = ReactiveCommand.Create(this.WhenAny(x => x.Location, x => x.SolutionName, (location, solution) => solution.Value != null && !Directory.Exists(Path.Combine(location.Value, solution.Value))));
-            OKCommand.Subscribe(async o =>
+            OKCommand = ReactiveCommand.Create(async () =>
             {
                 bool generateSolutionDirs = false;
 
@@ -89,7 +89,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 solution = null;
 
                 Close();
-            });
+            },
+            this.WhenAny(x => x.Location, x => x.SolutionName, (location, solution) => solution.Value != null && !Directory.Exists(Path.Combine(location.Value, solution.Value))));
         }
 
         public string Name
@@ -169,8 +170,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public ReactiveCommand<object> BrowseLocationCommand { get; }
-        public override ReactiveCommand<object> OKCommand { get; protected set; }
+        public ReactiveCommand BrowseLocationCommand { get; }
+        public override ReactiveCommand OKCommand { get; protected set; }
 
         private void GetTemplates(ILanguageService languageService)
         {

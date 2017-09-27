@@ -8,7 +8,7 @@ namespace AvalonStudio.Shell.Commands
 {
     public class CloseFileCommandDefinition : CommandDefinition
     {
-        private ReactiveCommand<object> _command;
+        private ReactiveCommand _command;
         public override string Text => "Close";
 
         public override string ToolTip => "Close ToolTip";

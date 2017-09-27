@@ -18,13 +18,11 @@
         {
             Model = model;
 
-            RemoveItemCommand = ReactiveCommand.Create();
-            RemoveItemCommand.Subscribe(o =>
+            RemoveItemCommand = ReactiveCommand.Create(() =>
             {
             });
 
-            OpenInExplorerCommand = ReactiveCommand.Create();
-            OpenInExplorerCommand.Subscribe(o =>
+            OpenInExplorerCommand = ReactiveCommand.Create(() =>
             {
                 if (model is IProjectFolder)
                 {
@@ -73,9 +71,9 @@
             }
         }
 
-        public ReactiveCommand<object> RemoveItemCommand { get; }
-        public ReactiveCommand<object> ToggleEditingModeCommand { get; }
-        public ReactiveCommand<object> OpenInExplorerCommand { get; protected set; }
+        public ReactiveCommand RemoveItemCommand { get; }
+        public ReactiveCommand ToggleEditingModeCommand { get; }
+        public ReactiveCommand OpenInExplorerCommand { get; protected set; }
 
         public bool TextBoxVisibility
         {

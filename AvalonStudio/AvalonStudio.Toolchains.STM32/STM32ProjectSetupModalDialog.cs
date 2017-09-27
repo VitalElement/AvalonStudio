@@ -8,12 +8,7 @@
     {
         public STM32ProjectSetupModalDialogViewModel() : base("New STM32 Project", true, true)
         {
-            OKCommand = ReactiveCommand.Create();
-
-            OKCommand.Subscribe((o) =>
-            {
-                Close();
-            });
+            OKCommand = ReactiveCommand.Create(()=>Close());
         }
     }
 }

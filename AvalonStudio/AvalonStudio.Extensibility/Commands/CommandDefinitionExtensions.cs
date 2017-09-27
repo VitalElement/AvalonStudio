@@ -18,7 +18,7 @@
             {
                 if (!_cache.TryGetValue(icon, out var image))
                 {
-                    var resource = Application.Current.FindStyleResource(icon.ToString());
+                    Application.Current.Styles.TryGetResource(icon.ToString(), out object resource);
 
                     if (resource == AvaloniaProperty.UnsetValue)
                     {

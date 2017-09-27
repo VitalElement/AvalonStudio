@@ -2,6 +2,7 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using Avalonia.Media;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -25,5 +26,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             get { return references; }
             set { this.RaiseAndSetIfChanged(ref references, value); }
         }
+
+        public override DrawingGroup Icon => "ReferenceIcon".GetIcon();
     }
 }

@@ -14,13 +14,11 @@ namespace AvalonStudio.Shell.Commands
     {
         public override KeyGesture Gesture => KeyGesture.Parse("CTRL+Y");
 
-        private readonly ReactiveCommand<object> _command;
+        private readonly ReactiveCommand _command;
 
         public RedoCommandDefinition()
         {
-            _command = ReactiveCommand.Create();
-
-            _command.Subscribe(_ =>
+            _command = ReactiveCommand.Create(() =>
             {
                 var shell = IoC.Get<IShell>();
 
