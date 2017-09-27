@@ -1,8 +1,12 @@
 image: vitalelement/avalonci:latest
 before_script:
-  
+    # Create symlinks for nuget and avalonstudio caches.
+  - mkdir -p /cache/.nuget
+  - ln -s /cache/.nuget ~/.nuget
+
 AvalonStudio:
   script:     
   # update all submodules.
   - git submodule update --init
+  - dotnet --info
   - ./build.sh
