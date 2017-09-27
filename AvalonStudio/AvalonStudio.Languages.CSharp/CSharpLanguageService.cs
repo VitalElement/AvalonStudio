@@ -347,7 +347,8 @@
                     results.Add(FromRoslynDiagnostic(diagnostic, file.Location, file.Project));
                 }
 
-                dataAssociation.Diagnostics.OnNext(results);
+                //dataAssociation.Diagnostics.OnNext(results);
+                Console.WriteLine("Restore adding diagnostics to output");
             });
 
             dataAssociations.Add(file, association);
@@ -483,11 +484,6 @@
             return result;
         }
 
-        public IObservable<TextSegmentCollection<Diagnostic>> ObserveDiagnostics(ISourceFile file)
-        {
-            return GetAssociatedData(file).Diagnostics;
-        }
-
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
@@ -511,8 +507,6 @@
             {
                 result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
             }
-
-            dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
         }

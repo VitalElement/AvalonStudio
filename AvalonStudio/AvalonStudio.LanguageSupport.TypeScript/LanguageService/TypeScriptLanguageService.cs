@@ -226,18 +226,18 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
             catch (JavaScriptException)
             {
-                dataAssociation.Diagnostics.OnNext(new TextSegmentCollection<Diagnostic>
+                result.Diagnostics = new TextSegmentCollection<Diagnostic>
+                {
+                    new Diagnostic
                     {
-                        new Diagnostic
-                        {
-                            Project = file.Project,
-                            Line = 1,
-                            Spelling = "Code analysis language service call failed.",
-                            StartOffset = 0,
-                            File = file.Name,
-                            Level = DiagnosticLevel.Error,
-                        }
-                    });
+                        Project = file.Project,
+                        Line = 1,
+                        Spelling = "Code analysis language service call failed.",
+                        StartOffset = 0,
+                        File = file.Name,
+                        Level = DiagnosticLevel.Error,
+                    }
+                };
 
                 return new CodeAnalysisResults
                 {
@@ -518,11 +518,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public virtual void Activation()
         {
-        }
-
-        public IObservable<TextSegmentCollection<Diagnostic>> ObserveDiagnostics(ISourceFile file)
-        {
-            return GetAssociatedData(file).Diagnostics;
         }
     }
 }

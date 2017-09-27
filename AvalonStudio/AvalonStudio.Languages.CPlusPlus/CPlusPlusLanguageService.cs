@@ -498,8 +498,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result)
         {
-            var result = new TextSegmentCollection<Diagnostic>();
-
             foreach (var diagnostic in clangDiagnostics)
             {
                 if (diagnostic.Location.IsFromMainFile)
@@ -530,8 +528,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                     tokens.Dispose();
                 }
             }
-
-            return result;
         }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument document, List<UnsavedFile> unsavedFiles,
@@ -559,8 +555,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                             GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
                         }
-                        
-                        var diagnostics = GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project);
 
                         GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics);
                     }
@@ -1259,11 +1253,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void Activation()
         {
-        }
-
-        public IObservable<TextSegmentCollection<Diagnostic>> ObserveDiagnostics(ISourceFile file)
-        {
-            return GetAssociatedData(file).Diagnostics;
         }
     }
 }

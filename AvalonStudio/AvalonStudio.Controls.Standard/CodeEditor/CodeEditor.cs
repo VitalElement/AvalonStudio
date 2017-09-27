@@ -637,44 +637,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
                 TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
-
-                _diagnosticMarkers = new TextMarkerService(Document);
-
-                TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkers);
-
-                LanguageService.ObserveDiagnostics(sourceFile).ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
-                {
-                    Diagnostics = d;
-
-                    _diagnosticMarkers.Clear();
-
-                    foreach (var diag in d)
-                    {
-                        Color markerColor;
-
-                        switch (diag.Level)
-                        {
-                            case DiagnosticLevel.Error:
-                            case DiagnosticLevel.Fatal:
-                                markerColor = Diagnostic.ErrorBrush;
-                                break;
-
-                            case DiagnosticLevel.Warning:
-                                markerColor = Diagnostic.WarningBrush;
-                                break;
-
-                            default:
-                                markerColor = Diagnostic.DefaultBrush;
-                                break;
-                        }
-
-                        _diagnosticMarkers.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
-                    }
-
-                    TextArea.TextView.Redraw();
-
-                    _shell.InvalidateErrors();
-                });
             }
             else
             {
