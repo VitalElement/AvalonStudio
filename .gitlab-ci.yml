@@ -1,6 +1,6 @@
 image: vitalelement/avalonci:latest
 before_script:
-    # Create symlinks for nuget and avalonstudio caches.
+    # Create symlinks for nuget.
   - mkdir -p /cache/.nuget
   - ln -s /cache/.nuget ~/.nuget
 
