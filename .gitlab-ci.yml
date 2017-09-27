@@ -5,7 +5,4 @@ AvalonStudio:
   script:     
   # update all submodules.
   - git submodule update --init
-  
-  - cd AvalonStudio
-  - ./dependencies.sh
-  - ./buildmono.sh
+  - ./build.sh
