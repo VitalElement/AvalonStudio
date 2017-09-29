@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Controls;
 using AvalonStudio.Extensibility;
@@ -12,7 +11,7 @@ namespace AvalonStudio
         public MainWindow()
         {
             IoC.RegisterConstant<Window>(this);
-            
+
             InitializeComponent();
 
             DataContext = ShellViewModel.Instance;

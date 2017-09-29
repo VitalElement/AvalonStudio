@@ -6,6 +6,7 @@ using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Platforms;
@@ -55,6 +56,31 @@ namespace AvalonStudio.Languages.CPlusPlus
                     return "_" + newName;
                 else
                     return newName;
+            });
+
+            _snippetCodeGenerators.Add("Dereference", (accessReference) =>
+            {
+                switch (accessReference)
+                {
+                    case "&":
+                        return "*";
+
+                    default:
+                        return "";
+                }
+            });
+
+            _snippetCodeGenerators.Add("ToStorageReference", (accessReference) =>
+            {
+                switch (accessReference)
+                {
+                    case "&":
+                    case "*":
+                        return "*";
+
+                    default:
+                        return "";
+                }
             });
 
             _snippetDynamicVars.Add("ClassName", (offset, line, column) => null);
@@ -124,13 +150,13 @@ namespace AvalonStudio.Languages.CPlusPlus
                 case NClang.CursorKind.Destructor:
                 case NClang.CursorKind.FunctionTemplate:
                 case NClang.CursorKind.ClassTemplate:
-                    return CodeCompletionKind.Method;
+                    return CodeCompletionKind.MethodPublic;
 
                 case NClang.CursorKind.ClassDeclaration:
-                    return CodeCompletionKind.Class;
+                    return CodeCompletionKind.ClassPublic;
 
                 case NClang.CursorKind.StructDeclaration:
-                    return CodeCompletionKind.Struct;
+                    return CodeCompletionKind.StructurePublic;
 
                 case NClang.CursorKind.MacroDefinition:
                     return CodeCompletionKind.Macro;
@@ -140,19 +166,19 @@ namespace AvalonStudio.Languages.CPlusPlus
                     return CodeCompletionKind.Keyword;
 
                 case NClang.CursorKind.EnumDeclaration:
-                    return CodeCompletionKind.Enum;
+                    return CodeCompletionKind.EnumPublic;
 
                 case NClang.CursorKind.EnumConstantDeclaration:
-                    return CodeCompletionKind.EnumConstant;
+                    return CodeCompletionKind.EnumMemberPublic;
 
                 case NClang.CursorKind.VarDeclaration:
                     return CodeCompletionKind.Variable;
 
                 case NClang.CursorKind.Namespace:
-                    return CodeCompletionKind.Namespace;
+                    return CodeCompletionKind.NamespacePublic;
 
                 case NClang.CursorKind.ParmDeclaration:
-                    return CodeCompletionKind.Field;
+                    return CodeCompletionKind.FieldPublic;
 
                 case NClang.CursorKind.FieldDeclaration:
                     return CodeCompletionKind.Parameter;
@@ -436,7 +462,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        private void GenerateHighlightData(ClangCursor cursor, SyntaxHighlightDataList highlightList)
+        private void GenerateHighlightData(ClangCursor cursor, SyntaxHighlightDataList highlightList, List<IndexEntry> result)
         {
             cursor.VisitChildren((current, parent, ptr) =>
             {
@@ -447,6 +473,16 @@ namespace AvalonStudio.Languages.CPlusPlus
                     if (highlight != null)
                     {
                         highlightList.Add(highlight);
+                    }
+
+                    switch (current.Kind)
+                    {
+                        case NClang.CursorKind.CompoundStatement:
+                        case NClang.CursorKind.ClassDeclaration:
+                        case NClang.CursorKind.Namespace:
+                            result.Add(new IndexEntry(current.Spelling, current.CursorExtent.Start.FileLocation.Offset,
+                            current.CursorExtent.End.FileLocation.Offset, (CursorKind)current.Kind));
+                            break;
                     }
 
                     return ChildVisitResult.Recurse;
@@ -461,7 +497,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }, IntPtr.Zero);
         }
 
-        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result, TextMarkerService service)
+        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result)
         {
             foreach (var diagnostic in clangDiagnostics)
             {
@@ -491,26 +527,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     result.Add(diag);
                     tokens.Dispose();
-
-                    Color markerColor;
-
-                    switch (diag.Level)
-                    {
-                        case DiagnosticLevel.Error:
-                        case DiagnosticLevel.Fatal:
-                            markerColor = Color.FromRgb(253, 45, 45);
-                            break;
-
-                        case DiagnosticLevel.Warning:
-                            markerColor = Color.FromRgb(255, 207, 40);
-                            break;
-
-                        default:
-                            markerColor = Color.FromRgb(0, 42, 74);
-                            break;
-                    }
-
-                    service.Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
                 }
             }
         }
@@ -538,20 +554,16 @@ namespace AvalonStudio.Languages.CPlusPlus
                         {
                             ScanTokens(translationUnit, result.SyntaxHighlightingData);
 
-                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData);
+                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
                         }
 
-                        dataAssociation.TextMarkerService.Clear();
-
-                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics, dataAssociation.TextMarkerService);
+                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics);
                     }
                 }
                 catch (Exception e)
                 {
                 }
             });
-
-            dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
         }
@@ -583,16 +595,14 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
         {
-            CPlusPlusDataAssociation association = null;
-
-            if (dataAssociations.TryGetValue(file, out association))
+            if (dataAssociations.TryGetValue(file, out CPlusPlusDataAssociation association))
             {
                 throw new Exception("Source file already registered with language service.");
             }
 
             IndentationStrategy = new CSharpIndentationStrategy(editor.Options);
 
-            association = new CPlusPlusDataAssociation(doc);
+            association = new CPlusPlusDataAssociation();
             dataAssociations.Add(file, association);
 
             association.TextInputHandler = (sender, e) =>
@@ -607,12 +617,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                     {
                         case "}":
                         case ";":
-                            editor.CaretOffset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+                            editor.CaretOffset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
                             break;
 
                         case "{":
                             var lineCount = editor.Document.LineCount;
-                            var offset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+                            var offset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
 
                             // suggests clang format didnt do anything, so we can assume not moving to new line.
                             if (lineCount != editor.Document.LineCount)
@@ -637,20 +647,6 @@ namespace AvalonStudio.Languages.CPlusPlus
             editor.TextArea.TextEntered += association.TextInputHandler;
         }
 
-        public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
-        {
-            var associatedData = GetAssociatedData(file);
-
-            return associatedData.DocumentLineTransformers;
-        }
-
-        public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
-        {
-            var associatedData = GetAssociatedData(file);
-
-            return associatedData.BackgroundRenderers;
-        }
-
         public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
         {
             var association = GetAssociatedData(file);
@@ -667,7 +663,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             dataAssociations.Remove(file);
         }
 
-        public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
         {
             bool replaceCursor = cursor >= 0 ? true : false;
 
@@ -676,8 +672,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 cursor = 0;
             }
 
-            var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor,
-                ClangFormatSettings.Default);
+            var replacements = ClangFormat.FormatXml(file.Location, textDocument.Text, offset, length, (uint)cursor);
 
             return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
         }
@@ -751,7 +746,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return results;
         }
 
-        public int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -768,13 +763,13 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             return result;
         }
 
-        public int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -797,7 +792,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             return result;
@@ -1098,20 +1093,23 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                                 var paragraph = discussion.Element("Para");
 
-                                if (isVarArgs != null)
+                                if (paragraph != null)
                                 {
-                                    result.Arguments.Last().Comment = paragraph.Value;
-                                }
-                                else
-                                {
-                                    var inx = argument.Element("Index");
-
-                                    if (inx != null)
+                                    if (isVarArgs != null)
                                     {
-                                        // This happens when documentation for an argument was left in, but the argument no longer exists.
-                                        var index = int.Parse(inx.Value);
+                                        result.Arguments.Last().Comment = paragraph.Value;
+                                    }
+                                    else
+                                    {
+                                        var inx = argument.Element("Index");
 
-                                        result.Arguments[index].Comment = paragraph.Value;
+                                        if (inx != null)
+                                        {
+                                            // This happens when documentation for an argument was left in, but the argument no longer exists.
+                                            var index = int.Parse(inx.Value);
+
+                                            result.Arguments[index].Comment = paragraph.Value;
+                                        }
                                     }
                                 }
                             }

@@ -10,12 +10,11 @@ namespace AvalonStudio.Controls.Standard.AboutScreen.Commands
 {
     internal class AboutScreenCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> command;
+        private readonly ReactiveCommand command;
 
         public AboutScreenCommandDefinition()
         {
-            command = ReactiveCommand.Create();
-            command.Subscribe(_ =>
+            command = ReactiveCommand.Create(() =>
             {
                 var shell = IoC.Get<IShell>();
                 shell.ModalDialog = new AboutDialogViewModel();

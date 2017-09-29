@@ -141,6 +141,10 @@ namespace AvalonStudio.Shell
 
         public IEnumerable<ICodeTemplate> CodeTemplates { get; }
 
+        public IObservable<ISolution> OnSolutionChanged => throw new NotImplementedException();
+
+        public IWorkspaceTaskRunner TaskRunner => throw new NotImplementedException();
+
         public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
             bool selectLine = false, bool focus = true)
         {

@@ -6,8 +6,8 @@
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.1-build3595-alpha" />
-    <PackageReference Include="AvalonStudio.Languages.CPlusPlus.LibClang" Version="4.0.0.2" />
+    <PackageReference Include="Avalonia" Version="0.5.2-build3911-alpha" />
+    <PackageReference Include="AvalonStudio.Languages.CPlusPlus.LibClang" Version="5.0.0" />
     <PackageReference Include="VitalElement.NClang" Version="0.9.0-build15-alpha" />
   </ItemGroup>
   <ItemGroup>
@@ -23,6 +23,18 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Snippets\cpp\if.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\ipropfull.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\iroprop.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\ppropfull.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cpp\proprop.snippet">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Snippets\cpp\while.snippet">

@@ -1,0 +1,5 @@
+{
+  "Name": "ipropfull",
+  "Description": "Implement Read and Write Property.",
+  "Snippet": "${type=int} ${reference=&} ${class=ClassName}::${property=PropertyName}()\n{\n\treturn ${Dereference(reference)}${ToFieldName(property)};\n}\n\nvoid ${class}::${property}(${type}${reference} value)\n{\n\t${ToFieldName(property)} = ${Dereference(reference)}value;\n}${Caret}"
+}

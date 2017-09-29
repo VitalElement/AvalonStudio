@@ -1,6 +1,5 @@
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
-using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Projects;
@@ -49,21 +48,17 @@ namespace AvalonStudio.Languages
 
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
-        IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file);
-
-        IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file);
-
         void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);
 
         void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file);
 
         bool CanHandle(ISourceFile file);
 
-        int Format(TextDocument textDocument, uint offset, uint length, int cursor);
+        int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor);
 
-        int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
+        int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
 
-        int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
+        int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
 
         Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
 

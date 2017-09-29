@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
+using AvalonStudio.Languages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,10 @@ namespace AvalonStudio.Extensibility.Editor
             int viewStart = visualLines.First().FirstDocumentLine.Offset;
             int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
 
-            foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart))
+            int start = Math.Min(viewStart, viewEnd);
+            int end = Math.Max(viewStart, viewEnd);
+
+            foreach (TextMarker marker in markers.FindOverlappingSegments(start, end - start))
             {
                 if (marker.EndOffset < textView.Document.TextLength)
                 {
@@ -73,11 +77,6 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
-        public void TransformLine(TextView textView, DrawingContext drawingContext, VisualLine line)
-        {
-           
-        }
-
         private IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
         {
             for (var i = 0; i < count; i++)
@@ -97,7 +96,35 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
-        public void Create(int offset, int length, string message, Color markerColor)
+        public void SetDiagnostics(TextSegmentCollection<Diagnostic> diagnostics)
+        {
+            Clear();
+
+            foreach (var diag in diagnostics)
+            {
+                Color markerColor;
+
+                switch (diag.Level)
+                {
+                    case DiagnosticLevel.Error:
+                    case DiagnosticLevel.Fatal:
+                        markerColor = Color.FromRgb(253, 45, 45);
+                        break;
+
+                    case DiagnosticLevel.Warning:
+                        markerColor = Color.FromRgb(255, 207, 40);
+                        break;
+
+                    default:
+                        markerColor = Color.FromRgb(0, 42, 74);
+                        break;
+                }
+
+                Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
+            }
+        }
+        
+        private void Create(int offset, int length, string message, Color markerColor)
         {
             var m = new TextMarker(offset, length);
             markers.Add(m);

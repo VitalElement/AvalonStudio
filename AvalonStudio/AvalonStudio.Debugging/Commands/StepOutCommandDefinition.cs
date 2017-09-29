@@ -11,36 +11,18 @@ namespace AvalonStudio.Debugging.Commands
 {
     internal class StepOutCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> command;
+        private ReactiveCommand command;
 
-        public StepOutCommandDefinition()
+        public override void Activation()
         {
-            command = ReactiveCommand.Create();
-            command.Subscribe(_ =>
-            {
-                var manager = IoC.Get<IDebugManager2>();
+            var manager = IoC.Get<IDebugManager2>();
 
-                manager.StepOut();
-            });
+            command = ReactiveCommand.Create(() => manager.StepOut(), manager.CanStep);
         }
 
         public override KeyGesture Gesture => KeyGesture.Parse("SHIFT+F11");
 
-        public override Path IconPath
-        {
-            get
-            {
-                return new Path
-                {
-                    Fill = Brush.Parse("#FF7AC1FF"),
-                    UseLayoutRounding = false,
-                    Stretch = Stretch.Uniform,
-                    Data =
-                        StreamGeometry.Parse(
-                            "M12,22A2,2 0 0,1 10,20A2,2 0 0,1 12,18A2,2 0 0,1 14,20A2,2 0 0,1 12,22M13,16H11V6L6.5,10.5L5.08,9.08L12,2.16L18.92,9.08L17.5,10.5L13,6V16Z")
-                };
-            }
-        }
+        public override DrawingGroup Icon => this.GetCommandIcon("StepOut");
 
         public override ICommand Command
         {

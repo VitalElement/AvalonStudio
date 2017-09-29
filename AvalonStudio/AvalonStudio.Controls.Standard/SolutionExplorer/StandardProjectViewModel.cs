@@ -13,8 +13,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public ReactiveCommand<object> SetDefaultProjectCommand { get; private set; }
+        public ReactiveCommand SetDefaultProjectCommand { get; private set; }
 
-        public ReactiveCommand<object> Remove { get; private set; }
+        public ReactiveCommand Remove { get; private set; }
     }
 }

@@ -40,6 +40,7 @@ namespace AvalonStudio
     {
         public static ShellViewModel Instance { get; internal set; }
         private IToolBar _toolBar;
+        private WorkspaceTaskRunner _taskRunner;
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
         private List<ILanguageService> _languageServices;
@@ -123,6 +124,10 @@ namespace AvalonStudio
             MiddleTopTabs = new TabControlViewModel();
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
+
+            OnSolutionChanged = Observable.FromEventPattern<SolutionChangedEventArgs>(this, nameof(SolutionChanged)).Select(s => s.EventArgs.NewValue);
+
+            _taskRunner = new WorkspaceTaskRunner();
 
             QuickCommander = new QuickCommanderViewModel();
 
@@ -246,16 +251,16 @@ namespace AvalonStudio
             ProcessCancellationToken = new CancellationTokenSource();
 
             CurrentPerspective = Perspective.Editor;
-            
+
             var editorSettings = Settings.GetSettings<EditorSettings>();
 
             _globalZoomLevel = editorSettings.GlobalZoomLevel;
 
             IoC.RegisterConstant(this);
 
-            this.WhenAnyValue(x => x.GlobalZoomLevel).Subscribe(zoomLevel=>
+            this.WhenAnyValue(x => x.GlobalZoomLevel).Subscribe(zoomLevel =>
             {
-                foreach(var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+                foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
                 {
                     document.ZoomLevel = zoomLevel;
                 }
@@ -270,17 +275,17 @@ namespace AvalonStudio
                 Settings.SetSettings(settings);
             });
 
-            EnableDebugModeCommand = ReactiveCommand.Create();
-
-            EnableDebugModeCommand.Subscribe(_ =>
+            EnableDebugModeCommand = ReactiveCommand.Create(() =>
             {
                 DebugMode = !DebugMode;
-            });
+            });            
         }
 
-        public ReactiveCommand<object> EnableDebugModeCommand { get; }
+        public ReactiveCommand EnableDebugModeCommand { get; }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+
+        public IObservable<ISolution> OnSolutionChanged { get; }
 
         public IMenu MainMenu { get; }
 
@@ -534,7 +539,7 @@ namespace AvalonStudio
 
                     if (documentToClose != null)
                     {
-                        await documentToClose.CloseCommand.ExecuteAsyncTask(null);
+                        //await documentToClose.CloseCommand.ExecuteAsyncTask(null);
                     }
                 });
             }
@@ -589,7 +594,7 @@ namespace AvalonStudio
 
             if (project.ToolChain != null)
             {
-                new Thread(async () => { await project.ToolChain.Clean(Console, project); }).Start();
+                TaskRunner.RunTask(() => project.ToolChain.Clean(Console, project).Wait());
             }
             else
             {
@@ -605,7 +610,10 @@ namespace AvalonStudio
 
             if (project.ToolChain != null)
             {
-                new Thread(async () => { await Task.Factory.StartNew(() => project.ToolChain.Build(Console, project)); }).Start();
+                TaskRunner.RunTask(() =>
+                {
+                    project.ToolChain.Build(Console, project).Wait();
+                });
             }
             else
             {
@@ -827,7 +835,7 @@ namespace AvalonStudio
             {
                 if (document is EditorViewModel)
                 {
-                    await (document as EditorViewModel).CloseCommand.ExecuteAsyncTask();
+                    //await (document as EditorViewModel).CloseCommand.ExecuteAsyncTask();
                 }
             }
 
@@ -842,7 +850,7 @@ namespace AvalonStudio
             {
                 if (document is EditorViewModel evm && evm.ProjectFile.Project == project)
                 {
-                    await evm.CloseCommand.ExecuteAsyncTask();
+                    //await evm.CloseCommand.ExecuteAsyncTask();
 
                     evm.OnClose();
                 }
@@ -856,5 +864,7 @@ namespace AvalonStudio
         }
 
         public bool DebugMode { get; set; }
+
+        public IWorkspaceTaskRunner TaskRunner => _taskRunner;
     }
 }

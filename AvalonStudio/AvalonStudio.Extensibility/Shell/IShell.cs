@@ -20,11 +20,16 @@ namespace AvalonStudio.Shell
     }
 
     public interface IShell
-    {
+    {        
+        ISolution CurrentSolution { get; set; }
+
+        IObservable<ISolution> OnSolutionChanged { get; }
+
         event EventHandler<SolutionChangedEventArgs> SolutionChanged;
 
+        IWorkspaceTaskRunner TaskRunner { get; }
+
         Perspective CurrentPerspective { get; set; }
-        ISolution CurrentSolution { get; set; }
         IDocumentTabViewModel SelectedDocument { get; set; }
         ObservableCollection<object> Tools { get; }
         ModalDialogViewModelBase ModalDialog { get; set; }

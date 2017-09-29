@@ -21,25 +21,28 @@
     </Style>
 
   </UserControl.Styles>
-  <ItemsControl Items="{Binding }">
-    <ItemsControl.ItemsPanel>
-      <ItemsPanelTemplate>
-        <StackPanel Orientation="Horizontal" Gap="1" />
-      </ItemsPanelTemplate>
-    </ItemsControl.ItemsPanel>
 
-    <ItemsControl.DataTemplates>
-      <DataTemplate DataType="mod:CommandToolBarItem">
-        <Button BorderThickness="0" Margin="0"  Height="18" Width="18" Command="{Binding Command}" ToolTip.Tip="{Binding ToolTip}" >
-          <Panel Height="12" Width="12">
-            <ContentControl Content="{Binding IconPath}" />            
-          </Panel>
-        </Button>
-      </DataTemplate>
+  <Grid>
+    <ItemsControl Items="{Binding }">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Horizontal" Gap="1" />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
 
-      <DataTemplate DataType="mod:ToolBarItemSeparator">
-        <Grid Width="1" Height="{TemplateBinding Height}" Background="#3F3F46" Margin="4,0" />
-      </DataTemplate>
-    </ItemsControl.DataTemplates>
-  </ItemsControl>
+      <ItemsControl.DataTemplates>
+        <DataTemplate DataType="mod:CommandToolBarItem">
+          <Button BorderThickness="0" Margin="0" Height="18" Width="18" Command="{Binding Command}" ToolTip.Tip="{Binding ToolTip}" >
+            <DrawingPresenter Drawing="{Binding Icon}" Width="16" Height="16" />
+          </Button>
+        </DataTemplate>
+
+        <DataTemplate DataType="mod:ToolBarItemSeparator">
+          <Grid Width="1" Height="{TemplateBinding Height}" Background="#3F3F46" Margin="4,0" />
+        </DataTemplate>
+      </ItemsControl.DataTemplates>
+    </ItemsControl>
+  </Grid>
+
+  
 </UserControl>

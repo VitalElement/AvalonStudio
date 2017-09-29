@@ -159,7 +159,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             switch (kind)
             {
                 case "class":
-                    return CodeCompletionKind.Class;
+                    return CodeCompletionKind.ClassPublic;
 
                 case "var":
                     return CodeCompletionKind.Variable;
@@ -172,24 +172,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
         }
 
-        public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
         {
             //STUB!
             return -1;
-        }
-
-        public IList<IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
-        {
-            var associatedData = GetAssociatedData(file);
-
-            return associatedData.BackgroundRenderers;
-        }
-
-        public IList<IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
-        {
-            var associatedData = GetAssociatedData(file);
-
-            return associatedData.DocumentLineTransformers;
         }
 
         public Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
@@ -217,7 +203,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 throw new InvalidOperationException("Source file already registered with language service.");
             }
 
-            association = new TypeScriptDataAssociation(textDocument);
+            association = new TypeScriptDataAssociation();
             dataAssociations.Add(file, association);
         }
 
@@ -305,9 +291,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 HighlightNode(rootStatement, result);
             }
 
-            // Clean up previous highlighting
-            dataAssociation.TextMarkerService.Clear();
-
             // Diagnostics
 
             // Language service has diagnostics
@@ -336,8 +319,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 File = file.Name,
                 Level = DiagnosticLevel.Warning,
             });
-
-            dataAssociation.TextColorizer.SetTransformations(result.SyntaxHighlightingData);
 
             return result;
         }
@@ -455,7 +436,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return Task.FromResult<SignatureHelp>(null);
         }
 
-        public int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -470,7 +451,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();
@@ -478,7 +459,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return result;
         }
 
-        public int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -499,7 +480,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();

@@ -10,32 +10,16 @@ namespace AvalonStudio.Debugging.Commands
 {
     internal class StopDebuggingCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> command;
+        private ReactiveCommand command;
 
-        public StopDebuggingCommandDefinition()
+        public override void Activation()
         {
-            command = ReactiveCommand.Create();
-            command.Subscribe(_ =>
-            {
-                var manager = IoC.Get<IDebugManager2>();
+            var manager = IoC.Get<IDebugManager2>();
 
-                manager.Stop();
-            });
+            command = ReactiveCommand.Create(()=>manager.Stop(), manager.CanStop);
         }
 
-        public override Path IconPath
-        {
-            get
-            {
-                return new Path
-                {
-                    Fill = Brush.Parse("#FFF38B76"),
-                    UseLayoutRounding = false,
-                    Stretch = Stretch.Uniform,
-                    Data = StreamGeometry.Parse("M18,18H6V6H18V18Z")
-                };
-            }
-        }
+        public override DrawingGroup Icon => this.GetCommandIcon("Stop");
 
         public override ICommand Command
         {

@@ -8,15 +8,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 
     internal class OpenSolutionCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> command;
+        private readonly ReactiveCommand command;
 
         public OpenSolutionCommandDefinition()
         {
-            command = ReactiveCommand.Create();
-            command.Subscribe(_ =>
-            {
-                IoC.Get<ISolutionExplorer>().OpenSolution();
-            });
+            command = ReactiveCommand.Create(() =>IoC.Get<ISolutionExplorer>().OpenSolution());
         }
 
         public override ICommand Command

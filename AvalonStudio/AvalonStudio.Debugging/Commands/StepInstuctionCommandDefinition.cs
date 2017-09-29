@@ -13,33 +13,15 @@ namespace AvalonStudio.Debugging.Commands
     {
         public override KeyGesture Gesture => KeyGesture.Parse("F9");
 
-        private readonly ReactiveCommand<object> command;
+        private ReactiveCommand command;
 
-        public StepInstructionCommandDefinition()
+        public override void Activation()
         {
-            command = ReactiveCommand.Create();
-            command.Subscribe(_ =>
-            {
-                var manager = IoC.Get<IDebugManager2>();
+            var manager = IoC.Get<IDebugManager2>();
 
-                manager.StepInstruction();
-            });
+            command = ReactiveCommand.Create(manager.StepInstruction, manager.CanStep);
         }
-
-        public override Path IconPath
-        {
-            get
-            {
-                return new Path
-                {
-                    Fill = Brush.Parse("#FF8DD28A"),
-                    UseLayoutRounding = false,
-                    Stretch = Stretch.Uniform,
-                    Data = StreamGeometry.Parse("M8,5.14V19.14L19,12.14L8,5.14Z")
-                };
-            }
-        }
-
+        
         public override ICommand Command
         {
             get { return command; }

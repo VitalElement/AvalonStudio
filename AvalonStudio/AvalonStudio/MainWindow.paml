@@ -59,7 +59,7 @@
       </Grid>
     </Grid>
 
-    <Grid Grid.Row="1">
+    <Grid Grid.Row="1" Margin="6 2">
       <dock:DockControl Name="mainDock">
         <docking:Branch Orientation="Horizontal" FirstItemLength="0.75*" SecondItemLength="0.25*">
           <docking:Branch.FirstItem>

@@ -64,25 +64,21 @@ namespace AvalonStudio.Toolchains.GCC
             rtti = settings.Rtti;
             exceptions = settings.Exceptions;
 
-            AddDefineCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.DefineText, define => !string.IsNullOrEmpty(define) && !Defines.Contains(define)));
-            AddDefineCommand.Subscribe(AddDefine);
+            AddDefineCommand = ReactiveCommand.Create(AddDefine, this.WhenAnyValue(x => x.DefineText, define => !string.IsNullOrEmpty(define) && !Defines.Contains(define)));
 
-            RemoveDefineCommand = ReactiveCommand.Create(this.WhenAnyValue(x => x.SelectedDefine, selected => !string.IsNullOrEmpty(selected)));
-            RemoveDefineCommand.Subscribe(RemoveDefine);
+            RemoveDefineCommand = ReactiveCommand.Create(RemoveDefine, this.WhenAnyValue(x => x.SelectedDefine, selected => !string.IsNullOrEmpty(selected)));
 
-            AddIncludePathCommand = ReactiveCommand.Create();
-            AddIncludePathCommand.Subscribe(AddIncludePath);
+            AddIncludePathCommand = ReactiveCommand.Create(AddIncludePath);
 
-            RemoveIncludePathCommand = ReactiveCommand.Create();
-            RemoveIncludePathCommand.Subscribe(RemoveIncludePath);
+            RemoveIncludePathCommand = ReactiveCommand.Create(RemoveIncludePath);
 
             UpdateCompileString();
         }
 
-        public ReactiveCommand<object> AddIncludePathCommand { get; }
-        public ReactiveCommand<object> RemoveIncludePathCommand { get; }
-        public ReactiveCommand<object> AddDefineCommand { get; }
-        public ReactiveCommand<object> RemoveDefineCommand { get; }
+        public ReactiveCommand AddIncludePathCommand { get; }
+        public ReactiveCommand RemoveIncludePathCommand { get; }
+        public ReactiveCommand AddDefineCommand { get; }
+        public ReactiveCommand RemoveDefineCommand { get; }
 
         public string[] CLanguageStandards
         {
@@ -307,20 +303,20 @@ namespace AvalonStudio.Toolchains.GCC
             }
         }
 
-        private void AddDefine(object param)
+        private void AddDefine()
         {
             Defines.Add(DefineText);
             DefineText = string.Empty;
             UpdateCompileString();
         }
 
-        private void RemoveDefine(object param)
+        private void RemoveDefine()
         {
             Defines.Remove(SelectedDefine);
             UpdateCompileString();
         }
 
-        private async void AddIncludePath(object param)
+        private async void AddIncludePath()
         {
             var fbd = new OpenFolderDialog();
 
@@ -349,7 +345,7 @@ namespace AvalonStudio.Toolchains.GCC
             return true;
         }
 
-        private void RemoveIncludePath(object param)
+        private void RemoveIncludePath()
         {
             includePaths.Remove(SelectedInclude);
             UpdateCompileString();

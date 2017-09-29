@@ -24,8 +24,7 @@ namespace AvalonStudio.Extensibility.Dialogs
             isVisible = false;
             this.title = title;
 
-            CancelCommand = ReactiveCommand.Create();
-            CancelCommand.Subscribe(_ => { Close(false); });
+            CancelCommand = ReactiveCommand.Create(() => Close(false));
         }
 
         public bool CancelButtonVisible
@@ -40,8 +39,8 @@ namespace AvalonStudio.Extensibility.Dialogs
             set { this.RaiseAndSetIfChanged(ref okayButtonVisible, value); }
         }
 
-        public virtual ReactiveCommand<object> OKCommand { get; protected set; }
-        public ReactiveCommand<object> CancelCommand { get; }
+        public virtual ReactiveCommand OKCommand { get; protected set; }
+        public ReactiveCommand CancelCommand { get; }
 
         public string Title
         {
