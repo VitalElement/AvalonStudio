@@ -474,7 +474,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         highlightList.Add(highlight);
                     }
 
-                    switch(current.Kind)
+                    switch (current.Kind)
                     {
                         case NClang.CursorKind.CompoundStatement:
                         case NClang.CursorKind.ClassDeclaration:
@@ -671,8 +671,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 cursor = 0;
             }
 
-            var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor,
-                ClangFormatSettings.Default);
+            var replacements = ClangFormat.FormatXml(file.Location, textDocument.Text, offset, length, (uint)cursor);
 
             return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
         }
@@ -746,7 +745,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return results;
         }
 
-        public int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -763,13 +762,13 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                //result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             return result;
         }
 
-        public int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -792,7 +791,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                //result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             return result;

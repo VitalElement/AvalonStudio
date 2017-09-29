@@ -55,12 +55,12 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public int Comment(global::AvaloniaEdit.Document.TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ISourceFile file, global::AvaloniaEdit.Document.TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             throw new NotImplementedException();
         }
 
-        public int Format(global::AvaloniaEdit.Document.TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(ISourceFile file, global::AvaloniaEdit.Document.TextDocument textDocument, uint offset, uint length, int cursor)
         {
             throw new NotImplementedException();
         }
@@ -115,7 +115,7 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public int UnComment(global::AvaloniaEdit.Document.TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ISourceFile file, global::AvaloniaEdit.Document.TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             throw new NotImplementedException();
         }

@@ -23,7 +23,6 @@ namespace AvalonStudio.Controls
 {
     public class EditorViewModel : DocumentTabViewModel, IEditor
     {
-        private readonly CompositeDisposable disposables;
         private double _fontSize;
         private double _zoomLevel;
         private double _visualFontSize;
@@ -112,7 +111,6 @@ namespace AvalonStudio.Controls
         {
             _shell.InvalidateErrors();
             _editor?.Close();
-            disposables.Dispose();
         }
 
         public void OnPointerWheelChanged(PointerWheelEventArgs e)
@@ -429,7 +427,7 @@ namespace AvalonStudio.Controls
                 ShellViewModel.Instance.StatusBar.Column = value;
             }
         }
-        
+
         private string _languageServiceName;
 
         public string LanguageServiceName

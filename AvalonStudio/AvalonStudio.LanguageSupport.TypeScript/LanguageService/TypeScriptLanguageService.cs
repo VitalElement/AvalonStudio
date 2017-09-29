@@ -437,7 +437,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return Task.FromResult<SignatureHelp>(null);
         }
 
-        public int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -452,7 +452,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-               // result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();
@@ -460,7 +460,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return result;
         }
 
-        public int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -481,7 +481,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-               // result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             textDocument.EndUpdate();
