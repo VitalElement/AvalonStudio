@@ -6,7 +6,7 @@ namespace AvalonStudio.Shell.Commands
 {
     public class CopyCommandDefinition : CommandDefinition
     {
-        private ReactiveCommand<object> _command;
+        private ReactiveCommand _command;
         public override string Text => "Copy";
 
         public override string ToolTip => "Copy ToolTip";

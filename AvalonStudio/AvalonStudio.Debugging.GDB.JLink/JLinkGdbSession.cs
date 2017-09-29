@@ -28,13 +28,13 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         private void JLinkGdbSession_TargetReady(object sender, TargetEventArgs e)
         {
+            var settings = _project.GetDebuggerSettings<JLinkSettings>();
+
             bool result = RunCommand("-target-select", "remote", ":2331").Status == CommandStatus.Done;
 
             if (result)
             {
                 InsideStop();
-
-                var settings = _project.GetDebuggerSettings<JLinkSettings>();
 
                 RunCommand("monitor", "halt");
 
@@ -70,7 +70,16 @@ namespace AvalonStudio.Debugging.GDB.JLink
             }
 
             var jlinkStartInfo = new ProcessStartInfo();
-            jlinkStartInfo.Arguments = string.Format("-select USB -device {0} -if {1} -speed {2}", settings.TargetDevice, Enum.GetName(typeof(JlinkInterfaceType), settings.Interface), settings.SpeedkHz);
+
+            if (settings.UseRemote)
+            {
+                jlinkStartInfo.Arguments = string.Format($"-select IP={settings.RemoteIPAddress} -device {settings.TargetDevice} -if {Enum.GetName(typeof(JlinkInterfaceType), settings.Interface)} -speed {settings.SpeedkHz}");
+            }
+            else
+            {
+                jlinkStartInfo.Arguments = string.Format($"-select USB -device {settings.TargetDevice} -if {Enum.GetName(typeof(JlinkInterfaceType), settings.Interface)} -speed {settings.SpeedkHz}");
+            }
+
             jlinkStartInfo.FileName = Path.Combine(JLinkDebugger.BaseDirectory, processName + Platform.ExecutableExtension);
 
             if (Path.IsPathRooted(jlinkStartInfo.FileName) && !System.IO.File.Exists(jlinkStartInfo.FileName))

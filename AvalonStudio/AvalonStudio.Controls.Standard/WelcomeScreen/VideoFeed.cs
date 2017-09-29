@@ -17,9 +17,7 @@
             _title = title;
             _image = image;
 
-            ClickCommand = ReactiveCommand.Create();
-
-            ClickCommand.Subscribe(_ =>
+            ClickCommand = ReactiveCommand.Create(() =>
             {
                 System.Diagnostics.Process.Start(url);
             });
@@ -37,6 +35,6 @@
             set { this.RaiseAndSetIfChanged(ref _image, value); }
         }
 
-        public ReactiveCommand<object> ClickCommand { get; }
+        public ReactiveCommand ClickCommand { get; }
     }
 }

@@ -14,9 +14,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             _name = name;
             _location = location;
 
-            ClickCommand = ReactiveCommand.Create();
-
-            ClickCommand.Subscribe(_ =>
+            ClickCommand = ReactiveCommand.Create(() =>
             {
                 var shell = IoC.Get<IShell>();
 
@@ -40,6 +38,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             set { this.RaiseAndSetIfChanged(ref _location, value); }
         }
 
-        public ReactiveCommand<object> ClickCommand { get; }
+        public ReactiveCommand ClickCommand { get; }
     }
 }

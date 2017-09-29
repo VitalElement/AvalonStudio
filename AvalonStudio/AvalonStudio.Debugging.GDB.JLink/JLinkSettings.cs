@@ -16,6 +16,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
         {
             Download = true;
             Reset = true;
+            UseRemote = false;
+            RemoteIPAddress = "";
         }
 
         public JlinkInterfaceType Interface { get; set; }
@@ -26,5 +28,9 @@ namespace AvalonStudio.Debugging.GDB.JLink
         public bool Download { get; set; }
 
         public bool Reset { get; set; }
+
+        public bool UseRemote { get; set; }
+
+        public string RemoteIPAddress { get; set; }
     }
 }

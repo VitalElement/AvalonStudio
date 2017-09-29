@@ -10,18 +10,13 @@ namespace AvalonStudio.Debugging.Commands
 {
     internal class RestartDebuggingCommandDefinition : CommandDefinition
     {
-        private ReactiveCommand<object> command;
+        private ReactiveCommand command;
 
         public override void Activation()
         {
             var manager = IoC.Get<IDebugManager2>();
 
-            command = ReactiveCommand.Create(manager.CanStop);
-
-            command.Subscribe(_ =>
-            {
-                manager.Restart();
-            });
+            command = ReactiveCommand.Create(() => manager.Restart(), manager.CanStop);
         }
 
         public override DrawingGroup Icon => this.GetCommandIcon("Restart");

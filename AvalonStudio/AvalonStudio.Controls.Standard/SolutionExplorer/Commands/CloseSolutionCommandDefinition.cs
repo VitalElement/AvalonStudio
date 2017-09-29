@@ -9,12 +9,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 {
     internal class CloseSolutionCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> command;
+        private readonly ReactiveCommand command;
 
         public CloseSolutionCommandDefinition()
         {
-            command = ReactiveCommand.Create();
-            command.Subscribe(async _ =>
+            command = ReactiveCommand.Create(async () =>
             {
                 var shell = IoC.Get<IShell>();
                 await shell.CloseSolutionAsync();
