@@ -42,14 +42,14 @@ namespace AvalonStudio.Languages.CPlusPlus
             return XDocument.Parse(resultText);
         }
 
-        public static XDocument FormatXml(string fileName, string text, uint offset, uint length, uint cursor, ClangFormatSettings fallbackSettings)
+        public static XDocument FormatXml(string fileName, string text, uint offset, uint length, uint cursor)
         {
             var startInfo = new ProcessStartInfo();
             var resultText = string.Empty;
             startInfo.WorkingDirectory = Path.GetDirectoryName(fileName);
             startInfo.FileName = Path.Combine(Platform.NativeFolder, "clang-format" + Platform.ExecutableExtension);
             startInfo.Arguments = string.Format("-offset={0} -length={1} -cursor={2} -fallback-style=none -assume-filename=\"{3}\" -style=file -output-replacements-xml",
-                offset, length, cursor, fileName, fallbackSettings);
+                offset, length, cursor, fileName);
 
             // Hide console window
             startInfo.UseShellExecute = false;

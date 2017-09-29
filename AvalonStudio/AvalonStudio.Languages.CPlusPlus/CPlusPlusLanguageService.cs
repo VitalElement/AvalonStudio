@@ -672,7 +672,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 cursor = 0;
             }
 
-            var replacements = ClangFormat.FormatXml(file.Location, textDocument.Text, offset, length, (uint)cursor, ClangFormatSettings.Default);
+            var replacements = ClangFormat.FormatXml(file.Location, textDocument.Text, offset, length, (uint)cursor);
 
             return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
         }
