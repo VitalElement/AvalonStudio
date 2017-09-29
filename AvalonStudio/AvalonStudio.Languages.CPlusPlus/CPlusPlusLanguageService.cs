@@ -475,7 +475,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         highlightList.Add(highlight);
                     }
 
-                    switch(current.Kind)
+                    switch (current.Kind)
                     {
                         case NClang.CursorKind.CompoundStatement:
                         case NClang.CursorKind.ClassDeclaration:

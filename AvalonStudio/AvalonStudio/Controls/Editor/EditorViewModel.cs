@@ -427,7 +427,7 @@ namespace AvalonStudio.Controls
                 ShellViewModel.Instance.StatusBar.Column = value;
             }
         }
-        
+
         private string _languageServiceName;
 
         public string LanguageServiceName
