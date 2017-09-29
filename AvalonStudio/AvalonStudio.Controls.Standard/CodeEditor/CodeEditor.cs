@@ -504,7 +504,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 ModifySelectedLines((start, end) =>
                 {
-                    LanguageService.Comment(Document, start, end, CaretOffset);
+                    LanguageService.Comment(SourceFile, Document, start, end, CaretOffset);
                 });
             }
         }
@@ -515,7 +515,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 ModifySelectedLines((start, end) =>
                 {
-                    LanguageService.UnComment(Document, start, end, CaretOffset);
+                    LanguageService.UnComment(SourceFile, Document, start, end, CaretOffset);
                 });
             }
         }
@@ -524,7 +524,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (LanguageService != null)
             {
-                CaretOffset = LanguageService.Format(Document, 0, (uint)Document.TextLength, CaretOffset);
+                CaretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
 
                 Focus();
             }
