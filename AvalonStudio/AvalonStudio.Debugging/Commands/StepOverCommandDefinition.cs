@@ -12,18 +12,13 @@ namespace AvalonStudio.Debugging.Commands
     {
         public override KeyGesture Gesture => KeyGesture.Parse("F10");
 
-        private ReactiveCommand<object> command;
+        private ReactiveCommand command;
 
         public override void Activation()
         {
             var manager = IoC.Get<IDebugManager2>();
 
-            command = ReactiveCommand.Create(manager.CanStep);
-
-            command.Subscribe(_ =>
-            {
-                manager.StepOver();
-            });
+            command = ReactiveCommand.Create(() => manager.StepOver(), manager.CanStep);
         }
 
         public override DrawingGroup Icon => this.GetCommandIcon("StepOver");

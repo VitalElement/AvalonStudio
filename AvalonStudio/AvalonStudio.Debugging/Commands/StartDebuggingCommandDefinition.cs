@@ -11,14 +11,13 @@ namespace AvalonStudio.Debugging.Commands
 
     internal class StartDebuggingCommandDefinition : CommandDefinition
     {
-        private ReactiveCommand<object> command;
+        private ReactiveCommand command;
 
         public override void Activation()
         {
             var manager = IoC.Get<IDebugManager2>();
 
-            command = ReactiveCommand.Create(manager.CanStart);
-            command.Subscribe(_ =>
+            command = ReactiveCommand.Create(() =>
             {
                 if (!manager.SessionActive)
                 {
@@ -28,7 +27,8 @@ namespace AvalonStudio.Debugging.Commands
                 {
                     manager.Continue();
                 }
-            });
+            },
+            manager.CanStart);
         }
 
         public override ICommand Command

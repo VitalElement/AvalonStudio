@@ -11,18 +11,13 @@ namespace AvalonStudio.Debugging.Commands
 {
     internal class StepOutCommandDefinition : CommandDefinition
     {
-        private ReactiveCommand<object> command;
+        private ReactiveCommand command;
 
         public override void Activation()
         {
             var manager = IoC.Get<IDebugManager2>();
 
-            command = ReactiveCommand.Create(manager.CanStep);
-
-            command.Subscribe(_ =>
-            {
-                manager.StepOut();
-            });
+            command = ReactiveCommand.Create(() => manager.StepOut(), manager.CanStep);
         }
 
         public override KeyGesture Gesture => KeyGesture.Parse("SHIFT+F11");

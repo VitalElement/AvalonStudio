@@ -20,6 +20,13 @@
                 <TextBlock Text="Reset" />
                 <CheckBox IsChecked="{Binding Reset}" />
             </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Gap="5">
+            <TextBlock Text="Connect over TCPIP" />
+            <CheckBox IsChecked="{Binding UseRemote}" />
+          </StackPanel>
+          
+          <TextBox Watermark="Remote IP" Text="{Binding IPAddress}" UseFloatingWatermark="true" IsEnabled="{Binding UseRemote}" />
         </StackPanel>
 
         <StackPanel Width="500">

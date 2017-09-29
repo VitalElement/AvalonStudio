@@ -33,9 +33,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             this.folder = folder;
 
-            OKCommand = ReactiveCommand.Create();
-
-            OKCommand.Subscribe(_ =>
+            OKCommand = ReactiveCommand.Create(() =>
             {
                 SelectedTemplate?.Generate(folder);
 
@@ -61,6 +59,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             set { this.RaiseAndSetIfChanged(ref folder, value); }
         }
 
-        public override ReactiveCommand<object> OKCommand { get; protected set; }
+        public override ReactiveCommand OKCommand { get; protected set; }
     }
 }

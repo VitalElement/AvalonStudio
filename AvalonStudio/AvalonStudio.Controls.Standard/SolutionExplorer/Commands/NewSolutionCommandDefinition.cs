@@ -10,9 +10,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
     {
         public NewSolutionCommandDefinition()
         {
-            var command = ReactiveCommand.Create();
-
-            command.Subscribe(_ =>
+            var command = ReactiveCommand.Create(() =>
             {
                 IoC.Get<ISolutionExplorer>().NewSolution();
             });

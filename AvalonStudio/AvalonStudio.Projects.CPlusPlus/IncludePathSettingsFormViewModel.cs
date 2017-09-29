@@ -37,25 +37,20 @@ namespace AvalonStudio.Projects.CPlusPlus
                 includePaths.Add(new IncludeViewModel(model, include));
             }
 
-            AddDefineCommand = ReactiveCommand.Create();
+            AddDefineCommand = ReactiveCommand.Create(AddDefine);
             // new RoutingCommand(AddDefine, (o) => DefineText != string.Empty && DefineText != null && !Defines.Contains(DefineText));
-            AddDefineCommand.Subscribe(AddDefine);
 
-            RemoveDefineCommand = ReactiveCommand.Create();
+            RemoveDefineCommand = ReactiveCommand.Create(RemoveDefine);
             // new RoutingCommand(RemoveDefine, (o) => SelectedDefine != string.Empty && SelectedDefine != null);
-            RemoveDefineCommand.Subscribe(RemoveDefine);
 
-            AddIncludePathCommand = ReactiveCommand.Create();
-            AddIncludePathCommand.Subscribe(AddIncludePath);
-
-            RemoveIncludePathCommand = ReactiveCommand.Create();
-            RemoveIncludePathCommand.Subscribe(RemoveIncludePath);
+            AddIncludePathCommand = ReactiveCommand.Create(AddIncludePath);
+            RemoveIncludePathCommand = ReactiveCommand.Create(RemoveIncludePath);
         }
 
-        public ReactiveCommand<object> AddIncludePathCommand { get; }
-        public ReactiveCommand<object> RemoveIncludePathCommand { get; }
-        public ReactiveCommand<object> AddDefineCommand { get; }
-        public ReactiveCommand<object> RemoveDefineCommand { get; }
+        public ReactiveCommand AddIncludePathCommand { get; }
+        public ReactiveCommand RemoveIncludePathCommand { get; }
+        public ReactiveCommand AddDefineCommand { get; }
+        public ReactiveCommand RemoveDefineCommand { get; }
 
         public string DefineText
         {
@@ -117,20 +112,20 @@ namespace AvalonStudio.Projects.CPlusPlus
             Model.Save();
         }
 
-        private void AddDefine(object param)
+        private void AddDefine()
         {
             Defines.Add(new DefinitionViewModel(Model, new Definition { Value = DefineText }));
             DefineText = string.Empty;
             Save();
         }
 
-        private void RemoveDefine(object param)
+        private void RemoveDefine()
         {
             Defines.Remove(SelectedDefine);
             Save();
         }
 
-        private async void AddIncludePath(object param)
+        private async void AddIncludePath()
         {
             var fbd = new OpenFolderDialog();
 
@@ -158,7 +153,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             return true;
         }
 
-        private void RemoveIncludePath(object param)
+        private void RemoveIncludePath()
         {
             includePaths.Remove(SelectedInclude);
             Save();
