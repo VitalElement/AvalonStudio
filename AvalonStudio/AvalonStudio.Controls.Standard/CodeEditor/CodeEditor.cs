@@ -525,7 +525,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 ModifySelectedLines((start, end) =>
                 {
-                    LanguageService.Comment(Document, start, end, CaretOffset);
+                    LanguageService.Comment(SourceFile, Document, start, end, CaretOffset);
                 });
             }
         }
@@ -536,7 +536,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 ModifySelectedLines((start, end) =>
                 {
-                    LanguageService.UnComment(Document, start, end, CaretOffset);
+                    LanguageService.UnComment(SourceFile, Document, start, end, CaretOffset);
                 });
             }
         }
@@ -545,7 +545,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (LanguageService != null)
             {
-                CaretOffset = LanguageService.Format(Document, 0, (uint)Document.TextLength, CaretOffset);
+                CaretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
 
                 Focus();
             }
@@ -678,13 +678,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 TextArea.TextView.BackgroundRenderers.Remove(_scopeLineBackgroundRenderer);
             }
 
-            if(_textColorizer != null)   
+            if (_textColorizer != null)
             {
                 TextArea.TextView.LineTransformers.Remove(_textColorizer);
                 _textColorizer = null;
             }
 
-            if(_diagnosticMarkersRenderer != null)
+            if (_diagnosticMarkersRenderer != null)
             {
                 TextArea.TextView.BackgroundRenderers.Remove(_diagnosticMarkersRenderer);
                 _diagnosticMarkersRenderer = null;

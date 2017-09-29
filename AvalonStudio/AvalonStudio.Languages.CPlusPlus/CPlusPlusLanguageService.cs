@@ -475,7 +475,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         highlightList.Add(highlight);
                     }
 
-                    switch(current.Kind)
+                    switch (current.Kind)
                     {
                         case NClang.CursorKind.CompoundStatement:
                         case NClang.CursorKind.ClassDeclaration:
@@ -617,12 +617,12 @@ namespace AvalonStudio.Languages.CPlusPlus
                     {
                         case "}":
                         case ";":
-                            editor.CaretOffset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+                            editor.CaretOffset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
                             break;
 
                         case "{":
                             var lineCount = editor.Document.LineCount;
-                            var offset = Format(editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+                            var offset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
 
                             // suggests clang format didnt do anything, so we can assume not moving to new line.
                             if (lineCount != editor.Document.LineCount)
@@ -663,7 +663,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             dataAssociations.Remove(file);
         }
 
-        public int Format(TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
         {
             bool replaceCursor = cursor >= 0 ? true : false;
 
@@ -672,8 +672,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 cursor = 0;
             }
 
-            var replacements = ClangFormat.FormatXml(textDocument.Text, offset, length, (uint)cursor,
-                ClangFormatSettings.Default);
+            var replacements = ClangFormat.FormatXml(file.Location, textDocument.Text, offset, length, (uint)cursor);
 
             return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
         }
@@ -747,7 +746,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return results;
         }
 
-        public int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -764,13 +763,13 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             return result;
         }
 
-        public int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -793,7 +792,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                 var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
             }
 
             return result;
