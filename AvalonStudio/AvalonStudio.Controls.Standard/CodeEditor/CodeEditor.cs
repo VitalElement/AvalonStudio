@@ -12,6 +12,7 @@ using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
+using AvalonStudio.CodeEditor;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
@@ -558,13 +559,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (RemoveTrailingWhitespaceOnSave)
                 {
-                    using (Document.RunUpdate())
-                    {
-                        foreach (var line in Document.Lines)
-                        {
-                            Document.Replace(line, Document.GetText(line).TrimEnd());
-                        }
-                    }
+                    Document.TrimTrailingWhiteSpace();
                 }
 
                 System.IO.File.WriteAllText(SourceFile.Location, Document.Text);
