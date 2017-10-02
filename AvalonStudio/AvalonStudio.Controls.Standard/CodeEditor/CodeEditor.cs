@@ -558,14 +558,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (RemoveTrailingWhitespaceOnSave)
                 {
-                    Document.BeginUpdate();
-
-                    foreach (var line in Document.Lines)
+                    using (Document.RunUpdate())
                     {
-                        Document.Replace(line, Document.GetText(line).TrimEnd());
+                        foreach (var line in Document.Lines)
+                        {
+                            Document.Replace(line, Document.GetText(line).TrimEnd());
+                        }
                     }
-
-                    Document.EndUpdate();
                 }
 
                 System.IO.File.WriteAllText(SourceFile.Location, Document.Text);
