@@ -187,6 +187,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             });
 
+            this.GetObservable(ColumnLimitProperty).Subscribe(limit =>
+            {
+                _columnLimitBackgroundRenderer.Column = limit;
+                this.TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+            });
+
             Options = new AvaloniaEdit.TextEditorOptions
             {
                 ConvertTabsToSpaces = true,
@@ -820,6 +826,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get { return GetValue(ShowColumnLimitProperty); }
             set { SetValue(ShowColumnLimitProperty, value); }
+        }
+
+        public static readonly StyledProperty<UInt32> ColumnLimitProperty =
+            AvaloniaProperty.Register<CodeEditor, UInt32>(nameof(ColumnLimit), 80);
+
+        public UInt32 ColumnLimit
+        {
+            get { return GetValue(ColumnLimitProperty); }
+            set { SetValue(ColumnLimitProperty, value); }
         }
 
         public static readonly StyledProperty<int> LineProperty =
