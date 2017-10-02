@@ -11,7 +11,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.2.0" PrivateAssets="all" />
+    <PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.4.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Build" Version="15.3.0-preview-000388-01" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.3.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="2.3.1" />
