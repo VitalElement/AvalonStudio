@@ -12,6 +12,7 @@ using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
+using AvalonStudio.CodeEditor;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
@@ -556,6 +557,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (SourceFile != null && Document != null && IsDirty)
             {
+                if (RemoveTrailingWhitespaceOnSave)
+                {
+                    Document.TrimTrailingWhiteSpace();
+                }
+
                 System.IO.File.WriteAllText(SourceFile.Location, Document.Text);
                 IsDirty = false;
 
@@ -778,6 +784,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get { return GetValue(LineNumbersVisibleProperty); }
             set { SetValue(LineNumbersVisibleProperty, value); }
+        }
+
+        public static readonly StyledProperty<bool> RemoveTrailingWhitespaceOnSaveProperty =
+            AvaloniaProperty.Register<CodeEditor, bool>(nameof(RemoveTrailingWhitespaceOnSave), true);
+
+        public bool RemoveTrailingWhitespaceOnSave
+        {
+            get { return GetValue(RemoveTrailingWhitespaceOnSaveProperty); }
+            set { SetValue(RemoveTrailingWhitespaceOnSaveProperty, value); }
         }
 
         public static readonly StyledProperty<bool> HighlightSelectedLineProperty =
