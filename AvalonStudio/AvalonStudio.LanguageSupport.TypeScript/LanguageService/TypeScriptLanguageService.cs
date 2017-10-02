@@ -53,10 +53,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             get { return new[] { '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^' }; }
         }
 
-        public IEnumerable<char> ValidIdentifierCharacters => new[]
+        public bool IsValidIdentifierCharacter(char data)
         {
-            '_'
-        };
+            return char.IsLetterOrDigit(data) || data == '_';
+        }
 
         private SemaphoreSlim analysisThreadSemaphore = new SemaphoreSlim(1);
 

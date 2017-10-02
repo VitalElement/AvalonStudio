@@ -82,10 +82,10 @@
             '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        public IEnumerable<char> ValidIdentifierCharacters => new[]
+        public bool IsValidIdentifierCharacter(char data)
         {
-            '_'
-        };
+            return char.IsLetterOrDigit(data) || data == '_';
+        }
 
         public IIndentationStrategy IndentationStrategy
         {

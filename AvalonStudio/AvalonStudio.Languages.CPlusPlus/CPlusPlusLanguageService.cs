@@ -134,10 +134,10 @@ namespace AvalonStudio.Languages.CPlusPlus
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        public IEnumerable<char> ValidIdentifierCharacters => new[]
+        public bool IsValidIdentifierCharacter (char data)
         {
-            '_'
-        };
+            return char.IsLetterOrDigit(data) || data == '_';
+        }        
 
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => _snippetCodeGenerators;
 
