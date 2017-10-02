@@ -462,7 +462,7 @@
         {
             var association = GetAssociatedData(file);
 
-            editor.TextInput -= association.TextInputHandler;
+            editor.TextArea.TextEntered -= association.TextInputHandler;
 
             association.Solution = null;
             dataAssociations.Remove(file);

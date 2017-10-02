@@ -651,7 +651,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             var association = GetAssociatedData(file);
 
-            editor.TextInput -= association.TextInputHandler;
+            editor.TextArea.TextEntered -= association.TextInputHandler;
 
             var tu = association.TranslationUnit;
 
