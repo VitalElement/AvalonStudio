@@ -83,6 +83,11 @@
             '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
+        public bool IsValidIdentifierCharacter(char data)
+        {
+            return char.IsLetterOrDigit(data) || data == '_';
+        }
+
         public IIndentationStrategy IndentationStrategy
         {
             get; private set;
