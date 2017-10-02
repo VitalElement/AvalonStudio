@@ -5,6 +5,7 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvaloniaEdit.Rendering;
+using AvalonStudio.CodeEditor;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
@@ -680,6 +681,8 @@ namespace AvalonStudio.Languages.CPlusPlus
                         {
                             var newline = TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
                             editor.Document.Insert(editor.CaretOffset, newline);
+
+                            editor.Document.TrimTrailingWhiteSpace(editor.TextArea.Caret.Line - 1);
 
                             var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
                             // use indentation strategy only if the line is not read-only
