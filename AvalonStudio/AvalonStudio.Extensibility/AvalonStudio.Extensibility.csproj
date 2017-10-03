@@ -15,7 +15,7 @@
     <PackageReference Include="System.Composition" Version="1.1.0" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
-    <PackageReference Include="RazorLight" Version="1.1.0" /> 
+    <PackageReference Include="RazorLight" Version="2.0.0-alpha3" /> 
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
