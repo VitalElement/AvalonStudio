@@ -10,5 +10,6 @@
 
         public EventHandler<TextInputEventArgs> TextInputHandler { get; set; }
         public EventHandler<TextInputEventArgs> BeforeTextInputHandler { get; set; }
+        public EventHandler<KeyEventArgs> KeyUpHandler { get; set; }
     }
 }
