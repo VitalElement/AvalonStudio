@@ -14,19 +14,19 @@ namespace AvalonStudio.Controls
 {
     public class DocumentTabControlViewModel : ViewModel
     {
-        private ObservableCollection<IDocumentTabViewModel> documents;        
+        private ObservableCollection<IDocumentTabViewModel> documents;
 
         private bool _seperatorVisible;
         private IDocumentTabViewModel selectedDocument;
 
         public DocumentTabControlViewModel()
         {
-            Documents = new ObservableCollection<IDocumentTabViewModel>();            
-        }        
+            Documents = new ObservableCollection<IDocumentTabViewModel>();
+        }
 
         public void InvalidateSeperatorVisibility()
         {
-            if(Documents.Where(d=>d.IsVisible).Count() > 0)
+            if (Documents.Count() > 0)
             {
                 SeperatorVisible = true;
             }
@@ -34,6 +34,111 @@ namespace AvalonStudio.Controls
             {
                 SeperatorVisible = false;
             }
+        }
+
+        public void OpenDocument(IDocumentTabViewModel document)
+        {
+            if (document == null)
+            {
+                return;
+            }
+
+            if (Documents.Contains(document))
+            {
+                SelectedDocument = document;
+            }
+            else
+            {
+                IDocumentTabViewModel documentToClose = null;
+
+                if (TemporaryDocument != null)
+                {
+                    documentToClose = TemporaryDocument;
+                }
+
+                document.IsTemporary = true;
+                Documents.Add(document);
+                SelectedDocument = document;
+                TemporaryDocument = document;
+            }
+
+            InvalidateSeperatorVisibility();
+        }
+
+        public void CloseDocument(IDocumentTabViewModel document)
+        {
+            if (!Documents.Contains(document))
+            {
+                return;
+            }
+
+            IDocumentTabViewModel newSelectedTab = SelectedDocument;
+
+            if (SelectedDocument == document)
+            {
+                var index = Documents.IndexOf(document);
+                var current = index;
+
+                bool foundTab = false;
+
+                while (!foundTab)
+                {
+                    index++;
+
+                    if (index < Documents.Count)
+                    {
+                        if (Documents[index].IsVisible)
+                        {
+                            foundTab = true;
+                            newSelectedTab = Documents[index];
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                index = current;
+
+                while (!foundTab)
+                {
+                    index--;
+
+                    if (index >= 0)
+                    {
+                        if (Documents[index].IsVisible)
+                        {
+                            foundTab = true;
+                            newSelectedTab = Documents[index];
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            SelectedDocument = newSelectedTab;
+
+            if (TemporaryDocument == document)
+            {
+                TemporaryDocument = null;
+            }
+
+            Documents.Remove(document);
+            document.OnClose();
+
+            Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                await Task.Delay(25);
+                GC.Collect();
+            });
+
+            InvalidateSeperatorVisibility();
         }
 
         public bool SeperatorVisible
@@ -66,6 +171,6 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public EditorViewModel TemporaryDocument { get; set; }
+        public IDocumentTabViewModel TemporaryDocument { get; set; }
     }
 }

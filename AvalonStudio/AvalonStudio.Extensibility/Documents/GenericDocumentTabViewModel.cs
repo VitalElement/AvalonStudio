@@ -14,8 +14,6 @@ namespace AvalonStudio.Controls
             CloseCommand = ReactiveCommand.Create(() =>
             {
                 IoC.Get<IShell>().RemoveDocument(this);
-
-                OnClose();
             });
 
             IsVisible = true;
