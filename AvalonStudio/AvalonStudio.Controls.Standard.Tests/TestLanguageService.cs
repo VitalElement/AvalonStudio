@@ -65,11 +65,6 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
-        {
-            throw new NotImplementedException();
-        }
-
         public IList<global::AvaloniaEdit.Rendering.IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
         {
             throw new NotImplementedException();
