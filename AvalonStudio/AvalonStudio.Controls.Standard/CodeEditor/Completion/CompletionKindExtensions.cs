@@ -21,7 +21,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Completion
             {
                 if (!_cache.TryGetValue(icon, out var image))
                 {
-                    if (Application.Current.Resources.TryGetResource(icon.ToString(), out object resource))
+                    if (Application.Current.Styles.TryGetResource(icon.ToString(), out object resource))
                     {
                         image = resource as DrawingGroup;
                         _cache.Add(icon, image);

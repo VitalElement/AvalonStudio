@@ -43,7 +43,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 if (!_cache.TryGetValue(extension, out var image))
                 {
-                    if (Application.Current.Resources.TryGetResource(extension, out object resource))
+                    if (Application.Current.Styles.TryGetResource(extension, out object resource))
                     {
                         image = resource as DrawingGroup;
                         _cache.Add(extension, image);
