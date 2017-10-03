@@ -27,13 +27,13 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 if (_settings.GenerateHeader)
                 {
-                    var rendered = Template.Engine.Parse("CppClassHeader.template", new { ClassName = _settings.ClassName });
+                    var rendered = await Template.Engine.CompileRenderAsync("CppClassHeader.template", new { ClassName = _settings.ClassName });
                     await SourceFile.Create(folder, $"{(name.Contains('.') ? name : name + ".h")}", rendered);
                 }
 
                 if (_settings.GenerateClass)
                 {
-                    var rendered = Template.Engine.Parse("CppClass.template", new { ClassName = _settings.ClassName });
+                    var rendered = await Template.Engine.CompileRenderAsync("CppClass.template", new { ClassName = _settings.ClassName });
                     await SourceFile.Create(folder, $"{name}.cpp", rendered);
                 }
             });

@@ -105,7 +105,7 @@ namespace AvalonStudio.Toolchains.Clang
                 System.IO.File.Delete(linkerScript);
             }
 
-            var rendered = Template.Engine.Parse("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size });
+            var rendered = Template.Engine.CompileRenderAsync("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size }).GetAwaiter().GetResult();
 
             using (var sw = System.IO.File.CreateText(linkerScript))
             {

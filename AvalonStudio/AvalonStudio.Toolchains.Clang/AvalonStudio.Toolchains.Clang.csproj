@@ -14,10 +14,7 @@
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Templates\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Templates\ArmLinkerScriptTemplate.template">
+    <None Update="Templates\ArmLinkerScriptTemplate.template.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
