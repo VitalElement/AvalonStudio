@@ -699,27 +699,8 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             };
 
-            association.KeyUpHandler = (sender, e) =>
-            {
-                switch (e.Key)
-                {
-                    case Key.Tab:
-                    case Key.Down:
-                    case Key.Up:
-                        var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
-                        if (String.IsNullOrWhiteSpace(editor.Document.GetText(line)))
-                        {
-                            IndentationStrategy.IndentLine(editor.Document, line);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            };
-
             editor.TextArea.TextEntered += association.TextInputHandler;
             editor.TextArea.TextEntering += association.BeforeTextInputHandler;
-            editor.TextArea.KeyUp += association.KeyUpHandler;
         }
 
         public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)

@@ -287,6 +287,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _textEntering = true;
             };
 
+            Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Subscribe(e =>
+            {
+                var line = this.Document.GetLineByNumber(TextArea.Caret.Line);
+                if (this.Document.GetText(line).Length == 0)
+                {
+                    this.LanguageService.IndentationStrategy.IndentLine(this.Document, line);
+                }
+            });
+
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
             {
                 if (_intellisenseManager != null && !_textEntering)
