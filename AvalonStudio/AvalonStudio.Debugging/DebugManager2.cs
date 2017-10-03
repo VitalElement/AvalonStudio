@@ -166,6 +166,8 @@
             CanStop = canStop.StartWith(false);
 
             CanStep = canStep.StartWith(false);
+
+            _shell.SolutionChanged.Subscribe(_ => LoadBreakpoints());
         }
 
         public void BeforeActivation()
