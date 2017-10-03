@@ -4,7 +4,7 @@
     <Setter Property="Padding" Value="0"/>
     <Setter Property="Template">
       <ControlTemplate>
-        <Border BorderBrush="#3E3E42" BorderThickness="1">
+        <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
           <Grid RowDefinitions="25,*">
             <Grid Height="6"  Margin="0 0 10 0">
               <Grid.Background>
@@ -12,8 +12,8 @@
                                      AlignmentY="Center" SourceRect="0,0,4,3000" DestinationRect="0,0,4,3000" />
               </Grid.Background>
             </Grid>
-            <Panel HorizontalAlignment="Left">
-              <TextBlock Text="{TemplateBinding Title}" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0"/>
+            <Panel HorizontalAlignment="Left" Background="{DynamicResource ThemeBackgroundBrush}">
+              <TextBlock Text="{TemplateBinding Title}" HorizontalAlignment="Left" TextAlignment="Center" VerticalAlignment="Center" Height="25"  Margin="8,8,8,0" />
             </Panel>
 
             <ContentPresenter  Grid.Row="1" Name="PART_ContentPresenter"

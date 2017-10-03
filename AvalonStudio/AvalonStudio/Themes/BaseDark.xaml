@@ -3,14 +3,15 @@
        xmlns:mut="https://github.com/avaloniaui/mutable"
        xmlns:sys="clr-namespace:System;assembly=mscorlib">
   <Style.Resources>
+    <SolidColorBrush x:Key="AvalonBorderBrush">#9B9FB9</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeBackgroundBrush">#FF2D2D30</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeBorderLightBrush">#FFAAAAAA</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeBorderMidBrush">#FF888888</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeBorderDarkBrush">#FF333333</SolidColorBrush>
+    <SolidColorBrush x:Key="ThemeBorderDarkBrush">#3E3E42</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeControlLightBrush">#FFFFFFFF</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeControlMidBrush">#FF3E3E42</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeControlDarkBrush">#FF252526</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeForegroundBrush">#FFC4C4C4</SolidColorBrush>
+    <SolidColorBrush x:Key="ThemeForegroundBrush">#FFE4E4E4</SolidColorBrush>
     <SolidColorBrush x:Key="ThemeForegroundLightBrush">#FF808080</SolidColorBrush>
 
     <SolidColorBrush x:Key="HighlightBrush">#FF086F9E</SolidColorBrush>

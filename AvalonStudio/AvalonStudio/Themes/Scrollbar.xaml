@@ -120,7 +120,7 @@
     <Style Selector="ScrollBar /template/ RepeatButton.repeattrack">
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{TemplateBinding ThemeControlDarkBrush}" />
+                <Border Background="{DynamicResource ThemeControlDarkBrush}" />
             </ControlTemplate>
         </Setter>
     </Style>

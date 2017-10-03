@@ -3,7 +3,7 @@
              xmlns:extVM="clr-namespace:AvalonStudio.Controls.Standard.ViewModels;assembly=AvalonStudio.Controls.Standard"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:extcont="clr-namespace:AvalonStudio.Controls.Standard;assembly=AvalonStudio.Controls.Standard"
-              Background="{StyleResource ThemeBackgroundBrush}">
+              Background="{DynamicResource ThemeBackgroundBrush}">
   <Grid RowDefinitions="70,*,100">
     <Grid Grid.Row="0">
       <Grid VerticalAlignment="Top" ColumnDefinitions="50,*">

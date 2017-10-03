@@ -7,7 +7,7 @@
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
              xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
              Foreground="WhiteSmoke" Name="Editor">
-  <Border BorderBrush="#3E3E42" BorderThickness="1">
+    <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
     <Grid>
         <DockPanel>
           <DropDown DockPanel.Dock="Top" Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">

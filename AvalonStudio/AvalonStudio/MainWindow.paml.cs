@@ -5,14 +5,13 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using AvalonStudio.Controls;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Theme;
 using System;
 
 namespace AvalonStudio
 {
     public class MainWindow : MetroWindow
     {
-        private bool set = false;
-
         public MainWindow()
         {
             IoC.RegisterConstant<Window>(this);
@@ -25,26 +24,16 @@ namespace AvalonStudio
 
             this.AttachDevTools();
 
-            var timer = new DispatcherTimer();
+            LoadTheme(ColorTheme.VisualStudioLight);
+        }
 
-            timer.Interval = TimeSpan.FromSeconds(5);
-            timer.Tick += (sender, e) =>
-            {
-                if(set)
-                {
-                    Resources["AvalonBorderBrush"] = Brushes.Red;
-                }
-                else
-                {
-                    Resources["AvalonBorderBrush"] = Brushes.Blue;
-                }
-
-                set = !set;
-            };
-
-            timer.Start();
-
-            this.Resources.Add("AvalonBorderBrush", Brushes.Green);
+        public void LoadTheme(ColorTheme theme)
+        {
+            Resources["ThemeBackgroundBrush"] = theme.Background;
+            Resources["ThemeControlDarkBrush"] = theme.ControlDark;
+            Resources["ThemeControlMidBrush"] = theme.ControlMid;
+            Resources["ThemeForegroundBrush"] = theme.Foreground;
+            Resources["ThemeBorderDarkBrush"] = theme.BorderDark;
         }
 
         private void InitializeComponent()
