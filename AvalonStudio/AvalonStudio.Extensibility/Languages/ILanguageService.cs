@@ -46,6 +46,8 @@ namespace AvalonStudio.Languages
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
 
+        bool IsValidIdentifierCharacter(char data);
+
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
         void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);

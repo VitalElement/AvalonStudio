@@ -10,15 +10,20 @@ namespace AvalonStudio.TextEditor.Rendering
     {
         private readonly IBrush brush = Brush.Parse("#30E4E4E4");
         private readonly Pen _pen;
+        private UInt32 _column = 80;
 
         public ColumnLimitBackgroundRenderer()
         {
             _pen = new Pen(brush);
         }
 
-        public KnownLayer Layer => KnownLayer.Background;
+        public UInt32 Column
+        {
+            get => _column;
+            set => _column = value;
+        }
 
-        private int _column = 120;
+        public KnownLayer Layer => KnownLayer.Background;        
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {

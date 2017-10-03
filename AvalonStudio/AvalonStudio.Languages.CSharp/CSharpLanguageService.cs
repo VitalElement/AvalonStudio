@@ -6,7 +6,7 @@
     using AvaloniaEdit.Indentation;
     using AvaloniaEdit.Indentation.CSharp;
     using AvaloniaEdit.Rendering;
-    using AvalonStudio.Extensibility.Editor;
+    using AvalonStudio.CodeEditor;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
@@ -88,6 +88,11 @@
         {
             '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
+
+        public bool IsValidIdentifierCharacter(char data)
+        {
+            return char.IsLetterOrDigit(data) || data == '_';
+        }
 
         public IIndentationStrategy IndentationStrategy
         {
@@ -284,15 +289,38 @@
 
                 if (editor.CaretOffset != document.TextLength)
                 {
-                    document.GetCharAt(editor.CaretOffset);
+                    nextChar = document.GetCharAt(editor.CaretOffset);
                 }
+
+                var location = document.GetLocation(editor.CaretOffset);
 
                 if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
                 {
-                    document.Insert(editor.CaretOffset, text[0].GetCloseBracketChar().ToString());
-                }
+                    if (text[0] == '{')
+                    {
+                        var offset = editor.CaretOffset;
 
-                editor.CaretOffset--;
+                        document.Insert(editor.CaretOffset, " " + text[0].GetCloseBracketChar().ToString() + " ");
+
+                        if (IndentationStrategy != null)
+                        {
+                            var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
+                            // use indentation strategy only if the line is not read-only
+                            IndentationStrategy.IndentLine(editor.Document, line);
+                        }
+
+
+                        editor.CaretOffset = offset + 1;
+                    }
+                    else
+                    {
+                        var offset = editor.CaretOffset;
+
+                        document.Insert(editor.CaretOffset, text[0].GetCloseBracketChar().ToString());
+
+                        editor.CaretOffset = offset;
+                    }
+                }
             }
         }
 
@@ -357,33 +385,92 @@
             {
                 if (editor.Document == doc)
                 {
-                    editor.BeginChange();
-                    OpenBracket(editor, editor.Document, e.Text);
-                    CloseBracket(editor, editor.Document, e.Text);
-
                     switch (e.Text)
                     {
                         case "}":
                         case ";":
-                            var offset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
-
-                            if(offset >= 0)
                             {
-                                editor.CaretOffset = offset;
+                                if (IndentationStrategy != null)
+                                {
+                                    var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
+                                    // use indentation strategy only if the line is not read-only
+                                    IndentationStrategy.IndentLine(editor.Document, line);
+                                }
+
+                                OpenBracket(editor, editor.Document, e.Text);
+                                CloseBracket(editor, editor.Document, e.Text);
+
+                                var offset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+
+                                if (offset >= 0)
+                                {
+                                    editor.CaretOffset = offset;
+                                }
                             }
                             break;
 
                         case "{":
-                            var lineCount = editor.Document.LineCount;
-                            Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+                            {
+                                if (IndentationStrategy != null)
+                                {
+                                    var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
+                                    // use indentation strategy only if the line is not read-only
+                                    IndentationStrategy.IndentLine(editor.Document, line);
+                                }
+
+                                OpenBracket(editor, editor.Document, e.Text);
+                                CloseBracket(editor, editor.Document, e.Text);
+
+                                var lineCount = editor.Document.LineCount;
+                                var offset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+
+                                if (offset >= 0)
+                                {
+                                    editor.CaretOffset = offset;
+                                }
+                            }
+                            break;
+
+                        default:
+                            OpenBracket(editor, editor.Document, e.Text);
+                            CloseBracket(editor, editor.Document, e.Text);
                             break;
                     }
+                }
+            };
 
-                    editor.EndChange();
+            association.BeforeTextInputHandler = (sender, e) =>
+            {
+                switch (e.Text)
+                {
+                    case "\n":
+                    case "\r\n":
+                        var nextChar = ' ';
+
+                        if (editor.CaretOffset != editor.Document.TextLength)
+                        {
+                            nextChar = editor.Document.GetCharAt(editor.CaretOffset);
+                        }
+
+                        if (nextChar == '}')
+                        {
+                            var newline = TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
+                            editor.Document.Insert(editor.CaretOffset, newline);
+
+                            editor.Document.TrimTrailingWhiteSpace(editor.TextArea.Caret.Line - 1);
+
+                            var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
+                            // use indentation strategy only if the line is not read-only
+                            IndentationStrategy.IndentLine(editor.Document, line);
+
+                            editor.CaretOffset -= newline.Length;
+                        }
+                        break;
                 }
             };
 
             editor.TextArea.TextEntered += association.TextInputHandler;
+            editor.TextArea.TextEntering += association.BeforeTextInputHandler;
         }
 
         private CSharpDataAssociation GetAssociatedData(ISourceFile sourceFile)
@@ -488,7 +575,7 @@
 
             return result;
         }
-
+        
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
@@ -571,7 +658,8 @@
         {
             var association = GetAssociatedData(file);
 
-            editor.TextInput -= association.TextInputHandler;
+            editor.TextArea.TextEntered -= association.TextInputHandler;
+            editor.TextArea.TextEntering -= association.BeforeTextInputHandler;
 
             association.Solution.Workspace.CloseDocument(file);
 

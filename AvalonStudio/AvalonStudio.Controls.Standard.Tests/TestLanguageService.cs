@@ -26,7 +26,7 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public IEnumerable<char> IntellisenseSearchCharacters => throw new NotImplementedException();
 
-        public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();
+        public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();        
 
         public string LanguageId => "cpp";
 
@@ -90,7 +90,7 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public IObservable<TextSegmentCollection<Diagnostic>> ObserveDiagnostics(ISourceFile file)
+        public bool IsValidIdentifierCharacter(char data)
         {
             throw new NotImplementedException();
         }
