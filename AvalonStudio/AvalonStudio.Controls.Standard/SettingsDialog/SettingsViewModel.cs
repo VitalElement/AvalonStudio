@@ -2,7 +2,7 @@
 
 namespace AvalonStudio.Controls.Standard.SettingsDialog
 {
-    public class SettingsViewModel : ReactiveObject
+    public abstract class SettingsViewModel : ReactiveObject
     {
         private string _title;
 

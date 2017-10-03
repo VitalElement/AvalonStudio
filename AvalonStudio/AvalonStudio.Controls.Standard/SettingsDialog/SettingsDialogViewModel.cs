@@ -15,15 +15,20 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
         private ObservableCollection<SettingsCategoryViewModel> _categoryViewModels = new ObservableCollection<SettingsCategoryViewModel>();
         private SettingsViewModel _selectedSetting;
 
+        public SettingsDialogViewModel()
+        {
+            Title = "Options";
+        }
+
         public void Activation()
         {
-            var shell = IoC.Get<IShell>();
-            shell.AddDocument(this);
+            var shell = IoC.Get<IShell>();            
         }
 
         public void BeforeActivation()
         {
             IoC.RegisterConstant<ISettingsManager>(this);
+            IoC.RegisterConstant(this);
         }
 
         public void RegisterSettingsDialog(string category, SettingsViewModel viewModel)

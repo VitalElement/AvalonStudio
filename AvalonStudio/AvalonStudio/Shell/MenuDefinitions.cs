@@ -15,6 +15,10 @@ namespace AvalonStudio.Shell
 
         public static readonly MenuItemDefinition ToolsPackagesMenuItem = new MenuItemDefinition<PackagesCommandDefinition>(ToolsPackagesMenuGroup, "Packages", 1);
 
+        public static readonly MenuItemGroupDefinition ToolsSettingsMenuGroup = new MenuItemGroupDefinition(Extensibility.MenuDefinitions.ToolsMenu, 8);
+
+        public static readonly MenuItemDefinition ToolsOptionsMenuItem = new MenuItemDefinition<OptionsCommandDefinition>(ToolsSettingsMenuGroup, "Options", 1);
+
         public static readonly MenuItemDefinition FileSaveAllMenuItem = new MenuItemDefinition<SaveAllFileCommandDefinition>(Extensibility.MenuDefinitions.FileSaveMenuGroup, "SaveAll", 1);
 
         public static readonly MenuItemDefinition FileSaveMenuItem = new MenuItemDefinition<SaveFileCommandDefinition>(Extensibility.MenuDefinitions.FileSaveMenuGroup, "Save", 0);
