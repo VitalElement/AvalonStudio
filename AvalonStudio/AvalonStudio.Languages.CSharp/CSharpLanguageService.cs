@@ -365,7 +365,12 @@
                     {
                         case "}":
                         case ";":
-                            editor.CaretOffset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+                            var offset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
+
+                            if(offset >= 0)
+                            {
+                                editor.CaretOffset = offset;
+                            }
                             break;
 
                         case "{":
