@@ -367,9 +367,6 @@ namespace AvalonStudio
 
         public void AddDocument(IDocumentTabViewModel document)
         {
-            DocumentTabs.Documents.Add(document);
-            DocumentTabs.SelectedDocument = document;            
-
             DocumentTabs.OpenDocument(document);
         }
 
