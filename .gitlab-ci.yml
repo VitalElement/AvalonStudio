@@ -7,6 +7,7 @@ before_script:
 AvalonStudio:
   script:     
   # update all submodules.
-  - git submodule update --init
+  - git submodule sync
+  - git submodule update --init --recursive
   - dotnet --info
   - ./build.sh
