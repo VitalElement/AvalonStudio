@@ -12,6 +12,7 @@ using AvalonStudio.Languages;
 using AvalonStudio.Shell;
 using AvalonStudio.Extensibility;
 using Avalonia.Input;
+using AvaloniaEdit.Document;
 
 namespace AvalonStudio.Controls
 {
@@ -29,6 +30,8 @@ namespace AvalonStudio.Controls
 
         public int CaretOffset => _editor.CaretOffset;
 
+        public bool Loaded => _editor == null ? false : _editor.IsLoaded;
+
         public EditorView()
         {
             InitializeComponent();
@@ -45,7 +48,7 @@ namespace AvalonStudio.Controls
         ~EditorView()
         {
             disposables.Dispose();
-        }        
+        }
 
         protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
@@ -63,7 +66,7 @@ namespace AvalonStudio.Controls
 
                     // Selecting the document event though it already is, causes it to be removed from the temporary document cache.
                     editorVm.IsTemporary = false;
-                    shell.SelectedDocument = editorVm;                    
+                    shell.SelectedDocument = editorVm;
                 }
             });
 
@@ -170,6 +173,11 @@ namespace AvalonStudio.Controls
         public string GetWordAtOffset(int offset)
         {
             return _editor.GetWordAtOffset(offset);
+        }
+
+        public Task WaitForEditorToLoadAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }
