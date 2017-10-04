@@ -31,6 +31,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using AvalonStudio.GlobalSettings;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -421,7 +422,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel);
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel);
-        }        
+        }
 
         protected override void OnTextChanged(EventArgs e)
         {
@@ -556,9 +557,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (LanguageService != null)
             {
-                CaretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
+                if (Settings.GetSettings<EditorSettings>().AutoFormat)
+                {
+                    CaretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
 
-                Focus();
+                    Focus();
+                }
             }
         }
 
@@ -588,7 +592,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (SourceFile != null && Document != null && IsDirty)
             {
-                if (RemoveTrailingWhitespaceOnSave)
+                if (Settings.GetSettings<EditorSettings>().RemoveTrailingWhitespaceOnSave)
                 {
                     Document.TrimTrailingWhiteSpace();
                 }
@@ -815,15 +819,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get { return GetValue(LineNumbersVisibleProperty); }
             set { SetValue(LineNumbersVisibleProperty, value); }
-        }
-
-        public static readonly StyledProperty<bool> RemoveTrailingWhitespaceOnSaveProperty =
-            AvaloniaProperty.Register<CodeEditor, bool>(nameof(RemoveTrailingWhitespaceOnSave), true);
-
-        public bool RemoveTrailingWhitespaceOnSave
-        {
-            get { return GetValue(RemoveTrailingWhitespaceOnSaveProperty); }
-            set { SetValue(RemoveTrailingWhitespaceOnSaveProperty, value); }
         }
 
         public static readonly StyledProperty<bool> HighlightSelectedLineProperty =
