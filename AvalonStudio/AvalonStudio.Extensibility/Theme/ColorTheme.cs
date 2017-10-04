@@ -1,14 +1,36 @@
 ﻿using Avalonia.Media;
-using System;
+using AvalonStudio.Extensibility.Plugin;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace AvalonStudio.Extensibility.Theme
 {
+    public class DefaultColorThemes : IExtension
+    {
+        public void Activation()
+        {
+            
+        }
+
+        public void BeforeActivation()
+        {
+        }
+    }
+
     public class ColorTheme
     {
+        private static List<ColorTheme> s_themes = new List<ColorTheme>();
+
+        public static IEnumerable<ColorTheme> Themes => s_themes;
+
+        public static void Register (ColorTheme theme)
+        {
+            s_themes.Add(theme);
+        }
+
         public static readonly ColorTheme VisualStudioLight = new ColorTheme
         {
+            Name = "Visual Studio Light",
             WindowBorder = Brush.Parse("#9B9FB9"),
             Background = Brush.Parse("#EEEEF2"),
             Foreground = Brush.Parse("#1E1E1E"),
@@ -23,6 +45,7 @@ namespace AvalonStudio.Extensibility.Theme
 
         public static readonly ColorTheme VisualStudioDark = new ColorTheme
         {
+            Name = "Visual Studio Dark",
             WindowBorder = Brush.Parse("#9B9FB9"),
             Background = Brush.Parse("#FF2D2D30"),
             Foreground = Brush.Parse("#FFC4C4C4"),
@@ -34,6 +57,8 @@ namespace AvalonStudio.Extensibility.Theme
             ControlMid = Brush.Parse("#FF3E3E42"),
             ControlDark = Brush.Parse("#FF252526")
         };
+
+        public string Name { get; private set; }
 
         public IBrush WindowBorder { get; set; }
 

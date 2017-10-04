@@ -1,0 +1,15 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui">
+    <Grid>
+        <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Padding="8 16 8 8" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" Gap="40">
+                <StackPanel Gap="12">
+                    <DropDown SelectedItem="{Binding SelectedTheme}">
+                        <DropDownItem>Visual Studio Dark</DropDownItem>
+                        <DropDownItem>Visual Studio Light</DropDownItem>
+                    </DropDown>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <TextBlock Text=" Colour Scheme " Background="{DynamicResource ThemeBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="16 0 0 0" />
+    </Grid>
+</UserControl>
