@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui">
     <Grid>
-        <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Padding="8 16 8 8" Margin="8">
+        <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Padding="8 16 8 8" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" Gap="40">
                 <StackPanel Gap="12">
                     <CheckBox IsChecked="{Binding RemoveTrailingWhiteSpaceOnSave}">Remove Trailing Whitespace on Save</CheckBox>

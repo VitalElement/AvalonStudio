@@ -22,7 +22,6 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
 
         public void Activation()
         {
-            var shell = IoC.Get<IShell>();
         }
 
         public void BeforeActivation()
@@ -39,7 +38,14 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
                 _categoryViewModels.Add(_categories[category]);
             }
 
-            _categories[category].Dialogs.Add(viewModel);
+            _categories[category].Dialogs.Add(viewModel);       
+            
+            if(_categoryViewModels.Count == 1)
+            {
+                SelectedSetting = viewModel;
+
+                _categories[category].IsExpanded = true;
+            }
         }
 
         public ObservableCollection<SettingsCategoryViewModel> Categories => _categoryViewModels;
@@ -59,10 +65,19 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
         }
     }
 
-    public class SettingsCategoryViewModel
+    public class SettingsCategoryViewModel : ReactiveObject
     {
+        private bool _isExpanded;
+
         public string Title { get; set; }
 
-        public ObservableCollection<SettingsViewModel> Dialogs { get; set; }
+        public ObservableCollection<SettingsViewModel> Dialogs { get; set; }        
+
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set { this.RaiseAndSetIfChanged(ref _isExpanded, value); }
+        }
+
     }
 }
