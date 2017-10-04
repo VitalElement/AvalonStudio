@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Controls;
+using AvalonStudio.Controls.Standard.SettingsDialog;
 using AvalonStudio.Extensibility;
 
 namespace AvalonStudio

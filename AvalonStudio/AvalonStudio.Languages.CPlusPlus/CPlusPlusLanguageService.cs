@@ -730,7 +730,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var replacements = ClangFormat.FormatXml(file.Location, textDocument.Text, offset, length, (uint)cursor);
 
-            return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
+            if(replacements != null)
+            {
+                return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
+            }
+
+            return cursor;
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)

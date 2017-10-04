@@ -52,6 +52,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         private SnippetManager _snippetManager;
+        private InsertionContext _currentSnippetContext;
+        private bool _suppressIsDirtyNotifications = false;
 
         public IntellisenseViewModel Intellisense => _intellisense;
 
@@ -77,6 +79,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
         private bool _isLoaded = false;
+
+        private int _lastLine = -1;
 
         private bool _textEntering;
         private readonly IShell _shell;
@@ -286,6 +290,24 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _textEntering = true;
             };
 
+            Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Subscribe(e =>
+            {
+                if (TextArea.Caret.Line != _lastLine && LanguageService != null)
+                {
+                    var line = Document.GetLineByNumber(TextArea.Caret.Line);
+
+                    if (line.Length == 0)
+                    {
+                        _suppressIsDirtyNotifications = true;
+                        LanguageService.IndentationStrategy.IndentLine(Document, line);
+                        _suppressIsDirtyNotifications = false;
+                    }
+                }
+
+                _lastLine = TextArea.Caret.Line;
+            });
+
+
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
             {
                 if (_intellisenseManager != null && !_textEntering)
@@ -398,9 +420,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel);
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel);
-        }
-
-        private InsertionContext _currentSnippetContext;
+        }        
 
         protected override void OnTextChanged(EventArgs e)
         {
@@ -408,9 +428,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             if (_isLoaded)
             {
-                IsDirty = true;
+                if (!_suppressIsDirtyNotifications)
+                {
+                    IsDirty = true;
 
-                TriggerCodeAnalysis();
+                    TriggerCodeAnalysis();
+                }
             }
         }
 
