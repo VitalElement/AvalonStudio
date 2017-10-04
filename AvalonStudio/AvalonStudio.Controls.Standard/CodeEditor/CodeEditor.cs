@@ -668,7 +668,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
-                TextArea.TextView.LineTransformers.Add(_textColorizer);
+                TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
 
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
