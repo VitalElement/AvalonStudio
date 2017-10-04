@@ -393,16 +393,21 @@ namespace AvalonStudio
             {
                 currentTab = new EditorViewModel();
 
-                currentTab.OpenFile(file);
+                AddDocument(currentTab);
+
+                currentTab.OpenFile(file);                
+            }            
+            else
+            {
+                AddDocument(currentTab);
             }
 
-            AddDocument(currentTab);
-            
             if (currentTab is IEditor editor)
             {
-                // ensures that the document has been opened and created.
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.InvokeAsync(async () =>
                 {
+                    await editor.WaitForEditorToLoadAsync();
+
                     if (debugHighlight)
                     {
                         editor.SetDebugHighlight(line, startColumn, endColumn);
