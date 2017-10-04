@@ -22,7 +22,7 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
 
         public void Activation()
         {
-            var shell = IoC.Get<IShell>();            
+            var shell = IoC.Get<IShell>();
         }
 
         public void BeforeActivation()
@@ -33,7 +33,7 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
 
         public void RegisterSettingsDialog(string category, SettingsViewModel viewModel)
         {
-            if(!_categories.ContainsKey(category))
+            if (!_categories.ContainsKey(category))
             {
                 _categories[category] = new SettingsCategoryViewModel { Title = category, Dialogs = new ObservableCollection<SettingsViewModel>() };
                 _categoryViewModels.Add(_categories[category]);
@@ -52,6 +52,8 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
                 if (value is SettingsViewModel)
                 {
                     this.RaiseAndSetIfChanged(ref _selectedSetting, value);
+
+                    _selectedSetting.OnDialogLoaded();
                 }
             }
         }

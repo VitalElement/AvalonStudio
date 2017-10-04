@@ -17,7 +17,7 @@
                 </TreeView>
             </Grid>
             <Grid>
-                <cont:ViewModelViewHost DataContext="{Binding SelectedSetting}" />
+                <cont:ViewModelViewHost DataContext="{Binding SelectedSetting}" Margin="4" />
             </Grid>
         </DockPanel>
     </Grid>

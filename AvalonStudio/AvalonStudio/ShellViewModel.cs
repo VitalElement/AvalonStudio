@@ -1,6 +1,7 @@
 using Avalonia.Input;
 using Avalonia.Threading;
 using AvalonStudio.Controls;
+using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Controls.Standard.ErrorList;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
@@ -31,7 +32,6 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AvalonStudio.IdeSettings;
 
 namespace AvalonStudio
 {
@@ -273,7 +273,7 @@ namespace AvalonStudio
             EnableDebugModeCommand = ReactiveCommand.Create(() =>
             {
                 DebugMode = !DebugMode;
-            });            
+            });
         }
 
         public ReactiveCommand EnableDebugModeCommand { get; }
@@ -372,7 +372,7 @@ namespace AvalonStudio
 
         public void RemoveDocument(IDocumentTabViewModel document)
         {
-            if(document == null)
+            if (document == null)
             {
                 return;
             }
@@ -382,12 +382,12 @@ namespace AvalonStudio
                 doc.Save();
             }
 
-            DocumentTabs.CloseDocument(document);            
+            DocumentTabs.CloseDocument(document);
         }
 
         public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
         {
-            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);            
+            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
 
             if (currentTab == null)
             {
@@ -397,7 +397,7 @@ namespace AvalonStudio
             }
 
             AddDocument(currentTab);
-            
+
             if (currentTab is IEditor editor)
             {
                 // ensures that the document has been opened and created.

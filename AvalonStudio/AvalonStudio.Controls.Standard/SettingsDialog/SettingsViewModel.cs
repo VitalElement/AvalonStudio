@@ -17,5 +17,10 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
             set { this.RaiseAndSetIfChanged(ref _title, value); }
         }
 
+        public virtual void OnDialogLoaded ()
+        {
+
+        }
+
     }
 }
