@@ -483,6 +483,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return null;
         }
 
+        public bool IsLoaded => _isLoaded;
+
         public TextSegment GetSelectionSegment()
         {
             TextSegment result = null;
