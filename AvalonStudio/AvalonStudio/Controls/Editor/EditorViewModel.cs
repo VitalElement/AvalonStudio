@@ -441,6 +441,8 @@ namespace AvalonStudio.Controls
             }
         }
 
+        public bool Loaded => _editor == null ? false :_editor.Loaded;
+
         #endregion Commands
 
         #region Public Methods
@@ -478,6 +480,20 @@ namespace AvalonStudio.Controls
         public string GetWordAtOffset(int offset)
         {
             return _editor?.GetWordAtOffset(offset);
+        }
+
+        public async Task WaitForEditorToLoadAsync()
+        {
+            if (_editor == null || !_editor.Loaded)
+            {
+                await Task.Run(() =>
+                {
+                    while (_editor == null || !_editor.Loaded)
+                    {
+                        Task.Delay(50);
+                    }
+                });
+            }
         }
 
         #endregion Public Methods

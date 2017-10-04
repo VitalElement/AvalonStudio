@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
 using AvalonStudio.Controls;
+using AvalonStudio.Controls.Standard.SettingsDialog;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Theme;
 using System;

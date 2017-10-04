@@ -1,0 +1,29 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" 
+             xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.SettingsDialog;assembly=AvalonStudio.Controls.Standard"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+    <Grid>
+        <DockPanel>
+            <Grid DockPanel.Dock="Left" Width="300">
+                <TreeView BorderThickness="1" BorderBrush="{DynamicResource ThemeBorderDarkBrush}" Items="{Binding Categories}" SelectedItem="{Binding SelectedSetting, Mode=TwoWay}">
+                  <TreeView.Styles>
+                    <Style Selector="TreeViewItem">
+                      <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    </Style>
+                  </TreeView.Styles>
+                    <TreeView.DataTemplates>
+                        <TreeDataTemplate DataType="vm:SettingsCategoryViewModel" ItemsSource="{Binding Dialogs}">
+                          <TextBlock Text="{Binding Title}" />
+                        </TreeDataTemplate>
+
+                        <TreeDataTemplate DataType="vm:SettingsViewModel" ItemsSource="{Binding Dialogs}">
+                            <TextBlock Text="{Binding Title}" />
+                        </TreeDataTemplate>
+                    </TreeView.DataTemplates>
+                </TreeView>
+            </Grid>
+            <Grid>
+                <cont:ViewModelViewHost DataContext="{Binding SelectedSetting}" Margin="4" />
+            </Grid>
+        </DockPanel>
+    </Grid>
+</UserControl>

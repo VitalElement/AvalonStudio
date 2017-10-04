@@ -315,57 +315,31 @@
             {
                 if (editor.Document == doc)
                 {
-                    switch (e.Text)
+                    if (IndentationStrategy != null)
                     {
-                        case "}":
-                        case ";":
-                            if (IndentationStrategy != null)
-                            {
-                                var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
-                                // use indentation strategy only if the line is not read-only
-                                IndentationStrategy.IndentLine(editor.Document, line);
-                            }
+                        var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
 
-                            OpenBracket(editor, editor.Document, e.Text);
-                            CloseBracket(editor, editor.Document, e.Text);
-
-                            editor.CaretOffset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
-                            break;
-
-                        case "{":
-                            if (IndentationStrategy != null)
-                            {
-                                var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
-                                // use indentation strategy only if the line is not read-only
-                                IndentationStrategy.IndentLine(editor.Document, line);
-                            }
-
-                            OpenBracket(editor, editor.Document, e.Text);
-                            CloseBracket(editor, editor.Document, e.Text);
-
-                            var lineCount = editor.Document.LineCount;
-                            var offset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
-
-                            // suggests clang format didnt do anything, so we can assume not moving to new line.
-                            if (lineCount != editor.Document.LineCount)
-                            {
-                                if (offset <= editor.Document.TextLength)
+                        switch (e.Text)
+                        {
+                            case "}":
+                            case ";":
+                                if (IndentationStrategy != null)
                                 {
-                                    var newLine = editor.Document.GetLineByOffset(offset);
-                                    editor.CaretOffset = newLine.PreviousLine.EndOffset;
+                                    IndentationStrategy.IndentLine(editor.Document, line);
                                 }
-                            }
-                            else
-                            {
-                                editor.CaretOffset = offset;
-                            }
-                            break;
+                                break;
 
-                        default:
-                            OpenBracket(editor, editor.Document, e.Text);
-                            CloseBracket(editor, editor.Document, e.Text);
-                            break;
+                            case "{":
+                                if (IndentationStrategy != null)
+                                {
+                                    IndentationStrategy.IndentLine(editor.Document, line);
+                                }
+                                break;
+                        }
                     }
+
+                    OpenBracket(editor, editor.Document, e.Text);
+                    CloseBracket(editor, editor.Document, e.Text);
                 }
             };
 

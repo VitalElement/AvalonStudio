@@ -31,6 +31,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using AvalonStudio.GlobalSettings;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -52,6 +53,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         private SnippetManager _snippetManager;
+        private InsertionContext _currentSnippetContext;
+        private bool _suppressIsDirtyNotifications = false;
 
         public IntellisenseViewModel Intellisense => _intellisense;
 
@@ -77,6 +80,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
         private bool _isLoaded = false;
+
+        private int _lastLine = -1;
 
         private bool _textEntering;
         private readonly IShell _shell;
@@ -287,6 +292,24 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _textEntering = true;
             };
 
+            Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Subscribe(e =>
+            {
+                if (TextArea.Caret.Line != _lastLine && LanguageService != null)
+                {
+                    var line = Document.GetLineByNumber(TextArea.Caret.Line);
+
+                    if (line.Length == 0)
+                    {
+                        _suppressIsDirtyNotifications = true;
+                        LanguageService.IndentationStrategy.IndentLine(Document, line);
+                        _suppressIsDirtyNotifications = false;
+                    }
+                }
+
+                _lastLine = TextArea.Caret.Line;
+            });
+
+
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
             {
                 if (_intellisenseManager != null && !_textEntering)
@@ -401,17 +424,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel);
         }
 
-        private InsertionContext _currentSnippetContext;
-
         protected override void OnTextChanged(EventArgs e)
         {
             base.OnTextChanged(e);
 
             if (_isLoaded)
             {
-                IsDirty = true;
+                if (!_suppressIsDirtyNotifications)
+                {
+                    IsDirty = true;
 
-                TriggerCodeAnalysis();
+                    TriggerCodeAnalysis();
+                }
             }
         }
 
@@ -458,6 +482,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             return null;
         }
+
+        public bool IsLoaded => _isLoaded;
 
         public TextSegment GetSelectionSegment()
         {
@@ -531,9 +557,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (LanguageService != null)
             {
-                CaretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
+                if (Settings.GetSettings<EditorSettings>().AutoFormat)
+                {
+                    CaretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
 
-                Focus();
+                    Focus();
+                }
             }
         }
 
@@ -563,7 +592,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (SourceFile != null && Document != null && IsDirty)
             {
-                if (RemoveTrailingWhitespaceOnSave)
+                if (Settings.GetSettings<EditorSettings>().RemoveTrailingWhitespaceOnSave)
                 {
                     Document.TrimTrailingWhiteSpace();
                 }
@@ -643,7 +672,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
-                TextArea.TextView.LineTransformers.Add(_textColorizer);
+                TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
 
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
@@ -790,15 +819,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get { return GetValue(LineNumbersVisibleProperty); }
             set { SetValue(LineNumbersVisibleProperty, value); }
-        }
-
-        public static readonly StyledProperty<bool> RemoveTrailingWhitespaceOnSaveProperty =
-            AvaloniaProperty.Register<CodeEditor, bool>(nameof(RemoveTrailingWhitespaceOnSave), true);
-
-        public bool RemoveTrailingWhitespaceOnSave
-        {
-            get { return GetValue(RemoveTrailingWhitespaceOnSaveProperty); }
-            set { SetValue(RemoveTrailingWhitespaceOnSaveProperty, value); }
         }
 
         public static readonly StyledProperty<bool> HighlightSelectedLineProperty =
