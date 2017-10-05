@@ -198,6 +198,25 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 this.TextArea.TextView.InvalidateLayer(KnownLayer.Background);
             });
 
+            this.GetObservable(ColorSchemeProperty).Subscribe(colorScheme =>
+            {
+                if (colorScheme != null)
+                {
+                    Background = colorScheme.Background;
+                    Foreground = colorScheme.Text;
+
+                    _lineNumberMargin.Background = colorScheme.BackgroundAccent;
+                    if (_textColorizer != null)
+                    {
+                        _textColorizer.ColorScheme = colorScheme;
+                    }
+                    
+                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+
+                    TriggerCodeAnalysis();
+                }
+            });
+
             Options = new AvaloniaEdit.TextEditorOptions
             {
                 ConvertTabsToSpaces = true,
@@ -901,6 +920,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get { return GetValue(BackgroundRenderersProperty); }
             set { SetValue(BackgroundRenderersProperty, value); }
+        }
+
+        public static readonly StyledProperty<ColorScheme> ColorSchemeProperty =
+            AvaloniaProperty.Register<CodeEditor, ColorScheme>(nameof(ColorScheme));
+
+        public ColorScheme ColorScheme
+        {
+            get => GetValue(ColorSchemeProperty);
+            set => SetValue(ColorSchemeProperty, value);
         }
 
         public static readonly StyledProperty<TextSegmentCollection<Diagnostic>> DiagnosticsProperty =

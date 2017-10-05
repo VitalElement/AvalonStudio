@@ -8,6 +8,7 @@ using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
 using AvalonStudio.Extensibility.Menus;
@@ -539,6 +540,23 @@ namespace AvalonStudio
             foreach (var document in DocumentTabs.Documents)
             {
                 //TODO implement code analysis trigger.
+            }
+        }
+
+        private ColorScheme _currentColorScheme;
+
+        public ColorScheme CurrentColorScheme
+        {
+            get { return _currentColorScheme; }
+
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
+
+                foreach(var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+                {
+                    document.ColorScheme = value;
+                }
             }
         }
 
