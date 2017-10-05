@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" Foreground="WhiteSmoke">
+﻿<UserControl xmlns="https://github.com/avaloniaui">
     <Grid>
       <Grid.Styles>
         <Style Selector="TextBox">

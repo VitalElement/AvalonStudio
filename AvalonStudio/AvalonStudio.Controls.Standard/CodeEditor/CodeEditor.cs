@@ -12,6 +12,7 @@ using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
+using AvalonStudio.CodeEditor;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
@@ -30,6 +31,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using AvalonStudio.GlobalSettings;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -51,6 +53,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         private SnippetManager _snippetManager;
+        private InsertionContext _currentSnippetContext;
+        private bool _suppressIsDirtyNotifications = false;
 
         public IntellisenseViewModel Intellisense => _intellisense;
 
@@ -78,6 +82,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private bool _isLoaded = false;
 
         private EditorSettings _settings;
+
+        private int _lastLine = -1;
 
         private bool _textEntering;
         private readonly IShell _shell;
@@ -186,6 +192,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     TextArea.TextView.BackgroundRenderers.Remove(_columnLimitBackgroundRenderer);
                 }
+            });
+
+            this.GetObservable(ColumnLimitProperty).Subscribe(limit =>
+            {
+                _columnLimitBackgroundRenderer.Column = limit;
+                this.TextArea.TextView.InvalidateLayer(KnownLayer.Background);
             });
 
             this.GetObservable(ColorSchemeProperty).Subscribe(colorScheme =>
@@ -301,6 +313,24 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _textEntering = true;
             };
 
+            Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Subscribe(e =>
+            {
+                if (TextArea.Caret.Line != _lastLine && LanguageService != null)
+                {
+                    var line = Document.GetLineByNumber(TextArea.Caret.Line);
+
+                    if (line.Length == 0)
+                    {
+                        _suppressIsDirtyNotifications = true;
+                        LanguageService.IndentationStrategy.IndentLine(Document, line);
+                        _suppressIsDirtyNotifications = false;
+                    }
+                }
+
+                _lastLine = TextArea.Caret.Line;
+            });
+
+
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
             {
                 if (_intellisenseManager != null && !_textEntering)
@@ -415,17 +445,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel);
         }
 
-        private InsertionContext _currentSnippetContext;
-
         protected override void OnTextChanged(EventArgs e)
         {
             base.OnTextChanged(e);
 
             if (_isLoaded)
             {
-                IsDirty = true;
+                if (!_suppressIsDirtyNotifications)
+                {
+                    IsDirty = true;
 
-                TriggerCodeAnalysis();
+                    TriggerCodeAnalysis();
+                }
             }
         }
 
@@ -472,6 +503,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             return null;
         }
+
+        public bool IsLoaded => _isLoaded;
 
         public TextSegment GetSelectionSegment()
         {
@@ -545,9 +578,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (LanguageService != null)
             {
-                CaretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
+                if (Settings.GetSettings<EditorSettings>().AutoFormat)
+                {
+                    CaretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
 
-                Focus();
+                    Focus();
+                }
             }
         }
 
@@ -577,6 +613,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (SourceFile != null && Document != null && IsDirty)
             {
+                if (Settings.GetSettings<EditorSettings>().RemoveTrailingWhitespaceOnSave)
+                {
+                    Document.TrimTrailingWhiteSpace();
+                }
+
                 System.IO.File.WriteAllText(SourceFile.Location, Document.Text);
                 IsDirty = false;
 
@@ -652,7 +693,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
-                TextArea.TextView.LineTransformers.Add(_textColorizer);
+                TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
 
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
@@ -826,6 +867,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get { return GetValue(ShowColumnLimitProperty); }
             set { SetValue(ShowColumnLimitProperty, value); }
+        }
+
+        public static readonly StyledProperty<UInt32> ColumnLimitProperty =
+            AvaloniaProperty.Register<CodeEditor, UInt32>(nameof(ColumnLimit), 80);
+
+        public UInt32 ColumnLimit
+        {
+            get { return GetValue(ColumnLimitProperty); }
+            set { SetValue(ColumnLimitProperty, value); }
         }
 
         public static readonly StyledProperty<int> LineProperty =

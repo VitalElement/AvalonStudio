@@ -196,7 +196,10 @@ Task("Build-NetCore")
         Information("Building: {0}", project.Name);
 
         var settings = new DotNetCoreBuildSettings {
-            Configuration = configuration
+            Configuration = configuration,
+            MSBuildSettings = new DotNetCoreMSBuildSettings {
+                MaxCpuCount = 0
+            }
         };
 
         DotNetCoreBuild(project.Path, settings);

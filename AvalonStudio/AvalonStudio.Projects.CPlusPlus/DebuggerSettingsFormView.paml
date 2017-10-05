@@ -13,21 +13,7 @@
 
       <StackPanel Grid.Row="0" Gap="4">
         <TextBlock  Text="Debug Adaptor:"/>
-        <DropDown  Items="{Binding Debuggers}" SelectedItem="{Binding SelectedDebugger, Mode=TwoWay}">
-          <DropDown.Styles>
-            <Style Selector="DropDownItem">
-              <Setter Property="Background" Value="#1e1e1e" />
-            </Style>
-
-            <Style Selector="DropDownItem:selected">
-              <Setter Property="Background" Value="#3f3f46" />
-            </Style>
-
-            <Style Selector="DropDownItem:pointerover">
-              <Setter Property="Background" Value="Red" />
-            </Style>
-          </DropDown.Styles>
-        </DropDown>
+        <DropDown  Items="{Binding Debuggers}" SelectedItem="{Binding SelectedDebugger, Mode=TwoWay}" />
       </StackPanel>
 
 

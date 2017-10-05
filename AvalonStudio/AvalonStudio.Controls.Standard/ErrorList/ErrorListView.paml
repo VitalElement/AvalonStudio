@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility" xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.ErrorList;assembly=AvalonStudio.Controls.Standard">
   <cont:ToolControl Title="Error List">
-    <ListBox  Items="{Binding Errors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
+    <ListBox  Items="{Binding Errors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}" BorderThickness="0" Background="{DynamicResource ThemeControlBackgroundBrush}">
       <ListBox.DataTemplates>
         <DataTemplate DataType="vm:ErrorViewModel">
           <Grid ColumnDefinitions="50, *, 200, 200, 100">

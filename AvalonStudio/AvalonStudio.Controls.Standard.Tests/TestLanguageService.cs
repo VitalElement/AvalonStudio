@@ -25,7 +25,7 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public IEnumerable<char> IntellisenseSearchCharacters => throw new NotImplementedException();
 
-        public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();
+        public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();        
 
         public string LanguageId => "cpp";
 
@@ -80,6 +80,11 @@ namespace AvalonStudio.Controls.Standard.Tests
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsValidIdentifierCharacter(char data)
         {
             throw new NotImplementedException();
         }

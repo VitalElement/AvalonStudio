@@ -1,21 +1,11 @@
-﻿using Avalonia.Media;
-using AvalonStudio.Extensibility.Editor;
-using Newtonsoft.Json;
-
-namespace AvalonStudio.Controls.Standard.CodeEditor
+﻿namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class EditorSettings
     {
-        public EditorSettings()
-        {
-            GlobalZoomLevel = 100;
+        public double GlobalZoomLevel { get; set; } = 100;
 
-            ColorScheme = ColorScheme.Default;
-        }
+        public bool RemoveTrailingWhitespaceOnSave { get; set; } = true;
 
-        public double GlobalZoomLevel { get; set; }
-
-        [JsonIgnore]
-        public ColorScheme ColorScheme { get; set; }
+        public bool AutoFormat { get; set; } = true;
     }
 }
