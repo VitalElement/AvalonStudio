@@ -1,5 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui">
-  <Grid>
+  <Grid Width="1000" HorizontalAlignment="Left">
     <Grid.Styles>
       <Style Selector="TextBox">
         <Setter Property="Background" Value="Transparent" />
@@ -62,7 +62,7 @@
       </Grid>
     </Panel>
 
-    <Panel Grid.Row="1" Grid.Column="2" >
+    <Panel Grid.Row="1" Grid.Column="2">
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
