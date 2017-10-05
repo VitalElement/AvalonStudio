@@ -124,9 +124,9 @@ namespace AvalonStudio.Controls
         public void EnableSystemStyles()
         {
             HasSystemDecorations = true;
-            closeButton.Opacity = 0.5;
-            minimiseButton.Opacity = 0.5;
-            restoreButton.Opacity = 0.5;
+            closeButton.Opacity = 0;
+            minimiseButton.Opacity = 0;
+            restoreButton.Opacity = 0;
         }
 
         public void DisableSystemStyles()
