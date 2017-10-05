@@ -99,15 +99,7 @@ namespace AvalonStudio.Controls
 
             var settings = GlobalSettings.Settings.GetSettings<EditorSettings>();
 
-            colorScheme = settings.ColorScheme;
-
-            disposables = new CompositeDisposable
-            {
-                CloseCommand.Subscribe(_ =>
-                {
-                    _shell.InvalidateErrors();
-                })
-            };
+            colorScheme = ColorScheme.LoadColorScheme(settings.ColorScheme);
 
             AddWatchCommand = ReactiveCommand.Create(() => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); });
 
@@ -120,7 +112,6 @@ namespace AvalonStudio.Controls
         ~EditorViewModel()
         {
         }
-
 
         public override void OnClose()
         {

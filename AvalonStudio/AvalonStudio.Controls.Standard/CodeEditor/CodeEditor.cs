@@ -81,8 +81,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private bool _isLoaded = false;
 
-        private EditorSettings _settings;
-
         private int _lastLine = -1;
 
         private bool _textEntering;
@@ -1033,12 +1031,5 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _selectedDebugLineBackgroundRenderer.SetLocation(-1);
         }
-
-        public EditorSettings Settings
-        {
-            get { return _settings; }
-            set { _settings = value; }
-        }
-
     }
 }

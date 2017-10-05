@@ -8,6 +8,7 @@ using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
 using AvalonStudio.Extensibility.Menus;
@@ -91,24 +92,6 @@ namespace AvalonStudio
             _toolBarDefinitions = new List<ToolBarDefinition>();
             _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
             _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
-
-            DefaultColorSchemeCommand = ReactiveCommand.Create();
-            DefaultColorSchemeCommand.Subscribe(_ =>
-            {
-                CurrentColorScheme = ColorScheme.Default;
-            });
-
-            SolarizedDarkColorSchemeCommand = ReactiveCommand.Create();
-            SolarizedDarkColorSchemeCommand.Subscribe(_ =>
-            {
-                CurrentColorScheme = ColorScheme.SolarizedDark;
-            });
-
-            SolarizedLightColorSchemeCommand = ReactiveCommand.Create();
-            SolarizedLightColorSchemeCommand.Subscribe(_ =>
-            {
-                CurrentColorScheme = ColorScheme.SolarizedLight;
-            });
 
             IoC.RegisterConstant(this, typeof(IShell));
 
@@ -576,10 +559,6 @@ namespace AvalonStudio
                 }
             }
         }
-
-        public ReactiveCommand<object> DefaultColorSchemeCommand { get; }
-        public ReactiveCommand<object> SolarizedDarkColorSchemeCommand { get; }
-        public ReactiveCommand<object> SolarizedLightColorSchemeCommand { get; }
 
         public ISolution CurrentSolution
         {

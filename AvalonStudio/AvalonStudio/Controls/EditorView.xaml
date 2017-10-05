@@ -33,7 +33,7 @@
                                   DocumentLineTransformers="{Binding DocumentLineTransformers}"
                                   IsDirty="{Binding IsDirty}" ShowColumnLimit="true"
                                   VerticalAlignment="Stretch" Background="{DynamicResource ThemeEditorBackground}" Diagnostics="{Binding Diagnostics}"
-                                  RemoveTrailingWhiteSpaceOnSave="true" >
+                                  ColorScheme="{Binding ColorScheme}" >
 
             <editor:CodeEditor.ContextMenu>
               <ContextMenu>
