@@ -18,9 +18,9 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.5.2-build3991-alpha" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.2-build452-alpha" />
+    <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build109-alpha" />
     <PackageReference Include="reactiveui" Version="8.0.0-alpha0089" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
-    <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build109-alpha" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
