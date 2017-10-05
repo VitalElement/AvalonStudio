@@ -59,7 +59,7 @@ namespace AvalonStudio.Extensibility.Theme
             BorderMid = Brush.Parse("#FF888888"),
             BorderDark = Brush.Parse("#FF3E3E42"),
             ControlLight = Brush.Parse("#FF9E9E9E"),
-            ControlMid = Brush.Parse("#FF999999"),
+            ControlMid = Brush.Parse("#FF686868"),
             ControlDark = Brush.Parse("#FF3E3E42"),
             ControlBackground = Brush.Parse("#FF252526")
         };

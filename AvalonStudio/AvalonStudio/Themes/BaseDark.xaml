@@ -9,7 +9,7 @@
         <SolidColorBrush x:Key="ThemeBorderMidBrush">#FF888888</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeBorderDarkBrush">#3E3E42</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeControlLightBrush">#FF9E9E9E</SolidColorBrush>
-        <SolidColorBrush x:Key="ThemeControlMidBrush">#FF999999</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeControlMidBrush">#FF686868</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeControlDarkBrush">#FF3E3E42</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeControlBackgroundBrush">#FF252526</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeForegroundBrush">#FFE4E4E4</SolidColorBrush>
