@@ -43,9 +43,11 @@ namespace AvalonStudio.Extensibility.Theme
             BorderLight = Brush.Parse("#9B9FB9"),
             BorderMid = Brush.Parse("#9B9FB9"),
             BorderDark = Brush.Parse("#FFCCCEDB"),
-            ControlLight = Brush.Parse("#9B9FB9"),
-            ControlMid = Brush.Parse("#F5F5F5"),
-            ControlDark = Brush.Parse("#E6E7E8")
+            ControlLight = Brush.Parse("#686868"),
+            ControlMid = Brush.Parse("#FFC2C3C9"),
+            ControlDark = Brush.Parse("#FFF5F5F5"),
+            ControlBackground = Brush.Parse("#FFE6E7E8"),
+            EditorBackground = Brush.Parse("#FFFFFFFF")
         };
 
         public static readonly ColorTheme VisualStudioDark = new ColorTheme
@@ -61,7 +63,8 @@ namespace AvalonStudio.Extensibility.Theme
             ControlLight = Brush.Parse("#FF9E9E9E"),
             ControlMid = Brush.Parse("#FF686868"),
             ControlDark = Brush.Parse("#FF3E3E42"),
-            ControlBackground = Brush.Parse("#FF252526")
+            ControlBackground = Brush.Parse("#FF252526"),
+            EditorBackground = Brush.Parse("#FF1E1E1E")
         };
 
         public static ColorTheme LoadTheme (string name)
@@ -89,7 +92,12 @@ namespace AvalonStudio.Extensibility.Theme
             Application.Current.Resources["ThemeControlLightBrush"] = theme.ControlLight;
             Application.Current.Resources["ThemeForegroundBrush"] = theme.Foreground;
             Application.Current.Resources["ThemeBorderDarkBrush"] = theme.BorderDark;
+            Application.Current.Resources["ThemeEditorBackground"] = theme.EditorBackground;
+
+            CurrentTheme = theme;
         }
+
+        public static ColorTheme CurrentTheme { get; private set; }
 
         public string Name { get; private set; }
 
@@ -114,5 +122,7 @@ namespace AvalonStudio.Extensibility.Theme
         public IBrush ControlDark { get; set; }
 
         public IBrush ControlBackground { get; set; }
+
+        public IBrush EditorBackground { get; set; }
     }
 }

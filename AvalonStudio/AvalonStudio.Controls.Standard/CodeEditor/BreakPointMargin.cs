@@ -2,6 +2,7 @@
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaEdit.Editing;
+using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.Platforms;
 using Mono.Debugging.Client;
 using System;
@@ -31,8 +32,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public override void Render(DrawingContext context)
         {
             if (TextView.VisualLinesValid)
-            {
-                context.FillRectangle(Brush.Parse("#333333"), Bounds);
+            {                
+                context.FillRectangle(ColorTheme.CurrentTheme.ControlDark, Bounds);
 
                 if (TextView.VisualLines.Count > 0)
                 {

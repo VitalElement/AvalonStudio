@@ -9,7 +9,7 @@
     <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
     <Grid>
         <DockPanel>
-          <DropDown DockPanel.Dock="Top" Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">
+          <DropDown DockPanel.Dock="Top" Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10">
             <DropDown.DataTemplates>
               <DataTemplate>
                 <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
@@ -23,7 +23,7 @@
 
           <editor:CodeEditor Name="editor"
                                   FontFamily="{Binding FontFamily}" FontSize="{Binding VisualFontSize}"
-                                  Foreground="#DCDCDC" BorderThickness="0" FontWeight="ExtraLight"
+                                  BorderThickness="0"
                                   EditorCaretOffset ="{Binding CaretOffset}"
                                   Line="{Binding Line}"
                                   Column="{Binding Column}"
@@ -32,7 +32,7 @@
                                   BackgroundRenderers="{Binding BackgroundRenderers}"
                                   DocumentLineTransformers="{Binding DocumentLineTransformers}"
                                   IsDirty="{Binding IsDirty}" ShowColumnLimit="true"
-                                  VerticalAlignment="Stretch" Background="#1e1e1e" Diagnostics="{Binding Diagnostics}"
+                                  VerticalAlignment="Stretch" Background="{DynamicResource ThemeEditorBackground}" Diagnostics="{Binding Diagnostics}"
                                   RemoveTrailingWhiteSpaceOnSave="true" >
 
             <editor:CodeEditor.ContextMenu>

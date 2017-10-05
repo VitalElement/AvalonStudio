@@ -219,7 +219,7 @@ namespace AvalonStudio.Controls
 
                 foreach (var argument in Arguments)
                 {
-                    argument.ResetFontWeight();
+                    argument.ResetFontWeight();                    
                 }
 
                 if (argumentIndex >= Arguments.Count && Model.IsVariadic)

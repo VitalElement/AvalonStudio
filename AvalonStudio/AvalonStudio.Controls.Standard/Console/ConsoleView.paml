@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility" xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard">
   <cont:ToolControl Title="Console">
     <editor:CodeEditor Grid.Row="1" BorderThickness="0" Background="{DynamicResource ThemeControlBackgroundBrush}" 
-                       TextBlock.FontFamily="Consolas" TextBlock.FontSize="13" TextBlock.FontWeight="100" 
+                       TextBlock.FontFamily="Consolas" TextBlock.FontSize="13"
                        Document="{Binding Document}" EditorCaretOffset="{Binding CaretIndex, Mode=TwoWay}" 
                        BackgroundRenderers="{Binding BackgroundRenderers}" 
                        LineNumbersVisible="false" ShowBreakpoints="false" IsReadOnly="true"

@@ -14,6 +14,8 @@
         <SolidColorBrush x:Key="ThemeControlBackgroundBrush">#FF252526</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeForegroundBrush">#FFE4E4E4</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeForegroundLightBrush">#FF808080</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeEditorBackground">#FFFFFFFF</SolidColorBrush>
+      
 
         <SolidColorBrush x:Key="ApplicationAccentBrush">#007ACC</SolidColorBrush>
         <SolidColorBrush x:Key="ApplicationAccentBrushLight">#1C97EA</SolidColorBrush>
