@@ -55,12 +55,13 @@
                 <TabStrip.Styles>
                   <Style Selector="TabStripItem">
                     <Setter Property="Margin" Value="0" />
+                    <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
                   </Style>
                   <Style Selector="TabStripItem:pointerover">
-                    <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrush}" />
                   </Style>
                   <Style Selector="TabStripItem:selected">
-                    <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrush}" />
                   </Style>
                 </TabStrip.Styles>
 
@@ -74,7 +75,11 @@
               </TabStrip>
             </StackPanel>
 
-            <Controls:ViewModelViewHost DataContext="{Binding #toolStrip.SelectedItem}" ZIndex="50" />
+            <ScrollViewer>
+              <Grid Margin="8">
+                <Controls:ViewModelViewHost DataContext="{Binding #toolStrip.SelectedItem}" ZIndex="50" />
+              </Grid>
+            </ScrollViewer>
           </DockPanel>
         </Border>
       </Grid>
