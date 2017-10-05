@@ -17,7 +17,7 @@
             </Panel>
 
             <ContentPresenter  Grid.Row="1" Name="PART_ContentPresenter"
-                         Background="{TemplateBinding Background}"
+                         Background="{DynamicResource ThemeControlBackgroundBrush}"
                          BorderBrush="{TemplateBinding BorderBrush}"
                          BorderThickness="{TemplateBinding BorderThickness}"
                          Content="{TemplateBinding Content}"

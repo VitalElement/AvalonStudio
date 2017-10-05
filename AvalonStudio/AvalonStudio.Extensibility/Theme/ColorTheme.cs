@@ -51,16 +51,17 @@ namespace AvalonStudio.Extensibility.Theme
         public static readonly ColorTheme VisualStudioDark = new ColorTheme
         {
             Name = "Visual Studio Dark",
-            WindowBorder = Brush.Parse("#9B9FB9"),
+            WindowBorder = Brush.Parse("#FF004C8A"),
             Background = Brush.Parse("#FF2D2D30"),
             Foreground = Brush.Parse("#FFC4C4C4"),
             ForegroundLight = Brush.Parse("#FF808080"),
             BorderLight = Brush.Parse("#FFAAAAAA"),
             BorderMid = Brush.Parse("#FF888888"),
             BorderDark = Brush.Parse("#FF3E3E42"),
-            ControlLight = Brush.Parse("#FFFFFFFF"),
-            ControlMid = Brush.Parse("#FF3E3E42"),
-            ControlDark = Brush.Parse("#FF252526")
+            ControlLight = Brush.Parse("#FF9E9E9E"),
+            ControlMid = Brush.Parse("#FF999999"),
+            ControlDark = Brush.Parse("#FF3E3E42"),
+            ControlBackground = Brush.Parse("#FF252526")
         };
 
         public static ColorTheme LoadTheme (string name)
@@ -82,8 +83,10 @@ namespace AvalonStudio.Extensibility.Theme
         public static void LoadTheme(ColorTheme theme)
         {
             Application.Current.Resources["ThemeBackgroundBrush"] = theme.Background;
+            Application.Current.Resources["ThemeControlBackgroundBrush"] = theme.ControlBackground;
             Application.Current.Resources["ThemeControlDarkBrush"] = theme.ControlDark;
             Application.Current.Resources["ThemeControlMidBrush"] = theme.ControlMid;
+            Application.Current.Resources["ThemeControlLightBrush"] = theme.ControlLight;
             Application.Current.Resources["ThemeForegroundBrush"] = theme.Foreground;
             Application.Current.Resources["ThemeBorderDarkBrush"] = theme.BorderDark;
         }
@@ -109,5 +112,7 @@ namespace AvalonStudio.Extensibility.Theme
         public IBrush ControlMid { get; set; }
 
         public IBrush ControlDark { get; set; }
+
+        public IBrush ControlBackground { get; set; }
     }
 }

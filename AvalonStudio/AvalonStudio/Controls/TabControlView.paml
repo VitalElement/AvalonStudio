@@ -22,12 +22,15 @@
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
             <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
           </Style>
           <Style Selector="TabStripItem:pointerover">
-            <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}" />
+            <Setter Property="Background" Value="{DynamicResource ThemeControlDarkBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrush}" />
           </Style>
           <Style Selector="TabStripItem:selected">
-            <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}" />
+            <Setter Property="Background" Value="{DynamicResource ThemeControlBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrushLight}" />
             <Setter Property="BorderThickness" Value="1" />
           </Style>
         </TabStrip.Styles>
@@ -35,7 +38,7 @@
         <TabStrip.DataTemplates>
           <DataTemplate>
             <StackPanel Orientation="Horizontal" Gap="2">
-              <TextBlock Text="{Binding Title}" Foreground="{DynamicResource ThemeForegroundBrush}" Margin="2"/>
+              <TextBlock Text="{Binding Title}" Margin="2"/>
             </StackPanel>
           </DataTemplate>
         </TabStrip.DataTemplates>
