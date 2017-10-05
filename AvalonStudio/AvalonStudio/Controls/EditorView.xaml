@@ -5,12 +5,11 @@
              xmlns:behaviours="clr-namespace:AvalonStudio.Behaviors;assembly=AvalonStudio"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
-             xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
-             Foreground="WhiteSmoke" Name="Editor">
-  <Border BorderBrush="#3E3E42" BorderThickness="1">
+             xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" Name="Editor">
+    <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
     <Grid>
         <DockPanel>
-          <DropDown DockPanel.Dock="Top" Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10" Background="#2d2d30">
+          <DropDown DockPanel.Dock="Top" Items="{Binding IndexItems, Mode=TwoWay}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10">
             <DropDown.DataTemplates>
               <DataTemplate>
                 <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
@@ -24,7 +23,7 @@
 
           <editor:CodeEditor Name="editor"
                                   FontFamily="{Binding FontFamily}" FontSize="{Binding VisualFontSize}"
-                                  Foreground="#DCDCDC" BorderThickness="0" FontWeight="ExtraLight"
+                                  BorderThickness="0"
                                   EditorCaretOffset ="{Binding CaretOffset}"
                                   Line="{Binding Line}"
                                   Column="{Binding Column}"
@@ -33,7 +32,7 @@
                                   BackgroundRenderers="{Binding BackgroundRenderers}"
                                   DocumentLineTransformers="{Binding DocumentLineTransformers}"
                                   IsDirty="{Binding IsDirty}" ShowColumnLimit="true"
-                                  VerticalAlignment="Stretch" Background="#1e1e1e" Diagnostics="{Binding Diagnostics}"
+                                  VerticalAlignment="Stretch" Background="{DynamicResource ThemeEditorBackground}" Diagnostics="{Binding Diagnostics}"
                                   RemoveTrailingWhiteSpaceOnSave="true" >
 
             <editor:CodeEditor.ContextMenu>

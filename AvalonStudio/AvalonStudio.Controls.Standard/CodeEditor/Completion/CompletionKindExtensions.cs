@@ -21,16 +21,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Completion
             {
                 if (!_cache.TryGetValue(icon, out var image))
                 {
-                    Application.Current.Styles.TryGetResource(icon.ToString(), out object resource);
-
-                    if (resource == AvaloniaProperty.UnsetValue)
-                    {
-                        System.Console.WriteLine($"No intellisense icon provided for {icon}");
-                    }
-                    else
+                    if (Application.Current.Styles.TryGetResource(icon.ToString(), out object resource))
                     {
                         image = resource as DrawingGroup;
                         _cache.Add(icon, image);
+                    }
+                    else
+                    {
+                        System.Console.WriteLine($"No intellisense icon provided for {icon}");
                     }
                 }
 

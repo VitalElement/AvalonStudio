@@ -1,13 +1,13 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
         xmlns:convert="clr-namespace:AvalonStudio.Converters;assembly=AvalonStudio">
   <Style Selector="local|MetroWindow">
-    <Setter Property="Background" Value="{StyleResource ThemeBackgroundBrush}" />
+    <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />
     <Setter Property="FontFamily" Value="Segoe UI" />
     <Setter Property="FontSize" Value="{StyleResource FontSizeNormal}" />
     <Setter Property="HasSystemDecorations" Value="false" />    
     <Setter Property="Template">
       <ControlTemplate>
-        <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+        <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">          
           <AdornerDecorator>
             <Grid Margin="{TemplateBinding !BorderThickness}" ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto,Auto,*,Auto,Auto" Background="Transparent">
               <Grid Grid.Row="0" Grid.RowSpan="5" Margin="-4 0" Grid.Column="1" RowDefinitions="Auto * Auto" ColumnDefinitions="Auto,Auto,*,Auto,Auto">
@@ -30,19 +30,19 @@
                         <StackPanel Orientation="Horizontal">
                           <Button Background="Transparent" BorderThickness="0" Name="minimiseButton">
                             <Panel Margin="4">
-                              <Path Margin="0" Height="8" Width="8" Stretch="Uniform" UseLayoutRounding="False"  Data="M20,14H4V10H20" Fill="WhiteSmoke" />
+                              <Path Margin="0" Height="8" Width="8" Stretch="Uniform" UseLayoutRounding="False"  Data="M20,14H4V10H20" Fill="{DynamicResource ThemeForegroundBrush}" />
                             </Panel>
                           </Button>
 
                           <Button Background="Transparent" BorderThickness="0" Name="restoreButton">
                             <Panel Margin="4">
-                              <Path Height="8" Width="8" Stretch="Uniform" UseLayoutRounding="False"  Data="M4,8H8V4H20V16H16V20H4V8M16,8V14H18V6H10V8H16M6,12V18H14V12H6Z" Fill="WhiteSmoke" />
+                              <Path Height="8" Width="8" Stretch="Uniform" UseLayoutRounding="False"  Data="M4,8H8V4H20V16H16V20H4V8M16,8V14H18V6H10V8H16M6,12V18H14V12H6Z" Fill="{DynamicResource ThemeForegroundBrush}" />
                             </Panel>
                           </Button>
 
                           <Button Background="Transparent" BorderThickness="0" Name="closeButton">
                             <Panel Margin="4">
-                              <Path Height="8" Width="8" Stretch="Uniform" UseLayoutRounding="False"  Data="M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z" Fill="WhiteSmoke" />
+                              <Path Height="8" Width="8" Stretch="Uniform" UseLayoutRounding="False"  Data="M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z" Fill="{DynamicResource ThemeForegroundBrush}" />
                             </Panel>
                           </Button>
                         </StackPanel>

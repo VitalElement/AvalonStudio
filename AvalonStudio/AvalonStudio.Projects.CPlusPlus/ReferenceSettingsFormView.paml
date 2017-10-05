@@ -5,7 +5,7 @@
         <DataTemplate DataType="proj:ReferenceViewModel">
           <StackPanel Orientation="Horizontal">
             <CheckBox IsChecked="{Binding IsReferenced}"  />
-            <TextBlock Text="{Binding Name}" Foreground="WhiteSmoke" />            
+            <TextBlock Text="{Binding Name}" />            
           </StackPanel>
         </DataTemplate>
       </ListBox.DataTemplates>
