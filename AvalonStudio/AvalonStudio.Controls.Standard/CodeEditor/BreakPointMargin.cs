@@ -32,7 +32,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public override void Render(DrawingContext context)
         {
             if (TextView.VisualLinesValid)
-            {                
+            {
                 context.FillRectangle(ColorTheme.CurrentTheme.ControlDark, Bounds);
 
                 if (TextView.VisualLines.Count > 0)
@@ -121,7 +121,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if(TextView != null)
+            if (TextView != null)
             {
                 return new Size(TextView.DefaultLineHeight, 0);
             }
