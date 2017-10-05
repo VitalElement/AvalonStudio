@@ -18,15 +18,6 @@
       </TreeView>
           
       <ListBox Grid.Column="1" Background="{DynamicResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" Items="{Binding ProjectTemplates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}">
-        <ListBox.Styles>
-          <Style Selector="ListBoxItem:selected /template/ Border#border">
-            <Setter Property="Background" Value="#5500557d" />
-          </Style>
-          <Style Selector="ListBoxItem:selected:focus /template/ Border#border">
-            <Setter Property="Background" Value="#5500557d" />
-          </Style>
-        </ListBox.Styles>
-
         <ListBox.DataTemplates>
           <DataTemplate DataType="proj:IProjectTemplate">
             <Grid Height="45">
