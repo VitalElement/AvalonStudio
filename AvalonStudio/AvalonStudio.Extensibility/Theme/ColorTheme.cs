@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using Avalonia;
+using Avalonia.Media;
 using AvalonStudio.Extensibility.Plugin;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +10,8 @@ namespace AvalonStudio.Extensibility.Theme
     {
         public void Activation()
         {
-            
+            ColorTheme.Register(ColorTheme.VisualStudioDark);
+            ColorTheme.Register(ColorTheme.VisualStudioLight);
         }
 
         public void BeforeActivation()
@@ -20,12 +22,15 @@ namespace AvalonStudio.Extensibility.Theme
     public class ColorTheme
     {
         private static List<ColorTheme> s_themes = new List<ColorTheme>();
+        private static Dictionary<string, ColorTheme> s_themeIds = new Dictionary<string, ColorTheme>();
+        private static readonly ColorTheme DefaultTheme = ColorTheme.VisualStudioLight;
 
         public static IEnumerable<ColorTheme> Themes => s_themes;
 
         public static void Register (ColorTheme theme)
         {
             s_themes.Add(theme);
+            s_themeIds.Add(theme.Name, theme);
         }
 
         public static readonly ColorTheme VisualStudioLight = new ColorTheme
@@ -57,6 +62,31 @@ namespace AvalonStudio.Extensibility.Theme
             ControlMid = Brush.Parse("#FF3E3E42"),
             ControlDark = Brush.Parse("#FF252526")
         };
+
+        public static ColorTheme LoadTheme (string name)
+        {
+            if (!string.IsNullOrEmpty(name) && s_themeIds.ContainsKey(name))
+            {
+                LoadTheme(s_themeIds[name]);
+
+                return s_themeIds[name];
+            }
+            else
+            {
+                LoadTheme(DefaultTheme);
+
+                return DefaultTheme;
+            }
+        }
+
+        public static void LoadTheme(ColorTheme theme)
+        {
+            Application.Current.Resources["ThemeBackgroundBrush"] = theme.Background;
+            Application.Current.Resources["ThemeControlDarkBrush"] = theme.ControlDark;
+            Application.Current.Resources["ThemeControlMidBrush"] = theme.ControlMid;
+            Application.Current.Resources["ThemeForegroundBrush"] = theme.Foreground;
+            Application.Current.Resources["ThemeBorderDarkBrush"] = theme.BorderDark;
+        }
 
         public string Name { get; private set; }
 

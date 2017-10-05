@@ -7,6 +7,7 @@ using AvalonStudio.Controls;
 using AvalonStudio.Controls.Standard.SettingsDialog;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Theme;
+using AvalonStudio.GlobalSettings;
 using System;
 
 namespace AvalonStudio
@@ -23,18 +24,11 @@ namespace AvalonStudio
 
             KeyBindings.AddRange(IoC.Get<ShellViewModel>().KeyBindings);
 
+            var generalSettings = Settings.GetSettings<GeneralSettings>();
+
+            ColorTheme.LoadTheme(generalSettings.Theme);
+
             this.AttachDevTools();
-
-            LoadTheme(ColorTheme.VisualStudioLight);
-        }
-
-        public void LoadTheme(ColorTheme theme)
-        {
-            Resources["ThemeBackgroundBrush"] = theme.Background;
-            Resources["ThemeControlDarkBrush"] = theme.ControlDark;
-            Resources["ThemeControlMidBrush"] = theme.ControlMid;
-            Resources["ThemeForegroundBrush"] = theme.Foreground;
-            Resources["ThemeBorderDarkBrush"] = theme.BorderDark;
         }
 
         private void InitializeComponent()

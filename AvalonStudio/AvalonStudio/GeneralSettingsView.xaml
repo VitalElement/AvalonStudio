@@ -3,10 +3,7 @@
         <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Padding="8 16 8 8" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" Gap="40">
                 <StackPanel Gap="12">
-                    <DropDown SelectedItem="{Binding SelectedTheme}">
-                        <DropDownItem>Visual Studio Dark</DropDownItem>
-                        <DropDownItem>Visual Studio Light</DropDownItem>
-                    </DropDown>
+                    <DropDown Items="{Binding Themes}" SelectedIndex="{Binding SelectedThemeIndex, Mode=TwoWay}" />
                 </StackPanel>
             </StackPanel>
         </Border>

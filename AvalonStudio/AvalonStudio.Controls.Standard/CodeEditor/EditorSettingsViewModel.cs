@@ -12,7 +12,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private bool _removeTrailingWhiteSpaceOnSave;
         private bool _autoFormat;
 
-        public EditorSettingsViewModel() : base("Editor")
+        public EditorSettingsViewModel() : base("General")
         {
         }
 
@@ -60,7 +60,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void Activation()
         {
-            IoC.Get<ISettingsManager>().RegisterSettingsDialog("General", this);
+            IoC.Get<ISettingsManager>().RegisterSettingsDialog("Editor", this);
         }
 
         public void BeforeActivation()

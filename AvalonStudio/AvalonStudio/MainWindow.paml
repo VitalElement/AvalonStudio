@@ -11,19 +11,19 @@
   </Controls:MetroWindow.TitleBarContent>
   <Controls:MetroWindow.Styles>
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-      <Setter Property="Background" Value="Red" />
+      <Setter Property="Background" Value="#274452" />
     </Style>
     <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
       <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />
     </Style>
     <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
-      <Setter Property="Background" Value="Red" />
+      <Setter Property="Background" Value="#274452" />
     </Style>
     <Style Selector="DropDownItem:selected /template/ ContentPresenter">
-      <Setter Property="Background" Value="Red" />
+      <Setter Property="Background" Value="#274452" />
     </Style>
     <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="Red" />
+      <Setter Property="Background" Value="#274452" />
     </Style>
 
     <!-- GridSplitter.vertical -->
