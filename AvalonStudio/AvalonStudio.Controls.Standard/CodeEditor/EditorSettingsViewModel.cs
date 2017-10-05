@@ -3,6 +3,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.GlobalSettings;
+using AvalonStudio.Shell;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -76,14 +77,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 if (_selectedColorSchemeIndex >= 0 && ColorSchemes.Count > _selectedColorSchemeIndex)
                 {
-                    var loadedTheme = ColorScheme.LoadColorScheme(ColorSchemes[_selectedColorSchemeIndex]);
+                    var loadedScheme = ColorScheme.LoadColorScheme(ColorSchemes[_selectedColorSchemeIndex]);
 
-                    if (loadedTheme.Name != ColorSchemes[_selectedColorSchemeIndex])
+                    if (loadedScheme.Name != ColorSchemes[_selectedColorSchemeIndex])
                     {
-                        _selectedColorSchemeIndex = ColorSchemes.IndexOf(loadedTheme.Name);
+                        _selectedColorSchemeIndex = ColorSchemes.IndexOf(loadedScheme.Name);
                     }
 
                     Save();
+
+                    IoC.Get<IShell>().CurrentColorScheme = loadedScheme;
                 }
             }
         }
