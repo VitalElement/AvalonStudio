@@ -6,9 +6,6 @@
     <!--NOTE: This is a partial accent.-->
 
     <!--Brushes-->       
-    <SolidColorBrush x:Key="ApplicationAccentBrush">#007ACC</SolidColorBrush>
-    <SolidColorBrush x:Key="ApplicationAccentBrushLight">#1C97EA</SolidColorBrush>
-    <SolidColorBrush x:Key="ApplicationAccentForegroundBrush">#F0F0F0</SolidColorBrush>
     <SolidColorBrush x:Key="ApplicationBackgroundBrush">#EEEEF2</SolidColorBrush>
     <SolidColorBrush x:Key="ApplicationBorderBrush">#CDCFDC</SolidColorBrush>
 

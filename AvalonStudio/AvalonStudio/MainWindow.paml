@@ -10,20 +10,39 @@
 
   </Controls:MetroWindow.TitleBarContent>
   <Controls:MetroWindow.Styles>
+    <Style Selector="ListBoxItem:selected">
+      <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+    </Style>
+    <Style Selector="ListBoxItem:selected:focus">
+      <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+    </Style>
+
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452" />
+      <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
     </Style>
     <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
       <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />
     </Style>
+    
     <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
-      <Setter Property="Background" Value="#274452" />
+      <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
     </Style>
+    <Style Selector="TreeViewItem:selected">
+      <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+    </Style>
+    
     <Style Selector="DropDownItem:selected /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452" />
+      <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
     </Style>
     <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452" />
+      <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+    </Style>
+
+    <Style Selector="DropDownItem:selected">
+      <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+    </Style>
+    <Style Selector="DropDownItem:pointerover">
+      <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
     </Style>
 
     <!-- GridSplitter.vertical -->

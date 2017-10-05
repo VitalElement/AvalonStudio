@@ -1,11 +1,11 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:proj="clr-namespace:AvalonStudio.Projects.CPlusPlus;assembly=AvalonStudio.Projects.CPlusPlus">
   <UserControl.Styles>
     <Style Selector="CheckBox /template/ Path#checkMark">
-      <Setter Property="Fill" Value="WhiteSmoke" />
+      <Setter Property="Fill" Value="{DynamicResource ThemeBackgroundBrush}" />
     </Style>
 
     <Style Selector="CheckBox /template/ Border#border">
-      <Setter Property="BorderBrush" Value="WhiteSmoke" />
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderDarkBrush}" />
     </Style>
   </UserControl.Styles>
 
@@ -34,7 +34,7 @@
                   </StackPanel>
 
                   <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="25">
-                    <CheckBox IsChecked="{Binding Exported}" Foreground="WhiteSmoke" />
+                    <CheckBox IsChecked="{Binding Exported}" />
                     <CheckBox IsChecked="{Binding Global}" />
                   </StackPanel>
                 </Grid>
@@ -77,7 +77,7 @@
                   </StackPanel>
 
                   <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="25">
-                    <CheckBox IsChecked="{Binding Exported}" Foreground="WhiteSmoke" />
+                    <CheckBox IsChecked="{Binding Exported}" />
                     <CheckBox IsChecked="{Binding Global}" />
                   </StackPanel>
                 </Grid>
