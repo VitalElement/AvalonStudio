@@ -67,8 +67,7 @@ namespace AvalonStudio.Projects.OmniSharp
             {
                 loadedAssemblies.First(a=>a.FullName.StartsWith("Microsoft.CodeAnalysis")),
                 loadedAssemblies.First(a=>a.FullName.StartsWith("Microsoft.CodeAnalysis.CSharp")),
-                loadedAssemblies.First(a => a.FullName.StartsWith( "Microsoft.CodeAnalysis.Features")),
-                loadedAssemblies.First(a => a.FullName.StartsWith( "Microsoft.CodeAnalysis.CSharp.Features")),
+                loadedAssemblies.First(a => a.FullName.StartsWith("Microsoft.CodeAnalysis.Features")),
                 typeof(DiagnosticsService).Assembly,
             };
 
