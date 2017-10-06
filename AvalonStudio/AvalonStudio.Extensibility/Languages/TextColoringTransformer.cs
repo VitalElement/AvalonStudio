@@ -87,7 +87,7 @@ namespace AvalonStudio.Languages
             switch (type)
             {
                 case HighlightType.DelegateName:
-                    result = DelegateNameBrush;
+                    result = ColorScheme.DelegateName;
                     break;
 
                 case HighlightType.Comment:
@@ -131,11 +131,11 @@ namespace AvalonStudio.Languages
                     break;
 
                 case HighlightType.Operator:
-                    result = OperatorBrush;
+                    result = ColorScheme.Operator;
                     break;
 
                 case HighlightType.StructName:
-                    result = StructNameBrush;
+                    result = ColorScheme.StructName;
                     break;
 
                 default:
