@@ -32,7 +32,7 @@ cd AvalonStudio
 ```
 
 ### Install Dependencies
-Install Dotnet Core 2 Preview from: https://www.microsoft.com/net/core/preview
+Install .NET Core 2 from: https://www.microsoft.com/net/download/core
 
 ### Building the project
 These instructions are roughly the same for all platforms:
