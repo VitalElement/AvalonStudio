@@ -15,7 +15,7 @@
 
   <ScrollViewer>
     <Grid RowDefinitions="80, *" ColumnDefinitions="250, 400, 250">
-      <Grid Grid.RowSpan="2" RowDefinitions="100, *" Background="#252526">
+      <Grid Grid.RowSpan="2" RowDefinitions="100, *" Background="{DynamicResource ThemeControlBackgroundBrush}">
         <TextBlock FontSize="35" FontFamily="Segoe UI" FontWeight="Light" Margin="10 0">AvalonStudio</TextBlock>
 
         <StackPanel Gap="0" Grid.Column="0" Grid.Row="1">

@@ -22,7 +22,6 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
 
         public void Activation()
         {
-            var shell = IoC.Get<IShell>();            
         }
 
         public void BeforeActivation()
@@ -33,13 +32,20 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
 
         public void RegisterSettingsDialog(string category, SettingsViewModel viewModel)
         {
-            if(!_categories.ContainsKey(category))
+            if (!_categories.ContainsKey(category))
             {
                 _categories[category] = new SettingsCategoryViewModel { Title = category, Dialogs = new ObservableCollection<SettingsViewModel>() };
                 _categoryViewModels.Add(_categories[category]);
             }
 
-            _categories[category].Dialogs.Add(viewModel);
+            _categories[category].Dialogs.Add(viewModel);       
+            
+            if(_categoryViewModels.Count == 1)
+            {
+                SelectedSetting = viewModel;
+
+                _categories[category].IsExpanded = true;
+            }
         }
 
         public ObservableCollection<SettingsCategoryViewModel> Categories => _categoryViewModels;
@@ -52,15 +58,26 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
                 if (value is SettingsViewModel)
                 {
                     this.RaiseAndSetIfChanged(ref _selectedSetting, value);
+
+                    _selectedSetting.OnDialogLoaded();
                 }
             }
         }
     }
 
-    public class SettingsCategoryViewModel
+    public class SettingsCategoryViewModel : ReactiveObject
     {
+        private bool _isExpanded;
+
         public string Title { get; set; }
 
-        public ObservableCollection<SettingsViewModel> Dialogs { get; set; }
+        public ObservableCollection<SettingsViewModel> Dialogs { get; set; }        
+
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set { this.RaiseAndSetIfChanged(ref _isExpanded, value); }
+        }
+
     }
 }

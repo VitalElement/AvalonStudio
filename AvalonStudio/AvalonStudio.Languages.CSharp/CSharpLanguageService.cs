@@ -385,57 +385,31 @@
             {
                 if (editor.Document == doc)
                 {
-                    switch (e.Text)
+                    if (IndentationStrategy != null)
                     {
-                        case "}":
-                        case ";":
-                            {
+                        var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
+
+                        switch (e.Text)
+                        {
+                            case "}":
+                            case ";":
                                 if (IndentationStrategy != null)
                                 {
-                                    var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
-                                    // use indentation strategy only if the line is not read-only
                                     IndentationStrategy.IndentLine(editor.Document, line);
                                 }
+                                break;
 
-                                OpenBracket(editor, editor.Document, e.Text);
-                                CloseBracket(editor, editor.Document, e.Text);
-
-                                var offset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
-
-                                if (offset >= 0)
-                                {
-                                    editor.CaretOffset = offset;
-                                }
-                            }
-                            break;
-
-                        case "{":
-                            {
+                            case "{":
                                 if (IndentationStrategy != null)
                                 {
-                                    var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
-                                    // use indentation strategy only if the line is not read-only
                                     IndentationStrategy.IndentLine(editor.Document, line);
                                 }
-
-                                OpenBracket(editor, editor.Document, e.Text);
-                                CloseBracket(editor, editor.Document, e.Text);
-
-                                var lineCount = editor.Document.LineCount;
-                                var offset = Format(file, editor.Document, 0, (uint)editor.Document.TextLength, editor.CaretOffset);
-
-                                if (offset >= 0)
-                                {
-                                    editor.CaretOffset = offset;
-                                }
-                            }
-                            break;
-
-                        default:
-                            OpenBracket(editor, editor.Document, e.Text);
-                            CloseBracket(editor, editor.Document, e.Text);
-                            break;
+                                break;
+                        }
                     }
+
+                    OpenBracket(editor, editor.Document, e.Text);
+                    CloseBracket(editor, editor.Document, e.Text);
                 }
             };
 

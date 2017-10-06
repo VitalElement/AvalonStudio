@@ -4,26 +4,39 @@
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
                       xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"
                       Icon="resm:AvalonStudio.Assets.icon.ico?assembly=AvalonStudio"
-                      Title="AvalonStudio" BorderThickness="1" BorderBrush="#FF004C8A" FontFamily="Segoe UI" FontWeight="Light"
-                      Foreground="#FFE4E4E4" WindowState="Maximized">
+                      Title="AvalonStudio" BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}" FontFamily="Segoe UI"
+                      Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized">
   <Controls:MetroWindow.TitleBarContent>
-
   </Controls:MetroWindow.TitleBarContent>
+  
   <Controls:MetroWindow.Styles>
+    <Style Selector="ListBoxItem:selected">
+      <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+    </Style>
+    
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452" />
-    </Style>
-    <Style Selector="ListBoxItem:selected:focus /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452" />
-    </Style>
+      <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+    </Style>    
+    
     <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
-      <Setter Property="Background" Value="#274452" />
+      <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
     </Style>
+    <Style Selector="TreeViewItem:selected">
+      <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+    </Style>
+    
     <Style Selector="DropDownItem:selected /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452" />
+      <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
     </Style>
     <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="#274452" />
+      <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+    </Style>
+
+    <Style Selector="DropDownItem:selected">
+      <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+    </Style>
+    <Style Selector="DropDownItem:pointerover">
+      <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
     </Style>
 
     <!-- GridSplitter.vertical -->
@@ -49,11 +62,11 @@
   </Controls:MetroWindow.Styles>
   <Controls:MetroWindow.KeyBindings>
     <KeyBinding Command="{Binding EnableDebugModeCommand}" CommandParameter="{Binding}" Gesture="CTRL+SHIFT+D"/>
-  </Controls:MetroWindow.KeyBindings>  
+  </Controls:MetroWindow.KeyBindings>
   <Grid RowDefinitions="Auto,*,25">
     <Grid Grid.ColumnSpan="5" Margin="0 0 0 0">
       <Grid RowDefinitions="Auto, Auto">
-        <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="5 4 0 0"  Foreground="White" />
+        <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="5 4 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" />
 
         <Controls:ToolBar DataContext="{Binding ToolBar}" Grid.Row="1" Margin="15 4 0 4" />
       </Grid>

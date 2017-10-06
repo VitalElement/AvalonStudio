@@ -31,6 +31,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using AvalonStudio.GlobalSettings;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -194,6 +195,25 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 _columnLimitBackgroundRenderer.Column = limit;
                 this.TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+            });
+
+            this.GetObservable(ColorSchemeProperty).Subscribe(colorScheme =>
+            {
+                if (colorScheme != null)
+                {
+                    Background = colorScheme.Background;
+                    Foreground = colorScheme.Text;
+
+                    _lineNumberMargin.Background = colorScheme.BackgroundAccent;
+                    if (_textColorizer != null)
+                    {
+                        _textColorizer.ColorScheme = colorScheme;
+                    }
+                    
+                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+
+                    TriggerCodeAnalysis();
+                }
             });
 
             Options = new AvaloniaEdit.TextEditorOptions
@@ -420,7 +440,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel);
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel);
-        }        
+        }
 
         protected override void OnTextChanged(EventArgs e)
         {
@@ -480,6 +500,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             return null;
         }
+
+        public bool IsLoaded => _isLoaded;
 
         public TextSegment GetSelectionSegment()
         {
@@ -553,6 +575,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (LanguageService != null)
             {
+                if (Settings.GetSettings<EditorSettings>().AutoFormat)
+                {
                 var caretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
 
                 // some language services manually set the caret themselves and return -1 to indicate this.
@@ -562,6 +586,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
 
                 Focus();
+                }
             }
         }
 
@@ -591,7 +616,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (SourceFile != null && Document != null && IsDirty)
             {
-                if (RemoveTrailingWhitespaceOnSave)
+                if (Settings.GetSettings<EditorSettings>().RemoveTrailingWhitespaceOnSave)
                 {
                     Document.TrimTrailingWhiteSpace();
                 }
@@ -667,7 +692,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
-                TextArea.TextView.LineTransformers.Add(_textColorizer);
+                TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
 
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
@@ -816,15 +841,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set { SetValue(LineNumbersVisibleProperty, value); }
         }
 
-        public static readonly StyledProperty<bool> RemoveTrailingWhitespaceOnSaveProperty =
-            AvaloniaProperty.Register<CodeEditor, bool>(nameof(RemoveTrailingWhitespaceOnSave), true);
-
-        public bool RemoveTrailingWhitespaceOnSave
-        {
-            get { return GetValue(RemoveTrailingWhitespaceOnSaveProperty); }
-            set { SetValue(RemoveTrailingWhitespaceOnSaveProperty, value); }
-        }
-
         public static readonly StyledProperty<bool> HighlightSelectedLineProperty =
             AvaloniaProperty.Register<CodeEditor, bool>(nameof(HighlightSelectedLine), true);
 
@@ -905,6 +921,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get { return GetValue(BackgroundRenderersProperty); }
             set { SetValue(BackgroundRenderersProperty, value); }
+        }
+
+        public static readonly StyledProperty<ColorScheme> ColorSchemeProperty =
+            AvaloniaProperty.Register<CodeEditor, ColorScheme>(nameof(ColorScheme));
+
+        public ColorScheme ColorScheme
+        {
+            get => GetValue(ColorSchemeProperty);
+            set => SetValue(ColorSchemeProperty, value);
         }
 
         public static readonly StyledProperty<TextSegmentCollection<Diagnostic>> DiagnosticsProperty =

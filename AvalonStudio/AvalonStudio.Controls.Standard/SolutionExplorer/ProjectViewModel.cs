@@ -134,7 +134,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     return FontWeight.Bold;
                 }
 
-                return FontWeight.Light;
+                return FontWeight.Normal;
             }
         }
 

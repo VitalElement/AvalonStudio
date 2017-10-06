@@ -2,7 +2,7 @@
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:vm="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">
   <Grid>
-    <TreeView Items="{Binding Children}" BorderThickness="0" Background="{StyleResource ThemeControlDarkBrush}">
+    <TreeView Items="{Binding Children}" BorderThickness="0" Background="{DynamicResource ThemeControlDarkBrush}">
       <TreeView.Styles>
         <Style Selector="TreeViewItem">
           <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />

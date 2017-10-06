@@ -9,6 +9,13 @@ namespace AvalonStudio.Controls
 {
     public class DocumentTabViewModel<T> : ViewModel<T>, IDocumentTabViewModel where T : class
     {
+        private Dock dock;
+        private string title;
+        private bool isDirty;
+        private bool _isTemporary;
+        private bool _isHidden;
+        private bool _isSelected;
+
         public DocumentTabViewModel(T model) : base(model)
         {
             CloseCommand = ReactiveCommand.Create(() =>
@@ -19,8 +26,6 @@ namespace AvalonStudio.Controls
             IsVisible = true;
         }
 
-        private Dock dock;
-
         public Dock Dock
         {
             get { return dock; }
@@ -28,8 +33,6 @@ namespace AvalonStudio.Controls
         }
 
         public ReactiveCommand CloseCommand { get; protected set; }
-
-        private string title;
 
         public string Title
         {
@@ -50,8 +53,6 @@ namespace AvalonStudio.Controls
             }
         }
 
-        private bool isDirty;
-
         public bool IsDirty
         {
             get
@@ -65,8 +66,6 @@ namespace AvalonStudio.Controls
             }
         }
 
-        private bool _isTemporary;
-
         public bool IsTemporary
         {
             get
@@ -79,12 +78,16 @@ namespace AvalonStudio.Controls
             }
         }
 
-        private bool _isHidden;
-
         public bool IsVisible
         {
             get { return _isHidden; }
             set { this.RaiseAndSetIfChanged(ref _isHidden, value); }
+        }
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { this.RaiseAndSetIfChanged(ref _isSelected, value); }
         }
 
         public virtual void OnClose()

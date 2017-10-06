@@ -2,6 +2,7 @@ using AvalonStudio.Controls;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.TestFrameworks;
@@ -34,6 +35,8 @@ namespace AvalonStudio.Shell
         ObservableCollection<object> Tools { get; }
         ModalDialogViewModelBase ModalDialog { get; set; }
         object BottomSelectedTool { get; set; }
+
+        ColorScheme CurrentColorScheme { get; set; }
 
         IEnumerable<ISolutionType> SolutionTypes { get; }
 

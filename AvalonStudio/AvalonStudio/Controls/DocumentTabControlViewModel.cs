@@ -17,7 +17,8 @@ namespace AvalonStudio.Controls
         private ObservableCollection<IDocumentTabViewModel> documents;
 
         private bool _seperatorVisible;
-        private IDocumentTabViewModel selectedDocument;
+        private IDocumentTabViewModel _selectedDocument;
+        private IDocumentTabViewModel _temporaryDocument;
 
         public DocumentTabControlViewModel()
         {
@@ -157,20 +158,48 @@ namespace AvalonStudio.Controls
         {
             get
             {
-                return selectedDocument;
+                return _selectedDocument;
             }
             set
             {
-                this.RaiseAndSetIfChanged(ref selectedDocument, value);
+                if(_selectedDocument != null)
+                {
+                    _selectedDocument.IsSelected = false;
+                }
+
+                this.RaiseAndSetIfChanged(ref _selectedDocument, value);
 
                 if (value is IEditor editor)
                 {
                     editor.Focus();
                     editor.TriggerCodeAnalysis();
                 }
+
+                if(_selectedDocument != null)
+                {
+                    value.IsSelected = true;
+                }
             }
         }
 
-        public IDocumentTabViewModel TemporaryDocument { get; set; }
+        public IDocumentTabViewModel TemporaryDocument
+        {
+            get { return _temporaryDocument; }
+            set
+            {
+                if(_temporaryDocument != null)
+                {
+                    _temporaryDocument.IsSelected = false;
+                }
+
+                this.RaiseAndSetIfChanged(ref _temporaryDocument, value);
+
+                if (_temporaryDocument != null)
+                {
+                    _temporaryDocument.IsSelected = true;
+                }
+            }
+        }
+
     }
 }
