@@ -20,6 +20,8 @@
         private FileSystemWatcher folderSystemWatcher;
         private Dispatcher uiDispatcher;
 
+        public event EventHandler<ISourceFile> FileAdded;
+
         public FileSystemProject(bool useDispatcher)
         {
             Folders = new ObservableCollection<IProjectFolder>();
@@ -34,22 +36,25 @@
                 uiDispatcher = Dispatcher.UIThread;
             }
         }
+
         ~FileSystemProject()
         {
             Dispose();
         }
 
-        public static void PopulateFiles(FileSystemProject project, IProjectFolder folder)
+        public void PopulateFiles(IProjectFolder folder)
         {
             var files = Directory.EnumerateFiles(folder.Location);
 
-            files = files.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()) && f != project.Location);
+            files = files.Where(f => !IsExcluded(ExcludedFiles, CurrentDirectory.MakeRelativePath(f).ToAvalonPath()) && f != Location);
 
             foreach (var file in files)
             {
-                var sourceFile = File.FromPath(project, folder, file.ToPlatformPath().NormalizePath());
-                project.SourceFiles.InsertSorted(sourceFile);
+                var sourceFile = File.FromPath(this, folder, file.ToPlatformPath().NormalizePath());
+                SourceFiles.InsertSorted(sourceFile);
                 folder.Items.InsertSorted(sourceFile);
+
+                FileAdded?.Invoke(this, sourceFile);
             }
         }
 
@@ -64,7 +69,7 @@
             return result;
         }
 
-        public static IProjectFolder GetSubFolders(FileSystemProject project, IProjectFolder parent, string path)
+        public IProjectFolder GetSubFolders(IProjectFolder parent, string path)
         {
             var result = new StandardProjectFolder(path);
 
@@ -74,17 +79,17 @@
 
                 if (folders.Count() > 0)
                 {
-                    foreach (var folder in folders.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath())))
+                    foreach (var folder in folders.Where(f => !IsExcluded(ExcludedFiles, CurrentDirectory.MakeRelativePath(f).ToAvalonPath())))
                     {
-                        result.Items.InsertSorted(GetSubFolders(project, result, folder));
+                        result.Items.InsertSorted(GetSubFolders(result, folder));
                     }
                 }
 
-                PopulateFiles(project, result);
+                PopulateFiles(result);
 
-                project.Folders.InsertSorted(result);
+                Folders.InsertSorted(result);
                 result.Parent = parent;
-                result.Project = project;
+                result.Project = this;
             }
             catch (Exception)
             {
@@ -93,14 +98,14 @@
             return result;
         }
 
-        protected void LoadFiles()
+        public void LoadFiles()
         {
-            var folders = GetSubFolders(this, this, CurrentDirectory);
+            var folders = GetSubFolders(this, CurrentDirectory);
 
             foreach (var item in folders.Items)
             {
                 item.Parent = this;
-                Items.InsertSorted(item);
+                Items.InsertSorted(item);                
             }
 
             foreach (var file in SourceFiles)
@@ -236,7 +241,7 @@
                     sourceFile.Parent = folder;
                 }
 
-                FileAdded?.Invoke(this, new EventArgs());
+                FileAdded?.Invoke(this, sourceFile);
             }
         }
 
@@ -270,7 +275,7 @@
 
                 if (existing == null)
                 {
-                    var newFolder = GetSubFolders(this, folder, fullPath);
+                    var newFolder = GetSubFolders(folder, fullPath);
 
                     if (folder.Location == Project.CurrentDirectory)
                     {
@@ -395,8 +400,6 @@
         }
 
         public abstract dynamic ToolchainSettings { get; set; }
-
-        public event EventHandler FileAdded;
 
         public abstract void AddReference(IProject project);
 

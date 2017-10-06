@@ -1,7 +1,7 @@
 ﻿namespace AvalonStudio.Languages.CSharp
 {
-    using Avalonia.Input;
-    using Avalonia.Interactivity;
+    using Avalonia.Media;
+    using Avalonia.Threading;
     using AvaloniaEdit.Document;
     using AvaloniaEdit.Indentation;
     using AvaloniaEdit.Indentation.CSharp;
@@ -11,7 +11,13 @@
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
     using AvalonStudio.Utils;
+    using Microsoft.CodeAnalysis.Classification;
+    using Microsoft.CodeAnalysis.Completion;
+    using Microsoft.CodeAnalysis.FindSymbols;
+    using Microsoft.CodeAnalysis.Formatting;
     using Projects.OmniSharp;
+    using RoslynPad.Editor.Windows;
+    using RoslynPad.Roslyn.Diagnostics;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -128,53 +134,44 @@
 
         private CodeCompletionKind FromOmniSharpKind(string kind)
         {
-            if (kind != null)
+            var roslynKind = (Microsoft.CodeAnalysis.SymbolKind)int.Parse(kind);
+
+            switch (roslynKind)
             {
-                switch (kind)
-                {
-                    case "Method":
-                        return CodeCompletionKind.MethodPublic;
+                case Microsoft.CodeAnalysis.SymbolKind.NamedType:
+                    return CodeCompletionKind.ClassPublic;
 
-                    case "Class":
-                        return CodeCompletionKind.ClassPublic;
+                case Microsoft.CodeAnalysis.SymbolKind.Parameter:
+                    return CodeCompletionKind.Parameter;
 
-                    case "Struct":
-                        return CodeCompletionKind.StructurePublic;
+                case Microsoft.CodeAnalysis.SymbolKind.Property:
+                    return CodeCompletionKind.PropertyPublic;
 
-                    case "Enum":
-                        return CodeCompletionKind.EnumPublic;
+                case Microsoft.CodeAnalysis.SymbolKind.Method:
+                    return CodeCompletionKind.MethodPublic;
 
-                    case "Delegate":
-                        return CodeCompletionKind.DelegatePublic;
+                case Microsoft.CodeAnalysis.SymbolKind.Event:
+                    return CodeCompletionKind.EventPublic;
 
-                    case "Property":
-                        return CodeCompletionKind.PropertyPublic;
+                case Microsoft.CodeAnalysis.SymbolKind.Namespace:
+                    return CodeCompletionKind.NamespacePublic;
 
-                    case "Event":
-                        return CodeCompletionKind.EventPublic;
+                case Microsoft.CodeAnalysis.SymbolKind.Local:
+                    return CodeCompletionKind.Variable;
 
-                    case "Interface":
-                        return CodeCompletionKind.InterfacePublic;
-
-                    case "Keyword":
-                        return CodeCompletionKind.Keyword;
-
-                    case "Namespace":
-                        return CodeCompletionKind.NamespacePublic;
-
-                    case "Field":
-                        return CodeCompletionKind.FieldPublic;
-
-                    case "Parameter":
-                        return CodeCompletionKind.Parameter;
-
-                    case "Local":
-                        return CodeCompletionKind.Variable;
-                }
+                case Microsoft.CodeAnalysis.SymbolKind.Field:
+                    return CodeCompletionKind.FieldPublic;
             }
 
             Console.WriteLine($"dont understand omnisharp: {kind}");
             return CodeCompletionKind.None;
+        }
+
+        private static CompletionTrigger GetCompletionTrigger(char? triggerChar)
+        {
+            return triggerChar != null
+                ? CompletionTrigger.CreateInsertionTrigger(triggerChar.Value)
+                : CompletionTrigger.Invoke;
         }
 
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter)
@@ -183,7 +180,39 @@
 
             var dataAssociation = GetAssociatedData(sourceFile);
 
-            var response = await dataAssociation.Solution.Server.AutoComplete(sourceFile.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
+            var document = dataAssociation.Solution.Workspace.GetDocument(sourceFile);
+
+            var completionService = CompletionService.GetService(document);
+            var completionTrigger = GetCompletionTrigger(null);
+            var data = await completionService.GetCompletionsAsync(
+                document,
+                index,
+                completionTrigger
+                );
+
+            if (data != null)
+            {
+                foreach (var completion in data.Items)
+                {
+                    var newCompletion = new CodeCompletionData()
+                    {
+                        Suggestion = completion.FilterText,
+                        Hint = completion.DisplayText
+                    };
+
+                    if (completion.Properties.ContainsKey("SymbolKind"))
+                    {
+                        newCompletion.Kind = FromOmniSharpKind(completion.Properties["SymbolKind"]);
+                    }
+
+                    result.Completions.Add(newCompletion);
+                }
+
+                result.Contexts = Languages.CompletionContext.AnyType;
+            }
+
+
+            /*var response = await dataAssociation.Solution.Server.AutoComplete(sourceFile.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
 
             if (response != null)
             {
@@ -205,20 +234,45 @@
                 }
 
                 result.Contexts = CompletionContext.AnyType;
-            }
+            }*/
 
             return result;
         }
 
         public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
         {
-            return cursor;
+            var dataAssociation = GetAssociatedData(file);
+
+            var document = dataAssociation.Solution.Workspace.GetDocument(file);
+            var formattedDocument = Formatter.FormatAsync(document).GetAwaiter().GetResult();
+
+            dataAssociation.Solution.Workspace.TryApplyChanges(formattedDocument.Project.Solution);
+
+            return -1;
         }
 
         public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
         {
-            return null;
-            //throw new NotImplementedException();
+            var dataAssociation = GetAssociatedData(file);
+
+            var document = dataAssociation.Solution.Workspace.GetDocument(file);
+
+            var semanticModel = await document.GetSemanticModelAsync();
+
+            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, offset, dataAssociation.Solution.Workspace);
+
+            Symbol result = null;
+
+            if (symbol != null)
+            {
+                result = new Symbol {
+                    Name = symbol.ToDisplayString(),
+                    TypeDescription = symbol.Kind == Microsoft.CodeAnalysis.SymbolKind.NamedType ? symbol.ToDisplayString() : symbol.ToMinimalDisplayString(semanticModel, offset),                    
+                    BriefComment = symbol.GetDocumentationCommentXml()
+                };
+            }
+
+            return result;
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
@@ -309,6 +363,22 @@
             association = new CSharpDataAssociation();
             association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.
 
+            var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
+            association.Solution.Workspace.OpenDocument(file, avaloniaEditTextContainer, (diagnostics) =>
+            {
+                var dataAssociation = GetAssociatedData(file);
+
+                var results = new TextSegmentCollection<Diagnostic>();
+
+                foreach (var diagnostic in diagnostics.Diagnostics)
+                {
+                    results.Add(FromRoslynDiagnostic(diagnostic, file.Location, file.Project));
+                }
+
+                //dataAssociation.Diagnostics.OnNext(results);
+                Console.WriteLine("Restore adding diagnostics to output");
+            });
+
             dataAssociations.Add(file, association);
 
             association.TextInputHandler = (sender, e) =>
@@ -389,71 +459,119 @@
             return result;
         }
 
-        public HighlightType ToAvalonHighlightType(string omniSharpHighlightType)
+        HighlightType FromRoslynType(string type)
         {
-            switch (omniSharpHighlightType)
+            var result = HighlightType.None;
+
+            switch (type)
             {
-                case "operator":
-                case "punctuation":
-                    return HighlightType.Punctuation;
-
-                case "identifier":
-                    return HighlightType.Identifier;
-
-                case "keyword":
-                    return HighlightType.Keyword;
-
-                case "class name":
-                    return HighlightType.ClassName;
-
-                case "struct name":
-                    return HighlightType.StructName;
-
-                case "comment":
-                    return HighlightType.Comment;
-
-                case "delegate name":
-                case "interface name":
-                case "enum name":
-                    return HighlightType.Identifier;
-
-                case "string":
-                case "number":
-                    return HighlightType.Literal;
-
                 case "preprocessor keyword":
                     return HighlightType.PreProcessor;
 
                 case "preprocessor text":
                     return HighlightType.PreProcessorText;
 
+                case "keyword":
+                    result = HighlightType.Keyword;
+                    break;
+
+                case "identifier":
+                    result = HighlightType.Identifier;
+                    break;
+
+                case "punctuation":
+                    result = HighlightType.Punctuation;
+                    break;
+
+                case "class name":
+                    result = HighlightType.ClassName;
+                    break;
+
+                case "interface name":
+                    result = HighlightType.InterfaceName;
+                    break;
+
+                case "enum name":
+                    return HighlightType.EnumTypeName;
+
+                case "struct name":
+                    result = HighlightType.StructName;
+                    break;
+
+                case "number":
+                    result = HighlightType.NumericLiteral;
+                    break;
+
+                case "string":
+                    result = HighlightType.Literal;
+                    break;
+
+                case "operator":
+                    result = HighlightType.Operator;
+                    break;
+
+                case "xml doc comment - text":
+                case "xml doc comment - delimiter":
+                case "xml doc comment - name":
+                case "xml doc comment - attribute name":
+                case "xml doc comment - attribute quotes":
+                case "comment":
+                    result = HighlightType.Comment;
+                    break;
+
+                case "delegate name":
+                    result = HighlightType.DelegateName;
+                    break;
+
+                case "excluded code":
+                    result = HighlightType.None;
+                    break;
+
                 default:
-                    Console.WriteLine($"Dont understand omnisharp {omniSharpHighlightType}");
-                    return HighlightType.None;
+                    Console.WriteLine($"Dont understand {type}");
+                    break;
             }
+
+            return result;
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, string fileName, IProject project)
+        {
+            var result = new Diagnostic
+            {
+                Spelling = diagnostic.Message,
+                Level = (DiagnosticLevel)diagnostic.Severity,
+                StartOffset = diagnostic.TextSpan.Start,
+                Length = diagnostic.TextSpan.Length,
+                File = fileName,
+                Project = project,
+            };
+
+            return result;
+        }
+        
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 
+            var textLength = 0;
+
+            await Dispatcher.UIThread.InvokeTaskAsync(() => { textLength = textDocument.TextLength; });
+
             var dataAssociation = GetAssociatedData(file);
 
-            var response = await dataAssociation.Solution.Server.Highlight(file.FilePath, unsavedFiles.FirstOrDefault()?.Contents);
+            var document = dataAssociation.Solution.Workspace.GetDocument(file);
 
-            if (response != null)
+            if (document == null)
             {
-                foreach (var highlight in response.Highlights)
-                {
-                    result.SyntaxHighlightingData.Add(new LineColumnSyntaxHighlightingData
-                    {
-                        StartLine = highlight.StartLine,
-                        EndLine = highlight.EndLine,
-                        StartColumn = highlight.StartColumn,
-                        EndColumn = highlight.EndColumn,
-                        Type = ToAvalonHighlightType(highlight.Kind)
-                    });
-                }
+                return result;
+            }
+
+            var highlightData = await Classifier.GetClassifiedSpansAsync(document, new Microsoft.CodeAnalysis.Text.TextSpan(0, textLength));
+
+            foreach (var span in highlightData)
+            {
+                result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
             }
 
             return result;
@@ -478,7 +596,6 @@
             }
 
             textDocument.EndUpdate();
-
             return result;
         }
 
@@ -518,6 +635,8 @@
             editor.TextArea.TextEntered -= association.TextInputHandler;
             editor.TextArea.TextEntering -= association.BeforeTextInputHandler;
 
+            association.Solution.Workspace.CloseDocument(file);
+
             association.Solution = null;
             dataAssociations.Remove(file);
         }
@@ -526,7 +645,7 @@
         {
             SignatureHelp result = null;
 
-            var dataAssociation = GetAssociatedData(file);
+            /*var dataAssociation = GetAssociatedData(file);
 
             result = await dataAssociation.Solution.Server.SignatureHelp(file.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
 
@@ -535,7 +654,7 @@
                 result.NormalizeSignatureData();
 
                 result.Offset = offset;
-            }
+            }*/
 
             return result;
         }

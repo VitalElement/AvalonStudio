@@ -54,6 +54,9 @@ namespace AvalonStudio.Extensibility.Editor
             NumericLiteral = Brush.Parse("#B5CEA8"),
             Punctuation = Brush.Parse("#C8C8C8"),
             Type = Brush.Parse("#4EC9B0"),
+            StructName = Brush.Parse("#4EC9B0"),
+            Operator = Brush.Parse("#B4B4B4"),
+            DelegateName = Brush.Parse("#4EC9B0")
         };
 
         public static readonly ColorScheme SolarizedDark = new ColorScheme {
@@ -72,6 +75,8 @@ namespace AvalonStudio.Extensibility.Editor
             NumericLiteral = Brush.Parse("#2aa198"),
             Punctuation = Brush.Parse("#839496"),
             Type = Brush.Parse("#b58900"),
+            StructName = Brush.Parse("Red"),
+            Operator = Brush.Parse("Red")
         };
 
         public static readonly ColorScheme SolarizedLight = new ColorScheme
@@ -91,6 +96,8 @@ namespace AvalonStudio.Extensibility.Editor
             NumericLiteral = Brush.Parse("#2aa198"),
             Punctuation = Brush.Parse("#839496"),
             Type = Brush.Parse("#b58900"),
+            StructName = Brush.Parse("Red"),
+            Operator = Brush.Parse("Red")
         };
 
         public static ColorScheme LoadColorScheme(string name)
@@ -133,6 +140,9 @@ namespace AvalonStudio.Extensibility.Editor
         [JsonProperty(PropertyName ="editor.comment")]
         public IBrush Comment { get; set; }
 
+        [JsonProperty(PropertyName = "editor.delegate.name")]
+        public IBrush DelegateName { get; set; }
+
         [JsonProperty(PropertyName ="editor.keyword")]
         public IBrush Keyword { get; set; }
 
@@ -153,6 +163,12 @@ namespace AvalonStudio.Extensibility.Editor
 
         [JsonProperty(PropertyName = "editor.enum")]
         public IBrush EnumType { get; set; }
+
+        [JsonProperty(PropertyName = "editor.operator")]
+        public IBrush Operator { get; set; }
+
+        [JsonProperty(PropertyName = "editor.struct.name")]
+        public IBrush StructName { get; set; }
 
         [JsonProperty(PropertyName = "editor.interface")]
         public IBrush InterfaceType { get; set; }

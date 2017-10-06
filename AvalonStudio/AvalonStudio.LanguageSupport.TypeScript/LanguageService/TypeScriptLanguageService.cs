@@ -212,7 +212,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             dataAssociations.Add(file, association);
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument document,
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
@@ -231,20 +231,21 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
             catch (JavaScriptException)
             {
+                result.Diagnostics = new TextSegmentCollection<Diagnostic>
+                {
+                    new Diagnostic
+                    {
+                        Project = file.Project,
+                        Line = 1,
+                        Spelling = "Code analysis language service call failed.",
+                        StartOffset = 0,
+                        File = file.Name,
+                        Level = DiagnosticLevel.Error,
+                    }
+                };
+
                 return new CodeAnalysisResults
                 {
-                    Diagnostics = new TextSegmentCollection<Diagnostic>
-                    {
-                        new Diagnostic
-                        {
-                            Project = file.Project,
-                            Line = 1,
-                            Spelling = "Code analysis language service call failed.",
-                            StartOffset = 0,
-                            File = file.Name,
-                            Level = DiagnosticLevel.Error,
-                        }
-                    }
                 };
             }
             finally
@@ -297,12 +298,12 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
 
             // Diagnostics
-
+            var diagnostics = new TextSegmentCollection<Diagnostic>(document);
             // Language service has diagnostics
             foreach (var diagnostic in syntaxTree.ParseDiagnostics)
             {
                 // Convert diagnostics
-                result.Diagnostics.Add(new Diagnostic
+                diagnostics.Add(new Diagnostic
                 {
                     Project = file.Project,
                     Line = GetLineNumber(currentFileConts, diagnostic.Start), // TODO
@@ -315,7 +316,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 });
             }
 
-            result.Diagnostics.Add(new Diagnostic
+            diagnostics.Add(new Diagnostic
             {
                 Project = file.Project,
                 Line = 1,

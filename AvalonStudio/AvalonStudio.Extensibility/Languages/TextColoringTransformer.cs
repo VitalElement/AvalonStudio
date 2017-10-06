@@ -80,20 +80,16 @@ namespace AvalonStudio.Languages
             });
         }
 
-        public void UpdateOffsets(DocumentChangeEventArgs e)
-        {
-            if (TextTransformations != null)
-            {
-                TextTransformations.UpdateOffsets(e);
-            }
-        }
-
         public IBrush GetBrush(HighlightType type)
         {
             IBrush result;
 
             switch (type)
             {
+                case HighlightType.DelegateName:
+                    result = ColorScheme.DelegateName;
+                    break;
+
                 case HighlightType.Comment:
                     result = ColorScheme.Comment;
                     break;
@@ -132,6 +128,14 @@ namespace AvalonStudio.Languages
 
                 case HighlightType.EnumTypeName:
                     result = ColorScheme.EnumType;
+                    break;
+
+                case HighlightType.Operator:
+                    result = ColorScheme.Operator;
+                    break;
+
+                case HighlightType.StructName:
+                    result = ColorScheme.StructName;
                     break;
 
                 default:

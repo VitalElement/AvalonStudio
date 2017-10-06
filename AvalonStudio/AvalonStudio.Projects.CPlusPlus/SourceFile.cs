@@ -92,7 +92,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             TaskCompletionSource<ISourceFile> fileAddedCompletionSource = new TaskCompletionSource<ISourceFile>();
 
-            EventHandler fileAddedHandler = (sender, e) =>
+            EventHandler<ISourceFile> fileAddedHandler = (sender, e) =>
             {
                 var newFile = parent.Project.FindFile(filePath);
 

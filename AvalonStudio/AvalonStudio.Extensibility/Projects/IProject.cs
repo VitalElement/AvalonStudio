@@ -47,7 +47,7 @@ namespace AvalonStudio.Projects
 
         ISourceFile FindFile(string path);
 
-        event EventHandler FileAdded;
+        event EventHandler<ISourceFile> FileAdded;
 
         /// <summary>
         ///     Resolves all references in the project.
