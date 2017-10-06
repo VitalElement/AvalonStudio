@@ -67,7 +67,7 @@ namespace AvalonStudio.Languages.Xaml
 
         public Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new CodeCompletionResults());
         }
 
         public int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
@@ -105,7 +105,7 @@ namespace AvalonStudio.Languages.Xaml
             
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             return Task.FromResult(new CodeAnalysisResults());
         }
