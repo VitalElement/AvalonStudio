@@ -47,13 +47,13 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                 {
                     case DiagnosticLevel.Error:
                     case DiagnosticLevel.Fatal:
-                        return Brush.Parse("#E51400");
+                        return Brush.Parse("#E34937");
 
                     case DiagnosticLevel.Warning:
-                        return Brush.Parse("#FFCC00");
+                        return Brush.Parse("#D78A04");
 
                     default:
-                        return Brush.Parse("#1BA1E2");
+                        return Brush.Parse("#1C7CD2 ");
                 }
             }
         }
