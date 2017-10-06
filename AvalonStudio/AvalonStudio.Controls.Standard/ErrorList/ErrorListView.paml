@@ -1,10 +1,17 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility" xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.ErrorList;assembly=AvalonStudio.Controls.Standard">
   <cont:ToolControl Title="Error List">
     <ListBox  Items="{Binding Errors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}" BorderThickness="0" Background="{DynamicResource ThemeControlBackgroundBrush}">
+      <ListBox.Styles>
+        <Style Selector="TextBlock">
+          <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+      </ListBox.Styles>
       <ListBox.DataTemplates>
         <DataTemplate DataType="vm:ErrorViewModel">
-          <Grid ColumnDefinitions="50, *, 200, 200, 100">
-            <Rectangle Height="18" Width="18" Fill="{Binding LevelBrush}" />
+          <Grid ColumnDefinitions="70, *, 200, 200, 100">
+            <Border CornerRadius="4" Background="{Binding LevelBrush}" Padding="4 2" Margin="8 2">
+              <TextBlock Text="{Binding Level}" Foreground="WhiteSmoke" />
+            </Border>
             <TextBlock Grid.Column="1"  Text="{Binding Spelling}" />
             <TextBlock Grid.Column="2"  Text="{Binding Project}" />
             <TextBlock Grid.Column="3"  Text="{Binding File}" />
