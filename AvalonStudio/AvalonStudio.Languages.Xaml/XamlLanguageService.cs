@@ -8,6 +8,11 @@ using AvaloniaEdit.Indentation;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Projects;
 using System.IO;
+using Avalonia.Ide.CompletionEngine;
+using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
+using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
+using System.Reflection;
+using System.Linq;
 
 namespace AvalonStudio.Languages.Xaml
 {
@@ -62,12 +67,37 @@ namespace AvalonStudio.Languages.Xaml
         {
             bool result = false;
 
+            if(currentChar == '<')
+            {
+                return true;
+            }
+
             return result;
         }
 
         public Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
-            return Task.FromResult(new CodeCompletionResults());
+            var results = new CodeCompletionResults();
+
+            if (unsavedFiles.Count > 0)
+            {
+                var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
+                var currentFileConts = currentUnsavedFile.Contents;
+
+                var completionSet = engine.GetCompletions(metaData, currentFileConts, index + 1);
+
+                if (completionSet != null)
+                {
+                    foreach (var completion in completionSet.Completions)
+                    {
+                        results.Completions.Add(new CodeCompletionData { Suggestion = completion.DisplayText, BriefComment = completion.Description, Kind = CodeCompletionKind.PropertyPublic });
+                    }
+                }
+            }
+
+            results.Contexts = CompletionContext.AnyType;
+
+            return Task.FromResult(results);
         }
 
         public int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
@@ -95,9 +125,15 @@ namespace AvalonStudio.Languages.Xaml
             return char.IsLetterOrDigit(data);
         }
 
+        private static CompletionEngine engine = null;
+        private static Metadata metaData = null;
+
         public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument)
         {
-            
+            engine = new CompletionEngine();
+
+            var path = Assembly.GetEntryAssembly().GetModules()[0].FullyQualifiedName;
+            metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(path);
         }
         
         public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
