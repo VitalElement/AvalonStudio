@@ -319,7 +319,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     if (line.Length == 0)
                     {
                         _suppressIsDirtyNotifications = true;
-                        LanguageService.IndentationStrategy.IndentLine(Document, line);
+                        LanguageService.IndentationStrategy?.IndentLine(Document, line);
                         _suppressIsDirtyNotifications = false;
                     }
                 }
