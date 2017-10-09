@@ -15,43 +15,18 @@ namespace AvalonStudio
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
-            }            
-
-            var builder = AppBuilder.Configure<App>();
-
-            if (args.Length >= 1 && args[0] == "--skia")
-            {
-                builder.UseSkia();
-
-                if (Platform.OSDescription == "Windows")
-                {
-                    builder.UseWin32();
-                }
-                else
-                {
-                    builder.UseGtk3();
-                }
-            }
-            else if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
-            {
-                builder.UsePlatformDetect().UseSkia();
-            }
-            else
-            {
-                builder.UseGtk3().UseSkia();
             }
 
-            builder.UseReactiveUI();
+            var builder = AppBuilder.Configure<App>().UseReactiveUI().AvalonStudioPlatformDetect().AfterSetup(_ =>
+            {
+                Platform.Initialise();
 
-            builder.SetupWithoutStarting();
+                PackageSources.InitialisePackageSources();
 
-            Platform.Initialise();
+                var container = CompositionRoot.CreateContainer();
 
-            PackageSources.InitialisePackageSources();
-
-            var container = CompositionRoot.CreateContainer();
-
-            ShellViewModel.Instance = container.GetExport<ShellViewModel>();
+                ShellViewModel.Instance = container.GetExport<ShellViewModel>();
+            });
 
             builder.Start<MainWindow>();            
         }
@@ -70,6 +45,21 @@ namespace AvalonStudio
 
         private static void InitializeLogging()
         {
+        }
+    }
+
+    public static class AppBuilderExtensions
+    {
+        public static AppBuilder AvalonStudioPlatformDetect(this AppBuilder builder)
+        {
+            if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+            {
+                return builder.UseWin32().UseSkia();
+            }
+            else
+            {
+                return builder.UseGtk3().UseSkia();
+            }
         }
     }
 }
