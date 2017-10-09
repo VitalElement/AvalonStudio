@@ -50,7 +50,7 @@ namespace AvalonStudio.CommandLineTools
             };
         }
 
-        public static void LaunchShell(string workingDirectory, params string[] paths)
+        public static Process LaunchShell(string workingDirectory, string parameters = "", params string[] paths)
         {
             var startInfo = new ProcessStartInfo
             {
@@ -68,19 +68,20 @@ namespace AvalonStudio.CommandLineTools
             if (executorType == ShellExecutorType.Windows)
             {
                 startInfo.FileName = ResolveFullExecutablePath("cmd.exe");
-                startInfo.Arguments = $"/c start {startInfo.FileName}";
+                startInfo.Arguments = $"/c start {startInfo.FileName} {parameters}";
             }
             else //Unix
             {
-                startInfo.FileName = "sh";
+                startInfo.FileName = "gnome-terminal";
+                startInfo.Arguments = "-e " + parameters;
             }
 
-            Process.Start(startInfo);
+            return Process.Start(startInfo);
         }
 
         public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>
             outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,
-            string workingDirectory = "", bool executeInShell = true, params string[] extraPaths)
+            string workingDirectory = "", bool executeInShell = true, bool CreateNoWindow = true, params string[] extraPaths)
         {
             using (var shellProc = new Process
             {
@@ -107,20 +108,20 @@ namespace AvalonStudio.CommandLineTools
                     {
                         shellProc.StartInfo.FileName = ResolveFullExecutablePath("cmd.exe");
                         shellProc.StartInfo.Arguments = $"/C {(resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName)} {args}";
-                        shellProc.StartInfo.CreateNoWindow = true;
+                        shellProc.StartInfo.CreateNoWindow = CreateNoWindow;
                     }
                     else //Unix
                     {
                         shellProc.StartInfo.FileName = "sh";
                         shellProc.StartInfo.Arguments = $"-c \"{(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}\"";
-                        shellProc.StartInfo.CreateNoWindow = true;
+                        shellProc.StartInfo.CreateNoWindow = CreateNoWindow;
                     }
                 }
                 else
                 {
                     shellProc.StartInfo.FileName = (resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName);
                     shellProc.StartInfo.Arguments = args;
-                    shellProc.StartInfo.CreateNoWindow = true;
+                    shellProc.StartInfo.CreateNoWindow = CreateNoWindow;
                 }
 
                 shellProc.OutputDataReceived += (s, a) => outputReceivedCallback(s, a);

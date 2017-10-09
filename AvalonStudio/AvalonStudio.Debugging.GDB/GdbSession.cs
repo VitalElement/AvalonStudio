@@ -25,6 +25,7 @@
 
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
+using AvalonStudio.CommandLineTools;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
@@ -77,6 +78,8 @@ namespace AvalonStudio.Debugging.GDB
         private bool _suppressEvents = false;
         private bool _waitForStopBeforeRunning;
 
+        private Process _terminal;
+
         /// <summary>
 		/// Raised when the debugging session is paused
 		/// </summary>
@@ -102,6 +105,55 @@ namespace AvalonStudio.Debugging.GDB
                 string ttyfile = Path.GetTempFileName();
                 string ttyfileDone = ttyfile + "_done";
                 string tty = string.Empty;
+
+                if(Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Unix)
+                {
+                    try
+                    {
+                        File.WriteAllText (script, "tty > " + ttyfile + "\ntouch " + ttyfileDone + "\nsleep 10000d");
+                        Platform.Chmod (script, 0x755);
+
+                        _terminal = PlatformSupport.LaunchShell ("", script);
+
+                        DateTime tim = DateTime.Now;
+
+                        while (!File.Exists (ttyfileDone)) 
+                        {
+                            System.Threading.Thread.Sleep (100);
+                            
+                            if ((DateTime.Now - tim).TotalSeconds > 10)
+                            {
+                                throw new InvalidOperationException ("Console could not be created.");
+                            }
+                        }
+
+                        tty = File.ReadAllText(ttyfile).Trim(' ', '\n');
+                    }
+                    finally
+                    {
+                        try 
+                        {
+                            if (File.Exists (script))
+                            {
+                                File.Delete (script);
+                            }
+
+                            if (File.Exists (ttyfile))
+                            {
+                                File.Delete (ttyfile);
+                            }
+
+                            if (File.Exists (ttyfileDone))
+                            {
+                                File.Delete (ttyfileDone);
+                            }
+                        } 
+                        catch 
+                        {
+                            // Ignore
+					    }
+                    }
+                }
 
                 StartGdb(startInfo);
 
@@ -253,11 +305,6 @@ namespace AvalonStudio.Debugging.GDB
 
         public override void Dispose()
         {
-            /*if (console != null && !console.IsCompleted) {
-				console.Cancel ();
-				console = null;
-			}*/
-
             closeTokenSource?.Cancel();
 
             if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
@@ -309,6 +356,13 @@ namespace AvalonStudio.Debugging.GDB
                 InternalStop();
                 sin.WriteLine("-gdb-exit");
                 closeTokenSource?.Cancel();
+
+                if (_terminal != null && !_terminal.HasExited) 
+                {
+				    _terminal.Kill();
+				    _terminal = null;
+			    }
+
                 TargetEventArgs args = new TargetEventArgs(TargetEventType.TargetExited);
                 OnTargetEvent(args);
             }
