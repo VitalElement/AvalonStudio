@@ -4,8 +4,10 @@
 [![Gitter](https://badges.gitter.im/VitalElement/AvalonStudio.svg)](https://gitter.im/VitalElement/AvalonStudio?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 <img src="AvalonStudio/AvalonStudio/Assets/icon.png" width="50" height="50" />
-<img src="https://cloud.githubusercontent.com/assets/4672627/21014496/36454f48-bd56-11e6-8e00-6cf8f878e9a6.png" />
-<img src="https://files.gitter.im/AvaloniaUI/Avalonia/LoHY/Screenshot-from-2017-01-27-00-51-26.png" />
+<img src="https://files.gitter.im/VitalElement/AvalonStudio/r3QX/image.png" />
+<img src="https://files.gitter.im/VitalElement/AvalonStudio/LUgi/image.png" />
+<img src="https://files.gitter.im/VitalElement/AvalonStudio/gpYQ/Screenshot-from-2017-10-09-15-51-18.png" />
+<img src="https://files.gitter.im/VitalElement/AvalonStudio/gEyI/Screenshot-from-2017-10-09-15-43-14.png" />
 
 # AvalonStudio
 
