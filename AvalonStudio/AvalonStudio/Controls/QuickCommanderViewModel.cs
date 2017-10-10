@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using AvalonStudio.Extensibility.Utils;
 using Avalonia.Media;
+using AvalonStudio.Extensibility.Theme;
 
 namespace AvalonStudio.Controls
 {
@@ -118,7 +119,7 @@ namespace AvalonStudio.Controls
                             {
                                 if (range.matched)
                                 {
-                                    var span = new FormattedTextStyleSpan(index + tp.Item4.Project.Name.Length + 1, range.text.Length + 1, Brushes.Red);
+                                    var span = new FormattedTextStyleSpan(index + tp.Item4.Project.Name.Length + 1, range.text.Length + 1, ColorTheme.CurrentTheme.Accent);
                                     spans.Add(span);
                                 }
 
