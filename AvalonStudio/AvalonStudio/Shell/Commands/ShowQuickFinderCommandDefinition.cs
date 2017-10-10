@@ -11,7 +11,7 @@ namespace AvalonStudio.Shell.Commands
 {
     class ShowQuickFinderCommandDefinition : CommandDefinition
     {
-        private readonly ReactiveCommand<object> _command;
+        private readonly ReactiveCommand _command;
         private ShellViewModel _shell;
 
         public override void Activation()
@@ -21,9 +21,7 @@ namespace AvalonStudio.Shell.Commands
 
         public ShowQuickFinderCommandDefinition()
         {
-            _command = ReactiveCommand.Create();
-
-            _command.Subscribe(_ => {
+            _command = ReactiveCommand.Create(() => {
                 
                 _shell.ShowQuickCommander();
             });

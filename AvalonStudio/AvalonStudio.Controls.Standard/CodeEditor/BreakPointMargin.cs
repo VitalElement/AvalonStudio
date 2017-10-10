@@ -2,6 +2,7 @@
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaEdit.Editing;
+using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.Platforms;
 using Mono.Debugging.Client;
 using System;
@@ -32,7 +33,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (TextView.VisualLinesValid)
             {
-                context.FillRectangle(Brush.Parse("#333333"), Bounds);
+                context.FillRectangle(ColorTheme.CurrentTheme.ControlDark, Bounds);
 
                 if (TextView.VisualLines.Count > 0)
                 {
@@ -120,7 +121,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if(TextView != null)
+            if (TextView != null)
             {
                 return new Size(TextView.DefaultLineHeight, 0);
             }

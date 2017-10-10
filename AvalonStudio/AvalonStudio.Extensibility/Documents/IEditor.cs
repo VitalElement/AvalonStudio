@@ -39,5 +39,9 @@ namespace AvalonStudio.Documents
         string GetWordAtOffset(int offset);
 
         int CaretOffset { get; }
+
+        bool Loaded { get; }
+
+        Task WaitForEditorToLoadAsync();
     }
 }

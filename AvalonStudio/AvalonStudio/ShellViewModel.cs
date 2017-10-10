@@ -1,12 +1,14 @@
 using Avalonia.Input;
 using Avalonia.Threading;
 using AvalonStudio.Controls;
+using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Controls.Standard.ErrorList;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
 using AvalonStudio.Extensibility.Menus;
@@ -31,7 +33,6 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AvalonStudio.IdeSettings;
 
 namespace AvalonStudio
 {
@@ -278,7 +279,7 @@ namespace AvalonStudio
             EnableDebugModeCommand = ReactiveCommand.Create(() =>
             {
                 DebugMode = !DebugMode;
-            });            
+            });
         }
 
         public ReactiveCommand EnableDebugModeCommand { get; }
@@ -372,156 +373,47 @@ namespace AvalonStudio
 
         public void AddDocument(IDocumentTabViewModel document)
         {
-            DocumentTabs.Documents.Add(document);
-            DocumentTabs.SelectedDocument = document;
-
-            DocumentTabs.InvalidateSeperatorVisibility();
+            DocumentTabs.OpenDocument(document);
         }
 
         public void RemoveDocument(IDocumentTabViewModel document)
         {
-            if(document == null)
+            if (document == null)
             {
                 return;
             }
-
-            IDocumentTabViewModel newSelectedTab = DocumentTabs.SelectedDocument;
-
-            if (DocumentTabs.SelectedDocument == document)
-            {
-                var index = DocumentTabs.Documents.IndexOf(document);
-                var current = index;
-
-                bool foundTab = false;
-
-                while (!foundTab)
-                {
-                    index++;
-
-                    if (index < DocumentTabs.Documents.Count)
-                    {
-                        if (DocumentTabs.Documents[index].IsVisible)
-                        {
-                            foundTab = true;
-                            newSelectedTab = DocumentTabs.Documents[index];
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                index = current;
-
-                while (!foundTab)
-                {
-                    index--;
-
-                    if (index >= 0)
-                    {
-                        if (DocumentTabs.Documents[index].IsVisible)
-                        {
-                            foundTab = true;
-                            newSelectedTab = DocumentTabs.Documents[index];
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-
-            DocumentTabs.SelectedDocument = newSelectedTab;
-
-            document.IsVisible = false;
 
             if (document is EditorViewModel doc)
             {
                 doc.Save();
             }
 
-            if (DocumentTabs.TemporaryDocument == document)
-            {
-                DocumentTabs.TemporaryDocument = null;
-            }
-
-            if (DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => !d.IsVisible).Count() == 5)
-            {
-                var toRemove = DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => !d.IsVisible).First();
-
-                DocumentTabs.Documents.Remove(toRemove);
-                toRemove.OnClose();
-
-                Dispatcher.UIThread.InvokeAsync(async () =>
-                {
-                    await Task.Delay(25);
-                    GC.Collect();
-                });
-            }
-
-            DocumentTabs.InvalidateSeperatorVisibility();
+            DocumentTabs.CloseDocument(document);
         }
 
         public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
         {
-            bool restoreFromCache = false;
-
             var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
 
-            if (currentTab != null && !currentTab.IsVisible)
+            if (currentTab == null)
             {
-                restoreFromCache = true;
-            }
+                currentTab = new EditorViewModel();
 
-            EditorViewModel documentToClose = null;
+                AddDocument(currentTab);
 
-            if (currentTab == null || restoreFromCache)
-            {
-                if (DocumentTabs.TemporaryDocument != null)
-                {
-                    documentToClose = DocumentTabs.TemporaryDocument;
-                }
-
-                EditorViewModel newEditor = null;
-
-                if (restoreFromCache)
-                {
-                    newEditor = currentTab;
-                }
-                else
-                {
-                    newEditor = new EditorViewModel();
-                }
-
-                if (restoreFromCache)
-                {
-                    newEditor.IsVisible = true;
-                    newEditor.Dock = Avalonia.Controls.Dock.Right;
-                    DocumentTabs.SelectedDocument = newEditor;
-                }
-                else
-                {
-                    newEditor.OpenFile(file);
-                    AddDocument(newEditor);
-                }
-
-                newEditor.IsTemporary = true;
-                DocumentTabs.TemporaryDocument = newEditor;
-            }
+                currentTab.OpenFile(file);                
+            }            
             else
             {
-                DocumentTabs.SelectedDocument = currentTab;
+                AddDocument(currentTab);
             }
 
             if (DocumentTabs.SelectedDocument is IEditor editor)
             {
-                // ensures that the document has been opened and created.
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
+                    await editor.WaitForEditorToLoadAsync();
+
                     if (debugHighlight)
                     {
                         editor.SetDebugHighlight(line, startColumn, endColumn);
@@ -536,15 +428,10 @@ namespace AvalonStudio
                     {
                         editor.Focus();
                     }
-
-                    if (documentToClose != null)
-                    {
-                        //await documentToClose.CloseCommand.ExecuteAsyncTask(null);
-                    }
                 });
             }
 
-            return DocumentTabs.SelectedDocument as IEditor;
+            return currentTab as IEditor;
         }
 
         public IEditor GetDocument(string path)
@@ -675,6 +562,23 @@ namespace AvalonStudio
             foreach (var document in DocumentTabs.Documents)
             {
                 //TODO implement code analysis trigger.
+            }
+        }
+
+        private ColorScheme _currentColorScheme;
+
+        public ColorScheme CurrentColorScheme
+        {
+            get { return _currentColorScheme; }
+
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
+
+                foreach(var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+                {
+                    document.ColorScheme = value;
+                }
             }
         }
 

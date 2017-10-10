@@ -71,6 +71,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             }
 
+            if(string.IsNullOrEmpty(resultText))
+            {
+                return null;
+            }
+
             return XDocument.Parse(resultText);
         }
     }

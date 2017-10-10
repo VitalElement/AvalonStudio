@@ -15,6 +15,8 @@ namespace AvalonStudio.Controls
 
         bool IsVisible { get; set; }
 
+        bool IsSelected { get; set; }
+
         Dock Dock { get; set; }
 
         void OnClose();

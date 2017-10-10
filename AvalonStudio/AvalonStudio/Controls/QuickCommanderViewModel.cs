@@ -48,8 +48,7 @@ namespace AvalonStudio.Controls
                 }
             }); 
 
-            UpCommand = ReactiveCommand.Create();
-            UpCommand.Subscribe(_ =>
+            UpCommand = ReactiveCommand.Create(() =>
             {
                 if (Results?.Count > 0 && SelectedIndex > 0)
                 {
@@ -57,8 +56,7 @@ namespace AvalonStudio.Controls
                 }
             });
 
-            DownCommand = ReactiveCommand.Create();
-            DownCommand.Subscribe(_ =>
+            DownCommand = ReactiveCommand.Create(() =>
             {
                 if (Results?.Count > 0 && SelectedIndex < Results?.Count - 1)
                 {
@@ -66,18 +64,16 @@ namespace AvalonStudio.Controls
                 }
             });
 
-            EnterCommand = ReactiveCommand.Create();
-            EnterCommand.Subscribe(_ =>
+            EnterCommand = ReactiveCommand.Create(() =>
             {
                 IsVisible = false;
             });
 
-            EscapeCommand = ReactiveCommand.Create();
-            EscapeCommand.Subscribe(_ =>
+            EscapeCommand = ReactiveCommand.Create(() =>
             {
                 if (_shell.DocumentTabs.TemporaryDocument != null)
                 {
-                    if (_shell.DocumentTabs.TemporaryDocument.SourceFile == SelectedResult?.Model)
+                    if ((_shell.DocumentTabs.TemporaryDocument as EditorViewModel).SourceFile == SelectedResult?.Model)
                     {
                         _shell.RemoveDocument(_shell.DocumentTabs.TemporaryDocument);
                     }
@@ -161,13 +157,13 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public ReactiveCommand<object> UpCommand { get; }
+        public ReactiveCommand UpCommand { get; }
 
-        public ReactiveCommand<object> DownCommand { get; }
+        public ReactiveCommand DownCommand { get; }
 
-        public ReactiveCommand<object> EscapeCommand { get; }
+        public ReactiveCommand EscapeCommand { get; }
 
-        public ReactiveCommand<object> EnterCommand { get; }
+        public ReactiveCommand EnterCommand { get; }
 
         public SearchResultViewModel SelectedResult
         {

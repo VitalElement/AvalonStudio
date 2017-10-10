@@ -1,9 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" 
              xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
              xmlns:proj="clr-namespace:AvalonStudio.Projects;assembly=AvalonStudio.Extensibility"
-             Background="{StyleResource ThemeBackgroundBrush}">
+             Background="{DynamicResource ThemeBackgroundBrush}">
     <Grid RowDefinitions="*,180" ColumnDefinitions="200,*,200">
-      <TreeView Background="{StyleResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
+      <TreeView Background="{DynamicResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
         <TreeView.DataTemplates>
           <DataTemplate DataType="lang:ILanguageService">
             <TextBlock Text="{Binding Title}" />
@@ -17,16 +17,7 @@
         <TreeViewItem Header="Languages" IsExpanded="true" Items="{Binding Languages}"/>                  
       </TreeView>
           
-      <ListBox Grid.Column="1" Background="{StyleResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" Items="{Binding ProjectTemplates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}">
-        <ListBox.Styles>
-          <Style Selector="ListBoxItem:selected /template/ Border#border">
-            <Setter Property="Background" Value="#5500557d" />
-          </Style>
-          <Style Selector="ListBoxItem:selected:focus /template/ Border#border">
-            <Setter Property="Background" Value="#5500557d" />
-          </Style>
-        </ListBox.Styles>
-
+      <ListBox Grid.Column="1" Background="{DynamicResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" Items="{Binding ProjectTemplates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}">
         <ListBox.DataTemplates>
           <DataTemplate DataType="proj:IProjectTemplate">
             <Grid Height="45">
@@ -40,7 +31,7 @@
         </ListBox.DataTemplates>
       </ListBox>
             
-      <Grid Grid.Column="2" Background="{StyleResource ThemeControlDarkBrush}" Margin="1">
+      <Grid Grid.Column="2" Background="{DynamicResource ThemeControlDarkBrush}" Margin="1">
         <StackPanel Margin="10">
           <StackPanel Orientation="Horizontal">
             <TextBlock Text="Type:" FontWeight="Bold" />
@@ -51,7 +42,7 @@
       </Grid>
         
     
-      <Grid Grid.Row="1" Grid.ColumnSpan="3" ColumnDefinitions="120,*,200" Margin="1" RowDefinitions="30, 30, 30" Background="{StyleResource ThemeControlDarkBrush}">        
+      <Grid Grid.Row="1" Grid.ColumnSpan="3" ColumnDefinitions="120,*,200" Margin="1" RowDefinitions="30, 30, 30" Background="{DynamicResource ThemeControlDarkBrush}">        
         <TextBlock Text="Name:" VerticalAlignment="Center" />
         <TextBox Grid.Column="1" Background="Transparent" Text="{Binding Name, Mode=TwoWay}" />
         

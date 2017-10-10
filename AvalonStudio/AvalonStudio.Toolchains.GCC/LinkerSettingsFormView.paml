@@ -5,7 +5,7 @@
         <Setter Property="Background" Value="Transparent" />
       </Style>
     </Grid.Styles>
-    
+
     <Grid.RowDefinitions>
       <RowDefinition Height="250"/>
       <RowDefinition Height="100"/>

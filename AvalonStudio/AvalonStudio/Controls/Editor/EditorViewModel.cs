@@ -1,11 +1,14 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 using Avalonia.Threading;
 using AvaloniaEdit.Document;
+using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
@@ -94,6 +97,10 @@ namespace AvalonStudio.Controls
         {
             _shell = IoC.Get<ShellViewModel>();
 
+            var settings = GlobalSettings.Settings.GetSettings<EditorSettings>();
+
+            colorScheme = ColorScheme.LoadColorScheme(settings.ColorScheme);
+
             AddWatchCommand = ReactiveCommand.Create(() => { IoC.Get<IWatchList>()?.AddWatch(_editor?.GetWordAtOffset(_editor.CaretOffset)); });
 
             Dock = Dock.Right;
@@ -105,7 +112,6 @@ namespace AvalonStudio.Controls
         ~EditorViewModel()
         {
         }
-
 
         public override void OnClose()
         {
@@ -144,6 +150,22 @@ namespace AvalonStudio.Controls
         #endregion Constructors
 
         #region Properties
+
+        private ColorScheme colorScheme;
+
+        public ColorScheme ColorScheme
+        {
+            get { return colorScheme; }
+            set { this.RaiseAndSetIfChanged(ref colorScheme, value); }
+        }
+
+        private IBrush background;
+
+        public IBrush Background
+        {
+            get { return background; }
+            set { this.RaiseAndSetIfChanged(ref background, value); }
+        }
 
         private string tabCharacter;
 
@@ -441,6 +463,8 @@ namespace AvalonStudio.Controls
             }
         }
 
+        public bool Loaded => _editor == null ? false :_editor.Loaded;
+
         #endregion Commands
 
         #region Public Methods
@@ -480,6 +504,20 @@ namespace AvalonStudio.Controls
         public string GetWordAtOffset(int offset)
         {
             return _editor?.GetWordAtOffset(offset);
+        }
+
+        public async Task WaitForEditorToLoadAsync()
+        {
+            if (_editor == null || !_editor.Loaded)
+            {
+                await Task.Run(() =>
+                {
+                    while (_editor == null || !_editor.Loaded)
+                    {
+                        Task.Delay(50);
+                    }
+                });
+            }
         }
 
         #endregion Public Methods

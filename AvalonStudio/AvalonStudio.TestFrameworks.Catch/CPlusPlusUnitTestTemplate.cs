@@ -84,7 +84,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             // Reference catch.
             project.AddReference(catchProject);
 
-            await SourceFile.Create(project, "UnitTest1.cpp", Template.Engine.Parse("CatchUnitTest.template", new { }));
+            await SourceFile.Create(project, "UnitTest1.cpp", await Template.Engine.CompileRenderAsync("CatchUnitTest.template", new { }));
 
             project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
             project.Debugger2 = shell.Debugger2s.FirstOrDefault(db => db.GetType().FullName == "AvalonStudio.Debuggers.GDB.Local.LocalGdbDebugger");

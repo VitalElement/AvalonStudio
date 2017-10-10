@@ -43,6 +43,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// </summary>
         protected double EmSize;
 
+        public IBrush Background { get; set; }
         public IBrush Foreground { get; set; }
         public IBrush SelectedLineForeground { get; set; }
 
@@ -76,6 +77,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// <inheritdoc/>
         public override void Render(DrawingContext drawingContext)
         {
+            drawingContext.FillRectangle(Background, Bounds);
+
             var textView = TextView;
             var renderSize = Bounds.Size;
             if (textView != null && textView.VisualLinesValid)

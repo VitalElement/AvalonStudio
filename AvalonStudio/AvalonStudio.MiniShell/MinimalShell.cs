@@ -15,6 +15,7 @@ namespace AvalonStudio.Shell
     using System.Collections.ObjectModel;
     using System.Composition;
     using System.Threading.Tasks;
+    using AvalonStudio.Extensibility.Editor;
 
     [Export]
     public class MinimalShell : IShell
@@ -144,6 +145,8 @@ namespace AvalonStudio.Shell
         public IObservable<ISolution> OnSolutionChanged => throw new NotImplementedException();
 
         public IWorkspaceTaskRunner TaskRunner => throw new NotImplementedException();
+
+        public ColorScheme CurrentColorScheme { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
             bool selectLine = false, bool focus = true)
