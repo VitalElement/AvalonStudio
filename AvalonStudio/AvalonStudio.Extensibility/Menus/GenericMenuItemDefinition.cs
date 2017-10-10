@@ -4,7 +4,7 @@
 
     public class MenuItemDefinition<TCommand> : MenuItemDefinition where TCommand : CommandDefinition
     {
-        public MenuItemDefinition(MenuItemGroupDefinition group, string text, int sortOrder) : base(group, text, sortOrder)
+        public MenuItemDefinition(MenuItemGroupDefinition group, int sortOrder) : base(group, sortOrder)
         {
         }
 
@@ -13,6 +13,8 @@
             base.Activation();
 
             CommandDefinition = IoC.Get<TCommand>();
+
+            Text = CommandDefinition.Text;
         }
     }
 }

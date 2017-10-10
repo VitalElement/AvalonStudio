@@ -21,9 +21,9 @@
 
                 using (var stream = new MemoryStream())
                 {
-                    //(value as WindowIcon).Save(stream);
+                    (value as WindowIcon).Save(stream);
                     stream.Seek(0, SeekOrigin.Begin);
-                    //result = new Bitmap(stream);
+                    result = new Bitmap(stream);
                 }
 
                 return result;
