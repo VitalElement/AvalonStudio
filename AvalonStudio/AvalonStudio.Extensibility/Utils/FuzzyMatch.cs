@@ -10,7 +10,7 @@ namespace AvalonStudio.Extensibility.Utils
     {
         static public (List<int> specials, int lastSegmentSpecialsIndex) FindSpecialCharacters(string str)
         {
-            const string special_chars = ".-_";
+            const string specialChars = ".-_";
             int i;
             char c;
             int lastSegmentSpecialsIndex = 0;
@@ -31,7 +31,7 @@ namespace AvalonStudio.Extensibility.Utils
                     lastSegmentSpecialsIndex = specials.Count - 1;
                     lastWasLower = false;
                 }
-                else if (special_chars.IndexOf(c) >= 0)
+                else if (specialChars.IndexOf(c) >= 0)
                 {
                     specials.Add(i++);
                     specials.Add(i);
@@ -57,8 +57,8 @@ namespace AvalonStudio.Extensibility.Utils
 
         public enum States
         {
-            SPECIALS_MATCH,
-            ANY_MATCH,
+            SpecialsMatch,
+            AnyMatch,
         };
 
         public class Match
@@ -73,7 +73,7 @@ namespace AvalonStudio.Extensibility.Utils
             public bool isSpecial;
         };
 
-        public static List<Match> generateMatchList(string query, string str, List<int> specials, int startingSpecial)
+        public static List<Match> GenerateMatchList(string query, string str, List<int> specials, int startingSpecial)
         {
             var matches = new Stack<Match>();
 
@@ -86,9 +86,9 @@ namespace AvalonStudio.Extensibility.Utils
 
             queryCounter = 0;
 
-            States state = States.SPECIALS_MATCH;
+            States state = States.SpecialsMatch;
 
-            bool findMatchingSpecial()
+            bool FindMatchingSpecial()
             {
                 int i;
 
@@ -117,7 +117,7 @@ namespace AvalonStudio.Extensibility.Utils
                 return false;
             }
 
-            bool backtrack()
+            bool Backtrack()
             {
                 while (matches.Count > 0)
                 {
@@ -133,7 +133,7 @@ namespace AvalonStudio.Extensibility.Utils
                         if (item.index < deadBranches[queryCounter])
                         {
                             deadBranches[queryCounter] = item.index - 1;
-                            state = States.ANY_MATCH;
+                            state = States.AnyMatch;
 
                             item = matches.ElementAtOrDefault(matches.Count - 1);
                             if (item == null)
@@ -155,21 +155,21 @@ namespace AvalonStudio.Extensibility.Utils
             {
                 while (queryCounter < query.Length && strCounter < str.Length && strCounter <= deadBranches[queryCounter])
                 {
-                    if (state == States.SPECIALS_MATCH)
+                    if (state == States.SpecialsMatch)
                     {
-                        if (!findMatchingSpecial())
+                        if (!FindMatchingSpecial())
                         {
-                            state = States.ANY_MATCH;
+                            state = States.AnyMatch;
                         }
                     }
 
-                    if (state == States.ANY_MATCH)
+                    if (state == States.AnyMatch)
                     {
                         if (query[queryCounter] == str[strCounter])
                         {
                             queryCounter++;
                             matches.Push(new Match(strCounter++, false));
-                            state = States.SPECIALS_MATCH;
+                            state = States.SpecialsMatch;
                         }
                         else
                         {
@@ -178,7 +178,7 @@ namespace AvalonStudio.Extensibility.Utils
                     }
                 }
 
-                if (queryCounter >= query.Length || (queryCounter < query.Length && !backtrack()))
+                if (queryCounter >= query.Length || (queryCounter < query.Length && !Backtrack()))
                 {
                     break;
                 }
@@ -195,7 +195,7 @@ namespace AvalonStudio.Extensibility.Utils
             return result;
         }
 
-        static (string remainder, List<Match> matchList)? _lastSegmentSearch(string query, string str, List<int> specials, int startingSpecial, int lastSegmentStart)
+        static (string remainder, List<Match> matchList)? LastSegmentSearch(string query, string str, List<int> specials, int startingSpecial, int lastSegmentStart)
         {
             List<Match> matchList = null;
             var remainder = "";
@@ -210,15 +210,15 @@ namespace AvalonStudio.Extensibility.Utils
             int queryCounter;
             for (queryCounter = 0; queryCounter < query.Length; queryCounter++)
             {
-                matchList = generateMatchList(query.Substring(queryCounter), str, specials, startingSpecial);
+                matchList = GenerateMatchList(query.Substring(queryCounter), str, specials, startingSpecial);
 
-                if(matchList != null || startingSpecial == 0)
+                if (matchList != null || startingSpecial == 0)
                 {
                     break;
                 }
             }
 
-            if(queryCounter == query.Length || matchList == null)
+            if (queryCounter == query.Length || matchList == null)
             {
                 return null;
             }
@@ -227,7 +227,7 @@ namespace AvalonStudio.Extensibility.Utils
         }
 
 
-        static List<Match> _wholeStringSearch(string query, string str, List<int> specials, int lastSegmentSpecialsIndex)
+        static List<Match> WholeStringSearch(string query, string str, List<int> specials, int lastSegmentSpecialsIndex)
         {
             query = query.ToLower();
             var compareStr = str.ToLower();
@@ -236,15 +236,15 @@ namespace AvalonStudio.Extensibility.Utils
 
             List<Match> matchList = new List<Match>();
 
-            var result = _lastSegmentSearch(query, compareStr, specials, lastSegmentSpecialsIndex, lastSegmentStart);
+            var result = LastSegmentSearch(query, compareStr, specials, lastSegmentSpecialsIndex, lastSegmentStart);
 
-            if(result.HasValue)
+            if (result.HasValue)
             {
                 matchList = result.Value.matchList;
 
-                if(result.Value.remainder != "")
+                if (result.Value.remainder != "")
                 {
-                    var remainderMatchList = generateMatchList(result.Value.remainder, compareStr.Substring(0, lastSegmentStart), specials.GetRange(0, lastSegmentSpecialsIndex), 0);
+                    var remainderMatchList = GenerateMatchList(result.Value.remainder, compareStr.Substring(0, lastSegmentStart), specials.GetRange(0, lastSegmentSpecialsIndex), 0);
                     if (remainderMatchList != null)
                     {
                         // add the new matched ranges to the beginning of the set of ranges we had
@@ -255,11 +255,12 @@ namespace AvalonStudio.Extensibility.Utils
                         // No match
                         return null;
                     }
-                } 
-            } else
+                }
+            }
+            else
             {
                 // no match in last segment, start over searching whole string.
-                matchList = generateMatchList(query, compareStr, specials, 0); // lastSegmentStart as 5th param??
+                matchList = GenerateMatchList(query, compareStr, specials, 0); // lastSegmentStart as 5th param??
             }
 
             return matchList;
@@ -276,18 +277,18 @@ namespace AvalonStudio.Extensibility.Utils
 
             public string text;
             public bool matched;
-            public bool includesLastSegment;     
+            public bool includesLastSegment;
         };
 
-        const int SPECIAL_POINTS = 35;
-        const int MATCH_POINTS = 10;
-        const int LAST_SEGMENT_BOOST = 1;
-        const int BEGINNING_OF_NAME_POINTS = 25;
-        const double DEDUCTION_FOR_LENGTH = 0.2;
-        const int CONSECUTIVE_MATCHES_POINTS = 10;
-        const int NOT_STARTING_ON_SPECIAL_PENALTY = 25;
+        const int SpecialPoints = 35;
+        const int MatchPoints = 10;
+        const int LastSegmentBoost = 1;
+        const int BegginingOfNamePoints = 25;
+        const double DeductionForLength = 0.2;
+        const int ConsecutiveMatchesPoints = 10;
+        const int NotStartingOnSpecialPenalty = 25;
 
-        static (List<Range> ranges, int score) _computeRangesAndScore(List<Match> matchList, string str, int lastSegmentStart)
+        static (List<Range> ranges, int score) ComputeRangesAndScore(List<Match> matchList, string str, int lastSegmentStart)
         {
             List<Range> ranges = new List<Range>();
 
@@ -297,31 +298,30 @@ namespace AvalonStudio.Extensibility.Utils
             bool currentRangeStartedOnSpecial = false;
 
             int score = 0;
-            //int scoreDebug;
 
             Range currentRange = null;
 
-            void closeRangeGap(int c)
+            void CloseRangeGap(int c)
             {
-                if(currentRange != null)
+                if (currentRange != null)
                 {
                     currentRange.includesLastSegment = lastMatchIndex >= lastSegmentStart;
-                    if(currentRange.matched && currentRange.includesLastSegment)
+                    if (currentRange.matched && currentRange.includesLastSegment)
                     {
-                        score += lastSegmentScore * LAST_SEGMENT_BOOST;
+                        score += lastSegmentScore * LastSegmentBoost;
                     }
 
-                    if(currentRange.matched && !currentRangeStartedOnSpecial)
+                    if (currentRange.matched && !currentRangeStartedOnSpecial)
                     {
-                        score -= NOT_STARTING_ON_SPECIAL_PENALTY;
+                        score -= NotStartingOnSpecialPenalty;
                     }
 
                     ranges.Add(currentRange);
                 }
 
-                if(lastMatchIndex + 1 < c)
+                if (lastMatchIndex + 1 < c)
                 {
-                    ranges.Add(new Range(str.Substring(lastMatchIndex + 1, c-(lastMatchIndex + 1)), false, c > lastSegmentStart));
+                    ranges.Add(new Range(str.Substring(lastMatchIndex + 1, c - (lastMatchIndex + 1)), false, c > lastSegmentStart));
                 }
 
                 currentRange = null;
@@ -330,69 +330,71 @@ namespace AvalonStudio.Extensibility.Utils
 
             int numConsecutive = 0;
 
-            void addMatch(Match match)
+            void AddMatch(Match match)
             {
                 int c = match.index;
                 int newPoints = 0;
 
-                newPoints += MATCH_POINTS;
+                newPoints += MatchPoints;
 
-                if(c == lastSegmentStart)
+                if (c == lastSegmentStart)
                 {
-                    newPoints += BEGINNING_OF_NAME_POINTS;
+                    newPoints += BegginingOfNamePoints;
                 }
 
-                if(score > 0 && lastMatchIndex + 1 == c)
+                if (score > 0 && lastMatchIndex + 1 == c)
                 {
-                    if(currentRangeStartedOnSpecial)
+                    if (currentRangeStartedOnSpecial)
                     {
                         numConsecutive++;
                     }
 
-                    newPoints += CONSECUTIVE_MATCHES_POINTS * numConsecutive;
-                } else
+                    newPoints += ConsecutiveMatchesPoints * numConsecutive;
+                }
+                else
                 {
                     numConsecutive = 1;
                 }
 
-                if(match.isSpecial)
+                if (match.isSpecial)
                 {
-                    newPoints += SPECIAL_POINTS;
+                    newPoints += SpecialPoints;
                 }
 
                 score += newPoints;
 
-                if(c >= lastSegmentStart)
+                if (c >= lastSegmentStart)
                 {
                     lastSegmentScore += newPoints;
                 }
 
-                if((currentRange != null && !currentRange.matched) || c > lastMatchIndex + 1)
+                if ((currentRange != null && !currentRange.matched) || c > lastMatchIndex + 1)
                 {
-                    closeRangeGap(c);
+                    CloseRangeGap(c);
                 }
 
                 lastMatchIndex = c;
 
-                if(currentRange == null)
+                if (currentRange == null)
                 {
                     currentRange = new Range(str[c].ToString(), true, false);
                     currentRangeStartedOnSpecial = (match.isSpecial);
-                } else
+                }
+                else
                 {
                     currentRange.text += str[c];
                 }
             }
 
-            for(matchCounter = 0; matchCounter < matchList.Count; matchCounter++)
+            for (matchCounter = 0; matchCounter < matchList.Count; matchCounter++)
             {
                 Match match = matchList[matchCounter];
-                addMatch(match);
+                AddMatch(match);
             }
 
-            closeRangeGap(str.Length);
+            CloseRangeGap(str.Length);
 
-            int lengthPenalty = (int) (-1 * Math.Round(str.Length * DEDUCTION_FOR_LENGTH));
+            int lengthPenalty = (int)(-1 * Math.Round(str.Length * DeductionForLength));
 
             score = score + lengthPenalty;
 
@@ -411,7 +413,7 @@ namespace AvalonStudio.Extensibility.Utils
             public int matchQuality;
         }
 
-        public static SearchResult StringMatch(string str, string query, (List<int> specials, int lastSegmentSpecialsIndex)? special_data)
+        public static SearchResult StringMatch(string str, string query, (List<int> specials, int lastSegmentSpecialsIndex)? specialData)
         {
             SearchResult result = null;
 
@@ -420,18 +422,18 @@ namespace AvalonStudio.Extensibility.Utils
                 // Return a single result..
             }
 
-            if (special_data == null)
+            if (specialData == null)
             {
-                special_data = FindSpecialCharacters(str);
+                specialData = FindSpecialCharacters(str);
             }
 
-            var lastSegmentStart = special_data.Value.specials[special_data.Value.lastSegmentSpecialsIndex];
-            var matchList = _wholeStringSearch(query, str, special_data.Value.specials, special_data.Value.lastSegmentSpecialsIndex);
+            var lastSegmentStart = specialData.Value.specials[specialData.Value.lastSegmentSpecialsIndex];
+            var matchList = WholeStringSearch(query, str, specialData.Value.specials, specialData.Value.lastSegmentSpecialsIndex);
 
             // If a matchList is resulted then return a fully formed result.
-            if(matchList != null)
+            if (matchList != null)
             {
-                var compareData = _computeRangesAndScore(matchList, str, lastSegmentStart);
+                var compareData = ComputeRangesAndScore(matchList, str, lastSegmentStart);
                 result = new SearchResult(str);
                 result.stringRanges = compareData.ranges;
                 result.matchQuality = -1 * (compareData.score);

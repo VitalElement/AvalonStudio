@@ -71,7 +71,7 @@ namespace AvalonStudio.Extensibility.Tests
         {
             string path = "src/document/DocumentCommandHandler.js";
             var specials = FuzzyMatch.FindSpecialCharacters(path);
-            var result = FuzzyMatch.generateMatchList("foo", path, specials.specials, specials.lastSegmentSpecialsIndex);
+            var result = FuzzyMatch.GenerateMatchList("foo", path, specials.specials, specials.lastSegmentSpecialsIndex);
             Assert.Equal(null, result);
         }
 
@@ -81,7 +81,7 @@ namespace AvalonStudio.Extensibility.Tests
             string path = "src/document/DocumentCommandHandler.js";
             var specials = FuzzyMatch.FindSpecialCharacters(path);
             path = path.ToLower();
-            var result = FuzzyMatch.generateMatchList("d", path, specials.specials, specials.lastSegmentSpecialsIndex);
+            var result = FuzzyMatch.GenerateMatchList("d", path, specials.specials, specials.lastSegmentSpecialsIndex);
             Assert.Equal(13, result[0].index);
         }
 

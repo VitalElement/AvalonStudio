@@ -4,10 +4,10 @@
              xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions.Custom"
              xmlns:beh="clr-namespace:AvalonStudio.Behaviors;assembly=AvalonStudio" Name="PART_QuickCommander" IsVisible="{Binding IsVisible, Mode=TwoWay}">
     <UserControl.KeyBindings>
-        <KeyBinding Command="{Binding UpCommand}" CommandParameter="{Binding}" Gesture="Up"/>
-        <KeyBinding Command="{Binding DownCommand}" CommandParameter="{Binding}" Gesture="Down"/>
-        <KeyBinding Command="{Binding EscapeCommand}" CommandParameter="{Binding}" Gesture="Escape"/>
-        <KeyBinding Command="{Binding EnterCommand}" CommandParameter="{Binding}" Gesture="Enter"/>
+        <KeyBinding Command="{Binding UpCommand}" Gesture="Up"/>
+        <KeyBinding Command="{Binding DownCommand}" Gesture="Down"/>
+        <KeyBinding Command="{Binding EscapeCommand}" Gesture="Escape"/>
+        <KeyBinding Command="{Binding EnterCommand}" Gesture="Enter"/>
     </UserControl.KeyBindings>
     <i:Interaction.Behaviors>
         <beh:HideOnLostFocusBehavior />
@@ -19,7 +19,7 @@
               <iac:FocusOnAttachedToVisualTreeBehavior />
             </i:Interaction.Behaviors>
           </TextBox>
-            <ListBox Items="{Binding Results}" IsVisible="{Binding ResultsVisible}" Background="{StyleResource ThemeBackgroundBrush}" SelectedItem="{Binding SelectedResult}" SelectedIndex="{Binding SelectedIndex}"  MaxHeight="450">
+            <ListBox Items="{Binding Results}" IsVisible="{Binding ResultsVisible}" Background="{StyleResource ThemeBackgroundBrush}" SelectedItem="{Binding SelectedResult, Mode=TwoWay}" SelectedIndex="{Binding SelectedIndex}"  MaxHeight="450">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <control:SearchResult />

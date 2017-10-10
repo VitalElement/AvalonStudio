@@ -34,11 +34,6 @@ namespace AvalonStudio.Controls
 
             this.WhenAnyValue(x => x.CommandQuery).Throttle(TimeSpan.FromMilliseconds(165)).Subscribe(async query => await ProcessQuery(query));
 
-            this.WhenAnyValue(x => x.SelectedResult).OfType<SearchResultViewModel>().Subscribe(result =>
-            {
-                Dispatcher.UIThread.InvokeAsync(() => { _shell.OpenDocument(result.Model, 1, focus: false); });
-            });
-
             this.WhenAnyValue(x => x.IsVisible).Subscribe(visible =>
             {
                 if (!visible)
@@ -46,7 +41,7 @@ namespace AvalonStudio.Controls
                     CommandQuery = string.Empty;
                     _results.Clear();
                 }
-            }); 
+            });
 
             UpCommand = ReactiveCommand.Create(() =>
             {
@@ -66,24 +61,18 @@ namespace AvalonStudio.Controls
 
             EnterCommand = ReactiveCommand.Create(() =>
             {
+                var selectedResult = SelectedResult.Model;
+                Dispatcher.UIThread.InvokeAsync(() => { _shell.OpenDocument(selectedResult, 1); });
                 IsVisible = false;
             });
 
             EscapeCommand = ReactiveCommand.Create(() =>
             {
-                if (_shell.DocumentTabs.TemporaryDocument != null)
-                {
-                    if ((_shell.DocumentTabs.TemporaryDocument as EditorViewModel).SourceFile == SelectedResult?.Model)
-                    {
-                        _shell.RemoveDocument(_shell.DocumentTabs.TemporaryDocument);
-                    }
-                }
-                
                 IsVisible = false;
             });
 
             _shell = IoC.Get<ShellViewModel>();
-        }        
+        }
 
         private async Task ProcessQuery(string query)
         {
@@ -96,7 +85,7 @@ namespace AvalonStudio.Controls
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    ResultsVisible = false; 
+                    ResultsVisible = false;
                     _results.Clear();
                 });
             }
@@ -112,9 +101,9 @@ namespace AvalonStudio.Controls
                     {
                         project.SourceFiles.Select(sf =>
                         {
-                            //var match = FuzzyMatch.fuzzy_match(query, sf.Project.Location.MakeRelativePath(sf.Location), out int score, out string format);
                             var match = FuzzyMatch.StringMatch(sf.Project.Location.MakeRelativePath(sf.Location), query, null);
-                            if(match != null)
+
+                            if (match != null)
                             {
                                 return new Tuple<bool, int, string, ISourceFile, List<FuzzyMatch.Range>>(true, match.matchQuality, match.label, sf, match.stringRanges);
                             }
@@ -122,20 +111,22 @@ namespace AvalonStudio.Controls
                             return new Tuple<bool, int, string, ISourceFile, List<FuzzyMatch.Range>>(false, 0, "", sf, null);
                         }).Where(tp => tp.Item1).Select(tp =>
                         {
-                            List<Avalonia.Media.FormattedTextStyleSpan> list_spans = new List<FormattedTextStyleSpan>();
-                            int index_start = 0;
-                            foreach(var range in tp.Item5)
+                            var spans = new List<FormattedTextStyleSpan>();
+                            int index = 0;
+
+                            foreach (var range in tp.Item5)
                             {
-                                if(range.matched)
+                                if (range.matched)
                                 {
-                                    Avalonia.Media.FormattedTextStyleSpan span = new FormattedTextStyleSpan(index_start+tp.Item4.Project.Name.Length+1, range.text.Length+1, Brushes.Red);
-                                    list_spans.Add(span);
+                                    var span = new FormattedTextStyleSpan(index + tp.Item4.Project.Name.Length + 1, range.text.Length + 1, Brushes.Red);
+                                    spans.Add(span);
                                 }
 
-                                index_start += range.text.Length;
+                                index += range.text.Length;
                             }
 
-                            list.InsertSorted(new SearchResultViewModel(tp.Item4) { Priority = tp.Item2, Spans = list_spans });
+                            list.InsertSorted(new SearchResultViewModel(tp.Item4) { Priority = tp.Item2, Spans = spans });
+
                             return tp;
                         }).ToList();
                     }
@@ -190,7 +181,7 @@ namespace AvalonStudio.Controls
         public bool IsVisible
         {
             get { return _isVisible; }
-            set { this.RaiseAndSetIfChanged(ref _isVisible, value); }     
+            set { this.RaiseAndSetIfChanged(ref _isVisible, value); }
         }
 
         public bool IsFocused
