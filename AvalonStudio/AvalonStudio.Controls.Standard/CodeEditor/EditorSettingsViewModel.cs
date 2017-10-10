@@ -16,6 +16,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private bool _removeTrailingWhiteSpaceOnSave;
         private bool _autoFormat;
         private int _selectedColorSchemeIndex;
+        private bool _loading;
 
         public EditorSettingsViewModel() : base("General")
         {
@@ -23,6 +24,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public override void OnDialogLoaded()
         {
+            _loading = true;
+
             base.OnDialogLoaded();
 
             var settings = Settings.GetSettings<Controls.Standard.CodeEditor.EditorSettings>();
@@ -31,17 +34,22 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             RemoveTrailingWhiteSpaceOnSave = settings.RemoveTrailingWhitespaceOnSave;
             AutoFormat = settings.AutoFormat;
+
+            _loading = false;
         }
 
         private void Save()
         {
-            var settings = Settings.GetSettings<Controls.Standard.CodeEditor.EditorSettings>();
+            if (!_loading)
+            {
+                var settings = Settings.GetSettings<Controls.Standard.CodeEditor.EditorSettings>();
 
-            settings.RemoveTrailingWhitespaceOnSave = RemoveTrailingWhiteSpaceOnSave;
-            settings.AutoFormat = AutoFormat;
-            settings.ColorScheme = ColorSchemes[SelectedColorSchemeIndex];
+                settings.RemoveTrailingWhitespaceOnSave = RemoveTrailingWhiteSpaceOnSave;
+                settings.AutoFormat = AutoFormat;
+                settings.ColorScheme = ColorSchemes[SelectedColorSchemeIndex];
 
-            Settings.SetSettings(settings);
+                Settings.SetSettings(settings);
+            }
         }
 
         public List<string> ColorSchemes => ColorScheme.ColorSchemes.Select(t => t.Name).ToList();
