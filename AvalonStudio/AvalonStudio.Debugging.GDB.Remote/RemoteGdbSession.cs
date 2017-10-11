@@ -25,7 +25,7 @@ namespace AvalonStudio.Debugging.GDB.Remote
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)
-        {            
+        {
             var settings = _project.GetDebuggerSettings<RemoteGdbSettings>();
             var environment = _project.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
 
@@ -35,11 +35,11 @@ namespace AvalonStudio.Debugging.GDB.Remote
             var preInitCommandArguments = settings.PreInitCommandArgs.Trim().ExpandVariables(environment);
             var postInitCommand = settings.PostInitCommand?.Trim().ExpandVariables(environment);
             var postInitCommandArguments = settings.PostInitCommandArgs.Trim().ExpandVariables(environment);
-            
+
             if (!string.IsNullOrEmpty(preInitCommand))
             {
                 console.WriteLine("[Remote GDB] - Starting GDB Server...");
-                
+
                 var gdbServerStartInfo = new ProcessStartInfo
                 {
                     Arguments = preInitCommandArguments,
@@ -122,14 +122,14 @@ namespace AvalonStudio.Debugging.GDB.Remote
 
             var settings = _project.GetDebuggerSettings<RemoteGdbSettings>();
 
-            var commands = settings.GDBExitCommands?.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+            var commands = settings.GDBExitCommands?.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var command in commands)
             {
                 var commandParts = command.Split(' ');
                 var args = command.Remove(0, commandParts[0].Length);
 
-                var arguments = args.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                var arguments = args.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                 console.WriteLine($"Running GDB Command: {command}");
                 RunCommand(commandParts[0], arguments);
@@ -148,14 +148,14 @@ namespace AvalonStudio.Debugging.GDB.Remote
             {
                 var environment = _project.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
 
-                var commands = settings.GDBInitCommands?.ExpandVariables(environment).Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+                var commands = settings.GDBInitCommands?.ExpandVariables(environment).Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-                foreach(var command in commands)
+                foreach (var command in commands)
                 {
                     var commandParts = command.Split(' ');
                     var args = command.Remove(0, commandParts[0].Length);
 
-                    var arguments = args.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    var arguments = args.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                     console.WriteLine($"Running GDB Command: {command}");
                     RunCommand(commandParts[0], arguments);
