@@ -395,6 +395,7 @@
         }
 
         public abstract dynamic ToolchainSettings { get; set; }
+        ISolutionFolder ISolutionItem.Parent { get; set; }
 
         public event EventHandler FileAdded;
 

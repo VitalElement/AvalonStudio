@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Projects
 {
-    public interface ISolution
+    public interface ISolution : ISolutionFolder
     {
         string Name { get; }
 

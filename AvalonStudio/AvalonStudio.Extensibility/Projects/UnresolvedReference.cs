@@ -15,6 +15,8 @@
             Location = location;
         }
 
+        public IProjectFolder Parent { get; set; }
+
         public ISolution Solution {get; set;}
 
         public ObservableCollection<IProject> References => null;
@@ -48,7 +50,7 @@
         }
 
         public IProject Project { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public IProjectFolder Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        ISolutionFolder ISolutionItem.Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public event EventHandler FileAdded;
 

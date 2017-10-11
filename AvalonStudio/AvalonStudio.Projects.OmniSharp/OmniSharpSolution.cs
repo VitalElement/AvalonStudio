@@ -11,6 +11,8 @@ namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpSolution : ISolution
     {
+        public ObservableCollection<ISolutionItem> Items => null;
+
         public static async Task<OmniSharpSolution> Create(string path)
         {
             OmniSharpSolution result = new OmniSharpSolution();

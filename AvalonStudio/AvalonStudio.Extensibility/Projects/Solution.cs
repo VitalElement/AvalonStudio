@@ -15,6 +15,8 @@ namespace AvalonStudio.Projects
     {
         public const string Extension = "asln";
 
+        public ObservableCollection<ISolutionItem> Items => null;
+
         public Solution()
         {
             ProjectReferences = new List<string>();
