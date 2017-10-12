@@ -103,7 +103,7 @@ namespace AvalonStudio.Extensibility.Projects
 
         public IProject StartupProject { get; set; }
 
-        public ObservableCollection<IProject> Projects { get; set; }
+        public IEnumerable<IProject> Projects => _solutionItems.Select(kv => kv.Value).OfType<IProject>();
 
         public string CurrentDirectory => Path.GetDirectoryName(_solutionModel.FullPath);
 

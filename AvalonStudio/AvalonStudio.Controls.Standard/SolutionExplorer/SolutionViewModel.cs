@@ -14,17 +14,17 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     public class SolutionViewModel : ViewModel<ISolution>
     {
-        private ObservableCollection<ProjectViewModel> projects;
+        private ObservableCollection<SolutionItemViewModel> _items;
         private readonly IShell shell;
 
         public SolutionViewModel(ISolution model) : base(model)
         {
             shell = IoC.Get<IShell>();
 
-            Projects = new ObservableCollection<ProjectViewModel>();
+            Items = new ObservableCollection<SolutionItemViewModel>();
             IsExpanded = true;
 
-            Projects.BindCollections(model.Projects, p => { return ProjectViewModel.Create(this, p); },
+            Items.BindCollections(model.Items, p => { return SolutionItemViewModel.Create(this, p); },
                 (pvm, p) => pvm.Model == p);
 
             NewProjectCommand = ReactiveCommand.Create(() =>
@@ -96,10 +96,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public bool IsExpanded { get; set; }
 
-        public ObservableCollection<ProjectViewModel> Projects
+        public ObservableCollection<SolutionItemViewModel> Items
         {
-            get { return projects; }
-            set { this.RaiseAndSetIfChanged(ref projects, value); }
+            get { return _items; }
+            set { this.RaiseAndSetIfChanged(ref _items, value); }
         }
 
         public ReactiveCommand ConfigurationCommand { get; }
@@ -129,7 +129,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 if (Model != null)
                 {
-                    return string.Format("Solution '{0}' ({1} {2})", Model.Name, Model.Projects.Count, StringProjects);
+                    return string.Format("Solution '{0}' ({1} {2})", Model.Name, Model.Projects.Count(), StringProjects);
                 }
 
                 return string.Empty;
@@ -140,7 +140,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             get
             {
-                if (Model.Projects.Count == 1)
+                if (Model.Projects.Count() == 1)
                 {
                     return "project";
                 }

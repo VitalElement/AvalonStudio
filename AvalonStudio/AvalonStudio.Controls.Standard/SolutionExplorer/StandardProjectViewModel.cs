@@ -1,3 +1,4 @@
+using Avalonia.Media;
 using AvalonStudio.Projects;
 using ReactiveUI;
 
@@ -16,5 +17,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand SetDefaultProjectCommand { get; private set; }
 
         public ReactiveCommand Remove { get; private set; }
+
+        public override DrawingGroup Icon => Model.GetIcon();
     }
 }

@@ -15,12 +15,12 @@ namespace AvalonStudio.Projects
     {
         public const string Extension = "asln";
 
-        public ObservableCollection<ISolutionItem> Items => null;
+        public ObservableCollection<ISolutionItem> Items { get; }
 
         public AvalonStudioSolution()
         {
             ProjectReferences = new List<string>();
-            Projects = new ObservableCollection<IProject>();
+            Items = new ObservableCollection<ISolutionItem>();
             Parent = Solution = this;
         }
 
@@ -35,7 +35,7 @@ namespace AvalonStudio.Projects
 
             if (currentProject != null) return currentProject;
             ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
-            Projects.InsertSorted(project);
+            Items.InsertSorted(project);
             currentProject = project;
 
             return currentProject;
@@ -43,7 +43,7 @@ namespace AvalonStudio.Projects
 
         public void RemoveProject(IProject project)
         {
-            Projects.Remove(project);
+            Items.Remove(project);
             ProjectReferences.Remove(CurrentDirectory.MakeRelativePath(project.Location).ToAvalonPath());
         }
 
@@ -80,7 +80,7 @@ namespace AvalonStudio.Projects
         public string CurrentDirectory { get; set; }
 
         [JsonIgnore]
-        public ObservableCollection<IProject> Projects { get; set; }
+        public IEnumerable<IProject> Projects => Items.OfType<IProject>();
 
         [JsonIgnore]
         public IProject StartupProject { get; set; }
@@ -151,7 +151,7 @@ namespace AvalonStudio.Projects
                 // todo null returned here we need a placeholder.
                 if (proj != null)
                 {
-                    solution.Projects.InsertSorted(proj);
+                    solution.Items.InsertSorted(proj);
                 }
             }
 

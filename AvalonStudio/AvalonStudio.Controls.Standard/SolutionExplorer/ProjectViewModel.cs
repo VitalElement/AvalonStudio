@@ -11,7 +11,7 @@ using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    public abstract class ProjectViewModel : ViewModel<IProject>
+    public abstract class ProjectViewModel : SolutionItemViewModel<IProject>
     {
         private readonly IShell shell;
         private ProjectConfigurationDialogViewModel configuration;
@@ -63,7 +63,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 shell.InvalidateCodeAnalysis();
 
-                foreach (var project in solutionViewModel.Projects)
+                foreach (var project in solutionViewModel.Items)
                 {
                     project.Invalidate();
                 }
@@ -89,8 +89,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 PlatformSupport.LaunchShell(Model.CurrentDirectory, Model.ToolChain?.BinDirectory, Model.Debugger2?.BinDirectory);
             });
         }
-
-        public DrawingGroup Icon => Model.GetIcon();
 
         public bool IsExpanded { get; set; }
 
@@ -139,12 +137,5 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         }
 
         public ObservableCollection<string> IncludePaths { get; private set; }
-
-        public static ProjectViewModel Create(SolutionViewModel solutionViewModel, IProject model)
-        {
-            ProjectViewModel result = new StandardProjectViewModel(solutionViewModel, model);
-
-            return result;
-        }
     }
 }

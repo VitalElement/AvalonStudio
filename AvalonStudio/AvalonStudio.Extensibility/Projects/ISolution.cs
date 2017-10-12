@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Projects
@@ -8,7 +9,7 @@ namespace AvalonStudio.Projects
 
         IProject StartupProject { get; set; }
 
-        ObservableCollection<IProject> Projects { get; }
+        IEnumerable<IProject> Projects { get; }
 
         string CurrentDirectory { get; }
 

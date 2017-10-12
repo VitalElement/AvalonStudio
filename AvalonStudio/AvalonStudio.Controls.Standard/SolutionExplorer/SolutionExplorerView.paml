@@ -9,7 +9,7 @@
         </Style>
       </TreeView.Styles>
       <TreeView.DataTemplates>
-        <TreeDataTemplate DataType="ViewModels:SolutionViewModel" ItemsSource="{Binding Projects}">
+        <TreeDataTemplate DataType="ViewModels:SolutionViewModel" ItemsSource="{Binding Items}">
           <TextBlock Text="{Binding Title}">
             <TextBlock.ContextMenu>
               <ContextMenu>
@@ -29,6 +29,30 @@
               </ContextMenu>
             </TextBlock.ContextMenu>
           </TextBlock>
+        </TreeDataTemplate>
+
+        <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Items}">
+          <StackPanel Orientation="Horizontal" Gap="4">
+            <StackPanel.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Rename" />
+                <Separator />
+                <MenuItem Header="Open Folder"  Command="{Binding OpenInExplorerCommand}" />
+                <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
+                <Separator />
+                <MenuItem Header="Add">
+                  <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
+                  <MenuItem Header="Exisiting Item..." />
+                  <MenuItem Header="New Folder..." />
+                  <MenuItem Header="Import Folder..." />
+                  <Separator />
+                  <MenuItem Header="New File..." />
+                </MenuItem>
+              </ContextMenu>
+            </StackPanel.ContextMenu>
+            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+            <TextBlock Text="{Binding Title}" Height="15" />
+          </StackPanel>
         </TreeDataTemplate>
 
         <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Items}">

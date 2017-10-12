@@ -2,6 +2,7 @@
 using AvalonStudio.Languages.CSharp.OmniSharp;
 using AvalonStudio.Utils;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -61,7 +62,7 @@ namespace AvalonStudio.Projects.OmniSharp
             if (currentProject != null) return currentProject;
 
             //ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
-            Projects.InsertSorted(project);
+            Items.InsertSorted(project);
             currentProject = project;
 
             return currentProject;
@@ -73,7 +74,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public string Name { get; set; }
 
-        public ObservableCollection<IProject> Projects { get; set; }
+        public IEnumerable<IProject> Projects { get; set; }
 
         public IProject StartupProject { get; set; }
 
