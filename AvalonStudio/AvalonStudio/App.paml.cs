@@ -27,8 +27,6 @@ namespace AvalonStudio
                 var container = CompositionRoot.CreateContainer();
 
                 ShellViewModel.Instance = container.GetExport<ShellViewModel>();
-
-                VisualStudioSolution.Load("c:\\dev\\repos\\AvalonStudio\\AvalonStudio\\AvalonStudio.sln");
             });
 
             builder.Start<MainWindow>();
