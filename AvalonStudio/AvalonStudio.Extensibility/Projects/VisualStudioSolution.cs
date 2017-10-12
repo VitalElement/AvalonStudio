@@ -39,6 +39,10 @@ namespace AvalonStudio.Extensibility.Projects
             BuildTree();
 
             this.PrintTree();
+
+            var subFolder = _solutionItems.FirstOrDefault(item => item.Value.Name == "SubFolder");
+
+            SetItemParent(subFolder.Value, this.Items.FirstOrDefault() as ISolutionFolder);
         }
 
         private void BuildTree()
@@ -49,7 +53,7 @@ namespace AvalonStudio.Extensibility.Projects
             {
                 foreach (var nestedProject in nestedProjects.Properties)
                 {
-                    _solutionItems[Guid.Parse(nestedProject.Key)].SetParent(_solutionItems[Guid.Parse(nestedProject.Value)] as ISolutionFolder);
+                    _solutionItems[Guid.Parse(nestedProject.Key)].SetParentInternal(_solutionItems[Guid.Parse(nestedProject.Value)] as ISolutionFolder);
                 }
             }
         }
@@ -135,13 +139,13 @@ namespace AvalonStudio.Extensibility.Projects
         {
             var nestedProjects = _solutionModel.Sections.FirstOrDefault(section => section.Id == "NestedProjects");
 
-            nestedProjects.Properties.Remove(item.Id.ToString());
+            nestedProjects.Properties.Remove(item.Id.GetGuidString());
 
-            item.SetParent(parent);
+            item.SetParentInternal(parent);
 
             if (parent != this)
             {
-                nestedProjects.Properties[item.Id.ToString()] = parent.Id.ToString();
+                nestedProjects.Properties[item.Id.GetGuidString()] = parent.Id.GetGuidString();
             }
 
             _solutionModel.Write();

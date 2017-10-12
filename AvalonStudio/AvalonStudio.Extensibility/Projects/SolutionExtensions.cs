@@ -19,7 +19,7 @@ namespace AvalonStudio.Projects
             return IoC.Get<IShell>().ProjectTypes.FirstOrDefault(type => type.ProjectTypeId == projectTypeId);
         }
 
-        public static void SetParent(this ISolutionItem item, ISolutionFolder parent)
+        internal static void SetParentInternal(this ISolutionItem item, ISolutionFolder parent)
         {
             if (item.Parent != null)
             {
@@ -29,6 +29,11 @@ namespace AvalonStudio.Projects
             item.Parent = parent ?? throw new ArgumentNullException("parent");
             
             parent.Items.InsertSorted(item);
+        }
+
+        internal static string GetGuidString(this Guid id)
+        {
+            return id.ToString("B").ToUpper();
         }
 
         public static int GetSolutionItemDepth (this ISolutionItem item)
