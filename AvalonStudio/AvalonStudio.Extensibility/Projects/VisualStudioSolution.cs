@@ -155,7 +155,15 @@ namespace AvalonStudio.Extensibility.Projects
 
         public void RemoveProject(IProject project)
         {
-            
+            Items.Remove(project);
+            _solutionItems.Remove(project.Id);
+
+            var currentSlnProject = _solutionModel.Projects.FirstOrDefault(slnProj => Guid.Parse(slnProj.Id) == project.Id);
+
+            if(currentSlnProject != null)
+            {
+                _solutionModel.Projects.Remove(currentSlnProject);
+            }
         }
 
         public ISourceFile FindFile(string path)
