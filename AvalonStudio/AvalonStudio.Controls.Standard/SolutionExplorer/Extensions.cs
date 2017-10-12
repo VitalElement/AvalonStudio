@@ -31,6 +31,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 return "TypeScriptIcon".GetIcon();
             }
+            else if(name.EndsWith("UnsupportedProjectType"))
+            {
+                return "UnloadedProjectIcon".GetIcon();
+            }
 
             return null;
         }

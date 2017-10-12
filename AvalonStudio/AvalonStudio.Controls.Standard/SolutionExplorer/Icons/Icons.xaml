@@ -3,6 +3,14 @@
         xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard">
     <Style>
         <Style.Resources>
+            <DrawingGroup x:Key="UnloadedProjectIcon">
+                <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                <GeometryDrawing Brush="Transparent" Geometry="F1M0,0.999700000000001L0,6.9997 0,14.9997 0,15.9997 10,15.9997 10,14.9997 16,14.9997 16,0.999700000000001z" />
+                <GeometryDrawing Brush="#FFA2A2A2" Geometry="F1M1,15L9,15 9,8 1,8z M15,2L15,14 10,14 10,13 14,13 14,5 2,5 2,7 1,7 1,2z" />
+                <GeometryDrawing Brush="Transparent" Geometry="F1M14,5L14,13 10,13 10,7 2,7 2,5z" />
+                <GeometryDrawing Brush="Transparent" Geometry="F1M8,14L6.5,14 5,12.5 3.5,14 2,14 4.25,11.75 2,9.5 3.5,9.5 5,11 6.5,9.5 8,9.5 5.75,11.75z" />
+            </DrawingGroup>
+
             <DrawingGroup x:Key="CSharpIcon">
                 <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
                 <GeometryDrawing Brush="Transparent" Geometry="F1M6.4531,8.9336C6.0641,8.9336 5.8921,8.7986 5.7881,8.6836 5.6091,8.4826 5.5211,8.1886 5.5211,7.7856 5.5211,7.1336 5.7501,6.8996 5.8251,6.8246 5.9451,6.7026 6.1331,6.5616 6.5331,6.5616 6.8911,6.5616 7.1971,6.6446 7.4701,6.8156L8.0001,7.1466 8.0001,8.3226 7.4741,8.6486C7.1641,8.8406,6.8301,8.9336,6.4531,8.9336 M14.0001,3.9996L14.0001,2.9996 9.0001,2.9996 9.0001,3.8126 8.3581,3.5666C7.8111,3.3566 7.1581,3.2496 6.4161,3.2496 5.1281,3.2496 4.0551,3.6936 3.2271,4.5676 2.4131,5.4266 2.0001,6.5466 2.0001,7.8936 2.0001,9.1246 2.3511,10.1486 3.0431,10.9356 3.8051,11.8076 4.8561,12.2496 6.1671,12.2496 7.0791,12.2496 7.8491,12.0926 8.4561,11.7816L9.0001,11.5026 9.0001,9.9996 14.0001,9.9996 14.0001,8.9996 15.0001,8.9996 15.0001,3.9996z" />
