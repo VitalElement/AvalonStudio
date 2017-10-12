@@ -433,7 +433,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 if (!string.IsNullOrEmpty(settings.PreBuildCommands))
                 {
-                    result.AddRange(settings.PreBuildCommands.Split(Environment.NewLine));
+                    result.AddRange(settings.PreBuildCommands.Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
                 }
 
                 return result;
@@ -451,7 +451,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 if (!string.IsNullOrEmpty(settings.PostBuildCommands))
                 {
-                    result.AddRange(settings.PostBuildCommands.Split(Environment.NewLine));
+                    result.AddRange(settings.PostBuildCommands.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)); 
                 }
 
                 return result;
