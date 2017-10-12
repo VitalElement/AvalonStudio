@@ -63,5 +63,21 @@ namespace AvalonStudio.Projects
                 }
             }
         }
+
+        public static int DefaultCompareTo(this ISolutionItem item, ISolutionItem other)
+        {
+            if (item is ISolutionFolder && other is IProject)
+            {
+                return -1;
+            }
+            else if (item is IProject && other is ISolutionFolder)
+            {
+                return 1;
+            }
+            else
+            {
+                return item.Name.CompareTo(other.Name);
+            }
+        }
     }
 }

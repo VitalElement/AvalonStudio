@@ -26,7 +26,7 @@ namespace AvalonStudio.Projects
 
         public int CompareTo(ISolutionItem other)
         {
-            return Name.CompareTo(other.Name);
+            return this.DefaultCompareTo(other);
         }
     }
 }

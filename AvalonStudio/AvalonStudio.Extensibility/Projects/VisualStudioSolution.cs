@@ -149,7 +149,7 @@ namespace AvalonStudio.Extensibility.Projects
 
         public int CompareTo(ISolutionItem other)
         {
-            throw new NotImplementedException();
+            return this.DefaultCompareTo(other);
         }
     }
 }

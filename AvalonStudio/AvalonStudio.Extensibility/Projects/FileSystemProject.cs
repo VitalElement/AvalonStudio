@@ -438,7 +438,7 @@
 
         public int CompareTo(ISolutionItem other)
         {
-            return CompareTo(other.Name);
+            return this.DefaultCompareTo(other);
         }
     }
 }
