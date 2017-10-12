@@ -23,7 +23,7 @@ namespace AvalonStudio
 
         private static readonly ProgramConsole console = new ProgramConsole();
 
-        private static Solution LoadSolution(ProjectOption options)
+        private static AvalonStudioSolution LoadSolution(ProjectOption options)
         {
             var currentDir = Directory.GetCurrentDirectory();
 
@@ -31,13 +31,13 @@ namespace AvalonStudio
 
             if (System.IO.File.Exists(solutionFile))
             {
-                return Solution.Load(solutionFile);
+                return AvalonStudioSolution.Load(solutionFile);
             }
 
             throw new Exception("Solution file: " + options.Solution + "could not be found.");
         }
 
-        private static IProject FindProject(Solution solution, string project)
+        private static IProject FindProject(AvalonStudioSolution solution, string project)
         {
             try
             {

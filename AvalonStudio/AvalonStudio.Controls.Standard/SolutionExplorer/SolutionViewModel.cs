@@ -62,7 +62,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
-                    var proj = Solution.LoadProjectFile(model, result[0]);
+                    var proj = AvalonStudioSolution.LoadProjectFile(model, result[0]);
 
                     if (proj != null)
                     {

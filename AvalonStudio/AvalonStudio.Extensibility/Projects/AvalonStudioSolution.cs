@@ -11,13 +11,13 @@ using System.Linq;
 
 namespace AvalonStudio.Projects
 {
-    public class Solution : ISolution
+    public class AvalonStudioSolution : ISolution
     {
         public const string Extension = "asln";
 
         public ObservableCollection<ISolutionItem> Items => null;
 
-        public Solution()
+        public AvalonStudioSolution()
         {
             ProjectReferences = new List<string>();
             Projects = new ObservableCollection<IProject>();
@@ -132,9 +132,9 @@ namespace AvalonStudio.Projects
             return result;
         }
 
-        public static Solution Load(string fileName)
+        public static AvalonStudioSolution Load(string fileName)
         {
-            var solution = SerializedObject.Deserialize<Solution>(fileName);
+            var solution = SerializedObject.Deserialize<AvalonStudioSolution>(fileName);
 
             solution.Location = fileName.NormalizePath().ToPlatformPath();
             solution.CurrentDirectory = (Path.GetDirectoryName(fileName) + Platform.DirectorySeperator).ToPlatformPath();
@@ -172,9 +172,9 @@ namespace AvalonStudio.Projects
             return result;
         }
 
-        public static Solution Create(string location, string name, bool save = true)
+        public static AvalonStudioSolution Create(string location, string name, bool save = true)
         {
-            var result = new Solution();
+            var result = new AvalonStudioSolution();
 
             result.CurrentDirectory = location + Platform.DirectorySeperator;
 

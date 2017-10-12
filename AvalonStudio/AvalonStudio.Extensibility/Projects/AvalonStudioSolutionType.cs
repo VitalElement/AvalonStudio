@@ -31,7 +31,7 @@
 
         public async Task<ISolution> LoadAsync(string path)
         {
-            return await Task.Factory.StartNew(() => { return Solution.Load(path); });
+            return await Task.Factory.StartNew(() => { return AvalonStudioSolution.Load(path); });
         }
     }
 }
