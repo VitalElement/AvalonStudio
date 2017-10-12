@@ -39,6 +39,8 @@
             Dispose();
         }
 
+        public Guid Id { get; set; }
+
         public static void PopulateFiles(FileSystemProject project, IProjectFolder folder)
         {
             var files = Directory.EnumerateFiles(folder.Location);
@@ -433,5 +435,10 @@
         }
 
         #endregion IProject Implementation
+
+        public int CompareTo(ISolutionItem other)
+        {
+            return CompareTo(other.Name);
+        }
     }
 }

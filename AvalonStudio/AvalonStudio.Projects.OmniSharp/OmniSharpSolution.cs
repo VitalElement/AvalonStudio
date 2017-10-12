@@ -11,6 +11,11 @@ namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpSolution : ISolution
     {
+        public int CompareTo(ISolutionItem other)
+        {
+            return Name.CompareTo(other.Name);
+        }
+
         public ObservableCollection<ISolutionItem> Items => null;
 
         public static async Task<OmniSharpSolution> Create(string path)
@@ -28,6 +33,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             server = new OmniSharpServer(TcpUtils.FreeTcpPort());
             Projects = new ObservableCollection<IProject>();
+            Parent = Solution = this;
         }
 
         private async Task LoadSolution(string path)
@@ -72,6 +78,9 @@ namespace AvalonStudio.Projects.OmniSharp
         public IProject StartupProject { get; set; }
 
         public string Location { get; private set; }
+        public ISolution Solution { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ISolutionFolder Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public ISourceFile FindFile(string file)
         {
@@ -98,6 +107,11 @@ namespace AvalonStudio.Projects.OmniSharp
         public void Save()
         {
             //throw new NotImplementedException();
+        }
+
+        public void SetItemParent(ISolutionItem item, ISolutionFolder parent)
+        {
+            throw new NotImplementedException();
         }
     }
 }

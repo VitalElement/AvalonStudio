@@ -10,6 +10,11 @@
 
     public class UnresolvedReference : IProject
     {
+        public int CompareTo(ISolutionItem other)
+        {
+            return Name.CompareTo(other.Name);
+        }
+
         public UnresolvedReference(ISolution solution, string location)
         {
             Location = location;
@@ -17,7 +22,7 @@
 
         public IProjectFolder Parent { get; set; }
 
-        public ISolution Solution {get; set;}
+        public ISolution Solution { get; set; }
 
         public ObservableCollection<IProject> References => null;
 
@@ -40,7 +45,7 @@
 
         public ObservableCollection<IProjectItem> Items => throw new NotImplementedException();
 
-        public string Location {get; set;}
+        public string Location { get; set; }
 
         public string LocationDirectory => throw new NotImplementedException();
 
@@ -50,6 +55,9 @@
         }
 
         public IProject Project { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public Guid Id { get; set; }
+
         ISolutionFolder ISolutionItem.Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public event EventHandler FileAdded;

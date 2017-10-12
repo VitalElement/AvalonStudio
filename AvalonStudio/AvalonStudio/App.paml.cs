@@ -2,11 +2,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Markup.Xaml;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
-using Microsoft.DotNet.Cli.Sln.Internal;
 using System;
-using System.Linq;
 
 namespace AvalonStudio
 {
@@ -14,21 +13,6 @@ namespace AvalonStudio
     {
         private static void Main(string[] args)
         {
-            var sln = SlnFile.Read("c:\\dev\\repos\\AvalonStudio\\AvalonStudio\\AvalonStudio.sln");
-
-            sln.Projects.Where(p => p.TypeGuid == ProjectTypeGuids.SolutionFolderGuid).Select(p =>
-            {
-                Console.WriteLine(p.FilePath);
-                return p;
-            }).ToList();
-
-            var nestedProjects = sln.Sections.FirstOrDefault(section => section.Id == "NestedProjects");
-
-            if(nestedProjects != null)
-            {
-                
-            }
-
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
@@ -43,9 +27,11 @@ namespace AvalonStudio
                 var container = CompositionRoot.CreateContainer();
 
                 ShellViewModel.Instance = container.GetExport<ShellViewModel>();
+
+                VisualStudioSolution.Load("c:\\dev\\repos\\AvalonStudio\\AvalonStudio\\AvalonStudio.sln");
             });
 
-            builder.Start<MainWindow>();            
+            builder.Start<MainWindow>();
         }
 
         public override void Initialize()

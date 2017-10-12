@@ -21,6 +21,7 @@ namespace AvalonStudio.Projects
         {
             ProjectReferences = new List<string>();
             Projects = new ObservableCollection<IProject>();
+            Parent = Solution = this;
         }
 
         public string StartupItem { get; set; }
@@ -89,6 +90,10 @@ namespace AvalonStudio.Projects
 
         [JsonIgnore]
         public string Location { get; private set; }
+        public ISolution Solution { get; set; }
+        public ISolutionFolder Parent { get; set; }
+
+        public Guid Id { get; set; }
 
         public static IProject LoadProjectFile(ISolution solution, string fileName)
         {
@@ -186,6 +191,16 @@ namespace AvalonStudio.Projects
             }
 
             return result;
+        }
+
+        public void SetItemParent(ISolutionItem item, ISolutionFolder parent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CompareTo(ISolutionItem other)
+        {
+            return Name.CompareTo(other.Name);
         }
     }
 }

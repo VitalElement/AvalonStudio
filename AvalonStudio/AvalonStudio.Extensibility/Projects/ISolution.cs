@@ -4,8 +4,6 @@ namespace AvalonStudio.Projects
 {
     public interface ISolution : ISolutionFolder
     {
-        string Name { get; }
-
         string Location { get; }
 
         IProject StartupProject { get; set; }
@@ -13,6 +11,8 @@ namespace AvalonStudio.Projects
         ObservableCollection<IProject> Projects { get; }
 
         string CurrentDirectory { get; }
+
+        void SetItemParent(ISolutionItem item, ISolutionFolder parent);
 
         IProject AddProject(IProject project);
 

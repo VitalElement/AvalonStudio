@@ -2,7 +2,7 @@
 
 namespace AvalonStudio.Projects
 {
-    public interface ISolutionFolder
+    public interface ISolutionFolder : ISolutionItem
     {
         ObservableCollection<ISolutionItem> Items { get; }
     }

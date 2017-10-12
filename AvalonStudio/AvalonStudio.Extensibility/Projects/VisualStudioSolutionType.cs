@@ -20,9 +20,9 @@ namespace AvalonStudio.Extensibility.Projects
         {
         }
 
-        public Task<ISolution> LoadAsync(string path)
+        public async Task<ISolution> LoadAsync(string path)
         {
-            throw new NotImplementedException();
+            return await Task.Run(() => VisualStudioSolution.Load(path));
         }
     }
 }
