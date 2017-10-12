@@ -36,13 +36,11 @@ namespace AvalonStudio.Extensibility.Projects
 
             LoadProjects();
 
+            ResolveReferences();
+
             BuildTree();
 
             this.PrintTree();
-
-            var subFolder = _solutionItems.FirstOrDefault(item => item.Value.Name == "SubFolder");
-
-            SetItemParent(subFolder.Value, this.Items.FirstOrDefault() as ISolutionFolder);
         }
 
         private void BuildTree()
@@ -67,6 +65,14 @@ namespace AvalonStudio.Extensibility.Projects
                 var newItem = new SolutionFolder(solutionFolder.Id, solutionFolder.Name, this);
                 _solutionItems.Add(newItem.Id, newItem);
                 Items.InsertSorted(newItem);
+            }
+        }
+
+        private void ResolveReferences()
+        {
+            foreach (var project in Projects)
+            {
+                project.ResolveReferences();
             }
         }
 
