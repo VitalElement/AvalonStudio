@@ -33,7 +33,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
             else if(name.EndsWith("UnsupportedProjectType"))
             {
-                return "UnloadedProjectIcon".GetIcon();
+                return "UnknownProjectIcon".GetIcon();
             }
 
             return null;
