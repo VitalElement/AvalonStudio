@@ -86,17 +86,20 @@ namespace AvalonStudio.Extensibility.Projects
 
                 IProject newProject = null;
 
+                var projectLocation = Path.Combine(this.CurrentDirectory, project.FilePath);
+
                 if (projectType != null)
                 {
-                    newProject = projectType.Load(this, project.FilePath);
+                    newProject = projectType.Load(this, projectLocation);
                 }
                 else
                 {
-                    newProject = new UnsupportedProjectType(this, project.FilePath);
+                    newProject = new UnsupportedProjectType(this, projectLocation);
                 }
 
                 newProject.Id = Guid.Parse(project.Id);
                 newProject.Solution = this;
+                (newProject as ISolutionItem).Parent = this;
 
                 _solutionItems.Add(newProject.Id, newProject);
                 Items.InsertSorted(newProject);
@@ -111,7 +114,7 @@ namespace AvalonStudio.Extensibility.Projects
 
         public IEnumerable<IProject> Projects => _solutionItems.Select(kv => kv.Value).OfType<IProject>();
 
-        public string CurrentDirectory => Path.GetDirectoryName(_solutionModel.FullPath);
+        public string CurrentDirectory => Path.GetDirectoryName(_solutionModel.FullPath) + "\\";
 
         public ObservableCollection<ISolutionItem> Items { get; private set; }
 
@@ -123,15 +126,39 @@ namespace AvalonStudio.Extensibility.Projects
 
         public IProject AddProject(IProject project)
         {
-            throw new NotImplementedException();
-        }
+            var currentProject = Projects.FirstOrDefault(p => p.Location == project.Location);
+            
+            if (currentProject == null)
+            {
+                project.Id = Guid.NewGuid();
+                project.Solution = this;
+                (project as ISolutionItem).Parent = this;
 
-        public ISourceFile FindFile(string path)
-        {
-            throw new NotImplementedException();
+                _solutionItems.Add(project.Id, project);
+                Items.InsertSorted(project);
+
+                _solutionModel.Projects.Add(new SlnProject
+                {
+                    Id = project.Id.GetGuidString(),
+                    TypeGuid = project.ProjectTypeId.GetGuidString(),
+                    Name = project.Name,
+                    FilePath = CurrentDirectory.MakeRelativePath(project.Location)
+                });
+            }
+            else
+            {
+                return currentProject;
+            }
+
+            return project;
         }
 
         public void RemoveProject(IProject project)
+        {
+            
+        }
+
+        public ISourceFile FindFile(string path)
         {
             throw new NotImplementedException();
         }
@@ -145,12 +172,20 @@ namespace AvalonStudio.Extensibility.Projects
         {
             var nestedProjects = _solutionModel.Sections.FirstOrDefault(section => section.Id == "NestedProjects");
 
-            nestedProjects.Properties.Remove(item.Id.GetGuidString());
+            if (nestedProjects != null)
+            {
+                nestedProjects.Properties.Remove(item.Id.GetGuidString());
+            }
 
             item.SetParentInternal(parent);
 
             if (parent != this)
             {
+                if(nestedProjects == null)
+                {
+                    _solutionModel.Sections.Add(new SlnSection() { Id = "NestedProjects", SectionType = SlnSectionType.PreProcess });
+                }
+
                 nestedProjects.Properties[item.Id.GetGuidString()] = parent.Id.GetGuidString();
             }
 
