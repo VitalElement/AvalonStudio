@@ -29,6 +29,10 @@ namespace AvalonStudio.Projects
         [JsonProperty("Projects")]
         public IList<string> ProjectReferences { get; set; }
 
+        public void AddFolder(ISolutionFolder folder)
+        {
+        }
+
         public IProject AddProject(IProject project)
         {
             var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);

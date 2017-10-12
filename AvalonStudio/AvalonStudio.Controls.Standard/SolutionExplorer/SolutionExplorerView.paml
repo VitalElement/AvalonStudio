@@ -22,7 +22,7 @@
                 <MenuItem Header="Add">
                   <MenuItem Header="New Project..." Command="{Binding NewProjectCommand}" />
                   <MenuItem Header="Existing Project..."  Command="{Binding AddExistingProjectCommand}"/>
-                  <MenuItem Header="New Solution Folder..." />
+                  <MenuItem Header="New Solution Folder..." Command="{Binding AddNewFolderCommand}" />
                 </MenuItem>
                 <Separator />
                 <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}"/>
@@ -35,19 +35,13 @@
           <StackPanel Orientation="Horizontal" Gap="4">
             <StackPanel.ContextMenu>
               <ContextMenu>
-                <MenuItem Header="Rename" />
-                <Separator />
-                <MenuItem Header="Open Folder"  Command="{Binding OpenInExplorerCommand}" />
-                <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
-                <Separator />
                 <MenuItem Header="Add">
-                  <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
-                  <MenuItem Header="Exisiting Item..." />
-                  <MenuItem Header="New Folder..." />
-                  <MenuItem Header="Import Folder..." />
-                  <Separator />
-                  <MenuItem Header="New File..." />
+                  <MenuItem Header="New Project..." Command="{Binding NewProjectCommand}" />
+                  <MenuItem Header="Existing Project..."  Command="{Binding AddExistingProjectCommand}"/>
+                  <MenuItem Header="New Solution Folder..." Command="{Binding AddNewFolderCommand}" />
                 </MenuItem>
+                <Separator />
+                <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}"/>
               </ContextMenu>
             </StackPanel.ContextMenu>
             <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />

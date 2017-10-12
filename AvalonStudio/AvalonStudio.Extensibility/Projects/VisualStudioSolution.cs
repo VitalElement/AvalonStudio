@@ -62,9 +62,9 @@ namespace AvalonStudio.Extensibility.Projects
 
             foreach (var solutionFolder in solutionFolders)
             {
-                var newItem = new SolutionFolder(solutionFolder.Id, solutionFolder.Name, this);
+                var newItem = new SolutionFolder(Guid.Parse(solutionFolder.Id), solutionFolder.Name, this);
                 _solutionItems.Add(newItem.Id, newItem);
-                Items.InsertSorted(newItem);
+                Items.InsertSorted(newItem, false);
             }
         }
 
@@ -124,6 +124,21 @@ namespace AvalonStudio.Extensibility.Projects
 
         public Guid Id { get; set; }
 
+        public void AddFolder(ISolutionFolder folder)
+        {
+            folder.Solution = this;
+
+            SetItemParent(folder, folder.Parent ?? this);
+
+            _solutionModel.Projects.Add(new SlnProject
+            {
+                Id = folder.Id.GetGuidString(),
+                TypeGuid = ProjectTypeGuids.SolutionFolderGuid,
+                Name = folder.Name,
+                FilePath = folder.Name
+            });
+        }
+
         public IProject AddProject(IProject project)
         {
             var currentProject = Projects.FirstOrDefault(p => p.Location == project.Location);
@@ -147,6 +162,7 @@ namespace AvalonStudio.Extensibility.Projects
             }
             else
             {
+                SetItemParent(currentProject, (project as ISolutionItem).Parent ?? this);
                 return currentProject;
             }
 
@@ -196,8 +212,6 @@ namespace AvalonStudio.Extensibility.Projects
 
                 nestedProjects.Properties[item.Id.GetGuidString()] = parent.Id.GetGuidString();
             }
-
-            _solutionModel.Write();
         }
 
         public int CompareTo(ISolutionItem other)

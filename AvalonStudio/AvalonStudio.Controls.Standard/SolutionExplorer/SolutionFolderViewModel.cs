@@ -4,6 +4,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
     using ReactiveUI;
+    using System;
     using System.Collections.ObjectModel;
 
     public class SolutionFolderViewModel : SolutionItemViewModel<ISolutionFolder>
@@ -20,6 +21,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             _folderIcon = "FolderIcon".GetIcon();
             _folderOpenIcon = "FolderOpenIcon".GetIcon();
+
+            AddNewFolderCommand = ReactiveCommand.Create(() =>
+            {
+                Model.Solution.AddFolder(SolutionFolder.Create("New Folder", Model));
+
+                Model.Solution.Save();
+            });
         }
 
         public ObservableCollection<SolutionItemViewModel> Items
@@ -46,6 +54,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         }
 
         public override DrawingGroup Icon => IsExpanded ? _folderOpenIcon : _folderIcon;
+
+        public ReactiveCommand AddNewFolderCommand { get; private set; }
     }
 
     //public abstract class SolutionParentViewModel<T> : SolutionItemViewModel where T : ISolutionFolder

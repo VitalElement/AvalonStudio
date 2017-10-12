@@ -27,6 +27,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             Items.BindCollections(model.Items, p => { return SolutionItemViewModel.Create(this, p); },
                 (pvm, p) => pvm.Model == p);
 
+            AddNewFolderCommand = ReactiveCommand.Create(() =>
+            {
+                Model.AddFolder(SolutionFolder.Create("New Folder"));
+
+                Model.Save();
+            });
+
             NewProjectCommand = ReactiveCommand.Create(() =>
             {
                 shell.ModalDialog = new NewProjectDialogViewModel(model);
@@ -110,6 +117,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand NewProjectCommand { get; }
         public ReactiveCommand AddExistingProjectCommand { get; }
         public ReactiveCommand OpenInExplorerCommand { get; }
+
+        public ReactiveCommand AddNewFolderCommand { get; private set; }
 
         private void CleanSolution()
         {

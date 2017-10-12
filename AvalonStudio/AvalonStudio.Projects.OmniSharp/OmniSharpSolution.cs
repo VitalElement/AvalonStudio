@@ -114,5 +114,10 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             throw new NotImplementedException();
         }
+
+        public void AddFolder(ISolutionFolder name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

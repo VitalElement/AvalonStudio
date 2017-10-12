@@ -17,6 +17,8 @@ namespace AvalonStudio.Projects
 
         IProject AddProject(IProject project);
 
+        void AddFolder(ISolutionFolder name);
+
         ISourceFile FindFile(string path);
 
         void RemoveProject(IProject project);
