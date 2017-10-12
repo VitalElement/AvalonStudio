@@ -39,6 +39,7 @@
             Dispose();
         }
 
+        [JsonIgnore]
         public Guid Id { get; set; }
 
         public static void PopulateFiles(FileSystemProject project, IProjectFolder folder)
@@ -398,6 +399,8 @@
 
         public abstract dynamic ToolchainSettings { get; set; }
         ISolutionFolder ISolutionItem.Parent { get; set; }
+
+        public abstract Guid ProjectTypeId { get; }
 
         public event EventHandler FileAdded;
 

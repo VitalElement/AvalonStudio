@@ -60,6 +60,8 @@
 
         ISolutionFolder ISolutionItem.Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        public Guid ProjectTypeId => Guid.Empty;
+
         public event EventHandler FileAdded;
 
         public void AddReference(IProject project)

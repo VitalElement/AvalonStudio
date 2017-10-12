@@ -458,6 +458,9 @@ namespace AvalonStudio.Projects.CPlusPlus
             }
         }
 
+        [JsonIgnore]
+        public override Guid ProjectTypeId => CPlusPlusProjectType.TypeId; 
+
         public static string GenerateProjectFileName(string name)
         {
             return string.Format("{0}.{1}", name, ProjectExtension);

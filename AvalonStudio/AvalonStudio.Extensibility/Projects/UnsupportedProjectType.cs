@@ -55,7 +55,9 @@ namespace AvalonStudio.Projects
 
         public ISolution Solution { get; set; }
 
-        public string Name { get; }        
+        public string Name { get; }
+
+        public Guid ProjectTypeId => Guid.Empty;
 
         public event EventHandler FileAdded;
 
