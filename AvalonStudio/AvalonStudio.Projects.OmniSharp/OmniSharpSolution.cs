@@ -119,5 +119,10 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             throw new NotImplementedException();
         }
+
+        public void RemoveItem(ISolutionItem item)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

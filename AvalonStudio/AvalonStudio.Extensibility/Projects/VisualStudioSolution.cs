@@ -139,6 +139,27 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
+        public void RemoveItem(ISolutionItem item)
+        {
+            if(item is IProject project)
+            {
+                RemoveProject(project);
+            }
+            else if(item is ISolutionFolder folder)
+            {
+                SetItemParent(item, null);
+
+                _solutionItems.Remove(folder.Id);
+
+                var currentSlnProject = _solutionModel.Projects.FirstOrDefault(slnProj => Guid.Parse(slnProj.Id) == folder.Id);
+
+                if (currentSlnProject != null)
+                {
+                    _solutionModel.Projects.Remove(currentSlnProject);
+                }
+            }
+        }
+
         public IProject AddProject(IProject project)
         {
             var currentProject = Projects.FirstOrDefault(p => p.Location == project.Location);
@@ -147,10 +168,10 @@ namespace AvalonStudio.Extensibility.Projects
             {
                 project.Id = Guid.NewGuid();
                 project.Solution = this;
-                (project as ISolutionItem).Parent = this;
+
+                SetItemParent(project, (project as ISolutionItem).Parent ?? this);
 
                 _solutionItems.Add(project.Id, project);
-                Items.InsertSorted(project);
 
                 _solutionModel.Projects.Add(new SlnProject
                 {
@@ -163,6 +184,7 @@ namespace AvalonStudio.Extensibility.Projects
             else
             {
                 SetItemParent(currentProject, (project as ISolutionItem).Parent ?? this);
+
                 return currentProject;
             }
 
@@ -171,7 +193,8 @@ namespace AvalonStudio.Extensibility.Projects
 
         public void RemoveProject(IProject project)
         {
-            Items.Remove(project);
+            project.SetParentInternal(null);
+
             _solutionItems.Remove(project.Id);
 
             var currentSlnProject = _solutionModel.Projects.FirstOrDefault(slnProj => Guid.Parse(slnProj.Id) == project.Id);
@@ -210,7 +233,10 @@ namespace AvalonStudio.Extensibility.Projects
                     _solutionModel.Sections.Add(new SlnSection() { Id = "NestedProjects", SectionType = SlnSectionType.PreProcess });
                 }
 
-                nestedProjects.Properties[item.Id.GetGuidString()] = parent.Id.GetGuidString();
+                if (parent != null)
+                {
+                    nestedProjects.Properties[item.Id.GetGuidString()] = parent.Id.GetGuidString();
+                }
             }
         }
 

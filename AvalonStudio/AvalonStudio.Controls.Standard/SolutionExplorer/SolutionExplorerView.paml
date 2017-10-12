@@ -41,7 +41,7 @@
                   <MenuItem Header="New Solution Folder..." Command="{Binding AddNewFolderCommand}" />
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}"/>
+                <MenuItem Header="Remove"  Command="{Binding RemoveCommand}"/>
               </ContextMenu>
             </StackPanel.ContextMenu>
             <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />

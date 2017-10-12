@@ -15,6 +15,8 @@ namespace AvalonStudio.Projects
 
         void SetItemParent(ISolutionItem item, ISolutionFolder parent);
 
+        void RemoveItem(ISolutionItem item);
+
         IProject AddProject(IProject project);
 
         void AddFolder(ISolutionFolder name);

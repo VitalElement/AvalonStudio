@@ -206,5 +206,10 @@ namespace AvalonStudio.Projects
         {
             return this.DefaultCompareTo(other);
         }
+
+        public void RemoveItem(ISolutionItem item)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

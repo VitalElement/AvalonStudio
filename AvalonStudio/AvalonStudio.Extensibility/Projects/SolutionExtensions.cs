@@ -26,9 +26,9 @@ namespace AvalonStudio.Projects
                 item.Parent.Items.Remove(item);
             }
 
-            item.Parent = parent ?? throw new ArgumentNullException("parent");
+            item.Parent = parent;
             
-            parent.Items.InsertSorted(item);
+            parent?.Items.InsertSorted(item);
         }
 
         internal static string GetGuidString(this Guid id)
