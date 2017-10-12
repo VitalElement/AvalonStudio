@@ -5,21 +5,9 @@
 
     public class AvalonStudioSolutionType : ISolutionType
     {
-        public string Description
-        {
-            get
-            {
-                return "AvalonStudio Solution";
-            }
-        }
+        public string Description => "AvalonStudio Solution";
 
-        public List<string> Extensions
-        {
-            get
-            {
-                return new List<string> { "asln" };
-            }
-        }
+        public List<string> Extensions { get; } = new List<string> { "asln" };
 
         public void Activation()
         {

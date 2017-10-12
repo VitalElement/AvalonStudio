@@ -34,7 +34,8 @@ using System.Collections;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.DotNet.Cli.Sln.Internal.FileManipulation;
-using AvalonStudio.Extensibility.Projects.SlnFile;
+using AvalonStudio.Extensibility.Projects.Utils;
+using AvalonStudio.Extensibility.Projects.MSBuildSolution;
 
 namespace Microsoft.DotNet.Cli.Sln.Internal
 {

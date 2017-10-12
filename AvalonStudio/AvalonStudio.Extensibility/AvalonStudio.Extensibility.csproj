@@ -28,14 +28,14 @@
     <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Projects\SlnFile\LocalizableStrings.Designer.cs">
+    <Compile Update="Projects\MSBuildSolution\LocalizableStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>LocalizableStrings.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Projects\SlnFile\LocalizableStrings.resx">
+    <EmbeddedResource Update="Projects\MSBuildSolution\LocalizableStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LocalizableStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>

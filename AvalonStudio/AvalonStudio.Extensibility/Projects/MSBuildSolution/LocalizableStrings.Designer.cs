@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AvalonStudio.Extensibility.Projects.SlnFile {
+namespace AvalonStudio.Extensibility.Projects.MSBuildSolution {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace AvalonStudio.Extensibility.Projects.SlnFile {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AvalonStudio.Extensibility.Projects.SlnFile.LocalizableStrings", typeof(LocalizableStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AvalonStudio.Extensibility.Projects.MSBuildSolution.LocalizableStrings", typeof(LocalizableStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

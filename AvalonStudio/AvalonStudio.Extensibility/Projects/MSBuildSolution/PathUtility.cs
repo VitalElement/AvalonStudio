@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace AvalonStudio.Extensibility.Projects.SlnFile
+namespace AvalonStudio.Extensibility.Projects.Utils
 {
     class PathUtility
     {
