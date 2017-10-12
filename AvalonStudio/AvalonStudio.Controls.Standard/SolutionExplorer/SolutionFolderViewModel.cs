@@ -18,7 +18,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         private DrawingGroup _folderOpenIcon;
         private DrawingGroup _folderIcon;
 
-        public SolutionFolderViewModel(SolutionViewModel solution, ISolutionFolder folder) : base(solution, folder)
+        public SolutionFolderViewModel(ISolutionFolder folder) : base(folder)
         {
             _folderIcon = "FolderIcon".GetIcon();
             _folderOpenIcon = "FolderOpenIcon".GetIcon();
@@ -27,15 +27,15 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public override DrawingGroup Icon => IsExpanded ? _folderOpenIcon : _folderIcon;
     }
 
-    public abstract class SolutionParentViewModel<T> : SolutionItemViewModel<ISolutionFolder> where T : ISolutionFolder
+    public abstract class SolutionParentViewModel<T> : SolutionItemViewModel<T> where T : ISolutionFolder
     {
         private ObservableCollection<SolutionItemViewModel> _items;
         private bool _isExpanded;
 
-        public SolutionParentViewModel(SolutionViewModel solution, T model) : base(model)
+        public SolutionParentViewModel(T model) : base(model)
         {
             Items = new ObservableCollection<SolutionItemViewModel>();
-            Items.BindCollections(model.Items, p => { return SolutionItemViewModel.Create(solution, p); }, (pvm, p) => pvm.Model == p);
+            Items.BindCollections(model.Items, p => { return SolutionItemViewModel.Create(p); }, (pvm, p) => pvm.Model == p);
 
             AddNewFolderCommand = ReactiveCommand.Create(() =>
             {
@@ -125,11 +125,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand AddNewFolderCommand { get; private set; }
         public ReactiveCommand AddNewProjectCommand { get; private set; }
         public ReactiveCommand AddExistingProjectCommand { get; private set; }
-        public ReactiveCommand RemoveCommand { get; private set; }
-
-        new public ISolutionFolder Model
-        {
-            get { return base.Model as SolutionFolder; }
-        }
+        public ReactiveCommand RemoveCommand { get; private set; }        
     }
 }

@@ -113,7 +113,6 @@ namespace AvalonStudio.Projects
 
         public void ResolveReferences()
         {
-            throw new NotImplementedException();
         }
 
         public void Save()

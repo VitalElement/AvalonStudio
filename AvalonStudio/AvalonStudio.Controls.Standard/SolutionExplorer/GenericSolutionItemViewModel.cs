@@ -18,7 +18,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             set { base.Model = value; }
         }
 
-        public string Title => Model.Name;
+        public virtual string Title => Model.Name;
         
     }
 }

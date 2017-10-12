@@ -18,7 +18,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private bool visibility;
 
-        public ProjectViewModel(SolutionViewModel solutionViewModel, IProject model)
+        public ProjectViewModel(IProject model)
             : base(model)
         {
             shell = IoC.Get<IShell>();
@@ -63,10 +63,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 shell.InvalidateCodeAnalysis();
 
-                foreach (var project in solutionViewModel.Items)
-                {
-                    project.Invalidate();
-                }
+                //foreach (var project in solutionViewModel.Items)
+                //{
+                //    project.Invalidate();
+                //}
             });
 
             OpenInExplorerCommand = ReactiveCommand.Create(() => Platform.OpenFolderInExplorer(Model.CurrentDirectory));

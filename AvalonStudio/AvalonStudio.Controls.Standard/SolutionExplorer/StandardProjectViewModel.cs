@@ -6,7 +6,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     internal class StandardProjectViewModel : ProjectViewModel
     {
-        public StandardProjectViewModel(SolutionViewModel solutionViewModel, IProject model) : base(solutionViewModel, model)
+        public StandardProjectViewModel(IProject model) : base(model)
         {
             if (model.Solution.StartupProject == model)
             {
