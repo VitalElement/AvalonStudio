@@ -62,7 +62,10 @@ namespace AvalonStudio.Extensibility.Projects
 
             foreach (var solutionFolder in solutionFolders)
             {
-                var newItem = new SolutionFolder(Guid.Parse(solutionFolder.Id), solutionFolder.Name, this);
+                var newItem = new SolutionFolder(solutionFolder.Name);
+                newItem.Id = Guid.Parse(solutionFolder.Id);
+                newItem.Parent = this;
+                newItem.Solution = this;
                 _solutionItems.Add(newItem.Id, newItem);
                 Items.InsertSorted(newItem, false);
             }
@@ -124,82 +127,65 @@ namespace AvalonStudio.Extensibility.Projects
 
         public Guid Id { get; set; }
 
-        public void AddFolder(ISolutionFolder folder)
+        public T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem
         {
-            folder.Solution = this;
+            item.Id = Guid.NewGuid();
+            item.Solution = this;
 
-            SetItemParent(folder, folder.Parent ?? this);
-
-            _solutionModel.Projects.Add(new SlnProject
+            if (item is IProject project)
             {
-                Id = folder.Id.GetGuidString(),
-                TypeGuid = ProjectTypeGuids.SolutionFolderGuid,
-                Name = folder.Name,
-                FilePath = folder.Name
-            });
+                var currentProject = Projects.FirstOrDefault(p => p.Location == project.Location);
+
+                if (currentProject == null)
+                {
+                    SetItemParent(project, parent ?? this);
+
+                    _solutionItems.Add(project.Id, project);
+
+                    _solutionModel.Projects.Add(new SlnProject
+                    {
+                        Id = project.Id.GetGuidString(),
+                        TypeGuid = project.ProjectTypeId.GetGuidString(),
+                        Name = project.Name,
+                        FilePath = CurrentDirectory.MakeRelativePath(project.Location)
+                    });
+
+                    return (T)project;
+                }
+                else
+                {
+                    SetItemParent(currentProject, parent ?? this);
+
+                    return (T)currentProject;
+                }
+            }
+            else if (item is ISolutionFolder folder)
+            {
+                SetItemParent(folder, parent ?? this);
+
+                _solutionModel.Projects.Add(new SlnProject
+                {
+                    Id = folder.Id.GetGuidString(),
+                    TypeGuid = ProjectTypeGuids.SolutionFolderGuid,
+                    Name = folder.Name,
+                    FilePath = folder.Name
+                });
+
+                return (T)folder;
+            }
+
+            return item;
         }
 
         public void RemoveItem(ISolutionItem item)
         {
-            if(item is IProject project)
-            {
-                RemoveProject(project);
-            }
-            else if(item is ISolutionFolder folder)
-            {
-                SetItemParent(item, null);
+            SetItemParent(item, null);
 
-                _solutionItems.Remove(folder.Id);
+            _solutionItems.Remove(item.Id);
 
-                var currentSlnProject = _solutionModel.Projects.FirstOrDefault(slnProj => Guid.Parse(slnProj.Id) == folder.Id);
+            var currentSlnProject = _solutionModel.Projects.FirstOrDefault(slnProj => Guid.Parse(slnProj.Id) == item.Id);
 
-                if (currentSlnProject != null)
-                {
-                    _solutionModel.Projects.Remove(currentSlnProject);
-                }
-            }
-        }
-
-        public IProject AddProject(IProject project)
-        {
-            var currentProject = Projects.FirstOrDefault(p => p.Location == project.Location);
-            
-            if (currentProject == null)
-            {
-                project.Id = Guid.NewGuid();
-                project.Solution = this;
-
-                SetItemParent(project, (project as ISolutionItem).Parent ?? this);
-
-                _solutionItems.Add(project.Id, project);
-
-                _solutionModel.Projects.Add(new SlnProject
-                {
-                    Id = project.Id.GetGuidString(),
-                    TypeGuid = project.ProjectTypeId.GetGuidString(),
-                    Name = project.Name,
-                    FilePath = CurrentDirectory.MakeRelativePath(project.Location)
-                });
-            }
-            else
-            {
-                SetItemParent(currentProject, (project as ISolutionItem).Parent ?? this);
-
-                return currentProject;
-            }
-
-            return project;
-        }
-
-        public void RemoveProject(IProject project)
-        {
-            SetItemParent(project, null);
-
-            _solutionItems.Remove(project.Id);
-
-            var currentSlnProject = _solutionModel.Projects.FirstOrDefault(slnProj => Guid.Parse(slnProj.Id) == project.Id);
-
-            if(currentSlnProject != null)
+            if (currentSlnProject != null)
             {
                 _solutionModel.Projects.Remove(currentSlnProject);
             }

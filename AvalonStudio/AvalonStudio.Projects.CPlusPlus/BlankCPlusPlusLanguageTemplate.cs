@@ -39,7 +39,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             IProject project = CPlusPlusProject.Create(solution, location, name);
 
-            project = solution.AddProject(project);
+            project = solution.AddItem(project);
 
             if (solution.StartupProject == null)
             {

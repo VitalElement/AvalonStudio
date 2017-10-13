@@ -20,7 +20,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 
             IProject project = await TypeScriptProject.Create(solution, location);
 
-            project = solution.AddProject(project);
+            project = solution.AddItem(project);
 
             if (solution.StartupProject == null)
             {

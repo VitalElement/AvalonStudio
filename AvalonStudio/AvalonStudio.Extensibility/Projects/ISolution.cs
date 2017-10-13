@@ -13,17 +13,11 @@ namespace AvalonStudio.Projects
 
         string CurrentDirectory { get; }
 
-        void SetItemParent(ISolutionItem item, ISolutionFolder parent);
+        T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem;
 
         void RemoveItem(ISolutionItem item);
 
-        IProject AddProject(IProject project);
-
-        void AddFolder(ISolutionFolder name);
-
         ISourceFile FindFile(string path);
-
-        void RemoveProject(IProject project);
 
         void Save();
     }

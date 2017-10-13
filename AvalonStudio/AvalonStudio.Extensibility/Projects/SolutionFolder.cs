@@ -5,18 +5,15 @@ namespace AvalonStudio.Projects
 {
     public class SolutionFolder : ISolutionFolder
     {
-        public SolutionFolder(Guid guid, string name, ISolutionFolder parent)
+        public SolutionFolder(string name)
         {
             Name = name;
-            Parent = parent;
-            Solution = parent?.Solution;
-            Id = guid;
             Items = new ObservableCollection<ISolutionItem>();
         }
 
-        public static SolutionFolder Create(string name, ISolutionFolder parent = null)
+        public static SolutionFolder Create(string name)
         {
-            return new SolutionFolder(Guid.NewGuid(), name, parent);
+            return new SolutionFolder(name);
         }
 
         public ObservableCollection<ISolutionItem> Items { get; }

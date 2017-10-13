@@ -39,7 +39,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             AddNewFolderCommand = ReactiveCommand.Create(() =>
             {
-                Model.Solution.AddFolder(SolutionFolder.Create("New Folder", Model));
+                Model.Solution.AddItem(SolutionFolder.Create("New Folder"), Model);
 
                 Model.Solution.Save();
             });
@@ -77,11 +77,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 {
                     var proj = AvalonStudioSolution.LoadProjectFile(Model.Solution, result[0]);
 
-                    (proj as ISolutionItem).Parent = Model;
-
                     if (proj != null)
                     {
-                        Model.Solution.AddProject(proj);
+                        Model.Solution.AddItem(proj, Model);
                         Model.Solution.Save();
                     }
                 }

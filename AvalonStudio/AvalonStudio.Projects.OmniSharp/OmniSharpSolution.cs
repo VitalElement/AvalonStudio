@@ -49,23 +49,33 @@ namespace AvalonStudio.Projects.OmniSharp
 
             foreach (var project in workspace.MsBuild.Projects)
             {
-                AddProject(OmniSharpProject.Create(this, project.Path, project));
+                AddItem(OmniSharpProject.Create(this, project.Path, project));
             }
 
             CurrentDirectory = Path.GetDirectoryName(path);
         }
 
-        public IProject AddProject(IProject project)
+        public void RemoveItem(ISolutionItem item)
         {
-            var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);
+            throw new NotImplementedException();
+        }
 
-            if (currentProject != null) return currentProject;
+        public T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem
+        {
+            if (item is IProject project)
+            {
+                var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);
 
-            //ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
-            Items.InsertSorted(project);
-            currentProject = project;
+                if (currentProject != null) return (T)currentProject;
 
-            return currentProject;
+                //ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
+                Items.InsertSorted(project);
+                currentProject = project;
+
+                return (T)currentProject;
+            }
+
+            return item;
         }
 
         public OmniSharpServer Server => server;
@@ -100,11 +110,6 @@ namespace AvalonStudio.Projects.OmniSharp
             return result;
         }
 
-        public void RemoveProject(IProject project)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Save()
         {
             //throw new NotImplementedException();
@@ -116,11 +121,6 @@ namespace AvalonStudio.Projects.OmniSharp
         }
 
         public void AddFolder(ISolutionFolder name)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveItem(ISolutionItem item)
         {
             throw new NotImplementedException();
         }

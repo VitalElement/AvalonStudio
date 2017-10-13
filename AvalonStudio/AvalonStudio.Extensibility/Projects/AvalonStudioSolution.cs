@@ -29,26 +29,31 @@ namespace AvalonStudio.Projects
         [JsonProperty("Projects")]
         public IList<string> ProjectReferences { get; set; }
 
-        public void AddFolder(ISolutionFolder folder)
+        public T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem
         {
+            if(item is IProject project)
+            {
+                var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);
+
+                if (currentProject != null) return (T)currentProject;
+                ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
+                Items.InsertSorted(project);
+                currentProject = project;
+
+                return (T)currentProject;
+            }
+
+            return item;
         }
 
-        public IProject AddProject(IProject project)
+        public void RemoveItem(ISolutionItem item)
         {
-            var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);
+            if(item is IProject project)
+            {
+                Items.Remove(project);
+                ProjectReferences.Remove(CurrentDirectory.MakeRelativePath(project.Location).ToAvalonPath());
+            }
 
-            if (currentProject != null) return currentProject;
-            ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
-            Items.InsertSorted(project);
-            currentProject = project;
-
-            return currentProject;
-        }
-
-        public void RemoveProject(IProject project)
-        {
-            Items.Remove(project);
-            ProjectReferences.Remove(CurrentDirectory.MakeRelativePath(project.Location).ToAvalonPath());
         }
 
         public void Save()
@@ -205,11 +210,6 @@ namespace AvalonStudio.Projects
         public int CompareTo(ISolutionItem other)
         {
             return this.DefaultCompareTo(other);
-        }
-
-        public void RemoveItem(ISolutionItem item)
-        {
-            throw new NotImplementedException();
         }
     }
 }

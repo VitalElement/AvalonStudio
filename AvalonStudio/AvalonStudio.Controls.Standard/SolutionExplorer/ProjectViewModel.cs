@@ -80,7 +80,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             RemoveCommand = ReactiveCommand.Create(async () =>
             {
                 await shell.CloseDocumentsForProjectAsync(Model);
-                Model.Solution.RemoveProject(Model);
+                Model.Solution.RemoveItem(Model);
                 Model.Solution.Save();
             });
 
