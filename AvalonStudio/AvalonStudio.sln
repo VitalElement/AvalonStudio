@@ -683,4 +683,7 @@ Global
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = AvalonStudio\AvalonStudio.csproj
 	EndGlobalSection
+	GlobalSection(AvalonStudioProperties) = preSolution
+		StartupItem = {8E501956-B9A6-430E-86AC-350ED94B44E4}
+	EndGlobalSection
 EndGlobal
