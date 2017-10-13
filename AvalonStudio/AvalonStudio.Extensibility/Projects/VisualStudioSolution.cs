@@ -129,7 +129,47 @@ namespace AvalonStudio.Extensibility.Projects
 
         public string Location => _solutionModel.FullPath;
 
-        public IProject StartupProject { get; set; }
+        public IProject StartupProject
+        {
+            get
+            {
+                var avalonStudioProperties = _solutionModel.Sections.FirstOrDefault(section => section.Id == "AvalonStudioProperties");
+
+                IProject result = null;
+
+                if(avalonStudioProperties != null && avalonStudioProperties.Properties.ContainsKey("StartupItem"))
+                {
+                    result = _solutionItems[Guid.Parse(avalonStudioProperties.Properties["StartupItem"])] as IProject;
+                }
+
+                return result;
+            }
+
+            set
+            {
+                var avalonStudioProperties = _solutionModel.Sections.FirstOrDefault(section => section.Id == "AvalonStudioProperties");
+
+                if (value == null)
+                {
+                    if(avalonStudioProperties != null)
+                    {
+                        _solutionModel.Sections.Remove(avalonStudioProperties);
+                    }
+                }
+                else
+                {
+                    if (avalonStudioProperties == null)
+                    {
+                        _solutionModel.Sections.Add(new SlnSection() { Id = "AvalonStudioProperties", SectionType = SlnSectionType.PreProcess });
+                        avalonStudioProperties = _solutionModel.Sections.FirstOrDefault(section => section.Id == "AvalonStudioProperties");
+                    }
+
+                    avalonStudioProperties.Properties["StartupItem"] = value.Id.GetGuidString();
+                }
+
+                Save();
+            }
+        }
 
         public IEnumerable<IProject> Projects => _solutionItems.Select(kv => kv.Value).OfType<IProject>();
 
@@ -230,7 +270,7 @@ namespace AvalonStudio.Extensibility.Projects
             _solutionModel.Write();
         }
 
-        public void SetItemParent(ISolutionItem item, ISolutionFolder parent)
+        private void SetItemParent(ISolutionItem item, ISolutionFolder parent)
         {
             var nestedProjects = _solutionModel.Sections.FirstOrDefault(section => section.Id == "NestedProjects");
 
