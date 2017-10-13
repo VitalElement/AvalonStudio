@@ -9,17 +9,19 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     {
         public abstract DrawingGroup Icon { get; }
 
-        public static SolutionItemViewModel Create(ISolutionItem item)
+        public ISolutionParentViewModel Parent { get; protected set; }
+
+        public static SolutionItemViewModel Create(ISolutionParentViewModel parent, ISolutionItem item)
         {
             SolutionItemViewModel result = null;
 
             if (item is ISolutionFolder folder)
             {
-                result = new SolutionFolderViewModel(folder);
+                result = new SolutionFolderViewModel(parent, folder);
             }
             else if(item is IProject project)
             {
-                result = new StandardProjectViewModel(project);
+                result = new StandardProjectViewModel(parent, project);
             }
             else
             {

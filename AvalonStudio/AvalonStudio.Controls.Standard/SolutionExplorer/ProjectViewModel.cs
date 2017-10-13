@@ -18,9 +18,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private bool visibility;
 
-        public ProjectViewModel(IProject model)
+        public ProjectViewModel(ISolutionParentViewModel parent, IProject model)
             : base(model)
         {
+            Parent = parent;
             shell = IoC.Get<IShell>();
 
             Items = new ObservableCollection<ProjectItemViewModel>();
@@ -63,10 +64,28 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 shell.InvalidateCodeAnalysis();
 
-                //foreach (var project in solutionViewModel.Items)
-                //{
-                //    project.Invalidate();
-                //}
+                ISolutionParentViewModel solution = Parent;
+
+                while(true)
+                {
+                    if(solution == null)
+                    {
+                        throw new InvalidOperationException("Unable to find solution");
+                    }
+
+                    if(solution is SolutionViewModel solutionViewModel)
+                    {
+                        solution.VisitChildren(solutionItem =>
+                        {
+                            solutionItem.RaisePropertyChanged(nameof(FontWeight));
+                        });
+                        break;
+                    }
+
+                    solution = solution.Parent;
+                }
+
+                
             });
 
             OpenInExplorerCommand = ReactiveCommand.Create(() => Platform.OpenFolderInExplorer(Model.CurrentDirectory));

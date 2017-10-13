@@ -15,24 +15,21 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     public class SolutionViewModel : SolutionParentViewModel<ISolution>
     {
-        private ObservableCollection<SolutionItemViewModel> _items;
         private readonly IShell shell;
 
         public SolutionViewModel(ISolution model) : base(model)
         {
+            Parent = this;
+
+            Initialise(this);
+
             shell = IoC.Get<IShell>();
-
-            Items = new ObservableCollection<SolutionItemViewModel>();
-            IsExpanded = true;
-
-            Items.BindCollections(model.Items, p => { return SolutionItemViewModel.Create(p); },
-                (pvm, p) => pvm.Model == p);            
 
             NewProjectCommand = ReactiveCommand.Create(() =>
             {
                 shell.ModalDialog = new NewProjectDialogViewModel(model);
                 shell.ModalDialog.ShowDialog();
-            });            
+            });
 
             OpenInExplorerCommand = ReactiveCommand.Create(() => { Platform.OpenFolderInExplorer(model.CurrentDirectory); });
 
@@ -54,15 +51,15 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             });
 
             RunAllTestsCommand = ReactiveCommand.Create(() => RunTests());
-        }        
+        }
 
         public ReactiveCommand ConfigurationCommand { get; }
         public ReactiveCommand CleanSolutionCommand { get; }
         public ReactiveCommand BuildSolutionCommand { get; }
         public ReactiveCommand RebuildSolutionCommand { get; }
         public ReactiveCommand RunAllTestsCommand { get; }
-        public ReactiveCommand NewProjectCommand { get; }        
-        public ReactiveCommand OpenInExplorerCommand { get; }        
+        public ReactiveCommand NewProjectCommand { get; }
+        public ReactiveCommand OpenInExplorerCommand { get; }
 
         private void CleanSolution()
         {
@@ -102,6 +99,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public override DrawingGroup Icon => throw new NotImplementedException();
+        public override DrawingGroup Icon => null;
     }
 }

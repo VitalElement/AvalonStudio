@@ -18,25 +18,36 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         private DrawingGroup _folderOpenIcon;
         private DrawingGroup _folderIcon;
 
-        public SolutionFolderViewModel(ISolutionFolder folder) : base(folder)
+        public SolutionFolderViewModel(ISolutionParentViewModel parent, ISolutionFolder folder) : base(folder)
         {
+            Parent = parent;
+
             _folderIcon = "FolderIcon".GetIcon();
             _folderOpenIcon = "FolderOpenIcon".GetIcon();
+
+            Initialise(parent);
         }
 
         public override DrawingGroup Icon => IsExpanded ? _folderOpenIcon : _folderIcon;
     }
 
-    public abstract class SolutionParentViewModel<T> : SolutionItemViewModel<T> where T : ISolutionFolder
+    public interface ISolutionParentViewModel
+    {
+        bool IsExpanded { get; set; }
+
+        ISolutionParentViewModel Parent { get; }
+
+        void VisitChildren(Action<SolutionItemViewModel> visitor);
+    }
+
+    public abstract class SolutionParentViewModel<T> : SolutionItemViewModel<T>, ISolutionParentViewModel
+        where T : ISolutionFolder
     {
         private ObservableCollection<SolutionItemViewModel> _items;
         private bool _isExpanded;
 
         public SolutionParentViewModel(T model) : base(model)
         {
-            Items = new ObservableCollection<SolutionItemViewModel>();
-            Items.BindCollections(model.Items, p => { return SolutionItemViewModel.Create(p); }, (pvm, p) => pvm.Model == p);
-
             AddNewFolderCommand = ReactiveCommand.Create(() =>
             {
                 Model.Solution.AddItem(SolutionFolder.Create("New Folder"), Model);
@@ -95,6 +106,25 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 Model.Solution.RemoveItem(Model);
                 Model.Solution.Save();
             });
+        }
+
+        protected void Initialise(ISolutionParentViewModel parent)
+        {
+            Items = new ObservableCollection<SolutionItemViewModel>();
+            Items.BindCollections(Model.Items, p => { return SolutionItemViewModel.Create(parent, p); }, (pvm, p) => pvm.Model == p);
+        }
+
+        public void VisitChildren(Action<SolutionItemViewModel> visitor)
+        {
+            foreach(var child in Items)
+            {
+                if(child is ISolutionParentViewModel folder)
+                {
+                    folder.VisitChildren(visitor);
+                }
+
+                visitor(child);
+            }
         }
 
         public ObservableCollection<SolutionItemViewModel> Items
