@@ -205,7 +205,8 @@ namespace AvalonStudio.Projects
 
             var console = IoC.Get<IConsole>();
 
-            console.WriteLine("Converting ASLN to SLN format");
+            console.WriteLine("Migrating ASLN to SLN format. Opening this file again will overwrite the newly created SLN file.");
+            console.WriteLine("Please delte ASLN file when you are happy with the migration.");
 
             return ConvertToSln(solution);
         }
