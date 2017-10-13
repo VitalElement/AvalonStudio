@@ -15,10 +15,26 @@ namespace AvalonStudio.Extensibility.Projects
         private SlnFile _solutionModel;
         private Dictionary<Guid, ISolutionItem> _solutionItems;
 
+        public const string Extension = "sln";
+
         public static VisualStudioSolution Load(string fileName)
         {
             return new VisualStudioSolution(SlnFile.Read(fileName));
         }
+
+        public static VisualStudioSolution Create(string location, string name, bool save = true)
+        {
+            var filePath = Path.Combine(location, name + "." + Extension);
+
+            var result = new VisualStudioSolution(new SlnFile { FullPath = filePath, FormatVersion = "12.00", MinimumVisualStudioVersion = "10.0.40219.1", VisualStudioVersion = "15.0.27009.1" });
+
+            if(save)
+            {
+                result.Save();
+            }
+
+            return result;
+        }            
 
         private VisualStudioSolution(SlnFile solutionModel)
         {
@@ -117,7 +133,7 @@ namespace AvalonStudio.Extensibility.Projects
 
         public IEnumerable<IProject> Projects => _solutionItems.Select(kv => kv.Value).OfType<IProject>();
 
-        public string CurrentDirectory => Path.GetDirectoryName(_solutionModel.FullPath) + "\\";
+        public string CurrentDirectory => Path.GetDirectoryName(_solutionModel.FullPath) + Platforms.Platform.DirectorySeperator;
 
         public ObservableCollection<ISolutionItem> Items { get; private set; }
 

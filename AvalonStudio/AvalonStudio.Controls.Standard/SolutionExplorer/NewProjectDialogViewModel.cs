@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -64,13 +65,15 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             OKCommand = ReactiveCommand.Create(async () =>
             {
                 bool generateSolutionDirs = false;
+                bool loadNewSolution = false;
 
                 if (solution == null)
                 {
+                    loadNewSolution = true;
                     generateSolutionDirs = true;
 
                     var destination = Path.Combine(location, solutionName);
-                    solution = AvalonStudioSolution.Create(destination, solutionName, false);
+                    solution = VisualStudioSolution.Create(destination, solutionName, false);
                 }
 
                 if (await selectedTemplate.Generate(solution, name) != null)
@@ -85,7 +88,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
 
                 solution.Save();
-                shell.CurrentSolution = solution;
+
+                if (loadNewSolution)
+                {
+                    await shell.OpenSolutionAsync(solution.Location);
+                }
+
                 solution = null;
 
                 Close();
