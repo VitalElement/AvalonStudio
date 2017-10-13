@@ -22,7 +22,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 {
     public class TypeScriptProject : FileSystemProject, IProject
     {
-        public static async Task<TypeScriptProject> Create(ISolution solution, string directory)
+        public static async Task<TypeScriptProject> Create(string directory)
         {
             return await Task.Run(() =>
             {
@@ -32,8 +32,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 
                 //Create new project with default name and extension
                 var projectFileLocation = Path.Combine(directory, projectName + $".{result.Extension}");
-
-                result.Solution = solution;
+                
                 result.Location = projectFileLocation;
 
                 //Create Main.TS file

@@ -97,7 +97,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             AddNewProjectCommand = ReactiveCommand.Create(() =>
             {
-                
+                var shell = IoC.Get<IShell>();
+
+                shell.ModalDialog = new NewProjectDialogViewModel(Model);
+                shell.ModalDialog.ShowDialog();
             });
 
             RemoveCommand = ReactiveCommand.Create(() =>

@@ -21,13 +21,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             Parent = this;
 
-            shell = IoC.Get<IShell>();
-
-            NewProjectCommand = ReactiveCommand.Create(() =>
-            {
-                shell.ModalDialog = new NewProjectDialogViewModel(model);
-                shell.ModalDialog.ShowDialog();
-            });
+            shell = IoC.Get<IShell>();            
 
             OpenInExplorerCommand = ReactiveCommand.Create(() => { Platform.OpenFolderInExplorer(model.CurrentDirectory); });
 
@@ -55,8 +49,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand CleanSolutionCommand { get; }
         public ReactiveCommand BuildSolutionCommand { get; }
         public ReactiveCommand RebuildSolutionCommand { get; }
-        public ReactiveCommand RunAllTestsCommand { get; }
-        public ReactiveCommand NewProjectCommand { get; }
+        public ReactiveCommand RunAllTestsCommand { get; }       
         public ReactiveCommand OpenInExplorerCommand { get; }
 
         private void CleanSolution()

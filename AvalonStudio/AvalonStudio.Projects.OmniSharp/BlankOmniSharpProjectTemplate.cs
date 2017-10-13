@@ -19,7 +19,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
         }
 
-        public Task<IProject> Generate(ISolution solution, string name)
+        public Task<IProject> Generate(ISolutionFolder solution, string name)
         {
             throw new NotImplementedException();
         }

@@ -28,22 +28,22 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
         }
 
-        public virtual async Task<IProject> Generate(ISolution solution, string name)
+        public virtual async Task<IProject> Generate(ISolutionFolder solutionFolder, string name)
         {
-            var location = Path.Combine(solution.CurrentDirectory, name);
+            var location = Path.Combine(solutionFolder.Solution.CurrentDirectory, name);
 
             if (!Directory.Exists(location))
             {
                 Directory.CreateDirectory(location);
             }
 
-            IProject project = CPlusPlusProject.Create(solution, location, name);
+            IProject project = CPlusPlusProject.Create(location, name);
 
-            project = solution.AddItem(project);
+            project = solutionFolder.Solution.AddItem(project, solutionFolder);
 
-            if (solution.StartupProject == null)
+            if (solutionFolder.Solution.StartupProject == null)
             {
-                solution.StartupProject = project;
+                solutionFolder.Solution.StartupProject = project;
             }
 
             return project;

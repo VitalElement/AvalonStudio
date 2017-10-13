@@ -495,7 +495,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             return project;
         }
 
-        public static CPlusPlusProject Create(ISolution solution, string directory, string name)
+        public static CPlusPlusProject Create(string directory, string name)
         {
             CPlusPlusProject result = null;
 
@@ -503,8 +503,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             if (!System.IO.File.Exists(projectFile))
             {
-                var project = new CPlusPlusProject();
-                project.Solution = solution;
+                var project = new CPlusPlusProject();                
                 project.Location = projectFile;
 
                 project.Save();
