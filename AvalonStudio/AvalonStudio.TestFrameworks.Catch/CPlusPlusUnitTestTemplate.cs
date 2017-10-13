@@ -79,7 +79,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             var catchProject = AvalonStudioSolution.LoadProjectFile(solution, catchProjectFile);
             catchProject.Hidden = true;
 
-            solution.AddProject(catchProject);
+            solution.AddItem(catchProject);
 
             // Reference catch.
             project.AddReference(catchProject);
