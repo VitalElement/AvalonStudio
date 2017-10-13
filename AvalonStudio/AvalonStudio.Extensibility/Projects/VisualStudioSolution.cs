@@ -193,7 +193,7 @@ namespace AvalonStudio.Extensibility.Projects
 
         public void RemoveProject(IProject project)
         {
-            project.SetParentInternal(null);
+            SetItemParent(project, null);
 
             _solutionItems.Remove(project.Id);
 
@@ -231,6 +231,7 @@ namespace AvalonStudio.Extensibility.Projects
                 if(nestedProjects == null)
                 {
                     _solutionModel.Sections.Add(new SlnSection() { Id = "NestedProjects", SectionType = SlnSectionType.PreProcess });
+                    nestedProjects = _solutionModel.Sections.FirstOrDefault(section => section.Id == "NestedProjects");
                 }
 
                 if (parent != null)
