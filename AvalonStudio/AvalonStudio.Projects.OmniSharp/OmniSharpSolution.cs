@@ -124,5 +124,15 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             throw new NotImplementedException();
         }
+
+        public IProject FindProject(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VisitChildren(Action<ISolutionItem> visitor)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

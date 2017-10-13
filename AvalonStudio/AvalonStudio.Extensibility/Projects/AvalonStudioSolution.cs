@@ -1,4 +1,5 @@
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
@@ -54,6 +55,19 @@ namespace AvalonStudio.Projects
                 ProjectReferences.Remove(CurrentDirectory.MakeRelativePath(project.Location).ToAvalonPath());
             }
 
+        }
+
+        public void VisitChildren(Action<ISolutionItem> visitor)
+        {
+            foreach (var child in Items)
+            {
+                if (child is ISolutionFolder folder)
+                {
+                    folder.VisitChildren(visitor);
+                }
+
+                visitor(child);
+            }
         }
 
         public void Save()
@@ -140,13 +154,31 @@ namespace AvalonStudio.Projects
             else
             {
                 Console.WriteLine("Failed to load " + projectFilePath);
-                // create an unloaded project type.
             }
 
             return result;
         }
 
-        public static AvalonStudioSolution Load(string fileName)
+        public static VisualStudioSolution ConvertToSln (ISolution solution)
+        {
+            var result = VisualStudioSolution.Create(solution.CurrentDirectory, solution.Name, true);
+
+            foreach(var item in solution.Items)
+            {
+                if(item is IProject project)
+                {
+                    result.AddItem(project);
+                }
+            }
+
+            result.StartupProject = solution.StartupProject;
+
+            result.Save();
+
+            return result;
+        }
+
+        public static ISolution Load(string fileName)
         {
             var solution = SerializedObject.Deserialize<AvalonStudioSolution>(fileName);
 
@@ -171,38 +203,14 @@ namespace AvalonStudio.Projects
 
             solution.StartupProject = solution.Projects.SingleOrDefault(p => p.Name == solution.StartupItem);
 
-            return solution;
+            var console = IoC.Get<IConsole>();
+
+            console.WriteLine("Converting ASLN to SLN format");
+
+            return ConvertToSln(solution);
         }
 
         public IProject FindProject(string name)
-        {
-            var result = Projects.FirstOrDefault(project => project.Name == name);
-
-            if (result == null)
-            {
-                throw new Exception($"Unable to find project with name {name}");
-            }
-
-            return result;
-        }
-
-        public static AvalonStudioSolution Create(string location, string name, bool save = true)
-        {
-            var result = new AvalonStudioSolution();
-
-            result.CurrentDirectory = location + Platform.DirectorySeperator;
-
-            result.Location = Path.Combine(result.CurrentDirectory, name + "." + Extension);
-
-            if (save)
-            {
-                result.Save();
-            }
-
-            return result;
-        }
-
-        public void SetItemParent(ISolutionItem item, ISolutionFolder parent)
         {
             throw new NotImplementedException();
         }

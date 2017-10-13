@@ -26,6 +26,19 @@ namespace AvalonStudio.Projects
 
         public Guid Id { get; set; }
 
+        public void VisitChildren(Action<ISolutionItem> visitor)
+        {
+            foreach (var child in Items)
+            {
+                if (child is ISolutionFolder folder)
+                {
+                    folder.VisitChildren(visitor);
+                }
+
+                visitor(child);
+            }
+        }
+
         public int CompareTo(ISolutionItem other)
         {
             return this.DefaultCompareTo(other);

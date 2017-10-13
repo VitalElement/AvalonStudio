@@ -28,13 +28,13 @@ namespace AvalonStudio.Extensibility.Projects
 
             var result = new VisualStudioSolution(new SlnFile { FullPath = filePath, FormatVersion = "12.00", MinimumVisualStudioVersion = "10.0.40219.1", VisualStudioVersion = "15.0.27009.1" });
 
-            if(save)
+            if (save)
             {
                 result.Save();
             }
 
             return result;
-        }            
+        }
 
         private VisualStudioSolution(SlnFile solutionModel)
         {
@@ -137,7 +137,7 @@ namespace AvalonStudio.Extensibility.Projects
 
                 IProject result = null;
 
-                if(avalonStudioProperties != null && avalonStudioProperties.Properties.ContainsKey("StartupItem"))
+                if (avalonStudioProperties != null && avalonStudioProperties.Properties.ContainsKey("StartupItem"))
                 {
                     result = _solutionItems[Guid.Parse(avalonStudioProperties.Properties["StartupItem"])] as IProject;
                 }
@@ -151,7 +151,7 @@ namespace AvalonStudio.Extensibility.Projects
 
                 if (value == null)
                 {
-                    if(avalonStudioProperties != null)
+                    if (avalonStudioProperties != null)
                     {
                         _solutionModel.Sections.Remove(avalonStudioProperties);
                     }
@@ -235,14 +235,14 @@ namespace AvalonStudio.Extensibility.Projects
 
         public void RemoveItem(ISolutionItem item)
         {
-            if(item is ISolution)
+            if (item is ISolution)
             {
                 throw new InvalidOperationException();
             }
 
-            if(item is ISolutionFolder folder)
+            if (item is ISolutionFolder folder)
             {
-                foreach(var child in folder.Items.ToList())
+                foreach (var child in folder.Items.ToList())
                 {
                     RemoveItem(child);
                 }
@@ -262,7 +262,19 @@ namespace AvalonStudio.Extensibility.Projects
 
         public ISourceFile FindFile(string path)
         {
-            throw new NotImplementedException();
+            ISourceFile result = null;
+
+            foreach (var project in Projects)
+            {
+                result = project.FindFile(path);
+
+                if (result != null)
+                {
+                    break;
+                }
+            }
+
+            return result;
         }
 
         public void Save()
@@ -283,7 +295,7 @@ namespace AvalonStudio.Extensibility.Projects
 
             if (parent != this)
             {
-                if(nestedProjects == null)
+                if (nestedProjects == null)
                 {
                     _solutionModel.Sections.Add(new SlnSection() { Id = "NestedProjects", SectionType = SlnSectionType.PreProcess });
                     nestedProjects = _solutionModel.Sections.FirstOrDefault(section => section.Id == "NestedProjects");
@@ -299,6 +311,24 @@ namespace AvalonStudio.Extensibility.Projects
         public int CompareTo(ISolutionItem other)
         {
             return this.DefaultCompareTo(other);
+        }
+
+        public void VisitChildren(Action<ISolutionItem> visitor)
+        {
+            foreach (var child in Items)
+            {
+                if (child is ISolutionFolder folder)
+                {
+                    folder.VisitChildren(visitor);
+                }
+
+                visitor(child);
+            }
+        }
+
+        public IProject FindProject(string name)
+        {
+            return Projects.FirstOrDefault(p => p.Name == name);
         }
     }
 }

@@ -19,6 +19,8 @@ namespace AvalonStudio.Projects
 
         ISourceFile FindFile(string path);
 
+        IProject FindProject(string name);
+
         void Save();
     }
 }
