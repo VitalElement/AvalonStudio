@@ -19,7 +19,7 @@ namespace AvalonStudio.Controls
             });
         }
 
-        public static readonly StyledProperty<string> TextProperty = AvaloniaProperty.Register<EditableTextBlock, string>(nameof(Text));
+        public static readonly StyledProperty<string> TextProperty = AvaloniaProperty.Register<EditableTextBlock, string>(nameof(Text), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
         public string Text
         {
@@ -44,6 +44,7 @@ namespace AvalonStudio.Controls
 
             _textBox.KeyUp += _textBox_KeyUp;
 
+
             Text = "WooHOO";
         }
 
@@ -56,7 +57,7 @@ namespace AvalonStudio.Controls
 
         private void _textBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Enter)
+            if (e.Key == Key.Enter || e.Key == Key.Escape)
             {
                 InEditMode = false;
             }
@@ -66,13 +67,24 @@ namespace AvalonStudio.Controls
         {
             base.OnPointerPressed(e);
 
-            if (e.MouseButton == MouseButton.Middle)
+            if (!InEditMode)
             {
-                InEditMode = true;
+                if (e.MouseButton == MouseButton.Middle)
+                {
+                    InEditMode = true;
+                    e.Device.Capture(this);
+                }
+                else if (e.ClickCount == 2)
+                {
+                    InEditMode = true;
+                    e.Device.Capture(this);
+                }
             }
-            else if (e.ClickCount == 2)
+            else if (!new Rect(Bounds.Size).Contains(e.GetPosition(this)))
             {
-                InEditMode = true;
+                e.Device.Capture(null);
+
+                InEditMode = false;
             }
         }
     }
