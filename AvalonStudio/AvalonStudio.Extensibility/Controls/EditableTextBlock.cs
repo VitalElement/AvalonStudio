@@ -43,11 +43,8 @@ namespace AvalonStudio.Controls
             _textBox = e.NameScope.Find<TextBox>("PART_TextBox");
 
             _textBox.KeyUp += _textBox_KeyUp;
-        }
 
-        protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
-        {
-            base.OnAttachedToLogicalTree(e);
+            Text = "WooHOO";
         }
 
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)

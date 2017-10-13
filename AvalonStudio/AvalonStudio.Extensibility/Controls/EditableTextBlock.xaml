@@ -5,8 +5,8 @@
     <Setter Property="Template">
       <ControlTemplate>
         <Grid>
-          <TextBlock Text="{TemplateBinding Text, Mode=TwoWay}" IsVisible="{TemplateBinding !InEditMode}" />
-          <TextBox Text="{TemplateBinding Text, Mode=TwoWay}" IsVisible="{TemplateBinding InEditMode}" Name="PART_TextBox" />
+          <TextBlock Text="{TemplateBinding Text}" IsVisible="{TemplateBinding !InEditMode}" />
+          <TextBox Text="{TemplateBinding Text}" IsVisible="{TemplateBinding InEditMode}" Name="PART_TextBox" />
         </Grid>
       </ControlTemplate>
     </Setter>
