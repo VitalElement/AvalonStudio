@@ -85,7 +85,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
-                    var proj = AvalonStudioSolution.LoadProjectFile(result[0]);
+                    var proj = Project.LoadProjectFile(result[0]);
 
                     if (proj != null)
                     {
@@ -112,9 +112,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public void VisitChildren(Action<SolutionItemViewModel> visitor)
         {
-            foreach(var child in Items)
+            foreach (var child in Items)
             {
-                if(child is ISolutionParentViewModel folder)
+                if (child is ISolutionParentViewModel folder)
                 {
                     folder.VisitChildren(visitor);
                 }
@@ -152,6 +152,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand AddNewFolderCommand { get; private set; }
         public ReactiveCommand AddNewProjectCommand { get; private set; }
         public ReactiveCommand AddExistingProjectCommand { get; private set; }
-        public ReactiveCommand RemoveCommand { get; private set; }        
+        public ReactiveCommand RemoveCommand { get; private set; }
     }
 }

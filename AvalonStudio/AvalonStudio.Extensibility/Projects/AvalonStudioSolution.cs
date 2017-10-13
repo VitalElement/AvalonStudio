@@ -116,26 +116,7 @@ namespace AvalonStudio.Projects
         public ISolution Solution { get; set; }
         public ISolutionFolder Parent { get; set; }
 
-        public Guid Id { get; set; }
-
-        public static IProject LoadProjectFile(string fileName)
-        {
-            var shell = IoC.Get<IShell>();
-            IProject result = null;
-
-            var extension = Path.GetExtension(fileName).Remove(0, 1);
-
-            var projectType = shell.ProjectTypes.FirstOrDefault(p => p.Extensions.Contains(extension));
-
-            if (projectType != null)
-            {
-                result = projectType.Load(fileName);
-
-                result.ResolveReferences();
-            }
-
-            return result;
-        }
+        public Guid Id { get; set; }        
 
         private static IProject LoadProject(ISolution solution, string reference)
         {
@@ -192,6 +173,7 @@ namespace AvalonStudio.Projects
                 // todo null returned here we need a placeholder.
                 if (proj != null)
                 {
+                    proj.Solution = solution;
                     solution.Items.InsertSorted(proj);
                 }
             }

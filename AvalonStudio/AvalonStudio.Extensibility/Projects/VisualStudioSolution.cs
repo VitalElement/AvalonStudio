@@ -101,20 +101,7 @@ namespace AvalonStudio.Extensibility.Projects
 
             foreach (var project in solutionProjects)
             {
-                var projectType = project.GetProjectType();
-
-                IProject newProject = null;
-
-                var projectLocation = Path.Combine(this.CurrentDirectory, project.FilePath);
-
-                if (projectType != null)
-                {
-                    newProject = projectType.Load(projectLocation);
-                }
-                else
-                {
-                    newProject = new UnsupportedProjectType(projectLocation);
-                }
+                IProject newProject = Project.LoadProjectFile(Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
 
                 newProject.Id = Guid.Parse(project.Id);
                 newProject.Solution = this;
