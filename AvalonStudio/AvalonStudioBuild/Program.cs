@@ -371,7 +371,7 @@ namespace AvalonStudio
             }
 
             throw new NotImplementedException();
-            var project = CPlusPlusProject.Create(null, projectPath, options.Project);
+            var project = CPlusPlusProject.Create(projectPath, options.Project);
 
             if (project != null)
             {
