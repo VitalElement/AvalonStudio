@@ -195,6 +195,19 @@ namespace AvalonStudio.Extensibility.Projects
 
         public void RemoveItem(ISolutionItem item)
         {
+            if(item is ISolution)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if(item is ISolutionFolder folder)
+            {
+                foreach(var child in folder.Items.ToList())
+                {
+                    RemoveItem(child);
+                }
+            }
+
             SetItemParent(item, null);
 
             _solutionItems.Remove(item.Id);
