@@ -7,6 +7,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     public abstract class SolutionItemViewModel : ViewModel
     {
+        public SolutionItemViewModel (ISolutionParentViewModel parent)
+        {
+            Parent = parent;
+        }
+
         public abstract DrawingGroup Icon { get; }
 
         public ISolutionParentViewModel Parent { get; protected set; }

@@ -17,11 +17,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     {
         private readonly IShell shell;
 
-        public SolutionViewModel(ISolution model) : base(model)
+        public SolutionViewModel(ISolution model) : base(null, model)
         {
             Parent = this;
-
-            Initialise(this);
 
             shell = IoC.Get<IShell>();
 

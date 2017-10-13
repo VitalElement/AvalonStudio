@@ -19,9 +19,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         private bool visibility;
 
         public ProjectViewModel(ISolutionParentViewModel parent, IProject model)
-            : base(model)
+            : base(parent, model)
         {
-            Parent = parent;
             shell = IoC.Get<IShell>();
 
             Items = new ObservableCollection<ProjectItemViewModel>();
@@ -64,27 +63,15 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 shell.InvalidateCodeAnalysis();
 
-                ISolutionParentViewModel solution = Parent;
+                var root = this.FindRoot();
 
-                while(true)
+                if(root != null)
                 {
-                    if(solution == null)
+                    root.VisitChildren(solutionItem =>
                     {
-                        throw new InvalidOperationException("Unable to find solution");
-                    }
-
-                    if(solution is SolutionViewModel solutionViewModel)
-                    {
-                        solution.VisitChildren(solutionItem =>
-                        {
-                            solutionItem.RaisePropertyChanged(nameof(FontWeight));
-                        });
-                        break;
-                    }
-
-                    solution = solution.Parent;
+                        solutionItem.RaisePropertyChanged(nameof(FontWeight));
+                    });
                 }
-
                 
             });
 
@@ -110,8 +97,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         }
 
         public bool IsExpanded { get; set; }
-
-        public string Title => Model.Name;
 
         public bool IsVisible => !Model.Hidden;
 

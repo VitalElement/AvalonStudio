@@ -18,14 +18,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         private DrawingGroup _folderOpenIcon;
         private DrawingGroup _folderIcon;
 
-        public SolutionFolderViewModel(ISolutionParentViewModel parent, ISolutionFolder folder) : base(folder)
+        public SolutionFolderViewModel(ISolutionParentViewModel parent, ISolutionFolder folder) : base(parent, folder)
         {
-            Parent = parent;
-
             _folderIcon = "FolderIcon".GetIcon();
             _folderOpenIcon = "FolderOpenIcon".GetIcon();
-
-            Initialise(parent);
         }
 
         public override DrawingGroup Icon => IsExpanded ? _folderOpenIcon : _folderIcon;
@@ -46,8 +42,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         private ObservableCollection<SolutionItemViewModel> _items;
         private bool _isExpanded;
 
-        public SolutionParentViewModel(T model) : base(model)
+        public SolutionParentViewModel(ISolutionParentViewModel parent, T model) : base(parent, model)
         {
+            Items = new ObservableCollection<SolutionItemViewModel>();
+            Items.BindCollections(Model.Items, p => { return SolutionItemViewModel.Create(this, p); }, (pvm, p) => pvm.Model == p);
+
             AddNewFolderCommand = ReactiveCommand.Create(() =>
             {
                 Model.Solution.AddItem(SolutionFolder.Create("New Folder"), Model);
@@ -108,12 +107,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             });
         }
 
-        protected void Initialise(ISolutionParentViewModel parent)
-        {
-            Items = new ObservableCollection<SolutionItemViewModel>();
-            Items.BindCollections(Model.Items, p => { return SolutionItemViewModel.Create(parent, p); }, (pvm, p) => pvm.Model == p);
-        }
-
         public void VisitChildren(Action<SolutionItemViewModel> visitor)
         {
             foreach(var child in Items)
@@ -146,6 +139,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             set
             {
                 _isExpanded = value;
+
+                this.RaiseAndSetIfChanged(ref _isExpanded, value);
+
                 this.RaisePropertyChanged(nameof(Icon));
             }
         }

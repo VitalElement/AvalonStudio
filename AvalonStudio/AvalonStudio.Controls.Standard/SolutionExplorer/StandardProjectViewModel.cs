@@ -10,6 +10,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             if (model.Solution.StartupProject == model)
             {
+                this.VisitParents(parentVm =>
+                {
+                    parentVm.IsExpanded = true;
+                });
+
                 IsExpanded = true;
             }
         }
