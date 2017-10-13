@@ -118,7 +118,7 @@ namespace AvalonStudio.Projects
 
         public Guid Id { get; set; }
 
-        public static IProject LoadProjectFile(ISolution solution, string fileName)
+        public static IProject LoadProjectFile(string fileName)
         {
             var shell = IoC.Get<IShell>();
             IProject result = null;
@@ -129,7 +129,7 @@ namespace AvalonStudio.Projects
 
             if (projectType != null)
             {
-                result = projectType.Load(solution, fileName);
+                result = projectType.Load(fileName);
 
                 result.ResolveReferences();
             }
@@ -149,7 +149,7 @@ namespace AvalonStudio.Projects
 
             if (projectType != null && System.IO.File.Exists(projectFilePath))
             {
-                result = projectType.Load(solution, projectFilePath);
+                result = projectType.Load(projectFilePath);
             }
             else
             {

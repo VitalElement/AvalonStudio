@@ -424,7 +424,7 @@
 
         public abstract void Save();
 
-        public abstract IProject Load(ISolution solution, string filePath);
+        public abstract IProject Load(string filePath);
 
         public void Dispose()
         {

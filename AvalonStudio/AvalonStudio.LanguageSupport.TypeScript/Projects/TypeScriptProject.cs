@@ -71,14 +71,13 @@ Program.main();
             });
         }
 
-        public override IProject Load(ISolution solution, string filename)
+        public override IProject Load(string filename)
         {
             TypeScriptProject result = new TypeScriptProject();
             result.Location = filename;
 
             //TODO: Load TS language service from here
-
-            result.Solution = solution;
+            
             result.LoadFiles();
 
             return result;

@@ -166,7 +166,7 @@ namespace AvalonStudio.Projects.OmniSharp
             throw new NotImplementedException();
         }
 
-        public override IProject Load(ISolution solution, string filePath)
+        public override IProject Load(string filePath)
         {
             return null;
         }

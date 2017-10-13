@@ -1,15 +1,10 @@
-using Avalonia.Controls;
+using Avalonia.Media;
 using AvalonStudio.Extensibility;
-using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Avalonia.Media;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -21,15 +16,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             Parent = this;
 
-            shell = IoC.Get<IShell>();            
+            shell = IoC.Get<IShell>();
 
             OpenInExplorerCommand = ReactiveCommand.Create(() => { Platform.OpenFolderInExplorer(model.CurrentDirectory); });
-
-            ConfigurationCommand = ReactiveCommand.Create(() =>
-            {
-                //Workspace.Instance.ModalDialog = new SolutionConfigurationDialogViewModel(Workspace.Instance.SolutionExplorer.Model);
-                //Workspace.Instance.ModalDialog.ShowDialog();
-            });
 
             BuildSolutionCommand = ReactiveCommand.Create(() => BuildSolution());
 
@@ -43,13 +32,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             });
 
             RunAllTestsCommand = ReactiveCommand.Create(() => RunTests());
+
+            IsExpanded = true;
         }
 
-        public ReactiveCommand ConfigurationCommand { get; }
         public ReactiveCommand CleanSolutionCommand { get; }
         public ReactiveCommand BuildSolutionCommand { get; }
         public ReactiveCommand RebuildSolutionCommand { get; }
-        public ReactiveCommand RunAllTestsCommand { get; }       
+        public ReactiveCommand RunAllTestsCommand { get; }
         public ReactiveCommand OpenInExplorerCommand { get; }
 
         private void CleanSolution()

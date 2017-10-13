@@ -6,6 +6,7 @@
     internal class CPlusPlusProjectType : IProjectType
     {
         public static readonly Guid TypeId = Guid.Parse("{DA891B1A-E1A3-4A1A-83CD-252F07B636ED}");
+
         public List<string> Extensions => new List<string>
         {
             "acproj"
@@ -23,9 +24,9 @@
         {
         }
 
-        public IProject Load(ISolution solution, string filePath)
+        public IProject Load(string filePath)
         {
-            return CPlusPlusProject.Load(filePath, solution);
+            return CPlusPlusProject.LoadFromFile(filePath);
         }
     }
 }

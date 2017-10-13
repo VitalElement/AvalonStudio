@@ -300,11 +300,9 @@ namespace AvalonStudio.Projects.CPlusPlus
         public string LinkerScript { get; set; }
         public override string Executable { get; set; }
 
-        public override IProject Load(ISolution solution, string filePath)
+        public override IProject Load(string filePath)
         {
-            var result = Load(filePath, solution);
-
-            return result;
+            return LoadFromFile(filePath);
         }
 
         public override int CompareTo(IProject other)
@@ -466,7 +464,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             return string.Format("{0}.{1}", name, ProjectExtension);
         }
 
-        public static CPlusPlusProject Load(string filename, ISolution solution)
+        public static CPlusPlusProject LoadFromFile(string filename)
         {
             if (!System.IO.File.Exists(filename))
             {
@@ -486,8 +484,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             }
 
             project.Project = project;
-            project.Location = filename;
-            project.Solution = solution;
+            project.Location = filename;            
 
             project.Items.InsertSorted(new ReferenceFolder(project));
             project.LoadFiles();

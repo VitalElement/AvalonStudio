@@ -13,8 +13,7 @@
           <TextBlock Text="{Binding Title}">
             <TextBlock.ContextMenu>
               <ContextMenu>
-                <MenuItem Header="Run All Tests" />
-                <MenuItem Header="Configuration" />
+                <MenuItem Header="Run All Tests" />                
                 <MenuItem Header="Build Solution" />
                 <MenuItem Header="Rebuild Solution" />
                 <MenuItem Header="Clean Solution" />

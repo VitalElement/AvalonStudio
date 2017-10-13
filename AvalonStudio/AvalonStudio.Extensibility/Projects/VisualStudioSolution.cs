@@ -109,11 +109,11 @@ namespace AvalonStudio.Extensibility.Projects
 
                 if (projectType != null)
                 {
-                    newProject = projectType.Load(this, projectLocation);
+                    newProject = projectType.Load(projectLocation);
                 }
                 else
                 {
-                    newProject = new UnsupportedProjectType(this, projectLocation);
+                    newProject = new UnsupportedProjectType(projectLocation);
                 }
 
                 newProject.Id = Guid.Parse(project.Id);

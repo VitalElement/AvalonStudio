@@ -10,15 +10,13 @@ namespace AvalonStudio.Projects
 {
     class UnsupportedProjectType : IProject
     {
-        public UnsupportedProjectType(ISolutionFolder parent, string location)
+        public UnsupportedProjectType(string location)
         {
             Name = Path.GetFileName(location);
             Location = location;
             LocationDirectory = Path.GetDirectoryName(location);
             Project = this;
-            Parent = this;
-
-            (this as ISolutionItem).Parent = parent;
+            Parent = this;            
         }
 
         public ObservableCollection<IProject> References => null;
