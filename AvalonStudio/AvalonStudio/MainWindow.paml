@@ -63,7 +63,7 @@
   <Controls:MetroWindow.KeyBindings>
     <KeyBinding Command="{Binding EnableDebugModeCommand}" Gesture="CTRL+SHIFT+D"/>
   </Controls:MetroWindow.KeyBindings>
-  <Grid RowDefinitions="Auto,*,25">
+  <Grid RowDefinitions="Auto,*,50">
     <Grid Grid.ColumnSpan="5" Margin="0 0 0 0">
       <Grid RowDefinitions="Auto, Auto">
         <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="5 4 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" />

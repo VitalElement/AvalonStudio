@@ -1,30 +1,35 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
+using Avalonia.Metadata;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using System;
 
 namespace AvalonStudio.Controls
 {
     public class EditableTextBlock : TemplatedControl
     {
+        private string _text;
         private TextBox _textBox;
 
-        public EditableTextBlock()
-        {
-            this.GetObservable(InEditModeProperty).Subscribe(editMode =>
-            {
+        public static readonly DirectProperty<EditableTextBlock, string> TextProperty = TextBlock.TextProperty.AddOwner<EditableTextBlock>(
+                o => o.Text,
+                (o, v) => o.Text = v,
+                defaultBindingMode: BindingMode.TwoWay,
+                enableDataValidation: true);
 
-            });
-        }
-
-        public static readonly StyledProperty<string> TextProperty = AvaloniaProperty.Register<EditableTextBlock, string>(nameof(Text), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
-
+        [Content]
         public string Text
         {
-            get { return GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get { return _text; }
+            set
+            {
+                SetAndRaise(TextProperty, ref _text, value);
+            }
         }
 
         public static readonly StyledProperty<bool> InEditModeProperty =
@@ -43,9 +48,6 @@ namespace AvalonStudio.Controls
             _textBox = e.NameScope.Find<TextBox>("PART_TextBox");
 
             _textBox.KeyUp += _textBox_KeyUp;
-
-
-            Text = "WooHOO";
         }
 
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
@@ -59,8 +61,26 @@ namespace AvalonStudio.Controls
         {
             if (e.Key == Key.Enter || e.Key == Key.Escape)
             {
-                InEditMode = false;
+                ExitEditMode();
             }
+        }
+
+        private void EnterEditMode()
+        {
+            InEditMode = true;
+            (VisualRoot as IInputRoot).MouseDevice.Capture(_textBox);
+            _textBox.CaretIndex = Text.Length - 1;
+
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _textBox.Focus();
+            });
+        }
+
+        private void ExitEditMode()
+        {
+            InEditMode = false;
+            (VisualRoot as IInputRoot).MouseDevice.Capture(null);
         }
 
         protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -71,20 +91,21 @@ namespace AvalonStudio.Controls
             {
                 if (e.MouseButton == MouseButton.Middle)
                 {
-                    InEditMode = true;
-                    e.Device.Capture(this);
+                    EnterEditMode();
                 }
                 else if (e.ClickCount == 2)
                 {
-                    InEditMode = true;
-                    e.Device.Capture(this);
+                    EnterEditMode();
                 }
             }
-            else if (!new Rect(Bounds.Size).Contains(e.GetPosition(this)))
+            else
             {
-                e.Device.Capture(null);
+                var hit = this.InputHitTest(e.GetPosition(this));
 
-                InEditMode = false;
+                if (!this.IsVisualAncestorOf(hit))
+                {
+                    ExitEditMode();
+                }
             }
         }
     }
