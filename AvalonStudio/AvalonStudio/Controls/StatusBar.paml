@@ -8,7 +8,5 @@
     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="2"  Text="{Binding OffsetText}"/>
     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3"  Text="{Binding LineText}"/>
     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="4" Text="{Binding ColumnText}"/>
-    <cont:EditableTextBlock  Grid.Column="5" Text="{Binding TestText, Mode=TwoWay}" />
-    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="6" Text="{Binding TestText, Mode=TwoWay}"/>
   </Grid>
 </UserControl>

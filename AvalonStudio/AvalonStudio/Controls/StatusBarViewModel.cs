@@ -128,14 +128,5 @@ namespace AvalonStudio.Controls
                 return string.Format("Col {0}", Column);
             }
         }
-
-        private string _testText = "TestText";
-
-        public string TestText
-        {
-            get { return _testText; }
-            set { this.RaiseAndSetIfChanged(ref _testText, value); }
-        }
-
     }
 }

@@ -10,10 +10,10 @@
       </TreeView.Styles>
       <TreeView.DataTemplates>
         <TreeDataTemplate DataType="ViewModels:SolutionViewModel" ItemsSource="{Binding Items}">
-          <TextBlock Text="{Binding Title}">
-            <TextBlock.ContextMenu>
+          <StackPanel  Orientation="Horizontal" Gap="4">
+            <StackPanel.ContextMenu>
               <ContextMenu>
-                <MenuItem Header="Run All Tests" />                
+                <MenuItem Header="Run All Tests" />
                 <MenuItem Header="Build Solution" />
                 <MenuItem Header="Rebuild Solution" />
                 <MenuItem Header="Clean Solution" />
@@ -26,8 +26,10 @@
                 <Separator />
                 <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}"/>
               </ContextMenu>
-            </TextBlock.ContextMenu>
-          </TextBlock>
+            </StackPanel.ContextMenu>
+            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+            <Controls:EditableTextBlock Text="{Binding Title}" />
+          </StackPanel>
         </TreeDataTemplate>
 
         <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Items}">
@@ -44,7 +46,7 @@
               </ContextMenu>
             </StackPanel.ContextMenu>
             <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-            <TextBlock Text="{Binding Title}" Height="15" />
+            <Controls:EditableTextBlock Text="{Binding Title}" Height="15" />
           </StackPanel>
         </TreeDataTemplate>
 
@@ -76,7 +78,7 @@
               </ContextMenu>
             </StackPanel.ContextMenu>
             <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-            <TextBlock Text="{Binding Title}" Height="15" FontWeight="{Binding FontWeight}" />
+            <Controls:EditableTextBlock Text="{Binding Title}" Height="15" FontWeight="{Binding FontWeight}" />
           </StackPanel>
         </TreeDataTemplate>
 
@@ -109,7 +111,7 @@
               </ContextMenu>
             </StackPanel.ContextMenu>
             <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-            <TextBlock Text="{Binding Title}" Height="15" />
+            <Controls:EditableTextBlock Text="{Binding Title}" Height="15" />
           </StackPanel>
         </TreeDataTemplate>
 
@@ -133,7 +135,7 @@
               </ContextMenu>
             </StackPanel.ContextMenu>
             <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-            <TextBlock Text="{Binding Title}" Height="15" />
+            <Controls:EditableTextBlock Text="{Binding Title}" Height="15" />
           </StackPanel>
         </TreeDataTemplate>
       </TreeView.DataTemplates>

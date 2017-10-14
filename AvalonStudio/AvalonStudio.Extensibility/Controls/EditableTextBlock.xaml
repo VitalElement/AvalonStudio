@@ -6,7 +6,15 @@
             <ControlTemplate>
                 <Grid>
                     <TextBlock Text="{TemplateBinding Text}" IsVisible="{TemplateBinding !InEditMode}" VerticalAlignment="Center" Name="PART_TextBlock" />
-                    <TextBox Text="{TemplateBinding Text}" IsVisible="{TemplateBinding InEditMode}" Name="PART_TextBox" Background="{TemplateBinding Background}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" BorderThickness="{TemplateBinding BorderThickness}" />
+                    <TextBox Text="{TemplateBinding Text}" 
+                             IsVisible="{TemplateBinding InEditMode}" 
+                             Name="PART_TextBox" 
+                             Background="{TemplateBinding Background}"
+                             Foreground="{TemplateBinding Foreground}" 
+                             VerticalAlignment="Center" 
+                             BorderThickness="{TemplateBinding BorderThickness}" 
+                             Padding="0" 
+                             ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden" />
                 </Grid>
             </ControlTemplate>
         </Setter>

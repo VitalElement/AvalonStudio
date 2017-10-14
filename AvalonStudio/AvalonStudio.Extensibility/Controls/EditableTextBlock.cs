@@ -46,23 +46,21 @@ namespace AvalonStudio.Controls
             base.OnTemplateApplied(e);
 
             _textBox = e.NameScope.Find<TextBox>("PART_TextBox");
-
-            _textBox.KeyUp += _textBox_KeyUp;
         }
 
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
             base.OnDetachedFromLogicalTree(e);
-
-            _textBox.KeyUp -= _textBox_KeyUp;
         }
 
-        private void _textBox_KeyUp(object sender, KeyEventArgs e)
+        protected override void OnKeyUp(KeyEventArgs e)
         {
             if (e.Key == Key.Enter || e.Key == Key.Escape)
             {
                 ExitEditMode();
             }
+
+            base.OnKeyUp(e);
         }
 
         private void EnterEditMode()
