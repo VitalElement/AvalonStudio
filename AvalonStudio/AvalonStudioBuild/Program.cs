@@ -282,12 +282,14 @@ namespace AvalonStudio
 
                 if (project != null)
                 {
-                    var sourceFile = SourceFile.FromPath(project, project, options.File);
+                    throw new NotImplementedException();
+
+                    /*var sourceFile = SourceFile.FromPath(project, project, options.File);
                     project.Items.Add(sourceFile);
                     project.SourceFiles.InsertSorted(sourceFile);
                     project.Save();
                     Console.WriteLine("File added.");
-                    return 1;
+                    return 1;*/
                 }
                 Console.WriteLine("Project not found.");
                 return -1;

@@ -377,7 +377,9 @@
 
         public abstract string LocationDirectory { get; }
 
-        public abstract string Name { get; }
+        public abstract bool CanRename { get; }
+
+        public abstract string Name { get; set; }
 
         public abstract IProjectFolder Parent { get; set; }
 
@@ -400,7 +402,7 @@
         public abstract dynamic ToolchainSettings { get; set; }
         ISolutionFolder ISolutionItem.Parent { get; set; }
 
-        public abstract Guid ProjectTypeId { get; }
+        public abstract Guid ProjectTypeId { get; }        
 
         public event EventHandler FileAdded;
 

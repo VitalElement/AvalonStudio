@@ -28,9 +28,12 @@
             get { return Path.Combine(Project.CurrentDirectory, FilePath); }
         }
 
+        public bool CanRename => true;
+
         public string Name
         {
             get { return Path.GetFileName(Location); }
+            set { }
         }
 
         public IProjectFolder Parent { get; set; }

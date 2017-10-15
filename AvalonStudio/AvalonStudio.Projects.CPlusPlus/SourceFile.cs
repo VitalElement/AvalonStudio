@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    public class SourceFile : ISourceFile
+    /*public class SourceFile : ISourceFile
     {
         private SourceFile()
         {
@@ -59,9 +59,18 @@ namespace AvalonStudio.Projects.CPlusPlus
             get { return Path.GetExtension(FilePath); }
         }
 
+        public bool CanRename => true;
+
         public string Name
         {
             get { return Path.GetFileName(Location); }
+            set
+            {
+                var newFilePath = Path.Combine(CurrentDirectory, value);
+                System.IO.File.Move(Location, newFilePath);
+
+
+            }
         }
 
         public IProjectFolder Parent { get; set; }
@@ -131,5 +140,5 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             FileModifiedExternally?.Invoke(this, new EventArgs());
         }
-    }
+    }*/
 }

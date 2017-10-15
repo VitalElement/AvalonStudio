@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AvalonStudio.Projects
+﻿namespace AvalonStudio.Projects
 {
     public interface IItem
     {
-        string Name { get; }
+        string Name { get; set; }
+
+        bool CanRename { get; }
     }
 }

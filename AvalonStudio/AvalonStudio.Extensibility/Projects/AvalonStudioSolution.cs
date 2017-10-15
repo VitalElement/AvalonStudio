@@ -109,7 +109,14 @@ namespace AvalonStudio.Projects
         public IProject StartupProject { get; set; }
 
         [JsonIgnore]
-        public string Name => Path.GetFileNameWithoutExtension(Location);
+        public string Name
+        {
+            get => Path.GetFileNameWithoutExtension(Location);
+            set { }
+        }
+
+        [JsonIgnore]
+        public bool CanRename => false;
 
         [JsonIgnore]
         public string Location { get; private set; }
