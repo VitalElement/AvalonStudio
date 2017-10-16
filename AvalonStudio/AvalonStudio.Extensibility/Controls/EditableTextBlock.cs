@@ -6,7 +6,6 @@ using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Metadata;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using System;
 
 namespace AvalonStudio.Controls
@@ -14,7 +13,19 @@ namespace AvalonStudio.Controls
     public class EditableTextBlock : TemplatedControl
     {
         private string _text;
+        private string _editText;
         private TextBox _textBox;
+
+        public EditableTextBlock()
+        {
+            this.GetObservable(TextProperty).Subscribe(t =>
+            {
+                if (!InEditMode)
+                {
+                    EditText = t;
+                }
+            });
+        }
 
         public static readonly DirectProperty<EditableTextBlock, string> TextProperty = TextBlock.TextProperty.AddOwner<EditableTextBlock>(
                 o => o.Text,
@@ -31,6 +42,18 @@ namespace AvalonStudio.Controls
                 SetAndRaise(TextProperty, ref _text, value);
             }
         }
+
+        public string EditText
+        {
+            get => _editText;
+            set
+            {
+                SetAndRaise(EditTextProperty, ref _editText, value);
+            }
+        }
+
+        public static readonly DirectProperty<EditableTextBlock, string> EditTextProperty =
+                AvaloniaProperty.RegisterDirect<EditableTextBlock, string>(nameof(EditText), o => o.EditText, (o, v) => o.EditText = v);
 
         public static readonly StyledProperty<bool> InEditModeProperty =
             AvaloniaProperty.Register<EditableTextBlock, bool>(nameof(InEditMode), defaultBindingMode: BindingMode.TwoWay);
@@ -65,6 +88,7 @@ namespace AvalonStudio.Controls
 
         private void EnterEditMode()
         {
+            EditText = Text;
             InEditMode = true;
             (VisualRoot as IInputRoot).MouseDevice.Capture(_textBox);
             _textBox.CaretIndex = Text.Length;
@@ -77,6 +101,8 @@ namespace AvalonStudio.Controls
 
         private void ExitEditMode()
         {
+            Text = EditText;
+
             InEditMode = false;
             (VisualRoot as IInputRoot).MouseDevice.Capture(null);
         }
