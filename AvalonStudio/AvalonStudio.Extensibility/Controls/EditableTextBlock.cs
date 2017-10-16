@@ -100,7 +100,7 @@ namespace AvalonStudio.Controls
             {
                 var hit = this.InputHitTest(e.GetPosition(this));
 
-                if (!this.IsVisualAncestorOf(hit))
+                if (hit == null)
                 {
                     ExitEditMode();
                 }
