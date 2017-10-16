@@ -4,11 +4,11 @@
     using System;
     using System.IO;
 
-    public class File : ISourceFile
+    public class FileSystemFile : ISourceFile
     {
-        public static File FromPath(IProject project, IProjectFolder parent, string filePath)
+        public static FileSystemFile FromPath(IProject project, IProjectFolder parent, string filePath)
         {
-            return new File { Project = project, Parent = parent, FilePath = filePath.ToPlatformPath() };
+            return new FileSystemFile { Project = project, Parent = parent, FilePath = filePath.ToPlatformPath() };
         }
 
         public string CurrentDirectory

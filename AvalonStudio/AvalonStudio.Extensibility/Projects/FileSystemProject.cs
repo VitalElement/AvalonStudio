@@ -50,7 +50,7 @@
 
             foreach (var file in files)
             {
-                var sourceFile = File.FromPath(project, folder, file.ToPlatformPath().NormalizePath());
+                var sourceFile = FileSystemFile.FromPath(project, folder, file.ToPlatformPath().NormalizePath());
                 project.SourceFiles.InsertSorted(sourceFile);
                 folder.Items.InsertSorted(sourceFile);
             }
@@ -69,7 +69,7 @@
 
         public static IProjectFolder GetSubFolders(FileSystemProject project, IProjectFolder parent, string path)
         {
-            var result = new StandardProjectFolder(path);
+            var result = new FileSystemFolder(path);
 
             try
             {
@@ -223,7 +223,7 @@
         {
             var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
-            var sourceFile = File.FromPath(this, folder, fullPath.ToPlatformPath().NormalizePath());
+            var sourceFile = FileSystemFile.FromPath(this, folder, fullPath.ToPlatformPath().NormalizePath());
             SourceFiles.InsertSorted(sourceFile);
 
             if (folder != null)

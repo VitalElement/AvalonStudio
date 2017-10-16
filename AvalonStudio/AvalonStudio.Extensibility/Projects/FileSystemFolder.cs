@@ -5,11 +5,11 @@ namespace AvalonStudio.Projects
     using System.Collections.ObjectModel;
     using System.IO;
 
-    public class StandardProjectFolder : IProjectFolder
+    public class FileSystemFolder : IProjectFolder
     {
         private string _name;
 
-        public StandardProjectFolder(string path)
+        public FileSystemFolder(string path)
         {
             _name = Path.GetFileName(path);
             Location = path;
