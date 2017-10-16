@@ -33,7 +33,7 @@ namespace AvalonStudio.Controls
         }
 
         public static readonly StyledProperty<bool> InEditModeProperty =
-            AvaloniaProperty.Register<EditableTextBlock, bool>(nameof(InEditMode));
+            AvaloniaProperty.Register<EditableTextBlock, bool>(nameof(InEditMode), defaultBindingMode: BindingMode.TwoWay);
 
         public bool InEditMode
         {
@@ -67,7 +67,7 @@ namespace AvalonStudio.Controls
         {
             InEditMode = true;
             (VisualRoot as IInputRoot).MouseDevice.Capture(_textBox);
-            _textBox.CaretIndex = Text.Length - 1;
+            _textBox.CaretIndex = Text.Length;
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {

@@ -60,10 +60,25 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 if (Model != null)
                 {
-                    return string.Format("Solution '{0}' ({1} {2})", Model.Name, Model.Solution.Projects.Count(), StringProjects);
+                    if (InEditMode)
+                    {
+                        return Model.Name;
+                    }
+                    else
+                    {
+                        return string.Format("Solution '{0}' ({1} {2})", Model.Name, Model.Solution.Projects.Count(), StringProjects);
+                    }
                 }
 
                 return string.Empty;
+            }
+
+            set
+            {
+                if(InEditMode)
+                {
+                    Model.Name = value;
+                }
             }
         }
 
@@ -81,5 +96,15 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         }
 
         public override DrawingGroup Icon => null;
+
+        public override bool InEditMode
+        {
+            get => base.InEditMode;
+            set
+            {
+                base.InEditMode = value;
+                this.RaisePropertyChanged(nameof(Title));
+            }
+        }
     }
 }

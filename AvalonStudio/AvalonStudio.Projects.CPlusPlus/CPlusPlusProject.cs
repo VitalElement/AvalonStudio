@@ -243,7 +243,22 @@ namespace AvalonStudio.Projects.CPlusPlus
         public override string Name
         {
             get { return Path.GetFileNameWithoutExtension(Location); }
-            set { }
+            set
+            {
+                if(value != Name)
+                {
+                    if (value != Name)
+                    {
+                        var newLocation = Path.Combine(CurrentDirectory, value + Path.GetExtension(Location));
+
+                        System.IO.File.Move(Location, newLocation);
+
+                        Location = newLocation;
+
+                        Solution?.UpdateItem(this);
+                    }
+                }
+            }
         }
 
         public ProjectType Type { get; set; }

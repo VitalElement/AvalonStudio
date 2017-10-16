@@ -5,9 +5,11 @@ namespace AvalonStudio.Projects
 {
     public class SolutionFolder : ISolutionFolder
     {
+        private string _name;
+        
         public SolutionFolder(string name)
         {
-            Name = name;
+            _name = name;
             Items = new ObservableCollection<ISolutionItem>();
         }
 
@@ -24,7 +26,19 @@ namespace AvalonStudio.Projects
 
         public bool CanRename => true;
 
-        public string Name { get; set; }
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+
+                    Solution?.UpdateItem(this);
+                }
+            }
+        }
 
         public Guid Id { get; set; }
 

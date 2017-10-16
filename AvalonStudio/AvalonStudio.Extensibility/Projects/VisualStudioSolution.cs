@@ -117,7 +117,19 @@ namespace AvalonStudio.Extensibility.Projects
         public string Name
         {
             get => Path.GetFileNameWithoutExtension(_solutionModel.FullPath);
-            set { }
+            set
+            {
+                if (value != Name)
+                {
+                    var newLocation = Path.Combine(CurrentDirectory, value + Path.GetExtension(Location));
+
+                    System.IO.File.Move(Location, newLocation);
+
+                    _solutionModel.FullPath = newLocation;
+                }
+
+                Save();
+            }
         }
 
         public string Location => _solutionModel.FullPath;
@@ -175,6 +187,26 @@ namespace AvalonStudio.Extensibility.Projects
         public ISolutionFolder Parent { get; set; }
 
         public Guid Id { get; set; }
+
+        public void UpdateItem (ISolutionItem item)
+        {
+            var slnProject = _solutionModel.Projects.FirstOrDefault(p => Guid.Parse(p.Id) == item.Id);
+
+            if(slnProject != null)
+            {
+                if(item is ISolutionFolder)
+                {
+                    slnProject.FilePath = slnProject.Name = item.Name;
+                }
+                else if(item is IProject project)
+                {
+                    slnProject.FilePath = CurrentDirectory.MakeRelativePath(project.Location);
+                    slnProject.Name = project.Name;
+                }
+
+                Save();
+            }
+        }
 
         public T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem
         {

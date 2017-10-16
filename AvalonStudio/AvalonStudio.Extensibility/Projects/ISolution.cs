@@ -13,6 +13,8 @@ namespace AvalonStudio.Projects
 
         string CurrentDirectory { get; }
 
+        void UpdateItem(ISolutionItem item);
+
         T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem;
 
         void RemoveItem(ISolutionItem item);

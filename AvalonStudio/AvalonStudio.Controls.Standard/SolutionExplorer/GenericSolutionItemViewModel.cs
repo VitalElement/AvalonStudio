@@ -12,13 +12,24 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             Model = model;
         }
 
+        public override bool CanRename => Model.CanRename;
+
+        public override string Title
+        {
+            get => Model.Name;
+            set
+            {
+                if(Model.CanRename)
+                {
+                    Model.Name = value;
+                }
+            }
+        }
+
         protected new T Model
         {
             get { return (T)base.Model; }
             set { base.Model = value; }
         }
-
-        public virtual string Title => Model.Name;
-        
     }
 }
