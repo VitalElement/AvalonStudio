@@ -20,10 +20,7 @@ namespace AvalonStudio.Controls
         {
             this.GetObservable(TextProperty).Subscribe(t =>
             {
-                if (!InEditMode)
-                {
-                    EditText = t;
-                }
+                EditText = t;
             });
         }
 
