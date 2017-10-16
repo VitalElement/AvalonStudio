@@ -1,7 +1,5 @@
 ﻿using AvalonStudio.Projects;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -19,9 +17,16 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             get => Model.Name;
             set
             {
-                if(Model.CanRename)
+                if(Model.CanRename && Title != value)
                 {
-                    Model.Name = value;
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        Model.Name = value;
+                    }
+                    else
+                    {
+                        throw new Exception("Name must have a length of at least 1.");
+                    }
                 }
             }
         }

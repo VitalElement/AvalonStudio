@@ -75,7 +75,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             set
             {
-                if(InEditMode)
+                if(InEditMode && Model.CanRename && !string.IsNullOrEmpty(value))
                 {
                     Model.Name = value;
                 }

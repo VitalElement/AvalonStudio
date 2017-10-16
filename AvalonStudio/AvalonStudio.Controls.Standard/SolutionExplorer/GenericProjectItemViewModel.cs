@@ -8,11 +8,6 @@
 
     public abstract class ProjectItemViewModel<T> : ProjectItemViewModel where T : IProjectItem
     {
-        private bool isEditingTitle;
-
-        private bool labelVisibility;
-
-        private bool textBoxVisibility;
 
         public ProjectItemViewModel(T model)
         {
@@ -33,9 +28,6 @@
                     Platform.OpenFolderInExplorer((model as IProjectItem).Parent.Location);
                 }
             });
-
-            textBoxVisibility = false;
-            labelVisibility = true;
         }
 
         private new T Model
@@ -49,7 +41,7 @@
             get { return Model.Name; }
             set
             {
-                if (Model.CanRename)
+                if (Model.CanRename && !string.IsNullOrEmpty(value))
                 {
                     Model.Name = value;
                 }
@@ -63,18 +55,6 @@
         public string TitleWithoutExtension
         {
             get { return Path.GetFileNameWithoutExtension(Title); }
-        }
-
-        public bool IsEditingTitle
-        {
-            get
-            {
-                return isEditingTitle;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref isEditingTitle, value);                
-            }
         }
 
         public ReactiveCommand RemoveItemCommand { get; }        
