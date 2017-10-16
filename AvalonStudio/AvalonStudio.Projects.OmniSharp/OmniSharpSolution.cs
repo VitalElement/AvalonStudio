@@ -82,6 +82,8 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public string CurrentDirectory { get; set; }
 
+        public bool CanRename => false;
+
         public string Name { get; set; }
 
         public IEnumerable<IProject> Projects { get; set; }

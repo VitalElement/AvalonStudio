@@ -93,9 +93,12 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override string LocationDirectory => CurrentDirectory;
 
+        public override bool CanRename => false;
+
         public override string Name
         {
             get { return Path.GetFileNameWithoutExtension(Location); }
+            set { }
         }
 
         public override IProjectFolder Parent { get; set; }

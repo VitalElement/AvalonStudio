@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
-    /*public class SourceFile : ISourceFile
+    public class SourceFile : ISourceFile
     {
         private SourceFile()
         {
@@ -140,5 +140,5 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             FileModifiedExternally?.Invoke(this, new EventArgs());
         }
-    }*/
+    }
 }

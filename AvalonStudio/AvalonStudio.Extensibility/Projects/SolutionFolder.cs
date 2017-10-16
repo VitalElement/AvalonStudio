@@ -22,7 +22,9 @@ namespace AvalonStudio.Projects
 
         public ISolutionFolder Parent { get; set; }
 
-        public string Name { get; private set; }
+        public bool CanRename => true;
+
+        public string Name { get; set; }
 
         public Guid Id { get; set; }
 

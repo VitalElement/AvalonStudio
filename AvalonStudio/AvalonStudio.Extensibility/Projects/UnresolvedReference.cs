@@ -52,7 +52,10 @@
         public string Name
         {
             get { return Path.GetFileNameWithoutExtension(Location); }
+            set { }
         }
+
+        public bool CanRename => false;
 
         public IProject Project { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

@@ -237,9 +237,13 @@ namespace AvalonStudio.Projects.CPlusPlus
         public override string Location { get; set; }
 
         [JsonIgnore]
+        public override bool CanRename => true;
+
+        [JsonIgnore]
         public override string Name
         {
             get { return Path.GetFileNameWithoutExtension(Location); }
+            set { }
         }
 
         public ProjectType Type { get; set; }

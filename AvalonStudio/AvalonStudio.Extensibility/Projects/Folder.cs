@@ -17,7 +17,9 @@ namespace AvalonStudio.Projects
 
         public ObservableCollection<IProjectItem> Items { get; }
 
-        public string Name { get; }
+        public bool CanRename => true;
+
+        public string Name { get; set; }
 
         public IProjectFolder Parent { get; set; }
 

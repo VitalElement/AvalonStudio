@@ -112,7 +112,13 @@ namespace AvalonStudio.Extensibility.Projects
             }
         }
 
-        public string Name => Path.GetFileNameWithoutExtension(_solutionModel.FullPath);
+        public bool CanRename => true;
+
+        public string Name
+        {
+            get => Path.GetFileNameWithoutExtension(_solutionModel.FullPath);
+            set { }
+        }
 
         public string Location => _solutionModel.FullPath;
 

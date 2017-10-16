@@ -141,7 +141,14 @@ Program.main();
         public override string LocationDirectory => CurrentDirectory;
 
         [JsonIgnore]
-        public override string Name => Path.GetFileNameWithoutExtension(Location);
+        public override string Name
+        {
+            get => Path.GetFileNameWithoutExtension(Location);
+            set { }
+        }
+
+        [JsonIgnore]
+        public override bool CanRename => false;
 
         [JsonIgnore]
         public override IProjectFolder Parent { get; set; }
