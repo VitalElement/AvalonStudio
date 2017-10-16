@@ -7,9 +7,11 @@ namespace AvalonStudio.Projects
 
     public class StandardProjectFolder : IProjectFolder
     {
+        private string _name;
+
         public StandardProjectFolder(string path)
         {
-            Name = Path.GetFileName(path);
+            _name = Path.GetFileName(path);
             Location = path;
 
             Items = new ObservableCollection<IProjectItem>();
@@ -19,11 +21,24 @@ namespace AvalonStudio.Projects
 
         public bool CanRename => true;
 
-        public string Name { get; set; }
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (value != Name)
+                {
+                    var newLocation = Path.Combine(Path.GetDirectoryName(Location), value);
+
+                    Directory.Move(Location, newLocation);
+                }
+            }
+        }
 
         public IProjectFolder Parent { get; set; }
 
-        public string Location { get; }
+        public string Location { get; private set; }
+
         public string LocationDirectory => Location;
 
         public IProject Project { get; set; }

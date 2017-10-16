@@ -33,7 +33,15 @@
         public string Name
         {
             get { return Path.GetFileName(Location); }
-            set { }
+            set
+            {
+                if (value != Name)
+                {
+                    var newLocation = Path.Combine(CurrentDirectory, value);
+
+                    System.IO.File.Move(Location, newLocation);
+                }
+            }
         }
 
         public IProjectFolder Parent { get; set; }
