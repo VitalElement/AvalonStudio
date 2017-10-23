@@ -10,15 +10,16 @@
     <Version>1.0.0</Version>
     <AssemblyVersion>0.3.0.0</AssemblyVersion>
     <FileVersion>0.3.0.0</FileVersion>
+    <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.2-build4045-alpha" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.5.2-build4045-alpha" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.5.2-build4045-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.2-build4149-alpha" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.5.2-build4149-alpha" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.5.2-build4149-alpha" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.2-build474-alpha" />
     <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.5.2-build474-alpha" />
