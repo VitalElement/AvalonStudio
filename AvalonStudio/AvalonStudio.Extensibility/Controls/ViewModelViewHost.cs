@@ -76,7 +76,7 @@ namespace AvalonStudio.Controls
             set { SetValue(ViewModelProperty, value); }
         }
 
-        protected override void OnDataContextChanged()
+        protected override void OnDataContextChanged(EventArgs e)
         {
             if (Content as ILogical != null)
             {
