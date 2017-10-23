@@ -1,18 +1,13 @@
 ﻿@using System
 /******************************************************************************
-*       Description: 
+*  Description: 
 *
 *       Author: 
 *         Date: @DateTime.Now.ToString()
 *
 *******************************************************************************/
-#pragma mark Compiler Pragmas
-#ifndef @Model.ClassName.ToUpper()_H_
-#define @Model.ClassName.ToUpper()_H_
+#pragma once
 
-#pragma mark Includes
-#include <stddef.h>
-#include <stdbool.h>
 #include <stdint.h>
 
 /**
@@ -20,7 +15,6 @@
  */
 class @Model.ClassName
 {
-#pragma mark Public Members
 public:
     /**
      * Instantiates a new instance of @Model.ClassName
@@ -28,12 +22,4 @@ public:
     @Model.ClassName ();
     ~@Model.ClassName ();
 
-#pragma mark Protected Members
-protected:
-
-#pragma mark Private Members
-private:
-
 };
-
-#endif
