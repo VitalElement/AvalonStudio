@@ -249,9 +249,11 @@ namespace AvalonStudio.Projects.CPlusPlus
                 {
                     var newLocation = Path.Combine(CurrentDirectory, value + Path.GetExtension(Location));
 
+                    var current = Location;
+
                     Location = newLocation;
 
-                    System.IO.File.Move(Location, newLocation);
+                    File.Move(current, newLocation);
 
                     Solution?.UpdateItem(this);
                 }

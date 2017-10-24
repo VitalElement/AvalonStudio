@@ -34,10 +34,13 @@
                 uiDispatcher = Dispatcher.UIThread;
             }
         }
+
         ~FileSystemProject()
         {
             Dispose();
         }
+
+        protected virtual bool FilterProjectFile => true;
 
         [JsonIgnore]
         public Guid Id { get; set; }
@@ -60,14 +63,14 @@
         {
             var result = false;
 
-            var path = CurrentDirectory.MakeRelativePath(fullPath).ToAvalonPath();
-
-            if(path == Location)
+            if(FilterProjectFile && fullPath == Location)
             {
                 result = true;
             }
             else
             {
+                var path = CurrentDirectory.MakeRelativePath(fullPath).ToAvalonPath();
+
                 var filter = ExcludedFiles.FirstOrDefault(f => path.Contains(f));
 
                 result = !string.IsNullOrEmpty(filter);
