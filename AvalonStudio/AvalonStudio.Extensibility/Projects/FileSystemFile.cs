@@ -4,11 +4,11 @@
     using System;
     using System.IO;
 
-    public class File : ISourceFile
+    public class FileSystemFile : ISourceFile
     {
-        public static File FromPath(IProject project, IProjectFolder parent, string filePath)
+        public static FileSystemFile FromPath(IProject project, IProjectFolder parent, string filePath)
         {
-            return new File { Project = project, Parent = parent, FilePath = filePath.ToPlatformPath() };
+            return new FileSystemFile { Project = project, Parent = parent, FilePath = filePath.ToPlatformPath() };
         }
 
         public string CurrentDirectory
@@ -28,9 +28,20 @@
             get { return Path.Combine(Project.CurrentDirectory, FilePath); }
         }
 
+        public bool CanRename => true;
+
         public string Name
         {
             get { return Path.GetFileName(Location); }
+            set
+            {
+                if (value != Name)
+                {
+                    var newLocation = Path.Combine(CurrentDirectory, value);
+
+                    System.IO.File.Move(Location, newLocation);
+                }
+            }
         }
 
         public IProjectFolder Parent { get; set; }

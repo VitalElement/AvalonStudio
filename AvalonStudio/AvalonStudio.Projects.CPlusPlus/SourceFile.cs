@@ -59,9 +59,18 @@ namespace AvalonStudio.Projects.CPlusPlus
             get { return Path.GetExtension(FilePath); }
         }
 
+        public bool CanRename => true;
+
         public string Name
         {
             get { return Path.GetFileName(Location); }
+            set
+            {
+                var newFilePath = Path.Combine(CurrentDirectory, value);
+                System.IO.File.Move(Location, newFilePath);
+
+
+            }
         }
 
         public IProjectFolder Parent { get; set; }

@@ -23,7 +23,7 @@ namespace AvalonStudio
 
         private static readonly ProgramConsole console = new ProgramConsole();
 
-        private static Solution LoadSolution(ProjectOption options)
+        private static ISolution LoadSolution(ProjectOption options)
         {
             var currentDir = Directory.GetCurrentDirectory();
 
@@ -31,13 +31,13 @@ namespace AvalonStudio
 
             if (System.IO.File.Exists(solutionFile))
             {
-                return Solution.Load(solutionFile);
+                return AvalonStudioSolution.Load(solutionFile);
             }
 
             throw new Exception("Solution file: " + options.Solution + "could not be found.");
         }
 
-        private static IProject FindProject(Solution solution, string project)
+        private static IProject FindProject(ISolution solution, string project)
         {
             try
             {
@@ -282,12 +282,14 @@ namespace AvalonStudio
 
                 if (project != null)
                 {
-                    var sourceFile = SourceFile.FromPath(project, project, options.File);
+                    throw new NotImplementedException();
+
+                    /*var sourceFile = SourceFile.FromPath(project, project, options.File);
                     project.Items.Add(sourceFile);
                     project.SourceFiles.InsertSorted(sourceFile);
                     project.Save();
                     Console.WriteLine("File added.");
-                    return 1;
+                    return 1;*/
                 }
                 Console.WriteLine("Project not found.");
                 return -1;
@@ -371,7 +373,7 @@ namespace AvalonStudio
             }
 
             throw new NotImplementedException();
-            var project = CPlusPlusProject.Create(null, projectPath, options.Project);
+            var project = CPlusPlusProject.Create(projectPath, options.Project);
 
             if (project != null)
             {

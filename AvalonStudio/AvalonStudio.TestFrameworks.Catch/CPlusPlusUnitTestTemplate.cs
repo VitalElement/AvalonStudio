@@ -62,11 +62,11 @@ namespace AvalonStudio.Languages.CPlusPlus
             throw new NotImplementedException();
         }
 
-        public override async Task<IProject> Generate(ISolution solution, string name)
+        public override async Task<IProject> Generate(ISolutionFolder solutionFolder, string name)
         {
             var shell = IoC.Get<IShell>();
-            var project = await base.Generate(solution, name);
-            var catchProjectDir = Path.Combine(solution.CurrentDirectory, "AvalonStudio.Testing.Catch");
+            var project = await base.Generate(solutionFolder, name);
+            var catchProjectDir = Path.Combine(solutionFolder.Solution.CurrentDirectory, "AvalonStudio.Testing.Catch");
             var catchProjectFile = Path.Combine(catchProjectDir, "CatchTestFramework.acproj");
             if (!Directory.Exists(catchProjectDir))
             {
@@ -76,10 +76,10 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
 
             // Add project
-            var catchProject = Solution.LoadProjectFile(solution, catchProjectFile);
+            var catchProject = Project.LoadProjectFile(catchProjectFile);
             catchProject.Hidden = true;
 
-            solution.AddProject(catchProject);
+            solutionFolder.Solution.AddItem(catchProject);
 
             // Reference catch.
             project.AddReference(catchProject);
@@ -97,7 +97,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             settings.CompileSettings.CustomFlags += " -Wno-unknown-pragmas ";
 
             project.Save();
-            solution.Save();
+            solutionFolder.Solution.Save();
 
             return project;
         }
