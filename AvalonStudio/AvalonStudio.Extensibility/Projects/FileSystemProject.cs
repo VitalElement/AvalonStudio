@@ -365,7 +365,7 @@
         }
 
         [JsonIgnore]
-        public IList<ISourceFile> SourceFiles { get; private set; }
+        public List<ISourceFile> SourceFiles { get; private set; }
 
         [JsonIgnore]
         public IList<IProjectFolder> Folders { get; private set; }
@@ -422,6 +422,8 @@
         ISolutionFolder ISolutionItem.Parent { get; set; }
 
         public abstract Guid ProjectTypeId { get; }        
+
+        IReadOnlyList<ISourceFile> IProject.SourceFiles => SourceFiles.AsReadOnly();
 
         public event EventHandler FileAdded;
 

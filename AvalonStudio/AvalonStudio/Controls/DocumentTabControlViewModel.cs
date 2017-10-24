@@ -171,7 +171,6 @@ namespace AvalonStudio.Controls
 
                 if (value is IEditor editor)
                 {
-                    editor.Focus();
                     editor.TriggerCodeAnalysis();
                 }
 

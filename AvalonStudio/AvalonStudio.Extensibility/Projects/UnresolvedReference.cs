@@ -65,6 +65,8 @@
 
         public Guid ProjectTypeId => Guid.Empty;
 
+        public IReadOnlyList<ISourceFile> SourceFiles => throw new NotImplementedException();
+
         public event EventHandler FileAdded;
 
         public void AddReference(IProject project)

@@ -70,6 +70,8 @@ namespace AvalonStudio.Extensibility.Tests
 
         public bool CanRename => true;
 
+        public IReadOnlyList<ISourceFile> SourceFiles => throw new NotImplementedException();
+
         ISolutionFolder ISolutionItem.Parent { get; set; }
 
         public event EventHandler FileAdded;

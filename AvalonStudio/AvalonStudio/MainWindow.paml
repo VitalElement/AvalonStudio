@@ -16,7 +16,7 @@
     
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
       <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
-    </Style>    
+    </Style>
     
     <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
       <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
@@ -138,6 +138,8 @@
       <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
+    <Controls:QuickCommander Grid.RowSpan="3" Grid.ColumnSpan="5" Width="450" MaxHeight="500" DataContext="{Binding QuickCommander}" VerticalAlignment="Top" />
+    
     <Controls:ModalDialog Grid.RowSpan="3" Grid.ColumnSpan="5" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
   </Grid>
 </Controls:MetroWindow>
