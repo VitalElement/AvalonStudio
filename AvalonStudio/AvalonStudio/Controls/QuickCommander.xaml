@@ -5,7 +5,10 @@
              xmlns:beh="clr-namespace:AvalonStudio.Behaviors;assembly=AvalonStudio" Name="PART_QuickCommander" IsVisible="{Binding IsVisible, Mode=TwoWay}">
     <UserControl.Styles>
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="#22FFFFFF" />
+            <Setter Property="Background" Value="{DynamicResource ThemeControlDarkBrush}" />
+        </Style>
+        <Style Selector="ListBoxItem:selected">
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
         </Style>
     </UserControl.Styles>
     <UserControl.KeyBindings>
