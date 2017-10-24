@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Extensibility.Projects
 {
@@ -215,7 +216,7 @@ namespace AvalonStudio.Extensibility.Projects
 
             if (item is IProject project)
             {
-                var currentProject = Projects.FirstOrDefault(p => p.Location == project.Location);
+                var currentProject = Projects.FirstOrDefault(p => p.Location.IsSamePathAs(project.Location));
 
                 if (currentProject == null)
                 {
