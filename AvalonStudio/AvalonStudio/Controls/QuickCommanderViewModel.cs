@@ -100,7 +100,7 @@ namespace AvalonStudio.Controls
                 {
                     foreach (var project in _shell.CurrentSolution.Projects)
                     {
-                        project.SourceFiles.Select(sf =>
+                        project.SourceFiles?.Select(sf =>
                         {
                             var match = FuzzyMatch.StringMatch(sf.Project.Location.MakeRelativePath(sf.Location), query, null);
 
