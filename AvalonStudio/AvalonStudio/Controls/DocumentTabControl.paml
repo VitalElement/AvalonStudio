@@ -33,7 +33,7 @@
       <DataTemplate>
         <StackPanel Orientation="Horizontal" Gap="2">
           <TextBlock Text="{Binding Title}" Margin="2" FontSize="12"/>
-          <Button IsVisble="{Binding IsSelected}" Height="14" Width="14" Command="{Binding CloseCommand}">
+          <Button IsVisible="{Binding IsSelected}" Height="14" Width="14" Command="{Binding CloseCommand}">
             <Button.Styles>
               <Style Selector="Button">
                 <Setter Property="BorderThickness" Value="0"/>
@@ -48,7 +48,7 @@
             <Path Margin="2" Stretch="Uniform" UseLayoutRounding="False" Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="{DynamicResource ApplicationAccentForegroundBrush}" />
           </Button>
 
-          <Button IsVisble="{Binding IsSelected}" Height="14" Width="14">
+          <Button IsVisible="{Binding IsSelected}" Height="14" Width="14">
             <Button.Styles>
               <Style Selector="Button">
                 <Setter Property="BorderThickness" Value="0"/>

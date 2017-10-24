@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui">
   <Menu Grid.ColumnSpan="2">
     <MenuItem Header="File">
-      <MenuItem Header="New Project" Command="{Binding NewProjectCommand}"/>
+      <MenuItem Header="New Project" Command="{Binding AddNewProjectCommand}"/>
       <MenuItem Header="Open Project" Command="{Binding LoadProjectCommand}"/>
       <MenuItem Header="Save" HotKey="Ctrl+S" Command="{Binding SaveCommand}" />
       <MenuItem Header="Save All" HotKey="Ctrl+Shift+S" Command="{Binding SaveAllCommand}" />

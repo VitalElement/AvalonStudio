@@ -588,7 +588,7 @@ namespace AvalonStudio
             {
                 return currentSolution;
             }
-            set
+            private set
             {
                 var oldValue = CurrentSolution;
 

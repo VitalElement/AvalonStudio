@@ -1,133 +1,157 @@
-//using AvalonStudio.MVVM;
-//namespace AvalonStudio.Controls.ViewModels
-//{
-//    using Microsoft.Win32;
-//    using System;
-//    using System.Collections.ObjectModel;
-//    using System.Windows.Input;
-//    using AvalonStudio.MVVM;
-//    using Avalonia.Controls;
-//    using ReactiveUI;
+namespace AvalonStudio.Controls.Standard.SolutionExplorer
+{
+    using Avalonia.Controls;
+    using Avalonia.Media;
+    using AvalonStudio.Extensibility;
+    using AvalonStudio.MVVM;
+    using AvalonStudio.Platforms;
+    using AvalonStudio.Projects;
+    using AvalonStudio.Shell;
+    using ReactiveUI;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
 
-//    public class SolutionFolderViewModel : SolutionParentViewModel<SolutionFolder>
-//    {
-//        public SolutionFolderViewModel(SolutionFolder folder) : base(folder)
-//        {
-//        }
+    public class SolutionFolderViewModel : SolutionParentViewModel<ISolutionFolder>
+    {
+        private DrawingGroup _folderOpenIcon;
+        private DrawingGroup _folderIcon;
 
-//        public static SolutionFolderViewModel Create(SolutionFolder folder)
-//        {
-//            var result = new SolutionFolderViewModel(folder);
+        public SolutionFolderViewModel(ISolutionParentViewModel parent, ISolutionFolder folder) : base(parent, folder)
+        {
+            _folderIcon = "FolderIcon".GetIcon();
+            _folderOpenIcon = "FolderOpenIcon".GetIcon();
+        }
 
-//            return result;
-//        }
-//    }
+        public override DrawingGroup Icon => IsExpanded ? _folderOpenIcon : _folderIcon;
+    }
 
-//    public abstract class SolutionParentViewModel<T> : ProjectItemViewModel where T : SolutionFolder
-//    {
-//        public SolutionParentViewModel(T model)
-//        {
-//            Children = new ObservableCollection<ViewModel>();
-//            Children.BindCollections(Model.Children, (p) => ReactiveObjectExtensions.Create(p), (vm, m) => vm.Model == m);
+    public interface ISolutionParentViewModel
+    {
+        bool IsExpanded { get; set; }
 
-//            AddNewFolderCommand = ReactiveCommand.Create();
-//            AddNewFolderCommand.Subscribe((args) =>
-//            {
-//                //Workspace.Instance.ModalDialog = new NewSolutionFolderViewModel(this.model as SolutionFolder);
-//                //Workspace.Instance.ModalDialog.ShowDialog();
-//            });
+        ISolutionParentViewModel Parent { get; }
 
-//            AddNewProjectCommand = ReactiveCommand.Create();
-//            AddNewProjectCommand.Subscribe((o) =>
-//            {
-//                //Workspace.Instance.ModalDialog = new NewProjectDialogViewModel(Workspace.Instance, Model, false);
-//                //Workspace.Instance.ModalDialog.ShowDialog();
-//            });
+        void VisitChildren(Action<SolutionItemViewModel> visitor);
+    }
 
-//            AddExistingProjectCommand = ReactiveCommand.Create();
-//            AddExistingProjectCommand.Subscribe(async (o) =>
-//            {
-//                Avalonia.Controls.OpenFileDialog ofd = new Avalonia.Controls.OpenFileDialog();
-//                ofd.InitialDirectory = model.Solution.CurrentDirectory;
+    public abstract class SolutionParentViewModel<T> : SolutionItemViewModel<T>, ISolutionParentViewModel
+        where T : ISolutionFolder
+    {
+        private ObservableCollection<SolutionItemViewModel> _items;
+        private bool _isExpanded;
 
-//                // ofd.Filter = "VEStudio Project Files (*" + VEStudioService.ProjectExtension + ")|*" + VEStudioService.ProjectExtension;
+        public SolutionParentViewModel(ISolutionParentViewModel parent, T model) : base(parent, model)
+        {
+            Items = new ObservableCollection<SolutionItemViewModel>();
+            Items.BindCollections(Model.Items, p => { return SolutionItemViewModel.Create(this, p); }, (pvm, p) => pvm.Model == p);
 
-//                var result = await ofd.ShowAsync();
+            AddNewFolderCommand = ReactiveCommand.Create(() =>
+            {
+                Model.Solution.AddItem(SolutionFolder.Create("New Folder"), Model);
 
-//                if (result.Length == 1)
-//                {
-//                    var unloadedProject = new UnloadedProject(Model, Model.Solution.CurrentDirectory.MakeRelativePath(result[0]));
-//                    var project = Project.LoadProject(Model.Solution, unloadedProject);
+                Model.Solution.Save();
+            });
 
-//                    if (!Model.Solution.ContainsProject(project))
-//                    {
-//                        model.AddProject(project, unloadedProject);
-//                    }
-//                }
-//            });
+            AddExistingProjectCommand = ReactiveCommand.Create(async () =>
+            {
+                var dlg = new OpenFileDialog();
+                dlg.Title = "Open Project";
 
-//            RemoveCommand = ReactiveCommand.Create();
-//            RemoveCommand.Subscribe((o) =>
-//            {
-//                model.Solution.GetParent(Model).RemoveItem(Model);
-//            });
-//        }
+                var extensions = new List<string>();
 
-//        public bool VisitAllChildren(Func<ProjectItemViewModel, bool> func)
-//        {
-//            if (func(this))
-//            {
-//                return true;
-//            }
+                var shell = IoC.Get<IShell>();
 
-//            foreach (ProjectItemViewModel item in this.Children)
-//            {
-//                if (item is SolutionFolderViewModel)
-//                {
-//                    if ((item as SolutionFolderViewModel).VisitAllChildren(func))
-//                    {
-//                        return true;
-//                    }
+                foreach (var projectType in shell.ProjectTypes)
+                {
+                    extensions.AddRange(projectType.Extensions);
+                }
 
-//                    if (func(item))
-//                    {
-//                        return true;
-//                    }
-//                }
-//                else if (item is ProjectViewModel)
-//                {
-//                    if (func(item))
-//                    {
-//                        return true;
-//                    }
-//                }
-//            }
+                dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = extensions });
 
-//            return false;
-//        }
+                if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+                {
+                    dlg.InitialDirectory = Model.Solution.CurrentDirectory;
+                }
+                else
+                {
+                    dlg.InitialFileName = Model.Solution.CurrentDirectory;
+                }
 
-//        public ReactiveCommand AddNewFolderCommand { get; private set; }
-//        public ReactiveCommand AddNewProjectCommand { get; private set; }
-//        public ReactiveCommand AddExistingProjectCommand { get; private set; }
-//        public ReactiveCommand RemoveCommand { get; private set; }
+                dlg.AllowMultiple = false;
 
-//        new public SolutionFolder Model
-//        {
-//            get { return base.Model as SolutionFolder; }
-//        }
+                var result = await dlg.ShowAsync();
 
-//        private ObservableCollection<ViewModel> children;
-//        public ObservableCollection<ViewModel> Children
-//        {
-//            get
-//            {
-//                return children;
-//            }
+                if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
+                {
+                    var proj = Project.LoadProjectFile(result[0]);
 
-//            set
-//            {
-//                children = value; this.RaisePropertyChanged();
-//            }
-//        }
-//    }
-//}
+                    if (proj != null)
+                    {
+                        Model.Solution.AddItem(proj, Model);
+                        Model.Solution.Save();
+                    }
+                }
+            });
+
+            AddNewProjectCommand = ReactiveCommand.Create(() =>
+            {
+                var shell = IoC.Get<IShell>();
+
+                shell.ModalDialog = new NewProjectDialogViewModel(Model);
+                shell.ModalDialog.ShowDialog();
+            });
+
+            RemoveCommand = ReactiveCommand.Create(() =>
+            {
+                Model.Solution.RemoveItem(Model);
+                Model.Solution.Save();
+            });
+        }
+
+        public void VisitChildren(Action<SolutionItemViewModel> visitor)
+        {
+            foreach (var child in Items)
+            {
+                if (child is ISolutionParentViewModel folder)
+                {
+                    folder.VisitChildren(visitor);
+                }
+
+                visitor(child);
+            }
+        }
+
+        public ObservableCollection<SolutionItemViewModel> Items
+        {
+            get
+            {
+                return _items;
+            }
+
+            set
+            {
+                _items = value; this.RaisePropertyChanged();
+            }
+        }
+
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set
+            {
+                _isExpanded = value;
+
+                this.RaiseAndSetIfChanged(ref _isExpanded, value);
+
+                this.RaisePropertyChanged(nameof(Icon));
+            }
+        }
+
+        public ReactiveCommand AddNewFolderCommand { get; private set; }
+        public ReactiveCommand AddNewProjectCommand { get; private set; }
+        public ReactiveCommand AddExistingProjectCommand { get; private set; }
+        public ReactiveCommand RemoveCommand { get; private set; }
+    }
+}

@@ -22,7 +22,7 @@ namespace AvalonStudio.Shell
 
     public interface IShell
     {        
-        ISolution CurrentSolution { get; set; }
+        ISolution CurrentSolution { get; }
 
         IObservable<ISolution> OnSolutionChanged { get; }
 
