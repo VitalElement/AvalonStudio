@@ -78,6 +78,11 @@ namespace AvalonStudio.Debugging.GDB
         private bool _waitForStopBeforeRunning;
 
         /// <summary>
+        /// Override if the GDBSession should Load Symbols (-file-exec-and-symbols command) before a session starts).
+        /// </summary>
+        protected virtual bool ManuallyLoadSymbols => false;
+
+        /// <summary>
 		/// Raised when the debugging session is paused
 		/// </summary>
 		private event EventHandler<TargetEventArgs> TargetStoppedWhenSuppressed;
@@ -108,14 +113,17 @@ namespace AvalonStudio.Debugging.GDB
                 // Initialize the terminal
                 RunCommand("-inferior-tty-set", Escape(tty));
 
-                try
+                if (ManuallyLoadSymbols)
                 {
-                    RunCommand("-file-exec-and-symbols", Escape(startInfo.Command.ToAvalonPath()));
-                }
-                catch
-                {
-                    FireTargetEvent(TargetEventType.TargetExited, null);
-                    throw;
+                    try
+                    {
+                        RunCommand("-file-exec-and-symbols", Escape(startInfo.Command.ToAvalonPath()));
+                    }
+                    catch
+                    {
+                        FireTargetEvent(TargetEventType.TargetExited, null);
+                        throw;
+                    }
                 }
 
                 RunCommand("-environment-cd", Escape(startInfo.WorkingDirectory));
@@ -1001,7 +1009,7 @@ namespace AvalonStudio.Debugging.GDB
                             }
                         }
                     }
-                    
+
                     if (ev != null)
                     {
                         ThreadPool.QueueUserWorkItem(delegate
