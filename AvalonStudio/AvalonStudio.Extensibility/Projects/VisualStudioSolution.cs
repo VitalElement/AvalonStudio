@@ -23,6 +23,13 @@ namespace AvalonStudio.Extensibility.Projects
             return new VisualStudioSolution(SlnFile.Read(fileName));
         }
 
+        /// <summary>
+        /// Allows disabling of serialization to disk. Useful for UnitTesting.
+        /// </summary>
+        public bool SaveEnabled { get; set; } = true;
+
+        public SlnFile Model => _solutionModel;
+
         public static VisualStudioSolution Create(string location, string name, bool save = true)
         {
             var filePath = Path.Combine(location, name + "." + Extension);
@@ -272,6 +279,11 @@ namespace AvalonStudio.Extensibility.Projects
                 }
             }
 
+            if(item == StartupProject)
+            {
+                StartupProject = null;
+            }
+
             SetItemParent(item, null);
 
             _solutionItems.Remove(item.Id);
@@ -303,7 +315,10 @@ namespace AvalonStudio.Extensibility.Projects
 
         public void Save()
         {
-            _solutionModel.Write();
+            if (SaveEnabled)
+            {
+                _solutionModel.Write();
+            }
         }
 
         private void SetItemParent(ISolutionItem item, ISolutionFolder parent)
