@@ -16,7 +16,7 @@
     
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
       <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
-    </Style>    
+    </Style>
     
     <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
       <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
