@@ -249,9 +249,9 @@ namespace AvalonStudio.Projects.CPlusPlus
                 {
                     var newLocation = Path.Combine(CurrentDirectory, value + Path.GetExtension(Location));
 
-                    System.IO.File.Move(Location, newLocation);
-
                     Location = newLocation;
+
+                    System.IO.File.Move(Location, newLocation);
 
                     Solution?.UpdateItem(this);
                 }
@@ -500,7 +500,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             }
 
             project.Project = project;
-            project.Location = filename;            
+            project.Location = filename;
 
             project.Items.InsertSorted(new ReferenceFolder(project));
             project.LoadFiles();

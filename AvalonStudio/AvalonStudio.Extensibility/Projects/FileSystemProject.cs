@@ -42,32 +42,41 @@
         [JsonIgnore]
         public Guid Id { get; set; }
 
-        public static void PopulateFiles(FileSystemProject project, IProjectFolder folder)
+        public void PopulateFiles(IProjectFolder folder)
         {
             var files = Directory.EnumerateFiles(folder.Location);
 
-            files = files.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()) && f != project.Location);
+            files = files.Where(f => !IsExcluded(f));
 
             foreach (var file in files)
             {
-                var sourceFile = FileSystemFile.FromPath(project, folder, file.ToPlatformPath().NormalizePath());
-                project.SourceFiles.InsertSorted(sourceFile);
+                var sourceFile = FileSystemFile.FromPath(this, folder, file.ToPlatformPath().NormalizePath());
+                SourceFiles.InsertSorted(sourceFile);
                 folder.Items.InsertSorted(sourceFile);
             }
         }
 
-        private static bool IsExcluded(List<string> exclusionFilters, string path)
+        private bool IsExcluded(string fullPath)
         {
             var result = false;
 
-            var filter = exclusionFilters.FirstOrDefault(f => path.Contains(f));
+            var path = CurrentDirectory.MakeRelativePath(f).ToAvalonPath();
 
-            result = !string.IsNullOrEmpty(filter);
+            if(path == Location)
+            {
+                result = true;
+            }
+            else
+            {
+                var filter = ExcludedFiles.FirstOrDefault(f => path.Contains(f));
+
+                result = !string.IsNullOrEmpty(filter);
+            }
 
             return result;
         }
 
-        public static IProjectFolder GetSubFolders(FileSystemProject project, IProjectFolder parent, string path)
+        public IProjectFolder GetSubFolders(IProjectFolder parent, string path)
         {
             var result = new FileSystemFolder(path);
 
@@ -77,17 +86,17 @@
 
                 if (folders.Count() > 0)
                 {
-                    foreach (var folder in folders.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath())))
+                    foreach (var folder in folders.Where(f => !IsExcluded(f)))
                     {
-                        result.Items.InsertSorted(GetSubFolders(project, result, folder));
+                        result.Items.InsertSorted(GetSubFolders(this, result, folder));
                     }
                 }
 
-                PopulateFiles(project, result);
+                PopulateFiles(this, result);
 
-                project.Folders.InsertSorted(result);
+                Folders.InsertSorted(result);
                 result.Parent = parent;
-                result.Project = project;
+                result.Project = this;
             }
             catch (Exception)
             {
@@ -221,25 +230,29 @@
 
         public void AddFile(string fullPath)
         {
-            var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
-
-            var sourceFile = FileSystemFile.FromPath(this, folder, fullPath.ToPlatformPath().NormalizePath());
-            SourceFiles.InsertSorted(sourceFile);
-
-            if (folder != null)
+            if(!IsExcluded(ExcludedFiles, project.CurrentDirectory.MakeRelativePath(fullPath).ToAvalonPath()))
             {
-                if (folder.Location == Project.CurrentDirectory)
-                {
-                    Project.Items.InsertSorted(sourceFile);
-                    sourceFile.Parent = Project;
-                }
-                else
-                {
-                    folder.Items.InsertSorted(sourceFile);
-                    sourceFile.Parent = folder;
-                }
+                var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
-                FileAdded?.Invoke(this, new EventArgs());
+                var sourceFile = FileSystemFile.FromPath(this, folder, fullPath.ToPlatformPath().NormalizePath());
+                
+                SourceFiles.InsertSorted(sourceFile);
+
+                if (folder != null)
+                {
+                    if (folder.Location == Project.CurrentDirectory)
+                    {
+                        Project.Items.InsertSorted(sourceFile);
+                        sourceFile.Parent = Project;
+                    }
+                    else
+                    {
+                        folder.Items.InsertSorted(sourceFile);
+                        sourceFile.Parent = folder;
+                    }
+
+                    FileAdded?.Invoke(this, new EventArgs());
+                }
             }
         }
 
