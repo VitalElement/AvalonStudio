@@ -56,8 +56,6 @@ namespace AvalonStudio.Extensibility.Projects
             ResolveReferences();
 
             BuildTree();
-
-            this.PrintTree();
         }
 
         private void BuildTree()
