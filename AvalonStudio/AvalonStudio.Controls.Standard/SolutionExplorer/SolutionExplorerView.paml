@@ -19,7 +19,7 @@
                 <MenuItem Header="Clean Solution" />
                 <Separator />
                 <MenuItem Header="Add">
-                  <MenuItem Header="New Project..." Command="{Binding NewProjectCommand}" />
+                  <MenuItem Header="New Project..." Command="{Binding AddNewProjectCommand}" />
                   <MenuItem Header="Existing Project..."  Command="{Binding AddExistingProjectCommand}"/>
                   <MenuItem Header="New Solution Folder..." Command="{Binding AddNewFolderCommand}" />
                 </MenuItem>
