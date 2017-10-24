@@ -228,10 +228,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         public override ISolution Solution { get; set; }
 
         [JsonIgnore]
-        public override string CurrentDirectory
-        {
-            get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
-        }
+        public override string CurrentDirectory => Path.GetDirectoryName(Location) + Platform.DirectorySeperator;
 
         [JsonIgnore]
         public override string Location { get; set; }
