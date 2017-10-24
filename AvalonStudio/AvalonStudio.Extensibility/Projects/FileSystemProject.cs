@@ -60,7 +60,7 @@
         {
             var result = false;
 
-            var path = CurrentDirectory.MakeRelativePath(f).ToAvalonPath();
+            var path = CurrentDirectory.MakeRelativePath(fullPath).ToAvalonPath();
 
             if(path == Location)
             {
@@ -88,11 +88,11 @@
                 {
                     foreach (var folder in folders.Where(f => !IsExcluded(f)))
                     {
-                        result.Items.InsertSorted(GetSubFolders(this, result, folder));
+                        result.Items.InsertSorted(GetSubFolders(result, folder));
                     }
                 }
 
-                PopulateFiles(this, result);
+                PopulateFiles(result);
 
                 Folders.InsertSorted(result);
                 result.Parent = parent;
@@ -107,7 +107,7 @@
 
         protected void LoadFiles()
         {
-            var folders = GetSubFolders(this, this, CurrentDirectory);
+            var folders = GetSubFolders(this, CurrentDirectory);
 
             foreach (var item in folders.Items)
             {
@@ -230,7 +230,7 @@
 
         public void AddFile(string fullPath)
         {
-            if(!IsExcluded(ExcludedFiles, project.CurrentDirectory.MakeRelativePath(fullPath).ToAvalonPath()))
+            if(!IsExcluded(fullPath))
             {
                 var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
@@ -278,25 +278,28 @@
 
         public void AddFolder(string fullPath)
         {
-            var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
-
-            if (folder != null)
+            if (!IsExcluded(fullPath))
             {
-                var existing = FindFolder(fullPath);
+                var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
-                if (existing == null)
+                if (folder != null)
                 {
-                    var newFolder = GetSubFolders(this, folder, fullPath);
+                    var existing = FindFolder(fullPath);
 
-                    if (folder.Location == Project.CurrentDirectory)
+                    if (existing == null)
                     {
-                        newFolder.Parent = Project;
-                        Project.Items.InsertSorted(newFolder);
-                    }
-                    else
-                    {
-                        newFolder.Parent = folder;
-                        folder.Items.InsertSorted(newFolder);
+                        var newFolder = GetSubFolders(folder, fullPath);
+
+                        if (folder.Location == Project.CurrentDirectory)
+                        {
+                            newFolder.Parent = Project;
+                            Project.Items.InsertSorted(newFolder);
+                        }
+                        else
+                        {
+                            newFolder.Parent = folder;
+                            folder.Items.InsertSorted(newFolder);
+                        }
                     }
                 }
             }
