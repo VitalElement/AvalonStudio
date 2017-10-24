@@ -17,6 +17,6 @@ namespace AvalonStudio.Projects
         /// </summary>
         /// <param name="solution">Solution that the template will install to.</param>
         /// <param name="name">Name of the project.</param>
-        Task<IProject> Generate(ISolution solution, string name);
+        Task<IProject> Generate(ISolutionFolder solution, string name);
     }
 }

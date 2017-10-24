@@ -2,6 +2,7 @@
 using AvalonStudio.Languages.CSharp.OmniSharp;
 using AvalonStudio.Utils;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,13 @@ namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpSolution : ISolution
     {
+        public int CompareTo(ISolutionItem other)
+        {
+            return Name.CompareTo(other.Name);
+        }
+
+        public ObservableCollection<ISolutionItem> Items => null;
+
         public static async Task<OmniSharpSolution> Create(string path)
         {
             OmniSharpSolution result = new OmniSharpSolution();
@@ -26,6 +34,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             server = new OmniSharpServer(TcpUtils.FreeTcpPort());
             Projects = new ObservableCollection<IProject>();
+            Parent = Solution = this;
         }
 
         private async Task LoadSolution(string path)
@@ -40,36 +49,51 @@ namespace AvalonStudio.Projects.OmniSharp
 
             foreach (var project in workspace.MsBuild.Projects)
             {
-                AddProject(OmniSharpProject.Create(this, project.Path, project));
+                AddItem(OmniSharpProject.Create(this, project.Path, project));
             }
 
             CurrentDirectory = Path.GetDirectoryName(path);
         }
 
-        public IProject AddProject(IProject project)
+        public void RemoveItem(ISolutionItem item)
         {
-            var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);
+            throw new NotImplementedException();
+        }
 
-            if (currentProject != null) return currentProject;
+        public T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem
+        {
+            if (item is IProject project)
+            {
+                var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);
 
-            //ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
-            Projects.InsertSorted(project);
-            currentProject = project;
+                if (currentProject != null) return (T)currentProject;
 
-            return currentProject;
+                //ProjectReferences.Add(CurrentDirectory.MakeRelativePath(project.Location));
+                Items.InsertSorted(project);
+                currentProject = project;
+
+                return (T)currentProject;
+            }
+
+            return item;
         }
 
         public OmniSharpServer Server => server;
 
         public string CurrentDirectory { get; set; }
 
+        public bool CanRename => false;
+
         public string Name { get; set; }
 
-        public ObservableCollection<IProject> Projects { get; set; }
+        public IEnumerable<IProject> Projects { get; set; }
 
         public IProject StartupProject { get; set; }
 
         public string Location { get; private set; }
+        public ISolution Solution { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public ISolutionFolder Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public ISourceFile FindFile(string file)
         {
@@ -88,14 +112,34 @@ namespace AvalonStudio.Projects.OmniSharp
             return result;
         }
 
-        public void RemoveProject(IProject project)
+        public void Save()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void SetItemParent(ISolutionItem item, ISolutionFolder parent)
         {
             throw new NotImplementedException();
         }
 
-        public void Save()
+        public void AddFolder(ISolutionFolder name)
         {
-            //throw new NotImplementedException();
+            throw new NotImplementedException();
+        }
+
+        public IProject FindProject(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VisitChildren(Action<ISolutionItem> visitor)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateItem(ISolutionItem item)
+        {
+            throw new NotImplementedException();
         }
     }
 }
