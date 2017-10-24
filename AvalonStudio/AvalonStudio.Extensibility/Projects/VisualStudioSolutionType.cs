@@ -8,7 +8,7 @@ namespace AvalonStudio.Extensibility.Projects
 {
     public class VisualStudioSolutionType : ISolutionType
     {
-        public List<string> Extensions { get; } = new List<string> { "sln" };
+        public List<string> Extensions { get; } = new List<string> { "asln", "sln" };
 
         public string Description => "Solution File";
 

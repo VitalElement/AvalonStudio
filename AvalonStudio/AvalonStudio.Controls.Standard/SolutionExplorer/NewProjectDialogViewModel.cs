@@ -73,7 +73,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     generateSolutionDirs = true;
 
                     var destination = Path.Combine(location, solutionName);
-                    _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false);
+                    _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, AvalonStudioSolution.Extension);
                 }
 
                 if (await selectedTemplate.Generate(_solutionFolder, name) != null)

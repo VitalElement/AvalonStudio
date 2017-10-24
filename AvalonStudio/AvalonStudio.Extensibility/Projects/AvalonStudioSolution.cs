@@ -149,7 +149,7 @@ namespace AvalonStudio.Projects
 
         public static VisualStudioSolution ConvertToSln (ISolution solution)
         {
-            var result = VisualStudioSolution.Create(solution.CurrentDirectory, solution.Name, true);
+            var result = VisualStudioSolution.Create(solution.CurrentDirectory, solution.Name, true, AvalonStudioSolution.Extension);
 
             foreach(var item in solution.Items)
             {
@@ -168,36 +168,43 @@ namespace AvalonStudio.Projects
 
         public static ISolution Load(string fileName)
         {
-            var solution = SerializedObject.Deserialize<AvalonStudioSolution>(fileName);
-
-            solution.Location = fileName.NormalizePath().ToPlatformPath();
-            solution.CurrentDirectory = (Path.GetDirectoryName(fileName) + Platform.DirectorySeperator).ToPlatformPath();
-
-            foreach (var projectReference in solution.ProjectReferences)
+            try
             {
-                var proj = LoadProject(solution, projectReference);
+                return VisualStudioSolution.Load(fileName);
+            }
+            catch (Exception e)
+            { 
+                var solution = SerializedObject.Deserialize<AvalonStudioSolution>(fileName);
 
-                // todo null returned here we need a placeholder.
-                if (proj != null)
+                solution.Location = fileName.NormalizePath().ToPlatformPath();
+                solution.CurrentDirectory = (Path.GetDirectoryName(fileName) + Platform.DirectorySeperator).ToPlatformPath();
+
+                foreach (var projectReference in solution.ProjectReferences)
                 {
-                    proj.Solution = solution;
-                    solution.Items.InsertSorted(proj);
+                    var proj = LoadProject(solution, projectReference);
+
+                    // todo null returned here we need a placeholder.
+                    if (proj != null)
+                    {
+                        proj.Solution = solution;
+                        solution.Items.InsertSorted(proj);
+                    }
                 }
+
+                foreach (var project in solution.Projects)
+                {
+                    project.ResolveReferences();
+                }
+
+                solution.StartupProject = solution.Projects.SingleOrDefault(p => p.Name == solution.StartupItem);
+
+                var console = IoC.Get<IConsole>();
+
+                console.WriteLine("Migrating ASLN to SLN format. Opening this file again will overwrite the newly created SLN file.");
+                console.WriteLine("Please delte ASLN file when you are happy with the migration.");
+
+                return ConvertToSln(solution);
             }
-
-            foreach (var project in solution.Projects)
-            {
-                project.ResolveReferences();
-            }
-
-            solution.StartupProject = solution.Projects.SingleOrDefault(p => p.Name == solution.StartupItem);
-
-            var console = IoC.Get<IConsole>();
-
-            console.WriteLine("Migrating ASLN to SLN format. Opening this file again will overwrite the newly created SLN file.");
-            console.WriteLine("Please delte ASLN file when you are happy with the migration.");
-
-            return ConvertToSln(solution);
         }
 
         public IProject FindProject(string name)

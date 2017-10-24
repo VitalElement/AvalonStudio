@@ -30,9 +30,9 @@ namespace AvalonStudio.Extensibility.Projects
 
         public SlnFile Model => _solutionModel;
 
-        public static VisualStudioSolution Create(string location, string name, bool save = true)
+        public static VisualStudioSolution Create(string location, string name, bool save = true, string extension = Extension)
         {
-            var filePath = Path.Combine(location, name + "." + Extension);
+            var filePath = Path.Combine(location, name + "." + extension);
 
             var result = new VisualStudioSolution(new SlnFile { FullPath = filePath, FormatVersion = "12.00", MinimumVisualStudioVersion = "10.0.40219.1", VisualStudioVersion = "15.0.27009.1" });
 
