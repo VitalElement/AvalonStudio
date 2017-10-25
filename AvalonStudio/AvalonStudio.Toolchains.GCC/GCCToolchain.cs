@@ -6,6 +6,7 @@ using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
 using System.IO;
+using System.Linq;
 
 namespace AvalonStudio.Toolchains.GCC
 {
@@ -50,7 +51,7 @@ namespace AvalonStudio.Toolchains.GCC
         public override bool SupportsFile(ISourceFile file)
         {
             var result = false;
-
+            
             switch (file.Extension.ToLower())
             {
                 case ".cpp":
@@ -58,6 +59,24 @@ namespace AvalonStudio.Toolchains.GCC
                 case ".s":
                     result = true;
                     break;
+            }
+
+            if(!result)
+            {
+                var extensions = file.Project.GetToolchainSettings<GccToolchainSettings>().CompileSettings.CompileExtensions;
+
+                if (extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
+                {
+                    result = true;
+                }
+
+                extensions = file.Project.GetToolchainSettings<GccToolchainSettings>().CompileSettings.AssembleExtensions;
+
+                if(extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
+                {
+                    result = true;
+                }
+
             }
 
             return result;
@@ -95,12 +114,14 @@ namespace AvalonStudio.Toolchains.GCC
 
             var fileArguments = string.Empty;
 
-            if (file.Extension == ".cpp")
+            var extensions = file.Project.GetToolchainSettings<GccToolchainSettings>().CompileSettings.CompileExtensions;
+            if (file.Extension == ".cpp" || extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
             {
                 fileArguments = "-x c++ -fno-use-cxa-atexit";
             }
 
-            if (file.Extension.ToLower() == ".s")
+            extensions = file.Project.GetToolchainSettings<GccToolchainSettings>().CompileSettings.AssembleExtensions;
+            if (file.Extension.ToLower() == ".s" || extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
             {
                 fileArguments = "-x assembler-with-cpp";
             }
