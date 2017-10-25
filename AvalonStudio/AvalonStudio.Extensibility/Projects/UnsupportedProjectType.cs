@@ -59,6 +59,8 @@ namespace AvalonStudio.Projects
 
         public Guid ProjectTypeId => Guid.Empty;
 
+        public IReadOnlyList<ISourceFile> SourceFiles => null;
+
         public event EventHandler FileAdded;
 
         public void AddReference(IProject project)
