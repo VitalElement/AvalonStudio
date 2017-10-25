@@ -43,11 +43,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 if (model != null)
                 {
-                    foreach(var model in model.Items)
-                    {
-                        //model.Dispose();
-                    }
-
                     model.Items.Clear();
                     GC.Collect();
                 }
