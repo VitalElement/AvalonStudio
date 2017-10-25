@@ -2,6 +2,7 @@
 {
     using Avalonia.Controls;
     using AvalonStudio.Extensibility;
+    using AvalonStudio.MVVM;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Shell;
