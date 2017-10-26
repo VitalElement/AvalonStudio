@@ -28,7 +28,7 @@
             </i:Interaction.Behaviors>
         </TextBox>
         <ListBox Items="{Binding Results}" IsVisible="{Binding ResultsVisible}" Margin="0 -1 0 0" 
-                     Background="{StyleResource ThemeBackgroundBrush}" 
+                     Background="{DynamicResource ThemeBackgroundBrush}" 
                      SelectedItem="{Binding SelectedResult, Mode=TwoWay}" 
                      SelectedIndex="{Binding SelectedIndex}"  
                      MaxHeight="450" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorderDarkBrush}">

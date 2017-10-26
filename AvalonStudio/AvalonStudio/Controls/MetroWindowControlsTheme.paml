@@ -6,11 +6,11 @@
     <Setter Property="FontWeight" Value="SemiBold" />
   </Style>
   <Style Selector="Button:pointerover /template/ ContentPresenter">
-    <Setter Property="Background" Value="{StyleResource AccentColorLight}" />
+    <Setter Property="Background" Value="{DynamicResource AccentColorLight}" />
     <Setter Property="BorderThickness" Value="0" />
   </Style>
   <Style Selector="Button:pressed  /template/ ContentPresenter">
-    <Setter Property="Background" Value="{StyleResource HighlightColorBrush}" />
+    <Setter Property="Background" Value="{DynamicResource HighlightColorBrush}" />
     <Setter Property="BorderThickness" Value="0" />
   </Style>
 </Styles>
