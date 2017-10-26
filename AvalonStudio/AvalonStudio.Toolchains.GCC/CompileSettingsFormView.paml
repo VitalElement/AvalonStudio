@@ -16,9 +16,11 @@
     <Grid.ColumnDefinitions>
       <ColumnDefinition/>
       <ColumnDefinition/>
+      <ColumnDefinition/>
+      <ColumnDefinition/>
     </Grid.ColumnDefinitions>
 
-    <Panel Grid.ColumnSpan="2">
+    <Panel Grid.ColumnSpan="3">
       <StackPanel Gap="10">
         <StackPanel Orientation="Horizontal" Gap="4">
           <TextBlock Text="Language Standard:"/>
@@ -62,7 +64,7 @@
       </Grid>
     </Panel>
 
-    <Panel Grid.Row="1" Grid.Column="2">
+    <Panel Grid.Row="1" Grid.Column="1">
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition/>
@@ -85,11 +87,57 @@
       </Grid>
     </Panel>
 
-    <Panel Grid.Row="2" Grid.ColumnSpan="2" >
+    <Panel Grid.Row="1" Grid.Column="2">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition Width="80"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+          <RowDefinition Height="30"/>
+          <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <TextBox Text="{Binding CompileExtensionText}" />
+        <ListBox Grid.Row="1" Items="{Binding CompileExtensions}" SelectedItem="{Binding SelectedCompileExtension, Mode=TwoWay}"/>
+
+        <StackPanel Grid.RowSpan="2" Grid.Column="1">
+          <Button Content="Add" Command="{Binding AddCompileExtensionCommand}" Margin="5 0 0 0" />
+          <Button Content="Remove" Command="{Binding RemoveCompileExtensionCommand}" Margin="5 5 0 0" />
+        </StackPanel>
+
+      </Grid>
+    </Panel>
+
+    <Panel Grid.Row="1" Grid.Column="3">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition Width="80"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+          <RowDefinition Height="30"/>
+          <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <TextBox Text="{Binding AssembleExtensionText}" />
+        <ListBox Grid.Row="1" Items="{Binding AssembleExtensions}" SelectedItem="{Binding SelectedAssembleExtension, Mode=TwoWay}"/>
+
+        <StackPanel Grid.RowSpan="2" Grid.Column="1">
+          <Button Content="Add" Command="{Binding AddAssembleExtensionCommand}" Margin="5 0 0 0" />
+          <Button Content="Remove" Command="{Binding RemoveAssembleExtensionCommand}" Margin="5 5 0 0" />
+        </StackPanel>
+
+      </Grid>
+    </Panel>
+
+    <Panel Grid.Row="2" Grid.ColumnSpan="3" >
       <TextBox Text="{Binding MiscOptions, Mode=TwoWay}" />
     </Panel>
 
-    <Panel Grid.Row="3" Grid.ColumnSpan="2">
+    <Panel Grid.Row="3" Grid.ColumnSpan="3">
       <TextBox Text="{Binding CompilerArguments}" IsReadOnly="true" />
     </Panel>
   </Grid>
