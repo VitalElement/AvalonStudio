@@ -17,8 +17,10 @@ namespace AvalonStudio.Debugging.GDB.JLink
         private int speedSelectedIndex;
         private string filter = string.Empty;
         private bool _download;
+        private bool _postDownloadReset;
         private bool _useRemote;
         private bool _reset;
+        private bool _run;
 
         private string speed;
         private JlinkInterfaceType interfaceType;
@@ -34,6 +36,8 @@ namespace AvalonStudio.Debugging.GDB.JLink
             _reset = settings.Reset;
             _useRemote = settings.UseRemote;
             _ipAddress = settings.RemoteIPAddress;
+            _postDownloadReset = settings.PostDownloadReset;
+            _run = settings.Run;
 
             speedSelectedIndex = SpeedOptions.IndexOf(settings.SpeedkHz.ToString());
 
@@ -197,10 +201,12 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 settings.Interface = (JlinkInterfaceType)interfaceSelectedIndex;
                 settings.DeviceKey = selectedDevice?.Device;
                 settings.TargetDevice = selectedDevice?.Device.Split(' ')[0].Trim();
+                settings.PostDownloadReset = _postDownloadReset;
                 settings.Download = _download;
                 settings.Reset = _reset;
                 settings.UseRemote = _useRemote;
                 settings.RemoteIPAddress = _ipAddress;
+                settings.Run = _run;
 
                 if (!string.IsNullOrEmpty(speed))
                 {
@@ -264,6 +270,22 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 this.RaiseAndSetIfChanged(ref _download, value);
                 Save();
             }
+        }
+
+        public bool PostDownloadReset
+        {
+            get { return _postDownloadReset; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _postDownloadReset, value);
+                Save();
+            }
+        }
+
+        public bool Run
+        {
+            get { return _run; }
+            set { this.RaiseAndSetIfChanged(ref _run, value); }
         }
 
         public bool UseRemote

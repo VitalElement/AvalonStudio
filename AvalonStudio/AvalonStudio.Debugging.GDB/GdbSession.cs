@@ -185,24 +185,31 @@ namespace AvalonStudio.Debugging.GDB
 
                 OnStarted();
 
-                if (_waitForStopBeforeRunning)
+                if (!startInfo.RequiresManualStart)
                 {
-                    _suppressEvents = true;
-
-                    var catchFirstStop = Observable.FromEventPattern(this, nameof(TargetStoppedWhenSuppressed)).Take(1).Subscribe(s =>
+                    if (_waitForStopBeforeRunning)
                     {
-                        ThreadPool.QueueUserWorkItem(delegate
+                        _suppressEvents = true;
+
+                        var catchFirstStop = Observable.FromEventPattern(this, nameof(TargetStoppedWhenSuppressed)).Take(1).Subscribe(s =>
                         {
-                            _suppressEvents = false;
-                            running = true;
-                            RunCommand(_runCommand);
+                            ThreadPool.QueueUserWorkItem(delegate
+                            {
+                                _suppressEvents = false;
+                                running = true;
+                                RunCommand(_runCommand);
+                            });
                         });
-                    });
+                    }
+                    else
+                    {
+                        running = true;
+                        RunCommand(_runCommand);
+                    }
                 }
                 else
                 {
-                    running = true;
-                    RunCommand(_runCommand);
+                    running = false;
                 }
             }
         }

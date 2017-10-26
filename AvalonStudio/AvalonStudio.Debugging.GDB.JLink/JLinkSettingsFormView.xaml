@@ -14,6 +14,9 @@
             <StackPanel Orientation="Horizontal" Gap="5">
                 <TextBlock Text="Download" />
                 <CheckBox IsChecked="{Binding Download}" />
+
+                <TextBlock Text="Post Download Reset" />
+                <CheckBox IsChecked="{Binding PostDownloadReset}" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Gap="5">
@@ -21,7 +24,12 @@
                 <CheckBox IsChecked="{Binding Reset}" />
             </StackPanel>
 
-          <StackPanel Orientation="Horizontal" Gap="5">
+            <StackPanel Orientation="Horizontal" Gap="5">
+                <TextBlock Text="Run" />
+                <CheckBox IsChecked="{Binding Run}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Gap="5">
             <TextBlock Text="Connect over TCPIP" />
             <CheckBox IsChecked="{Binding UseRemote}" />
           </StackPanel>
