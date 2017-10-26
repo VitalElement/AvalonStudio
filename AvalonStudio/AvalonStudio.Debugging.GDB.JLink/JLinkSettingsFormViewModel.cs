@@ -47,10 +47,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
             deviceList = new ObservableCollection<JLinkTargetDeviceViewModel>();
 
-            if (System.IO.File.Exists(devPath))
-            {
-                LoadDeviceList(devPath);
-            }
+            LoadDeviceList(devPath);
         }
 
         private bool hasLoaded = false;
@@ -59,40 +56,43 @@ namespace AvalonStudio.Debugging.GDB.JLink
         {
             var list = new ObservableCollection<JLinkTargetDeviceViewModel>();
 
-            using (TextReader tr = System.IO.File.OpenText(deviceFile))
+            if(File.Exists(deviceFile))
             {
-                tr.ReadLine();
-
-                string line = null;
-                while ((line = await tr.ReadLineAsync()) != null)
+                using (TextReader tr = System.IO.File.OpenText(deviceFile))
                 {
-                    line = line.Replace("\"", string.Empty);
-                    line = line.Replace("{", string.Empty);
-                    line = line.Replace("}", string.Empty);
-                    var splits = line.Split(',');
-                    var newdev = new JLinkTargetDeviceViewModel();
-                    newdev.Manufacturer = splits[0];
-                    newdev.Device = splits[1].Trim();
-                    newdev.Core = splits[2].Trim();
-                    newdev.FlashStart = Convert.ToUInt32(splits[3].Trim(), 16);
-                    newdev.FlashLength = Convert.ToUInt32(splits[4].Trim(), 16);
-                    newdev.RamStart = Convert.ToUInt32(splits[5].Trim(), 16);
-                    newdev.RamLength = Convert.ToUInt32(splits[6].Trim(), 16);
+                    tr.ReadLine();
 
-                    list.Add(newdev);
+                    string line = null;
+                    while ((line = await tr.ReadLineAsync()) != null)
+                    {
+                        line = line.Replace("\"", string.Empty);
+                        line = line.Replace("{", string.Empty);
+                        line = line.Replace("}", string.Empty);
+                        var splits = line.Split(',');
+                        var newdev = new JLinkTargetDeviceViewModel();
+                        newdev.Manufacturer = splits[0];
+                        newdev.Device = splits[1].Trim();
+                        newdev.Core = splits[2].Trim();
+                        newdev.FlashStart = Convert.ToUInt32(splits[3].Trim(), 16);
+                        newdev.FlashLength = Convert.ToUInt32(splits[4].Trim(), 16);
+                        newdev.RamStart = Convert.ToUInt32(splits[5].Trim(), 16);
+                        newdev.RamLength = Convert.ToUInt32(splits[6].Trim(), 16);
+
+                        list.Add(newdev);
+                    }
                 }
+
+                unfilteredList = list;
+
+                await FilterListAsync();
+
+                var selectedDevice = list.FirstOrDefault((d) => d.Device == settings.DeviceKey);
+
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    SelectedDevice = selectedDevice;
+                });
             }
-
-            unfilteredList = list;
-
-            await FilterListAsync();
-
-            var selectedDevice = list.FirstOrDefault((d) => d.Device == settings.DeviceKey);
-
-            await Dispatcher.UIThread.InvokeTaskAsync(() =>
-            {
-                SelectedDevice = selectedDevice;
-            });
 
             hasLoaded = true;
         }
@@ -199,8 +199,13 @@ namespace AvalonStudio.Debugging.GDB.JLink
             if (hasLoaded)
             {
                 settings.Interface = (JlinkInterfaceType)interfaceSelectedIndex;
-                settings.DeviceKey = selectedDevice?.Device;
-                settings.TargetDevice = selectedDevice?.Device.Split(' ')[0].Trim();
+
+                if(selectedDevice != null)
+                {
+                    settings.DeviceKey = selectedDevice?.Device;
+                    settings.TargetDevice = selectedDevice?.Device.Split(' ')[0].Trim();
+                }
+
                 settings.PostDownloadReset = _postDownloadReset;
                 settings.Download = _download;
                 settings.Reset = _reset;
@@ -285,7 +290,11 @@ namespace AvalonStudio.Debugging.GDB.JLink
         public bool Run
         {
             get { return _run; }
-            set { this.RaiseAndSetIfChanged(ref _run, value); }
+            set 
+            { 
+                this.RaiseAndSetIfChanged(ref _run, value);
+                Save();
+            }
         }
 
         public bool UseRemote
