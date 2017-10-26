@@ -1,5 +1,5 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" FontFamily="Verdana" FontSize="12">
-  <Grid Background="{DynamicResource ThemeControlDarkBrush}">
+﻿<UserControl xmlns="https://github.com/avaloniaui" FontFamily="Segoe UI" FontSize="12">
+  <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
     <TextBlock Text="{Binding Tooltip}" Margin="5"/>
   </Grid>  
 </UserControl>
