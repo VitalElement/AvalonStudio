@@ -1,15 +1,15 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-              xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" FontFamily="Segoe UI" FontSize="12">
+              xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" FontFamily="Segoe UI" FontSize="14">
     <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
-        <Grid Margin="5">
+        <Grid Margin="2">
             <Grid>
                 <StackPanel Margin="4">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                         <TextBlock Text="{Binding BuiltInReturnType}" Foreground="#FF569CD6" />
                         <TextBlock Text="{Binding ReturnType}" Foreground="#FF4ec9b0" />
                         <TextBlock Text="{Binding Name}" Margin="5 0 0 0" />
-                        <TextBlock Margin="5 0 0 0" Text="(" />
-                        <ListBox Items="{Binding Parameters}" BorderThickness="0" Margin="0 -4 0 0" VirtualizationMode="None" Background="{DynamicResource ThemeControlBackgroundBrush}" IsEnabled="false">
+                        <TextBlock Margin="5 0 2 0" Text="(" />
+                        <ListBox Items="{Binding Parameters}" BorderThickness="0" Margin="-2 -4 0 0" VirtualizationMode="None" Background="{DynamicResource ThemeControlBackgroundBrush}" IsEnabled="false">
                             <ListBox.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="0" />
