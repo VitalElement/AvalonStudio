@@ -20,7 +20,7 @@
       <ColumnDefinition/>
     </Grid.ColumnDefinitions>
 
-    <Panel Grid.ColumnSpan="3">
+    <Panel Grid.ColumnSpan="4">
       <StackPanel Gap="10">
         <StackPanel Orientation="Horizontal" Gap="4">
           <TextBlock Text="Language Standard:"/>
@@ -133,11 +133,11 @@
       </Grid>
     </Panel>
 
-    <Panel Grid.Row="2" Grid.ColumnSpan="3" >
+    <Panel Grid.Row="2" Grid.ColumnSpan="4" >
       <TextBox Text="{Binding MiscOptions, Mode=TwoWay}" />
     </Panel>
 
-    <Panel Grid.Row="3" Grid.ColumnSpan="3">
+    <Panel Grid.Row="3" Grid.ColumnSpan="4">
       <TextBox Text="{Binding CompilerArguments}" IsReadOnly="true" />
     </Panel>
   </Grid>
