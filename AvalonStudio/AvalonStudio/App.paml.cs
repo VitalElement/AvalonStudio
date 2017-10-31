@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Markup.Xaml;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
 using System;
@@ -28,7 +29,7 @@ namespace AvalonStudio
                 ShellViewModel.Instance = container.GetExport<ShellViewModel>();
             });
 
-            builder.Start<MainWindow>();            
+            builder.Start<MainWindow>();
         }
 
         public override void Initialize()

@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -27,13 +28,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private IProjectTemplate selectedTemplate;
         private readonly IShell shell;
-        private ISolution solution;
+        private ISolutionFolder _solutionFolder;
 
         private string solutionName;
 
-        public NewProjectDialogViewModel(ISolution solution) : this()
+        public NewProjectDialogViewModel(ISolutionFolder solutionFolder) : this()
         {
-            this.solution = solution;
+            _solutionFolder = solutionFolder;
         }
 
         public NewProjectDialogViewModel() : base("New Project", true, true)
@@ -64,29 +65,36 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             OKCommand = ReactiveCommand.Create(async () =>
             {
                 bool generateSolutionDirs = false;
+                bool loadNewSolution = false;
 
-                if (solution == null)
+                if (_solutionFolder == null)
                 {
+                    loadNewSolution = true;
                     generateSolutionDirs = true;
 
                     var destination = Path.Combine(location, solutionName);
-                    solution = Solution.Create(destination, solutionName, false);
+                    _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, AvalonStudioSolution.Extension);
                 }
 
-                if (await selectedTemplate.Generate(solution, name) != null)
+                if (await selectedTemplate.Generate(_solutionFolder, name) != null)
                 {
                     if (generateSolutionDirs)
                     {
-                        if (!Directory.Exists(solution.CurrentDirectory))
+                        if (!Directory.Exists(_solutionFolder.Solution.CurrentDirectory))
                         {
-                            Directory.CreateDirectory(solution.CurrentDirectory);
+                            Directory.CreateDirectory(_solutionFolder.Solution.CurrentDirectory);
                         }
                     }
                 }
 
-                solution.Save();
-                shell.CurrentSolution = solution;
-                solution = null;
+                _solutionFolder.Solution.Save();
+
+                if (loadNewSolution)
+                {
+                    await shell.OpenSolutionAsync(_solutionFolder.Solution.Location);
+                }
+
+                _solutionFolder = null;
 
                 Close();
             },
@@ -112,7 +120,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public bool SolutionControlsVisible
         {
-            get { return solution == null; }
+            get { return _solutionFolder == null; }
         }
 
         public string Location

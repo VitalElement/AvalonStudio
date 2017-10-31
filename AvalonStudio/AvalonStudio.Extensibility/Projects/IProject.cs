@@ -7,14 +7,14 @@ using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Projects
 {
-    public interface IProject : IProjectFolder, IComparable<IProject>, IDisposable
+    public interface IProject : IProjectFolder, ISolutionItem, IComparable<IProject>, IDisposable
     {
-        ISolution Solution { get; }
-
         /// <summary>
         ///     List of references with the project.
         /// </summary>
         ObservableCollection<IProject> References { get; }
+
+        Guid ProjectTypeId { get; }
 
         IToolChain ToolChain { get; set; }
         IDebugger Debugger2 { get; set; }
@@ -47,7 +47,9 @@ namespace AvalonStudio.Projects
 
         ISourceFile FindFile(string path);
 
-        event EventHandler<ISourceFile> FileAdded;
+        IReadOnlyList<ISourceFile> SourceFiles { get; }
+
+        event EventHandler FileAdded;
 
         /// <summary>
         ///     Resolves all references in the project.

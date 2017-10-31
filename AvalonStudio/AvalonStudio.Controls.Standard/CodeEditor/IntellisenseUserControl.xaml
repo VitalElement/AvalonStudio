@@ -1,12 +1,21 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
               xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
               xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility">
-    <Grid Background="{DynamicResource ThemeControlDarkBrush}"  TextBlock.FontFamily="Segoi UI" TextBlock.FontSize="14">
-        <ListBox Items="{Binding CompletionData}" Background="{DynamicResource ThemeControlDarkBrush}"
-                 BorderBrush="{DynamicResource ThemeBorderDarkBrush}" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="180" 
-                 BorderThickness="1" Width="240" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}" >
-            <ListBox.ItemTemplate>
+    <Grid TextBlock.FontFamily="Segoi UI" TextBlock.FontSize="14">
+        <Grid.Styles>
+            <Style Selector="ListBoxItem:selected">
+                <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+            </Style>
 
+            <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+            </Style>
+        </Grid.Styles>
+        <ListBox Items="{Binding CompletionData}"
+                 Background="{DynamicResource ThemeControlBackgroundBrush}"
+                 BorderBrush="{DynamicResource ThemeBorderDarkBrush}" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="180"
+                 BorderThickness="1" Width="240" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
+            <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
                         <StackPanel Orientation="Horizontal" Gap="4">

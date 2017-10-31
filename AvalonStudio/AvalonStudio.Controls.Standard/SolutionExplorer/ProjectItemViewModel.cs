@@ -16,13 +16,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 result = new ProjectFolderViewModel(item as IProjectFolder);
             }
-
-            if (item is ISourceFile)
+            else if (item is ISourceFile)
             {
                 result = new SourceFileViewModel(item as ISourceFile);
             }
-
-            if (item is IReferenceFolder)
+            else if (item is IReferenceFolder)
             {
                 result = new ReferenceFolderViewModel(item as IReferenceFolder);
             }

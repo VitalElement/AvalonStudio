@@ -24,9 +24,9 @@ namespace AvalonStudio.Toolchains.Clang
             get { return "Basic template for projects using Clang Toolchain."; }
         }
 
-        public override async Task<IProject> Generate(ISolution solution, string name)
+        public override async Task<IProject> Generate(ISolutionFolder solutionFolder, string name)
         {
-            var project = await base.Generate(solution, name);
+            var project = await base.Generate(solutionFolder, name);
 
             project.ToolChain = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc is ClangToolchain);
 

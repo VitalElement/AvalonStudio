@@ -43,12 +43,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 if (model != null)
                 {
-                    foreach(var model in model.Projects)
-                    {
-                        model.Dispose();
-                    }
-
-                    model.Projects.Clear();
+                    model.Items.Clear();
                     GC.Collect();
                 }
 
@@ -58,7 +53,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (Model != null)
                 {
-                    if (Model.Projects.Count > 0)
+                    if (Model.Items.Count > 0)
                     {
                         SelectedProject = Model.StartupProject;
                     }

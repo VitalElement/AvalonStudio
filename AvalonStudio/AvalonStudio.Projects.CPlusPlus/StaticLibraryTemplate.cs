@@ -22,9 +22,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             get { return "Creates a Static Library project for C/C++"; }
         }
 
-        public override async Task<IProject> Generate(ISolution solution, string name)
+        public override async Task<IProject> Generate(ISolutionFolder solutionFolder, string name)
         {
-            var project = await base.Generate(solution, name) as CPlusPlusProject;
+            var project = await base.Generate(solutionFolder, name) as CPlusPlusProject;
 
             project.Type = ProjectType.StaticLibrary;
             project.Includes.Add(new Include() { Exported = true, Value = "./" });

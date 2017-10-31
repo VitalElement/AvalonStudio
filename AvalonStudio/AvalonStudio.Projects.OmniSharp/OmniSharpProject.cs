@@ -100,9 +100,12 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override string LocationDirectory => CurrentDirectory;
 
+        public override bool CanRename => false;
+
         public override string Name
         {
             get { return Path.GetFileNameWithoutExtension(Location); }
+            set { }
         }
 
         public override IProjectFolder Parent { get; set; }
@@ -173,7 +176,7 @@ namespace AvalonStudio.Projects.OmniSharp
             throw new NotImplementedException();
         }
 
-        public override IProject Load(ISolution solution, string filePath)
+        public override IProject Load(string filePath)
         {
             return null;
         }
@@ -194,5 +197,7 @@ namespace AvalonStudio.Projects.OmniSharp
         }
 
         public override List<string> ExcludedFiles { get; set; }
+
+        public override Guid ProjectTypeId => throw new NotImplementedException();
     }
 }

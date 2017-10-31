@@ -71,6 +71,10 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 CloseExternalConsoleOnExit = true
             };
 
+            var settings = project.GetDebuggerSettings<JLinkSettings>();
+
+            startInfo.RequiresManualStart = !settings.Run;
+
             return startInfo;
         }
 

@@ -40,8 +40,6 @@ namespace AvalonStudio.Projects.Standard
 
         IList<Include> Includes { get; }
 
-        IList<ISourceFile> SourceFiles { get; }
-
         string GetObjectDirectory(IStandardProject superProject);
 
         string GetBuildDirectory(IStandardProject superProject);
